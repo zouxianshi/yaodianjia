@@ -1,0 +1,19 @@
+@import "../helpers/mixins";
+
+.hydee-icon {
+  display: inline-block;
+}
+
+.safe-icon{
+  @include bg-logo2(18px,18px,'../image/login/yzm.png')
+}
+
+.user-icon{
+  @include bg-logo2(18px,18px,'../image/login/yh.png')
+}
+
+.password-icon{
+  @include bg-logo2(18px,18px,'../image/login/mima.png')
+}
+
+

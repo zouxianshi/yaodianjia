@@ -1,0 +1,77 @@
+/* eslint-disable */
+
+import _ from 'lodash'
+import store from '@/store'
+const ps = () => new InnerCtor()
+
+class InnerCtor {
+  constructor () {
+    this.p = {}
+  }
+  navList (){
+    return [
+      {
+        name: '首页',
+        icon: 'iconshouye2',
+        path: '/home',
+        disabled: true,
+        children: []
+      },
+      {
+        name: '商品管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('merchant-org'),
+        children: [
+          {
+            name: '商品库',
+            path: '/goods-manage/depot',
+            disabled: this.get('merchant-org.merchant-org-org'),
+          },
+          {
+            name: `自建新品`,
+            path: '/goods-manage/apply',
+            disabled: this.get('merchant-org.merchant-org-store')
+          }
+        ]
+      }
+    ]
+  }
+
+
+  handlerPs() {
+    let p = {}
+    _.map(store.state.user.resList, v => {
+      _.map(v.children, v1 => {
+        p[v.rePath] = _.assign(p[v.rePath], {
+          [v1.rePath]: _.map(v1.children, v2 => v2.rePath)
+        })
+      })
+    })
+    this.p = p
+    return p
+  }
+
+
+  get (str) {
+    return true
+    // let p = this.p;
+    // if (_.isEmpty(p)) {
+    //   p = this.handlerPs()
+    // }
+    // const strArr = _.split(str, '.')
+    // const leven1Code = strArr[0]
+    // const leven2Code = strArr[1]
+    // const leven3Code = strArr[2] || ''
+    // switch (strArr.length) {
+    //   case 1:
+    //     return _.has(p, leven1Code)
+    //   case 2:
+    //     return _.has(p[leven1Code], leven2Code)
+    //   default:
+    //     return p[leven1Code][leven2Code].includes(leven3Code)
+    // }
+  }
+}
+
+export default ps()
