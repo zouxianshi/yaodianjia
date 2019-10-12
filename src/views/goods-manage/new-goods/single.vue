@@ -29,7 +29,7 @@
         </el-card>
       </div>
       <footer class="footer text-center">
-        <el-button type="primary" size="small">下一步</el-button>
+        <el-button type="primary" size="small" @click="handleSubmit">下一步</el-button>
       </footer>
     </div>
   </div>
@@ -242,6 +242,9 @@ export default {
   methods: {
     handleClick(tab, event) {
       console.log(tab, event)
+    },
+    handleSubmit() {
+      this.$router.push('/goods-manage/edit')
     }
   }
 }

@@ -32,6 +32,18 @@ class InnerCtor {
             name: `自建新品`,
             path: '/goods-manage/apply',
             disabled: this.get('merchant-org.merchant-org-store')
+          },{
+            name:'新品审核',
+            path: '/goods-manage/examine',
+            disabled: this.get('merchant-org.merchant-org-store')
+          },{
+            name: `自定义分组`,
+            path: '/goods-manage/group',
+            disabled: this.get('merchant-org.merchant-org-store')
+          },{
+            name: `门店商品管理`,
+            path: '/goods-manage/group',
+            disabled: this.get('merchant-org.merchant-org-store')
           }
         ]
       }

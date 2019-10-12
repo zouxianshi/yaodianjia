@@ -30,7 +30,7 @@
             <div class="name">批量创建</div>
             <div class="det">通过指定格式的excel表格数据批量创建新产品，审核成功的产品将被导入我的产品库。</div>
             <p class="text-center">
-              <a href="#/new_apply_pl">
+              <a href="#/goods-manage/batch-create">
                 <button
                   type="button"
                   class="el-button btn el-button--default"

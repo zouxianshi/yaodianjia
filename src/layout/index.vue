@@ -26,7 +26,7 @@ import { mapState } from 'vuex'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mSidebar,mHeader ,MC} from '@merchant/commons'
 import RightPanel from '@/components/RightPanel'
-import { AppMain,  Settings, TagsView } from './components'
+import { AppMain, TagsView } from './components'
 import Breadcrumb from '@/components/Breadcrumb'
 import ps from './psHandler'
 import { removeToken } from '@/utils/auth'
@@ -40,7 +40,7 @@ export default {
       isOpen:false
     }
   },
-  components: {mSidebar,TagsView,AppMain,RightPanel,Settings,mHeader,Breadcrumb},
+  components: {mSidebar,TagsView,AppMain,RightPanel,mHeader,Breadcrumb},
   mixins: [ResizeMixin],
   computed: {
     ...mapState({

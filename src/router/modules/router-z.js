@@ -56,10 +56,19 @@ const router = [
         }
       }, {
         path: 'single-create',
-        component: () => import('@/views/goods-manage/new-goods/single-create'),
+        component: () => import('@/views/goods-manage/new-goods/single'),
         name: 'single-create',
         meta: {
           title: '单品创建',
+          noCache: true,
+          activeMenu: '/goods-manage/apply'
+        }
+      }, {
+        path: 'batch-create',
+        component: () => import('@/views/goods-manage/new-goods/batch'),
+        name: 'batch-create',
+        meta: {
+          title: '批量创建商品',
           noCache: true,
           activeMenu: '/goods-manage/apply'
         }
@@ -71,6 +80,32 @@ const router = [
           title: '商品信息编辑',
           noCache: true,
           activeMenu: '/goods-manage/apply'
+        }
+      }, {
+        path: 'group',
+        component: () => import('@/views/goods-manage/group/list'),
+        name: 'group',
+        meta: {
+          title: '自定义分组',
+          noCache: true
+        }
+      },
+      {
+        path: 'group-edit',
+        component: () => import('@/views/goods-manage/group/edit'),
+        name: 'groupEdit',
+        meta: {
+          title: '编辑分组',
+          noCache: true,
+          activeMenu: '/goods-manage/group'
+        }
+      }, {
+        path: 'examine',
+        component: () => import('@/views/goods-manage/examine/list'),
+        name: 'examine',
+        meta: {
+          title: '新品审核',
+          noCache: true
         }
       }
     ]

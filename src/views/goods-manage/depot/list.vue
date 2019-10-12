@@ -37,6 +37,9 @@
           <span class="label-name">批准文号</span>
           <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="批准文号" />
         </div>
+        <div class="search-item">
+          <el-button type="" size="small">查询</el-button>
+        </div>
       </div>
       <section class="depot-list">
         <el-card class="tree-card">

@@ -16,6 +16,10 @@
           第一步：按名称、条形码进行搜索商品；第二步：在搜索结果中点击“生成商品”；第三步：在商品详情页填写商品价格并选择店内分类，保存后，商品创建完成。
         </p>
       </el-alert>
+      <p class="text-right " style="margin-top:10px">
+        <el-button type="primary" size="small">导入历史</el-button>
+        <el-button type="" size="small">商品对码</el-button>
+      </p>
       <ul class="step">
         <li>
           <p class="title">① 下载EXCEL表格</p>

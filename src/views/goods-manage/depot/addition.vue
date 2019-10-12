@@ -35,7 +35,7 @@
         :closable="false"
       >
         <p slot="title" class="alret-title">
-          没有想要商品，去创建<router-link tag="span" class="link" to="/home">自有新品</router-link>
+          没有想要商品，去<router-link tag="span" class="link" to="/home">创建自有新品</router-link>
         </p>
       </el-alert>
       <el-table :data="tableData" stripe>

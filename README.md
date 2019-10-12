@@ -4,7 +4,7 @@
 
 ```bash
 # clone the project
-git clone git@10.200.25.127:client/merchant.git
+git clone git@10.200.25.127:client/yaodianjia.git
 
 # enter the project directory
 cd merchant

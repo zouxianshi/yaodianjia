@@ -222,6 +222,9 @@ export default {
       })
     },
     closeSelectedTag(view) {
+      if (this.visitedViews.length === 1 && view.name === 'home') {
+        return
+      }
       this.$store
         .dispatch('tagsView/delView', view)
         .then(({ visitedViews }) => {
