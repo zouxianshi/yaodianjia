@@ -14,33 +14,36 @@
         <el-button type="primary" size="small" icon="el-icon-upload2" @click="handleImport">商品导入</el-button>
         <el-button type="" size="small" icon="el-icon-download" @click="handleExport">导出</el-button>
       </div>
-      <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-        <div class="search-item">
-          <span class="label-name">商品名称</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="商品名称" />
+      <section @keydown.enter="getList">
+        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
+          <div class="search-item">
+            <span class="label-name">商品名称</span>
+            <el-input v-model.trim="searchForm.name" size="small" style="width:200px" placeholder="商品名称" />
+          </div>
+          <div class="search-item">
+            <span class="label-name">生产企业</span>
+            <el-input v-model.trim="searchForm.storeName" size="small" style="width:200px" placeholder="生产企业" />
+          </div>
+          <div class="search-item">
+            <span class="label-name">商品编码</span>
+            <el-input v-model.trim="searchForm.dimensionId" size="small" style="width:200px" placeholder="商品编码" />
+          </div>
         </div>
-        <div class="search-item">
-          <span class="label-name">生产企业</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="生产企业" />
+        <div class="search-form">
+          <div class="search-item">
+            <span class="label-name">条形码</span>
+            <el-input v-model.trim="searchForm.barCode" size="small" style="width:200px" placeholder="商品名称" />
+          </div>
+          <div class="search-item">
+            <span class="label-name">批准文号</span>
+            <el-input v-model.trim="searchForm.approvalNumber" size="small" style="width:200px" placeholder="批准文号" />
+          </div>
+          <div class="search-item">
+            <el-button type="" size="small" @click="getList">查询</el-button>
+          </div>
         </div>
-        <div class="search-item">
-          <span class="label-name">商品编码</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="商品编码" />
-        </div>
-      </div>
-      <div class="search-form">
-        <div class="search-item">
-          <span class="label-name">条形码</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="商品名称" />
-        </div>
-        <div class="search-item">
-          <span class="label-name">批准文号</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="批准文号" />
-        </div>
-        <div class="search-item">
-          <el-button type="" size="small">查询</el-button>
-        </div>
-      </div>
+      </section>
+
       <section class="depot-list">
         <el-card class="tree-card">
           <div class="tree-box">
@@ -61,11 +64,11 @@
         </el-card>
       </section>
       <section class="depot-table">
-        <el-radio-group v-model="goodStatus" size="small">
-          <el-radio-button label="1">全部</el-radio-button>
-          <el-radio-button label="2">已上架</el-radio-button>
-          <el-radio-button label="3">已下架</el-radio-button>
-          <el-radio-button label="4">待完善资料</el-radio-button>
+        <el-radio-group v-model="searchForm.status" size="small">
+          <el-radio-button :label="0">全部</el-radio-button>
+          <el-radio-button :label="1">已上架</el-radio-button>
+          <el-radio-button :label="2">已下架</el-radio-button>
+          <el-radio-button :label="3">待完善资料</el-radio-button>
         </el-radio-group>
         <div class="table-box">
           <el-table
@@ -189,7 +192,7 @@
   </div>
 </template>
 <script>
-// import { getTreeList, setCreateOrg, setDeleteOrg, setEditOrg, setCheckStatus, getOrganizationInfo } from '@/api/depot'
+import { getGoodsList } from '@/api/depot'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 // import download from '@hydee/download'
@@ -230,15 +233,28 @@ export default {
       dialogVisible: false,
       total: 0,
       subLoading: false,
-      groupVisible: false
+      groupVisible: false,
+      searchForm: {
+        'approvalNumber': '',
+        'barCode': '',
+        'dimensionId': '',
+        'manufacture': '',
+        'name': '',
+        'status': 0,
+        'storeName': ''
+      }
     }
   },
   created() {
-
+    this.getList()
   },
   methods: {
     getList() {
+      getGoodsList(this.searchForm).then(res => {
+        this.tableData = res.data
+      }).catch(() => {
 
+      })
     },
     handleChangeUpdown(status) { // 上下架
       this.status = status

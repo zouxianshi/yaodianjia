@@ -107,6 +107,15 @@ const router = [
           title: '新品审核',
           noCache: true
         }
+      }, {
+        path: 'mate',
+        component: () => import('@/views/goods-manage/examine/mate'),
+        name: 'mate',
+        meta: {
+          title: '重新匹配',
+          activeMenu: '/goods-manage/examine',
+          noCache: true
+        }
       }
     ]
   },

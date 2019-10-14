@@ -59,7 +59,7 @@ module.exports = {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       '/api': {
-        target: `http://middle.dev.yaodianjia.cn/businesses-gateway/merchant`,
+        target: `http://middle.dev.yaodianjia.cn/businesses-gateway/mer-manager`,
         changeOrigin: true,
         pathRewrite: {
           '^/api': `http://middle.dev.yaodianjia.cn`

@@ -1,28 +1,28 @@
 import request from '@/utils/request'
 
-// 获取树结构
-export function getTreeList(params) {
+// 获取商品库商品列表
+export function getGoodsList(params) {
   return request({
-    url: '/1.0/org/_searchByCondition',
-    method: 'post',
-    data: params
+    url: '/1.0/commodity/getCommodityList',
+    method: 'get',
+    params
   })
 }
 
-// 获取组织机构
-export function getOrgList(params) {
+// 获取左侧商品分组树结构
+export function goodsClass(params) {
   return request({
     url: '/1.0/org/' + params.id,
     method: 'get'
   })
 }
 
-// 新增组织机构
-export function setCreateOrg(params) {
+// 获取标库商品列表
+export function getProductList(params) {
   return request({
-    url: '/1.0/org',
-    method: 'post',
-    data: params
+    url: '/product/getProductList',
+    method: 'get',
+    params
   })
 }
 

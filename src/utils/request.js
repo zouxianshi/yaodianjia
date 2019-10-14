@@ -75,7 +75,7 @@ service.interceptors.response.use(
           msg = '登录失效，请重新登录'
           store.dispatch('user/resetToken').then(() => {
             setTimeout(() => {
-              location.reload()
+              // location.reload()
             }, 1000)
           })
         } else {

@@ -9,7 +9,10 @@
         <el-radio-button label="2">营养保健新品审核</el-radio-button>
         <el-radio-button label="3">医疗器械新品审核</el-radio-button>
       </el-radio-group>
-      <div class="search-form" style="margin-top:20px;margin-bottom:10px">
+      <div
+        class="search-form"
+        style="margin-top:20px;margin-bottom:10px"
+      >
         <div class="search-item">
           <span class="label-name">连锁信息</span>
           <el-input
@@ -65,12 +68,7 @@
           :data="tableData"
           stripe
           style="width: 100%"
-          @selection-change="handleSelectionChange"
         >
-          <el-table-column
-            type="selection"
-            width="55"
-          />
           <el-table-column
             prop="orCode"
             align="left"
@@ -143,13 +141,13 @@
             label="操作"
             min-width="100"
           >
-            <template slot-scope="scope">
+            <template>
               <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
               <el-button
-                :type="scope.row.status===1?'danger':'success'"
-                size="mini"
-                @click="handleCommand(1,scope.row)"
-              >{{ scope.row.status===1?'停用':'启用' }}</el-button>
+                type="primary"
+                size="small"
+                @click="handleClick"
+              >查看</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -166,8 +164,8 @@
   </div>
 </template>
 <script>
-import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
+import Pagination from '@/components/Pagination'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -175,7 +173,9 @@ export default {
     return {
       radio3: '1',
       keyword: '',
-      tableData: [],
+      tableData: [{
+
+      }],
       loading: false
     }
   },
@@ -185,11 +185,14 @@ export default {
   methods: {
     getList() {
 
+    },
+    handleClick() {
+      this.drawer = true
     }
   }
 }
 </script>
-<style lang="scss">
+    <style lang="scss">
 .examine-wrapper {
   .search-form {
     .search-item {
