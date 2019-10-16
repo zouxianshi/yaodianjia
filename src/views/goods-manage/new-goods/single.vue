@@ -236,6 +236,11 @@ export default {
       }]
     }
   },
+  beforeRouteLeave(to, from, next) { // 路由离开关闭标签
+    this.$store
+      .dispatch('tagsView/delView', from)
+    next()
+  },
   created() {
 
   },

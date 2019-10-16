@@ -45,7 +45,7 @@
             <div class="name">新品申请记录</div>
             <div class="det">申请的新品将会记录在这里，可以查看新品申请进度，完善产品信息，重新申请新品。</div>
             <p class="text-center">
-              <a href="#/new_apply_jl/wtj">
+              <a href="#/goods-manage/apply-record">
                 <button
                   type="button"
                   class="el-button btn el-button--default"

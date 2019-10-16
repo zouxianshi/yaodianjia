@@ -47,6 +47,15 @@ const router = [
           activeMenu: '/goods-manage/depot'
         }
       }, {
+        path: 'paircode',
+        component: () => import('@/views/goods-manage/depot/paircode'),
+        name: 'paircode',
+        meta: {
+          title: '商品对码',
+          noCache: true,
+          activeMenu: '/goods-manage/depot'
+        }
+      }, {
         path: 'apply',
         component: () => import('@/views/goods-manage/new-goods/apply'),
         name: 'apply',
@@ -78,6 +87,15 @@ const router = [
         name: 'goodsEdit',
         meta: {
           title: '商品信息编辑',
+          noCache: true,
+          activeMenu: '/goods-manage/apply'
+        }
+      }, {
+        path: 'apply-record',
+        component: () => import('@/views/goods-manage/new-goods/record'),
+        name: 'goodsRecord',
+        meta: {
+          title: '新品申请记录',
           noCache: true,
           activeMenu: '/goods-manage/apply'
         }
@@ -114,6 +132,14 @@ const router = [
         meta: {
           title: '重新匹配',
           activeMenu: '/goods-manage/examine',
+          noCache: true
+        }
+      }, {
+        path: 'store-goods',
+        component: () => import('@/views/goods-manage/store-goods'),
+        name: 'storeGoods',
+        meta: {
+          title: '门店商品管理',
           noCache: true
         }
       }

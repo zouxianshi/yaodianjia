@@ -35,16 +35,6 @@ import routez from './modules/router-z'
  */
 export const constantRoutes = [
   {
-    path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
-  },
-  {
-    path: '/check',
-    component: () => import('@/views/login/check'),
-    hidden: true
-  },
-  {
     path: '/404',
     component: () => import('@/views/error-page/404'),
     hidden: true
@@ -82,7 +72,7 @@ const createRouter = () => new Router({
   // mode: 'history', // require service support
   // base: process.env.VUE_ROUTE_BASE_URL,
   scrollBehavior: () => ({ y: 0 }),
-  routes: [...constantRoutes, ...routez]
+  routes: [...constantRoutes, ...asyncRoutes]
 })
 
 const router = createRouter()

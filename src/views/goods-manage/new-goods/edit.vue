@@ -202,7 +202,7 @@
           </div>
           <div class="edit-card-cnt">
             <div class="content">
-              <Img-upload :actions="upLoadUrl" :headers="headers" :limit="6" :file-data="{merCode:merCode}" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" />
+              <vue-upload-img :actions="upLoadUrl" :before-upload="beforeUpload" :file-list="fileList" :headers="headers" :limit="6" :file-data="{merCode:merCode}" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" />
               <el-dialog append-to-body :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt="">
               </el-dialog>
@@ -239,9 +239,10 @@
 </template>
 <script>
 import Tinymce from '@/components/Tinymce'
-import ImgUpload from '@/components/ImgUpload'
+// import ImgUpload from '@/components/ImgUpload'
+import vueUploadImg from 'vueuploadimg/dist/vueuploadimg'
 export default {
-  components: { Tinymce, ImgUpload },
+  components: { Tinymce, vueUploadImg },
   data() {
     return {
       step: 3,
@@ -270,7 +271,10 @@ export default {
       }],
       value: '',
       dialogVisible: false,
-      dialogImageUrl: ''
+      dialogImageUrl: '',
+      fileList: [{
+        imgUrl: 'https://img.ithome.com/newsuploadfiles/2019/10/20191015_084449_97.jpg'
+      }]
     }
   },
   computed: {
@@ -281,7 +285,7 @@ export default {
       return 'sdfdf'
     },
     headers() {
-      return { 'Authorization': 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwM2Y3YzdkM2Y1NGI0MDMyOTU1NjI5ZTdjZDRlMWUyNiIsIm5hbWUiOiJzZGZkZi0xODgwNjkiLCJleHAiOjE1NzA3MTY4NDR9.WjCTA3SnnLjGSeI_kvFoUzruVcPy4FGXd1ust25CEzaer_6Rn-Eqs9K0epgWx0eaQyO5Rd1_RcBW5vA9W6zLLnebpzcC0xbh4Aql29zQUmiHjUiHLXnq7MxYzI6QZyGyG88YjG9UDiUzy2rTM48fjcbL9AtMebWeSj2RrtDEDsgKlTLf7C4epoE2YWolCOVybR6RwXbBgKxEXFU1vDg-PgfaL3yLML7GyqctkIjVoo6tnaV9tVeVTCQ2FHH5ySx3KGf7cFUP1JW6SqLsV4I-Do-Ll38us85Wct7dBvo9x2yjjYZe9xmGGYtOfBYF2BJnXV8X44yoFxE2mEFfVoRtvg' }
+      return { 'Authorization': this.$store.getters.token }
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
@@ -299,12 +303,22 @@ export default {
     },
     handleImgSuccess(res, fileList, index) {
       if (res.code === '10000') {
-        console.log(res, fileList, index)
+        this.fileList[index].imgUrl = res.data.data
       }
     },
     handlePreview(file) {
       this.dialogImageUrl = file.imgUrl
       this.dialogVisible = true
+    },
+    beforeUpload(file) {
+      const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      if (!isImg) {
+        this.$message({
+          message: '只能上传图片',
+          type: 'warning'
+        })
+      }
+      return isImg
     }
   }
 }

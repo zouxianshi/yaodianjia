@@ -42,7 +42,7 @@ class InnerCtor {
             disabled: this.get('merchant-org.merchant-org-store')
           },{
             name: `门店商品管理`,
-            path: '/goods-manage/group',
+            path: '/goods-manage/store-goods',
             disabled: this.get('merchant-org.merchant-org-store')
           }
         ]
