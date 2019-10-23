@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 const name = defaultSettings.title || '海典商户平台' // page title
-const port = 7002 // dev port
+const port = 80 // dev port
 
 // 引用uglifyjs，代码压缩、去除console
 // const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
@@ -49,6 +49,7 @@ module.exports = {
     }
   },
   devServer: {
+    disableHostCheck: true,
     port: port,
     open: false,
     overlay: {
@@ -59,7 +60,7 @@ module.exports = {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       '/api': {
-        target: `http://middle.dev.yaodianjia.cn/businesses-gateway/mer-manager`,
+        target: `http://middle.dev.yaodianjia.cn/businesses-gateway`,
         changeOrigin: true,
         pathRewrite: {
           '^/api': `http://middle.dev.yaodianjia.cn`

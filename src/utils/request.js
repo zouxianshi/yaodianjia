@@ -19,9 +19,11 @@ service.interceptors.request.use(
       config.headers['Authorization'] = getToken()
     }
     isExport = config.isExport || false
+    console.log('store.state.user.merCode', store.state)
     const authParams = {
       // 公共参数
-      'merCode': store.state.user.merCode,
+      merCode: store.state.user.merCode,
+      // merCode: '888888',
       timestame: Date.parse(new Date())
     }
     if (config.method === 'get') {
