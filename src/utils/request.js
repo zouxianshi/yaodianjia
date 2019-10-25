@@ -21,7 +21,8 @@ service.interceptors.request.use(
     isExport = config.isExport || false
     const authParams = {
       // 公共参数
-      'merCode': store.state.user.merCode,
+      merCode: store.state.user.merCode,
+      // merCode: '888888',
       timestame: Date.parse(new Date())
     }
     if (config.method === 'get') {

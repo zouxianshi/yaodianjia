@@ -46,6 +46,32 @@ class InnerCtor {
             disabled: this.get('merchant-org.merchant-org-store')
           }
         ]
+      },
+      {
+        name: '微商城',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('merchant-org'),
+        children: [
+          {
+            name: '首页轮播图',
+            path: '/wxmall/banner',
+            disabled: this.get('merchant-org.merchant-org-org'),
+          },
+          {
+            name: '公告',
+            path: '/wxmall/notice',
+            disabled: this.get('merchant-org.merchant-org-store')
+          },{
+            name:'分类广告位',
+            path: '/wxmall/ad-position',
+            disabled: this.get('merchant-org.merchant-org-store')
+          },{
+            name:'主页设置',
+            path: '/wxmall/home-set',
+            disabled: this.get('merchant-org.merchant-org-store')
+          }
+        ]
       }
     ]
   }

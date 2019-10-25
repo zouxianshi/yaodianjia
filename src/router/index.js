@@ -6,7 +6,8 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import routez from './modules/router-z'
+import routeZ from './modules/router-z'
+import routeX from './modules/router-x'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -65,7 +66,8 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  ...routez
+  ...routeZ,
+  ...routeX
 ]
 
 const createRouter = () => new Router({
