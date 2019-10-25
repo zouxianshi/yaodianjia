@@ -180,20 +180,39 @@
                     @someSwiperEvent="swiperCallback"
                   >
                     <!-- slides -->
-                    <swiper-slide v-for="(item, index) in 10" :key="index" class="goods-item">
-                      <div class="cover-box">
-                        <div class="cover" />
-                      </div>
-                      <div class="caption">康恩贝蛋白粉呃呃呃</div>
-                      <div class="price">
-                        <span class="current">
-                          <span class="sign">￥</span>179
-                        </span>
-                        <span class="original">
-                          <span class="sign">￥</span>268
-                        </span>
-                      </div>
-                    </swiper-slide>
+                    <template v-if="xForm6.detail && xForm6.detail.length">
+                      <swiper-slide v-for="item in xForm6.detail" :key="item.id" class="goods-item">
+                        <div class="cover-box">
+                          <img :src="item.imageUrl">
+                        </div>
+                        <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
+                        <div class="price">
+                          <span class="current">
+                            <span class="sign">￥</span>179
+                          </span>
+                          <span class="original">
+                            <span class="sign">￥</span>268
+                          </span>
+                        </div>
+                      </swiper-slide>
+                    </template>
+                    <template v-else>
+                      <swiper-slide v-for="(item, index) in 6" :key="index" class="goods-item">
+                        <div class="cover-box">
+                          <div class="cover" />
+                        </div>
+                        <div class="caption">康恩贝蛋白粉呃呃呃</div>
+                        <div class="price">
+                          <span class="current">
+                            <span class="sign">￥</span>179
+                          </span>
+                          <span class="original">
+                            <span class="sign">￥</span>268
+                          </span>
+                        </div>
+                      </swiper-slide>
+                    </template>
+
                     <div slot="pagination" class="swiper-pagination2" />
                   </swiper>
                 </div>
@@ -383,21 +402,23 @@
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸1:1.2</p>
                 <ul class="m-goods-list">
-                  <li v-for="(item, index) in 5" :key="index" class="goods-item">
-                    <div class="cover-box">
-                      <div class="cover" />
-                      <div class="btn-remove" />
-                    </div>
-                    <div class="caption">修正VE软胶</div>
-                    <div class="price">
-                      <span class="current">
-                        <span class="sign">￥</span>138
-                      </span>
-                      <span class="original">
-                        <span class="sign">￥</span>268
-                      </span>
-                    </div>
-                  </li>
+                  <template v-if="xForm6.detail && xForm6.detail.length>0">
+                    <li v-for="(item, index) in xForm6.detail" :key="index" class="goods-item">
+                      <div class="cover-box">
+                        <div class="cover" />
+                        <div class="btn-remove" />
+                      </div>
+                      <div class="caption">修正VE软胶</div>
+                      <div class="price">
+                        <span class="current">
+                          <span class="sign">￥</span>138
+                        </span>
+                        <span class="original">
+                          <span class="sign">￥</span>268
+                        </span>
+                      </div>
+                    </li>
+                  </template>
                   <li class="goods-item item-add">
                     <div class="icon-add" @click.stop="toSelectGoods" />
                   </li>
@@ -431,7 +452,7 @@ import 'swiper/dist/css/swiper.css'
 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import dialogGoods from './components/dialog-goods'
-import { getPageSets } from '../../api/wxmall'
+import { getPageSets, mutilAddPageSet } from '../../api/wxmall'
 import config from '../../utils/config'
 
 export default {
@@ -539,7 +560,7 @@ export default {
       // e.target.src = url
     },
     fetchData() {
-      // positionCode: '0-01'.主页标题,'1-01'.轮播,'1-02'.公告,'2-01'.活动(1+3),'2-02'.活动top广告,'2-03'.活动分组商品
+      // positionCode: '0-01'.主页标题,'1-01'.轮播,'1-02'.公告,'2-01'.活动(1+3),'2-02'.活动top广告,'2-03'.活动分组商品 '3-01'.分类广告位
       this._getAppSetDetail('0-01') // 主页标题
       this._getAppSetDetail('1-01') // 轮播
       this._getAppSetDetail('1-02') // 公告
@@ -590,32 +611,67 @@ export default {
         submitForm.detail = []
       }
     },
+    // 保存所有设置
     submitSettings() {
-      alert('shi bai')
-      // const params = {
-      //   'createPageSetDTOS': [
-      //     {
-      //       'announcement': 'string',
-      //       'classId': 'string',
-      //       'createName': 'string',
-      //       'endTime': '2019-10-24T14:09:58.925Z',
-      //       'id': 'string',
-      //       'imageUrl': 'string',
-      //       'merCode': 'string',
-      //       'positionCode': 'string',
-      //       'productId': 'string',
-      //       'remark': 'string',
-      //       'sortNumber': 0,
-      //       'startTime': '2019-10-24T14:09:58.925Z',
-      //       'status': 0,
-      //       'url': 'string'
-      //     }
-      //   ],
-      //   'merCode': '',
-      //   'positionCode': ''
+      alert('傻 逼？')
+      let ret = []
+      // const data1 = this.xForm1.detail ? [this.xForm5.detail] : [] // 主页名称 （0-01）
+      // const data2 = this.xForm4.detail || [] // 1+3 (2-01)
+      // console.log('this.xForm5', this.xForm5)
+      // const data3 = this.xForm5.detail ? [this.xForm5.detail] : [] // top广告 (2-02)
+      // const data4 = this.xForm6.detail || [] // top广告 (3-01)
+      ret.push(this.xForm1.detail)
+      if (this.xForm4.detail && this.xForm4.detail.length > 0) {
+        ret = ret.concat(this.xForm4.detail || [])
+      }
+      ret.push(this.xForm5.detail)
+      if (this.xForm6.detail && this.xForm6.detail.length > 0) {
+        ret = ret.concat(this.xForm6.detail || [])
+      }
+      console.log('this.xForm1.detail', this.xForm1.detail)
+      console.log('this.xForm4.detail', this.xForm4.detail)
+      console.log('this.xForm5.detail', this.xForm5.detail)
+      console.log('this.xForm6.detail', this.xForm6.detail)
+      // if (!data1.length > 0) {
+      //   console.log('未设置主页名称')
+      //   // return false
       // }
+      // if (!data2.length > 0) {
+      //   console.log('未设置精彩活动')
+      //   // return false
+      // }
+      // if (!data3.length > 0) {
+      //   console.log('未设置活动广告')
+      //   // return false
+      // }
+      // if (!data4.length > 0) {
+      //   console.log('未设置分组商品')
+      //   // return false
+      // }
+
+      const params = {
+        createPageSetDTOS: ret
+      }
+      console.log('mutil add params', params)
+      mutilAddPageSet(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '保存成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          // this.dialogFormVisible = false
+          // 更新table
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+      })
     },
-    formatData(data) {
+    formatData(data, positionCode, sortNumber) {
       if (data) {
         return data
       } else {
@@ -625,12 +681,12 @@ export default {
           'createName': '',
           'endTime': '',
           'id': '',
-          'imageUrl': '22222222',
+          'imageUrl': '',
           'merCode': '',
-          'positionCode': '',
-          'productId': '',
+          'positionCode': positionCode,
+          'productId': null,
           'remark': '',
-          'sortNumber': 0,
+          'sortNumber': sortNumber,
           'startTime': '',
           'status': 0,
           'url': ''
@@ -647,14 +703,14 @@ export default {
         endTime: '',
         positionCode: positonCode,
         remark: '',
-        sortOrder: 0,
+        sortOrder: '',
         status: ''
       }
       getPageSets(params).then(res => {
         if (res.code === '10000') {
           if (positonCode === '0-01') {
             // 主页标题
-            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null)
+            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null, '0-01', 1)
             this.xForm1.positionCode = positonCode
             console.log('res-标题', res.data)
           } else if (positonCode === '1-01') {
@@ -673,7 +729,7 @@ export default {
               ret = res.data.splice(0, 4)
             } else {
               for (let i = 0; i < 4; i++) {
-                ret[i] = this.formatData(ret[i] || null)
+                ret[i] = this.formatData(ret[i] || null, '2-01', i + 1)
               }
             }
             console.log('ret', ret)
@@ -681,13 +737,19 @@ export default {
           } else if (positonCode === '2-02') {
             // 活动top广告
             console.log('res 活动top广告---', res.data)
-            this.xForm5.detail = this.formatData(res.data ? res.data[0] : null)
+            this.xForm5.detail = this.formatData(res.data ? res.data[0] : null, '2-02', 1)
           } else if (positonCode === '2-03') {
             // 活动分组商品
-            console.log(1)
+            let ret = []
+            if (res.data && res.data.length > 0) { // 有商品
+              console.log('有商品')
+              ret = res.data
+            } else {
+              ret = []
+            }
+            console.log('ret 商品', ret)
+            this.xForm6.detail = ret
           }
-
-          this.tableData = res.data || []
         } else {
           this.$message({
             message: res.msg,
@@ -767,7 +829,8 @@ export default {
       //     return false
       //   }
       // }
-      this.$refs.couponDialog.close()
+      this.xForm6.detail = list
+      this.$refs.goodsDialog.close()
       // this.xForm2.couponList = list
     }
   }

@@ -407,7 +407,7 @@ export default {
         merCode: '',
         positionCode: this.positionCode,
         remark: this.xForm.remark,
-        productId: '', // 2-03 类型必填
+        productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
@@ -444,7 +444,7 @@ export default {
         merCode: '',
         positionCode: this.positionCode,
         remark: this.xForm.remark,
-        productId: '', // 2-03 类型必填
+        productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl

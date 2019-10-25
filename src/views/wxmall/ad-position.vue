@@ -58,9 +58,9 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="url" label="链接地址" width="300" align="center" />
-          <el-table-column prop="startTime" label="开始时间" width="200" align="center" />
-          <el-table-column prop="endTime" label="结束时间" width="200" align="center" />
+          <el-table-column prop="url" label="链接地址" min-width="240" />
+          <el-table-column prop="startTime" label="开始时间" width="180" align="center" />
+          <el-table-column prop="endTime" label="结束时间" width="180" align="center" />
           <el-table-column label="状态" width="100" align="center">
             >
             <template slot-scope="scope">
@@ -68,7 +68,7 @@
               <span v-if="scope.row.status=='0'">停用</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column label="操作" align="center" width="240">
             <template slot-scope="scope">
               <el-button type="primary" size="small" @click.stop="handleEdit(scope.row)">编辑</el-button>
               <el-button type="danger" size="small" @click.stop="handleChangeStatus(scope.row)">
@@ -188,7 +188,7 @@ export default {
   data() {
     return {
       currentRole: 'adminDashboard',
-      positionCode: '2-03', // "1-01",0, "轮播图"，"1-02", 0,"公告"，"3-01", 0,"分类广告位"，"2-03", 1,"精彩活动-商品广告位"
+      positionCode: '3-01', // '3-01'.分类广告位
       statusOptions: [
         { id: 1, label: '全部', value: '' },
         { id: 2, label: '使用', value: '1' },
@@ -421,7 +421,7 @@ export default {
         merCode: '',
         positionCode: this.positionCode,
         remark: this.xForm.remark,
-        productId: '', // 2-03 类型必填
+        productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
