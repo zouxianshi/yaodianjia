@@ -17,11 +17,8 @@
         </p>
       </el-alert>
       <p class="text-right " style="margin-top:10px">
-        <a href="#/goods-manage/import-history">
-          <el-button type="primary" size="small">导入历史</el-button>
-        </a>
         <a href="#/goods-manage/paircode">
-          <el-button type="" size="small">商品对码</el-button>
+          <el-button type="primary" size="small">导入历史</el-button>
         </a>
       </p>
       <ul class="step">
@@ -31,7 +28,7 @@
             <el-card class="file-card">
               <div class="file-bg">
                 <div class="excel">
-                  <el-image style="width: 80px; height: 50px" src="https://img.ithome.com/newsuploadfiles/2019/10/20191008113047_5472.jpg" />
+                  <img style="width: 50px; height: 50px" src="../../../assets/image/excel_img.jpeg">
                   <span>通过条码匹配药品库.xls</span>
                 </div>
                 <i class="el-icon-download" />
@@ -46,10 +43,15 @@
           <p class="title">③ 上传已填写的excel表格</p>
           <div class="step-cnt">
             <el-upload
+              ref="file"
               class="upload-demo"
               drag
-              action="https://jsonplaceholder.typicode.com/posts/"
-              multiple
+              :action="uploadUlr"
+              :headers="headers"
+              name="excelFile"
+              :on-success="handleFileSuccess"
+              :auto-upload="false"
+              :before-upload="beforeUpload"
             >
               <i class="el-icon-upload" />
               <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -59,16 +61,61 @@
               >只能上传excel文件</div>
             </el-upload>
           </div>
+          <p style="margin-left:40px;margin-top:12px">
+            <el-button type="primary" size="small" @click="handleUpload">立即上传</el-button>
+          </p>
         </li>
       </ul>
     </div>
   </div>
 </template>
 <script>
+import config from '@/utils/config'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
 
+    }
+  },
+  computed: {
+    ...mapGetters(['merCode']),
+    uploadUlr() {
+      return `${this.uploadFileURL}${config.merGoods}/1.0/commodity/_batImport?merCode=${this.merCode}`
+    },
+    headers() {
+      return { 'Authorization': this.$store.getters.token }
+    }
+  },
+  methods: {
+    beforeUpload(file) {
+      const type = file.name.split('.')
+      if (type[1] !== 'xls') {
+        this.$message({
+          message: '只能导入excel文件',
+          type: 'warning'
+        })
+        return false
+      }
+      return true
+    },
+    handleUpload() {
+      this.$refs.file.submit()
+    },
+    handleFileSuccess(res) {
+      if (res.code === '10000') {
+        this.$message({
+          message: '导入成功',
+          type: 'success'
+        })
+        this.$refs.file.clearFiles()
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+        this.$refs.file.clearFiles()
+      }
     }
   }
 }

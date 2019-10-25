@@ -10,15 +10,10 @@ import store from './store'
 import router from './router'
 import permission from './directive/permission' // permission control
 import * as filters from './filters' // global filters
-import BaiduMap from 'vue-baidu-map'
 import './permission'
 import { setSystem } from './utils/auth'
 Vue.use(permission)
 
-Vue.use(BaiduMap, {
-  // ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
-  ak: 'hvIKbdwV3E26NBoTMgyyU7kGmhfvRG4j'
-})
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

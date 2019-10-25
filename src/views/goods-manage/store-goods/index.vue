@@ -2,39 +2,47 @@
   <div class="app-container">
     <div class="store-goods-wrapper">
       <el-radio-group
-        v-model="radio3"
+        v-model="listQuery.status"
         size="small"
+        @change="_loadList"
       >
-        <el-radio-button label="1">在售</el-radio-button>
-        <el-radio-button label="2">下架</el-radio-button>
-        <el-radio-button label="3">售馨</el-radio-button>
-        <el-radio-button label="3">锁定</el-radio-button>
+        <el-radio-button :label="1">在售</el-radio-button>
+        <el-radio-button :label="0">下架</el-radio-button>
+        <el-radio-button :label="2">售馨</el-radio-button>
+        <el-radio-button :label="3">锁定</el-radio-button>
       </el-radio-group>
-      <section @keydown.enter="getList">
+      <section @keydown.enter="_loadList">
         <div
           class="search-form"
           style="margin-top:20px;margin-bottom:10px"
         >
           <div class="search-item">
             <span class="label-name">选择门店</span>
-            <el-input
-              v-model.trim="keyword"
-              size="small"
-              placeholder="商品名称"
-            />
+            <el-select
+              v-model="listQuery.storeId"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入关键词"
+              :remote-method="remoteMethod"
+              :loading="selectloading"
+              @change="handleChangeStore"
+            >
+              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName" :value="item.id" />
+            </el-select>
           </div>
           <div class="search-item">
             <span class="label-name">商品名称</span>
             <el-input
-              v-model.trim="keyword"
+              v-model.trim="listQuery.manufacture"
               size="small"
               placeholder="生产企业"
             />
           </div>
           <div class="search-item">
-            <span class="label-name">商品编码</span>
+            <span class="label-name">ERP编码</span>
             <el-input
-              v-model.trim="keyword"
+              v-model.trim="listQuery.erpCode"
               size="small"
               placeholder="商品编码"
             />
@@ -42,7 +50,7 @@
           <div class="search-item">
             <span class="label-name">批准文号</span>
             <el-input
-              v-model.trim="keyword"
+              v-model.trim="listQuery.approvalNumber"
               size="small"
               placeholder="商品编码"
             />
@@ -68,26 +76,34 @@
           <div class="search-item">
             <span class="label-name">商品分组</span>
             <el-cascader
-              v-model="value"
-              :options="options"
+              v-model="groupId"
+              style="width:300px"
+              class="cascader"
+              :props="defaultProps"
+              :options="groupData"
               size="small"
+              @change="handleChangeGroup"
             />
           </div>
           <div class="search-item">
             <el-button
               type=""
               size="small"
+              @click="_loadList"
             >查询</el-button>
           </div>
-          <div class="search-item">
-            <el-button type="primary" size="small">批量上架</el-button>
-            <el-button type="danger" size="small">批量下架</el-button>
-            <el-button type="" size="small">批量锁定库存价格</el-button>
-          </div>
+          <div class="search-item" />
         </div>
       </section>
       <div class="table-box">
-        <p class="choose-num text-right"><span>已选中（1）个</span></p>
+        <div class="choose-num">
+          <div>
+            <el-button v-if="listQuery.status!==1" type="primary" size="small" @click="handleBatchUpDown(1)">批量上架</el-button>
+            <el-button v-if="listQuery.status!==0" type="danger" size="small" @click="handleBatchUpDown(0)">批量下架</el-button>
+            <el-button type="" size="small" @click="handleLock">批量锁定库存价格</el-button>
+          </div>
+          <span>已选中（{{ multipleSelection.length }}）个</span>
+        </div>
         <el-table
           v-loading="loading"
           :data="tableData"
@@ -100,12 +116,18 @@
             width="55"
           />
           <el-table-column
-            prop="orName"
             align="left"
-            min-width="120"
+            min-width="140"
             :show-overflow-tooltip="true"
             label="门店信息"
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p>门店编号：{{ chooseStore.stCode }}</p>
+                <p>门店名称：{{ scope.row.storeName }}</p>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="orCode"
             align="left"
@@ -130,282 +152,348 @@
           </el-table-column>
           <el-table-column
             align="left"
-            min-width="120"
+            min-width="150"
             label="商品信息"
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p>{{ scope.row.name }}</p>
+                <p>{{ scope.row.approvalNumber }}</p>
+              </div>
+            </template></el-table-column>
           <el-table-column
-            prop="address"
-            label="商品编码"
+            prop="erpCode"
+            label="ERP编码"
             align="left"
           />
           <el-table-column
             prop="createTime"
             align="left"
-            min-width="155"
-            label="参考价格"
-          />
-          <el-table-column
-            prop="createTime"
-            align="left"
-            min-width="155"
+            min-width="120"
             label="门店价格"
-          />
+          >
+            <template slot-scope="scope">
+              <div style="display:flex;align-items: center;">
+                <span style="font-size:16px;display:inline-block;margin-right:10px" v-text="scope.row.price" />
+                <el-button type="primary" icon="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'price')" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="createTime"
             align="left"
-            min-width="155"
+            min-width="120"
             label="门店库存"
-          />
+          >
+            <template slot-scope="scope">
+              <div style="display:flex;align-items: center;">
+                <span style="font-size:16px;display:inline-block;margin-right:10px" v-text="scope.row.stock" />
+                <el-button type="primary" icon="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'stock')" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="address"
             align="left"
             fixed="right"
             label="操作"
-            min-width="100"
+            min-width="150"
           >
-            <template>
+            <template slot-scope="scope">
               <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
               <el-button
+                v-if="listQuery.status!==1"
                 type="primary"
-                size="small"
-                @click="handleClick"
-              >查看</el-button>
+                size="mini"
+                @click="handleUpDown(scope.row)"
+              >上架</el-button>
+              <el-button v-if="listQuery.status!==0" type="danger" size="mini" @click="handleUpDown(scope.row)">下架</el-button>
             </template>
           </el-table-column>
         </el-table>
         <div class="table-footer">
           <pagination
             :total="total"
-            :page.sync="listQuery.page"
-            :limit.sync="listQuery.limit"
+            :page.sync="listQuery.currentPage"
+            :limit.sync="listQuery.pageSize"
             @pagination="getList"
           />
         </div>
       </div>
     </div>
+    <el-dialog
+      ref="lockForm"
+      title="锁定库存价格"
+      :visible.sync="dialogVisible"
+      width="30%"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <el-form :model="formData" label-width="100px" size="small">
+        <el-form-item label="锁定商品属性">
+          <el-checkbox-group v-model="lockFlag">
+            <el-checkbox :label="1">价格</el-checkbox>
+            <el-checkbox :label="2">库存</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="定时解锁设置">
+          <el-checkbox v-model="formData.unlockType" :true-label="1" :false-label="0">定时解锁</el-checkbox>
+        </el-form-item>
+        <el-form-item label="解锁时间">
+          <el-date-picker
+            v-model="formData.unlockTime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetime"
+            placeholder="选择日期时间"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitLock">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`修改${type=='price'?'价格':'库存'}`"
+      :visible.sync="isShow"
+      width="20%"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <el-input v-model="editData[type]" size="small" />
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="isShow = false">取 消</el-button>
+        <el-button type="primary" size="small" :loading="subLoading" @click="handleSetPriceStock">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
+import { mapGetters } from 'vuex'
+import { getTypeTree } from '@/api/group'
+import { getStoreGoodsList, setLockPrice, setUpdatePriceStock } from '@/api/store-goods'
+import { getStoreList, setBatchUpdown } from '@/api/depot'
 export default {
   components: { Pagination },
   mixins: [mixins],
   data() {
     return {
-      radio3: '1',
       keyword: '',
-      tableData: [{
-
-      }],
-      value: '',
-      options: [{
-        value: 'zhinan',
-        label: '指南',
-        children: [{
-          value: 'shejiyuanze',
-          label: '设计原则',
-          children: [{
-            value: 'yizhi',
-            label: '一致'
-          }, {
-            value: 'fankui',
-            label: '反馈'
-          }, {
-            value: 'xiaolv',
-            label: '效率'
-          }, {
-            value: 'kekong',
-            label: '可控'
-          }]
-        }, {
-          value: 'daohang',
-          label: '导航',
-          children: [{
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }, {
-            value: 'dingbudaohang',
-            label: '顶部导航'
-          }]
-        }]
-      }, {
-        value: 'zujian',
-        label: '组件',
-        children: [{
-          value: 'basic',
-          label: 'Basic',
-          children: [{
-            value: 'layout',
-            label: 'Layout 布局'
-          }, {
-            value: 'color',
-            label: 'Color 色彩'
-          }, {
-            value: 'typography',
-            label: 'Typography 字体'
-          }, {
-            value: 'icon',
-            label: 'Icon 图标'
-          }, {
-            value: 'button',
-            label: 'Button 按钮'
-          }]
-        }, {
-          value: 'form',
-          label: 'Form',
-          children: [{
-            value: 'radio',
-            label: 'Radio 单选框'
-          }, {
-            value: 'checkbox',
-            label: 'Checkbox 多选框'
-          }, {
-            value: 'input',
-            label: 'Input 输入框'
-          }, {
-            value: 'input-number',
-            label: 'InputNumber 计数器'
-          }, {
-            value: 'select',
-            label: 'Select 选择器'
-          }, {
-            value: 'cascader',
-            label: 'Cascader 级联选择器'
-          }, {
-            value: 'switch',
-            label: 'Switch 开关'
-          }, {
-            value: 'slider',
-            label: 'Slider 滑块'
-          }, {
-            value: 'time-picker',
-            label: 'TimePicker 时间选择器'
-          }, {
-            value: 'date-picker',
-            label: 'DatePicker 日期选择器'
-          }, {
-            value: 'datetime-picker',
-            label: 'DateTimePicker 日期时间选择器'
-          }, {
-            value: 'upload',
-            label: 'Upload 上传'
-          }, {
-            value: 'rate',
-            label: 'Rate 评分'
-          }, {
-            value: 'form',
-            label: 'Form 表单'
-          }]
-        }, {
-          value: 'data',
-          label: 'Data',
-          children: [{
-            value: 'table',
-            label: 'Table 表格'
-          }, {
-            value: 'tag',
-            label: 'Tag 标签'
-          }, {
-            value: 'progress',
-            label: 'Progress 进度条'
-          }, {
-            value: 'tree',
-            label: 'Tree 树形控件'
-          }, {
-            value: 'pagination',
-            label: 'Pagination 分页'
-          }, {
-            value: 'badge',
-            label: 'Badge 标记'
-          }]
-        }, {
-          value: 'notice',
-          label: 'Notice',
-          children: [{
-            value: 'alert',
-            label: 'Alert 警告'
-          }, {
-            value: 'loading',
-            label: 'Loading 加载'
-          }, {
-            value: 'message',
-            label: 'Message 消息提示'
-          }, {
-            value: 'message-box',
-            label: 'MessageBox 弹框'
-          }, {
-            value: 'notification',
-            label: 'Notification 通知'
-          }]
-        }, {
-          value: 'navigation',
-          label: 'Navigation',
-          children: [{
-            value: 'menu',
-            label: 'NavMenu 导航菜单'
-          }, {
-            value: 'tabs',
-            label: 'Tabs 标签页'
-          }, {
-            value: 'breadcrumb',
-            label: 'Breadcrumb 面包屑'
-          }, {
-            value: 'dropdown',
-            label: 'Dropdown 下拉菜单'
-          }, {
-            value: 'steps',
-            label: 'Steps 步骤条'
-          }]
-        }, {
-          value: 'others',
-          label: 'Others',
-          children: [{
-            value: 'dialog',
-            label: 'Dialog 对话框'
-          }, {
-            value: 'tooltip',
-            label: 'Tooltip 文字提示'
-          }, {
-            value: 'popover',
-            label: 'Popover 弹出框'
-          }, {
-            value: 'card',
-            label: 'Card 卡片'
-          }, {
-            value: 'carousel',
-            label: 'Carousel 走马灯'
-          }, {
-            value: 'collapse',
-            label: 'Collapse 折叠面板'
-          }]
-        }]
-      }, {
-        value: 'ziyuan',
-        label: '资源',
-        children: [{
-          value: 'axure',
-          label: 'Axure Components'
-        }, {
-          value: 'sketch',
-          label: 'Sketch Templates'
-        }, {
-          value: 'jiaohu',
-          label: '组件交互文档'
-        }]
-      }],
-      loading: false
+      tableData: [],
+      multipleSelection: [],
+      dialogVisible: false,
+      defaultProps: {
+        children: 'children',
+        label: 'name',
+        value: 'id'
+      },
+      lockFlag: [],
+      formData: {
+        'lockFlag': 0,
+        'specIds': [],
+        'storeId': '',
+        'unlockTime': '',
+        'unlockType': 0
+      },
+      groupData: [],
+      chooseStore: {},
+      loading: false,
+      selectloading: false,
+      listQuery: {
+        'approvalNumber': '',
+        'barCode': '',
+        'erpCode': '',
+        'groupId': '',
+        'manufacture': '',
+        'name': '',
+        'storeId': '',
+        'status': 1
+      },
+      storeList: [],
+      groupId: '',
+      subLoading: false,
+      editData: 0,
+      type: 'price',
+      isShow: false
     }
   },
+  computed: {
+    ...mapGetters(['merCode', 'name'])
+  },
   created() {
-
+    this.getList()
+    this._loadTypeList()
   },
   methods: {
     getList() {
-
+      this._loadStoreList().then(res => {
+        this.loading = true
+        this.listQuery.storeId = res[0] ? res[0].id : ''
+        this.chooseStore = res[0]
+        this._loadList()
+      })
+    },
+    _loadList() {
+      getStoreGoodsList(this.listQuery).then(res => {
+        this.loading = false
+        const { data, totalCount } = res.data
+        if (data) {
+          this.tableData = data
+          this.total = totalCount
+        }
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    _loadTypeList() { // 获取分组
+      getTypeTree(2).then(res => {
+        this.groupData = res.data
+        this.groupData.unshift({ name: '全部', id: '' })
+      })
+    },
+    _loadStoreList(val = '') { // 加载门店数据
+      return new Promise((resolve, reject) => {
+        getStoreList({ pageSize: 100, currentPage: 1, storeName: val }).then(res => {
+          const { data } = res.data
+          this.storeList = data
+          this.selectloading = false
+          resolve(data)
+        }).catch((err) => {
+          this.selectloading = false
+          reject(err)
+        })
+      })
+    },
+    handleChangeGroup(val) {
+      this.listQuery.groupId = val[val.length - 1]
+    },
+    remoteMethod(val) {
+      this.selectloading = true
+      console.log(val)
+    },
+    handleChangeStore(val) { // 门店选择改变时触发
+      this.storeList.map(v => {
+        if (v.id === val) {
+          this.chooseStore = v
+        }
+      })
+    },
+    handleLock() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请先选择要锁定库存价格的数据',
+          type: 'warning'
+        })
+        return
+      }
+      this.dialogVisible = true
+      this.$$nextTick(() => {
+        this.$refs.lockForm.resetField()
+      })
+    },
+    handleSetPriceStock() {
+      this.subLoading = true
+      const data = {
+        'commodityId': this.editData.id,
+        'price': this.editData.price,
+        'specId': this.editData.storeSpecId,
+        'stock': this.editData.stock,
+        'storeId': this.editData.storeId,
+        'merCode': this.merCode
+      }
+      setUpdatePriceStock({ list: [data] }).then(res => {
+        this.subLoading = false
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        })
+        this._loadList()
+        this.isShow = false
+      }).catch(() => {
+        this.subLoading = false
+      })
+    },
+    handleUpDown(row) { // 单个上下级
+      const status = row.status === 0 ? 1 : 0
+      const data = {
+        'isAll': false,
+        'specIds': [
+          row.storeSpecId
+        ],
+        'status': status,
+        'storeIds': [
+          this.listQuery.storeId
+        ],
+        'userName': this.name
+      }
+      this._SetUpDown(data)
+    },
+    _SetUpDown(data) { // 执行上下架请求
+      setBatchUpdown(data).then(res => {
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+        this._loadList()
+      })
+    },
+    handleBatchUpDown(status) { // 批量上下架
+      const ary = []
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请选择上下架的数据',
+          type: 'warning'
+        })
+        return
+      }
+      this.multipleSelection.map(v => {
+        ary.push(v.storeSpecId)
+      })
+      const data = {
+        'isAll': false,
+        'specIds': ary,
+        'status': status,
+        'storeIds': [
+          this.listQuery.storeId
+        ],
+        'userName': this.name
+      }
+      this._SetUpDown(data)
+    },
+    handleSubmitLock() { // 执行锁定请求
+      this.subLoading = true
+      const ary = []
+      // 获取规格id
+      this.multipleSelection.map(v => {
+        ary.push(v.storeSpecId)
+      })
+      this.formData.specIds = ary
+      if (this.lockFlag.length === 0) { // 全部锁定
+        this.formData.lockFlag = 0
+      }
+      if (this.lockFlag.includes(1)) { // 锁定价格
+        this.formData.lockFlag = 1
+      }
+      if (this.lockFlag.includes(2)) {
+        this.formData.lockFlag = 2 // 锁定库存
+      }
+      if (this.lockFlag.includes(2) && this.lockFlag.includes(1)) {
+        this.formData.lockFlag = 3 // 锁定价格和库存
+      }
+      setLockPrice(this.formData).then(res => {
+        this.subLoading = false
+      }).catch(() => {
+        this.subLoading = true
+      })
+    },
+    handleEditData(row, key) {
+      this.editData = JSON.parse(JSON.stringify(row))
+      this.type = key
+      this.isShow = true
     },
     handleSelectionChange(val) {
-
+      this.multipleSelection = val
     },
     handleClick() {
       this.$router.push('/goods-manage/mate')
@@ -424,6 +512,16 @@ export default {
         width: 180px;
       }
     }
+  }
+  .cascader{
+      .el-input{
+          width: 300px!important
+      }
+  }
+  .choose-num{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
   }
 }
 </style>

@@ -5,7 +5,7 @@
         v-model="radio3"
         size="small"
       >
-        <el-radio-button label="">全部</el-radio-button>
+        <el-radio-button label="">未提交审核</el-radio-button>
         <el-radio-button label="2">待审核</el-radio-button>
         <el-radio-button label="3">已通过</el-radio-button>
         <el-radio-button label="3">已拒绝</el-radio-button>

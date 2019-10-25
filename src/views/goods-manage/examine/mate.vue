@@ -5,43 +5,66 @@
         <ul class="product-box">
           <li class="product-list">
             <p class="title">当前产品</p>
-            <p class="title">ERP编码：102228</p>
+            <p v-if="pairData.platformCode" class="title">ERP编码：{{ pairData.platformCode }}</p>
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span>庆大霉素普鲁卡因维B12胶囊</span></p>
-              <p>规格：<span>0.27g*36粒</span></p>
-              <p>企业：<span>海口奇力制药股份有限公司</span></p>
-              <p>条码：<span>6926973113391</span></p>
-              <p>批准文号：<span>国药准字H20045188</span></p>
+              <p>名称：<span v-text="pairData.name" /></p>
+              <p>规格：<span v-text="pairData.packStandard" /></p>
+              <p>企业：<span v-text="pairData.manufacture" /></p>
+              <p>条码：<span v-text="pairData.barCode" /></p>
+              <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
             </div>
           </li>
           <li class="product-list">
             <p class="title">
               当前所选药店加平台库产品</p>
-            <p class="title">ERP编码：102228</p>
+            <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p>
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span>庆大霉素普鲁卡因维B12胶囊</span></p>
-              <p>规格：<span>0.27g*36粒</span></p>
-              <p>企业：<span>海口奇力制药股份有限公司</span></p>
-              <p>条码：<span>6926973113391</span></p>
-              <p>批准文号：<span>国药准字H20045188</span></p>
+              <p>名称：<span v-text="currentRow.name" /></p>
+              <p>规格：<span v-text="currentRow.packStandard" /></p>
+              <p>企业：<span v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
         <div class="right-operate">
-          <p>
+          <template v-if="$route.query.from==='pair'">
+            <p>
+              <el-button
+                type="primary"
+                size="small"
+                :loading="subLoading"
+                @click="handleAddGoods"
+              >确认对码</el-button>
+            </p>
+            <el-button
+              size="small"
+            >申请新品</el-button>
+          </template>
+          <template v-else-if="$route.query.from==='is_pair'">
             <el-button
               type="primary"
               size="small"
-              @click="goodsInfoVisible=true"
-            >查看商品详情</el-button>
-          </p>
-          <el-button
-            type="danger"
-            size="small"
-            @click="rejectVisible=true"
-          >拒绝</el-button>
+              :loading="subLoading"
+              @click="handleAgainCode"
+            >重新对码</el-button>
+          </template>
+          <template v-else>
+            <p>
+              <el-button
+                type="primary"
+                size="small"
+                @click="goodsInfoVisible=true"
+              >查看商品详情</el-button>
+            </p>
+            <el-button
+              type="danger"
+              size="small"
+              @click="rejectVisible=true"
+            >拒绝</el-button>
+          </template>
         </div>
       </div>
       <div class="search-box">
@@ -55,19 +78,9 @@
             />
           </div>
           <div class="search-item">
-            <span class="label-name">商品编码：</span>
-            <el-input
-              v-model="searchForm.code"
-              placeholder=""
-              size="small"
-            />
-          </div>
-        </div>
-        <div class="search-form">
-          <div class="search-item">
             <span class="label-name">条形码：</span>
             <el-input
-              v-model="searchForm.name"
+              v-model="searchForm.barCode"
               placeholder=""
               size="small"
             />
@@ -75,15 +88,17 @@
           <div class="search-item">
             <span class="label-name">生产企业：</span>
             <el-input
-              v-model="searchForm.code"
+              v-model="searchForm.manufacture"
               placeholder=""
               size="small"
             />
           </div>
+        </div>
+        <div class="search-form">
           <div class="search-item">
             <span class="label-name">批准文号：</span>
             <el-input
-              v-model="searchForm.code"
+              v-model="searchForm.approvalNumber"
               placeholder=""
               size="small"
             />
@@ -92,6 +107,7 @@
             <el-button
               type="primary"
               size="small"
+              @click="checkAdult"
             >查询</el-button>
           </div>
         </div>
@@ -99,69 +115,60 @@
       <div class="table-box">
         <p class="title">为您匹配到的药店加平台产品库中与之匹配的产品：</p>
         <el-table
+          ref="singleTable"
           v-loading="loading"
           :data="tableData"
           stripe
+          highlight-current-row
           style="width: 100%"
+          @current-change="handleCurrentChange"
         >
           <el-table-column
-            prop="orCode"
+            prop="name"
             align="left"
             min-width="120"
-            label="商名称"
+            label="商品名称"
             show-overflow-tooltip
           />
           <el-table-column
-            prop="orName"
+            prop="packStandard"
             align="left"
             min-width="120"
             label="规格"
           />
           <el-table-column
+            prop="manufacture"
             align="left"
             min-width="120"
             label="生产企业"
           />
           <el-table-column
-            prop="orParentName"
+            prop="barCode"
             align="left"
             label="条形码"
             :show-overflow-tooltip="true"
             min-width="120"
           />
           <el-table-column
-            prop="headPerson"
+            prop="approvalNumber"
             align="left"
             label="批准文号"
             :show-overflow-tooltip="true"
             min-width="120"
           />
           <el-table-column
-            prop="address"
-            label="商品编码"
+            prop="merUserNum"
             align="left"
+            min-width="125"
+            label="使用商家数量"
           />
           <el-table-column
-            prop="createTime"
+            prop="matchScore"
             align="left"
-            min-width="155"
-            label="使用商家数"
-          />
-          <el-table-column
-            prop="createTime"
-            align="left"
-            min-width="155"
+            min-width="125"
             label="匹配得分"
           />
         </el-table>
-        <div class="table-footer">
-          <pagination
-            :total="total"
-            :page.sync="listQuery.page"
-            :limit.sync="listQuery.limit"
-            @pagination="getList"
-          />
-        </div>
       </div>
     </div>
     <el-dialog
@@ -225,11 +232,9 @@
   </div>
 </template>
 <script>
-import Pagination from '@/components/Pagination'
-import mixins from '@/utils/mixin'
+import { getMatchList, setComAddGoods, mateAgain } from '@/api/depot'
+import { mapGetters } from 'vuex'
 export default {
-  components: { Pagination },
-  mixins: [mixins],
   data() {
     return {
       searchForm: {
@@ -240,15 +245,103 @@ export default {
       tableData: [],
       goodsInfoVisible: false,
       rejectVisible: false,
-      rejectForm: {}
+      rejectForm: {},
+      currentRow: {},
+      subLoading: false,
+      pariData: {},
+      storeTableData: [],
+      isMate: {}
     }
   },
+  computed: {
+    ...mapGetters(['name'])
+  },
   created() {
-
+    this._loadMatchList()
+    const data = sessionStorage.getItem('mate')
+    this.pairData = JSON.parse(data)
   },
   methods: {
-    getList() {
-
+    _loadMatchList() {
+      this.loading = true
+      getMatchList(this.$route.query.id).then(res => {
+        this.tableData = res.data
+        this.storeTableData = JSON.parse(JSON.stringify(res.data))
+        if (res.data.length !== 0) {
+          this.$refs.singleTable.setCurrentRow(this.tableData[0])
+          this.currentRow = this.tableData[0]
+          this.isMate = this.tableData[0]
+        }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    checkAdult() {
+      const tempFilter = this.searchForm
+      const arrayData = JSON.parse(JSON.stringify(this.storeTableData))
+      // 筛选
+      const resultArr = arrayData.filter(
+        (item) => {
+          let flag = false
+          for (const key in tempFilter) {
+            if (item[key] && item[key].toString().indexOf(tempFilter[key].toString()) >= 0) {
+              flag = true
+            } else {
+              flag = false
+              break
+            }
+          }
+          if (flag) {
+            return item
+          }
+        }
+      )
+      this.tableData = resultArr
+      if (this.tableData.length !== 0) {
+        this.$refs.singleTable.setCurrentRow(this.tableData[0])
+        this.currentRow = this.tableData[0]
+      } else {
+        this.currentRow = {}
+      }
+    },
+    handleCurrentChange(val) {
+      this.currentRow = val
+    },
+    handleAddGoods() { // 确定对码
+      this.subLoading = true
+      setComAddGoods({ ids: [this.currentRow.id], userName: this.name }).then(res => {
+        this.$message({
+          message: '确认对码成功',
+          type: 'success'
+        })
+        this.$router.go(-1)
+      }).catch(() => {
+        this.subLoading = false
+      })
+    },
+    handleAgainCode() { // 重新对码
+      const data = {
+        id: this.currentRow.id,
+        productId: this.currentRow.productId,
+        userName: this.name
+      }
+      this.$confirm(`是否确定从${this.isMate.name}更改为${this.currentRow.name}`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.subLoading = true
+        mateAgain(data).then(res => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.$router.go(-1)
+        }).catch(() => {
+          this.subLoading = false
+        })
+      }).catch(() => {})
     }
   }
 }

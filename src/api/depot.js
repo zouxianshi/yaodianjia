@@ -4,8 +4,8 @@ import config from '@/utils/config'
 export function getGoodsList(params) {
   return request({
     url: `${config.merGoods}/1.0/commodity/list`,
-    method: 'get',
-    params
+    method: 'post',
+    data: params
   })
 }
 
@@ -17,46 +17,94 @@ export function goodsClass(params) {
   })
 }
 
+// 导出商品
+export function exportData(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/export`,
+    method: 'post',
+    data: params,
+    isExport: true,
+    responseType: 'blob'
+  })
+}
+
 // 获取标库商品列表
 export function getProductList(params) {
   return request({
-    url: `${config.merGoods}/product/getProductList`,
-    method: 'get',
-    params
-  })
-}
-
-// 编辑组织机构
-export function setEditOrg(params) {
-  return request({
-    url: '/1.0/org/_update',
+    url: `${config.merGoods}/product/list`,
     method: 'post',
     data: params
   })
 }
 
-// 删除
-export function setDeleteOrg(params) {
+// 从标库中添加商品
+export function setComAddGoods(params) {
   return request({
-    url: `/1.0/org/${params.id}`,
-    method: 'delete',
-    data: params
-  })
-}
-
-// 停用
-export function setCheckStatus(params) {
-  return request({
-    url: '/1.0/org/disableEnable',
+    url: `${config.merGoods}/1.0/commodity`,
     method: 'post',
     data: params
   })
 }
 
-// 获取组织机构详情
-export function getOrganizationInfo(id) {
+// 获取门店列表
+export function getStoreList(params) {
   return request({
-    url: `/1.0/org/${id}`,
+    url: `${config.merchant}/1.0/store/_search`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 批量上下架商品
+export function setBatchUpdown(params) {
+  return request({
+    url: `${config.merGoods}/1.0/store-spec/storeStatus`,
+    method: 'put',
+    data: params
+  })
+}
+
+// 批量修改分组
+export function setBatchGroup(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-relate/_group`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 导入历史
+export function getImportList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-match/_search`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 删除匹配
+export function deletePair(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-match/_delete`,
+    method: 'post',
+    data: params,
+    noMerCode: true
+  })
+}
+
+// 获取对码重新匹配数据
+export function getMatchList(id) {
+  return request({
+    url: `${config.merGoods}/product/getMatchList/${id}`,
     method: 'get'
+  })
+}
+
+// 重新匹配(重新对码)
+export function mateAgain(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-match/again`,
+    method: 'post',
+    data: params
   })
 }

@@ -2,12 +2,14 @@
 @import "helpers/variables";
 @import "helpers/functions";
 @import "helpers/mixins";
+@import 'helpers/element-variables';
 
 //pages
 @import "pages/reset";
 @import "pages/element-ui";
-@import "pages//transition";
-@import 'pages//page';
+@import "pages/transition";
+@import 'pages/page';
+
 
 //components
 @import "components/custom-icon";

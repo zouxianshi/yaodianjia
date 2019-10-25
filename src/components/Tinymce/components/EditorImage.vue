@@ -3,7 +3,7 @@
     <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
       上传图片
     </el-button>
-    <el-dialog :visible.sync="dialogVisible">
+    <el-dialog :visible.sync="dialogVisible" append-to-body>
       <el-upload
         :multiple="true"
         :file-list="fileList"
@@ -12,18 +12,20 @@
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
-        action="https://httpbin.org/post"
+        :action="upLoadUrl"
+        :headers="headers"
+        :data="{merCode:merCode}"
         list-type="picture-card"
       >
         <el-button size="small" type="primary">
-          Click upload
+          点击上传图片
         </el-button>
       </el-upload>
-      <el-button @click="dialogVisible = false">
-        Cancel
+      <el-button size="small" @click="dialogVisible = false">
+        取消
       </el-button>
-      <el-button type="primary" @click="handleSubmit">
-        Confirm
+      <el-button type="primary" size="small" @click="handleSubmit">
+        确定
       </el-button>
     </el-dialog>
   </div>
@@ -31,7 +33,7 @@
 
 <script>
 // import { getToken } from 'api/qiniu'
-
+import config from '@/utils/config'
 export default {
   name: 'EditorSlideUpload',
   props: {
@@ -45,6 +47,17 @@ export default {
       dialogVisible: false,
       listObj: {},
       fileList: []
+    }
+  },
+  computed: {
+    upLoadUrl() {
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload`
+    },
+    merCode() {
+      return 'sdfdf'
+    },
+    headers() {
+      return { 'Authorization': this.$store.getters.token }
     }
   },
   methods: {

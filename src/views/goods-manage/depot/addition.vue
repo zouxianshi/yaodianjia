@@ -10,21 +10,21 @@
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品名称</span>
-            <el-input v-model.trim="searchForm.name" size="small" style="width:200px" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.name" size="small" style="width:200px" placeholder="商品名称" />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
-            <el-input v-model.trim="searchForm.manufacture" size="small" style="width:200px" placeholder="生产企业" />
+            <el-input v-model.trim="listQuery.manufacture" size="small" style="width:200px" placeholder="生产企业" />
           </div>
         </div>
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="searchForm.barCode" size="small" style="width:200px" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.barCode" size="small" style="width:200px" placeholder="商品名称" />
           </div>
           <div class="search-item">
             <span class="label-name">批准文号</span>
-            <el-input v-model.trim="searchForm.approvalNumber" size="small" style="width:200px" placeholder="批准文号" />
+            <el-input v-model.trim="listQuery.approvalNumber" size="small" style="width:200px" placeholder="批准文号" />
           </div>
           <div class="search-item">
             <el-button type="primary" size="small" @click="getList">查询</el-button>
@@ -48,11 +48,11 @@
             <p class="text-center">自主创建的商品由运营人员自行审核上架</p>
           </div>
         </template>
-        <el-table-column label="序号" />
+        <el-table-column label="序号" type="index" min-width="60" />
         <el-table-column
           prop="orCode"
           align="left"
-          min-width="120"
+          min-width="100"
           label="商品图片"
           show-overflow-tooltip
         >
@@ -60,10 +60,10 @@
             <template v-if="scope.row.stPath">
               <el-image
                 style="width: 100px; height: 100px"
-                :src="scope.row.stPath"
+                :src="scope.row.mainPic"
                 lazy
                 fit="contain"
-                :preview-src-list="[`${scope.row.stPath}`]"
+                :preview-src-list="[`${scope.row.mainPic}`]"
               />
             </template>
             <template v-else>
@@ -71,12 +71,23 @@
             </template>
           </template>
         </el-table-column>
-        <el-table-column label="商品信息" />
-        <el-table-column label="条码" />
-        <el-table-column label="生产企业" />
-        <el-table-column label="品牌" />
+        <el-table-column label="商品信息" min-width="150">
+          <template slot-scope="scope">
+            <div>
+              <p v-text="scope.row.name" />
+              <p v-text="' 国药准字:'+scope.row.approvalNumber" />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="条码" prop="barCode" />
+        <el-table-column label="生产企业" prop="manufacture" />
+        <el-table-column label="规格" />
         <el-table-column label="商品分类" />
-        <el-table-column label="操作" />
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="primary" :loading="scope.row.loading" size="mini" @click="handleSetStore(scope.row)">添加该商品</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <pagination
         :total="total"
@@ -103,25 +114,26 @@
 <script>
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
-import { getProductList } from '@/api/depot'
+import { getProductList, setComAddGoods } from '@/api/depot'
+import { mapGetters } from 'vuex'
 export default {
   components: { Pagination },
   mixins: [mixins],
   data() {
     return {
       keyword: '',
-      total: 0,
       tableData: [],
       dialogVisible: false,
-      searchForm: {
+      listQuery: {
         'approvalNumber': '',
         'barCode': '',
         'manufacture': '',
-        'name': '',
-        'page': this.page,
-        'pageSize': this.limit
+        'name': ''
       }
     }
+  },
+  computed: {
+    ...mapGetters(['name', 'merCode'])
   },
   created() {
     this.getList()
@@ -129,10 +141,26 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      getProductList(this.searchForm).then(res => {
-
+      getProductList(this.listQuery).then(res => {
+        this.loading = false
+        const { data, totalCount } = res.data
+        this.tableData = data
+        this.total = totalCount
       }).catch(() => {
-
+        this.loading = false
+      })
+    },
+    handleSetStore(row) {
+      row.loading = true
+      setComAddGoods({ ids: [row.id], userName: this.name }).then(res => {
+        this.$message({
+          message: '添加商品成功',
+          type: 'success'
+        })
+        this.getList()
+        row.loading = false
+      }).catch(() => {
+        row.loading = false
       })
     }
   }

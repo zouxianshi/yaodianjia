@@ -38,15 +38,6 @@ const router = [
           activeMenu: '/goods-manage/depot'
         }
       }, {
-        path: 'import-history',
-        component: () => import('@/views/goods-manage/depot/import-history'),
-        name: 'import-history',
-        meta: {
-          title: '导入商品',
-          noCache: true,
-          activeMenu: '/goods-manage/depot'
-        }
-      }, {
         path: 'paircode',
         component: () => import('@/views/goods-manage/depot/paircode'),
         name: 'paircode',
@@ -109,8 +100,8 @@ const router = [
         }
       },
       {
-        path: 'group-edit',
-        component: () => import('@/views/goods-manage/group/edit'),
+        path: 'group-create/:id',
+        component: () => import('@/views/goods-manage/group/Create'),
         name: 'groupEdit',
         meta: {
           title: '编辑分组',

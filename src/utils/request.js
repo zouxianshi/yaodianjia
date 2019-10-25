@@ -30,6 +30,10 @@ service.interceptors.request.use(
         ...authParams
       }
     } else {
+      delete authParams.timestame
+      if (config.noMerCode) {
+        delete authParams.merCode
+      }
       config.data = {
         ...config.data,
         ...authParams

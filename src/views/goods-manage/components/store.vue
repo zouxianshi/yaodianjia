@@ -9,14 +9,14 @@
       :close-on-click-modal="false"
     >
       <div class="modal-body">
-        <div class="search-box">
+        <div class="search-box" @keydown.enter="_loadStoreData">
           <div class="search-item">
             <span>门店选择：</span>
-            <el-checkbox label="1">全部门店</el-checkbox>
+            <el-checkbox v-model="isAll">全部门店</el-checkbox>
           </div>
           <div class="search-query">
             <el-input v-model="storeCode" placeholder="门店编码/门店名称" style="width:200px" size="mini" />
-            <el-button type="primary" size="mini">查询</el-button>
+            <el-button type="primary" size="mini" @click="_loadStoreData">查询</el-button>
           </div>
         </div>
         <el-table ref="multipleTable" :data="list" stripe style="width: 100%" @selection-change="handleSelectionChangeStore">
@@ -24,10 +24,14 @@
             type="selection"
             width="55"
           />
-          <el-table-column label="门店编号" prop="id" />
-          <el-table-column label="门店名称" prop="name" />
-          <el-table-column label="门店地址" />
-          <el-table-column label="门店电话" />
+          <el-table-column label="门店编号" prop="stCode" />
+          <el-table-column label="门店名称" prop="stName" />
+          <el-table-column label="门店地址" show-overflow-tooltip>
+            <template slot-scope="scope">
+              {{ scope.row.province }}{{ scope.row.city }}{{ scope.row.area }}{{ scope.row.address }}
+            </template>
+          </el-table-column>
+          <el-table-column label="门店电话" prop="mobile" />
         </el-table>
         <div class="text-right pagination">
           <el-pagination
@@ -36,31 +40,32 @@
             background
             :page-size="10"
             layout="total, prev, pager, next"
-            :total="storeTotal"
+            :total="total"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
           />
         </div>
         <el-divider content-position="left">未选择门店的销售状态保持不变</el-divider>
         <ul class="choose-box">
-          <template v-if="multipleSelection.length!==0">
+          <template v-if="!isAll&&multipleSelection.length!==0">
             <li v-for="(item,index) in multipleSelection" :key="index">
-              <el-tag type="info" size="small" closable @close="handleTagClose(item)">{{ item.name }}</el-tag>
+              <el-tag type="info" size="small" closable @close="handleTagClose(item)">{{ item.stName }}</el-tag>
             </li>
           </template>
           <template v-else>
-            <p class="text-center">请选择门店</p>
+            <p class="text-center">{{ isAll?'已选择全部门店':'请选择门店' }}</p>
           </template>
         </ul>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="" size="small" @click="handleCanle">取消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit">确定</el-button>
+        <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmit">确定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
+import { getStoreList, setBatchUpdown } from '@/api/depot'
 export default {
   props: {
     isShow: {
@@ -74,20 +79,24 @@ export default {
     chooseNum: {
       type: Number,
       default: 0
+    },
+    specData: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
     return {
       storeCode: '',
-      storeTotal: 0, // 门店总页数
+      total: 0, // 门店总页数
       currentPage: 1, // 门店分页
       chooseStore: [], // 选择的门店数据
-      list: [
-        { id: 1, name: 'a门店' },
-        { id: 2, name: 'b门店' },
-        { id: 3, name: 'c门店' }
-      ],
-      multipleSelection: []
+      list: [],
+      multipleSelection: [],
+      isAll: false,
+      subLoading: false
     }
   },
   watch: {
@@ -102,14 +111,46 @@ export default {
   },
   methods: {
     _loadStoreData() {
-
+      const query = {
+        storeName: this.storeCode,
+        currentPage: this.currentPage
+      }
+      getStoreList(query).then(res => {
+        const { data, totalCount } = res.data
+        this.list = data
+        this.total = totalCount
+      })
     },
     handleSubmit() {
-      this.$message({
-        message: '你未选择任何门店，请先选择门店',
-        type: 'warning'
+      const data = []
+      this.multipleSelection.map(res => {
+        data.push(res.id)
       })
-      return
+      if (!this.isAll && data.length === 0) {
+        this.$message({
+          message: '你未选择任何门店，请先选择门店',
+          type: 'warning'
+        })
+        return
+      }
+      const params = {
+        status: this.status,
+        isAll: this.isAll,
+        specIds: this.specData,
+        storeIds: data,
+        userName: this.$store.getters.name
+      }
+      this.subLoading = true
+      setBatchUpdown(params).then(res => {
+        this.subLoading = false
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+        this.$emit('close')
+      }).catch(() => {
+        this.subLoading = false
+      })
     },
     handleSelectionChangeStore(val) { // 门店列表选中事件
       this.multipleSelection = val
