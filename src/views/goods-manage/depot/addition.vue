@@ -6,29 +6,31 @@
         从商品库新建商品
       </p>
       <el-divider />
-      <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-        <div class="search-item">
-          <span class="label-name">商品名称</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="商品名称" />
+      <section @keydown.enter="getList">
+        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
+          <div class="search-item">
+            <span class="label-name">商品名称</span>
+            <el-input v-model.trim="searchForm.name" size="small" style="width:200px" placeholder="商品名称" />
+          </div>
+          <div class="search-item">
+            <span class="label-name">生产企业</span>
+            <el-input v-model.trim="searchForm.manufacture" size="small" style="width:200px" placeholder="生产企业" />
+          </div>
         </div>
-        <div class="search-item">
-          <span class="label-name">生产企业</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="生产企业" />
+        <div class="search-form">
+          <div class="search-item">
+            <span class="label-name">条形码</span>
+            <el-input v-model.trim="searchForm.barCode" size="small" style="width:200px" placeholder="商品名称" />
+          </div>
+          <div class="search-item">
+            <span class="label-name">批准文号</span>
+            <el-input v-model.trim="searchForm.approvalNumber" size="small" style="width:200px" placeholder="批准文号" />
+          </div>
+          <div class="search-item">
+            <el-button type="primary" size="small" @click="getList">查询</el-button>
+          </div>
         </div>
-      </div>
-      <div class="search-form">
-        <div class="search-item">
-          <span class="label-name">条形码</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="商品名称" />
-        </div>
-        <div class="search-item">
-          <span class="label-name">批准文号</span>
-          <el-input v-model.trim="keyword" size="small" style="width:200px" placeholder="批准文号" />
-        </div>
-        <div class="search-item">
-          <el-button type="primary" size="small">查询</el-button>
-        </div>
-      </div>
+      </section>
       <el-alert
         type="warning"
         style="margin-bottom:10px"
@@ -101,6 +103,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
+import { getProductList } from '@/api/depot'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -109,15 +112,28 @@ export default {
       keyword: '',
       total: 0,
       tableData: [],
-      dialogVisible: false
+      dialogVisible: false,
+      searchForm: {
+        'approvalNumber': '',
+        'barCode': '',
+        'manufacture': '',
+        'name': '',
+        'page': this.page,
+        'pageSize': this.limit
+      }
     }
   },
   created() {
-
+    this.getList()
   },
   methods: {
     getList() {
+      this.loading = true
+      getProductList(this.searchForm).then(res => {
 
+      }).catch(() => {
+
+      })
     }
   }
 }

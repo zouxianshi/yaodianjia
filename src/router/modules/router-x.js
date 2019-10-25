@@ -16,7 +16,7 @@ const router = [
         component: () => import('@/views/wxmall/banner'),
         name: 'banner',
         meta: {
-          title: '轮播图',
+          title: '首页轮播图',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       }, {
@@ -24,7 +24,7 @@ const router = [
         component: () => import('@/views/wxmall/notice'),
         name: 'notice',
         meta: {
-          title: '公告设置',
+          title: '公告',
           noCache: true,
           activeMenu: '/wxmall/notice'
         }
@@ -38,13 +38,13 @@ const router = [
           activeMenu: '/wxmall/ad-position'
         }
       }, {
-        path: 'home',
-        component: () => import('@/views/wxmall/home'),
-        name: 'home',
+        path: 'home-set',
+        component: () => import('@/views/wxmall/home-set'),
+        name: 'home-set',
         meta: {
           title: '主页设置',
           noCache: true,
-          activeMenu: '/wxmall/home'
+          activeMenu: '/wxmall/home-set'
         }
       }
     ]

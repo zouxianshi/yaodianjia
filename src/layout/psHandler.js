@@ -42,7 +42,7 @@ class InnerCtor {
             disabled: this.get('merchant-org.merchant-org-store')
           },{
             name: `门店商品管理`,
-            path: '/goods-manage/group',
+            path: '/goods-manage/store-goods',
             disabled: this.get('merchant-org.merchant-org-store')
           }
         ]
@@ -54,12 +54,12 @@ class InnerCtor {
         disabled: this.get('merchant-org'),
         children: [
           {
-            name: '轮播图',
+            name: '首页轮播图',
             path: '/wxmall/banner',
             disabled: this.get('merchant-org.merchant-org-org'),
           },
           {
-            name: '公告设置',
+            name: '公告',
             path: '/wxmall/notice',
             disabled: this.get('merchant-org.merchant-org-store')
           },{
@@ -68,7 +68,7 @@ class InnerCtor {
             disabled: this.get('merchant-org.merchant-org-store')
           },{
             name:'主页设置',
-            path: '/wxmall/home',
+            path: '/wxmall/home-set',
             disabled: this.get('merchant-org.merchant-org-store')
           }
         ]

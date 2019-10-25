@@ -17,8 +17,12 @@
         </p>
       </el-alert>
       <p class="text-right " style="margin-top:10px">
-        <el-button type="primary" size="small">导入历史</el-button>
-        <el-button type="" size="small">商品对码</el-button>
+        <a href="#/goods-manage/import-history">
+          <el-button type="primary" size="small">导入历史</el-button>
+        </a>
+        <a href="#/goods-manage/paircode">
+          <el-button type="" size="small">商品对码</el-button>
+        </a>
       </p>
       <ul class="step">
         <li>

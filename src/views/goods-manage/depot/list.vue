@@ -18,25 +18,33 @@
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品名称</span>
-            <el-input v-model.trim="searchForm.name" size="small" style="width:200px" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.name" size="small" style="width:200px" placeholder="商品名称" />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
-            <el-input v-model.trim="searchForm.storeName" size="small" style="width:200px" placeholder="生产企业" />
+            <el-input v-model.trim="listQuery.storeName" size="small" style="width:200px" placeholder="生产企业" />
           </div>
           <div class="search-item">
             <span class="label-name">商品编码</span>
-            <el-input v-model.trim="searchForm.dimensionId" size="small" style="width:200px" placeholder="商品编码" />
+            <el-input v-model.trim="listQuery.dimensionId" size="small" style="width:200px" placeholder="商品编码" />
           </div>
         </div>
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="searchForm.barCode" size="small" style="width:200px" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.barCode" size="small" style="width:200px" placeholder="商品名称" />
           </div>
           <div class="search-item">
             <span class="label-name">批准文号</span>
-            <el-input v-model.trim="searchForm.approvalNumber" size="small" style="width:200px" placeholder="批准文号" />
+            <el-input v-model.trim="listQuery.approvalNumber" size="small" style="width:200px" placeholder="批准文号" />
+          </div>
+          <div class="search-item">
+            <span class="label-name">商品来源</span>
+            <el-select v-model="listQuery.origin" placeholder="选择商品来源" size="small">
+              <el-option label="全部" value="" />
+              <el-option label="海典" value="1" />
+              <el-option label="商家" value="2" />
+            </el-select>
           </div>
           <div class="search-item">
             <el-button type="" size="small" @click="getList">查询</el-button>
@@ -64,12 +72,12 @@
         </el-card>
       </section>
       <section class="depot-table">
-        <el-radio-group v-model="searchForm.status" size="small">
+        <!-- <el-radio-group v-model="listQuery.status" size="small">
           <el-radio-button :label="0">全部</el-radio-button>
           <el-radio-button :label="1">已上架</el-radio-button>
           <el-radio-button :label="2">已下架</el-radio-button>
           <el-radio-button :label="3">待完善资料</el-radio-button>
-        </el-radio-group>
+        </el-radio-group> -->
         <div class="table-box">
           <el-table
             v-loading="loading"
@@ -179,8 +187,8 @@
             </div>
             <pagination
               :total="total"
-              :page.sync="listQuery.page"
-              :limit.sync="listQuery.limit"
+              :page.sync="listQuery.currentPage"
+              :limit.sync="listQuery.pageSize"
               @pagination="getList"
             />
           </div>
@@ -234,14 +242,14 @@ export default {
       total: 0,
       subLoading: false,
       groupVisible: false,
-      searchForm: {
-        'approvalNumber': '',
-        'barCode': '',
-        'dimensionId': '',
-        'manufacture': '',
-        'name': '',
-        'status': 0,
-        'storeName': ''
+      listQuery: {
+        approvalNumber: '',
+        barCode: '',
+        dimensionId: '',
+        manufacture: '',
+        name: '',
+        status: 0,
+        storeName: ''
       }
     }
   },
@@ -250,10 +258,12 @@ export default {
   },
   methods: {
     getList() {
-      getGoodsList(this.searchForm).then(res => {
+      this.loading = true
+      getGoodsList(this.listQuery).then(res => {
         this.tableData = res.data
+        this.loading = false
       }).catch(() => {
-
+        this.loading = false
       })
     },
     handleChangeUpdown(status) { // 上下架

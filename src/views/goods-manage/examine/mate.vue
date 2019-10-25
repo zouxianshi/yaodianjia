@@ -16,7 +16,8 @@
             </div>
           </li>
           <li class="product-list">
-            <p class="title">当前产品</p>
+            <p class="title">
+              当前所选药店加平台库产品</p>
             <p class="title">ERP编码：102228</p>
             <span class="line-status" />
             <div class="info">
@@ -33,11 +34,13 @@
             <el-button
               type="primary"
               size="small"
+              @click="goodsInfoVisible=true"
             >查看商品详情</el-button>
           </p>
           <el-button
             type="danger"
             size="small"
+            @click="rejectVisible=true"
           >拒绝</el-button>
         </div>
       </div>
@@ -163,7 +166,7 @@
     </div>
     <el-dialog
       title="产品详情"
-      :visible.sync="dialogVisible"
+      :visible.sync="goodsInfoVisible"
       append-to-body
       :close-on-click-modal="false"
       width="800px"
@@ -173,18 +176,26 @@
           <p>商品名称：<span>12321</span></p>
         </div>
         <div class="info-image">
-          <p>商品图片</p>
+          <p style="margin-bottom:10px">商品图片：</p>
           <div class="main-img">
             <el-image src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpb" fit="contain" style="width: 300px; height: 300px">
-              <div slot="placeholder" class="image-slot-loading">
-                <i class="el-icon-loading" />
-                <p class="txt">加载中....</p>
+              <div slot="placeholder" class="image-slot">
+                加载中<span class="dot">...</span>
               </div>
             </el-image>
           </div>
+          <ul class="other-image">
+            <li v-for="item in 4" :key="item" class="">
+              <el-image src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpb" fit="contain" style="width: 100px; height: 100px">
+                <div slot="placeholder" class="image-slot">
+                  加载中<span class="dot">...</span>
+                </div>
+              </el-image>
+            </li>
+          </ul>
         </div>
       </div>
-      <span slot="footer text-center">
+      <span slot="footer" class="ext-center">
         <el-button
           type="primary"
           size="small"
@@ -193,6 +204,22 @@
           type="danger"
           size="small"
         >拒 绝</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="选择拒绝原因" append-to-body close-on-click-modal :visible.sync="rejectVisible" width="30%">
+      <div class="modal-body">
+        <el-form :model="rejectForm" label-width="100px">
+          <el-form-item label="选择原因">
+            <el-select v-model="rejectForm.id" placeholder="">
+              <el-option label="药店加平台已存在改商品" value="0" />
+              <el-option label="商品信息不够规范合格" value="1" />
+              <el-option label="其他原因" value="2" />
+            </el-select>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer">
+        <el-button type="primary" size="small">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -211,7 +238,9 @@ export default {
       total: 0,
       loading: false,
       tableData: [],
-      dialogVisible: true
+      goodsInfoVisible: false,
+      rejectVisible: false,
+      rejectForm: {}
     }
   },
   created() {
@@ -244,6 +273,14 @@ export default {
       padding: 10px;
       margin-right: 10px;
       width: 50%;
+      .line-status{
+        display: block;
+        height: 6px;
+        width: 50px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background: #147de8;
+      }
       .title {
         margin-bottom: 10px;
       }
@@ -293,6 +330,16 @@ export default {
     font-size: 14px;
     p {
       margin-bottom: 5px;
+    }
+  }
+  .info-image{
+    height: 360px;
+    overflow-y: auto;
+    .other-image{
+      li{
+        display: inline-block;
+        margin-right: 2px;
+      }
     }
   }
 }

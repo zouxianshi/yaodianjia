@@ -2,14 +2,10 @@ const mixin = {
   data() {
     return {
       total: 0,
-      listLoading: true,
+      loading: false,
       listQuery: {
-        page: 1,
-        limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        currentPage: 1,
+        pageSize: 20
       }
     }
   }

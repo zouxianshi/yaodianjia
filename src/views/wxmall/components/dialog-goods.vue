@@ -102,7 +102,7 @@ export default {
   data() {
     return {
       dialog: {
-        visible: true
+        visible: false
       },
       pager: {
         current: 1,

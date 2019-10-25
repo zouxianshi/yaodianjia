@@ -187,7 +187,7 @@ export default {
 
     },
     handleClick() {
-      this.drawer = true
+      this.$router.push('/goods-manage/mate')
     }
   }
 }

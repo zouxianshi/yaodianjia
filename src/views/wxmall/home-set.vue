@@ -1,9 +1,11 @@
+
 <template>
   <div class="dashboard-container">
     <div class="app-container h5-set-container">
       <div class="h5-app">
-        <div class="h5-app-title">
-          <div class="text">微商城</div>
+        <div class="h5-app-title set-hover" :class="{'set-active': xFormSet.formName==='xForm1'}" @click.stop="setEdit('xForm1', '')">
+          <div v-if="xFormSet.detail" class="text" v-text="xFormSet.detail.remark">微商城</div>
+          <div v-else class="text">微商城</div>
         </div>
         <div class="h5-home">
           <div class="h5-top-bg" />
@@ -22,25 +24,20 @@
             </div>
           </div>
           <div class="h5-body">
-            <div class="h5-banner">
+            <div class="h5-banner set-hover" :class="{'set-active': xFormSet.formName==='xForm2'}" @click.stop="setEdit('xForm2', '')">
               <swiper
+                v-if="xForm2.detail"
                 ref="mySwiper"
                 :options="swiperOption"
                 style="height:100%"
                 @someSwiperEvent="swiperCallback"
               >
                 <!-- slides -->
-                <swiper-slide v-for="(item, index) in 5" :key="index" class="slider-item">
+                <swiper-slide v-for="item in xForm2.detail" :key="item.id" class="slider-item">
                   <div class="img-wrap">
-                    <img src="../../assets/image/h5/pic_ac.png">
+                    <img :src="item.imageUrl">
                   </div>
                 </swiper-slide>
-                <!-- Optional controls -->
-                <div slot="pagination" class="swiper-pagination">
-                  <div class="dots">
-                    <span v-for="dot in 5" :key="dot" class="dot">1</span>
-                  </div>
-                </div>
               </swiper>
             </div>
             <div class="h5-module">
@@ -63,9 +60,25 @@
                 </li>
               </ul>
             </div>
-            <div class="h5-notice">
-              <i class="icon icon-notice" />
-              <div class="text">不注重保养颈椎有哪些危害</div>
+            <div class="h5-notice set-hover" :class="{'set-active': xFormSet.formName==='xForm3'}" @click.stop="setEdit('xForm3', '')">
+              <div class="icon-box">
+                <i class="icon icon-notice" />
+              </div>
+              <div class="notice-box">
+                <swiper
+                  v-if="xForm3.detail"
+                  ref="mySwiper3"
+                  :options="swiperOption3"
+                  style="height:100%"
+                >
+                  <!-- slides -->
+                  <swiper-slide v-for="item in xForm3.detail" :key="item.id" class="slider-item">
+                    <div class="text-box">
+                      <div class="text" v-text="item.announcement" />
+                    </div>
+                  </swiper-slide>
+                </swiper>
+              </div>
             </div>
             <div class="h5-card h5-store">
               <div class="header">
@@ -132,21 +145,32 @@
               </div>
               <div class="card-1">
                 <div class="card_left">
-                  <div class="pos-1" />
+                  <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 1}" @click.stop="setEdit('xForm4', 1)">
+                    <img v-if="xForm4.detail" :src="xForm4.detail[0].imageUrl">
+                    <!-- <img class="pos-img" src="../../assets/image/h5/pic_aa.png"> -->
+                  </div>
                 </div>
                 <div class="card_right">
-                  <div class="pos-2" />
-                  <div class="pos-3" />
-                  <div class="pos-4" />
+                  <div class="pos-2 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 2}" @click.stop="setEdit('xForm4', 2)">
+                    <img v-if="xForm4.detail" :src="xForm4.detail[1].imageUrl" @error="imgLoadErr($event, '../../assets/image/h5/pic_aa.png')">
+                  </div>
+                  <div class="pos-3 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 3}" @click.stop="setEdit('xForm4', 3)">
+                    <img v-if="xForm4.detail" :src="xForm4.detail[2].imageUrl">
+                  </div>
+                  <div class="pos-4 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 4}" @click.stop="setEdit('xForm4', 4)">
+                    <img v-if="xForm4.detail" :src="xForm4.detail[3].imageUrl">
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="h5-card h5-activity">
+            <div class="h5-card h5-activity" style="padding: 0 0">
               <div class="card-2">
                 <div class="card_top">
-                  <div class="pos-1" />
+                  <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm5'}" @click.stop="setEdit('xForm5', '')">
+                    <img v-if="xForm5.detail" :src="xForm5.detail.imageUrl">
+                  </div>
                 </div>
-                <div class="card_bottom">
+                <div class="card_bottom set-hover" :class="{'set-active': xFormSet.formName==='xForm6'}" @click.stop="setEdit('xForm6', '')">
                   <swiper
                     key="swiper_2"
                     ref="mySwiper2"
@@ -236,14 +260,20 @@
         </div>
       </div>
       <div class="h5-settings">
-        <div class="set-module module-app-title">
+        <div class="set-module module-app-title" :class="{'active': xFormSet.formName==='xForm1'}">
           <div class="m-header">
             <span class="text">主页名称</span>
           </div>
           <div class="m-body">
             <el-form class="form-title">
               <el-form-item label="名称">
-                <el-input type="text" size="small" style="width: 292px;" placeholder="请输入主页名称" />
+                <el-input
+                  v-model.trim="xForm1.name"
+                  type="text"
+                  size="small"
+                  style="width: 292px;"
+                  placeholder="请输入主页名称"
+                />
                 <p class="form-notes">建议不超过6字</p>
               </el-form-item>
             </el-form>
@@ -253,26 +283,30 @@
                 class="btn-submit"
                 plain
                 size="small"
-                @click="submitForm('ruleForm')"
+                @click="submitForm('xForm1')"
               >提交</el-button>
             </div>
           </div>
         </div>
-        <div class="set-module module-activity">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm4'}" style="top: 738px">
           <div class="m-header">
-            <span class="text">左主图片</span>
-            <!-- <span class="text">右1图片</span> -->
+            <span v-if="xFormSet.position === 1" class="text">左主图片</span>
+            <span v-else-if="xFormSet.position === 2" class="text">右1图片</span>
+            <span v-else-if="xFormSet.position === 3" class="text">右2图片</span>
+            <span v-else-if="xFormSet.position === 4" class="text">右3图片</span>
           </div>
           <div class="m-body">
             <el-form class="form-title">
               <el-form-item label="图片" class="upload-item">
-                <div class="cover-wrap" :class="'1'== '1'? 'cover-left':'cover-right'">
-                  <div class="cover">1</div>
+                <div class="cover-wrap" :class="xFormSet.position === 1 ? 'cover-left':'cover-right'">
+                  <div v-if="xForm4.imgUrl==''" class="cover" />
+                  <img v-else class="cover" :src="xForm4.imgUrl">
                 </div>
-                <p class="note-grey">建议尺寸1:1.2</p>
+                <p class="note-grey" style="margin-left: 42px;">建议尺寸1:1.2</p>
                 <el-upload
                   style="height:0"
-                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :headers="headers"
+                  :action="upLoadUrl"
                   :show-file-list="false"
                   :on-success="handleUploadSuccess"
                   :before-upload="beforeUpload"
@@ -281,7 +315,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接">
-                <el-input type="text" size="small" style="width: 292px;" placeholder="请输入主页名称" />
+                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 292px;" :maxlength="100" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -290,26 +324,27 @@
                 class="btn-submit"
                 plain
                 size="small"
-                @click="submitForm('ruleForm')"
+                @click="submitForm('xForm4')"
               >提交</el-button>
             </div>
           </div>
         </div>
-        <div class="set-module module-activity">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1020px">
           <div class="m-header">
             <span class="text">分组主图</span>
-            <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
             <el-form class="form-title">
               <el-form-item label="图片" class="upload-item">
                 <div class="cover-wrap cover-top">
-                  <div class="cover" />
+                  <div v-if="xForm5.imgUrl==''" class="cover" />
+                  <img v-else class="cover" :src="xForm5.imgUrl">
                 </div>
                 <p class="note-grey" style="margin-left: 140px;">建议尺寸1:1.2</p>
                 <el-upload
-                  style="height:10px"
-                  action="https://jsonplaceholder.typicode.com/posts/"
+                  style="height:0"
+                  :headers="headers"
+                  :action="upLoadUrl"
                   :show-file-list="false"
                   :on-success="handleUploadSuccess"
                   :before-upload="beforeUpload"
@@ -322,7 +357,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接">
-                <el-input type="text" size="small" style="width: 292px;" placeholder="请输入主页名称" />
+                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 292px;" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -331,14 +366,14 @@
                 class="btn-submit"
                 plain
                 size="small"
-                @click="submitForm('ruleForm')"
+                @click="submitForm('xForm5')"
               >提交</el-button>
             </div>
           </div>
         </div>
-        <div class="set-module module-activity">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1120px">
           <div class="m-header">
-            <span class="text">分组主图</span>
+            <span class="text">分组商品图片</span>
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
@@ -375,19 +410,18 @@
                 class="btn-submit"
                 plain
                 size="small"
-                @click="submitForm('ruleForm')"
+                @click="submitForm('xForm6')"
               >提交</el-button>
             </div>
           </div>
         </div>
       </div>
+      <div class="footer-btns">
+        <el-button type="primary" @click.stop="submitSettings()">保存</el-button>
+      </div>
     </div>
     <!--弹窗--上线门店-->
-    <dialog-goods
-      ref="goodsDialog"
-      :list="[]"
-      @confirm="goodsSelectChange"
-    />
+    <dialog-goods ref="goodsDialog" :list="[]" @confirm="goodsSelectChange" />
   </div>
 </template>
 
@@ -397,9 +431,11 @@ import 'swiper/dist/css/swiper.css'
 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import dialogGoods from './components/dialog-goods'
+import { getPageSets } from '../../api/wxmall'
+import config from '../../utils/config'
 
 export default {
-  name: 'Home',
+  name: 'HomeSet',
   components: {
     swiper,
     swiperSlide,
@@ -408,69 +444,14 @@ export default {
   data() {
     return {
       currentRole: 'adminDashboard',
-      dateRange: '',
-      statusOptions: [
-        { id: 1, name: '使用', value: '1' },
-        { id: 0, name: '停用', value: '0' }
-      ],
-      searchForm: {
-        timeBeg: '', // 开始时间
-        timeEnd: '', // 结束时间
-        status: '', // 使用状态
-        notes: '' // 备注
-      },
-      tableData: [
-        {
-          img: '../img.png',
-          url: 'http://wwww.yaodianjia.com?sid=1111',
-          timeBeg: '2016-05-02 00:00:00',
-          timeEnd: '2016-05-03 00:00:00',
-          status: 1,
-          notes: '品牌XX广告'
-        },
-        {
-          img: '../img.png',
-          url: 'http://wwww.yaodianjia.com?sid=1111',
-          timeBeg: '2016-05-02 00:00:00',
-          timeEnd: '2016-05-03 00:00:00',
-          status: 0,
-          notes: '品牌XX广告'
-        },
-        {
-          img: '../img.png',
-          url: 'http://wwww.yaodianjia.com?sid=1111',
-          timeBeg: '2016-05-02 00:00:00',
-          timeEnd: '2016-05-03 00:00:00',
-          status: 0,
-          notes: '品牌XX广告'
-        },
-        {
-          img: '../img.png',
-          url: 'http://wwww.yaodianjia.com?sid=1111',
-          timeBeg: '2016-05-02 00:00:00',
-          timeEnd: '2016-05-03 00:00:00',
-          status: 1,
-          notes: '品牌XX广告'
-        }
-      ],
-      dialogFormVisible: true,
-      form: {
-        id: '',
-        imgUrl: '',
-        linkUrl: '',
-        dateRange: '',
-        dateStart: '',
-        dateEnd: '',
-        index: false,
-        type: [],
-        notes: ''
-      },
-      formLabelWidth: '80px',
       swiperOption: {
         pagination: {
           el: '.swiper-pagination'
+        },
+        loop: true,
+        autoplay: {
+          delay: 5000 // 1秒切换一次
         }
-        // some swiper options...
       },
       swiperOption2: {
         pagination: {
@@ -478,34 +459,289 @@ export default {
         },
         slidesPerView: 3,
         slidesPerGroup: 3
-        // some swiper options...
+      },
+      swiperOption3: {
+        // 公告
+        direction: 'vertical',
+        loop: true,
+        autoplay: {
+          delay: 5000 // 1秒切换一次
+        }
+      },
+      // setting form
+      xFormSet: {
+        formName: '',
+        position: ''
+      },
+      // 主页名称
+      xForm1: {
+        detail: null,
+        name: ''
+      },
+      // 轮播
+      xForm2: {
+        detail: null
+      },
+      // 公告
+      xForm3: {
+        detail: null
+      },
+      // 活动(1+3)
+      xForm4: {
+        detail: null,
+        imgUrl: '',
+        linkUrl: ''
+      },
+      // 活动top广告
+      xForm5: {
+        detail: null,
+        imgUrl: '',
+        linkUrl: ''
+      },
+      // 活动分组商品
+      xForm6: {
+        detail: null
       }
     }
   },
   computed: {
     ...mapGetters(['roles']),
-    uploadFileUrl() {
-      return `${this.uploadFileURL}`
-    },
     swiper() {
       return this.$refs.mySwiper.swiper
     },
     swiper2() {
       return this.$refs.mySwiper2.swiper
+    },
+    swiper3() {
+      return this.$refs.mySwiper3.swiper
+    },
+    currentTime() {
+      return this.getNowFormatDate()
+    },
+    merCode() {
+      return this.$store.state.user.merCode || ''
+    },
+    upLoadUrl() {
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+    },
+    headers() {
+      return { 'Authorization': this.$store.getters.token }
     }
   },
   created() {
-    // 发卡机上岛咖啡
+    // 获取数据
+    this.fetchData()
   },
   methods: {
+    imgLoadErr(e, url) {
+      console.log('eeeeee', e)
+      console.log('url', url)
+      // e.target.src = url
+    },
+    fetchData() {
+      // positionCode: '0-01'.主页标题,'1-01'.轮播,'1-02'.公告,'2-01'.活动(1+3),'2-02'.活动top广告,'2-03'.活动分组商品
+      this._getAppSetDetail('0-01') // 主页标题
+      this._getAppSetDetail('1-01') // 轮播
+      this._getAppSetDetail('1-02') // 公告
+      this._getAppSetDetail('2-01') // 活动(1+3)
+      this._getAppSetDetail('2-02') // 活动top广告
+      this._getAppSetDetail('2-03') // 活动分组商品
+    },
+    setEdit(formName, position) {
+      const eidtForm = this[formName]
+      // 显示详情
+      if (formName === 'xForm1') {
+        eidtForm.name = (eidtForm.detail && eidtForm.detail.remark) ? eidtForm.detail.remark || '' : ''
+      }
+      if (formName === 'xForm4') {
+        eidtForm.imgUrl = eidtForm.detail[position - 1].imageUrl || ''
+        eidtForm.linkUrl = eidtForm.detail[position - 1].url || ''
+      }
+      if (formName === 'xForm5') {
+        eidtForm.imgUrl = eidtForm.detail.imageUrl || ''
+        eidtForm.linkUrl = eidtForm.detail.url || ''
+      }
+      this.xFormSet = {
+        formName: formName,
+        position: position
+      }
+      console.log('this.xFormSet', this.xFormSet)
+      console.log('eidtForm', this[formName])
+    },
+    submitForm(formName) {
+      console.log('formName', this[formName])
+      const submitForm = this[formName]
+      if (formName === 'xForm1') {
+        // 表单验证..
+        submitForm.detail.remark = submitForm.name
+      }
+      if (formName === 'xForm4') {
+        // 表单验证..
+        submitForm.detail[this.xFormSet.position - 1].imageUrl = submitForm.imgUrl
+        submitForm.detail[this.xFormSet.position - 1].url = submitForm.linkUrl
+      }
+      if (formName === 'xForm5') {
+        // 表单验证..
+        submitForm.detail.imageUrl = submitForm.imgUrl
+        submitForm.detail.url = submitForm.linkUrl
+      }
+      if (formName === 'xForm6') {
+        // 表单验证..
+        submitForm.detail = []
+      }
+    },
+    submitSettings() {
+      alert('shi bai')
+      // const params = {
+      //   'createPageSetDTOS': [
+      //     {
+      //       'announcement': 'string',
+      //       'classId': 'string',
+      //       'createName': 'string',
+      //       'endTime': '2019-10-24T14:09:58.925Z',
+      //       'id': 'string',
+      //       'imageUrl': 'string',
+      //       'merCode': 'string',
+      //       'positionCode': 'string',
+      //       'productId': 'string',
+      //       'remark': 'string',
+      //       'sortNumber': 0,
+      //       'startTime': '2019-10-24T14:09:58.925Z',
+      //       'status': 0,
+      //       'url': 'string'
+      //     }
+      //   ],
+      //   'merCode': '',
+      //   'positionCode': ''
+      // }
+    },
+    formatData(data) {
+      if (data) {
+        return data
+      } else {
+        const detail = {
+          'announcement': '',
+          'classId': '',
+          'createName': '',
+          'endTime': '',
+          'id': '',
+          'imageUrl': '22222222',
+          'merCode': '',
+          'positionCode': '',
+          'productId': '',
+          'remark': '',
+          'sortNumber': 0,
+          'startTime': '',
+          'status': 0,
+          'url': ''
+        }
+        return detail
+      }
+    },
+    _getAppSetDetail(positonCode) {
+      console.log('positonCode')
+      const params = {
+        classId: '',
+        displayTime: this.currentTime,
+        startTime: '',
+        endTime: '',
+        positionCode: positonCode,
+        remark: '',
+        sortOrder: 0,
+        status: ''
+      }
+      getPageSets(params).then(res => {
+        if (res.code === '10000') {
+          if (positonCode === '0-01') {
+            // 主页标题
+            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null)
+            this.xForm1.positionCode = positonCode
+            console.log('res-标题', res.data)
+          } else if (positonCode === '1-01') {
+            // 轮播
+            if (res.data && res.data.length > 0) {
+              this.xForm2.detail = res.data
+            }
+          } else if (positonCode === '1-02') {
+            // 公告
+            this.xForm3.detail = res.data
+          } else if (positonCode === '2-01') {
+            console.log('res公告---', res.data)
+            // 活动(1+3)
+            let ret = []
+            if (res.data && res.data.length > 4) { // 大于4个
+              ret = res.data.splice(0, 4)
+            } else {
+              for (let i = 0; i < 4; i++) {
+                ret[i] = this.formatData(ret[i] || null)
+              }
+            }
+            console.log('ret', ret)
+            this.xForm4.detail = ret
+          } else if (positonCode === '2-02') {
+            // 活动top广告
+            console.log('res 活动top广告---', res.data)
+            this.xForm5.detail = this.formatData(res.data ? res.data[0] : null)
+          } else if (positonCode === '2-03') {
+            // 活动分组商品
+            console.log(1)
+          }
+
+          this.tableData = res.data || []
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+      })
+    },
     // h5-app
     swiperCallback(event) {
       console.log('event', event)
     },
     // h5-settings
-    handleUploadSuccess($event) {
-      console.log($event)
+    handleUploadSuccess(res, file) {
+      console.log('res', res)
+      console.log('file', file)
+      if (this.xFormSet.formName === 'xForm4') {
+        this.xForm4.imgUrl = res.data
+      } else if (this.xFormSet.formName === 'xForm5') {
+        this.xForm5.imgUrl = res.data
+      }
       // this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    // 获取当前时间
+    getNowFormatDate() {
+      const date = new Date()
+      const seperator1 = '-'
+      const seperator2 = ':'
+      let month = date.getMonth() + 1
+      const strDate = date.getDate()
+      if (month >= 1 && month <= 9) {
+        month = '0' + month
+      }
+      const currentdate =
+        date.getFullYear() +
+        seperator1 +
+        month +
+        seperator1 +
+        this.padNum(strDate) +
+        ' ' +
+        this.padNum(date.getHours()) +
+        seperator2 +
+        this.padNum(date.getMinutes()) +
+        seperator2 +
+        this.padNum(date.getSeconds())
+      console.log('currentdate', currentdate)
+      return currentdate
+    },
+    padNum(val) {
+      if (val <= 9) {
+        return '0' + val
+      }
+      return val
     },
     beforeUpload(file) {
       const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
@@ -542,6 +778,21 @@ export default {
   position: relative;
   z-index: 0;
   display: flex;
+  box-sizing: border-box;
+  padding-bottom: 100px;
+  .footer-btns{
+    position: fixed;
+    bottom: 0;
+    left:0;
+    z-index: 555;
+    background: white;
+    box-shadow:0px 2px 3px 0px rgba(35,24,21,0.2);
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 .x-dialog-body {
   width: 100%;
@@ -705,7 +956,7 @@ export default {
     .h5-banner {
       width: 100%;
       height: 125px;
-      border-radius: 5px;
+      border-radius: 10px;
       overflow: hidden;
       background-color: #f2f2f2;
       .swiper-container {
@@ -778,29 +1029,40 @@ export default {
       height: 35px;
       background: rgba(0, 0, 0, 0.03);
       border-radius: 5px;
+      overflow: hidden;
       display: flex;
       align-items: center;
-      box-sizing: border-box;
       padding: 0 10px;
-      overflow: hidden;
-      .icon-notice {
+      box-sizing: border-box;
+      .icon-box {
         flex: 0 0 atuo;
-        width: 45px;
-        height: 20px;
-        background: url('../../assets/image/h5/pic_a.png') no-repeat center/100%
-          100%;
-      }
-      .text {
-        flex: 1;
-        margin-left: 10px;
         box-sizing: border-box;
+        padding-right: 10px;
+        border-right: 1px solid rgba(19, 116, 159, 0.2);
+        .icon-notice {
+          width: 45px;
+          height: 20px;
+          background: url('../../assets/image/h5/pic_notice.png') no-repeat
+            center/100% 100%;
+        }
+      }
+      .notice-box {
+        flex: 1;
+        height: 100%;
         padding-left: 10px;
-        height: 14px;
-        font-size: 14px;
-        border-left: 1px solid rgba(19, 116, 159, 0.2);
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        box-sizing: border-box;
         overflow: hidden;
+        .text-box {
+          display: flex;
+          height: 100%;
+          align-items: center;
+          .text {
+            font-size: 14px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+        }
       }
     }
     .h5-store {
@@ -1026,6 +1288,7 @@ export default {
         }
       }
     }
+    $bg-cover: #f9f9f9;
     .h5-activity {
       .card-1 {
         display: flex;
@@ -1039,11 +1302,15 @@ export default {
         .card_right {
           margin-left: 10px;
         }
+        .pos-img{
+          width: 100%;
+          height:100%;
+        }
         .pos-1 {
           width: 100%;
           height: 100%;
-          background: url('../../assets/image/h5/pic_aa.png') no-repeat
-            center/100% 100%;
+          border-radius: 5px;
+          background: $bg-cover;
         }
         .pos-2,
         .pos-3,
@@ -1051,31 +1318,29 @@ export default {
           width: 100%;
           height: 60px;
           border-radius: 5px;
-        }
-        .pos-2 {
-          background: url('../../assets/image/h5/pic_ab.png') no-repeat
-            center/100% 100%;
+          background: $bg-cover;
         }
         .pos-3 {
           margin-top: 10px;
-          background: url('../../assets/image/h5/pic_ac.png') no-repeat
-            center/100% 100%;
         }
         .pos-4 {
           margin-top: 10px;
-          background: url('../../assets/image/h5/pic_ad.png') no-repeat
-            center/100% 100%;
         }
       }
       .card-2 {
         .card_top {
           width: 100%;
           height: 95px;
-          background: url('../../assets/image/h5/pic_zhu_a.png') no-repeat
-            center/100% 100%;
+            .pos-1{
+              width: 100%;
+              height: 100%;
+              background: $bg-cover;
+            }
         }
         .card_bottom {
           position: relative;
+          box-sizing: border-box;
+          padding: 0 3px;
         }
         .goods-list2 {
           margin-top: 6px;
@@ -1097,8 +1362,7 @@ export default {
               .cover {
                 width: 100%;
                 height: 100%;
-                background: url('../../assets/image/h5/pic_sb.png') no-repeat
-                  center/100% 100%;
+                background: $bg-cover;
               }
             }
             .caption {
@@ -1258,6 +1522,10 @@ export default {
     padding: 0 10px 12px;
     background-color: white;
     border-radius: 5px;
+    img{
+      width: 100%;
+      height: 100%;
+    }
     .card-header {
       display: flex;
       height: 60px;
@@ -1285,8 +1553,13 @@ export default {
   flex: 1;
   font-size: 14px;
   .set-module {
+    position: relative;
     border-radius: 3px;
     border: 1px solid rgba(220, 223, 230, 1);
+    display: none;
+    &.active{
+      display: block;
+    }
     .m-header {
       height: 40px;
       line-height: 40px;
@@ -1382,16 +1655,16 @@ export default {
         margin-right: 0;
         width: 88px;
         height: 88px;
-        background:rgba(255,255,255,1);
-        border:1px solid rgba(220,223,230,1);
-        border-radius:5px;
+        background: rgba(255, 255, 255, 1);
+        border: 1px solid rgba(220, 223, 230, 1);
+        border-radius: 5px;
         cursor: pointer;
         .icon-add {
           margin: auto;
           width: 31px;
           height: 31px;
-          background: url('../../assets/image/h5/add.png') no-repeat
-            center/100% 100%;
+          background: url('../../assets/image/h5/add.png') no-repeat center/100%
+            100%;
         }
       }
     }
@@ -1432,16 +1705,16 @@ export default {
         100%;
     }
     &.cover-left {
-      width: 168px;
-      height: 88px;
+      width: 139px;
+      height: 166px;
       .cover {
         background: url('../../assets/image/h5/pic_d.png') no-repeat center/100%
           100%;
       }
     }
     &.cover-right {
-      width: 139px;
-      height: 166px;
+      width: 168px;
+      height: 88px;
       .cover {
         background: url('../../assets/image/h5/pic_c.png') no-repeat center/100%
           100%;
@@ -1460,5 +1733,16 @@ export default {
 .note-grey {
   font-size: 14px;
   color: #999999;
+}
+
+.set-hover:hover {
+  box-sizing: border-box;
+  border: 1px solid red;
+  border-radius: 0 !important;
+  cursor: pointer;
+}
+.set-active {
+  border-radius: 0 !important;
+  border: 1px solid red !important;
 }
 </style>

@@ -21,7 +21,7 @@
         </div>
       </div>
     </draggable>
-    <div v-if="limit!==0&&fileList.length!==limit" class="upload-list-card upload-box">
+    <div v-if="fileList.length!==limit" class="upload-list-card upload-box">
       <i class="el-icon-plus" />
       <input
         id="files"
@@ -34,10 +34,10 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 import draggable from 'vuedraggable'
+import ajax from './ajax'
 export default {
-  name: 'ImgUpload',
+  name: 'Vueuploadimg',
   components: { draggable },
   props: {
     multiple: { // 是否支持多选
@@ -64,14 +64,33 @@ export default {
         return null
       }
     },
+    withCredentials: { // 支持发送cookie信息
+      type: Boolean,
+      default: false
+    },
     limit: {
-      type: Number,
-      default: 0
+      type: Number
+    },
+    fileList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    beforeUpload: {
+      type: Function,
+      default: function() {
+        return true
+      }
+    },
+    httpRequest: { // 可自定义上传方法
+      type: Function,
+      default: ajax
     }
   },
   data() {
     return {
-      fileList: []
+
     }
   },
   created() {
@@ -87,12 +106,7 @@ export default {
     handleChooseFile(e) {
       const file = e.target.files[0]
       if (file) {
-        const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
-        if (!isImg) {
-          this.$message({
-            message: '只能上传图片',
-            type: 'warning'
-          })
+        if (!this.beforeUpload(file)) {
           return
         }
         this.fileList.push({
@@ -103,38 +117,40 @@ export default {
           process: 0
         })
         const index = this.fileList.length
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('merCode', this.fileData.merCode)
-        this.uploadFile(index - 1, formData)
+        this.uploadFile(index - 1, file)
         document.getElementById('files').value = '' // 置空，解决上传重复图片
       }
     },
-    uploadFile(index, data) {
-      axios({
-        url: this.actions,
-        method: 'post',
+    uploadFile(index, rawFile) {
+      const options = {
         headers: this.headers,
-        onUploadProgress: (progressEvent) => { // 原生获取上传进度的事件
+        withCredentials: this.withCredentials,
+        file: rawFile,
+        data: this.fileData,
+        filename: this.name,
+        action: this.actions,
+        onProgress: progressEvent => {
           if (progressEvent.lengthComputable) {
             // 属性lengthComputable主要表明总共需要完成的工作量和已经完成的工作是否可以被测量
             // 如果lengthComputable为false，就获取不到progressEvent.total和progressEvent.loaded
             const process = parseInt((progressEvent.loaded / progressEvent.total) * 100)
             this.fileList[index].process = process
-            if (process === 100) {
-              this.fileList[index].status = 'success'
-            }
           }
         },
-        data: data
-      }).then(res => {
-        if (res.data.code === '10000') {
-          this.fileList[index].imgUrl = res.data.data
+        onSuccess: res => {
+          this.$emit('onSuccess', res.data, this.fileList, index)
+          this.fileList[index].status = 'success'
+        },
+        onError: err => {
+          this.$emit('onError', err, this.fileList, index)
+          console.log('上传失败')
+          this.fileList.splice(index, 1)
         }
-        this.$emit('onSuccess', res.data, this.fileList, index)
-      }).catch(error => {
-        this.$emit('onError', error, index)
-      })
+      }
+      const req = this.httpRequest(options)
+      if (req && req.then) {
+        req.then(options.onSuccess, options.onError)
+      }
     },
     handlePreview(val) {
       this.$emit('preview', val)
@@ -145,7 +161,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .upload-list {
   display: inline-block;
 }

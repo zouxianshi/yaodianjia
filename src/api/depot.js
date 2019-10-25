@@ -1,9 +1,9 @@
 import request from '@/utils/request'
-
+import config from '@/utils/config'
 // 获取商品库商品列表
 export function getGoodsList(params) {
   return request({
-    url: '/1.0/commodity/getCommodityList',
+    url: `${config.merGoods}/1.0/commodity/list`,
     method: 'get',
     params
   })
@@ -20,7 +20,7 @@ export function goodsClass(params) {
 // 获取标库商品列表
 export function getProductList(params) {
   return request({
-    url: '/product/getProductList',
+    url: `${config.merGoods}/product/getProductList`,
     method: 'get',
     params
   })

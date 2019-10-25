@@ -81,6 +81,9 @@
       display: inline-block;
       margin-right: 12px;
       margin-bottom: 12px;
+      .el-input{
+        width: 200px;
+      }
       .label-name {
         display: inline-block;
         width: 80px;
@@ -131,13 +134,22 @@
   }
   .table-box{
     margin-top: 20px;
+    .choose-num{
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #333;
+    }
   }
 
   .image-slot-loding{
-    position:absolute;
+    position: absolute;
     left: 0;
     right: 0;
+    background: #f5f7fa;
+    top: 0;
     bottom: 0;
-    top:0;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
