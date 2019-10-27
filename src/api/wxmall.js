@@ -67,6 +67,6 @@ export function delPageSet(params) {
 export function getProductList(params) {
   return request({
     url: `${api_wxmall}/1.0/pageset/queryMinProductList`,
-    method: 'delete'
+    method: 'post'
   })
 }

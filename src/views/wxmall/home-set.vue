@@ -4,7 +4,7 @@
     <div class="app-container h5-set-container">
       <div class="h5-app">
         <div class="h5-app-title set-hover" :class="{'set-active': xFormSet.formName==='xForm1'}" @click.stop="setEdit('xForm1', '')">
-          <div v-if="xFormSet.detail" class="text" v-text="xFormSet.detail.remark">微商城</div>
+          <div v-if="xForm1.detail" class="text" v-text="xForm1.detail.remark">微商城</div>
           <div v-else class="text">微商城</div>
         </div>
         <div class="h5-home">
@@ -284,14 +284,15 @@
             <span class="text">主页名称</span>
           </div>
           <div class="m-body">
-            <el-form class="form-title">
-              <el-form-item label="名称">
+            <el-form ref="xForm1" class="form-title" :rules="xRules1" :model="xForm1">
+              <el-form-item label="名称" prop="name" style="position: relative; margin-bottom: 50px">
                 <el-input
                   v-model.trim="xForm1.name"
                   type="text"
                   size="small"
-                  style="width: 292px;"
+                  style="width: 280px;"
                   placeholder="请输入主页名称"
+                  maxlength="6"
                 />
                 <p class="form-notes">建议不超过6字</p>
               </el-form-item>
@@ -315,13 +316,13 @@
             <span v-else-if="xFormSet.position === 4" class="text">右3图片</span>
           </div>
           <div class="m-body">
-            <el-form class="form-title">
-              <el-form-item label="图片" class="upload-item">
+            <el-form ref="xForm4" :rules="xRules4" :model="xForm4">
+              <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap" :class="xFormSet.position === 1 ? 'cover-left':'cover-right'">
                   <div v-if="xForm4.imgUrl==''" class="cover" />
                   <img v-else class="cover" :src="xForm4.imgUrl">
                 </div>
-                <p class="note-grey" style="margin-left: 42px;">建议尺寸1:1.2</p>
+                <p class="note-grey" style="margin: 10px 0 0 52px;">建议尺寸1:1.2</p>
                 <el-upload
                   style="height:0"
                   :headers="headers"
@@ -333,8 +334,8 @@
                   <el-button class="btn btn-upload" size="small">本地上传</el-button>
                 </el-upload>
               </el-form-item>
-              <el-form-item label="链接">
-                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 292px;" :maxlength="100" />
+              <el-form-item label="链接" prop="linkUrl">
+                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="100" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -353,15 +354,15 @@
             <span class="text">分组主图</span>
           </div>
           <div class="m-body">
-            <el-form class="form-title">
-              <el-form-item label="图片" class="upload-item">
+            <el-form ref="xForm5" :rules="xRules5" :model="xForm5">
+              <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap cover-top">
                   <div v-if="xForm5.imgUrl==''" class="cover" />
                   <img v-else class="cover" :src="xForm5.imgUrl">
                 </div>
-                <p class="note-grey" style="margin-left: 140px;">建议尺寸1:1.2</p>
+                <p class="note-grey" style="margin:8px 0 0 140px;">建议尺寸1:1.2</p>
                 <el-upload
-                  style="height:0"
+                  style="height:20px"
                   :headers="headers"
                   :action="upLoadUrl"
                   :show-file-list="false"
@@ -370,13 +371,13 @@
                 >
                   <el-button
                     class="btn btn-upload"
-                    style="position:relative;left: 40px;top: -28px"
+                    style="position:relative;left: 50px;top: -20px"
                     size="small"
                   >本地上传</el-button>
                 </el-upload>
               </el-form-item>
-              <el-form-item label="链接">
-                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 292px;" />
+              <el-form-item label="链接" prop="linkUrl">
+                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -494,6 +495,27 @@ export default {
         formName: '',
         position: ''
       },
+      xRules1: {
+        name: [
+          { required: true, message: '请输入主页名称', trigger: 'blur' }
+        ]
+      },
+      xRules4: {
+        imgUrl: [
+          { required: true, message: '请上传图片', trigger: 'blur' }
+        ],
+        linkUrl: [
+          { required: true, message: '请输入链接地址', trigger: 'blur' }
+        ]
+      },
+      xRules5: {
+        imgUrl: [
+          { required: true, message: '请上传图片', trigger: 'blur' }
+        ],
+        linkUrl: [
+          { required: true, message: '请输入链接地址', trigger: 'blur' }
+        ]
+      },
       // 主页名称
       xForm1: {
         detail: null,
@@ -521,7 +543,8 @@ export default {
       },
       // 活动分组商品
       xForm6: {
-        detail: null
+        detail: null,
+        selectGoodsList: []
       }
     }
   },
@@ -570,6 +593,20 @@ export default {
     },
     setEdit(formName, position) {
       const eidtForm = this[formName]
+      if (formName === this.xFormSet.formName && position === this.xFormSet.position) {
+        console.log('同一位置')
+        return
+      } else {
+        // reset 表单验证
+        if (formName === 'xForm1' || formName === 'xForm4' || formName === 'xForm5') {
+          this.$refs[formName].resetFields()
+        }
+      }
+      // 检测数据是否正常
+      if (eidtForm.detail === null) { // 即获取初始数据失败{
+        alert('数据异常，请稍后重试')
+        return
+      }
       // 显示详情
       if (formName === 'xForm1') {
         eidtForm.name = (eidtForm.detail && eidtForm.detail.remark) ? eidtForm.detail.remark || '' : ''
@@ -590,86 +627,63 @@ export default {
       console.log('eidtForm', this[formName])
     },
     submitForm(formName) {
-      console.log('formName', this[formName])
-      const submitForm = this[formName]
-      if (formName === 'xForm1') {
-        // 表单验证..
-        submitForm.detail.remark = submitForm.name
-      }
-      if (formName === 'xForm4') {
-        // 表单验证..
-        submitForm.detail[this.xFormSet.position - 1].imageUrl = submitForm.imgUrl
-        submitForm.detail[this.xFormSet.position - 1].url = submitForm.linkUrl
-      }
-      if (formName === 'xForm5') {
-        // 表单验证..
-        submitForm.detail.imageUrl = submitForm.imgUrl
-        submitForm.detail.url = submitForm.linkUrl
-      }
       if (formName === 'xForm6') {
-        // 表单验证..
-        submitForm.detail = []
+        console.log(this.selectGoodsList)
+        if (this.xForm6.selectGoodsList.length === 0) {
+          alert('请选取分组商品')
+        }
+        this.xForm6.detail = this.xForm6.selectGoodsList
+      } else {
+        // 表单验证
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            const submitForm = this[formName]
+            if (formName === 'xForm1') {
+              // 表单验证..
+              submitForm.detail.remark = submitForm.name
+            }
+            if (formName === 'xForm4') {
+              // 表单验证..
+              submitForm.detail[this.xFormSet.position - 1].imageUrl = submitForm.imgUrl
+              submitForm.detail[this.xFormSet.position - 1].url = submitForm.linkUrl
+            }
+            if (formName === 'xForm5') {
+              // 表单验证..
+              submitForm.detail.imageUrl = submitForm.imgUrl
+              submitForm.detail.url = submitForm.linkUrl
+            }
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
       }
     },
     // 保存所有设置
     submitSettings() {
-      alert('傻 逼？')
       let ret = []
-      // const data1 = this.xForm1.detail ? [this.xForm5.detail] : [] // 主页名称 （0-01）
-      // const data2 = this.xForm4.detail || [] // 1+3 (2-01)
-      // console.log('this.xForm5', this.xForm5)
-      // const data3 = this.xForm5.detail ? [this.xForm5.detail] : [] // top广告 (2-02)
-      // const data4 = this.xForm6.detail || [] // top广告 (3-01)
-      ret.push(this.xForm1.detail)
+      // 剔除空数据
+      if (this.xForm1.detail && this.xForm1.detail.remark !== '') {
+        ret.push(this.xForm1.detail)
+      }
+      // 剔除空数据
       if (this.xForm4.detail && this.xForm4.detail.length > 0) {
-        ret = ret.concat(this.xForm4.detail || [])
+        const mdata = this.xForm4.detail.filter(item => {
+          return item.imageUrl && item.url
+        })
+        ret = ret.concat(mdata)
       }
-      ret.push(this.xForm5.detail)
+      if (this.xForm5.detail && this.xForm5.detail.imageUrl !== '') {
+        ret.push(this.xForm5.detail)
+      }
       if (this.xForm6.detail && this.xForm6.detail.length > 0) {
-        ret = ret.concat(this.xForm6.detail || [])
-      }
-      console.log('this.xForm1.detail', this.xForm1.detail)
-      console.log('this.xForm4.detail', this.xForm4.detail)
-      console.log('this.xForm5.detail', this.xForm5.detail)
-      console.log('this.xForm6.detail', this.xForm6.detail)
-      // if (!data1.length > 0) {
-      //   console.log('未设置主页名称')
-      //   // return false
-      // }
-      // if (!data2.length > 0) {
-      //   console.log('未设置精彩活动')
-      //   // return false
-      // }
-      // if (!data3.length > 0) {
-      //   console.log('未设置活动广告')
-      //   // return false
-      // }
-      // if (!data4.length > 0) {
-      //   console.log('未设置分组商品')
-      //   // return false
-      // }
-
-      const params = {
-        createPageSetDTOS: ret
-      }
-      console.log('mutil add params', params)
-      mutilAddPageSet(params).then(res => {
-        if (res.code === '10000') {
-          this.$message({
-            message: '保存成功',
-            type: 'success',
-            duration: 5 * 1000
-          })
-          // this.dialogFormVisible = false
-          // 更新table
-        } else {
-          this.$message({
-            message: res.msg,
-            type: 'error',
-            duration: 5 * 1000
-          })
+        // 剔除空数据
+        if (this.xForm6.detail && this.xForm6.detail.length > 0) {
+          ret = ret.concat(this.xForm6.detail)
         }
-      })
+      }
+      // 提交数据
+      this._mutilAddPageSet(ret)
     },
     formatData(data, positionCode, sortNumber) {
       if (data) {
@@ -682,7 +696,7 @@ export default {
           'endTime': '',
           'id': '',
           'imageUrl': '',
-          'merCode': '',
+          'merCode': this.merCode,
           'positionCode': positionCode,
           'productId': null,
           'remark': '',
@@ -694,71 +708,7 @@ export default {
         return detail
       }
     },
-    _getAppSetDetail(positonCode) {
-      console.log('positonCode')
-      const params = {
-        classId: '',
-        displayTime: this.currentTime,
-        startTime: '',
-        endTime: '',
-        positionCode: positonCode,
-        remark: '',
-        sortOrder: '',
-        status: ''
-      }
-      getPageSets(params).then(res => {
-        if (res.code === '10000') {
-          if (positonCode === '0-01') {
-            // 主页标题
-            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null, '0-01', 1)
-            this.xForm1.positionCode = positonCode
-            console.log('res-标题', res.data)
-          } else if (positonCode === '1-01') {
-            // 轮播
-            if (res.data && res.data.length > 0) {
-              this.xForm2.detail = res.data
-            }
-          } else if (positonCode === '1-02') {
-            // 公告
-            this.xForm3.detail = res.data
-          } else if (positonCode === '2-01') {
-            console.log('res公告---', res.data)
-            // 活动(1+3)
-            let ret = []
-            if (res.data && res.data.length > 4) { // 大于4个
-              ret = res.data.splice(0, 4)
-            } else {
-              for (let i = 0; i < 4; i++) {
-                ret[i] = this.formatData(ret[i] || null, '2-01', i + 1)
-              }
-            }
-            console.log('ret', ret)
-            this.xForm4.detail = ret
-          } else if (positonCode === '2-02') {
-            // 活动top广告
-            console.log('res 活动top广告---', res.data)
-            this.xForm5.detail = this.formatData(res.data ? res.data[0] : null, '2-02', 1)
-          } else if (positonCode === '2-03') {
-            // 活动分组商品
-            let ret = []
-            if (res.data && res.data.length > 0) { // 有商品
-              console.log('有商品')
-              ret = res.data
-            } else {
-              ret = []
-            }
-            console.log('ret 商品', ret)
-            this.xForm6.detail = ret
-          }
-        } else {
-          this.$message({
-            message: res.msg,
-            type: 'error',
-            duration: 5 * 1000
-          })
-        }
-      })
-    },
+
     // h5-app
     swiperCallback(event) {
       console.log('event', event)
@@ -829,9 +779,108 @@ export default {
       //     return false
       //   }
       // }
-      this.xForm6.detail = list
+      this.xForm6.selectGoodsList = list
       this.$refs.goodsDialog.close()
       // this.xForm2.couponList = list
+    },
+    _getAppSetDetail(positonCode) {
+      console.log('positonCode')
+      const params = {
+        classId: '',
+        displayTime: this.currentTime,
+        startTime: '',
+        endTime: '',
+        positionCode: positonCode,
+        remark: '',
+        sortOrder: '',
+        status: ''
+      }
+      getPageSets(params).then(res => {
+        if (res.code === '10000') {
+          // positionCode: '0-01'.主页标题,'1-01'.轮播,'1-02'.公告,'2-01'.活动(1+3),'2-02'.活动top广告,'2-03'.活动分组商品 '3-01'.分类广告位
+          if (positonCode === '0-01') {
+            // 主页标题
+            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null, '0-01', 1)
+            console.log('res-标题', res.data)
+          } else if (positonCode === '1-01') {
+            // 轮播
+            if (res.data && res.data.length > 0) {
+              this.xForm2.detail = res.data
+            }
+          } else if (positonCode === '1-02') {
+            // 公告
+            this.xForm3.detail = res.data
+          } else if (positonCode === '2-01') {
+            console.log('res公告---', res.data)
+            // 活动(1+3)
+            let ret = []
+            if (res.data && res.data.length > 4) { // 大于4个
+              ret = res.data.splice(0, 4)
+            } else {
+              for (let i = 0; i < 4; i++) {
+                ret[i] = this.formatData(ret[i] || null, '2-01', i + 1)
+                console.log('i---', i)
+              }
+            }
+            // for (let i = 0; i < 4; i++) {
+            //   ret[i] = this.formatData(ret[i] || null, '2-01', i + 1)
+            //   console.log('i---', i)
+            // }
+            console.log('ret 活动(1+3)', ret)
+            this.xForm4.detail = ret
+          } else if (positonCode === '2-02') {
+            // 活动top广告
+            console.log('res 活动top广告---', res.data)
+            this.xForm5.detail = this.formatData(res.data ? res.data[0] : null, '2-02', 1)
+            console.log('this.xForm5.detail', this.xForm5.detail)
+          } else if (positonCode === '2-03') {
+            // 活动分组商品
+            let ret = []
+            if (res.data && res.data.length > 0) { // 有商品
+              console.log('有商品')
+              ret = res.data
+            } else {
+              ret = []
+            }
+            console.log('ret 商品', ret)
+            this.xForm6.detail = ret
+          }
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+      })
+    },
+    _mutilAddPageSet(ret) {
+      if (ret.length === 0) {
+        alert('请提交修改数据')
+        return
+      }
+      console.log('ret', ret)
+      const params = {
+        createPageSetDTOS: ret
+      }
+      console.log('mutil add params', params)
+      mutilAddPageSet(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '保存成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          // this.dialogFormVisible = false
+          // 更新table
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+      })
     }
   }
 }
@@ -1734,9 +1783,11 @@ export default {
   }
   .form-title {
     .form-notes {
+      position: absolute;
+      top: 30px;
+      right: 10px;
       font-size: 14px;
       color: #999;
-      text-align: right;
     }
   }
   .module-app-title {
@@ -1784,8 +1835,8 @@ export default {
       }
     }
     &.cover-top {
-      width: 291px;
-      height: 108px;
+      width: 286px;
+      height: 100px;
       .cover {
         background: url('../../assets/image/h5/pic_e.png') no-repeat center/100%
           100%;
@@ -1795,6 +1846,7 @@ export default {
 }
 .note-grey {
   font-size: 14px;
+  line-height: 1.1;
   color: #999999;
 }
 
