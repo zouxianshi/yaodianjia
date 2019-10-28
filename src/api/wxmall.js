@@ -63,6 +63,14 @@ export function delPageSet(params) {
   })
 }
 
+// 广告分类
+export function getADClass(params) {
+  return request({
+    url: `${api_wxmall}/1.0/comm-dimen/get/${params.merCode}/${params.useStatus}`,
+    method: 'get'
+  })
+}
+
 // 商品查询
 export function getProductList(params) {
   return request({

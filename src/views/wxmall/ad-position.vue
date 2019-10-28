@@ -45,9 +45,9 @@
       </section>
       <section class="table-box">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column type="index" label="序号" width="50" align="center">
+          <el-table-column label="序号" width="60" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.$index + 1 }}</span>
+              <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" width="200" align="center" />
@@ -113,10 +113,10 @@
                 placeholder="请选择分类"
               >
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in classOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
                 />
               </el-select>
             </el-form-item>
@@ -188,7 +188,8 @@ import {
   addPageSet,
   editPageSet,
   delPageSet,
-  updatePageSetStatus
+  updatePageSetStatus,
+  getADClass
 } from '../../api/wxmall'
 import config from '../../utils/config'
 
@@ -208,7 +209,16 @@ export default {
     }
     return {
       currentRole: 'adminDashboard',
-      positionCode: '3-01', // '3-01'.分类广告位
+      // I-01	轮播图
+      // I-02	公告
+      // I-03	精彩活动一加三广告位
+      // I-F1-1	精彩活动单张广告位
+      // I-F1-2	精彩活动商品广告位
+      // C-01	分类广告位
+      // I-00	主页名称
+      // I-F2-1	精彩活动单张广告位
+      // I-F2-2	精彩活动商品广告位
+      positionCode: 'C-01',
       statusOptions: [
         { id: 1, label: '全部', value: '' },
         { id: 2, label: '使用', value: '1' },
@@ -227,16 +237,7 @@ export default {
         total: 200
       },
       dialogFormVisible: false,
-      options: [{
-        value: 1,
-        label: '分类1'
-      }, {
-        value: 2,
-        label: '分类1'
-      }, {
-        value: 3,
-        label: '分类3'
-      }],
+      classOptions: [],
       xForm: {
         id: '',
         classId: '',
@@ -286,6 +287,7 @@ export default {
   methods: {
     fetchData() {
       this._getTableData()
+      this._getADClass() // 获取广告分分类列表
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -347,7 +349,7 @@ export default {
       // 信息查询
       this.xForm = {
         id: row.id,
-        classId: this.xForm.classId,
+        classId: row.classId,
         imgUrl: row.imageUrl,
         linkUrl: row.url,
         dateRange: [row.startTime, row.endTime],
@@ -416,7 +418,7 @@ export default {
         endTime: this.searchForm.timeEnd,
         positionCode: this.positionCode,
         remark: this.searchForm.remark,
-        sortOrder: 0,
+        sortOrder: 1,
         status: this.searchForm.status,
         currentPage: this.pager.current,
         pageSize: this.pager.size
@@ -441,7 +443,7 @@ export default {
         displayTime: '2019-10-23 10:00:00',
         startTime: '2019-10-20 12:00:00',
         endTime: '2019-11-24 10:00:00',
-        merCode: '888888',
+        merCode: '',
         positionCode: '1',
         remark: '',
         sortOrder: 0,
@@ -455,11 +457,30 @@ export default {
           console.log('err', err)
         })
     },
+    // 获取广告分类
+    _getADClass() {
+      const params = {
+        merCode: this.merCode,
+        useStatus: 1
+      }
+      getADClass(params).then(res => {
+        console.log('class res', res)
+        if (res.code === '10000') {
+          this.classOptions = res.data || []
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+      })
+    },
     // 新增数据
     _addData() {
       const params = {
         announcement: '',
-        classId: '',
+        classId: this.xForm.classId,
         createName: '',
         endTime: this.xForm.endTime,
         id: '',
@@ -496,7 +517,7 @@ export default {
     _editData() {
       const params = {
         announcement: '',
-        classId: '',
+        classId: this.xForm.classId,
         createName: '',
         endTime: this.xForm.endTime,
         id: this.xForm.id,
