@@ -145,7 +145,7 @@
               <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
               <el-button
                 type="primary"
-                size="small"
+                size="mini"
                 @click="handleClick"
               >查看</el-button>
             </template>

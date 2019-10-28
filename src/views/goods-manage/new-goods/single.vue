@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     _loadTypeList() { // 加载数据
-      getTypeTree(1).then(res => {
+      getTypeTree({ merCode: 'hydee', type: 1 }).then(res => {
         this.groupData = res.data
       })
     },

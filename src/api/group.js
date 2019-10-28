@@ -18,10 +18,12 @@ export function getTypeDimensionList(merCode) {
 }
 
 // 获取分类或分组树结构
-export function getTypeTree(type) {
+export function getTypeTree(params) {
   return request({
-    url: `${config.merGoods}/1.0/comm-type/getTypeTree/hydee/${type}`,
-    method: 'get'
+    url: `${config.merGoods}/1.0/comm-type/getTypeTree`,
+    method: 'post',
+    data: params,
+    noMerCode: true
   })
 }
 
@@ -43,10 +45,36 @@ export function setUpdateTypeDimension(params) {
   })
 }
 
-// 修改分类维度状态
+// 修改分组维度状态
 export function setTypeDimensionStatus(id, merCode) {
   return request({
     url: `${config.merGoods}/1.0/comm-dimen/updateUseStatus/${id}/${merCode}`,
     method: 'put'
+  })
+}
+
+// 新增分组
+export function setAddGroup(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-type/addType`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 删除分组
+export function delGroup(id) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-type/${id}`,
+    method: 'delete'
+  })
+}
+
+// 修改分组
+export function updateGroup(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-type/updateType`,
+    method: 'put',
+    data: params
   })
 }

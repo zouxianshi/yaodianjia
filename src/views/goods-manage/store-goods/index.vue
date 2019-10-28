@@ -173,9 +173,9 @@
             label="门店价格"
           >
             <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <span style="font-size:16px;display:inline-block;margin-right:10px" v-text="scope.row.price" />
-                <el-button type="primary" icon="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'price')" />
+              <div class="edit-tip">
+                <span style="display:inline-block;margin-right:10px" v-text="scope.row.price" />
+                <i class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'price')" />
               </div>
             </template>
           </el-table-column>
@@ -185,9 +185,9 @@
             label="门店库存"
           >
             <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <span style="font-size:16px;display:inline-block;margin-right:10px" v-text="scope.row.stock" />
-                <el-button type="primary" icon="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'stock')" />
+              <div class="edit-tip">
+                <span style="display:inline-block;margin-right:10px" v-text="scope.row.stock" />
+                <i class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'stock')" />
               </div>
             </template>
           </el-table-column>
@@ -347,7 +347,7 @@ export default {
       })
     },
     _loadTypeList() { // 获取分组
-      getTypeTree(2).then(res => {
+      getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
         this.groupData.unshift({ name: '全部', id: '' })
       })
@@ -522,6 +522,14 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
+  }
+  .edit-tip{
+    i{
+      cursor: pointer;
+      &:hover{
+        color: #409eff
+      }
+    }
   }
 }
 </style>

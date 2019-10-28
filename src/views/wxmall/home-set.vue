@@ -427,7 +427,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import 'swiper/dist/css/swiper.css'
+// import 'swiper/dist/css/swiper.css'
 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import dialogGoods from './components/dialog-goods'

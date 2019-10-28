@@ -3,10 +3,10 @@
     <slot name="name" />
     <div class="photo">
       <el-image
-        v-if="itemInfo.photo"
+        v-if="itemInfo.pic"
         style="width: 30px; height: 30px"
-        :preview-src-list="['https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg']"
-        src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+        :preview-src-list="[itemInfo.pic]"
+        :src="itemInfo.pic"
         fit="cover"
       />
       <span v-else>&nbsp;</span>
@@ -15,16 +15,16 @@
       <span>{{ itemInfo.is ? '商品数' : '9999' }}</span>
     </div>
     <div class="creater">
-      <span>{{ itemInfo.is ? '创建人' : 'admin' }}</span>
+      <span>{{ itemInfo.is ? '创建人' : itemInfo.createName }}</span>
     </div>
     <div class="create-time">
-      <span>{{ itemInfo.is ? '创建时间' : '2019-01-01 17:17:17' }}</span>
+      <span>{{ itemInfo.is ? '创建时间' : itemInfo.createTime }}</span>
     </div>
     <div class="modifier">
-      <span>{{ itemInfo.is ? '修改人' : 'quanquan' }}</span>
+      <span>{{ itemInfo.is ? '修改人' : itemInfo.modifyName }}</span>
     </div>
     <div class="edit-time">
-      <span>{{ itemInfo.is ? '更新时间' : '2019-01-01 17:17:17' }}</span>
+      <span>{{ itemInfo.is ? '更新时间' : itemInfo.modifyTime }}</span>
     </div>
     <slot name="operation" />
   </div>

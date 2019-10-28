@@ -411,7 +411,7 @@ export default {
       return isImg
     },
     _loadTypeList() { // 获取分组
-      getTypeTree(2).then(res => {
+      getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
       })
     },

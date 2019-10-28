@@ -1,21 +1,25 @@
 <template>
-  <el-popover placement="right" width="320" trigger="click">
+  <el-popover v-model="visible" placement="right" width="320" trigger="click">
     <div class="subgrouping-model">
-      <el-input v-model="value" placeholder="请输入内容" size="mini" style="width: 230px;" />
-      <div v-if="level === '3'" class="photo">
-        <el-image
-          style="width: 48px; height: 48px"
-          :preview-src-list="['https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg']"
-          src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-          fit="cover"
-        />
+      <el-input v-model="info.name" placeholder="请输入内容" size="mini" style="width: 230px;" />
+      <div v-if="level === '3'||(level==='2'&&type==='create')" class="photo">
+        <el-upload
+          class="avatar-uploader"
+          :action="uploadUrl"
+          :show-file-list="false"
+          :headers="headers"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+        >
+          <img v-if="info.pic" :src="uploadFileURL+'/'+info.pic" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon" />
+        </el-upload>
       </div>
       <div class="oper">
-        <el-button type="success" icon="el-icon-check" circle size="mini" />
-        <el-button type="danger" icon="el-icon-close" circle size="mini" />
+        <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubmit" />
+        <el-button type="danger" icon="el-icon-close" circle size="mini" @click="visible=false" />
       </div>
     </div>
-
     <el-tooltip v-if="!$slots.default" slot="reference" class="item" effect="dark" :content="type === 'edit' ? '编辑' : `新建（${level === '1' ? '一' : '二'}级）子分组` " placement="top">
       <el-button v-if="contentType === 'button'" type="primary" icon="el-icon-folder-add" :disabled="level === '3'" circle size="mini" style="margin-right: 10px" />
       <i v-if="contentType === 'text'" class="icon-edit el-icon-edit" />
@@ -26,47 +30,158 @@
   </el-popover>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+import config from '@/utils/config'
 export default {
   name: 'SubgroupingVue',
   components: {},
   props: {
-    type: {
+    type: { // 类型  是编辑or创建
       type: String,
       default: ''
     },
-    contentType: {
+    contentType: { // 按钮显示类型  button//text
       type: String,
       default: 'text'
     },
-    level: {
+    level: { // 级别
       type: String,
       default: '1'
+    },
+    oneIndex: { // 下标
+      type: Number,
+      default: 0
+    },
+    twoIndex: { // 下标
+      type: Number,
+      default: 0
+    },
+    threeIndex: { // 下标
+      type: Number,
+      default: 0
+    },
+    parentId: {
+      type: String,
+      default: '0'
+    },
+    groupInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
     return {
-      value: ''
+      visible: false,
+      info: {
+        children: [],
+        show: true
+      }
     }
   },
-  computed: {},
-  watch: {},
-  beforeCreate() {
+  computed: {
+    ...mapGetters(['groupList', 'merCode', 'token']),
+    headers() {
+      return { 'Authorization': this.token }
+    },
+    uploadUrl() {
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
+    }
+  },
+  watch: {
+    visible(val) {
+      if (val) {
+        if (this.groupInfo.name) {
+          this.info = JSON.parse(JSON.stringify(this.groupInfo))
+        }
+      }
+    }
   },
   created() {
+
   },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
-  },
-  methods: {}
+  methods: {
+    handleSubmit() {
+      if (this.type === 'create') {
+        this._Create()
+      } else {
+        this._Modify()
+      }
+    },
+    _Modify() { // 修改
+      this.$store.dispatch('group/modifyGroup', this.info).then(res => {
+        const updata = this.groupList.slice()
+        if (this.level === '1') {
+          updata[this.oneIndex] = this.info
+        } else if (this.level === '2') {
+          updata[this.oneIndex].children[this.twoIndex] = this.info
+        } else if (this.level === '3') {
+          updata[this.oneIndex].children[this.twoIndex].children[this.threeIndex] = this.info
+        }
+        this.$store.dispatch('group/updateGroup', updata)
+        this.visible = false
+        this.info = {}
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        })
+      })
+    },
+    _Create() { // 创建分组
+      const data = {
+        'dimensionId': this.$route.params.id,
+        'level': this.level === '0' ? 1 : this.level,
+        'name': this.info.name,
+        'parentId': this.parentId,
+        'pic': this.info.pic,
+        'type': 2
+      }
+      this.$store.dispatch('group/createGroup', data).then(res => {
+        const resData = res.data
+        const updata = this.groupList.slice()
+        if (this.level === '1') {
+          resData.children = []
+          resData.show = true
+          updata[this.oneIndex].children.push(resData)
+        } else if (this.level === '2') {
+          resData.children = []
+          resData.show = true
+          updata[this.oneIndex].children[this.twoIndex].children.push(resData)
+        } else if (this.level === '0') {
+          resData.children = []
+          updata.push(resData)
+        }
+        this.$store.dispatch('group/updateGroup', updata)
+        this.visible = false
+        this.info = {}
+        this.$message({
+          message: '创建成功',
+          type: 'success'
+        })
+      })
+    },
+    handleAvatarSuccess(res) {
+      if (res.code === '10000') {
+        this.info.pic = res.data
+      } else {
+        this.$message({
+          message: '上传失败',
+          type: 'error'
+        })
+      }
+    },
+    beforeAvatarUpload(file) {
+      const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      if (!isImg) {
+        this.$message({
+          message: '只能上传图片',
+          type: 'warning'
+        })
+      }
+      return isImg
+    }
+  }
 }
 </script>
 
@@ -94,4 +209,18 @@ export default {
       top: 4px;
     }
   }
+</style>
+<style scoped>
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 50px;
+    height: 50px;
+    line-height: 50px !important;
+    text-align: center;
+}
+.avatar{
+  width: 50px;
+  height: 50px;
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="drag-tree-model" style="position: relative">
-    <v-draggable v-model="tree" v-bind="level1_Opt()" @start="_onStartLevel1" @end="_onEndLevel1">
-      <div v-for="(item_1,$index_1) in tree" :key="$index_1" class="level-1-group">
+    <v-draggable v-model="list" v-bind="level1_Opt()" @start="_onStartLevel1" @end="_onEndLevel1">
+      <div v-for="(item_1,$index_1) in list" :key="$index_1" class="level-1-group">
         <div class="level-1-box">
           <div v-if="$index_1 === 0" class="title-box">
             <m-item-info :item-info="{is:true}">
@@ -12,15 +12,15 @@
             </m-item-info>
           </div>
           <div class="title">
-            <m-item-info :item-info="{}">
+            <m-item-info :item-info="item_1">
               <div slot="name" class="name">
-                <i class="el-icon-caret-bottom" @click="item_1.show = !item_1.show">{{ item_1.show ? '&#xe872;' : '&#xe635;' }}</i>
+                <i class="iconfont icon-toggle" @click="item_1.show = !item_1.show">{{ item_1.show ? '&#xe872;' : '&#xe635;' }}</i>
                 {{ item_1.name }}
-                <m-subgrouping type="edit" content-type="text" />
+                <m-subgrouping type="edit" :group-info="item_1" :one-index="$index_1" level="1" content-type="text" />
               </div>
               <div slot="operation" class="operation">
-                <m-subgrouping type="create" content-type="button" level="1" />
-                <m-delete />
+                <m-subgrouping type="create" content-type="button" :parent-id="item_1.id" :one-index="$index_1" level="1" />
+                <m-delete :one-index="$index_1" level="1" :group-id="item_1.id" />
               </div>
             </m-item-info>
           </div>
@@ -31,18 +31,15 @@
             <div v-for="(item_2,$index_2) in item_1.children" :key="$index_2" class="level-2-group">
               <div class="level-2-box">
                 <div class="title">
-                  <m-item-info :item-info="{}">
+                  <m-item-info :item-info="item_2">
                     <div slot="name" class="name" style="padding-left: 17px;">
-                      <i
-                        class="el-icon-caret-bottom"
-                        @click="item_2.show = !item_2.show"
-                      >{{ item_2.show ? '&#xe872;' : '&#xe635;' }}</i>
+                      <i class="iconfont icon-toggle" @click="item_2.show = !item_2.show">{{ item_2.show ? '&#xe872;' : '&#xe635;' }}</i>
                       {{ item_2.name }}
-                      <m-subgrouping type="edit" content-type="text" />
+                      <m-subgrouping type="edit" :group-info="item_2" :one-index="$index_1" :two-index="$index_2" level="2" content-type="text" />
                     </div>
                     <div slot="operation" class="operation">
-                      <m-subgrouping type="create" content-type="button" level="2" />
-                      <m-delete />
+                      <m-subgrouping type="create" content-type="button" :parent-id="item_2.id" :one-index="$index_1" :two-index="$index_2" level="2" />
+                      <m-delete :one-index="$index_1" :two-index="$index_2" level="2" :group-id="item_2.id" />
                     </div>
                   </m-item-info>
 
@@ -60,14 +57,14 @@
                   <div v-for="(item_3,$index_3) in item_2.children" :key="$index_3" class="level-3-group">
                     <div class="level-3-box">
                       <div class="title">
-                        <m-item-info :item-info="{photo:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'}">
+                        <m-item-info :item-info="item_3">
                           <div slot="name" class="name" style="padding-left: 46px;">
                             {{ item_3.name }}
-                            <m-subgrouping type="edit" content-type="text" level="3" />
+                            <m-subgrouping type="edit" :group-info="item_3" content-type="text" :one-index="$index_1" :two-index="$index_2" :three-index="$index_3" level="3" />
                           </div>
                           <div slot="operation" class="operation">
-                            <m-subgrouping type="create" content-type="button" level="3" />
-                            <m-delete />
+                            <m-subgrouping type="create" content-type="button" :parent-id="item_3.id" :one-index="$index_1" :two-index="$index_2" :three-index="$index_3" level="3" />
+                            <m-delete :one-index="$index_1" :two-index="$index_2" :three-index="$index_3" level="3" :group-id="item_3.id" />
                           </div>
                         </m-item-info>
                       </div>
@@ -93,72 +90,25 @@ import mDelete from './delete'
 export default {
   name: 'DragTree',
   components: { vDraggable, mItemInfo, mSubgrouping, mDelete },
-  props: {},
+  props: {
+    list: { // 分组数据
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
   data() {
     return {
-      drag: false,
-      tree: [
-        {
-          id: 1,
-          name: '一级（1）',
-          show: true,
-          children: [
-            {
-              id: 3,
-              name: '二级（1）',
-              show: true,
-              children: [
-                {
-                  id: 4,
-                  name: '三级（1）'
-                },
-                {
-                  id: 4,
-                  name: '三级（2）'
-                }
-              ]
-            },
-            {
-              name: '二级（2）',
-              id: 4,
-              show: true,
-              children: []
-            }
-          ]
-        },
-        {
-          id: 2,
-          name: '一级（2）',
-          show: true,
-          children: [
-
-          ]
-        }
-      ]
+      drag: false
     }
   },
   computed: {},
   watch: {},
-  beforeCreate() {
-  },
-  created() {
-  },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
-  },
   methods: {
     _onStartLevel1() {},
     _onEndLevel1() {
-      console.log(this.tree)
+      console.log(this.list)
     },
     level1_Opt() {
       return { animation: 150, filter: '.level-2-group' }

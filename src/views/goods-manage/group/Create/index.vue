@@ -5,7 +5,7 @@
         <m-conditions />
       </div>
       <div class="list">
-        <m-drag-tree />
+        <m-drag-tree :list="groupList" />
       </div>
     </div>
   </div>
@@ -13,33 +13,27 @@
 <script>
 import mDragTree from './_source/dragTree'
 import mConditions from './_source/conditions'
-
+import { mapGetters } from 'vuex'
 export default {
   name: 'Index',
   components: { mConditions, mDragTree },
   props: {},
   data() {
-    return {}
+    return {
+
+    }
   },
-  computed: {},
-  watch: {},
-  beforeCreate() {
+  computed: {
+    ...mapGetters(['groupList', 'merCode'])
   },
   created() {
+    this.getList()
   },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
-  },
-  methods: {}
+  methods: {
+    getList() {
+      this.$store.dispatch('group/getGroupList', { merCode: this.merCode, id: this.$route.params.id })
+    }
+  }
 }
 </script>
 

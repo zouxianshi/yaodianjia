@@ -1,6 +1,6 @@
 <template>
   <div class="gt-conditions-model">
-    <m-subgrouping level="1">
+    <m-subgrouping type="create" level="0">
       <el-button type="primary" size="mini">新建一级分组</el-button>
     </m-subgrouping>
   </div>
