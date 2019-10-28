@@ -26,7 +26,7 @@ import { mapState } from 'vuex'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mSidebar,mHeader ,MC} from '@merchant/commons'
 import RightPanel from '@/components/RightPanel'
-import { AppMain, TagsView } from './components'
+import { AppMain,  TagsView } from './components'
 import Breadcrumb from '@/components/Breadcrumb'
 import ps from './psHandler'
 import { removeToken } from '@/utils/auth'
@@ -116,7 +116,7 @@ export default {
 .layout-wary {
   position: relative;
   .sidebar-box {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: 255px;
@@ -131,6 +131,27 @@ export default {
     overflow-y: auto;
     height: calc(100vh);
     z-index: 1;
+    &:hover::-webkit-scrollbar-thumb {
+      background: #409eff;
+      min-width: 200px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      height: 10px;
+      background: #fff;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 5px;
+      margin: 4px 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #409eff;
+      border-radius: 5px;
+    }
     .breadcrumb-box {
       position: absolute;
       top: 0;

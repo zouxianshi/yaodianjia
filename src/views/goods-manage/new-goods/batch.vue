@@ -15,14 +15,13 @@
       <section class="batch-cnt-card">
         <div class="upfile">
           <el-upload
+            ref="file"
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            multiple
-            :limit="3"
-            :on-exceed="handleExceed"
+            :action="uploadUrl"
+            name="excelFile"
+            :headers="headers"
+            :on-success="handleFileSuccess"
+            :on-error="handleFileError"
           >
             <el-button
               size="small"
@@ -97,6 +96,8 @@
   </div>
 </template>
 <script>
+import config from '@/utils/config'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -108,18 +109,39 @@ export default {
       .dispatch('tagsView/delView', from)
     next()
   },
+  computed: {
+    ...mapGetters(['merCode', 'token']),
+    uploadUrl() {
+      return `${this.uploadFileURL}${config.merGoods}/1.0/commodity/_batCreat?merCode=${this.merCode}`
+    },
+    headers() {
+      return { 'Authorization': this.token }
+    }
+  },
   created() {
 
   },
   methods: {
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
+    handleFileSuccess(res) {
+      if (res.code === '10000') {
+        this.$message({
+          message: '上传成功',
+          type: 'success'
+        })
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+      this.$refs.file.clearFiles()
     },
-    handlePreview(file) {
-      console.log(file)
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    handleFileError(res) {
+      this.$message({
+        message: '文件上传失败',
+        type: 'error'
+      })
+      this.$refs.file.clearFiles()
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)

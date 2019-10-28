@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 const name = defaultSettings.title || '海典商户平台' // page title
-const port = 80 // dev port
+const port = 7002 // dev port
 
 // 引用uglifyjs，代码压缩、去除console
 // const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
@@ -58,6 +58,7 @@ module.exports = {
     },
     proxy: {
       '/api': {
+        // target: `http://middle.dev.yaodianjia.cn/businesses-gateway`,
         target: `http://middle.dev.yaodianjia.cn/businesses-gateway`,
         changeOrigin: true,
         pathRewrite: {
