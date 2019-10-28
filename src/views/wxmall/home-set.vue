@@ -218,6 +218,60 @@
                 </div>
               </div>
             </div>
+            <div class="h5-card h5-activity" style="padding: 0 0">
+              <div class="card-2">
+                <div class="card_top">
+                  <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm7'}" @click.stop="setEdit('xForm7', '')">
+                    <img v-if="xForm7.detail" :src="xForm7.detail.imageUrl">
+                  </div>
+                </div>
+                <div class="card_bottom set-hover" :class="{'set-active': xFormSet.formName==='xForm8'}" @click.stop="setEdit('xForm8', '')">
+                  <swiper
+                    key="swiper_4"
+                    ref="mySwiper4"
+                    class="goods-list2"
+                    :options="swiperOption2"
+                    style="height:100%"
+                    @someSwiperEvent="swiperCallback"
+                  >
+                    <!-- slides -->
+                    <template v-if="xForm8.detail && xForm8.detail.length">
+                      <swiper-slide v-for="item in xForm8.detail" :key="item.id" class="goods-item">
+                        <div class="cover-box">
+                          <img :src="item.imageUrl">
+                        </div>
+                        <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
+                        <div class="price">
+                          <span class="current">
+                            <span class="sign">￥</span>179
+                          </span>
+                          <span class="original">
+                            <span class="sign">￥</span>268
+                          </span>
+                        </div>
+                      </swiper-slide>
+                    </template>
+                    <template v-else>
+                      <swiper-slide v-for="(item, index) in 6" :key="index" class="goods-item">
+                        <div class="cover-box">
+                          <div class="cover" />
+                        </div>
+                        <div class="caption">康恩贝蛋白粉呃呃呃</div>
+                        <div class="price">
+                          <span class="current">
+                            <span class="sign">￥</span>179
+                          </span>
+                          <span class="original">
+                            <span class="sign">￥</span>268
+                          </span>
+                        </div>
+                      </swiper-slide>
+                    </template>
+                    <div slot="pagination" class="swiper-pagination2" />
+                  </swiper>
+                </div>
+              </div>
+            </div>
             <div class="h5-card h5-guess-like">
               <div class="card-header">
                 <div class="title">猜你喜欢</div>
@@ -437,6 +491,94 @@
             </div>
           </div>
         </div>
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm7'}" style="top: 1300px">
+          <div class="m-header">
+            <span class="text">分组主图2</span>
+          </div>
+          <div class="m-body">
+            <el-form ref="xForm7" :rules="xRules7" :model="xForm7">
+              <el-form-item label="图片" class="upload-item" prop="imgUrl">
+                <div class="cover-wrap cover-top">
+                  <div v-if="xForm7.imgUrl==''" class="cover" />
+                  <img v-else class="cover" :src="xForm7.imgUrl">
+                </div>
+                <p class="note-grey" style="margin:8px 0 0 140px;">建议尺寸1:1.2</p>
+                <el-upload
+                  style="height:20px"
+                  :headers="headers"
+                  :action="upLoadUrl"
+                  :show-file-list="false"
+                  :on-success="handleUploadSuccess"
+                  :before-upload="beforeUpload"
+                >
+                  <el-button
+                    class="btn btn-upload"
+                    style="position:relative;left: 50px;top: -20px"
+                    size="small"
+                  >本地上传</el-button>
+                </el-upload>
+              </el-form-item>
+              <el-form-item label="链接" prop="linkUrl">
+                <el-input v-model="xForm6.linkUrl" type="text" size="small" style="width: 286px;" />
+              </el-form-item>
+            </el-form>
+            <div class="btn-line">
+              <el-button
+                type="primary"
+                class="btn-submit"
+                plain
+                size="small"
+                @click="submitForm('xForm7')"
+              >提交</el-button>
+            </div>
+          </div>
+        </div>
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1300px">
+          <div class="m-header">
+            <span class="text">分组商品图片2</span>
+            <!-- <span class="text">右1图片</span> -->
+          </div>
+          <div class="m-body">
+            <div style="display: flex">
+              <div style="flex: 0 0 auto;">图片</div>
+              <div class="flex: 1;margin-left: 10px;">
+                <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
+                <p class="note-grey" style="margin: 10px 10px;">建议尺寸1:1.2</p>
+                <ul class="m-goods-list">
+                  <template v-if="xForm8.detail && xForm8.detail.length>0">
+                    <li v-for="(item, index) in xForm8.detail" :key="index" class="goods-item">
+                      <div class="cover-box">
+                        <div class="cover" />
+                        <div class="btn-remove" />
+                      </div>
+                      <div class="caption">修正VE软胶</div>
+                      <div class="price">
+                        <span class="current">
+                          <span class="sign">￥</span>138
+                        </span>
+                        <span class="original">
+                          <span class="sign">￥</span>268
+                        </span>
+                      </div>
+                    </li>
+                  </template>
+                  <li class="goods-item item-add">
+                    <div class="icon-add" @click.stop="toSelectGoods" />
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="btn-line">
+              <el-button
+                type="primary"
+                class="btn-submit"
+                plain
+                size="small"
+                @click="submitForm('xForm6')"
+              >提交</el-button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="footer-btns">
         <el-button type="primary" @click.stop="submitSettings()">保存</el-button>
@@ -449,7 +591,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// import 'swiper/dist/css/swiper.css'
+import 'swiper/dist/css/swiper.css'
 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import dialogGoods from './components/dialog-goods'
@@ -516,10 +658,18 @@ export default {
           { required: true, message: '请输入链接地址', trigger: 'blur' }
         ]
       },
+      xRules7: {
+        imgUrl: [
+          { required: true, message: '请上传图片', trigger: 'blur' }
+        ],
+        linkUrl: [
+          { required: true, message: '请输入链接地址', trigger: 'blur' }
+        ]
+      },
       // 主页名称
       xForm1: {
         detail: null,
-        name: ''
+        name: '微商城'
       },
       // 轮播
       xForm2: {
@@ -545,6 +695,17 @@ export default {
       xForm6: {
         detail: null,
         selectGoodsList: []
+      },
+      // 活动top广告
+      xForm7: {
+        detail: null,
+        imgUrl: '',
+        linkUrl: ''
+      },
+      // 活动分组商品2
+      xForm8: {
+        detail: null,
+        selectGoodsList: []
       }
     }
   },
@@ -555,6 +716,9 @@ export default {
     },
     swiper2() {
       return this.$refs.mySwiper2.swiper
+    },
+    swiper4() {
+      return this.$refs.mySwiper4.swiper
     },
     swiper3() {
       return this.$refs.mySwiper3.swiper
@@ -583,13 +747,23 @@ export default {
       // e.target.src = url
     },
     fetchData() {
-      // positionCode: '0-01'.主页标题,'1-01'.轮播,'1-02'.公告,'2-01'.活动(1+3),'2-02'.活动top广告,'2-03'.活动分组商品 '3-01'.分类广告位
-      this._getAppSetDetail('0-01') // 主页标题
-      this._getAppSetDetail('1-01') // 轮播
-      this._getAppSetDetail('1-02') // 公告
-      this._getAppSetDetail('2-01') // 活动(1+3)
-      this._getAppSetDetail('2-02') // 活动top广告
-      this._getAppSetDetail('2-03') // 活动分组商品
+      // I-00	主页名称
+      // I-01	轮播图
+      // I-02	公告
+      // I-03	精彩活动一加三广告位
+      // I-F1-1	精彩活动单张广告位
+      // I-F1-2	精彩活动商品广告位
+      // I-F2-1	精彩活动单张广告位
+      // I-F2-2	精彩活动商品广告位
+      // C-01	分类广告位
+      this._getAppSetDetail('I-00') // 主页标题
+      this._getAppSetDetail('I-01') // 轮播图
+      this._getAppSetDetail('I-02') // 公告
+      this._getAppSetDetail('I-03') // 活动(1+3)
+      this._getAppSetDetail('I-F1-1') // 活动top广告
+      this._getAppSetDetail('I-F1-2') // 活动分组商品
+      this._getAppSetDetail('I-F2-1') // 活动top广告
+      this._getAppSetDetail('I-F2-2') // 活动分组商品
     },
     setEdit(formName, position) {
       const eidtForm = this[formName]
@@ -609,7 +783,7 @@ export default {
       }
       // 显示详情
       if (formName === 'xForm1') {
-        eidtForm.name = (eidtForm.detail && eidtForm.detail.remark) ? eidtForm.detail.remark || '' : ''
+        eidtForm.name = (eidtForm.detail && eidtForm.detail.remark) ? eidtForm.detail.remark || '微商城' : '微商城'
       }
       if (formName === 'xForm4') {
         eidtForm.imgUrl = eidtForm.detail[position - 1].imageUrl || ''
@@ -797,20 +971,27 @@ export default {
       }
       getPageSets(params).then(res => {
         if (res.code === '10000') {
-          // positionCode: '0-01'.主页标题,'1-01'.轮播,'1-02'.公告,'2-01'.活动(1+3),'2-02'.活动top广告,'2-03'.活动分组商品 '3-01'.分类广告位
-          if (positonCode === '0-01') {
+          // positionCode:
+          // I-00.主页名称, I-01.轮播图 I-02.公告
+          // I-03	精彩活动一加三广告位
+          // I-F1-1	精彩活动单张广告位
+          // I-F1-2	精彩活动商品广告位
+          // I-F2-1	精彩活动单张广告位
+          // I-F2-2	精彩活动商品广告位
+          // C-01	分类广告位
+          if (positonCode === 'I-00') {
             // 主页标题
-            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null, '0-01', 1)
+            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
             console.log('res-标题', res.data)
-          } else if (positonCode === '1-01') {
+          } else if (positonCode === 'I-01') {
             // 轮播
             if (res.data && res.data.length > 0) {
               this.xForm2.detail = res.data
             }
-          } else if (positonCode === '1-02') {
+          } else if (positonCode === 'I-02') {
             // 公告
             this.xForm3.detail = res.data
-          } else if (positonCode === '2-01') {
+          } else if (positonCode === 'I-03') {
             console.log('res公告---', res.data)
             // 活动(1+3)
             let ret = []
@@ -818,7 +999,12 @@ export default {
               ret = res.data.splice(0, 4)
             } else {
               for (let i = 0; i < 4; i++) {
-                ret[i] = this.formatData(ret[i] || null, '2-01', i + 1)
+                if (res.data) {
+                  ret[i] = this.formatData(res.data[i] || null, positonCode, i + 1)
+                } else {
+                  ret[i] = this.formatData(null, positonCode, i + 1)
+                }
+
                 console.log('i---', i)
               }
             }
@@ -828,22 +1014,29 @@ export default {
             // }
             console.log('ret 活动(1+3)', ret)
             this.xForm4.detail = ret
-          } else if (positonCode === '2-02') {
+            console.log('this.xForm4', this.xForm4.detail)
+          } else if (positonCode === 'I-F1-1' || positonCode === 'I-F2-1') {
             // 活动top广告
             console.log('res 活动top广告---', res.data)
-            this.xForm5.detail = this.formatData(res.data ? res.data[0] : null, '2-02', 1)
-            console.log('this.xForm5.detail', this.xForm5.detail)
-          } else if (positonCode === '2-03') {
+            if (positonCode === 'I-F1-1') {
+              this.xForm5.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
+            } else {
+              this.xForm7.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
+            }
+          } else if (positonCode === 'I-F1-2' || positonCode === 'I-F2-2') {
             // 活动分组商品
             let ret = []
             if (res.data && res.data.length > 0) { // 有商品
-              console.log('有商品')
               ret = res.data
             } else {
               ret = []
             }
             console.log('ret 商品', ret)
-            this.xForm6.detail = ret
+            if (positonCode === 'I-F1-2') {
+              this.xForm6.detail = ret
+            } else {
+              this.xForm8.detail = ret
+            }
           }
         } else {
           this.$message({

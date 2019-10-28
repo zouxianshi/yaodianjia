@@ -41,9 +41,9 @@
       </section>
       <section class="table-box">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column type="index" label="序号" width="50" align="center">
+          <el-table-column label="序号" width="60" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.$index + 1 }}</span>
+              <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="announcement" label="展示内容" min-width="240" />
@@ -163,7 +163,16 @@ export default {
     }
     return {
       currentRole: 'adminDashboard',
-      positionCode: '1-02', // "1-01",0, "轮播图"，"1-02", 0,"公告"，"3-01", 0,"分类广告位"，"2-03", 1,"精彩活动-商品广告位"
+      // I-01	轮播图
+      // I-02	公告
+      // I-03	精彩活动一加三广告位
+      // I-F1-1	精彩活动单张广告位
+      // I-F1-2	精彩活动商品广告位
+      // C-01	分类广告位
+      // I-00	主页名称
+      // I-F2-1	精彩活动单张广告位
+      // I-F2-2	精彩活动商品广告位
+      positionCode: 'I-02',
       statusOptions: [
         { id: 1, label: '全部', value: '' },
         { id: 2, label: '使用', value: '1' },
@@ -350,7 +359,7 @@ export default {
         endTime: this.searchForm.timeEnd,
         positionCode: this.positionCode,
         remark: this.searchForm.remark,
-        sortOrder: 0,
+        sortOrder: 1,
         status: this.searchForm.status,
         currentPage: this.pager.current,
         pageSize: this.pager.size
