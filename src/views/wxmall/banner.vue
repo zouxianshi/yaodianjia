@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-button class="btn btn-add" type="primary" @click.stop="handleAdd()">添加轮播图</el-button>
+      <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加轮播图</el-button>
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
@@ -93,11 +93,18 @@
         />
       </section>-->
     </div>
-    <el-dialog title="添加轮播图" append-to-body :visible.sync="dialogFormVisible" width="800px">
+    <el-dialog
+      :title="`${xForm.id==''? '添加':'修改'}轮播图`"
+      append-to-body
+      :visible.sync="dialogFormVisible"
+      width="800px"
+      :close-on-click-modal="false"
+      @close="dialogClose('xForm')"
+    >
       <div class="x-dialog-body">
         <div class="form-box">
-          <el-form :model="xForm">
-            <el-form-item label="图片" :label-width="formLabelWidth">
+          <el-form ref="xForm" :model="xForm" :rules="xRules">
+            <el-form-item label="图片" :label-width="formLabelWidth" prop="imgUrl">
               <el-upload
                 class="avatar-uploader"
                 :headers="headers"
@@ -111,15 +118,17 @@
               </el-upload>
               <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
             </el-form-item>
-            <el-form-item label="设置链接" :label-width="formLabelWidth">
+            <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
               <el-input
                 v-model="xForm.linkUrl"
                 size="small"
                 autocomplete="off"
                 style="width: 350px"
+                :maxlength="150"
+                placeholder="http:// 或 https://"
               />
             </el-form-item>
-            <el-form-item label="时间段" :label-width="formLabelWidth">
+            <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
               <el-date-picker
                 v-model="xForm.dateRange"
                 style="width: 350px"
@@ -133,15 +142,16 @@
                 @change="handleTimeChange($event, 2)"
               />
             </el-form-item>
-            <el-form-item label="序号" :label-width="formLabelWidth">
-              <el-input v-model="xForm.sort" size="small" autocomplete="off" style="width: 350px" />
+            <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
+              <el-input v-model="xForm.sort" size="small" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
             </el-form-item>
             <el-form-item label="备注" :label-width="formLabelWidth">
               <el-input
                 v-model="xForm.remark"
                 size="small"
                 autocomplete="off"
-                placeholder="备注"
+                placeholder="20字以内"
+                :maxlength="20"
                 style="width: 350px"
               />
             </el-form-item>
@@ -158,7 +168,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit()">确 定</el-button>
+        <el-button type="primary" size="small" @click="handleSubmit('xForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -179,6 +189,17 @@ import config from '../../utils/config'
 export default {
   name: 'Banner',
   data() {
+    const checkNum = (rule, value, callback) => {
+      console.log('rule', rule)
+      if (value === '') {
+        callback(new Error('请输入序号'))
+      }
+      if (/[^1-9]/.test(value)) {
+        console.log(1111)
+        callback(new Error('请输入正整数'))
+      }
+      callback()
+    }
     return {
       currentRole: 'adminDashboard',
       positionCode: '1-01', // "1-01",0, "轮播图"，"1-02", 0,"公告"，"3-01", 0,"分类广告位"，"2-03", 1,"精彩活动-商品广告位"
@@ -210,6 +231,20 @@ export default {
         endTime: '',
         sort: '',
         remark: ''
+      },
+      xRules: {
+        imgUrl: [
+          { required: true, message: '请上传图片', trigger: 'blur' }
+        ],
+        linkUrl: [
+          { required: true, message: '请输入链接地址', trigger: 'blur' }
+        ],
+        startTime: [
+          { required: true, message: '请选择时间段', trigger: 'change' }
+        ],
+        sort: [
+          { required: true, validator: checkNum, trigger: 'blur' }
+        ]
       },
       editDetail: null, // 编辑详情
       formLabelWidth: '80px'
@@ -248,6 +283,7 @@ export default {
       this._getTableData()
     },
     handleTimeChange(val, type) {
+      console.log(val, type)
       if (type === 1) {
         // 搜索栏
         if (val && val.length === 2) {
@@ -268,25 +304,10 @@ export default {
           this.xForm.endTime = ''
         }
       }
-      console.log('this.searchForm', this.searchForm)
-      console.log('this.xForm', this.xForm)
     },
     // 查询
     search() {
       this._getTableData()
-    },
-    // 表单重置
-    formReset() {
-      this.xForm = {
-        id: '',
-        imgUrl: '',
-        linkUrl: '',
-        timeRange: '',
-        startTime: '',
-        endTime: '',
-        sort: '',
-        remark: ''
-      }
     },
     handleChangeStatus(row) {
       console.log('row', row)
@@ -303,11 +324,9 @@ export default {
       })
     },
     handleAdd() {
-      this.formReset()
       this.dialogFormVisible = true
     },
     handleEdit(row) {
-      this.formReset()
       this.editDetail = row
       // 信息查询
       this.xForm = {
@@ -322,15 +341,39 @@ export default {
       }
       this.dialogFormVisible = true
     },
-    handleSubmit() {
-      // 表单验证
-      if (this.xForm.id === '') {
-        // 新增
-        this._addData()
-      } else {
-        // 修改
-        this._editData()
+    dialogClose(formName) {
+      this.resetForm(formName)
+    },
+    resetForm(formName) {
+      // 表单重置
+      this.xForm = {
+        id: '',
+        imgUrl: '',
+        linkUrl: '',
+        timeRange: '',
+        startTime: '',
+        endTime: '',
+        sort: '',
+        remark: ''
       }
+      this.$refs[formName].resetFields()
+    },
+    handleSubmit(formName) {
+      // 表单验证
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (this.xForm.id === '') {
+            // 新增
+            this._addData()
+          } else {
+            // 修改
+            this._editData()
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     handleUploadSuccess(res, file) {
       this.xForm.imgUrl = res.data || ''
@@ -407,7 +450,7 @@ export default {
         merCode: '',
         positionCode: this.positionCode,
         remark: this.xForm.remark,
-        productId: '', // 2-03 类型必填
+        productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
@@ -444,7 +487,7 @@ export default {
         merCode: '',
         positionCode: this.positionCode,
         remark: this.xForm.remark,
-        productId: '', // 2-03 类型必填
+        productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
@@ -552,5 +595,11 @@ export default {
   .test-1 {
     color: red;
   }
+}
+
+.note-grey {
+  font-size: 14px;
+  line-height: 1.1;
+  color: #999999;
 }
 </style>

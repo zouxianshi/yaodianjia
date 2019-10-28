@@ -63,3 +63,10 @@ export function delPageSet(params) {
   })
 }
 
+// 商品查询
+export function getProductList(params) {
+  return request({
+    url: `${api_wxmall}/1.0/pageset/queryMinProductList`,
+    method: 'post'
+  })
+}

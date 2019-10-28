@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-button class="btn btn-add" type="primary" @click.stop="handleAdd()">添加分类广告</el-button>
+      <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加分类广告</el-button>
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
@@ -58,9 +58,9 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="url" label="链接地址" width="300" align="center" />
-          <el-table-column prop="startTime" label="开始时间" width="200" align="center" />
-          <el-table-column prop="endTime" label="结束时间" width="200" align="center" />
+          <el-table-column prop="url" label="链接地址" min-width="240" />
+          <el-table-column prop="startTime" label="开始时间" width="180" align="center" />
+          <el-table-column prop="endTime" label="结束时间" width="180" align="center" />
           <el-table-column label="状态" width="100" align="center">
             >
             <template slot-scope="scope">
@@ -68,7 +68,7 @@
               <span v-if="scope.row.status=='0'">停用</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column label="操作" align="center" width="240">
             <template slot-scope="scope">
               <el-button type="primary" size="small" @click.stop="handleEdit(scope.row)">编辑</el-button>
               <el-button type="danger" size="small" @click.stop="handleChangeStatus(scope.row)">
@@ -93,11 +93,18 @@
         />
       </section>-->
     </div>
-    <el-dialog title="添加分类广告位" append-to-body :visible.sync="dialogFormVisible" width="800px">
+    <el-dialog
+      :title="`${xForm.id==''? '添加':'修改'}分列广告`"
+      append-to-body
+      :visible.sync="dialogFormVisible"
+      width="800px"
+      :close-on-click-modal="false"
+      @close="dialogClose('xForm')"
+    >
       <div class="x-dialog-body">
         <div class="form-box">
-          <el-form :model="xForm">
-            <el-form-item label="所属分类" :label-width="formLabelWidth">
+          <el-form ref="xForm" :model="xForm" :rules="xRules">
+            <el-form-item label="所属分类" :label-width="formLabelWidth" prop="classId">
               <el-select
                 v-model="xForm.classId"
                 filterable
@@ -113,7 +120,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="广告图片" :label-width="formLabelWidth">
+            <el-form-item label="广告图片" :label-width="formLabelWidth" prop="imgUrl">
               <el-upload
                 class="avatar-uploader"
                 :headers="headers"
@@ -127,15 +134,17 @@
               </el-upload>
               <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
             </el-form-item>
-            <el-form-item label="设置链接" :label-width="formLabelWidth">
+            <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
               <el-input
                 v-model="xForm.linkUrl"
                 size="small"
                 autocomplete="off"
                 style="width: 350px"
+                :maxlength="150"
+                placeholder="http:// 或 https://"
               />
             </el-form-item>
-            <el-form-item label="时间段" :label-width="formLabelWidth">
+            <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
               <el-date-picker
                 v-model="xForm.dateRange"
                 style="width: 350px"
@@ -149,8 +158,8 @@
                 @change="handleTimeChange($event, 2)"
               />
             </el-form-item>
-            <el-form-item label="序号" :label-width="formLabelWidth">
-              <el-input v-model="xForm.sort" size="small" autocomplete="off" style="width: 350px" />
+            <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
+              <el-input v-model="xForm.sort" size="small" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
             </el-form-item>
           </el-form>
         </div>
@@ -165,7 +174,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit()">确 定</el-button>
+        <el-button type="primary" size="small" @click="handleSubmit('xForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -186,9 +195,20 @@ import config from '../../utils/config'
 export default {
   name: 'ADPosition',
   data() {
+    const checkNum = (rule, value, callback) => {
+      console.log('rule', rule)
+      if (value === '') {
+        callback(new Error('请输入序号'))
+      }
+      if (/[^1-9]/.test(value)) {
+        console.log(1111)
+        callback(new Error('请输入正整数'))
+      }
+      callback()
+    }
     return {
       currentRole: 'adminDashboard',
-      positionCode: '2-03', // "1-01",0, "轮播图"，"1-02", 0,"公告"，"3-01", 0,"分类广告位"，"2-03", 1,"精彩活动-商品广告位"
+      positionCode: '3-01', // '3-01'.分类广告位
       statusOptions: [
         { id: 1, label: '全部', value: '' },
         { id: 2, label: '使用', value: '1' },
@@ -226,6 +246,23 @@ export default {
         startTime: '',
         endTime: '',
         sort: ''
+      },
+      xRules: {
+        classId: [
+          { required: true, message: '请选择分类', trigger: 'blur' }
+        ],
+        imgUrl: [
+          { required: true, message: '请上传图片', trigger: 'blur' }
+        ],
+        linkUrl: [
+          { required: true, message: '请输入链接地址', trigger: 'blur' }
+        ],
+        startTime: [
+          { required: true, message: '请选择时间段', trigger: 'change' }
+        ],
+        sort: [
+          { required: true, validator: checkNum, trigger: 'blur' }
+        ]
       },
       editDetail: null, // 编辑详情
       formLabelWidth: '80px'
@@ -288,19 +325,6 @@ export default {
     search() {
       this._getTableData()
     },
-    // 表单重置
-    formReset() {
-      this.xForm = {
-        id: '',
-        classId: '',
-        imgUrl: '',
-        linkUrl: '',
-        timeRange: '',
-        startTime: '',
-        endTime: '',
-        sort: ''
-      }
-    },
     handleChangeStatus(row) {
       console.log('row', row)
       this._updateDataStatus(row)
@@ -316,11 +340,9 @@ export default {
       })
     },
     handleAdd() {
-      this.formReset()
       this.dialogFormVisible = true
     },
     handleEdit(row) {
-      this.formReset()
       this.editDetail = row
       // 信息查询
       this.xForm = {
@@ -336,15 +358,39 @@ export default {
       }
       this.dialogFormVisible = true
     },
-    handleSubmit() {
-      // 表单验证
-      if (this.xForm.id === '') {
-        // 新增
-        this._addData()
-      } else {
-        // 修改
-        this._editData()
+    dialogClose(formName) {
+      this.resetForm(formName)
+    },
+    resetForm(formName) {
+      // 表单重置
+      this.xForm = {
+        id: '',
+        classId: '',
+        imgUrl: '',
+        linkUrl: '',
+        timeRange: '',
+        startTime: '',
+        endTime: '',
+        sort: ''
       }
+      this.$refs[formName].resetFields()
+    },
+    handleSubmit(formName) {
+      // 表单验证
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (this.xForm.id === '') {
+            // 新增
+            this._addData()
+          } else {
+            // 修改
+            this._editData()
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     handleUploadSuccess(res, file) {
       this.xForm.imgUrl = res.data || ''
@@ -421,7 +467,7 @@ export default {
         merCode: '',
         positionCode: this.positionCode,
         remark: this.xForm.remark,
-        productId: '', // 2-03 类型必填
+        productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
@@ -566,5 +612,10 @@ export default {
   .test-1 {
     color: red;
   }
+}
+.note-grey {
+  font-size: 14px;
+  line-height: 1.1;
+  color: #999999;
 }
 </style>

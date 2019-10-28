@@ -28,6 +28,7 @@
         @select-all="handleSelectAllChange"
         @select="handleSelect"
       >
+        <el-table-column type="selection" align="center" width="50" />
         <el-table-column align="center" label="图片" width="120">
           <template slot-scope="scope">
             <div class="img-wrap">
@@ -39,12 +40,11 @@
         <el-table-column prop="storeName" label="包装规格" align="center" min-width="150" />
         <el-table-column prop="storeName" label="价格" align="center" min-width="150" />
         <el-table-column prop="storeName" label="库存" align="center" min-width="150" />
-        <el-table-column label="操作">
+        <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
           </template>
-        </el-table-column>
-
+        </el-table-column>-->
       </el-table>
       <el-pagination
         background
@@ -60,8 +60,8 @@
       <div class="result-section">
         <div class="blank-line" />
         <div class="title">
-          <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
-          <span v-else style="color: red">请选取门店</span>
+          <span v-if="mySelectList && mySelectList.length>0">已选商品：</span>
+          <span v-else style="color: red">请选取商品</span>
         </div>
         <div class="label-line">
           <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { getProductList } from '../../../api/wxmall'
 export default {
   name: 'DialogGoods',
   props: {
@@ -239,40 +240,22 @@ export default {
         }, 1000)
         return false*/
       const params = {
+        storeId: '',
         keyWord: this.search.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size
       }
-      const reqUrl = 'redPacket/getAllStore'
-      new Promise((resolve, reject) => {
-        this.$Ajaxy(
-          'POST',
-          reqUrl,
-          params,
-          res => {
-            resolve(res)
-          },
-          () => {
-            reject()
-          },
-          'jsonType'
-        )
-      })
-        .then(res => {
-          if (res.code === '0' && res.data) {
-            this.tableData = res.data.data || []
-            this.pager.total = res.data.totalAmount
-            this.$nextTick(() => {
-              this.updateChecked()
-            })
-          } else {
-            this.tableData = []
-          }
-        })
-        .catch(err => {
+      getProductList(params).then(res => {
+        if (res.code === '10000' && res.data) {
+          this.tableData = res.data.data || []
+          this.pager.total = res.data.totalAmount
+          this.$nextTick(() => {
+            this.updateChecked()
+          })
+        } else {
           this.tableData = []
-          console.log('err2', err)
-        })
+        }
+      })
     }
   }
 }
@@ -280,7 +263,7 @@ export default {
 
 <style lang="scss">
 .dialog-goods {
-  .el-dialog__header{
+  .el-dialog__header {
     height: 0;
     padding: 0;
   }
