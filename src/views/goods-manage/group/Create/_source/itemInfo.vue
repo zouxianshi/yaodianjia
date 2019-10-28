@@ -5,8 +5,8 @@
       <el-image
         v-if="itemInfo.pic"
         style="width: 30px; height: 30px"
-        :preview-src-list="[itemInfo.pic]"
-        :src="itemInfo.pic"
+        :preview-src-list="[showImg(itemInfo.pic)]"
+        :src="showImg(itemInfo.pic)"
         fit="cover"
       />
       <span v-else>&nbsp;</span>

@@ -50,16 +50,17 @@
           <el-table-column
             prop="createTime"
             label="创建时间"
-            min-width="120"
+            min-width="130"
           />
           <el-table-column
             prop="modifyName"
+            min-width="130"
             label="修改人"
           />
           <el-table-column
             prop="modifyTime"
             label="修改时间"
-            min-width="120"
+            min-width="130"
           />
           <el-table-column
             prop="address"

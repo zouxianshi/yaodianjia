@@ -78,3 +78,12 @@ export function updateGroup(params) {
     data: params
   })
 }
+
+// 修改排序
+export function updateSort(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-type/sort`,
+    method: 'post',
+    data: params
+  })
+}

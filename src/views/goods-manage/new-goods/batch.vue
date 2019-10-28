@@ -85,10 +85,28 @@
         <div class="table-box">
           <p style="margin-bottom:12px;color:#333">本次批量创建结果如下：</p>
           <el-table :data="tableData">
-            <el-table-column label="品类" />
-            <el-table-column label="创建结果" />
-            <el-table-column label="数量" />
-            <el-table-column label="操作" />
+            <el-table-column label="品类">
+              <template slot-scope="scope">
+                <span v-if="scope.row.model==='1'">中西医药</span>
+                <span v-else-if="scope.row.model==='2'">营养保健</span>
+                <span v-else-if="scope.row.model==='3'">医疗器械</span>
+                <span v-else>其他</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="创建结果">
+              <template slot-scope="scope">
+                <span v-text="scope.row.resut?'成功':'失败'" />
+              </template>
+            </el-table-column>
+            <el-table-column label="数量" prop="number" />
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <template v-if="scope.row.resut">
+                  <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
+                </template>
+                <el-button type="" size="mini" @click="handleDowload(scope.row)">下载结果</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </section>
@@ -128,6 +146,7 @@ export default {
           message: '上传成功',
           type: 'success'
         })
+        this.tableData = res.data
       } else {
         this.$message({
           message: res.msg,
@@ -145,6 +164,12 @@ export default {
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    handleDowload(row) {
+      var elemIF = document.createElement('iframe')
+      elemIF.src = row.excelPath
+      elemIF.style.display = 'none'
+      document.body.appendChild(elemIF)
     }
   }
 }

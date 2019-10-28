@@ -14,27 +14,27 @@
         style="margin-top:20px;margin-bottom:10px"
       >
         <div class="search-item">
-          <span class="label-name">连锁信息</span>
+          <span class="label-name">商品编码</span>
           <el-input
-            v-model.trim="keyword"
+            v-model.trim="listQuery.erpCode"
+            size="small"
+            placeholder="商品编码"
+          />
+        </div>
+        <div class="search-item">
+          <span class="label-name">商品名称</span>
+          <el-input
+            v-model.trim="listQuery.name"
             size="small"
             placeholder="商品名称"
           />
         </div>
         <div class="search-item">
-          <span class="label-name">商品信息</span>
-          <el-input
-            v-model.trim="keyword"
-            size="small"
-            placeholder="生产企业"
-          />
-        </div>
-        <div class="search-item">
           <span class="label-name">生产企业</span>
           <el-input
-            v-model.trim="keyword"
+            v-model.trim="listQuery.manufacture"
             size="small"
-            placeholder="商品编码"
+            placeholder="生产企业"
           />
         </div>
         <div class="search-item">
@@ -50,9 +50,9 @@
         <div class="search-item">
           <span class="label-name">批准文号</span>
           <el-input
-            v-model.trim="keyword"
+            v-model.trim="listQuery.approvalNumber"
             size="small"
-            placeholder="商品名称"
+            placeholder="批准文号"
           />
         </div>
         <div class="search-item">
@@ -92,15 +92,19 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="orName"
             align="left"
-            min-width="120"
-            :show-overflow-tooltip="true"
+            min-width="150"
             label="商品信息"
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p>{{ scope.row.name }}{{ scope.row.packStandard }}</p>
+              </div>
+            </template></el-table-column>
           <el-table-column
             align="left"
             min-width="120"
+            prop="manufacture"
             label="生产企业"
           />
           <el-table-column
@@ -111,14 +115,14 @@
             min-width="120"
           />
           <el-table-column
-            prop="headPerson"
+            prop="approvalNumber"
             align="left"
             label="批准文号"
             :show-overflow-tooltip="true"
             min-width="120"
           />
           <el-table-column
-            prop="address"
+            prop="platformCode"
             label="商品编码"
             align="left"
           />
@@ -129,7 +133,7 @@
             label="申请时间"
           />
           <el-table-column
-            prop="createTime"
+            prop="createName"
             align="left"
             min-width="155"
             label="申请人"
@@ -166,6 +170,7 @@
 <script>
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
+import { getAuditList } from '@/api/examine'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -176,15 +181,33 @@ export default {
       tableData: [{
 
       }],
-      loading: false
+      loading: false,
+      listQuery: {
+        'approvalNumber': '',
+        'barCode': '',
+        'erpCode': '',
+        'manufacture': '',
+        'name': '',
+        'typeId': ''
+      }
     }
   },
   created() {
-
+    this.getList()
   },
   methods: {
     getList() {
-
+      this.loading = true
+      getAuditList(this.listQuery).then(res => {
+        this.loading = false
+        const { data, totalCount } = res.data
+        if (data) {
+          this.tableData = data
+          this.total = totalCount
+        }
+      }).catch(_ => {
+        this.loading = false
+      })
     },
     handleClick() {
       this.$router.push('/goods-manage/mate')
