@@ -64,6 +64,7 @@
                           </div>
                           <div slot="operation" class="operation">
                             <m-subgrouping type="create" content-type="button" :parent-id="item_3.id" :one-index="$index_1" :two-index="$index_2" :three-index="$index_3" level="3" />
+                            <band :info="item_3" />
                             <m-delete :one-index="$index_1" :two-index="$index_2" :three-index="$index_3" level="3" :group-id="item_3.id" />
                           </div>
                         </m-item-info>
@@ -86,9 +87,10 @@ import mItemInfo from './itemInfo'
 import vDraggable from 'vuedraggable'
 import mSubgrouping from './subgrouping'
 import mDelete from './delete'
+import band from './band'
 export default {
   name: 'DragTree',
-  components: { vDraggable, mItemInfo, mSubgrouping, mDelete },
+  components: { vDraggable, mItemInfo, mSubgrouping, mDelete, band },
   props: {
     list: { // 分组数据
       type: Array,

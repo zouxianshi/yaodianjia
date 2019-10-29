@@ -2,16 +2,18 @@
   <div class="app-container">
     <div class="examine-wrapper">
       <el-radio-group
-        v-model="radio3"
+        v-model="listQuery.typeId"
         size="small"
+        @change="getList"
       >
-        <el-radio-button label="1">中西医药新品审核</el-radio-button>
-        <el-radio-button label="2">营养保健新品审核</el-radio-button>
-        <el-radio-button label="3">医疗器械新品审核</el-radio-button>
+        <el-radio-button label="2e7843d06f3c400bb07e704d4877dbb2">中西医药新品审核</el-radio-button>
+        <el-radio-button label="38b3bcd6a2cd4fafa3de955fb665faed">营养保健新品审核</el-radio-button>
+        <el-radio-button label="4b0e9d79c54143f1a6adfd9567524110">医疗器械新品审核</el-radio-button>
       </el-radio-group>
       <div
         class="search-form"
         style="margin-top:20px;margin-bottom:10px"
+        @keydown.enter="getList"
       >
         <div class="search-item">
           <span class="label-name">商品编码</span>
@@ -57,8 +59,9 @@
         </div>
         <div class="search-item">
           <el-button
-            type=""
+            type="primary"
             size="small"
+            @click="getList"
           >查询</el-button>
         </div>
       </div>
@@ -108,7 +111,7 @@
             label="生产企业"
           />
           <el-table-column
-            prop="orParentName"
+            prop="barCode"
             align="left"
             label="条形码"
             :show-overflow-tooltip="true"
@@ -145,12 +148,12 @@
             label="操作"
             min-width="100"
           >
-            <template>
+            <template slot-scope="scope">
               <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
               <el-button
                 type="primary"
                 size="mini"
-                @click="handleClick"
+                @click="handleClick(scope.row)"
               >查看</el-button>
             </template>
           </el-table-column>
@@ -188,7 +191,7 @@ export default {
         'erpCode': '',
         'manufacture': '',
         'name': '',
-        'typeId': ''
+        'typeId': '2e7843d06f3c400bb07e704d4877dbb2'
       }
     }
   },
@@ -209,8 +212,9 @@ export default {
         this.loading = false
       })
     },
-    handleClick() {
-      this.$router.push('/goods-manage/mate')
+    handleClick(row) {
+      sessionStorage.setItem('mate', JSON.stringify(row))
+      this.$router.push('/goods-manage/mate?id=' + row.id)
     }
   }
 }

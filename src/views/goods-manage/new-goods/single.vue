@@ -103,6 +103,12 @@ export default {
           type: 'warning'
         })
         return
+      } else if (this.chooseList.length !== 3) {
+        this.$message({
+          message: '分类选择有误',
+          type: 'error'
+        })
+        return
       }
       sessionStorage.setItem('types', JSON.stringify(this.choose))
       this.$router.push('/goods-manage/edit')

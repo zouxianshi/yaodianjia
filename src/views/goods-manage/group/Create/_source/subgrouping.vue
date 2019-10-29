@@ -25,7 +25,7 @@
       </div>
     </div>
     <el-tooltip v-if="!$slots.default" slot="reference" class="item" effect="dark" :content="type === 'edit' ? '编辑' : `新建（${level === '1' ? '一' : '二'}级）子分组` " placement="top">
-      <el-button v-if="contentType === 'button'" type="primary" icon="el-icon-folder-add" :disabled="level === '3'" circle size="mini" style="margin-right: 10px" />
+      <el-button v-if="contentType === 'button'" type="primary" :style="{display:level==='3'?'none':'inline-block'}" icon="el-icon-folder-add" :disabled="level === '3'" circle size="mini" style="margin-right: 10px" />
       <i v-if="contentType === 'text'" class="icon-edit el-icon-edit" />
     </el-tooltip>
     <el-tooltip v-if="$slots.default" slot="reference" class="item" effect="dark" content="创建分组" placement="top">

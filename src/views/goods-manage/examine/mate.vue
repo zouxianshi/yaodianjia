@@ -180,12 +180,29 @@
     >
       <div class="modal-body">
         <div class="info-text">
-          <p>商品名称：<span>12321</span></p>
+          <p>商品名称：<span v-text="pairData.name" /></p>
+          <p>商品规格：<span v-text="pairData.name" /></p>
+          <p>生产企业：<span v-text="pairData.packStandard">12321</span></p>
+          <p>搜索关键词：<span v-text="pairData.keyWord" /></p>
+          <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
+          <!-- <p>是否药品：<span v-text="pariData."/></p> -->
+          <p>处方分类：
+            <span v-if="pariData.drugType==='0'">甲类OTC</span>
+            <span v-if="pariData.drugType==='1'">处方药</span>
+            <span v-if="pariData.drugType==='2'">乙类OTC</span>
+            <span v-else>非处方药</span>
+          </p>
+          <p>是否含有麻黄碱：<span v-text="pairData.hasEphedrine===0?'不包含':'包含'" /></p>
+          <p>品牌名称：<span v-text="pairData.commonName" /></p>
+          <p>通用名：<span v-text="pairData.commonName" /></p>
+          <p>功能疗效：<span v-text="pairData.keyFeature" /></p>
+          <!-- <p>用法用量：<span v-text="pairData"/></p> -->
+          <!-- <p>不良反应：<span/></p> -->
         </div>
         <div class="info-image">
           <p style="margin-bottom:10px">商品图片：</p>
           <div class="main-img">
-            <el-image src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpb" fit="contain" style="width: 300px; height: 300px">
+            <el-image :src="pairData.mainPic" fit="contain" style="width: 300px; height: 300px">
               <div slot="placeholder" class="image-slot">
                 加载中<span class="dot">...</span>
               </div>
@@ -206,36 +223,49 @@
         <el-button
           type="primary"
           size="small"
+          @click="handleAudit(1)"
         >通 过</el-button>
         <el-button
           type="danger"
           size="small"
+          @click="handleAudit(0)"
         >拒 绝</el-button>
       </span>
     </el-dialog>
     <el-dialog title="选择拒绝原因" append-to-body close-on-click-modal :visible.sync="rejectVisible" width="30%">
       <div class="modal-body">
-        <el-form :model="rejectForm" label-width="100px">
-          <el-form-item label="选择原因">
+        <el-form ref="rejectForm" :model="rejectForm" :rules="rules" label-width="100px" size="small">
+          <el-form-item label="选择原因" prop="id">
             <el-select v-model="rejectForm.id" placeholder="">
-              <el-option label="药店加平台已存在改商品" value="0" />
-              <el-option label="商品信息不够规范合格" value="1" />
-              <el-option label="其他原因" value="2" />
+              <el-option label="药店加平台已存在改商品" value="1" />
+              <el-option label="商品信息不够规范合格" value="2" />
+              <el-option label="其他原因" value="3" />
             </el-select>
+          </el-form-item>
+          <el-form-item v-if="rejectForm.id==='3'" label="驳回原因" prop="reason">
+            <el-input v-model="rejectForm.reason" placeholder="输入原因" type="textarea" :rows="2" />
           </el-form-item>
         </el-form>
       </div>
       <span slot="footer">
-        <el-button type="primary" size="small">确 定</el-button>
+        <el-button type="primary" size="small" :loading="subLoading" @click="handleReject">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
 import { getMatchList, setComAddGoods, mateAgain } from '@/api/depot'
+import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 export default {
   data() {
+    var _checkReason = (rule, value, callback) => {
+      if (!value) {
+        if (this.rejectForm.id === '3') {
+          return callback(new Error('请填写其他拒绝原因'))
+        }
+      }
+    }
     return {
       searchForm: {
         name: ''
@@ -246,6 +276,10 @@ export default {
       goodsInfoVisible: false,
       rejectVisible: false,
       rejectForm: {},
+      rules: {
+        id: [{ required: true, message: '请选择驳回原因', trigger: 'blur' }],
+        reason: [{ validator: _checkReason, trigger: 'blur' }]
+      },
       currentRow: {},
       subLoading: false,
       pariData: {},
@@ -342,6 +376,59 @@ export default {
           this.subLoading = false
         })
       }).catch(() => {})
+    },
+    handleAudit(type) {
+      if (type === 1) {
+        const data = {
+          'auditReason': '',
+          'auditStatus': type,
+          'ids': [
+            this.$route.query.id
+          ],
+          'userName': this.name
+        }
+        this._AuditRequest(data)
+      } else {
+        this.rejectVisible = true
+      }
+    },
+    handleReject() {
+      let reason = ''
+      if (this.rejectForm.id === '1') {
+        reason = '药店加平台已存在改商品'
+      } else if (this.rejectForm.id === '2') {
+        reason = '商品信息不够规范合格'
+      } else {
+        reason = this.rejectForm.reason
+      }
+      const data = {
+        'auditReason': reason,
+        'auditStatus': '0',
+        'ids': [
+          this.$route.query.id
+        ],
+        'userName': this.name
+      }
+      this.$refs['rejectForm'].validate((valid) => {
+        if (valid) {
+          this._AuditRequest(data)
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    _AuditRequest(data) { // 审核请求
+      this.subLoading = true
+      setAuditGoods(data).then(res => {
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+        this.$router.go(-1)
+      }).catch(_ => {
+        this.subLoading = false
+      })
     }
   }
 }
@@ -422,7 +509,7 @@ export default {
     color: #333;
     font-size: 14px;
     p {
-      margin-bottom: 5px;
+      margin-bottom: 10px;
     }
   }
   .info-image{

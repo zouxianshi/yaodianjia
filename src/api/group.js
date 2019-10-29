@@ -87,3 +87,12 @@ export function updateSort(params) {
     data: params
   })
 }
+
+// 绑定商品
+export function bandGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-relate/_group`,
+    method: 'post',
+    data: params
+  })
+}
