@@ -73,7 +73,6 @@
             show-overflow-tooltip
           >
             <template slot-scope="scope">
-              >
               <span>{{ scope.row.name }}{{ scope.row.packStandard }}</span>
             </template>
           </el-table-column>
@@ -115,10 +114,15 @@
             align="left"
             fixed="right"
             label="操作"
-            min-width="100"
+            min-width="250"
           >
             <template slot-scope="scope">
-              <el-button type="" size="mini">查看</el-button>
+              <template v-if="scope.row.infoStatus===15">
+                <el-button type="primary" size="mini">提交审核</el-button>
+                <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                  <el-button type="" size="mini">完善信息</el-button>
+                </a>
+              </template>
               <el-button
                 type="danger"
                 size="mini"

@@ -147,7 +147,7 @@
               <template slot-scope="scope">
                 <div>
                   <p v-text="scope.row.name" />
-                  <p v-text="' 国药准字:'+scope.row.approvalNumber" />
+                  <p v-text="scope.row.approvalNumber" />
                 </div>
               </template>
             </el-table-column>
@@ -189,7 +189,9 @@
                   <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-button type="info" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template>
-                <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button>
+                <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                  <el-button type="" size="mini">编辑</el-button>
+                </a>
               </template>
             </el-table-column>
           </el-table>

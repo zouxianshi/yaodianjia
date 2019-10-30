@@ -75,7 +75,7 @@
           <template slot-scope="scope">
             <div>
               <p v-text="scope.row.name" />
-              <p v-text="' 国药准字:'+scope.row.approvalNumber" />
+              <p v-text="scope.row.approvalNumber" />
             </div>
           </template>
         </el-table-column>

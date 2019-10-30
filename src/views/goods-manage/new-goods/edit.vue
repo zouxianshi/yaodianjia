@@ -38,14 +38,15 @@
             <div class="content">
               <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicRules">
                 <el-form-item label="商品信息：" prop="name">
-                  <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
+                  <el-input v-model="basicForm.name" :disabled="basicForm.origin===1" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
                 <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='保健品')" prop="commonName" label="通用名：">
-                  <el-input v-model="basicForm.commonName" placeholder="请输入通用名" size="small" />
+                  <el-input v-model="basicForm.commonName" :disabled="basicForm.origin===1" placeholder="请输入通用名" size="small" />
                 </el-form-item>
                 <el-form-item label="所属品牌：" prop="brandId">
                   <el-select
                     v-model="basicForm.brandId"
+                    :disabled="basicForm.origin===1"
                     filterable
                     remote
                     :remote-method="remoteMethod"
@@ -61,17 +62,17 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="重量：">
-                  <el-input v-model="basicForm.weight" placeholder="请输入重量" size="small" style="width:193px">
+                  <el-input v-model="basicForm.weight" :disabled="basicForm.origin===1" placeholder="请输入重量" size="small" style="width:193px">
                     <template slot="append">公斤</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="长宽高：">
-                  <el-input v-model="basicForm.long" placeholder="长" size="small" style="width:70px" /> m *
-                  <el-input v-model="basicForm.width" placeholder="宽" size="small" style="width:70px" /> m *
-                  <el-input v-model="basicForm.height" placeholder="高" size="small" style="width:70px" />
+                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1" placeholder="长" size="small" style="width:70px" /> m *
+                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1" placeholder="宽" size="small" style="width:70px" /> m *
+                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1" placeholder="高" size="small" style="width:70px" />
                 </el-form-item>
                 <el-form-item label="单位：" prop="unit">
-                  <el-select v-model="basicForm.unit" filterable placeholder="选择单位">
+                  <el-select v-model="basicForm.unit" :disabled="basicForm.origin===1" placeholder="选择单位">
                     <el-option
                       v-for="item in unit"
                       :key="item.value"
@@ -97,7 +98,7 @@
               <el-form :model="basicForm" label-width="130px" status-icon>
                 <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西医药品'">
                   <el-form-item label="药品类型：">
-                    <el-select v-model="basicForm.drugType" placeholder="请选择药品类型">
+                    <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1" placeholder="请选择药品类型">
                       <el-option label="甲类OTC" value="0" />
                       <el-option label="处方药" value="1" />
                       <el-option label="乙类OTC" value="2" />
@@ -105,28 +106,28 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="剂型：">
-                    <el-select v-model="basicForm.dosageForm" placeholder="请选择药品类型">
+                    <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1" placeholder="请选择药品类型">
                       <el-option label="剂兴1" value="0" />
                       <el-option label="剂兴2" value="1" />
                     </el-select>
                   </el-form-item>
                 </template>
                 <el-form-item label="生产企业：" prop="manufacture">
-                  <el-input v-model="basicForm.manufacture" placeholder="请输入生产企业" size="small" />
+                  <el-input v-model="basicForm.manufacture" :disabled="basicForm.origin===1" placeholder="请输入生产企业" size="small" />
                 </el-form-item>
                 <el-form-item label="产地：" prop="produceOrigin">
-                  <el-input v-model="basicForm.produceOrigin" placeholder="请输入产地" size="small" />
+                  <el-input v-model="basicForm.produceOrigin" :disabled="basicForm.origin===1" placeholder="请输入产地" size="small" />
                 </el-form-item>
                 <el-form-item label="批准文号：" prop="approvalNumber">
-                  <el-input v-model="basicForm.approvalNumber" placeholder="请输入批准文号" size="small" />
+                  <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList[0].name!=='中西医药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='保健品'" label="是否含有麻黄碱">
-                  <el-checkbox v-model="basicForm.hasEphedrine" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
+                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='中西医药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='保健品')" label="是否含有麻黄碱">
+                  <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
                 </el-form-item>
                 <el-form-item label="商品详细信息：">
-                  <Tinymce ref="editor" v-model="basicForm.intro" :height="400" />
+                  <Tinymce ref="editor" v-model="basicForm.intro" :disabled="basicForm.origin===1" :height="400" />
                 </el-form-item>
-                <el-form-item :label="chooseTypeList[0].name==='保健品'?'保健功能':'功能主治/适应症：'">
+                <el-form-item label="功能主治/适应症：">
                   <el-input
                     v-model="basicForm.keyFeature"
                     type="textarea"
@@ -136,10 +137,10 @@
                   />
                 </el-form-item>
                 <el-form-item label="有效期：">
-                  <el-radio v-model="expireDays" :label="-1" size="small">无</el-radio>
-                  <el-radio v-model="expireDays" :label="1" size="small">
-                    <el-input v-model="days" style="width:80px" size="small" placeholder="" />
-                    <el-select v-model="timeTypes" style="width:100px" size="small" placeholder="">
+                  <el-radio v-model="expireDays" :disabled="basicForm.origin===1" :label="-1" size="small">无</el-radio>
+                  <el-radio v-model="expireDays" :disabled="basicForm.origin===1" :label="1" size="small">
+                    <el-input v-model="days" :disabled="basicForm.origin===1" style="width:80px" size="small" placeholder="" />
+                    <el-select v-model="timeTypes" :disabled="basicForm.origin===1" style="width:100px" size="small" placeholder="">
                       <el-option value="1" label="年" />
                       <el-option value="2" label="月" />
                     </el-select>
@@ -159,19 +160,18 @@
             <div class="content">
               <el-form :model="basicForm">
                 <el-form-item label="运输方式：">
-                  <el-radio-group v-model="basicForm.freightType">
+                  <el-radio-group v-model="basicForm.freightType" :disabled="basicForm.origin===1">
                     <el-radio :label="0">常温</el-radio>
                     <el-radio :label="1">冷藏</el-radio>
                     <el-radio :label="2">冷冻</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="其他属性：">
-                  <el-checkbox v-model="basicForm.isEasyBreak" :true-label="1" :false-label="0">易碎</el-checkbox>
-                  <el-checkbox v-model="basicForm.isLiquid" :true-label="1" :false-label="0">液体</el-checkbox>
+                  <el-checkbox v-model="basicForm.isEasyBreak" :disabled="basicForm.origin===1" :true-label="1" :false-label="0">易碎</el-checkbox>
+                  <el-checkbox v-model="basicForm.isLiquid" :disabled="basicForm.origin===1" :true-label="1" :false-label="0">液体</el-checkbox>
                 </el-form-item>
                 <el-form-item label="" label-width="100px">
-                  <el-button type="" size="small" @click="$router.go(-1)">上一步</el-button>
-                  <el-button type="primary" size="small" @click="handleSubmitForm">下一步</el-button>
+                  <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitForm">下一步</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -229,11 +229,10 @@
               </template>
             </el-form-item>
             <el-form-item label="" label-width="100px">
-              <el-button type="" size="small" @click="$router.go(-1)">上一步</el-button>
-              <el-button type="primary" size="small" @click="handleSubmitSpec">下一步</el-button>
+              <el-button type="" size="small" @click="step=1">上一步</el-button>
+              <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitSpec">下一步</el-button>
             </el-form-item>
           </el-form>
-
         </div>
       </div>
       <!-- 图文详情 -->
@@ -265,14 +264,14 @@
                 <div class="left-show">
                   <div class="img" />
                   <div class="basicMsgs">基本信息区<br>固定样式,显示商品主图、价格等信息</div>
-                  <div class="editSqu w-e-text" />
+                  <div class="editSqu w-e-text" v-html="goodsIntro.content" />
                 </div>
                 <div class="edit-box">
                   <Tinymce ref="editor" v-model="goodsIntro.content" :height="400" />
                 </div>
               </section>
               <div class="text-center">
-                <el-button type="primary" size="small" @click="handleSubIntro">保存</el-button>
+                <el-button type="primary" size="small" :loading="subLoading" @click="handleSubIntro">保存</el-button>
               </div>
             </div>
           </div>
@@ -308,12 +307,12 @@ import vueUploadImg from 'vueuploadimg/dist/vueuploadimg'
 import { getTypeTree } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
-import { setGoodsAdd, getBrandList, getSpecs, setSpecsData, saveImg, saveGoodsDetails } from '@/api/new-goods'
+import { setGoodsAdd, updateBasicInfo, getBrandList, getSpecs, setSpecsData, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsIntro } from '@/api/new-goods'
 export default {
   components: { Tinymce, vueUploadImg },
   data() {
     return {
-      step: 3,
+      step: 1,
       chooseSpecsAry: [],
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组
@@ -347,6 +346,7 @@ export default {
         'produceOrigin': '', // 产地
         'unit': '', // 规格
         'typeId': '',
+        'origin': 2, // 商品来源，1-海典标准库，2-商家自定义
         'packStandard': '', // 长宽高
         'groupIds': [] // 分组id
       },
@@ -391,14 +391,13 @@ export default {
       ],
       value: '',
       dialogImageUrl: '',
-      fileList: [{
-        imgUrl: 'https://img.ithome.com/newsuploadfiles/2019/10/20191015_084449_97.jpg'
-      }],
+      fileList: [],
       groupData: [], // 分组
       specsList: [], // 规格
       goodsIntro: { // 商品信息
         content: ''
-      }
+      },
+      subLoading: false
     }
   },
   computed: {
@@ -411,7 +410,7 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
-    const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
+    const answer = window.confirm('你还有数据没有保存，是否确认退出')
     if (answer) {
       this.$store
         .dispatch('tagsView/delView', from)
@@ -421,17 +420,72 @@ export default {
     }
   },
   created() {
-    const data = sessionStorage.getItem('types')
-    this.chooseTypeList = JSON.parse(data)
-    this.basicForm.typeId = this.chooseTypeList[0].id
+    if (this.$route.query.id) {
+      this._loadBasicInfo()
+    } else {
+      const data = sessionStorage.getItem('types')
+      this.chooseTypeList = JSON.parse(data)
+      this.basicForm.typeId = this.chooseTypeList[0].id
+    }
     this._loadTypeList() // 获取分组
     this._loadBrandList() // 获取所属品牌
-    this._loadSpces() // 获取规格
   },
   methods: {
+    _loadBasicInfo() { // 加载基本信息
+      getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
+        const { data } = res
+        // 有限期处理
+        if (data.expireDays === -1) {
+          this.expireDays = -1
+        } else {
+          if (data.expireDays > 360) {
+            data.expireDays = data.expireDays / 360
+            this.timeTypes = '1'
+          } else {
+            data.expireDays = data.expireDays / 30
+            this.timeTypes = '2'
+          }
+        }
+
+        // 长宽高处理
+        if (data.packStandard) {
+          const packStandard = data.packStandard.split('*')
+          data.long = packStandard[0] || ''
+          data.width = packStandard[1] || ''
+          data.height = packStandard[2] || ''
+        }
+        // 赋值值
+        this.basicForm = data
+      })
+    },
+    _loadGoodsImgAry() { // 加载商品图片
+      const id = this.$route.query.id
+      if (id) {
+        getGoodsImgAry(id).then(res => {
+          if (res.data) {
+            res.data.map(v => {
+              this.fileList.push({
+                imgUrl: v.picUrl
+              })
+            })
+          }
+        })
+      }
+    },
+    _loadGoodsIntro() { // 加载商品说明
+      const id = this.$route.query.id
+      if (id) {
+        getGoodsIntro(id).then(res => {
+          this.goodsIntro.content = res.data.content
+        })
+      }
+    },
     handleSelectionChange() {},
-    handleSortEnd(val) {
-      console.log('排序之后的结果', val)
+    handleSortEnd(val) { // 图片排序
+      this.fileList = val
+      if (this.fileList.length > 0) {
+        console.log('1111')
+      }
     },
     handleImgSuccess(res, fileList, index) {
       if (res.code === '10000') {
@@ -516,10 +570,12 @@ export default {
     },
     _loadSpces() { // 根据一级分类加载规格
       getSpecs(this.chooseTypeList[0].id).then(res => {
-        res.data.map((v, index) => {
-          v['index_' + index] = ''
-        })
-        this.specsList = res.data
+        if (res.data.length > 0) {
+          res.data.map((v, index) => {
+            v['index_' + index] = ''
+          })
+          this.specsList = res.data
+        }
       })
     },
     handleSpecsChange(row) { // 规格勾选
@@ -529,7 +585,34 @@ export default {
         }
       })
     },
-    handleSubmitForm() {
+    _CreateBasicInfo(data) { // 创建基本信息
+      setGoodsAdd(data).then(res => {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+        this.basicForm.id = res.data
+        this.step = 2
+        this.subLoading = false
+      }).catch(_ => {
+        this.subLoading = false
+      })
+    },
+    _UpdateBasicInfo(data) { // 更新基本信息
+      updateBasicInfo(data).then(res => {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+        this.basicForm.id = res.data
+        this.step = 2
+        this.subLoading = false
+      }).catch(_ => {
+        this.subLoading = false
+      })
+    },
+    handleSubmitForm() { // 保存基本信息操作
+      this._loadSpces() // 获取规格
       this.$refs['basic'].validate((valid) => {
         if (valid) {
           const data = JSON.parse(JSON.stringify(this.basicForm))
@@ -546,16 +629,12 @@ export default {
           this.chooseGroup.map(v => {
             data.groupIds.push(v[2].id)
           })
-          setGoodsAdd(data).then(res => {
-            this.$message({
-              message: '保存成功',
-              type: 'success'
-            })
-            this.basicForm.id = res.data
-            this.step = 2
-          }).catch(_ => {
-
-          })
+          this.subLoading = true
+          if (this.basicForm.id) {
+            this._UpdateBasicInfo(data)
+          } else {
+            this._CreateBasicInfo(data)
+          }
         } else {
           console.log('error submit')
         }
@@ -565,6 +644,7 @@ export default {
       this.specsForm.specs.map(v => {
         v.valueList = []
         v.commodityId = this.basicForm.id
+        v.merCode = this.merCode
         for (const key in v) {
           if (v.hasOwnProperty(key)) {
             const val = key.split('_')
@@ -585,6 +665,7 @@ export default {
           type: 'success'
         })
         this.subLoading = false
+        this._loadGoodsImgAry()
         this.step = 3
       }).catch(_ => {
         this.subLoading = false
@@ -618,7 +699,11 @@ export default {
     },
     handleSubIntro() { // 保存商品说明
       this.subLoading = true
-      saveGoodsDetails().then(res => {
+      const data = {
+        content: this.goodsIntro.content,
+        id: this.basicForm.id
+      }
+      saveGoodsDetails(data).then(res => {
         this.$message({
           message: '保存成功',
           type: 'success'
