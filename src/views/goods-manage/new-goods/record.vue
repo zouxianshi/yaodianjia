@@ -68,7 +68,7 @@
           <el-table-column
             prop="orCode"
             align="left"
-            min-width="120"
+            min-width="150"
             label="商品/规格"
             show-overflow-tooltip
           >
@@ -114,11 +114,13 @@
             align="left"
             fixed="right"
             label="操作"
-            min-width="250"
+            min-width="200"
           >
             <template slot-scope="scope">
-              <template v-if="scope.row.infoStatus===15">
-                <el-button type="primary" size="mini">提交审核</el-button>
+              <template v-if="scope.row.infoStatus===15&&(scope.row.auditStatus!==2||scope.row.auditStatus!==1||scope.row.auditStatus!==0)">
+                <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
+              </template>
+              <template v-if="scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14">
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>
@@ -147,6 +149,7 @@
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 import { getNewGoodsRecord, deleteGoods } from '@/api/new-goods'
+import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 export default {
   components: { Pagination },
@@ -179,6 +182,22 @@ export default {
   methods: {
     handleSelectionChange(rows) {
       this.multipleSelection = rows
+    },
+    handleSendCheck(row) { // 提交审核
+      const data = {
+        'auditStatus': '2',
+        'ids': [
+          row.id
+        ],
+        'userName': this.name
+      }
+      setAuditGoods(data).then(res => {
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+        this.getList()
+      })
     },
     getList() {
       this.loading = true
@@ -229,6 +248,7 @@ export default {
             message: '删除成功',
             type: 'success'
           })
+          this.getList()
         })
       }).catch(() => {})
     }

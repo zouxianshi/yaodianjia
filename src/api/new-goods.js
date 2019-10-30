@@ -74,7 +74,7 @@ export function saveImg(params) {
 // 保存商品说明 或更新
 export function saveGoodsDetails(params) {
   return request({
-    url: `${config.merGoods}/1.0/comm-intro`,
+    url: `${config.merGoods}/1.0/comm-detail`,
     method: 'post',
     data: params
   })
@@ -105,9 +105,26 @@ export function getGoodsImgAry(commodityId) {
 }
 
 // 加载商品说明
-export function getGoodsIntro(commodityId) {
+export function getGoodsDetails(commodityId) {
   return request({
-    url: `${config.merGoods}/1.0/comm-intro/${commodityId}`,
+    url: `${config.merGoods}/1.0/comm-details/${commodityId}`,
     method: 'get'
+  })
+}
+
+// 加载规格信息（海典）
+export function getSpecsInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-spec/_search`,
+    method: 'post',
+    data: params
+  })
+}
+// 查询商品规格 商家自建
+export function getSelfSpecsInfo(commodityId) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-spec/get`,
+    method: 'post',
+    data: { commodityId: commodityId }
   })
 }

@@ -96,3 +96,13 @@ export function bandGoods(params) {
     data: params
   })
 }
+
+// 根据id集合获取分类列表
+export function getPreGroupList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-type/parent`,
+    method: 'post',
+    data: params,
+    noMerCode: true
+  })
+}
