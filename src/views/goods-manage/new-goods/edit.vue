@@ -493,20 +493,29 @@ export default {
         'type': type,
         merCode: type === '1' ? 'hydee' : this.merCode
       }
+
       getPreGroupList(data).then(res => {
         if (type === '1') { // 分类
           const datas = res.data[ids[0]]
           this.chooseTypeList = [{ name: datas.name, id: datas.id }, { name: datas.child.name, id: datas.child.id }, { name: datas.child.child.name, id: datas.child.child.id }]
+        } else { // 分组
+          const datas = res.data
+          ids.map(v => {
+            const dat = datas[v]
+            this.chooseGroup.push([{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }, { name: dat.child.child.name, id: dat.child.child.name }])
+          })
         }
       })
     },
     _loadBasicInfo() { // 加载基本信息
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
+        // 分组处理
         this._loadgroupGather('1', [res.data.typeId])
         if (res.data.groupIds) {
           this._loadgroupGather('2', res.data.groupIds)
         }
         const { data } = res
+
         // 有限期处理
         if (data.expireDays === -1) {
           this.expireDays = -1
@@ -687,7 +696,7 @@ export default {
       }
       if (this.basicForm.origin === 1) {
         getSpecsProductSKU(this.$route.query.id).then(res => {
-
+          this.specsForm.specs = res.data
         })
       } else {
         getSpecs(this.chooseTypeList[0].id).then(res => {
