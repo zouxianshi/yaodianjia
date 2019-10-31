@@ -29,7 +29,7 @@ router.beforeEach(async(to, from, next) => {
           // 获取用户信息
           // const { resList } = await store.dispatch('user/getInfo')
           await store.dispatch('user/getInfo')
-
+          console.log('走这里')
           // if (to.path === '/403' || to.path === '/home') {
           //   if (resList.length !== 0) {
           //     const accessRoutes = await store.dispatch('permission/generateRoutes', resList)

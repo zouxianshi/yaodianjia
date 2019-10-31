@@ -502,7 +502,7 @@ export default {
           const datas = res.data
           ids.map(v => {
             const dat = datas[v]
-            this.chooseGroup.push([{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }, { name: dat.child.child.name, id: dat.child.child.name }])
+            this.chooseGroup.push([{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }, { name: dat.child.child.name, id: dat.child.child.id }])
           })
         }
       })
@@ -520,8 +520,8 @@ export default {
         if (data.expireDays === -1) {
           this.expireDays = -1
         } else {
-          if (data.expireDays > 360) {
-            data.expireDays = data.expireDays / 360
+          if (data.expireDays > 365) {
+            data.expireDays = data.expireDays / 365
             this.timeTypes = '1'
           } else {
             data.expireDays = data.expireDays / 30
@@ -604,6 +604,7 @@ export default {
       }
     },
     handleImgSuccess(res, fileList, index) {
+      console.log(res, fileList, index)
       this.fileList[index].imgUrl = this.showImg(res)
     },
     handlePreview(file) {
@@ -761,7 +762,7 @@ export default {
             if (this.timeTypes === '2') { // 月
               data.expireDays = parseInt(this.days) * 30
             } else {
-              data.expireDays = parseInt(this.days) * 360
+              data.expireDays = parseInt(this.days) * 365
             }
           }
           data.groupIds = []
