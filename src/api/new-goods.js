@@ -107,7 +107,7 @@ export function getGoodsImgAry(commodityId) {
 // 加载商品说明
 export function getGoodsDetails(commodityId) {
   return request({
-    url: `${config.merGoods}/1.0/comm-details/${commodityId}`,
+    url: `${config.merGoods}/1.0/comm-detail/${commodityId}`,
     method: 'get'
   })
 }

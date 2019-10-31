@@ -359,7 +359,7 @@ export default {
   components: { Tinymce, vueUploadImg },
   data() {
     return {
-      step: 2,
+      step: 1,
       chooseSpecsAry: [],
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组
@@ -476,6 +476,8 @@ export default {
   created() {
     if (this.$route.query.id) {
       this._loadBasicInfo()
+      this._loadGoodsDetails()
+      this._loadGoodsImgAry()
     } else {
       const data = sessionStorage.getItem('types')
       this.chooseTypeList = JSON.parse(data)
@@ -496,7 +498,6 @@ export default {
           const datas = res.data[ids[0]]
           this.chooseTypeList = [{ name: datas.name, id: datas.id }, { name: datas.child.name, id: datas.child.id }, { name: datas.child.child.name, id: datas.child.child.id }]
         }
-        this._loadSpces()
       })
     },
     _loadBasicInfo() { // 加载基本信息
@@ -574,11 +575,13 @@ export default {
         })
       }
     },
-    _loadGoodsIntro() { // 加载商品说明
+    _loadGoodsDetails() { // 加载商品详情
       const id = this.$route.query.id
       if (id) {
         getGoodsDetails(id).then(res => {
-          this.goodsIntro.content = res.data.content
+          if (res.data) {
+            this.goodsIntro.content = res.data.content
+          }
         })
       }
     },
@@ -718,12 +721,12 @@ export default {
       })
     },
     _UpdateBasicInfo(data) { // 更新基本信息
+      console.log('更新', data)
       updateBasicInfo(data).then(res => {
         this.$message({
           message: '保存成功',
           type: 'success'
         })
-        this.basicForm.id = res.data
         this.step = 2
         this.subLoading = false
       }).catch(_ => {
@@ -758,6 +761,7 @@ export default {
           })
           this.subLoading = true
           if (this.basicForm.id) {
+            data.commodityId = data.id
             this._UpdateBasicInfo(data)
           } else {
             this._CreateBasicInfo(data)
@@ -830,7 +834,7 @@ export default {
         this.subLoading = false
       })
     },
-    handleSubIntro() { // 保存商品说明
+    handleSubIntro() { // 保存商品详情
       this.subLoading = true
       const data = {
         content: this.goodsIntro.content,

@@ -6,9 +6,9 @@
         size="small"
         @change="getList"
       >
-        <el-radio-button label="2e7843d06f3c400bb07e704d4877dbb2">中西医药新品审核</el-radio-button>
-        <el-radio-button label="38b3bcd6a2cd4fafa3de955fb665faed">营养保健新品审核</el-radio-button>
-        <el-radio-button label="4b0e9d79c54143f1a6adfd9567524110">医疗器械新品审核</el-radio-button>
+        <el-radio-button label="1065279ca65a4a529109f82472f11053">中西医药新品审核</el-radio-button>
+        <el-radio-button label="fb5e6c99d2a24eb79dae4350d9bfa837">营养保健新品审核</el-radio-button>
+        <el-radio-button label="a99917a7c7254ac281e844acf1610657">医疗器械新品审核</el-radio-button>
       </el-radio-group>
       <div
         class="search-form"

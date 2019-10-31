@@ -29,7 +29,7 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
 
-setSystem('mc-system', 'merchant')
+setSystem('mc-system', 'medical')
 
 import { MC } from '@merchant/commons'
 
