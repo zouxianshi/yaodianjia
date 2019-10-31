@@ -191,7 +191,7 @@ export default {
         'erpCode': '',
         'manufacture': '',
         'name': '',
-        'typeId': '2e7843d06f3c400bb07e704d4877dbb2'
+        'typeId': '1065279ca65a4a529109f82472f11053'
       }
     }
   },

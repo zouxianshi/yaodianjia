@@ -167,6 +167,7 @@ export default {
           updata[this.oneIndex].children[this.twoIndex].children.push(resData)
         } else if (this.level === '0') {
           resData.children = []
+          resData.show = true
           updata.push(resData)
         }
         this.$store.dispatch('group/updateGroup', updata)

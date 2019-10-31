@@ -4,6 +4,7 @@
       <el-radio-group
         v-model="listQuquery.auditStatus"
         size="small"
+        @change="getList"
       >
         <el-radio-button label="">全部</el-radio-button>
         <el-radio-button label="2">待审核</el-radio-button>

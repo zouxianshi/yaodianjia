@@ -92,12 +92,12 @@
         <div class="text-right" style="margin-bottom:10px;display:flex;justify-content:space-between">
           <div>
             <el-radio-group v-model="listQuery.infoFlag" size="small" @change="getList">
-              <el-radio-button :label="true">全部</el-radio-button>
-              <el-radio-button :label="false">待完善资料</el-radio-button>
+              <el-radio-button :label="false">全部</el-radio-button>
+              <el-radio-button :label="true">待完善资料</el-radio-button>
             </el-radio-group>
           </div>
           <div>
-            <template v-if="listQuery.infoFlag">
+            <template v-if="!listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
               <el-button type="danger" size="mini" @click="handleChangeUpdown(0)">批量下架</el-button>
             </template>
@@ -182,10 +182,10 @@
               align="left"
               fixed="right"
               label="操作"
-              :min-width="!listQuery.infoFlag?'100':'220'"
+              :min-width="listQuery.infoFlag?'100':'220'"
             >
               <template slot-scope="scope">
-                <template v-if="listQuery.infoFlag">
+                <template v-if="!listQuery.infoFlag">
                   <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-button type="info" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template>
@@ -245,7 +245,7 @@ export default {
         barCode: '',
         manufacture: '',
         name: '',
-        infoFlag: true,
+        infoFlag: false,
         erpCode: '',
         typeId: '' // 分组id
       }
@@ -280,6 +280,7 @@ export default {
       this.getList()
     },
     handleChangeUpdown(status) { // 批量上下架
+      this.specData = []
       if (this.multiselect.length === 0) {
         this.$message({
           message: '请选择商品',
