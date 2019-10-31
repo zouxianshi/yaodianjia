@@ -290,7 +290,7 @@
           </div>
           <div class="edit-card-cnt">
             <div class="content">
-              <vue-upload-img :actions="upLoadUrl" :before-upload="beforeUpload" :file-list="fileList" :headers="headers" :limit="6" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" />
+              <vue-upload-img :actions="upLoadUrl" :before-upload="beforeUpload" :file-list="fileList" :headers="headers" :limit="6" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" @onError="handleImgError" />
               <el-dialog append-to-body :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt="">
               </el-dialog>
@@ -604,8 +604,17 @@ export default {
       }
     },
     handleImgSuccess(res, fileList, index) {
-      console.log(res, fileList, index)
-      this.fileList[index].imgUrl = this.showImg(res)
+      if (!this.fileList[index]) {
+        this.fileList.push({ imgUrl: this.showImg(res) })
+      } else {
+        this.fileList[index].imgUrl = this.showImg(res)
+      }
+    },
+    handleImgError() {
+      this.$message({
+        message: '图片上传失败',
+        type: 'error'
+      })
     },
     handlePreview(file) {
       this.dialogImageUrl = file.imgUrl
