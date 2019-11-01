@@ -330,6 +330,13 @@ export default {
     },
     handleAddGoods() { // 确定对码
       this.subLoading = true
+      if (!this.currentRow.id) {
+        this.$message({
+          message: '未选择任何商品',
+          type: 'warning'
+        })
+        return
+      }
       setComAddGoods({ ids: [this.currentRow.id], userName: this.name }).then(res => {
         this.$message({
           message: '确认对码成功',
@@ -341,6 +348,13 @@ export default {
       })
     },
     handleAgainCode() { // 重新对码
+      if (!this.currentRow.id) {
+        this.$message({
+          message: '未选择任何商品',
+          type: 'warning'
+        })
+        return
+      }
       const data = {
         id: this.currentRow.id,
         productId: this.currentRow.productId,

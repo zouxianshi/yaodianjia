@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="">
-      <div style="margin-bottom:10px"><el-button type="primary" size="small">批量导入</el-button></div>
+      <div style="margin-bottom:10px"><el-button type="primary" size="small" @click="$router.go(-1)">批量导入</el-button></div>
       <el-radio-group
         v-model="listQuery.status"
         size="small"

@@ -113,7 +113,8 @@ export default {
     _loadStoreData() {
       const query = {
         storeName: this.storeCode,
-        currentPage: this.currentPage
+        currentPage: this.currentPage,
+        onlineStatus: 1
       }
       getStoreList(query).then(res => {
         const { data, totalCount } = res.data

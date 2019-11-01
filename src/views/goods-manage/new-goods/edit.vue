@@ -744,7 +744,6 @@ export default {
       })
     },
     _UpdateBasicInfo(data) { // 更新基本信息
-      console.log('更新', data)
       updateBasicInfo(data).then(res => {
         this.$message({
           message: '保存成功',

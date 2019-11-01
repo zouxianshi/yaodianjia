@@ -19,6 +19,10 @@ const mixin = {
       } else {
         data = this.specsForm.specs
       }
+      if (this.$route.query.id && data.length === 0) {
+        this.step = 3
+        return
+      }
       this.specsForm.specs.map(v => {
         v.valueList = []
         v.commodityId = this.basicForm.id
