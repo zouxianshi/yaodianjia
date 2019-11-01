@@ -17,3 +17,12 @@ export function setAuditGoods(params) {
     data: params
   })
 }
+
+// 获取商品打分匹配列表
+export function getExamineMatchList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/_match`,
+    method: 'post',
+    data: params
+  })
+}

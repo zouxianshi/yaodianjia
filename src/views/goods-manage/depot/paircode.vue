@@ -252,7 +252,7 @@ export default {
     },
     handleMate(row) {
       sessionStorage.setItem('mate', JSON.stringify(row))
-      this.$router.push(`/goods-manage/mate?id=${row.id}&from=pair`)
+      this.$router.push(`/goods-manage/mate-details?id=${row.id}&from=${this.listQuery.status === 1 ? 'is_pair' : 'pair'}`)
     },
     handleTimeChange(val) {
       if (val) {

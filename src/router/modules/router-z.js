@@ -47,6 +47,15 @@ const router = [
           activeMenu: '/goods-manage/depot'
         }
       }, {
+        path: 'mate-details',
+        component: () => import('@/views/goods-manage/depot/mate'),
+        name: 'paircode',
+        meta: {
+          title: '重新匹配',
+          noCache: true,
+          activeMenu: '/goods-manage/depot'
+        }
+      }, {
         path: 'apply',
         component: () => import('@/views/goods-manage/new-goods/apply'),
         name: 'apply',

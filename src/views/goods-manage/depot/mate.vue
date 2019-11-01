@@ -30,18 +30,27 @@
           </li>
         </ul>
         <div class="right-operate">
-          <p>
+          <template v-if="$route.query.from==='pair'">
+            <p>
+              <el-button
+                type="primary"
+                size="small"
+                :loading="subLoading"
+                @click="handleAddGoods"
+              >确认对码</el-button>
+            </p>
+            <el-button
+              size="small"
+            >申请新品</el-button>
+          </template>
+          <template v-else-if="$route.query.from==='is_pair'">
             <el-button
               type="primary"
               size="small"
-              @click="goodsInfoVisible=true"
-            >查看商品详情</el-button>
-          </p>
-          <el-button
-            type="danger"
-            size="small"
-            @click="rejectVisible=true"
-          >拒绝</el-button>
+              :loading="subLoading"
+              @click="handleAgainCode"
+            >重新对码</el-button>
+          </template>
         </div>
       </div>
       <div class="search-box">
@@ -90,7 +99,7 @@
         </div>
       </div>
       <div class="table-box">
-        <p class="title">为您匹配到的您的商品库与之匹配的产品：</p>
+        <p class="title">为您匹配到的药店加平台产品库中与之匹配的产品：</p>
         <el-table
           ref="singleTable"
           v-loading="loading"
@@ -231,8 +240,8 @@
   </div>
 </template>
 <script>
-import { setComAddGoods } from '@/api/depot'
-import { setAuditGoods, getExamineMatchList } from '@/api/examine'
+import { getMatchList, setComAddGoods, mateAgain } from '@/api/depot'
+import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -275,7 +284,7 @@ export default {
   methods: {
     _loadMatchList() {
       this.loading = true
-      getExamineMatchList(this.$route.query.id).then(res => {
+      getMatchList(this.$route.query.id).then(res => {
         this.tableData = res.data
         this.storeTableData = JSON.parse(JSON.stringify(res.data))
         if (res.data.length !== 0) {
@@ -330,6 +339,29 @@ export default {
       }).catch(() => {
         this.subLoading = false
       })
+    },
+    handleAgainCode() { // 重新对码
+      const data = {
+        id: this.currentRow.id,
+        productId: this.currentRow.productId,
+        userName: this.name
+      }
+      this.$confirm(`是否确定从${this.isMate.name}更改为${this.currentRow.name}`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.subLoading = true
+        mateAgain(data).then(res => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.$router.go(-1)
+        }).catch(() => {
+          this.subLoading = false
+        })
+      }).catch(() => {})
     },
     handleAudit(type) {
       if (type === 1) {
