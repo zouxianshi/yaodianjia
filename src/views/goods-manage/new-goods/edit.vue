@@ -604,13 +604,11 @@ export default {
     },
     _loadGoodsDetails() { // 加载商品详情
       const id = this.$route.query.id
-      if (id) {
-        getGoodsDetails(id).then(res => {
-          if (res.data) {
-            this.goodsIntro.content = res.data.content
-          }
-        })
-      }
+      getGoodsDetails(id).then(res => {
+        if (res.data) {
+          this.goodsIntro.content = res.data.content
+        }
+      })
     },
     handleSelectionChange(row) {
       this.chooseTableSpec = row
@@ -722,7 +720,6 @@ export default {
     handleDeleteSpec(index) { // 删除规格
       this.specsForm.specs.splice(index, 1)
     },
-
     handleSpecsChange(row) { // 规格勾选
       this.specsList.map(v => {
         if (row[row.length - 1] === v.id) {

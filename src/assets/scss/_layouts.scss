@@ -15,6 +15,7 @@ html {
 
 #app {
   height: 100%;
+  overflow: hidden;
 }
 
 *,
@@ -115,7 +116,32 @@ aside {
 .app-container {
   padding: 20px;
   margin-bottom: 30px;
+  height: calc(100vh - 158px);
+  overflow-y: scroll;
+  &:hover::-webkit-scrollbar-thumb {
+    background: #409eff;
+    min-width: 200px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+    background: #fff;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px;
+    margin: 4px 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #409eff;
+    border-radius: 5px;
+  }
+
 }
+
 
 .components-container {
   margin: 30px 50px;
