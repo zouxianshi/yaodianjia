@@ -71,6 +71,7 @@
           :data="tableData"
           stripe
           style="width: 100%"
+          @current-change="handleCurrentChange"
         >
           <el-table-column
             prop="orCode"
@@ -141,22 +142,6 @@
             min-width="155"
             label="申请人"
           />
-          <el-table-column
-            prop="address"
-            align="left"
-            fixed="right"
-            label="操作"
-            min-width="100"
-          >
-            <template slot-scope="scope">
-              <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
-              <el-button
-                type="primary"
-                size="mini"
-                @click="handleClick(scope.row)"
-              >查看</el-button>
-            </template>
-          </el-table-column>
         </el-table>
         <div class="table-footer">
           <pagination
@@ -213,6 +198,10 @@ export default {
       })
     },
     handleClick(row) {
+      sessionStorage.setItem('mate', JSON.stringify(row))
+      this.$router.push('/goods-manage/mate?id=' + row.id)
+    },
+    handleCurrentChange(row) {
       sessionStorage.setItem('mate', JSON.stringify(row))
       this.$router.push('/goods-manage/mate?id=' + row.id)
     }

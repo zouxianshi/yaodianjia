@@ -221,14 +221,13 @@
       </div>
     </div>
     <el-dialog
-      ref="lockForm"
       title="锁定库存价格"
       :visible.sync="dialogVisible"
       width="30%"
       append-to-body
       :close-on-click-modal="false"
     >
-      <el-form :model="formData" label-width="100px" size="small">
+      <el-form ref="lockForm" :model="formData" label-width="100px" size="small">
         <el-form-item label="锁定商品属性">
           <el-checkbox-group v-model="lockFlag">
             <el-checkbox :label="1">价格</el-checkbox>
@@ -388,16 +387,18 @@ export default {
         return
       }
       this.dialogVisible = true
-      this.$$nextTick(() => {
-        this.$refs.lockForm.resetField()
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.lockForm.resetField()
+        }, 500)
       })
     },
     handleSetPriceStock() {
       this.subLoading = true
       const data = {
-        'commodityId': this.editData.id,
+        'commodityId': this.editData.commodityId,
         'price': this.editData.price,
-        'specId': this.editData.storeSpecId,
+        'specId': this.editData.id,
         'stock': this.editData.stock,
         'storeId': this.editData.storeId,
         'merCode': this.merCode
@@ -419,7 +420,7 @@ export default {
       const data = {
         'isAll': false,
         'specIds': [
-          row.storeSpecId
+          row.id
         ],
         'status': status,
         'storeIds': [
@@ -466,9 +467,10 @@ export default {
       const ary = []
       // 获取规格id
       this.multipleSelection.map(v => {
-        ary.push(v.storeSpecId)
+        ary.push(v.id)
       })
       this.formData.specIds = ary
+      this.formData.storeId = this.listQuery.storeId
       if (this.lockFlag.length === 0) { // 全部锁定
         this.formData.lockFlag = 0
       }
@@ -482,9 +484,15 @@ export default {
         this.formData.lockFlag = 3 // 锁定价格和库存
       }
       setLockPrice(this.formData).then(res => {
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+        this.dialogVisible = false
         this.subLoading = false
       }).catch(() => {
         this.subLoading = true
+        this.dialogVisible = false
       })
     },
     handleEditData(row, key) {

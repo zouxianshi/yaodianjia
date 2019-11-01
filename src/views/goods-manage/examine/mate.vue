@@ -275,7 +275,16 @@ export default {
   methods: {
     _loadMatchList() {
       this.loading = true
-      getExamineMatchList(this.$route.query.id).then(res => {
+      const data = JSON.parse(sessionStorage.getItem('mate'))
+      const params = {
+        'approvalNumber': data.approvalNumber,
+        'barCode': data.barCode,
+        'manufacture': data.manufacture,
+        'merCode': data.merCode,
+        'name': data.name
+      }
+      console.log(params)
+      getExamineMatchList(params).then(res => {
         this.tableData = res.data
         this.storeTableData = JSON.parse(JSON.stringify(res.data))
         if (res.data.length !== 0) {

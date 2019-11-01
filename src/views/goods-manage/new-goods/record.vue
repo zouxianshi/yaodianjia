@@ -115,13 +115,13 @@
             align="left"
             fixed="right"
             label="操作"
-            min-width="200"
+            min-width="250"
           >
             <template slot-scope="scope">
               <template v-if="scope.row.infoStatus===15&&scope.row.auditStatus!==2&&scope.row.auditStatus!==1&&scope.row.auditStatus!==0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
               </template>
-              <template v-if="scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13">
+              <template v-if="scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13||scope.row.infoStatus===15">
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>
