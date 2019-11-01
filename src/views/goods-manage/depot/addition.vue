@@ -174,9 +174,7 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.app-container {
-    padding-bottom: 50px;
-}
+
 .addition-wrapper{
   background: #f6f7fb;
   padding: 15px;

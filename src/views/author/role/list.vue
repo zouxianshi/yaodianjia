@@ -91,7 +91,5 @@ export default {
 }
 </script>
 <style lang="scss">
-.app-container{
-  margin-bottom: 30px;
-}
+
 </style>
