@@ -16,17 +16,21 @@
           <div class="edit-card-cnt">
             <div class="content">
               <p class="type-list">商品分类：
-                <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
-                  {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
-                <span class="link" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
+                <el-tag>
+                  <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
+                    {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
+                </el-tag>
+                <span class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
               <div class="type-list groups">商品分组：
                 <p class="group-list">
-                  <span v-for="(item,index) in chooseGroup" :key="index" class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                  <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                    <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                  </el-tag>
                 </p>
                 <span class="opreate">
-                  <span class="link" @click="groupVisible=true">选择分组</span>
-                  <a href="#/goods-manage/group" target="_blank"><span class="link">新建分组</span></a>
-                  <span class="link" @click="handleRefresh">刷新</span>
+                  <span class="link link-btn" @click="groupVisible=true">选择分组</span>
+                  <a href="#/goods-manage/group" target="_blank"><span class="link link-btn">新建分组</span></a>
+                  <span class="link link-btn" @click="handleRefresh">刷新</span>
                 </span>
               </div>
             </div>
@@ -679,6 +683,9 @@ export default {
     handleRefresh() { // 刷新分组
       this._loadTypeList(true)
     },
+    handleRemoveGroup(index) { // 删除选择的分组
+      this.chooseGroup.splice(index, 1)
+    },
     remoteMethod(query) {
       this._loadBrandList(query)
     },
@@ -879,10 +886,12 @@ export default {
         }
         &.groups{
           display: flex;
+          align-items: center;
         }
         .group-list{
           display: inline-block;
           max-width: 600px;
+          margin-right: 5px;
           .tag{
             margin-right: 10px;
           }
@@ -972,6 +981,9 @@ export default {
   .add-spec{
       margin-left: 80px;
     }
+}
+.link-btn{
+  font-size: 14px;
 }
 .modal-body{
    .cascader{

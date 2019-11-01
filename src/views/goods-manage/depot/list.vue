@@ -16,7 +16,7 @@
         <a href="#/goods-manage/import">
           <el-button type="primary" size="small" icon="el-icon-upload2">商品导入</el-button>
         </a>
-        <el-button type="" size="small" icon="el-icon-download" @click="handleExport">导出</el-button>
+        <!-- <el-button type="" size="small" icon="el-icon-download" @click="handleExport">导出</el-button> -->
       </div>
       <section @keydown.enter="getList">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
