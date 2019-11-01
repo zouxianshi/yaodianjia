@@ -33,12 +33,6 @@ setSystem('mc-system', 'medical')
 
 import { MC } from '@merchant/commons'
 
-// default config
-MC.init({
-  env: process.env.NODE_ENV === 'development' ? 'local' : process.env.VUE_APP_ENV,
-  proxyTarget: 'middle.dev.yaodianjia.cn/businesses-gateway/merchant'
-})
-
 // register global utility filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
@@ -47,9 +41,14 @@ Object.keys(filters).forEach(key => {
 Vue.config.productionTip = false
 Vue.prototype.uploadFileURL = process.env.VUE_APP_API_BASE || '/api'
 
-new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
+// default config
+MC.init({
+  env: process.env.VUE_APP_ENV ? process.env.VUE_APP_ENV : 'local'
+}).then(() => {
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
+  })
 })
