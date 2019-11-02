@@ -54,33 +54,31 @@ const mixin = {
       })
     },
     _loadSpces() { // 根据一级分类加载规格
-      if (this.basicForm.origin === 1) {
-        getSpecsProductSKU(this.$route.query.id).then(res => {
-          this.specsForm.specs = res.data
-          if (this.$route.query.id) {
-            this._loadSpecsInfo()
-          }
-        })
-      } else {
-        getSpecs(this.chooseTypeList[0].id).then(res => {
-          if (res.data) {
-            res.data.map((v, index) => {
-              v['index_' + index + '_' + v.attributeName] = ''
-            })
-            this.specsList = res.data
-          }
-          if (this.$route.query.id) {
-            this._loadSpecsInfo()
-          }
-        })
-      }
+      getSpecs(this.chooseTypeList[0].id).then(res => {
+        if (res.data) {
+          res.data.map((v, index) => {
+            v['index_' + index + '_' + v.attributeName] = ''
+            if (this.basicForm.origin === 1) {
+              this.chooseSpecsAry.push(v.id)
+            }
+          })
+          this.specsList = res.data
+        }
+        if (this.$route.query.id) {
+          this._loadSpecsInfo()
+        }
+      })
     },
     _loadSpecsInfo() { // 加载规格信息
-      getSelfSpecsInfo(this.$route.query.id).then(res => {
-        const { specList } = res.data
-        this.chooseSpecsAry = []
-        if (specList.length > 0) {
-          if (this.basicForm.origin === 2) { // 上架自建
+      if (this.basicForm.origin === 1) { // 标库
+        getSpecsProductSKU(this.basicForm.platformCode).then(res => {
+          this.specsForm.specs = res.data
+        })
+      } else {
+        getSelfSpecsInfo(this.$route.query.id).then(res => {
+          const { specList } = res.data
+          this.chooseSpecsAry = []
+          if (specList.length > 0) {
             if (specList) {
               this.specsForm.specs = []
             }
@@ -110,12 +108,9 @@ const mixin = {
             //       })
             //     })
             //     this.specsForm.specs = data
-          } else {
-            const data = specList
-            specList.productSpecSkuDTOs = data.specSkuList
           }
-        }
-      })
+        })
+      }
     }
   }
 }

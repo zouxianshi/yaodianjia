@@ -193,7 +193,7 @@
           <el-form>
             <el-form-item label="规格设置：">
               <el-checkbox-group v-model="chooseSpecsAry" @change="handleSpecsChange">
-                <el-checkbox v-for="(item,index) in specsList" :key="index" :label="item.id"> {{ item.attributeName }}</el-checkbox>
+                <el-checkbox v-for="(item,index) in specsList" :key="index" :disabled="basicForm.origin===1" :label="item.id"> {{ item.attributeName }}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="规格信息：">
@@ -228,14 +228,14 @@
                   <el-table-column label="商品图片">
                     <template slot-scope="scope">
                       <el-upload
-                        class="avatar-uploader specs-img"
+                        class="avatar-uploader specs-img-table"
                         :action="upLoadUrl"
                         :headers="headers"
                         :show-file-list="false"
                         :on-success="handleAvatarSuccess"
                         :before-upload="beforeUpload"
                       >
-                        <img v-if="scope.row.picUrl" :src="showImg(scope.row.picUrl)" class="avatar">
+                        <img v-if="scope.row.picUrl" style="width:80px;height:80px" :src="showImg(scope.row.picUrl)" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
                       </el-upload>
                     </template>
@@ -291,7 +291,7 @@
                           :on-success="handleAvatarSuccess"
                           :before-upload="beforeUpload"
                         >
-                          <img v-if="item.picUrl" :src="showImg(item.picUrl)" class="avatar">
+                          <img v-if="item.picUrl" style="width:100px;height:100px" :src="showImg(item.picUrl)" class="avatar">
                           <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(index)" />
                         </el-upload>
                       </el-form-item>
@@ -596,11 +596,10 @@ export default {
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
         this._loadgroupGather('1', [res.data.typeId])
-        if (res.data.groupIds) {
+        if (res.data.groupIds && res.data.groupIds.length > 0) {
           this._loadgroupGather('2', res.data.groupIds)
         }
         const { data } = res
-
         // 有限期处理
         if (data.expireDays === -1) {
           this.expireDays = -1
@@ -870,7 +869,11 @@ export default {
         this.subLoading = false
         this.leaveAction = true
         setTimeout(() => {
-          this.$router.replace('/goods-manage/apply-record')
+          if (this.basicForm.origin === 1) {
+            this.$router.replace('/goods-manage/depot')
+          } else {
+            this.$router.replace('/goods-manage/apply-record')
+          }
         }, 1000)
       }).catch(_ => {
         this.subLoading = false
@@ -998,6 +1001,17 @@ export default {
         padding: 12px;
         .el-input{
           width: 250px;
+        }
+        .specs-img-table{
+            .avatar-uploader-icon{
+            width: 80px;
+            height: 80px;
+            line-height: 80px!important;
+          }
+          .avatar{
+             width: 80px;
+            height: 80px;
+          }
         }
         .specs-img{
           .avatar-uploader-icon{
