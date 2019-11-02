@@ -6,18 +6,19 @@
       </div>
       <div class="app-main-box" :style="_styleToggle">
         <div class="flx" :style="_styleToggle">
-          <m-header />
-          <div class="breadcrumb-box">
-            <breadcrumb />
-          </div>
-          <tags-view />
+          <m-header>
+            <breadcrumb slot="breadcrumb" />
+            <tags-view slot="tags" />
+          </m-header>
         </div>
-        <div style="padding-top: 90px;">
+        <div class="app-main-model">
           <app-main />
+          <p class="copyright">Copyright © 2016-2019 上海海典软件股份有限公司 版权所有 沪ICP备10208754号</p>
         </div>
       </div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -112,7 +113,6 @@ export default {
 <style lang="scss" scoped>
 @import '~@/assets/scss/helpers/_mixins.scss';
 @import '~@/assets/scss/helpers/_variables.scss';
-
 .layout-wary {
   position: relative;
   .sidebar-box {
@@ -128,34 +128,16 @@ export default {
     left: 255px;
     top: 0;
     width: calc(100% - 255px);
-    overflow-y: auto;
-    height: calc(100vh);
     z-index: 1;
-    &:hover::-webkit-scrollbar-thumb {
-      background: #409eff;
-      min-width: 200px;
-    }
-
-    &::-webkit-scrollbar {
-      width: 5px;
-      height: 10px;
-      background: #fff;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-      border-radius: 5px;
-      margin: 4px 0;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #409eff;
-      border-radius: 5px;
-    }
-    .breadcrumb-box {
-      position: absolute;
-      top: 0;
-      left: 46px;
+    .app-main-model {
+      margin-top: 138px;
+      .copyright {
+        height: 20px;
+        line-height:20px;
+        font-size: 12px;
+        text-align: center;
+        color: #888;
+      }
     }
     .flx {
       position: fixed;
@@ -207,4 +189,5 @@ export default {
 .mobile .fixed-header {
   width: 100%;
 }
+
 </style>

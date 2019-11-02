@@ -1,7 +1,7 @@
 <template>
   <div class="drag-tree-model" style="position: relative">
-    <v-draggable v-model="list" v-bind="level1_Opt()" @start="_onStartLevel1" @end="_onEndLevel1">
-      <div v-for="(item_1,$index_1) in list" :key="$index_1" class="level-1-group">
+    <v-draggable v-model="listData" v-bind="level1_Opt()" @start="_onStartLevel1" @end="handleSort(listData,0)">
+      <div v-for="(item_1,$index_1) in listData" :key="$index_1" class="level-1-group">
         <div class="level-1-box">
           <div v-if="$index_1 === 0" class="title-box">
             <m-item-info :item-info="{is:true}">
@@ -27,7 +27,7 @@
         </div>
         <!--level 1-->
         <template v-if="item_1.children.length">
-          <v-draggable v-show="item_1.show" v-model="item_1.children" v-bind="level2_Opt()" @start="_onStartLevel1" @end="_onEndLevel1">
+          <v-draggable v-show="item_1.show" v-model="item_1.children" v-bind="level2_Opt()" @start="_onStartLevel1" @end="handleSort(item_1.children)">
             <div v-for="(item_2,$index_2) in item_1.children" :key="$index_2" class="level-2-group">
               <div class="level-2-box">
                 <div class="title">
@@ -52,7 +52,7 @@
                   v-model="item_2.children"
                   v-bind="level3_Opt()"
                   @start="_onStartLevel1"
-                  @end="_onEndLevel1"
+                  @end="handleSort(item_2.children)"
                 >
                   <div v-for="(item_3,$index_3) in item_2.children" :key="$index_3" class="level-3-group">
                     <div class="level-3-box">
@@ -64,6 +64,7 @@
                           </div>
                           <div slot="operation" class="operation">
                             <m-subgrouping type="create" content-type="button" :parent-id="item_3.id" :one-index="$index_1" :two-index="$index_2" :three-index="$index_3" level="3" />
+                            <band :info="item_3" />
                             <m-delete :one-index="$index_1" :two-index="$index_2" :three-index="$index_3" level="3" :group-id="item_3.id" />
                           </div>
                         </m-item-info>
@@ -86,10 +87,10 @@ import mItemInfo from './itemInfo'
 import vDraggable from 'vuedraggable'
 import mSubgrouping from './subgrouping'
 import mDelete from './delete'
-
+import band from './band'
 export default {
   name: 'DragTree',
-  components: { vDraggable, mItemInfo, mSubgrouping, mDelete },
+  components: { vDraggable, mItemInfo, mSubgrouping, mDelete, band },
   props: {
     list: { // 分组数据
       type: Array,
@@ -100,13 +101,34 @@ export default {
   },
   data() {
     return {
+      listData: this.list,
       drag: false
     }
   },
-  computed: {},
-  watch: {},
+  watch: {
+    list: {
+      handler(newValue, oldValue) {
+        this.listData = newValue
+      }
+    }
+  },
   methods: {
     _onStartLevel1() {},
+    handleSort(row, level) { // 排序
+      const data = []
+      row.map(v => {
+        data.push({
+          'id': v.id,
+          'merCode': v.merCode
+        })
+      })
+      this.$store.dispatch('group/updateSort', { list: data }).then(res => {
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        })
+      })
+    },
     _onEndLevel1() {
       console.log(this.list)
     },

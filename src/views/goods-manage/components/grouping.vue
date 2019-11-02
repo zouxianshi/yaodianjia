@@ -66,11 +66,9 @@
           <p class="choose-label">已选择：</p>
           <ul class="choose-list clearfix">
             <li v-for="(item,index) in chooseGroup" :key="index" class="choose-item">
-              <el-breadcrumb separator-class="el-icon-arrow-right">
-                <el-breadcrumb-item>{{ item[0].name }}</el-breadcrumb-item>
-                <el-breadcrumb-item>{{ item[1].name }}</el-breadcrumb-item>
-                <el-breadcrumb-item>{{ item[2].name }}</el-breadcrumb-item>
-              </el-breadcrumb>
+              <el-tag type="" closable @close="handleRemove(index)">
+                <span>{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+              </el-tag>
             </li>
           </ul>
         </div>
@@ -173,6 +171,14 @@ export default {
         }
         this.chooseGroup.splice(findIndex, 1)
       }
+    },
+    handleRemove(index) { // 移出选择的数据
+      const id = this.chooseGroup[index][3]
+      if (this.modelList.includes(id)) {
+        const index = this.modelList.indexOf(id)
+        this.modelList.splice(index, 1)
+      }
+      this.chooseGroup.splice(index, 1)
     },
     handleSubmit() {
       const params = {

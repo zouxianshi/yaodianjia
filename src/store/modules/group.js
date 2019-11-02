@@ -1,4 +1,4 @@
-import { getTypeTree, setAddGroup, delGroup, updateGroup } from '@/api/group'
+import { getTypeTree, setAddGroup, delGroup, updateGroup, updateSort } from '@/api/group'
 
 function mapData(data) {
   data.map(v => {
@@ -61,6 +61,15 @@ const actions = {
   modifyGroup({ commit }, data) { // 修改分组
     return new Promise((reslove, reject) => {
       updateGroup(data).then(res => {
+        reslove(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  updateSort({ commit }, data) { // 修改排序
+    return new Promise((reslove, reject) => {
+      updateSort(data).then(res => {
         reslove(res)
       }).catch(err => {
         reject(err)

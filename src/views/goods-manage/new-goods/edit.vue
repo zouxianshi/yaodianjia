@@ -15,10 +15,24 @@
           </div>
           <div class="edit-card-cnt">
             <div class="content">
-              <p class="type-list">商品分类：<span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;{{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span></p>
-              <p class="type-list">商品分组：<span v-if="chooseGroup.length">{{ chooseGroup[0].name }}&nbsp;>&nbsp;{{ chooseGroup[1].name }}&nbsp;>&nbsp;{{ chooseGroup[2].name }}</span>
-                <span class="link" @click="groupVisible=true">选择分组</span> <span class="link">新建分组</span> <span class="link">刷新</span>
-              </p>
+              <p class="type-list">商品分类：
+                <el-tag v-if="chooseTypeList.length">
+                  <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
+                    {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
+                </el-tag>
+                <span class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
+              <div class="type-list groups">商品分组：
+                <p class="group-list">
+                  <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                    <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                  </el-tag>
+                </p>
+                <span class="opreate">
+                  <span class="link link-btn" @click="groupVisible=true">选择分组</span>
+                  <a href="#/goods-manage/group" target="_blank"><span class="link link-btn">新建分组</span></a>
+                  <span class="link link-btn" @click="handleRefresh">刷新</span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -31,33 +45,41 @@
             <div class="content">
               <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicRules">
                 <el-form-item label="商品信息：" prop="name">
-                  <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
+                  <el-input v-model="basicForm.name" :disabled="basicForm.origin===1" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
                 <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='保健品')" prop="commonName" label="通用名：">
-                  <el-input v-model="basicForm.commonName" placeholder="请输入通用名" size="small" />
+                  <el-input v-model="basicForm.commonName" :disabled="basicForm.origin===1" placeholder="请输入通用名" size="small" />
                 </el-form-item>
-                <el-form-item label="所属品牌：">
-                  <el-select v-model="basicForm.brandId" filterable placeholder="请选择所属品牌">
-                    <!-- <el-option
-                      v-for="item in options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    /> -->
+                <el-form-item label="所属品牌：" prop="brandId">
+                  <el-select
+                    v-model="basicForm.brandId"
+                    :disabled="basicForm.origin===1"
+                    filterable
+                    remote
+                    :remote-method="remoteMethod"
+                    :loading="loading"
+                    placeholder="请选择所属品牌"
+                  >
+                    <el-option
+                      v-for="item in brandList"
+                      :key="item.id"
+                      :label="item.engName"
+                      :value="item.id"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="重量：">
-                  <el-input v-model="basicForm.weight" placeholder="请输入重量" size="small" style="width:193px">
+                  <el-input v-model="basicForm.weight" :disabled="basicForm.origin===1" placeholder="请输入重量" size="small" style="width:193px">
                     <template slot="append">公斤</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="长宽高：">
-                  <el-input v-model="basicForm.zl" placeholder="长" size="small" style="width:70px" /> m *
-                  <el-input v-model="basicForm.zl" placeholder="宽" size="small" style="width:70px" /> m *
-                  <el-input v-model="basicForm.zl" placeholder="高" size="small" style="width:70px" />
+                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1" placeholder="长" size="small" style="width:70px" /> m *
+                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1" placeholder="宽" size="small" style="width:70px" /> m *
+                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1" placeholder="高" size="small" style="width:70px" />
                 </el-form-item>
                 <el-form-item label="单位：" prop="unit">
-                  <el-select v-model="basicForm.unit" filterable placeholder="选择单位">
+                  <el-select v-model="basicForm.unit" :disabled="basicForm.origin===1" placeholder="选择单位">
                     <el-option
                       v-for="item in unit"
                       :key="item.value"
@@ -67,7 +89,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="关键字：">
-                  <el-input v-model="basicForm.keyWord" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
+                  <el-input v-model="basicForm.keyWord" :disabled="basicForm.origin===1" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
                 </el-form-item>
               </el-form>
             </div>
@@ -83,7 +105,7 @@
               <el-form :model="basicForm" label-width="130px" status-icon>
                 <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西医药品'">
                   <el-form-item label="药品类型：">
-                    <el-select v-model="basicForm.drugType" placeholder="请选择药品类型">
+                    <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1" placeholder="请选择药品类型">
                       <el-option label="甲类OTC" value="0" />
                       <el-option label="处方药" value="1" />
                       <el-option label="乙类OTC" value="2" />
@@ -91,22 +113,29 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="剂型：">
-                    <el-select v-model="value" placeholder="请选择剂型" />
+                    <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1" placeholder="请选择药品类型">
+                      <el-option label="剂兴1" value="0" />
+                      <el-option label="剂兴2" value="1" />
+                    </el-select>
                   </el-form-item>
                 </template>
                 <el-form-item label="生产企业：" prop="manufacture">
-                  <el-input v-model="basicForm.manufacture" placeholder="请输入生产企业" size="small" />
+                  <el-input v-model="basicForm.manufacture" :disabled="basicForm.origin===1" placeholder="请输入生产企业" size="small" />
                 </el-form-item>
                 <el-form-item label="产地：" prop="produceOrigin">
-                  <el-input v-model="basicForm.produceOrigin" placeholder="请输入产地" size="small" />
+                  <el-input v-model="basicForm.produceOrigin" :disabled="basicForm.origin===1" placeholder="请输入产地" size="small" />
                 </el-form-item>
                 <el-form-item label="批准文号：" prop="approvalNumber">
-                  <el-input v-model="basicForm.approvalNumber" placeholder="请输入批准文号" size="small" />
+                  <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1" placeholder="请输入批准文号" size="small" />
+                </el-form-item>
+                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='中西医药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='保健品')" label="是否含有麻黄碱">
+                  <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
                 </el-form-item>
                 <el-form-item label="商品详细信息：">
-                  <Tinymce ref="editor" v-model="basicForm.intro" :height="400" />
+                  <p>填写商品说明书</p>
+                  <Tinymce ref="editor" v-model="basicForm.intro" :disabled="basicForm.origin===1" :height="400" />
                 </el-form-item>
-                <el-form-item :label="chooseTypeList[0].name==='保健品'?'保健功能':'功能主治/适应症：'">
+                <el-form-item label="功能主治/适应症：">
                   <el-input
                     v-model="basicForm.keyFeature"
                     type="textarea"
@@ -116,16 +145,17 @@
                   />
                 </el-form-item>
                 <el-form-item label="有效期：">
-                  <el-radio v-model="basicForm.type" size="small">无</el-radio>
-                  <el-radio v-model="basicForm.type" size="small">
-                    <el-input v-model="basicForm.num" style="width:80px" size="small" placeholder="2" />
-                    <el-select v-model="basicForm.types" style="width:100px" size="small" placeholder="">
-                      <el-option value="年" label="年" />
-                      <el-option value="月" label="月" />
+                  <el-radio v-model="expireDays" :disabled="basicForm.origin===1" :label="-1" size="small">无</el-radio>
+                  <el-radio v-model="expireDays" :disabled="basicForm.origin===1" :label="1" size="small">
+                    <el-input v-model="days" :disabled="basicForm.origin===1" style="width:80px" size="small" placeholder="" />
+                    <el-select v-model="timeTypes" :disabled="basicForm.origin===1" style="width:100px" size="small" placeholder="">
+                      <el-option value="1" label="年" />
+                      <el-option value="2" label="月" />
                     </el-select>
                   </el-radio>
                 </el-form-item>
               </el-form>
+
             </div>
           </div>
         </div>
@@ -138,74 +168,132 @@
             <div class="content">
               <el-form :model="basicForm">
                 <el-form-item label="运输方式：">
-                  <el-radio-group v-model="basicForm.freightType">
+                  <el-radio-group v-model="basicForm.freightType" :disabled="basicForm.origin===1">
                     <el-radio :label="0">常温</el-radio>
                     <el-radio :label="1">冷藏</el-radio>
                     <el-radio :label="2">冷冻</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="其他属性：">
-                  <el-checkbox v-model="basicForm.isEasyBreak" :true-label="1" :false-label="0">易碎</el-checkbox>
-                  <el-checkbox v-model="basicForm.isLiquid" :true-label="1" :false-label="0">液体</el-checkbox>
-                  <template v-if="chooseTypeList[0].name!=='中西医药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='保健品'">
-                    <el-checkbox v-model="basicForm.hasEphedrine" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
-                  </template>
+                  <el-checkbox v-model="basicForm.isEasyBreak" :disabled="basicForm.origin===1" :true-label="1" :false-label="0">易碎</el-checkbox>
+                  <el-checkbox v-model="basicForm.isLiquid" :disabled="basicForm.origin===1" :true-label="1" :false-label="0">液体</el-checkbox>
+                </el-form-item>
+                <el-form-item label="" label-width="100px">
+                  <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitForm">下一步</el-button>
                 </el-form-item>
               </el-form>
             </div>
           </div>
         </div>
-        <div class="next-btn text-center">
-          <el-button type="" size="small" @click="$router.go(-1)">上一步</el-button>
-          <el-button type="primary" size="small">下一步</el-button>
-        </div>
       </div>
       <!-- 规格信息 -->
       <div v-show="step===2">
         <div class="specs-box">
-          <p class="text-right" style="font-size:13px">商品来源：海典商品标准库</p>
+          <p class="text-right" style="font-size:13px">商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
           <el-form>
             <el-form-item label="规格设置：">
-              <el-checkbox-group v-model="checkList">
-                <el-checkbox label="0">药品规格</el-checkbox>
-                <el-checkbox label="1">颜色</el-checkbox>
-                <el-checkbox label="2">尺寸</el-checkbox>
+              <el-checkbox-group v-model="chooseSpecsAry" @change="handleSpecsChange">
+                <el-checkbox v-for="(item,index) in specsList" :key="index" :disabled="basicForm.origin===1" :label="item.id"> {{ item.attributeName }}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="规格信息：">
-              <template v-if="false">
-                <el-table :data="specsForm.specsInfo" @selection-change="handleSelectionChange">
+              <template v-if="basicForm.origin===1">
+                <el-table :data="specsForm.specs" @selection-change="handleSelectionChange">
                   <el-table-column
                     type="selection"
                     width="55"
                   />
-                  <el-table-column label="尺寸" />
-                  <el-table-column label="颜色" />
-                  <el-table-column label="规格" />
-                  <el-table-column label="商品编码" />
-                  <el-table-column label="商品条码" />
-                  <el-table-column label="商品价格" />
+                  <span v-for="(item,index) in specsForm.specs" :key="index">
+                    <el-table-column v-for="(items,index1) in item.productSpecSkuDTOs" :key="index1" :label="items.skuKeyName">
+                      <template>
+                        <span v-text="items.skuValue" />
+                      </template>
+                    </el-table-column>
+                  </span>
+                  <el-table-column label="商品编码">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.erpCode" size="mini" placeholder="" />
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="商品条码">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.barCode" size="mini" placeholder="" />
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="商品价格">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.mprice" size="mini" placeholder="" />
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="商品图片">
+                    <template slot-scope="scope">
+                      <el-upload
+                        class="avatar-uploader specs-img-table"
+                        :action="upLoadUrl"
+                        :headers="headers"
+                        :show-file-list="false"
+                        :on-success="handleAvatarSuccess"
+                        :before-upload="beforeUpload"
+                      >
+                        <img v-if="scope.row.picUrl" style="width:80px;height:80px" :src="showImg(scope.row.picUrl)" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
+                      </el-upload>
+                    </template>
+                  </el-table-column>
                 </el-table>
               </template>
               <template v-else>
-                <div v-for="(item,index) in specsForm.specs" :key="index" class="spec-list">
+                <template v-if="$route.query.id">
+                  <el-table :data="editSpecsData">
+                    <span v-for="(list,index) in editSpecsData" :key="index">
+                      <el-table-column v-for="(propsf,indexs) in list.specSkuList" :key="indexs" :label="propsf.skuKeyName">
+                        <template>
+                          <span v-text="propsf.skuValue" />
+                        </template>
+                      </el-table-column>
+                    </span>
+                    <el-table-column label="商品编码" prop="erpCode" />
+                    <el-table-column label="商品条码" prop="barCode" />
+                    <el-table-column label="商品价格" prop="mprice" />
+                    <el-table-column label="商品图片">
+                      <template slot-scope="scope">
+                        <el-image :src="showImg(scope.row.picUrl)" style="width:60px;height:60px" />
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </template>
+                <div v-for="(item,index) in specsForm.specs" :key="index" class="spec-list" style="margin-top:10px;">
                   <div class="header">
                     <span>规格{{ index+1 }}</span>
                     <i class="el-icon-delete" @click="handleDeleteSpec(index)" />
                   </div>
                   <div class="spec-content">
                     <el-form :model="item" size="small" label-width="80px" :status-icon="true">
-                      <el-form-item label="包装规格">
-                        <el-input placeholder="输入包装规格" />
-                      </el-form-item>
-                      <el-form-item label="尺寸">
-                        <el-input placeholder="输入尺寸规格" />
-                      </el-form-item>
-                      <el-form-item label="颜色">
-                        <el-input placeholder="输入颜色规格" />
+                      <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1" :label="items.attributeName">
+                        <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" placeholder="输入包装规格" />
                       </el-form-item>
                       <el-form-item label="条码">
-                        <el-input placeholder="输入条码" />
+                        <el-input v-model="item.barCode" placeholder="输入条码" />
+                      </el-form-item>
+                      <el-form-item label="商品编码">
+                        <el-input v-model="item.erpCode" placeholder="输入条码" />
+                      </el-form-item>
+                      <el-form-item label="价格">
+                        <el-input v-model="item.mprice" placeholder="输入价格" />
+                      </el-form-item>
+                      <el-form-item label="商品图片">
+                        <el-upload
+                          class="avatar-uploader specs-img"
+                          :action="upLoadUrl"
+                          :headers="headers"
+                          :show-file-list="false"
+                          :upload-index="index"
+                          :on-success="handleAvatarSuccess"
+                          :before-upload="beforeUpload"
+                        >
+                          <img v-if="item.picUrl" style="width:100px;height:100px" :src="showImg(item.picUrl)" class="avatar">
+                          <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(index)" />
+                        </el-upload>
                       </el-form-item>
                     </el-form>
                   </div>
@@ -214,6 +302,10 @@
                   <el-button type="text" icon="el-icon-plus" size="small" @click="handleAddSpec">添加规格</el-button>
                 </p>
               </template>
+            </el-form-item>
+            <el-form-item label="" label-width="100px">
+              <el-button type="" size="small" @click="step=1">上一步</el-button>
+              <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitSpec">下一步</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -226,13 +318,13 @@
           </div>
           <div class="edit-card-cnt">
             <div class="content">
-              <vue-upload-img :actions="upLoadUrl" :before-upload="beforeUpload" :file-list="fileList" :headers="headers" :limit="6" :file-data="{merCode:merCode}" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" />
+              <vue-upload-img :actions="upLoadUrl" :before-upload="beforeUpload" :file-list="fileList" :headers="headers" :limit="6" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" @onError="handleImgError" />
               <el-dialog append-to-body :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt="">
               </el-dialog>
               <p class="img-tips" style="margin-top:10px;color:#E6A23C">提示：上传图片后可在线编辑图片，支持鼠标拖拽排序</p>
               <div class="text-center">
-                <el-button type="primary" size="small">保存</el-button>
+                <el-button type="primary" size="small" @click="handleSubImg">保存</el-button>
               </div>
             </div>
           </div>
@@ -247,14 +339,14 @@
                 <div class="left-show">
                   <div class="img" />
                   <div class="basicMsgs">基本信息区<br>固定样式,显示商品主图、价格等信息</div>
-                  <div class="editSqu w-e-text" />
+                  <div class="editSqu w-e-text" v-html="goodsIntro.content" />
                 </div>
                 <div class="edit-box">
-                  <Tinymce ref="editor" v-model="basicForm.content" :height="400" />
+                  <Tinymce ref="editor" v-model="goodsIntro.content" :height="400" />
                 </div>
               </section>
               <div class="text-center">
-                <el-button type="primary" size="small">保存</el-button>
+                <el-button type="primary" size="small" :loading="subLoading" @click="handleSubIntro">保存</el-button>
               </div>
             </div>
           </div>
@@ -282,30 +374,59 @@
         <el-button type="primary" size="small" @click="handleSaveGroup">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      title="选择分类"
+      :visible.sync="typeVisible"
+      :close-on-click-modal="false"
+      width="30%"
+      append-to-body
+    >
+      <div class="modal-body">
+        <el-cascader
+          v-model="chooseList"
+          class="cascader"
+          style="width:300px"
+          :options="typeList"
+          :props="defaultProps"
+        />
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="typeVisible = false">取 消</el-button>
+        <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 import Tinymce from '@/components/Tinymce'
-// import ImgUpload from '@/components/ImgUpload'
 import vueUploadImg from 'vueuploadimg/dist/vueuploadimg'
-import { getTypeTree } from '@/api/group'
+import { getTypeTree, getPreGroupList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
+import { setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
+import mixins from './_source/mixin'
+import specsMixin from './_source/specsMixins'
 export default {
   components: { Tinymce, vueUploadImg },
+  mixins: [mixins, specsMixin],
   data() {
     return {
       step: 1,
-      checkList: ['1', '2'],
+      chooseSpecsAry: [],
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组
       groupVisible: false,
       chooseArray: [],
+      brandList: [], // 品牌列表
+      timeTypes: '2', // 2为月 1为年
+      expireDays: -1,
+      days: '',
       defaultProps: {
         children: 'children',
         label: 'name',
         value: 'id'
       },
+      loading: false,
       basicForm: {
         'approvalNumber': '', // 批准文号
         'brandId': '', // 商品品牌id
@@ -322,7 +443,11 @@ export default {
         'manufacture': '', // 生产企业
         'name': '', // 商品名
         'produceOrigin': '', // 产地
-        'unit': ''// 规格
+        'unit': '', // 规格
+        'typeId': '',
+        'origin': 2, // 商品来源，1-海典标准库，2-商家自定义
+        'packStandard': '', // 长宽高
+        'groupIds': [] // 分组id
       },
       basicRules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
@@ -334,10 +459,6 @@ export default {
         approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }]
       },
       dialogVisible: false,
-      specsForm: {
-        specsInfo: [],
-        specs: [{}, {}]
-      },
       unit: [{
         value: '件',
         label: '件'
@@ -355,46 +476,199 @@ export default {
         label: '包'
       },
       {
+        value: '盒',
+        label: '盒'
+      },
+      {
         value: '箱',
         label: '箱'
+      }, {
+        value: '公斤',
+        label: '公斤'
+      },
+      {
+        value: '条',
+        label: '条'
+      },
+      {
+        value: '杯',
+        label: '杯'
+      },
+      {
+        value: '提',
+        label: '提'
+      },
+      {
+        value: '对',
+        label: '对'
+      },
+      {
+        value: '块',
+        label: '块'
+      },
+      {
+        value: '套',
+        label: '套'
+      },
+      {
+        value: '双',
+        label: '双'
+      },
+      {
+        value: '钱',
+        label: '钱'
+      },
+      {
+        value: '两',
+        label: '两'
       }
       ],
       value: '',
       dialogImageUrl: '',
-      fileList: [{
-        imgUrl: 'https://img.ithome.com/newsuploadfiles/2019/10/20191015_084449_97.jpg'
-      }],
-      groupData: []// 分组
+      fileList: [],
+      groupData: [], // 分组
+      goodsIntro: { // 商品信息
+        content: ''
+      },
+      uploadIndex: 0,
+      subLoading: false,
+      chooseTableSpec: [],
+      leaveAction: false // 离开页面动作，true为保存离开  false异常离开
     }
   },
   computed: {
     ...mapGetters(['merCode', 'name', 'token']),
     upLoadUrl() {
-      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload`
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
     },
     headers() {
       return { 'Authorization': this.token }
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
-    this.$store
-      .dispatch('tagsView/delView', from)
-    next()
+    if (!this.leaveAction) {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        this.$store
+          .dispatch('tagsView/delView', from)
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
+    }
   },
   created() {
-    const data = sessionStorage.getItem('types')
-    this.chooseTypeList = JSON.parse(data)
-    this._loadTypeList()
+    if (this.$route.query.id) {
+      this._loadBasicInfo()
+      this._loadGoodsDetails()
+      this._loadGoodsImgAry()
+    } else {
+      const data = sessionStorage.getItem('types')
+      this.chooseTypeList = JSON.parse(data)
+    }
+    this._loadTypeList() // 获取分组
+    this._loadBrandList() // 获取所属品牌
   },
   methods: {
-    handleSelectionChange() {},
-    handleSortEnd(val) {
-      console.log('排序之后的结果', val)
+    _loadgroupGather(type, ids) { // 查询分类和分组的父类
+      const data = {
+        'ids': ids,
+        'type': type,
+        merCode: type === '1' ? 'hydee' : this.merCode
+      }
+
+      getPreGroupList(data).then(res => {
+        if (type === '1') { // 分类
+          const datas = res.data[ids[0]]
+          this.chooseTypeList = [{ name: datas.name, id: datas.id }, { name: datas.child.name, id: datas.child.id }, { name: datas.child.child.name, id: datas.child.child.id }]
+        } else { // 分组
+          const datas = res.data
+          ids.map(v => {
+            const dat = datas[v]
+            this.chooseGroup.push([{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }, { name: dat.child.child.name, id: dat.child.child.id }])
+          })
+        }
+      })
+    },
+    _loadBasicInfo() { // 加载基本信息
+      getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
+        // 分组处理
+        this._loadgroupGather('1', [res.data.typeId])
+        if (res.data.groupIds && res.data.groupIds.length > 0) {
+          this._loadgroupGather('2', res.data.groupIds)
+        }
+        const { data } = res
+        // 有限期处理
+        if (data.expireDays === -1) {
+          this.expireDays = -1
+        } else {
+          if (data.expireDays > 365) {
+            data.expireDays = data.expireDays / 365
+            this.timeTypes = '1'
+          } else {
+            data.expireDays = data.expireDays / 30
+            this.timeTypes = '2'
+          }
+        }
+
+        // 长宽高处理
+        if (data.packStandard) {
+          const packStandard = data.packStandard.split('*')
+          data.long = packStandard[0] || ''
+          data.width = packStandard[1] || ''
+          data.height = packStandard[2] || ''
+        }
+        // 赋值值
+        this.basicForm = data
+      })
+    },
+    _loadGoodsImgAry() { // 加载商品图片
+      const id = this.$route.query.id
+      if (id) {
+        getGoodsImgAry(id).then(res => {
+          if (res.data) {
+            res.data.map(v => {
+              this.fileList.push({
+                imgUrl: this.showImg(v.picUrl),
+                picUrl: v.picUrl
+              })
+            })
+          }
+        })
+      }
+    },
+    _loadGoodsDetails() { // 加载商品详情
+      const id = this.$route.query.id
+      getGoodsDetails(id).then(res => {
+        if (res.data) {
+          this.goodsIntro.content = res.data.content
+        }
+      })
+    },
+    handleSelectionChange(row) {
+      this.chooseTableSpec = row
+    },
+    handleSortEnd(val) { // 图片排序
+      this.fileList = val
+      if (this.fileList.length > 0) {
+        console.log('1111')
+      }
     },
     handleImgSuccess(res, fileList, index) {
-      if (res.code === '10000') {
-        this.fileList[index].imgUrl = res.data.data
+      if (!this.fileList[index]) {
+        this.fileList.push({ imgUrl: this.showImg(res), picUrl: res })
+      } else {
+        this.fileList[index].imgUrl = this.showImg(res)
+        this.fileList[index].picUrl = res
       }
+    },
+    handleImgError() {
+      this.$message({
+        message: '图片上传失败',
+        type: 'error'
+      })
     },
     handlePreview(file) {
       this.dialogImageUrl = file.imgUrl
@@ -410,30 +684,66 @@ export default {
       }
       return isImg
     },
-    _loadTypeList() { // 获取分组
+    handleUploadIndex(index) {
+      this.uploadIndex = index
+    },
+    handleAvatarSuccess(res, file) { // 规格图片上传成功
+      if (res.code === '10000') {
+        this.specsForm.specs[this.uploadIndex].picUrl = res.data
+      }
+    },
+    _loadTypeList(isRefresh) { // 获取分组
       getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
+        if (isRefresh) {
+          this.$message({
+            message: '刷新成功',
+            type: 'success'
+          })
+        }
       })
     },
     handleSaveGroup() { // 保存数据
-      this._filters(this.chooseArray)
+      if (this.chooseArray.length !== 3) {
+        this.$message({
+          message: '分组选择不完整',
+          type: 'error'
+        })
+        return
+      }
+      this.chooseGroup.push([])
+      this._filters(this.chooseArray, this.chooseGroup.length - 1)
       this.groupVisible = false
     },
-    _filters(data) {
-      this.chooseGroup = []
+    handleRefresh() { // 刷新分组
+      this._loadTypeList(true)
+    },
+    handleRemoveGroup(index) { // 删除选择的分组
+      this.chooseGroup.splice(index, 1)
+    },
+    remoteMethod(query) {
+      this._loadBrandList(query)
+    },
+    _loadBrandList(query = '') { // 获取品牌
+      getBrandList({ brandName: query }).then(res => {
+        const { data } = res.data
+        this.brandList = data
+      })
+    },
+    _filters(data, index) {
       this.groupData.map(v => {
         if (v.id === data[0]) {
-          this.chooseGroup.push({ name: v.name, id: v.id })
+          this.chooseGroup[index].push({ name: v.name, id: v.id })
         }
         if (v.children) {
           v.children.map(v1 => {
             if (v1.id === data[1]) {
-              this.chooseGroup.push({ name: v1.name, id: v1.id })
+              this.chooseGroup[index].push({ name: v1.name, id: v1.id })
             }
             if (v1.children) {
               v1.children.map(v2 => {
                 if (v2.id === data[2]) {
-                  this.chooseGroup.push({ name: v2.name, id: v2.id })
+                  this.chooseGroup[index].push({ name: v2.name, id: v2.id })
                 }
               })
             }
@@ -442,10 +752,132 @@ export default {
       })
     },
     handleAddSpec() {
-      this.specsForm.specs.push({})
+      this.specsForm.specs.push({ picUrl: '', mprice: '', erpCode: '', barCode: '' })
     },
     handleDeleteSpec(index) { // 删除规格
       this.specsForm.specs.splice(index, 1)
+    },
+    handleSpecsChange(row) { // 规格勾选
+      this.specsList.map(v => {
+        if (row[row.length - 1] === v.id) {
+          this.specsForm.specsData.push(v)
+        }
+      })
+    },
+    _CreateBasicInfo(data) { // 创建基本信息
+      setGoodsAdd(data).then(res => {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+        this.basicForm.id = res.data
+        this.step = 2
+        this.subLoading = false
+      }).catch(_ => {
+        this.subLoading = false
+      })
+    },
+    _UpdateBasicInfo(data) { // 更新基本信息
+      updateBasicInfo(data).then(res => {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+        this.step = 2
+        this.subLoading = false
+      }).catch(_ => {
+        this.subLoading = false
+      })
+    },
+    handleSubmitForm() { // 保存基本信息操作
+      try {
+        this._loadSpces() // 获取规格
+      } catch (error) {
+        console.log(error)
+      }
+      if (this.basicForm.origin === 1) {
+        this.step = 2
+      }
+      this.$refs['basic'].validate((valid) => {
+        if (valid) {
+          this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
+          const data = JSON.parse(JSON.stringify(this.basicForm))
+          data.packStandard = `${data.long}*${data.width}*${data.height}`
+          if (this.expireDays === -1) {
+            data.expireDays = -1
+          } else {
+            if (this.timeTypes === '2') { // 月
+              data.expireDays = parseInt(this.days) * 30
+            } else {
+              data.expireDays = parseInt(this.days) * 365
+            }
+          }
+          data.groupIds = []
+          this.chooseGroup.map(v => {
+            data.groupIds.push(v[2].id)
+          })
+          this.subLoading = true
+          if (this.basicForm.id) {
+            data.commodityId = data.id
+            this._UpdateBasicInfo(data)
+          } else {
+            this._CreateBasicInfo(data)
+          }
+        } else {
+          console.log('error submit')
+        }
+      })
+    },
+
+    handleSubImg() { // 保存图片
+      if (this.fileList.length === 0) {
+        this.$message({
+          message: '必须上传图片',
+          type: 'error'
+        })
+        return
+      }
+      this.subLoading = true
+      const data = {
+        'commodityId': this.basicForm.id,
+        'imgs': this.fileList
+      }
+      // this.fileList.map(v => {
+      //   data.imgs.push({ picUrl: v.imgUrl })
+      // })
+      saveImg(data).then(_ => {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+        this.subLoading = false
+      }).catch(_ => {
+        this.subLoading = false
+      })
+    },
+    handleSubIntro() { // 保存商品详情
+      this.subLoading = true
+      const data = {
+        content: this.goodsIntro.content,
+        id: this.basicForm.id
+      }
+      saveGoodsDetails(data).then(res => {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+        this.subLoading = false
+        this.leaveAction = true
+        setTimeout(() => {
+          if (this.basicForm.origin === 1) {
+            this.$router.replace('/goods-manage/depot')
+          } else {
+            this.$router.replace('/goods-manage/apply-record')
+          }
+        }, 1000)
+      }).catch(_ => {
+        this.subLoading = false
+      })
     }
   }
 }
@@ -488,6 +920,18 @@ export default {
         margin-bottom: 10px;
         &:last-child {
           margin: 0;
+        }
+        &.groups{
+          display: flex;
+          align-items: center;
+        }
+        .group-list{
+          display: inline-block;
+          max-width: 600px;
+          margin-right: 5px;
+          .tag{
+            margin-right: 10px;
+          }
         }
         .link {
           cursor: pointer;
@@ -558,11 +1002,36 @@ export default {
         .el-input{
           width: 250px;
         }
+        .specs-img-table{
+            .avatar-uploader-icon{
+            width: 80px;
+            height: 80px;
+            line-height: 80px!important;
+          }
+          .avatar{
+             width: 80px;
+            height: 80px;
+          }
+        }
+        .specs-img{
+          .avatar-uploader-icon{
+            width: 100px;
+            height: 100px;
+            line-height: 100px!important;
+          }
+          .avatar{
+             width: 100px;
+            height: 100px;
+          }
+        }
     }
   }
   .add-spec{
       margin-left: 80px;
     }
+}
+.link-btn{
+  font-size: 14px;
 }
 .modal-body{
    .cascader{

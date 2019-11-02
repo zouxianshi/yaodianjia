@@ -1,7 +1,11 @@
 <template>
   <el-popover v-model="visible" placement="right" width="320" trigger="click">
     <div class="subgrouping-model">
-      <el-input v-model="info.name" placeholder="请输入内容" size="mini" style="width: 230px;" />
+      <el-form ref="formInfo" :model="info" :rules="rules">
+        <el-form-item label="" prop="name">
+          <el-input v-model="info.name" placeholder="请输入内容" size="mini" style="width: 230px;" />
+        </el-form-item>
+      </el-form>
       <div v-if="level === '3'||(level==='2'&&type==='create')" class="photo">
         <el-upload
           class="avatar-uploader"
@@ -11,7 +15,7 @@
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
         >
-          <img v-if="info.pic" :src="uploadFileURL+'/'+info.pic" class="avatar">
+          <img v-if="pic" :src="showImg(info.pic)" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon" />
         </el-upload>
       </div>
@@ -21,7 +25,7 @@
       </div>
     </div>
     <el-tooltip v-if="!$slots.default" slot="reference" class="item" effect="dark" :content="type === 'edit' ? '编辑' : `新建（${level === '1' ? '一' : '二'}级）子分组` " placement="top">
-      <el-button v-if="contentType === 'button'" type="primary" icon="el-icon-folder-add" :disabled="level === '3'" circle size="mini" style="margin-right: 10px" />
+      <el-button v-if="contentType === 'button'" type="primary" :style="{display:level==='3'?'none':'inline-block'}" icon="el-icon-folder-add" :disabled="level === '3'" circle size="mini" style="margin-right: 10px" />
       <i v-if="contentType === 'text'" class="icon-edit el-icon-edit" />
     </el-tooltip>
     <el-tooltip v-if="$slots.default" slot="reference" class="item" effect="dark" content="创建分组" placement="top">
@@ -74,6 +78,10 @@ export default {
   data() {
     return {
       visible: false,
+      pic: '',
+      rules: {
+        name: [{ required: true, message: '请输入分组名称', trigger: 'blur' }]
+      },
       info: {
         children: [],
         show: true
@@ -94,6 +102,9 @@ export default {
       if (val) {
         if (this.groupInfo.name) {
           this.info = JSON.parse(JSON.stringify(this.groupInfo))
+          if (this.info.pic) {
+            this.pic = this.info.pic
+          }
         }
       }
     }
@@ -103,11 +114,17 @@ export default {
   },
   methods: {
     handleSubmit() {
-      if (this.type === 'create') {
-        this._Create()
-      } else {
-        this._Modify()
-      }
+      this.$refs.formInfo.validate((valid) => {
+        if (valid) {
+          if (this.type === 'create') {
+            this._Create()
+          } else {
+            this._Modify()
+          }
+        } else {
+          return false
+        }
+      })
     },
     _Modify() { // 修改
       this.$store.dispatch('group/modifyGroup', this.info).then(res => {
@@ -131,7 +148,7 @@ export default {
     _Create() { // 创建分组
       const data = {
         'dimensionId': this.$route.params.id,
-        'level': this.level === '0' ? 1 : this.level,
+        'level': this.level === '0' ? 1 : parseInt(this.level) + 1,
         'name': this.info.name,
         'parentId': this.parentId,
         'pic': this.info.pic,
@@ -150,6 +167,7 @@ export default {
           updata[this.oneIndex].children[this.twoIndex].children.push(resData)
         } else if (this.level === '0') {
           resData.children = []
+          resData.show = true
           updata.push(resData)
         }
         this.$store.dispatch('group/updateGroup', updata)
@@ -163,6 +181,7 @@ export default {
     },
     handleAvatarSuccess(res) {
       if (res.code === '10000') {
+        this.pic = res.data
         this.info.pic = res.data
       } else {
         this.$message({

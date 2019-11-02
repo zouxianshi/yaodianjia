@@ -34,7 +34,7 @@
           <li class="zxy">
             <div class="m">
               <div class="name">中西医药模板.xls</div> <a
-                href="static/doc/xp_zhongxiyi.xls"
+                href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BF.xls"
                 download="中西医药模板.xls"
               ><button
                 type="button"
@@ -46,7 +46,7 @@
           <li class="yxbj">
             <div class="m">
               <div class="name">营养保健模板.xls</div> <a
-                href="static/doc/xp_yingyang.xls"
+                href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E8%90%A5%E5%85%BB%E4%BF%9D%E5%81%A5%E6%A8%A1%E6%9D%BF.xls"
                 download="营养保健模板.xls"
               ><button
                 type="button"
@@ -59,7 +59,7 @@
           <li class="yl">
             <div class="m">
               <div class="name">医疗器械模板.xls</div> <a
-                href="static/doc/xp_yiliao.xls"
+                href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E5%8C%BB%E7%96%97%E5%99%A8%E6%A2%B0%E6%A8%A1%E6%9D%BF.xls"
                 download="医疗器械模板.xls"
               ><button
                 type="button"
@@ -72,7 +72,7 @@
           <li class="qt">
             <div class="m">
               <div class="name">其它模板.xls</div> <a
-                href="static/doc/xp_qita.xls"
+                href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E5%85%B6%E5%AE%83%E6%A8%A1%E6%9D%BF.xls"
                 download="其它模板.xls"
               ><button
                 type="button"
@@ -85,10 +85,30 @@
         <div class="table-box">
           <p style="margin-bottom:12px;color:#333">本次批量创建结果如下：</p>
           <el-table :data="tableData">
-            <el-table-column label="品类" />
-            <el-table-column label="创建结果" />
-            <el-table-column label="数量" />
-            <el-table-column label="操作" />
+            <el-table-column label="品类">
+              <template slot-scope="scope">
+                <span v-if="scope.row.model==='1'">中西医药</span>
+                <span v-else-if="scope.row.model==='2'">营养保健</span>
+                <span v-else-if="scope.row.model==='3'">医疗器械</span>
+                <span v-else>其他</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="创建结果">
+              <template slot-scope="scope">
+                <span v-text="scope.row.resut?'成功':'失败'" />
+              </template>
+            </el-table-column>
+            <el-table-column label="数量" prop="number" />
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <template v-if="scope.row.resut">
+                  <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
+                </template>
+                <template v-else>
+                  <el-button type="" size="mini" @click="handleDowload(scope.row)">下载结果</el-button>
+                </template>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </section>
@@ -128,6 +148,7 @@ export default {
           message: '上传成功',
           type: 'success'
         })
+        this.tableData = res.data
       } else {
         this.$message({
           message: res.msg,
@@ -145,6 +166,12 @@ export default {
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    handleDowload(row) {
+      var elemIF = document.createElement('iframe')
+      elemIF.src = row.excelPath
+      elemIF.style.display = 'none'
+      document.body.appendChild(elemIF)
     }
   }
 }

@@ -30,18 +30,27 @@
           </li>
         </ul>
         <div class="right-operate">
-          <p>
+          <template v-if="$route.query.from==='pair'">
+            <p>
+              <el-button
+                type="primary"
+                size="small"
+                :loading="subLoading"
+                @click="handleAddGoods"
+              >确认对码</el-button>
+            </p>
+            <el-button
+              size="small"
+            >申请新品</el-button>
+          </template>
+          <template v-else-if="$route.query.from==='is_pair'">
             <el-button
               type="primary"
               size="small"
-              @click="goodsInfoVisible=true"
-            >查看商品详情</el-button>
-          </p>
-          <el-button
-            type="danger"
-            size="small"
-            @click="rejectVisible=true"
-          >拒绝</el-button>
+              :loading="subLoading"
+              @click="handleAgainCode"
+            >重新对码</el-button>
+          </template>
         </div>
       </div>
       <div class="search-box">
@@ -90,7 +99,7 @@
         </div>
       </div>
       <div class="table-box">
-        <p class="title">为您匹配到的您的商品库与之匹配的产品：</p>
+        <p class="title">为您匹配到的药店加平台产品库中与之匹配的产品：</p>
         <el-table
           ref="singleTable"
           v-loading="loading"
@@ -148,92 +157,11 @@
         </el-table>
       </div>
     </div>
-    <el-dialog
-      title="产品详情"
-      :visible.sync="goodsInfoVisible"
-      append-to-body
-      :close-on-click-modal="false"
-      width="800px"
-    >
-      <div class="modal-body">
-        <div class="info-text">
-          <p>商品名称：<span v-text="pairData.name" /></p>
-          <p>商品规格：<span v-text="pairData.name" /></p>
-          <p>生产企业：<span v-text="pairData.packStandard">12321</span></p>
-          <p>搜索关键词：<span v-text="pairData.keyWord" /></p>
-          <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
-          <!-- <p>是否药品：<span v-text="pariData."/></p> -->
-          <p>处方分类：
-            <span v-if="pariData.drugType==='0'">甲类OTC</span>
-            <span v-if="pariData.drugType==='1'">处方药</span>
-            <span v-if="pariData.drugType==='2'">乙类OTC</span>
-            <span v-else>非处方药</span>
-          </p>
-          <p>是否含有麻黄碱：<span v-text="pairData.hasEphedrine===0?'不包含':'包含'" /></p>
-          <p>品牌名称：<span v-text="pairData.commonName" /></p>
-          <p>通用名：<span v-text="pairData.commonName" /></p>
-          <p>功能疗效：<span v-text="pairData.keyFeature" /></p>
-          <!-- <p>用法用量：<span v-text="pairData"/></p> -->
-          <!-- <p>不良反应：<span/></p> -->
-        </div>
-        <div class="info-image">
-          <p style="margin-bottom:10px">商品图片：</p>
-          <div class="main-img">
-            <el-image :src="showImg(pairData.mainPic)" fit="contain" style="width: 300px; height: 300px">
-              <div slot="placeholder" class="image-slot">
-                加载中<span class="dot">...</span>
-              </div>
-            </el-image>
-          </div>
-          <ul class="other-image">
-            <li v-for="(item,index) in imgList" :key="index" class="">
-              <el-image :src="showImg(item.picUrl)" fit="contain" style="width: 100px; height: 100px">
-                <div slot="placeholder" class="image-slot">
-                  加载中<span class="dot">...</span>
-                </div>
-              </el-image>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <span slot="footer" class="ext-center">
-        <el-button
-          type="primary"
-          size="small"
-          @click="handleAudit(1)"
-        >通 过</el-button>
-        <el-button
-          type="danger"
-          size="small"
-          @click="handleAudit(0)"
-        >拒 绝</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog title="选择拒绝原因" append-to-body close-on-click-modal :visible.sync="rejectVisible" width="30%">
-      <div class="modal-body">
-        <el-form ref="rejectForm" :model="rejectForm" :rules="rules" label-width="100px" size="small">
-          <el-form-item label="选择原因" prop="id">
-            <el-select v-model="rejectForm.id" placeholder="">
-              <el-option label="药店加平台已存在改商品" value="1" />
-              <el-option label="商品信息不够规范合格" value="2" />
-              <el-option label="其他原因" value="3" />
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="rejectForm.id==='3'" label="驳回原因" prop="reason">
-            <el-input v-model="rejectForm.reason" placeholder="输入原因" type="textarea" :rows="2" />
-          </el-form-item>
-        </el-form>
-      </div>
-      <span slot="footer">
-        <el-button type="primary" size="small" :loading="subLoading" @click="handleReject">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 <script>
-import { setComAddGoods } from '@/api/depot'
-import { setAuditGoods, getExamineMatchList } from '@/api/examine'
-import { getGoodsImgAry } from '@/api/new-goods'
+import { getMatchList, setMateCode, mateAgain } from '@/api/depot'
+import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -272,20 +200,11 @@ export default {
     this._loadMatchList()
     const data = sessionStorage.getItem('mate')
     this.pairData = JSON.parse(data)
-    this._loadImgList()
   },
   methods: {
     _loadMatchList() {
       this.loading = true
-      const data = JSON.parse(sessionStorage.getItem('mate'))
-      const params = {
-        'approvalNumber': data.approvalNumber,
-        'barCode': data.barCode,
-        'manufacture': data.manufacture,
-        'merCode': data.merCode,
-        'name': data.name
-      }
-      getExamineMatchList(params).then(res => {
+      getMatchList(this.$route.query.id).then(res => {
         this.tableData = res.data
         this.storeTableData = JSON.parse(JSON.stringify(res.data))
         if (res.data.length !== 0) {
@@ -329,17 +248,24 @@ export default {
     handleCurrentChange(val) {
       this.currentRow = val
     },
-    _loadImgList() { // 加载图片
-      getGoodsImgAry(this.$route.query.id).then(res => {
-        if (res.data.length > 0) {
-          res.data.splice(0, 1)
-        }
-        this.imgList = res.data
-      })
-    },
     handleAddGoods() { // 确定对码
       this.subLoading = true
-      setComAddGoods({ ids: [this.currentRow.id], userName: this.name }).then(res => {
+      if (!this.currentRow.id) {
+        this.$message({
+          message: '未选择任何商品',
+          type: 'warning'
+        })
+        return
+      }
+      const data = {
+        'id': this.$route.query.id,
+        'productIds': [
+          this.currentRow.id
+        ],
+        'status': 1,
+        'userName': this.name
+      }
+      setMateCode(data).then(res => {
         this.$message({
           message: '确认对码成功',
           type: 'success'
@@ -348,6 +274,36 @@ export default {
       }).catch(() => {
         this.subLoading = false
       })
+    },
+    handleAgainCode() { // 重新对码
+      if (!this.currentRow.id) {
+        this.$message({
+          message: '未选择任何商品',
+          type: 'warning'
+        })
+        return
+      }
+      const data = {
+        id: this.currentRow.id,
+        productId: this.currentRow.productId,
+        userName: this.name
+      }
+      this.$confirm(`是否确定从${this.isMate.name}更改为${this.currentRow.name}`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.subLoading = true
+        mateAgain(data).then(res => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.$router.go(-1)
+        }).catch(() => {
+          this.subLoading = false
+        })
+      }).catch(() => {})
     },
     handleAudit(type) {
       if (type === 1) {

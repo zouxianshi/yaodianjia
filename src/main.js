@@ -12,8 +12,10 @@ import permission from './directive/permission' // permission control
 import * as filters from './filters' // global filters
 import './permission'
 import { setSystem } from './utils/auth'
-Vue.use(permission)
+import utils from '@/utils/util'
 
+Vue.use(permission)
+Vue.use(utils)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -27,15 +29,9 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
 
-setSystem('mc-system', 'merchant')
+setSystem('mc-system', 'medical')
 
 import { MC } from '@merchant/commons'
-
-// default config
-MC.init({
-  env: process.env.NODE_ENV === 'development' ? 'local' : process.env.VUE_APP_ENV,
-  proxyTarget: 'middle.dev.yaodianjia.cn/businesses-gateway/merchant'
-})
 
 // register global utility filters
 Object.keys(filters).forEach(key => {
@@ -45,9 +41,14 @@ Object.keys(filters).forEach(key => {
 Vue.config.productionTip = false
 Vue.prototype.uploadFileURL = process.env.VUE_APP_API_BASE || '/api'
 
-new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
+// default config
+MC.init({
+  env: process.env.VUE_APP_ENV ? process.env.VUE_APP_ENV : 'local'
+}).then(() => {
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
+  })
 })

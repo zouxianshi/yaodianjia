@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="">
-      <div style="margin-bottom:10px"><el-button type="primary" size="small">批量导入</el-button></div>
+      <div style="margin-bottom:10px"><el-button type="primary" size="small" @click="$router.go(-1)">批量导入</el-button></div>
       <el-radio-group
         v-model="listQuery.status"
         size="small"
@@ -150,7 +150,7 @@
                 <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
               <template v-else>
-                <el-button size="mini">查看</el-button>
+                <el-button size="mini" @click="handleMate(scope.row)">查看</el-button>
               </template>
             </template>
           </el-table-column>
@@ -252,7 +252,7 @@ export default {
     },
     handleMate(row) {
       sessionStorage.setItem('mate', JSON.stringify(row))
-      this.$router.push(`/goods-manage/mate?id=${row.id}&from=pair`)
+      this.$router.push(`/goods-manage/mate-details?id=${row.id}&from=${this.listQuery.status === 1 ? 'is_pair' : 'pair'}`)
     },
     handleTimeChange(val) {
       if (val) {

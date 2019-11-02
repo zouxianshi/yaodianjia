@@ -5,7 +5,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
-
+import { MC } from '@merchant/commons'
 const whiteList = ['/login', '/check'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
@@ -29,7 +29,6 @@ router.beforeEach(async(to, from, next) => {
           // 获取用户信息
           // const { resList } = await store.dispatch('user/getInfo')
           await store.dispatch('user/getInfo')
-
           // if (to.path === '/403' || to.path === '/home') {
           //   if (resList.length !== 0) {
           //     const accessRoutes = await store.dispatch('permission/generateRoutes', resList)
@@ -45,9 +44,10 @@ router.beforeEach(async(to, from, next) => {
           // }
         } catch (error) {
           if (error.code && error.code === '50000') {
-            // await store.dispatch('user/resetToken')
-            // next(`/login?redirect=${to.path}`)
-            next()
+            setTimeout(() => {
+              console.log(MC.merHomeAddr)
+              window.location.href = MC.merHomeAddr
+            }, 500)
           }
           NProgress.done()
         }
@@ -57,7 +57,10 @@ router.beforeEach(async(to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      next(`/login?redirect=${to.path}`)
+      console.log('MC.merHomeAddr', MC.merHomeAddr)
+      setTimeout(() => {
+        window.location.href = MC.merHomeAddr
+      }, 500)
       NProgress.done()
     }
   }

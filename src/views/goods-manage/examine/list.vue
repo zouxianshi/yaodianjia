@@ -2,39 +2,41 @@
   <div class="app-container">
     <div class="examine-wrapper">
       <el-radio-group
-        v-model="radio3"
+        v-model="listQuery.typeId"
         size="small"
+        @change="getList"
       >
-        <el-radio-button label="1">中西医药新品审核</el-radio-button>
-        <el-radio-button label="2">营养保健新品审核</el-radio-button>
-        <el-radio-button label="3">医疗器械新品审核</el-radio-button>
+        <el-radio-button label="1065279ca65a4a529109f82472f11053">中西医药新品审核</el-radio-button>
+        <el-radio-button label="fb5e6c99d2a24eb79dae4350d9bfa837">营养保健新品审核</el-radio-button>
+        <el-radio-button label="a99917a7c7254ac281e844acf1610657">医疗器械新品审核</el-radio-button>
       </el-radio-group>
       <div
         class="search-form"
         style="margin-top:20px;margin-bottom:10px"
+        @keydown.enter="getList"
       >
         <div class="search-item">
-          <span class="label-name">连锁信息</span>
+          <span class="label-name">商品编码</span>
           <el-input
-            v-model.trim="keyword"
+            v-model.trim="listQuery.erpCode"
+            size="small"
+            placeholder="商品编码"
+          />
+        </div>
+        <div class="search-item">
+          <span class="label-name">商品名称</span>
+          <el-input
+            v-model.trim="listQuery.name"
             size="small"
             placeholder="商品名称"
           />
         </div>
         <div class="search-item">
-          <span class="label-name">商品信息</span>
-          <el-input
-            v-model.trim="keyword"
-            size="small"
-            placeholder="生产企业"
-          />
-        </div>
-        <div class="search-item">
           <span class="label-name">生产企业</span>
           <el-input
-            v-model.trim="keyword"
+            v-model.trim="listQuery.manufacture"
             size="small"
-            placeholder="商品编码"
+            placeholder="生产企业"
           />
         </div>
         <div class="search-item">
@@ -50,15 +52,16 @@
         <div class="search-item">
           <span class="label-name">批准文号</span>
           <el-input
-            v-model.trim="keyword"
+            v-model.trim="listQuery.approvalNumber"
             size="small"
-            placeholder="商品名称"
+            placeholder="批准文号"
           />
         </div>
         <div class="search-item">
           <el-button
-            type=""
+            type="primary"
             size="small"
+            @click="getList"
           >查询</el-button>
         </div>
       </div>
@@ -68,6 +71,7 @@
           :data="tableData"
           stripe
           style="width: 100%"
+          @current-change="handleCurrentChange"
         >
           <el-table-column
             prop="orCode"
@@ -92,33 +96,37 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="orName"
             align="left"
-            min-width="120"
-            :show-overflow-tooltip="true"
+            min-width="150"
             label="商品信息"
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p>{{ scope.row.name }}{{ scope.row.packStandard }}</p>
+              </div>
+            </template></el-table-column>
           <el-table-column
             align="left"
             min-width="120"
+            prop="manufacture"
             label="生产企业"
           />
           <el-table-column
-            prop="orParentName"
+            prop="barCode"
             align="left"
             label="条形码"
             :show-overflow-tooltip="true"
             min-width="120"
           />
           <el-table-column
-            prop="headPerson"
+            prop="approvalNumber"
             align="left"
             label="批准文号"
             :show-overflow-tooltip="true"
             min-width="120"
           />
           <el-table-column
-            prop="address"
+            prop="platformCode"
             label="商品编码"
             align="left"
           />
@@ -129,27 +137,11 @@
             label="申请时间"
           />
           <el-table-column
-            prop="createTime"
+            prop="createName"
             align="left"
             min-width="155"
             label="申请人"
           />
-          <el-table-column
-            prop="address"
-            align="left"
-            fixed="right"
-            label="操作"
-            min-width="100"
-          >
-            <template>
-              <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
-              <el-button
-                type="primary"
-                size="mini"
-                @click="handleClick"
-              >查看</el-button>
-            </template>
-          </el-table-column>
         </el-table>
         <div class="table-footer">
           <pagination
@@ -166,6 +158,7 @@
 <script>
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
+import { getAuditList } from '@/api/examine'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -176,18 +169,41 @@ export default {
       tableData: [{
 
       }],
-      loading: false
+      loading: false,
+      listQuery: {
+        'approvalNumber': '',
+        'barCode': '',
+        'erpCode': '',
+        'manufacture': '',
+        'name': '',
+        'typeId': '1065279ca65a4a529109f82472f11053'
+      }
     }
   },
   created() {
-
+    this.getList()
   },
   methods: {
     getList() {
-
+      this.loading = true
+      getAuditList(this.listQuery).then(res => {
+        this.loading = false
+        const { data, totalCount } = res.data
+        if (data) {
+          this.tableData = data
+          this.total = totalCount
+        }
+      }).catch(_ => {
+        this.loading = false
+      })
     },
-    handleClick() {
-      this.$router.push('/goods-manage/mate')
+    handleClick(row) {
+      sessionStorage.setItem('mate', JSON.stringify(row))
+      this.$router.push('/goods-manage/mate?id=' + row.id)
+    },
+    handleCurrentChange(row) {
+      sessionStorage.setItem('mate', JSON.stringify(row))
+      this.$router.push('/goods-manage/mate?id=' + row.id)
     }
   }
 }

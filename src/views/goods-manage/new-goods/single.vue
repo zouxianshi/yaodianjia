@@ -22,10 +22,10 @@
           />
         </el-steps>
       </div>
-      <div class="step-content">
-        <el-cascader-panel v-model="chooseList" :props="defaultProps" :options="groupData" @change="handleChoose" />
+      <div v-loading="loading" class="step-content">
+        <el-cascader-panel v-model="chooseList" :props="defaultProps" :options="typeList" @change="handleChoose" />
         <el-card style="width:600px;margin-top:12px;">
-          <span>您当前选择的是：</span> <span v-if="choose.length!==0">{{ choose[0].name }}>{{ choose[1]?choose[1].name:'' }}>{{ choose[2]?choose[2].name:'' }}</span>
+          <span>您当前选择的是：</span> <span v-if="chooseTypeList.length!==0">{{ chooseTypeList[0].name }}>{{ chooseTypeList[1]?chooseTypeList[1].name:'' }}>{{ chooseTypeList[2]?chooseTypeList[2].name:'' }}</span>
         </el-card>
       </div>
       <footer class="footer text-center">
@@ -35,9 +35,10 @@
   </div>
 </template>
 <script>
-import { getTypeTree } from '@/api/group'
+import minxis from './_source/mixin'
 import { mapGetters } from 'vuex'
 export default {
+  mixins: [minxis],
   data() {
     return {
       active: 0,
@@ -46,9 +47,8 @@ export default {
         label: 'name',
         value: 'id'
       },
-      groupData: [],
-      chooseList: [],
-      choose: []
+      choose: [],
+      loading: false
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
@@ -60,41 +60,14 @@ export default {
     ...mapGetters(['merCode'])
   },
   created() {
-    this._loadTypeList()
+    this._loadClassList()
   },
   methods: {
-    _loadTypeList() { // 加载数据
-      getTypeTree({ merCode: 'hydee', type: 1 }).then(res => {
-        this.groupData = res.data
-      })
-    },
     handleClick(tab, event) {
       console.log(tab, event)
     },
     handleChoose(val) {
-      this._filters(val)
-    },
-    _filters(data) {
-      this.choose = []
-      this.groupData.map(v => {
-        if (v.id === data[0]) {
-          this.choose.push({ name: v.name, id: v.id })
-        }
-        if (v.children) {
-          v.children.map(v1 => {
-            if (v1.id === data[1]) {
-              this.choose.push({ name: v1.name, id: v1.id })
-            }
-            if (v1.children) {
-              v1.children.map(v2 => {
-                if (v2.id === data[2]) {
-                  this.choose.push({ name: v2.name, id: v2.id })
-                }
-              })
-            }
-          })
-        }
-      })
+      this._filtersTypes(val)
     },
     handleSubmit() {
       if (this.chooseList.length === 0) {
@@ -103,8 +76,14 @@ export default {
           type: 'warning'
         })
         return
+      } else if (this.chooseList.length !== 3) {
+        this.$message({
+          message: '分类选择有误',
+          type: 'error'
+        })
+        return
       }
-      sessionStorage.setItem('types', JSON.stringify(this.choose))
+      sessionStorage.setItem('types', JSON.stringify(this.chooseTypeList))
       this.$router.push('/goods-manage/edit')
     }
   }
