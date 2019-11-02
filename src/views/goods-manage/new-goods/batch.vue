@@ -104,7 +104,9 @@
                 <template v-if="scope.row.resut">
                   <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
                 </template>
-                <el-button type="" size="mini" @click="handleDowload(scope.row)">下载结果</el-button>
+                <template v-else>
+                  <el-button type="" size="mini" @click="handleDowload(scope.row)">下载结果</el-button>
+                </template>
               </template>
             </el-table-column>
           </el-table>
@@ -164,6 +166,12 @@ export default {
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    handleDowload(row) {
+      var elemIF = document.createElement('iframe')
+      elemIF.src = row.excelPath
+      elemIF.style.display = 'none'
+      document.body.appendChild(elemIF)
     }
   }
 }

@@ -16,7 +16,7 @@
           <div class="edit-card-cnt">
             <div class="content">
               <p class="type-list">商品分类：
-                <el-tag>
+                <el-tag v-if="chooseTypeList.length">
                   <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
                     {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
                 </el-tag>

@@ -108,3 +108,12 @@ export function mateAgain(params) {
     data: params
   })
 }
+
+// 确认对码
+export function setMateCode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-match/confirm`,
+    method: 'post',
+    data: params
+  })
+}
