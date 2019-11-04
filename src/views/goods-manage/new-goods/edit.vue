@@ -410,7 +410,7 @@ export default {
   mixins: [mixins, specsMixin],
   data() {
     return {
-      step: 2,
+      step: 1,
       chooseSpecsAry: [],
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组
