@@ -59,7 +59,9 @@ const mixin = {
           res.data.map((v, index) => {
             v['index_' + index + '_' + v.attributeName] = ''
             if (this.basicForm.origin === 1) {
-              this.chooseSpecsAry.push(v.id)
+              v.isCheck = true
+            } else {
+              v.isCheck = false
             }
           })
           this.specsList = res.data
