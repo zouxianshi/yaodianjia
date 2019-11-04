@@ -150,7 +150,7 @@
                 <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
               <template v-else>
-                <el-button size="mini">查看</el-button>
+                <el-button size="mini" @click="handleMate(scope.row)">查看</el-button>
               </template>
             </template>
           </el-table-column>

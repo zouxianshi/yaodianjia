@@ -23,14 +23,12 @@ router.beforeEach(async(to, from, next) => {
     } else {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       if (hasRoles) {
-        console.log('存在用户信息')
         next()
       } else {
         try {
           // 获取用户信息
           // const { resList } = await store.dispatch('user/getInfo')
           await store.dispatch('user/getInfo')
-          console.log('走这里,获取用户信息')
           // if (to.path === '/403' || to.path === '/home') {
           //   if (resList.length !== 0) {
           //     const accessRoutes = await store.dispatch('permission/generateRoutes', resList)

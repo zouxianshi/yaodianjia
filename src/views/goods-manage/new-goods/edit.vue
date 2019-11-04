@@ -16,7 +16,7 @@
           <div class="edit-card-cnt">
             <div class="content">
               <p class="type-list">商品分类：
-                <el-tag>
+                <el-tag v-if="chooseTypeList.length">
                   <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
                     {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
                 </el-tag>
@@ -192,9 +192,7 @@
           <p class="text-right" style="font-size:13px">商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
           <el-form>
             <el-form-item label="规格设置：">
-              <el-checkbox-group v-model="chooseSpecsAry" @change="handleSpecsChange">
-                <el-checkbox v-for="(item,index) in specsList" :key="index" :label="item.id"> {{ item.attributeName }}</el-checkbox>
-              </el-checkbox-group>
+              <el-checkbox v-for="(item,index) in specsList" :key="index" v-model="item.isCheck" :disabled="basicForm.origin===1" @change="handleSpecsChange"> {{ item.attributeName }}</el-checkbox>
             </el-form-item>
             <el-form-item label="规格信息：">
               <template v-if="basicForm.origin===1">
@@ -228,14 +226,14 @@
                   <el-table-column label="商品图片">
                     <template slot-scope="scope">
                       <el-upload
-                        class="avatar-uploader specs-img"
+                        class="avatar-uploader specs-img-table"
                         :action="upLoadUrl"
                         :headers="headers"
                         :show-file-list="false"
                         :on-success="handleAvatarSuccess"
                         :before-upload="beforeUpload"
                       >
-                        <img v-if="scope.row.picUrl" :src="showImg(scope.row.picUrl)" class="avatar">
+                        <img v-if="scope.row.picUrl" style="width:80px;height:80px" :src="showImg(scope.row.picUrl)" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
                       </el-upload>
                     </template>
@@ -243,7 +241,7 @@
                 </el-table>
               </template>
               <template v-else>
-                <template v-if="$route.query.id">
+                <template v-if="$route.query.id&&editSpecsData.length>0">
                   <el-table :data="editSpecsData">
                     <span v-for="(list,index) in editSpecsData" :key="index">
                       <el-table-column v-for="(propsf,indexs) in list.specSkuList" :key="indexs" :label="propsf.skuKeyName">
@@ -291,7 +289,7 @@
                           :on-success="handleAvatarSuccess"
                           :before-upload="beforeUpload"
                         >
-                          <img v-if="item.picUrl" :src="showImg(item.picUrl)" class="avatar">
+                          <img v-if="item.picUrl" style="width:100px;height:100px" :src="showImg(item.picUrl)" class="avatar">
                           <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(index)" />
                         </el-upload>
                       </el-form-item>
@@ -406,6 +404,7 @@ import { mapGetters } from 'vuex'
 import { setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
+import { findArray } from '@/utils/index'
 export default {
   components: { Tinymce, vueUploadImg },
   mixins: [mixins, specsMixin],
@@ -578,7 +577,6 @@ export default {
         'type': type,
         merCode: type === '1' ? 'hydee' : this.merCode
       }
-
       getPreGroupList(data).then(res => {
         if (type === '1') { // 分类
           const datas = res.data[ids[0]]
@@ -596,11 +594,10 @@ export default {
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
         this._loadgroupGather('1', [res.data.typeId])
-        if (res.data.groupIds) {
+        if (res.data.groupIds && res.data.groupIds.length > 0) {
           this._loadgroupGather('2', res.data.groupIds)
         }
         const { data } = res
-
         // 有限期处理
         if (data.expireDays === -1) {
           this.expireDays = -1
@@ -760,8 +757,15 @@ export default {
     },
     handleSpecsChange(row) { // 规格勾选
       this.specsList.map(v => {
-        if (row[row.length - 1] === v.id) {
-          this.specsForm.specsData.push(v)
+        const findIndex = findArray(this.specsForm.specsData, { id: v.id })
+        if (v.isCheck) {
+          if (findIndex < 0) {
+            this.specsForm.specsData.push(v)
+          }
+        } else {
+          if (findIndex > -1) {
+            this.specsForm.specsData.splice(findIndex, 1)
+          }
         }
       })
     },
@@ -791,6 +795,7 @@ export default {
       })
     },
     handleSubmitForm() { // 保存基本信息操作
+      // 获取规格
       try {
         this._loadSpces() // 获取规格
       } catch (error) {
@@ -870,7 +875,11 @@ export default {
         this.subLoading = false
         this.leaveAction = true
         setTimeout(() => {
-          this.$router.replace('/goods-manage/apply-record')
+          if (this.basicForm.origin === 1) {
+            this.$router.replace('/goods-manage/depot')
+          } else {
+            this.$router.replace('/goods-manage/apply-record')
+          }
         }, 1000)
       }).catch(_ => {
         this.subLoading = false
@@ -998,6 +1007,17 @@ export default {
         padding: 12px;
         .el-input{
           width: 250px;
+        }
+        .specs-img-table{
+            .avatar-uploader-icon{
+            width: 80px;
+            height: 80px;
+            line-height: 80px!important;
+          }
+          .avatar{
+             width: 80px;
+            height: 80px;
+          }
         }
         .specs-img{
           .avatar-uploader-icon{

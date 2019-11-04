@@ -179,15 +179,15 @@
         <div class="info-image">
           <p style="margin-bottom:10px">商品图片：</p>
           <div class="main-img">
-            <el-image :src="pairData.mainPic" fit="contain" style="width: 300px; height: 300px">
+            <el-image :src="showImg(pairData.mainPic)" fit="contain" style="width: 300px; height: 300px">
               <div slot="placeholder" class="image-slot">
                 加载中<span class="dot">...</span>
               </div>
             </el-image>
           </div>
           <ul class="other-image">
-            <li v-for="item in 4" :key="item" class="">
-              <el-image src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpb" fit="contain" style="width: 100px; height: 100px">
+            <li v-for="(item,index) in imgList" :key="index" class="">
+              <el-image :src="showImg(item.picUrl)" fit="contain" style="width: 100px; height: 100px">
                 <div slot="placeholder" class="image-slot">
                   加载中<span class="dot">...</span>
                 </div>
@@ -233,6 +233,7 @@
 <script>
 import { setComAddGoods } from '@/api/depot'
 import { setAuditGoods, getExamineMatchList } from '@/api/examine'
+import { getGoodsImgAry } from '@/api/new-goods'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -271,6 +272,7 @@ export default {
     this._loadMatchList()
     const data = sessionStorage.getItem('mate')
     this.pairData = JSON.parse(data)
+    this._loadImgList()
   },
   methods: {
     _loadMatchList() {
@@ -283,7 +285,6 @@ export default {
         'merCode': data.merCode,
         'name': data.name
       }
-      console.log(params)
       getExamineMatchList(params).then(res => {
         this.tableData = res.data
         this.storeTableData = JSON.parse(JSON.stringify(res.data))
@@ -327,6 +328,14 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentRow = val
+    },
+    _loadImgList() { // 加载图片
+      getGoodsImgAry(this.$route.query.id).then(res => {
+        if (res.data.length > 0) {
+          res.data.splice(0, 1)
+        }
+        this.imgList = res.data
+      })
     },
     handleAddGoods() { // 确定对码
       this.subLoading = true
