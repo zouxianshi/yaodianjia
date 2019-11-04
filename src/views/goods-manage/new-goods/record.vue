@@ -93,12 +93,12 @@
           <el-table-column
             prop="approvalNumber"
             align="left"
-            label="批准的文号"
+            label="批准文号"
             :show-overflow-tooltip="true"
             min-width="160"
           />
           <el-table-column
-            prop="platformCode"
+            prop="erpCode"
             align="left"
             label="商品编码"
             :show-overflow-tooltip="true"
@@ -121,7 +121,12 @@
               <template v-if="scope.row.infoStatus===15&&scope.row.auditStatus!==2&&scope.row.auditStatus!==1&&scope.row.auditStatus!==0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
               </template>
-              <template v-if="(scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13||scope.row.infoStatus===15)&&scope.row.auditStatus!==1">
+              <template v-else>
+                <a :href="`#/goods-manage/edit?id=${scope.row.id}&type=query`">
+                  <el-button type="" size="mini">查看</el-button>
+                </a>
+              </template>
+              <template v-if="(scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13||scope.row.infoStatus===15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0)">
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>
