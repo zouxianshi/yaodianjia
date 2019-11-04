@@ -39,6 +39,10 @@ export default {
         return []
       }
     },
+    readonly: { // 只读
+      type: Boolean,
+      default: false
+    },
     menubar: {
       type: String,
       default: 'file edit insert view format table'
@@ -131,6 +135,7 @@ export default {
         toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
         menubar: this.menubar,
         plugins: plugins,
+        readonly: this.readonly ? 1 : 0,
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,

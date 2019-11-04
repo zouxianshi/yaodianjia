@@ -249,7 +249,6 @@ export default {
       this.currentRow = val
     },
     handleAddGoods() { // 确定对码
-      this.subLoading = true
       if (!this.currentRow.id) {
         this.$message({
           message: '未选择任何商品',
@@ -257,6 +256,7 @@ export default {
         })
         return
       }
+      this.subLoading = true
       const data = {
         'id': this.$route.query.id,
         'productIds': [
@@ -284,8 +284,8 @@ export default {
         return
       }
       const data = {
-        id: this.currentRow.id,
-        productId: this.currentRow.productId,
+        id: this.$route.query.id,
+        productId: this.currentRow.id,
         userName: this.name
       }
       this.$confirm(`是否确定从${this.isMate.name}更改为${this.currentRow.name}`, '提示', {

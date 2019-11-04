@@ -466,7 +466,7 @@ export default {
       getADClass(params).then(res => {
         console.log('class res', res)
         if (res.code === '10000') {
-          this.classOptions = res.data || []
+          this.classOptions = res.data && res.data[0] && res.data[0].children && res.data.children.length > 0 ? res.data.children : []
         } else {
           this.$message({
             message: res.msg,

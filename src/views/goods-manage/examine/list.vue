@@ -126,7 +126,7 @@
             min-width="120"
           />
           <el-table-column
-            prop="platformCode"
+            prop="erpCode"
             label="商品编码"
             align="left"
           />
