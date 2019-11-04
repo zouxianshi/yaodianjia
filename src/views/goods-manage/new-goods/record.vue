@@ -69,7 +69,7 @@
           <el-table-column
             prop="orCode"
             align="left"
-            min-width="150"
+            min-width="200"
             label="商品/规格"
             show-overflow-tooltip
           >
