@@ -72,6 +72,36 @@ class InnerCtor {
             disabled: this.get('merchant-org.merchant-org-store')
           }
         ]
+      },
+      {
+        name: '连锁设置',
+        icon: 'icongoods',
+        path: '/chainSetting',
+        disabled: true,
+        children: []
+      },
+      {
+        name: '门店设置',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('merchant-org'),
+        children: [
+          {
+            name: '所有门店',
+            path: '/storeSetting/index',
+            disabled: this.get('merchant-org.merchant-org-org'),
+          },
+          {
+            name: '上线门店设置',
+            path: '/storeSetting/setting',
+            disabled: this.get('merchant-org.merchant-org-store')
+          },
+          {
+            name: '门店配送',
+            path: '/storeSetting/deliverySetting',
+            disabled: this.get('merchant-org.merchant-org-store')
+          }
+        ]
       }
     ]
   }
