@@ -410,7 +410,7 @@ export default {
   mixins: [mixins, specsMixin],
   data() {
     return {
-      step: 2,
+      step: 1,
       chooseSpecsAry: [],
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组
@@ -587,12 +587,6 @@ export default {
             const dat = datas[v]
             this.chooseGroup.push([{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }, { name: dat.child.child.name, id: dat.child.child.id }])
           })
-        }
-        // 获取规格
-        try {
-          this._loadSpces() // 获取规格
-        } catch (error) {
-          console.log(error)
         }
       })
     },
@@ -801,6 +795,12 @@ export default {
       })
     },
     handleSubmitForm() { // 保存基本信息操作
+      // 获取规格
+      try {
+        this._loadSpces() // 获取规格
+      } catch (error) {
+        console.log(error)
+      }
       if (this.basicForm.origin === 1) {
         this.step = 2
       }
