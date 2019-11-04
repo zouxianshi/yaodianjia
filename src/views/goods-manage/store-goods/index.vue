@@ -327,13 +327,15 @@ export default {
   methods: {
     getList() {
       this._loadStoreList().then(res => {
-        this.loading = true
-        this.listQuery.storeId = res[0] ? res[0].id : ''
-        this.chooseStore = res[0]
-        this._loadList()
+        if (res) {
+          this.listQuery.storeId = res[0] ? res[0].id : ''
+          this.chooseStore = res[0]
+          this._loadList()
+        }
       })
     },
     _loadList() {
+      this.loading = true
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data

@@ -52,3 +52,4 @@ MC.init({
     render: h => h(App)
   })
 })
+

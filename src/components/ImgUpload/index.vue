@@ -1,15 +1,35 @@
 <template>
   <div class="imgupload">
-    <draggable id="upload-list" v-model="fileList" class="upload-list" @end="handeDragEnd">
+    <template v-if="disable">
+      <draggable id="upload-list" v-model="fileList" class="upload-list" @end="handeDragEnd">
+        <div
+          v-for="(item,index) in fileList"
+          :key="index"
+          class="upload-list-card"
+        >
+          <div v-if="item.status==='uploading'" class="process text-center">
+            <el-progress type="circle" :width="80" :percentage="item.process" />
+          </div>
+          <div v-else class="uploaded-img">
+            <img :src="item.imgUrl" alt="">
+            <div class="action">
+              <i class="el-icon-zoom-in" @click="handlePreview(item)" />
+              <i class="el-icon-delete" @click.stop="handleRemove(index)" />
+            </div>
+            <label v-show="item.status==='success'" class="upload-status-label-suc">
+              <i class="el-icon-upload-success el-icon-check" />
+            </label>
+          </div>
+        </div>
+      </draggable>
+    </template>
+    <template v-else>
       <div
         v-for="(item,index) in fileList"
         :key="index"
         class="upload-list-card"
       >
-        <div v-if="item.status==='uploading'" class="process text-center">
-          <el-progress type="circle" :width="80" :percentage="item.process" />
-        </div>
-        <div v-else class="uploaded-img">
+        <div class="uploaded-img">
           <img :src="item.imgUrl" alt="">
           <div class="action">
             <i class="el-icon-zoom-in" @click="handlePreview(item)" />
@@ -20,8 +40,8 @@
           </label>
         </div>
       </div>
-    </draggable>
-    <div v-if="fileList.length!==limit" class="upload-list-card upload-box">
+    </template>
+    <div v-if="fileList.length!==limit&&!disable" class="upload-list-card upload-box">
       <i class="el-icon-plus" />
       <input
         id="files"
@@ -48,6 +68,10 @@ export default {
       type: String,
       default: ''
     },
+    disable: { // 是否可编辑
+      type: Boolean,
+      default: false
+    },
     name: { // 上传是的file名字
       type: String,
       default: 'file'
@@ -69,7 +93,8 @@ export default {
       default: false
     },
     limit: {
-      type: Number
+      type: Number,
+      default: null
     },
     fileList: {
       type: Array,
