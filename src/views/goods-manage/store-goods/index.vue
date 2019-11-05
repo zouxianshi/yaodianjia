@@ -307,7 +307,8 @@ export default {
         'manufacture': '',
         'name': '',
         'storeId': '',
-        'status': 1
+        'status': 1,
+        'auditStatus': 1
       },
       storeList: [],
       groupId: '',

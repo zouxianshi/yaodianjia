@@ -50,20 +50,25 @@ const mixin = {
         }
         this.subSpecs(data)
       } else {
+        let checkNum = 0
+        this.specsForm.specsData.map(v => {
+          if (v.isCheck) {
+            checkNum = +1
+          }
+        })
+        if (checkNum === 0) {
+          this.$message({
+            message: '请勾选规格参数',
+            type: 'warning'
+          })
+          return
+        }
         data = this.specsForm.specs
         const index = -1
         this.specsForm.specs.map(v => {
           console.log(index + 1)
-          const form = 'specsForm' + parseInt(index + 1)
-          console.log(form)
-          this.$refs[form].validate((valid) => {
-            if (valid) {
-              this.subSpecs(data)
-            } else {
-              console.log('error submit!!')
-              return false
-            }
-          })
+          // const form = 'specsForm' + parseInt(index + 1)
+          this.subSpecs(data)
           v.valueList = []
           v.commodityId = this.basicForm.id
           v.merCode = this.merCode

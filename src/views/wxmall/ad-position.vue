@@ -34,10 +34,10 @@
               />
             </el-select>
           </div>
-          <div class="search-item">
+          <!-- <div class="search-item">
             <span class="label-name" style="width: 50px">备注</span>
             <el-input v-model.trim="searchForm.remark" size="small" style="width: 200px" />
-          </div>
+          </div> -->
           <div class="search-item">
             <el-button size="small" @click="search()">查 询</el-button>
           </div>
@@ -50,7 +50,7 @@
               <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" width="200" align="center" />
+          <el-table-column prop="className" label="所属分类" width="200" align="center" />
           <el-table-column prop="img" label="图片" width="180" align="center">
             <template slot-scope="scope">
               <div class="scope-img-wrap">
@@ -221,7 +221,7 @@ export default {
       positionCode: 'C-01',
       statusOptions: [
         { id: 1, label: '全部', value: '' },
-        { id: 2, label: '使用', value: '1' },
+        { id: 2, label: '正常', value: '1' },
         { id: 3, label: '停用', value: '0' }
       ],
       searchForm: {
@@ -466,7 +466,7 @@ export default {
       getADClass(params).then(res => {
         console.log('class res', res)
         if (res.code === '10000') {
-          this.classOptions = res.data && res.data[0] && res.data[0].children && res.data.children.length > 0 ? res.data.children : []
+          this.classOptions = res.data && res.data[0] && res.data[0].children && res.data[0].children.length > 0 ? res.data[0].children : []
         } else {
           this.$message({
             message: res.msg,
@@ -525,7 +525,7 @@ export default {
         merCode: '',
         positionCode: this.positionCode,
         remark: this.xForm.remark,
-        productId: '', // 2-03 类型必填
+        productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
