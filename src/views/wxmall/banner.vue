@@ -214,7 +214,7 @@ export default {
       positionCode: 'I-01',
       statusOptions: [
         { id: 1, label: '全部', value: '' },
-        { id: 2, label: '使用', value: '1' },
+        { id: 2, label: '正常', value: '1' },
         { id: 3, label: '停用', value: '0' }
       ],
       searchForm: {
