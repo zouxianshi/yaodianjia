@@ -1,4 +1,5 @@
 import { getSelfSpecsInfo, setSpecsData, getSpecsProductSKU, getSpecs } from '@/api/new-goods'
+import { findArray } from '@/utils/index'
 const mixin = {
   data() {
     return {
@@ -43,7 +44,7 @@ const mixin = {
           } else {
             v.merCode = this.merCode
             v.valueList = v.productSpecSkuDTOs
-            v.commodityId = v.id
+            v.commodityId = this.$route.query.id
           }
         })
         if (is_err) {
@@ -57,45 +58,64 @@ const mixin = {
             checkNum = +1
           }
         })
-        if (checkNum === 0) {
-          this.$message({
-            message: '请勾选规格参数',
-            type: 'warning'
-          })
-          return
-        }
-        data = this.specsForm.specs
-        const index = -1
-        this.specsForm.specs.map(v => {
-          console.log(index + 1)
-          // const form = 'specsForm' + parseInt(index + 1)
-          this.subSpecs(data)
-          v.valueList = []
-          v.commodityId = this.basicForm.id
-          v.merCode = this.merCode
-          for (const key in v) {
-            if (v.hasOwnProperty(key)) {
-              const val = key.split('_')
-              if (val.includes('index')) {
-                v.valueList.push({
-                  skuKeyId: val[1],
-                  skuValue: v[key],
-                  skuKeyName: val[2]
-                })
+        if (this.specsForm.specs.length !== 0) {
+          if (checkNum === 0) {
+            this.$message({
+              message: '请勾选规格参数',
+              type: 'warning'
+            })
+            return
+          }
+
+          data = this.specsForm.specs
+          let index = 0
+          this.specsForm.specs.map(v => {
+            index = +1
+            v.valueList = []
+            v.commodityId = this.basicForm.id
+            v.merCode = this.merCode
+            for (const key in v) {
+              if (v.hasOwnProperty(key)) {
+                const val = key.split('_')
+                if (val.includes('index')) {
+                  if (v[key]) {
+                    v.valueList.push({
+                      skuKeyId: val[1],
+                      skuValue: v[key],
+                      skuKeyName: val[2]
+                    })
+                  } else {
+                    this.$message({
+                      message: `请输入规格${index}中的${val[2]}`,
+                      type: 'error'
+                    })
+                  }
+                }
               }
             }
+            if (!v.barCode) {
+              this.$message({
+                message: `请输入规格${index}中的条码`,
+                type: 'error'
+              })
+            }
+          })
+        } else {
+          if (this.$route.query.id) { // 如果是编辑 且已存在sku规格数据  未点击添加规格是直接进入下一步
+            this.step = 3
+          } else {
+            if (data.length === 0) {
+              this.$message({
+                message: '请设置规格',
+                type: 'warning'
+              })
+              return
+            }
           }
-        })
+        }
       }
     },
     subSpecs(data) {
-      if (this.$route.query.id && data.length === 0) {
-        this.$message({
-          message: '请设置规格',
-          type: 'warning'
-        })
-        return
-      }
       this.subLoading = true
       setSpecsData({ list: data }).then(res => {
         this.$message({
@@ -171,6 +191,26 @@ const mixin = {
           }
         })
       }
+    },
+    handleAddSpec() { // 增加 规格
+      this.specsForm.specs.push({ picUrl: '', mprice: '', erpCode: '', barCode: '' })
+    },
+    handleDeleteSpec(index) { // 删除规格
+      this.specsForm.specs.splice(index, 1)
+    },
+    handleSpecsChange(row) { // 规格勾选
+      this.specsList.map(v => {
+        const findIndex = findArray(this.specsForm.specsData, { id: v.id })
+        if (v.isCheck) {
+          if (findIndex < 0) {
+            this.specsForm.specsData.push(v)
+          }
+        } else {
+          if (findIndex > -1) {
+            this.specsForm.specsData.splice(findIndex, 1)
+          }
+        }
+      })
     }
   }
 }

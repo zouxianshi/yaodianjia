@@ -268,28 +268,24 @@
                   </div>
                   <div class="spec-content">
                     <el-form :ref="'specsForm'+index" :model="item" size="small" label-width="80px" :status-icon="true">
-                      <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1" :label="items.attributeName">
+                      <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1">
+                        <span slot="label"><span class="tip">*</span> {{ items.attributeName }}</span>
                         <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" :disabled="is_query" placeholder="输入包装规格" />
                       </el-form-item>
-                      <el-form-item
-                        label="条码"
-                        :rules="{ required: true, message: '商品编码不能为空', trigger: 'blur' }"
-                      >
+                      <el-form-item label="">
+                        <span slot="label"><span class="tip">*</span> 条码</span>
                         <el-input v-model="item.barCode" placeholder="输入条码" />
                       </el-form-item>
-                      <el-form-item
-                        label="商品编码"
-                        :rules="{ required: true, message: '商品编码不能为空', trigger: 'blur' }"
-                      >
+                      <el-form-item>
+                        <span slot="label"><span class="tip">*</span> 商品编码</span>
                         <el-input v-model="item.erpCode" placeholder="输入条码" />
                       </el-form-item>
-                      <el-form-item
-                        label="价格"
-                        :rules="{ required: true, message: '价格不能为空', trigger: 'blur' }"
-                      >
+                      <el-form-item>
+                        <span slot="label"><span class="tip">*</span> 价格</span>
                         <el-input v-model="item.mprice" placeholder="输入价格" />
                       </el-form-item>
                       <el-form-item label="商品图片">
+                        <span slot="label"><span class="tip">*</span> 商品图片</span>
                         <el-upload
                           class="avatar-uploader specs-img"
                           :action="upLoadUrl"
@@ -416,7 +412,6 @@ import { mapGetters } from 'vuex'
 import { setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
-import { findArray } from '@/utils/index'
 import unit from './_source/unit'
 export default {
   components: { Tinymce, vueUploadImg },
@@ -707,26 +702,6 @@ export default {
               })
             }
           })
-        }
-      })
-    },
-    handleAddSpec() {
-      this.specsForm.specs.push({ picUrl: '', mprice: '', erpCode: '', barCode: '' })
-    },
-    handleDeleteSpec(index) { // 删除规格
-      this.specsForm.specs.splice(index, 1)
-    },
-    handleSpecsChange(row) { // 规格勾选
-      this.specsList.map(v => {
-        const findIndex = findArray(this.specsForm.specsData, { id: v.id })
-        if (v.isCheck) {
-          if (findIndex < 0) {
-            this.specsForm.specsData.push(v)
-          }
-        } else {
-          if (findIndex > -1) {
-            this.specsForm.specsData.splice(findIndex, 1)
-          }
         }
       })
     },

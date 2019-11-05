@@ -18,6 +18,7 @@ import toolbar from './toolbar'
 // import load from './dynamicLoadScript'
 import config from '@/utils/config'
 import '../../assets/lang/zh_CN'
+import { mapGetters } from 'vuex'
 export default {
   name: 'Tinymce',
   // components: { editorImage },
@@ -81,14 +82,9 @@ export default {
       return width
     },
     upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload`
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImg`
     },
-    merCode() {
-      return 'sdfdf'
-    },
-    headers() {
-      return { 'Authorization': this.$store.getters.token }
-    }
+    ...mapGetters(['token', 'merCode'])
   },
   watch: {
     value(val) {
@@ -164,10 +160,11 @@ export default {
         images_upload_handler: (blobInfo, success, failure) => {
           const xhr = new XMLHttpRequest()
           xhr.withCredentials = false
-          xhr.open('POST', this.upLoadUrl)
+          xhr.open('POST', `${this.upLoadUrl}?merCode=${this.merCode}`)
+          xhr.setRequestHeader('Authorization', this.$store.getters.token)
           const formData = new FormData()
           formData.append('file', blobInfo.blob())
-          formData.append('merCode', this.merCode)
+          var _this = this
           xhr.onload = function(e) {
             var json
             if (xhr.status !== 200) {
@@ -176,11 +173,12 @@ export default {
             }
             json = JSON.parse(this.responseText)
 
-            if (!json || typeof json.location !== 'string') {
+            if (!json || typeof json.data !== 'string') {
               failure('Invalid JSON: ' + xhr.responseText)
               return
             }
-            success(json.location)
+            // console.log(json.location)
+            success(_this.showImg(json.data))
           }
           xhr.send(formData)
         }
