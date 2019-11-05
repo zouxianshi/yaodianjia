@@ -262,7 +262,8 @@ export default {
       subLoading: false,
       pariData: {},
       storeTableData: [],
-      isMate: {}
+      isMate: {},
+      imgList: []
     }
   },
   computed: {
@@ -333,8 +334,8 @@ export default {
       getGoodsImgAry(this.$route.query.id).then(res => {
         if (res.data.length > 0) {
           res.data.splice(0, 1)
+          this.imgList = res.data
         }
-        this.imgList = res.data
       })
     },
     handleAddGoods() { // 确定对码

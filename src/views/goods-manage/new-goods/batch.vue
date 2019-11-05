@@ -169,7 +169,7 @@ export default {
     },
     handleDowload(row) {
       var elemIF = document.createElement('iframe')
-      elemIF.src = row.excelPath
+      elemIF.src = this.showImg(row.excelPath)
       elemIF.style.display = 'none'
       document.body.appendChild(elemIF)
     }

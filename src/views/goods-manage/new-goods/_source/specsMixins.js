@@ -18,7 +18,7 @@ const mixin = {
         this.step = 3
         return
       }
-      if (this.basicForm.origin === 1) {
+      if (this.basicForm.origin === 1) { // 标库商品
         data = this.chooseTableSpec
         let is_err = false
         data.forEach((v, index) => {
@@ -43,6 +43,7 @@ const mixin = {
           } else {
             v.merCode = this.merCode
             v.valueList = v.productSpecSkuDTOs
+            v.commodityId = v.id
           }
         })
         if (is_err) {

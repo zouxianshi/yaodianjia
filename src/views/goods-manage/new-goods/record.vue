@@ -135,6 +135,7 @@
                 </a>
               </template>
               <el-button
+                v-if="scope.row.auditStatus!==1"
                 type="danger"
                 size="mini"
                 @click="handleDel(scope.row)"
