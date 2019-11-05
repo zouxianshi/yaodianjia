@@ -83,6 +83,9 @@ export default {
       loading: false
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     this.searchParams.merCode = this.merCode
     this.getData()
@@ -160,9 +163,6 @@ export default {
     onSelect() {
       this.visable = false
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>
