@@ -131,6 +131,7 @@ export default {
     isShow(val) {
       if (this.groupData.length > 0) {
         this.group_id = this.groupData[0].id
+        this.handleChooseGroup(this.group_id)
         this.modelList = []
       }
     }

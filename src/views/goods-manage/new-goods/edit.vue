@@ -47,7 +47,7 @@
                 <el-form-item label="商品信息：" prop="name">
                   <el-input v-model="basicForm.name" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='保健品')" prop="commonName" label="通用名：">
+                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='营养保健')" prop="commonName" label="通用名：">
                   <el-input v-model="basicForm.commonName" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
                 </el-form-item>
                 <el-form-item label="所属品牌：" prop="brandId">
@@ -103,7 +103,7 @@
           <div class="edit-card-cnt">
             <div class="content">
               <el-form :model="basicForm" label-width="130px" status-icon>
-                <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西医药品'">
+                <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
                   <el-form-item label="药品类型：">
                     <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
                       <el-option label="甲类OTC" value="0" />
@@ -128,7 +128,7 @@
                 <el-form-item label="批准文号：" prop="approvalNumber">
                   <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='中西医药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='保健品')" label="是否含有麻黄碱">
+                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='中西药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')" label="是否含有麻黄碱">
                   <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
                 </el-form-item>
                 <el-form-item label="商品详细信息：">
@@ -270,7 +270,7 @@
                     <el-form :ref="'specsForm'+index" :model="item" size="small" label-width="80px" :status-icon="true">
                       <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1">
                         <span slot="label"><span class="tip">*</span> {{ items.attributeName }}</span>
-                        <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" :disabled="is_query" placeholder="输入包装规格" />
+                        <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" :disabled="is_query" :placeholder="'输入'+items.attributeName" @change="handleInputSpecs(items,index1)" />
                       </el-form-item>
                       <el-form-item label="">
                         <span slot="label"><span class="tip">*</span> 条码</span>
@@ -323,7 +323,7 @@
           </div>
           <div class="edit-card-cnt">
             <div class="content">
-              <vue-upload-img :actions="upLoadUrl" :disable="is_query" :before-upload="beforeUpload" :file-list="fileList" :headers="headers" :limit="6" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" @onError="handleImgError" />
+              <vue-upload-img :actions="upLoadUrl" :disable="is_query" :before-upload="beforeUpload" :list="fileList" :headers="headers" :limit="6" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" @onError="handleImgError" />
               <el-dialog append-to-body :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt="">
               </el-dialog>
@@ -607,7 +607,7 @@ export default {
     handleSortEnd(val) { // 图片排序
       this.fileList = val
       if (this.fileList.length > 0) {
-        console.log('1111')
+        // console.log('1111')
       }
     },
     handleImgSuccess(res, fileList, index) {
@@ -909,6 +909,9 @@ export default {
       .editSqu{
           height: 376px;
           border: 1px dashed red;
+          img{
+            max-width: 100%!important;
+          }
       }
       .w-e-text {
           padding: 0 10px;

@@ -9,6 +9,7 @@ const mixin = {
         specsData: [],
         specs: [{ picUrl: '', mprice: '', erpCode: '', barCode: '' }]
       },
+      chooseSpec: [], // 选中的规格参数
       specsList: [] // 规格
     }
   },
@@ -41,6 +42,12 @@ const mixin = {
               type: 'error'
             })
             is_err = true
+          } else if (!v.picUrl) {
+            this.$message({
+              message: `你勾选的规格中第${index + 1}个图片不能为空`,
+              type: 'error'
+            })
+            is_err = true
           } else {
             v.merCode = this.merCode
             v.valueList = v.productSpecSkuDTOs
@@ -66,9 +73,9 @@ const mixin = {
             })
             return
           }
-          debugger
           data = this.specsForm.specs
           let index = 0
+          let flag = true
           this.specsForm.specs.map(v => {
             index = +1
             v.valueList = []
@@ -77,7 +84,7 @@ const mixin = {
             for (const key in v) {
               if (v.hasOwnProperty(key)) {
                 const val = key.split('_')
-                if (val.includes('index')) {
+                if (val.includes('index') && this.chooseSpec.includes(val[1])) {
                   if (v[key]) {
                     v.valueList.push({
                       skuKeyId: val[1],
@@ -85,45 +92,50 @@ const mixin = {
                       skuKeyName: val[2]
                     })
                   } else {
-                    this.$message({
-                      message: `请输入规格${index}中的${val[2]}`,
-                      type: 'error'
-                    })
-                    return
+                    if (flag) {
+                      this.$message({
+                        message: `请输入规格${index}中的${val[2]}`,
+                        type: 'error'
+                      })
+                      flag = false
+                    }
                   }
                 }
               }
             }
-            if (!v.barCode) {
+            if (flag && !v.barCode) {
+              console.log(456)
               this.$message({
                 message: `请输入规格${index}中的条码`,
                 type: 'error'
               })
-              return
+              flag = false
             }
-            if (!v.erpCode) {
+            if (flag && !v.erpCode) {
               this.$message({
                 message: `请输入规格${index}中的商品编码`,
                 type: 'error'
               })
-              return
+              flag = false
             }
-            if (!v.mprice) {
+            if (flag && !v.mprice) {
               this.$message({
                 message: `请输入规格${index}中的价格`,
                 type: 'error'
               })
-              return
+              flag = false
             }
-            if (!v.picUrl) {
+            if (flag && !v.picUrl) {
               this.$message({
                 message: `请上传规格${index}中的图片`,
                 type: 'error'
               })
-              return
+              flag = false
             }
           })
-          this.subSpecs(data)
+          if (flag) {
+            this.subSpecs(data)
+          }
         } else {
           if (this.$route.query.id) { // 如果是编辑 且已存在sku规格数据  未点击添加规格是直接进入下一步
             this.step = 3
@@ -138,6 +150,9 @@ const mixin = {
           }
         }
       }
+    },
+    handleInputSpecs(item, index) { // change事件
+      this.$set(this.specsForm.specs, index, item)
     },
     subSpecs(data) {
       this.subLoading = true
@@ -217,33 +232,37 @@ const mixin = {
       }
     },
     handleAddSpec() { // 增加 规格
-      this.specsForm.specs.push({ picUrl: '', mprice: '', erpCode: '', barCode: '' })
+      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '' }
+      this.specsList.map(v => {
+        const keys = 'index_' + v.id + '_' + v.attributeName
+        data[keys] = ''
+      })
+      this.specsForm.specs.push(data)
     },
     handleDeleteSpec(index) { // 删除规格
       this.specsForm.specs.splice(index, 1)
     },
     handleSpecsChange(row) { // 规格勾选
-      // const formData = this.specsForm.specs.slice()
       this.specsList.map(v => {
         const findIndex = findArray(this.specsForm.specsData, { id: v.id })
         if (v.isCheck) {
           if (findIndex < 0) {
             this.specsForm.specsData.push(v)
-            // const keys = 'index_' + v.id + '_' + v.attributeName
-            // formData.map(vl => {
-            //   if (!vl[keys]) {
-            //     vl[keys] = ''
-            //   }
-            // })
-            // this.specsForm.specs = formData
+          }
+          if (!this.chooseSpec.includes(v.id)) { // 是否在勾选的规格参数中是否存在
+            this.chooseSpec.push(v.id)
           }
         } else {
+          if (!this.chooseSpec.includes(v.id)) { // 取消 就删除
+            const index = this.chooseSpec.indexOf(v.id)
+            this.chooseSpec.push(index, 1)
+          }
           if (findIndex > -1) {
             const items = this.specsForm.specsData[findIndex]
             const keys = 'index_' + items.id + '_' + items.attributeName
             this.specsForm.specs.map(vl => {
               if (vl[keys]) {
-                delete vl[keys] // 删除this.specsForm.specs 已存在的值
+                vl[keys] = '' // 删除this.specsForm.specs 已存在的值
               }
             })
             this.specsForm.specsData.splice(findIndex, 1)
