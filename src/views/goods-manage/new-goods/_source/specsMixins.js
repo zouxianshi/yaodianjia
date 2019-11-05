@@ -66,7 +66,7 @@ const mixin = {
             })
             return
           }
-
+          debugger
           data = this.specsForm.specs
           let index = 0
           this.specsForm.specs.map(v => {
@@ -89,6 +89,7 @@ const mixin = {
                       message: `请输入规格${index}中的${val[2]}`,
                       type: 'error'
                     })
+                    return
                   }
                 }
               }
@@ -98,8 +99,31 @@ const mixin = {
                 message: `请输入规格${index}中的条码`,
                 type: 'error'
               })
+              return
+            }
+            if (!v.erpCode) {
+              this.$message({
+                message: `请输入规格${index}中的商品编码`,
+                type: 'error'
+              })
+              return
+            }
+            if (!v.mprice) {
+              this.$message({
+                message: `请输入规格${index}中的价格`,
+                type: 'error'
+              })
+              return
+            }
+            if (!v.picUrl) {
+              this.$message({
+                message: `请上传规格${index}中的图片`,
+                type: 'error'
+              })
+              return
             }
           })
+          this.subSpecs(data)
         } else {
           if (this.$route.query.id) { // 如果是编辑 且已存在sku规格数据  未点击添加规格是直接进入下一步
             this.step = 3
@@ -132,8 +156,8 @@ const mixin = {
     _loadSpces() { // 根据一级分类加载规格
       getSpecs(this.chooseTypeList[0].id).then(res => {
         if (res.data) {
-          res.data.map((v, index) => {
-            v['index_' + index + '_' + v.attributeName] = ''
+          res.data.map((v) => {
+            v['index_' + v.id + '_' + v.attributeName] = ''
             if (this.basicForm.origin === 1) {
               v.isCheck = true
             } else {
@@ -199,14 +223,29 @@ const mixin = {
       this.specsForm.specs.splice(index, 1)
     },
     handleSpecsChange(row) { // 规格勾选
+      // const formData = this.specsForm.specs.slice()
       this.specsList.map(v => {
         const findIndex = findArray(this.specsForm.specsData, { id: v.id })
         if (v.isCheck) {
           if (findIndex < 0) {
             this.specsForm.specsData.push(v)
+            // const keys = 'index_' + v.id + '_' + v.attributeName
+            // formData.map(vl => {
+            //   if (!vl[keys]) {
+            //     vl[keys] = ''
+            //   }
+            // })
+            // this.specsForm.specs = formData
           }
         } else {
           if (findIndex > -1) {
+            const items = this.specsForm.specsData[findIndex]
+            const keys = 'index_' + items.id + '_' + items.attributeName
+            this.specsForm.specs.map(vl => {
+              if (vl[keys]) {
+                delete vl[keys] // 删除this.specsForm.specs 已存在的值
+              }
+            })
             this.specsForm.specsData.splice(findIndex, 1)
           }
         }
