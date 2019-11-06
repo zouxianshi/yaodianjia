@@ -180,18 +180,18 @@
                     @someSwiperEvent="swiperCallback"
                   >
                     <!-- slides -->
-                    <template v-if="xForm6.detail && xForm6.detail.length">
-                      <swiper-slide v-for="item in xForm6.detail" :key="item.id" class="goods-item">
+                    <template v-if="xForm6.detail && xForm6.detail.length>0">
+                      <swiper-slide v-for="item in xForm6.detail" :key="item.productId" class="goods-item">
                         <div class="cover-box">
-                          <img :src="item.imageUrl">
+                          <div class="cover" :style="`background: url('${showImg(item.imageUrl)}')`" />
                         </div>
                         <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
                           <span class="current">
-                            <span class="sign">￥</span>179
+                            <span class="sign">￥</span>{{ item.price }}
                           </span>
                           <span class="original">
-                            <span class="sign">￥</span>268
+                            <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
                       </swiper-slide>
@@ -235,18 +235,18 @@
                     @someSwiperEvent="swiperCallback"
                   >
                     <!-- slides -->
-                    <template v-if="xForm8.detail && xForm8.detail.length">
-                      <swiper-slide v-for="item in xForm8.detail" :key="item.id" class="goods-item">
+                    <template v-if="xForm8.detail && xForm8.detail.length>0">
+                      <swiper-slide v-for="item in xForm8.detail" :key="item.productId" class="goods-item">
                         <div class="cover-box">
-                          <img :src="item.imageUrl">
+                          <div class="cover" :style="`background: url('${showImg(item.imageUrl)}')`" />
                         </div>
                         <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
                           <span class="current">
-                            <span class="sign">￥</span>179
+                            <span class="sign">￥</span>{{ item.price }}
                           </span>
                           <span class="original">
-                            <span class="sign">￥</span>268
+                            <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
                       </swiper-slide>
@@ -403,7 +403,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1020px">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1019px">
           <div class="m-header">
             <span class="text">分组主图</span>
           </div>
@@ -445,7 +445,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1120px">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
           <div class="m-header">
             <span class="text">分组商品图片</span>
             <!-- <span class="text">右1图片</span> -->
@@ -457,25 +457,25 @@
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸1:1.2</p>
                 <ul class="m-goods-list">
-                  <template v-if="xForm6.detail && xForm6.detail.length>0">
-                    <li v-for="(item, index) in xForm6.detail" :key="index" class="goods-item">
+                  <template v-if="xForm6.selectGoodsList && xForm6.selectGoodsList.length>0">
+                    <li v-for="(goods, $index) in xForm6.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
-                        <div class="cover" />
-                        <div class="btn-remove" />
+                        <div class="cover" :style="`background: url('${goods.picUrl}')`" />
+                        <div class="btn-remove" @click.stop="removeGoods($index, 'xForm6')" />
                       </div>
-                      <div class="caption">修正VE软胶</div>
+                      <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
                       <div class="price">
                         <span class="current">
-                          <span class="sign">￥</span>138
+                          <span class="sign">￥</span>{{ goods.price }}
                         </span>
                         <span class="original">
-                          <span class="sign">￥</span>268
+                          <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
                     </li>
                   </template>
-                  <li class="goods-item item-add">
-                    <div class="icon-add" @click.stop="toSelectGoods" />
+                  <li class="goods-item item-add" @click.stop="toSelectGoods">
+                    <div class="icon-add" />
                   </li>
                 </ul>
               </div>
@@ -519,7 +519,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm6.linkUrl" type="text" size="small" style="width: 286px;" />
+                <el-input v-model="xForm7.linkUrl" type="text" size="small" style="width: 286px;" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -533,7 +533,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1300px">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
           <div class="m-header">
             <span class="text">分组商品图片2</span>
             <!-- <span class="text">右1图片</span> -->
@@ -545,25 +545,25 @@
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸1:1.2</p>
                 <ul class="m-goods-list">
-                  <template v-if="xForm8.detail && xForm8.detail.length>0">
-                    <li v-for="(item, index) in xForm8.detail" :key="index" class="goods-item">
+                  <template v-if="xForm8.selectGoodsList && xForm8.selectGoodsList.length>0">
+                    <li v-for="(goods, $index) in xForm8.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
-                        <div class="cover" />
-                        <div class="btn-remove" />
+                        <div class="cover" :style="`background: url('${showImg(goods.mainPic)}')`" />
+                        <div class="btn-remove" @click.stop="removeGoods($index, 'xForm8')" />
                       </div>
-                      <div class="caption">修正VE软胶</div>
+                      <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
                       <div class="price">
                         <span class="current">
-                          <span class="sign">￥</span>138
+                          <span class="sign">￥</span>{{ goods.price }}
                         </span>
                         <span class="original">
-                          <span class="sign">￥</span>268
+                          <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
                     </li>
                   </template>
-                  <li class="goods-item item-add">
-                    <div class="icon-add" @click.stop="toSelectGoods" />
+                  <li class="goods-item item-add" @click.stop="toSelectGoods">
+                    <div class="icon-add" />
                   </li>
                 </ul>
               </div>
@@ -574,7 +574,7 @@
                 class="btn-submit"
                 plain
                 size="small"
-                @click="submitForm('xForm6')"
+                @click="submitForm('xForm8')"
               >提交</el-button>
             </div>
           </div>
@@ -584,8 +584,8 @@
         <el-button type="primary" @click.stop="submitSettings()">保存</el-button>
       </div>
     </div>
-    <!--弹窗--上线门店-->
-    <dialog-goods ref="goodsDialog" :list="[]" @confirm="goodsSelectChange" />
+    <!--弹窗--商品选取-->
+    <dialog-goods ref="goodsDialog" :list="currentSelectList" @confirm="goodsSelectChange" />
   </div>
 </template>
 
@@ -734,6 +734,15 @@ export default {
     },
     headers() {
       return { 'Authorization': this.$store.getters.token }
+    },
+    currentSelectList() {
+      if (this.xFormSet.formName === 'xForm6') {
+        return this.xForm6.selectGoodsList
+      }
+      if (this.xFormSet.formName === 'xForm8') {
+        return this.xForm8.selectGoodsList
+      }
+      return []
     }
   },
   created() {
@@ -775,10 +784,12 @@ export default {
         if (formName === 'xForm1' || formName === 'xForm4' || formName === 'xForm5' || formName === 'xForm7') {
           // 检测数据是否正常
           if (eidtForm.detail === null) { // 即获取初始数据失败{
-            alert('数据异常，请稍后重试')
+            this.$message.warning('数据异常，请稍后重试')
             return
           }
           this.$refs[formName].resetFields()
+        } else if (formName === 'xForm6' || formName === 'xForm8') {
+          eidtForm.selectGoodsList = this.formatToSelectGoods(eidtForm.detail)
         } else if (formName === 'xForm2') {
           this.$confirm('去设置轮播图')
             .then(_ => {
@@ -799,7 +810,7 @@ export default {
         eidtForm.imgUrl = eidtForm.detail[position - 1].imageUrl || ''
         eidtForm.linkUrl = eidtForm.detail[position - 1].url || ''
       }
-      if (formName === 'xForm5') {
+      if (formName === 'xForm5' || formName === 'xForm7') {
         eidtForm.imgUrl = eidtForm.detail.imageUrl || ''
         eidtForm.linkUrl = eidtForm.detail.url || ''
       }
@@ -811,17 +822,26 @@ export default {
       console.log('eidtForm', this[formName])
     },
     submitForm(formName) {
-      if (formName === 'xForm6') {
+      const submitForm = this[formName]
+      if (formName === 'xForm6' || formName === 'xForm8') {
         console.log(this.selectGoodsList)
-        if (this.xForm6.selectGoodsList.length === 0) {
-          alert('请选取分组商品')
+        if (submitForm.selectGoodsList.length === 0) {
+          this.$message.warning('请选取分组商品')
         }
-        this.xForm6.detail = this.xForm6.selectGoodsList
+        let positionCode = 'I-F1-2'
+        if (formName === 'xForm8') {
+          positionCode = 'I-F2-2'
+        }
+        submitForm.detail = this.formatGoodsData(submitForm.selectGoodsList, positionCode)
+        // 重置选中
+        this.xFormSet = {
+          formName: '',
+          position: ''
+        }
       } else {
         // 表单验证
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            const submitForm = this[formName]
             if (formName === 'xForm1') {
               // 表单验证..
               submitForm.detail.remark = submitForm.name
@@ -831,10 +851,15 @@ export default {
               submitForm.detail[this.xFormSet.position - 1].imageUrl = submitForm.imgUrl
               submitForm.detail[this.xFormSet.position - 1].url = submitForm.linkUrl
             }
-            if (formName === 'xForm5') {
+            if (formName === 'xForm5' || formName === 'xForm7') {
               // 表单验证..
               submitForm.detail.imageUrl = submitForm.imgUrl
               submitForm.detail.url = submitForm.linkUrl
+            }
+            // 重置选中
+            this.xFormSet = {
+              formName: '',
+              position: ''
             }
           } else {
             console.log('error submit!!')
@@ -860,14 +885,71 @@ export default {
       if (this.xForm5.detail && this.xForm5.detail.imageUrl !== '') {
         ret.push(this.xForm5.detail)
       }
+      if (this.xForm7.detail && this.xForm7.detail.imageUrl !== '') {
+        ret.push(this.xForm7.detail)
+      }
       if (this.xForm6.detail && this.xForm6.detail.length > 0) {
         // 剔除空数据
         if (this.xForm6.detail && this.xForm6.detail.length > 0) {
           ret = ret.concat(this.xForm6.detail)
         }
       }
+      if (this.xForm8.detail && this.xForm8.detail.length > 0) {
+        // 剔除空数据
+        if (this.xForm8.detail && this.xForm8.detail.length > 0) {
+          ret = ret.concat(this.xForm8.detail)
+        }
+      }
       // 提交数据
       this._mutilAddPageSet(ret)
+    },
+    formatGoodsData(list, positionCode) {
+      const detailList = list.map((v, i) => {
+        const goodItem = {
+          'announcement': '',
+          'classId': '',
+          'createName': '',
+          'endTime': '',
+          'id': '',
+          'imageUrl': v.mainPic,
+          'merCode': this.merCode,
+          'positionCode': positionCode,
+          'productId': v.commodityId,
+          'remark': v.commodityName,
+          'sortNumber': i + 1,
+          'startTime': '',
+          'status': 0,
+          'url': ''
+        }
+        return goodItem
+      })
+      return detailList
+    },
+    formatToSelectGoods(list, positionCode) {
+      const selectList = list.map((v, i) => {
+        const selectItem = {
+          barCode: '',
+          commodityId: v.productId,
+          commodityName: v.productName,
+          erpCode: '',
+          id: '',
+          lockFlag: 0,
+          mainPic: v.imageUrl,
+          matchStatus: null,
+          mprice: v.mprice,
+          packStandard: '',
+          picUrl: v.imageUrl,
+          price: v.price,
+          specId: null,
+          specSkuList: null,
+          status: 1,
+          stock: '0',
+          unlockTime: null,
+          unlockType: 0
+        }
+        return selectItem
+      })
+      return selectList
     },
     formatData(data, positionCode, sortNumber) {
       if (data) {
@@ -892,7 +974,6 @@ export default {
         return detail
       }
     },
-
     // h5-app
     swiperCallback(event) {
       console.log('event', event)
@@ -903,8 +984,8 @@ export default {
       console.log('file', file)
       if (this.xFormSet.formName === 'xForm4') {
         this.xForm4.imgUrl = res.data
-      } else if (this.xFormSet.formName === 'xForm5') {
-        this.xForm5.imgUrl = res.data
+      } else if (this.xFormSet.formName === 'xForm5' || this.xFormSet.formName === 'xForm7') {
+        this[this.xFormSet.formName].imgUrl = res.data
       }
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
@@ -951,9 +1032,13 @@ export default {
       }
       return isType && isLt2M
     },
-    // 选取优惠券
+    // 选取商品
     toSelectGoods() {
       this.$refs.goodsDialog.open()
+    },
+    // 移除商品
+    removeGoods(index, formName) {
+      this[formName].selectGoodsList.splice(index, 1)
     },
     goodsSelectChange(list) {
       console.log('list', list)
@@ -963,7 +1048,10 @@ export default {
       //     return false
       //   }
       // }
-      this.xForm6.selectGoodsList = list
+      // const currentForm = this[this.xFormSet.formName]
+      this[this.xFormSet.formName].selectGoodsList = list
+      console.log('this[this.xFormSet.formName].selectGoodsList', this[this.xFormSet.formName].selectGoodsList)
+      console.log('this[this.xFormSet.formName].selectGoodsList', this['xForm8'].selectGoodsList)
       this.$refs.goodsDialog.close()
       // this.xForm2.couponList = list
     },
@@ -1059,7 +1147,7 @@ export default {
     },
     _mutilAddPageSet(ret) {
       if (ret.length === 0) {
-        alert('请提交修改数据')
+        this.$message.warning('请提交修改数据')
         return
       }
       console.log('ret', ret)
@@ -1670,8 +1758,7 @@ export default {
             .cover-box {
               width: 100%;
               height: 108px;
-              // background: rgba(249, 249, 249, 1);
-              background: burlywood;
+              background: $bg-cover;
               border-radius: 5px;
               border-radius: 5px;
               .cover {

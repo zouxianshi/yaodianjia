@@ -22,6 +22,7 @@
       <el-table
         ref="multipleTable"
         border
+        size="small"
         :data="tableData"
         style="width: 100%;margin-top: 20px"
         max-height="256"
@@ -32,14 +33,14 @@
         <el-table-column align="center" label="图片" width="120">
           <template slot-scope="scope">
             <div class="img-wrap">
-              <img :src="scope.url">
+              <img :src="showImg(scope.row.mainPic)">
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="storeName" label="名称" align="center" min-width="150" />
+        <el-table-column prop="commodityName" label="名称" align="center" min-width="150" />
         <el-table-column prop="storeName" label="包装规格" align="center" min-width="150" />
-        <el-table-column prop="storeName" label="价格" align="center" min-width="150" />
-        <el-table-column prop="storeName" label="库存" align="center" min-width="150" />
+        <el-table-column prop="price" label="价格" align="center" min-width="150" />
+        <el-table-column prop="stock" label="库存" align="center" min-width="150" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
@@ -65,7 +66,7 @@
         </div>
         <div class="label-line">
           <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-            <span v-text="mItem.storeName" />
+            <span v-text="mItem.commodityName" />
             <i
               v-if="editable"
               class="icon el-icon-close"
@@ -177,11 +178,11 @@ export default {
     handleSelectAllChange(allList) {
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.storeId === item.storeId
+          return mItem.commodityId === item.commodityId
         })
         if (index > -1) {
           if (allList.length > 0) {
-            console.log('已存在' + item.storeId + ':' + item.name)
+            console.log('已存在' + item.commodityId + ':' + item.commodityName)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
@@ -194,7 +195,7 @@ export default {
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.storeId === row.storeId
+        return mItem.commodityId === row.commodityId
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
@@ -205,7 +206,7 @@ export default {
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
       const index = this.tableData.findIndex(item => {
-        return item.storeId === myItem.storeId
+        return item.commodityId === myItem.commodityId
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
@@ -217,7 +218,7 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.storeId === item.storeId
+          return mItem.commodityId === item.commodityId
         })
         if (index > -1) {
           currentCheckedList.push(item)
@@ -248,7 +249,7 @@ export default {
       getProductList(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []
-          this.pager.total = res.data.totalAmount
+          this.pager.total = res.data.totalCount
           this.$nextTick(() => {
             this.updateChecked()
           })
@@ -274,6 +275,18 @@ export default {
   .el-dialog__headerbtn {
     top: 8px;
     right: 12px;
+  }
+  .el-table thead th {
+    height: 40px;
+  }
+  .img-wrap{
+    margin: 0 auto;
+    width: 50px;
+    height: 32px;
+    img{
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 </style>
