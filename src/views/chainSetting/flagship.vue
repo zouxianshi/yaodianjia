@@ -83,6 +83,14 @@ export default {
       loading: false
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
+  created() {
+    this.searchParams.merCode = this.merCode
+    this.getData()
+    this.getStore()
+  },
   methods: {
     getData() {
       getFlagship({
@@ -156,14 +164,6 @@ export default {
     onSelect() {
       this.visable = false
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
-  },
-  created() {
-    this.searchParams.merCode = this.merCode
-    this.getData()
-    this.getStore()
   }
 }
 </script>
