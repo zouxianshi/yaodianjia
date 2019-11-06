@@ -197,7 +197,7 @@
           <p class="text-right" style="font-size:13px">商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
           <el-form>
             <el-form-item label="规格设置：">
-              <el-checkbox v-for="(item,index) in specsList" :key="index" v-model="item.isCheck" :disabled="basicForm.origin===1||is_query" @change="handleSpecsChange"> {{ item.attributeName }}</el-checkbox>
+              <el-checkbox v-for="(item,index) in specsList" :key="index" v-model="item.isCheck" :disabled="basicForm.origin===1||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
             </el-form-item>
             <el-form-item label="规格信息：">
               <template v-if="basicForm.origin===1">
@@ -618,6 +618,7 @@ export default {
         this.fileList[index].imgUrl = this.showImg(res)
         this.fileList[index].picUrl = res
       }
+      this.pageLoading.close()
     },
     handleImgError() {
       this.$message({
