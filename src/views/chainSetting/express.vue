@@ -230,7 +230,7 @@ export default {
       })
       console.log(rangeResDTOList)
       let sortNumber = 0
-      if (this.form.list.length > 0) {
+      if (this.form.list && this.form.list.length > 0) {
         if (this.form.list[this.form.list.length - 1].sortNumber) {
           sortNumber = this.form.list[this.form.list.length - 1].sortNumber + 1
         } else {
@@ -249,7 +249,11 @@ export default {
           postageFreeThreshold: 0,
           rangeResDTOList: rangeResDTOList
         }
-        this.form.list.push(tempData)
+        if (this.form.list) {
+          this.form.list.push(tempData)
+        } else {
+          this.form.list = [tempData]
+        }
         console.log(tempData)
       } else {
         this.form.list[this.editPosition].rangeResDTOList = _.cloneDeep(rangeResDTOList)
