@@ -248,7 +248,7 @@
                   <el-table :data="editSpecsData">
                     <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs" :label="propsf.name">
                       <template slot-scope="scope">
-                        <span v-text="scope.row[propsf.name]" />
+                        <span v-if="scope.row[propsf.name]" v-text="scope.row[propsf.name]" />
                       </template>
                     </el-table-column>
                     <el-table-column label="商品编码" prop="erpCode" />
