@@ -291,12 +291,14 @@ const mixin = {
        * 这里新增的时候判断是为编辑且已有编辑的规格数据了，有的话默认点击新增就自动吧规格参数添加到表单中
        */
       if (this.basicForm.id && this.editSpecsData.length > 0) {
-        this.specsList.map(v => {
-          if (this.chooseSpec.includes(v.id)) {
-            v.isCheck = true
-            this.specsForm.specsData.push(v)
-          }
-        })
+        if (this.specsForm.specsData.length === 0) {
+          this.specsList.map(v => {
+            if (this.chooseSpec.includes(v.id)) {
+              v.isCheck = true
+              this.specsForm.specsData.push(v)
+            }
+          })
+        }
       }
     },
     handleDeleteSpec(index) { // 删除规格
