@@ -403,7 +403,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1019px">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1020px">
           <div class="m-header">
             <span class="text">分组主图</span>
           </div>
@@ -833,6 +833,7 @@ export default {
           positionCode = 'I-F2-2'
         }
         submitForm.detail = this.formatGoodsData(submitForm.selectGoodsList, positionCode)
+        console.log('submitForm.detail', submitForm.detail)
         // 重置选中
         this.xFormSet = {
           formName: '',
@@ -906,20 +907,23 @@ export default {
     formatGoodsData(list, positionCode) {
       const detailList = list.map((v, i) => {
         const goodItem = {
-          'announcement': '',
-          'classId': '',
-          'createName': '',
-          'endTime': '',
-          'id': '',
-          'imageUrl': v.mainPic,
-          'merCode': this.merCode,
-          'positionCode': positionCode,
-          'productId': v.commodityId,
-          'remark': v.commodityName,
-          'sortNumber': i + 1,
-          'startTime': '',
-          'status': 0,
-          'url': ''
+          announcement: '',
+          classId: '',
+          createName: '',
+          endTime: '',
+          id: '',
+          imageUrl: v.mainPic,
+          merCode: this.merCode,
+          positionCode: positionCode,
+          productId: v.commodityId,
+          remark: v.commodityName,
+          sortNumber: i + 1,
+          startTime: '',
+          status: 0,
+          url: '',
+          productName: v.commodityName,
+          mprice: v.mprice,
+          price: v.price
         }
         return goodItem
       })
@@ -1219,7 +1223,7 @@ export default {
 .h5-app {
   flex: 0 0 auto;
   width: 375px;
-  //height: 712px;
+  height: 2218px;
   border: 1px solid #dedede;
   background: #f2f2f2;
   box-sizing: border-box;
