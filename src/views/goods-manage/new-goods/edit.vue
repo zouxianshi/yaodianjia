@@ -47,7 +47,7 @@
                 <el-form-item label="商品信息：" prop="name">
                   <el-input v-model="basicForm.name" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='保健品')" prop="commonName" label="通用名：">
+                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='营养保健')" prop="commonName" label="通用名：">
                   <el-input v-model="basicForm.commonName" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
                 </el-form-item>
                 <el-form-item label="所属品牌：" prop="brandId">
@@ -103,7 +103,7 @@
           <div class="edit-card-cnt">
             <div class="content">
               <el-form :model="basicForm" label-width="130px" status-icon>
-                <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西医药品'">
+                <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
                   <el-form-item label="药品类型：">
                     <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
                       <el-option label="甲类OTC" value="0" />
@@ -128,7 +128,7 @@
                 <el-form-item label="批准文号：" prop="approvalNumber">
                   <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='中西医药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='保健品')" label="是否含有麻黄碱">
+                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='中西药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')" label="是否含有麻黄碱">
                   <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
                 </el-form-item>
                 <el-form-item label="商品详细信息：">
@@ -268,28 +268,24 @@
                   </div>
                   <div class="spec-content">
                     <el-form :ref="'specsForm'+index" :model="item" size="small" label-width="80px" :status-icon="true">
-                      <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1" :label="items.attributeName">
-                        <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" :disabled="is_query" placeholder="输入包装规格" />
+                      <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1">
+                        <span slot="label"><span class="tip">*</span> {{ items.attributeName }}</span>
+                        <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" :disabled="is_query" :placeholder="'输入'+items.attributeName" @change="handleInputSpecs(items,index1)" />
                       </el-form-item>
-                      <el-form-item
-                        label="条码"
-                        :rules="{ required: true, message: '商品编码不能为空', trigger: 'blur' }"
-                      >
+                      <el-form-item label="">
+                        <span slot="label"><span class="tip">*</span> 条码</span>
                         <el-input v-model="item.barCode" placeholder="输入条码" />
                       </el-form-item>
-                      <el-form-item
-                        label="商品编码"
-                        :rules="{ required: true, message: '商品编码不能为空', trigger: 'blur' }"
-                      >
+                      <el-form-item>
+                        <span slot="label"><span class="tip">*</span> 商品编码</span>
                         <el-input v-model="item.erpCode" placeholder="输入条码" />
                       </el-form-item>
-                      <el-form-item
-                        label="价格"
-                        :rules="{ required: true, message: '价格不能为空', trigger: 'blur' }"
-                      >
+                      <el-form-item>
+                        <span slot="label"><span class="tip">*</span> 价格</span>
                         <el-input v-model="item.mprice" placeholder="输入价格" />
                       </el-form-item>
                       <el-form-item label="商品图片">
+                        <span slot="label"><span class="tip">*</span> 商品图片</span>
                         <el-upload
                           class="avatar-uploader specs-img"
                           :action="upLoadUrl"
@@ -327,7 +323,7 @@
           </div>
           <div class="edit-card-cnt">
             <div class="content">
-              <vue-upload-img :actions="upLoadUrl" :disable="is_query" :before-upload="beforeUpload" :file-list="fileList" :headers="headers" :limit="6" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" @onError="handleImgError" />
+              <vue-upload-img :actions="upLoadUrl" :disable="is_query" :before-upload="beforeUpload" :list="fileList" :headers="headers" :limit="6" @preview="handlePreview" @onsort="handleSortEnd" @onSuccess="handleImgSuccess" @onError="handleImgError" />
               <el-dialog append-to-body :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt="">
               </el-dialog>
@@ -416,7 +412,6 @@ import { mapGetters } from 'vuex'
 import { setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
-import { findArray } from '@/utils/index'
 import unit from './_source/unit'
 export default {
   components: { Tinymce, vueUploadImg },
@@ -612,7 +607,7 @@ export default {
     handleSortEnd(val) { // 图片排序
       this.fileList = val
       if (this.fileList.length > 0) {
-        console.log('1111')
+        // console.log('1111')
       }
     },
     handleImgSuccess(res, fileList, index) {
@@ -707,26 +702,6 @@ export default {
               })
             }
           })
-        }
-      })
-    },
-    handleAddSpec() {
-      this.specsForm.specs.push({ picUrl: '', mprice: '', erpCode: '', barCode: '' })
-    },
-    handleDeleteSpec(index) { // 删除规格
-      this.specsForm.specs.splice(index, 1)
-    },
-    handleSpecsChange(row) { // 规格勾选
-      this.specsList.map(v => {
-        const findIndex = findArray(this.specsForm.specsData, { id: v.id })
-        if (v.isCheck) {
-          if (findIndex < 0) {
-            this.specsForm.specsData.push(v)
-          }
-        } else {
-          if (findIndex > -1) {
-            this.specsForm.specsData.splice(findIndex, 1)
-          }
         }
       })
     },
@@ -934,6 +909,9 @@ export default {
       .editSqu{
           height: 376px;
           border: 1px dashed red;
+          img{
+            max-width: 100%!important;
+          }
       }
       .w-e-text {
           padding: 0 10px;

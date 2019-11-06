@@ -798,7 +798,7 @@ export default {
         } else if (formName === 'xForm3') {
           this.$confirm('去设置公告')
             .then(_ => {
-              this.$router.push('/wxmall/notice')
+              this.$router.push('/wxmall/banner')
             })
         }
       }

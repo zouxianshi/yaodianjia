@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="record-wrapper">
       <el-radio-group
-        v-model="listQuquery.auditStatus"
+        v-model="listQuery.auditStatus"
         size="small"
         @change="getList"
       >
@@ -19,7 +19,7 @@
           <div class="search-item">
             <span class="label-name">商品信息</span>
             <el-input
-              v-model.trim="listQuquery.name"
+              v-model.trim="listQuery.name"
               size="small"
               placeholder="商品名称"
             />
@@ -27,7 +27,7 @@
           <div class="search-item">
             <span class="label-name">生产企业</span>
             <el-input
-              v-model.trim="listQuquery.manufacture"
+              v-model.trim="listQuery.manufacture"
               size="small"
               placeholder="生产企业"
             />
@@ -35,7 +35,7 @@
           <div class="search-item">
             <span class="label-name">条形码</span>
             <el-input
-              v-model.trim="listQuquery.barCode"
+              v-model.trim="listQuery.barCode"
               size="small"
               placeholder="商品编码"
             />
@@ -43,13 +43,13 @@
           <div class="search-item">
             <span class="label-name">批准文号</span>
             <el-input
-              v-model.trim="listQuquery.approvalNumber"
+              v-model.trim="listQuery.approvalNumber"
               size="small"
               placeholder="商品编码"
             />
           </div>
           <div class="search-item">
-            <el-button type="" size="small">查询</el-button>
+            <el-button type="" size="small" @click="getList">查询</el-button>
             <el-button type="danger" size="small" @click="handleBatchDel">删除</el-button>
           </div>
         </div>
@@ -121,6 +121,9 @@
               <template v-if="scope.row.infoStatus===15&&scope.row.auditStatus!==2&&scope.row.auditStatus!==1&&scope.row.auditStatus!==0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
               </template>
+              <template v-else-if="scope.row.infoStatus===15&&scope.row.auditStatus==0">
+                <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
+              </template>
               <template v-else>
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}&type=query`">
                   <el-button type="" size="mini">查看</el-button>
@@ -132,6 +135,7 @@
                 </a>
               </template>
               <el-button
+                v-if="scope.row.auditStatus!==1"
                 type="danger"
                 size="mini"
                 @click="handleDel(scope.row)"
@@ -166,7 +170,7 @@ export default {
       tableData: [],
       total: 0,
       loading: false,
-      listQuquery: {
+      listQuery: {
         'approvalNumber': '',
         'auditStatus': '',
         'barCode': '',
@@ -189,7 +193,7 @@ export default {
     handleSelectionChange(rows) {
       this.multipleSelection = rows
     },
-    handleSendCheck(row) { // 提交审核
+    handleSendCheck(row, status) { // 提交审核
       const data = {
         'auditStatus': '2',
         'ids': [
@@ -207,7 +211,7 @@ export default {
     },
     getList() {
       this.loading = true
-      getNewGoodsRecord(this.listQuquery).then(res => {
+      getNewGoodsRecord(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
         if (data) {

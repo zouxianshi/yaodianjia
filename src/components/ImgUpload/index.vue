@@ -1,6 +1,6 @@
 <template>
   <div class="imgupload">
-    <template v-if="disable">
+    <template v-if="!disable">
       <draggable id="upload-list" v-model="fileList" class="upload-list" @end="handeDragEnd">
         <div
           v-for="(item,index) in fileList"
@@ -96,7 +96,7 @@ export default {
       type: Number,
       default: null
     },
-    fileList: {
+    list: {
       type: Array,
       default: () => {
         return []
@@ -115,7 +115,7 @@ export default {
   },
   data() {
     return {
-
+      fileList: this.list
     }
   },
   created() {
@@ -123,6 +123,7 @@ export default {
   },
   methods: {
     handeDragEnd() {
+      console.log('onsort')
       this.$emit('onsort', this.fileList)// 排序成功之后抛出数据
     },
     getFileList() { // 获取已上传的文件列表

@@ -1,4 +1,5 @@
 import { getSelfSpecsInfo, setSpecsData, getSpecsProductSKU, getSpecs } from '@/api/new-goods'
+import { findArray } from '@/utils/index'
 const mixin = {
   data() {
     return {
@@ -8,6 +9,7 @@ const mixin = {
         specsData: [],
         specs: [{ picUrl: '', mprice: '', erpCode: '', barCode: '' }]
       },
+      chooseSpec: [], // 选中的规格参数
       specsList: [] // 规格
     }
   },
@@ -18,7 +20,7 @@ const mixin = {
         this.step = 3
         return
       }
-      if (this.basicForm.origin === 1) {
+      if (this.basicForm.origin === 1) { // 标库商品
         data = this.chooseTableSpec
         let is_err = false
         data.forEach((v, index) => {
@@ -40,9 +42,16 @@ const mixin = {
               type: 'error'
             })
             is_err = true
+          } else if (!v.picUrl) {
+            this.$message({
+              message: `你勾选的规格中第${index + 1}个图片不能为空`,
+              type: 'error'
+            })
+            is_err = true
           } else {
             v.merCode = this.merCode
             v.valueList = v.productSpecSkuDTOs
+            v.commodityId = this.$route.query.id
           }
         })
         if (is_err) {
@@ -50,46 +59,102 @@ const mixin = {
         }
         this.subSpecs(data)
       } else {
-        data = this.specsForm.specs
-        const index = -1
-        this.specsForm.specs.map(v => {
-          console.log(index + 1)
-          const form = 'specsForm' + parseInt(index + 1)
-          console.log(form)
-          this.$refs[form].validate((valid) => {
-            if (valid) {
-              this.subSpecs(data)
-            } else {
-              console.log('error submit!!')
-              return false
-            }
-          })
-          v.valueList = []
-          v.commodityId = this.basicForm.id
-          v.merCode = this.merCode
-          for (const key in v) {
-            if (v.hasOwnProperty(key)) {
-              const val = key.split('_')
-              if (val.includes('index')) {
-                v.valueList.push({
-                  skuKeyId: val[1],
-                  skuValue: v[key],
-                  skuKeyName: val[2]
-                })
-              }
-            }
+        let checkNum = 0
+        this.specsForm.specsData.map(v => {
+          if (v.isCheck) {
+            checkNum = +1
           }
         })
+        if (this.specsForm.specs.length !== 0) {
+          if (checkNum === 0) {
+            this.$message({
+              message: '请勾选规格参数',
+              type: 'warning'
+            })
+            return
+          }
+          data = this.specsForm.specs
+          let index = 0
+          let flag = true
+          this.specsForm.specs.map(v => {
+            index = +1
+            v.valueList = []
+            v.commodityId = this.basicForm.id
+            v.merCode = this.merCode
+            for (const key in v) {
+              if (v.hasOwnProperty(key)) {
+                const val = key.split('_')
+                if (val.includes('index') && this.chooseSpec.includes(val[1])) {
+                  if (v[key]) {
+                    v.valueList.push({
+                      skuKeyId: val[1],
+                      skuValue: v[key],
+                      skuKeyName: val[2]
+                    })
+                  } else {
+                    if (flag) {
+                      this.$message({
+                        message: `请输入规格${index}中的${val[2]}`,
+                        type: 'error'
+                      })
+                      flag = false
+                    }
+                  }
+                }
+              }
+            }
+            if (flag && !v.barCode) {
+              console.log(456)
+              this.$message({
+                message: `请输入规格${index}中的条码`,
+                type: 'error'
+              })
+              flag = false
+            }
+            if (flag && !v.erpCode) {
+              this.$message({
+                message: `请输入规格${index}中的商品编码`,
+                type: 'error'
+              })
+              flag = false
+            }
+            if (flag && !v.mprice) {
+              this.$message({
+                message: `请输入规格${index}中的价格`,
+                type: 'error'
+              })
+              flag = false
+            }
+            if (flag && !v.picUrl) {
+              this.$message({
+                message: `请上传规格${index}中的图片`,
+                type: 'error'
+              })
+              flag = false
+            }
+          })
+          if (flag) {
+            this.subSpecs(data)
+          }
+        } else {
+          if (this.$route.query.id) { // 如果是编辑 且已存在sku规格数据  未点击添加规格是直接进入下一步
+            this.step = 3
+          } else {
+            if (data.length === 0) {
+              this.$message({
+                message: '请设置规格',
+                type: 'warning'
+              })
+              return
+            }
+          }
+        }
       }
     },
+    handleInputSpecs(item, index) { // change事件
+      this.$set(this.specsForm.specs, index, item)
+    },
     subSpecs(data) {
-      if (this.$route.query.id && data.length === 0) {
-        this.$message({
-          message: '请设置规格',
-          type: 'warning'
-        })
-        return
-      }
       this.subLoading = true
       setSpecsData({ list: data }).then(res => {
         this.$message({
@@ -106,8 +171,8 @@ const mixin = {
     _loadSpces() { // 根据一级分类加载规格
       getSpecs(this.chooseTypeList[0].id).then(res => {
         if (res.data) {
-          res.data.map((v, index) => {
-            v['index_' + index + '_' + v.attributeName] = ''
+          res.data.map((v) => {
+            v['index_' + v.id + '_' + v.attributeName] = ''
             if (this.basicForm.origin === 1) {
               v.isCheck = true
             } else {
@@ -165,6 +230,45 @@ const mixin = {
           }
         })
       }
+    },
+    handleAddSpec() { // 增加 规格
+      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '' }
+      this.specsList.map(v => {
+        const keys = 'index_' + v.id + '_' + v.attributeName
+        data[keys] = ''
+      })
+      this.specsForm.specs.push(data)
+    },
+    handleDeleteSpec(index) { // 删除规格
+      this.specsForm.specs.splice(index, 1)
+    },
+    handleSpecsChange(row) { // 规格勾选
+      this.specsList.map(v => {
+        const findIndex = findArray(this.specsForm.specsData, { id: v.id })
+        if (v.isCheck) {
+          if (findIndex < 0) {
+            this.specsForm.specsData.push(v)
+          }
+          if (!this.chooseSpec.includes(v.id)) { // 是否在勾选的规格参数中是否存在
+            this.chooseSpec.push(v.id)
+          }
+        } else {
+          if (!this.chooseSpec.includes(v.id)) { // 取消 就删除
+            const index = this.chooseSpec.indexOf(v.id)
+            this.chooseSpec.push(index, 1)
+          }
+          if (findIndex > -1) {
+            const items = this.specsForm.specsData[findIndex]
+            const keys = 'index_' + items.id + '_' + items.attributeName
+            this.specsForm.specs.map(vl => {
+              if (vl[keys]) {
+                vl[keys] = '' // 删除this.specsForm.specs 已存在的值
+              }
+            })
+            this.specsForm.specsData.splice(findIndex, 1)
+          }
+        }
+      })
     }
   }
 }
