@@ -20,21 +20,24 @@
           <template>
             <el-image
               style="width: 70px; height: 70px"
-              :src="url"
-              :fit="fit"
             />
           </template>
         </el-table-column>
-        <el-table-column label="门店名称" property="name" />
-        <el-table-column label="门店编码" property="name" />
-        <el-table-column label="电话" property="name" />
+        <el-table-column label="门店名称" property="stName" />
+        <el-table-column label="门店编码" property="stCode" />
+        <el-table-column label="电话" property="mobile" />
         <el-table-column label="状态" width="80px">
           <template>
             <el-switch />
           </template>
         </el-table-column>
         <el-table-column label="配送方式" property="name" />
-        <el-table-column label="微商城是否上线" property="name" />
+        <el-table-column label="微商城是否上线">
+          <template slot-scope="scope">
+            <span v-if="scope.row.onlineStatus === 1">上线</span>
+            <span v-else>下线</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="80px">
           <template>
             <el-button size="small" type="primary" icon="el-icon-edit" circle />
@@ -47,6 +50,11 @@
 </template>
 
 <script>
+import _ from 'lodash'
+import { mapGetters } from 'vuex'
+import {
+  queryStore
+} from '../../api/chainSetting'
 export default {
   name: 'Index',
   data() {
@@ -62,13 +70,41 @@ export default {
         label: '下线'
       }],
       value: '全部',
-      list: [
-        { code: '12', name: 'aaa' },
-        { code: '12', name: 'aaa' },
-        { code: '12', name: 'aaa' },
-        { code: '12', name: 'aaa' }
-      ]
+      searchParams: {
+        merCode: null,
+        currentPage: 1,
+        pageSize: 20,
+        searchKey: null
+      },
+      list: []
     }
+  },
+  created() {
+    this.getData()
+  },
+  methods: {
+    getData() {
+      queryStore({
+        merCode: this.merCode,
+        currentPage: 1,
+        pageSize: 200000
+      }).then(res => {
+        if (res.code === '10000') {
+          this.list = _.cloneDeep(res.data.data)
+        } else {
+          this.loading = false
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        console.log('res-2', this.list)
+      })
+    }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   }
 }
 </script>
