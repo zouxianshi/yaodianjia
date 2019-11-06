@@ -217,7 +217,7 @@ const mixin = {
       }
     },
     _loadSpecs() { // 请求回显数据
-      getSelfSpecsInfo(this.$route.query.id).then(res => {
+      getSelfSpecsInfo(this.basicForm.id).then(res => {
         if (res.data) {
           const { specList } = res.data
           if (this.basicForm.origin === 2) {
@@ -238,7 +238,6 @@ const mixin = {
                   }
                 }
               }
-              console.log('specList', specList)
               specList.map(v => {
                 if (v.specSkuList) {
                   v.specSkuList.map(vs => {
