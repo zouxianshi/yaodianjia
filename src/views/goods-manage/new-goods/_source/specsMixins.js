@@ -225,16 +225,26 @@ const mixin = {
               if (specList) {
                 this.specsForm.specs = []
               }
-              specList[0].specSkuList.map(v => {
-                this.dynamicProp.push({
-                  name: v.skuKeyName,
-                  id: v.skuKeyId
-                })
-              })
+              for (let index = 0; index < specList.length; index++) {
+                const element = specList[index]
+                if (element.specSkuList) {
+                  if (this.dynamicProp.length === 0) {
+                    element.specSkuList.map(v => {
+                      this.dynamicProp.push({
+                        name: v.skuKeyName,
+                        id: v.skuKeyId
+                      })
+                    })
+                  }
+                }
+              }
+              console.log('specList', specList)
               specList.map(v => {
-                v.specSkuList.map(vs => {
-                  v[vs.skuKeyName] = vs.skuValue
-                })
+                if (v.specSkuList) {
+                  v.specSkuList.map(vs => {
+                    v[vs.skuKeyName] = vs.skuValue
+                  })
+                }
               })
               console.log('specList', specList)
               this.editSpecsData = specList
