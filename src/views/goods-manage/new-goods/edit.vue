@@ -202,7 +202,7 @@
             <el-form-item label="规格设置：">
               <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
                 <template v-if="dynamicProp.length>0">
-                  <span v-for="(item,index) in specsList" :key="index">
+                  <span v-for="(item,index) in specsList" :key="index" style="display:inline-block;margin-right:10px;">
                     <el-checkbox v-if="shows(item)" :key="index" checked :disabled="true||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
                   </span>
                 </template>
@@ -613,7 +613,7 @@ export default {
       })
     },
     _loadGoodsImgAry() { // 加载商品图片
-      const id = this.$route.query.id
+      const id = this.basicForm.id
       if (id) {
         getGoodsImgAry(id).then(res => {
           if (res.data) {
@@ -628,7 +628,7 @@ export default {
       }
     },
     _loadGoodsDetails() { // 加载商品详情
-      const id = this.$route.query.id
+      const id = this.basicForm.id
       getGoodsDetails(id).then(res => {
         if (res.data) {
           this.goodsIntro.content = res.data.content
