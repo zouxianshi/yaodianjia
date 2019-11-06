@@ -7,10 +7,25 @@ const mixin = {
       specSkuList: [],
       specsForm: { // 商家自建商品的规格表单
         specsData: [],
-        specs: [{ picUrl: '', mprice: '', erpCode: '', barCode: '' }]
+        specs: []
       },
+      dynamicProp: [], // 表格的动态字段
       chooseSpec: [], // 选中的规格参数
       specsList: [] // 规格
+    }
+  },
+  watch: {
+    step(val) {
+      console.log(val)
+      if (val === 2 && this.basicForm.id) {
+        // 获取规格
+        try {
+          this._loadSpces() // 获取规格
+        } catch (error) {
+          console.log(error)
+        }
+        this.handleAddSpec()
+      }
     }
   },
   methods: {
@@ -22,6 +37,10 @@ const mixin = {
       }
       if (this.basicForm.origin === 1) { // 标库商品
         data = this.chooseTableSpec
+        if (data.length === 0) { // 为选择任何东西直接跳过
+          this.step = 3
+          return
+        }
         let is_err = false
         data.forEach((v, index) => {
           if (!v.erpCode) {
@@ -134,6 +153,7 @@ const mixin = {
             }
           })
           if (flag) {
+            // console.log('走这里')
             this.subSpecs(data)
           }
         } else {
@@ -150,9 +170,6 @@ const mixin = {
           }
         }
       }
-    },
-    handleInputSpecs(item, index) { // change事件
-      this.$set(this.specsForm.specs, index, item)
     },
     subSpecs(data) {
       this.subLoading = true
@@ -181,7 +198,7 @@ const mixin = {
           })
           this.specsList = res.data
         }
-        if (this.$route.query.id) {
+        if (this.basicForm.id) {
           this._loadSpecsInfo()
         }
       })
@@ -189,47 +206,53 @@ const mixin = {
     _loadSpecsInfo() { // 加载规格信息
       if (this.basicForm.origin === 1) { // 标库
         getSpecsProductSKU(this.basicForm.platformCode).then(res => {
+          res.data.map(v => {
+            v.disabled = false
+          })
           this.specsForm.specs = res.data
+          this._loadSpecs()
         })
       } else {
-        getSelfSpecsInfo(this.$route.query.id).then(res => {
-          if (res.data) {
-            const { specList } = res.data
-            this.chooseSpecsAry = []
-            if (specList.length > 0) {
+        this._loadSpecs()
+      }
+    },
+    _loadSpecs() { // 请求回显数据
+      getSelfSpecsInfo(this.$route.query.id).then(res => {
+        if (res.data) {
+          const { specList } = res.data
+          if (this.basicForm.origin === 2) {
+            if (res.data && specList.length > 0) {
               if (specList) {
                 this.specsForm.specs = []
               }
+              specList[0].specSkuList.map(v => {
+                this.dynamicProp.push({
+                  name: v.skuKeyName,
+                  id: v.skuKeyId
+                })
+              })
+              specList.map(v => {
+                v.specSkuList.map(vs => {
+                  v[vs.skuKeyName] = vs.skuValue
+                })
+              })
+              console.log('specList', specList)
               this.editSpecsData = specList
-              //     // 处理数据，把单选框选中
-              //     specList[0].specSkuList.map(v => {
-              //       this.chooseSpecsAry.push(v.skuKeyId)
-              //     })
-              //     // 设置动态表单的值
-              //     this.specsList.forEach((v, index) => {
-              //       console.log(this.chooseSpecsAry[index], v.id)
-              //       if (this.chooseSpecsAry.includes(v.id)) {
-              //         this.specsForm.specsData.push(v)
-              //       }
-              //     })
-              //     const data = []
-              //     specList.forEach((v, index) => {
-              //       data.push({
-              //         'picUrl': v.picUrl,
-              //         'mprice': v.mprice,
-              //         'erpCode': v.erpCode,
-              //         'barCode': v.barCode
-              //       })
-              //       v.specSkuList.forEach((val, index1) => {
-              //         const name = 'index_' + val.skuKeyId + '_' + val.skuKeyName + ''
-              //         data[index][name] = val.skuValue
-              //       })
-              //     })
-              //     this.specsForm.specs = data
+            } else {
+              this.handleAddSpec()
             }
+          } else {
+            $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked')
+            specList.forEach((v, index) => {
+              const findIndex = findArray(this.specsForm.specs, { barCode: v.barCode })
+              if (findIndex > -1) {
+                this.specsForm.specs[findIndex].disabled = true
+                $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
+              }
+            })
           }
-        })
-      }
+        }
+      })
     },
     handleAddSpec() { // 增加 规格
       const data = { picUrl: '', mprice: '', erpCode: '', barCode: '' }
@@ -255,7 +278,7 @@ const mixin = {
         } else {
           if (!this.chooseSpec.includes(v.id)) { // 取消 就删除
             const index = this.chooseSpec.indexOf(v.id)
-            this.chooseSpec.push(index, 1)
+            this.chooseSpec.splice(index, 1)
           }
           if (findIndex > -1) {
             const items = this.specsForm.specsData[findIndex]

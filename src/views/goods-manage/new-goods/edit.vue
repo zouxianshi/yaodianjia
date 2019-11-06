@@ -133,7 +133,12 @@
                 </el-form-item>
                 <el-form-item label="商品详细信息：">
                   <p>填写商品说明书</p>
-                  <Tinymce ref="editor" v-model="basicForm.intro" :readonly="basicForm.origin===1||is_query" :height="400" />
+                  <div v-show="basicForm.origin===1">
+                    <Tinymce ref="editor" v-model="basicForm.intro" :readonly="true" :height="400" />
+                  </div>
+                  <div v-show="basicForm.origin!==1">
+                    <Tinymce ref="editor" v-model="basicForm.intro" :readonly="is_query" :height="400" />
+                  </div>
                 </el-form-item>
                 <el-form-item label="功能主治/适应症：">
                   <el-input
@@ -210,17 +215,13 @@
                   </span>
                   <el-table-column label="商品编码">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.erpCode" size="mini" placeholder="" />
+                      <el-input v-model="scope.row.erpCode" :disabled="scope.row.disabled" size="mini" placeholder="" />
                     </template>
                   </el-table-column>
-                  <el-table-column label="商品条码">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.barCode" size="mini" placeholder="" />
-                    </template>
-                  </el-table-column>
+                  <el-table-column label="商品条码" prop="barCode" />
                   <el-table-column label="商品价格">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.mprice" size="mini" placeholder="" />
+                      <el-input v-model="scope.row.mprice" size="mini" :disabled="scope.row.disabled" placeholder="" />
                     </template>
                   </el-table-column>
                   <el-table-column label="商品图片">
@@ -229,9 +230,10 @@
                         class="avatar-uploader specs-img-table"
                         :action="upLoadUrl"
                         :headers="headers"
-                        :disabled="is_query"
+                        :disabled="is_query||scope.row.disabled"
                         :show-file-list="false"
                         :on-success="handleAvatarSuccess"
+                        :on-error="handleImgError"
                         :before-upload="beforeUpload"
                       >
                         <img v-if="scope.row.picUrl" style="width:80px;height:80px" :src="showImg(scope.row.picUrl)" class="avatar">
@@ -242,15 +244,13 @@
                 </el-table>
               </template>
               <template v-else>
-                <template v-if="$route.query.id&&editSpecsData.length>0">
+                <template v-if="basicForm.id&&editSpecsData.length>0">
                   <el-table :data="editSpecsData">
-                    <span v-for="(list,index) in editSpecsData" :key="index">
-                      <el-table-column v-for="(propsf,indexs) in list.specSkuList" :key="indexs" :label="propsf.skuKeyName">
-                        <template>
-                          <span v-text="propsf.skuValue" />
-                        </template>
-                      </el-table-column>
-                    </span>
+                    <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs" :label="propsf.name">
+                      <template slot-scope="scope">
+                        <span v-text="scope.row[propsf.name]" />
+                      </template>
+                    </el-table-column>
                     <el-table-column label="商品编码" prop="erpCode" />
                     <el-table-column label="商品条码" prop="barCode" />
                     <el-table-column label="商品价格" prop="mprice" />
@@ -270,7 +270,7 @@
                     <el-form :ref="'specsForm'+index" :model="item" size="small" label-width="80px" :status-icon="true">
                       <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1">
                         <span slot="label"><span class="tip">*</span> {{ items.attributeName }}</span>
-                        <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" :disabled="is_query" :placeholder="'输入'+items.attributeName" @change="handleInputSpecs(items,index1)" />
+                        <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" :disabled="is_query" :placeholder="'输入'+items.attributeName" />
                       </el-form-item>
                       <el-form-item label="">
                         <span slot="label"><span class="tip">*</span> 条码</span>
@@ -294,6 +294,7 @@
                           :show-file-list="false"
                           :upload-index="index"
                           :on-success="handleAvatarSuccess"
+                          :on-error="handleImgError"
                           :before-upload="beforeUpload"
                         >
                           <img v-if="item.picUrl" style="width:100px;height:100px" :src="showImg(item.picUrl)" class="avatar">
@@ -419,7 +420,6 @@ export default {
   data() {
     return {
       step: 1,
-      chooseSpecsAry: [],
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组
       groupVisible: false,
@@ -478,6 +478,7 @@ export default {
       is_query: false, // 是否为查看
       subLoading: false,
       chooseTableSpec: [],
+      pageLoading: false, // 加载
       leaveAction: false // 离开页面动作，true为保存离开  false异常离开
     }
   },
@@ -509,12 +510,12 @@ export default {
     }
   },
   created() {
-    if (this.$route.query.id) {
+    if (this.$route.query.id) { // 如果是编辑
       this._loadBasicInfo()
       this._loadGoodsDetails()
       this._loadGoodsImgAry()
     } else {
-      const data = sessionStorage.getItem('types')
+      const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
     }
     this.is_query = this.$route.query.type === 'query'
@@ -623,18 +624,26 @@ export default {
         message: '图片上传失败',
         type: 'error'
       })
+      this.pageLoading.close()
     },
     handlePreview(file) {
       this.dialogImageUrl = file.imgUrl
       this.dialogVisible = true
     },
     beforeUpload(file) {
+      this.pageLoading = this.$loading({
+        lock: true,
+        text: '图片上传中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
           message: '只能上传图片',
           type: 'warning'
         })
+        this.pageLoading.close()
       }
       return isImg
     },
@@ -645,6 +654,7 @@ export default {
       if (res.code === '10000') {
         this.specsForm.specs[this.uploadIndex].picUrl = res.data
       }
+      this.pageLoading.close()
     },
     _loadTypeList(isRefresh) { // 获取分组
       getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
@@ -731,13 +741,7 @@ export default {
       })
     },
     handleSubmitForm() { // 保存基本信息操作
-      // 获取规格
-      try {
-        this._loadSpces() // 获取规格
-      } catch (error) {
-        console.log(error)
-      }
-      if (this.basicForm.origin === 1 || this.is_query) {
+      if (this.is_query) {
         this.step = 2
         return
       }
@@ -745,7 +749,9 @@ export default {
         if (valid) {
           this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
           const data = JSON.parse(JSON.stringify(this.basicForm))
-          data.packStandard = `${data.long}*${data.width}*${data.height}`
+          if (data.long && data.width && data.height) {
+            data.packStandard = `${data.long}*${data.width}*${data.height}`
+          }
           if (this.expireDays === -1) {
             data.expireDays = -1
           } else {
@@ -914,7 +920,7 @@ export default {
           }
       }
       .w-e-text {
-          padding: 0 10px;
+          padding: 5px 10px;
           overflow-y: scroll;
       }
     }

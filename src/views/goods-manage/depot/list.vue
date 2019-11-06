@@ -36,7 +36,7 @@
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="listQuery.barCode" size="small" style="width:200px" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.barCode" size="small" style="width:200px" placeholder="条形码" />
           </div>
           <div class="search-item">
             <span class="label-name">批准文号</span>
@@ -76,7 +76,7 @@
                 <span
                   slot-scope="{ node, data }"
                   class="custom-tree-node"
-                  :class="{'active':data.id===listQuery.typeId}"
+                  :class="{'active':data.id===listQuery.groupId}"
                 >
                   <span
                     class="ellipsis"
@@ -124,13 +124,13 @@
               show-overflow-tooltip
             >
               <template slot-scope="scope">
-                <template v-if="scope.row.stPath">
+                <template v-if="scope.row.mainPic">
                   <el-image
-                    style="width: 100px; height: 100px"
-                    :src="scope.row.mainPic"
+                    style="width: 80px; height: 80px"
+                    :src="showImg(scope.row.mainPic)"
                     lazy
                     fit="contain"
-                    :preview-src-list="[`${scope.row.mainPic}`]"
+                    :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
                   />
                 </template>
                 <template v-else>
@@ -148,6 +148,7 @@
                 <div>
                   <p v-text="scope.row.name" />
                   <p v-text="scope.row.approvalNumber" />
+                  <p v-text="'条码：'+scope.row.barCode" />
                 </div>
               </template>
             </el-table-column>
@@ -158,7 +159,7 @@
               prop="manufacture"
             />
             <el-table-column
-              prop="orParentName"
+              prop="mprice"
               align="left"
               label="参考价"
               :show-overflow-tooltip="true"
@@ -247,7 +248,7 @@ export default {
         name: '',
         infoFlag: true,
         erpCode: '',
-        typeId: '' // 分组id
+        groupId: '' // 分组id
       }
     }
   },
@@ -276,8 +277,11 @@ export default {
       })
     },
     handleTreeClick(row, node) { // 节点被点击时
-      this.listQuery.typeId = row.id
-      this.getList()
+      if (row.level) { // 维度不请求
+        this.listQuery.groupId = row.id
+        this.listQuery.level = row.level
+        this.getList()
+      }
     },
     handleChangeUpdown(status) { // 批量上下架
       this.specData = []

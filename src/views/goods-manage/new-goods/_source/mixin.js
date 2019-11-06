@@ -12,6 +12,14 @@ const mixin = {
     _loadClassList() { // 加载数据
       this.loading = true
       getTypeTree({ merCode: 'hydee', type: 1 }).then(res => {
+        if (this.basicForm && this.basicForm.origin === 1) {
+          res.data.map(v => {
+            if (this.chooseTypeList[0].id !== v.id) {
+              v.disabled = true
+            }
+          })
+        }
+        console.log('ssss')
         this.typeList = res.data
         console.log(res)
         this.loading = false
