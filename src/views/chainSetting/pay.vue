@@ -2,11 +2,15 @@
   <div class="container">
     <h3>订单支付方式</h3>
     <div class="border" style="display:inline-block;width: 100%;margin-top: 10px">
-      <div style="float: left">
+      <div>
         <span class="label-name">快递订单：</span>
-        <el-checkbox>货到付款</el-checkbox>
+        <el-checkbox v-model="deliveryOrder" :true-label="1" :false-label="0" @change="changeOrderPayset">货到付款</el-checkbox>
       </div>
-      <div style="float:  left;margin-left: 30px">
+      <div style="margin-top: 5px">
+        <span class="label-name">配送订单：</span>
+        <el-checkbox v-model="distributionOrder" :true-label="1" :false-label="0" @change="changeOrderPayset">货到付款</el-checkbox>
+      </div>
+      <div style="margin-top: 10px">
         <h6>
           后台所有订单都支持在线支付，自提订单支持在线支付及到店支付。<br>
           此处选择商户自行配置，提示：为了避免顾客与商家之间关于付款或退款的纠纷，建议商家送货上门的订单不要选择货到付款
@@ -21,8 +25,11 @@
         </span>
         <el-button type="text" @click="onSetting(true)">设置</el-button>
         <el-switch
-          v-model="wechat"
+          v-model="form.status"
+          :active-value="1"
+          :inactive-value="0"
           style="margin-left: 200px"
+          @change="setStatus"
         />
       </div>
       <div>
@@ -46,11 +53,14 @@
     >
       <el-form ref="form" :model="form" label-position="right" label-width="130px">
         <el-form-item label="支付授权配置：">
-          <span>{{ configuration }}</span>
-          <el-button type="text" style="margin-left: 20px">复制</el-button>
+          <span v-if="data && data.payAutoConfig">
+            <span>{{ form.payAutoConfig }}</span>
+            <el-button type="text" style="margin-left: 20px" class="copy-key" :data-clipboard-text="form.payAutoConfig" @click="onCopyLink">复制</el-button>
+          </span>
+          <el-input v-else v-model="form.payAutoConfig" style="width: 300px" />
         </el-form-item>
         <el-form-item :label="isWechat ? '微信支付商户号：' : '支付宝商户号：'">
-          <el-input v-model="form.code" style="width: 300px" />
+          <el-input v-model="form.merchantCode" style="width: 300px" />
           <el-popover
             placement="right"
             title="操作提示："
@@ -69,37 +79,44 @@
           </el-popover>
         </el-form-item>
         <el-form-item :label="isWechat ? '微信支付key：' : '支付宝key：'">
-          <el-input v-model="form.key" style="width: 300px" />
+          <el-input v-model="form.payKey" style="width: 300px" />
         </el-form-item>
         <el-form-item label="商户证书：">
           <el-upload
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :headers="headers"
+            :action="upLoadUrl"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :before-remove="beforeRemove"
-            multiple
             :limit="1"
             :on-exceed="handleExceed"
+            :on-success="handleUploadSuccess"
             :file-list="fileList"
           >
             <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            <!--            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
           </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small">取 消</el-button>
-        <el-button type="primary" size="small">确定</el-button>
+        <el-button size="small" @click="dismiss">取 消</el-button>
+        <el-button type="primary" size="small" @click="submit">确定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
+import Clipboard from 'clipboard'
 import { mapGetters } from 'vuex'
+import config from '../../utils/config'
 import {
-  getPayset
+  setPayset,
+  getPayset,
+  setOrderPayset,
+  getOrderPayset
 } from '../../api/chainSetting'
 export default {
   name: 'Pay',
@@ -109,24 +126,76 @@ export default {
       wechat: false,
       alipay: false,
       isWechat: true,
-      configuration: 'ydjia.hydee.cn/wx/wxpay/',
+      // configuration: 'ydjia.hydee.cn/wx/wxpay/',
+      orderPaysetId: null,
+      deliveryOrder: 0,
+      distributionOrder: 0,
+      data: null,
       form: {
-        number: null,
-        key: null
+        id: null,
+        merCode: null,
+        merchantCertificate: null,
+        merchantCode: null,
+        payAutoConfig: null,
+        payKey: null,
+        payType: 0,
+        status: 0
       },
-      fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }]
+      fileList: []
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   },
   created() {
     this.getPayset()
+    this.getOrderPayset()
   },
   methods: {
     onSetting(isWechat) {
       this.isWechat = isWechat
       this.visable = true
+    },
+    getOrderPayset() {
+      this.loading = true
+      getOrderPayset(this.merCode).then(res => {
+        if (res.code === '10000') {
+          this.loading = false
+          this.orderPaysetId = res.data[0].id
+          this.distributionOrder = res.data[0].distributionOrder
+          this.deliveryOrder = res.data[0].deliveryOrder
+        } else {
+          this.loading = false
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        console.log('res-2', res.data)
+      })
+    },
+    changeOrderPayset() {
+      setOrderPayset({
+        id: this.orderPaysetId,
+        merCode: this.merCode,
+        deliveryOrder: this.deliveryOrder,
+        distributionOrder: this.distributionOrder
+      }).then(res => {
+        if (res.code === '10000') {
+          this.loading = false
+          this.$message({
+            message: '设置成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+        } else {
+          this.loading = false
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        console.log('res-2', res.data)
+      })
     },
     getPayset() {
       this.loading = true
@@ -135,8 +204,51 @@ export default {
         type: 0
       }).then(res => {
         if (res.code === '10000') {
-          this.list = res.data.data
-          this.totalCount = res.data.totalCount
+          // this.data = _.filter(_.cloneDeep(res.data), (o) => {return o.payType === 0})
+          const tempData = _.filter(_.cloneDeep(res.data), (o) => { return o.payType === 0 })
+          if (tempData && tempData.length > 0) {
+            this.data = tempData[0]
+          }
+          console.log(this.data)
+          if (this.data) {
+            this.form = _.cloneDeep(this.data)
+            this.form.id = this.data.id
+            this.form.merCode = this.data.merCode
+            this.form.merchantCertificate = this.data.merchantCertificate
+            this.form.merchantCode = this.data.merchantCode
+            this.form.payAutoConfig = this.data.payAutoConfig
+            this.form.payKey = this.data.payKey
+            this.form.payType = this.data.payType
+            this.form.status = this.data.status
+            this.fileList = [{
+              name: '商户证书',
+              url: this.data.merchantCertificate
+            }]
+          } else {
+            this.form.id = null
+            this.form.merCode = null
+            this.form.merchantCertificate = null
+            this.form.merchantCode = null
+            this.form.payAutoConfig = null
+            this.form.payKey = null
+            this.form.payType = 0
+            this.form.status = 0
+            this.fileList = []
+          }
+          /* const tempData = _.filter(_.cloneDeep(res.data), (o) => {return o.payType === 0})
+          if(tempData && tempData.length > 0){
+            this.form = tempData[0]
+          }else{
+            this.form.id = null
+            this.form.merCode = null
+            this.form.merchantCertificate = null
+            this.form.merchantCode = null
+            this.form.payAutoConfig = null
+            this.form.payKey = null
+            this.form.payType = 0
+            this.form.status = 0
+          }*/
+          console.log(this.form)
           this.loading = false
         } else {
           this.loading = false
@@ -146,25 +258,127 @@ export default {
             duration: 5 * 1000
           })
         }
-        console.log('res-2', this.list)
+        console.log('res-2', res.data)
+      })
+    },
+    setStatus() {
+      this.loading = true
+      this.form.merCode = this.merCode
+      setPayset(this.form).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '保存成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+        } else {
+          this.loading = false
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+      })
+    },
+    submit() {
+      this.loading = true
+      this.form.merCode = this.merCode
+      setPayset(this.form).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '保存成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.dismiss()
+          this.getPayset()
+        } else {
+          this.loading = false
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
       })
     },
     dismiss() {
-
+      if (this.data) {
+        this.form = _.cloneDeep(this.data)
+        this.form.id = this.data.id
+        this.form.merCode = this.data.merCode
+        this.form.merchantCertificate = this.data.merchantCertificate
+        this.form.merchantCode = this.data.merchantCode
+        this.form.payAutoConfig = this.data.payAutoConfig
+        this.form.payKey = this.data.payKey
+        this.form.payType = this.data.payType
+        this.form.status = this.data.status
+        this.fileList = [{
+          name: '商户证书',
+          url: this.data.merchantCertificate
+        }]
+      } else {
+        this.form.id = null
+        this.form.merCode = null
+        this.form.merchantCertificate = null
+        this.form.merchantCode = null
+        this.form.payAutoConfig = null
+        this.form.payKey = null
+        this.form.payType = 0
+        this.form.status = 0
+        this.fileList = []
+      }
+      /* this.form.id = null
+      this.form.merCode = null
+      this.form.merchantCertificate = null
+      this.form.merchantCode = null
+      this.form.payAutoConfig = null
+      this.form.payKey = null
+      this.form.payType = 0
+      this.form.status = 1*/
+      this.visable = false
     },
     handleRemove(file, fileList) {
       console.log(file, fileList)
+      this.form.merchantCertificate = null
     },
     handlePreview(file) {
       console.log(file)
     },
     handleExceed(files, fileList) {
+      console.log(this.fileList)
       this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    handleUploadSuccess(res, file) {
+      this.form.merchantCertificate = res.data
+      console.log(this.form.merchantCertificate)
+    },
+    onCopyLink() {
+      const clipboard = new Clipboard(`.copy-key`)
+      clipboard.on('success', () => {
+        this.$message({ type: 'success', message: '复制成功！' })
+        clipboard.destroy()
+      })
+      clipboard.on('error', e => {
+        this.$message({ type: 'error', message: JSON.stringify(e) })
+        clipboard.destroy()
+      })
     }
-  }
+  },
+  computed: {
+    ...mapGetters(['merCode', 'roles']),
+    upLoadUrl() {
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+    },
+    headers() {
+      return { 'Authorization': this.$store.getters.token }
+    }
+  },
+  components: { }
 }
 </script>
 

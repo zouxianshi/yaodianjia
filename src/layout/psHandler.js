@@ -86,11 +86,11 @@ class InnerCtor {
         path: '',
         disabled: this.get('merchant-org'),
         children: [
-          {
+          /*{
             name: '所有门店',
             path: '/storeSetting/index',
             disabled: this.get('merchant-org.merchant-org-org'),
-          },
+          },*/
           {
             name: '上线门店设置',
             path: '/storeSetting/setting',
@@ -102,6 +102,13 @@ class InnerCtor {
             disabled: this.get('merchant-org.merchant-org-store')
           }
         ]
+      },
+      {
+        name: '内部链接',
+        icon: 'icongoods',
+        path: '/internalLink',
+        disabled: true,
+        children: []
       }
     ]
   }

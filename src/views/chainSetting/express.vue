@@ -2,7 +2,7 @@
   <div class="container">
     <h3>快递运费</h3>
     <el-alert
-      v-if="cities.length - selected.length > 0"
+      v-if="cities && cities.length && cities.length - selected.length > 0"
       type="warning"
       :closable="false"
     >
@@ -10,12 +10,13 @@
         有未配置的区域{{ cities.length - selected.length }}个
       </template>
     </el-alert>
+
     <el-form ref="form" :model="form" label-position="right">
       <el-form-item label="计费方式：">
         <el-radio disabled>按重量</el-radio>
       </el-form-item>
       <el-form-item label="配送区域配置：" />
-      <el-table :data="form.list" border>
+      <el-table :data="form.list" border height="calc(100vh - 530px)">
         <el-table-column label="配送区域">
           <template slot-scope="scope">
             <span v-for="(item, $index) in scope.row.rangeResDTOList" :key="$index">
@@ -54,7 +55,7 @@
         <el-table-column label="操作" width="110px">
           <template slot-scope="scope">
             <el-button size="small" type="primary" icon="el-icon-edit" circle @click="onEdit(scope.$index)" />
-            <el-button size="small" type="danger" icon="el-icon-delete" circle />
+            <el-button size="small" type="danger" icon="el-icon-delete" circle @click="onDel(scope.$index)" />
           </template>
         </el-table-column>
       </el-table>
@@ -64,21 +65,9 @@
         <span style="color: #99a9bf">如全部设置为0，表示包邮</span>
       </div>
       <div style="text-align: center;margin-top: 20px">
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" @click="submit">保存</el-button>
       </div>
     </el-form>
-    <span v-for="city in showCities" :key="city.id">
-      <el-checkbox
-
-        v-model="city.checked"
-
-        :label="city.id"
-        size="mini"
-        style="width: 120px"
-        :disabled="isSelected(city.id)"
-        @change="onCheck($event,city)"
-      >{{ city.name }}</el-checkbox>
-    </span>
     <el-dialog
       append-to-body
       title="新增区域"
@@ -88,16 +77,19 @@
     >
       <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
       <div style="margin: 15px 0;" />
-      <el-checkbox
+      <span
         v-for="city in showCities"
         :key="city.id"
-        :label="city.id"
-        size="mini"
-        style="width: 120px"
-        :disabled="isSelected(city.id)"
-        :value="city.checked"
-        @change="onCheck($event,city)"
-      >{{ city.name }}</el-checkbox>
+      >
+        <el-checkbox
+          v-model="city.checked"
+          :label="city.id"
+          size="mini"
+          style="width: 120px"
+          :disabled="isSelected(city.id)"
+          @change="onCheck($event,city)"
+        >{{ city.name }}</el-checkbox>
+      </span>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取消</el-button>
         <el-button type="primary" size="small" @click="save">确定</el-button>
@@ -108,8 +100,11 @@
 
 <script>
 import _ from 'lodash'
+import { mapGetters } from 'vuex'
 import {
-  getProvince
+  getProvince,
+  saveDelivery,
+  getDelivery
 } from '../../api/chainSetting'
 export default {
   name: 'Express',
@@ -136,12 +131,30 @@ export default {
       this.loading = true
       getProvince().then(res => {
         if (res.code === '10000') {
-          this.cities = res.data
-          this.showCities = res.data
-          _.map(this.showCities, (v) => {
-            v.checked = false
+          this.cities = _.cloneDeep(res.data)
+          // this.showCities = _.cloneDeep(res.data)
+          this.showCities = _.map(_.cloneDeep(res.data), (v) => {
+            return _.assign(v, { checked: false })
           })
           console.log('showCities', this.showCities)
+          getDelivery(this.merCode).then(res => {
+            if (res.code === '10000') {
+              this.form.list = _.cloneDeep(res.data)
+              this.selected = []
+              _.map(this.form.list, (o) => {
+                _.map(o.rangeResDTOList, (v) => {
+                  this.selected.push(v.rangeId)
+                })
+              })
+              console.log('selected', this.selected)
+            } else {
+              this.$message({
+                message: res.msg,
+                type: 'error',
+                duration: 5 * 1000
+              })
+            }
+          })
         } else {
           this.$message({
             message: res.msg,
@@ -173,21 +186,23 @@ export default {
         this.isIndeterminate = false
         this.checkAll = false
       }
-
+      const ids = _.map(this.checkedCities, 'id')
+      _.map(this.showCities, function(o) {
+        o.checked = ids.indexOf(o.id) !== -1
+      })
       console.log(this.checkedCities)
       this.visable = true
     },
-    isChecked(id) {
-      if (this.editPosition !== -1) {
-        const arr = _.filter(this.form.list[this.editPosition].rangeResDTOList, { rangeId: id })
-        if (arr.length > 0) {
-          return true
-        } else {
-          return false
-        }
-      } else {
-        return false
-      }
+    onDel(index) {
+      console.log('index', index)
+      const tempData = _.cloneDeep(this.form.list[index].rangeResDTOList)
+      console.log('tempData', tempData)
+      _.map(tempData, (o) => {
+        this.selected = _.filter(_.cloneDeep(this.selected), (v) => v !== o.rangeId)
+      })
+      console.log('selected', this.selected)
+      this.form.list.splice(index, 1)
+      console.log('list', this.form.list)
     },
     isSelected(id) {
       if (this.editPosition !== -1) {
@@ -213,9 +228,14 @@ export default {
           rangeId: v.id
         })
       })
+      console.log(rangeResDTOList)
       let sortNumber = 0
       if (this.form.list.length > 0) {
-        sortNumber = this.form.list[this.form.list.length - 1].sortNumber + 1
+        if (this.form.list[this.form.list.length - 1].sortNumber) {
+          sortNumber = this.form.list[this.form.list.length - 1].sortNumber + 1
+        } else {
+          sortNumber = 0
+        }
       }
       if (this.editPosition === -1) {
         const tempData = {
@@ -230,8 +250,9 @@ export default {
           rangeResDTOList: rangeResDTOList
         }
         this.form.list.push(tempData)
+        console.log(tempData)
       } else {
-        this.form.list[this.editPosition].rangeResDTOList = rangeResDTOList
+        this.form.list[this.editPosition].rangeResDTOList = _.cloneDeep(rangeResDTOList)
       }
       this.selected = []
       _.map(this.form.list, (v) => {
@@ -251,13 +272,15 @@ export default {
           this.checkedCities = _.filter(this.cities, function(o) { return that.selected.indexOf(o.id) === -1 })
         } else {
           this.checkedCities = _.filter(this.cities, function(o) { return that.selected.indexOf(o.id) === -1 })
-          _.map(this.form.list.rangeResDTOList, function(o) {
-            this.checkedCities.push({
+          console.log('checkedCities', this.checkedCities)
+          _.map(this.form.list[this.editPosition].rangeResDTOList, function(o) {
+            that.checkedCities.push({
               id: o.rangeId,
               name: o.name
             })
           })
         }
+        console.log(this.checkedCities)
         const ids = _.map(this.checkedCities, 'id')
         _.map(this.showCities, function(o) {
           o.checked = ids.indexOf(o.id) !== -1
@@ -280,22 +303,60 @@ export default {
         this.checkAll = false
       }
     },
-    onCheck(e, item) {
-      console.log(e)
-      console.log(item)
-      item.checked = !item.checked
-      // console.log(value)
-      // // console.log('ch', this.showCities)
-      //   if(value){
-      //     this.checkedCities.push({
-      //       id: id,
-      //       name: name
-      //     })
-      //
-      //   }else{
-      //     this.checkedCities = _.filter(this.checkedCities, function(o) { return o.id !== id });
-      //   }
-      // console.log(this.checkedCities)
+    onCheck(value, item) {
+      console.log(value, item)
+      // console.log('ch', this.showCities)
+      if (value) {
+        this.checkedCities.push({
+          id: item.id,
+          name: item.name
+        })
+      } else {
+        this.checkedCities = _.filter(this.checkedCities, function(o) { return o.id !== item.id })
+      }
+      console.log(this.checkedCities)
+    },
+    submit() {
+      if (this.cities.length - this.selected.length > 0) {
+        this.$message({
+          message: '有未配置的区域' + (this.cities.length - this.selected.length) + '个',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        return
+      }
+      const params = _.map(_.cloneDeep(this.form.list), o => {
+        const rangeId = _.map(o.rangeResDTOList, v => {
+          return v.rangeId
+        })
+        return _.assign(o, { rangeId: rangeId, rangeResDTOList: null })
+      })
+      console.log(params)
+      saveDelivery({
+        'list': params
+      }).then(res => {
+        if (res.code === '10000') {
+          /* this.cities = _.cloneDeep(res.data)
+          // this.showCities = _.cloneDeep(res.data)
+          this.showCities = _.map(_.cloneDeep(res.data), (v) => {
+            return _.assign(v, {checked: false})
+          })
+          console.log('showCities', this.showCities)*/
+          this.$message({
+            message: '保存成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.getData()
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        console.log('res-1', this.cities)
+      })
     },
     dismiss() {
       this.checkedCities = []
@@ -303,11 +364,13 @@ export default {
       this.isIndeterminate = false
       this.editPosition = -1
       this.visable = false
-      this.showCities = this.cities
-      _.map(this.showCities, (v) => {
-        _.assign(v, { checked: false })
+      this.showCities = _.map(_.cloneDeep(this.cities), (v) => {
+        return _.assign(v, { checked: false })
       })
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   }
 }
 </script>
