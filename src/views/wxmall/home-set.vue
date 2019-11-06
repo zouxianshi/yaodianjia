@@ -772,14 +772,24 @@ export default {
         return
       } else {
         // reset 表单验证
-        if (formName === 'xForm1' || formName === 'xForm4' || formName === 'xForm5') {
+        if (formName === 'xForm1' || formName === 'xForm4' || formName === 'xForm5' || formName === 'xForm7') {
+          // 检测数据是否正常
+          if (eidtForm.detail === null) { // 即获取初始数据失败{
+            alert('数据异常，请稍后重试')
+            return
+          }
           this.$refs[formName].resetFields()
+        } else if (formName === 'xForm2') {
+          this.$confirm('去设置轮播图')
+            .then(_ => {
+              this.$router.push('/wxmall/banner')
+            })
+        } else if (formName === 'xForm3') {
+          this.$confirm('去设置公告')
+            .then(_ => {
+              this.$router.push('/wxmall/banner')
+            })
         }
-      }
-      // 检测数据是否正常
-      if (eidtForm.detail === null) { // 即获取初始数据失败{
-        alert('数据异常，请稍后重试')
-        return
       }
       // 显示详情
       if (formName === 'xForm1') {
