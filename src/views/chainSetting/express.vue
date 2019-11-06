@@ -123,6 +123,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     this.getData()
   },
@@ -372,9 +375,6 @@ export default {
         return _.assign(v, { checked: false })
       })
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>

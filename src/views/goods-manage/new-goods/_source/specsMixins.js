@@ -9,6 +9,7 @@ const mixin = {
         specsData: [],
         specs: []
       },
+      standardSpecs: [], // 标库选中的历史数据
       dynamicProp: [], // 表格的动态字段
       chooseSpec: [], // 选中的规格参数
       specsList: [] // 规格
@@ -35,8 +36,14 @@ const mixin = {
       }
       if (this.basicForm.origin === 1) { // 标库商品
         data = this.chooseTableSpec
-        if (data.length === 0) { // 为选择任何东西直接跳过
+        if (this.standardSpecs.length !== 0) { // 为选择任何东西直接跳过
           this.step = 3
+          return
+        } else if (this.standardSpecs.length === 0 && data.length === 0) {
+          this.$message({
+            message: '请选择规格信息',
+            type: 'error'
+          })
           return
         }
         let is_err = false
@@ -151,7 +158,6 @@ const mixin = {
             }
           })
           if (flag) {
-            // console.log('走这里')
             // return
             this.subSpecs(data)
           }
@@ -231,11 +237,15 @@ const mixin = {
                 const element = specList[index]
                 if (element.specSkuList) {
                   if (this.dynamicProp.length === 0) {
+                    const data = []
                     element.specSkuList.map(v => {
                       this.dynamicProp.push({
                         name: v.skuKeyName,
                         id: v.skuKeyId
                       })
+                      data.push(v.skuKeyId)
+                      // 设置默认选择
+                      this.chooseSpec.push(v.skuKeyId)
                     })
                   }
                 }
@@ -256,6 +266,7 @@ const mixin = {
             specList.forEach((v, index) => {
               const findIndex = findArray(this.specsForm.specs, { barCode: v.barCode })
               if (findIndex > -1) {
+                this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
                 this.specsForm.specs[findIndex].disabled = true
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
               }
@@ -264,14 +275,29 @@ const mixin = {
         }
       })
     },
+    shows(row) {
+      const findIndex = findArray(this.dynamicProp, { id: row.id })
+      return findIndex > -1
+    },
     handleAddSpec() { // 增加 规格
       const data = { picUrl: '', mprice: '', erpCode: '', barCode: '' }
       this.specsList.map(v => {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
-      console.log('zeng')
       this.specsForm.specs.push(data)
+      /** **
+       *
+       * 这里新增的时候判断是为编辑且已有编辑的规格数据了，有的话默认点击新增就自动吧规格参数添加到表单中
+       */
+      if (this.basicForm.id && this.editSpecsData.length > 0) {
+        this.specsList.map(v => {
+          if (this.chooseSpec.includes(v.id)) {
+            v.isCheck = true
+            this.specsForm.specsData.push(v)
+          }
+        })
+      }
     },
     handleDeleteSpec(index) { // 删除规格
       this.specsForm.specs.splice(index, 1)

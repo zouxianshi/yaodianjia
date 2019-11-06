@@ -132,6 +132,9 @@ export default {
       dialogList: []
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     this.getData()
   },
@@ -281,9 +284,6 @@ export default {
       this.visable = false
       this.dialogMultipleSelection = null
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>

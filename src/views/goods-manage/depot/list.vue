@@ -46,8 +46,8 @@
             <span class="label-name">商品来源</span>
             <el-select v-model="listQuery.origin" placeholder="选择商品来源" size="small" @change="getList">
               <el-option label="全部" value="" />
-              <el-option label="海典" value="1" />
-              <el-option label="商家" value="2" />
+              <el-option label="海典商品库" value="1" />
+              <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
           <div class="search-item">
@@ -70,6 +70,7 @@
                 ref="tree"
                 :data="treeData"
                 :props="defaultProps"
+                :default-expanded-keys="[1,2]"
                 node-key="id"
                 @node-click="handleTreeClick"
               >
@@ -211,7 +212,7 @@
 </template>
 <script>
 import { getGoodsList, exportData } from '@/api/depot'
-import { getTypeDimensionList } from '@/api/group'
+import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 import download from '@hydee/download'
@@ -269,11 +270,18 @@ export default {
       })
     },
     _loadTypeList() {
-      getTypeDimensionList(this.$store.state.user.merCode).then(res => {
+      getTypeTree({ merCode: this.$store.state.user.merCode, type: 2 }).then(res => {
         this.treeData = res.data
-        this.groupData = res.data
         this.treeData = JSON.parse(JSON.stringify(this.treeData))
         this.treeData.unshift({ name: '全部', id: '' })
+        this.$nextTick(_ => {
+          $('.el-tree').find('.el-tree-node').each(function(i) {
+            $(this).find('.el-tree-node__content .el-tree-node__expand-icon').click()
+          })
+        })
+      })
+      getTypeDimensionList(this.$store.state.user.merCode).then(res => {
+        this.groupData = res.data
       })
     },
     handleTreeClick(row, node) { // 节点被点击时

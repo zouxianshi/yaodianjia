@@ -144,6 +144,15 @@ export default {
       fileList: []
     }
   },
+  computed: {
+    ...mapGetters(['merCode', 'roles']),
+    upLoadUrl() {
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+    },
+    headers() {
+      return { 'Authorization': this.$store.getters.token }
+    }
+  },
   created() {
     this.getPayset()
     this.getOrderPayset()
@@ -368,17 +377,7 @@ export default {
         clipboard.destroy()
       })
     }
-  },
-  computed: {
-    ...mapGetters(['merCode', 'roles']),
-    upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
-    },
-    headers() {
-      return { 'Authorization': this.$store.getters.token }
-    }
-  },
-  components: { }
+  }
 }
 </script>
 

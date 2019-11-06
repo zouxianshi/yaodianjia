@@ -124,6 +124,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     this.getData()
   },
@@ -218,9 +221,6 @@ export default {
       this.multipleSelection = val
       console.log(this.multipleSelection)
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>
