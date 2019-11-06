@@ -42,6 +42,20 @@ const router = [
       }
     ]
   },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/internalLink',
+    children: [
+      {
+        path: 'internalLink',
+        component: () => import('@/views/internalLink/index'),
+        name: 'internalLink',
+        hidden: true,
+        meta: { title: '内部链接', icon: 'internalLink', affix: true }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true, meta: { title: '404' }}
 ]
 

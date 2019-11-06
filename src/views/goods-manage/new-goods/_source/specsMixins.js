@@ -16,7 +16,6 @@ const mixin = {
   },
   watch: {
     step(val) {
-      console.log(val)
       if (val === 2 && this.basicForm.id) {
         // 获取规格
         try {
@@ -24,7 +23,6 @@ const mixin = {
         } catch (error) {
           console.log(error)
         }
-        this.handleAddSpec()
       }
     }
   },
@@ -154,6 +152,7 @@ const mixin = {
           })
           if (flag) {
             // console.log('走这里')
+            // return
             this.subSpecs(data)
           }
         } else {
@@ -197,6 +196,8 @@ const mixin = {
             }
           })
           this.specsList = res.data
+          this.specsForm.specsData = []
+          this.handleAddSpec()
         }
         if (this.basicForm.id) {
           this._loadSpecsInfo()
@@ -217,7 +218,7 @@ const mixin = {
       }
     },
     _loadSpecs() { // 请求回显数据
-      getSelfSpecsInfo(this.$route.query.id).then(res => {
+      getSelfSpecsInfo(this.basicForm.id).then(res => {
         if (res.data) {
           const { specList } = res.data
           if (this.basicForm.origin === 2) {
@@ -225,6 +226,7 @@ const mixin = {
               if (specList) {
                 this.specsForm.specs = []
               }
+              // 取出 sku的规格动态数据
               for (let index = 0; index < specList.length; index++) {
                 const element = specList[index]
                 if (element.specSkuList) {
@@ -238,7 +240,7 @@ const mixin = {
                   }
                 }
               }
-              console.log('specList', specList)
+              // 把specSkuList 数据放到 平级
               specList.map(v => {
                 if (v.specSkuList) {
                   v.specSkuList.map(vs => {
@@ -246,13 +248,12 @@ const mixin = {
                   })
                 }
               })
-              console.log('specList', specList)
               this.editSpecsData = specList
             } else {
               this.handleAddSpec()
             }
           } else {
-            $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked')
+            $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置全选disabeld
             specList.forEach((v, index) => {
               const findIndex = findArray(this.specsForm.specs, { barCode: v.barCode })
               if (findIndex > -1) {
@@ -270,38 +271,37 @@ const mixin = {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
+      console.log('zeng')
       this.specsForm.specs.push(data)
     },
     handleDeleteSpec(index) { // 删除规格
       this.specsForm.specs.splice(index, 1)
     },
     handleSpecsChange(row) { // 规格勾选
-      this.specsList.map(v => {
-        const findIndex = findArray(this.specsForm.specsData, { id: v.id })
-        if (v.isCheck) {
-          if (findIndex < 0) {
-            this.specsForm.specsData.push(v)
-          }
-          if (!this.chooseSpec.includes(v.id)) { // 是否在勾选的规格参数中是否存在
-            this.chooseSpec.push(v.id)
-          }
-        } else {
-          if (!this.chooseSpec.includes(v.id)) { // 取消 就删除
-            const index = this.chooseSpec.indexOf(v.id)
-            this.chooseSpec.splice(index, 1)
-          }
-          if (findIndex > -1) {
-            const items = this.specsForm.specsData[findIndex]
-            const keys = 'index_' + items.id + '_' + items.attributeName
-            this.specsForm.specs.map(vl => {
-              if (vl[keys]) {
-                vl[keys] = '' // 删除this.specsForm.specs 已存在的值
-              }
-            })
-            this.specsForm.specsData.splice(findIndex, 1)
-          }
+      const findIndex = findArray(this.specsForm.specsData, { id: row.id })
+      if (row.isCheck) {
+        if (findIndex < 0) {
+          this.specsForm.specsData.push(row)
         }
-      })
+        if (!this.chooseSpec.includes(row.id)) { // 是否在勾选的规格参数中是否存在
+          this.chooseSpec.push(row.id)
+        }
+      } else {
+        if (this.chooseSpec.includes(row.id)) { // 取消 就删除
+          const index = this.chooseSpec.indexOf(row.id)
+          this.chooseSpec.splice(index, 1)
+        }
+        if (findIndex > -1) {
+          const items = this.specsForm.specsData[findIndex]
+          const keys = 'index_' + items.id + '_' + items.attributeName
+          this.specsForm.specs.map(vl => {
+            if (vl[keys]) {
+              vl[keys] = '' // 删除this.specsForm.specs 已存在的值
+            }
+          })
+          this.specsForm.specsData.splice(findIndex, 1)
+        }
+      }
     }
   }
 }
