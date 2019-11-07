@@ -37,13 +37,13 @@
           </div>
         </div>
         <!-- 商品信息 -->
-        <div class="edit-card">
-          <div class="header">
-            <span>商品信息</span>
-          </div>
-          <div class="edit-card-cnt">
-            <div class="content">
-              <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicRules">
+        <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicRules">
+          <div class="edit-card">
+            <div class="header">
+              <span>商品信息</span>
+            </div>
+            <div class="edit-card-cnt">
+              <div class="content">
                 <el-form-item label="商品信息：" prop="name">
                   <el-input v-model="basicForm.name" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
@@ -68,10 +68,7 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="" prop="weight">
-                  <span slot="label" class="">
-                    <span v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name==='营养保健'||(chooseTypeList[0].name!=='中西药品'&&chooseTypeList[0].name!=='医疗器械'))" class="tip">*</span>
-                    重量：</span>
+                <el-form-item label="重量" prop="weight">
                   <el-input v-model="basicForm.weight" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
                     <template slot="append">公斤</template>
                   </el-input>
@@ -94,18 +91,16 @@
                 <el-form-item label="关键字：">
                   <el-input v-model="basicForm.keyWord" :disabled="basicForm.origin===1||is_query" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
                 </el-form-item>
-              </el-form>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- 详细信息 -->
-        <div class="edit-card">
-          <div class="header">
-            <span>详细信息</span>
-          </div>
-          <div class="edit-card-cnt">
-            <div class="content">
-              <el-form ref="basicDes" :model="basicForm" :rules="basicDesRules" label-width="130px" status-icon>
+          <!-- 详细信息 -->
+          <div class="edit-card">
+            <div class="header">
+              <span>详细信息</span>
+            </div>
+            <div class="edit-card-cnt">
+              <div class="content">
                 <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
                   <el-form-item label="药品类型：">
                     <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
@@ -162,18 +157,16 @@
                     </el-select>
                   </el-radio>
                 </el-form-item>
-              </el-form>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- 特殊属性 -->
-        <div class="edit-card">
-          <div class="header">
-            <span>特殊属性</span>
-          </div>
-          <div class="edit-card-cnt">
-            <div class="content">
-              <el-form :model="basicForm">
+          <!-- 特殊属性 -->
+          <div class="edit-card">
+            <div class="header">
+              <span>特殊属性</span>
+            </div>
+            <div class="edit-card-cnt">
+              <div class="content">
                 <el-form-item label="运输方式：">
                   <el-radio-group v-model="basicForm.freightType" :disabled="basicForm.origin===1||is_query">
                     <el-radio :label="0">常温</el-radio>
@@ -188,10 +181,10 @@
                 <el-form-item label="" label-width="100px">
                   <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitForm">下一步</el-button>
                 </el-form-item>
-              </el-form>
+              </div>
             </div>
           </div>
-        </div>
+        </el-form>
       </div>
       <!-- 规格信息 -->
       <div v-show="step===2">
@@ -428,16 +421,34 @@ export default {
   components: { Tinymce, vueUploadImg },
   mixins: [mixins, specsMixin],
   data() {
-    // const _checkWeight = (rule, value, callback) => {
-    //   if (this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '营养保健') {
-    //     console.log(value)
-    //     if (!value) {
-    //       callback(new Error('请输入重量'))
-    //     } else {
-    //       callback()
-    //     }
-    //   }
-    // }
+    const _checkName = (rule, value, callback) => {
+      if (!value) {
+        if (rule.field === 'commonName') {
+          return callback(new Error('请输入通用名'))
+        }
+        return callback(new Error('请输入内容'))
+      }
+      const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+      if (!reg.test(value)) {
+        callback(new Error('只能输入中英文或数字'))
+      } else {
+        callback()
+      }
+    }
+    const _checkFloat = (rule, value, callback) => {
+      if (!value) {
+        if (rule.field === 'weight') {
+          return callback(new Error('请输入重量'))
+        }
+        return callback(new Error('请输入数值'))
+      }
+      const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
+      if (value && !reg.test(value)) {
+        callback(new Error('只能设置最多两位小数的正数'))
+      } else {
+        callback()
+      }
+    }
     return {
       step: 1,
       chooseTypeList: [], // 选中的分类
@@ -478,14 +489,12 @@ export default {
       },
       basicRules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-        commonName: [{ required: true, message: '请输入通用名称', trigger: 'blur' }],
+        commonName: [{ required: true, validator: _checkName, message: '请输入通用名称', trigger: 'blur' }],
         unit: [{ required: true, message: '请输入选择单位', trigger: 'change' }],
-        brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }]
-        // weight: [
-        //   { validator: _checkWeight, trigger: 'blur' }
-        // ]
-      },
-      basicDesRules: {
+        brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }],
+        weight: [
+          { required: true, validator: _checkFloat, trigger: 'blur' }
+        ],
         manufacture: [{ required: true, message: '请输入生成企业', trigger: 'blur' }],
         produceOrigin: [{ required: true, message: '请输入生产地', trigger: 'blur' }],
         approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }]
@@ -597,7 +606,9 @@ export default {
       getPreGroupList(data).then(res => {
         if (type === '1') { // 分类
           const datas = res.data[ids[0]]
-          this.chooseTypeList = [{ name: datas.name, id: datas.id }, { name: datas.child.name, id: datas.child.id }, { name: datas.child.child.name, id: datas.child.child.id }]
+          if (datas) {
+            this.chooseTypeList = [{ name: datas.name, id: datas.id }, { name: datas.child.name, id: datas.child.id }, { name: datas.child.child.name, id: datas.child.child.id }]
+          }
         } else { // 分组
           const datas = res.data
           ids.map(v => {
@@ -808,45 +819,42 @@ export default {
       }
       this.$refs['basic'].validate((valid) => {
         if (valid) {
-          this.$refs.basicDes.validate((valid) => {
-            if (valid) {
-              if (this.chooseTypeList.length === 0) {
-                this.$message({
-                  message: '请选择分类',
-                  type: 'warning'
-                })
-                return
-              }
-              this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
-              const data = JSON.parse(JSON.stringify(this.basicForm))
-              if (data.long && data.width && data.height) {
-                data.packStandard = `${data.long}*${data.width}*${data.height}`
-              }
-              if (this.expireDays === -1) {
-                data.expireDays = -1
-              } else {
-                if (this.timeTypes === '2') { // 月
-                  data.expireDays = parseInt(this.days) * 30
-                } else {
-                  data.expireDays = parseInt(this.days) * 365
-                }
-              }
-              data.groupIds = []
-              this.chooseGroup.map(v => {
-                data.groupIds.push(v[2].id)
+          if (valid) {
+            if (this.chooseTypeList.length === 0) {
+              this.$message({
+                message: '请选择分类',
+                type: 'warning'
               })
-              this.subLoading = true
-              if (this.basicForm.id) {
-                data.commodityId = data.id
-                this._UpdateBasicInfo(data)
+              return
+            }
+            this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
+            const data = JSON.parse(JSON.stringify(this.basicForm))
+            if (data.long && data.width && data.height) {
+              data.packStandard = `${data.long}*${data.width}*${data.height}`
+            }
+            if (this.expireDays === -1) {
+              data.expireDays = -1
+            } else {
+              if (this.timeTypes === '2') { // 月
+                data.expireDays = parseInt(this.days) * 30
               } else {
-                this._CreateBasicInfo(data)
+                data.expireDays = parseInt(this.days) * 365
               }
             }
-          })
+            data.groupIds = []
+            this.chooseGroup.map(v => {
+              data.groupIds.push(v[2].id)
+            })
+            this.subLoading = true
+            if (this.basicForm.id) {
+              data.commodityId = data.id
+              this._UpdateBasicInfo(data)
+            } else {
+              this._CreateBasicInfo(data)
+            }
+          }
         } else {
           console.log('error submit')
-          this.$refs.basicDes.validate(() => {})
         }
       })
     },

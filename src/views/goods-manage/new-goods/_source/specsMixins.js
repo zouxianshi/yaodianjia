@@ -267,7 +267,10 @@ const mixin = {
               const findIndex = findArray(this.specsForm.specs, { barCode: v.barCode })
               if (findIndex > -1) {
                 this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
-                this.specsForm.specs[findIndex].disabled = true
+                const row = this.specsForm.specs[findIndex]
+                row.disabled = true
+                row.mprice = v.mprice
+                row.erpCode = v.erpCode
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
               }
             })
