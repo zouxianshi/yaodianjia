@@ -68,7 +68,10 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="重量：">
+                <el-form-item label="" prop="weight">
+                  <span slot="label" class="">
+                    <span v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name==='营养保健'||(chooseTypeList[0].name!=='中西药品'&&chooseTypeList[0].name!=='医疗器械'))" class="tip">*</span>
+                    重量：</span>
                   <el-input v-model="basicForm.weight" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
                     <template slot="append">公斤</template>
                   </el-input>
@@ -102,7 +105,7 @@
           </div>
           <div class="edit-card-cnt">
             <div class="content">
-              <el-form :model="basicForm" label-width="130px" status-icon>
+              <el-form ref="basicDes" :model="basicForm" :rules="basicDesRules" label-width="130px" status-icon>
                 <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
                   <el-form-item label="药品类型：">
                     <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
@@ -128,7 +131,7 @@
                 <el-form-item label="批准文号：" prop="approvalNumber">
                   <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='中西药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')" label="是否含有麻黄碱">
+                <el-form-item v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" label="是否含有麻黄碱">
                   <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
                 </el-form-item>
                 <el-form-item label="商品详细信息：">
@@ -197,7 +200,16 @@
           <p class="text-right" style="font-size:13px">商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
           <el-form>
             <el-form-item label="规格设置：">
-              <el-checkbox v-for="(item,index) in specsList" :key="index" v-model="item.isCheck" :disabled="basicForm.origin===1||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
+              <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
+                <template v-if="dynamicProp.length>0">
+                  <span v-for="(item,index) in specsList" :key="index" style="display:inline-block;margin-right:10px;">
+                    <el-checkbox v-if="shows(item)" :key="index" checked :disabled="true||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
+                  </span>
+                </template>
+              </template>
+              <template v-else>
+                <el-checkbox v-for="(item,index) in specsList" :key="index" v-model="item.isCheck" :disabled="basicForm.origin===1||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
+              </template>
             </el-form-item>
             <el-form-item label="规格信息：">
               <template v-if="basicForm.origin===1">
@@ -418,6 +430,16 @@ export default {
   components: { Tinymce, vueUploadImg },
   mixins: [mixins, specsMixin],
   data() {
+    // const _checkWeight = (rule, value, callback) => {
+    //   if (this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '营养保健') {
+    //     console.log(value)
+    //     if (!value) {
+    //       callback(new Error('请输入重量'))
+    //     } else {
+    //       callback()
+    //     }
+    //   }
+    // }
     return {
       step: 1,
       chooseTypeList: [], // 选中的分类
@@ -460,7 +482,12 @@ export default {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
         commonName: [{ required: true, message: '请输入通用名称', trigger: 'blur' }],
         unit: [{ required: true, message: '请输入选择单位', trigger: 'change' }],
-        brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }],
+        brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }]
+        // weight: [
+        //   { validator: _checkWeight, trigger: 'blur' }
+        // ]
+      },
+      basicDesRules: {
         manufacture: [{ required: true, message: '请输入生成企业', trigger: 'blur' }],
         produceOrigin: [{ required: true, message: '请输入生产地', trigger: 'blur' }],
         approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }]
@@ -491,6 +518,14 @@ export default {
       return { 'Authorization': this.token }
     }
   },
+  watch: {
+    step(val) {
+      if (val === 3) {
+        this._loadGoodsDetails()
+        this._loadGoodsImgAry()
+      }
+    }
+  },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
     if (this.is_query) {
       next()
@@ -512,8 +547,6 @@ export default {
   created() {
     if (this.$route.query.id) { // 如果是编辑
       this._loadBasicInfo()
-      this._loadGoodsDetails()
-      this._loadGoodsImgAry()
     } else {
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
@@ -580,7 +613,7 @@ export default {
       })
     },
     _loadGoodsImgAry() { // 加载商品图片
-      const id = this.$route.query.id
+      const id = this.basicForm.id
       if (id) {
         getGoodsImgAry(id).then(res => {
           if (res.data) {
@@ -595,7 +628,7 @@ export default {
       }
     },
     _loadGoodsDetails() { // 加载商品详情
-      const id = this.$route.query.id
+      const id = this.basicForm.id
       getGoodsDetails(id).then(res => {
         if (res.data) {
           this.goodsIntro.content = res.data.content
@@ -748,33 +781,45 @@ export default {
       }
       this.$refs['basic'].validate((valid) => {
         if (valid) {
-          this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
-          const data = JSON.parse(JSON.stringify(this.basicForm))
-          if (data.long && data.width && data.height) {
-            data.packStandard = `${data.long}*${data.width}*${data.height}`
-          }
-          if (this.expireDays === -1) {
-            data.expireDays = -1
-          } else {
-            if (this.timeTypes === '2') { // 月
-              data.expireDays = parseInt(this.days) * 30
-            } else {
-              data.expireDays = parseInt(this.days) * 365
+          this.$refs.basicDes.validate((valid) => {
+            if (valid) {
+              if (this.chooseTypeList.length === 0) {
+                this.$message({
+                  message: '请选择分类',
+                  type: 'warning'
+                })
+                return
+              }
+              this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
+              const data = JSON.parse(JSON.stringify(this.basicForm))
+              if (data.long && data.width && data.height) {
+                data.packStandard = `${data.long}*${data.width}*${data.height}`
+              }
+              if (this.expireDays === -1) {
+                data.expireDays = -1
+              } else {
+                if (this.timeTypes === '2') { // 月
+                  data.expireDays = parseInt(this.days) * 30
+                } else {
+                  data.expireDays = parseInt(this.days) * 365
+                }
+              }
+              data.groupIds = []
+              this.chooseGroup.map(v => {
+                data.groupIds.push(v[2].id)
+              })
+              this.subLoading = true
+              if (this.basicForm.id) {
+                data.commodityId = data.id
+                this._UpdateBasicInfo(data)
+              } else {
+                this._CreateBasicInfo(data)
+              }
             }
-          }
-          data.groupIds = []
-          this.chooseGroup.map(v => {
-            data.groupIds.push(v[2].id)
           })
-          this.subLoading = true
-          if (this.basicForm.id) {
-            data.commodityId = data.id
-            this._UpdateBasicInfo(data)
-          } else {
-            this._CreateBasicInfo(data)
-          }
         } else {
           console.log('error submit')
+          this.$refs.basicDes.validate(() => {})
         }
       })
     },

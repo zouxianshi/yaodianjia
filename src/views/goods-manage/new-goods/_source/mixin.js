@@ -19,17 +19,16 @@ const mixin = {
             }
           })
         }
-        console.log('ssss')
         this.typeList = res.data
-        console.log(res)
         this.loading = false
       }).catch(_ => {
         this.loading = false
       })
     },
-    handleSaveType() {
+    handleSaveType() { // 保存
       this._filtersTypes(this.chooseList)
       this.typeVisible = false
+      this.$refs.basic.validateField('weight')
     },
     _filtersTypes(data) {
       this.chooseTypeList = []

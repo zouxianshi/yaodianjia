@@ -27,6 +27,9 @@ export default {
       list: []
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     this.getData()
   },
@@ -57,9 +60,6 @@ export default {
         clipboard.destroy()
       })
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>

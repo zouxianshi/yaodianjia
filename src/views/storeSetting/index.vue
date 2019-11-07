@@ -79,6 +79,9 @@ export default {
       list: []
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     this.getData()
   },
@@ -102,9 +105,6 @@ export default {
         console.log('res-2', this.list)
       })
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>
