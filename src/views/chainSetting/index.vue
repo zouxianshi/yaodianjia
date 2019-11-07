@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="conditions">
+    <div class="app-container">
       <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
         <el-tab-pane label="旗舰店设置" name="first">
           <m-flagship />

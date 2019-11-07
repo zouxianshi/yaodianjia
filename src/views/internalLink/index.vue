@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="app-container">
     <el-table :data="list">
       <el-table-column label="页面名称" property="pageName" />
       <el-table-column label="链接地址" property="linkAddress" />
