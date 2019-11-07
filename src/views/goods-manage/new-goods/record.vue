@@ -7,6 +7,8 @@
         @change="getList"
       >
         <el-radio-button label="">全部</el-radio-button>
+        <!-- <el-radio-button label="0">待完善</el-radio-button>
+        <el-radio-button label="">待提交审核</el-radio-button> -->
         <el-radio-button label="2">待审核</el-radio-button>
         <el-radio-button label="1">已通过</el-radio-button>
         <el-radio-button label="0">已拒绝</el-radio-button>
@@ -108,7 +110,7 @@
             prop="createTime"
             align="left"
             min-width="155"
-            label="申请时间"
+            label="修改时间"
           />
           <el-table-column
             prop="address"
