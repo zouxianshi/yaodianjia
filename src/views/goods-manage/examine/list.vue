@@ -42,7 +42,7 @@
         <div class="search-item">
           <span class="label-name">条形码</span>
           <el-input
-            v-model.trim="listQuery.barCode"
+            v-model.trim="keyword"
             size="small"
             placeholder="商品编码"
           />
@@ -81,13 +81,13 @@
             show-overflow-tooltip
           >
             <template slot-scope="scope">
-              <template v-if="scope.row.mainPic">
+              <template v-if="scope.row.stPath">
                 <el-image
-                  style="width: 60px; height: 60px"
-                  :src="showImg(scope.row.mainPic)"
+                  style="width: 100px; height: 100px"
+                  :src="scope.row.stPath"
                   lazy
                   fit="contain"
-                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
+                  :preview-src-list="[`${scope.row.stPath}`]"
                 />
               </template>
               <template v-else>
@@ -102,7 +102,7 @@
           >
             <template slot-scope="scope">
               <div>
-                <p>{{ scope.row.name }}</p>
+                <p>{{ scope.row.name }}{{ scope.row.packStandard }}</p>
               </div>
             </template></el-table-column>
           <el-table-column
@@ -146,8 +146,8 @@
         <div class="table-footer">
           <pagination
             :total="total"
-            :page.sync="listQuery.currentPage"
-            :limit.sync="listQuery.pageSize"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
             @pagination="getList"
           />
         </div>

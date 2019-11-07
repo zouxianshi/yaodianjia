@@ -20,7 +20,7 @@
                   <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
                     {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
                 </el-tag>
-                <span v-if="basicForm.id!==1||!is_query" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
+                <span v-if="(basicForm.id!==1||!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
               <div class="type-list groups">商品分组：
                 <p class="group-list">
                   <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
@@ -117,8 +117,7 @@
                   </el-form-item>
                   <el-form-item label="剂型：">
                     <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
-                      <el-option label="剂兴1" value="0" />
-                      <el-option label="剂兴2" value="1" />
+                      <el-option v-for="(item,index) in drug" :key="index" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </template>
@@ -422,10 +421,9 @@ import vueUploadImg from '@/components/ImgUpload'
 import { getTypeTree, getPreGroupList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
-import { setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
+import { getUnit, getMetering, setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
-import unit from './_source/unit'
 export default {
   components: { Tinymce, vueUploadImg },
   mixins: [mixins, specsMixin],
@@ -493,7 +491,7 @@ export default {
         approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }]
       },
       dialogVisible: false,
-      unit: unit,
+      unit: [],
       value: '',
       dialogImageUrl: '',
       fileList: [],
@@ -501,6 +499,7 @@ export default {
       goodsIntro: { // 商品信息
         content: ''
       },
+      drug: [], // 剂型
       uploadIndex: 0,
       is_query: false, // 是否为查看
       subLoading: false,
@@ -554,12 +553,40 @@ export default {
     this.is_query = this.$route.query.type === 'query'
     this._loadTypeList() // 获取分组
     this._loadBrandList() // 获取所属品牌
+    this._loadUnit() // 加载单位
+    this._loadMetering() // 加载剂型
   },
   methods: {
     handleGoStep(val) {
       if (this.is_query) {
         this.step = val
       }
+    },
+    _loadUnit() { // 加载单位
+      getUnit().then(res => {
+        const { data } = res
+        if (data) {
+          data.map(v => {
+            this.unit.push({
+              label: v,
+              value: v
+            })
+          })
+        }
+      })
+    },
+    _loadMetering() { // 加载剂型
+      getMetering().then(res => {
+        const { data } = res
+        if (data) {
+          data.map(v => {
+            this.drug.push({
+              label: v,
+              value: v
+            })
+          })
+        }
+      })
     },
     _loadgroupGather(type, ids) { // 查询分类和分组的父类
       const data = {

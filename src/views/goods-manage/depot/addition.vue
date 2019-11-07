@@ -57,13 +57,13 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <template v-if="scope.row.stPath">
+            <template v-if="scope.row.mainPic">
               <el-image
-                style="width: 100px; height: 100px"
-                :src="scope.row.mainPic"
+                style="width: 60px; height: 60px"
+                :src="showImg(scope.row.mainPic)"
                 lazy
                 fit="contain"
-                :preview-src-list="[`${scope.row.mainPic}`]"
+                :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
               />
             </template>
             <template v-else>

@@ -206,6 +206,9 @@ export default {
           message: '操作成功',
           type: 'success'
         })
+        if (this.listQuery.auditStatus === '0') {
+          this.$router.push(`/goods-manage/edit?id=${row.id}`)
+        }
         this.getList()
       })
     },
