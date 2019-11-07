@@ -92,8 +92,8 @@
       <pagination
         :total="total"
         style="background:#f6f7fb"
-        :page.sync="listQuery.page"
-        :limit.sync="listQuery.limit"
+        :page.sync="listQuery.currentPage"
+        :limit.sync="listQuery.pageSize"
         @pagination="getList"
       />
     </section>
