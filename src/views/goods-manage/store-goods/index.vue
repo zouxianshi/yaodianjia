@@ -372,7 +372,6 @@ export default {
     },
     remoteMethod(val) {
       this.selectloading = true
-      console.log(val)
     },
     handleChangeStore(val) { // 门店选择改变时触发
       this.storeList.map(v => {
@@ -380,6 +379,7 @@ export default {
           this.chooseStore = v
         }
       })
+      this.getList()
     },
     handleLock() {
       if (this.multipleSelection.length === 0) {

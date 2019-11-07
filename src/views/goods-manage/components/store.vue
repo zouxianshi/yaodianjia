@@ -12,7 +12,7 @@
         <div class="search-box" @keydown.enter="_loadStoreData">
           <div class="search-item">
             <span>门店选择：</span>
-            <el-checkbox v-model="isAll">全部门店</el-checkbox>
+            <el-checkbox v-model="isAll" @change="handleChooseStore">全部门店</el-checkbox>
           </div>
           <div class="search-query">
             <el-input v-model="storeCode" placeholder="门店编码/门店名称" style="width:200px" size="mini" />
@@ -110,6 +110,11 @@ export default {
 
   },
   methods: {
+    handleChooseStore() { // 选择全部
+      this.list.map(v => {
+        this.$refs.multipleTable.toggleRowSelection(v)
+      })
+    },
     _loadStoreData() {
       const query = {
         storeName: this.storeCode,
@@ -120,13 +125,21 @@ export default {
         const { data, totalCount } = res.data
         this.list = data
         this.total = totalCount
+        if (this.isAll) { // 选择全部  选中门店
+          this.list.map(v => {
+            this.$refs.multipleTable.toggleRowSelection(v)
+          })
+        }
       })
     },
     handleSubmit() {
       const data = []
-      this.multipleSelection.map(res => {
-        data.push(res.id)
-      })
+      if (!this.isAll) {
+        this.multipleSelection.map(res => {
+          data.push(res.id)
+        })
+      }
+
       if (!this.isAll && data.length === 0) {
         this.$message({
           message: '你未选择任何门店，请先选择门店',
@@ -166,7 +179,8 @@ export default {
       console.log(`每页 ${val} 条`)
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this._loadStoreData()
     }
   }
 }
