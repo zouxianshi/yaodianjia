@@ -704,7 +704,7 @@ export default {
     handleSaveGroup() { // 保存数据
       if (this.chooseArray.length !== 3) {
         this.$message({
-          message: '分组选择不完整',
+          message: '分组选择不完整，分组必须三级',
           type: 'error'
         })
         return

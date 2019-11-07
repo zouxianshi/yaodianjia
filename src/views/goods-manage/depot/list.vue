@@ -127,7 +127,7 @@
               <template slot-scope="scope">
                 <template v-if="scope.row.mainPic">
                   <el-image
-                    style="width: 80px; height: 80px"
+                    style="width: 60px; height: 60px"
                     :src="showImg(scope.row.mainPic)"
                     lazy
                     fit="contain"

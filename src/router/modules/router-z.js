@@ -130,7 +130,7 @@ const router = [
         component: () => import('@/views/goods-manage/examine/mate'),
         name: 'mate',
         meta: {
-          title: '重新匹配',
+          title: '匹配列表',
           activeMenu: '/goods-manage/examine',
           noCache: true
         }
