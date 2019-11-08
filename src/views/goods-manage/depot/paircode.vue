@@ -1,7 +1,11 @@
 <template>
   <div class="app-container">
     <div class="">
-      <div style="margin-bottom:10px"><el-button type="primary" size="small" @click="$router.go(-1)">批量导入</el-button></div>
+      <div style="margin-bottom:10px">
+        <a href="#/goods-manage/import">
+          <el-button type="primary" size="small">批量导入</el-button>
+        </a>
+      </div>
       <el-radio-group
         v-model="listQuery.status"
         size="small"
@@ -94,7 +98,7 @@
             width="55"
           />
           <el-table-column
-            prop="platformCode"
+            prop="erpCode"
             align="left"
             min-width="120"
             label="商品编号"
@@ -103,14 +107,8 @@
             prop="name"
             align="left"
             min-width="120"
-            label="商名称"
+            label="商品名称"
             show-overflow-tooltip
-          />
-          <el-table-column
-            prop="packStandard"
-            align="left"
-            min-width="120"
-            label="规格"
           />
           <el-table-column
             align="left"
@@ -118,6 +116,12 @@
             min-width="120"
             label="生产企业"
           />
+          <!-- <el-table-column
+            prop="packStandard"
+            align="left"
+            min-width="120"
+            label="规格"
+          /> -->
           <el-table-column
             prop="barCode"
             align="left"
@@ -139,6 +143,13 @@
             label="操作人"
           />
           <el-table-column
+            v-if="listQuery.status===1"
+            prop="createTime"
+            align="left"
+            min-width="100"
+            label="对码时间"
+          />
+          <el-table-column
             align="left"
             min-width="180"
             label="操作"
@@ -158,8 +169,8 @@
         <div class="table-footer">
           <pagination
             :total="total"
-            :page.sync="listQuery.page"
-            :limit.sync="listQuery.limit"
+            :page.sync="listQuery.currentPage"
+            :limit.sync="listQuery.pageSize"
             @pagination="getList"
           />
         </div>

@@ -73,10 +73,19 @@
                     <template slot="append">公斤</template>
                   </el-input>
                 </el-form-item>
-                <el-form-item label="长宽高：">
-                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:70px" /> m *
-                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:70px" /> m *
-                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" style="width:70px" />
+                <el-form-item label="长宽高：" style="display:inline-block" prop="long">
+                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:160px">
+                    <template slot="append">m*</template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="" label-width="0px" style="display:inline-block" prop="long">
+                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
+                    <template slot="append">m*</template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="" label-width="0px" style="display:inline-block" prop="long">
+                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">  <template slot="append">m*</template>
+                  </el-input>
                 </el-form-item>
                 <el-form-item label="单位：" prop="unit">
                   <el-select v-model="basicForm.unit" :disabled="basicForm.origin===1||is_query" placeholder="选择单位">
@@ -219,13 +228,15 @@
                   </span>
                   <el-table-column label="商品编码">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.erpCode" :disabled="scope.row.disabled" size="mini" placeholder="" />
+                      <span v-text="scope.row.erpCode" />
+                      <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                     </template>
                   </el-table-column>
                   <el-table-column label="商品条码" prop="barCode" />
                   <el-table-column label="商品价格">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.mprice" size="mini" :disabled="scope.row.disabled" placeholder="" />
+                      <span v-text="scope.row.mprice" />
+                      <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                     </template>
                   </el-table-column>
                   <el-table-column label="商品图片">
@@ -234,13 +245,17 @@
                         class="avatar-uploader specs-img-table"
                         :action="upLoadUrl"
                         :headers="headers"
-                        :disabled="is_query||scope.row.disabled"
+                        :disabled="is_query"
                         :show-file-list="false"
                         :on-success="handleAvatarSuccess"
                         :on-error="handleImgError"
                         :before-upload="beforeUpload"
                       >
-                        <img v-if="scope.row.picUrl" style="width:80px;height:80px" :src="showImg(scope.row.picUrl)" class="avatar">
+                        <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                          <div slot="placeholder" class="image-slot">
+                            加载中<span class="dot">...</span>
+                          </div>
+                        </el-image>
                         <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
                       </el-upload>
                     </template>
@@ -252,15 +267,47 @@
                   <el-table :data="editSpecsData">
                     <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs" :label="propsf.name">
                       <template slot-scope="scope">
-                        <span v-if="scope.row[propsf.name]" v-text="scope.row[propsf.name]" />
+                        <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
+                        <edit-table :title="propsf.name" :keys="propsf.keys" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                       </template>
                     </el-table-column>
-                    <el-table-column label="商品编码" prop="erpCode" />
-                    <el-table-column label="商品条码" prop="barCode" />
-                    <el-table-column label="商品价格" prop="mprice" />
+                    <el-table-column label="商品编码" prop="erpCode">
+                      <template slot-scope="scope">
+                        <span v-text="scope.row.erpCode" />
+                        <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="商品条码" prop="barCode">
+                      <template slot-scope="scope">
+                        <span v-text="scope.row.barCode" />
+                        <edit-table title="商品条码" keys="barCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="商品价格" prop="mprice">
+                      <template slot-scope="scope">
+                        <span v-text="scope.row.mprice" />
+                        <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
+                    </el-table-column>
                     <el-table-column label="商品图片">
                       <template slot-scope="scope">
-                        <el-image :src="showImg(scope.row.picUrl)" style="width:60px;height:60px" />
+                        <el-upload
+                          class="avatar-uploader specs-img-table"
+                          :action="upLoadUrl"
+                          :headers="headers"
+                          :disabled="is_query"
+                          :show-file-list="false"
+                          :on-success="handleAvatarSuccessEdit"
+                          :on-error="handleImgError"
+                          :before-upload="beforeUpload"
+                        >
+                          <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                            <div slot="placeholder" class="image-slot">
+                              加载中<span class="dot">...</span>
+                            </div>
+                          </el-image>
+                          <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
+                        </el-upload>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -301,7 +348,11 @@
                           :on-error="handleImgError"
                           :before-upload="beforeUpload"
                         >
-                          <img v-if="item.picUrl" style="width:100px;height:100px" :src="showImg(item.picUrl)" class="avatar">
+                          <el-image v-if="item.picUrl" class="avatar" style="width:80px;height:80px" :src="showImg(item.picUrl)">
+                            <div slot="placeholder" class="image-slot">
+                              加载中<span class="dot">...</span>
+                            </div>
+                          </el-image>
                           <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(index)" />
                         </el-upload>
                       </el-form-item>
@@ -417,8 +468,9 @@ import { mapGetters } from 'vuex'
 import { getUnit, getMetering, setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
+import editTable from './_source/edit-table'
 export default {
-  components: { Tinymce, vueUploadImg },
+  components: { Tinymce, vueUploadImg, editTable },
   mixins: [mixins, specsMixin],
   data() {
     const _checkName = (rule, value, callback) => {
@@ -440,7 +492,7 @@ export default {
         if (rule.field === 'weight') {
           return callback(new Error('请输入重量'))
         }
-        return callback(new Error('请输入数值'))
+        // return callback(new Error('请输入数值'))
       }
       const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
       if (value && !reg.test(value)) {
@@ -497,7 +549,10 @@ export default {
         ],
         manufacture: [{ required: true, message: '请输入生成企业', trigger: 'blur' }],
         produceOrigin: [{ required: true, message: '请输入生产地', trigger: 'blur' }],
-        approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }]
+        approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }],
+        long: [{ validator: _checkFloat, trigger: 'blur' }],
+        height: [{ validator: _checkFloat, trigger: 'blur' }],
+        width: [{ validator: _checkFloat, trigger: 'blur' }]
       },
       dialogVisible: false,
       unit: [],
@@ -512,7 +567,7 @@ export default {
       uploadIndex: 0,
       is_query: false, // 是否为查看
       subLoading: false,
-      chooseTableSpec: [],
+
       pageLoading: false, // 加载
       leaveAction: false // 离开页面动作，true为保存离开  false异常离开
     }
@@ -642,9 +697,9 @@ export default {
         // 长宽高处理
         if (data.packStandard) {
           const packStandard = data.packStandard.split('*')
-          data.long = packStandard[0] || ''
-          data.width = packStandard[1] || ''
-          data.height = packStandard[2] || ''
+          data.long = packStandard[0] === 'undefined' ? '' : packStandard[0]
+          data.width = packStandard[1] === 'undefined' ? '' : packStandard[1]
+          data.height = packStandard[2] === 'undefined' ? '' : packStandard[2]
         }
         // 赋值值
         this.basicForm = data
@@ -673,9 +728,6 @@ export default {
         }
       })
     },
-    handleSelectionChange(row) {
-      this.chooseTableSpec = row
-    },
     handleSortEnd(val) { // 图片排序
       this.fileList = val
       if (this.fileList.length > 0) {
@@ -683,6 +735,7 @@ export default {
       }
     },
     handleImgSuccess(res, fileList, index) {
+      this.fileList = []
       if (!this.fileList[index]) {
         this.fileList.push({ imgUrl: this.showImg(res), picUrl: res })
       } else {
@@ -690,6 +743,9 @@ export default {
         this.fileList[index].picUrl = res
       }
       this.pageLoading.close()
+    },
+    handleAvatarSuccessEdit(res, fileList, index) {
+      this.editSpecsData[this.uploadIndex].picUrl = res.data
     },
     handleImgError() {
       this.$message({
@@ -829,9 +885,7 @@ export default {
             }
             this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
             const data = JSON.parse(JSON.stringify(this.basicForm))
-            if (data.long && data.width && data.height) {
-              data.packStandard = `${data.long}*${data.width}*${data.height}`
-            }
+            data.packStandard = `${data.long || ''}*${data.width || ''}*${data.height || ''}`
             if (this.expireDays === -1) {
               data.expireDays = -1
             } else {
@@ -899,11 +953,21 @@ export default {
         this.subLoading = false
         this.leaveAction = true
         setTimeout(() => {
+          let url = ''
           if (this.basicForm.origin === 1) {
-            this.$router.replace('/goods-manage/depot')
+            url = '/goods-manage/depot'
           } else {
-            this.$router.replace('/goods-manage/apply-record')
+            url = '/goods-manage/apply-record'
           }
+          this.$confirm('请确认以保存橱窗图', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$router.replace(url)
+          }).catch(() => {
+            console.log('已取消')
+          })
         }, 1000)
       }).catch(_ => {
         this.subLoading = false
@@ -1037,13 +1101,13 @@ export default {
         }
         .specs-img-table{
             .avatar-uploader-icon{
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             line-height: 80px!important;
           }
           .avatar{
-             width: 80px;
-            height: 80px;
+             width: 60px;
+            height: 60px;
           }
         }
         .specs-img{

@@ -21,8 +21,7 @@
             <el-select
               v-model="listQuery.storeId"
               filterable
-              remote
-              reserve-keyword
+
               placeholder="请输入关键词"
               :remote-method="remoteMethod"
               :loading="selectloading"
@@ -379,7 +378,7 @@ export default {
           this.chooseStore = v
         }
       })
-      this.getList()
+      this._loadList()
     },
     handleLock() {
       if (this.multipleSelection.length === 0) {

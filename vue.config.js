@@ -59,10 +59,10 @@ module.exports = {
     proxy: {
       '/api': {
         // target: `http://middle.dev.yaodianjia.cn/businesses-gateway`,
-        target: `http://middle.test.yaodianjia.cn/businesses-gateway`,
+        target: `http://middle.dev.yaodianjia.cn/businesses-gateway`,
         changeOrigin: true,
         pathRewrite: {
-          '^/api': `http://middle.test.yaodianjia.cn`
+          '^/api': `http://middle.dev.yaodianjia.cn`
         }
       }
     }

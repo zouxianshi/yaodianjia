@@ -7,8 +7,8 @@
         @change="getList"
       >
         <el-radio-button label="">全部</el-radio-button>
-        <!-- <el-radio-button label="0">待完善</el-radio-button>
-        <el-radio-button label="">待提交审核</el-radio-button> -->
+        <el-radio-button label="-1">待完善</el-radio-button>
+        <el-radio-button label="3">待提交审核</el-radio-button>
         <el-radio-button label="2">待审核</el-radio-button>
         <el-radio-button label="1">已通过</el-radio-button>
         <el-radio-button label="0">已拒绝</el-radio-button>
@@ -216,7 +216,14 @@ export default {
     },
     getList() {
       this.loading = true
-      getNewGoodsRecord(this.listQuery).then(res => {
+      const data = JSON.parse(JSON.stringify(this.listQuery))
+      if (this.listQuery.auditStatus === '-1') { // 待完善
+        data.auditStatus = ''
+        data.infoFlag = false
+      } else if (this.listQuery.auditStatus === '3') { // 待提交审核
+        data.infoFlag = true
+      }
+      getNewGoodsRecord(data).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
         if (data) {
