@@ -337,6 +337,7 @@ const mixin = {
                 row.erpCode = v.erpCode
                 row.isCheck = true // 数据做标识  选中
                 row.picUrl = v.picUrl
+                this.$set(this.specsForm.specs, findIndex, row)
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
               }
             })

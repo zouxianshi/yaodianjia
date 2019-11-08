@@ -101,7 +101,7 @@
             prop="erpCode"
             align="left"
             min-width="120"
-            label="商品编号"
+            label="商品编码"
           />
           <el-table-column
             prop="name"
