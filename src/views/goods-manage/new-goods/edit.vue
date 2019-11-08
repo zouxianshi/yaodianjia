@@ -959,7 +959,7 @@ export default {
           } else {
             url = '/goods-manage/apply-record'
           }
-          this.$confirm('请确认以保存橱窗图', '提示', {
+          this.$confirm('请确认已保存橱窗图', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'

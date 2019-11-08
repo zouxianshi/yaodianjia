@@ -61,7 +61,7 @@
               <div
                 slot="tip"
                 class="el-upload__tip"
-              >只能上传excel文件</div>
+              >只能上传excel文件 <span class="tip">一次只允许上传1个文件</span></div>
             </el-upload>
           </div>
           <p style="margin-left:40px;margin-top:12px">
