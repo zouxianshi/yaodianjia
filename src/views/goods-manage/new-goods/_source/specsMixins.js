@@ -9,6 +9,8 @@ const mixin = {
         specsData: [],
         specs: []
       },
+      chooseTableSpec: [], // 标库选择数据事件
+      standardSpecs: [], // 标库选中的历史数据
       dynamicProp: [], // 表格的动态字段
       chooseSpec: [], // 选中的规格参数
       specsList: [] // 规格
@@ -27,6 +29,45 @@ const mixin = {
     }
   },
   methods: {
+    handleEditTabSpecs(row, keys, index) { // 编辑已有的规格 编码 价格
+      if (this.basicForm.origin === 1) {
+        if (keys === 'erpCode') {
+          const findIndex = findArray(this.specsForm.specs, { erpCode: row[keys] })
+          if (findIndex > -1) {
+            this.$message({
+              message: '已存在相同的商品编码,请重新编辑输入',
+              type: 'error'
+            })
+            return
+          }
+        }
+        this.$set(this.specsForm.specs, index, row)
+      } else {
+        if (keys === 'erpCode') {
+          const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
+          if (findIndex > -1) {
+            this.$message({
+              message: '已存在相同的商品编码,请重新编辑输入',
+              type: 'error'
+            })
+            return
+          }
+        } else if (keys === 'barCode') {
+          const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
+          if (findIndex > -1) {
+            this.$message({
+              message: '已存在相同的条形码,请重新编辑输入',
+              type: 'error'
+            })
+            return
+          }
+        }
+        this.$set(this.editSpecsData, index, row)
+      }
+    },
+    handleSelectionChange(row) {
+      this.chooseTableSpec = row
+    },
     handleSubmitSpec() { // 规格保存操作
       let data = []
       if (this.is_query) { // 如果是查看
@@ -34,9 +75,18 @@ const mixin = {
         return
       }
       if (this.basicForm.origin === 1) { // 标库商品
-        data = this.chooseTableSpec
-        if (data.length === 0) { // 为选择任何东西直接跳过
-          this.step = 3
+        //  获取一种选中的值
+        this.specsForm.specs.map(v => {
+          if (v.isCheck) {
+            data.push(v)
+          }
+        })
+        data = [...data, ...this.chooseTableSpec]
+        if (data.length === 0) {
+          this.$message({
+            message: '请选择规格信息',
+            type: 'error'
+          })
           return
         }
         let is_err = false
@@ -77,96 +127,114 @@ const mixin = {
         this.subSpecs(data)
       } else {
         let checkNum = 0
+        if (this.specsForm.specs.length === 0 && this.editSpecsData.length === 0) {
+          if (data.length === 0) {
+            this.$message({
+              message: '请设置规格',
+              type: 'warning'
+            })
+            return
+          }
+        }
+
         this.specsForm.specsData.map(v => {
           if (v.isCheck) {
             checkNum = +1
           }
         })
-        if (this.specsForm.specs.length !== 0) {
-          if (checkNum === 0) {
-            this.$message({
-              message: '请勾选规格参数',
-              type: 'warning'
-            })
-            return
-          }
-          data = this.specsForm.specs
-          let index = 0
-          let flag = true
-          this.specsForm.specs.map(v => {
-            index = +1
-            v.valueList = []
-            v.commodityId = this.basicForm.id
-            v.merCode = this.merCode
-            for (const key in v) {
-              if (v.hasOwnProperty(key)) {
-                const val = key.split('_')
-                if (val.includes('index') && this.chooseSpec.includes(val[1])) {
-                  if (v[key]) {
-                    v.valueList.push({
-                      skuKeyId: val[1],
-                      skuValue: v[key],
-                      skuKeyName: val[2]
+
+        if (checkNum === 0 && this.dynamicProp.length === 0) {
+          this.$message({
+            message: '请勾选规格参数',
+            type: 'warning'
+          })
+          return
+        }
+        data = this.specsForm.specs
+        let index = 0
+        let flag = true
+        this.specsForm.specs.map(v => {
+          index = +1
+          v.valueList = []
+          v.commodityId = this.basicForm.id
+          v.merCode = this.merCode
+          for (const key in v) {
+            if (v.hasOwnProperty(key)) {
+              const val = key.split('_')
+              if (val.includes('index') && this.chooseSpec.includes(val[1])) {
+                if (v[key]) {
+                  v.valueList.push({
+                    skuKeyId: val[1],
+                    skuValue: v[key],
+                    skuKeyName: val[2]
+                  })
+                } else {
+                  if (flag) {
+                    this.$message({
+                      message: `请输入规格${index}中的${val[2]}`,
+                      type: 'error'
                     })
-                  } else {
-                    if (flag) {
-                      this.$message({
-                        message: `请输入规格${index}中的${val[2]}`,
-                        type: 'error'
-                      })
-                      flag = false
-                    }
+                    flag = false
                   }
                 }
               }
             }
-            if (flag && !v.barCode) {
-              console.log(456)
-              this.$message({
-                message: `请输入规格${index}中的条码`,
-                type: 'error'
-              })
-              flag = false
-            }
-            if (flag && !v.erpCode) {
-              this.$message({
-                message: `请输入规格${index}中的商品编码`,
-                type: 'error'
-              })
-              flag = false
-            }
-            if (flag && !v.mprice) {
-              this.$message({
-                message: `请输入规格${index}中的价格`,
-                type: 'error'
-              })
-              flag = false
-            }
-            if (flag && !v.picUrl) {
-              this.$message({
-                message: `请上传规格${index}中的图片`,
-                type: 'error'
-              })
-              flag = false
-            }
-          })
-          if (flag) {
-            // console.log('走这里')
-            // return
-            this.subSpecs(data)
           }
-        } else {
-          if (this.$route.query.id) { // 如果是编辑 且已存在sku规格数据  未点击添加规格是直接进入下一步
-            this.step = 3
-          } else {
-            if (data.length === 0) {
-              this.$message({
-                message: '请设置规格',
-                type: 'warning'
-              })
-              return
-            }
+          if (flag && !v.barCode) {
+            console.log(456)
+            this.$message({
+              message: `请输入规格${index}中的条码`,
+              type: 'error'
+            })
+            flag = false
           }
+          if (flag && !v.erpCode) {
+            this.$message({
+              message: `请输入规格${index}中的商品编码`,
+              type: 'error'
+            })
+            flag = false
+          }
+          if (flag && !v.mprice) {
+            this.$message({
+              message: `请输入规格${index}中的价格`,
+              type: 'error'
+            })
+            flag = false
+          }
+          if (flag && !v.picUrl) {
+            this.$message({
+              message: `请上传规格${index}中的图片`,
+              type: 'error'
+            })
+            flag = false
+          }
+        })
+        if (flag) {
+          // return
+          if (this.basicForm.id) {
+            this.editSpecsData.map(v => {
+              v.valueList = []
+              v.commodityId = this.basicForm.id
+              v.merCode = this.merCode
+              for (const key in v) {
+                if (v.hasOwnProperty(key)) {
+                  const val = key.split('_')
+                  if (val.includes('index')) {
+                    if (v[key]) {
+                      v.valueList.push({
+                        skuKeyId: val[1],
+                        skuValue: v[key],
+                        skuKeyName: val[2]
+                      })
+                    }
+                  }
+                }
+              }
+            })
+            data = [...data, ...this.editSpecsData]
+          }
+          this.subSpecs(data)
         }
       }
     },
@@ -231,11 +299,16 @@ const mixin = {
                 const element = specList[index]
                 if (element.specSkuList) {
                   if (this.dynamicProp.length === 0) {
+                    const data = []
                     element.specSkuList.map(v => {
                       this.dynamicProp.push({
                         name: v.skuKeyName,
-                        id: v.skuKeyId
+                        id: v.skuKeyId,
+                        keys: `index_${v.skuKeyId}_${v.skuKeyName}`
                       })
+                      data.push(v.skuKeyId)
+                      // 设置默认选择
+                      this.chooseSpec.push(v.skuKeyId)
                     })
                   }
                 }
@@ -243,7 +316,7 @@ const mixin = {
               specList.map(v => {
                 if (v.specSkuList) {
                   v.specSkuList.map(vs => {
-                    v[vs.skuKeyName] = vs.skuValue
+                    v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
                   })
                 }
               })
@@ -256,7 +329,15 @@ const mixin = {
             specList.forEach((v, index) => {
               const findIndex = findArray(this.specsForm.specs, { barCode: v.barCode })
               if (findIndex > -1) {
-                this.specsForm.specs[findIndex].disabled = true
+                this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
+                const row = this.specsForm.specs[findIndex]
+                row.disabled = true
+                row.id = v.id
+                row.mprice = v.mprice
+                row.erpCode = v.erpCode
+                row.isCheck = true // 数据做标识  选中
+                row.picUrl = v.picUrl
+                this.$set(this.specsForm.specs, findIndex, row)
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
               }
             })
@@ -264,14 +345,31 @@ const mixin = {
         }
       })
     },
+    shows(row) {
+      const findIndex = findArray(this.dynamicProp, { id: row.id })
+      return findIndex > -1
+    },
     handleAddSpec() { // 增加 规格
       const data = { picUrl: '', mprice: '', erpCode: '', barCode: '' }
       this.specsList.map(v => {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
-      console.log('zeng')
       this.specsForm.specs.push(data)
+      /** **
+       *
+       * 这里新增的时候判断是为编辑且已有编辑的规格数据了，有的话默认点击新增就自动吧规格参数添加到表单中
+       */
+      if (this.basicForm.id && this.editSpecsData.length > 0) {
+        if (this.specsForm.specsData.length === 0) {
+          this.specsList.map(v => {
+            if (this.chooseSpec.includes(v.id)) {
+              v.isCheck = true
+              this.specsForm.specsData.push(v)
+            }
+          })
+        }
+      }
     },
     handleDeleteSpec(index) { // 删除规格
       this.specsForm.specs.splice(index, 1)

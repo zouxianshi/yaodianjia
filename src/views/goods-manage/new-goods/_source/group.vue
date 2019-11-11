@@ -1,7 +1,7 @@
 <template>
   <div class="group-content">
     <el-dialog
-      :title="`修改分组(已选${goodsData.length}个商品)`"
+      :title="`修改分组`"
       :visible.sync="isShow"
       append-to-body
       :show-close="false"
@@ -10,25 +10,11 @@
       :close-on-click-modal="false"
     >
       <div class="modal-body-group">
-        <div class="header">
-          <el-select
-            v-model="group_id"
-            placeholder="选择商品分类"
-            @change="handleChooseGroup"
-          >
-            <el-option
-              v-for="(item,index) in groupData"
-              :key="index"
-              :value="item.id"
-              :label="item.name"
-            />
-          </el-select>
-        </div>
         <div class="group-cnt">
           <ul class="group-list">
-            <template v-if="groups1&&groups1.length!==0">
+            <template v-if="groupData.length!==0">
               <li
-                v-for="(item,index) in groups1"
+                v-for="(item,index) in groupData"
                 :key="index"
                 class="group-item text-center"
                 :class="{'active':active_row.id===item.id}"
@@ -92,7 +78,6 @@
   </div>
 </template>
 <script>
-import { setBatchGroup } from '@/api/depot'
 import { mapGetters } from 'vuex'
 export default {
   props: {
@@ -105,17 +90,10 @@ export default {
       default: () => {
         return []
       }
-    },
-    goodsData: {
-      type: Array,
-      default: () => {
-        return []
-      }
     }
   },
   data() {
     return {
-      modelList: [],
       group_id: '',
       groups1: [],
       groups2: [],
@@ -133,6 +111,7 @@ export default {
         this.group_id = this.groupData[0].id
         this.handleChooseGroup(this.group_id)
         this.modelList = []
+        this.chooseGroup = []
       }
     }
   },
@@ -140,22 +119,24 @@ export default {
     handleCanle() {
       this.$emit('close')
     },
-    handleChooseGroup(val) { // 第一阶分组
+    handleChooseGroup(val) {
       this.groupData.map(res => {
         if (res.id === val) {
-          this.groups1 = res.children
-          if (res.children && res.children.length > 0) {
+          if (res.children.length > 0) {
             this.active_row = res.children[0]
             this.groups2 = res.children[0].children
           }
         }
       })
+      this.active_row = this.groupData[0]
+      this.groups2 = this.groupData[0].children
     },
     handleLeftGroup(row) { // 左侧分组点击事件
       this.active_row = row
       this.groups2 = row.children
     },
     handleCheckClk(row) { // 单个checkbox选择触发
+      console.log(row)
       if (this.modelList.includes(row.id)) {
         this.active_row.children.map(res => {
           if (row.parentId === res.id) {
@@ -182,22 +163,11 @@ export default {
       this.chooseGroup.splice(index, 1)
     },
     handleSubmit() {
-      const params = {
-        userName: this.name,
-        typeIds: this.modelList,
-        ids: this.goodsData
-      }
-      this.subLoading = true
-      setBatchGroup(params).then(res => {
-        this.$message({
-          message: '修改成功',
-          type: 'success'
-        })
-        this.subLoading = false
-        this.$emit('close')
-      }).catch(() => {
-        this.subLoading = false
+      const data = []
+      this.chooseGroup.map(v => {
+        data.push([v[0].id, v[1].id, v[2].id])
       })
+      this.$emit('back', data)
     }
   }
 }
@@ -210,5 +180,5 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-@import './group.scss'
+@import '../../components/group.scss'
 </style>

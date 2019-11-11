@@ -7,6 +7,8 @@
         @change="getList"
       >
         <el-radio-button label="">全部</el-radio-button>
+        <el-radio-button label="-1">待完善</el-radio-button>
+        <el-radio-button label="3">待提交审核</el-radio-button>
         <el-radio-button label="2">待审核</el-radio-button>
         <el-radio-button label="1">已通过</el-radio-button>
         <el-radio-button label="0">已拒绝</el-radio-button>
@@ -49,7 +51,8 @@
             />
           </div>
           <div class="search-item">
-            <el-button type="" size="small" @click="getList">查询</el-button>
+            <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
             <el-button type="danger" size="small" @click="handleBatchDel">删除</el-button>
           </div>
         </div>
@@ -108,7 +111,7 @@
             prop="createTime"
             align="left"
             min-width="155"
-            label="申请时间"
+            label="修改时间"
           />
           <el-table-column
             prop="address"
@@ -190,6 +193,19 @@ export default {
     this.getList()
   },
   methods: {
+    resetQuery() {
+      this.listQuery = {
+        'approvalNumber': '',
+        'auditStatus': this.listQuery.auditStatus,
+        'barCode': '',
+        'erpCode': '',
+        'manufacture': '',
+        'merCode': '',
+        'name': '',
+        'origin': this.listQuery.origin
+      }
+      this.getList()
+    },
     handleSelectionChange(rows) {
       this.multipleSelection = rows
     },
@@ -206,12 +222,22 @@ export default {
           message: '操作成功',
           type: 'success'
         })
+        if (this.listQuery.auditStatus === '0') {
+          this.$router.push(`/goods-manage/edit?id=${row.id}`)
+        }
         this.getList()
       })
     },
     getList() {
       this.loading = true
-      getNewGoodsRecord(this.listQuery).then(res => {
+      const data = JSON.parse(JSON.stringify(this.listQuery))
+      if (this.listQuery.auditStatus === '-1') { // 待完善
+        data.auditStatus = ''
+        data.infoFlag = false
+      } else if (this.listQuery.auditStatus === '3') { // 待提交审核
+        data.infoFlag = true
+      }
+      getNewGoodsRecord(data).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
         if (data) {

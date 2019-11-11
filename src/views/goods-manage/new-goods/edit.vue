@@ -20,7 +20,7 @@
                   <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
                     {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
                 </el-tag>
-                <span v-if="basicForm.id!==1||!is_query" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
+                <span v-if="(basicForm.id!==1||!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
               <div class="type-list groups">商品分组：
                 <p class="group-list">
                   <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
@@ -37,14 +37,14 @@
           </div>
         </div>
         <!-- 商品信息 -->
-        <div class="edit-card">
-          <div class="header">
-            <span>商品信息</span>
-          </div>
-          <div class="edit-card-cnt">
-            <div class="content">
-              <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicRules">
-                <el-form-item label="商品信息：" prop="name">
+        <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicRules">
+          <div class="edit-card">
+            <div class="header">
+              <span>商品信息</span>
+            </div>
+            <div class="edit-card-cnt">
+              <div class="content">
+                <el-form-item label="商品名称：" prop="name">
                   <el-input v-model="basicForm.name" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
                 <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='营养保健')" prop="commonName" label="通用名：">
@@ -68,15 +68,24 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="重量：">
+                <el-form-item label="重量" prop="weight">
                   <el-input v-model="basicForm.weight" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
                     <template slot="append">公斤</template>
                   </el-input>
                 </el-form-item>
-                <el-form-item label="长宽高：">
-                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:70px" /> m *
-                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:70px" /> m *
-                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" style="width:70px" />
+                <el-form-item label="长宽高：" style="display:inline-block" prop="long">
+                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:160px">
+                    <template slot="append">m*</template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="" label-width="0px" style="display:inline-block" prop="long">
+                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
+                    <template slot="append">m*</template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="" label-width="0px" style="display:inline-block" prop="long">
+                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">  <template slot="append">m*</template>
+                  </el-input>
                 </el-form-item>
                 <el-form-item label="单位：" prop="unit">
                   <el-select v-model="basicForm.unit" :disabled="basicForm.origin===1||is_query" placeholder="选择单位">
@@ -91,18 +100,16 @@
                 <el-form-item label="关键字：">
                   <el-input v-model="basicForm.keyWord" :disabled="basicForm.origin===1||is_query" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
                 </el-form-item>
-              </el-form>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- 详细信息 -->
-        <div class="edit-card">
-          <div class="header">
-            <span>详细信息</span>
-          </div>
-          <div class="edit-card-cnt">
-            <div class="content">
-              <el-form :model="basicForm" label-width="130px" status-icon>
+          <!-- 详细信息 -->
+          <div class="edit-card">
+            <div class="header">
+              <span>详细信息</span>
+            </div>
+            <div class="edit-card-cnt">
+              <div class="content">
                 <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
                   <el-form-item label="药品类型：">
                     <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
@@ -114,8 +121,7 @@
                   </el-form-item>
                   <el-form-item label="剂型：">
                     <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
-                      <el-option label="剂兴1" value="0" />
-                      <el-option label="剂兴2" value="1" />
+                      <el-option v-for="(item,index) in drug" :key="index" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </template>
@@ -128,7 +134,7 @@
                 <el-form-item label="批准文号：" prop="approvalNumber">
                   <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='中西药品'||chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')" label="是否含有麻黄碱">
+                <el-form-item v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" label="是否含有麻黄碱">
                   <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
                 </el-form-item>
                 <el-form-item label="商品详细信息：">
@@ -160,18 +166,16 @@
                     </el-select>
                   </el-radio>
                 </el-form-item>
-              </el-form>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- 特殊属性 -->
-        <div class="edit-card">
-          <div class="header">
-            <span>特殊属性</span>
-          </div>
-          <div class="edit-card-cnt">
-            <div class="content">
-              <el-form :model="basicForm">
+          <!-- 特殊属性 -->
+          <div class="edit-card">
+            <div class="header">
+              <span>特殊属性</span>
+            </div>
+            <div class="edit-card-cnt">
+              <div class="content">
                 <el-form-item label="运输方式：">
                   <el-radio-group v-model="basicForm.freightType" :disabled="basicForm.origin===1||is_query">
                     <el-radio :label="0">常温</el-radio>
@@ -186,10 +190,10 @@
                 <el-form-item label="" label-width="100px">
                   <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitForm">下一步</el-button>
                 </el-form-item>
-              </el-form>
+              </div>
             </div>
           </div>
-        </div>
+        </el-form>
       </div>
       <!-- 规格信息 -->
       <div v-show="step===2">
@@ -197,7 +201,16 @@
           <p class="text-right" style="font-size:13px">商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
           <el-form>
             <el-form-item label="规格设置：">
-              <el-checkbox v-for="(item,index) in specsList" :key="index" v-model="item.isCheck" :disabled="basicForm.origin===1||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
+              <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
+                <template v-if="dynamicProp.length>0">
+                  <span v-for="(item,index) in specsList" :key="index" style="display:inline-block;margin-right:10px;">
+                    <el-checkbox v-if="shows(item)" :key="index" checked :disabled="true||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
+                  </span>
+                </template>
+              </template>
+              <template v-else>
+                <el-checkbox v-for="(item,index) in specsList" :key="index" v-model="item.isCheck" :disabled="basicForm.origin===1||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
+              </template>
             </el-form-item>
             <el-form-item label="规格信息：">
               <template v-if="basicForm.origin===1">
@@ -215,13 +228,15 @@
                   </span>
                   <el-table-column label="商品编码">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.erpCode" :disabled="scope.row.disabled" size="mini" placeholder="" />
+                      <span v-text="scope.row.erpCode" />
+                      <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                     </template>
                   </el-table-column>
                   <el-table-column label="商品条码" prop="barCode" />
                   <el-table-column label="商品价格">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.mprice" size="mini" :disabled="scope.row.disabled" placeholder="" />
+                      <span v-text="scope.row.mprice" />
+                      <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                     </template>
                   </el-table-column>
                   <el-table-column label="商品图片">
@@ -230,13 +245,17 @@
                         class="avatar-uploader specs-img-table"
                         :action="upLoadUrl"
                         :headers="headers"
-                        :disabled="is_query||scope.row.disabled"
+                        :disabled="is_query"
                         :show-file-list="false"
                         :on-success="handleAvatarSuccess"
                         :on-error="handleImgError"
                         :before-upload="beforeUpload"
                       >
-                        <img v-if="scope.row.picUrl" style="width:80px;height:80px" :src="showImg(scope.row.picUrl)" class="avatar">
+                        <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                          <div slot="placeholder" class="image-slot">
+                            加载中<span class="dot">...</span>
+                          </div>
+                        </el-image>
                         <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
                       </el-upload>
                     </template>
@@ -248,15 +267,47 @@
                   <el-table :data="editSpecsData">
                     <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs" :label="propsf.name">
                       <template slot-scope="scope">
-                        <span v-if="scope.row[propsf.name]" v-text="scope.row[propsf.name]" />
+                        <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
+                        <edit-table :title="propsf.name" :keys="propsf.keys" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                       </template>
                     </el-table-column>
-                    <el-table-column label="商品编码" prop="erpCode" />
-                    <el-table-column label="商品条码" prop="barCode" />
-                    <el-table-column label="商品价格" prop="mprice" />
+                    <el-table-column label="商品编码" prop="erpCode">
+                      <template slot-scope="scope">
+                        <span v-text="scope.row.erpCode" />
+                        <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="商品条码" prop="barCode">
+                      <template slot-scope="scope">
+                        <span v-text="scope.row.barCode" />
+                        <edit-table title="商品条码" keys="barCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="商品价格" prop="mprice">
+                      <template slot-scope="scope">
+                        <span v-text="scope.row.mprice" />
+                        <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
+                    </el-table-column>
                     <el-table-column label="商品图片">
                       <template slot-scope="scope">
-                        <el-image :src="showImg(scope.row.picUrl)" style="width:60px;height:60px" />
+                        <el-upload
+                          class="avatar-uploader specs-img-table"
+                          :action="upLoadUrl"
+                          :headers="headers"
+                          :disabled="is_query"
+                          :show-file-list="false"
+                          :on-success="handleAvatarSuccessEdit"
+                          :on-error="handleImgError"
+                          :before-upload="beforeUpload"
+                        >
+                          <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                            <div slot="placeholder" class="image-slot">
+                              加载中<span class="dot">...</span>
+                            </div>
+                          </el-image>
+                          <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
+                        </el-upload>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -297,7 +348,11 @@
                           :on-error="handleImgError"
                           :before-upload="beforeUpload"
                         >
-                          <img v-if="item.picUrl" style="width:100px;height:100px" :src="showImg(item.picUrl)" class="avatar">
+                          <el-image v-if="item.picUrl" class="avatar" style="width:80px;height:80px" :src="showImg(item.picUrl)">
+                            <div slot="placeholder" class="image-slot">
+                              加载中<span class="dot">...</span>
+                            </div>
+                          </el-image>
                           <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(index)" />
                         </el-upload>
                       </el-form-item>
@@ -361,27 +416,6 @@
       </div>
     </div>
     <el-dialog
-      title="选择分组"
-      :visible.sync="groupVisible"
-      :close-on-click-modal="false"
-      width="30%"
-      append-to-body
-    >
-      <div class="modal-body">
-        <el-cascader
-          v-model="chooseArray"
-          class="cascader"
-          style="width:300px"
-          :options="groupData"
-          :props="defaultProps"
-        />
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="groupVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSaveGroup">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
       title="选择分类"
       :visible.sync="typeVisible"
       :close-on-click-modal="false"
@@ -402,6 +436,7 @@
         <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
       </span>
     </el-dialog>
+    <edit-group :is-show="groupVisible" :group-data="groupData" @back="handleSaveGroup" @close="groupVisible=false" />
   </div>
 </template>
 <script>
@@ -410,14 +445,43 @@ import vueUploadImg from '@/components/ImgUpload'
 import { getTypeTree, getPreGroupList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
-import { setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
+import { getUnit, getMetering, setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
-import unit from './_source/unit'
+import editTable from './_source/edit-table'
+import editGroup from './_source/group'
 export default {
-  components: { Tinymce, vueUploadImg },
+  components: { Tinymce, vueUploadImg, editTable, editGroup },
   mixins: [mixins, specsMixin],
   data() {
+    const _checkName = (rule, value, callback) => {
+      if (!value) {
+        if (rule.field === 'commonName') {
+          return callback(new Error('请输入通用名'))
+        }
+        return callback(new Error('请输入内容'))
+      }
+      const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+      if (!reg.test(value)) {
+        callback(new Error('只能输入中英文或数字'))
+      } else {
+        callback()
+      }
+    }
+    const _checkFloat = (rule, value, callback) => {
+      if (!value) {
+        if (rule.field === 'weight') {
+          return callback(new Error('请输入重量'))
+        }
+        // return callback(new Error('请输入数值'))
+      }
+      const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
+      if (value && !reg.test(value)) {
+        callback(new Error('只能设置最多两位小数的正数'))
+      } else {
+        callback()
+      }
+    }
     return {
       step: 1,
       chooseTypeList: [], // 选中的分类
@@ -458,15 +522,21 @@ export default {
       },
       basicRules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-        commonName: [{ required: true, message: '请输入通用名称', trigger: 'blur' }],
+        commonName: [{ required: true, validator: _checkName, message: '请输入通用名称', trigger: 'blur' }],
         unit: [{ required: true, message: '请输入选择单位', trigger: 'change' }],
         brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }],
+        weight: [
+          { required: true, validator: _checkFloat, trigger: 'blur' }
+        ],
         manufacture: [{ required: true, message: '请输入生成企业', trigger: 'blur' }],
         produceOrigin: [{ required: true, message: '请输入生产地', trigger: 'blur' }],
-        approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }]
+        approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }],
+        long: [{ validator: _checkFloat, trigger: 'blur' }],
+        height: [{ validator: _checkFloat, trigger: 'blur' }],
+        width: [{ validator: _checkFloat, trigger: 'blur' }]
       },
       dialogVisible: false,
-      unit: unit,
+      unit: [],
       value: '',
       dialogImageUrl: '',
       fileList: [],
@@ -474,10 +544,11 @@ export default {
       goodsIntro: { // 商品信息
         content: ''
       },
+      drug: [], // 剂型
       uploadIndex: 0,
       is_query: false, // 是否为查看
       subLoading: false,
-      chooseTableSpec: [],
+
       pageLoading: false, // 加载
       leaveAction: false // 离开页面动作，true为保存离开  false异常离开
     }
@@ -489,6 +560,14 @@ export default {
     },
     headers() {
       return { 'Authorization': this.token }
+    }
+  },
+  watch: {
+    step(val) {
+      if (val === 3) {
+        this._loadGoodsDetails()
+        this._loadGoodsImgAry()
+      }
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
@@ -512,8 +591,6 @@ export default {
   created() {
     if (this.$route.query.id) { // 如果是编辑
       this._loadBasicInfo()
-      this._loadGoodsDetails()
-      this._loadGoodsImgAry()
     } else {
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
@@ -521,12 +598,40 @@ export default {
     this.is_query = this.$route.query.type === 'query'
     this._loadTypeList() // 获取分组
     this._loadBrandList() // 获取所属品牌
+    this._loadUnit() // 加载单位
+    this._loadMetering() // 加载剂型
   },
   methods: {
     handleGoStep(val) {
       if (this.is_query) {
         this.step = val
       }
+    },
+    _loadUnit() { // 加载单位
+      getUnit().then(res => {
+        const { data } = res
+        if (data) {
+          data.map(v => {
+            this.unit.push({
+              label: v,
+              value: v
+            })
+          })
+        }
+      })
+    },
+    _loadMetering() { // 加载剂型
+      getMetering().then(res => {
+        const { data } = res
+        if (data) {
+          data.map(v => {
+            this.drug.push({
+              label: v,
+              value: v
+            })
+          })
+        }
+      })
     },
     _loadgroupGather(type, ids) { // 查询分类和分组的父类
       const data = {
@@ -537,7 +642,9 @@ export default {
       getPreGroupList(data).then(res => {
         if (type === '1') { // 分类
           const datas = res.data[ids[0]]
-          this.chooseTypeList = [{ name: datas.name, id: datas.id }, { name: datas.child.name, id: datas.child.id }, { name: datas.child.child.name, id: datas.child.child.id }]
+          if (datas) {
+            this.chooseTypeList = [{ name: datas.name, id: datas.id }, { name: datas.child.name, id: datas.child.id }, { name: datas.child.child.name, id: datas.child.child.id }]
+          }
         } else { // 分组
           const datas = res.data
           ids.map(v => {
@@ -571,16 +678,16 @@ export default {
         // 长宽高处理
         if (data.packStandard) {
           const packStandard = data.packStandard.split('*')
-          data.long = packStandard[0] || ''
-          data.width = packStandard[1] || ''
-          data.height = packStandard[2] || ''
+          data.long = packStandard[0] === 'undefined' ? '' : packStandard[0]
+          data.width = packStandard[1] === 'undefined' ? '' : packStandard[1]
+          data.height = packStandard[2] === 'undefined' ? '' : packStandard[2]
         }
         // 赋值值
         this.basicForm = data
       })
     },
     _loadGoodsImgAry() { // 加载商品图片
-      const id = this.$route.query.id
+      const id = this.basicForm.id
       if (id) {
         getGoodsImgAry(id).then(res => {
           if (res.data) {
@@ -595,15 +702,12 @@ export default {
       }
     },
     _loadGoodsDetails() { // 加载商品详情
-      const id = this.$route.query.id
+      const id = this.basicForm.id
       getGoodsDetails(id).then(res => {
         if (res.data) {
           this.goodsIntro.content = res.data.content
         }
       })
-    },
-    handleSelectionChange(row) {
-      this.chooseTableSpec = row
     },
     handleSortEnd(val) { // 图片排序
       this.fileList = val
@@ -612,6 +716,7 @@ export default {
       }
     },
     handleImgSuccess(res, fileList, index) {
+      this.fileList = []
       if (!this.fileList[index]) {
         this.fileList.push({ imgUrl: this.showImg(res), picUrl: res })
       } else {
@@ -619,6 +724,9 @@ export default {
         this.fileList[index].picUrl = res
       }
       this.pageLoading.close()
+    },
+    handleAvatarSuccessEdit(res, fileList, index) {
+      this.editSpecsData[this.uploadIndex].picUrl = res.data
     },
     handleImgError() {
       this.$message({
@@ -668,16 +776,10 @@ export default {
         }
       })
     },
-    handleSaveGroup() { // 保存数据
-      if (this.chooseArray.length !== 3) {
-        this.$message({
-          message: '分组选择不完整',
-          type: 'error'
-        })
-        return
-      }
-      this.chooseGroup.push([])
-      this._filters(this.chooseArray, this.chooseGroup.length - 1)
+    handleSaveGroup(row) { // 保存数据
+      this.chooseArray = row
+      this.chooseGroup = []
+      this._filters(this.chooseArray)
       this.groupVisible = false
     },
     handleRefresh() { // 刷新分组
@@ -695,25 +797,30 @@ export default {
         this.brandList = data
       })
     },
-    _filters(data, index) {
-      this.groupData.map(v => {
-        if (v.id === data[0]) {
-          this.chooseGroup[index].push({ name: v.name, id: v.id })
-        }
-        if (v.children) {
-          v.children.map(v1 => {
-            if (v1.id === data[1]) {
-              this.chooseGroup[index].push({ name: v1.name, id: v1.id })
+    _filters(data) {
+      this.groupData.forEach((v, index) => {
+        data.forEach((val, index) => {
+          if (v.id === val[0]) {
+            if (!this.chooseGroup[index]) {
+              this.chooseGroup.push([])
             }
-            if (v1.children) {
-              v1.children.map(v2 => {
-                if (v2.id === data[2]) {
-                  this.chooseGroup[index].push({ name: v2.name, id: v2.id })
+            this.chooseGroup[index].push({ name: v.name, id: v.id })
+            if (v.children) {
+              v.children.map(v1 => {
+                if (v1.id === val[1]) {
+                  this.chooseGroup[index].push({ name: v1.name, id: v1.id })
+                }
+                if (v1.children) {
+                  v1.children.map(v2 => {
+                    if (v2.id === val[2]) {
+                      this.chooseGroup[index].push({ name: v2.name, id: v2.id })
+                    }
+                  })
                 }
               })
             }
-          })
-        }
+          }
+        })
       })
     },
     _CreateBasicInfo(data) { // 创建基本信息
@@ -748,33 +855,44 @@ export default {
       }
       this.$refs['basic'].validate((valid) => {
         if (valid) {
-          this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
-          const data = JSON.parse(JSON.stringify(this.basicForm))
-          if (data.long && data.width && data.height) {
-            data.packStandard = `${data.long}*${data.width}*${data.height}`
-          }
-          if (this.expireDays === -1) {
-            data.expireDays = -1
-          } else {
-            if (this.timeTypes === '2') { // 月
-              data.expireDays = parseInt(this.days) * 30
+          if (valid) {
+            if (this.chooseTypeList.length === 0) {
+              this.$message({
+                message: '请选择分类',
+                type: 'warning'
+              })
+              return
+            }
+            this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
+            const data = JSON.parse(JSON.stringify(this.basicForm))
+            data.packStandard = `${data.long || ''}*${data.width || ''}*${data.height || ''}`
+            if (this.expireDays === -1) {
+              data.expireDays = -1
             } else {
-              data.expireDays = parseInt(this.days) * 365
+              if (this.timeTypes === '2') { // 月
+                data.expireDays = parseInt(this.days) * 30
+              } else {
+                data.expireDays = parseInt(this.days) * 365
+              }
+            }
+            data.groupIds = []
+            this.chooseGroup.map(v => {
+              data.groupIds.push(v[2].id)
+            })
+            this.subLoading = true
+            if (this.basicForm.id) {
+              data.commodityId = data.id
+              this._UpdateBasicInfo(data)
+            } else {
+              this._CreateBasicInfo(data)
             }
           }
-          data.groupIds = []
-          this.chooseGroup.map(v => {
-            data.groupIds.push(v[2].id)
-          })
-          this.subLoading = true
-          if (this.basicForm.id) {
-            data.commodityId = data.id
-            this._UpdateBasicInfo(data)
-          } else {
-            this._CreateBasicInfo(data)
-          }
         } else {
-          console.log('error submit')
+          // console.log('error submit')
+          this.$message({
+            message: '存在必填字段未填写',
+            type: 'error'
+          })
         }
       })
     },
@@ -819,11 +937,21 @@ export default {
         this.subLoading = false
         this.leaveAction = true
         setTimeout(() => {
+          let url = ''
           if (this.basicForm.origin === 1) {
-            this.$router.replace('/goods-manage/depot')
+            url = '/goods-manage/depot'
           } else {
-            this.$router.replace('/goods-manage/apply-record')
+            url = '/goods-manage/apply-record'
           }
+          this.$confirm('请确认已保存橱窗图', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$router.replace(url)
+          }).catch(() => {
+            console.log('已取消')
+          })
         }, 1000)
       }).catch(_ => {
         this.subLoading = false
@@ -957,13 +1085,13 @@ export default {
         }
         .specs-img-table{
             .avatar-uploader-icon{
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             line-height: 80px!important;
           }
           .avatar{
-             width: 80px;
-            height: 80px;
+             width: 60px;
+            height: 60px;
           }
         }
         .specs-img{

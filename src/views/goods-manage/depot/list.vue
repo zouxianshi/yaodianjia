@@ -46,12 +46,13 @@
             <span class="label-name">商品来源</span>
             <el-select v-model="listQuery.origin" placeholder="选择商品来源" size="small" @change="getList">
               <el-option label="全部" value="" />
-              <el-option label="海典" value="1" />
-              <el-option label="商家" value="2" />
+              <el-option label="海典商品库" value="1" />
+              <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
           <div class="search-item">
-            <el-button type="" size="small" @click="getList">查询</el-button>
+            <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </section>
@@ -70,6 +71,7 @@
                 ref="tree"
                 :data="treeData"
                 :props="defaultProps"
+                :default-expanded-keys="[1,2]"
                 node-key="id"
                 @node-click="handleTreeClick"
               >
@@ -90,12 +92,12 @@
       </section>
       <section class="depot-table">
         <div class="text-right" style="margin-bottom:10px;display:flex;justify-content:space-between">
-          <div>
+          <!-- <div>
             <el-radio-group v-model="listQuery.infoFlag" size="small" @change="getList">
               <el-radio-button :label="true">全部</el-radio-button>
               <el-radio-button :label="false">待完善资料</el-radio-button>
             </el-radio-group>
-          </div>
+          </div> -->
           <div>
             <template v-if="listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
@@ -126,7 +128,7 @@
               <template slot-scope="scope">
                 <template v-if="scope.row.mainPic">
                   <el-image
-                    style="width: 80px; height: 80px"
+                    style="width: 60px; height: 60px"
                     :src="showImg(scope.row.mainPic)"
                     lazy
                     fit="contain"
@@ -211,7 +213,7 @@
 </template>
 <script>
 import { getGoodsList, exportData } from '@/api/depot'
-import { getTypeDimensionList } from '@/api/group'
+import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 import download from '@hydee/download'
@@ -257,6 +259,18 @@ export default {
     this._loadTypeList()
   },
   methods: {
+    resetQuery() { // 重置
+      this.listQuery = {
+        approvalNumber: '',
+        barCode: '',
+        manufacture: '',
+        name: '',
+        infoFlag: this.listQuery.infoFlag,
+        erpCode: '',
+        groupId: '' // 分组id
+      }
+      this.getList()
+    },
     getList() {
       this.loading = true
       getGoodsList(this.listQuery).then(res => {
@@ -269,11 +283,18 @@ export default {
       })
     },
     _loadTypeList() {
-      getTypeDimensionList(this.$store.state.user.merCode).then(res => {
+      getTypeTree({ merCode: this.$store.state.user.merCode, type: 2 }).then(res => {
         this.treeData = res.data
-        this.groupData = res.data
         this.treeData = JSON.parse(JSON.stringify(this.treeData))
         this.treeData.unshift({ name: '全部', id: '' })
+        this.$nextTick(_ => {
+          $('.el-tree').find('.el-tree-node').each(function(i) {
+            $(this).find('.el-tree-node__content .el-tree-node__expand-icon').click()
+          })
+        })
+      })
+      getTypeDimensionList(this.$store.state.user.merCode).then(res => {
+        this.groupData = res.data
       })
     },
     handleTreeClick(row, node) { // 节点被点击时

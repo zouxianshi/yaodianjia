@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="app-container">
     <el-alert
       v-if="offlineStore > 0"
       type="warning"
@@ -53,7 +53,6 @@
       <el-table
         :data="list"
         style="width: 100%"
-        height="calc(100vh - 370px)"
         @selection-change="handleSelectionChange"
       >
         <div slot="empty">
@@ -131,6 +130,9 @@ export default {
       list: [],
       dialogList: []
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   created() {
     this.getData()
@@ -281,9 +283,6 @@ export default {
       this.visable = false
       this.dialogMultipleSelection = null
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>

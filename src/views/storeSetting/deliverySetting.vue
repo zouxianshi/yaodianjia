@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="app-container">
     <el-dialog
       append-to-body
       title="配送费用设置"
@@ -35,7 +35,7 @@
           <el-input v-model="form.distributionFee" style="width: 100px" size="mini" type="number" />
           元
         </el-form-item>
-        <el-form-item label="免运门槛：">
+        <el-form-item v-if="form.isfreeShipping === 1" label="免运门槛：">
           <el-input v-model="form.freeEntryThreshold" style="width: 100px" size="mini" type="number" />
           元
         </el-form-item>
@@ -64,6 +64,7 @@
       <el-table-column
         type="selection"
         width="55"
+        :selectable="checkSelectable"
       />
       <el-table-column label="所在省份" property="provinceName" />
       <el-table-column label="包含门店数" property="includeStores" />
@@ -85,7 +86,7 @@
       <el-table-column label="配送说明" property="deliveryTime" />
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="text" @click="setting(scope.row)">设置配送规则</el-button>
+          <el-button type="text" :disabled="!scope.row.rangeId" @click="setting(scope.row)">设置配送规则</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -124,6 +125,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     this.getData()
   },
@@ -146,6 +150,7 @@ export default {
     },
     setting(row) {
       if (row) {
+        console.log(row)
         this.form.cashOnDelivery = row.cashOnDelivery
         this.form.deliveryTime = row.deliveryTime
         this.form.distributionFee = row.distributionFee
@@ -156,6 +161,12 @@ export default {
         this.form.isfreeShipping = row.isfreeShipping
         this.form.merCode = this.merCode
         this.form.rangeId = [row.rangeId]
+        if (!this.form.isfloatingFreight) {
+          this.form.isfloatingFreight = 0
+        }
+        if (!this.form.isfreeShipping) {
+          this.form.isfreeShipping = 0
+        }
       } else {
         if (this.multipleSelection.length <= 0) {
           this.$message({
@@ -179,6 +190,9 @@ export default {
       this.visable = true
     },
     submit() {
+      if (this.form.isfreeShipping !== 1) {
+        this.form.freeEntryThreshold = null
+      }
       console.log(this.form)
       saveDeliverySettings(this.form).then(res => {
         if (res.code === '10000') {
@@ -217,10 +231,10 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
+    },
+    checkSelectable(row) {
+      return row.rangeId !== null
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>

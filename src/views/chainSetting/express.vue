@@ -16,7 +16,7 @@
         <el-radio disabled>按重量</el-radio>
       </el-form-item>
       <el-form-item label="配送区域配置：" />
-      <el-table :data="form.list" border height="calc(100vh - 530px)">
+      <el-table :data="form.list">
         <el-table-column label="配送区域">
           <template slot-scope="scope">
             <span v-for="(item, $index) in scope.row.rangeResDTOList" :key="$index">
@@ -59,9 +59,9 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-button size="small" type="primary" style="margin-top: 10px" @click="visable = true">新增区域</el-button>
+      <!--      <el-button size="small" type="primary" style="margin-top: 10px" @click="visable = true">新增区域</el-button>-->
       <div style="margin-top: 20px;font-size: 14px">
-        <span style="color: #409eff;margin-right: 20px">按区域设置配送费用</span>
+        <el-button type="text" @click="visable = true">按区域设置配送费用</el-button>
         <span style="color: #99a9bf">如全部设置为0，表示包邮</span>
       </div>
       <div style="text-align: center;margin-top: 20px">
@@ -122,6 +122,9 @@ export default {
         list: []
       }
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   created() {
     this.getData()
@@ -372,9 +375,6 @@ export default {
         return _.assign(v, { checked: false })
       })
     }
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   }
 }
 </script>

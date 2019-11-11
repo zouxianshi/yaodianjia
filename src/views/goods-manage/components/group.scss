@@ -1,0 +1,59 @@
+$divider: #dcdfe6;
+.modal-body-group {
+  margin: -10px;
+  .header {
+    padding: 10px 12px;
+  }
+  .group-cnt {
+    border-top: 1px solid $divider;
+    border-bottom: 1px solid $divider;
+    display: flex;
+    .group-list {
+      height: 300px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      width: 150px;
+      border-right: 1px solid $divider;
+      .group-item {
+        line-height: 40px;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        cursor: default;
+        &.active {
+          background: $divider;
+        }
+      }
+    }
+    .group-details {
+      flex: 1;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      .list {
+        margin-bottom: 10px;
+        .titles {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+  .choose-box {
+      padding: 10px;
+    .choose-label {
+      float: left;
+      color: red;
+      width: 80px;
+    }
+    .choose-list {
+      margin-left: 80px;
+      .choose-item{
+          display: inline-block;
+          margin-right: 15px;
+          margin-bottom: 5px;
+          list-style-type: disc;
+      }
+    }
+  }
+}

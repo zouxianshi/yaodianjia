@@ -21,11 +21,11 @@
             <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p>
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-text="currentRow.name" /></p>
-              <p>规格：<span v-text="currentRow.packStandard" /></p>
-              <p>企业：<span v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-text="currentRow.approvalNumber" /></p>
+              <p>名称：<span v-if="currentRow" v-text="currentRow.name" /></p>
+              <p>规格：<span v-if="currentRow" v-text="currentRow.packStandard" /></p>
+              <p>企业：<span v-if="currentRow" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
@@ -44,7 +44,7 @@
           >拒绝</el-button>
         </div>
       </div>
-      <div class="search-box">
+      <div class="search-box" @keydown.enter="checkAdult">
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">商品名称：</span>
@@ -81,11 +81,8 @@
             />
           </div>
           <div class="search-item">
-            <el-button
-              type="primary"
-              size="small"
-              @click="checkAdult"
-            >查询</el-button>
+            <el-button type="primary" size="small" @click="checkAdult">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </div>
@@ -219,9 +216,12 @@
               <el-option label="其他原因" value="3" />
             </el-select>
           </el-form-item>
-          <el-form-item v-if="rejectForm.id==='3'" label="驳回原因" prop="reason">
-            <el-input v-model="rejectForm.reason" placeholder="输入原因" type="textarea" :rows="2" />
-          </el-form-item>
+          <div v-show="rejectForm.id==='3'">
+            <el-form-item label="驳回原因" prop="reason">
+              <el-input v-model="rejectForm.reason" placeholder="输入原因" type="textarea" :rows="2" />
+              <span v-show="is_err" class="tip">请填写驳回原因</span>
+            </el-form-item>
+          </div>
         </el-form>
       </div>
       <span slot="footer">
@@ -237,16 +237,12 @@ import { getGoodsImgAry } from '@/api/new-goods'
 import { mapGetters } from 'vuex'
 export default {
   data() {
-    var _checkReason = (rule, value, callback) => {
-      if (!value) {
-        if (this.rejectForm.id === '3') {
-          return callback(new Error('请填写其他拒绝原因'))
-        }
-      }
-    }
     return {
       searchForm: {
-        name: ''
+        name: '',
+        barCode: '',
+        manufacture: '',
+        approvalNumber: ''
       },
       total: 0,
       loading: false,
@@ -255,15 +251,15 @@ export default {
       rejectVisible: false,
       rejectForm: {},
       rules: {
-        id: [{ required: true, message: '请选择驳回原因', trigger: 'blur' }],
-        reason: [{ validator: _checkReason, trigger: 'blur' }]
+        id: [{ required: true, message: '请选择驳回原因', trigger: 'blur' }]
       },
       currentRow: {},
       subLoading: false,
       pariData: {},
       storeTableData: [],
       isMate: {},
-      imgList: []
+      imgList: [],
+      is_err: false
     }
   },
   computed: {
@@ -276,6 +272,15 @@ export default {
     this._loadImgList()
   },
   methods: {
+    resetQuery() {
+      this.searchForm = {
+        name: '',
+        barCode: '',
+        manufacture: '',
+        approvalNumber: ''
+      }
+      this.checkAdult()
+    },
     _loadMatchList() {
       this.loading = true
       const data = JSON.parse(sessionStorage.getItem('mate'))
@@ -382,14 +387,17 @@ export default {
         ],
         'userName': this.name
       }
-      this.$refs['rejectForm'].validate((valid) => {
-        if (valid) {
-          this._AuditRequest(data)
+      if (this.rejectForm.id === '3') {
+        if (!data.auditReason) {
+          this.is_err = true
+          return
         } else {
-          console.log('error submit!!')
-          return false
+          this.is_err = false
+          this._AuditRequest(data)
         }
-      })
+      } else {
+        this._AuditRequest(data)
+      }
     },
     _AuditRequest(data) { // 审核请求
       this.subLoading = true

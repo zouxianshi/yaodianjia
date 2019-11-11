@@ -110,6 +110,15 @@ export default {
       imageUrl: ''
     }
   },
+  computed: {
+    ...mapGetters(['merCode']),
+    upLoadUrl() {
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
+    },
+    headers() {
+      return { 'Authorization': this.$store.getters.token }
+    }
+  },
   created() {
     this.getData()
   },
@@ -260,15 +269,6 @@ export default {
         this.$message.error('上传证书图片大小不能超过 2MB!')
       }
       return (isJPG || isPNG) && isLt2M
-    }
-  },
-  computed: {
-    ...mapGetters(['merCode']),
-    upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
-    },
-    headers() {
-      return { 'Authorization': this.$store.getters.token }
     }
   }
 }
