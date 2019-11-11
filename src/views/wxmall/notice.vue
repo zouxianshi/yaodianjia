@@ -40,34 +40,78 @@
         </div>
       </section>
       <section class="table-box">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%" size="small">
           <el-table-column label="序号" width="60" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="announcement" label="展示内容" min-width="240" />
-          <el-table-column prop="url" label="链接地址" width="240" />
+          <el-table-column prop="url" label="链接地址" min-width="240" />
           <el-table-column prop="startTime" label="开始时间" width="180" align="center" />
           <el-table-column prop="endTime" label="结束时间" width="180" align="center" />
           <el-table-column label="状态" width="100" align="center">
             >
             <template slot-scope="scope">
-              <span v-if="scope.row.status=='1'">正常</span>
-              <span v-if="scope.row.status=='0'">停用</span>
+              <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
+              <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="240">
             <template slot-scope="scope">
-              <el-button type="primary" size="small" @click.stop="handleEdit(scope.row)">编辑</el-button>
-              <el-button type="danger" size="small" @click.stop="handleChangeStatus(scope.row)">
-                <span v-if="scope.row.status==1">停用</span>
-                <span v-if="scope.row.status==0">启用</span>
-              </el-button>
-              <el-button type="danger" size="small" @click.stop="handleDel(scope.row)">删除</el-button>
+              <el-button
+                slot="reference"
+                title="编辑"
+                icon="el-icon-edit"
+                type="primary"
+                circle
+                size="mini"
+                @click="handleEdit(scope.row)"
+              />
+              <el-button
+                v-if="scope.row.status===0"
+                slot="reference"
+                title="启用"
+                type="success"
+                icon="el-icon-coordinate"
+                circle
+                size="mini"
+                @click="handleChangeStatus(scope.row)"
+              />
+              <el-button
+                v-if="scope.row.status===1"
+                slot="reference"
+                title="停用"
+                type="warning"
+                icon="el-icon-coordinate"
+                circle
+                size="mini"
+                @click="handleChangeStatus(scope.row)"
+              />
+              <el-button
+                slot="reference"
+                title="删除"
+                type="danger"
+                icon="el-icon-delete"
+                circle
+                size="mini"
+                @click="handleDel(scope.row)"
+              />
             </template>
           </el-table-column>
         </el-table>
+      </section>
+      <section class="c-footer">
+        <el-pagination
+          background
+          :current-page="pager.current"
+          :page-sizes="[10, 20, 30, 50]"
+          :page-size="pager.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pager.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </section>
     </div>
     <el-dialog
@@ -86,8 +130,8 @@
                 v-model="xForm.notice"
                 autocomplete="off"
                 style="width: 350px"
-                :maxlength="10"
-                placeholder="不超过10个字"
+                :maxlength="15"
+                placeholder="最多输入15字"
               />
             </el-form-item>
             <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
@@ -150,13 +194,17 @@ import {
 export default {
   name: 'Notice',
   data() {
-    const checkNum = (rule, value, callback) => {
-      console.log('rule', rule)
+    const checkWebsite = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入序号'))
+        callback(new Error('请输入链接地址'))
       }
-      if (/[^1-9]/.test(value)) {
-        console.log(1111)
+      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+        callback(new Error('请输入正确的地址'))
+      }
+      callback()
+    }
+    const checkNum = (rule, value, callback) => {
+      if (value !== '' && !/^[1-9]([0-9])*$/.test(value)) {
         callback(new Error('请输入正整数'))
       }
       callback()
@@ -206,13 +254,13 @@ export default {
           { required: true, message: '请输入公告文字', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, message: '请输入链接地址', trigger: 'blur' }
+          { required: true, validator: checkWebsite, trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
         ],
         sort: [
-          { required: true, validator: checkNum, trigger: 'blur' }
+          { validator: checkNum, trigger: 'blur' }
         ]
       },
       editDetail: null, // 编辑详情
@@ -336,7 +384,6 @@ export default {
     },
     handleUploadSuccess($event) {
       console.log($event)
-      // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeUpload(file) {
       const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
@@ -359,14 +406,16 @@ export default {
         endTime: this.searchForm.timeEnd,
         positionCode: this.positionCode,
         remark: this.searchForm.remark,
-        sortOrder: 1,
+        sortOrder: 0,
         status: this.searchForm.status,
         currentPage: this.pager.current,
-        pageSize: this.pager.size
+        pageSize: this.pager.size,
+        pageFlag: true
       }
       getPageSets(params).then(res => {
         if (res.code === '10000') {
-          this.tableData = res.data || []
+          this.tableData = res.data.data || []
+          this.pager.total = res.data.totalCount
         } else {
           this.$message({
             message: res.msg,
@@ -420,8 +469,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: '新增成功',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           this.dialogFormVisible = false
           // 更新table
@@ -456,8 +504,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: '修改成功',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           this.dialogFormVisible = false
           // 更新table
@@ -480,8 +527,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: '删除成功',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           // 更新列表
           this._getTableData()
@@ -507,8 +553,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: row.status === 1 ? '已停用' : '已启用',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           // 更新列表
           this._getTableData()

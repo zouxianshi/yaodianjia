@@ -66,8 +66,9 @@ export function delPageSet(params) {
 // 广告分类
 export function getADClass(params) {
   return request({
-    url: `${api_wxmall}/1.0/comm-dimen/get/${params.merCode}/${params.useStatus}`,
-    method: 'get'
+    url: `${api_wxmall}/1.0/comm-type/getTypeTree`,
+    method: 'post',
+    data: params
   })
 }
 
