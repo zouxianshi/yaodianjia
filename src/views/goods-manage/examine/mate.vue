@@ -21,11 +21,11 @@
             <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p>
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-text="currentRow.name" /></p>
-              <p>规格：<span v-text="currentRow.packStandard" /></p>
-              <p>企业：<span v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-text="currentRow.approvalNumber" /></p>
+              <p>名称：<span v-if="currentRow" v-text="currentRow.name" /></p>
+              <p>规格：<span v-if="currentRow" v-text="currentRow.packStandard" /></p>
+              <p>企业：<span v-if="currentRow" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
@@ -44,7 +44,7 @@
           >拒绝</el-button>
         </div>
       </div>
-      <div class="search-box">
+      <div class="search-box" @keydown.enter="checkAdult">
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">商品名称：</span>
@@ -81,11 +81,8 @@
             />
           </div>
           <div class="search-item">
-            <el-button
-              type="primary"
-              size="small"
-              @click="checkAdult"
-            >查询</el-button>
+            <el-button type="primary" size="small" @click="checkAdult">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </div>
@@ -242,7 +239,10 @@ export default {
   data() {
     return {
       searchForm: {
-        name: ''
+        name: '',
+        barCode: '',
+        manufacture: '',
+        approvalNumber: ''
       },
       total: 0,
       loading: false,
@@ -272,6 +272,15 @@ export default {
     this._loadImgList()
   },
   methods: {
+    resetQuery() {
+      this.searchForm = {
+        name: '',
+        barCode: '',
+        manufacture: '',
+        approvalNumber: ''
+      }
+      this.checkAdult()
+    },
     _loadMatchList() {
       this.loading = true
       const data = JSON.parse(sessionStorage.getItem('mate'))

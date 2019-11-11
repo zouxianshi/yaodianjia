@@ -51,7 +51,8 @@
             </el-select>
           </div>
           <div class="search-item">
-            <el-button type="" size="small" @click="getList">查询</el-button>
+            <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </section>
@@ -91,12 +92,12 @@
       </section>
       <section class="depot-table">
         <div class="text-right" style="margin-bottom:10px;display:flex;justify-content:space-between">
-          <div>
+          <!-- <div>
             <el-radio-group v-model="listQuery.infoFlag" size="small" @change="getList">
               <el-radio-button :label="true">全部</el-radio-button>
               <el-radio-button :label="false">待完善资料</el-radio-button>
             </el-radio-group>
-          </div>
+          </div> -->
           <div>
             <template v-if="listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
@@ -258,6 +259,18 @@ export default {
     this._loadTypeList()
   },
   methods: {
+    resetQuery() { // 重置
+      this.listQuery = {
+        approvalNumber: '',
+        barCode: '',
+        manufacture: '',
+        name: '',
+        infoFlag: this.listQuery.infoFlag,
+        erpCode: '',
+        groupId: '' // 分组id
+      }
+      this.getList()
+    },
     getList() {
       this.loading = true
       getGoodsList(this.listQuery).then(res => {

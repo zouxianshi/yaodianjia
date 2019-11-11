@@ -416,27 +416,6 @@
       </div>
     </div>
     <el-dialog
-      title="选择分组"
-      :visible.sync="groupVisible"
-      :close-on-click-modal="false"
-      width="30%"
-      append-to-body
-    >
-      <div class="modal-body">
-        <el-cascader
-          v-model="chooseArray"
-          class="cascader"
-          style="width:300px"
-          :options="groupData"
-          :props="defaultProps"
-        />
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="groupVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSaveGroup">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
       title="选择分类"
       :visible.sync="typeVisible"
       :close-on-click-modal="false"
@@ -457,6 +436,7 @@
         <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
       </span>
     </el-dialog>
+    <edit-group :is-show="groupVisible" :group-data="groupData" @back="handleSaveGroup" @close="groupVisible=false" />
   </div>
 </template>
 <script>
@@ -469,8 +449,9 @@ import { getUnit, getMetering, setGoodsAdd, updateBasicInfo, getBrandList, saveI
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
 import editTable from './_source/edit-table'
+import editGroup from './_source/group'
 export default {
-  components: { Tinymce, vueUploadImg, editTable },
+  components: { Tinymce, vueUploadImg, editTable, editGroup },
   mixins: [mixins, specsMixin],
   data() {
     const _checkName = (rule, value, callback) => {
@@ -795,16 +776,10 @@ export default {
         }
       })
     },
-    handleSaveGroup() { // 保存数据
-      if (this.chooseArray.length !== 3) {
-        this.$message({
-          message: '分组选择不完整，分组必须三级',
-          type: 'error'
-        })
-        return
-      }
-      this.chooseGroup.push([])
-      this._filters(this.chooseArray, this.chooseGroup.length - 1)
+    handleSaveGroup(row) { // 保存数据
+      this.chooseArray = row
+      this.chooseGroup = []
+      this._filters(this.chooseArray)
       this.groupVisible = false
     },
     handleRefresh() { // 刷新分组
@@ -822,25 +797,30 @@ export default {
         this.brandList = data
       })
     },
-    _filters(data, index) {
-      this.groupData.map(v => {
-        if (v.id === data[0]) {
-          this.chooseGroup[index].push({ name: v.name, id: v.id })
-        }
-        if (v.children) {
-          v.children.map(v1 => {
-            if (v1.id === data[1]) {
-              this.chooseGroup[index].push({ name: v1.name, id: v1.id })
+    _filters(data) {
+      this.groupData.forEach((v, index) => {
+        data.forEach((val, index) => {
+          if (v.id === val[0]) {
+            if (!this.chooseGroup[index]) {
+              this.chooseGroup.push([])
             }
-            if (v1.children) {
-              v1.children.map(v2 => {
-                if (v2.id === data[2]) {
-                  this.chooseGroup[index].push({ name: v2.name, id: v2.id })
+            this.chooseGroup[index].push({ name: v.name, id: v.id })
+            if (v.children) {
+              v.children.map(v1 => {
+                if (v1.id === val[1]) {
+                  this.chooseGroup[index].push({ name: v1.name, id: v1.id })
+                }
+                if (v1.children) {
+                  v1.children.map(v2 => {
+                    if (v2.id === val[2]) {
+                      this.chooseGroup[index].push({ name: v2.name, id: v2.id })
+                    }
+                  })
                 }
               })
             }
-          })
-        }
+          }
+        })
       })
     },
     _CreateBasicInfo(data) { // 创建基本信息
@@ -908,7 +888,11 @@ export default {
             }
           }
         } else {
-          console.log('error submit')
+          // console.log('error submit')
+          this.$message({
+            message: '存在必填字段未填写',
+            type: 'error'
+          })
         }
       })
     },

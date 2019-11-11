@@ -24,7 +24,7 @@
             <el-input
               v-model.trim="listQuery.name"
               size="small"
-              placeholder="生产企业"
+              placeholder="商品名称"
             />
           </div>
           <div class="search-item">
@@ -68,7 +68,7 @@
             <el-date-picker
               v-model="time"
               size="small"
-              type="datetimerange"
+              type="daterange"
               value-format="yyyy-MM-dd HH:mm:ss"
               range-separator="至"
               start-placeholder="开始日期"
@@ -77,10 +77,8 @@
             />
           </div>
           <div class="search-item">
-            <el-button
-              type=""
-              size="small"
-            >查询</el-button>
+            <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
             <el-button type="danger" size="small" @click="handleBatchDel">批量删除</el-button>
           </div>
         </div>
@@ -207,6 +205,20 @@ export default {
     this.getList()
   },
   methods: {
+    resetQuery() {
+      this.listQuery = {
+        'approvalNumber': '',
+        'barCode': '',
+        'endTime': '',
+        'erpCode': '',
+        'manufacture': '',
+        'merCode': '',
+        'name': '',
+        'startTime': '',
+        'status': this.listQuery.status
+      }
+      this.getList()
+    },
     getList() {
       this.loading = true
       getImportList(this.listQuery).then(res => {

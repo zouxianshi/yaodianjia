@@ -63,6 +63,7 @@
             size="small"
             @click="getList"
           >查询</el-button>
+          <el-button type="" size="small" @click="resetQuery">重置</el-button>
         </div>
       </div>
       <div class="table-box">
@@ -184,6 +185,17 @@ export default {
     this.getList()
   },
   methods: {
+    resetQuery() {
+      this.listQuery = {
+        'approvalNumber': '',
+        'barCode': '',
+        'erpCode': '',
+        'manufacture': '',
+        'name': '',
+        'typeId': this.listQuery.typeId
+      }
+      this.getList()
+    },
     getList() {
       this.loading = true
       getAuditList(this.listQuery).then(res => {

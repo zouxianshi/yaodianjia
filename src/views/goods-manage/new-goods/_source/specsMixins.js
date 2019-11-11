@@ -143,7 +143,7 @@ const mixin = {
           }
         })
 
-        if (checkNum === 0 && !this.basicForm.id) {
+        if (checkNum === 0 && this.dynamicProp.length === 0) {
           this.$message({
             message: '请勾选规格参数',
             type: 'warning'

@@ -51,7 +51,8 @@
             />
           </div>
           <div class="search-item">
-            <el-button type="" size="small" @click="getList">查询</el-button>
+            <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
             <el-button type="danger" size="small" @click="handleBatchDel">删除</el-button>
           </div>
         </div>
@@ -192,6 +193,19 @@ export default {
     this.getList()
   },
   methods: {
+    resetQuery() {
+      this.listQuery = {
+        'approvalNumber': '',
+        'auditStatus': this.listQuery.auditStatus,
+        'barCode': '',
+        'erpCode': '',
+        'manufacture': '',
+        'merCode': '',
+        'name': '',
+        'origin': this.listQuery.origin
+      }
+      this.getList()
+    },
     handleSelectionChange(rows) {
       this.multipleSelection = rows
     },

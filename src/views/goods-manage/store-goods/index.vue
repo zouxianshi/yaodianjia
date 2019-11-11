@@ -21,7 +21,6 @@
             <el-select
               v-model="listQuery.storeId"
               filterable
-
               placeholder="请输入关键词"
               :remote-method="remoteMethod"
               :loading="selectloading"
@@ -85,13 +84,9 @@
             />
           </div>
           <div class="search-item">
-            <el-button
-              type=""
-              size="small"
-              @click="_loadList"
-            >查询</el-button>
+            <el-button type="primary" size="small" @click="_loadList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
-          <div class="search-item" />
         </div>
       </section>
       <div class="table-box">
@@ -325,6 +320,20 @@ export default {
     this._loadTypeList()
   },
   methods: {
+    resetQuery() {
+      this.listQuery = {
+        'approvalNumber': '',
+        'barCode': '',
+        'erpCode': '',
+        'groupId': '',
+        'manufacture': '',
+        'name': '',
+        'storeId': '',
+        'status': this.listQuery.status,
+        'auditStatus': this.listQuery.auditStatus
+      }
+      this.getList()
+    },
     getList() {
       this._loadStoreList().then(res => {
         if (res) {

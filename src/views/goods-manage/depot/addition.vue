@@ -28,6 +28,7 @@
           </div>
           <div class="search-item">
             <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </section>
@@ -139,6 +140,15 @@ export default {
     this.getList()
   },
   methods: {
+    resetQuery() {
+      this.listQuery = {
+        'approvalNumber': '',
+        'barCode': '',
+        'manufacture': '',
+        'name': ''
+      }
+      this.getList()
+    },
     getList() {
       this.loading = true
       getProductList(this.listQuery).then(res => {
@@ -154,8 +164,9 @@ export default {
       row.loading = true
       setComAddGoods({ ids: [row.id], userName: this.name }).then(res => {
         this.$message({
-          message: '添加商品成功，请至商品库“待完善”页面补充商品信息',
-          type: 'success'
+          message: '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
+          type: 'success',
+          duration: 4000
         })
         this.getList()
         row.loading = false
