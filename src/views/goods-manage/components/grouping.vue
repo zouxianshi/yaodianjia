@@ -26,7 +26,7 @@
         </div>
         <div class="group-cnt">
           <ul class="group-list">
-            <template v-if="groups1.length!==0">
+            <template v-if="groups1&&groups1.length!==0">
               <li
                 v-for="(item,index) in groups1"
                 :key="index"
@@ -53,7 +53,7 @@
                   v-model="modelList"
                   style="padding-left:20px"
                 >
-                  <el-checkbox v-for="(items,index1) in item.children" :key="index1" :label="items.id" @change="handleCheckClk(items)">{{ item.name }}</el-checkbox>
+                  <el-checkbox v-for="(items,index1) in item.children" :key="index1" :label="items.id" @change="handleCheckClk(items)">{{ items.name }}</el-checkbox>
                 </el-checkbox-group>
               </div>
             </template>
@@ -144,7 +144,7 @@ export default {
       this.groupData.map(res => {
         if (res.id === val) {
           this.groups1 = res.children
-          if (res.children.length > 0) {
+          if (res.children && res.children.length > 0) {
             this.active_row = res.children[0]
             this.groups2 = res.children[0].children
           }

@@ -44,7 +44,7 @@
             </div>
             <div class="edit-card-cnt">
               <div class="content">
-                <el-form-item label="商品信息：" prop="name">
+                <el-form-item label="商品名称：" prop="name">
                   <el-input v-model="basicForm.name" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
                 <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='营养保健')" prop="commonName" label="通用名：">
