@@ -460,7 +460,7 @@
                   <template v-if="xForm6.selectGoodsList && xForm6.selectGoodsList.length>0">
                     <li v-for="(goods, $index) in xForm6.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
-                        <div class="cover" :style="`background: url('${goods.picUrl}')`" />
+                        <div class="cover" :style="`background: url('${showImg(goods.mainPic)}')`" />
                         <div class="btn-remove" @click.stop="removeGoods($index, 'xForm6')" />
                       </div>
                       <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
@@ -611,7 +611,7 @@ export default {
         callback(new Error('请输入链接地址'))
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-        callback(new Error('请输入正确的地址'))
+        callback(new Error('链接格式不正确，例：http://111.com'))
       }
       callback()
     }

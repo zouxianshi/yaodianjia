@@ -120,7 +120,7 @@
       :visible.sync="dialogFormVisible"
       width="800px"
       :close-on-click-modal="false"
-      @close="dialogClose('xForm')"
+      @closed="dialogClose('xForm')"
     >
       <div class="x-dialog-body">
         <div class="form-box">
@@ -199,7 +199,7 @@ export default {
         callback(new Error('请输入链接地址'))
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-        callback(new Error('请输入正确的地址'))
+        callback(new Error('链接格式不正确，例：http://111.com'))
       }
       callback()
     }
