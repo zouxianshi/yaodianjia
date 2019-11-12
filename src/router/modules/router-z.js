@@ -142,6 +142,23 @@ const router = [
           title: '门店商品管理',
           noCache: true
         }
+      }, {
+        path: 'constitute-goods',
+        component: () => import('@/views/goods-manage/constitute-goods/list'),
+        name: 'constituteGoods',
+        meta: {
+          title: '组合商品',
+          noCache: true
+        }
+      }, {
+        path: 'constitute-goods/edit',
+        component: () => import('@/views/goods-manage/constitute-goods/edit'),
+        name: 'constituteGoods',
+        meta: {
+          title: '组合商品',
+          noCache: true,
+          activeMenu: '/goods-manage/constitute-goods'
+        }
       }
     ]
   },
