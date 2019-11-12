@@ -27,6 +27,14 @@ export function getTypeTree(params) {
   })
 }
 
+// 获取分类维度树
+export function getTypeTreeDimension(merCode, id) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-dimen/getTree/${merCode}/${id}`,
+    method: 'get'
+  })
+}
+
 // 新增分组维度
 export function setAddTypeDimension(params) {
   return request({

@@ -118,8 +118,10 @@ export default {
       fileList: this.list
     }
   },
-  created() {
-
+  watch: {
+    list(val) {
+      this.fileList = val
+    }
   },
   methods: {
     handeDragEnd() {

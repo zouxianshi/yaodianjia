@@ -44,7 +44,7 @@
           <el-input
             v-model.trim="listQuery.barCode"
             size="small"
-            placeholder="商品编码"
+            placeholder="条形码"
           />
         </div>
       </div>

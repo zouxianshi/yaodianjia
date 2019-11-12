@@ -39,7 +39,7 @@
             <el-input
               v-model.trim="listQuery.barCode"
               size="small"
-              placeholder="商品编码"
+              placeholder="条形码"
             />
           </div>
           <div class="search-item">
@@ -69,6 +69,28 @@
             type="selection"
             width="55"
           />
+          <el-table-column
+            prop="orCode"
+            align="left"
+            min-width="100"
+            label="商品图片"
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <template v-if="scope.row.mainPic">
+                <el-image
+                  style="width: 60px; height: 60px"
+                  :src="showImg(scope.row.mainPic)"
+                  lazy
+                  fit="contain"
+                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
+                />
+              </template>
+              <template v-else>
+                <p class="">暂未上传</p>
+              </template>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="orCode"
             align="left"
@@ -108,7 +130,7 @@
             min-width="120"
           />
           <el-table-column
-            prop="createTime"
+            prop="modifyTime"
             align="left"
             min-width="155"
             label="修改时间"
@@ -137,12 +159,12 @@
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>
               </template>
-              <el-button
-                v-if="scope.row.auditStatus!==1"
-                type="danger"
-                size="mini"
-                @click="handleDel(scope.row)"
-              >删除</el-button>
+              <template v-if="listQuery.auditStatus==='0'">
+                <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                  <el-button type="" size="mini">编辑</el-button>
+                </a>
+              </template>
+              <el-button v-if="scope.row.auditStatus!==1|listQuery.auditStatus==='-1'" type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

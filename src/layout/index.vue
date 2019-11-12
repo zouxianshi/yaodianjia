@@ -121,7 +121,7 @@ export default {
     top: 0;
     width: 255px;
     height: calc(100vh);
-    z-index: 2;
+    // z-index: 2;
   }
   .app-main-box {
     position: absolute;

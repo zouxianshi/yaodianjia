@@ -246,7 +246,6 @@ const mixin = {
           type: 'success'
         })
         this.subLoading = false
-        this._loadGoodsImgAry()
         this.step = 3
       }).catch(_ => {
         this.subLoading = false

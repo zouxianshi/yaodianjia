@@ -326,6 +326,7 @@ export default {
       this.multiselect = rows
     },
     handleUpGroup() { // 修改分组
+      this.goodsData = []
       if (this.multiselect.length === 0) {
         this.$message({
           message: '请选择商品',

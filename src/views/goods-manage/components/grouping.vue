@@ -42,7 +42,7 @@
             </template>
           </ul>
           <div class="group-details">
-            <template v-if="groups2&&groups2.length>0">
+            <template v-if="groups1&&groups1.length!==0&&groups2&&groups2.length>0">
               <div
                 v-for="(item,index) in groups2"
                 :key="index"
@@ -111,6 +111,10 @@ export default {
       default: () => {
         return []
       }
+    },
+    type: {
+      type: String,
+      default: '0'
     }
   },
   data() {
@@ -182,22 +186,30 @@ export default {
       this.chooseGroup.splice(index, 1)
     },
     handleSubmit() {
-      const params = {
-        userName: this.name,
-        typeIds: this.modelList,
-        ids: this.goodsData
-      }
-      this.subLoading = true
-      setBatchGroup(params).then(res => {
-        this.$message({
-          message: '修改成功',
-          type: 'success'
+      if (this.type === '0') { // 商品库批量修改商品
+        const params = {
+          userName: this.name,
+          typeIds: this.modelList,
+          ids: this.goodsData
+        }
+        this.subLoading = true
+        setBatchGroup(params).then(res => {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this.subLoading = false
+          this.$emit('close')
+        }).catch(() => {
+          this.subLoading = false
         })
-        this.subLoading = false
-        this.$emit('close')
-      }).catch(() => {
-        this.subLoading = false
-      })
+      } else { // 修改分组
+        const data = []
+        this.chooseGroup.map(v => {
+          data.push([v[0].id, v[1].id, v[2].id])
+        })
+        this.$emit('back', data)
+      }
     }
   }
 }
