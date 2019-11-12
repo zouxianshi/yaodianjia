@@ -190,7 +190,7 @@
                           <span class="current">
                             <span class="sign">￥</span>{{ item.price }}
                           </span>
-                          <span class="original">
+                          <span v-if="item.mprice === item.price" class="original">
                             <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
@@ -245,7 +245,7 @@
                           <span class="current">
                             <span class="sign">￥</span>{{ item.price }}
                           </span>
-                          <span class="original">
+                          <span v-if="item.price === item.mprice" class="original">
                             <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
@@ -468,7 +468,7 @@
                         <span class="current">
                           <span class="sign">￥</span>{{ goods.price }}
                         </span>
-                        <span class="original">
+                        <span v-if="goods.price === goods.mprice" class="original">
                           <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
