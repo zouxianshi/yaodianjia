@@ -32,15 +32,27 @@
         <el-table-column type="selection" align="center" width="50" />
         <el-table-column align="center" label="图片" width="120">
           <template slot-scope="scope">
+            <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
+              <div class="x-image__preview">
+                <el-image
+                  fit="scale-down"
+                  :src="showImg(scope.row.mainPic)"
+                  :preview-src-list="[scope.row.imageUrl]"
+                />
+              </div>
+            </div>
+            <div v-else style="line-height: 32px">暂无上传</div>
+          </template>
+          <!-- <template slot-scope="scope">
             <div class="img-wrap">
               <img :src="showImg(scope.row.mainPic)">
             </div>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column prop="commodityName" label="名称" align="center" min-width="150" />
-        <el-table-column prop="storeName" label="包装规格" align="center" min-width="150" />
-        <el-table-column prop="price" label="价格" align="center" min-width="150" />
-        <el-table-column prop="stock" label="库存" align="center" min-width="150" />
+        <el-table-column prop="packStandard" label="包装规格" align="center" min-width="150" />
+        <el-table-column prop="price" label="价格" align="center" width="100" />
+        <el-table-column prop="stock" label="库存" align="center" width="100" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>

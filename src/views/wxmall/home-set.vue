@@ -346,9 +346,9 @@
                   size="small"
                   style="width: 280px;"
                   placeholder="请输入主页名称"
-                  maxlength="6"
+                  maxlength="20"
                 />
-                <p class="form-notes">建议不超过6字</p>
+                <p class="form-notes">建议不超过20字</p>
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -389,7 +389,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="100" />
+                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="100" placeholder="http:// 或 https://" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -431,7 +431,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" />
+                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -519,7 +519,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm7.linkUrl" type="text" size="small" style="width: 286px;" />
+                <el-input v-model="xForm7.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -606,6 +606,15 @@ export default {
     dialogGoods
   },
   data() {
+    const checkWebsite = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入链接地址'))
+      }
+      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+        callback(new Error('请输入正确的地址'))
+      }
+      callback()
+    }
     return {
       currentRole: 'adminDashboard',
       swiperOption: {
@@ -647,7 +656,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, message: '请输入链接地址', trigger: 'blur' }
+          { required: true, validator: checkWebsite, trigger: 'blur' }
         ]
       },
       xRules5: {
@@ -655,7 +664,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, message: '请输入链接地址', trigger: 'blur' }
+          { required: true, validator: checkWebsite, trigger: 'blur' }
         ]
       },
       xRules7: {
@@ -663,13 +672,13 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, message: '请输入链接地址', trigger: 'blur' }
+          { required: true, validator: checkWebsite, trigger: 'blur' }
         ]
       },
       // 主页名称
       xForm1: {
         detail: null,
-        name: '微商城'
+        name: ''
       },
       // 轮播
       xForm2: {
@@ -776,7 +785,17 @@ export default {
     },
     setEdit(formName, position) {
       const eidtForm = this[formName]
-      if (formName === this.xFormSet.formName && position === this.xFormSet.position) {
+      if (formName === 'xForm2') {
+        this.$confirm('去设置轮播图')
+          .then(_ => {
+            this.$router.push('/wxmall/banner')
+          })
+      } else if (formName === 'xForm3') {
+        this.$confirm('去设置公告')
+          .then(_ => {
+            this.$router.push('/wxmall/banner')
+          })
+      } else if (formName === this.xFormSet.formName && position === this.xFormSet.position) {
         console.log('同一位置')
         return
       } else {
@@ -788,31 +807,22 @@ export default {
             return
           }
           this.$refs[formName].resetFields()
+          // 显示详情
+          if (formName === 'xForm1') {
+            console.log('eidtForm.detail------------', eidtForm.detail.remark)
+            this.xForm1.name = eidtForm.detail && eidtForm.detail.remark ? eidtForm.detail.remark : '微商城'
+          }
+          if (formName === 'xForm4') {
+            eidtForm.imgUrl = eidtForm.detail[position - 1].imageUrl || ''
+            eidtForm.linkUrl = eidtForm.detail[position - 1].url || ''
+          }
+          if (formName === 'xForm5' || formName === 'xForm7') {
+            eidtForm.imgUrl = eidtForm.detail.imageUrl || ''
+            eidtForm.linkUrl = eidtForm.detail.url || ''
+          }
         } else if (formName === 'xForm6' || formName === 'xForm8') {
           eidtForm.selectGoodsList = this.formatToSelectGoods(eidtForm.detail)
-        } else if (formName === 'xForm2') {
-          this.$confirm('去设置轮播图')
-            .then(_ => {
-              this.$router.push('/wxmall/banner')
-            })
-        } else if (formName === 'xForm3') {
-          this.$confirm('去设置公告')
-            .then(_ => {
-              this.$router.push('/wxmall/banner')
-            })
         }
-      }
-      // 显示详情
-      if (formName === 'xForm1') {
-        eidtForm.name = (eidtForm.detail && eidtForm.detail.remark) ? eidtForm.detail.remark || '微商城' : '微商城'
-      }
-      if (formName === 'xForm4') {
-        eidtForm.imgUrl = eidtForm.detail[position - 1].imageUrl || ''
-        eidtForm.linkUrl = eidtForm.detail[position - 1].url || ''
-      }
-      if (formName === 'xForm5' || formName === 'xForm7') {
-        eidtForm.imgUrl = eidtForm.detail.imageUrl || ''
-        eidtForm.linkUrl = eidtForm.detail.url || ''
       }
       this.xFormSet = {
         formName: formName,
@@ -969,7 +979,7 @@ export default {
           'merCode': this.merCode,
           'positionCode': positionCode,
           'productId': null,
-          'remark': '',
+          'remark': positionCode === 'I-00' ? '微商城' : '',
           'sortNumber': sortNumber,
           'startTime': '',
           'status': 0,
@@ -1046,12 +1056,6 @@ export default {
     },
     goodsSelectChange(list) {
       console.log('list', list)
-      // if (!this.couponCheck(list)) {
-      //   if (this.xForm2.bestType === '1') {
-      //     this.$message({ type: 'warning', duration: 6000, message: '最佳手气获取方式设置随机时，只能选取抵价券或现金券' })
-      //     return false
-      //   }
-      // }
       // const currentForm = this[this.xFormSet.formName]
       this[this.xFormSet.formName].selectGoodsList = list
       console.log('this[this.xFormSet.formName].selectGoodsList', this[this.xFormSet.formName].selectGoodsList)
@@ -1069,10 +1073,11 @@ export default {
         positionCode: positonCode,
         remark: '',
         sortOrder: '',
-        status: ''
+        status: 1 // integer($int32)状态0停用1启用
       }
       getPageSets(params).then(res => {
         if (res.code === '10000') {
+          const resData = res.data ? res.data.data || '' : res.data
           // positionCode:
           // I-00.主页名称, I-01.轮播图 I-02.公告
           // I-03	精彩活动一加三广告位
@@ -1083,30 +1088,29 @@ export default {
           // C-01	分类广告位
           if (positonCode === 'I-00') {
             // 主页标题
-            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
-            console.log('res-标题', res.data)
+            this.xForm1.detail = this.formatData(resData ? resData[0] : null, positonCode, 1)
+            console.log('res-标题', this.xForm1.detail)
           } else if (positonCode === 'I-01') {
             // 轮播
-            if (res.data && res.data.length > 0) {
-              this.xForm2.detail = res.data
+            if (resData && resData.length > 0) {
+              this.xForm2.detail = resData
             }
           } else if (positonCode === 'I-02') {
             // 公告
-            this.xForm3.detail = res.data
+            this.xForm3.detail = resData
           } else if (positonCode === 'I-03') {
-            console.log('res公告---', res.data)
+            console.log('res公告---', resData)
             // 活动(1+3)
             let ret = []
-            if (res.data && res.data.length > 4) { // 大于4个
-              ret = res.data.splice(0, 4)
+            if (resData && resData.length > 4) { // 大于4个
+              ret = resData.splice(0, 4)
             } else {
               for (let i = 0; i < 4; i++) {
-                if (res.data) {
-                  ret[i] = this.formatData(res.data[i] || null, positonCode, i + 1)
+                if (resData) {
+                  ret[i] = this.formatData(resData[i] || null, positonCode, i + 1)
                 } else {
                   ret[i] = this.formatData(null, positonCode, i + 1)
                 }
-
                 console.log('i---', i)
               }
             }
@@ -1119,17 +1123,17 @@ export default {
             console.log('this.xForm4', this.xForm4.detail)
           } else if (positonCode === 'I-F1-1' || positonCode === 'I-F2-1') {
             // 活动top广告
-            console.log('res 活动top广告---', res.data)
+            console.log('res 活动top广告---', resData)
             if (positonCode === 'I-F1-1') {
-              this.xForm5.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
+              this.xForm5.detail = this.formatData(resData ? resData[0] : null, positonCode, 1)
             } else {
-              this.xForm7.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
+              this.xForm7.detail = this.formatData(resData ? resData[0] : null, positonCode, 1)
             }
           } else if (positonCode === 'I-F1-2' || positonCode === 'I-F2-2') {
             // 活动分组商品
             let ret = []
-            if (res.data && res.data.length > 0) { // 有商品
-              ret = res.data
+            if (resData && resData.length > 0) { // 有商品
+              ret = resData
             } else {
               ret = []
             }
@@ -1163,8 +1167,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: '保存成功',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           // this.dialogFormVisible = false
           // 更新table
