@@ -8,7 +8,7 @@
       trigger="click"
     >
       <div class="content">
-        <el-form ref="formData" :model="infoData">
+        <el-form ref="formData" :model="infoData" @submit.native.prevent>
           <el-form-item label="" :prop="keys" :rules="{ required: true, message: '不能为空', trigger: 'blur' }">
             <el-input v-model="infoData[keys]" size="mini" placeholder="" style="width:200px" />
             <span>

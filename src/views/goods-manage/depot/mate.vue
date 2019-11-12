@@ -39,9 +39,9 @@
                 @click="handleAddGoods"
               >确认对码</el-button>
             </p>
-            <el-button
-              size="small"
-            >申请新品</el-button>
+            <a href="#/goods-manage/apply">
+              <el-button size="small">申请新品</el-button>
+            </a>
           </template>
           <template v-else-if="$route.query.from==='is_pair'">
             <el-button

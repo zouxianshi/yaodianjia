@@ -240,7 +240,7 @@ export default {
         })
         return
       }
-      this.$confirm('是否确实删除', '提示', {
+      this.$confirm('是否确认删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -253,7 +253,7 @@ export default {
       }).catch(() => {})
     },
     handleDel(row) { // 删除数据
-      this.$confirm('是否确实删除', '提示', {
+      this.$confirm('是否确认删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

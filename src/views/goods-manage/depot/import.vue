@@ -55,6 +55,7 @@
               :on-success="handleFileSuccess"
               :auto-upload="false"
               :before-upload="beforeUpload"
+              :on-change="fileChange"
             >
               <i class="el-icon-upload" />
               <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -78,7 +79,7 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-
+      is_file: false
     }
   },
   computed: {
@@ -95,15 +96,25 @@ export default {
       const type = file.name.split('.')
       if (type[1] !== 'xls') {
         this.$message({
-          message: '只能导入excel文件',
+          message: '请上传正确的模板',
           type: 'warning'
         })
+        this.is_file = false
         return false
       }
       return true
     },
     handleUpload() {
+      if (!this.is_file) {
+        this.$message({
+          message: '请上传文件',
+          type: 'warning'
+        })
+      }
       this.$refs.file.submit()
+    },
+    fileChange() {
+      this.is_file = true
     },
     handleFileSuccess(res) {
       if (res.code === '10000') {
@@ -120,6 +131,7 @@ export default {
         })
         this.$refs.file.clearFiles()
       }
+      this.is_file = false
     }
   }
 }

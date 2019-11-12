@@ -47,7 +47,11 @@
                 <el-form-item label="商品名称：" prop="name">
                   <el-input v-model="basicForm.name" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='营养保健')" prop="commonName" label="通用名：">
+                <el-form-item prop="commonName">
+                  <span slot="label">
+                    <span v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" class="tip">*</span>
+                    通用名：
+                  </span>
                   <el-input v-model="basicForm.commonName" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
                 </el-form-item>
                 <el-form-item label="所属品牌：" prop="brandId">
@@ -120,7 +124,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="剂型：">
-                    <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
+                    <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品剂型">
                       <el-option v-for="(item,index) in drug" :key="index" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
@@ -470,7 +474,11 @@ export default {
     const _checkName = (rule, value, callback) => {
       if (!value) {
         if (rule.field === 'commonName') {
-          return callback(new Error('请输入通用名'))
+          if (this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '中西药品') {
+            return callback(new Error('请输入通用名'))
+          } else {
+            callback()
+          }
         }
         return callback(new Error('请输入内容'))
       }
@@ -535,7 +543,7 @@ export default {
       },
       basicRules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-        commonName: [{ required: true, validator: _checkName, message: '请输入通用名称', trigger: 'blur' }],
+        commonName: [{ validator: _checkName, message: '请输入通用名称', trigger: 'blur' }],
         unit: [{ required: true, message: '请输入选择单位', trigger: 'change' }],
         brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }],
         weight: [

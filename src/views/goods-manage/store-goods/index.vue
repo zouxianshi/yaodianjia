@@ -344,6 +344,13 @@ export default {
       })
     },
     _loadList() {
+      if (!this.listQuery.storeId) {
+        this.$message({
+          message: '请选择门店',
+          type: 'error'
+        })
+        return
+      }
       this.loading = true
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
