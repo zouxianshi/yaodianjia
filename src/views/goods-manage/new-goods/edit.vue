@@ -436,13 +436,13 @@
         <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
       </span>
     </el-dialog>
-    <edit-group :is-show="groupVisible" :group-data="groupData" @back="handleSaveGroup" @close="groupVisible=false" />
+    <edit-group :is-show="groupVisible" :group-data="groupDataDimens" @back="handleSaveGroup" @close="groupVisible=false" />
   </div>
 </template>
 <script>
 import Tinymce from '@/components/Tinymce'
 import vueUploadImg from '@/components/ImgUpload'
-import { getTypeTree, getPreGroupList } from '@/api/group'
+import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import { getUnit, getMetering, setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
@@ -541,6 +541,7 @@ export default {
       dialogImageUrl: '',
       fileList: [],
       groupData: [], // 分组
+      groupDataDimens: [],
       goodsIntro: { // 商品信息
         content: ''
       },
@@ -774,6 +775,9 @@ export default {
             type: 'success'
           })
         }
+      })
+      getTypeDimensionList(this.$store.state.user.merCode).then(res => {
+        this.groupDataDimens = res.data
       })
     },
     handleSaveGroup(row) { // 保存数据

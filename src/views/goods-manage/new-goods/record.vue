@@ -132,7 +132,7 @@
                   <el-button type="" size="mini">查看</el-button>
                 </a>
               </template>
-              <template v-if="(scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13||scope.row.infoStatus===15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0)">
+              <template v-if="listQuery.auditStatus==='-1'||((scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13||scope.row.infoStatus===15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))">
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>

@@ -18,7 +18,7 @@ const mixin = {
   },
   watch: {
     step(val) {
-      if (val === 2 && this.basicForm.id) {
+      if (val === 2) {
         // 获取规格
         try {
           this._loadSpces() // 获取规格

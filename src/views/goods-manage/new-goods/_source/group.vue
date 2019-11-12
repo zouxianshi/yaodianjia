@@ -10,11 +10,25 @@
       :close-on-click-modal="false"
     >
       <div class="modal-body-group">
+        <div class="header">
+          <el-select
+            v-model="group_id"
+            placeholder="选择商品分类"
+            @change="handleChooseGroup"
+          >
+            <el-option
+              v-for="(item,index) in groupData"
+              :key="index"
+              :value="item.id"
+              :label="item.name"
+            />
+          </el-select>
+        </div>
         <div class="group-cnt">
           <ul class="group-list">
-            <template v-if="groupData.length!==0">
+            <template v-if="groups1&&groups1.length!==0">
               <li
-                v-for="(item,index) in groupData"
+                v-for="(item,index) in groups1"
                 :key="index"
                 class="group-item text-center"
                 :class="{'active':active_row.id===item.id}"
@@ -28,7 +42,7 @@
             </template>
           </ul>
           <div class="group-details">
-            <template v-if="groups2.length>0">
+            <template v-if="groups1&&groups1.length!==0&&groups2&&groups2.length>0">
               <div
                 v-for="(item,index) in groups2"
                 :key="index"
@@ -94,6 +108,7 @@ export default {
   },
   data() {
     return {
+      modelList: [],
       group_id: '',
       groups1: [],
       groups2: [],
@@ -111,7 +126,6 @@ export default {
         this.group_id = this.groupData[0].id
         this.handleChooseGroup(this.group_id)
         this.modelList = []
-        this.chooseGroup = []
       }
     }
   },
@@ -119,24 +133,22 @@ export default {
     handleCanle() {
       this.$emit('close')
     },
-    handleChooseGroup(val) {
+    handleChooseGroup(val) { // 第一阶分组
       this.groupData.map(res => {
         if (res.id === val) {
-          if (res.children.length > 0) {
+          this.groups1 = res.children
+          if (res.children && res.children.length > 0) {
             this.active_row = res.children[0]
             this.groups2 = res.children[0].children
           }
         }
       })
-      this.active_row = this.groupData[0]
-      this.groups2 = this.groupData[0].children
     },
     handleLeftGroup(row) { // 左侧分组点击事件
       this.active_row = row
       this.groups2 = row.children
     },
     handleCheckClk(row) { // 单个checkbox选择触发
-      console.log(row)
       if (this.modelList.includes(row.id)) {
         this.active_row.children.map(res => {
           if (row.parentId === res.id) {
