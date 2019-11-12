@@ -234,8 +234,12 @@ export default {
       if (this.listQuery.auditStatus === '-1') { // 待完善
         data.auditStatus = ''
         data.infoFlag = false
+        data.origin = 1
       } else if (this.listQuery.auditStatus === '3') { // 待提交审核
         data.infoFlag = true
+        data.origin = 0
+      } else {
+        data.origin = 0
       }
       getNewGoodsRecord(data).then(res => {
         this.loading = false
