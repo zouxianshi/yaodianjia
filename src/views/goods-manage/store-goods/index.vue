@@ -34,7 +34,7 @@
             <el-input
               v-model.trim="listQuery.manufacture"
               size="small"
-              placeholder="生产企业"
+              placeholder="商品名称"
             />
           </div>
           <div class="search-item">
@@ -42,7 +42,7 @@
             <el-input
               v-model.trim="listQuery.erpCode"
               size="small"
-              placeholder="商品编码"
+              placeholder="ERP编码"
             />
           </div>
           <div class="search-item">
@@ -50,7 +50,7 @@
             <el-input
               v-model.trim="listQuery.approvalNumber"
               size="small"
-              placeholder="商品编码"
+              placeholder="批准文号"
             />
           </div>
         </div>
@@ -60,7 +60,7 @@
             <el-input
               v-model.trim="keyword"
               size="small"
-              placeholder="商品名称"
+              placeholder="条形码"
             />
           </div>
           <div class="search-item">
@@ -68,7 +68,7 @@
             <el-input
               v-model.trim="keyword"
               size="small"
-              placeholder="商品名称"
+              placeholder="生产企业"
             />
           </div>
           <div class="search-item">

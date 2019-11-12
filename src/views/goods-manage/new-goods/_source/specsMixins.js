@@ -276,6 +276,7 @@ const mixin = {
         getSpecsProductSKU(this.basicForm.platformCode).then(res => {
           res.data.map(v => {
             v.disabled = false
+            // 标库数据回显 规格处理
             if (v.productSpecSkuDTOs) {
               if (this.dynamicProp.length === 0) {
                 v.productSpecSkuDTOs.map(vs => {
