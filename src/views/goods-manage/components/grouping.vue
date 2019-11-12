@@ -42,7 +42,7 @@
             </template>
           </ul>
           <div class="group-details">
-            <template v-if="groups2.length>0">
+            <template v-if="groups2&&groups2.length>0">
               <div
                 v-for="(item,index) in groups2"
                 :key="index"
