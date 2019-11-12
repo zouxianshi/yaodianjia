@@ -50,7 +50,7 @@
               <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="className" label="所属分类" width="150" align="center" />
+          <el-table-column prop="className" label="所属分组" width="150" align="center" />
           <el-table-column prop="img" label="图片" width="180" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
@@ -138,7 +138,7 @@
       :visible.sync="dialogFormVisible"
       width="800px"
       :close-on-click-modal="false"
-      @close="dialogClose('xForm')"
+      @closed="dialogClose('xForm')"
     >
       <div class="x-dialog-body">
         <div class="form-box">
@@ -149,7 +149,7 @@
                 filterable
                 allow-create
                 default-first-option
-                placeholder="请选择分类"
+                placeholder="请选择分组"
               >
                 <el-option
                   v-for="item in classOptions"
@@ -512,7 +512,8 @@ export default {
     _getADClass() {
       const params = {
         notTree: true,
-        level: 1
+        level: 1,
+        use: true
       }
       getADClass(params).then(res => {
         console.log('class res', res)

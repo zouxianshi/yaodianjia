@@ -37,7 +37,7 @@
                 <el-image
                   fit="scale-down"
                   :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[scope.row.imageUrl]"
+                  :preview-src-list="[scope.row.mainPic]"
                 />
               </div>
             </div>
