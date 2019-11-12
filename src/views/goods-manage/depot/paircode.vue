@@ -114,12 +114,12 @@
             min-width="120"
             label="生产企业"
           />
-          <!-- <el-table-column
+          <el-table-column
             prop="packStandard"
             align="left"
             min-width="120"
             label="规格"
-          /> -->
+          />
           <el-table-column
             prop="barCode"
             align="left"
