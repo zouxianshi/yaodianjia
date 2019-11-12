@@ -47,7 +47,7 @@
             <el-input
               v-model.trim="listQuery.approvalNumber"
               size="small"
-              placeholder="商品编码"
+              placeholder="批准文号"
             />
           </div>
           <div class="search-item">
