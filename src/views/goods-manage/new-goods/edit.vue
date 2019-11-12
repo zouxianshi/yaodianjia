@@ -220,13 +220,13 @@
                     type="selection"
                     width="55"
                   />
-                  <span v-for="(item,index) in specsForm.specs" :key="index">
-                    <el-table-column v-for="(items,index1) in item.productSpecSkuDTOs" :key="index1" :label="items.skuKeyName">
-                      <template>
-                        <span v-text="items.skuValue" />
+                  <el-table-column v-for="(items,index1) in dynamicProp" :key="index1" :label="items.name">
+                    <template slot-scope="scope">
+                      <template v-if="scope.row[items.keys]">
+                        <span v-text="scope.row[items.keys]" />
                       </template>
-                    </el-table-column>
-                  </span>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="商品编码">
                     <template slot-scope="scope">
                       <span v-text="scope.row.erpCode" />
