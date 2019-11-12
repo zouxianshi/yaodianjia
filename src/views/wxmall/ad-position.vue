@@ -34,28 +34,35 @@
               />
             </el-select>
           </div>
-          <div class="search-item">
+          <!-- <div class="search-item">
             <span class="label-name" style="width: 50px">备注</span>
             <el-input v-model.trim="searchForm.remark" size="small" style="width: 200px" />
-          </div>
+          </div> -->
           <div class="search-item">
             <el-button size="small" @click="search()">查 询</el-button>
           </div>
         </div>
       </section>
       <section class="table-box">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%" size="small">
           <el-table-column label="序号" width="60" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" width="200" align="center" />
+          <el-table-column prop="className" label="所属分类" width="150" align="center" />
           <el-table-column prop="img" label="图片" width="180" align="center">
             <template slot-scope="scope">
-              <div class="scope-img-wrap">
-                <img :src="scope.row.imageUrl">
+              <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
+                <div class="x-image__preview">
+                  <el-image
+                    fit="scale-down"
+                    :src="scope.row.imageUrl"
+                    :preview-src-list="[scope.row.imageUrl]"
+                  />
+                </div>
               </div>
+              <div v-else style="line-height: 32px">暂未上传</div>
             </template>
           </el-table-column>
           <el-table-column prop="url" label="链接地址" min-width="240" />
@@ -64,23 +71,55 @@
           <el-table-column label="状态" width="100" align="center">
             >
             <template slot-scope="scope">
-              <span v-if="scope.row.status=='1'">正常</span>
-              <span v-if="scope.row.status=='0'">停用</span>
+              <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
+              <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="240">
             <template slot-scope="scope">
-              <el-button type="primary" size="small" @click.stop="handleEdit(scope.row)">编辑</el-button>
-              <el-button type="danger" size="small" @click.stop="handleChangeStatus(scope.row)">
-                <span v-if="scope.row.status==1">停用</span>
-                <span v-if="scope.row.status==0">启用</span>
-              </el-button>
-              <el-button type="danger" size="small" @click.stop="handleDel(scope.row)">删除</el-button>
+              <el-button
+                slot="reference"
+                title="编辑"
+                icon="el-icon-edit"
+                type="primary"
+                circle
+                size="mini"
+                @click="handleEdit(scope.row)"
+              />
+              <el-button
+                v-if="scope.row.status===0"
+                slot="reference"
+                title="启用"
+                type="success"
+                icon="el-icon-coordinate"
+                circle
+                size="mini"
+                @click="handleChangeStatus(scope.row)"
+              />
+              <el-button
+                v-if="scope.row.status===1"
+                slot="reference"
+                title="停用"
+                type="warning"
+                icon="el-icon-coordinate"
+                circle
+                size="mini"
+                @click="handleChangeStatus(scope.row)"
+              />
+              <el-button
+                slot="reference"
+                title="删除"
+                type="danger"
+                icon="el-icon-delete"
+                circle
+                size="mini"
+                @click="handleDel(scope.row)"
+              />
             </template>
           </el-table-column>
         </el-table>
       </section>
-      <!-- <section class="c-footer">
+      <section class="c-footer">
         <el-pagination
           background
           :current-page="pager.current"
@@ -91,10 +130,10 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
-      </section>-->
+      </section>
     </div>
     <el-dialog
-      :title="`${xForm.id==''? '添加':'修改'}分列广告`"
+      :title="`${xForm.id==''? '添加':'修改'}分类广告`"
       append-to-body
       :visible.sync="dialogFormVisible"
       width="800px"
@@ -104,7 +143,7 @@
       <div class="x-dialog-body">
         <div class="form-box">
           <el-form ref="xForm" :model="xForm" :rules="xRules">
-            <el-form-item label="所属分类" :label-width="formLabelWidth" prop="classId">
+            <el-form-item label="所属分组" :label-width="formLabelWidth" prop="classId">
               <el-select
                 v-model="xForm.classId"
                 filterable
@@ -168,7 +207,7 @@
             <label style="font-weight: bold">内容位置：</label> 分类-广告
           </p>
           <div class="prview-pic">
-            <img src="../../assets/image/h5/priview_1.png" style="width:100%;height:100%">
+            <img src="../../assets/image/h5/priview_3.jpg" style="width:100%;height:100%">
           </div>
         </div>
       </div>
@@ -196,13 +235,18 @@ import config from '../../utils/config'
 export default {
   name: 'ADPosition',
   data() {
-    const checkNum = (rule, value, callback) => {
-      console.log('rule', rule)
+    const checkWebsite = (rule, value, callback) => {
+      console.log('value', value)
       if (value === '') {
-        callback(new Error('请输入序号'))
+        callback(new Error('请输入链接地址'))
       }
-      if (/[^1-9]/.test(value)) {
-        console.log(1111)
+      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+        callback(new Error('请输入正确的地址'))
+      }
+      callback()
+    }
+    const checkNum = (rule, value, callback) => {
+      if (value !== '' && !/^[1-9]([0-9])*$/.test(value)) {
         callback(new Error('请输入正整数'))
       }
       callback()
@@ -221,7 +265,7 @@ export default {
       positionCode: 'C-01',
       statusOptions: [
         { id: 1, label: '全部', value: '' },
-        { id: 2, label: '使用', value: '1' },
+        { id: 2, label: '正常', value: '1' },
         { id: 3, label: '停用', value: '0' }
       ],
       searchForm: {
@@ -234,7 +278,7 @@ export default {
       pager: {
         current: 1,
         size: 10,
-        total: 200
+        total: 0
       },
       dialogFormVisible: false,
       classOptions: [],
@@ -250,19 +294,19 @@ export default {
       },
       xRules: {
         classId: [
-          { required: true, message: '请选择分类', trigger: 'blur' }
+          { required: true, message: '请选择分组', trigger: 'blur' }
         ],
         imgUrl: [
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, message: '请输入链接地址', trigger: 'blur' }
+          { required: true, validator: checkWebsite, trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
         ],
         sort: [
-          { required: true, validator: checkNum, trigger: 'blur' }
+          { validator: checkNum, trigger: 'blur' }
         ]
       },
       editDetail: null, // 编辑详情
@@ -395,7 +439,12 @@ export default {
       })
     },
     handleUploadSuccess(res, file) {
-      this.xForm.imgUrl = res.data || ''
+      if (res.code === '10000') {
+        this.xForm.imgUrl = res.data || ''
+        this.$refs.xForm.validate()
+      } else {
+        this.$message.error('上传失败!')
+      }
     },
     beforeUpload(file) {
       const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
@@ -418,14 +467,16 @@ export default {
         endTime: this.searchForm.timeEnd,
         positionCode: this.positionCode,
         remark: this.searchForm.remark,
-        sortOrder: 1,
+        sortOrder: 0,
         status: this.searchForm.status,
         currentPage: this.pager.current,
-        pageSize: this.pager.size
+        pageSize: this.pager.size,
+        pageFlag: true
       }
       getPageSets(params).then(res => {
         if (res.code === '10000') {
-          this.tableData = res.data || []
+          this.tableData = res.data.data || []
+          this.pager.total = res.data.totalCount
         } else {
           this.$message({
             message: res.msg,
@@ -460,8 +511,8 @@ export default {
     // 获取广告分类
     _getADClass() {
       const params = {
-        merCode: this.merCode,
-        useStatus: 1
+        notTree: true,
+        level: 1
       }
       getADClass(params).then(res => {
         console.log('class res', res)
@@ -498,8 +549,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: '新增成功',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           this.dialogFormVisible = false
           // 更新table
@@ -525,7 +575,7 @@ export default {
         merCode: '',
         positionCode: this.positionCode,
         remark: this.xForm.remark,
-        productId: '', // 2-03 类型必填
+        productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
@@ -534,8 +584,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: '修改成功',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           this.dialogFormVisible = false
           // 更新table
@@ -558,8 +607,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: '删除成功',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           // 更新列表
           this._getTableData()
@@ -585,8 +633,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: row.status === 1 ? '已停用' : '已启用',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           // 更新列表
           this._getTableData()

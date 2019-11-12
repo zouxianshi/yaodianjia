@@ -128,3 +128,19 @@ export function getSelfSpecsInfo(commodityId) {
     data: { commodityId: commodityId }
   })
 }
+
+// 获取单位
+export function getUnit() {
+  return request({
+    url: `${config.merchandise}/1.0/code/unit`,
+    method: 'get'
+  })
+}
+
+// 获取剂型
+export function getMetering() {
+  return request({
+    url: `${config.merchandise}/1.0/code/dosage-form`,
+    method: 'get'
+  })
+}

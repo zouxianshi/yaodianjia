@@ -23,7 +23,7 @@
         </el-steps>
       </div>
       <div v-loading="loading" class="step-content">
-        <el-cascader-panel v-model="chooseList" :props="defaultProps" :options="typeList" @change="handleChoose" />
+        <el-cascader-panel v-model="chooseList" :options="typeList" :props="defaultProps" @change="handleChoose" />
         <el-card style="width:600px;margin-top:12px;">
           <span>您当前选择的是：</span> <span v-if="chooseTypeList.length!==0">{{ chooseTypeList[0].name }}>{{ chooseTypeList[1]?chooseTypeList[1].name:'' }}>{{ chooseTypeList[2]?chooseTypeList[2].name:'' }}</span>
         </el-card>
@@ -40,12 +40,36 @@ import { mapGetters } from 'vuex'
 export default {
   mixins: [minxis],
   data() {
+    const _this = this
     return {
       active: 0,
       defaultProps: {
+        // lazy: true,
         children: 'children',
         label: 'name',
-        value: 'id'
+        value: 'id',
+        lazyLoad(node, resolve) {
+          const { level, data } = node
+          // setTimeout(() => {
+          //   const nodes = Array.from({ length: level + 1 })
+          //     .map(item => ({
+          //       value: ++id,
+          //       label: `选项${id}`,
+          //       leaf: level >= 2
+          //     }));
+          //   // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+          //   resolve(nodes);
+          // }, 1000);
+          if (level === 0) {
+            _this._loadClassList('').then(res => {
+              resolve(res.data)
+            })
+          } else {
+            _this._loadClassList(data.id).then(res => {
+              resolve(res.data)
+            })
+          }
+        }
       },
       choose: [],
       loading: false

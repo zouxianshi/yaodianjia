@@ -15,6 +15,14 @@ router.beforeEach(async(to, from, next) => {
   // set page title
   document.title = getPageTitle(to.meta.title)
   const hasToken = getToken()
+
+  // 加入百度统计
+  if (to.path) {
+    if (window._hmt) {
+      window._hmt.push(['_trackPageview', '/#' + to.fullPath])
+    }
+  }
+
   // const hasToken = true
   if (hasToken) {
     if (to.path === '/login') {

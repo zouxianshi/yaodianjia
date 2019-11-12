@@ -5,7 +5,7 @@
         <ul class="product-box">
           <li class="product-list">
             <p class="title">当前产品</p>
-            <p v-if="pairData.platformCode" class="title">ERP编码：{{ pairData.platformCode }}</p>
+            <p v-if="pairData.erpCode" class="title">ERP编码：{{ pairData.erpCode }}</p>
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-text="pairData.name" /></p>
@@ -18,14 +18,14 @@
           <li class="product-list">
             <p class="title">
               当前所选药店加平台库产品</p>
-            <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p>
+            <!-- <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p> -->
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-text="currentRow.name" /></p>
-              <p>规格：<span v-text="currentRow.packStandard" /></p>
-              <p>企业：<span v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-text="currentRow.approvalNumber" /></p>
+              <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
+              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
+              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
@@ -53,7 +53,7 @@
           </template>
         </div>
       </div>
-      <div class="search-box">
+      <div class="search-box" @keydown.enter="checkAdult">
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">商品名称：</span>
@@ -90,11 +90,8 @@
             />
           </div>
           <div class="search-item">
-            <el-button
-              type="primary"
-              size="small"
-              @click="checkAdult"
-            >查询</el-button>
+            <el-button type="primary" size="small" @click="checkAdult">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </div>
@@ -174,7 +171,10 @@ export default {
     }
     return {
       searchForm: {
-        name: ''
+        name: '',
+        barCode: '',
+        manufacture: '',
+        approvalNumber: ''
       },
       total: 0,
       loading: false,
@@ -202,6 +202,15 @@ export default {
     this.pairData = JSON.parse(data)
   },
   methods: {
+    resetQuery() {
+      this.searchForm = {
+        name: '',
+        barCode: '',
+        manufacture: '',
+        approvalNumber: ''
+      }
+      this.checkAdult()
+    },
     _loadMatchList() {
       this.loading = true
       getMatchList(this.$route.query.id).then(res => {
@@ -249,7 +258,6 @@ export default {
       this.currentRow = val
     },
     handleAddGoods() { // 确定对码
-      this.subLoading = true
       if (!this.currentRow.id) {
         this.$message({
           message: '未选择任何商品',
@@ -257,6 +265,7 @@ export default {
         })
         return
       }
+      this.subLoading = true
       const data = {
         'id': this.$route.query.id,
         'productIds': [
@@ -284,8 +293,8 @@ export default {
         return
       }
       const data = {
-        id: this.currentRow.id,
-        productId: this.currentRow.productId,
+        id: this.$route.query.id,
+        productId: this.currentRow.id,
         userName: this.name
       }
       this.$confirm(`是否确定从${this.isMate.name}更改为${this.currentRow.name}`, '提示', {
@@ -370,6 +379,11 @@ export default {
   height: 101%;
   .mate-info {
     display: flex;
+  }
+  .yellow-bg{
+    background: yellow;
+    display: inline-block;
+    padding:5px;
   }
   .product-box {
     display: flex;

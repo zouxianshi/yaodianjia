@@ -8,6 +8,7 @@ import Layout from '@/layout'
 /* Router Modules */
 import routeZ from './modules/router-z'
 import routeX from './modules/router-x'
+import routeR from './modules/router-r'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -67,7 +68,8 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   ...routeZ,
-  ...routeX
+  ...routeX,
+  ...routeR
 ]
 
 const createRouter = () => new Router({

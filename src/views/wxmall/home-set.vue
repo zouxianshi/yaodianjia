@@ -180,18 +180,18 @@
                     @someSwiperEvent="swiperCallback"
                   >
                     <!-- slides -->
-                    <template v-if="xForm6.detail && xForm6.detail.length">
-                      <swiper-slide v-for="item in xForm6.detail" :key="item.id" class="goods-item">
+                    <template v-if="xForm6.detail && xForm6.detail.length>0">
+                      <swiper-slide v-for="item in xForm6.detail" :key="item.productId" class="goods-item">
                         <div class="cover-box">
-                          <img :src="item.imageUrl">
+                          <div class="cover" :style="`background: url('${showImg(item.imageUrl)}')`" />
                         </div>
                         <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
                           <span class="current">
-                            <span class="sign">￥</span>179
+                            <span class="sign">￥</span>{{ item.price }}
                           </span>
                           <span class="original">
-                            <span class="sign">￥</span>268
+                            <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
                       </swiper-slide>
@@ -235,18 +235,18 @@
                     @someSwiperEvent="swiperCallback"
                   >
                     <!-- slides -->
-                    <template v-if="xForm8.detail && xForm8.detail.length">
-                      <swiper-slide v-for="item in xForm8.detail" :key="item.id" class="goods-item">
+                    <template v-if="xForm8.detail && xForm8.detail.length>0">
+                      <swiper-slide v-for="item in xForm8.detail" :key="item.productId" class="goods-item">
                         <div class="cover-box">
-                          <img :src="item.imageUrl">
+                          <div class="cover" :style="`background: url('${showImg(item.imageUrl)}')`" />
                         </div>
                         <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
                           <span class="current">
-                            <span class="sign">￥</span>179
+                            <span class="sign">￥</span>{{ item.price }}
                           </span>
                           <span class="original">
-                            <span class="sign">￥</span>268
+                            <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
                       </swiper-slide>
@@ -346,9 +346,9 @@
                   size="small"
                   style="width: 280px;"
                   placeholder="请输入主页名称"
-                  maxlength="6"
+                  maxlength="20"
                 />
-                <p class="form-notes">建议不超过6字</p>
+                <p class="form-notes">建议不超过20字</p>
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -389,7 +389,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="100" />
+                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="100" placeholder="http:// 或 https://" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -431,7 +431,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" />
+                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -445,7 +445,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1120px">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
           <div class="m-header">
             <span class="text">分组商品图片</span>
             <!-- <span class="text">右1图片</span> -->
@@ -457,25 +457,25 @@
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸1:1.2</p>
                 <ul class="m-goods-list">
-                  <template v-if="xForm6.detail && xForm6.detail.length>0">
-                    <li v-for="(item, index) in xForm6.detail" :key="index" class="goods-item">
+                  <template v-if="xForm6.selectGoodsList && xForm6.selectGoodsList.length>0">
+                    <li v-for="(goods, $index) in xForm6.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
-                        <div class="cover" />
-                        <div class="btn-remove" />
+                        <div class="cover" :style="`background: url('${goods.picUrl}')`" />
+                        <div class="btn-remove" @click.stop="removeGoods($index, 'xForm6')" />
                       </div>
-                      <div class="caption">修正VE软胶</div>
+                      <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
                       <div class="price">
                         <span class="current">
-                          <span class="sign">￥</span>138
+                          <span class="sign">￥</span>{{ goods.price }}
                         </span>
                         <span class="original">
-                          <span class="sign">￥</span>268
+                          <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
                     </li>
                   </template>
-                  <li class="goods-item item-add">
-                    <div class="icon-add" @click.stop="toSelectGoods" />
+                  <li class="goods-item item-add" @click.stop="toSelectGoods">
+                    <div class="icon-add" />
                   </li>
                 </ul>
               </div>
@@ -519,7 +519,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm6.linkUrl" type="text" size="small" style="width: 286px;" />
+                <el-input v-model="xForm7.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -533,7 +533,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1300px">
+        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
           <div class="m-header">
             <span class="text">分组商品图片2</span>
             <!-- <span class="text">右1图片</span> -->
@@ -545,25 +545,25 @@
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸1:1.2</p>
                 <ul class="m-goods-list">
-                  <template v-if="xForm8.detail && xForm8.detail.length>0">
-                    <li v-for="(item, index) in xForm8.detail" :key="index" class="goods-item">
+                  <template v-if="xForm8.selectGoodsList && xForm8.selectGoodsList.length>0">
+                    <li v-for="(goods, $index) in xForm8.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
-                        <div class="cover" />
-                        <div class="btn-remove" />
+                        <div class="cover" :style="`background: url('${showImg(goods.mainPic)}')`" />
+                        <div class="btn-remove" @click.stop="removeGoods($index, 'xForm8')" />
                       </div>
-                      <div class="caption">修正VE软胶</div>
+                      <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
                       <div class="price">
                         <span class="current">
-                          <span class="sign">￥</span>138
+                          <span class="sign">￥</span>{{ goods.price }}
                         </span>
                         <span class="original">
-                          <span class="sign">￥</span>268
+                          <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
                     </li>
                   </template>
-                  <li class="goods-item item-add">
-                    <div class="icon-add" @click.stop="toSelectGoods" />
+                  <li class="goods-item item-add" @click.stop="toSelectGoods">
+                    <div class="icon-add" />
                   </li>
                 </ul>
               </div>
@@ -574,7 +574,7 @@
                 class="btn-submit"
                 plain
                 size="small"
-                @click="submitForm('xForm6')"
+                @click="submitForm('xForm8')"
               >提交</el-button>
             </div>
           </div>
@@ -584,8 +584,8 @@
         <el-button type="primary" @click.stop="submitSettings()">保存</el-button>
       </div>
     </div>
-    <!--弹窗--上线门店-->
-    <dialog-goods ref="goodsDialog" :list="[]" @confirm="goodsSelectChange" />
+    <!--弹窗--商品选取-->
+    <dialog-goods ref="goodsDialog" :list="currentSelectList" @confirm="goodsSelectChange" />
   </div>
 </template>
 
@@ -606,6 +606,15 @@ export default {
     dialogGoods
   },
   data() {
+    const checkWebsite = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入链接地址'))
+      }
+      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+        callback(new Error('请输入正确的地址'))
+      }
+      callback()
+    }
     return {
       currentRole: 'adminDashboard',
       swiperOption: {
@@ -647,7 +656,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, message: '请输入链接地址', trigger: 'blur' }
+          { required: true, validator: checkWebsite, trigger: 'blur' }
         ]
       },
       xRules5: {
@@ -655,7 +664,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, message: '请输入链接地址', trigger: 'blur' }
+          { required: true, validator: checkWebsite, trigger: 'blur' }
         ]
       },
       xRules7: {
@@ -663,13 +672,13 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, message: '请输入链接地址', trigger: 'blur' }
+          { required: true, validator: checkWebsite, trigger: 'blur' }
         ]
       },
       // 主页名称
       xForm1: {
         detail: null,
-        name: '微商城'
+        name: ''
       },
       // 轮播
       xForm2: {
@@ -734,6 +743,15 @@ export default {
     },
     headers() {
       return { 'Authorization': this.$store.getters.token }
+    },
+    currentSelectList() {
+      if (this.xFormSet.formName === 'xForm6') {
+        return this.xForm6.selectGoodsList
+      }
+      if (this.xFormSet.formName === 'xForm8') {
+        return this.xForm8.selectGoodsList
+      }
+      return []
     }
   },
   created() {
@@ -767,31 +785,44 @@ export default {
     },
     setEdit(formName, position) {
       const eidtForm = this[formName]
-      if (formName === this.xFormSet.formName && position === this.xFormSet.position) {
+      if (formName === 'xForm2') {
+        this.$confirm('去设置轮播图')
+          .then(_ => {
+            this.$router.push('/wxmall/banner')
+          })
+      } else if (formName === 'xForm3') {
+        this.$confirm('去设置公告')
+          .then(_ => {
+            this.$router.push('/wxmall/banner')
+          })
+      } else if (formName === this.xFormSet.formName && position === this.xFormSet.position) {
         console.log('同一位置')
         return
       } else {
         // reset 表单验证
-        if (formName === 'xForm1' || formName === 'xForm4' || formName === 'xForm5') {
+        if (formName === 'xForm1' || formName === 'xForm4' || formName === 'xForm5' || formName === 'xForm7') {
+          // 检测数据是否正常
+          if (eidtForm.detail === null) { // 即获取初始数据失败{
+            this.$message.warning('数据异常，请稍后重试')
+            return
+          }
           this.$refs[formName].resetFields()
+          // 显示详情
+          if (formName === 'xForm1') {
+            console.log('eidtForm.detail------------', eidtForm.detail.remark)
+            this.xForm1.name = eidtForm.detail && eidtForm.detail.remark ? eidtForm.detail.remark : '微商城'
+          }
+          if (formName === 'xForm4') {
+            eidtForm.imgUrl = eidtForm.detail[position - 1].imageUrl || ''
+            eidtForm.linkUrl = eidtForm.detail[position - 1].url || ''
+          }
+          if (formName === 'xForm5' || formName === 'xForm7') {
+            eidtForm.imgUrl = eidtForm.detail.imageUrl || ''
+            eidtForm.linkUrl = eidtForm.detail.url || ''
+          }
+        } else if (formName === 'xForm6' || formName === 'xForm8') {
+          eidtForm.selectGoodsList = this.formatToSelectGoods(eidtForm.detail)
         }
-      }
-      // 检测数据是否正常
-      if (eidtForm.detail === null) { // 即获取初始数据失败{
-        alert('数据异常，请稍后重试')
-        return
-      }
-      // 显示详情
-      if (formName === 'xForm1') {
-        eidtForm.name = (eidtForm.detail && eidtForm.detail.remark) ? eidtForm.detail.remark || '微商城' : '微商城'
-      }
-      if (formName === 'xForm4') {
-        eidtForm.imgUrl = eidtForm.detail[position - 1].imageUrl || ''
-        eidtForm.linkUrl = eidtForm.detail[position - 1].url || ''
-      }
-      if (formName === 'xForm5') {
-        eidtForm.imgUrl = eidtForm.detail.imageUrl || ''
-        eidtForm.linkUrl = eidtForm.detail.url || ''
       }
       this.xFormSet = {
         formName: formName,
@@ -801,17 +832,27 @@ export default {
       console.log('eidtForm', this[formName])
     },
     submitForm(formName) {
-      if (formName === 'xForm6') {
+      const submitForm = this[formName]
+      if (formName === 'xForm6' || formName === 'xForm8') {
         console.log(this.selectGoodsList)
-        if (this.xForm6.selectGoodsList.length === 0) {
-          alert('请选取分组商品')
+        if (submitForm.selectGoodsList.length === 0) {
+          this.$message.warning('请选取分组商品')
         }
-        this.xForm6.detail = this.xForm6.selectGoodsList
+        let positionCode = 'I-F1-2'
+        if (formName === 'xForm8') {
+          positionCode = 'I-F2-2'
+        }
+        submitForm.detail = this.formatGoodsData(submitForm.selectGoodsList, positionCode)
+        console.log('submitForm.detail', submitForm.detail)
+        // 重置选中
+        this.xFormSet = {
+          formName: '',
+          position: ''
+        }
       } else {
         // 表单验证
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            const submitForm = this[formName]
             if (formName === 'xForm1') {
               // 表单验证..
               submitForm.detail.remark = submitForm.name
@@ -821,10 +862,15 @@ export default {
               submitForm.detail[this.xFormSet.position - 1].imageUrl = submitForm.imgUrl
               submitForm.detail[this.xFormSet.position - 1].url = submitForm.linkUrl
             }
-            if (formName === 'xForm5') {
+            if (formName === 'xForm5' || formName === 'xForm7') {
               // 表单验证..
               submitForm.detail.imageUrl = submitForm.imgUrl
               submitForm.detail.url = submitForm.linkUrl
+            }
+            // 重置选中
+            this.xFormSet = {
+              formName: '',
+              position: ''
             }
           } else {
             console.log('error submit!!')
@@ -850,14 +896,74 @@ export default {
       if (this.xForm5.detail && this.xForm5.detail.imageUrl !== '') {
         ret.push(this.xForm5.detail)
       }
+      if (this.xForm7.detail && this.xForm7.detail.imageUrl !== '') {
+        ret.push(this.xForm7.detail)
+      }
       if (this.xForm6.detail && this.xForm6.detail.length > 0) {
         // 剔除空数据
         if (this.xForm6.detail && this.xForm6.detail.length > 0) {
           ret = ret.concat(this.xForm6.detail)
         }
       }
+      if (this.xForm8.detail && this.xForm8.detail.length > 0) {
+        // 剔除空数据
+        if (this.xForm8.detail && this.xForm8.detail.length > 0) {
+          ret = ret.concat(this.xForm8.detail)
+        }
+      }
       // 提交数据
       this._mutilAddPageSet(ret)
+    },
+    formatGoodsData(list, positionCode) {
+      const detailList = list.map((v, i) => {
+        const goodItem = {
+          announcement: '',
+          classId: '',
+          createName: '',
+          endTime: '',
+          id: '',
+          imageUrl: v.mainPic,
+          merCode: this.merCode,
+          positionCode: positionCode,
+          productId: v.commodityId,
+          remark: v.commodityName,
+          sortNumber: i + 1,
+          startTime: '',
+          status: 0,
+          url: '',
+          productName: v.commodityName,
+          mprice: v.mprice,
+          price: v.price
+        }
+        return goodItem
+      })
+      return detailList
+    },
+    formatToSelectGoods(list, positionCode) {
+      const selectList = list.map((v, i) => {
+        const selectItem = {
+          barCode: '',
+          commodityId: v.productId,
+          commodityName: v.productName,
+          erpCode: '',
+          id: '',
+          lockFlag: 0,
+          mainPic: v.imageUrl,
+          matchStatus: null,
+          mprice: v.mprice,
+          packStandard: '',
+          picUrl: v.imageUrl,
+          price: v.price,
+          specId: null,
+          specSkuList: null,
+          status: 1,
+          stock: '0',
+          unlockTime: null,
+          unlockType: 0
+        }
+        return selectItem
+      })
+      return selectList
     },
     formatData(data, positionCode, sortNumber) {
       if (data) {
@@ -873,7 +979,7 @@ export default {
           'merCode': this.merCode,
           'positionCode': positionCode,
           'productId': null,
-          'remark': '',
+          'remark': positionCode === 'I-00' ? '微商城' : '',
           'sortNumber': sortNumber,
           'startTime': '',
           'status': 0,
@@ -882,7 +988,6 @@ export default {
         return detail
       }
     },
-
     // h5-app
     swiperCallback(event) {
       console.log('event', event)
@@ -893,8 +998,8 @@ export default {
       console.log('file', file)
       if (this.xFormSet.formName === 'xForm4') {
         this.xForm4.imgUrl = res.data
-      } else if (this.xFormSet.formName === 'xForm5') {
-        this.xForm5.imgUrl = res.data
+      } else if (this.xFormSet.formName === 'xForm5' || this.xFormSet.formName === 'xForm7') {
+        this[this.xFormSet.formName].imgUrl = res.data
       }
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
@@ -941,19 +1046,20 @@ export default {
       }
       return isType && isLt2M
     },
-    // 选取优惠券
+    // 选取商品
     toSelectGoods() {
       this.$refs.goodsDialog.open()
     },
+    // 移除商品
+    removeGoods(index, formName) {
+      this[formName].selectGoodsList.splice(index, 1)
+    },
     goodsSelectChange(list) {
       console.log('list', list)
-      // if (!this.couponCheck(list)) {
-      //   if (this.xForm2.bestType === '1') {
-      //     this.$message({ type: 'warning', duration: 6000, message: '最佳手气获取方式设置随机时，只能选取抵价券或现金券' })
-      //     return false
-      //   }
-      // }
-      this.xForm6.selectGoodsList = list
+      // const currentForm = this[this.xFormSet.formName]
+      this[this.xFormSet.formName].selectGoodsList = list
+      console.log('this[this.xFormSet.formName].selectGoodsList', this[this.xFormSet.formName].selectGoodsList)
+      console.log('this[this.xFormSet.formName].selectGoodsList', this['xForm8'].selectGoodsList)
       this.$refs.goodsDialog.close()
       // this.xForm2.couponList = list
     },
@@ -967,10 +1073,11 @@ export default {
         positionCode: positonCode,
         remark: '',
         sortOrder: '',
-        status: ''
+        status: 1 // integer($int32)状态0停用1启用
       }
       getPageSets(params).then(res => {
         if (res.code === '10000') {
+          const resData = res.data ? res.data.data || '' : res.data
           // positionCode:
           // I-00.主页名称, I-01.轮播图 I-02.公告
           // I-03	精彩活动一加三广告位
@@ -981,30 +1088,29 @@ export default {
           // C-01	分类广告位
           if (positonCode === 'I-00') {
             // 主页标题
-            this.xForm1.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
-            console.log('res-标题', res.data)
+            this.xForm1.detail = this.formatData(resData ? resData[0] : null, positonCode, 1)
+            console.log('res-标题', this.xForm1.detail)
           } else if (positonCode === 'I-01') {
             // 轮播
-            if (res.data && res.data.length > 0) {
-              this.xForm2.detail = res.data
+            if (resData && resData.length > 0) {
+              this.xForm2.detail = resData
             }
           } else if (positonCode === 'I-02') {
             // 公告
-            this.xForm3.detail = res.data
+            this.xForm3.detail = resData
           } else if (positonCode === 'I-03') {
-            console.log('res公告---', res.data)
+            console.log('res公告---', resData)
             // 活动(1+3)
             let ret = []
-            if (res.data && res.data.length > 4) { // 大于4个
-              ret = res.data.splice(0, 4)
+            if (resData && resData.length > 4) { // 大于4个
+              ret = resData.splice(0, 4)
             } else {
               for (let i = 0; i < 4; i++) {
-                if (res.data) {
-                  ret[i] = this.formatData(res.data[i] || null, positonCode, i + 1)
+                if (resData) {
+                  ret[i] = this.formatData(resData[i] || null, positonCode, i + 1)
                 } else {
                   ret[i] = this.formatData(null, positonCode, i + 1)
                 }
-
                 console.log('i---', i)
               }
             }
@@ -1017,17 +1123,17 @@ export default {
             console.log('this.xForm4', this.xForm4.detail)
           } else if (positonCode === 'I-F1-1' || positonCode === 'I-F2-1') {
             // 活动top广告
-            console.log('res 活动top广告---', res.data)
+            console.log('res 活动top广告---', resData)
             if (positonCode === 'I-F1-1') {
-              this.xForm5.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
+              this.xForm5.detail = this.formatData(resData ? resData[0] : null, positonCode, 1)
             } else {
-              this.xForm7.detail = this.formatData(res.data ? res.data[0] : null, positonCode, 1)
+              this.xForm7.detail = this.formatData(resData ? resData[0] : null, positonCode, 1)
             }
           } else if (positonCode === 'I-F1-2' || positonCode === 'I-F2-2') {
             // 活动分组商品
             let ret = []
-            if (res.data && res.data.length > 0) { // 有商品
-              ret = res.data
+            if (resData && resData.length > 0) { // 有商品
+              ret = resData
             } else {
               ret = []
             }
@@ -1049,7 +1155,7 @@ export default {
     },
     _mutilAddPageSet(ret) {
       if (ret.length === 0) {
-        alert('请提交修改数据')
+        this.$message.warning('请提交修改数据')
         return
       }
       console.log('ret', ret)
@@ -1061,8 +1167,7 @@ export default {
         if (res.code === '10000') {
           this.$message({
             message: '保存成功',
-            type: 'success',
-            duration: 5 * 1000
+            type: 'success'
           })
           // this.dialogFormVisible = false
           // 更新table
@@ -1121,7 +1226,7 @@ export default {
 .h5-app {
   flex: 0 0 auto;
   width: 375px;
-  //height: 712px;
+  height: 2218px;
   border: 1px solid #dedede;
   background: #f2f2f2;
   box-sizing: border-box;
@@ -1660,8 +1765,7 @@ export default {
             .cover-box {
               width: 100%;
               height: 108px;
-              // background: rgba(249, 249, 249, 1);
-              background: burlywood;
+              background: $bg-cover;
               border-radius: 5px;
               border-radius: 5px;
               .cover {

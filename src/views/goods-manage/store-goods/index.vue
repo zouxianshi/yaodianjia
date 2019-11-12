@@ -21,8 +21,6 @@
             <el-select
               v-model="listQuery.storeId"
               filterable
-              remote
-              reserve-keyword
               placeholder="请输入关键词"
               :remote-method="remoteMethod"
               :loading="selectloading"
@@ -86,13 +84,9 @@
             />
           </div>
           <div class="search-item">
-            <el-button
-              type=""
-              size="small"
-              @click="_loadList"
-            >查询</el-button>
+            <el-button type="primary" size="small" @click="_loadList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
-          <div class="search-item" />
         </div>
       </section>
       <div class="table-box">
@@ -307,7 +301,8 @@ export default {
         'manufacture': '',
         'name': '',
         'storeId': '',
-        'status': 1
+        'status': 1,
+        'auditStatus': 1
       },
       storeList: [],
       groupId: '',
@@ -325,15 +320,31 @@ export default {
     this._loadTypeList()
   },
   methods: {
+    resetQuery() {
+      this.listQuery = {
+        'approvalNumber': '',
+        'barCode': '',
+        'erpCode': '',
+        'groupId': '',
+        'manufacture': '',
+        'name': '',
+        'storeId': '',
+        'status': this.listQuery.status,
+        'auditStatus': this.listQuery.auditStatus
+      }
+      this.getList()
+    },
     getList() {
       this._loadStoreList().then(res => {
-        this.loading = true
-        this.listQuery.storeId = res[0] ? res[0].id : ''
-        this.chooseStore = res[0]
-        this._loadList()
+        if (res) {
+          this.listQuery.storeId = res[0] ? res[0].id : ''
+          this.chooseStore = res[0]
+          this._loadList()
+        }
       })
     },
     _loadList() {
+      this.loading = true
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
@@ -369,7 +380,6 @@ export default {
     },
     remoteMethod(val) {
       this.selectloading = true
-      console.log(val)
     },
     handleChangeStore(val) { // 门店选择改变时触发
       this.storeList.map(v => {
@@ -377,6 +387,7 @@ export default {
           this.chooseStore = v
         }
       })
+      this._loadList()
     },
     handleLock() {
       if (this.multipleSelection.length === 0) {

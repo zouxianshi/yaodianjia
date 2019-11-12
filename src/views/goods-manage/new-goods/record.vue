@@ -2,11 +2,13 @@
   <div class="app-container">
     <div class="record-wrapper">
       <el-radio-group
-        v-model="listQuquery.auditStatus"
+        v-model="listQuery.auditStatus"
         size="small"
         @change="getList"
       >
         <el-radio-button label="">全部</el-radio-button>
+        <el-radio-button label="-1">待完善</el-radio-button>
+        <el-radio-button label="3">待提交审核</el-radio-button>
         <el-radio-button label="2">待审核</el-radio-button>
         <el-radio-button label="1">已通过</el-radio-button>
         <el-radio-button label="0">已拒绝</el-radio-button>
@@ -19,7 +21,7 @@
           <div class="search-item">
             <span class="label-name">商品信息</span>
             <el-input
-              v-model.trim="listQuquery.name"
+              v-model.trim="listQuery.name"
               size="small"
               placeholder="商品名称"
             />
@@ -27,7 +29,7 @@
           <div class="search-item">
             <span class="label-name">生产企业</span>
             <el-input
-              v-model.trim="listQuquery.manufacture"
+              v-model.trim="listQuery.manufacture"
               size="small"
               placeholder="生产企业"
             />
@@ -35,7 +37,7 @@
           <div class="search-item">
             <span class="label-name">条形码</span>
             <el-input
-              v-model.trim="listQuquery.barCode"
+              v-model.trim="listQuery.barCode"
               size="small"
               placeholder="商品编码"
             />
@@ -43,13 +45,14 @@
           <div class="search-item">
             <span class="label-name">批准文号</span>
             <el-input
-              v-model.trim="listQuquery.approvalNumber"
+              v-model.trim="listQuery.approvalNumber"
               size="small"
               placeholder="商品编码"
             />
           </div>
           <div class="search-item">
-            <el-button type="" size="small">查询</el-button>
+            <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="" size="small" @click="resetQuery">重置</el-button>
             <el-button type="danger" size="small" @click="handleBatchDel">删除</el-button>
           </div>
         </div>
@@ -69,7 +72,7 @@
           <el-table-column
             prop="orCode"
             align="left"
-            min-width="150"
+            min-width="200"
             label="商品/规格"
             show-overflow-tooltip
           >
@@ -93,12 +96,12 @@
           <el-table-column
             prop="approvalNumber"
             align="left"
-            label="批准的文号"
+            label="批准文号"
             :show-overflow-tooltip="true"
             min-width="160"
           />
           <el-table-column
-            prop="platformCode"
+            prop="erpCode"
             align="left"
             label="商品编码"
             :show-overflow-tooltip="true"
@@ -108,7 +111,7 @@
             prop="createTime"
             align="left"
             min-width="155"
-            label="申请时间"
+            label="修改时间"
           />
           <el-table-column
             prop="address"
@@ -121,12 +124,21 @@
               <template v-if="scope.row.infoStatus===15&&scope.row.auditStatus!==2&&scope.row.auditStatus!==1&&scope.row.auditStatus!==0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
               </template>
-              <template v-if="(scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13||scope.row.infoStatus===15)&&scope.row.auditStatus!==1">
+              <template v-else-if="scope.row.infoStatus===15&&scope.row.auditStatus==0">
+                <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
+              </template>
+              <template v-else>
+                <a :href="`#/goods-manage/edit?id=${scope.row.id}&type=query`">
+                  <el-button type="" size="mini">查看</el-button>
+                </a>
+              </template>
+              <template v-if="(scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13||scope.row.infoStatus===15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0)">
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>
               </template>
               <el-button
+                v-if="scope.row.auditStatus!==1"
                 type="danger"
                 size="mini"
                 @click="handleDel(scope.row)"
@@ -161,7 +173,7 @@ export default {
       tableData: [],
       total: 0,
       loading: false,
-      listQuquery: {
+      listQuery: {
         'approvalNumber': '',
         'auditStatus': '',
         'barCode': '',
@@ -181,10 +193,23 @@ export default {
     this.getList()
   },
   methods: {
+    resetQuery() {
+      this.listQuery = {
+        'approvalNumber': '',
+        'auditStatus': this.listQuery.auditStatus,
+        'barCode': '',
+        'erpCode': '',
+        'manufacture': '',
+        'merCode': '',
+        'name': '',
+        'origin': this.listQuery.origin
+      }
+      this.getList()
+    },
     handleSelectionChange(rows) {
       this.multipleSelection = rows
     },
-    handleSendCheck(row) { // 提交审核
+    handleSendCheck(row, status) { // 提交审核
       const data = {
         'auditStatus': '2',
         'ids': [
@@ -197,12 +222,22 @@ export default {
           message: '操作成功',
           type: 'success'
         })
+        if (this.listQuery.auditStatus === '0') {
+          this.$router.push(`/goods-manage/edit?id=${row.id}`)
+        }
         this.getList()
       })
     },
     getList() {
       this.loading = true
-      getNewGoodsRecord(this.listQuquery).then(res => {
+      const data = JSON.parse(JSON.stringify(this.listQuery))
+      if (this.listQuery.auditStatus === '-1') { // 待完善
+        data.auditStatus = ''
+        data.infoFlag = false
+      } else if (this.listQuery.auditStatus === '3') { // 待提交审核
+        data.infoFlag = true
+      }
+      getNewGoodsRecord(data).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
         if (data) {

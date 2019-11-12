@@ -51,6 +51,7 @@
               :action="uploadUlr"
               :headers="headers"
               name="excelFile"
+              :limit="1"
               :on-success="handleFileSuccess"
               :auto-upload="false"
               :before-upload="beforeUpload"
@@ -60,7 +61,7 @@
               <div
                 slot="tip"
                 class="el-upload__tip"
-              >只能上传excel文件</div>
+              >只能上传excel文件 <span class="tip">一次只允许上传1个文件</span></div>
             </el-upload>
           </div>
           <p style="margin-left:40px;margin-top:12px">
@@ -107,13 +108,14 @@ export default {
     handleFileSuccess(res) {
       if (res.code === '10000') {
         this.$message({
-          message: '导入成功',
+          message: '导入成功,请至“导入历史”页面查询商品上传结果',
           type: 'success'
         })
         this.$refs.file.clearFiles()
       } else {
+        this.$message.close() // 关闭
         this.$message({
-          message: res.msg,
+          message: '导入失败,请至“导入历史”页面查询商品上传结果',
           type: 'error'
         })
         this.$refs.file.clearFiles()

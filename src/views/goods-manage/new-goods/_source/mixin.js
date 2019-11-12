@@ -9,19 +9,40 @@ const mixin = {
     }
   },
   methods: {
-    _loadClassList() { // 加载数据
+    _loadClassList(dimensionId) { // 加载数据
+      // return new Promise((resolve, reject) => {
+      //   getTypeTree({ merCode: 'hydee', type: 1, dimensionId: dimensionId, issTree: true }).then(res => {
+      //     // if (this.basicForm && this.basicForm.origin === 2) {
+      //     //   res.data.map(v => {
+      //     //     if (this.chooseTypeList[0].id !== v.id) {
+      //     //       v.disabled = true
+      //     //     }
+      //     //   })
+      //     // }
+      //     resolve(res)
+      //   })
+
+      // })
       this.loading = true
-      getTypeTree({ merCode: 'hydee', type: 1 }).then(res => {
+      getTypeTree({ merCode: 'hydee', type: 1, dimensionId: dimensionId, issTree: true }).then(res => {
+        if (this.basicForm && this.basicForm.origin === 2) {
+          res.data.map(v => {
+            if (this.chooseTypeList[0].id !== v.id) {
+              v.disabled = true
+            }
+          })
+        }
         this.typeList = res.data
-        console.log(res)
         this.loading = false
+        // resolve(res)
       }).catch(_ => {
         this.loading = false
       })
     },
-    handleSaveType() {
+    handleSaveType() { // 保存
       this._filtersTypes(this.chooseList)
       this.typeVisible = false
+      this.$refs.basic.validateField('weight')
     },
     _filtersTypes(data) {
       this.chooseTypeList = []
