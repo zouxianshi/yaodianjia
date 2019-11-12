@@ -18,7 +18,7 @@ const mixin = {
   },
   watch: {
     step(val) {
-      if (val === 2 && this.basicForm.id) {
+      if (val === 2) {
         // 获取规格
         try {
           this._loadSpces() // 获取规格
@@ -246,7 +246,6 @@ const mixin = {
           type: 'success'
         })
         this.subLoading = false
-        this._loadGoodsImgAry()
         this.step = 3
       }).catch(_ => {
         this.subLoading = false
@@ -277,6 +276,20 @@ const mixin = {
         getSpecsProductSKU(this.basicForm.platformCode).then(res => {
           res.data.map(v => {
             v.disabled = false
+            if (v.productSpecSkuDTOs) {
+              if (this.dynamicProp.length === 0) {
+                v.productSpecSkuDTOs.map(vs => {
+                  this.dynamicProp.push({
+                    name: vs.skuKeyName,
+                    id: vs.skuKeyId,
+                    keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`
+                  })
+                })
+              }
+              v.productSpecSkuDTOs.map(vs => {
+                v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
+              })
+            }
           })
           this.specsForm.specs = res.data
           this._loadSpecs()

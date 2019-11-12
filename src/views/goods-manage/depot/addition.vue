@@ -20,7 +20,7 @@
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="listQuery.barCode" size="small" style="width:200px" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.barCode" size="small" style="width:200px" placeholder="条形码" />
           </div>
           <div class="search-item">
             <span class="label-name">批准文号</span>
@@ -72,7 +72,7 @@
             </template>
           </template>
         </el-table-column>
-        <el-table-column label="商品信息" min-width="150">
+        <el-table-column label="商品信息" min-width="120">
           <template slot-scope="scope">
             <div>
               <p v-text="scope.row.name" />
@@ -82,9 +82,15 @@
         </el-table-column>
         <el-table-column label="条码" prop="barCode" />
         <el-table-column label="生产企业" prop="manufacture" />
-        <el-table-column label="规格" />
-        <el-table-column label="商品分类" />
-        <el-table-column label="操作">
+        <el-table-column label="品牌" prop="brandName" />
+        <el-table-column label="商品分类" min-width="140">
+          <template slot-scope="scope">
+            <span v-text="scope.row.multilevelTypeDTO.name" /> >
+            <span v-text="scope.row.multilevelTypeDTO.child.name" /> >
+            <span v-text="scope.row.multilevelTypeDTO.child.child.name" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
             <el-button type="primary" :loading="scope.row.loading" size="mini" @click="handleSetStore(scope.row)">添加该商品</el-button>
           </template>

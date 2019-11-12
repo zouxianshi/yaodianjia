@@ -134,9 +134,7 @@
                 <el-form-item label="批准文号：" prop="approvalNumber">
                   <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" label="是否含有麻黄碱">
-                  <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
-                </el-form-item>
+
                 <el-form-item label="商品详细信息：">
                   <p>填写商品说明书</p>
                   <div v-show="basicForm.origin===1">
@@ -146,7 +144,7 @@
                     <Tinymce ref="editor" v-model="basicForm.intro" :readonly="is_query" :height="400" />
                   </div>
                 </el-form-item>
-                <el-form-item label="功能主治/适应症：">
+                <el-form-item :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'">
                   <el-input
                     v-model="basicForm.keyFeature"
                     type="textarea"
@@ -186,6 +184,9 @@
                 <el-form-item label="其他属性：">
                   <el-checkbox v-model="basicForm.isEasyBreak" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">易碎</el-checkbox>
                   <el-checkbox v-model="basicForm.isLiquid" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">液体</el-checkbox>
+                  <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'">
+                    <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
+                  </template>
                 </el-form-item>
                 <el-form-item label="" label-width="100px">
                   <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitForm">下一步</el-button>
@@ -219,24 +220,28 @@
                     type="selection"
                     width="55"
                   />
-                  <span v-for="(item,index) in specsForm.specs" :key="index">
-                    <el-table-column v-for="(items,index1) in item.productSpecSkuDTOs" :key="index1" :label="items.skuKeyName">
-                      <template>
-                        <span v-text="items.skuValue" />
+                  <el-table-column v-for="(items,index1) in dynamicProp" :key="index1" :label="items.name">
+                    <template slot-scope="scope">
+                      <template v-if="scope.row[items.keys]">
+                        <span v-text="scope.row[items.keys]" />
                       </template>
-                    </el-table-column>
-                  </span>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="商品编码">
                     <template slot-scope="scope">
                       <span v-text="scope.row.erpCode" />
-                      <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      <template v-if="!is_query">
+                        <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
                     </template>
                   </el-table-column>
                   <el-table-column label="商品条码" prop="barCode" />
                   <el-table-column label="商品价格">
                     <template slot-scope="scope">
                       <span v-text="scope.row.mprice" />
-                      <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      <template v-if="!is_query">
+                        <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
                     </template>
                   </el-table-column>
                   <el-table-column label="商品图片">
@@ -268,25 +273,33 @@
                     <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs" :label="propsf.name">
                       <template slot-scope="scope">
                         <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
-                        <edit-table :title="propsf.name" :keys="propsf.keys" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        <template v-if="!is_query">
+                          <edit-table :title="propsf.name" :keys="propsf.keys" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        </template>
                       </template>
                     </el-table-column>
                     <el-table-column label="商品编码" prop="erpCode">
                       <template slot-scope="scope">
                         <span v-text="scope.row.erpCode" />
-                        <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        <template v-if="!is_query">
+                          <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        </template>
                       </template>
                     </el-table-column>
                     <el-table-column label="商品条码" prop="barCode">
                       <template slot-scope="scope">
                         <span v-text="scope.row.barCode" />
-                        <edit-table title="商品条码" keys="barCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        <template v-if="!is_query">
+                          <edit-table title="商品条码" keys="barCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        </template>
                       </template>
                     </el-table-column>
                     <el-table-column label="商品价格" prop="mprice">
                       <template slot-scope="scope">
                         <span v-text="scope.row.mprice" />
-                        <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        <template v-if="!is_query">
+                          <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        </template>
                       </template>
                     </el-table-column>
                     <el-table-column label="商品图片">
@@ -436,20 +449,20 @@
         <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
       </span>
     </el-dialog>
-    <edit-group :is-show="groupVisible" :group-data="groupData" @back="handleSaveGroup" @close="groupVisible=false" />
+    <edit-group :is-show="groupVisible" type="1" :group-data="groupDataDimens" @back="handleSaveGroup" @close="groupVisible=false" />
   </div>
 </template>
 <script>
 import Tinymce from '@/components/Tinymce'
 import vueUploadImg from '@/components/ImgUpload'
-import { getTypeTree, getPreGroupList } from '@/api/group'
+import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import { getUnit, getMetering, setGoodsAdd, updateBasicInfo, getBrandList, saveImg, saveGoodsDetails, getBasicGoodsInfo, getGoodsImgAry, getGoodsDetails } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
 import editTable from './_source/edit-table'
-import editGroup from './_source/group'
+import editGroup from '../components/grouping'
 export default {
   components: { Tinymce, vueUploadImg, editTable, editGroup },
   mixins: [mixins, specsMixin],
@@ -541,6 +554,7 @@ export default {
       dialogImageUrl: '',
       fileList: [],
       groupData: [], // 分组
+      groupDataDimens: [],
       goodsIntro: { // 商品信息
         content: ''
       },
@@ -691,12 +705,15 @@ export default {
       if (id) {
         getGoodsImgAry(id).then(res => {
           if (res.data) {
-            res.data.map(v => {
-              this.fileList.push({
+            const fileList = []
+            res.data.forEach((v, index) => {
+              const item = {
                 imgUrl: this.showImg(v.picUrl),
                 picUrl: v.picUrl
-              })
+              }
+              fileList.push(item)
             })
+            this.fileList = fileList
           }
         })
       }
@@ -716,7 +733,6 @@ export default {
       }
     },
     handleImgSuccess(res, fileList, index) {
-      this.fileList = []
       if (!this.fileList[index]) {
         this.fileList.push({ imgUrl: this.showImg(res), picUrl: res })
       } else {
@@ -727,6 +743,7 @@ export default {
     },
     handleAvatarSuccessEdit(res, fileList, index) {
       this.editSpecsData[this.uploadIndex].picUrl = res.data
+      this.pageLoading.close()
     },
     handleImgError() {
       this.$message({
@@ -774,6 +791,9 @@ export default {
             type: 'success'
           })
         }
+      })
+      getTypeDimensionList(this.$store.state.user.merCode).then(res => {
+        this.groupDataDimens = res.data
       })
     },
     handleSaveGroup(row) { // 保存数据

@@ -460,7 +460,7 @@ export default {
         return
       }
       this.multipleSelection.map(v => {
-        ary.push(v.storeSpecId)
+        ary.push(v.id)
       })
       const data = {
         'isAll': false,
