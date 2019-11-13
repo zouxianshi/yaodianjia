@@ -107,12 +107,18 @@
           @current-change="handleCurrentChange"
         >
           <el-table-column
-            prop="name"
             align="left"
             min-width="120"
             label="商品名称"
             show-overflow-tooltip
-          />
+          >
+            <template slot-scope="scope">
+              <span v-text="scope.row.name" />
+              <p>
+                <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
+              </p>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="packStandard"
             align="left"
@@ -150,7 +156,16 @@
             align="left"
             min-width="125"
             label="匹配得分"
-          />
+          >
+            <template slot-scope="scope">
+              <span v-text="scope.row.matchScore" />
+              <p
+                v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id"
+              >
+                <el-button type="text" size="mini" @click="handleRemoveRelation(scope.row)">解除对码关系</el-button>
+              </p>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
@@ -197,9 +212,10 @@ export default {
     ...mapGetters(['name'])
   },
   created() {
-    this._loadMatchList()
     const data = sessionStorage.getItem('mate')
     this.pairData = JSON.parse(data)
+    console.log(this.pairData)
+    this._loadMatchList()
   },
   methods: {
     resetQuery() {
@@ -217,9 +233,19 @@ export default {
         this.tableData = res.data
         this.storeTableData = JSON.parse(JSON.stringify(res.data))
         if (res.data.length !== 0) {
-          this.$refs.singleTable.setCurrentRow(this.tableData[0])
-          this.currentRow = this.tableData[0]
-          this.isMate = this.tableData[0]
+          let data = {}
+          if (this.$route.query.from === 'is_pair') {
+            this.tableData.map(v => {
+              if (v.id === this.pairData.platformCode) {
+                data = v
+              }
+            })
+          } else {
+            data = this.tableData[0]
+          }
+          this.$refs.singleTable.setCurrentRow(data)
+          this.currentRow = data
+          this.isMate = data
         }
         this.loading = false
       }).catch(() => {
@@ -254,8 +280,11 @@ export default {
         this.currentRow = {}
       }
     },
-    handleCurrentChange(val) {
+    handleCurrentChange(val) { // 选择表格中某条数据选中
       this.currentRow = val
+    },
+    handleRemoveRelation(row) { // 解除对码关系
+
     },
     handleAddGoods() { // 确定对码
       if (!this.currentRow.id) {

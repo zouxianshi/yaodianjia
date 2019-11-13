@@ -20,7 +20,7 @@
                   <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
                     {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
                 </el-tag>
-                <span v-if="(basicForm.id!==1||!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
+                <span v-if="(basicForm.id!==1&&!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
               <div class="type-list groups">商品分组：
                 <p class="group-list">
                   <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
@@ -219,7 +219,7 @@
             </el-form-item>
             <el-form-item label="规格信息：">
               <template v-if="basicForm.origin===1">
-                <el-table :data="specsForm.specs" @selection-change="handleSelectionChange">
+                <el-table ref="multipleTable" :data="specsForm.specs" @selection-change="handleSelectionChange">
                   <el-table-column
                     type="selection"
                     width="55"

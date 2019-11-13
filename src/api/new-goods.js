@@ -144,3 +144,12 @@ export function getMetering() {
     method: 'get'
   })
 }
+
+// 获取批量上传后的结果
+export function getUploadFileList(params) {
+  return request({
+    url: `${config.merchandise}/1.0/self-record/_search`,
+    method: 'post',
+    data: params
+  })
+}

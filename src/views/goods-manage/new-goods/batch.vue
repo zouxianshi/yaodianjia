@@ -83,29 +83,32 @@
           </li>
         </ul>
         <div class="table-box">
-          <p style="margin-bottom:12px;color:#333">本次批量创建结果如下：</p>
+          <p style="margin-bottom:12px;color:#333;display:flex;justify-content: space-between;">
+            <span>本次批量创建结果如下：</span>
+            <el-button type="primary" size="small" @click="_loadFileResultList">刷新</el-button>
+          </p>
           <el-table :data="tableData">
             <el-table-column label="品类">
               <template slot-scope="scope">
-                <span v-if="scope.row.model==='1'">中西医药</span>
-                <span v-else-if="scope.row.model==='2'">营养保健</span>
-                <span v-else-if="scope.row.model==='3'">医疗器械</span>
+                <span v-if="scope.row.firstTypeId==='1065279ca65a4a529109f82472f11053'">中西医药</span>
+                <span v-else-if="scope.row.firstTypeId==='fb5e6c99d2a24eb79dae4350d9bfa837'">营养保健</span>
+                <span v-else-if="scope.row.firstTypeId==='a99917a7c7254ac281e844acf1610657'">医疗器械</span>
                 <span v-else>其他</span>
               </template>
             </el-table-column>
             <el-table-column label="创建结果">
               <template slot-scope="scope">
-                <span v-text="scope.row.resut?'成功':'失败'" />
+                <p>成功数量：{{ scope.row.success }}</p>
+                <p>失败数量：{{ scope.row.fail }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="数量" prop="number" />
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <template v-if="scope.row.resut">
                   <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
                 </template>
                 <template v-else>
-                  <el-button type="" size="mini" @click="handleDowload(scope.row)">下载结果</el-button>
+                  <el-button type="" size="mini" @click="handleDowload(scope.row)">失败结果下载</el-button>
                 </template>
               </template>
             </el-table-column>
@@ -117,6 +120,7 @@
 </template>
 <script>
 import config from '@/utils/config'
+import { getUploadFileList } from '@/api/new-goods'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -148,7 +152,7 @@ export default {
           message: '上传成功',
           type: 'success'
         })
-        this.tableData = res.data
+        this._loadFileResultList()
       } else {
         this.$message({
           message: res.msg,
@@ -169,9 +173,14 @@ export default {
     },
     handleDowload(row) {
       var elemIF = document.createElement('iframe')
-      elemIF.src = this.showImg(row.excelPath)
+      elemIF.src = this.showImg(row.failPath)
       elemIF.style.display = 'none'
       document.body.appendChild(elemIF)
+    },
+    _loadFileResultList() {
+      getUploadFileList({ merCode: this.merCode }).then(res => {
+        this.tableData = res.data.data
+      })
     }
   }
 }

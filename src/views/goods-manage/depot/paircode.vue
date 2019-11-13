@@ -115,12 +115,6 @@
             label="生产企业"
           />
           <el-table-column
-            prop="packStandard"
-            align="left"
-            min-width="120"
-            label="规格"
-          />
-          <el-table-column
             prop="barCode"
             align="left"
             label="条形码"
@@ -133,6 +127,13 @@
             label="批准文号"
             :show-overflow-tooltip="true"
             min-width="120"
+          />
+          <el-table-column
+            prop="reason"
+            align="left"
+            show-overflow-tooltip=""
+            min-width="120"
+            label="失败原因"
           />
           <el-table-column
             prop="modifyName"
@@ -221,6 +222,7 @@ export default {
     },
     getList() {
       this.loading = true
+      this.tableData = []
       getImportList(this.listQuery).then(res => {
         const { data, totalCount } = res.data
         if (data) {

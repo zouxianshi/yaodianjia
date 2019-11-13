@@ -1,9 +1,10 @@
 <template>
   <div class="group-content">
     <el-dialog
-      :title="`修改分组(已选${goodsData.length}个商品)`"
+      :title="titles"
       :visible.sync="isShow"
       append-to-body
+      :close-on-press-escape="false"
       :show-close="false"
       width="700px"
       custom-class="custom-body"
@@ -129,7 +130,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['name'])
+    ...mapGetters(['name']),
+    titles(val) {
+      if (this.type === '0') {
+        return `修改分组(已选${this.goodsData.length}个商品)`
+      } else {
+        return `修改分组`
+      }
+    }
   },
   watch: {
     isShow(val) {
@@ -137,6 +145,7 @@ export default {
         this.group_id = this.groupData[0].id
         this.handleChooseGroup(this.group_id)
         this.modelList = []
+        this.chooseGroup = []
       }
     }
   },
