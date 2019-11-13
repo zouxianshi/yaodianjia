@@ -133,10 +133,10 @@
               <template v-if="scope.row.mainPic">
                 <el-image
                   style="width: 60px; height: 60px"
-                  :src="scope.row.mainPic"
+                  :src="showImg(scope.row.mainPic)"
                   lazy
                   fit="contain"
-                  :preview-src-list="[`${scope.row.mainPic}`]"
+                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
                 />
               </template>
               <template v-else>
@@ -599,6 +599,9 @@ export default {
       this.editData = JSON.parse(JSON.stringify(row))
       this.type = key
       this.isShow = true
+      this.$nextTick(_ => {
+        this.$refs.editData.clearValidate()
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
