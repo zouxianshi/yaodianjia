@@ -74,16 +74,9 @@
           <el-table-column label="操作" min-width="130">
             <template slot-scope="scope">
               <a :href="`#/goods-manage/group-create/${scope.row.id}`">
-                <el-button
-                  type=""
-                  size="mini"
-                >编辑</el-button>
+                <el-button type="" size="mini">编辑</el-button>
               </a>
-              <el-button
-                :type="scope.row.useStatus===1?'danger':'success'"
-                size="mini"
-                @click="handleChangeStatau(scope.row)"
-              >{{ scope.row.useStatus===1?'停用':'启用' }}</el-button>
+              <el-button v-if="scope.row.useStatus!==1" type="success" size="mini" @click="handleChangeStatau(scope.row)">启用</el-button>
             </template>
           </el-table-column>
         </el-table>

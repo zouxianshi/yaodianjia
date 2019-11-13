@@ -159,7 +159,7 @@
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>
               </template>
-              <template v-if="listQuery.auditStatus==='0'">
+              <template v-if="scope.row.auditStatus===0">
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">编辑</el-button>
                 </a>

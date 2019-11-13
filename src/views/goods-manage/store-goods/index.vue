@@ -32,7 +32,7 @@
           <div class="search-item">
             <span class="label-name">商品名称</span>
             <el-input
-              v-model.trim="listQuery.manufacture"
+              v-model.trim="listQuery.name"
               size="small"
               placeholder="商品名称"
             />
@@ -58,7 +58,7 @@
           <div class="search-item">
             <span class="label-name">条形码</span>
             <el-input
-              v-model.trim="keyword"
+              v-model.trim="listQuery.barCode"
               size="small"
               placeholder="条形码"
             />
@@ -66,7 +66,7 @@
           <div class="search-item">
             <span class="label-name">生产企业</span>
             <el-input
-              v-model.trim="keyword"
+              v-model.trim="listQuery.manufacture"
               size="small"
               placeholder="生产企业"
             />

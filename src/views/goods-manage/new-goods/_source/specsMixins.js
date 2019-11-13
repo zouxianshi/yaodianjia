@@ -154,7 +154,7 @@ const mixin = {
         let index = 0
         let flag = true
         this.specsForm.specs.map(v => {
-          index = +1
+          index++
           v.valueList = []
           v.commodityId = this.basicForm.id
           v.merCode = this.merCode

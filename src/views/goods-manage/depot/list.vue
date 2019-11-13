@@ -335,7 +335,7 @@ export default {
         return
       }
       this.multiselect.map(res => {
-        this.goodsData.push(res.specId)
+        this.goodsData.push(res.id)
       })
       this.groupVisible = true
     },

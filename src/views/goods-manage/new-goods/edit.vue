@@ -467,6 +467,7 @@ import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
 import editTable from './_source/edit-table'
 import editGroup from '../components/grouping'
+import { findArray } from '@/utils/index'
 export default {
   components: { Tinymce, vueUploadImg, editTable, editGroup },
   mixins: [mixins, specsMixin],
@@ -774,7 +775,7 @@ export default {
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
-          message: '只能上传图片',
+          message: '只能上传格式为 jpg、jpeg、png',
           type: 'warning'
         })
         this.pageLoading.close()
@@ -826,29 +827,29 @@ export default {
       })
     },
     _filters(data) {
-      this.groupData.forEach((v, index) => {
-        data.forEach((val, index) => {
-          if (v.id === val[0]) {
-            if (!this.chooseGroup[index]) {
-              this.chooseGroup.push([])
-            }
-            this.chooseGroup[index].push({ name: v.name, id: v.id })
-            if (v.children) {
-              v.children.map(v1 => {
-                if (v1.id === val[1]) {
-                  this.chooseGroup[index].push({ name: v1.name, id: v1.id })
+      data.forEach((val, index1) => {
+        const findIndex = findArray(this.groupData, { id: val[0] })
+        if (findIndex > -1) { // 找一级
+          if (!this.chooseGroup[index1]) {
+            this.chooseGroup.push([])
+          }
+          const row = this.groupData[findIndex]
+          this.chooseGroup[index1].push({ name: row.name, id: row.id })
+          if (row.children) { // 找二级
+            const findIndex_child = findArray(row.children, { id: val[1] })
+            if (findIndex_child > -1) {
+              const child = row.children[findIndex_child]
+              this.chooseGroup[index1].push({ name: child.name, id: child.id })
+              if (child.children) { // 找三级
+                const findIndex_children = findArray(child.children, { id: val[2] })
+                if (findIndex_children > -1) {
+                  const children = child.children[findIndex_children]
+                  this.chooseGroup[index1].push({ name: children.name, id: children.id })
                 }
-                if (v1.children) {
-                  v1.children.map(v2 => {
-                    if (v2.id === val[2]) {
-                      this.chooseGroup[index].push({ name: v2.name, id: v2.id })
-                    }
-                  })
-                }
-              })
+              }
             }
           }
-        })
+        }
       })
     },
     _CreateBasicInfo(data) { // 创建基本信息

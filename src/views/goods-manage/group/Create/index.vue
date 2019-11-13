@@ -1,14 +1,17 @@
 <template>
-  <div class="gt-create-model">
-    <div class="content">
-      <div class="conditions">
-        <m-conditions />
-      </div>
-      <div class="list">
-        <m-drag-tree :list="groupList" />
+  <div class="app-container">
+    <div class="gt-create-model">
+      <div class="content">
+        <div class="conditions">
+          <m-conditions />
+        </div>
+        <div class="list">
+          <m-drag-tree :list="groupList" />
+        </div>
       </div>
     </div>
   </div>
+
 </template>
 <script>
 import mDragTree from './_source/dragTree'
@@ -40,7 +43,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .gt-create-model {
     .content {
-      border: 1px solid #e8eaec;
+      // border: 1px solid #e8eaec;
       border-radius: 3px;
       padding: 16px;
       margin-bottom: 90px;
