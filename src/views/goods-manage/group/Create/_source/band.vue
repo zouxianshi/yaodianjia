@@ -10,8 +10,37 @@
     >
       <div style="margin-bottom:10px">
         <p style="margin-bottom:10px">分组名称：<span v-text="info.name" /></p>
-        <p>分类下面</p>
+        <!-- <p>分类下面</p> -->
       </div>
+      <section @keydown.enter="getList">
+        <div
+          class="search-form"
+          style="margin-top:20px;margin-bottom:10px"
+        >
+          <div class="search-item">
+            <span class="label-name">商品信息</span>
+            <el-input
+              v-model.trim="listQuery.name"
+              size="mini"
+              style="width:100px"
+              placeholder="商品名称"
+            />
+          </div>
+          <div class="search-item">
+            <span class="label-name">生产企业</span>
+            <el-input
+              v-model.trim="listQuery.manufacture"
+              style="width:100px"
+              size="mini"
+              placeholder="生产企业"
+            />
+          </div>
+          <div class="search-item">
+            <el-button type="primary" size="mini" @click="getList">查询</el-button>
+            <el-button type="" size="mini" @click="resetQuery">重置</el-button>
+          </div>
+        </div>
+      </section>
       <div>
         <el-table
           v-loading="loading"
@@ -32,13 +61,13 @@
             show-overflow-tooltip
           >
             <template slot-scope="scope">
-              <template v-if="scope.row.stPath">
+              <template v-if="scope.row.mainPic">
                 <el-image
-                  style="width: 100px; height: 100px"
-                  :src="scope.row.mainPic"
+                  style="width: 40px; height: 40px"
+                  :src="showImg(scope.row.mainPic)"
                   lazy
                   fit="contain"
-                  :preview-src-list="[`${scope.row.mainPic}`]"
+                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
                 />
               </template>
               <template v-else>
@@ -56,15 +85,21 @@
             align="left"
             min-width="120"
             label="生产企业"
+            show-overflow-tooltip
             prop="manufacture"
           />
         </el-table>
-        <pagination
-          :total="total"
-          :page.sync="listQuery.currentPage"
-          :limit.sync="listQuery.pageSize"
-          @pagination="getList"
-        />
+        <div class="text-right" style="margin-top:10px">
+          <el-pagination
+            small
+            :current-page="listQuery.currentPage"
+            background
+            :page-size="8"
+            layout="total, prev, pager, next"
+            :total="total"
+            @current-change="handleCurrentChange"
+          />
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
@@ -75,13 +110,9 @@
 </template>
 <script>
 import { getGoodsList } from '@/api/depot'
-import Pagination from '@/components/Pagination'
-import mixins from '@/utils/mixin'
 import { bandGoods } from '@/api/group'
 import { mapGetters } from 'vuex'
 export default {
-  components: { Pagination },
-  mixins: [mixins],
   props: {
     info: {
       type: Object,
@@ -99,7 +130,9 @@ export default {
       subLoading: false,
       listQuery: {
         currentPage: 1,
-        pageSize: 10
+        pageSize: 10,
+        name: '',
+        manufacture: ''
       }
     }
   },
@@ -130,6 +163,12 @@ export default {
       this.getList()
       this.dialogVisible = true
     },
+    resetQuery() {
+      this.listQuery.name = ''
+      this.listQuery.manufacture = ''
+      this.listQuery.currentPage = 1
+      this.getList()
+    },
     handleSubBand() {
       const data = {
         'ids': [],
@@ -152,6 +191,10 @@ export default {
       }).catch(_ => {
         this.subLoading = false
       })
+    },
+    handleCurrentChange(val) {
+      this.listQuery.currentPage = val
+      this.getList()
     }
   }
 }
