@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <p style="font-size:13px"> 当前分组标题：{{ $route.query.name }}</p>
     <div class="gt-create-model">
       <div class="content">
         <div class="conditions">

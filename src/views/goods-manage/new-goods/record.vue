@@ -99,7 +99,10 @@
             show-overflow-tooltip
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.name }}{{ scope.row.packStandard }}</span>
+              <span>商品名称：{{ scope.row.name }}</span>
+              <p v-for="(item,index) in scope.row.specSkuList" :key="index">
+                {{ item.skuKeyName }}：{{ item.skuValue }}
+              </p>
             </template>
           </el-table-column>
           <el-table-column

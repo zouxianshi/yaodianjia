@@ -156,18 +156,18 @@
         <div class="info-text">
           <p>商品名称：<span v-text="pairData.name" /></p>
           <p>商品规格：<span v-text="pairData.name" /></p>
-          <p>生产企业：<span v-text="pairData.packStandard">12321</span></p>
+          <p>生产企业：<span v-text="pairData.manufacture">12321</span></p>
           <p>搜索关键词：<span v-text="pairData.keyWord" /></p>
           <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
           <!-- <p>是否药品：<span v-text="pariData."/></p> -->
           <p>处方分类：
-            <span v-if="pariData.drugType==='0'">甲类OTC</span>
-            <span v-if="pariData.drugType==='1'">处方药</span>
-            <span v-if="pariData.drugType==='2'">乙类OTC</span>
+            <span v-if="pariData.drugType===0">甲类OTC</span>
+            <span v-if="pariData.drugType===1">处方药</span>
+            <span v-if="pariData.drugType===2">乙类OTC</span>
             <span v-else>非处方药</span>
           </p>
           <p>是否含有麻黄碱：<span v-text="pairData.hasEphedrine===0?'不包含':'包含'" /></p>
-          <p>品牌名称：<span v-text="pairData.commonName" /></p>
+          <p>品牌名称：<span v-text="pairData.brandName" /></p>
           <p>通用名：<span v-text="pairData.commonName" /></p>
           <p>功能疗效：<span v-text="pairData.keyFeature" /></p>
           <!-- <p>用法用量：<span v-text="pairData"/></p> -->

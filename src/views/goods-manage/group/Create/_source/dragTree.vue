@@ -1,6 +1,6 @@
 <template>
   <div class="drag-tree-model" style="position: relative">
-    <v-draggable v-model="listData" v-bind="level1_Opt()" @start="_onStartLevel1" @end="handleSort(listData,0)">
+    <v-draggable v-model="listData" v-bind="level1_Opt()" @start="_onStartLevel1" @Update="handleSort(listData,0)">
       <div v-for="(item_1,$index_1) in listData" :key="$index_1" class="level-1-group">
         <div class="level-1-box">
           <div v-if="$index_1 === 0" class="title-box">
@@ -115,6 +115,7 @@ export default {
   methods: {
     _onStartLevel1() {},
     handleSort(row, level) { // 排序
+      console.log(row, '---')
       const data = []
       row.map(v => {
         data.push({
@@ -122,12 +123,14 @@ export default {
           'merCode': v.merCode
         })
       })
-      this.$store.dispatch('group/updateSort', { list: data }).then(res => {
-        this.$message({
-          message: '修改成功',
-          type: 'success'
+      if (this.is_sort) {
+        this.$store.dispatch('group/updateSort', { list: data }).then(res => {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
         })
-      })
+      }
     },
     _onEndLevel1() {
       console.log(this.list)

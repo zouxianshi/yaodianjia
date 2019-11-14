@@ -96,7 +96,11 @@ export default {
       loading: false,
       multipleSelection: [],
       tableData: [],
-      subLoading: false
+      subLoading: false,
+      listQuery: {
+        currentPage: 1,
+        pageSize: 10
+      }
     }
   },
   computed: {
@@ -108,7 +112,7 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      getGoodsList().then(res => {
+      getGoodsList(this.listQuery).then(res => {
         const { data, totalCount } = res.data
         if (data) {
           this.tableData = data

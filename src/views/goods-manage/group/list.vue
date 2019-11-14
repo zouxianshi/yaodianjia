@@ -27,6 +27,7 @@
           <el-table-column
             prop="name"
             label="分组标题"
+            min-width="130"
           >
             <template slot-scope="scope">
               <div class="desc">
@@ -38,10 +39,6 @@
           <el-table-column
             prop="childNum"
             label="子分类数"
-          />
-          <el-table-column
-            prop="address"
-            label="商品数"
           />
           <el-table-column
             prop="createName"
@@ -73,7 +70,7 @@
           </el-table-column>
           <el-table-column label="操作" min-width="130">
             <template slot-scope="scope">
-              <a :href="`#/goods-manage/group-create/${scope.row.id}`">
+              <a :href="`#/goods-manage/group-create/${scope.row.id}?name=${scope.row.name}`">
                 <el-button type="" size="mini">编辑</el-button>
               </a>
               <el-button v-if="scope.row.useStatus!==1" type="success" size="mini" @click="handleChangeStatau(scope.row)">启用</el-button>
@@ -177,7 +174,7 @@ export default {
       })
     },
     handleEditType(row) {
-      this.modalForm = row
+      this.modalForm = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
       this.$nextTick(_ => {
         this.$refs.modalForm.clearValidate()
