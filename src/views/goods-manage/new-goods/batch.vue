@@ -102,7 +102,8 @@
                 <p>失败数量：{{ scope.row.fail }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="失败原因" prop="reason" />
+            <el-table-column label="导入时间" prop="createTime" />
+            <!-- <el-table-column label="失败原因" prop="reason" /> -->
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <template v-if="scope.row.failPath">
