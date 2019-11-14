@@ -118,7 +118,7 @@
               <p>
                 <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
               </p>
-              <span v-text="expands(row)" />
+              <span v-text="expands(scope.row)" />
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="商品名称">
                   <span>{{ props.row.name }}</span>
