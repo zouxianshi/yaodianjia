@@ -102,17 +102,24 @@
                 <p>失败数量：{{ scope.row.fail }}</p>
               </template>
             </el-table-column>
+            <el-table-column label="失败原因" prop="reason" />
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <template v-if="scope.row.resut">
-                  <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
+                <template v-if="scope.row.failPath">
+                  <el-button type="" size="mini" @click="handleDowload(scope.row)">失败结果下载</el-button>
                 </template>
                 <template v-else>
-                  <el-button type="" size="mini" @click="handleDowload(scope.row)">失败结果下载</el-button>
+                  <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
                 </template>
               </template>
             </el-table-column>
           </el-table>
+          <pagination
+            :total="total"
+            :page.sync="listQuery.currentPage"
+            :limit.sync="listQuery.pageSize"
+            @pagination="_loadFileResultList"
+          />
         </div>
       </section>
     </div>
@@ -122,10 +129,18 @@
 import config from '@/utils/config'
 import { getUploadFileList } from '@/api/new-goods'
 import { mapGetters } from 'vuex'
+import Pagination from '@/components/Pagination'
+import mixins from '@/utils/mixin'
 export default {
+  components: { Pagination },
+  mixins: [mixins],
   data() {
     return {
-      tableData: []
+      tableData: [],
+      listQuery: {
+        currentPage: 1,
+        pageSize: 20
+      }
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
@@ -178,7 +193,7 @@ export default {
       document.body.appendChild(elemIF)
     },
     _loadFileResultList() {
-      getUploadFileList({ merCode: this.merCode }).then(res => {
+      getUploadFileList(this.listQuery).then(res => {
         this.tableData = res.data.data
       })
     }

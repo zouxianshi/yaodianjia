@@ -117,3 +117,12 @@ export function setMateCode(params) {
     data: params
   })
 }
+
+// 解除对码关系
+export function removeMateCode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-match`,
+    method: 'put',
+    data: params
+  })
+}

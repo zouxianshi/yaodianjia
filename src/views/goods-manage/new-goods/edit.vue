@@ -960,7 +960,7 @@ export default {
       }
       saveGoodsDetails(data).then(res => {
         this.$message({
-          message: '保存成功',
+          message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
           type: 'success'
         })
         this.subLoading = false
@@ -977,13 +977,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$message({
-              message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
-              type: 'success'
-            })
-            setTimeout(() => {
-              this.$router.replace(url)
-            }, 500)
+            this.$router.replace(url)
           }).catch(() => {
             console.log('已取消')
           })

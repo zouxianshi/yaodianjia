@@ -255,6 +255,7 @@ export default {
         name: '',
         infoFlag: true,
         erpCode: '',
+        auditStatus: 1,
         groupId: '' // 分组id
       }
     }
@@ -272,6 +273,7 @@ export default {
         name: '',
         infoFlag: this.listQuery.infoFlag,
         erpCode: '',
+        auditStatus: 1,
         groupId: '' // 分组id
       }
       this.getList()

@@ -111,12 +111,37 @@
             min-width="120"
             label="商品名称"
             show-overflow-tooltip
+            :type="expand?'expand':''"
           >
             <template slot-scope="scope">
               <span v-text="scope.row.name" />
               <p>
                 <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
               </p>
+              <span v-text="expands(row)" />
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="商品名称">
+                  <span>{{ props.row.name }}</span>
+                </el-form-item>
+                <el-form-item label="所属店铺">
+                  <span>{{ props.row.shop }}</span>
+                </el-form-item>
+                <el-form-item label="商品 ID">
+                  <span>{{ props.row.id }}</span>
+                </el-form-item>
+                <el-form-item label="店铺 ID">
+                  <span>{{ props.row.shopId }}</span>
+                </el-form-item>
+                <el-form-item label="商品分类">
+                  <span>{{ props.row.category }}</span>
+                </el-form-item>
+                <el-form-item label="店铺地址">
+                  <span>{{ props.row.address }}</span>
+                </el-form-item>
+                <el-form-item label="商品描述">
+                  <span>{{ props.row.desc }}</span>
+                </el-form-item>
+              </el-form>
             </template>
           </el-table-column>
           <el-table-column
@@ -179,7 +204,7 @@
   </div>
 </template>
 <script>
-import { getMatchList, setMateCode, mateAgain } from '@/api/depot'
+import { getMatchList, setMateCode, mateAgain, removeMateCode } from '@/api/depot'
 import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 export default {
@@ -204,13 +229,14 @@ export default {
       goodsInfoVisible: false,
       rejectVisible: false,
       rejectForm: {},
+      expand: false,
       rules: {
         id: [{ required: true, message: '请选择驳回原因', trigger: 'blur' }],
         reason: [{ validator: _checkReason, trigger: 'blur' }]
       },
       currentRow: {},
       subLoading: false,
-      pariData: {},
+      pairData: {},
       storeTableData: [],
       isMate: {}
     }
@@ -224,6 +250,11 @@ export default {
     this._loadMatchList()
   },
   methods: {
+    expands(row) {
+      if (this.pairData.platformCode === row.id) {
+        this.expand = true
+      }
+    },
     resetQuery() {
       this.searchForm = {
         name: '',
@@ -266,10 +297,6 @@ export default {
         (item) => {
           let flag = false
           for (const key in tempFilter) {
-            console.log('key', key)
-            console.log('item[key]', item[key])
-            console.log('item[key].toString()', item[key].toString())
-            console.log('tempFilter[key].toString()', tempFilter[key].toString())
             if (item[key] && item[key].toString().indexOf(tempFilter[key].toString()) >= 0) {
               flag = true
               console.log('找到了')
@@ -295,7 +322,26 @@ export default {
       this.currentRow = val
     },
     handleRemoveRelation(row) { // 解除对码关系
+      this.$confirm('是否确认解除对码关系', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const data = JSON.parse(JSON.stringify(this.pairData))
+        data.commodityId = ''
+        data.platformCode = ''
+        data.specId = 0
+        data.status = 0
+        removeMateCode(data).then(res => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this._loadMatchList()
+        }).catch(_ => {
 
+        })
+      }).catch(() => {})
     },
     handleAddGoods() { // 确定对码
       if (!this.currentRow.id) {
@@ -306,14 +352,8 @@ export default {
         return
       }
       this.subLoading = true
-      const data = {
-        'id': this.$route.query.id,
-        'productIds': [
-          this.currentRow.id
-        ],
-        'status': 1,
-        'userName': this.name
-      }
+      const data = JSON.parse(JSON.stringify(this.pairData))
+      data.platformCode = this.currentRow.id
       setMateCode(data).then(res => {
         this.$message({
           message: '确认对码成功',
