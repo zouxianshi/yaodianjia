@@ -1,6 +1,8 @@
 <template>
   <div class="bandGoods">
-    <el-button type="primary" circle icon="el-icon-goods" class="band-btn" size="mini" @click="handleShow" />
+    <el-tooltip class="item" effect="dark" content="绑定商品" placement="top">
+      <el-button type="primary" circle icon="el-icon-goods" class="band-btn" size="mini" @click="handleShow" />
+    </el-tooltip>
     <el-dialog
       title="分组绑定商品"
       :visible.sync="dialogVisible"
@@ -132,8 +134,10 @@ export default {
         currentPage: 1,
         pageSize: 10,
         name: '',
-        manufacture: ''
-      }
+        manufacture: '',
+        onlyCom: true
+      },
+      total: 0
     }
   },
   computed: {

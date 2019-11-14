@@ -9,7 +9,12 @@
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-text="pairData.name" /></p>
-              <p>规格：<span v-text="pairData.packStandard" /></p>
+              <div class="specs-item">
+                <span>规格：</span>
+                <div>
+                  <p v-for="(item,index) in pairData.specSkuList" :key="index"> {{ item.skuKeyName }}：{{ item.skuValue }}</p>
+                </div>
+              </div>
               <p>企业：<span v-text="pairData.manufacture" /></p>
               <p>条码：<span v-text="pairData.barCode" /></p>
               <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
@@ -105,11 +110,17 @@
             show-overflow-tooltip
           />
           <el-table-column
-            prop="packStandard"
             align="left"
             min-width="120"
             label="规格"
-          />
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="manufacture"
             align="left"
@@ -131,12 +142,6 @@
             min-width="120"
           />
           <el-table-column
-            prop="merUserNum"
-            align="left"
-            min-width="125"
-            label="使用商家数量"
-          />
-          <el-table-column
             prop="matchScore"
             align="left"
             min-width="125"
@@ -155,7 +160,12 @@
       <div class="modal-body">
         <div class="info-text">
           <p>商品名称：<span v-text="pairData.name" /></p>
-          <p>商品规格：<span v-text="pairData.name" /></p>
+          <div class="specs-item">
+            <span>商品规格：</span>
+            <div>
+              <p v-for="(item,index) in pairData.specSkuList" :key="index"> {{ item.skuKeyName }}：{{ item.skuValue }}</p>
+            </div>
+          </div>
           <p>生产企业：<span v-text="pairData.manufacture">12321</span></p>
           <p>搜索关键词：<span v-text="pairData.keyWord" /></p>
           <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
@@ -418,6 +428,13 @@ export default {
 .el-drawer__body {
   overflow-y: scroll;
   height: 100%;
+}
+.specs-item{
+  display: flex;
+  margin-bottom: 5px;
+  .name{
+    width: 50px;
+  }
 }
 .mate-wrapper {
   height: 101%;

@@ -98,13 +98,15 @@
           </el-table-column>
           <el-table-column
             align="left"
-            min-width="150"
+            min-width="160"
+            show-overflow-tooltip
             label="商品信息"
           >
             <template slot-scope="scope">
-              <div>
-                <p>{{ scope.row.name }}</p>
-              </div>
+              <span> {{ scope.row.name }}</span>
+              <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+              </span>
             </template></el-table-column>
           <el-table-column
             align="left"
@@ -130,6 +132,7 @@
             prop="erpCode"
             label="商品编码"
             align="left"
+            min-width="130"
           />
           <el-table-column
             prop="createTime"

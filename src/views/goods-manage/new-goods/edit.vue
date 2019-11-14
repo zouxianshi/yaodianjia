@@ -977,7 +977,13 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$router.replace(url)
+            this.$message({
+              message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
+              type: 'success'
+            })
+            setTimeout(() => {
+              this.$router.replace(url)
+            }, 500)
           }).catch(() => {
             console.log('已取消')
           })

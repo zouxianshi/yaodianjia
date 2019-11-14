@@ -25,7 +25,7 @@ const mixin = {
       // })
       this.loading = true
       getTypeTree({ merCode: 'hydee', type: 1, dimensionId: dimensionId, issTree: true }).then(res => {
-        if (this.basicForm && this.basicForm.origin === 2) {
+        if (this.basicForm && this.basicForm.origin === 2 && this.basicForm.id) {
           res.data.map(v => {
             if (this.chooseTypeList[0].id !== v.id) {
               v.disabled = true

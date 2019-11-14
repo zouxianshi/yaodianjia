@@ -123,8 +123,15 @@
             prop="packStandard"
             align="left"
             min-width="120"
+            show-overflow-tooltip
             label="规格"
-          />
+          >
+            <template slot-scope="scope">
+              <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="manufacture"
             align="left"
@@ -214,7 +221,6 @@ export default {
   created() {
     const data = sessionStorage.getItem('mate')
     this.pairData = JSON.parse(data)
-    console.log(this.pairData)
     this._loadMatchList()
   },
   methods: {
@@ -260,8 +266,13 @@ export default {
         (item) => {
           let flag = false
           for (const key in tempFilter) {
+            console.log('key', key)
+            console.log('item[key]', item[key])
+            console.log('item[key].toString()', item[key].toString())
+            console.log('tempFilter[key].toString()', tempFilter[key].toString())
             if (item[key] && item[key].toString().indexOf(tempFilter[key].toString()) >= 0) {
               flag = true
+              console.log('找到了')
             } else {
               flag = false
               break

@@ -144,13 +144,18 @@
               prop="orName"
               align="left"
               min-width="160"
+              show-overflow-tooltip
               label="商品信息"
             >
               <template slot-scope="scope">
-                <div>
+                <div style="overflow: hidden;text-overflow: ellipsis;">
                   <p v-text="scope.row.name" />
-                  <p v-text="scope.row.approvalNumber" />
-                  <p v-text="'条码：'+scope.row.barCode" />
+                  <p style="overflow: hidden;text-overflow: ellipsis;">
+                    <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                      {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                    </span>
+                  </p>
+                  <p style="overflow: hidden;text-overflow: ellipsis;" v-text="'条码：'+scope.row.barCode" />
                 </div>
               </template>
             </el-table-column>
