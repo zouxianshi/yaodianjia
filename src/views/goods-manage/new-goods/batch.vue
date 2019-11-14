@@ -159,7 +159,7 @@ export default {
     }
   },
   created() {
-
+    this._loadFileResultList()
   },
   methods: {
     handleFileSuccess(res) {
