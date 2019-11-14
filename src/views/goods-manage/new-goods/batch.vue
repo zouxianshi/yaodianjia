@@ -98,7 +98,7 @@
             </el-table-column>
             <el-table-column label="创建结果">
               <template slot-scope="scope">
-                <p>成功数量：{{ scope.row.success }}</p>
+                <p>成功数量：{{ scope.row.success }}  <a v-if="scope.row.success>0" :href="'#/goods-manage/apply-record'"><el-button type="text" size="mini">去完善信息</el-button></a></p>
                 <p>失败数量：{{ scope.row.fail }}</p>
               </template>
             </el-table-column>
