@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h3>旗舰店</h3>
-    <h6>旗舰店是连锁的最大且最为丰富齐全的一家营业店，旗舰店可为全国范围的会员提供最丰富的商品，且可提供<span style="color: #409eff">快递服务</span>的门门店</h6>
+    <h6>旗舰店是连锁的最大且最为丰富齐全的一家营业店，旗舰店可为全国范围的会员提供最丰富的商品，且可提供<span style="color: #409eff">快递服务</span>的门店</h6>
     <div style="padding-top: 5px;padding-bottom: 5px">
       <span class="label-name">设置旗舰店：</span>
       <span id="flagship-name">{{ flagShipName }}</span>
@@ -25,7 +25,7 @@
       </div>
       <el-table :data="list" stripe height="250">
         <div slot="empty">
-          当前无上线门店，先去维护<el-button type="text">上线门店</el-button>吧
+          当前无上线门店，先去维护<el-button type="text" @click="toStoreSetting">上线门店</el-button>吧
         </div>
         <el-table-column property="stCode" label="门店编码" width="150" show-overflow-tooltip />
         <el-table-column label="门店名称" show-overflow-tooltip>
@@ -163,6 +163,9 @@ export default {
     },
     onSelect() {
       this.visable = false
+    },
+    toStoreSetting() {
+      this.$router.push({ path: '/storeSetting/setting' })
     }
   }
 }

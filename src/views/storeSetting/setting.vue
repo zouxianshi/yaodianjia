@@ -56,7 +56,7 @@
         @selection-change="handleSelectionChange"
       >
         <div slot="empty">
-          当前无上线门店，上线商城需添加<el-button type="text">上线门店</el-button>吧
+          当前无上线门店，上线商城需添加<el-button type="text" @click="visable = true">上线门店</el-button>吧
         </div>
         <el-table-column
           type="selection"
