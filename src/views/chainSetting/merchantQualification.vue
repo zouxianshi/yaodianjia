@@ -41,14 +41,21 @@
       </el-col>
     </el-row>-->
     <el-dialog
+      v-if="visable"
       append-to-body
       title="完善证书"
       :visible.sync="visable"
       width="800px"
       @close="dismiss"
     >
-      <el-form ref="form" :model="form" label-position="right">
-        <el-form-item label="证书名称：">
+      <el-form
+        ref="form"
+        :model="form"
+        :rules="rules"
+        label-position="right"
+        label-width="110px"
+      >
+        <el-form-item label="证书名称：" prop="certificateName">
           <el-input v-model="form.certificateName" style="width: 260px" :disabled="form.sortNumber <= 6" />
         </el-form-item>
         <el-form-item label="证书编号：">
@@ -70,7 +77,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取 消</el-button>
-        <el-button type="primary" size="small" @click="save">确定</el-button>
+        <el-button type="primary" size="small" @click="handleSubmit('form')">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -107,7 +114,12 @@ export default {
         certificatePicture: null,
         sortNumber: 0
       },
-      imageUrl: ''
+      imageUrl: '',
+      rules: {
+        certificateName: [
+          { required: true, message: '请输入证书名称', trgger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -123,6 +135,15 @@ export default {
     this.getData()
   },
   methods: {
+    handleSubmit(form) { // 保存
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this.save()
+        } else {
+          console.log('error submit')
+        }
+      })
+    },
     getData() {
       this.loading = true
       getMerCertificate(this.merCode).then(res => {
