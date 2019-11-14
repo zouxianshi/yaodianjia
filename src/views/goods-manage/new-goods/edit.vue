@@ -117,10 +117,10 @@
                 <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
                   <el-form-item label="药品类型：">
                     <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
-                      <el-option label="甲类OTC" value="0" />
-                      <el-option label="处方药" value="1" />
-                      <el-option label="乙类OTC" value="2" />
-                      <el-option label="非处方药" value="3" />
+                      <el-option label="甲类OTC" :value="0" />
+                      <el-option label="处方药" :value="1" />
+                      <el-option label="乙类OTC" :value="2" />
+                      <el-option label="非处方药" :value="3" />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="剂型：">
