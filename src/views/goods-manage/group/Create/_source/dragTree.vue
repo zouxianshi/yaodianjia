@@ -123,14 +123,12 @@ export default {
           'merCode': v.merCode
         })
       })
-      if (this.is_sort) {
-        this.$store.dispatch('group/updateSort', { list: data }).then(res => {
-          this.$message({
-            message: '修改成功',
-            type: 'success'
-          })
+      this.$store.dispatch('group/updateSort', { list: data }).then(res => {
+        this.$message({
+          message: '修改成功',
+          type: 'success'
         })
-      }
+      })
     },
     _onEndLevel1() {
       console.log(this.list)
