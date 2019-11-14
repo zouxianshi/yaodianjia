@@ -119,27 +119,16 @@
                 <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
               </p>
               <span v-text="expands(scope.row)" />
-              <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="商品名称">
-                  <span>{{ props.row.name }}</span>
-                </el-form-item>
-                <el-form-item label="所属店铺">
-                  <span>{{ props.row.shop }}</span>
-                </el-form-item>
-                <el-form-item label="商品 ID">
-                  <span>{{ props.row.id }}</span>
-                </el-form-item>
-                <el-form-item label="店铺 ID">
-                  <span>{{ props.row.shopId }}</span>
-                </el-form-item>
-                <el-form-item label="商品分类">
-                  <span>{{ props.row.category }}</span>
-                </el-form-item>
-                <el-form-item label="店铺地址">
-                  <span>{{ props.row.address }}</span>
-                </el-form-item>
-                <el-form-item label="商品描述">
-                  <span>{{ props.row.desc }}</span>
+              <el-form v-if="pairData.platformCode===scope.row.id" label-position="left" inline class="demo-table-expand">
+                <el-form-item>
+                  <p>当前改数据对应的ERP产品资料为：{{ pairData.name }}
+                    <span v-for="(item,index) in pairData.specSkuList" :key="index">
+                      {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                    </span>
+                    <span v-text="pairData.manufacture" />
+                    <span v-text="pairData.barCode" />
+                    <span v-text="pairData.approvalNumber" />
+                  </p>
                 </el-form-item>
               </el-form>
             </template>
@@ -251,7 +240,7 @@ export default {
   },
   methods: {
     expands(row) {
-      if (this.pairData.platformCode === row.id) {
+      if (row && this.pairData.platformCode === row.id) {
         this.expand = true
       }
     },
