@@ -109,9 +109,9 @@
                 <template v-if="scope.row.failPath">
                   <el-button type="" size="mini" @click="handleDowload(scope.row)">失败结果下载</el-button>
                 </template>
-                <template v-else>
+                <!-- <template v-else>
                   <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
-                </template>
+                </template> -->
               </template>
             </el-table-column>
           </el-table>
