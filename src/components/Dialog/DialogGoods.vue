@@ -257,6 +257,7 @@ export default {
         currentPage: this.pager.current,
         pageSize: this.pager.size
       }
+      console.log('params', params)
       getProductList(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []

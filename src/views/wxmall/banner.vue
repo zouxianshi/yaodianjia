@@ -149,7 +149,7 @@
                 size="small"
                 autocomplete="off"
                 style="width: 350px"
-                :maxlength="120"
+                :maxlength="500"
                 placeholder="http:// 或 https://"
               />
             </el-form-item>
@@ -509,7 +509,7 @@ export default {
         positionCode: this.positionCode,
         remark: this.xForm.remark,
         productId: null, // 2-03 类型必填
-        sortNumber: this.xForm.sort,
+        sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
@@ -545,7 +545,7 @@ export default {
         positionCode: this.positionCode,
         remark: this.xForm.remark,
         productId: null, // 2-03 类型必填
-        sortNumber: this.xForm.sort,
+        sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
