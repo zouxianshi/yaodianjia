@@ -42,6 +42,11 @@ const mixin = {
           }
         }
         this.$set(this.specsForm.specs, index, row)
+        const findIndex = findArray(this.chooseTableSpec, { id: row.id })
+        if (findIndex) {
+          this.chooseTableSpec.splice(findIndex, 1)
+          this.$refs.multipleTable.toggleRowSelection(row)
+        }
       } else {
         if (keys === 'erpCode') {
           const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
@@ -81,7 +86,7 @@ const mixin = {
             data.push(v)
           }
         })
-        data = [...data, ...this.chooseTableSpec]
+        data = [...this.chooseTableSpec, ...data]
         if (data.length === 0) {
           this.$message({
             message: '请选择规格信息',
@@ -91,27 +96,21 @@ const mixin = {
         }
         let is_err = false
         data.forEach((v, index) => {
-          if (!v.erpCode) {
+          if (!v.erpCode && !is_err) {
             this.$message({
-              message: `你勾选的规格中第${index + 1}个商品编码不能为空`,
+              message: `请完善已勾选的规格，商品编码未填写`,
               type: 'error'
             })
             is_err = true
-          } else if (!v.mprice) {
+          } else if (!v.mprice && !is_err) {
             this.$message({
-              message: `你勾选的规格中第${index + 1}个商品价格不能为空`,
+              message: `请完善已勾选的规格，商品价格未填写`,
               type: 'error'
             })
             is_err = true
-          } else if (!v.barCode) {
+          } else if (!v.picUrl && !is_err) {
             this.$message({
-              message: `你勾选的规格中第${index + 1}个商品条码不能为空`,
-              type: 'error'
-            })
-            is_err = true
-          } else if (!v.picUrl) {
-            this.$message({
-              message: `你勾选的规格中第${index + 1}个图片不能为空`,
+              message: `请完善已勾选的规格，图片未上传`,
               type: 'error'
             })
             is_err = true
@@ -154,7 +153,7 @@ const mixin = {
         let index = 0
         let flag = true
         this.specsForm.specs.map(v => {
-          index = +1
+          index++
           v.valueList = []
           v.commodityId = this.basicForm.id
           v.merCode = this.merCode
