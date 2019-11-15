@@ -15,7 +15,7 @@
       <el-form-item label="计费方式：">
         <el-radio disabled>按重量</el-radio>
       </el-form-item>
-      <el-form-item label="配送区域配置：" />
+      <el-form-item label="配送区域设置：" />
       <el-table :data="form.list">
         <el-table-column label="配送区域">
           <template slot-scope="scope">
@@ -27,27 +27,27 @@
         </el-table-column>
         <el-table-column label="首重（Kg）" width="120px">
           <template slot-scope="scope">
-            <el-input-number v-model="scope.row.ykg" :precision="0" min="0" max="99999" :controls="false" style="width: 100px" />
+            <el-input-number v-model="scope.row.ykg" :precision="0" :min="0" :max="99999" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
         <el-table-column label="运费（元）" width="120px">
           <template slot-scope="scope">
-            <el-input-number v-model="scope.row.freight" :precision="2" min="0" max="99999" :controls="false" style="width: 100px" />
+            <el-input-number v-model="scope.row.freight" :precision="2" :min="0" :max="99999" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
         <el-table-column label="续重（Kg）" width="120px">
           <template slot-scope="scope">
-            <el-input-number v-model="scope.row.continueWeight" :precision="0" min="0" max="99999" :controls="false" style="width: 100px" />
+            <el-input-number v-model="scope.row.continueWeight" :precision="0" :min="0" :max="99999" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
         <el-table-column label="续费（元）" width="120px">
           <template slot-scope="scope">
-            <el-input-number v-model="scope.row.renewalCost" :precision="2" min="0" max="99999" :controls="false" style="width: 100px" />
+            <el-input-number v-model="scope.row.renewalCost" :precision="2" :min="0" :max="99999" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
         <el-table-column label="包邮门槛(元)" width="160px">
           <template slot-scope="scope">
-            <el-input-number v-model="scope.row.postageFreeThreshold" :precision="2" max="99999" min="0" :controls="false" style="width: 100px" />
+            <el-input-number v-model="scope.row.postageFreeThreshold" :precision="2" :max="99999" :min="0" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="110px">
@@ -71,6 +71,7 @@
       title="新增区域"
       :visible.sync="visable"
       width="800px"
+      :close-on-click-modal="false"
       @close="dismiss"
     >
       <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
@@ -83,7 +84,7 @@
           v-model="city.checked"
           :label="city.id"
           size="mini"
-          style="width: 120px"
+          style="width: 150px"
           :disabled="isSelected(city.id)"
           @change="onCheck($event,city)"
         >{{ city.name }}</el-checkbox>
@@ -240,12 +241,21 @@ export default {
       console.log(rangeResDTOList)
       let sortNumber = 0
       if (this.form.list && this.form.list.length > 0) {
-        if (this.form.list[this.form.list.length - 1].sortNumber) {
+        /* let maxSort = 0
+        _.map(_.cloneDeep(this.form.list), (o) => {
+          if(o.sortNumber && o.sortNumber > maxSort){
+            maxSort = o.sortNumber
+          }
+        })*/
+        if (this.form.list[this.form.list.length - 1].sortNumber !== null) {
           sortNumber = this.form.list[this.form.list.length - 1].sortNumber + 1
+          // sortNumber = maxSort + 1
         } else {
           sortNumber = 0
         }
       }
+      console.log('editPosition', this.editPosition)
+      console.log('sortNumber', sortNumber)
       if (this.editPosition === -1) {
         const tempData = {
           billingPlan: 0,

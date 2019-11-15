@@ -92,6 +92,17 @@ export function getDelivery(params) {
     data: null
   })
 }
+
+// 导出商品
+export function exportData(params) {
+  return request({
+    url: `${api_wxmall}/1.0/store/_export`,
+    method: 'post',
+    data: params,
+    isExport: true,
+    responseType: 'blob'
+  })
+}
 // 获取商家资质
 export function getMerCertificate(params) {
   return request({
