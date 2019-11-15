@@ -493,7 +493,7 @@
         </div>
         <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm7'}" style="top: 1300px">
           <div class="m-header">
-            <span class="text">分组商品列表2</span>
+            <span class="text">分组主图2</span>
           </div>
           <div class="m-body">
             <el-form ref="xForm7" :rules="xRules7" :model="xForm7">
@@ -535,7 +535,7 @@
         </div>
         <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
           <div class="m-header">
-            <span class="text">分组商品图片2</span>
+            <span class="text">分组商品列表2</span>
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
