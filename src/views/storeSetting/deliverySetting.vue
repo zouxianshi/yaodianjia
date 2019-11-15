@@ -5,6 +5,7 @@
       title="配送费用设置"
       :visible.sync="visable"
       width="800px"
+      :close-on-click-modal="false"
       @close="dismiss"
     >
       <el-form :model="form" label-width="110px" label-position="right">
@@ -71,7 +72,7 @@
       <el-table-column label="支持配送门店数" property="distributionStores" />
       <el-table-column label="起送价" property="initialDeliveryPrice" />
       <el-table-column label="是否免运">
-        <template slot-scope="scope">
+        <template v-if="scope.row.isfreeShipping" slot-scope="scope">
           <span v-if="scope.row.isfreeShipping === 1">是</span>
           <span v-else>无</span>
         </template>
@@ -79,7 +80,7 @@
       <el-table-column label="详细规则">
         <template slot-scope="scope">
           <span v-if="scope.row.isfreeShipping === 1">无</span>
-          <span v-else>满{{ scope.row.freeEntryThreshold }}免配送费</span>
+          <span v-else-if="scope.row.freeEntryThreshold">满{{ scope.row.freeEntryThreshold }}免配送费</span>
         </template>
       </el-table-column>
       <el-table-column label="配送费" property="distributionFee" />

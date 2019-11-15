@@ -7,6 +7,22 @@
           <div class="search-item">
             <span class="label-name">有效时间</span>
             <el-date-picker
+              v-model="searchForm.timeBeg"
+              size="small"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="开始时间"
+              @change="handleTimeChange($event, 1)"
+            /> -
+            <el-date-picker
+              v-model="searchForm.timeEnd"
+              size="small"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="结束时间"
+              @change="handleTimeChange($event, 2)"
+            />
+            <!-- <el-date-picker
               v-model="searchForm.dateRange"
               size="small"
               type="datetimerange"
@@ -16,7 +32,7 @@
               start-placeholder="开始时间"
               end-placeholder="结束时间"
               @change="handleTimeChange($event, 1)"
-            />
+            /> -->
           </div>
           <div class="search-item">
             <span class="label-name" style="width: 50px">状态</span>
@@ -43,14 +59,14 @@
           </div>
         </div>
       </section>
-      <section class="table-box">
-        <el-table :data="tableData" style="width: 100%" size="small">
+      <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
+        <el-table :data="tableData" style="width: 100%">
           <el-table-column label="序号" width="60" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="img" label="图片" width="120" align="center">
+          <el-table-column prop="img" label="图片" min-width="100" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
                 <div class="x-image__preview">
@@ -64,57 +80,27 @@
               <div v-else style="line-height: 32px">暂未上传</div>
             </template>
           </el-table-column>
-          <el-table-column prop="url" label="链接地址" min-width="240" />
-          <el-table-column prop="startTime" label="开始时间" width="180" align="center" />
-          <el-table-column prop="endTime" label="结束时间" width="180" align="center" />
-          <el-table-column label="状态" width="100" align="center">
+          <el-table-column prop="url" label="链接地址" min-width="240">
+            <template v-if="scope.row.url && scope.row.url!==''" slot-scope="scope">
+              <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="startTime" label="开始时间" min-width="180" align="center" />
+          <el-table-column prop="endTime" label="结束时间" min-width="180" align="center" />
+          <el-table-column label="状态" min-width="80" align="center">
             >
             <template slot-scope="scope">
               <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
               <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" width="200" align="center" />
-          <el-table-column label="操作" align="center" width="240">
+          <el-table-column prop="remark" label="备注" min-width="120" align="center" />
+          <el-table-column label="操作" align="center" min-width="240">
             <template slot-scope="scope">
-              <el-button
-                slot="reference"
-                title="编辑"
-                icon="el-icon-edit"
-                type="primary"
-                circle
-                size="mini"
-                @click="handleEdit(scope.row)"
-              />
-              <el-button
-                v-if="scope.row.status===0"
-                slot="reference"
-                title="启用"
-                type="success"
-                icon="el-icon-coordinate"
-                circle
-                size="mini"
-                @click="handleChangeStatus(scope.row)"
-              />
-              <el-button
-                v-if="scope.row.status===1"
-                slot="reference"
-                title="停用"
-                type="warning"
-                icon="el-icon-coordinate"
-                circle
-                size="mini"
-                @click="handleChangeStatus(scope.row)"
-              />
-              <el-button
-                slot="reference"
-                title="删除"
-                type="danger"
-                icon="el-icon-delete"
-                circle
-                size="mini"
-                @click="handleDel(scope.row)"
-              />
+              <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
+              <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
+              <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -178,7 +164,7 @@
                 :default-time="['00:00:00','23:59:59']"
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
-                @change="handleTimeChange($event, 2)"
+                @change="handleTimeChange($event, 3)"
               />
             </el-form-item>
             <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
@@ -271,7 +257,7 @@ export default {
       tableData: [],
       pager: {
         current: 1,
-        size: 10,
+        size: 20,
         total: 0
       },
       dialogFormVisible: false,
@@ -337,18 +323,30 @@ export default {
     },
     handleTimeChange(val, type) {
       console.log(val, type)
-      if (type === 1) {
-        // 搜索栏
-        if (val && val.length === 2) {
-          this.searchForm.timeBeg = val[0]
-          this.searchForm.timeEnd = val[1]
-          this.search()
+      if (type === 1 || type === 2) { // 搜索栏 1.开始时间 2.结束时间
+        if (!val) {
+          type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
         } else {
-          this.searchForm.timeBeg = ''
-          this.searchForm.timeEnd = ''
+          console.log('this.searchForm', this.searchForm)
+          if (this.searchForm.timeBeg && this.searchForm.timeEnd && this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
+            // 比较时间
+            const start = this.searchForm.timeBeg.replace(/[- :]/g, '')
+            const end = this.searchForm.timeEnd.replace(/[- :]/g, '')
+            if (parseInt(start) > parseInt(end)) {
+              this.$message('结束时间必须大于开始时间')
+              type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
+              return
+            }
+          }
         }
-      } else if (type === 2) {
-        // dialog
+        this.search()
+        // if (this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
+        //   this.search()
+        // } else {
+        //   this.searchForm.timeBeg = ''
+        //   this.searchForm.timeEnd = ''
+        // }
+      } else if (type === 3) { // dialog
         if (val && val.length === 2) {
           this.xForm.startTime = val[0]
           this.xForm.endTime = val[1]
@@ -658,4 +656,5 @@ export default {
   line-height: 1.1;
   color: #999999;
 }
+
 </style>

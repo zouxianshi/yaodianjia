@@ -141,6 +141,30 @@ aside {
 
 }
 
+.webkit-scroll {
+  &:hover::-webkit-scrollbar-thumb {
+    background: #409eff;
+    min-width: 200px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+    background: #fff;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px;
+    margin: 4px 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #409eff;
+    border-radius: 5px;
+  }
+}
+
 
 .components-container {
   margin: 30px 50px;

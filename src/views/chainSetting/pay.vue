@@ -11,7 +11,7 @@
         <el-checkbox v-model="distributionOrder" :true-label="1" :false-label="0" @change="changeOrderPayset">货到付款</el-checkbox>
       </div>
       <div style="margin-top: 10px">
-        <h6>
+        <h6 style="line-height: 20px">
           后台所有订单都支持在线支付，自提订单支持在线支付及到店支付。<br>
           此处选择商户自行配置，提示：为了避免顾客与商家之间关于付款或退款的纠纷，建议商家送货上门的订单不要选择货到付款
         </h6>
@@ -53,6 +53,7 @@
       :title="isWechat ? '微信支付设置' : '支付宝设置'"
       :visible.sync="visable"
       width="800px"
+      :close-on-click-modal="false"
       @close="dismiss"
     >
       <el-form ref="form" :model="form" :rules="rules" label-position="right" label-width="140px">
@@ -60,8 +61,42 @@
           <span v-if="data && data.payAutoConfig">
             <span>{{ form.payAutoConfig }}</span>
             <el-button type="text" style="margin-left: 20px" class="copy-key" :data-clipboard-text="form.payAutoConfig" @click="onCopyLink">复制</el-button>
+            <el-popover
+              placement="right"
+              title="操作提示："
+              width="500"
+              trigger="click"
+            >
+              <span>
+                1：进入微信商户平台<el-link href="https://pay.weixin.qq.com/" type="primary" :underline="false" target="_blank">https://pay.weixin.qq.com/</el-link><br>
+                2：点击“产品中心”，点击“开发配置”<br>
+                3：找到支付配置，公众号支付配置，点击“添加”<br>
+                4：选择左侧相应的支付授权链接复制<br>
+                5：粘贴到输入框中<br>
+                6：支付授权目录开始下拉框切记选择https://
+              </span>
+              <el-button slot="reference" type="text" class="el-icon-question" style="margin-left: 5px" />
+            </el-popover>
           </span>
-          <el-input v-else v-model="form.payAutoConfig" style="width: 300px" maxlength="100" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
+          <span v-else>
+            <el-input v-model="form.payAutoConfig" style="width: 300px" maxlength="100" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
+            <el-popover
+              placement="right"
+              title="操作提示："
+              width="500"
+              trigger="click"
+            >
+              <span>
+                1：进入微信商户平台<el-link href="https://pay.weixin.qq.com/" type="primary" :underline="false" target="_blank">https://pay.weixin.qq.com/</el-link><br>
+                2：点击“产品中心”，点击“开发配置”<br>
+                3：找到支付配置，公众号支付配置，点击“添加”<br>
+                4：选择左侧相应的支付授权链接复制<br>
+                5：粘贴到输入框中<br>
+                6：支付授权目录开始下拉框切记选择https://
+              </span>
+              <el-button slot="reference" type="text" class="el-icon-question" style="margin-left: 5px" />
+            </el-popover>
+          </span>
         </el-form-item>
         <el-form-item :label="isWechat ? '微信支付商户号：' : '支付宝商户号：'" prop="merchantCode">
           <el-input v-model="form.merchantCode" style="width: 300px" maxlength="50" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
@@ -82,10 +117,27 @@
             <el-button slot="reference" type="text" class="el-icon-question" style="margin-left: 5px" />
           </el-popover>
         </el-form-item>
-        <el-form-item :label="isWechat ? '微信支付key：' : '支付宝key：'">
+        <el-form-item :label="isWechat ? '微信支付key：' : '支付宝key：'" prop="payKey">
           <el-input v-model="form.payKey" style="width: 300px" maxlength="60" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
+          <el-popover
+            placement="right"
+            title="操作提示："
+            width="500"
+            trigger="click"
+          >
+            <span>
+              1：进入微信商户平台<el-link href="https://pay.weixin.qq.com/" type="primary" :underline="false" target="_blank">https://pay.weixin.qq.com/</el-link><br>
+              2：点击“产品中心”，点击“开发配置”<br>
+              3：找到支付配置，公众号支付配置，点击“添加”<br>
+              4：选择左侧相应的支付授权链接复制<br>
+              5：粘贴到输入框中<br>
+              6：支付授权目录开始下拉框切记选择https://
+            </span>
+            <el-button slot="reference" type="text" class="el-icon-question" style="margin-left: 5px" />
+          </el-popover>
         </el-form-item>
-        <el-form-item label="商户证书：">
+        <el-form-item label="商户证书：" prop="merchantCertificate">
+          <el-input v-model="form.merchantCertificate" style="display: none" />
           <el-upload
             class="upload-demo"
             :headers="headers"
@@ -149,6 +201,12 @@ export default {
       rules: {
         merchantCode: [
           { required: true, message: '请输入支付商户号', trgger: 'blur' }
+        ],
+        payKey: [
+          { required: true, message: '请输入支付key', trgger: 'blur' }
+        ],
+        merchantCertificate: [
+          { required: true, message: '请上传商户证书', trgger: 'blur' }
         ]
       }
     }
@@ -235,6 +293,7 @@ export default {
         if (tempData && tempData.length > 0) {
           this.data = tempData[0]
         }
+        // this.data = null
         console.log(this.data)
         if (this.data) {
           this.form = _.cloneDeep(this.data)
@@ -246,10 +305,14 @@ export default {
           this.form.payKey = this.data.payKey
           this.form.payType = this.data.payType
           this.form.status = this.data.status
-          this.fileList = [{
-            name: '商户证书',
-            url: this.data.merchantCertificate
-          }]
+          if (this.data.merchantCertificate) {
+            this.fileList = [{
+              name: '商户证书',
+              url: this.data.merchantCertificate
+            }]
+          } else {
+            this.fileList = []
+          }
         } else {
           this.form.id = null
           this.form.merCode = null
@@ -290,6 +353,32 @@ export default {
   setStatus() {
     this.loading = true
     this.form.merCode = this.merCode
+    if (!this.form.merchantCode || !this.form.payKey || !this.form.merchantCertificate) {
+      this.$message({
+        message: '请先完善支付设置',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      if (this.form.status === 0) {
+        this.form.status = 1
+      } else {
+        this.form.status = 0
+      }
+      return
+    }
+    /* if(!this.form.payKey){
+      this.$message({
+        message: '请输入支付key',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      if(this.form.status === 0){
+        this.form.status = 1
+      }else{
+        this.form.status = 0
+      }
+      return
+    }*/
     setPayset(this.form).then(res => {
       if (res.code === '10000') {
         this.$message({
@@ -299,6 +388,11 @@ export default {
         })
       } else {
         this.loading = false
+        if (this.form.status === 0) {
+          this.form.status = 1
+        } else {
+          this.form.status = 0
+        }
         this.$message({
           message: res.msg,
           type: 'error',
