@@ -147,7 +147,7 @@
                     <Tinymce ref="editor" v-model="basicForm.intro" :readonly="true" :height="400" />
                   </div>
                   <div v-show="basicForm.origin!==1">
-                    <Tinymce ref="editor" v-model="basicForm.intro" :readonly="is_query" :height="400" />
+                    <Tinymce id="basicInfo" ref="editor" v-model="basicForm.intro" :readonly="is_query" :height="400" @onload="tinymceLoad" />
                   </div>
                 </el-form-item>
                 <el-form-item :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'">
@@ -423,7 +423,7 @@
                   <div class="editSqu w-e-text" v-html="goodsIntro.content" />
                 </div>
                 <div class="edit-box">
-                  <Tinymce ref="editor" v-model="goodsIntro.content" :readonly="is_query" :height="400" />
+                  <Tinymce v-model="goodsIntro.content" :readonly="is_query" :height="400" />
                 </div>
               </section>
               <div class="text-center">
@@ -444,6 +444,7 @@
       <div class="modal-body">
         <el-cascader
           v-model="chooseList"
+          v-loading="loading"
           class="cascader"
           style="width:300px"
           :options="typeList"
@@ -626,8 +627,17 @@ export default {
     this._loadBrandList() // 获取所属品牌
     this._loadUnit() // 加载单位
     this._loadMetering() // 加载剂型
+    this.pageLoading = this.$loading({
+      lock: true,
+      text: '数据初始化中...',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
   },
   methods: {
+    tinymceLoad() { // 富文本渲染染成
+      this.pageLoading.close()
+    },
     handleGoStep(val) {
       if (this.is_query) {
         this.step = val
@@ -740,6 +750,9 @@ export default {
         if (res.data) {
           this.goodsIntro.content = res.data.content
         }
+        this.$refs['details-ty'].init()
+      }).catch(_ => {
+        this.$refs['details-ty'].init()
       })
     },
     handleSortEnd(val) { // 图片排序
@@ -924,9 +937,13 @@ export default {
             })
             this.subLoading = true
             if (this.basicForm.id) {
+              data.firstTypeId = this.chooseTypeList[0].id
+              data.secondTypeId = this.chooseTypeList[1].id
               data.commodityId = data.id
               this._UpdateBasicInfo(data)
             } else {
+              data.firstTypeId = this.chooseTypeList[0].id
+              data.secondTypeId = this.chooseTypeList[1].id
               this._CreateBasicInfo(data)
             }
           }

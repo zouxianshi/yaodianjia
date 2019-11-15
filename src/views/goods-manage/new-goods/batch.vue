@@ -196,6 +196,7 @@ export default {
     _loadFileResultList() {
       getUploadFileList(this.listQuery).then(res => {
         this.tableData = res.data.data
+        this.total = res.data.totalCount
       })
     }
   }

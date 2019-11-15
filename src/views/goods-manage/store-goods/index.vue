@@ -301,6 +301,12 @@ export default {
       const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
       if (value) {
         if (value <= 0) {
+          if (rule.field === 'stock') {
+            if (value < 0) {
+              callback(new Error('请输入大于等于0的值'))
+            }
+            return callback()
+          }
           callback(new Error('请输入大于0的值'))
         } else {
           if (rule.field === 'stock') {
@@ -319,6 +325,9 @@ export default {
         }
       } else {
         if (value === 0) {
+          if (rule.field === 'stock') {
+            return callback()
+          }
           callback(new Error('请输入大于0的值'))
         } else {
           callback(new Error('不能为空'))
