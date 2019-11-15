@@ -391,7 +391,7 @@
         </div>
       </div>
       <!-- 图文详情 -->
-      <div v-if="step==3">
+      <div v-show="step==3">
         <div class="edit-card">
           <div class="header">
             商品橱窗图 <span class="img-tips">最多6张，图片800*800</span>
@@ -423,7 +423,7 @@
                   <div class="editSqu w-e-text" v-html="goodsIntro.content" />
                 </div>
                 <div class="edit-box">
-                  <Tinymce id="details" ref="details-ty" v-model="goodsIntro.content" :readonly="is_query" :height="400" />
+                  <Tinymce v-model="goodsIntro.content" :readonly="is_query" :height="400" />
                 </div>
               </section>
               <div class="text-center">
@@ -746,14 +746,13 @@ export default {
     },
     _loadGoodsDetails() { // 加载商品详情
       const id = this.basicForm.id
-      this.$nextTick(v => {
-        this.$refs['details-ty'].destroyTinymce()
-      })
       getGoodsDetails(id).then(res => {
         if (res.data) {
           this.goodsIntro.content = res.data.content
-          this.$refs['details-ty'].init()
         }
+        this.$refs['details-ty'].init()
+      }).catch(_ => {
+        this.$refs['details-ty'].init()
       })
     },
     handleSortEnd(val) { // 图片排序
