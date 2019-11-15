@@ -119,14 +119,14 @@ export default {
     handleFileSuccess(res) {
       if (res.code === '10000') {
         this.$message({
-          message: '导入成功,请至“导入历史”页面查询商品上传结果',
+          message: res.msg,
           type: 'success'
         })
         this.$refs.file.clearFiles()
       } else {
         this.$message.close() // 关闭
         this.$message({
-          message: '导入失败,请至“导入历史”页面查询商品上传结果',
+          message: res.msg,
           type: 'error'
         })
         this.$refs.file.clearFiles()

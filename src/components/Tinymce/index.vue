@@ -147,6 +147,9 @@ export default {
             editor.setContent(_this.value)
           }
           _this.hasInit = true
+          if (this.id === 'basicInfo') {
+            this.$emit('onload')
+          }
           editor.on('NodeChange Change KeyUp SetContent', () => {
             this.hasChange = true
             this.$emit('input', editor.getContent())

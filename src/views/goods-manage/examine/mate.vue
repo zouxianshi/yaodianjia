@@ -26,11 +26,11 @@
             <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.erpCode }}</span></p>
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
-              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
-              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
+              <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name&&currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
+              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard&&currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
+              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
