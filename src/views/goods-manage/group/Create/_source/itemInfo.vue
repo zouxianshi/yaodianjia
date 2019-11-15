@@ -11,9 +11,9 @@
       />
       <span v-else>&nbsp;</span>
     </div>
-    <div class="goods-num">
+    <!-- <div class="goods-num">
       <span>{{ itemInfo.is ? '商品数' : '9999' }}</span>
-    </div>
+    </div> -->
     <div class="creater">
       <span>{{ itemInfo.is ? '创建人' : itemInfo.createName }}</span>
     </div>
@@ -95,27 +95,22 @@ export default {
     }
 
     > .photo {
-      width: 48px;
+      width: 70px;
       right: 650px;
     }
 
-    > .goods-num {
-      width: 70px;
-      right: 580px;
-    }
-
     > .creater {
-      width: 120px;
-      right: 460px;
+      width: 150px;
+      right: 510px;
     }
 
     > .create-time {
-      width: 130px;
-      right: 330px;
+      width: 180px;
+      right: 355px;
     }
 
     > .modifier {
-      width: 120px;
+      width: 150px;
       right: 210px;
     }
 

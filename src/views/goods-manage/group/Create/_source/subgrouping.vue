@@ -1,7 +1,7 @@
 <template>
   <el-popover v-model="visible" placement="right" width="320" trigger="click">
     <div class="subgrouping-model">
-      <el-form ref="formInfo" :model="info" :rules="rules">
+      <el-form ref="formInfo" :model="info" :rules="rules" @submit.native.prevent>
         <el-form-item label="" prop="name">
           <el-input v-model="info.name" placeholder="请输入内容" size="mini" style="width: 230px;" />
         </el-form-item>
@@ -24,7 +24,7 @@
         <el-button type="danger" icon="el-icon-close" circle size="mini" @click="visible=false" />
       </div>
     </div>
-    <el-tooltip v-if="!$slots.default" slot="reference" class="item" effect="dark" :content="type === 'edit' ? '编辑' : `新建（${level === '1' ? '一' : '二'}级）子分组` " placement="top">
+    <el-tooltip v-if="!$slots.default" slot="reference" class="item" effect="dark" :content="type === 'edit' ? '编辑' : `新建（${level === '1' ? '二' : '三'}级）子分组` " placement="top">
       <el-button v-if="contentType === 'button'" type="primary" :style="{display:level==='3'?'none':'inline-block'}" icon="el-icon-folder-add" :disabled="level === '3'" circle size="mini" style="margin-right: 10px" />
       <i v-if="contentType === 'text'" class="icon-edit el-icon-edit" />
     </el-tooltip>

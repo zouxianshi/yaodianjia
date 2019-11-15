@@ -20,7 +20,7 @@
                   <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
                     {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
                 </el-tag>
-                <span v-if="(basicForm.id!==1||!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
+                <span v-if="(basicForm.id!==1&&!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
               <div class="type-list groups">商品分组：
                 <p class="group-list">
                   <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
@@ -47,7 +47,11 @@
                 <el-form-item label="商品名称：" prop="name">
                   <el-input v-model="basicForm.name" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
-                <el-form-item v-if="chooseTypeList.length!==0&&(chooseTypeList[0].name!=='医疗器械'||chooseTypeList[0].name!=='营养保健')" prop="commonName" label="通用名：">
+                <el-form-item prop="commonName">
+                  <span slot="label">
+                    <span v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" class="tip">*</span>
+                    通用名：
+                  </span>
                   <el-input v-model="basicForm.commonName" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
                 </el-form-item>
                 <el-form-item label="所属品牌：" prop="brandId">
@@ -113,14 +117,14 @@
                 <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
                   <el-form-item label="药品类型：">
                     <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
-                      <el-option label="甲类OTC" value="0" />
-                      <el-option label="处方药" value="1" />
-                      <el-option label="乙类OTC" value="2" />
-                      <el-option label="非处方药" value="3" />
+                      <el-option label="甲类OTC" :value="0" />
+                      <el-option label="处方药" :value="1" />
+                      <el-option label="乙类OTC" :value="2" />
+                      <el-option label="非处方药" :value="3" />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="剂型：">
-                    <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
+                    <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品剂型">
                       <el-option v-for="(item,index) in drug" :key="index" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
@@ -215,7 +219,7 @@
             </el-form-item>
             <el-form-item label="规格信息：">
               <template v-if="basicForm.origin===1">
-                <el-table :data="specsForm.specs" @selection-change="handleSelectionChange">
+                <el-table ref="multipleTable" :data="specsForm.specs" @selection-change="handleSelectionChange">
                   <el-table-column
                     type="selection"
                     width="55"
@@ -463,6 +467,7 @@ import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
 import editTable from './_source/edit-table'
 import editGroup from '../components/grouping'
+import { findArray } from '@/utils/index'
 export default {
   components: { Tinymce, vueUploadImg, editTable, editGroup },
   mixins: [mixins, specsMixin],
@@ -470,7 +475,11 @@ export default {
     const _checkName = (rule, value, callback) => {
       if (!value) {
         if (rule.field === 'commonName') {
-          return callback(new Error('请输入通用名'))
+          if (this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '中西药品') {
+            return callback(new Error('请输入通用名'))
+          } else {
+            callback()
+          }
         }
         return callback(new Error('请输入内容'))
       }
@@ -535,7 +544,7 @@ export default {
       },
       basicRules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-        commonName: [{ required: true, validator: _checkName, message: '请输入通用名称', trigger: 'blur' }],
+        commonName: [{ validator: _checkName, message: '请输入通用名称', trigger: 'blur' }],
         unit: [{ required: true, message: '请输入选择单位', trigger: 'change' }],
         brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }],
         weight: [
@@ -766,7 +775,7 @@ export default {
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
-          message: '只能上传图片',
+          message: '只能上传格式为 jpg、jpeg、png',
           type: 'warning'
         })
         this.pageLoading.close()
@@ -818,29 +827,29 @@ export default {
       })
     },
     _filters(data) {
-      this.groupData.forEach((v, index) => {
-        data.forEach((val, index) => {
-          if (v.id === val[0]) {
-            if (!this.chooseGroup[index]) {
-              this.chooseGroup.push([])
-            }
-            this.chooseGroup[index].push({ name: v.name, id: v.id })
-            if (v.children) {
-              v.children.map(v1 => {
-                if (v1.id === val[1]) {
-                  this.chooseGroup[index].push({ name: v1.name, id: v1.id })
+      data.forEach((val, index1) => {
+        const findIndex = findArray(this.groupData, { id: val[0] })
+        if (findIndex > -1) { // 找一级
+          if (!this.chooseGroup[index1]) {
+            this.chooseGroup.push([])
+          }
+          const row = this.groupData[findIndex]
+          this.chooseGroup[index1].push({ name: row.name, id: row.id })
+          if (row.children) { // 找二级
+            const findIndex_child = findArray(row.children, { id: val[1] })
+            if (findIndex_child > -1) {
+              const child = row.children[findIndex_child]
+              this.chooseGroup[index1].push({ name: child.name, id: child.id })
+              if (child.children) { // 找三级
+                const findIndex_children = findArray(child.children, { id: val[2] })
+                if (findIndex_children > -1) {
+                  const children = child.children[findIndex_children]
+                  this.chooseGroup[index1].push({ name: children.name, id: children.id })
                 }
-                if (v1.children) {
-                  v1.children.map(v2 => {
-                    if (v2.id === val[2]) {
-                      this.chooseGroup[index].push({ name: v2.name, id: v2.id })
-                    }
-                  })
-                }
-              })
+              }
             }
           }
-        })
+        }
       })
     },
     _CreateBasicInfo(data) { // 创建基本信息
@@ -951,7 +960,7 @@ export default {
       }
       saveGoodsDetails(data).then(res => {
         this.$message({
-          message: '保存成功',
+          message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
           type: 'success'
         })
         this.subLoading = false

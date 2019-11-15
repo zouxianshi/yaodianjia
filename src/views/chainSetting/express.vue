@@ -27,29 +27,27 @@
         </el-table-column>
         <el-table-column label="首重（Kg）" width="120px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.ykg" type="number" />
+            <el-input-number v-model="scope.row.ykg" :precision="0" min="0" max="99999" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
         <el-table-column label="运费（元）" width="120px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.freight" type="number" />
+            <el-input-number v-model="scope.row.freight" :precision="2" min="0" max="99999" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
-        <el-table-column label="续重（元）" width="120px">
+        <el-table-column label="续重（Kg）" width="120px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.continueWeight" type="number" />
+            <el-input-number v-model="scope.row.continueWeight" :precision="0" min="0" max="99999" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
         <el-table-column label="续费（元）" width="120px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.renewalCost" type="number" />
+            <el-input-number v-model="scope.row.renewalCost" :precision="2" min="0" max="99999" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
-        <el-table-column label="包邮门槛" width="160px">
+        <el-table-column label="包邮门槛(元)" width="160px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.postageFreeThreshold" type="number">
-              <template slot="append">元</template>
-            </el-input>
+            <el-input-number v-model="scope.row.postageFreeThreshold" :precision="2" max="99999" min="0" :controls="false" style="width: 100px" />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="110px">
@@ -224,6 +222,14 @@ export default {
       }
     },
     save() {
+      if (this.checkedCities.length <= 0) {
+        this.$message({
+          message: '请至少选择一个',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        return
+      }
       const rangeResDTOList = []
       _.map(this.checkedCities, (v) => {
         rangeResDTOList.push({

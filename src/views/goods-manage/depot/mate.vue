@@ -39,9 +39,9 @@
                 @click="handleAddGoods"
               >确认对码</el-button>
             </p>
-            <el-button
-              size="small"
-            >申请新品</el-button>
+            <a href="#/goods-manage/apply">
+              <el-button size="small">申请新品</el-button>
+            </a>
           </template>
           <template v-else-if="$route.query.from==='is_pair'">
             <el-button
@@ -107,18 +107,45 @@
           @current-change="handleCurrentChange"
         >
           <el-table-column
-            prop="name"
             align="left"
             min-width="120"
             label="商品名称"
             show-overflow-tooltip
-          />
+            :type="expand?'expand':''"
+          >
+            <template slot-scope="scope">
+              <span v-text="scope.row.name" />
+              <p>
+                <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
+              </p>
+              <span v-text="expands(scope.row)" />
+              <el-form v-if="pairData.platformCode===scope.row.id" label-position="left" inline class="demo-table-expand">
+                <el-form-item>
+                  <p>当前改数据对应的ERP产品资料为：{{ pairData.name }}
+                    <span v-for="(item,index) in pairData.specSkuList" :key="index">
+                      {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                    </span>
+                    <span v-text="pairData.manufacture" />
+                    <span v-text="pairData.barCode" />
+                    <span v-text="pairData.approvalNumber" />
+                  </p>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="packStandard"
             align="left"
             min-width="120"
+            show-overflow-tooltip
             label="规格"
-          />
+          >
+            <template slot-scope="scope">
+              <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="manufacture"
             align="left"
@@ -150,14 +177,23 @@
             align="left"
             min-width="125"
             label="匹配得分"
-          />
+          >
+            <template slot-scope="scope">
+              <span v-text="scope.row.matchScore" />
+              <p
+                v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id"
+              >
+                <el-button type="text" size="mini" @click="handleRemoveRelation(scope.row)">解除对码关系</el-button>
+              </p>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { getMatchList, setMateCode, mateAgain } from '@/api/depot'
+import { getMatchList, setMateCode, mateAgain, removeMateCode } from '@/api/depot'
 import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 export default {
@@ -182,13 +218,14 @@ export default {
       goodsInfoVisible: false,
       rejectVisible: false,
       rejectForm: {},
+      expand: false,
       rules: {
         id: [{ required: true, message: '请选择驳回原因', trigger: 'blur' }],
         reason: [{ validator: _checkReason, trigger: 'blur' }]
       },
       currentRow: {},
       subLoading: false,
-      pariData: {},
+      pairData: {},
       storeTableData: [],
       isMate: {}
     }
@@ -197,11 +234,16 @@ export default {
     ...mapGetters(['name'])
   },
   created() {
-    this._loadMatchList()
     const data = sessionStorage.getItem('mate')
     this.pairData = JSON.parse(data)
+    this._loadMatchList()
   },
   methods: {
+    expands(row) {
+      if (row && this.pairData.platformCode === row.id) {
+        this.expand = true
+      }
+    },
     resetQuery() {
       this.searchForm = {
         name: '',
@@ -217,9 +259,19 @@ export default {
         this.tableData = res.data
         this.storeTableData = JSON.parse(JSON.stringify(res.data))
         if (res.data.length !== 0) {
-          this.$refs.singleTable.setCurrentRow(this.tableData[0])
-          this.currentRow = this.tableData[0]
-          this.isMate = this.tableData[0]
+          let data = {}
+          if (this.$route.query.from === 'is_pair') {
+            this.tableData.map(v => {
+              if (v.id === this.pairData.platformCode) {
+                data = v
+              }
+            })
+          } else {
+            data = this.tableData[0]
+          }
+          this.$refs.singleTable.setCurrentRow(data)
+          this.currentRow = data
+          this.isMate = data
         }
         this.loading = false
       }).catch(() => {
@@ -236,6 +288,7 @@ export default {
           for (const key in tempFilter) {
             if (item[key] && item[key].toString().indexOf(tempFilter[key].toString()) >= 0) {
               flag = true
+              console.log('找到了')
             } else {
               flag = false
               break
@@ -254,8 +307,30 @@ export default {
         this.currentRow = {}
       }
     },
-    handleCurrentChange(val) {
+    handleCurrentChange(val) { // 选择表格中某条数据选中
       this.currentRow = val
+    },
+    handleRemoveRelation(row) { // 解除对码关系
+      this.$confirm('是否确认解除对码关系', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const data = JSON.parse(JSON.stringify(this.pairData))
+        data.commodityId = ''
+        data.platformCode = ''
+        data.specId = 0
+        data.status = 0
+        removeMateCode(data).then(res => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this._loadMatchList()
+        }).catch(_ => {
+
+        })
+      }).catch(() => {})
     },
     handleAddGoods() { // 确定对码
       if (!this.currentRow.id) {
@@ -266,14 +341,8 @@ export default {
         return
       }
       this.subLoading = true
-      const data = {
-        'id': this.$route.query.id,
-        'productIds': [
-          this.currentRow.id
-        ],
-        'status': 1,
-        'userName': this.name
-      }
+      const data = JSON.parse(JSON.stringify(this.pairData))
+      data.platformCode = this.currentRow.id
       setMateCode(data).then(res => {
         this.$message({
           message: '确认对码成功',

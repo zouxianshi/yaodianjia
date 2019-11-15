@@ -9,30 +9,7 @@
 import mSubgrouping from './subgrouping'
 export default {
   name: 'Conditions',
-  components: { mSubgrouping },
-  props: {},
-  data() {
-    return {}
-  },
-  computed: {},
-  watch: {},
-  beforeCreate() {
-  },
-  created() {
-  },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
-  },
-  methods: {}
+  components: { mSubgrouping }
 }
 </script>
 

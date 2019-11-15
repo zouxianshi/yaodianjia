@@ -5,11 +5,16 @@
         <ul class="product-box">
           <li class="product-list">
             <p class="title">当前产品</p>
-            <p v-if="pairData.platformCode" class="title">ERP编码：{{ pairData.platformCode }}</p>
+            <p class="title">ERP编码：<span v-if="currentRow">{{ pairData.erpCode }}</span></p>
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-text="pairData.name" /></p>
-              <p>规格：<span v-text="pairData.packStandard" /></p>
+              <div class="specs-item">
+                <span>规格：</span>
+                <div>
+                  <p v-for="(item,index) in pairData.specSkuList" :key="index"> {{ item.skuKeyName }}：{{ item.skuValue }}</p>
+                </div>
+              </div>
               <p>企业：<span v-text="pairData.manufacture" /></p>
               <p>条码：<span v-text="pairData.barCode" /></p>
               <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
@@ -17,15 +22,15 @@
           </li>
           <li class="product-list">
             <p class="title">
-              当前所选药店加平台库产品</p>
-            <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p>
+              当前所选商品库产品</p>
+            <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.erpCode }}</span></p>
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-if="currentRow" v-text="currentRow.name" /></p>
-              <p>规格：<span v-if="currentRow" v-text="currentRow.packStandard" /></p>
-              <p>企业：<span v-if="currentRow" v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-if="currentRow" v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-if="currentRow" v-text="currentRow.approvalNumber" /></p>
+              <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
+              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
+              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
@@ -105,11 +110,17 @@
             show-overflow-tooltip
           />
           <el-table-column
-            prop="packStandard"
             align="left"
             min-width="120"
             label="规格"
-          />
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="manufacture"
             align="left"
@@ -131,12 +142,6 @@
             min-width="120"
           />
           <el-table-column
-            prop="merUserNum"
-            align="left"
-            min-width="125"
-            label="使用商家数量"
-          />
-          <el-table-column
             prop="matchScore"
             align="left"
             min-width="125"
@@ -155,19 +160,24 @@
       <div class="modal-body">
         <div class="info-text">
           <p>商品名称：<span v-text="pairData.name" /></p>
-          <p>商品规格：<span v-text="pairData.name" /></p>
-          <p>生产企业：<span v-text="pairData.packStandard">12321</span></p>
+          <div class="specs-item">
+            <span>商品规格：</span>
+            <div>
+              <p v-for="(item,index) in pairData.specSkuList" :key="index"> {{ item.skuKeyName }}：{{ item.skuValue }}</p>
+            </div>
+          </div>
+          <p>生产企业：<span v-text="pairData.manufacture">12321</span></p>
           <p>搜索关键词：<span v-text="pairData.keyWord" /></p>
           <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
           <!-- <p>是否药品：<span v-text="pariData."/></p> -->
           <p>处方分类：
-            <span v-if="pariData.drugType==='0'">甲类OTC</span>
-            <span v-if="pariData.drugType==='1'">处方药</span>
-            <span v-if="pariData.drugType==='2'">乙类OTC</span>
+            <span v-if="pariData.drugType===0">甲类OTC</span>
+            <span v-if="pariData.drugType===1">处方药</span>
+            <span v-if="pariData.drugType===2">乙类OTC</span>
             <span v-else>非处方药</span>
           </p>
           <p>是否含有麻黄碱：<span v-text="pairData.hasEphedrine===0?'不包含':'包含'" /></p>
-          <p>品牌名称：<span v-text="pairData.commonName" /></p>
+          <p>品牌名称：<span v-text="pairData.brandName" /></p>
           <p>通用名：<span v-text="pairData.commonName" /></p>
           <p>功能疗效：<span v-text="pairData.keyFeature" /></p>
           <!-- <p>用法用量：<span v-text="pairData"/></p> -->
@@ -419,10 +429,22 @@ export default {
   overflow-y: scroll;
   height: 100%;
 }
+.specs-item{
+  display: flex;
+  margin-bottom: 5px;
+  .name{
+    width: 50px;
+  }
+}
 .mate-wrapper {
   height: 101%;
   .mate-info {
     display: flex;
+  }
+  .yellow-bg{
+    background: yellow;
+    display: inline-block;
+    padding:5px;
   }
   .product-box {
     display: flex;
