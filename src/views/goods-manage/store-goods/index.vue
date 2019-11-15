@@ -234,7 +234,7 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="定时解锁设置">
-          <el-checkbox v-model="formData.unlockType" :true-label="1" :false-label="0">定时解锁</el-checkbox>
+          <el-checkbox v-model="formData.unlockType" :true-label="1" :false-label="0" @change="unlockTypeChange">定时解锁</el-checkbox>
         </el-form-item>
         <el-form-item v-if="formData.unlockType===1" label="解锁时间" prop="unlockTime">
           <el-date-picker
@@ -395,6 +395,9 @@ export default {
       }
       this.getList()
     },
+    unlockTypeChange() { // 定时解锁 chang
+      this.formData.unlockTime = ''
+    },
     getList() {
       this._loadStoreList().then(res => {
         if (res) {
@@ -483,6 +486,7 @@ export default {
             'storeId': this.editData.storeId,
             'merCode': this.merCode
           }
+
           setUpdatePriceStock({ list: [data] }).then(res => {
             this.subLoading = false
             this.$message({
@@ -555,13 +559,7 @@ export default {
       })
       this.formData.specIds = ary
       this.formData.storeId = this.listQuery.storeId
-      if (this.lockFlag.length === 0 && this.formData.unlockType === 0) {
-        this.$message({
-          message: '请选择锁定方式',
-          type: 'warning'
-        })
-        return
-      }
+
       if (this.lockFlag.length === 0) { // 全部锁定
         this.formData.lockFlag = 0
       }
@@ -574,8 +572,16 @@ export default {
       if (this.lockFlag.includes(2) && this.lockFlag.includes(1)) {
         this.formData.lockFlag = 3 // 锁定价格和库存
       }
+
       this.$refs['lockForm'].validate((valid) => {
         if (valid) {
+          if (this.lockFlag.length === 0) {
+            this.$message({
+              message: '请选择锁定属性',
+              type: 'error'
+            })
+            return
+          }
           this.subLoading = true
           setLockPrice(this.formData).then(res => {
             this.$message({
@@ -584,7 +590,7 @@ export default {
             })
             this.dialogVisible = false
             this.subLoading = false
-            this.getList()
+            this._loadList()
           }).catch(() => {
             this.subLoading = false
             this.dialogVisible = false
