@@ -185,7 +185,7 @@
                         <div class="cover-box">
                           <div class="cover" :style="`backgroundImage: url('${showImg(item.imageUrl)}')`" />
                         </div>
-                        <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
+                        <div class="caption" :title="item.productName" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
                           <span class="current">
                             <span class="sign">￥</span>{{ item.price }}
@@ -240,7 +240,7 @@
                         <div class="cover-box">
                           <div class="cover" :style="`backgroundImage: url('${showImg(item.imageUrl)}')`" />
                         </div>
-                        <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
+                        <div class="caption" :title="item.productName" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
                           <span class="current">
                             <span class="sign">￥</span>{{ item.price }}
@@ -463,7 +463,7 @@
                         <div class="cover" :style="`backgroundImage: url('${showImg(goods.mainPic)}')`" />
                         <div class="btn-remove" @click.stop="removeGoods($index, 'xForm6')" />
                       </div>
-                      <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
+                      <div class="caption" :title="goods.commodityName" v-text="goods.commodityName">修正VE软胶</div>
                       <div class="price">
                         <span class="current">
                           <span class="sign">￥</span>{{ goods.price }}
@@ -551,7 +551,7 @@
                         <div class="cover" :style="`backgroundImage: url('${showImg(goods.mainPic)}')`" />
                         <div class="btn-remove" @click.stop="removeGoods($index, 'xForm8')" />
                       </div>
-                      <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
+                      <div class="caption" :title="goods.commodityName" v-text="goods.commodityName">修正VE软胶</div>
                       <div class="price">
                         <span class="current">
                           <span class="sign">￥</span>{{ goods.price }}
@@ -1660,7 +1660,6 @@ export default {
               width: 100%;
               height: 100%;
               background: url('../../assets/image/h5/pic_xian_a.png') no-repeat 100% 100%;
-              background-size: cover;
             }
           }
           .caption {
@@ -1770,8 +1769,8 @@ export default {
               .cover {
                 width: 100%;
                 height: 100%;
-                background: $bg-cover;
-                background-size: cover;
+                background-color: $bg-cover;
+                background: no-repeat center/100% 100%;
               }
             }
             .caption {
@@ -1831,7 +1830,6 @@ export default {
               width: 100%;
               height: 100%;
               background: url('../../assets/image/h5/pic_sh.png') no-repeat 100% 100%;
-              background-size: cover;
             }
           }
           .info-box {
@@ -2013,8 +2011,7 @@ export default {
           .cover {
             width: 100%;
             height: 100%;
-            background: url('../../assets/image/h5/pic_xian_a.png') no-repeat 100% 100%;
-            background-size: cover;
+            background: url('../../assets/image/h5/pic_xian_a.png') no-repeat center/100% 100%;
           }
           .btn-remove {
             position: absolute;
