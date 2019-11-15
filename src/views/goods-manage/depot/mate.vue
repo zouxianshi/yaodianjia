@@ -9,7 +9,7 @@
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-text="pairData.name" /></p>
-              <p>规格：<span v-text="pairData.packStandard" /></p>
+              <!-- <p>规格：<span v-text="pairData.packStandard" /></p> -->
               <p>企业：<span v-text="pairData.manufacture" /></p>
               <p>条码：<span v-text="pairData.barCode" /></p>
               <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
@@ -21,11 +21,11 @@
             <!-- <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p> -->
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
-              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
-              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
+              <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name&&currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
+              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard&&currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
+              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
@@ -326,6 +326,8 @@ export default {
             message: '操作成功',
             type: 'success'
           })
+          this.pairData.platformCode = ''
+          sessionStorage.setItem('mate', JSON.stringify(this.pairData))
           this._loadMatchList()
         }).catch(_ => {
 

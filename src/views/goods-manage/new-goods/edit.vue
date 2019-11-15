@@ -7,7 +7,10 @@
         <el-step title="图文信息" icon="el-icon-picture-outline-round" @click="handleGoStep(3)" />
       </el-steps>
       <!-- 第一步 -->
-      <div v-show="step===1">
+      <div
+        v-show="step===1"
+        v-loading="basicLoading"
+      >
         <!-- 分类信息 -->
         <div class="edit-card">
           <div class="header">
@@ -138,7 +141,6 @@
                 <el-form-item label="批准文号：" prop="approvalNumber">
                   <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
-
                 <el-form-item label="商品详细信息：">
                   <p>填写商品说明书</p>
                   <div v-show="basicForm.origin===1">
@@ -520,6 +522,7 @@ export default {
         value: 'id'
       },
       loading: false,
+      basicLoading: false,
       basicForm: {
         'approvalNumber': '', // 批准文号
         'brandId': '', // 商品品牌id
@@ -678,6 +681,7 @@ export default {
       })
     },
     _loadBasicInfo() { // 加载基本信息
+      this.basicLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
         this._loadgroupGather('1', [res.data.typeId])
@@ -707,6 +711,9 @@ export default {
         }
         // 赋值值
         this.basicForm = data
+        this.basicLoading = false
+      }).catch(_ => {
+        this.basicLoading = false
       })
     },
     _loadGoodsImgAry() { // 加载商品图片
@@ -775,7 +782,7 @@ export default {
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
-          message: '只能上传格式为 jpg、jpeg、png',
+          message: '只能上传格式为 jpg、jpeg、png的图片',
           type: 'warning'
         })
         this.pageLoading.close()
@@ -821,7 +828,7 @@ export default {
       this._loadBrandList(query)
     },
     _loadBrandList(query = '') { // 获取品牌
-      getBrandList({ brandName: query }).then(res => {
+      getBrandList({ brandName: query, pageSize: 300 }).then(res => {
         const { data } = res.data
         this.brandList = data
       })
@@ -903,6 +910,13 @@ export default {
               } else {
                 data.expireDays = parseInt(this.days) * 365
               }
+            }
+            if (this.chooseGroup.length === 0) {
+              this.$message({
+                message: '请设置商品分组',
+                type: 'error'
+              })
+              return
             }
             data.groupIds = []
             this.chooseGroup.map(v => {

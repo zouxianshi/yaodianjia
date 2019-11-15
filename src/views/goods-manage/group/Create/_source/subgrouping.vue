@@ -194,7 +194,7 @@ export default {
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
-          message: '只能上传图片',
+          message: '只能上传格式为 jpg、jpeg、png的图片',
           type: 'warning'
         })
       }
