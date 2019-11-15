@@ -109,6 +109,24 @@ class InnerCtor {
         path: '/internalLink',
         disabled: true,
         children: []
+      },
+      {
+        name: '营销活动',
+        icon: 'icongoods',
+        path: '/marketing/activity',
+        disabled: this.get('merchant-org'),
+        children: [
+          {
+            name: '新建活动',
+            path: '/marketing/activity/create',
+            disabled: this.get('merchant-org.merchant-org-org'),
+          },
+          {
+            name: '活动管理',
+            path: '/marketing/activity',
+            disabled: this.get('merchant-org.merchant-org-org'),
+          }
+        ]
       }
     ]
   }
