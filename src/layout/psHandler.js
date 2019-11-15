@@ -48,7 +48,7 @@ class InnerCtor {
         ]
       },
       {
-        name: '微商城',
+        name: '内容管理',
         icon: 'icongoods',
         path: '',
         disabled: this.get('merchant-org'),

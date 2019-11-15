@@ -183,7 +183,7 @@
                     <template v-if="xForm6.detail && xForm6.detail.length>0">
                       <swiper-slide v-for="item in xForm6.detail" :key="item.productId" class="goods-item">
                         <div class="cover-box">
-                          <div class="cover" :style="`background: url('${showImg(item.imageUrl)}')`" />
+                          <div class="cover" :style="`backgroundImage: url('${showImg(item.imageUrl)}')`" />
                         </div>
                         <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
@@ -238,7 +238,7 @@
                     <template v-if="xForm8.detail && xForm8.detail.length>0">
                       <swiper-slide v-for="item in xForm8.detail" :key="item.productId" class="goods-item">
                         <div class="cover-box">
-                          <div class="cover" :style="`background: url('${showImg(item.imageUrl)}')`" />
+                          <div class="cover" :style="`backgroundImage: url('${showImg(item.imageUrl)}')`" />
                         </div>
                         <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
@@ -460,7 +460,7 @@
                   <template v-if="xForm6.selectGoodsList && xForm6.selectGoodsList.length>0">
                     <li v-for="(goods, $index) in xForm6.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
-                        <div class="cover" :style="`background: url('${showImg(goods.mainPic)}')`" />
+                        <div class="cover" :style="`backgroundImage: url('${showImg(goods.mainPic)}')`" />
                         <div class="btn-remove" @click.stop="removeGoods($index, 'xForm6')" />
                       </div>
                       <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
@@ -548,7 +548,7 @@
                   <template v-if="xForm8.selectGoodsList && xForm8.selectGoodsList.length>0">
                     <li v-for="(goods, $index) in xForm8.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
-                        <div class="cover" :style="`background: url('${showImg(goods.mainPic)}')`" />
+                        <div class="cover" :style="`backgroundImage: url('${showImg(goods.mainPic)}')`" />
                         <div class="btn-remove" @click.stop="removeGoods($index, 'xForm8')" />
                       </div>
                       <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
@@ -594,8 +594,8 @@ import { mapGetters } from 'vuex'
 import 'swiper/dist/css/swiper.css'
 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
-import dialogGoods from './components/dialog-goods'
-import { getPageSets, mutilAddPageSet } from '../../api/wxmall'
+import dialogGoods from '@/components/Dialog/DialogGoods'
+import { getPageSets, mutilAddPageSet } from '@/api/wxmall'
 import config from '../../utils/config'
 
 export default {
@@ -1518,8 +1518,7 @@ export default {
           .img {
             width: 65px;
             height: 65px;
-            background: url('../../assets/image/h5/pic_sh.png') no-repeat
-              center/100% 100%;
+            background: url('../../assets/image/h5/pic_sh.png') no-repeat 100% 100%;
           }
         }
         .info-box {
@@ -1660,8 +1659,8 @@ export default {
             .cover {
               width: 100%;
               height: 100%;
-              background: url('../../assets/image/h5/pic_xian_a.png') no-repeat
-                center/100% 100%;
+              background: url('../../assets/image/h5/pic_xian_a.png') no-repeat 100% 100%;
+              background-size: cover;
             }
           }
           .caption {
@@ -1772,6 +1771,7 @@ export default {
                 width: 100%;
                 height: 100%;
                 background: $bg-cover;
+                background-size: cover;
               }
             }
             .caption {
@@ -1830,8 +1830,8 @@ export default {
             .cover {
               width: 100%;
               height: 100%;
-              background: url('../../assets/image/h5/pic_sh.png') no-repeat
-                center/100% 100%;
+              background: url('../../assets/image/h5/pic_sh.png') no-repeat 100% 100%;
+              background-size: cover;
             }
           }
           .info-box {
@@ -2013,8 +2013,8 @@ export default {
           .cover {
             width: 100%;
             height: 100%;
-            background: url('../../assets/image/h5/pic_xian_a.png') no-repeat
-              center/100% 100%;
+            background: url('../../assets/image/h5/pic_xian_a.png') no-repeat 100% 100%;
+            background-size: cover;
           }
           .btn-remove {
             position: absolute;

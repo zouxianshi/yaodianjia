@@ -6,7 +6,7 @@ const router = [
     redirect: '/wxmall/banner',
     name: 'wxmall',
     meta: {
-      title: '微商城',
+      title: '内容管理',
       icon: 'goods'
     },
     alwaysShow: true,

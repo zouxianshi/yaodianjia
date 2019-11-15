@@ -7,15 +7,20 @@
           <div class="search-item">
             <span class="label-name">有效时间</span>
             <el-date-picker
-              v-model="searchForm.dateRange"
+              v-model="searchForm.timeBeg"
               size="small"
-              type="datetimerange"
+              type="datetime"
               value-format="yyyy-MM-dd HH:mm:ss"
-              range-separator="至"
-              :default-time="['00:00:00','23:59:59']"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
+              placeholder="开始时间"
               @change="handleTimeChange($event, 1)"
+            /> -
+            <el-date-picker
+              v-model="searchForm.timeEnd"
+              size="small"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="结束时间"
+              @change="handleTimeChange($event, 2)"
             />
           </div>
           <div class="search-item">
@@ -194,7 +199,7 @@
                 :default-time="['00:00:00','23:59:59']"
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
-                @change="handleTimeChange($event, 2)"
+                @change="handleTimeChange($event, 3)"
               />
             </el-form-item>
             <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
@@ -344,17 +349,25 @@ export default {
       this._getTableData()
     },
     handleTimeChange(val, type) {
-      if (type === 1) {
-        // 搜索栏
-        if (val && val.length === 2) {
-          this.searchForm.timeBeg = val[0]
-          this.searchForm.timeEnd = val[1]
-          this.search()
+      console.log(val, type)
+      if (type === 1 || type === 2) { // 搜索栏 1.开始时间 2.结束时间
+        if (!val) {
+          type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
         } else {
-          this.searchForm.timeBeg = ''
-          this.searchForm.timeEnd = ''
+          console.log('this.searchForm', this.searchForm)
+          if (this.searchForm.timeBeg && this.searchForm.timeEnd && this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
+            // 比较时间
+            const start = this.searchForm.timeBeg.replace(/[- :]/g, '')
+            const end = this.searchForm.timeEnd.replace(/[- :]/g, '')
+            if (parseInt(start) > parseInt(end)) {
+              this.$message('结束时间必须大于开始时间')
+              type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
+              return
+            }
+          }
         }
-      } else if (type === 2) {
+        this.search()
+      } else if (type === 3) { // dialog
         // dialog
         if (val && val.length === 2) {
           this.xForm.startTime = val[0]
