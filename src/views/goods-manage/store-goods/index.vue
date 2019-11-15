@@ -575,7 +575,7 @@ export default {
 
       this.$refs['lockForm'].validate((valid) => {
         if (valid) {
-          if (this.lockFlag.length === 0) {
+          if (this.formData.unlockType === 1 && this.formData.unlockTime !== '' && this.lockFlag.length === 0) {
             this.$message({
               message: '请选择锁定属性',
               type: 'error'
