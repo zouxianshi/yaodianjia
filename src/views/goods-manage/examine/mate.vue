@@ -171,9 +171,9 @@
           <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
           <!-- <p>是否药品：<span v-text="pariData."/></p> -->
           <p>处方分类：
-            <span v-if="pariData.drugType===0">甲类OTC</span>
-            <span v-if="pariData.drugType===1">处方药</span>
-            <span v-if="pariData.drugType===2">乙类OTC</span>
+            <span v-if="pairData.drugType===0">甲类OTC</span>
+            <span v-else-if="pairData.drugType===1">处方药</span>
+            <span v-else-if="pairData.drugType===2">乙类OTC</span>
             <span v-else>非处方药</span>
           </p>
           <p>是否含有麻黄碱：<span v-text="pairData.hasEphedrine===0?'不包含':'包含'" /></p>

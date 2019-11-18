@@ -111,13 +111,15 @@
             min-width="120"
             label="商品名称"
             show-overflow-tooltip
-            :base="index"
           >
             <template slot-scope="scope">
               <div :class="{'is_pair':scope.row.commodity}">
                 <span v-text="scope.row.name" />
-                <p>
-                  <el-tag v-if="scope.row.commodity" type="warning" size="mini">已对码</el-tag>
+                <p v-if="scope.row.commodity&&scope.row.id!==pairData.platformCode">
+                  <el-tag type="warning" size="mini">已匹配其他商品</el-tag>
+                </p>
+                <p v-if="scope.row.id===pairData.platformCode">
+                  <el-tag type="warning" size="mini">已对码</el-tag>
                 </p>
               </div>
               <div v-if="scope.row.commodity" class="bind-info">
@@ -180,7 +182,7 @@
             <template slot-scope="scope">
               <span v-text="scope.row.matchScore" />
               <p
-                v-if="scope.row.commodity"
+                v-if="scope.row.id===pairData.platformCode"
               >
                 <el-button type="text" size="mini" @click="handleRemoveRelation(scope.row)">解除对码关系</el-button>
               </p>
