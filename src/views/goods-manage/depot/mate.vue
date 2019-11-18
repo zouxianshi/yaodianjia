@@ -22,7 +22,12 @@
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name&&currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
-              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard&&currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
+              <div class="specs-item">
+                <span>规格：</span>
+                <div>
+                  <p v-for="(item,index) in currentRow.specSkuList" :key="index"> {{ item.skuKeyName }}：{{ item.skuValue }}</p>
+                </div>
+              </div>
               <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
               <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
               <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
@@ -184,7 +189,7 @@
               <p
                 v-if="scope.row.id===pairData.platformCode"
               >
-                <el-button type="text" size="mini" @click="handleRemoveRelation(scope.row)">解除对码关系</el-button>
+                <!-- <el-button type="text" size="mini" @click="handleRemoveRelation(scope.row)">解除对码关系</el-button> -->
               </p>
             </template>
           </el-table-column>
@@ -197,6 +202,7 @@
 import { getMatchList, setMateCode, mateAgain, removeMateCode } from '@/api/depot'
 import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
+import { findArray } from '@/utils/index'
 export default {
   data() {
     var _checkReason = (rule, value, callback) => {
@@ -240,11 +246,6 @@ export default {
     this._loadMatchList()
   },
   methods: {
-    expands(row) {
-      if (row && this.pairData.platformCode === row.id) {
-        this.expand = true
-      }
-    },
     resetQuery() {
       this.searchForm = {
         name: '',
@@ -322,6 +323,7 @@ export default {
         data.platformCode = ''
         data.specId = 0
         data.status = 0
+        data.reason = '手动解除对码'
         removeMateCode(data).then(res => {
           this.$message({
             message: '操作成功',
@@ -351,7 +353,16 @@ export default {
           message: '确认对码成功',
           type: 'success'
         })
-        this.$router.go(-1)
+        const storeData = JSON.parse(sessionStorage.getItem('mateList')) // 读取缓存数据
+        const findIndex = findArray(storeData, { id: this.$route.query.id })
+        if (findIndex > -1 && findIndex !== storeData.length - 1) { // 如果在该数据中找到了，且不是最后一条，那么自动到条
+          this.$router.replace(`/goods-manage/mate-details?id=${storeData[parseInt(findIndex) + 1].id}&from=pair`)
+          this.pairData = storeData[parseInt(findIndex) + 1]
+          sessionStorage.setItem('mate', JSON.stringify(storeData[parseInt(findIndex) + 1]))
+          this._loadMatchList()
+        } else {
+          this.$router.go(-1)
+        }
       }).catch(() => {
         this.subLoading = false
       })
@@ -380,7 +391,16 @@ export default {
             message: '操作成功',
             type: 'success'
           })
-          this.$router.go(-1)
+          const storeData = JSON.parse(sessionStorage.getItem('mateList')) // 读取缓存数据
+          const findIndex = findArray(storeData, { id: this.$route.query.id })
+          if (findIndex > -1 && findIndex !== storeData.length - 1) {
+            this.$router.replace(`/goods-manage/mate-details?id=${storeData[parseInt(findIndex) + 1].id}&from=pair`)
+            this.pairData = storeData[parseInt(findIndex) + 1]
+            sessionStorage.setItem('mate', JSON.stringify(storeData[parseInt(findIndex) + 1]))
+            this._loadMatchList()
+          } else {
+            this.$router.go(-1)
+          }
         }).catch(() => {
           this.subLoading = false
         })
@@ -452,6 +472,13 @@ export default {
   .mate-info {
     display: flex;
   }
+  .specs-item{
+    display: flex;
+    margin-bottom: 5px;
+    .name{
+      width: 50px;
+    }
+}
   .yellow-bg{
     background: yellow;
     display: inline-block;

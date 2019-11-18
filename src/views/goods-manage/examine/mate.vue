@@ -27,8 +27,12 @@
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name&&currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
-              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard&&currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
-              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
+              <div class="specs-item">
+                <span>规格：</span>
+                <div :class="{'yellow-bg':isShowBg}">
+                  <p v-for="(item,index) in currentRow.specSkuList" :key="index"> {{ item.skuKeyName }}：{{ item.skuValue }}</p>
+                </div>
+              </div>              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
               <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
               <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
             </div>
@@ -282,6 +286,17 @@ export default {
     this._loadImgList()
   },
   methods: {
+    isShowBg() {
+      let pairInfo = ''
+      this.pairData.specSkuList.map(v => {
+        pairInfo = +v.skuValue
+      })
+      let currentInfo = ''
+      this.currentRow.specSkuList.map(v => {
+        currentInfo = +v.skuValue
+      })
+      return pairInfo === currentInfo
+    },
     resetQuery() {
       this.searchForm = {
         name: '',

@@ -13,6 +13,7 @@
           :show-file-list="false"
           :headers="headers"
           :on-success="handleAvatarSuccess"
+          :on-error="handleAvatarError"
           :before-upload="beforeAvatarUpload"
         >
           <img v-if="pic" :src="showImg(info.pic)" class="avatar">
@@ -36,6 +37,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
+let loading = ''
 export default {
   name: 'SubgroupingVue',
   components: {},
@@ -189,14 +191,34 @@ export default {
           type: 'error'
         })
       }
+      loading.close()
+    },
+    handleAvatarError(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        location.reload()
+      } else {
+        this.$message({
+          message: '图片上传失败',
+          type: 'error'
+        })
+        loading.close()
+      }
     },
     beforeAvatarUpload(file) {
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      loading = this.$loading({
+        lock: true,
+        text: '图片上传中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       if (!isImg) {
         this.$message({
           message: '只能上传格式为 jpg、jpeg、png的图片',
           type: 'warning'
         })
+        loading.close()
       }
       return isImg
     }

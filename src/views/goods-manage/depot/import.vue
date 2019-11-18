@@ -53,6 +53,7 @@
               name="excelFile"
               :limit="1"
               :on-success="handleFileSuccess"
+              :on-error="handleFileErr"
               :auto-upload="false"
               :before-upload="beforeUpload"
               :on-change="fileChange"
@@ -83,12 +84,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode']),
+    ...mapGetters(['merCode', 'token']),
     uploadUlr() {
       return `${this.uploadFileURL}${config.merGoods}/1.0/commodity/_batImport?merCode=${this.merCode}`
     },
     headers() {
-      return { 'Authorization': this.$store.getters.token }
+      return { 'Authorization': this.token }
     }
   },
   methods: {
@@ -132,6 +133,12 @@ export default {
         this.$refs.file.clearFiles()
       }
       this.is_file = false
+    },
+    handleFileErr(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        window.location.reload()
+      }
     }
   }
 }
