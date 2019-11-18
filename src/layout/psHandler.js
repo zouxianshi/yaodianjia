@@ -120,6 +120,13 @@ class InnerCtor {
             name: '新建活动',
             path: '/marketing/activity/create',
             disabled: this.get('merchant-org.merchant-org-org'),
+            children: [
+              {
+                name: '新建限时优惠',
+                path: '/marketing/activity/limit-edit',
+                disabled: this.get('merchant-org.merchant-org-org'),
+              }
+            ]
           },
           {
             name: '活动管理',

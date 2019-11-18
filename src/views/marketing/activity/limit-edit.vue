@@ -1,182 +1,94 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">新建活动</el-button>
-      <section @keydown.enter="search()">
-        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动类型</span>
-            <el-select
-              v-model="searchForm.type"
-              size="small"
-              placeholder="全部"
-              @change="search()"
-            >
-              <el-option label="全部" value="" />
-              <el-option label="电子DM单" :value="0" />
-              <el-option label="限时优惠" :value="1" />
+      <section class="form-box">
+        <el-form :model="xForm" size="small">
+          <el-form-item label="活动类型">
+            <el-radio-group v-model="xForm.type">
+              <el-radio label="限时优惠" value="1" />
+              <el-radio label="限时秒杀" value="2" />
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="活动名称" required>
+            <el-input placeholder="不超过20字" />
+          </el-form-item>
+          <el-form-item label="活动描述">
+            <el-input type="textarea" placeholder="不超过50字" />
+          </el-form-item>
+          <el-form-item label="生效时间" required>
+            <el-time-picker v-model="xForm.startTime" placeholder="开始时间" />
+            <el-time-picker v-model="xForm.startTime" placeholder="结束时间" />
+          </el-form-item>
+          <el-form-item label="优惠模式">
+            <el-radio-group v-model="xForm.mode">
+              <el-radio label="折扣" value="1" />
+              <el-radio label="减价" value="2" />
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="活动范围">
+            <el-radio-group v-model="xForm.range">
+              <el-radio label="全部门店" value="1" />
+              <el-radio label="部分门店" value="2" />
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="是否免运">
+            <el-checkbox v-model="xForm.isBY" label="快递包邮" value="1" />
+            <el-checkbox v-model="xForm.isPS" label="免配送费" value="1" />
+            <el-checkbox v-model="xForm.isMY" label="否" value="1" />
+          </el-form-item>
+        </el-form>
+        <div class="table-box">
+          <div class="muti-set">
+            <span>批量设置</span>
+            <el-select v-model="xForm.mutiSetMode" placeholder="批量设置">
+              <template>
+                <el-option label="批量设置折扣" :value="1" />
+                <el-option label="批量设置减价" :value="2" />
+                <el-option label="批量设置限购" :value="3" />
+                <el-option label="批量设置库存" :value="4" />
+              </template>
             </el-select>
           </div>
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动名称</span>
-            <el-input v-model.trim="searchForm.name" size="small" style="width: 200px" />
-          </div>
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动状态</span>
-            <el-select
-              v-model="searchForm.type"
-              size="small"
-              placeholder="全部"
-              @change="search()"
-            >
-              <el-option label="进行中" value="" />
-              <el-option label="未开始" :value="0" />
-              <el-option label="已开始" :value="1" />
-            </el-select>
-          </div>
-          <div class="search-item">
-            <span class="label-name">有效时间</span>
-            <el-date-picker
-              v-model="searchForm.dateRange"
-              size="small"
-              type="datetimerange"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              range-separator="至"
-              :default-time="['00:00:00','23:59:59']"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              @change="handleTimeChange($event, 1)"
-            />
-          </div>
-          <div class="search-item">
-            <el-button size="small" @click="search()">查 询</el-button>
-          </div>
+          <el-table :data="tabData">
+            <el-table-column label="序号" type="index" />
+            <el-table-column label="商品名称" prop="name" min-width="150px" />
+            <el-table-column label="规格" prop="name" min-width="100px" />
+            <el-table-column label="生产厂家" prop="name" min-width="120px" />
+            <el-table-column label="折扣" prop="name" min-width="100px">
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.value" style="width: 40px" @blur="valueChange" />
+                <span>折</span>
+                <span>元</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="限购" prop="name" min-width="100px">
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.num" style="width: 40px" />
+              </template>
+            </el-table-column>
+            <el-table-column label="库存" prop="name" min-width="100px">
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.store" style="width: 40px" />
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" prop="name" min-width="120px">
+              <template slot-scope="scope">
+                <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
-      </section>
-      <section class="table-box">
-        <el-table :data="tableData" style="width: 100%" size="small">
-          <el-table-column prop="startTime" label="活动类型" min-width="80" />
-          <el-table-column prop="startTime" label="标题" min-width="150" />
-          <el-table-column prop="startTime" label="活动开始时间" min-width="120" align="center" />
-          <el-table-column prop="endTime" label="活动结束时间" min-width="120" align="center" />
-          <el-table-column label="时间状态" min-width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.status=='1'" size="small">进行中</el-tag>
-              <el-tag v-if="scope.row.status=='0'" size="small" type="info">未开始</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="状态" min-width="60" align="center">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
-              <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center" min-width="220">
-            <template slot-scope="scope">
-              <el-button plain size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-              <el-button plain size="mini" @click="handleEdit(scope.row)">复制链接</el-button>
-              <!-- <el-button plain size="mini" @click="handleChangeStatus(scope.row)">查看</el-button> -->
-              <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </section>
-      <section class="c-footer">
-        <el-pagination
-          background
-          :current-page="pager.current"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="pager.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pager.total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
       </section>
     </div>
-    <el-dialog
-      :title="`${xForm.id==''? '添加':'修改'}轮播图`"
-      append-to-body
-      :visible.sync="dialogFormVisible"
-      width="800px"
-      :close-on-click-modal="false"
-      @closed="dialogClose('xForm')"
-    >
-      <div class="x-dialog-body">
-        <div class="form-box">
-          <el-form ref="xForm" :model="xForm" :rules="xRules">
-            <el-form-item label="图片" :label-width="formLabelWidth" prop="imgUrl">
-              <el-upload
-                class="avatar-uploader"
-                :headers="headers"
-                :action="upLoadUrl"
-                :show-file-list="false"
-                :on-success="handleUploadSuccess"
-                :before-upload="beforeUpload"
-              >
-                <img v-if="xForm.imgUrl" :src="xForm.imgUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon" />
-              </el-upload>
-              <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
-            </el-form-item>
-            <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
-              <el-input
-                v-model="xForm.linkUrl"
-                size="small"
-                autocomplete="off"
-                style="width: 350px"
-                :maxlength="120"
-                placeholder="http:// 或 https://"
-              />
-            </el-form-item>
-            <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
-              <el-date-picker
-                v-model="xForm.dateRange"
-                style="width: 350px"
-                size="small"
-                type="datetimerange"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                range-separator="至"
-                :default-time="['00:00:00','23:59:59']"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                @change="handleTimeChange($event, 2)"
-              />
-            </el-form-item>
-            <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
-              <el-input v-model="xForm.sort" size="small" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
-            </el-form-item>
-            <el-form-item label="备注" :label-width="formLabelWidth">
-              <el-input
-                v-model="xForm.remark"
-                size="small"
-                autocomplete="off"
-                placeholder="10字以内"
-                :maxlength="10"
-                style="width: 350px"
-              />
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="preview-box">
-          <p class="title">
-            <label style="font-weight: bold">内容位置：</label> 首页-轮播图
-          </p>
-          <div class="prview-pic">
-            <img src="@/assets/image/h5/priview_1.png" style="width:100%;height:100%">
-          </div>
-        </div>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit('xForm')">确 定</el-button>
-      </div>
-    </el-dialog>
+    <dialog-goods ref="dialogGoods" />
+    <dialog-store ref="dialogStore" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import dialogGoods from '@/components/Dialog/DialogGoods'
+import dialogStore from '@/components/Dialog/DialogStore'
 import {
   getPageSets,
   getPageSetDetail,
@@ -189,6 +101,10 @@ import config from '@/utils/config'
 
 export default {
   name: 'Banner',
+  components: {
+    dialogGoods,
+    dialogStore
+  },
   data() {
     const checkWebsite = (rule, value, callback) => {
       console.log('value', value)
@@ -207,36 +123,11 @@ export default {
       callback()
     }
     return {
-      currentRole: 'adminDashboard',
-      // I-01	轮播图
-      // I-02	公告
-      // I-03	精彩活动一加三广告位
-      // I-F1-1	精彩活动单张广告位
-      // I-F1-2	精彩活动商品广告位
-      // C-01	分类广告位
-      // I-00	主页名称
-      // I-F2-1	精彩活动单张广告位
-      // I-F2-2	精彩活动商品广告位
-      positionCode: 'I-01',
-      statusOptions: [
-        { id: 1, label: '全部', value: '' },
-        { id: 2, label: '正常', value: '1' },
-        { id: 3, label: '停用', value: '0' }
-      ],
-      searchForm: {
-        dateRange: '',
-        timeBeg: '', // 开始时间
-        timeEnd: '', // 结束时间
-        status: '', // 使用状态:0停用1启用
-        remark: '' // 备注
-      },
-      tableData: [],
-      pager: {
-        current: 1,
-        size: 10,
-        total: 0
-      },
-      dialogFormVisible: false,
+      tabData: [{
+        value: 10,
+        num: 6,
+        store: 200
+      }],
       xForm: {
         id: '',
         imgUrl: '',
@@ -244,8 +135,9 @@ export default {
         dateRange: '',
         startTime: '',
         endTime: '',
-        sort: '',
-        remark: ''
+        isBY: 0,
+        isPS: 0,
+        isMY: 0
       },
       xRules: {
         imgUrl: [
@@ -287,16 +179,6 @@ export default {
     fetchData() {
       this._getTableData()
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
-      this.pager.size = val
-      this._getTableData()
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
-      this.pager.current = val
-      this._getTableData()
-    },
     handleTimeChange(val, type) {
       console.log(val, type)
       if (type === 1) {
@@ -320,23 +202,17 @@ export default {
         }
       }
     },
-    // 查询
-    search() {
-      this._getTableData()
+    valueChange() {
+      console.log('list', this.tabData)
     },
     handleChangeStatus(row) {
       console.log('row', row)
       this._updateDataStatus(row)
     },
-    handleDel(row) {
-      console.log('delete row', row)
-      this.$confirm('确认删除吗, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this._delData(row.id)
-      })
+    handleDel(row, index) {
+      console.log('row', row)
+      console.log('index', index)
+      this.tabData.splice(index, 1)
     },
     handleAdd() {
       this.$router.push({
