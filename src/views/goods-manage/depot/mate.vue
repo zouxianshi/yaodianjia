@@ -9,7 +9,7 @@
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-text="pairData.name" /></p>
-              <p>规格：<span v-text="pairData.packStandard" /></p>
+              <!-- <p>规格：<span v-text="pairData.packStandard" /></p> -->
               <p>企业：<span v-text="pairData.manufacture" /></p>
               <p>条码：<span v-text="pairData.barCode" /></p>
               <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
@@ -21,11 +21,11 @@
             <!-- <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p> -->
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
-              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
-              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
+              <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name&&currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
+              <p>规格：<span v-if="currentRow" :class="{'yellow-bg':currentRow.packStandard&&currentRow.packStandard!==pairData.packStandard}" v-text="currentRow.packStandard" /></p>
+              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
@@ -111,26 +111,25 @@
             min-width="120"
             label="商品名称"
             show-overflow-tooltip
-            :type="expand?'expand':''"
+            :base="index"
           >
             <template slot-scope="scope">
-              <span v-text="scope.row.name" />
-              <p>
-                <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
-              </p>
-              <span v-text="expands(scope.row)" />
-              <el-form v-if="pairData.platformCode===scope.row.id" label-position="left" inline class="demo-table-expand">
-                <el-form-item>
-                  <p>当前改数据对应的ERP产品资料为：{{ pairData.name }}
-                    <span v-for="(item,index) in pairData.specSkuList" :key="index">
-                      {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
-                    </span>
-                    <span v-text="pairData.manufacture" />
-                    <span v-text="pairData.barCode" />
-                    <span v-text="pairData.approvalNumber" />
-                  </p>
-                </el-form-item>
-              </el-form>
+              <div :class="{'is_pair':scope.row.commodity}">
+                <span v-text="scope.row.name" />
+                <p>
+                  <el-tag v-if="scope.row.commodity" type="warning" size="mini">已对码</el-tag>
+                </p>
+              </div>
+              <div v-if="scope.row.commodity" class="bind-info">
+                <p>当前改数据对应的ERP产品资料为：{{ scope.row.commodity.name }}
+                  <span v-for="(item,index) in pairData.specSkuList" :key="index">
+                    {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                  </span>
+                  <span v-text="scope.row.commodity.manufacture" />
+                  <span v-text="scope.row.commodity.barCode" />
+                  <span v-text="scope.row.commodity.approvalNumber" />
+                </p>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -181,7 +180,7 @@
             <template slot-scope="scope">
               <span v-text="scope.row.matchScore" />
               <p
-                v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id"
+                v-if="scope.row.commodity"
               >
                 <el-button type="text" size="mini" @click="handleRemoveRelation(scope.row)">解除对码关系</el-button>
               </p>
@@ -326,6 +325,8 @@ export default {
             message: '操作成功',
             type: 'success'
           })
+          this.pairData.platformCode = ''
+          sessionStorage.setItem('mate', JSON.stringify(this.pairData))
           this._loadMatchList()
         }).catch(_ => {
 
@@ -453,6 +454,17 @@ export default {
     background: yellow;
     display: inline-block;
     padding:5px;
+  }
+  .is_pair{
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .bind-info{
+    position: absolute;
+    bottom: 10px;
+    z-index: 3;
   }
   .product-box {
     display: flex;

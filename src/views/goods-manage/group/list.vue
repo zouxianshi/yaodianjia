@@ -100,6 +100,7 @@
           label-width="80px"
           :status-icon="true"
           size="small"
+          @submit.native.prevent
         >
           <el-form-item
             label="分组名称"

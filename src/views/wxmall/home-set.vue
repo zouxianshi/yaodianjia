@@ -185,12 +185,12 @@
                         <div class="cover-box">
                           <div class="cover" :style="`backgroundImage: url('${showImg(item.imageUrl)}')`" />
                         </div>
-                        <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
+                        <div class="caption" :title="item.productName" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
                           <span class="current">
                             <span class="sign">￥</span>{{ item.price }}
                           </span>
-                          <span v-if="item.mprice === item.price" class="original">
+                          <span v-if="item.mprice !== item.price" class="original">
                             <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
@@ -240,12 +240,12 @@
                         <div class="cover-box">
                           <div class="cover" :style="`backgroundImage: url('${showImg(item.imageUrl)}')`" />
                         </div>
-                        <div class="caption" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
+                        <div class="caption" :title="item.productName" v-text="item.productName">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
                           <span class="current">
                             <span class="sign">￥</span>{{ item.price }}
                           </span>
-                          <span v-if="item.price === item.mprice" class="original">
+                          <span v-if="item.price !== item.mprice" class="original">
                             <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
@@ -389,7 +389,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="100" placeholder="http:// 或 https://" />
+                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="500" placeholder="http:// 或 https://" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -431,7 +431,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" />
+                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" maxlength="500" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -447,7 +447,7 @@
         </div>
         <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
           <div class="m-header">
-            <span class="text">分组商品图片</span>
+            <span class="text">分组商品列表1</span>
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
@@ -463,12 +463,12 @@
                         <div class="cover" :style="`backgroundImage: url('${showImg(goods.mainPic)}')`" />
                         <div class="btn-remove" @click.stop="removeGoods($index, 'xForm6')" />
                       </div>
-                      <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
+                      <div class="caption" :title="goods.commodityName" v-text="goods.commodityName">修正VE软胶</div>
                       <div class="price">
                         <span class="current">
                           <span class="sign">￥</span>{{ goods.price }}
                         </span>
-                        <span v-if="goods.price === goods.mprice" class="original">
+                        <span v-if="goods.price !== goods.mprice" class="original">
                           <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
@@ -519,7 +519,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm7.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" />
+                <el-input v-model="xForm7.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" maxlength="500" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -535,7 +535,7 @@
         </div>
         <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
           <div class="m-header">
-            <span class="text">分组商品图片2</span>
+            <span class="text">分组商品列表2</span>
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
@@ -551,12 +551,12 @@
                         <div class="cover" :style="`backgroundImage: url('${showImg(goods.mainPic)}')`" />
                         <div class="btn-remove" @click.stop="removeGoods($index, 'xForm8')" />
                       </div>
-                      <div class="caption" v-text="goods.commodityName">修正VE软胶</div>
+                      <div class="caption" :title="goods.commodityName" v-text="goods.commodityName">修正VE软胶</div>
                       <div class="price">
                         <span class="current">
                           <span class="sign">￥</span>{{ goods.price }}
                         </span>
-                        <span v-if="goods.price === goods.mprice" class="original">
+                        <span v-if="goods.price !== goods.mprice" class="original">
                           <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
@@ -1660,7 +1660,6 @@ export default {
               width: 100%;
               height: 100%;
               background: url('../../assets/image/h5/pic_xian_a.png') no-repeat 100% 100%;
-              background-size: cover;
             }
           }
           .caption {
@@ -1770,8 +1769,8 @@ export default {
               .cover {
                 width: 100%;
                 height: 100%;
-                background: $bg-cover;
-                background-size: cover;
+                background-color: $bg-cover;
+                background: no-repeat center/100% 100%;
               }
             }
             .caption {
@@ -1831,7 +1830,6 @@ export default {
               width: 100%;
               height: 100%;
               background: url('../../assets/image/h5/pic_sh.png') no-repeat 100% 100%;
-              background-size: cover;
             }
           }
           .info-box {
@@ -2013,8 +2011,7 @@ export default {
           .cover {
             width: 100%;
             height: 100%;
-            background: url('../../assets/image/h5/pic_xian_a.png') no-repeat 100% 100%;
-            background-size: cover;
+            background: url('../../assets/image/h5/pic_xian_a.png') no-repeat center/100% 100%;
           }
           .btn-remove {
             position: absolute;

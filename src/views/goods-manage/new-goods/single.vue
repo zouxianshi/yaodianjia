@@ -16,15 +16,11 @@
             title="选择分类"
             icon="el-icon-finished"
           />
-          <el-step
-            title="编辑基本信息"
-            icon="el-icon-edit"
-          />
         </el-steps>
       </div>
       <div v-loading="loading" class="step-content">
         <el-cascader-panel v-model="chooseList" :options="typeList" :props="defaultProps" @change="handleChoose" />
-        <el-card style="width:600px;margin-top:12px;">
+        <el-card style="width:730px;margin-top:12px;">
           <span>您当前选择的是：</span> <span v-if="chooseTypeList.length!==0">{{ chooseTypeList[0].name }}>{{ chooseTypeList[1]?chooseTypeList[1].name:'' }}>{{ chooseTypeList[2]?chooseTypeList[2].name:'' }}</span>
         </el-card>
       </div>

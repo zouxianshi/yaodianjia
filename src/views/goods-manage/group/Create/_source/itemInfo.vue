@@ -9,7 +9,7 @@
         :src="showImg(itemInfo.pic)"
         fit="cover"
       />
-      <span v-else>&nbsp;</span>
+      <span v-else>{{ itemInfo.is ? '分组图片' : '&nbsp;' }}</span>
     </div>
     <!-- <div class="goods-num">
       <span>{{ itemInfo.is ? '商品数' : '9999' }}</span>
@@ -96,7 +96,7 @@ export default {
 
     > .photo {
       width: 70px;
-      right: 650px;
+      right: 660px;
     }
 
     > .creater {

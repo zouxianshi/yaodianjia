@@ -177,3 +177,18 @@
       height: 100%;
     }
   }
+
+  .c-footer{
+    margin-top: 20px;
+    .el-pagination{
+      text-align: right;
+    }
+  }
+
+  .x-a-text{
+    line-height: 20px !important;
+    &:hover {
+      color: #147de8;
+      text-decoration: underline;
+    }
+  }

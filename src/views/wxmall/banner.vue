@@ -59,14 +59,14 @@
           </div>
         </div>
       </section>
-      <section class="table-box">
-        <el-table :data="tableData" style="width: 100%" size="small">
+      <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
+        <el-table :data="tableData" style="width: 100%">
           <el-table-column label="序号" width="60" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="img" label="图片" width="120" align="center">
+          <el-table-column prop="img" label="图片" min-width="100" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
                 <div class="x-image__preview">
@@ -80,57 +80,27 @@
               <div v-else style="line-height: 32px">暂未上传</div>
             </template>
           </el-table-column>
-          <el-table-column prop="url" label="链接地址" min-width="240" />
-          <el-table-column prop="startTime" label="开始时间" width="180" align="center" />
-          <el-table-column prop="endTime" label="结束时间" width="180" align="center" />
-          <el-table-column label="状态" width="100" align="center">
+          <el-table-column prop="url" label="链接地址" min-width="240">
+            <template v-if="scope.row.url && scope.row.url!==''" slot-scope="scope">
+              <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="startTime" label="开始时间" min-width="180" align="center" />
+          <el-table-column prop="endTime" label="结束时间" min-width="180" align="center" />
+          <el-table-column label="状态" min-width="80" align="center">
             >
             <template slot-scope="scope">
               <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
               <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" width="200" align="center" />
-          <el-table-column label="操作" align="center" width="240">
+          <el-table-column prop="remark" label="备注" min-width="120" align="center" />
+          <el-table-column label="操作" align="center" min-width="240">
             <template slot-scope="scope">
-              <el-button
-                slot="reference"
-                title="编辑"
-                icon="el-icon-edit"
-                type="primary"
-                circle
-                size="mini"
-                @click="handleEdit(scope.row)"
-              />
-              <el-button
-                v-if="scope.row.status===0"
-                slot="reference"
-                title="启用"
-                type="success"
-                icon="el-icon-coordinate"
-                circle
-                size="mini"
-                @click="handleChangeStatus(scope.row)"
-              />
-              <el-button
-                v-if="scope.row.status===1"
-                slot="reference"
-                title="停用"
-                type="warning"
-                icon="el-icon-coordinate"
-                circle
-                size="mini"
-                @click="handleChangeStatus(scope.row)"
-              />
-              <el-button
-                slot="reference"
-                title="删除"
-                type="danger"
-                icon="el-icon-delete"
-                circle
-                size="mini"
-                @click="handleDel(scope.row)"
-              />
+              <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
+              <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
+              <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -179,7 +149,7 @@
                 size="small"
                 autocomplete="off"
                 style="width: 350px"
-                :maxlength="120"
+                :maxlength="500"
                 placeholder="http:// 或 https://"
               />
             </el-form-item>
@@ -287,7 +257,7 @@ export default {
       tableData: [],
       pager: {
         current: 1,
-        size: 10,
+        size: 20,
         total: 0
       },
       dialogFormVisible: false,
@@ -539,7 +509,7 @@ export default {
         positionCode: this.positionCode,
         remark: this.xForm.remark,
         productId: null, // 2-03 类型必填
-        sortNumber: this.xForm.sort,
+        sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
@@ -575,7 +545,7 @@ export default {
         positionCode: this.positionCode,
         remark: this.xForm.remark,
         productId: null, // 2-03 类型必填
-        sortNumber: this.xForm.sort,
+        sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
@@ -686,4 +656,5 @@ export default {
   line-height: 1.1;
   color: #999999;
 }
+
 </style>

@@ -7,7 +7,10 @@
         <el-step title="图文信息" icon="el-icon-picture-outline-round" @click="handleGoStep(3)" />
       </el-steps>
       <!-- 第一步 -->
-      <div v-show="step===1">
+      <div
+        v-show="step===1"
+        v-loading="basicLoading"
+      >
         <!-- 分类信息 -->
         <div class="edit-card">
           <div class="header">
@@ -138,14 +141,13 @@
                 <el-form-item label="批准文号：" prop="approvalNumber">
                   <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
-
                 <el-form-item label="商品详细信息：">
                   <p>填写商品说明书</p>
                   <div v-show="basicForm.origin===1">
                     <Tinymce ref="editor" v-model="basicForm.intro" :readonly="true" :height="400" />
                   </div>
                   <div v-show="basicForm.origin!==1">
-                    <Tinymce ref="editor" v-model="basicForm.intro" :readonly="is_query" :height="400" />
+                    <Tinymce id="basicInfo" ref="editor" v-model="basicForm.intro" :readonly="is_query" :height="400" @onload="tinymceLoad" />
                   </div>
                 </el-form-item>
                 <el-form-item :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'">
@@ -421,7 +423,7 @@
                   <div class="editSqu w-e-text" v-html="goodsIntro.content" />
                 </div>
                 <div class="edit-box">
-                  <Tinymce ref="editor" v-model="goodsIntro.content" :readonly="is_query" :height="400" />
+                  <Tinymce v-model="goodsIntro.content" :readonly="is_query" :height="400" />
                 </div>
               </section>
               <div class="text-center">
@@ -442,6 +444,7 @@
       <div class="modal-body">
         <el-cascader
           v-model="chooseList"
+          v-loading="loading"
           class="cascader"
           style="width:300px"
           :options="typeList"
@@ -520,6 +523,7 @@ export default {
         value: 'id'
       },
       loading: false,
+      basicLoading: false,
       basicForm: {
         'approvalNumber': '', // 批准文号
         'brandId': '', // 商品品牌id
@@ -623,8 +627,17 @@ export default {
     this._loadBrandList() // 获取所属品牌
     this._loadUnit() // 加载单位
     this._loadMetering() // 加载剂型
+    this.pageLoading = this.$loading({
+      lock: true,
+      text: '数据初始化中...',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
   },
   methods: {
+    tinymceLoad() { // 富文本渲染染成
+      this.pageLoading.close()
+    },
     handleGoStep(val) {
       if (this.is_query) {
         this.step = val
@@ -678,6 +691,7 @@ export default {
       })
     },
     _loadBasicInfo() { // 加载基本信息
+      this.basicLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
         this._loadgroupGather('1', [res.data.typeId])
@@ -707,6 +721,9 @@ export default {
         }
         // 赋值值
         this.basicForm = data
+        this.basicLoading = false
+      }).catch(_ => {
+        this.basicLoading = false
       })
     },
     _loadGoodsImgAry() { // 加载商品图片
@@ -733,6 +750,9 @@ export default {
         if (res.data) {
           this.goodsIntro.content = res.data.content
         }
+        this.$refs['details-ty'].init()
+      }).catch(_ => {
+        this.$refs['details-ty'].init()
       })
     },
     handleSortEnd(val) { // 图片排序
@@ -775,7 +795,7 @@ export default {
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
-          message: '只能上传格式为 jpg、jpeg、png',
+          message: '只能上传格式为 jpg、jpeg、png的图片',
           type: 'warning'
         })
         this.pageLoading.close()
@@ -821,7 +841,7 @@ export default {
       this._loadBrandList(query)
     },
     _loadBrandList(query = '') { // 获取品牌
-      getBrandList({ brandName: query }).then(res => {
+      getBrandList({ brandName: query, pageSize: 300 }).then(res => {
         const { data } = res.data
         this.brandList = data
       })
@@ -904,15 +924,26 @@ export default {
                 data.expireDays = parseInt(this.days) * 365
               }
             }
+            if (this.chooseGroup.length === 0) {
+              this.$message({
+                message: '请设置商品分组',
+                type: 'error'
+              })
+              return
+            }
             data.groupIds = []
             this.chooseGroup.map(v => {
               data.groupIds.push(v[2].id)
             })
             this.subLoading = true
             if (this.basicForm.id) {
+              data.firstTypeId = this.chooseTypeList[0].id
+              data.secondTypeId = this.chooseTypeList[1].id
               data.commodityId = data.id
               this._UpdateBasicInfo(data)
             } else {
+              data.firstTypeId = this.chooseTypeList[0].id
+              data.secondTypeId = this.chooseTypeList[1].id
               this._CreateBasicInfo(data)
             }
           }
