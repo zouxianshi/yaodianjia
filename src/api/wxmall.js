@@ -76,6 +76,7 @@ export function getADClass(params) {
 export function getProductList(params) {
   return request({
     url: `${api_wxmall}/1.0/pageset/queryMinProductList`,
-    method: 'post'
+    method: 'post',
+    data: params
   })
 }
