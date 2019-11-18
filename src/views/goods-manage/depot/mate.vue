@@ -111,26 +111,25 @@
             min-width="120"
             label="商品名称"
             show-overflow-tooltip
-            :type="expand?'expand':''"
+            :base="index"
           >
             <template slot-scope="scope">
-              <span v-text="scope.row.name" />
-              <p>
-                <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
-              </p>
-              <span v-text="expands(scope.row)" />
-              <el-form v-if="pairData.platformCode===scope.row.id" label-position="left" inline class="demo-table-expand">
-                <el-form-item>
-                  <p>当前改数据对应的ERP产品资料为：{{ pairData.name }}
-                    <span v-for="(item,index) in pairData.specSkuList" :key="index">
-                      {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
-                    </span>
-                    <span v-text="pairData.manufacture" />
-                    <span v-text="pairData.barCode" />
-                    <span v-text="pairData.approvalNumber" />
-                  </p>
-                </el-form-item>
-              </el-form>
+              <div :class="{'is_pair':$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id}">
+                <span v-text="scope.row.name" />
+                <p>
+                  <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
+                </p>
+              </div>
+              <div v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" class="bind-info">
+                <p>当前改数据对应的ERP产品资料为：{{ scope.row.commodity.name }}
+                  <span v-for="(item,index) in pairData.specSkuList" :key="index">
+                    {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                  </span>
+                  <span v-text="scope.row.commodity.manufacture" />
+                  <span v-text="scope.row.commodity.barCode" />
+                  <span v-text="scope.row.commodity.approvalNumber" />
+                </p>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -455,6 +454,17 @@ export default {
     background: yellow;
     display: inline-block;
     padding:5px;
+  }
+  .is_pair{
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .bind-info{
+    position: absolute;
+    bottom: 10px;
+    z-index: 3;
   }
   .product-box {
     display: flex;

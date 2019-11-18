@@ -45,7 +45,9 @@ const mixin = {
         const findIndex = findArray(this.chooseTableSpec, { id: row.id })
         if (findIndex) {
           this.chooseTableSpec.splice(findIndex, 1)
-          this.$refs.multipleTable.toggleRowSelection(row)
+          if (!row.disabled) {
+            this.$refs.multipleTable.toggleRowSelection(row)
+          }
         }
       } else {
         if (keys === 'erpCode') {

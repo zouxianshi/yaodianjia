@@ -102,32 +102,56 @@
             label="商品编码"
           />
           <el-table-column
-            prop="name"
             align="left"
             min-width="120"
             label="商品名称"
             show-overflow-tooltip
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p v-text="scope.row.name" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product" v-text="scope.row.product.name" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
             align="left"
-            prop="manufacture"
             min-width="120"
             label="生产企业"
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p v-text="scope.row.manufacture" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product" v-text="scope.row.product.manufacture" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="barCode"
             align="left"
             label="条形码"
             :show-overflow-tooltip="true"
             min-width="120"
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p v-text="scope.row.barCode" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product" v-text="scope.row.product.barCode" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="approvalNumber"
             align="left"
             label="批准文号"
             :show-overflow-tooltip="true"
             min-width="120"
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p v-text="scope.row.approvalNumber" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product" v-text="scope.row.product.approvalNumber" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="listQuery.status===0"
             prop="reason"
@@ -299,3 +323,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.product{
+  color: #9999
+}
+</style>
