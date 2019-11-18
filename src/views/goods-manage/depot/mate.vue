@@ -114,13 +114,13 @@
             :base="index"
           >
             <template slot-scope="scope">
-              <div :class="{'is_pair':$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id}">
+              <div :class="{'is_pair':scope.row.commodity}">
                 <span v-text="scope.row.name" />
                 <p>
-                  <el-tag v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" type="warning" size="mini">已对码</el-tag>
+                  <el-tag v-if="scope.row.commodity" type="warning" size="mini">已对码</el-tag>
                 </p>
               </div>
-              <div v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id" class="bind-info">
+              <div v-if="scope.row.commodity" class="bind-info">
                 <p>当前改数据对应的ERP产品资料为：{{ scope.row.commodity.name }}
                   <span v-for="(item,index) in pairData.specSkuList" :key="index">
                     {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
@@ -180,7 +180,7 @@
             <template slot-scope="scope">
               <span v-text="scope.row.matchScore" />
               <p
-                v-if="$route.query.from==='is_pair'&&pairData.platformCode===scope.row.id"
+                v-if="scope.row.commodity"
               >
                 <el-button type="text" size="mini" @click="handleRemoveRelation(scope.row)">解除对码关系</el-button>
               </p>
