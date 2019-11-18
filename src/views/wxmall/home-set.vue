@@ -190,7 +190,7 @@
                           <span class="current">
                             <span class="sign">￥</span>{{ item.price }}
                           </span>
-                          <span v-if="item.mprice === item.price" class="original">
+                          <span v-if="item.mprice !== item.price" class="original">
                             <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
@@ -245,7 +245,7 @@
                           <span class="current">
                             <span class="sign">￥</span>{{ item.price }}
                           </span>
-                          <span v-if="item.price === item.mprice" class="original">
+                          <span v-if="item.price !== item.mprice" class="original">
                             <span class="sign">￥</span>{{ item.mprice }}
                           </span>
                         </div>
@@ -389,7 +389,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="100" placeholder="http:// 或 https://" />
+                <el-input v-model="xForm4.linkUrl" type="text" size="small" style="width: 286px;" :maxlength="500" placeholder="http:// 或 https://" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -431,7 +431,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" />
+                <el-input v-model="xForm5.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" maxlength="500" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -447,7 +447,7 @@
         </div>
         <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
           <div class="m-header">
-            <span class="text">分组商品图片</span>
+            <span class="text">分组商品列表1</span>
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
@@ -468,7 +468,7 @@
                         <span class="current">
                           <span class="sign">￥</span>{{ goods.price }}
                         </span>
-                        <span v-if="goods.price === goods.mprice" class="original">
+                        <span v-if="goods.price !== goods.mprice" class="original">
                           <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
@@ -519,7 +519,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item label="链接" prop="linkUrl">
-                <el-input v-model="xForm7.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" />
+                <el-input v-model="xForm7.linkUrl" type="text" size="small" style="width: 286px;" placeholder="http:// 或 https://" maxlength="500" />
               </el-form-item>
             </el-form>
             <div class="btn-line">
@@ -535,7 +535,7 @@
         </div>
         <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
           <div class="m-header">
-            <span class="text">分组商品图片2</span>
+            <span class="text">分组商品列表2</span>
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
@@ -556,7 +556,7 @@
                         <span class="current">
                           <span class="sign">￥</span>{{ goods.price }}
                         </span>
-                        <span v-if="goods.price === goods.mprice" class="original">
+                        <span v-if="goods.price !== goods.mprice" class="original">
                           <span class="sign">￥</span>{{ goods.mprice }}
                         </span>
                       </div>
