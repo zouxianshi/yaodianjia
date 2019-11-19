@@ -177,12 +177,17 @@ export default {
       }
       this.$refs.file.clearFiles()
     },
-    handleFileError(res) {
-      this.$message({
-        message: '文件上传失败',
-        type: 'error'
-      })
-      this.$refs.file.clearFiles()
+    handleFileError(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        location.reload()
+      } else {
+        this.$message({
+          message: '文件上传失败',
+          type: 'error'
+        })
+        this.$refs.file.clearFiles()
+      }
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)

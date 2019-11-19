@@ -774,12 +774,17 @@ export default {
       this.editSpecsData[this.uploadIndex].picUrl = res.data
       this.pageLoading.close()
     },
-    handleImgError() {
-      this.$message({
-        message: '图片上传失败',
-        type: 'error'
-      })
-      this.pageLoading.close()
+    handleImgError(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        location.reload()
+      } else {
+        this.$message({
+          message: '图片上传失败',
+          type: 'error'
+        })
+        this.pageLoading.close()
+      }
     },
     handlePreview(file) {
       this.dialogImageUrl = file.imgUrl

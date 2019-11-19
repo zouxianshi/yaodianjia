@@ -109,20 +109,20 @@
           >
             <template slot-scope="scope">
               <div>
-                <p v-text="scope.row.name" />
-                <p v-if="listQuery.status===1&&scope.row.product" class="product" v-text="scope.row.product.name" />
+                <p class="ellipsis" v-text="scope.row.name" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product ellipsis" v-text="scope.row.product.name" />
               </div>
             </template>
           </el-table-column>
           <el-table-column
             align="left"
-            min-width="120"
+            min-width="180"
             label="生产企业"
           >
             <template slot-scope="scope">
               <div>
-                <p v-text="scope.row.manufacture" />
-                <p v-if="listQuery.status===1&&scope.row.product" class="product" v-text="scope.row.product.manufacture" />
+                <p class="ellipsis" v-text="scope.row.manufacture" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product ellipsis" v-text="scope.row.product.manufacture" />
               </div>
             </template>
           </el-table-column>
@@ -143,12 +143,12 @@
             align="left"
             label="批准文号"
             :show-overflow-tooltip="true"
-            min-width="120"
+            min-width="130"
           >
             <template slot-scope="scope">
-              <div>
-                <p v-text="scope.row.approvalNumber" />
-                <p v-if="listQuery.status===1&&scope.row.product" class="product" v-text="scope.row.product.approvalNumber" />
+              <div class="ellipsis">
+                <p class="ellipsis" v-text="scope.row.approvalNumber" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product ellipsis" v-text="scope.row.product.approvalNumber" />
               </div>
             </template>
           </el-table-column>
@@ -175,7 +175,7 @@
           />
           <el-table-column
             v-if="listQuery.status===1"
-            prop="createTime"
+            prop="modifyTime"
             align="left"
             min-width="155"
             label="对码时间"
@@ -308,6 +308,7 @@ export default {
       this.multipleSelection = row
     },
     handleMate(row) {
+      sessionStorage.setItem('mateList', JSON.stringify(this.tableData))
       sessionStorage.setItem('mate', JSON.stringify(row))
       this.$router.push(`/goods-manage/mate-details?id=${row.id}&from=${this.listQuery.status === 1 ? 'is_pair' : 'pair'}`)
     },
