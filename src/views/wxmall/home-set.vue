@@ -39,6 +39,12 @@
                   </div>
                 </swiper-slide>
               </swiper>
+              <template v-else>
+                <img src="../../assets/image/h5/pic_banner_1.png">
+                <div class="set-mask">
+                  <div class="text">轮播图</div>
+                </div>
+              </template>
             </div>
             <div class="h5-module">
               <ul class="module-list">
@@ -125,7 +131,10 @@
               <ul class="goods-list">
                 <li v-for="(item, index) in 4" :key="index" class="goods-item">
                   <div class="cover-box">
-                    <div class="cover" />
+                    <div class="cover" :class="`img-${index}`" />
+                    <!-- <div v-if="index===0" class="cover" style="backgroundImage: url('../../assets/image/h5/pic_goods_1.png')" />
+                    <div v-if="index===1" class="cover" style="backgroundImage: url('../../assets/image/h5/pic_goods_2.png')" />
+                    <div v-if="index===2" class="cover" style="backgroundImage: url('../../assets/image/h5/pic_goods_3.png')" /> -->
                   </div>
                   <div class="caption">修正VE软胶</div>
                   <div class="price">
@@ -147,18 +156,41 @@
                 <div class="card_left">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 1}" @click.stop="setEdit('xForm4', 1)">
                     <img v-if="xForm4.detail" :src="xForm4.detail[0].imageUrl">
-                    <!-- <img class="pos-img" src="../../assets/image/h5/pic_aa.png"> -->
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_pos_1.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="card_right">
                   <div class="pos-2 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 2}" @click.stop="setEdit('xForm4', 2)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[1].imageUrl" @error="imgLoadErr($event, '../../assets/image/h5/pic_aa.png')">
+                    <img v-if="xForm4.detail" :src="xForm4.detail[1].imageUrl">
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_pos_2.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                   <div class="pos-3 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 3}" @click.stop="setEdit('xForm4', 3)">
                     <img v-if="xForm4.detail" :src="xForm4.detail[2].imageUrl">
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_pos_3.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                   <div class="pos-4 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 4}" @click.stop="setEdit('xForm4', 4)">
                     <img v-if="xForm4.detail" :src="xForm4.detail[3].imageUrl">
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_pos_4.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -168,9 +200,18 @@
                 <div class="card_top">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm5'}" @click.stop="setEdit('xForm5', '')">
                     <img v-if="xForm5.detail" :src="xForm5.detail.imageUrl">
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_top_1.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="card_bottom set-hover" :class="{'set-active': xFormSet.formName==='xForm6'}" @click.stop="setEdit('xForm6', '')">
+                  <div v-if="!xForm6.detail || xForm6.detail.length === 0" class="set-mask">
+                    <div class="text">商品列表</div>
+                  </div>
                   <swiper
                     key="swiper_2"
                     ref="mySwiper2"
@@ -199,7 +240,10 @@
                     <template v-else>
                       <swiper-slide v-for="(item, index) in 6" :key="index" class="goods-item">
                         <div class="cover-box">
-                          <div class="cover" />
+                          <img v-if="index===0" src="../../assets/image/h5/pic_goods_5.png">
+                          <img v-if="index===1" src="../../assets/image/h5/pic_goods_6.png">
+                          <img v-if="index===2" src="../../assets/image/h5/pic_goods_7.png">
+                          <img v-if="index===3" src="../../assets/image/h5/pic_goods_8.png">
                         </div>
                         <div class="caption">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
@@ -223,9 +267,18 @@
                 <div class="card_top">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm7'}" @click.stop="setEdit('xForm7', '')">
                     <img v-if="xForm7.detail" :src="xForm7.detail.imageUrl">
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_top_2.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="card_bottom set-hover" :class="{'set-active': xFormSet.formName==='xForm8'}" @click.stop="setEdit('xForm8', '')">
+                  <div v-if="!xForm8.detail || xForm8.detail.length === 0" class="set-mask">
+                    <div class="text">商品列表</div>
+                  </div>
                   <swiper
                     key="swiper_4"
                     ref="mySwiper4"
@@ -252,9 +305,12 @@
                       </swiper-slide>
                     </template>
                     <template v-else>
-                      <swiper-slide v-for="(item, index) in 6" :key="index" class="goods-item">
+                      <swiper-slide v-for="(item, index) in 4" :key="index" class="goods-item">
                         <div class="cover-box">
-                          <div class="cover" />
+                          <img v-if="index===0" src="../../assets/image/h5/pic_goods_7.png">
+                          <img v-if="index===1" src="../../assets/image/h5/pic_goods_8.png">
+                          <img v-if="index===2" src="../../assets/image/h5/pic_goods_6.png">
+                          <img v-if="index===3" src="../../assets/image/h5/pic_goods_5.png">
                         </div>
                         <div class="caption">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
@@ -807,7 +863,7 @@ export default {
       // C-01	分类广告位
       queryCenterStore({ merCode: this.merCode }).then(res => {
         if (res.code === '10000') {
-          if (res.data) {
+          if (!res.data) {
             this.hasCenterStore = true
             this._getAppSetDetail('I-00') // 主页标题
             this._getAppSetDetail('I-01') // 轮播图
@@ -1588,7 +1644,7 @@ export default {
           .img {
             width: 65px;
             height: 65px;
-            background: url('../../assets/image/h5/pic_sh.png') no-repeat 100% 100%;
+            background: url('../../assets/image/h5/pic_store.png') no-repeat 100% 100%;
           }
         }
         .info-box {
@@ -1729,7 +1785,16 @@ export default {
             .cover {
               width: 100%;
               height: 100%;
-              background: url('../../assets/image/h5/pic_xian_a.png') no-repeat 100% 100%;
+              background: no-repeat center/100% 100%;
+              &.img-0{
+                background-image: url('../../assets/image/h5/pic_goods_1.png');
+              }
+              &.img-1{
+                background-image: url('../../assets/image/h5/pic_goods_2.png');
+              }
+              &.img-2{
+                background-image: url('../../assets/image/h5/pic_goods_3.png');
+              }
             }
           }
           .caption {
@@ -1899,7 +1964,7 @@ export default {
             .cover {
               width: 100%;
               height: 100%;
-              background: url('../../assets/image/h5/pic_sh.png') no-repeat 100% 100%;
+              background: url('../../assets/image/h5/pic_goods_1.png') no-repeat 100% 100%;
             }
           }
           .info-box {
@@ -2085,7 +2150,7 @@ export default {
           .cover {
             width: 100%;
             height: 100%;
-            background: url('../../assets/image/h5/pic_xian_a.png') no-repeat center/100% 100%;
+            background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100% 100%;
           }
           .btn-remove {
             position: absolute;
@@ -2184,7 +2249,7 @@ export default {
       width: 100%;
       height: 100%;
       border: 1px solid #dedede;
-      background: url('../../assets/image/h5/pic_b.png') no-repeat center/100%
+      background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
         100%;
     }
     &:hover{
@@ -2196,7 +2261,7 @@ export default {
       width: 139px;
       height: 166px;
       .cover {
-        background: url('../../assets/image/h5/pic_d.png') no-repeat center/100%
+        background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
           100%;
       }
     }
@@ -2204,7 +2269,7 @@ export default {
       width: 168px;
       height: 88px;
       .cover {
-        background: url('../../assets/image/h5/pic_c.png') no-repeat center/100%
+        background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
           100%;
       }
     }
@@ -2212,7 +2277,7 @@ export default {
       width: 286px;
       height: 100px;
       .cover {
-        background: url('../../assets/image/h5/pic_e.png') no-repeat center/100%
+        background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
           100%;
       }
     }
@@ -2226,9 +2291,31 @@ export default {
 
 .set-hover:hover {
   box-sizing: border-box;
-  border: 1px solid red;
-  border-radius: 0 !important;
+  border: 2px dashed #147DE8;
+  border-radius: 2px !important;
   cursor: pointer;
+  .set-mask{
+    background:rgba(0, 0, 0, 0.4);
+  }
+}
+.set-hover{
+  border: 2px solid inherit;
+  position: relative;
+}
+.set-mask{
+  display: flex;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  background:rgba(0, 0, 0, 0.2);
+  .text{
+    margin: auto;
+    color: white;
+    font-size: 14px;
+  }
 }
 .set-active {
   border-radius: 0 !important;
