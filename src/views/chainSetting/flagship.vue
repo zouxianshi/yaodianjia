@@ -29,7 +29,7 @@
           当前无上线门店，先去维护<el-button type="text" @click="toStoreSetting">上线门店</el-button>吧
         </div>
         <el-table-column property="stCode" label="门店编码" width="150" show-overflow-tooltip />
-        <el-table-column label="门店名称" show-overflow-tooltip>
+        <el-table-column label="门店名称">
           <template slot-scope="scope">
             <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" class="item">
               <span>{{ scope.row.stName }}</span>
@@ -49,7 +49,7 @@
       <div class="pages">
         <el-pagination
           background
-          layout="prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="totalCount"
           :current-page="searchParams.currentPage"
           :page-size="searchParams.pageSize"
@@ -113,6 +113,7 @@ export default {
     getStore() {
       this.loading = true
       this.searchParams.onlineStatus = 1
+      this.searchParams.isdelivery = 1
       queryStore(this.searchParams).then(res => {
         if (res.code === '10000') {
           this.list = res.data.data
