@@ -369,7 +369,7 @@
             <span v-else-if="xFormSet.position === 3" class="text">右2图片</span>
             <span v-else-if="xFormSet.position === 4" class="text">右3图片</span>
           </div>
-          <div class="m-body">
+          <div v-loading="uploadLoading" class="m-body">
             <el-form ref="xForm4" :rules="xRules4" :model="xForm4">
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap" :class="xFormSet.position === 1 ? 'cover-left':'cover-right'">
@@ -411,7 +411,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1020px">
+        <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1020px">
           <div class="m-header">
             <span class="text">分组主图</span>
           </div>
@@ -458,7 +458,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
+        <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
           <div class="m-header">
             <span class="text">分组商品列表1</span>
             <!-- <span class="text">右1图片</span> -->
@@ -504,7 +504,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm7'}" style="top: 1300px">
+        <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm7'}" style="top: 1300px">
           <div class="m-header">
             <span class="text">分组主图2</span>
           </div>
@@ -526,6 +526,7 @@
                   :headers="headers"
                   :action="upLoadUrl"
                   :show-file-list="false"
+                  :on-error="handleUploadError"
                   :on-success="handleUploadSuccess"
                   :before-upload="beforeUpload"
                 >
@@ -551,7 +552,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
+        <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
           <div class="m-header">
             <span class="text">分组商品列表2</span>
             <!-- <span class="text">右1图片</span> -->
@@ -635,6 +636,7 @@ export default {
       callback()
     }
     return {
+      uploadLoading: false,
       hasCenterStore: false,
       currentRole: 'adminDashboard',
       swiperOption: {
@@ -689,7 +691,7 @@ export default {
       },
       xRules7: {
         imgUrl: [
-          { message: '请上传图片', trigger: 'blur' }
+          { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
           { validator: checkWebsite, trigger: 'blur' }
@@ -1054,7 +1056,11 @@ export default {
     handleRemove(formName) {
       this[formName].imgUrl = ''
     },
+    handleUploadError() {
+      this.uploadLoading = false
+    },
     handleUploadSuccess(res, file) {
+      this.uploadLoading = false
       console.log('res', res)
       console.log('file', file)
       if (this.xFormSet.formName === 'xForm4') {
@@ -1065,6 +1071,19 @@ export default {
         this.$refs[this.xFormSet.formName ].validate()
       }
       // this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    beforeUpload(file) {
+      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isType) {
+        this.$message.warning('上传图片只支持 JPG,PNG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.warning('上传的图片大小不能超过 2MB!')
+      }
+      this.uploadLoading = true
+      return isType && isLt2M
     },
     // 获取当前时间
     getNowFormatDate() {
@@ -1096,18 +1115,6 @@ export default {
         return '0' + val
       }
       return val
-    },
-    beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isType) {
-        this.$message.error('上传图片只支持 JPG,PNG 格式!')
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isType && isLt2M
     },
     // 选取商品
     toSelectGoods() {
@@ -1729,6 +1736,7 @@ export default {
             margin-top: 10px;
             width: 100%;
             font-size: 13px;
+            line-height: 1.1;
             font-weight: 500;
             color: rgba(51, 51, 51, 1);
             text-overflow: ellipsis;
@@ -1839,6 +1847,7 @@ export default {
               margin-top: 10px;
               width: 100%;
               font-size: 13px;
+              line-height: 1.1;
               font-weight: 500;
               color: rgba(51, 51, 51, 1);
               text-overflow: ellipsis;
@@ -2092,8 +2101,8 @@ export default {
         .caption {
           margin-top: 10px;
           width: 100%;
-          height: 12px;
           font-size: 13px;
+          line-height: 1.1;
           font-weight: 500;
           color: rgba(51, 51, 51, 1);
           text-overflow: ellipsis;

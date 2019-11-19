@@ -127,7 +127,7 @@
       :close-on-click-modal="false"
       @closed="dialogClose('xForm')"
     >
-      <div class="x-dialog-body">
+      <div v-loading="uploadLoading" element-loading-text="图片上传中" class="x-dialog-body">
         <div class="form-box">
           <el-form ref="xForm" :model="xForm" :rules="xRules">
             <el-form-item label="图片" :label-width="formLabelWidth" prop="imgUrl">
@@ -451,7 +451,7 @@ export default {
       })
     },
     handleUploadError() {
-
+      this.uploadLoading = false
     },
     handleUploadSuccess(res, file) {
       if (res.code === '10000') {
@@ -460,17 +460,19 @@ export default {
       } else {
         this.$message.error('上传失败!')
       }
+      this.uploadLoading = false
     },
     beforeUpload(file) {
       const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isType) {
-        this.$message.error('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('上传图片只支持 JPG,PNG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.warning('上传的图片大小不能超过 2MB!')
       }
+      this.uploadLoading = true
       return isType && isLt2M
     },
     // 获取列表数据

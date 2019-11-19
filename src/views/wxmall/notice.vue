@@ -373,18 +373,27 @@ export default {
         }
       })
     },
-    handleUploadSuccess($event) {
-      console.log($event)
+    handleUploadError() {
+      this.uploadLoading = false
+    },
+    handleUploadSuccess(res, file) {
+      if (res.code === '10000') {
+        this.xForm.imgUrl = res.data || ''
+        this.$refs.xForm.validate()
+      } else {
+        this.$message.error('上传失败!')
+      }
+      this.uploadLoading = false
     },
     beforeUpload(file) {
       const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isType) {
-        this.$message.error('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('上传图片只支持 JPG,PNG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.warning('上传的图片大小不能超过 2MB!')
       }
       return isType && isLt2M
     },
