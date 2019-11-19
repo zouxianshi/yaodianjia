@@ -171,7 +171,8 @@ export default {
   data() {
     const checkWebsite = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入链接地址'))
+        // callback(new Error('请输入链接地址'))
+        callback()
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
         callback(new Error('链接格式不正确，例：http://111.com'))
@@ -229,7 +230,7 @@ export default {
           { required: true, message: '请输入公告文字', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
@@ -304,6 +305,8 @@ export default {
     },
     // 查询
     search() {
+      this.pager.current = 1
+      this.pager.total = 0
       this._getTableData()
     },
     handleChangeStatus(row) {

@@ -61,7 +61,8 @@
               <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
                 <div class="x-image__preview">
                   <el-image
-                    fit="scale-down"
+                    style="width: 50px;height: 50px;"
+                    fit="contain"
                     :src="scope.row.imageUrl"
                     :preview-src-list="[scope.row.imageUrl]"
                   />
@@ -80,15 +81,15 @@
           <el-table-column label="状态" min-width="80" align="center">
             >
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
-              <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
+              <el-tag v-if="scope.row.className !== '' && scope.row.status=='1'" size="small">正常</el-tag>
+              <el-tag v-if="scope.row.className === '' || scope.row.status=='0'" size="small" type="info">停用</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" min-width="240">
             <template slot-scope="scope">
               <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-              <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
-              <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
+              <el-button v-if="scope.row.className === '' || scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
+              <el-button v-if="scope.row.className !== '' && scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
               <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
             </template>
           </el-table-column>
@@ -136,15 +137,21 @@
             </el-form-item>
             <el-form-item label="广告图片" :label-width="formLabelWidth" prop="imgUrl">
               <el-upload
-                class="avatar-uploader"
+                class="avatar-uploader x-uploader"
                 :headers="headers"
                 :action="upLoadUrl"
                 :show-file-list="false"
                 :on-success="handleUploadSuccess"
                 :before-upload="beforeUpload"
               >
-                <img v-if="xForm.imgUrl" :src="xForm.imgUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon" />
+                <div v-if="xForm.imgUrl" class="el-img-box">
+                  <img :src="xForm.imgUrl" class="image">
+                  <div class="img-actions" @click.stop>
+                    <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
+                    <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
+                  </div>
+                </div>
+                <i v-else class="el-icon-plus icon-add" />
               </el-upload>
               <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
             </el-form-item>
@@ -213,7 +220,8 @@ export default {
     const checkWebsite = (rule, value, callback) => {
       console.log('value', value)
       if (value === '') {
-        callback(new Error('请输入链接地址'))
+        // callback(new Error('请输入链接地址'))
+        callback()
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
         callback(new Error('链接格式不正确，例：http://111.com'))
@@ -275,7 +283,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
@@ -307,6 +315,12 @@ export default {
     fetchData() {
       this._getTableData()
       this._getADClass() // 获取广告分分类列表
+    },
+    handleUpload() {
+      $('.el-img-box').click()
+    },
+    handleRemove() {
+      this.xForm.imgUrl = ''
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -352,10 +366,16 @@ export default {
     },
     // 查询
     search() {
+      this.pager.current = 1
+      this.pager.total = 0
       this._getTableData()
     },
     handleChangeStatus(row) {
       console.log('row', row)
+      if (row.className === '' && row.status === 0) {
+        this.$message.warning('请设置分组')
+        return
+      }
       this._updateDataStatus(row)
     },
     handleDel(row) {
@@ -373,10 +393,14 @@ export default {
     },
     handleEdit(row) {
       this.editDetail = row
+      // 改分组是否存在
+      const result = this.classOptions.findIndex(item => {
+        return item.id === row.classId
+      })
       // 信息查询
       this.xForm = {
         id: row.id,
-        classId: row.classId,
+        classId: result > -1 ? row.classId : '',
         imgUrl: row.imageUrl,
         linkUrl: row.url,
         dateRange: [row.startTime, row.endTime],
