@@ -22,17 +22,6 @@
               placeholder="结束时间"
               @change="handleTimeChange($event, 2)"
             />
-            <!-- <el-date-picker
-              v-model="searchForm.dateRange"
-              size="small"
-              type="datetimerange"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              range-separator="至"
-              :default-time="['00:00:00','23:59:59']"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              @change="handleTimeChange($event, 1)"
-            /> -->
           </div>
           <div class="search-item">
             <span class="label-name" style="width: 50px">状态</span>

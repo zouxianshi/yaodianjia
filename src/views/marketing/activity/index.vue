@@ -13,8 +13,8 @@
               @change="search()"
             >
               <el-option label="全部" value="" />
-              <el-option label="电子DM单" :value="0" />
-              <el-option label="限时优惠" :value="1" />
+              <el-option label="电子DM单" :value="10" />
+              <el-option label="限时优惠" :value="11" />
             </el-select>
           </div>
           <div class="search-item">
@@ -29,23 +29,28 @@
               placeholder="全部"
               @change="search()"
             >
-              <el-option label="进行中" value="" />
+              <el-option label="进行中" :value="1" />
               <el-option label="未开始" :value="0" />
-              <el-option label="已开始" :value="1" />
+              <el-option label="已结束" :value="-1" />
             </el-select>
           </div>
           <div class="search-item">
             <span class="label-name">有效时间</span>
             <el-date-picker
-              v-model="searchForm.dateRange"
+              v-model="searchForm.timeBeg"
               size="small"
-              type="datetimerange"
+              type="datetime"
               value-format="yyyy-MM-dd HH:mm:ss"
-              range-separator="至"
-              :default-time="['00:00:00','23:59:59']"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
+              placeholder="开始时间"
               @change="handleTimeChange($event, 1)"
+            /> -
+            <el-date-picker
+              v-model="searchForm.timeEnd"
+              size="small"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="结束时间"
+              @change="handleTimeChange($event, 2)"
             />
           </div>
           <div class="search-item">
@@ -109,11 +114,11 @@ export default {
   data() {
     return {
       searchForm: {
-        type: '',
+        type: '', // 活动类型 (10: 电子DM单, 11: 限时特惠, 12: 限时秒杀)
         name: '',
         startTime: '',
         endTime: '',
-        status: ''
+        timeStatus: ''
       },
       tableData: [],
       pager: {
@@ -158,18 +163,30 @@ export default {
     },
     handleTimeChange(val, type) {
       console.log(val, type)
-      if (type === 1) {
-        // 搜索栏
-        if (val && val.length === 2) {
-          this.searchForm.timeBeg = val[0]
-          this.searchForm.timeEnd = val[1]
-          this.search()
+      if (type === 1 || type === 2) { // 搜索栏 1.开始时间 2.结束时间
+        if (!val) {
+          type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
         } else {
-          this.searchForm.timeBeg = ''
-          this.searchForm.timeEnd = ''
+          console.log('this.searchForm', this.searchForm)
+          if (this.searchForm.timeBeg && this.searchForm.timeEnd && this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
+            // 比较时间
+            const start = this.searchForm.timeBeg.replace(/[- :]/g, '')
+            const end = this.searchForm.timeEnd.replace(/[- :]/g, '')
+            if (parseInt(start) > parseInt(end)) {
+              this.$message('结束时间必须大于开始时间')
+              type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
+              return
+            }
+          }
         }
-      } else if (type === 2) {
-        // dialog
+        this.search()
+        // if (this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
+        //   this.search()
+        // } else {
+        //   this.searchForm.timeBeg = ''
+        //   this.searchForm.timeEnd = ''
+        // }
+      } else if (type === 3) { // dialog
         if (val && val.length === 2) {
           this.xForm.startTime = val[0]
           this.xForm.endTime = val[1]
@@ -186,15 +203,16 @@ export default {
     // 获取列表数据
     _getTableData() {
       const params = {
-        type: 10,
-        name: '',
-        maxStartTime: '',
-        minStartTime: '',
-        status: '',
-        currentPage: this.pager.currentPage,
+        type: this.searchForm.type,
+        name: this.searchForm.name,
+        minStartTime: this.searchForm.startTime,
+        maxStartTime: this.searchForm.endTime,
+        timeStatus: this.searchForm.timeStatus,
+        currentPage: this.pager.current,
         pageSize: this.pager.size
 
       }
+      console.log('params', params)
       getActivityList(params).then(res => {
         if (res.code === '10000') {
           this.tableData = res.data.data || []
