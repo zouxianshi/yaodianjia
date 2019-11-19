@@ -707,10 +707,10 @@ export default {
         } else {
           this.expireDays = 1
           if (data.expireDays > 365) {
-            this.days = data.expireDays / 365
+            this.days = parseInt(data.expireDays / 365)
             this.timeTypes = '1'
           } else if (data.expireDays >= 30) {
-            this.days = data.expireDays / 30
+            this.days = parseInt(data.expireDays / 30)
             this.timeTypes = '2'
           } else {
             // eslint-disable-next-line no-self-assign
