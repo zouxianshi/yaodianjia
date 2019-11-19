@@ -167,7 +167,9 @@
                     <el-select v-model="timeTypes" :disabled="basicForm.origin===1||is_query" style="width:100px" size="small" placeholder="">
                       <el-option value="1" label="年" />
                       <el-option value="2" label="月" />
+                      <el-option value="3" label="天" />
                     </el-select>
+                    <span style="color:#999">30天为一个月，365天为一年</span>
                   </el-radio>
                 </el-form-item>
               </div>
@@ -514,7 +516,7 @@ export default {
       groupVisible: false,
       chooseArray: [],
       brandList: [], // 品牌列表
-      timeTypes: '2', // 2为月 1为年
+      timeTypes: '3', // 2为月 1为年
       expireDays: -1,
       days: '',
       defaultProps: {
@@ -703,12 +705,17 @@ export default {
         if (data.expireDays === -1) {
           this.expireDays = -1
         } else {
+          this.expireDays = 1
           if (data.expireDays > 365) {
-            data.expireDays = data.expireDays / 365
+            this.days = data.expireDays / 365
             this.timeTypes = '1'
-          } else {
-            data.expireDays = data.expireDays / 30
+          } else if (data.expireDays >= 30) {
+            this.days = data.expireDays / 30
             this.timeTypes = '2'
+          } else {
+            // eslint-disable-next-line no-self-assign
+            this.days = data.expireDays
+            this.timeTypes = '3'
           }
         }
 
@@ -925,8 +932,10 @@ export default {
             } else {
               if (this.timeTypes === '2') { // 月
                 data.expireDays = parseInt(this.days) * 30
-              } else {
+              } else if (this.timeTypes === '1') {
                 data.expireDays = parseInt(this.days) * 365
+              } else {
+                data.expireDays = parseInt(this.days)
               }
             }
             if (this.chooseGroup.length === 0) {
