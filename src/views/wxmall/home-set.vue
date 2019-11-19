@@ -2290,7 +2290,6 @@ export default {
 }
 
 .set-hover:hover {
-  box-sizing: border-box;
   border: 2px dashed #147DE8;
   border-radius: 2px !important;
   cursor: pointer;
@@ -2299,6 +2298,7 @@ export default {
   }
 }
 .set-hover{
+  box-sizing: border-box;
   border: 2px solid inherit;
   position: relative;
 }
@@ -2318,7 +2318,7 @@ export default {
   }
 }
 .set-active {
-  border-radius: 0 !important;
-  border: 1px solid red !important;
+  border: 2px dashed #147DE8;
+  border-radius: 2px !important;
 }
 </style>
