@@ -13,7 +13,7 @@
     <div class="modal-body">
       <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
-          <el-input v-model.trim="search.keyWord" style="width: 240px" placeholder="商品名称" size="small" />
+          <el-input v-model="search.keyWord" style="width: 240px" placeholder="搜索" size="small" />
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
@@ -62,7 +62,7 @@
         background
         style="text-align: right;margin-top: 20px"
         :current-page="pager.current"
-        :page-sizes="[5, 10, 15, 20]"
+        :page-sizes="[10, 20, 30, 50]"
         :page-size="pager.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pager.total"
@@ -119,7 +119,7 @@ export default {
       },
       pager: {
         current: 1,
-        size: 5,
+        size: 10,
         total: 0
       },
       search: {
@@ -253,7 +253,7 @@ export default {
         return false*/
       const params = {
         storeId: '',
-        name: this.search.keyWord.trim(),
+        keyWord: this.search.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size
       }
@@ -305,8 +305,8 @@ export default {
 <style lang="scss" scoped>
 .dialog-goods {
   .modal-header {
-    height: 40px;
-    line-height: 40px;
+    height: 30px;
+    line-height: 30px;
     font-size: 14px;
     font-weight: bold;
     text-align: left;
