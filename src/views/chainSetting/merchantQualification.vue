@@ -295,6 +295,7 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG && !isPNG) {
         this.$message.error('上传证书图片只能是 JPG/PNG 格式!')
+        return false
       }
       if (!isLt2M) {
         this.$message.error('上传证书图片大小不能超过 2MB!')
