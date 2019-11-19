@@ -171,7 +171,8 @@ export default {
   data() {
     const checkWebsite = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入链接地址'))
+        // callback(new Error('请输入链接地址'))
+        callback()
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
         callback(new Error('链接格式不正确，例：http://111.com'))
@@ -229,7 +230,7 @@ export default {
           { required: true, message: '请输入公告文字', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
@@ -304,6 +305,8 @@ export default {
     },
     // 查询
     search() {
+      this.pager.current = 1
+      this.pager.total = 0
       this._getTableData()
     },
     handleChangeStatus(row) {
@@ -370,18 +373,27 @@ export default {
         }
       })
     },
-    handleUploadSuccess($event) {
-      console.log($event)
+    handleUploadError() {
+      this.uploadLoading = false
+    },
+    handleUploadSuccess(res, file) {
+      if (res.code === '10000') {
+        this.xForm.imgUrl = res.data || ''
+        this.$refs.xForm.validate()
+      } else {
+        this.$message.error('上传失败!')
+      }
+      this.uploadLoading = false
     },
     beforeUpload(file) {
       const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isType) {
-        this.$message.error('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('上传图片只支持 JPG,PNG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.warning('上传的图片大小不能超过 2MB!')
       }
       return isType && isLt2M
     },

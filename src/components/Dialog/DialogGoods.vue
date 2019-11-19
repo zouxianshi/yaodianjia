@@ -35,7 +35,8 @@
             <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
               <div class="x-image__preview">
                 <el-image
-                  fit="scale-down"
+                  style="width: 60px; height: 36px"
+                  fit="contain"
                   :src="showImg(scope.row.mainPic)"
                   :preview-src-list="[showImg(scope.row.mainPic)]"
                 />
@@ -62,7 +63,7 @@
         background
         style="text-align: right;margin-top: 20px"
         :current-page="pager.current"
-        :page-sizes="[5, 10, 15, 20]"
+        :page-sizes="[10, 15, 20, 50]"
         :page-size="pager.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pager.total"
@@ -119,7 +120,7 @@ export default {
       },
       pager: {
         current: 1,
-        size: 5,
+        size: 20,
         total: 0
       },
       search: {
@@ -148,7 +149,7 @@ export default {
     reset() {
       this.pager = {
         current: 1,
-        size: 10,
+        size: 20,
         total: 0
       }
       this.search = {
