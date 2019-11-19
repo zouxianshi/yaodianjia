@@ -10,7 +10,7 @@
       <div class="content">
         <el-form ref="formData" :model="infoData" @submit.native.prevent>
           <el-form-item label="" :prop="keys" :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]">
-            <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focuse="handleInput" />
+            <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
             <span>
               <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
               <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
@@ -71,12 +71,11 @@ export default {
     handleSubSave() {
       this.$refs['formData'].validate((valid) => {
         if (valid) {
-          var reg = /^[0-9]+.?[0-9]*$/
-          console.log(reg.test(String))
-          if (this.keys === 'erpCode' && !reg.test(String)) {
+          if (this.keys === 'erpCode' && !/^[0-9]+$/.test(this.infoData[this.keys])) {
             this.err_show = true
             return
           }
+          this.err_show = false
           this.$emit('saveInfo', this.infoData, this.keys, this.index)
           this.isShow = false
         } else {
@@ -86,7 +85,6 @@ export default {
       })
     },
     handleInput(value) {
-      console.log('jjjj')
       this.err_show = false
     }
   }
