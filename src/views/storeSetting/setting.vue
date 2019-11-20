@@ -29,10 +29,10 @@
       <div>
         <span>选择门店：</span>
         <el-input v-model="diaLogSearchParams.searchKey" size="small" placeholder="门店编码/名称" style="width: 180px" />
-        <el-button size="small" type="primary" style="margin-left: 5px" @click="getData">查询</el-button>
+        <el-button size="small" type="primary" style="margin-left: 5px" @click="getDialogData">查询</el-button>
       </div>
       <el-table
-        v-loading="loading"
+        v-loading="dialogLoading"
         :data="dialogList"
         height="250"
         border
@@ -88,7 +88,7 @@
       <div class="pages">
         <el-pagination
           background
-          layout="prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="diaLogTotalCount"
           :current-page="diaLogSearchParams.currentPage"
           :page-size="diaLogSearchParams.pageSize"
@@ -173,7 +173,7 @@
       <div class="pages">
         <el-pagination
           background
-          layout="prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="totalCount"
           :current-page="searchParams.currentPage"
           :page-size="searchParams.pageSize"
@@ -207,6 +207,7 @@ export default {
     return {
       visable: false,
       loading: false,
+      dialogLoading: false,
       totalCount: 0,
       diaLogTotalCount: 0,
       searchParams: {
@@ -236,6 +237,7 @@ export default {
   },
   created() {
     this.getData()
+    this.getDialogData()
   },
   methods: {
     getData() {
@@ -268,15 +270,18 @@ export default {
         }
         console.log('res-2', this.list)
       })
+    },
+    getDialogData() {
+      this.dialogLoading = true
       this.diaLogSearchParams.merCode = this.merCode
       queryStore(this.diaLogSearchParams).then(res => {
         if (res.code === '10000') {
           this.dialogList = _.cloneDeep(res.data.data)
           this.diaLogTotalCount = res.data.totalCount
-          this.loading = false
+          this.dialogLoading = false
           console.log(this.list, this.dialogList)
         } else {
-          this.loading = false
+          this.dialogLoading = false
           this.$message({
             message: res.msg,
             type: 'error',
@@ -427,6 +432,7 @@ export default {
       this.searchParams.excelFlag = true
       exportData(this.searchParams)
         .then(res => {
+          this.searchParams.excelFlag = null
           if (res.type === 'application/json') {
             this.$message({
               message: '导出的记录为空',
