@@ -144,13 +144,18 @@
               prop="orName"
               align="left"
               min-width="160"
+              show-overflow-tooltip
               label="商品信息"
             >
               <template slot-scope="scope">
-                <div>
+                <div style="overflow: hidden;text-overflow: ellipsis;">
                   <p v-text="scope.row.name" />
-                  <p v-text="scope.row.approvalNumber" />
-                  <p v-text="'条码：'+scope.row.barCode" />
+                  <p style="overflow: hidden;text-overflow: ellipsis;">
+                    <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                      {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                    </span>
+                  </p>
+                  <p style="overflow: hidden;text-overflow: ellipsis;" v-text="'条码：'+scope.row.barCode" />
                 </div>
               </template>
             </el-table-column>
@@ -250,6 +255,7 @@ export default {
         name: '',
         infoFlag: true,
         erpCode: '',
+        auditStatus: 1,
         groupId: '' // 分组id
       }
     }
@@ -267,6 +273,7 @@ export default {
         name: '',
         infoFlag: this.listQuery.infoFlag,
         erpCode: '',
+        auditStatus: 1,
         groupId: '' // 分组id
       }
       this.getList()
@@ -283,7 +290,7 @@ export default {
       })
     },
     _loadTypeList() {
-      getTypeTree({ merCode: this.$store.state.user.merCode, type: 2 }).then(res => {
+      getTypeTree({ merCode: this.$store.state.user.merCode, type: 2, use: true }).then(res => {
         this.treeData = res.data
         this.treeData = JSON.parse(JSON.stringify(this.treeData))
         this.treeData.unshift({ name: '全部', id: '' })
@@ -298,11 +305,9 @@ export default {
       })
     },
     handleTreeClick(row, node) { // 节点被点击时
-      if (row.level) { // 维度不请求
-        this.listQuery.groupId = row.id
-        this.listQuery.level = row.level
-        this.getList()
-      }
+      this.listQuery.groupId = row.id
+      this.listQuery.level = row.level
+      this.getList()
     },
     handleChangeUpdown(status) { // 批量上下架
       this.specData = []
@@ -328,6 +333,7 @@ export default {
       this.multiselect = rows
     },
     handleUpGroup() { // 修改分组
+      this.goodsData = []
       if (this.multiselect.length === 0) {
         this.$message({
           message: '请选择商品',
@@ -336,7 +342,7 @@ export default {
         return
       }
       this.multiselect.map(res => {
-        this.goodsData.push(res.specId)
+        this.goodsData.push(res.id)
       })
       this.groupVisible = true
     },

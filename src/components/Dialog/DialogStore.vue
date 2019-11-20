@@ -8,12 +8,12 @@
     @close="handlerClose"
   >
     <div class="modal-header">
-      <div class="title">选取商品</div>
+      <div class="title">选取门店</div>
     </div>
     <div class="modal-body">
       <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
-          <el-input v-model="search.keyWord" style="width: 240px" placeholder="搜索" size="small" />
+          <el-input v-model="search.keyWord" style="width: 240px" placeholder="门店编码/门店名称" size="small" />
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
@@ -30,14 +30,14 @@
         @select="handleSelect"
       >
         <el-table-column type="selection" align="center" width="50" />
-        <el-table-column align="center" label="图片" width="120">
+        <el-table-column align="center" label="图片" min-width="120">
           <template slot-scope="scope">
             <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
               <div class="x-image__preview">
                 <el-image
                   fit="scale-down"
                   :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[scope.row.imageUrl]"
+                  :preview-src-list="[showImg(scope.row.mainPic)]"
                 />
               </div>
             </div>
@@ -49,10 +49,10 @@
             </div>
           </template> -->
         </el-table-column>
-        <el-table-column prop="commodityName" label="名称" align="center" min-width="150" />
-        <el-table-column prop="packStandard" label="包装规格" align="center" min-width="150" />
-        <el-table-column prop="price" label="价格" align="center" width="100" />
-        <el-table-column prop="stock" label="库存" align="center" width="100" />
+        <el-table-column prop="commodityName" label="门店编码" align="center" min-width="150" />
+        <el-table-column prop="commodityName" label="门店名称" align="center" min-width="150" />
+        <el-table-column prop="price" label="门店地址" align="price" min-width="150" />
+        <el-table-column prop="stock" label="门店电话" align="center" min-width="100" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
@@ -63,7 +63,7 @@
         background
         style="text-align: right;margin-top: 20px"
         :current-page="pager.current"
-        :page-sizes="[10, 20, 30, 50]"
+        :page-sizes="[5, 10, 15, 20]"
         :page-size="pager.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pager.total"
@@ -73,8 +73,8 @@
       <div class="result-section">
         <div class="blank-line" />
         <div class="title">
-          <span v-if="mySelectList && mySelectList.length>0">已选商品：</span>
-          <span v-else style="color: red">请选取商品</span>
+          <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
+          <span v-else style="color: red">请选取门店</span>
         </div>
         <div class="label-line">
           <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { getProductList } from '../../../api/wxmall'
+import { getProductList } from '@/api/wxmall'
 export default {
   name: 'DialogGoods',
   props: {
@@ -120,7 +120,7 @@ export default {
       },
       pager: {
         current: 1,
-        size: 10,
+        size: 5,
         total: 0
       },
       search: {
@@ -258,6 +258,7 @@ export default {
         currentPage: this.pager.current,
         pageSize: this.pager.size
       }
+      console.log('params', params)
       getProductList(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []

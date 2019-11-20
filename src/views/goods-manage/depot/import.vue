@@ -53,8 +53,10 @@
               name="excelFile"
               :limit="1"
               :on-success="handleFileSuccess"
+              :on-error="handleFileErr"
               :auto-upload="false"
               :before-upload="beforeUpload"
+              :on-change="fileChange"
             >
               <i class="el-icon-upload" />
               <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -78,16 +80,16 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-
+      is_file: false
     }
   },
   computed: {
-    ...mapGetters(['merCode']),
+    ...mapGetters(['merCode', 'token']),
     uploadUlr() {
       return `${this.uploadFileURL}${config.merGoods}/1.0/commodity/_batImport?merCode=${this.merCode}`
     },
     headers() {
-      return { 'Authorization': this.$store.getters.token }
+      return { 'Authorization': this.token }
     }
   },
   methods: {
@@ -95,30 +97,47 @@ export default {
       const type = file.name.split('.')
       if (type[1] !== 'xls') {
         this.$message({
-          message: '只能导入excel文件',
+          message: '请上传正确的模板',
           type: 'warning'
         })
+        this.is_file = false
         return false
       }
       return true
     },
     handleUpload() {
+      if (!this.is_file) {
+        this.$message({
+          message: '请上传文件',
+          type: 'warning'
+        })
+      }
       this.$refs.file.submit()
+    },
+    fileChange() {
+      this.is_file = true
     },
     handleFileSuccess(res) {
       if (res.code === '10000') {
         this.$message({
-          message: '导入成功,请至“导入历史”页面查询商品上传结果',
+          message: res.msg,
           type: 'success'
         })
         this.$refs.file.clearFiles()
       } else {
         this.$message.close() // 关闭
         this.$message({
-          message: '导入失败,请至“导入历史”页面查询商品上传结果',
+          message: res.msg,
           type: 'error'
         })
         this.$refs.file.clearFiles()
+      }
+      this.is_file = false
+    },
+    handleFileErr(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        window.location.reload()
       }
     }
   }

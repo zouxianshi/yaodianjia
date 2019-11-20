@@ -15,7 +15,7 @@
       <el-form-item label="计费方式：">
         <el-radio disabled>按重量</el-radio>
       </el-form-item>
-      <el-form-item label="配送区域配置：" />
+      <el-form-item label="配送区域设置：" />
       <el-table :data="form.list">
         <el-table-column label="配送区域">
           <template slot-scope="scope">
@@ -27,29 +27,55 @@
         </el-table-column>
         <el-table-column label="首重（Kg）" width="120px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.ykg" type="number" />
+            <div :class="{'el-form-item is-error':scope.row.ykg === ''}">
+              <div class="el-form-item__content">
+                <el-input v-model.number="scope.row.ykg" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5" style="width: 100px" @input="onChange" />
+                <div class="el-form-item__error"> 请输入首重 </div>
+              </div>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="运费（元）" width="120px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.freight" type="number" />
+            <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.freight)}">
+              <div class="el-form-item__content">
+                <el-input v-model="scope.row.freight" oninput="value=value.replace(/[^0-9.]/g,'')" maxlength="5" style="width: 100px" @change="onChange" />
+                <div v-if="scope.row.freight === ''" class="el-form-item__error"> 请输入运费 </div>
+                <div v-else class="el-form-item__error"> 最多2位小数 </div>
+              </div>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column label="续重（元）" width="120px">
+        <el-table-column label="续重（Kg）" width="120px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.continueWeight" type="number" />
+            <div :class="{'el-form-item is-error':scope.row.continueWeight === ''}">
+              <div class="el-form-item__content">
+                <el-input v-model="scope.row.continueWeight" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5" style="width: 100px" />
+                <div class="el-form-item__error"> 请输入续重 </div>
+              </div>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="续费（元）" width="120px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.renewalCost" type="number" />
+            <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.renewalCost)}">
+              <div class="el-form-item__content">
+                <el-input v-model="scope.row.renewalCost" :step="0.01" oninput="value=value.replace(/[^0-9.]/g,'')" maxlength="5" style="width: 100px" />
+                <div v-if="scope.row.renewalCost === ''" class="el-form-item__error"> 请输入续费 </div>
+                <div v-else class="el-form-item__error"> 最多2位小数 </div>
+              </div>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column label="包邮门槛" width="160px">
+        <el-table-column label="包邮门槛(元)" width="160px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row.postageFreeThreshold" type="number">
-              <template slot="append">元</template>
-            </el-input>
+            <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.postageFreeThreshold)}">
+              <div class="el-form-item__content">
+                <el-input v-model="scope.row.postageFreeThreshold" oninput="value=value.replace(/[^0-9.]/g,'')" maxlength="5" style="width: 100px" />
+                <div v-if="scope.row.postageFreeThreshold === ''" class="el-form-item__error"> 请输入包邮门槛 </div>
+                <div v-else class="el-form-item__error"> 最多2位小数 </div>
+              </div>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="110px">
@@ -73,6 +99,7 @@
       title="新增区域"
       :visible.sync="visable"
       width="800px"
+      :close-on-click-modal="false"
       @close="dismiss"
     >
       <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
@@ -85,7 +112,7 @@
           v-model="city.checked"
           :label="city.id"
           size="mini"
-          style="width: 120px"
+          style="width: 150px"
           :disabled="isSelected(city.id)"
           @change="onCheck($event,city)"
         >{{ city.name }}</el-checkbox>
@@ -224,6 +251,14 @@ export default {
       }
     },
     save() {
+      if (this.checkedCities.length <= 0) {
+        this.$message({
+          message: '请至少选择一个',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        return
+      }
       const rangeResDTOList = []
       _.map(this.checkedCities, (v) => {
         rangeResDTOList.push({
@@ -234,12 +269,21 @@ export default {
       console.log(rangeResDTOList)
       let sortNumber = 0
       if (this.form.list && this.form.list.length > 0) {
-        if (this.form.list[this.form.list.length - 1].sortNumber) {
+        /* let maxSort = 0
+        _.map(_.cloneDeep(this.form.list), (o) => {
+          if(o.sortNumber && o.sortNumber > maxSort){
+            maxSort = o.sortNumber
+          }
+        })*/
+        if (this.form.list[this.form.list.length - 1].sortNumber !== null) {
           sortNumber = this.form.list[this.form.list.length - 1].sortNumber + 1
+          // sortNumber = maxSort + 1
         } else {
           sortNumber = 0
         }
       }
+      console.log('editPosition', this.editPosition)
+      console.log('sortNumber', sortNumber)
       if (this.editPosition === -1) {
         const tempData = {
           billingPlan: 0,
@@ -332,6 +376,21 @@ export default {
         })
         return
       }
+      const patten = /^\d+(\.\d{0,2})?$/
+      let vlidate = true
+      _.map(_.cloneDeep(this.form.list), o => {
+        if (o.ykg === '' ||
+          o.continueWeight === '' ||
+          !patten.test(o.freight) ||
+          !patten.test(o.renewalCost) ||
+          !patten.test(o.postageFreeThreshold)) {
+          vlidate = false
+          return
+        }
+      })
+      if (!vlidate) {
+        return
+      }
       const params = _.map(_.cloneDeep(this.form.list), o => {
         const rangeId = _.map(o.rangeResDTOList, v => {
           return v.rangeId
@@ -374,8 +433,19 @@ export default {
       this.showCities = _.map(_.cloneDeep(this.cities), (v) => {
         return _.assign(v, { checked: false })
       })
+    },
+    onChange(cv, ov) {
+      console.log(cv, ov)
     }
-  }
+  }/*,
+  watch: {
+    'form.list': {
+      deep: true,
+      handler(v) {
+        console.log(v)
+      }
+    }
+  }*/
 }
 </script>
 

@@ -18,7 +18,7 @@ const mixin = {
   },
   watch: {
     step(val) {
-      if (val === 2 && this.basicForm.id) {
+      if (val === 2) {
         // 获取规格
         try {
           this._loadSpces() // 获取规格
@@ -42,6 +42,13 @@ const mixin = {
           }
         }
         this.$set(this.specsForm.specs, index, row)
+        const findIndex = findArray(this.chooseTableSpec, { id: row.id })
+        if (findIndex) {
+          this.chooseTableSpec.splice(findIndex, 1)
+          if (!row.disabled) {
+            this.$refs.multipleTable.toggleRowSelection(row)
+          }
+        }
       } else {
         if (keys === 'erpCode') {
           const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
@@ -81,7 +88,7 @@ const mixin = {
             data.push(v)
           }
         })
-        data = [...data, ...this.chooseTableSpec]
+        data = [...this.chooseTableSpec, ...data]
         if (data.length === 0) {
           this.$message({
             message: '请选择规格信息',
@@ -91,27 +98,21 @@ const mixin = {
         }
         let is_err = false
         data.forEach((v, index) => {
-          if (!v.erpCode) {
+          if (!v.erpCode && !is_err) {
             this.$message({
-              message: `你勾选的规格中第${index + 1}个商品编码不能为空`,
+              message: `请完善已勾选的规格，商品编码未填写`,
               type: 'error'
             })
             is_err = true
-          } else if (!v.mprice) {
+          } else if (!v.mprice && !is_err) {
             this.$message({
-              message: `你勾选的规格中第${index + 1}个商品价格不能为空`,
+              message: `请完善已勾选的规格，商品价格未填写`,
               type: 'error'
             })
             is_err = true
-          } else if (!v.barCode) {
+          } else if (!v.picUrl && !is_err) {
             this.$message({
-              message: `你勾选的规格中第${index + 1}个商品条码不能为空`,
-              type: 'error'
-            })
-            is_err = true
-          } else if (!v.picUrl) {
-            this.$message({
-              message: `你勾选的规格中第${index + 1}个图片不能为空`,
+              message: `请完善已勾选的规格，图片未上传`,
               type: 'error'
             })
             is_err = true
@@ -153,8 +154,20 @@ const mixin = {
         data = this.specsForm.specs
         let index = 0
         let flag = true
+        if (this.editSpecsData.length !== 0) {
+          for (let index = 0; index < this.editSpecsData.length; index++) {
+            const element = this.editSpecsData[index]
+            if (!element.picUrl) {
+              this.$message({
+                message: '已存在的规格中存在图片未上传，请上传图片',
+                type: 'error'
+              })
+              return
+            }
+          }
+        }
         this.specsForm.specs.map(v => {
-          index = +1
+          index++
           v.valueList = []
           v.commodityId = this.basicForm.id
           v.merCode = this.merCode
@@ -246,7 +259,6 @@ const mixin = {
           type: 'success'
         })
         this.subLoading = false
-        this._loadGoodsImgAry()
         this.step = 3
       }).catch(_ => {
         this.subLoading = false
@@ -277,6 +289,21 @@ const mixin = {
         getSpecsProductSKU(this.basicForm.platformCode).then(res => {
           res.data.map(v => {
             v.disabled = false
+            // 标库数据回显 规格处理
+            if (v.productSpecSkuDTOs) {
+              if (this.dynamicProp.length === 0) {
+                v.productSpecSkuDTOs.map(vs => {
+                  this.dynamicProp.push({
+                    name: vs.skuKeyName,
+                    id: vs.skuKeyId,
+                    keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`
+                  })
+                })
+              }
+              v.productSpecSkuDTOs.map(vs => {
+                v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
+              })
+            }
           })
           this.specsForm.specs = res.data
           this._loadSpecs()

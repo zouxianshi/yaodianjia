@@ -83,33 +83,44 @@
           </li>
         </ul>
         <div class="table-box">
-          <p style="margin-bottom:12px;color:#333">本次批量创建结果如下：</p>
+          <p style="margin-bottom:12px;color:#333;display:flex;justify-content: space-between;">
+            <span>本次批量创建结果如下：</span>
+            <el-button type="primary" size="small" @click="_loadFileResultList">刷新</el-button>
+          </p>
           <el-table :data="tableData">
             <el-table-column label="品类">
               <template slot-scope="scope">
-                <span v-if="scope.row.model==='1'">中西医药</span>
-                <span v-else-if="scope.row.model==='2'">营养保健</span>
-                <span v-else-if="scope.row.model==='3'">医疗器械</span>
+                <span v-if="scope.row.firstTypeId==='1065279ca65a4a529109f82472f11053'">中西医药</span>
+                <span v-else-if="scope.row.firstTypeId==='fb5e6c99d2a24eb79dae4350d9bfa837'">营养保健</span>
+                <span v-else-if="scope.row.firstTypeId==='a99917a7c7254ac281e844acf1610657'">医疗器械</span>
                 <span v-else>其他</span>
               </template>
             </el-table-column>
             <el-table-column label="创建结果">
               <template slot-scope="scope">
-                <span v-text="scope.row.resut?'成功':'失败'" />
+                <p>成功数量：{{ scope.row.success }}  <a v-if="scope.row.success>0" :href="'#/goods-manage/apply-record'"><el-button type="text" size="mini">去完善信息</el-button></a></p>
+                <p>失败数量：{{ scope.row.fail }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="数量" prop="number" />
+            <el-table-column label="导入时间" prop="createTime" />
+            <!-- <el-table-column label="失败原因" prop="reason" /> -->
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <template v-if="scope.row.resut">
+                <template v-if="scope.row.failPath">
+                  <el-button type="" size="mini" @click="handleDowload(scope.row)">失败结果下载</el-button>
+                </template>
+                <!-- <template v-else>
                   <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
-                </template>
-                <template v-else>
-                  <el-button type="" size="mini" @click="handleDowload(scope.row)">下载结果</el-button>
-                </template>
+                </template> -->
               </template>
             </el-table-column>
           </el-table>
+          <pagination
+            :total="total"
+            :page.sync="listQuery.currentPage"
+            :limit.sync="listQuery.pageSize"
+            @pagination="_loadFileResultList"
+          />
         </div>
       </section>
     </div>
@@ -117,11 +128,20 @@
 </template>
 <script>
 import config from '@/utils/config'
+import { getUploadFileList } from '@/api/new-goods'
 import { mapGetters } from 'vuex'
+import Pagination from '@/components/Pagination'
+import mixins from '@/utils/mixin'
 export default {
+  components: { Pagination },
+  mixins: [mixins],
   data() {
     return {
-      tableData: []
+      tableData: [],
+      listQuery: {
+        currentPage: 1,
+        pageSize: 20
+      }
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
@@ -139,7 +159,7 @@ export default {
     }
   },
   created() {
-
+    this._loadFileResultList()
   },
   methods: {
     handleFileSuccess(res) {
@@ -148,7 +168,7 @@ export default {
           message: '上传成功',
           type: 'success'
         })
-        this.tableData = res.data
+        this._loadFileResultList()
       } else {
         this.$message({
           message: res.msg,
@@ -157,21 +177,32 @@ export default {
       }
       this.$refs.file.clearFiles()
     },
-    handleFileError(res) {
-      this.$message({
-        message: '文件上传失败',
-        type: 'error'
-      })
-      this.$refs.file.clearFiles()
+    handleFileError(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        location.reload()
+      } else {
+        this.$message({
+          message: '文件上传失败',
+          type: 'error'
+        })
+        this.$refs.file.clearFiles()
+      }
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
     },
     handleDowload(row) {
       var elemIF = document.createElement('iframe')
-      elemIF.src = this.showImg(row.excelPath)
+      elemIF.src = this.showImg(row.failPath)
       elemIF.style.display = 'none'
       document.body.appendChild(elemIF)
+    },
+    _loadFileResultList() {
+      getUploadFileList(this.listQuery).then(res => {
+        this.tableData = res.data.data
+        this.total = res.data.totalCount
+      })
     }
   }
 }

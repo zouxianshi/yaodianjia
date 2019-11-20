@@ -40,7 +40,7 @@
             <el-input
               v-model.trim="listQuery.approvalNumber"
               size="small"
-              placeholder="商品名称"
+              placeholder="批准文号"
             />
           </div>
         </div>
@@ -50,7 +50,7 @@
             <el-input
               v-model.trim="listQuery.barCode"
               size="small"
-              placeholder="商品名称"
+              placeholder="条形码"
             />
           </div>
           <div class="search-item">
@@ -58,7 +58,7 @@
             <el-input
               v-model.trim="listQuery.manufacture"
               size="small"
-              placeholder="商品名称"
+              placeholder="生产企业"
             />
           </div>
         </div>
@@ -102,49 +102,82 @@
             label="商品编码"
           />
           <el-table-column
-            prop="name"
             align="left"
             min-width="120"
             label="商品名称"
             show-overflow-tooltip
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p class="ellipsis" v-text="scope.row.name" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product ellipsis" v-text="scope.row.product.name" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
             align="left"
-            prop="manufacture"
-            min-width="120"
+            min-width="180"
             label="生产企业"
-          />
-          <!-- <el-table-column
-            prop="packStandard"
-            align="left"
-            min-width="120"
-            label="规格"
-          /> -->
+          >
+            <template slot-scope="scope">
+              <div>
+                <p class="ellipsis" v-text="scope.row.manufacture" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product ellipsis" v-text="scope.row.product.manufacture" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="barCode"
             align="left"
             label="条形码"
             :show-overflow-tooltip="true"
             min-width="120"
-          />
+          >
+            <template slot-scope="scope">
+              <div>
+                <p v-text="scope.row.barCode" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product" v-text="scope.row.product.barCode" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="approvalNumber"
             align="left"
             label="批准文号"
             :show-overflow-tooltip="true"
+            min-width="130"
+          >
+            <template slot-scope="scope">
+              <div class="ellipsis">
+                <p class="ellipsis" v-text="scope.row.approvalNumber" />
+                <p v-if="listQuery.status===1&&scope.row.product" class="product ellipsis" v-text="scope.row.product.approvalNumber" />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="listQuery.status===0"
+            prop="reason"
+            align="left"
+            show-overflow-tooltip=""
             min-width="120"
+            label="失败原因"
+          />
+          <el-table-column
+            v-if="listQuery.status===0"
+            prop="modifyTime"
+            align="left"
+            min-width="155"
+            label="导入时间"
           />
           <el-table-column
             prop="modifyName"
             align="left"
-            min-width="100"
+            min-width="120"
             label="操作人"
           />
           <el-table-column
             v-if="listQuery.status===1"
-            prop="createTime"
+            prop="modifyTime"
             align="left"
-            min-width="100"
+            min-width="155"
             label="对码时间"
           />
           <el-table-column
@@ -221,6 +254,7 @@ export default {
     },
     getList() {
       this.loading = true
+      this.tableData = []
       getImportList(this.listQuery).then(res => {
         const { data, totalCount } = res.data
         if (data) {
@@ -240,7 +274,7 @@ export default {
         })
         return
       }
-      this.$confirm('是否确实删除', '提示', {
+      this.$confirm('是否确认删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -253,7 +287,7 @@ export default {
       }).catch(() => {})
     },
     handleDel(row) { // 删除数据
-      this.$confirm('是否确实删除', '提示', {
+      this.$confirm('是否确认删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -274,6 +308,7 @@ export default {
       this.multipleSelection = row
     },
     handleMate(row) {
+      sessionStorage.setItem('mateList', JSON.stringify(this.tableData))
       sessionStorage.setItem('mate', JSON.stringify(row))
       this.$router.push(`/goods-manage/mate-details?id=${row.id}&from=${this.listQuery.status === 1 ? 'is_pair' : 'pair'}`)
     },
@@ -289,3 +324,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.product{
+  color: #9999
+}
+</style>

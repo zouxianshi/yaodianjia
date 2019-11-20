@@ -25,12 +25,32 @@ const mixin = {
       // })
       this.loading = true
       getTypeTree({ merCode: 'hydee', type: 1, dimensionId: dimensionId, issTree: true }).then(res => {
-        if (this.basicForm && this.basicForm.origin === 2) {
-          res.data.map(v => {
-            if (this.chooseTypeList[0].id !== v.id) {
-              v.disabled = true
-            }
-          })
+        if (this.basicForm && this.basicForm.origin === 2 && this.basicForm.id) {
+          if (!this.basicForm.typeId) {
+            res.data.map(v => {
+              if (this.basicForm.firstTypeId === '4') {
+                if (v.name === '中西药品') {
+                  v.disabled = true
+                }
+                if (v.name === '营养保健') {
+                  v.disabled = true
+                }
+                if (v.name === '医疗器械') {
+                  v.disabled = true
+                }
+              } else {
+                if (this.basicForm.firstTypeId !== v.id) {
+                  v.disabled = true
+                }
+              }
+            })
+          } else {
+            res.data.map(v => {
+              if (this.chooseTypeList[0] && this.chooseTypeList[0].id !== v.id) {
+                v.disabled = true
+              }
+            })
+          }
         }
         this.typeList = res.data
         this.loading = false

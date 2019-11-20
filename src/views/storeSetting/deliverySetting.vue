@@ -1,28 +1,24 @@
 <template>
   <div class="app-container">
     <el-dialog
+      v-if="visable"
       append-to-body
       title="配送费用设置"
       :visible.sync="visable"
       width="800px"
+      :close-on-click-modal="false"
       @close="dismiss"
     >
-      <el-form :model="form" label-width="110px" label-position="right">
+      <el-form ref="form" :model="form" label-width="110px" :rules="rules" label-position="right">
         <div style="font-size: 16px;font-weight: 400;margin-bottom: 10px">起送价</div>
-        <el-form-item label="起送价：">
-          <el-input v-model="form.initialDeliveryPrice" style="width: 100px" size="mini" type="number" />
+        <el-form-item label="起送价：" prop="initialDeliveryPrice">
+          <el-input v-model="form.initialDeliveryPrice" style="width: 100px" size="mini" maxlength="5" />
           元
+          <span style="font-size: 12px;font-weight: 400;color: #99a9bf;margin-left: 5px">
+            设置订单多少元起送，未达到该金额不进行配送
+          </span>
         </el-form-item>
-        <el-form-item>
-          <template slot="label">
-            <el-checkbox v-model="form.isfloatingFreight" :true-label="1" :false-label="0">浮动费用：</el-checkbox>
-          </template>
-          超出
-          <el-input v-model="form.floatOverKilometers" style="width: 100px" size="mini" type="number" />
-          公里（步行距离），每公里加收
-          <el-input v-model="form.cashOnDelivery" style="width: 100px" size="mini" type="number" />
-          元
-        </el-form-item>
+
         <div style="font-size: 16px;font-weight: 400;margin-bottom: 10px">免运设置</div>
         <el-form-item label="免费配送：">
           <el-radio v-model="form.isfreeShipping" :label="0" size="mini">否</el-radio>
@@ -31,13 +27,46 @@
             合理设置门店运费满免规则，有助于门店销售
           </span>
         </el-form-item>
-        <el-form-item label="配送费：">
-          <el-input v-model="form.distributionFee" style="width: 100px" size="mini" type="number" />
+        <el-form-item label="配送费：" prop="distributionFee">
+          <el-input v-model="form.distributionFee" style="width: 100px" size="mini" maxlength="5" />
           元
+          <span style="font-size: 12px;font-weight: 400;color: #99a9bf;margin-left: 5px">
+            设置配送范围内的配送费用
+          </span>
         </el-form-item>
-        <el-form-item v-if="form.isfreeShipping === 1" label="免运门槛：">
+        <el-form-item>
+          <template slot="label">
+            <el-checkbox v-model="form.isfloatingFreight" :true-label="1" :false-label="0">浮动费用：</el-checkbox>
+          </template>
+          <span style="float: left">超出</span>
+          <div :class="{'el-form-item is-error':form.isfloatingFreight && form.floatOverKilometers <= 0}" style="float: left;margin-left: 5px;margin-right: 5px">
+            <div class="el-form-item__content">
+              <el-input v-model.number="form.floatOverKilometers" style="width: 100px" size="mini" maxlength="5" :disabled="!form.isfloatingFreight" />
+              <div v-if="form.isfloatingFreight && form.floatOverKilometers <= 0" class="el-form-item__error"> 请输入大于0的值 </div>
+            </div>
+          </div>
+
+          <span style="float: left">公里（步行距离），每公里加收</span>
+          <div :class="{'el-form-item is-error':form.isfloatingFreight && !/^\d+(\.\d{0,2})?$/.test(form.cashOnDelivery)}" style="float: left;margin-left: 5px;margin-right: 5px">
+            <div class="el-form-item__content">
+              <el-input v-model="form.cashOnDelivery" style="width: 100px" size="mini" maxlength="5" :disabled="!form.isfloatingFreight" />
+              <div v-if="form.isfloatingFreight">
+                <div v-if="form.cashOnDelivery <= 0" class="el-form-item__error"> 请输入大于0的值 </div>
+                <div v-else-if="!/^\d+(\.\d{0,2})?$/.test(form.cashOnDelivery)" class="el-form-item__error"> 最多2位小数 </div>
+              </div>
+            </div>
+          </div>
+          元
+          <span style="font-size: 12px;font-weight: 400;color: #99a9bf;margin-left: 5px">
+            超过配送范围的浮动配送费
+          </span>
+        </el-form-item>
+        <el-form-item v-if="form.isfreeShipping === 1" label="免运门槛：" prop="freeEntryThreshold">
           <el-input v-model="form.freeEntryThreshold" style="width: 100px" size="mini" type="number" />
           元
+          <span style="font-size: 12px;font-weight: 400;color: #99a9bf;margin-left: 5px">
+            订单超过多少金额可以免配送费
+          </span>
         </el-form-item>
         <div style="font-size: 16px;font-weight: 400;margin-bottom: 10px">配送时间设置</div>
         <el-form-item label="配送时间：">
@@ -51,13 +80,12 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取消</el-button>
-        <el-button type="primary" size="small" @click="submit">确定</el-button>
+        <el-button type="primary" size="small" @click="handleSubmit('form')">确定</el-button>
       </div>
     </el-dialog>
     <el-table
       :data="list"
       height="550"
-      border
       style="margin-top: 20px"
       @selection-change="handleSelectionChange"
     >
@@ -71,15 +99,15 @@
       <el-table-column label="支持配送门店数" property="distributionStores" />
       <el-table-column label="起送价" property="initialDeliveryPrice" />
       <el-table-column label="是否免运">
-        <template slot-scope="scope">
+        <template v-if="scope.row.isfreeShipping !== null" slot-scope="scope">
           <span v-if="scope.row.isfreeShipping === 1">是</span>
           <span v-else>无</span>
         </template>
       </el-table-column>
       <el-table-column label="详细规则">
         <template slot-scope="scope">
-          <span v-if="scope.row.isfreeShipping === 1">无</span>
-          <span v-else>满{{ scope.row.freeEntryThreshold }}免配送费</span>
+          <span v-if="!scope.row.freeEntryThreshold || scope.row.freeEntryThreshold === 0">无</span>
+          <span v-else-if="scope.row.freeEntryThreshold">满{{ scope.row.freeEntryThreshold }}免配送费</span>
         </template>
       </el-table-column>
       <el-table-column label="配送费" property="distributionFee" />
@@ -112,7 +140,7 @@ export default {
       multipleSelection: [],
       list: [],
       form: {
-        cashOnDelivery: 0,
+        cashOnDelivery: 0.0,
         deliveryTime: null,
         distributionFee: 0,
         floatOverKilometers: 0,
@@ -122,6 +150,53 @@ export default {
         isfreeShipping: 0,
         merCode: null,
         rangeId: []
+      },
+      rules: {
+        initialDeliveryPrice: [
+          { validator: (rule, value, callback) => {
+            if (value) {
+              if (value < 0) {
+                return callback(new Error('不能输入负数'))
+              } else if (!/^\d+(\.\d{0,2})?$/.test(value)) {
+                return callback(new Error('请输入正确的数值'))
+              } else {
+                callback()
+              }
+            } else {
+              return callback(new Error('请输入起送价'))
+            }
+          }, trgger: 'blur' }
+        ],
+        distributionFee: [
+          { validator: (rule, value, callback) => {
+            if (value) {
+              if (value < 0) {
+                return callback(new Error('不能输入负数'))
+              } else if (!/^\d+(\.\d{0,2})?$/.test(value)) {
+                return callback(new Error('请输入正确的数值'))
+              } else {
+                callback()
+              }
+            } else {
+              callback()
+            }
+          }, trgger: 'blur' }
+        ],
+        freeEntryThreshold: [
+          { validator: (rule, value, callback) => {
+            if (value) {
+              if (value < 0) {
+                return callback(new Error('不能输入负数'))
+              } else if (!/^\d+(\.\d{0,2})?$/.test(value)) {
+                return callback(new Error('请输入正确的数值'))
+              } else {
+                callback()
+              }
+            } else {
+              callback()
+            }
+          }, trgger: 'blur' }
+        ]
       }
     }
   },
@@ -132,6 +207,17 @@ export default {
     this.getData()
   },
   methods: {
+    handleSubmit(form) { // 保存
+      console.log(this.$refs[form])
+      this.$refs[form].validate((valid) => {
+        console.log(valid)
+        if (valid) {
+          this.submit()
+        } else {
+          console.log('error submit')
+        }
+      })
+    },
     getData() {
       getDeliverySettings(this.merCode).then(res => {
         if (res.code === '10000') {
@@ -190,6 +276,15 @@ export default {
       this.visable = true
     },
     submit() {
+      if (this.form.isfloatingFreight === 1 && (!this.form.floatOverKilometers ||
+        this.form.floatOverKilometers === '' ||
+        this.form.floatOverKilometers <= 0 ||
+        !this.form.cashOnDelivery ||
+        !/^\d+(\.\d{0,2})?$/.test(this.form.cashOnDelivery) ||
+        this.form.cashOnDelivery <= 0)) {
+        console.log('dddd')
+        return
+      }
       if (this.form.isfreeShipping !== 1) {
         this.form.freeEntryThreshold = null
       }

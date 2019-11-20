@@ -1,7 +1,7 @@
 <template>
   <el-popover v-model="visible" placement="right" width="320" trigger="click">
     <div class="subgrouping-model">
-      <el-form ref="formInfo" :model="info" :rules="rules">
+      <el-form ref="formInfo" :model="info" :rules="rules" @submit.native.prevent>
         <el-form-item label="" prop="name">
           <el-input v-model="info.name" placeholder="请输入内容" size="mini" style="width: 230px;" />
         </el-form-item>
@@ -13,6 +13,7 @@
           :show-file-list="false"
           :headers="headers"
           :on-success="handleAvatarSuccess"
+          :on-error="handleAvatarError"
           :before-upload="beforeAvatarUpload"
         >
           <img v-if="pic" :src="showImg(info.pic)" class="avatar">
@@ -24,7 +25,7 @@
         <el-button type="danger" icon="el-icon-close" circle size="mini" @click="visible=false" />
       </div>
     </div>
-    <el-tooltip v-if="!$slots.default" slot="reference" class="item" effect="dark" :content="type === 'edit' ? '编辑' : `新建（${level === '1' ? '一' : '二'}级）子分组` " placement="top">
+    <el-tooltip v-if="!$slots.default" slot="reference" class="item" effect="dark" :content="type === 'edit' ? '编辑' : `新建（${level === '1' ? '二' : '三'}级）子分组` " placement="top">
       <el-button v-if="contentType === 'button'" type="primary" :style="{display:level==='3'?'none':'inline-block'}" icon="el-icon-folder-add" :disabled="level === '3'" circle size="mini" style="margin-right: 10px" />
       <i v-if="contentType === 'text'" class="icon-edit el-icon-edit" />
     </el-tooltip>
@@ -36,6 +37,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
+let loading = ''
 export default {
   name: 'SubgroupingVue',
   components: {},
@@ -189,14 +191,34 @@ export default {
           type: 'error'
         })
       }
+      loading.close()
+    },
+    handleAvatarError(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        location.reload()
+      } else {
+        this.$message({
+          message: '图片上传失败',
+          type: 'error'
+        })
+        loading.close()
+      }
     },
     beforeAvatarUpload(file) {
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      loading = this.$loading({
+        lock: true,
+        text: '图片上传中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       if (!isImg) {
         this.$message({
-          message: '只能上传图片',
+          message: '只能上传格式为 jpg、jpeg、png的图片',
           type: 'warning'
         })
+        loading.close()
       }
       return isImg
     }

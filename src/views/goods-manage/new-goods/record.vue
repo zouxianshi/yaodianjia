@@ -39,7 +39,7 @@
             <el-input
               v-model.trim="listQuery.barCode"
               size="small"
-              placeholder="商品编码"
+              placeholder="条形码"
             />
           </div>
           <div class="search-item">
@@ -47,7 +47,7 @@
             <el-input
               v-model.trim="listQuery.approvalNumber"
               size="small"
-              placeholder="商品编码"
+              placeholder="批准文号"
             />
           </div>
           <div class="search-item">
@@ -72,12 +72,39 @@
           <el-table-column
             prop="orCode"
             align="left"
+            min-width="100"
+            label="商品图片"
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <template v-if="scope.row.mainPic">
+                <el-image
+                  style="width: 60px; height: 60px"
+                  :src="showImg(scope.row.mainPic)"
+                  lazy
+                  fit="contain"
+                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
+                />
+              </template>
+              <template v-else>
+                <p class="">暂未上传</p>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="orCode"
+            align="left"
             min-width="200"
             label="商品/规格"
             show-overflow-tooltip
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.name }}{{ scope.row.packStandard }}</span>
+              <span>{{ scope.row.name }}&nbsp;</span>
+              <template v-if=" scope.row.specSkuList">
+                <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                  {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                </span>
+              </template>
             </template>
           </el-table-column>
           <el-table-column
@@ -108,7 +135,7 @@
             min-width="120"
           />
           <el-table-column
-            prop="createTime"
+            prop="modifyTime"
             align="left"
             min-width="155"
             label="修改时间"
@@ -132,17 +159,17 @@
                   <el-button type="" size="mini">查看</el-button>
                 </a>
               </template>
-              <template v-if="(scope.row.infoStatus===8||scope.row.infoStatus===12||scope.row.infoStatus===14||scope.row.infoStatus===13||scope.row.infoStatus===15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0)">
+              <template v-if="scope.row.origin===1||listQuery.auditStatus==='-1'||((scope.row.infoStatus<=15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))">
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>
               </template>
-              <el-button
-                v-if="scope.row.auditStatus!==1"
-                type="danger"
-                size="mini"
-                @click="handleDel(scope.row)"
-              >删除</el-button>
+              <template v-if="scope.row.auditStatus===0">
+                <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                  <el-button type="" size="mini">编辑</el-button>
+                </a>
+              </template>
+              <el-button v-if="scope.row.auditStatus!==1" type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -234,8 +261,12 @@ export default {
       if (this.listQuery.auditStatus === '-1') { // 待完善
         data.auditStatus = ''
         data.infoFlag = false
+        data.origin = 1
       } else if (this.listQuery.auditStatus === '3') { // 待提交审核
         data.infoFlag = true
+        data.origin = 0
+      } else {
+        data.origin = 0
       }
       getNewGoodsRecord(data).then(res => {
         this.loading = false

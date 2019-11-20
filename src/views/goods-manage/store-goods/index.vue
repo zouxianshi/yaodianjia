@@ -32,7 +32,7 @@
           <div class="search-item">
             <span class="label-name">商品名称</span>
             <el-input
-              v-model.trim="listQuery.manufacture"
+              v-model.trim="listQuery.name"
               size="small"
               placeholder="商品名称"
             />
@@ -58,7 +58,7 @@
           <div class="search-item">
             <span class="label-name">条形码</span>
             <el-input
-              v-model.trim="keyword"
+              v-model.trim="listQuery.barCode"
               size="small"
               placeholder="条形码"
             />
@@ -66,7 +66,7 @@
           <div class="search-item">
             <span class="label-name">生产企业</span>
             <el-input
-              v-model.trim="keyword"
+              v-model.trim="listQuery.manufacture"
               size="small"
               placeholder="生产企业"
             />
@@ -104,7 +104,7 @@
       <div class="table-box">
         <div class="choose-num">
           <div>
-            <el-button v-if="listQuery.status!==1" type="primary" size="small" @click="handleBatchUpDown(1)">批量上架</el-button>
+            <el-button v-if="listQuery.status!==1&&listQuery.status!==2" type="primary" size="small" @click="handleBatchUpDown(1)">批量上架</el-button>
             <el-button v-if="listQuery.status!==0" type="danger" size="small" @click="handleBatchUpDown(0)">批量下架</el-button>
             <el-button type="" size="small" @click="handleLock">批量锁定库存价格</el-button>
           </div>
@@ -142,13 +142,13 @@
             show-overflow-tooltip
           >
             <template slot-scope="scope">
-              <template v-if="scope.row.stPath">
+              <template v-if="scope.row.mainPic">
                 <el-image
-                  style="width: 100px; height: 100px"
-                  :src="scope.row.stPath"
+                  style="width: 60px; height: 60px"
+                  :src="showImg(scope.row.mainPic)"
                   lazy
                   fit="contain"
-                  :preview-src-list="[`${scope.row.stPath}`]"
+                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
                 />
               </template>
               <template v-else>
@@ -170,6 +170,11 @@
           <el-table-column
             prop="erpCode"
             label="ERP编码"
+            align="left"
+          />
+          <el-table-column
+            prop="mprice"
+            label="参考价格"
             align="left"
           />
           <el-table-column
@@ -207,12 +212,12 @@
             <template slot-scope="scope">
               <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
               <el-button
-                v-if="listQuery.status!==1"
+                v-if="scope.row.status===0"
                 type="primary"
                 size="mini"
                 @click="handleUpDown(scope.row)"
               >上架</el-button>
-              <el-button v-if="listQuery.status!==0" type="danger" size="mini" @click="handleUpDown(scope.row)">下架</el-button>
+              <el-button v-else type="danger" size="mini" @click="handleUpDown(scope.row)">下架</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -221,7 +226,7 @@
             :total="total"
             :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize"
-            @pagination="getList"
+            @pagination="_loadList"
           />
         </div>
       </div>
@@ -233,7 +238,7 @@
       append-to-body
       :close-on-click-modal="false"
     >
-      <el-form ref="lockForm" :model="formData" label-width="100px" size="small">
+      <el-form ref="lockForm" :model="formData" :rules="rules" label-width="100px" size="small">
         <el-form-item label="锁定商品属性">
           <el-checkbox-group v-model="lockFlag">
             <el-checkbox :label="1">价格</el-checkbox>
@@ -241,9 +246,9 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="定时解锁设置">
-          <el-checkbox v-model="formData.unlockType" :true-label="1" :false-label="0">定时解锁</el-checkbox>
+          <el-checkbox v-model="formData.unlockType" :true-label="1" :false-label="0" @change="unlockTypeChange">定时解锁</el-checkbox>
         </el-form-item>
-        <el-form-item label="解锁时间">
+        <el-form-item v-if="formData.unlockType===1" label="解锁时间" prop="unlockTime">
           <el-date-picker
             v-model="formData.unlockTime"
             value-format="yyyy-MM-dd HH:mm:ss"
@@ -264,7 +269,11 @@
       append-to-body
       :close-on-click-modal="false"
     >
-      <el-input v-model="editData[type]" size="small" />
+      <el-form ref="editData" :model="editData" :rules="editRules">
+        <el-form-item label="" :prop="type=='price'?'price':'stock'">
+          <el-input v-model="editData[type]" size="small" />
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="isShow = false">取 消</el-button>
         <el-button type="primary" size="small" :loading="subLoading" @click="handleSetPriceStock">确 定</el-button>
@@ -283,6 +292,60 @@ export default {
   components: { Pagination },
   mixins: [mixins],
   data() {
+    const _checkTime = (rule, value, callback) => {
+      if (value) {
+        const chooseTime = Date.parse(new Date(value))
+        const nowTime = Date.parse(new Date())
+        if (chooseTime < nowTime) {
+          callback(new Error('选择时间必须大于当前时间'))
+        } else {
+          callback()
+        }
+      } else {
+        if (this.formData.unlockType === 1) {
+          callback(new Error('请选择解锁时间'))
+        } else {
+          callback()
+        }
+      }
+    }
+    const _checkFloat = (rule, value, callback) => {
+      const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
+      if (value) {
+        if (value <= 0) {
+          if (rule.field === 'stock') {
+            if (value < 0) {
+              callback(new Error('请输入大于等于0的值'))
+            }
+            return callback()
+          }
+          callback(new Error('请输入大于0的值'))
+        } else {
+          if (rule.field === 'stock') {
+            if (!/^\d+$/.test(value)) {
+              return callback(new Error('库存只能输入正整数'))
+            }
+          }
+          if (!reg.test(value)) {
+            return callback(new Error('只能设置最多两位小数的正数'))
+          }
+          if (value > 99999999) {
+            callback(new Error('最多只能输入8位数'))
+          } else {
+            callback()
+          }
+        }
+      } else {
+        if (value === 0) {
+          if (rule.field === 'stock') {
+            return callback()
+          }
+          callback(new Error('请输入大于0的值'))
+        } else {
+          callback(new Error('不能为空'))
+        }
+      }
+    }
     return {
       keyword: '',
       tableData: [],
@@ -300,6 +363,13 @@ export default {
         'storeId': '',
         'unlockTime': '',
         'unlockType': 0
+      },
+      rules: {
+        unlockTime: [{ validator: _checkTime, trigger: 'change' }]
+      },
+      editRules: {
+        price: [{ required: true, validator: _checkFloat, trigger: 'blur' }],
+        stock: [{ required: true, validator: _checkFloat, trigger: 'blur' }]
       },
       groupData: [],
       chooseStore: {},
@@ -348,6 +418,9 @@ export default {
       }
       this.getList()
     },
+    unlockTypeChange() { // 定时解锁 chang
+      this.formData.unlockTime = ''
+    },
     getList() {
       this._loadStoreList().then(res => {
         if (res) {
@@ -358,6 +431,13 @@ export default {
       })
     },
     _loadList() {
+      if (!this.listQuery.storeId) {
+        this.$message({
+          message: '请选择门店',
+          type: 'error'
+        })
+        return
+      }
       this.loading = true
       console.log('this.listQuery--xf:', this.listQuery)
       getStoreGoodsList(this.listQuery).then(res => {
@@ -372,14 +452,14 @@ export default {
       })
     },
     _loadTypeList() { // 获取分组
-      getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
+      getTypeTree({ merCode: this.merCode, type: 2, use: true }).then(res => {
         this.groupData = res.data
         this.groupData.unshift({ name: '全部', id: '' })
       })
     },
     _loadStoreList(val = '') { // 加载门店数据
       return new Promise((resolve, reject) => {
-        getStoreList({ pageSize: 100, currentPage: 1, storeName: val }).then(res => {
+        getStoreList({ pageSize: 100, currentPage: 1, storeName: val, onlineStatus: 1 }).then(res => {
           const { data } = res.data
           this.storeList = data
           this.selectloading = false
@@ -402,6 +482,7 @@ export default {
           this.chooseStore = v
         }
       })
+      this.listQuery.currentPage = 1
       this._loadList()
     },
     handleChangeCommodityType(val) { // 商品类型改变时触发
@@ -421,32 +502,38 @@ export default {
         return
       }
       this.dialogVisible = true
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.$refs.lockForm.resetField()
-        }, 500)
-      })
+      this.lockFlag = []
+      this.formData.unlockType = 0
+      this.formData.unlockTime = ''
     },
     handleSetPriceStock() {
-      this.subLoading = true
-      const data = {
-        'commodityId': this.editData.commodityId,
-        'price': this.editData.price,
-        'specId': this.editData.id,
-        'stock': this.editData.stock,
-        'storeId': this.editData.storeId,
-        'merCode': this.merCode
-      }
-      setUpdatePriceStock({ list: [data] }).then(res => {
-        this.subLoading = false
-        this.$message({
-          message: '修改成功',
-          type: 'success'
-        })
-        this._loadList()
-        this.isShow = false
-      }).catch(() => {
-        this.subLoading = false
+      this.$refs['editData'].validate((valid) => {
+        if (valid) {
+          this.subLoading = true
+          const data = {
+            'commodityId': this.editData.commodityId,
+            'price': this.editData.price,
+            'specId': this.editData.id,
+            'stock': this.editData.stock,
+            'storeId': this.editData.storeId,
+            'merCode': this.merCode
+          }
+
+          setUpdatePriceStock({ list: [data] }).then(res => {
+            this.subLoading = false
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this._loadList()
+            this.isShow = false
+          }).catch(() => {
+            this.subLoading = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     },
     handleUpDown(row) { // 单个上下级
@@ -483,7 +570,7 @@ export default {
         return
       }
       this.multipleSelection.map(v => {
-        ary.push(v.storeSpecId)
+        ary.push(v.id)
       })
       const data = {
         'isAll': false,
@@ -497,7 +584,6 @@ export default {
       this._SetUpDown(data)
     },
     handleSubmitLock() { // 执行锁定请求
-      this.subLoading = true
       const ary = []
       // 获取规格id
       this.multipleSelection.map(v => {
@@ -505,6 +591,7 @@ export default {
       })
       this.formData.specIds = ary
       this.formData.storeId = this.listQuery.storeId
+
       if (this.lockFlag.length === 0) { // 全部锁定
         this.formData.lockFlag = 0
       }
@@ -517,22 +604,42 @@ export default {
       if (this.lockFlag.includes(2) && this.lockFlag.includes(1)) {
         this.formData.lockFlag = 3 // 锁定价格和库存
       }
-      setLockPrice(this.formData).then(res => {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
-        this.dialogVisible = false
-        this.subLoading = false
-      }).catch(() => {
-        this.subLoading = true
-        this.dialogVisible = false
+
+      this.$refs['lockForm'].validate((valid) => {
+        if (valid) {
+          if (this.formData.unlockType === 1 && this.formData.unlockTime !== '' && this.lockFlag.length === 0) {
+            this.$message({
+              message: '请选择锁定属性',
+              type: 'error'
+            })
+            return
+          }
+          this.subLoading = true
+          setLockPrice(this.formData).then(res => {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
+            this.dialogVisible = false
+            this.subLoading = false
+            this._loadList()
+          }).catch(() => {
+            this.subLoading = false
+            this.dialogVisible = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     },
     handleEditData(row, key) {
       this.editData = JSON.parse(JSON.stringify(row))
       this.type = key
       this.isShow = true
+      this.$nextTick(_ => {
+        this.$refs.editData.clearValidate()
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

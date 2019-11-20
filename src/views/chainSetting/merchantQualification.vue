@@ -14,12 +14,14 @@
         <template slot-scope="scope">
           <el-col :span="20" style="font-size: 14px;color: #999999">
             <span v-if="scope.row.certificateCode">资质证号：{{ scope.row.certificateCode }}</span>
+
             <el-button
               v-if="!scope.row.certificateCode || !scope.row.certificateName || !scope.row.certificatePicture"
               type="warning"
               size="mini"
               @click="onEdit(scope.row)"
             >待完善</el-button>
+            <el-button v-else type="text" icon="el-icon-edit" @click="onEdit(scope.row)" />
             <!--            <span style="font-size: 14px;color: #ffffff;background-color: orangered;padding-left: 5px;padding-right: 5px">待完善</span>-->
             <!--            <el-button type="text" icon="el-icon-delete" style="margin-left: 10px" v-if="!scope.row.id" @click="onDel(scope.$index)"></el-button>-->
           </el-col>
@@ -41,20 +43,29 @@
       </el-col>
     </el-row>-->
     <el-dialog
+      v-if="visable"
       append-to-body
       title="完善证书"
       :visible.sync="visable"
       width="800px"
+      :close-on-click-modal="false"
       @close="dismiss"
     >
-      <el-form ref="form" :model="form" label-position="right">
-        <el-form-item label="证书名称：">
-          <el-input v-model="form.certificateName" style="width: 260px" :disabled="form.sortNumber <= 6" />
+      <el-form
+        ref="form"
+        :model="form"
+        :rules="rules"
+        label-position="right"
+        label-width="110px"
+      >
+        <el-form-item label="证书名称：" prop="certificateName">
+          <el-input v-model="form.certificateName" style="width: 260px" :disabled="form.sortNumber <= 6" maxlength="30" />
         </el-form-item>
-        <el-form-item label="证书编号：">
-          <el-input v-model="form.certificateCode" style="width: 260px" />
+        <el-form-item label="证书编号：" prop="certificateCode">
+          <el-input v-model="form.certificateCode" style="width: 260px" maxlength="30" />
         </el-form-item>
-        <el-form-item label="证书图片：">
+        <el-form-item label="证书图片：" prop="certificatePicture">
+          <el-input v-model="form.certificatePicture" style="display: none" />
           <el-upload
             class="avatar-uploader"
             :headers="headers"
@@ -70,7 +81,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取 消</el-button>
-        <el-button type="primary" size="small" @click="save">确定</el-button>
+        <el-button type="primary" size="small" @click="handleSubmit('form')">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -107,7 +118,18 @@ export default {
         certificatePicture: null,
         sortNumber: 0
       },
-      imageUrl: ''
+      imageUrl: '',
+      rules: {
+        certificateName: [
+          { required: true, message: '请输入证书名称', trgger: 'blur' }
+        ],
+        certificateCode: [
+          { required: true, message: '请输入证书编号', trgger: 'blur' }
+        ],
+        certificatePicture: [
+          { required: true, message: '请上传证书图片', trgger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -123,6 +145,15 @@ export default {
     this.getData()
   },
   methods: {
+    handleSubmit(form) { // 保存
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this.save()
+        } else {
+          console.log('error submit')
+        }
+      })
+    },
     getData() {
       this.loading = true
       getMerCertificate(this.merCode).then(res => {
@@ -264,6 +295,7 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG && !isPNG) {
         this.$message.error('上传证书图片只能是 JPG/PNG 格式!')
+        return false
       }
       if (!isLt2M) {
         this.$message.error('上传证书图片大小不能超过 2MB!')

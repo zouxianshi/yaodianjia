@@ -7,15 +7,20 @@
           <div class="search-item">
             <span class="label-name">有效时间</span>
             <el-date-picker
-              v-model="searchForm.dateRange"
+              v-model="searchForm.timeBeg"
               size="small"
-              type="datetimerange"
+              type="datetime"
               value-format="yyyy-MM-dd HH:mm:ss"
-              range-separator="至"
-              :default-time="['00:00:00','23:59:59']"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
+              placeholder="开始时间"
               @change="handleTimeChange($event, 1)"
+            /> -
+            <el-date-picker
+              v-model="searchForm.timeEnd"
+              size="small"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="结束时间"
+              @change="handleTimeChange($event, 2)"
             />
           </div>
           <div class="search-item">
@@ -43,19 +48,20 @@
           </div>
         </div>
       </section>
-      <section class="table-box">
-        <el-table :data="tableData" style="width: 100%" size="small">
+      <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
+        <el-table :data="tableData" style="width: 100%">
           <el-table-column label="序号" width="60" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="img" label="图片" width="120" align="center">
+          <el-table-column prop="img" label="图片" min-width="100" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
                 <div class="x-image__preview">
                   <el-image
-                    fit="scale-down"
+                    style="width: 50px;height: 50px;"
+                    fit="contain"
                     :src="scope.row.imageUrl"
                     :preview-src-list="[scope.row.imageUrl]"
                   />
@@ -64,57 +70,27 @@
               <div v-else style="line-height: 32px">暂未上传</div>
             </template>
           </el-table-column>
-          <el-table-column prop="url" label="链接地址" min-width="240" />
-          <el-table-column prop="startTime" label="开始时间" width="180" align="center" />
-          <el-table-column prop="endTime" label="结束时间" width="180" align="center" />
-          <el-table-column label="状态" width="100" align="center">
+          <el-table-column prop="url" label="链接地址" min-width="240">
+            <template v-if="scope.row.url && scope.row.url!==''" slot-scope="scope">
+              <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="startTime" label="开始时间" min-width="180" align="center" />
+          <el-table-column prop="endTime" label="结束时间" min-width="180" align="center" />
+          <el-table-column label="状态" min-width="80" align="center">
             >
             <template slot-scope="scope">
               <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
               <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" width="200" align="center" />
-          <el-table-column label="操作" align="center" width="240">
+          <el-table-column prop="remark" label="备注" min-width="120" align="center" />
+          <el-table-column label="操作" align="center" min-width="240">
             <template slot-scope="scope">
-              <el-button
-                slot="reference"
-                title="编辑"
-                icon="el-icon-edit"
-                type="primary"
-                circle
-                size="mini"
-                @click="handleEdit(scope.row)"
-              />
-              <el-button
-                v-if="scope.row.status===0"
-                slot="reference"
-                title="启用"
-                type="success"
-                icon="el-icon-coordinate"
-                circle
-                size="mini"
-                @click="handleChangeStatus(scope.row)"
-              />
-              <el-button
-                v-if="scope.row.status===1"
-                slot="reference"
-                title="停用"
-                type="warning"
-                icon="el-icon-coordinate"
-                circle
-                size="mini"
-                @click="handleChangeStatus(scope.row)"
-              />
-              <el-button
-                slot="reference"
-                title="删除"
-                type="danger"
-                icon="el-icon-delete"
-                circle
-                size="mini"
-                @click="handleDel(scope.row)"
-              />
+              <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
+              <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
+              <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -138,22 +114,29 @@
       :visible.sync="dialogFormVisible"
       width="800px"
       :close-on-click-modal="false"
-      @close="dialogClose('xForm')"
+      @closed="dialogClose('xForm')"
     >
-      <div class="x-dialog-body">
+      <div v-loading="uploadLoading" element-loading-text="图片上传中" class="x-dialog-body">
         <div class="form-box">
           <el-form ref="xForm" :model="xForm" :rules="xRules">
             <el-form-item label="图片" :label-width="formLabelWidth" prop="imgUrl">
               <el-upload
-                class="avatar-uploader"
+                class="avatar-uploader x-uploader"
                 :headers="headers"
                 :action="upLoadUrl"
                 :show-file-list="false"
                 :on-success="handleUploadSuccess"
+                :on-error="handleUploadError"
                 :before-upload="beforeUpload"
               >
-                <img v-if="xForm.imgUrl" :src="xForm.imgUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon" />
+                <div v-if="xForm.imgUrl" class="el-img-box">
+                  <img :src="xForm.imgUrl" class="image">
+                  <div class="img-actions" @click.stop>
+                    <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
+                    <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
+                  </div>
+                </div>
+                <i v-else class="el-icon-plus icon-add" />
               </el-upload>
               <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
             </el-form-item>
@@ -163,7 +146,7 @@
                 size="small"
                 autocomplete="off"
                 style="width: 350px"
-                :maxlength="120"
+                :maxlength="500"
                 placeholder="http:// 或 https://"
               />
             </el-form-item>
@@ -178,7 +161,7 @@
                 :default-time="['00:00:00','23:59:59']"
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
-                @change="handleTimeChange($event, 2)"
+                @change="handleTimeChange($event, 3)"
               />
             </el-form-item>
             <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
@@ -210,6 +193,9 @@
         <el-button type="primary" size="small" @click="handleSubmit('xForm')">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="dialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
   </div>
 </template>
 
@@ -231,10 +217,11 @@ export default {
     const checkWebsite = (rule, value, callback) => {
       console.log('value', value)
       if (value === '') {
-        callback(new Error('请输入链接地址'))
+        // callback(new Error('请输入链接地址'))
+        callback()
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-        callback(new Error('请输入正确的地址'))
+        callback(new Error('链接格式不正确，例：http://111.com'))
       }
       callback()
     }
@@ -245,6 +232,9 @@ export default {
       callback()
     }
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
+      disabled: false,
       currentRole: 'adminDashboard',
       // I-01	轮播图
       // I-02	公告
@@ -271,7 +261,7 @@ export default {
       tableData: [],
       pager: {
         current: 1,
-        size: 10,
+        size: 20,
         total: 0
       },
       dialogFormVisible: false,
@@ -290,7 +280,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
@@ -300,7 +290,8 @@ export default {
         ]
       },
       editDetail: null, // 编辑详情
-      formLabelWidth: '80px'
+      formLabelWidth: '80px',
+      uploadLoading: false
     }
   },
   computed: {
@@ -325,6 +316,12 @@ export default {
     fetchData() {
       this._getTableData()
     },
+    handleUpload() {
+      $('.el-img-box').click()
+    },
+    handleRemove() {
+      this.xForm.imgUrl = ''
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.pager.size = val
@@ -337,18 +334,30 @@ export default {
     },
     handleTimeChange(val, type) {
       console.log(val, type)
-      if (type === 1) {
-        // 搜索栏
-        if (val && val.length === 2) {
-          this.searchForm.timeBeg = val[0]
-          this.searchForm.timeEnd = val[1]
-          this.search()
+      if (type === 1 || type === 2) { // 搜索栏 1.开始时间 2.结束时间
+        if (!val) {
+          type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
         } else {
-          this.searchForm.timeBeg = ''
-          this.searchForm.timeEnd = ''
+          console.log('this.searchForm', this.searchForm)
+          if (this.searchForm.timeBeg && this.searchForm.timeEnd && this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
+            // 比较时间
+            const start = this.searchForm.timeBeg.replace(/[- :]/g, '')
+            const end = this.searchForm.timeEnd.replace(/[- :]/g, '')
+            if (parseInt(start) > parseInt(end)) {
+              this.$message('结束时间必须大于开始时间')
+              type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
+              return
+            }
+          }
         }
-      } else if (type === 2) {
-        // dialog
+        this.search()
+        // if (this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
+        //   this.search()
+        // } else {
+        //   this.searchForm.timeBeg = ''
+        //   this.searchForm.timeEnd = ''
+        // }
+      } else if (type === 3) { // dialog
         if (val && val.length === 2) {
           this.xForm.startTime = val[0]
           this.xForm.endTime = val[1]
@@ -360,6 +369,8 @@ export default {
     },
     // 查询
     search() {
+      this.pager.current = 1
+      this.pager.total = 0
       this._getTableData()
     },
     handleChangeStatus(row) {
@@ -415,6 +426,13 @@ export default {
       // 表单验证
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          // 验证结束时间
+          const end_time = new Date(this.xForm.endTime).getTime()
+          const current_time = new Date().getTime()
+          if (end_time <= current_time) {
+            this.$message.warning('结束时间不能小于当前时间')
+            return false
+          }
           if (this.xForm.id === '') {
             // 新增
             this._addData()
@@ -428,6 +446,9 @@ export default {
         }
       })
     },
+    handleUploadError() {
+      this.uploadLoading = false
+    },
     handleUploadSuccess(res, file) {
       if (res.code === '10000') {
         this.xForm.imgUrl = res.data || ''
@@ -435,17 +456,20 @@ export default {
       } else {
         this.$message.error('上传失败!')
       }
+      this.uploadLoading = false
     },
     beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
-
       if (!isType) {
-        this.$message.error('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
+        return false
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.warning('请上传不超过 2M 的图片！')
+        return false
       }
+      this.uploadLoading = true
       return isType && isLt2M
     },
     // 获取列表数据
@@ -511,7 +535,7 @@ export default {
         positionCode: this.positionCode,
         remark: this.xForm.remark,
         productId: null, // 2-03 类型必填
-        sortNumber: this.xForm.sort,
+        sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
@@ -547,7 +571,7 @@ export default {
         positionCode: this.positionCode,
         remark: this.xForm.remark,
         productId: null, // 2-03 类型必填
-        sortNumber: this.xForm.sort,
+        sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
         startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
@@ -658,4 +682,5 @@ export default {
   line-height: 1.1;
   color: #999999;
 }
+
 </style>
