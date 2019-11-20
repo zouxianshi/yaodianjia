@@ -46,13 +46,13 @@
             </div>
 
             <el-form
-              ref="basic2"
+              ref="basic"
               :model="basicForm"
               status-icon
               label-width="160px"
               :rules="basicRules"
             >
-              <el-form-item label="组合商品图片：" required>
+              <el-form-item label="组合商品图片：" prop="file" required>
                 <el-upload
                   class="avatar-uploader specs-img"
                   :action="upLoadUrl"
@@ -97,8 +97,15 @@
               <el-table v-loading="loading" :data="childCommodities" stripe style="width: 100%">
                 <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
                 <el-table-column align="left" min-width="120" prop="packStandard" label="规格" />
+                <!-- <el-form
+              ref="basic"
+              :model="childCommodities"
+              status-icon
+              label-width="160px"
+              :rules="basicRules"
+            > -->
                 <el-table-column
-                  prop="number"
+
                   align="left"
                   label="组合数量"
                   :show-overflow-tooltip="true"
@@ -108,6 +115,7 @@
                     <el-input v-model="scope.row.number" size="small" class="inp_mini" />
                   </template>
                 </el-table-column>
+                <!-- </el-form-item> -->
                 <el-table-column
                   prop="mprice"
                   align="left"
@@ -120,6 +128,7 @@
                     <el-input v-model="scope.row.price" size="small" class="inp_mini" />
                   </template>
                 </el-table-column>
+                <!-- </el-form> -->
                 <el-table-column prop="erpCode" align="left" min-width="120" label="商品编码" />
                 <el-table-column align="left" min-width="130" label="操作">
                   <template slot-scope="scope">
@@ -132,6 +141,7 @@
                 </el-table-column>
               </el-table>
             </div>
+
             <el-form
               ref="basic"
               :model="basicForm"
@@ -147,7 +157,7 @@
                 <el-button type="primary" size="small">选择商品</el-button>
               </div>
 
-              <el-form-item label="组合商品价格（元）：">
+              <el-form-item label="组合商品价格(元)：" prop="price" required>
                 <span>{{ basicForm.price }}</span>
                 <!-- <el-input
                   v-model="basicForm.price"
@@ -157,7 +167,7 @@
                 />-->
               </el-form-item>
 
-              <el-form-item label="参考价（元）：" prop="price">
+              <el-form-item label="参考价(元)：" prop="mprice" required>
                 <span>{{ basicForm.mprice }}</span>
                 <!-- <el-input
                   v-model="basicForm.referPrice"
@@ -284,7 +294,14 @@ export default {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' },
           { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
         ],
-        keyWord: [{ min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }]
+        file: [{ required: true, message: '请上传图片' }],
+        keyWord: [{ min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }],
+        number: [{ required: true, trigger: 'blur' }],
+        price: [{ required: true, trigger: 'blur' }]
+      },
+      childCommoditiesRules: {
+        number: [{ required: true, trigger: 'blur' }],
+        price: [{ required: true, trigger: 'blur' }]
       },
       dialogVisible: false,
       // value: '',
@@ -393,7 +410,7 @@ export default {
       this.childCommodities = list.map(item => {
         item.specId = item.id
         item.id = null
-        item.price = 0
+        item.price = ''
         // item.number = 0
         return item
       })
@@ -673,6 +690,30 @@ export default {
       //   content: this.basicForm,
       //   id: this.basicForm.id
       // }
+      if (!this.chooseTypeList.length) {
+        this.$message({ type: 'warning', message: '请选择分类' })
+        return false
+      }
+      if (!this.chooseGroup.length) {
+        this.$message({ type: 'warning', message: '请选择分组' })
+        return false
+      }
+      if (!this.childCommodities.length) {
+        this.$message({ type: 'warning', message: '请选择商品' })
+        return false
+      }
+
+      for (let i = 0; i < this.childCommodities.length; i++) {
+        if (!this.childCommodities[i].number) {
+          this.$message({ type: 'warning', message: '请输入组合数量' })
+          return false
+        }
+        if (!this.childCommodities[i].price) {
+          this.$message({ type: 'warning', message: '请输入组合单价' })
+          return false
+        }
+      }
+
       this.$refs['basic'].validate(valid => {
         if (valid) {
           this.basicForm.typeId = this.chooseTypeList[
@@ -690,8 +731,8 @@ export default {
           //   data.groupIds.push(v[2].id)
           // })
           data.groupId = this.chooseGroup[this.chooseTypeList.length - 1].id
-          console.log('data.groupId:', data.groupId)
-          console.log('新增的数据：', data)
+          // console.log('data.groupId:', data.groupId)
+          // console.log('新增的数据：', data)
           data.merCode = this.merCode
           this.subLoading = true
           if (this.basicForm.id) {
@@ -701,7 +742,10 @@ export default {
             this._CreateBasicInfo(data)
           }
         } else {
-          console.log('error submit')
+          this.$message({
+            message: '存在必填字段未填写',
+            type: 'error'
+          })
         }
       })
     }
