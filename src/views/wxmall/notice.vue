@@ -359,6 +359,13 @@ export default {
     handleSubmit(formName) {
       // 表单验证
       this.$refs[formName].validate((valid) => {
+        // 验证结束时间
+        const end_time = new Date(this.xForm.endTime).getTime()
+        const current_time = new Date().getTime()
+        if (end_time <= current_time) {
+          this.$message.warning('结束时间不能小于当前时间')
+          return false
+        }
         if (valid) {
           if (this.xForm.id === '') {
             // 新增
@@ -391,10 +398,13 @@ export default {
 
       if (!isType) {
         this.$message.warning('上传图片只支持 JPG,PNG 格式!')
+        return false
       }
       if (!isLt2M) {
         this.$message.warning('上传的图片大小不能超过 2MB!')
+        return false
       }
+      this.uploadLoading = true
       return isType && isLt2M
     },
     // 获取列表数据

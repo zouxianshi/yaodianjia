@@ -335,7 +335,7 @@
               <ul class="goods-list3">
                 <li v-for="(item, index) in 3" :key="index" class="goods-item">
                   <div class="cover-box">
-                    <div class="cover" />
+                    <div class="cover" :class="`img-${index}`" />
                   </div>
                   <div class="info-box">
                     <div class="title">
@@ -863,7 +863,7 @@ export default {
       // C-01	分类广告位
       queryCenterStore({ merCode: this.merCode }).then(res => {
         if (res.code === '10000') {
-          if (!res.data) {
+          if (res.data) {
             this.hasCenterStore = true
             this._getAppSetDetail('I-00') // 主页标题
             this._getAppSetDetail('I-01') // 轮播图
@@ -1113,6 +1113,7 @@ export default {
       this[formName].imgUrl = ''
     },
     handleUploadError() {
+      alert(1)
       this.uploadLoading = false
     },
     handleUploadSuccess(res, file) {
@@ -1134,9 +1135,11 @@ export default {
 
       if (!isType) {
         this.$message.warning('上传图片只支持 JPG,PNG 格式!')
+        return false
       }
       if (!isLt2M) {
         this.$message.warning('上传的图片大小不能超过 2MB!')
+        return false
       }
       this.uploadLoading = true
       return isType && isLt2M
@@ -1883,12 +1886,12 @@ export default {
         .card_bottom {
           position: relative;
           box-sizing: border-box;
-          padding: 0 3px;
+          padding: 6px 3px 5px;
         }
         .goods-list2 {
-          margin-top: 6px;
           overflow-x: hidden;
           overflow-y: hidden;
+          height: 170px;
           .goods-item {
             box-sizing: border-box;
             padding: 0 3px;
@@ -1964,7 +1967,13 @@ export default {
             .cover {
               width: 100%;
               height: 100%;
-              background: url('../../assets/image/h5/pic_goods_1.png') no-repeat 100% 100%;
+              background: url('../../assets/image/h5/pic_goods_9.png') no-repeat 100% 100%;
+              &.img-1{
+                background: url('../../assets/image/h5/pic_goods_10.png') no-repeat 100% 100%;
+              }
+              &.img-2{
+                background: url('../../assets/image/h5/pic_goods_11.png') no-repeat 100% 100%;
+              }
             }
           }
           .info-box {
@@ -2310,7 +2319,7 @@ export default {
   z-index: 10;
   width: 100%;
   height: 100%;
-  background:rgba(0, 0, 0, 0.2);
+  background:rgba(0, 0, 0, 0.25);
   .text{
     margin: auto;
     color: white;
