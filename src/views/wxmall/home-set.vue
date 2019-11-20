@@ -2,7 +2,11 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container h5-set-container">
-      <div class="h5-app">
+      <div
+        v-loading="loading"
+        element-loading-text="数据加载中"
+        class="h5-app"
+      >
         <div class="h5-app-title set-hover" :class="{'set-active': xFormSet.formName==='xForm1'}" @click.stop="setEdit('xForm1', '')">
           <div v-if="xForm1.detail" class="text" v-text="xForm1.detail.remark">微商城</div>
           <div v-else class="text">微商城</div>
@@ -704,7 +708,8 @@ export default {
       callback()
     }
     return {
-      uploadLoading: false,
+      loading: false, // 页面加载
+      uploadLoading: false, // 上传加载
       hasCenterStore: false,
       currentRole: 'adminDashboard',
       swiperOption: {
@@ -873,6 +878,7 @@ export default {
       // I-F2-1	精彩活动单张广告位
       // I-F2-2	精彩活动商品广告位
       // C-01	分类广告位
+      this.loading = true
       queryCenterStore({ merCode: this.merCode }).then(res => {
         if (res.code === '10000') {
           if (res.data) {
@@ -886,13 +892,16 @@ export default {
             this._getAppSetDetail('I-F2-1') // 活动top广告
             this._getAppSetDetail('I-F2-2') // 活动分组商品
           } else {
+            this.loading = false
             this.toSetCenterStore()
           }
         } else {
+          this.loading = false
           this.$message.error(res.msg)
         }
       })
         .catch(err => {
+          this.loading = false
           this.$message.error(err)
         })
     },
@@ -1144,11 +1153,11 @@ export default {
       const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isType) {
-        this.$message.warning('上传图片只支持 JPG、JPEG、PNG 格式！')
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
         return false
       }
       if (!isLt2M) {
-        this.$message.warning('上传的图片大小不能超过 2MB！')
+        this.$message.warning('请上传不超过 2M 的图片！')
         return false
       }
       this.uploadLoading = true
@@ -1290,6 +1299,10 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.loading = false
+      }).catch(err => {
+        this.loading = false
+        console.log(err)
       })
     },
     _mutilAddPageSet(ret) {
