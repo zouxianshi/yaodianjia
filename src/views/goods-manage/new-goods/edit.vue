@@ -123,7 +123,6 @@
                       <el-option label="甲类OTC" :value="0" />
                       <el-option label="处方药" :value="1" />
                       <el-option label="乙类OTC" :value="2" />
-                      <el-option label="非处方药" :value="3" />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="剂型：">
@@ -352,11 +351,11 @@
                       </el-form-item>
                       <el-form-item>
                         <span slot="label"><span class="tip">*</span> 商品编码</span>
-                        <el-input v-model="item.erpCode" placeholder="输入条码" />
+                        <el-input v-model="item.erpCode" placeholder="输入条码" @blur="input_checkErpcode(item.erpCode)" />
                       </el-form-item>
                       <el-form-item>
                         <span slot="label"><span class="tip">*</span> 价格</span>
-                        <el-input v-model="item.mprice" placeholder="输入价格" />
+                        <el-input v-model="item.mprice" placeholder="输入价格" @blur="input_checkMprice(item.mprice)" />
                       </el-form-item>
                       <el-form-item label="商品图片">
                         <span slot="label"><span class="tip">*</span> 商品图片</span>
@@ -427,7 +426,7 @@
                   <div class="editSqu w-e-text" v-html="goodsIntro.content" />
                 </div>
                 <div class="edit-box">
-                  <Tinymce v-model="goodsIntro.content" :readonly="is_query" :height="400" />
+                  <Tinymce ref="details-ty" v-model="goodsIntro.content" :readonly="is_query" :height="400" />
                 </div>
               </section>
               <div class="text-center">
@@ -475,6 +474,7 @@ import specsMixin from './_source/specsMixins'
 import editTable from './_source/edit-table'
 import editGroup from '../components/grouping'
 import { findArray } from '@/utils/index'
+import { checkNumberdouble } from '@/utils/validate'
 export default {
   components: { Tinymce, vueUploadImg, editTable, editGroup },
   mixins: [mixins, specsMixin],
@@ -504,8 +504,7 @@ export default {
         }
         // return callback(new Error('请输入数值'))
       }
-      const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
-      if (value && !reg.test(value)) {
+      if (value && !checkNumberdouble(value)) {
         callback(new Error('只能设置最多两位小数的正数'))
       } else {
         callback()
@@ -746,11 +745,12 @@ export default {
     },
     _loadGoodsDetails() { // 加载商品详情
       const id = this.basicForm.id
+      this.$refs['details-ty'].destroyTinymce() // 先销毁
       getGoodsDetails(id).then(res => {
         if (res.data) {
           this.goodsIntro.content = res.data.content
         }
-        this.$refs['details-ty'].init()
+        this.$refs['details-ty'].init() // 再初始化
       }).catch(_ => {
         this.$refs['details-ty'].init()
       })
@@ -797,6 +797,7 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
+      // const size = file.size / 1024
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
@@ -804,8 +805,17 @@ export default {
           type: 'warning'
         })
         this.pageLoading.close()
+        return
       }
-      return isImg
+      // if (size < 200 || size > 500) {
+      //   this.$message({
+      //     message: '请上传大小为200kb~500kb的图片',
+      //     type: 'warning'
+      //   })
+      //   this.pageLoading.close()
+      //   return
+      // }
+      return true
     },
     handleUploadIndex(index) {
       this.uploadIndex = index
