@@ -155,7 +155,9 @@
               <div class="card-1">
                 <div class="card_left">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 1}" @click.stop="setEdit('xForm4', 1)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[0].imageUrl">
+                    <template v-if="xForm4.detail && xForm4.detail[0] && xForm4.detail[0].imageUrl && xForm4.detail[0].imageUrl!==''">
+                      <img :src="xForm4.detail[0].imageUrl">
+                    </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_1.png">
                       <div class="set-mask">
@@ -166,7 +168,9 @@
                 </div>
                 <div class="card_right">
                   <div class="pos-2 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 2}" @click.stop="setEdit('xForm4', 2)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[1].imageUrl">
+                    <template v-if="xForm4.detail && xForm4.detail[1] && xForm4.detail[1].imageUrl && xForm4.detail[1].imageUrl!==''">
+                      <img :src="xForm4.detail[1].imageUrl">
+                    </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_2.png">
                       <div class="set-mask">
@@ -175,7 +179,9 @@
                     </template>
                   </div>
                   <div class="pos-3 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 3}" @click.stop="setEdit('xForm4', 3)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[2].imageUrl">
+                    <template v-if="xForm4.detail && xForm4.detail[2] && xForm4.detail[2].imageUrl && xForm4.detail[2].imageUrl!==''">
+                      <img :src="xForm4.detail[2].imageUrl">
+                    </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_3.png">
                       <div class="set-mask">
@@ -184,7 +190,9 @@
                     </template>
                   </div>
                   <div class="pos-4 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 4}" @click.stop="setEdit('xForm4', 4)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[3].imageUrl">
+                    <template v-if="xForm4.detail && xForm4.detail[3] && xForm4.detail[3].imageUrl && xForm4.detail[3].imageUrl!==''">
+                      <img :src="xForm4.detail[3].imageUrl">
+                    </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_4.png">
                       <div class="set-mask">
@@ -199,7 +207,9 @@
               <div class="card-2">
                 <div class="card_top">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm5'}" @click.stop="setEdit('xForm5', '')">
-                    <img v-if="xForm5.detail" :src="xForm5.detail.imageUrl">
+                    <template v-if="xForm5.detail && xForm5.detail.imageUrl!==''">
+                      <img :src="xForm5.detail.imageUrl">
+                    </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_top_1.png">
                       <div class="set-mask">
@@ -266,7 +276,9 @@
               <div class="card-2">
                 <div class="card_top">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm7'}" @click.stop="setEdit('xForm7', '')">
-                    <img v-if="xForm7.detail" :src="xForm7.detail.imageUrl">
+                    <template v-if="xForm7.detail && xForm7.detail.imageUrl!==''">
+                      <img :src="xForm7.detail.imageUrl">
+                    </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_top_2.png">
                       <div class="set-mask">
@@ -431,7 +443,7 @@
                 <div class="cover-wrap" :class="xFormSet.position === 1 ? 'cover-left':'cover-right'">
                   <div v-if="xForm4.imgUrl==''" class="cover" />
                   <template v-else>
-                    <img class="cover" :src="xForm4.imgUrl">
+                    <div class="cover" :style="`backgroundImage: url('${xForm4.imgUrl}')`" />
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm4')" />
                     </div>
@@ -477,7 +489,7 @@
                 <div class="cover-wrap cover-top">
                   <div v-if="xForm5.imgUrl==''" class="cover" />
                   <template v-else>
-                    <img class="cover" :src="xForm5.imgUrl">
+                    <div class="cover" :style="`backgroundImage: url('${xForm5.imgUrl}')`" />
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm5')" />
                     </div>
@@ -570,7 +582,7 @@
                 <div class="cover-wrap cover-top">
                   <div v-if="xForm7.imgUrl==''" class="cover" />
                   <template v-else>
-                    <img class="cover" :src="xForm7.imgUrl">
+                    <div class="cover" :style="`backgroundImage: url('${xForm7.imgUrl}')`" />
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm7')" />
                     </div>
@@ -997,12 +1009,12 @@ export default {
       let ret = []
       // 剔除空数据
       if (this.xForm1.detail && this.xForm1.detail.remark !== '') {
-        ret.push(this.xForm1.detail.trim())
+        ret.push(this.xForm1.detail)
       }
       // 剔除空数据
       if (this.xForm4.detail && this.xForm4.detail.length > 0) {
         const mdata = this.xForm4.detail.filter(item => {
-          return item.imageUrl && item.url
+          return item.imageUrl
         })
         ret = ret.concat(mdata)
       }
@@ -1113,7 +1125,6 @@ export default {
       this[formName].imgUrl = ''
     },
     handleUploadError() {
-      alert(1)
       this.uploadLoading = false
     },
     handleUploadSuccess(res, file) {
@@ -1130,15 +1141,14 @@ export default {
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
-
       if (!isType) {
-        this.$message.warning('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('上传图片只支持 JPG、JPEG、PNG 格式！')
         return false
       }
       if (!isLt2M) {
-        this.$message.warning('上传的图片大小不能超过 2MB!')
+        this.$message.warning('上传的图片大小不能超过 2MB！')
         return false
       }
       this.uploadLoading = true
@@ -2270,7 +2280,7 @@ export default {
       width: 139px;
       height: 166px;
       .cover {
-        background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
+        background: url('../../assets/image/h5/pic_d.png') no-repeat center/100%
           100%;
       }
     }
@@ -2278,7 +2288,7 @@ export default {
       width: 168px;
       height: 88px;
       .cover {
-        background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
+        background: url('../../assets/image/h5/pic_c.png') no-repeat center/100%
           100%;
       }
     }
@@ -2286,7 +2296,7 @@ export default {
       width: 286px;
       height: 100px;
       .cover {
-        background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
+        background: url('../../assets/image/h5/pic_e.png') no-repeat center/100%
           100%;
       }
     }

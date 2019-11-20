@@ -393,15 +393,14 @@ export default {
       this.uploadLoading = false
     },
     beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
-
       if (!isType) {
-        this.$message.warning('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('上传图片只支持 JPG、JPEG、PNG 格式！')
         return false
       }
       if (!isLt2M) {
-        this.$message.warning('上传的图片大小不能超过 2MB!')
+        this.$message.warning('上传的图片大小不能超过 2MB！')
         return false
       }
       this.uploadLoading = true

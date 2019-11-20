@@ -444,7 +444,6 @@ export default {
             this.$message.warning('结束时间不能小于当前时间')
             return false
           }
-
           if (this.xForm.id === '') {
             // 新增
             this._addData()
@@ -471,11 +470,13 @@ export default {
       this.uploadLoading = false
     },
     beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
+      alert(1)
+      console.log('file', file)
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
-
+      console.log('isType', isType)
       if (!isType) {
-        this.$message.warning('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('上传图片只支持 JPG、JPEG、PNG 格式!')
         return false
       }
       if (!isLt2M) {
