@@ -13,13 +13,20 @@ const mixin = {
       this.loading = true
       getTypeTree({ merCode: 'hydee', type: 1 }).then(res => {
         this.typeList = res.data
-        console.log(res)
+        // console.log('加载分类数据', res)
         this.loading = false
       }).catch(_ => {
         this.loading = false
       })
     },
     handleSaveType() {
+      if (this.chooseList.length !== 3) {
+        this.$message({
+          message: '分类选择不完整',
+          type: 'error'
+        })
+        return
+      }
       this._filtersTypes(this.chooseList)
       this.typeVisible = false
     },

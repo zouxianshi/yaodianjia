@@ -34,7 +34,7 @@
             <el-input
               v-model.trim="listQuery.manufacture"
               size="small"
-              placeholder="生产企业"
+              placeholder="商品名称"
             />
           </div>
           <div class="search-item">
@@ -42,7 +42,7 @@
             <el-input
               v-model.trim="listQuery.erpCode"
               size="small"
-              placeholder="商品编码"
+              placeholder="ERP编码"
             />
           </div>
           <div class="search-item">
@@ -50,7 +50,7 @@
             <el-input
               v-model.trim="listQuery.approvalNumber"
               size="small"
-              placeholder="商品编码"
+              placeholder="批准文号"
             />
           </div>
         </div>
@@ -60,7 +60,7 @@
             <el-input
               v-model.trim="keyword"
               size="small"
-              placeholder="商品名称"
+              placeholder="条形码"
             />
           </div>
           <div class="search-item">
@@ -68,7 +68,7 @@
             <el-input
               v-model.trim="keyword"
               size="small"
-              placeholder="商品名称"
+              placeholder="生产企业"
             />
           </div>
           <div class="search-item">
@@ -82,6 +82,18 @@
               size="small"
               @change="handleChangeGroup"
             />
+          </div>
+          <div class="search-item">
+            <span class="label-name">商品类型</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="普通商品/组合商品"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="普通商品" value="1" />
+              <el-option label="组合商品" value="2" />
+            </el-select>
           </div>
           <div class="search-item">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
@@ -294,6 +306,7 @@ export default {
       loading: false,
       selectloading: false,
       listQuery: {
+        'commodityType': '',
         'approvalNumber': '',
         'barCode': '',
         'erpCode': '',
@@ -330,7 +343,8 @@ export default {
         'name': '',
         'storeId': '',
         'status': this.listQuery.status,
-        'auditStatus': this.listQuery.auditStatus
+        'auditStatus': this.listQuery.auditStatus,
+        'commodityType': ''
       }
       this.getList()
     },
@@ -345,6 +359,7 @@ export default {
     },
     _loadList() {
       this.loading = true
+      console.log('this.listQuery--xf:', this.listQuery)
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
@@ -382,6 +397,14 @@ export default {
       this.selectloading = true
     },
     handleChangeStore(val) { // 门店选择改变时触发
+      this.storeList.map(v => {
+        if (v.id === val) {
+          this.chooseStore = v
+        }
+      })
+      this._loadList()
+    },
+    handleChangeCommodityType(val) { // 商品类型改变时触发
       this.storeList.map(v => {
         if (v.id === val) {
           this.chooseStore = v

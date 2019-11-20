@@ -2,9 +2,6 @@
   <div class="app-container">
     <div class="edit-wrapper">
       <div class="edit-card">
-        <!-- <div class="header">
-          <span>商品分类信息</span>
-        </div>-->
         <div class="edit-card-cnt">
           <div class="content">
             <el-form
@@ -15,12 +12,7 @@
               :rules="basicRules"
             >
               <el-form-item label="组合商品名称：" prop="name">
-                <el-input
-                  v-model="basicForm.name"
-                  :disabled="basicForm.origin===1"
-                  placeholder="请输入商品名称"
-                  size="small"
-                />
+                <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
               </el-form-item>
             </el-form>
             <p class="type-list">
@@ -40,16 +32,11 @@
                 <span class="color_red">*</span> 组合商品分组：
               </span>
               <p class="group-list">
-                <el-tag
-                  v-for="(item,index) in chooseGroup"
-                  :key="index"
-                  style="margin-right:10px"
-                  closable
-                  @close="handleRemoveGroup(index)"
-                >
-                  <span
-                    class="tag"
-                  >{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                <el-tag v-if="chooseGroup.length" style="margin-right:10px">
+                  <span v-if="chooseGroup.length">
+                    {{ chooseGroup[0].name }}&nbsp;>&nbsp;
+                    {{ chooseGroup[1].name }}&nbsp;>&nbsp;{{ chooseGroup[2].name }}
+                  </span>
                 </el-tag>
               </p>
               <span class="opreate">
@@ -73,24 +60,25 @@
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeUpload"
+                  @preview="handlePreview"
                 >
                   <img
-                    v-if="basicForm.picUrl"
+                    v-if="basicForm.image"
                     style="width:100px;height:100px"
-                    :src="showImg(basicForm.picUrl)"
+                    :src="showImg(basicForm.image)"
                     class="avatar"
                   >
                   <i v-else class="el-icon-plus avatar-uploader-icon" />
                 </el-upload>
               </el-form-item>
 
-              <el-form-item label="关键字：">
+              <el-form-item label="关键字：" prop="keyWord">
                 <el-input v-model="basicForm.keyWord" placeholder="请输入关键字" size="small" />&nbsp;用、隔开
               </el-form-item>
 
               <el-form-item label="组合商品详细信息：">
                 <p class="color_gray">填写商品说明书，详细介绍文字</p>
-                <Tinymce ref="editor" v-model="basicForm.intro" :height="400" />
+                <Tinymce ref="editor" v-model="basicForm.detail" :height="400" />
               </el-form-item>
             </el-form>
           </div>
@@ -106,22 +94,22 @@
         <div class="edit-card-cnt">
           <div class="content">
             <div class="table-box">
-              <el-table v-loading="loading" :data="goodsData" stripe style="width: 100%">
+              <el-table v-loading="loading" :data="childCommodities" stripe style="width: 100%">
                 <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
                 <el-table-column align="left" min-width="120" prop="packStandard" label="规格" />
                 <el-table-column
-                  prop="price"
+                  prop="number"
                   align="left"
                   label="组合数量"
                   :show-overflow-tooltip="true"
                   min-width="120"
                 >
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.price" size="small" class="inp_mini" />
+                    <el-input v-model="scope.row.number" size="small" class="inp_mini" />
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="price"
+                  prop="mprice"
                   align="left"
                   label="参考价(元)"
                   :show-overflow-tooltip="true"
@@ -132,10 +120,14 @@
                     <el-input v-model="scope.row.price" size="small" class="inp_mini" />
                   </template>
                 </el-table-column>
-                <el-table-column prop="barCode" align="left" min-width="120" label="商品编码" />
-                <el-table-column prop="createTime" align="left" min-width="130" label="操作">
+                <el-table-column prop="erpCode" align="left" min-width="120" label="商品编码" />
+                <el-table-column align="left" min-width="130" label="操作">
                   <template slot-scope="scope">
-                    <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">删除</el-button>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="handleDelete(scope.$index,scope.row)"
+                    >删除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -155,32 +147,44 @@
                 <el-button type="primary" size="small">选择商品</el-button>
               </div>
 
-              <el-form-item label="组合商品价格：" prop="price">
-                {{ basicForm.price }}
-                <el-input
+              <el-form-item label="组合商品价格（元）：">
+                <span>{{ basicForm.price }}</span>
+                <!-- <el-input
                   v-model="basicForm.price"
                   placeholder="组合商品价格"
                   size="small"
                   type="hidden"
-                />
+                />-->
+              </el-form-item>
+
+              <el-form-item label="参考价（元）：" prop="price">
+                <span>{{ basicForm.mprice }}</span>
+                <!-- <el-input
+                  v-model="basicForm.referPrice"
+                  placeholder="参考价（元）："
+                  size="small"
+                  type="hidden"
+                />-->
               </el-form-item>
             </el-form>
 
             <el-form ref="basic" :model="basicForm" status-icon label-width="160px">
-              <el-form-item label="限购设置：" prop>
-                <el-checkbox
-                  v-model="basicForm.isEasyBreak"
-                  :true-label="1"
-                  :false-label="0"
-                >单个用户限购数量为</el-checkbox>
-
-                <el-input v-model="basicForm.num" placeholder="数量" size="mini" class="inp_mini" />
+              <el-form-item label="限购设置：">
+                <span>单个用户限购数量为</span>
+                <el-input v-model="basicForm.limitNum" placeholder="0" size="mini" class="inp_mini" />
                 <span class="color_gray">同一个用户限制购买的数量</span>
               </el-form-item>
             </el-form>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="footer">
+      <span>
+        <!-- <el-button size="small" @click="groupVisible = false">取 消</el-button> -->
+        <el-button type="primary" size="small" @click="handleConstituteGoods">确 定</el-button>
+      </span>
     </div>
 
     <el-dialog
@@ -226,7 +230,8 @@
       </span>
     </el-dialog>
     <!--弹窗--选择商品-->
-    <dialog-goods ref="goodsDialog" :list="[]" @confirm="goodsSelectChange" />
+    <!-- <dialog-goods ref="goodsDialog" :list="[]" @confirm="goodsSelectChange" /> -->
+    <dialog-goods ref="goodsDialog" :list="childCommodities" @confirm="goodsSelectChange" />
   </div>
 </template>
 <script>
@@ -236,32 +241,25 @@ import { getTypeTree, getPreGroupList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import {
-  setGoodsAdd,
-  updateBasicInfo,
-  getBrandList,
-  saveImg,
-  saveGoodsDetails,
-  getBasicGoodsInfo,
-  getGoodsDetails
+  saveImg
 } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
+import {
+  addConstituteGoods,
+  updateConstituteGoods,
+  getConstituteGoodsInfo
+} from '@/api/constitute-goods'
 export default {
   components: { Tinymce, dialogGoods },
   mixins: [mixins, specsMixin],
   data() {
     return {
-      goodsData: [],
-      step: 1,
-      chooseSpecsAry: [],
+      // goodsData: [],
       chooseTypeList: [], // 选中的分类
-      chooseGroup: [], // 选中的分组
+      chooseGroup: [], // 选中的分组(id+name)
       groupVisible: false,
-      chooseArray: [],
-      brandList: [], // 品牌列表
-      timeTypes: '2', // 2为月 1为年
-      expireDays: -1,
-      days: '',
+      chooseArray: [], // 选中的分组(只有id)
       defaultProps: {
         children: 'children',
         label: 'name',
@@ -269,64 +267,38 @@ export default {
       },
       loading: false,
       basicForm: {
-        picUrl: '', // 组合图片
+        firstTypeId: '', // 一级分类
+        secondTypeId: '', // 二级分类
+        typeId: '', // 三级分类
+        image: '', // 组合图片
         price: 0, // 组合商品价格
-        num: 1, // 限购数量
-        approvalNumber: '', // 批准文号
-        brandId: '', // 商品品牌id
-        commonName: '', // 药品通用名，国际非专有名称
-        drugType: '', // drugType 药品类型
-        freightType: 0, // 运输属性运输属性（0常温，1冷藏，2冰冻）
-        hasEphedrine: 0, // 包含麻黄碱，0-不包含，1-包含
-        intro: '', // 商品说明
-        isEasyBreak: 0, // 是否易碎，0-否，1-是
-        isInsurance: 0, // 是否医保支持,0-不支持，1-支持
-        isLiquid: 0, // 是否液体,0-否，1-是
-        keyFeature: '', // 功能主治
+        limitNum: 0, // 限购数量
+        mprice: 0, // 参考价格
         keyWord: '', // 关键字
-        manufacture: '', // 生产企业
         name: '', // 商品名
-        produceOrigin: '', // 产地
-        unit: '', // 规格
-        typeId: '',
-        origin: 2, // 商品来源，1-海典标准库，2-商家自定义
-        packStandard: '', // 长宽高
-        groupIds: [] // 分组id
+        // groupIds: [], // 分组的ids
+        groupId: '' // 分组id
       },
+      childCommodities: [], // 子商品信息
       basicRules: {
-        name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-        commonName: [
-          { required: true, message: '请输入通用名称', trigger: 'blur' }
+        name: [{ required: true, message: '请输入商品名称', trigger: 'blur' },
+          { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
         ],
-        unit: [
-          { required: true, message: '请输入选择单位', trigger: 'change' }
-        ],
-        brandId: [
-          { required: true, message: '请选择所属品牌', trigger: 'change' }
-        ],
-        manufacture: [
-          { required: true, message: '请输入生成企业', trigger: 'blur' }
-        ],
-        produceOrigin: [
-          { required: true, message: '请输入生产地', trigger: 'blur' }
-        ],
-        approvalNumber: [
-          { required: true, message: '请输入批准文号', trigger: 'blur' }
-        ]
+        keyWord: [{ min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }]
       },
       dialogVisible: false,
-      value: '',
-      dialogImageUrl: '',
+      // value: '',
+      // dialogImageUrl: '',
       fileList: [],
-      groupData: [], // 分组
-      goodsIntro: {
-        // 商品信息
-        content: ''
-      },
+      groupData: [], // 分组数据
+      // goodsIntro: {
+      //   // 商品信息
+      //   content: ''
+      // },
       uploadIndex: 0,
       subLoading: false,
-      chooseTableSpec: [],
-      leaveAction: false // 离开页面动作，true为保存离开  false异常离开
+      chooseTableSpec: []
+      // leaveAction: false // 离开页面动作，true为保存离开  false异常离开
     }
   },
   computed: {
@@ -339,32 +311,74 @@ export default {
     headers() {
       return { Authorization: this.token }
     }
+    // currentSelectList() {
+    //   if (this.xFormSet.formName === 'xForm6') {
+    //     return this.xForm6.selectGoodsList
+    //   }
+    //   if (this.xFormSet.formName === 'xForm8') {
+    //     return this.xForm8.selectGoodsList
+    //   }
+    //   return []
+    // }
   },
-  beforeRouteLeave(to, from, next) {
-    // 路由离开关闭标签
-    if (!this.leaveAction) {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        this.$store.dispatch('tagsView/delView', from)
-        next()
-      } else {
-        next(false)
-      }
-    } else {
-      next()
+  watch: {
+    childCommodities: {
+      // 组合商品价格
+      handler: function(newval) {
+        let price = 0
+        let mprice = 0
+
+        newval.forEach(function(item, index) {
+          price += item.number * item.price
+          mprice += item.number * item.mprice
+
+          // item.specId = item.id
+          // item.id = null
+        })
+
+        this.basicForm.price = price
+        this.basicForm.mprice = mprice
+        console.log('newval:', newval)
+
+        this.$nextTick(function() {
+          this.basicForm.price = price
+          this.basicForm.mprice = mprice
+        })
+      },
+      deep: true
     }
   },
+  // beforeRouteLeave(to, from, next) {
+  //   // 路由离开关闭标签
+  //   if (!this.leaveAction) {
+  //     const answer = window.confirm('你还有数据没有保存，是否确认退出')
+  //     if (answer) {
+  //       this.$store.dispatch('tagsView/delView', from)
+  //       next()
+  //     } else {
+  //       next(false)
+  //     }
+  //   } else {
+  //     next()
+  //   }
+  // },
   created() {
     if (this.$route.query.id) {
-      this._loadBasicInfo()
-      this._loadGoodsDetails()
+      // this._loadBasicInfo()
+      // this._loadGoodsDetails()
       // this._loadGoodsImgAry()
+      this._loadInfo()
+
+      this._loadClassList() // 获取分类
     } else {
       // const data = sessionStorage.getItem('types')
       // this.chooseTypeList = JSON.parse(data)
     }
     this._loadTypeList() // 获取分组
-    this._loadBrandList() // 获取所属品牌
+
+    // this.childCommodities.forEach(function(item, index) {
+    //   item.price = ''
+    // })
   },
   methods: {
     // 选取商品
@@ -372,8 +386,19 @@ export default {
       this.$refs.goodsDialog.open()
     },
     goodsSelectChange(list) {
-      console.log('list', list)
-      this.goodsData = list
+      // list.forEach(function(item) {
+      //   item.number = 0
+      // })
+
+      this.childCommodities = list.map(item => {
+        item.specId = item.id
+        item.id = null
+        item.price = 0
+        // item.number = 0
+        return item
+      })
+      console.log('this.childCommodities-----', this.childCommodities)
+
       this.$refs.goodsDialog.close()
     },
     _loadgroupGather(type, ids) {
@@ -388,84 +413,80 @@ export default {
         if (type === '1') {
           // 分类
           const datas = res.data[ids[0]]
-          this.chooseTypeList = [
-            { name: datas.name, id: datas.id },
-            { name: datas.child.name, id: datas.child.id },
-            { name: datas.child.child.name, id: datas.child.child.id }
-          ]
+          // console.log('datas:', datas)
+          if (datas !== undefined) {
+            this.chooseTypeList = [
+              { name: datas.name, id: datas.id },
+              { name: datas.child.name, id: datas.child.id },
+              { name: datas.child.child.name, id: datas.child.child.id }
+            ]
+          }
         } else {
           // 分组
-          const datas = res.data
-          ids.map(v => {
-            const dat = datas[v]
-            this.chooseGroup.push([
-              { name: dat.name, id: dat.id },
-              { name: dat.child.name, id: dat.child.id },
-              { name: dat.child.child.name, id: dat.child.child.id }
-            ])
-          })
-        }
-      })
-    },
-    _loadBasicInfo() {
-      // 加载基本信息
-      getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
-        // 分组处理
-        this._loadgroupGather('1', [res.data.typeId])
-        if (res.data.groupIds && res.data.groupIds.length > 0) {
-          this._loadgroupGather('2', res.data.groupIds)
-        }
-        const { data } = res
-        // 有限期处理
-        if (data.expireDays === -1) {
-          this.expireDays = -1
-        } else {
-          if (data.expireDays > 365) {
-            data.expireDays = data.expireDays / 365
-            this.timeTypes = '1'
-          } else {
-            data.expireDays = data.expireDays / 30
-            this.timeTypes = '2'
+          // const datas = res.data
+          // ids.map(v => {
+          //   const dat = datas[v]
+          //   this.chooseGroup.push([
+          //     { name: dat.name, id: dat.id },
+          //     { name: dat.child.name, id: dat.child.id },
+          //     { name: dat.child.child.name, id: dat.child.child.id }
+          //   ])
+          // })
+
+          const datas = res.data[ids[0]]
+          if (datas !== undefined) {
+            this.chooseGroup = [
+              { name: datas.name, id: datas.id },
+              { name: datas.child.name, id: datas.child.id },
+              { name: datas.child.child.name, id: datas.child.child.id }
+            ]
           }
         }
-
-        // 长宽高处理
-        if (data.packStandard) {
-          const packStandard = data.packStandard.split('*')
-          data.long = packStandard[0] || ''
-          data.width = packStandard[1] || ''
-          data.height = packStandard[2] || ''
+      })
+    },
+    _loadInfo() {
+      // 加载商品信息
+      getConstituteGoodsInfo(this.$route.query.id, this.merCode).then(res => {
+        // 分组处理
+        this._loadgroupGather('1', [res.data.typeId])
+        if (res.data.groupId && res.data.groupId.length > 0) {
+          this._loadgroupGather('2', [res.data.groupId])
         }
+        // this._loadgroupGather('2', [res.data.groupId])
+        const { data } = res
+
         // 赋值值
         this.basicForm = data
+        this.childCommodities = data.childCommodities
+        // console.log('this.basicForm:', this.basicForm)
       })
     },
-    _loadGoodsDetails() {
-      // 加载商品详情
-      const id = this.$route.query.id
-      getGoodsDetails(id).then(res => {
-        if (res.data) {
-          this.goodsIntro.content = res.data.content
-        }
-      })
-    },
+    // _loadBasicInfo() {
+    //   // 加载基本信息
+    //   getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
+    //     // 分组处理
+    //     this._loadgroupGather('1', [res.data.typeId])
+    //     if (res.data.groupIds && res.data.groupIds.length > 0) {
+    //       this._loadgroupGather('2', [res.data.groupId])
+    //       // alert('分组不为空')
+    //     }
+    //     const { data } = res
+
+    //     // 赋值
+    //     this.basicForm = data
+    //   })
+    // },
+    // _loadGoodsDetails() {
+    //   // 加载商品详情
+    //   const id = this.$route.query.id
+    //   getGoodsDetails(id).then(res => {
+    //     if (res.data) {
+    //       this.goodsIntro.content = res.data.content
+    //     }
+    //   })
+    // },
     handleSelectionChange(row) {
       this.chooseTableSpec = row
-    },
-    handleSortEnd(val) {
-      // 图片排序
-      this.fileList = val
-      if (this.fileList.length > 0) {
-        // console.log('1111')
-      }
-    },
-    handleImgSuccess(res, fileList, index) {
-      if (!this.fileList[index]) {
-        this.fileList.push({ imgUrl: this.showImg(res), picUrl: res })
-      } else {
-        this.fileList[index].imgUrl = this.showImg(res)
-        this.fileList[index].picUrl = res
-      }
     },
     handleImgError() {
       this.$message({
@@ -474,8 +495,8 @@ export default {
       })
     },
     handlePreview(file) {
-      this.dialogImageUrl = file.imgUrl
-      this.dialogVisible = true
+      this.basicForm.image = file.image
+      // this.dialogVisible = true
     },
     beforeUpload(file) {
       const isImg =
@@ -494,10 +515,20 @@ export default {
       this.uploadIndex = index
     },
     handleAvatarSuccess(res, file) {
-      // 规格图片上传成功
+      // 图片上传成功
       if (res.code === '10000') {
-        this.basicForm.picUrl = res.data
+        this.basicForm.image = res.data
       }
+    },
+    handleDelete(index, row) {
+      // 删除组合商品
+      this.$confirm('是否确实删除', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.childCommodities.splice(index, 1)
+      })
     },
     _loadTypeList(isRefresh) {
       // 获取分组
@@ -520,8 +551,8 @@ export default {
         })
         return
       }
-      this.chooseGroup.push([])
-      this._filters(this.chooseArray, this.chooseGroup.length - 1)
+      // console.log('this.chooseArray', this.chooseArray.id)
+      this._filters(this.chooseArray)
       this.groupVisible = false
     },
     handleRefresh() {
@@ -532,30 +563,22 @@ export default {
       // 删除选择的分组
       this.chooseGroup.splice(index, 1)
     },
-    remoteMethod(query) {
-      this._loadBrandList(query)
-    },
-    _loadBrandList(query = '') {
-      // 获取品牌
-      getBrandList({ brandName: query }).then(res => {
-        const { data } = res.data
-        this.brandList = data
-      })
-    },
     _filters(data, index) {
+      this.chooseGroup = []
       this.groupData.map(v => {
         if (v.id === data[0]) {
-          this.chooseGroup[index].push({ name: v.name, id: v.id })
+          this.chooseGroup.push({ name: v.name, id: v.id, dimensionId: v.dimensionId })
+          // console.log('维度id:', v.dimensionId)
         }
         if (v.children) {
           v.children.map(v1 => {
             if (v1.id === data[1]) {
-              this.chooseGroup[index].push({ name: v1.name, id: v1.id })
+              this.chooseGroup.push({ name: v1.name, id: v1.id })
             }
             if (v1.children) {
               v1.children.map(v2 => {
                 if (v2.id === data[2]) {
-                  this.chooseGroup[index].push({ name: v2.name, id: v2.id })
+                  this.chooseGroup.push({ name: v2.name, id: v2.id })
                 }
               })
             }
@@ -565,10 +588,9 @@ export default {
     },
     handleAddSpec() {
       this.specsForm.specs.push({
-        picUrl: '',
+        image: '',
         mprice: '',
-        erpCode: '',
-        barCode: ''
+        erpCode: ''
       })
     },
     handleDeleteSpec(index) {
@@ -585,15 +607,15 @@ export default {
     },
     _CreateBasicInfo(data) {
       // 创建基本信息
-      setGoodsAdd(data)
+      addConstituteGoods(data)
         .then(res => {
           this.$message({
             message: '保存成功',
             type: 'success'
           })
           this.basicForm.id = res.data
-          this.step = 2
           this.subLoading = false
+          this.$router.push('/goods-manage/constitute-goods')
         })
         .catch(_ => {
           this.subLoading = false
@@ -601,63 +623,19 @@ export default {
     },
     _UpdateBasicInfo(data) {
       // 更新基本信息
-      updateBasicInfo(data)
+      updateConstituteGoods(data)
         .then(res => {
           this.$message({
             message: '保存成功',
             type: 'success'
           })
-          this.step = 2
           this.subLoading = false
+          this.$router.push('/goods-manage/constitute-goods')
         })
         .catch(_ => {
           this.subLoading = false
         })
     },
-    handleSubmitForm() {
-      // 保存基本信息操作
-      try {
-        this._loadSpces() // 获取规格
-      } catch (error) {
-        console.log(error)
-      }
-      if (this.basicForm.origin === 1) {
-        this.step = 2
-      }
-      this.$refs['basic'].validate(valid => {
-        if (valid) {
-          this.basicForm.typeId = this.chooseTypeList[
-            this.chooseTypeList.length - 1
-          ].id // 分类id
-          const data = JSON.parse(JSON.stringify(this.basicForm))
-          data.packStandard = `${data.long}*${data.width}*${data.height}`
-          if (this.expireDays === -1) {
-            data.expireDays = -1
-          } else {
-            if (this.timeTypes === '2') {
-              // 月
-              data.expireDays = parseInt(this.days) * 30
-            } else {
-              data.expireDays = parseInt(this.days) * 365
-            }
-          }
-          data.groupIds = []
-          this.chooseGroup.map(v => {
-            data.groupIds.push(v[2].id)
-          })
-          this.subLoading = true
-          if (this.basicForm.id) {
-            data.commodityId = data.id
-            this._UpdateBasicInfo(data)
-          } else {
-            this._CreateBasicInfo(data)
-          }
-        } else {
-          console.log('error submit')
-        }
-      })
-    },
-
     handleSubImg() {
       // 保存图片
       if (this.fileList.length === 0) {
@@ -687,32 +665,45 @@ export default {
           this.subLoading = false
         })
     },
-    handleSubIntro() {
+    handleConstituteGoods() {
       // 保存商品详情
       this.subLoading = true
-      const data = {
-        content: this.goodsIntro.content,
-        id: this.basicForm.id
-      }
-      saveGoodsDetails(data)
-        .then(res => {
-          this.$message({
-            message: '保存成功',
-            type: 'success'
-          })
-          this.subLoading = false
-          this.leaveAction = true
-          setTimeout(() => {
-            if (this.basicForm.origin === 1) {
-              this.$router.replace('/goods-manage/depot')
-            } else {
-              this.$router.replace('/goods-manage/apply-record')
-            }
-          }, 1000)
-        })
-        .catch(_ => {
-          this.subLoading = false
-        })
+      this.basicForm.childCommodities = this.childCommodities
+      // const data = {
+      //   content: this.basicForm,
+      //   id: this.basicForm.id
+      // }
+      this.$refs['basic'].validate(valid => {
+        if (valid) {
+          this.basicForm.typeId = this.chooseTypeList[
+            this.chooseTypeList.length - 1
+          ].id // 第三级分类id
+          this.basicForm.secondTypeId = this.chooseTypeList[
+            this.chooseTypeList.length - 2
+          ].id // 第二级分类id
+          this.basicForm.firstTypeId = this.chooseTypeList[
+            this.chooseTypeList.length - 3
+          ].id // 第一级分类id
+          const data = JSON.parse(JSON.stringify(this.basicForm))
+          // data.groupIds = []
+          // this.chooseGroup.map(v => {
+          //   data.groupIds.push(v[2].id)
+          // })
+          data.groupId = this.chooseGroup[this.chooseTypeList.length - 1].id
+          console.log('data.groupId:', data.groupId)
+          console.log('新增的数据：', data)
+          data.merCode = this.merCode
+          this.subLoading = true
+          if (this.basicForm.id) {
+            data.commodityId = data.id
+            this._UpdateBasicInfo(data)
+          } else {
+            this._CreateBasicInfo(data)
+          }
+        } else {
+          console.log('error submit')
+        }
+      })
     }
   }
 }
@@ -901,5 +892,9 @@ export default {
   padding-right: 20px;
   margin-bottom: 20px;
   margin-top: 20px;
+}
+.footer {
+  text-align: center;
+  margin: 50px auto;
 }
 </style>

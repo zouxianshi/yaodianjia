@@ -10,51 +10,64 @@
       <div class="search-form">
         <div class="search-item">
           <span class="label-name" style="width:80px">商品名称：</span>
-          <el-input v-model.trim="listQuery.approvalNumber" size="small" placeholder="商品名称" />
+          <el-input v-model.trim="keyword" size="small" placeholder="商品名称" />
         </div>
         <div class="search-item">
           <el-button type="primary" size="small" @click="getList">查询</el-button>
         </div>
       </div>
       <div class="table-box">
-        <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-          @current-change="handleCurrentChange"
-        >
-          <el-table-column align="left" min-width="150" label="商品编码">
+        <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
+          <el-table-column align="left" min-width="140" prop="erpCode" label="商品编码">
             <template slot-scope="scope">
               <div>
-                <p>{{ scope.row.name }}{{ scope.row.packStandard }}</p>
+                <p :title="scope.row.erpCode">{{ scope.row.erpCode }}</p>
               </div>
             </template>
           </el-table-column>
-          <el-table-column align="left" min-width="120" prop="manufacture" label="商品图片" />
+          <el-table-column align="left" min-width="70" label="商品图片">
+            <template slot-scope="scope">
+              <div v-if="scope.row.mainPic && scope.row.mainPic!==''" width="60" height="60">
+                <div class="x-image__preview">
+                  <el-image
+                    fit="scale-down"
+                    :src="showImg(scope.row.mainPic)"
+                    :preview-src-list="[showImg(scope.row.mainPic)]"
+                  />
+                </div>
+              </div>
+              <div v-else style="line-height: 32px">暂未上传</div>
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="barCode"
+            prop="name"
             align="left"
             label="商品名称"
             :show-overflow-tooltip="true"
-            min-width="120"
-          />
+            min-width="110"
+          >
+            <template slot-scope="scope">
+              <div>
+                <p class="ellipsis" :title="scope.row.name">{{ scope.row.name }}</p>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="approvalNumber"
+            prop="mprice"
             align="left"
             label="参考价(元)"
             :show-overflow-tooltip="true"
-            min-width="120"
+            min-width="80"
           />
-          <el-table-column prop="platformCode" label="售价(元)" align="left" />
-          <el-table-column prop="createName" align="left" min-width="120" label="限购数量" />
-          <el-table-column prop="createTime" align="left" min-width="120" label="修改时间" />
-          <el-table-column prop="createTime" align="left" min-width="130" label="操作">
+          <el-table-column prop="price" label="售价(元)" align="left" min-width="80" />
+          <el-table-column prop="limitNum" align="left" min-width="80" label="限购数量" />
+          <el-table-column prop="modifyTime" align="left" min-width="110" label="修改时间" />
+          <el-table-column align="left" min-width="150" label="操作">
             <template slot-scope="scope">
-              <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上下架</el-button>
-              <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
-                <el-button type size="mini">编辑</el-button>
-              </a>
+              <!-- <el-button type="primary" size="mini" @click.stop="toSelectShops">上下架</el-button> -->
+              <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
+              <el-button type="info" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
+              <el-button type size="mini" @click="createSon(scope.row.id)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -68,30 +81,43 @@
         </div>
       </div>
     </div>
+
+    <!--弹窗--选择门店-->
+    <dialog-shops ref="shopsDialog" :list="[]" @confirm="shopsSelectChange" />
+    <!--弹窗--上下架-->
+    <store :status="status" :choose-num="specData.length" :spec-data="specData" :is-show="dialogVisible" @close="dialogVisible=false" />
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
-import { getAuditList } from '@/api/examine'
+import { getConstituteGoodsList } from '@/api/constitute-goods'
+import dialogShops from './components/dialog-shops'
+import store from '../components/store'
 export default {
-  components: { Pagination },
+  components: { Pagination, dialogShops, store },
   mixins: [mixins],
   data() {
     return {
       radio3: '1',
       keyword: '',
-      tableData: [{}],
+      tableData: [],
       loading: false,
-      listQuery: {
-        approvalNumber: '',
-        barCode: '',
-        erpCode: '',
-        manufacture: '',
-        name: '',
-        typeId: '1065279ca65a4a529109f82472f11053'
-      }
+      shopsData: [],
+      searchParams: {
+        merCode: null,
+        currentPage: 1,
+        pageSize: 20,
+        name: null
+      },
+      specData: [],
+      status: 0,
+      dialogVisible: false
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   created() {
     this.getList()
@@ -99,7 +125,9 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      getAuditList(this.listQuery)
+      this.searchParams.merCode = this.merCode
+      this.searchParams.name = this.keyword
+      getConstituteGoodsList(this.searchParams)
         .then(res => {
           this.loading = false
           const { data, totalCount } = res.data
@@ -112,13 +140,30 @@ export default {
           this.loading = false
         })
     },
-    handleClick(row) {
-      sessionStorage.setItem('mate', JSON.stringify(row))
-      this.$router.push('/goods-manage/mate?id=' + row.id)
+    createSon(rowData) {
+      this.$router.push({
+        path: `/goods-manage/constitute-goods/edit`,
+        query: { mercode: this.merCode, id: rowData }
+      })
     },
-    handleCurrentChange(row) {
-      sessionStorage.setItem('mate', JSON.stringify(row))
-      this.$router.push('/goods-manage/mate?id=' + row.id)
+    shopsSelectChange(list) {
+      console.log('list', list)
+      this.shopsData = list
+      this.$refs.shopsDialog.close()
+    },
+    // 选取门店
+    toSelectShops() {
+      this.$refs.shopsDialog.open()
+    },
+    goodsSelectChange(list) {
+      console.log('list', list)
+      this.goodsData = list
+      this.$refs.goodsDialog.close()
+    },
+    handleUpDown(status, row) { // 单个上下架
+      this.specData = [`${row.specId}`]
+      this.status = status
+      this.dialogVisible = true
     }
   }
 }
@@ -133,4 +178,5 @@ export default {
     }
   }
 }
+.ellipsis{ width:100%;overflow: hidden; text-overflow: ellipsis;white-space: nowrap}
 </style>

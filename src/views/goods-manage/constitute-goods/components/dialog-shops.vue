@@ -8,12 +8,19 @@
     @close="handlerClose"
   >
     <div class="modal-header">
-      <div class="title">选择门店</div>
+      <div class="title">上下架商品</div>
     </div>
     <div class="modal-body">
       <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
-          <el-input v-model="search.keyWord" style="width: 240px" placeholder="搜索" size="small" />
+          <span class="title">选择门店：</span>
+          <el-input
+            v-model="searchParams.searchKey"
+            style="width: 240px"
+            placeholder="
+门店编码/门店名称"
+            size="small"
+          />
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
@@ -29,22 +36,10 @@
         @select="handleSelect"
       >
         <el-table-column type="selection" align="center" width="50" />
-        <el-table-column align="center" label="图片" width="120">
-          <template slot-scope="scope">
-            <div class="img-wrap">
-              <img :src="scope.url">
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="storeName" label="名称" align="center" min-width="150" />
-        <el-table-column prop="storeName" label="包装规格" align="center" min-width="150" />
-        <el-table-column prop="storeName" label="价格" align="center" min-width="150" />
-        <el-table-column prop="storeName" label="库存" align="center" min-width="150" />
-        <!-- <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
-          </template>
-        </el-table-column>-->
+        <el-table-column align="center" prop="stCode" label="门店编码" width="120" />
+        <el-table-column prop="stName" label="门店名称" align="center" min-width="150" />
+        <el-table-column prop="address" label="门店地址" align="center" min-width="150" />
+        <el-table-column prop="mobile" label="门店电话" align="center" min-width="150" />
       </el-table>
       <el-pagination
         background
@@ -65,7 +60,7 @@
         </div>
         <div class="label-line">
           <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-            <span v-text="mItem.storeName" />
+            <span v-text="mItem.stName" />
             <i
               v-if="editable"
               class="icon el-icon-close"
@@ -86,7 +81,8 @@
 </template>
 
 <script>
-import { getProductList } from '../../../../api/wxmall'
+import { mapGetters } from 'vuex'
+import { queryStore } from '../../../../api/chainSetting'
 export default {
   name: 'DialogShops',
   props: {
@@ -102,6 +98,17 @@ export default {
   },
   data() {
     return {
+      visable: false,
+      flagShipName: null,
+      codeOrName: null,
+      totalCount: 0,
+      searchParams: {
+        merCode: null,
+        currentPage: 1,
+        pageSize: 20,
+        searchKey: null
+      },
+      loading: false,
       dialog: {
         visible: false
       },
@@ -117,6 +124,9 @@ export default {
       multipleSelection: [],
       mySelectList: []
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   created() {},
   mounted() {},
@@ -177,11 +187,11 @@ export default {
     handleSelectAllChange(allList) {
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.storeId === item.storeId
+          return mItem.id === item.id
         })
         if (index > -1) {
           if (allList.length > 0) {
-            console.log('已存在' + item.storeId + ':' + item.name)
+            console.log('已存在' + item.id + ':' + item.name)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
@@ -230,32 +240,63 @@ export default {
       this.pager.total = 0
       this._getTableData()
     },
+    // getStore() {
+    //   this.loading = true
+    //   this.searchParams.merCode = this.merCode
+    //   this.searchParams.onlineStatus = 1
+    //   queryStore(this.searchParams).then(res => {
+    //     if (res.code === '10000') {
+    //       this.list = res.data.data
+    //       this.totalCount = res.data.totalCount
+    //       this.loading = false
+    //     } else {
+    //       this.loading = false
+    //       this.$message({
+    //         message: res.msg,
+    //         type: 'error',
+    //         duration: 5 * 1000
+    //       })
+    //     }
+    //     console.log('res-2', this.list)
+    //   })
+    // },
     _getTableData() {
-      // this.tableData = []
-      /* setTimeout(() => {
-          this.tableData = this.tableArr.slice()
-          this.$nextTick(() => {
-            this.updateChecked()
-          })
-        }, 1000)
-        return false*/
-      const params = {
-        storeId: '',
-        keyWord: this.search.keyWord.trim(),
-        currentPage: this.pager.current,
-        pageSize: this.pager.size
-      }
-      getProductList(params).then(res => {
-        if (res.code === '10000' && res.data) {
-          this.tableData = res.data.data || []
-          this.pager.total = res.data.totalAmount
-          this.$nextTick(() => {
-            this.updateChecked()
-          })
+      this.loading = true
+      this.searchParams.merCode = this.merCode
+      this.searchParams.onlineStatus = 1
+      queryStore(this.searchParams).then(res => {
+        if (res.code === '10000') {
+          this.tableData = res.data.data
+          this.totalCount = res.data.totalCount
+          this.loading = false
+          console.log('tableData:', this.tableData)
         } else {
-          this.tableData = []
+          this.loading = false
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
         }
+        // console.log('res-2', this.list)
       })
+      // const params = {
+      //   storeId: '',
+      //   keyWord: this.search.keyWord.trim(),
+      //   currentPage: this.pager.current,
+      //   pageSize: this.pager.size
+      // }
+      // getProductList(params).then(res => {
+      //   if (res.code === '10000' && res.data) {
+      //     this.tableData = res.data.data || []
+      //     this.pager.total = res.data.totalAmount
+      //     this.$nextTick(() => {
+      //       this.updateChecked()
+      //     })
+      //   } else {
+      //     this.tableData = []
+      //   }
+      // })
     }
   }
 }
