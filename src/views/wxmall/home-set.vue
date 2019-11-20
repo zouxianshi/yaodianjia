@@ -2,7 +2,11 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container h5-set-container">
-      <div class="h5-app">
+      <div
+        v-loading="loading"
+        element-loading-text="数据加载中"
+        class="h5-app"
+      >
         <div class="h5-app-title set-hover" :class="{'set-active': xFormSet.formName==='xForm1'}" @click.stop="setEdit('xForm1', '')">
           <div v-if="xForm1.detail" class="text" v-text="xForm1.detail.remark">微商城</div>
           <div v-else class="text">微商城</div>
@@ -39,6 +43,12 @@
                   </div>
                 </swiper-slide>
               </swiper>
+              <template v-else>
+                <img src="../../assets/image/h5/pic_banner_1.png">
+                <div class="set-mask">
+                  <div class="text">轮播图</div>
+                </div>
+              </template>
             </div>
             <div class="h5-module">
               <ul class="module-list">
@@ -125,7 +135,10 @@
               <ul class="goods-list">
                 <li v-for="(item, index) in 4" :key="index" class="goods-item">
                   <div class="cover-box">
-                    <div class="cover" />
+                    <div class="cover" :class="`img-${index}`" />
+                    <!-- <div v-if="index===0" class="cover" style="backgroundImage: url('../../assets/image/h5/pic_goods_1.png')" />
+                    <div v-if="index===1" class="cover" style="backgroundImage: url('../../assets/image/h5/pic_goods_2.png')" />
+                    <div v-if="index===2" class="cover" style="backgroundImage: url('../../assets/image/h5/pic_goods_3.png')" /> -->
                   </div>
                   <div class="caption">修正VE软胶</div>
                   <div class="price">
@@ -146,19 +159,50 @@
               <div class="card-1">
                 <div class="card_left">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 1}" @click.stop="setEdit('xForm4', 1)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[0].imageUrl">
-                    <!-- <img class="pos-img" src="../../assets/image/h5/pic_aa.png"> -->
+                    <template v-if="xForm4.detail && xForm4.detail[0] && xForm4.detail[0].imageUrl && xForm4.detail[0].imageUrl!==''">
+                      <img :src="xForm4.detail[0].imageUrl">
+                    </template>
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_pos_1.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="card_right">
                   <div class="pos-2 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 2}" @click.stop="setEdit('xForm4', 2)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[1].imageUrl" @error="imgLoadErr($event, '../../assets/image/h5/pic_aa.png')">
+                    <template v-if="xForm4.detail && xForm4.detail[1] && xForm4.detail[1].imageUrl && xForm4.detail[1].imageUrl!==''">
+                      <img :src="xForm4.detail[1].imageUrl">
+                    </template>
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_pos_2.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                   <div class="pos-3 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 3}" @click.stop="setEdit('xForm4', 3)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[2].imageUrl">
+                    <template v-if="xForm4.detail && xForm4.detail[2] && xForm4.detail[2].imageUrl && xForm4.detail[2].imageUrl!==''">
+                      <img :src="xForm4.detail[2].imageUrl">
+                    </template>
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_pos_3.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                   <div class="pos-4 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 4}" @click.stop="setEdit('xForm4', 4)">
-                    <img v-if="xForm4.detail" :src="xForm4.detail[3].imageUrl">
+                    <template v-if="xForm4.detail && xForm4.detail[3] && xForm4.detail[3].imageUrl && xForm4.detail[3].imageUrl!==''">
+                      <img :src="xForm4.detail[3].imageUrl">
+                    </template>
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_pos_4.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -167,10 +211,21 @@
               <div class="card-2">
                 <div class="card_top">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm5'}" @click.stop="setEdit('xForm5', '')">
-                    <img v-if="xForm5.detail" :src="xForm5.detail.imageUrl">
+                    <template v-if="xForm5.detail && xForm5.detail.imageUrl!==''">
+                      <img :src="xForm5.detail.imageUrl">
+                    </template>
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_top_1.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="card_bottom set-hover" :class="{'set-active': xFormSet.formName==='xForm6'}" @click.stop="setEdit('xForm6', '')">
+                  <div v-if="!xForm6.detail || xForm6.detail.length === 0" class="set-mask">
+                    <div class="text">商品列表</div>
+                  </div>
                   <swiper
                     key="swiper_2"
                     ref="mySwiper2"
@@ -199,7 +254,10 @@
                     <template v-else>
                       <swiper-slide v-for="(item, index) in 6" :key="index" class="goods-item">
                         <div class="cover-box">
-                          <div class="cover" />
+                          <img v-if="index===0" src="../../assets/image/h5/pic_goods_5.png">
+                          <img v-if="index===1" src="../../assets/image/h5/pic_goods_6.png">
+                          <img v-if="index===2" src="../../assets/image/h5/pic_goods_7.png">
+                          <img v-if="index===3" src="../../assets/image/h5/pic_goods_8.png">
                         </div>
                         <div class="caption">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
@@ -222,10 +280,21 @@
               <div class="card-2">
                 <div class="card_top">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm7'}" @click.stop="setEdit('xForm7', '')">
-                    <img v-if="xForm7.detail" :src="xForm7.detail.imageUrl">
+                    <template v-if="xForm7.detail && xForm7.detail.imageUrl!==''">
+                      <img :src="xForm7.detail.imageUrl">
+                    </template>
+                    <template v-else>
+                      <img src="../../assets/image/h5/pic_top_2.png">
+                      <div class="set-mask">
+                        <div class="text">广告图片</div>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="card_bottom set-hover" :class="{'set-active': xFormSet.formName==='xForm8'}" @click.stop="setEdit('xForm8', '')">
+                  <div v-if="!xForm8.detail || xForm8.detail.length === 0" class="set-mask">
+                    <div class="text">商品列表</div>
+                  </div>
                   <swiper
                     key="swiper_4"
                     ref="mySwiper4"
@@ -252,9 +321,12 @@
                       </swiper-slide>
                     </template>
                     <template v-else>
-                      <swiper-slide v-for="(item, index) in 6" :key="index" class="goods-item">
+                      <swiper-slide v-for="(item, index) in 4" :key="index" class="goods-item">
                         <div class="cover-box">
-                          <div class="cover" />
+                          <img v-if="index===0" src="../../assets/image/h5/pic_goods_7.png">
+                          <img v-if="index===1" src="../../assets/image/h5/pic_goods_8.png">
+                          <img v-if="index===2" src="../../assets/image/h5/pic_goods_6.png">
+                          <img v-if="index===3" src="../../assets/image/h5/pic_goods_5.png">
                         </div>
                         <div class="caption">康恩贝蛋白粉呃呃呃</div>
                         <div class="price">
@@ -279,7 +351,7 @@
               <ul class="goods-list3">
                 <li v-for="(item, index) in 3" :key="index" class="goods-item">
                   <div class="cover-box">
-                    <div class="cover" />
+                    <div class="cover" :class="`img-${index}`" />
                   </div>
                   <div class="info-box">
                     <div class="title">
@@ -341,7 +413,7 @@
             <el-form ref="xForm1" class="form-title" :rules="xRules1" :model="xForm1">
               <el-form-item label="名称" prop="name" style="position: relative; margin-bottom: 50px">
                 <el-input
-                  v-model.trim="xForm1.name"
+                  v-model="xForm1.name"
                   type="text"
                   size="small"
                   style="width: 280px;"
@@ -369,14 +441,22 @@
             <span v-else-if="xFormSet.position === 3" class="text">右2图片</span>
             <span v-else-if="xFormSet.position === 4" class="text">右3图片</span>
           </div>
-          <div class="m-body">
+          <div v-loading="uploadLoading" class="m-body">
             <el-form ref="xForm4" :rules="xRules4" :model="xForm4">
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap" :class="xFormSet.position === 1 ? 'cover-left':'cover-right'">
                   <div v-if="xForm4.imgUrl==''" class="cover" />
-                  <img v-else class="cover" :src="xForm4.imgUrl">
+                  <template v-else>
+                    <div class="cover" :style="`backgroundImage: url('${xForm4.imgUrl}')`" />
+                    <div class="x-img-actions">
+                      <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm4')" />
+                    </div>
+                  </template>
                 </div>
-                <p class="note-grey" style="margin: 10px 0 0 52px;">建议尺寸1:1.2</p>
+                <p class="note-grey" style="margin: 10px 0 0 52px;">
+                  <span v-if="xFormSet.position === 1">建议尺寸 1:1.2 </span>
+                  <span v-else>建议尺寸 2.65:1 </span>
+                </p>
                 <el-upload
                   style="height:0"
                   :headers="headers"
@@ -403,7 +483,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1020px">
+        <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1020px">
           <div class="m-header">
             <span class="text">分组主图</span>
           </div>
@@ -412,9 +492,14 @@
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap cover-top">
                   <div v-if="xForm5.imgUrl==''" class="cover" />
-                  <img v-else class="cover" :src="xForm5.imgUrl">
+                  <template v-else>
+                    <div class="cover" :style="`backgroundImage: url('${xForm5.imgUrl}')`" />
+                    <div class="x-img-actions">
+                      <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm5')" />
+                    </div>
+                  </template>
                 </div>
-                <p class="note-grey" style="margin:8px 0 0 140px;">建议尺寸1:1.2</p>
+                <p class="note-grey" style="margin:8px 0 0 140px;">建议尺寸 3.68:1</p>
                 <el-upload
                   style="height:20px"
                   :headers="headers"
@@ -445,7 +530,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
+        <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
           <div class="m-header">
             <span class="text">分组商品列表1</span>
             <!-- <span class="text">右1图片</span> -->
@@ -455,8 +540,8 @@
               <div style="flex: 0 0 auto;">图片</div>
               <div class="flex: 1;margin-left: 10px;">
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
-                <p class="note-grey" style="margin: 10px 10px;">建议尺寸1:1.2</p>
-                <ul class="m-goods-list">
+                <p class="note-grey" style="margin: 10px 10px;">建议尺寸 1:1</p>
+                <ul class="m-goods-list webkit-scroll">
                   <template v-if="xForm6.selectGoodsList && xForm6.selectGoodsList.length>0">
                     <li v-for="(goods, $index) in xForm6.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
@@ -491,7 +576,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm7'}" style="top: 1300px">
+        <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm7'}" style="top: 1300px">
           <div class="m-header">
             <span class="text">分组主图2</span>
           </div>
@@ -500,14 +585,20 @@
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap cover-top">
                   <div v-if="xForm7.imgUrl==''" class="cover" />
-                  <img v-else class="cover" :src="xForm7.imgUrl">
+                  <template v-else>
+                    <div class="cover" :style="`backgroundImage: url('${xForm7.imgUrl}')`" />
+                    <div class="x-img-actions">
+                      <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm7')" />
+                    </div>
+                  </template>
                 </div>
-                <p class="note-grey" style="margin:8px 0 0 140px;">建议尺寸1:1.2</p>
+                <p class="note-grey" style="margin:8px 0 0 140px;">建议尺寸 3.68:1</p>
                 <el-upload
                   style="height:20px"
                   :headers="headers"
                   :action="upLoadUrl"
                   :show-file-list="false"
+                  :on-error="handleUploadError"
                   :on-success="handleUploadSuccess"
                   :before-upload="beforeUpload"
                 >
@@ -533,7 +624,7 @@
             </div>
           </div>
         </div>
-        <div class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
+        <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
           <div class="m-header">
             <span class="text">分组商品列表2</span>
             <!-- <span class="text">右1图片</span> -->
@@ -543,8 +634,8 @@
               <div style="flex: 0 0 auto;">图片</div>
               <div class="flex: 1;margin-left: 10px;">
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
-                <p class="note-grey" style="margin: 10px 10px;">建议尺寸1:1.2</p>
-                <ul class="m-goods-list">
+                <p class="note-grey" style="margin: 10px 10px;">建议尺寸 1:1 比列</p>
+                <ul class="m-goods-list webkit-scroll">
                   <template v-if="xForm8.selectGoodsList && xForm8.selectGoodsList.length>0">
                     <li v-for="(goods, $index) in xForm8.selectGoodsList" :key="$index" class="goods-item">
                       <div class="cover-box">
@@ -595,7 +686,7 @@ import 'swiper/dist/css/swiper.css'
 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import dialogGoods from '@/components/Dialog/DialogGoods'
-import { getPageSets, mutilAddPageSet } from '@/api/wxmall'
+import { getPageSets, mutilAddPageSet, queryCenterStore } from '@/api/wxmall'
 import config from '../../utils/config'
 
 export default {
@@ -608,7 +699,8 @@ export default {
   data() {
     const checkWebsite = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入链接地址'))
+        // callback(new Error('请输入链接地址'))
+        callback()
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
         callback(new Error('链接格式不正确，例：http://111.com'))
@@ -616,6 +708,9 @@ export default {
       callback()
     }
     return {
+      loading: false, // 页面加载
+      uploadLoading: false, // 上传加载
+      hasCenterStore: false,
       currentRole: 'adminDashboard',
       swiperOption: {
         pagination: {
@@ -656,7 +751,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ]
       },
       xRules5: {
@@ -664,7 +759,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ]
       },
       xRules7: {
@@ -672,7 +767,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ]
       },
       // 主页名称
@@ -764,6 +859,15 @@ export default {
       console.log('url', url)
       // e.target.src = url
     },
+    toSetCenterStore() {
+      this.$confirm('还未设置旗舰店，请先维护旗舰店, 去设置？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push('/chainSetting')
+      })
+    },
     fetchData() {
       // I-00	主页名称
       // I-01	轮播图
@@ -774,16 +878,38 @@ export default {
       // I-F2-1	精彩活动单张广告位
       // I-F2-2	精彩活动商品广告位
       // C-01	分类广告位
-      this._getAppSetDetail('I-00') // 主页标题
-      this._getAppSetDetail('I-01') // 轮播图
-      this._getAppSetDetail('I-02') // 公告
-      this._getAppSetDetail('I-03') // 活动(1+3)
-      this._getAppSetDetail('I-F1-1') // 活动top广告
-      this._getAppSetDetail('I-F1-2') // 活动分组商品
-      this._getAppSetDetail('I-F2-1') // 活动top广告
-      this._getAppSetDetail('I-F2-2') // 活动分组商品
+      this.loading = true
+      queryCenterStore({ merCode: this.merCode }).then(res => {
+        if (res.code === '10000') {
+          if (res.data) {
+            this.hasCenterStore = true
+            this._getAppSetDetail('I-00') // 主页标题
+            this._getAppSetDetail('I-01') // 轮播图
+            this._getAppSetDetail('I-02') // 公告
+            this._getAppSetDetail('I-03') // 活动(1+3)
+            this._getAppSetDetail('I-F1-1') // 活动top广告
+            this._getAppSetDetail('I-F1-2') // 活动分组商品
+            this._getAppSetDetail('I-F2-1') // 活动top广告
+            this._getAppSetDetail('I-F2-2') // 活动分组商品
+          } else {
+            this.loading = false
+            this.toSetCenterStore()
+          }
+        } else {
+          this.loading = false
+          this.$message.error(res.msg)
+        }
+      })
+        .catch(err => {
+          this.loading = false
+          this.$message.error(err)
+        })
     },
     setEdit(formName, position) {
+      if (!this.hasCenterStore) {
+        this.toSetCenterStore()
+        return
+      }
       const eidtForm = this[formName]
       if (formName === 'xForm2') {
         this.$confirm('去设置轮播图')
@@ -793,7 +919,7 @@ export default {
       } else if (formName === 'xForm3') {
         this.$confirm('去设置公告')
           .then(_ => {
-            this.$router.push('/wxmall/banner')
+            this.$router.push('/wxmall/notice')
           })
       } else if (formName === this.xFormSet.formName && position === this.xFormSet.position) {
         console.log('同一位置')
@@ -832,6 +958,10 @@ export default {
       console.log('eidtForm', this[formName])
     },
     submitForm(formName) {
+      if (!this.hasCenterStore) {
+        this.toSetCenterStore()
+        return
+      }
       const submitForm = this[formName]
       if (formName === 'xForm6' || formName === 'xForm8') {
         console.log(this.selectGoodsList)
@@ -881,6 +1011,10 @@ export default {
     },
     // 保存所有设置
     submitSettings() {
+      if (!this.hasCenterStore) {
+        this.toSetCenterStore()
+        return
+      }
       let ret = []
       // 剔除空数据
       if (this.xForm1.detail && this.xForm1.detail.remark !== '') {
@@ -889,7 +1023,7 @@ export default {
       // 剔除空数据
       if (this.xForm4.detail && this.xForm4.detail.length > 0) {
         const mdata = this.xForm4.detail.filter(item => {
-          return item.imageUrl && item.url
+          return item.imageUrl
         })
         ret = ret.concat(mdata)
       }
@@ -940,6 +1074,9 @@ export default {
       return detailList
     },
     formatToSelectGoods(list, positionCode) {
+      if (!list) {
+        return false
+      }
       const selectList = list.map((v, i) => {
         const selectItem = {
           barCode: '',
@@ -993,15 +1130,38 @@ export default {
       console.log('event', event)
     },
     // h5-settings
+    handleRemove(formName) {
+      this[formName].imgUrl = ''
+    },
+    handleUploadError() {
+      this.uploadLoading = false
+    },
     handleUploadSuccess(res, file) {
+      this.uploadLoading = false
       console.log('res', res)
       console.log('file', file)
       if (this.xFormSet.formName === 'xForm4') {
         this.xForm4.imgUrl = res.data
+        this.$refs[this.xFormSet.formName ].validate()
       } else if (this.xFormSet.formName === 'xForm5' || this.xFormSet.formName === 'xForm7') {
         this[this.xFormSet.formName].imgUrl = res.data
+        this.$refs[this.xFormSet.formName ].validate()
       }
       // this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    beforeUpload(file) {
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isType) {
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.warning('请上传不超过 2M 的图片！')
+        return false
+      }
+      this.uploadLoading = true
+      return isType && isLt2M
     },
     // 获取当前时间
     getNowFormatDate() {
@@ -1033,18 +1193,6 @@ export default {
         return '0' + val
       }
       return val
-    },
-    beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isType) {
-        this.$message.error('上传图片只支持 JPG,PNG 格式!')
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isType && isLt2M
     },
     // 选取商品
     toSelectGoods() {
@@ -1151,6 +1299,10 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.loading = false
+      }).catch(err => {
+        this.loading = false
+        console.log(err)
       })
     },
     _mutilAddPageSet(ret) {
@@ -1518,7 +1670,7 @@ export default {
           .img {
             width: 65px;
             height: 65px;
-            background: url('../../assets/image/h5/pic_sh.png') no-repeat 100% 100%;
+            background: url('../../assets/image/h5/pic_store.png') no-repeat 100% 100%;
           }
         }
         .info-box {
@@ -1659,14 +1811,23 @@ export default {
             .cover {
               width: 100%;
               height: 100%;
-              background: url('../../assets/image/h5/pic_xian_a.png') no-repeat 100% 100%;
+              background: no-repeat center/100% 100%;
+              &.img-0{
+                background-image: url('../../assets/image/h5/pic_goods_1.png');
+              }
+              &.img-1{
+                background-image: url('../../assets/image/h5/pic_goods_2.png');
+              }
+              &.img-2{
+                background-image: url('../../assets/image/h5/pic_goods_3.png');
+              }
             }
           }
           .caption {
             margin-top: 10px;
             width: 100%;
-            height: 12px;
             font-size: 13px;
+            line-height: 1.1;
             font-weight: 500;
             color: rgba(51, 51, 51, 1);
             text-overflow: ellipsis;
@@ -1748,12 +1909,12 @@ export default {
         .card_bottom {
           position: relative;
           box-sizing: border-box;
-          padding: 0 3px;
+          padding: 6px 3px 5px;
         }
         .goods-list2 {
-          margin-top: 6px;
           overflow-x: hidden;
           overflow-y: hidden;
+          height: 170px;
           .goods-item {
             box-sizing: border-box;
             padding: 0 3px;
@@ -1776,8 +1937,8 @@ export default {
             .caption {
               margin-top: 10px;
               width: 100%;
-              height: 12px;
               font-size: 13px;
+              line-height: 1.1;
               font-weight: 500;
               color: rgba(51, 51, 51, 1);
               text-overflow: ellipsis;
@@ -1829,7 +1990,13 @@ export default {
             .cover {
               width: 100%;
               height: 100%;
-              background: url('../../assets/image/h5/pic_sh.png') no-repeat 100% 100%;
+              background: url('../../assets/image/h5/pic_goods_9.png') no-repeat 100% 100%;
+              &.img-1{
+                background: url('../../assets/image/h5/pic_goods_10.png') no-repeat 100% 100%;
+              }
+              &.img-2{
+                background: url('../../assets/image/h5/pic_goods_11.png') no-repeat 100% 100%;
+              }
             }
           }
           .info-box {
@@ -1987,9 +2154,13 @@ export default {
       }
     }
     .m-goods-list {
-      margin-top: 2px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      padding: 5px 0;
       display: flex;
       flex-wrap: wrap;
+      max-height: 420px;
+      overflow-y: auto;
       .goods-item {
         line-height: 1.1;
         margin-right: 6px;
@@ -2011,7 +2182,7 @@ export default {
           .cover {
             width: 100%;
             height: 100%;
-            background: url('../../assets/image/h5/pic_xian_a.png') no-repeat center/100% 100%;
+            background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100% 100%;
           }
           .btn-remove {
             position: absolute;
@@ -2027,8 +2198,8 @@ export default {
         .caption {
           margin-top: 10px;
           width: 100%;
-          height: 12px;
           font-size: 13px;
+          line-height: 1.1;
           font-weight: 500;
           color: rgba(51, 51, 51, 1);
           text-overflow: ellipsis;
@@ -2101,6 +2272,7 @@ export default {
     right: 0;
   }
   .cover-wrap {
+    position: relative;
     width: 120px;
     height: 120px;
     border-radius: 5px;
@@ -2109,8 +2281,13 @@ export default {
       width: 100%;
       height: 100%;
       border: 1px solid #dedede;
-      background: url('../../assets/image/h5/pic_b.png') no-repeat center/100%
+      background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
         100%;
+    }
+    &:hover{
+      .x-img-actions{
+        display: flex;
+      }
     }
     &.cover-left {
       width: 139px;
@@ -2145,13 +2322,35 @@ export default {
 }
 
 .set-hover:hover {
-  box-sizing: border-box;
-  border: 1px solid red;
-  border-radius: 0 !important;
+  border: 2px dashed #147DE8;
+  border-radius: 2px !important;
   cursor: pointer;
+  .set-mask{
+    background:rgba(0, 0, 0, 0.4);
+  }
+}
+.set-hover{
+  box-sizing: border-box;
+  border: 2px solid inherit;
+  position: relative;
+}
+.set-mask{
+  display: flex;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  background:rgba(0, 0, 0, 0.25);
+  .text{
+    margin: auto;
+    color: white;
+    font-size: 14px;
+  }
 }
 .set-active {
-  border-radius: 0 !important;
-  border: 1px solid red !important;
+  border: 2px dashed #147DE8;
+  border-radius: 2px !important;
 }
 </style>

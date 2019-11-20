@@ -48,14 +48,14 @@
               <el-button size="small">申请新品</el-button>
             </a>
           </template>
-          <template v-else-if="$route.query.from==='is_pair'">
+          <!-- <template v-else-if="$route.query.from==='is_pair'">
             <el-button
               type="primary"
               size="small"
               :loading="subLoading"
               @click="handleAgainCode"
             >重新对码</el-button>
-          </template>
+          </template> -->
         </div>
       </div>
       <div class="search-box" @keydown.enter="checkAdult">

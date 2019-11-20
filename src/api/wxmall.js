@@ -1,6 +1,15 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
 
+// 查询中心店
+export function queryCenterStore(params) {
+  console.log('params', params)
+  return request({
+    url: `${config.merGoods}/1.0/store/queryCenterStore/${params.merCode}`,
+    method: 'get'
+  })
+}
+
 // 查询（综合条件）轮播,公告,分类广告列表数据, 单个查询 pisitionCode 首页设置信息
 export function getPageSets(params) {
   console.log('params', params)

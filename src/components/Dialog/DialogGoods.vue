@@ -1,12 +1,5 @@
 <template>
-  <el-dialog
-    append-to-body
-    class="m-dialog dialog-goods"
-    :visible.sync="dialog.visible"
-    :close-on-click-modal="false"
-    width="900px"
-    @close="handlerClose"
-  >
+  <el-dialog append-to-body class="m-dialog dialog-goods" :visible.sync="dialog.visible" :close-on-click-modal="false" width="900px" @close="handlerClose">
     <div class="modal-header">
       <div class="title">选取商品</div>
     </div>
@@ -35,7 +28,8 @@
             <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
               <div class="x-image__preview">
                 <el-image
-                  fit="scale-down"
+                  style="width: 60px; height: 36px"
+                  fit="contain"
                   :src="showImg(scope.row.mainPic)"
                   :preview-src-list="[showImg(scope.row.mainPic)]"
                 />
@@ -62,7 +56,7 @@
         background
         style="text-align: right;margin-top: 20px"
         :current-page="pager.current"
-        :page-sizes="[10, 20, 30, 50]"
+        :page-sizes="[10, 15, 20, 50]"
         :page-size="pager.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pager.total"
@@ -119,7 +113,7 @@ export default {
       },
       pager: {
         current: 1,
-        size: 10,
+        size: 20,
         total: 0
       },
       search: {
@@ -148,7 +142,7 @@ export default {
     reset() {
       this.pager = {
         current: 1,
-        size: 10,
+        size: 20,
         total: 0
       }
       this.search = {

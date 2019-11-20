@@ -171,7 +171,8 @@ export default {
   data() {
     const checkWebsite = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入链接地址'))
+        // callback(new Error('请输入链接地址'))
+        callback()
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
         callback(new Error('链接格式不正确，例：http://111.com'))
@@ -229,7 +230,7 @@ export default {
           { required: true, message: '请输入公告文字', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
@@ -304,6 +305,8 @@ export default {
     },
     // 查询
     search() {
+      this.pager.current = 1
+      this.pager.total = 0
       this._getTableData()
     },
     handleChangeStatus(row) {
@@ -356,6 +359,13 @@ export default {
     handleSubmit(formName) {
       // 表单验证
       this.$refs[formName].validate((valid) => {
+        // 验证结束时间
+        const end_time = new Date(this.xForm.endTime).getTime()
+        const current_time = new Date().getTime()
+        if (end_time <= current_time) {
+          this.$message.warning('结束时间不能小于当前时间')
+          return false
+        }
         if (valid) {
           if (this.xForm.id === '') {
             // 新增
@@ -370,19 +380,30 @@ export default {
         }
       })
     },
-    handleUploadSuccess($event) {
-      console.log($event)
+    handleUploadError() {
+      this.uploadLoading = false
+    },
+    handleUploadSuccess(res, file) {
+      if (res.code === '10000') {
+        this.xForm.imgUrl = res.data || ''
+        this.$refs.xForm.validate()
+      } else {
+        this.$message.error('上传失败!')
+      }
+      this.uploadLoading = false
     },
     beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
-
       if (!isType) {
-        this.$message.error('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
+        return false
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.warning('请上传不超过 2M 的图片！')
+        return false
       }
+      this.uploadLoading = true
       return isType && isLt2M
     },
     // 获取列表数据

@@ -6,8 +6,7 @@ import config from '@/utils/config'
  */
 
 // 查询活动列表
-export function getPageSets(params) {
-  console.log('params', params)
+export function getActivityList(params) {
   return request({
     url: `${config.merGoods}/1.0/admin/activities/_search`,
     method: 'post',

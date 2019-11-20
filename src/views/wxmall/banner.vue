@@ -60,7 +60,8 @@
               <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
                 <div class="x-image__preview">
                   <el-image
-                    fit="scale-down"
+                    style="width: 50px;height: 50px;"
+                    fit="contain"
                     :src="scope.row.imageUrl"
                     :preview-src-list="[scope.row.imageUrl]"
                   />
@@ -115,20 +116,27 @@
       :close-on-click-modal="false"
       @closed="dialogClose('xForm')"
     >
-      <div class="x-dialog-body">
+      <div v-loading="uploadLoading" element-loading-text="图片上传中" class="x-dialog-body">
         <div class="form-box">
           <el-form ref="xForm" :model="xForm" :rules="xRules">
             <el-form-item label="图片" :label-width="formLabelWidth" prop="imgUrl">
               <el-upload
-                class="avatar-uploader"
+                class="avatar-uploader x-uploader"
                 :headers="headers"
                 :action="upLoadUrl"
                 :show-file-list="false"
                 :on-success="handleUploadSuccess"
+                :on-error="handleUploadError"
                 :before-upload="beforeUpload"
               >
-                <img v-if="xForm.imgUrl" :src="xForm.imgUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon" />
+                <div v-if="xForm.imgUrl" class="el-img-box">
+                  <img :src="xForm.imgUrl" class="image">
+                  <div class="img-actions" @click.stop>
+                    <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
+                    <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
+                  </div>
+                </div>
+                <i v-else class="el-icon-plus icon-add" />
               </el-upload>
               <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
             </el-form-item>
@@ -185,6 +193,9 @@
         <el-button type="primary" size="small" @click="handleSubmit('xForm')">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="dialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
   </div>
 </template>
 
@@ -206,7 +217,8 @@ export default {
     const checkWebsite = (rule, value, callback) => {
       console.log('value', value)
       if (value === '') {
-        callback(new Error('请输入链接地址'))
+        // callback(new Error('请输入链接地址'))
+        callback()
       }
       if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
         callback(new Error('链接格式不正确，例：http://111.com'))
@@ -220,6 +232,9 @@ export default {
       callback()
     }
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
+      disabled: false,
       currentRole: 'adminDashboard',
       // I-01	轮播图
       // I-02	公告
@@ -265,7 +280,7 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         linkUrl: [
-          { required: true, validator: checkWebsite, trigger: 'blur' }
+          { validator: checkWebsite, trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
@@ -275,7 +290,8 @@ export default {
         ]
       },
       editDetail: null, // 编辑详情
-      formLabelWidth: '80px'
+      formLabelWidth: '80px',
+      uploadLoading: false
     }
   },
   computed: {
@@ -299,6 +315,12 @@ export default {
   methods: {
     fetchData() {
       this._getTableData()
+    },
+    handleUpload() {
+      $('.el-img-box').click()
+    },
+    handleRemove() {
+      this.xForm.imgUrl = ''
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -347,6 +369,8 @@ export default {
     },
     // 查询
     search() {
+      this.pager.current = 1
+      this.pager.total = 0
       this._getTableData()
     },
     handleChangeStatus(row) {
@@ -402,6 +426,13 @@ export default {
       // 表单验证
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          // 验证结束时间
+          const end_time = new Date(this.xForm.endTime).getTime()
+          const current_time = new Date().getTime()
+          if (end_time <= current_time) {
+            this.$message.warning('结束时间不能小于当前时间')
+            return false
+          }
           if (this.xForm.id === '') {
             // 新增
             this._addData()
@@ -415,6 +446,9 @@ export default {
         }
       })
     },
+    handleUploadError() {
+      this.uploadLoading = false
+    },
     handleUploadSuccess(res, file) {
       if (res.code === '10000') {
         this.xForm.imgUrl = res.data || ''
@@ -422,17 +456,20 @@ export default {
       } else {
         this.$message.error('上传失败!')
       }
+      this.uploadLoading = false
     },
     beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
-
       if (!isType) {
-        this.$message.error('上传图片只支持 JPG,PNG 格式!')
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
+        return false
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.warning('请上传不超过 2M 的图片！')
+        return false
       }
+      this.uploadLoading = true
       return isType && isLt2M
     },
     // 获取列表数据
