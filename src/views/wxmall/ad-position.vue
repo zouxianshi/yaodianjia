@@ -470,11 +470,11 @@ export default {
       const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isType) {
-        this.$message.warning('上传图片只支持 JPG、JPEG、PNG 格式！')
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
         return false
       }
       if (!isLt2M) {
-        this.$message.warning('上传的图片大小不能超过 2MB！')
+        this.$message.warning('请上传不超过 2M 的图片！')
         return false
       }
       this.uploadLoading = true
