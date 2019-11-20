@@ -239,7 +239,7 @@
                     <template slot-scope="scope">
                       <span v-text="scope.row.erpCode" />
                       <template v-if="!is_query">
-                        <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                        <edit-table title="商品编码" keys="erpCode" max-length="16" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                       </template>
                     </template>
                   </el-table-column>
@@ -277,61 +277,63 @@
               </template>
               <template v-else>
                 <template v-if="basicForm.id&&editSpecsData.length>0">
-                  <el-table :data="editSpecsData">
-                    <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs" :label="propsf.name">
-                      <template slot-scope="scope">
-                        <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
-                        <template v-if="!is_query">
-                          <edit-table :title="propsf.name" :keys="propsf.keys" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                  <div class="spec-content">
+                    <el-table :data="editSpecsData">
+                      <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs" :label="propsf.name">
+                        <template slot-scope="scope">
+                          <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
+                          <template v-if="!is_query">
+                            <edit-table :title="propsf.name" :keys="propsf.keys" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                          </template>
                         </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="商品编码" prop="erpCode">
-                      <template slot-scope="scope">
-                        <span v-text="scope.row.erpCode" />
-                        <template v-if="!is_query">
-                          <edit-table title="商品编码" keys="erpCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </el-table-column>
+                      <el-table-column label="商品编码" prop="erpCode">
+                        <template slot-scope="scope">
+                          <span v-text="scope.row.erpCode" />
+                          <template v-if="!is_query">
+                            <edit-table title="商品编码" keys="erpCode" :info="scope.row" max-length="16" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                          </template>
                         </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="商品条码" prop="barCode">
-                      <template slot-scope="scope">
-                        <span v-text="scope.row.barCode" />
-                        <template v-if="!is_query">
-                          <edit-table title="商品条码" keys="barCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </el-table-column>
+                      <el-table-column label="商品条码" prop="barCode">
+                        <template slot-scope="scope">
+                          <span v-text="scope.row.barCode" />
+                          <template v-if="!is_query">
+                            <edit-table title="商品条码" keys="barCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                          </template>
                         </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="商品价格" prop="mprice">
-                      <template slot-scope="scope">
-                        <span v-text="scope.row.mprice" />
-                        <template v-if="!is_query">
-                          <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </el-table-column>
+                      <el-table-column label="商品价格" prop="mprice">
+                        <template slot-scope="scope">
+                          <span v-text="scope.row.mprice" />
+                          <template v-if="!is_query">
+                            <edit-table title="商品价格" keys="mprice" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                          </template>
                         </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="商品图片">
-                      <template slot-scope="scope">
-                        <el-upload
-                          class="avatar-uploader specs-img-table"
-                          :action="upLoadUrl"
-                          :headers="headers"
-                          :disabled="is_query"
-                          :show-file-list="false"
-                          :on-success="handleAvatarSuccessEdit"
-                          :on-error="handleImgError"
-                          :before-upload="beforeUpload"
-                        >
-                          <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
-                            <div slot="placeholder" class="image-slot">
-                              加载中<span class="dot">...</span>
-                            </div>
-                          </el-image>
-                          <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
-                        </el-upload>
-                      </template>
-                    </el-table-column>
-                  </el-table>
+                      </el-table-column>
+                      <el-table-column label="商品图片">
+                        <template slot-scope="scope">
+                          <el-upload
+                            class="avatar-uploader specs-img-table"
+                            :action="upLoadUrl"
+                            :headers="headers"
+                            :disabled="is_query"
+                            :show-file-list="false"
+                            :on-success="handleAvatarSuccessEdit"
+                            :on-error="handleImgError"
+                            :before-upload="beforeUpload"
+                          >
+                            <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                              <div slot="placeholder" class="image-slot">
+                                加载中<span class="dot">...</span>
+                              </div>
+                            </el-image>
+                            <i v-else class="el-icon-plus avatar-uploader-icon" @click="handleUploadIndex(scope.$index)" />
+                          </el-upload>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </div>
                 </template>
                 <div v-for="(item,index) in specsForm.specs" :key="index" class="spec-list" style="margin-top:10px;">
                   <div class="header">
@@ -706,17 +708,8 @@ export default {
           this.expireDays = -1
         } else {
           this.expireDays = 1
-          if (data.expireDays > 365) {
-            this.days = parseInt(data.expireDays / 365)
-            this.timeTypes = '1'
-          } else if (data.expireDays >= 30) {
-            this.days = parseInt(data.expireDays / 30)
-            this.timeTypes = '2'
-          } else {
-            // eslint-disable-next-line no-self-assign
-            this.days = data.expireDays
-            this.timeTypes = '3'
-          }
+          this.days = data.expireDays
+          this.timeTypes = '3'
         }
 
         // 长宽高处理
@@ -1158,7 +1151,7 @@ export default {
           width: 250px;
         }
         .specs-img-table{
-            .avatar-uploader-icon{
+          .avatar-uploader-icon{
             width: 60px;
             height: 60px;
             line-height: 80px!important;

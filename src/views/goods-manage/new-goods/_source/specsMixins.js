@@ -154,6 +154,18 @@ const mixin = {
         data = this.specsForm.specs
         let index = 0
         let flag = true
+        if (this.editSpecsData.length !== 0) {
+          for (let index = 0; index < this.editSpecsData.length; index++) {
+            const element = this.editSpecsData[index]
+            if (!element.picUrl) {
+              this.$message({
+                message: '已存在的规格中存在图片未上传，请上传图片',
+                type: 'error'
+              })
+              return
+            }
+          }
+        }
         this.specsForm.specs.map(v => {
           index++
           v.valueList = []
