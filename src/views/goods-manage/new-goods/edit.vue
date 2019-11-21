@@ -20,8 +20,8 @@
             <div class="content">
               <p class="type-list">商品分类：
                 <el-tag v-if="chooseTypeList.length">
-                  <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;>&nbsp;
-                    {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}</span>
+                  <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;
+                    <span v-if="chooseTypeList[1]">>&nbsp;{{ chooseTypeList[1].name }}&nbsp;>&nbsp;</span><span v-if="chooseTypeList[2]">{{ chooseTypeList[2].name }}</span></span>
                 </el-tag>
                 <span v-if="(basicForm.id!==1&&!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
               <div class="type-list groups">商品分组：
@@ -193,7 +193,7 @@
                 <el-form-item label="其他属性：">
                   <el-checkbox v-model="basicForm.isEasyBreak" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">易碎</el-checkbox>
                   <el-checkbox v-model="basicForm.isLiquid" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">液体</el-checkbox>
-                  <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')">
+                  <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')">
                     <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
                   </template>
                 </el-form-item>
@@ -487,7 +487,7 @@ export default {
     const _checkName = (rule, value, callback) => {
       if (!value) {
         if (rule.field === 'commonName') {
-          if (this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '中西药品') {
+          if (this.basicForm.origin !== 1 && this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '中西药品') {
             return callback(new Error('请输入通用名'))
           } else {
             callback()
@@ -657,7 +657,11 @@ export default {
   },
   created() {
     if (this.$route.query.id) { // 如果是编辑
-      this._loadBasicInfo()
+      this.getTypeListData().then(res => {
+        this._loadBasicInfo()
+      }).catch(_ => {
+        this._loadBasicInfo()
+      })
     } else {
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
@@ -739,6 +743,19 @@ export default {
           this._loadgroupGather('2', res.data.groupIds)
         }
         const { data } = res
+        if (!data.typeId) {
+          const findIndex = findArray(this.typeList, { id: data.firstTypeId })
+          if (findIndex > -1) {
+            this.chooseTypeList = [{ id: this.typeList[findIndex].id, name: this.typeList[findIndex].name }]
+            if (data.secondTypeId) {
+              const row = this.typeList[findIndex].children
+              const findSecIndex = findArray(row, { id: data.secondTypeId })
+              if (findSecIndex > -1) {
+                this.chooseTypeList.push({ id: row[findSecIndex].id, name: row[findSecIndex].name })
+              }
+            }
+          }
+        }
         // 有限期处理
         if (data.expireDays === -1) {
           this.expireDays = -1
@@ -746,6 +763,17 @@ export default {
           this.expireDays = 1
           this.basicForm.days = data.expireDays
           this.timeTypes = '3'
+        }
+        const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
+        const findDrugIndex = findArray(this.drug, { value: data.dosageForm })
+        if (this.basicForm.origin === 2) { // 自建商品
+          // 处理批量自建的问题
+          if (findUnitIndex === -1) {
+            data.unit = ''
+          }
+          if (findDrugIndex === -1) {
+            data.dosageForm = ''
+          }
         }
 
         // 长宽高处理
