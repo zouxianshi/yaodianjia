@@ -11,7 +11,7 @@
             <el-progress type="circle" :width="80" :percentage="item.process" />
           </div>
           <div v-else class="uploaded-img">
-            <img :src="item.imgUrl" alt="">
+            <el-image style="width: 100px; height: 100px" :src="item.imgUrl" />
             <div class="action">
               <i class="el-icon-zoom-in" @click="handlePreview(item)" />
               <i class="el-icon-delete" @click.stop="handleRemove(index)" />
@@ -181,7 +181,9 @@ export default {
       }
     },
     handlePreview(val) {
-      this.$emit('preview', val)
+      if (val.imgUrl) {
+        this.$emit('preview', val)
+      }
     },
     handleRemove(index) {
       this.fileList.splice(index, 1)

@@ -48,14 +48,14 @@
             <div class="edit-card-cnt">
               <div class="content">
                 <el-form-item label="商品名称：" prop="name">
-                  <el-input v-model="basicForm.name" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
+                  <el-input v-model.trim="basicForm.name" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
                 <el-form-item prop="commonName">
                   <span slot="label">
                     <span v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" class="tip">*</span>
                     通用名：
                   </span>
-                  <el-input v-model="basicForm.commonName" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
+                  <el-input v-model.trim="basicForm.commonName" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
                 </el-form-item>
                 <el-form-item label="所属品牌：" prop="brandId">
                   <el-select
@@ -70,13 +70,13 @@
                     <el-option
                       v-for="item in brandList"
                       :key="item.id"
-                      :label="item.engName"
+                      :label="item.name"
                       :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="重量" prop="weight">
-                  <el-input v-model="basicForm.weight" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
+                  <el-input v-model="basicForm.weight" maxlength="5" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
                     <template slot="append">公斤</template>
                   </el-input>
                 </el-form-item>
@@ -85,13 +85,13 @@
                     <template slot="append">m*</template>
                   </el-input>
                 </el-form-item>
-                <el-form-item label="" label-width="0px" style="display:inline-block" prop="long">
+                <el-form-item label="" label-width="0px" style="display:inline-block" prop="width">
                   <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
                     <template slot="append">m*</template>
                   </el-input>
                 </el-form-item>
-                <el-form-item label="" label-width="0px" style="display:inline-block" prop="long">
-                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">  <template slot="append">m*</template>
+                <el-form-item label="" label-width="0px" style="display:inline-block" prop="height">
+                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" style="width:160px">  <template slot="append">m*</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="单位：" prop="unit">
@@ -105,7 +105,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="关键字：">
-                  <el-input v-model="basicForm.keyWord" :disabled="basicForm.origin===1||is_query" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
+                  <el-input v-model="basicForm.keyWord" maxlength="512" :disabled="basicForm.origin===1||is_query" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
                 </el-form-item>
               </div>
             </div>
@@ -132,13 +132,13 @@
                   </el-form-item>
                 </template>
                 <el-form-item label="生产企业：" prop="manufacture">
-                  <el-input v-model="basicForm.manufacture" :disabled="basicForm.origin===1||is_query" placeholder="请输入生产企业" size="small" />
+                  <el-input v-model.trim="basicForm.manufacture" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入生产企业" size="small" />
                 </el-form-item>
                 <el-form-item label="产地：" prop="produceOrigin">
-                  <el-input v-model="basicForm.produceOrigin" :disabled="basicForm.origin===1||is_query" placeholder="请输入产地" size="small" />
+                  <el-input v-model.trim="basicForm.produceOrigin" maxlength="50" :disabled="basicForm.origin===1||is_query" placeholder="请输入产地" size="small" />
                 </el-form-item>
                 <el-form-item label="批准文号：" prop="approvalNumber">
-                  <el-input v-model="basicForm.approvalNumber" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
+                  <el-input v-model.trim="basicForm.approvalNumber" maxlength="24" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
                 </el-form-item>
                 <el-form-item label="商品详细信息：">
                   <p>填写商品说明书</p>
@@ -151,10 +151,12 @@
                 </el-form-item>
                 <el-form-item :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'">
                   <el-input
-                    v-model="basicForm.keyFeature"
+                    v-model.trim="basicForm.keyFeature"
                     type="textarea"
+                    maxlength="512"
                     :disabled="basicForm.origin===1||is_query"
-                    :rows="2"
+                    :rows="3"
+                    show-word-limit
                     placeholder="请输入功能主治/适应症"
                     size="small"
                   />
@@ -162,7 +164,7 @@
                 <el-form-item label="有效期：">
                   <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="-1" size="small">无</el-radio>
                   <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="1" size="small">
-                    <el-input v-model="days" :disabled="basicForm.origin===1||is_query" style="width:80px" size="small" placeholder="" />
+                    <el-input v-model="basicForm.days" :disabled="basicForm.origin===1||is_query" maxlength="8" style="width:80px" size="small" placeholder="" />
                     <el-select v-model="timeTypes" :disabled="basicForm.origin===1||is_query" style="width:100px" size="small" placeholder="">
                       <el-option value="1" label="年" />
                       <el-option value="2" label="月" />
@@ -191,7 +193,7 @@
                 <el-form-item label="其他属性：">
                   <el-checkbox v-model="basicForm.isEasyBreak" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">易碎</el-checkbox>
                   <el-checkbox v-model="basicForm.isLiquid" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">液体</el-checkbox>
-                  <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'">
+                  <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')">
                     <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
                   </template>
                 </el-form-item>
@@ -216,8 +218,11 @@
                   </span>
                 </template>
               </template>
-              <template v-else>
+              <template v-else-if="basicForm.origin===2&&basicForm.id">
                 <el-checkbox v-for="(item,index) in specsList" :key="index" v-model="item.isCheck" :disabled="basicForm.origin===1||is_query" @change="handleSpecsChange(item)"> {{ item.attributeName }}</el-checkbox>
+              </template>
+              <template v-else>
+                <el-checkbox v-for="(item,index) in dynamicProp" :key="index" v-model="item.checked" :disabled="basicForm.origin===1||is_query" @change="handleSpecsChange(item)"> {{ item.name }}</el-checkbox>
               </template>
             </el-form-item>
             <el-form-item label="规格信息：">
@@ -282,7 +287,7 @@
                         <template slot-scope="scope">
                           <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
                           <template v-if="!is_query">
-                            <edit-table :title="propsf.name" :keys="propsf.keys" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                            <edit-table :title="propsf.name" :keys="propsf.keys" :info="scope.row" max-length="50" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                           </template>
                         </template>
                       </el-table-column>
@@ -298,7 +303,7 @@
                         <template slot-scope="scope">
                           <span v-text="scope.row.barCode" />
                           <template v-if="!is_query">
-                            <edit-table title="商品条码" keys="barCode" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                            <edit-table title="商品条码" keys="barCode" :info="scope.row" max-length="30" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                           </template>
                         </template>
                       </el-table-column>
@@ -343,19 +348,19 @@
                     <el-form :ref="'specsForm'+index" :model="item" size="small" label-width="80px" :status-icon="true">
                       <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1">
                         <span slot="label"><span class="tip">*</span> {{ items.attributeName }}</span>
-                        <el-input v-model="item['index_'+items.id+'_'+items.attributeName]" :disabled="is_query" :placeholder="'输入'+items.attributeName" />
+                        <el-input v-model.trim="item['index_'+items.id+'_'+items.attributeName]" maxlength="50" :disabled="is_query" :placeholder="'输入'+items.attributeName" />
                       </el-form-item>
                       <el-form-item label="">
                         <span slot="label"><span class="tip">*</span> 条码</span>
-                        <el-input v-model="item.barCode" placeholder="输入条码" />
+                        <el-input v-model.trim="item.barCode" maxlength="30" placeholder="输入条码" @blur="input_checkBarCode(item.barCode)" />
                       </el-form-item>
                       <el-form-item>
                         <span slot="label"><span class="tip">*</span> 商品编码</span>
-                        <el-input v-model="item.erpCode" placeholder="输入条码" @blur="input_checkErpcode(item.erpCode)" />
+                        <el-input v-model.trim="item.erpCode" placeholder="输入条码" maxlength="16" @blur="input_checkErpcode(item.erpCode)" />
                       </el-form-item>
                       <el-form-item>
                         <span slot="label"><span class="tip">*</span> 价格</span>
-                        <el-input v-model="item.mprice" placeholder="输入价格" @blur="input_checkMprice(item.mprice)" />
+                        <el-input v-model.trim="item.mprice" placeholder="输入价格" @blur="input_checkMprice(item.mprice)" />
                       </el-form-item>
                       <el-form-item label="商品图片">
                         <span slot="label"><span class="tip">*</span> 商品图片</span>
@@ -507,6 +512,28 @@ export default {
       if (value && !checkNumberdouble(value)) {
         callback(new Error('只能设置最多两位小数的正数'))
       } else {
+        if (rule.field === 'weight') {
+          if (value <= 0 || value % 1 !== 0) {
+            return callback(new Error('必须大于0的整数'))
+          }
+          if (value > 99000) {
+            return callback(new Error('重量不能大于99000公斤'))
+          }
+        }
+        if (rule.field === 'long' || rule.field === 'height' || rule.field === 'width') {
+          if ((value && value <= 0) || value > 999) {
+            return callback(new Error('长宽高必须大于0 小于999'))
+          }
+        }
+        callback()
+      }
+    }
+    const _checkDays = (rule, value, callback) => {
+      if (value) {
+        if (value % 1 !== 0) {
+          callback(new Error('请输入整数'))
+        }
+      } else {
         callback()
       }
     }
@@ -519,7 +546,6 @@ export default {
       brandList: [], // 品牌列表
       timeTypes: '3', // 2为月 1为年
       expireDays: -1,
-      days: '',
       defaultProps: {
         children: 'children',
         label: 'name',
@@ -545,6 +571,10 @@ export default {
         'produceOrigin': '', // 产地
         'unit': '', // 规格
         'typeId': '',
+        long: '',
+        height: '',
+        width: '',
+        days: '',
         'origin': 2, // 商品来源，1-海典标准库，2-商家自定义
         'packStandard': '', // 长宽高
         'groupIds': [] // 分组id
@@ -562,7 +592,8 @@ export default {
         approvalNumber: [{ required: true, message: '请输入批准文号', trigger: 'blur' }],
         long: [{ validator: _checkFloat, trigger: 'blur' }],
         height: [{ validator: _checkFloat, trigger: 'blur' }],
-        width: [{ validator: _checkFloat, trigger: 'blur' }]
+        width: [{ validator: _checkFloat, trigger: 'blur' }],
+        days: [{ validator: _checkDays, trigger: 'blur' }]
       },
       dialogVisible: false,
       unit: [],
@@ -603,10 +634,16 @@ export default {
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
     if (this.is_query) {
       next()
+      if (this.pageLoading) {
+        this.pageLoading.close()
+      }
     } else {
       if (!this.leaveAction) {
         const answer = window.confirm('你还有数据没有保存，是否确认退出')
         if (answer) {
+          if (this.pageLoading) {
+            this.pageLoading.close()
+          }
           this.$store
             .dispatch('tagsView/delView', from)
           next()
@@ -707,7 +744,7 @@ export default {
           this.expireDays = -1
         } else {
           this.expireDays = 1
-          this.days = data.expireDays
+          this.basicForm.days = data.expireDays
           this.timeTypes = '3'
         }
 
@@ -791,13 +828,7 @@ export default {
       this.dialogVisible = true
     },
     beforeUpload(file) {
-      this.pageLoading = this.$loading({
-        lock: true,
-        text: '图片上传中...',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
-      // const size = file.size / 1024
+      const size = file.size / 1024
       const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
@@ -807,15 +838,53 @@ export default {
         this.pageLoading.close()
         return
       }
-      // if (size < 200 || size > 500) {
-      //   this.$message({
-      //     message: '请上传大小为200kb~500kb的图片',
-      //     type: 'warning'
-      //   })
-      //   this.pageLoading.close()
-      //   return
-      // }
+      if (size < 200 || size > 500) {
+        this.$message({
+          message: '请上传大小为200kb~500kb的图片',
+          type: 'warning'
+        })
+        this.pageLoading.close()
+        return false
+      }
       return true
+      // var err = false
+      // const isSize = new Promise(function(resolve, reject) {
+      //   const _URL = window.URL || window.webkitURL
+      //   const img = new Image()
+      //   img.onload = function() {
+      //     const valid = img.width === img.height
+      //     valid ? resolve() : reject()
+      //   }
+      //   img.src = _URL.createObjectURL(file)
+      // }).then(() => {
+      //   err = false
+      //   return file
+      // }).catch(() => {
+      //   this.$message.error('请上传1：1比例的图片')
+      //   err = true
+      //   return Promise.reject()
+      // })
+      // console.log(err)
+      // return isSize
+    },
+    _checkImg(file) {
+      return new Promise((reslove, reject) => {
+        var reader = new FileReader()
+        reader.onload = function(event) {
+          var image = new Image()
+          image.onload = function() {
+            var width = this.width
+            var height = this.height
+            if (width !== height) {
+              reject()
+            } else {
+              reslove()
+            }
+          }
+          image.src = event.target.result
+        }
+        reader.readAsDataURL(file)
+      })
     },
     handleUploadIndex(index) {
       this.uploadIndex = index
@@ -934,11 +1003,11 @@ export default {
               data.expireDays = -1
             } else {
               if (this.timeTypes === '2') { // 月
-                data.expireDays = parseInt(this.days) * 30
+                data.expireDays = parseInt(this.basicForm.days) * 30
               } else if (this.timeTypes === '1') {
-                data.expireDays = parseInt(this.days) * 365
+                data.expireDays = parseInt(this.basicForm.days) * 365
               } else {
-                data.expireDays = parseInt(this.days)
+                data.expireDays = parseInt(this.basicForm.days)
               }
             }
             if (this.chooseGroup.length === 0) {
@@ -1007,10 +1076,10 @@ export default {
         id: this.basicForm.id
       }
       saveGoodsDetails(data).then(res => {
-        this.$message({
-          message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
-          type: 'success'
-        })
+        // this.$message({
+        //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
+        //   type: 'success'
+        // })
         this.subLoading = false
         this.leaveAction = true
         setTimeout(() => {

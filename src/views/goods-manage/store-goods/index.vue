@@ -132,7 +132,7 @@
             <template slot-scope="scope">
               <template v-if="scope.row.mainPic">
                 <el-image
-                  style="width: 60px; height: 60px"
+                  style="width: 70px; height: 70px"
                   :src="showImg(scope.row.mainPic)"
                   lazy
                   fit="contain"
@@ -627,7 +627,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .store-goods-wrapper {
   .search-form {
     .search-item {

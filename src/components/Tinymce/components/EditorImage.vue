@@ -1,24 +1,21 @@
 <template>
   <div class="upload-container">
     <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
-      上传图片
+      上传视频
     </el-button>
-    <el-dialog :visible.sync="dialogVisible" append-to-body>
+    <el-dialog title="视频上传" :visible.sync="dialogVisible" append-to-body width="40%">
       <el-upload
         :multiple="true"
         :file-list="fileList"
-        :show-file-list="true"
         :on-remove="handleRemove"
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
         :action="upLoadUrl"
         :headers="headers"
-        :data="{merCode:merCode}"
-        list-type="picture-card"
       >
         <el-button size="small" type="primary">
-          点击上传图片
+          选择视频
         </el-button>
       </el-upload>
       <el-button size="small" @click="dialogVisible = false">
@@ -34,6 +31,7 @@
 <script>
 // import { getToken } from 'api/qiniu'
 import config from '@/utils/config'
+import { mapGetters } from 'vuex'
 export default {
   name: 'EditorSlideUpload',
   props: {
@@ -50,14 +48,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['token', 'merCode']),
     upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload`
-    },
-    merCode() {
-      return 'sdfdf'
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
     },
     headers() {
-      return { 'Authorization': this.$store.getters.token }
+      return { 'Authorization': this.token }
     }
   },
   methods: {

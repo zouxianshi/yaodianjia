@@ -1,5 +1,5 @@
 import { getSelfSpecsInfo, setSpecsData, getSpecsProductSKU, getSpecs } from '@/api/new-goods'
-import { checkNumberdouble } from '@/utils/validate'
+import { checkNumberdouble, checkZmSZ } from '@/utils/validate'
 import { findArray } from '@/utils/index'
 const mixin = {
   data() {
@@ -16,7 +16,8 @@ const mixin = {
       chooseSpec: [], // 选中的规格参数
       specsList: [], // 规格
       mprice_err: false,
-      erpCode_err: false
+      erpCode_err: false,
+      barCode_err: false
     }
   },
   watch: {
@@ -263,6 +264,13 @@ const mixin = {
             })
             return
           }
+          if (this.barCode_err) {
+            this.$message({
+              message: '规格中存在条码输入非法值，请输入正确的值',
+              type: 'error'
+            })
+            return
+          }
           this.subSpecs(data)
         }
       }
@@ -312,7 +320,8 @@ const mixin = {
                   this.dynamicProp.push({
                     name: vs.skuKeyName,
                     id: vs.skuKeyId,
-                    keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`
+                    keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
+                    checked: true
                   })
                 })
               }
@@ -398,6 +407,7 @@ const mixin = {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
+      this.specsForm.specs = []
       this.specsForm.specs.push(data)
       /** **
        *
@@ -446,15 +456,15 @@ const mixin = {
     input_checkMprice(value) { // 校验价格
       if (value > 99999999) {
         this.$message({
-          message: '最多只能输入8位数',
+          message: '价格最多只能输入8位数',
           type: 'error'
         })
         this.mprice_err = true
         return
       }
-      if (!checkNumberdouble(value)) {
+      if (value && !checkNumberdouble(value)) {
         this.$message({
-          message: '只能设置最多两位小数的正数',
+          message: '价格只能设置最多两位小数的正数',
           type: 'error'
         })
         this.mprice_err = true
@@ -463,9 +473,7 @@ const mixin = {
       this.mprice_err = false
     },
     input_checkErpcode(value) {
-      console.log(value)
-      console.log(/^[0-9]+$/.test(value))
-      if (!/^[0-9]+$/.test(value)) {
+      if (value && !/^[0-9]+$/.test(value)) {
         this.$message({
           message: '商品编码只能为纯数字',
           type: 'error'
@@ -474,6 +482,17 @@ const mixin = {
         return
       }
       this.erpCode_err = false
+    },
+    input_checkBarCode(value) {
+      if (value && !checkZmSZ(value)) {
+        this.$message({
+          message: '规格只能输入数字、英文、字符',
+          type: 'error'
+        })
+        this.barCode_err = true
+        return
+      }
+      this.barCode_err = false
     }
   }
 }

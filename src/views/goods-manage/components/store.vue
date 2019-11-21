@@ -5,6 +5,7 @@
       :visible.sync="isShow"
       append-to-body
       width="700px"
+      :close-on-press-escape="false"
       :show-close="false"
       :close-on-click-modal="false"
     >
