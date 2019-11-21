@@ -280,7 +280,7 @@ export default {
       'trailing': true
     }),
     onEdit() {
-      window.location.href = window.location.origin + '/merchant/#/institution/list'
+      window.location.href = window.location.origin + '/merchant/#/institution/store'
     },
     getData() {
       this.loading = true
