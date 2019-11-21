@@ -538,6 +538,7 @@ export default {
     },
     dismiss() {
       this.visable = false
+      this.dialogSelectedStore = ''
       this.diaLogSearchParams.searchKey = null
       this.dialogMultipleSelection = null
     },
