@@ -369,8 +369,8 @@ export default {
         this.isIndeterminate = false
         this.checkAll = false
       }
-      this.isIndeterminate = this.checkedCities.length > 0
-      this.checkAll = (this.checkedCities.length + this.selected.length) === this.cities.length
+      // this.isIndeterminate = this.checkedCities.length > 0
+      // this.checkAll = (this.checkedCities.length + this.selected.length) === this.cities.length
     },
     onCheck(value, item) {
       console.log(value, item)

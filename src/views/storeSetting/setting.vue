@@ -20,8 +20,9 @@
     </div>
     <el-dialog
       v-if="visable"
-      append-to-body
+      lock-scroll
       title="添加上线门店"
+      :modal-append-to-body="false"
       :visible.sync="visable"
       width="800px"
       :close-on-click-modal="false"
@@ -93,34 +94,24 @@
           </template>
         </el-table-column>
       </el-table>
-      <div style="position: relative">
-        <span
-          v-if="dialogSelectedStore"
-          style="
-        position: absolute;
-        margin-top: 25px;
-        width: 250px;
-        display: block;
-        overflow: hidden;
-        height:16px;
-        line-height: 16px;
-        text-overflow: ellipsis;
-        -ms-text-overflow: ellipsis;
-        white-space:nowrap;"
-        >
-          已选门店：{{ dialogSelectedStore }}
+      <div style="margin-top: 10px">
+        <span v-if="dialogMultipleSelection">
+          已选{{ dialogMultipleSelection.length }}家门店
         </span>
-        <div class="pages">
-          <el-pagination
-            background
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="diaLogTotalCount"
-            :current-page="diaLogSearchParams.currentPage"
-            :page-size="diaLogSearchParams.pageSize"
-            @size-change="dialogPageSizeChange"
-            @current-change="dialogPageChange"
-          />
-        </div>
+        <span v-else>
+          已选0家门店
+        </span>
+      </div>
+      <div class="pages">
+        <el-pagination
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="diaLogTotalCount"
+          :current-page="diaLogSearchParams.currentPage"
+          :page-size="diaLogSearchParams.pageSize"
+          @size-change="dialogPageSizeChange"
+          @current-change="dialogPageChange"
+        />
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取 消</el-button>
@@ -193,7 +184,7 @@
         <el-table-column label="操作" width="100px">
           <template slot-scope="scope">
             <!--            <el-button size="small" type="text">编辑</el-button>-->
-            <el-button type="text" @click="onEdit">编辑</el-button>
+            <el-button type="text" @click="onEdit(scope.row.id)">编辑</el-button>
             <el-button type="text" :disabled="scope.row.centerStore === 1" @click="offline(scope.row.stCode)">下线</el-button>
           </template>
         </el-table-column>
@@ -251,7 +242,7 @@ export default {
       diaLogSearchParams: {
         merCode: null,
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 10,
         searchKey: null,
         onlineStatus: 0,
         status: 1
@@ -279,8 +270,8 @@ export default {
       'leading': false,
       'trailing': true
     }),
-    onEdit() {
-      window.location.href = window.location.origin + '/merchant/#/institution/store'
+    onEdit(id) {
+      window.location.href = window.location.origin + '/merchant/#/institution/store-edit?id=' + id
     },
     getData() {
       this.loading = true
