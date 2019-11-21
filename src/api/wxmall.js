@@ -1,11 +1,11 @@
 import request from '@/utils/request'
-const api_wxmall = '/mer-manager'
+import config from '@/utils/config'
 
 // 查询中心店
 export function queryCenterStore(params) {
   console.log('params', params)
   return request({
-    url: `${api_wxmall}/1.0/store/queryCenterStore/${params.merCode}`,
+    url: `${config.merGoods}/1.0/store/queryCenterStore/${params.merCode}`,
     method: 'get'
   })
 }
@@ -14,7 +14,7 @@ export function queryCenterStore(params) {
 export function getPageSets(params) {
   console.log('params', params)
   return request({
-    url: `${api_wxmall}/1.0/pageset/_search`,
+    url: `${config.merGoods}/1.0/pageset/_search`,
     method: 'post',
     data: params
   })
@@ -23,7 +23,7 @@ export function getPageSets(params) {
 // 查询单个轮播,公告,分类广告详情
 export function getPageSetDetail(params) {
   return request({
-    url: `${api_wxmall}/1.0/pageset/${params.id}`,
+    url: `${config.merGoods}/1.0/pageset/${params.id}`,
     method: 'get'
   })
 }
@@ -31,7 +31,7 @@ export function getPageSetDetail(params) {
 // 新增轮播,公告,分类广告
 export function addPageSet(params) {
   return request({
-    url: `${api_wxmall}/1.0/pageset`,
+    url: `${config.merGoods}/1.0/pageset`,
     method: 'post',
     data: params
   })
@@ -40,7 +40,7 @@ export function addPageSet(params) {
 // 批量新增轮播,公告,分类广告
 export function mutilAddPageSet(params) {
   return request({
-    url: `${api_wxmall}/1.0/pageset/_batch`,
+    url: `${config.merGoods}/1.0/pageset/_batch`,
     method: 'post',
     data: params
   })
@@ -49,7 +49,7 @@ export function mutilAddPageSet(params) {
 // 修改轮播,公告,分类广告
 export function editPageSet(params) {
   return request({
-    url: `${api_wxmall}/1.0/pageset`,
+    url: `${config.merGoods}/1.0/pageset`,
     method: 'put',
     data: params
   })
@@ -58,7 +58,7 @@ export function editPageSet(params) {
 // 修改轮播,公告,分类广告状态
 export function updatePageSetStatus(params) {
   return request({
-    url: `${api_wxmall}/1.0/pageset/_updateStatus`,
+    url: `${config.merGoods}/1.0/pageset/_updateStatus`,
     method: 'put',
     data: params
   })
@@ -67,7 +67,7 @@ export function updatePageSetStatus(params) {
 // 删除轮播,公告,分类广告
 export function delPageSet(params) {
   return request({
-    url: `${api_wxmall}/1.0/pageset/${params.id}`,
+    url: `${config.merGoods}/1.0/pageset/${params.id}`,
     method: 'delete'
   })
 }
@@ -75,7 +75,7 @@ export function delPageSet(params) {
 // 广告分类
 export function getADClass(params) {
   return request({
-    url: `${api_wxmall}/1.0/comm-type/getTypeTree`,
+    url: `${config.merGoods}/1.0/comm-type/getTypeTree`,
     method: 'post',
     data: params
   })
@@ -84,7 +84,7 @@ export function getADClass(params) {
 // 商品查询
 export function getProductList(params) {
   return request({
-    url: `${api_wxmall}/1.0/pageset/queryMinProductList`,
+    url: `${config.merGoods}/1.0/pageset/queryMinProductList`,
     method: 'post',
     data: params
   })

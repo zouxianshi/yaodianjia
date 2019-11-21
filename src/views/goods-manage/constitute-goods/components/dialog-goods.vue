@@ -1,17 +1,24 @@
 <template>
-  <el-dialog append-to-body class="m-dialog dialog-goods" :visible.sync="dialog.visible" :close-on-click-modal="false" width="900px" @close="handlerClose">
+  <el-dialog
+    append-to-body
+    class="m-dialog dialog-goods"
+    :visible.sync="dialog.visible"
+    :close-on-click-modal="false"
+    width="900px"
+    @close="handlerClose"
+  >
     <div class="modal-header">
       <div class="title">选取商品</div>
     </div>
     <div class="modal-body">
-      <div class="md-search">
+      <!-- <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
           <el-input v-model="search.keyWord" style="width: 240px" placeholder="搜索" size="small" />
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
         </div>
-      </div>
+      </div>-->
       <el-table
         ref="multipleTable"
         border
@@ -23,15 +30,18 @@
         @select="handleSelect"
       >
         <el-table-column type="selection" align="center" width="50" />
-        <el-table-column align="center" label="图片" min-width="120">
+        <el-table-column align="center" label="图片" width="120">
           <template slot-scope="scope">
-            <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
+            <div
+              v-if="scope.row.mainPic && scope.row.mainPic!==''"
+              class="x-img-mini"
+              style="width: 60px; height: 36px"
+            >
               <div class="x-image__preview">
                 <el-image
-                  style="width: 60px; height: 36px"
-                  fit="contain"
+                  fit="scale-down"
                   :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[showImg(scope.row.mainPic)]"
+                  :preview-src-list="[scope.row.imageUrl]"
                 />
               </div>
             </div>
@@ -41,11 +51,12 @@
             <div class="img-wrap">
               <img :src="showImg(scope.row.mainPic)">
             </div>
-          </template> -->
+          </template>-->
         </el-table-column>
         <el-table-column prop="commodityName" label="名称" align="center" min-width="150" />
-        <el-table-column prop="price" label="价格" align="center" min-width="100" />
-        <el-table-column prop="stock" label="库存" align="center" min-width="100" />
+        <el-table-column prop="packStandard" label="包装规格" align="center" min-width="150" />
+        <el-table-column prop="price" label="价格" align="center" width="100" />
+        <el-table-column prop="stock" label="库存" align="center" width="100" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
@@ -56,7 +67,7 @@
         background
         style="text-align: right;margin-top: 20px"
         :current-page="pager.current"
-        :page-sizes="[10, 15, 20, 50]"
+        :page-sizes="[10, 20, 30, 50]"
         :page-size="pager.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pager.total"
@@ -92,7 +103,7 @@
 </template>
 
 <script>
-import { getProductList } from '@/api/wxmall'
+import { getProductList } from '../../../../api/wxmall'
 export default {
   name: 'DialogGoods',
   props: {
@@ -113,7 +124,7 @@ export default {
       },
       pager: {
         current: 1,
-        size: 20,
+        size: 10,
         total: 0
       },
       search: {
@@ -142,7 +153,7 @@ export default {
     reset() {
       this.pager = {
         current: 1,
-        size: 20,
+        size: 10,
         total: 0
       }
       this.search = {
@@ -185,6 +196,9 @@ export default {
         const index = this.mySelectList.findIndex(mItem => {
           return mItem.commodityId === item.commodityId
         })
+        // this.referPrice = item.mprice
+        // item.price = ''
+        // this.number = 0
         if (index > -1) {
           if (allList.length > 0) {
             console.log('已存在' + item.commodityId + ':' + item.commodityName)
@@ -196,6 +210,7 @@ export default {
           this.mySelectList.push(item)
         }
       })
+      console.log('mySelectList:', this.mySelectList)
     },
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
@@ -249,9 +264,9 @@ export default {
         storeId: '',
         keyWord: this.search.keyWord.trim(),
         currentPage: this.pager.current,
-        pageSize: this.pager.size
+        pageSize: this.pager.size,
+        commodityType: 1
       }
-      console.log('params', params)
       getProductList(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []
@@ -285,11 +300,11 @@ export default {
   .el-table thead th {
     height: 40px;
   }
-  .img-wrap{
+  .img-wrap {
     margin: 0 auto;
     width: 50px;
     height: 32px;
-    img{
+    img {
       width: 100%;
       height: 100%;
     }

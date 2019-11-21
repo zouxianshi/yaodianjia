@@ -98,7 +98,7 @@ export default {
   methods: {
     toCreate(type) { // type 1.限时活动
       if (type === 1) {
-        this.$router.push('/marketing/activity/create')
+        this.$router.push('/marketing/activity/limit-edit')
       }
     }
   }

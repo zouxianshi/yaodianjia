@@ -84,6 +84,18 @@
             />
           </div>
           <div class="search-item">
+            <span class="label-name">商品类型</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="普通商品/组合商品"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="普通商品" value="1" />
+              <el-option label="组合商品" value="2" />
+            </el-select>
+          </div>
+          <div class="search-item">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
@@ -364,6 +376,7 @@ export default {
       loading: false,
       selectloading: false,
       listQuery: {
+        'commodityType': '',
         'approvalNumber': '',
         'barCode': '',
         'erpCode': '',
@@ -400,7 +413,8 @@ export default {
         'name': '',
         'storeId': '',
         'status': this.listQuery.status,
-        'auditStatus': this.listQuery.auditStatus
+        'auditStatus': this.listQuery.auditStatus,
+        'commodityType': ''
       }
       this.getList()
     },
@@ -425,6 +439,7 @@ export default {
         return
       }
       this.loading = true
+      console.log('this.listQuery--xf:', this.listQuery)
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
@@ -468,6 +483,14 @@ export default {
         }
       })
       this.listQuery.currentPage = 1
+      this._loadList()
+    },
+    handleChangeCommodityType(val) { // 商品类型改变时触发
+      this.storeList.map(v => {
+        if (v.id === val) {
+          this.chooseStore = v
+        }
+      })
       this._loadList()
     },
     handleLock() {

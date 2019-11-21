@@ -1,90 +1,48 @@
 <template>
-  <el-dialog append-to-body class="m-dialog dialog-goods" :visible.sync="dialog.visible" :close-on-click-modal="false" width="900px" @close="handlerClose">
+  <el-dialog
+    append-to-body
+    class="m-dialog dialog-goods"
+    :visible.sync="dialog.visible"
+    :close-on-click-modal="false"
+    width="560px"
+    @close="handlerClose"
+  >
     <div class="modal-header">
-      <div class="title">选取商品</div>
+      <div class="title">批量设置</div>
     </div>
     <div class="modal-body">
-      <div class="md-search">
-        <div class="search-item" @keyup.enter="forSearch()">
-          <el-input v-model="search.keyWord" style="width: 240px" placeholder="搜索" size="small" />
-        </div>
-        <div class="search-btns">
-          <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
-        </div>
-      </div>
-      <el-table
-        ref="multipleTable"
-        border
-        size="small"
-        :data="tableData"
-        style="width: 100%;margin-top: 20px"
-        max-height="256"
-        @select-all="handleSelectAllChange"
-        @select="handleSelect"
-      >
-        <el-table-column type="selection" align="center" width="50" />
-        <el-table-column align="center" label="图片" min-width="120">
-          <template slot-scope="scope">
-            <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
-              <div class="x-image__preview">
-                <el-image
-                  style="width: 60px; height: 36px"
-                  fit="contain"
-                  :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[showImg(scope.row.mainPic)]"
-                />
-              </div>
-            </div>
-            <div v-else style="line-height: 32px">暂无上传</div>
-          </template>
-          <!-- <template slot-scope="scope">
-            <div class="img-wrap">
-              <img :src="showImg(scope.row.mainPic)">
-            </div>
-          </template> -->
-        </el-table-column>
-        <el-table-column prop="commodityName" label="名称" align="center" min-width="150" />
-        <el-table-column prop="price" label="价格" align="center" min-width="100" />
-        <el-table-column prop="stock" label="库存" align="center" min-width="100" />
-        <!-- <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
-          </template>
-        </el-table-column>-->
-      </el-table>
-      <el-pagination
-        background
-        style="text-align: right;margin-top: 20px"
-        :current-page="pager.current"
-        :page-sizes="[10, 15, 20, 50]"
-        :page-size="pager.size"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pager.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-      <div class="result-section">
-        <div class="blank-line" />
-        <div class="title">
-          <span v-if="mySelectList && mySelectList.length>0">已选商品：</span>
-          <span v-else style="color: red">请选取商品</span>
-        </div>
-        <div class="label-line">
-          <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-            <span v-text="mItem.commodityName" />
-            <i
-              v-if="editable"
-              class="icon el-icon-close"
-              @click.stop="removeMyselectItem(mItem, index2)"
-            />
-          </div>
-        </div>
-      </div>
+      <el-form :model="xForm" label-width="60px">
+        <template>
+          <el-form-item label="折扣：">
+            <el-input style="width: 200px" placeholder="" />
+            <span>折</span>
+            <span class="note-text">填写折扣，如8</span>
+          </el-form-item>
+        </template>
+        <template>
+          <el-form-item label="减价：">
+            <el-input style="width: 200px" placeholder="" />
+            <span class="note-text">填写减价金额，如减价10元则填10</span>
+          </el-form-item>
+        </template>
+        <template>
+          <el-form-item label="限购：">
+            <el-input style="width: 200px" placeholder="" />
+            <span class="note-text">填写限购数量，如0表示不限购</span>
+          </el-form-item>
+        </template>
+        <template>
+          <el-form-item label="库存：">
+            <el-input style="width: 200px" placeholder="" />
+            <span class="note-text">填写秒杀库存数量，大于0</span>
+          </el-form-item>
+        </template>
+      </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
       <template v-if="editable">
-        <el-button type="primary" size="small" @click="confirm()">确 定</el-button>
-        <el-button size="small" @click="dialog.visible = false">取 消</el-button>
+        <el-button type="primary" size="mini" @click="confirm()">确 定</el-button>
+        <el-button size="mini" @click="dialog.visible = false">取 消</el-button>
       </template>
       <el-button v-else @click="dialog.visible = false">关 闭</el-button>
     </span>
@@ -94,7 +52,7 @@
 <script>
 import { getProductList } from '@/api/wxmall'
 export default {
-  name: 'DialogGoods',
+  name: 'DialogSet',
   props: {
     list: {
       type: Array,
@@ -109,11 +67,11 @@ export default {
   data() {
     return {
       dialog: {
-        visible: false
+        visible: true
       },
       pager: {
         current: 1,
-        size: 20,
+        size: 5,
         total: 0
       },
       search: {
@@ -142,7 +100,7 @@ export default {
     reset() {
       this.pager = {
         current: 1,
-        size: 20,
+        size: 10,
         total: 0
       }
       this.search = {
@@ -299,8 +257,8 @@ export default {
 <style lang="scss" scoped>
 .dialog-goods {
   .modal-header {
-    height: 30px;
-    line-height: 30px;
+    height: 40px;
+    line-height: 40px;
     font-size: 14px;
     font-weight: bold;
     text-align: left;
@@ -315,52 +273,11 @@ export default {
   .modal-body {
     box-sizing: border-box;
     padding: 20px;
-
-    .md-search {
-      display: flex;
-
-      .search-item {
-        flex: 0 0 auto;
-      }
-
-      .search-btns {
-        margin-left: 20px;
-      }
-    }
-
-    .result-section {
-      margin-top: 20px;
-      box-sizing: border-box;
-
-      .blank-line {
-        margin-left: -20px;
-        margin-right: -20px;
-        height: 10px;
-        background: #f2f2f2;
-      }
-
-      .title {
-        margin-top: 10px;
-        font-size: 16px;
-        line-height: 40px;
-        color: black;
-      }
-
-      .label-line {
-        height: 60px;
-        overflow: auto;
-
-        .label {
-          line-height: 30px;
-          margin-right: 24px;
-          display: inline-block;
-          color: #16a8e2;
-
-          .icon {
-            cursor: pointer;
-          }
-        }
-      }
+    font-size: 14px;
+    .note-text {
+        margin-left: 15px;
+        font-size: 13px;
+        color: #999999;
     }
   }
 }
