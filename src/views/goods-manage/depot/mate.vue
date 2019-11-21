@@ -128,7 +128,7 @@
                 </p>
               </div>
               <div v-if="scope.row.commodity" class="bind-info">
-                <p>当前改数据对应的ERP产品资料为：{{ scope.row.commodity.name }}
+                <p>当前该数据对应的ERP产品资料为：{{ scope.row.commodity.name }}
                   <span v-for="(item,index) in pairData.specSkuList" :key="index">
                     {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
                   </span>
@@ -332,8 +332,6 @@ export default {
           this.pairData.platformCode = ''
           sessionStorage.setItem('mate', JSON.stringify(this.pairData))
           this._loadMatchList()
-        }).catch(_ => {
-
         })
       }).catch(() => {})
     },
@@ -363,6 +361,7 @@ export default {
         } else {
           this.$router.go(-1)
         }
+        this.subLoading = false
       }).catch(() => {
         this.subLoading = false
       })
