@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     append-to-body
-    class="m-dialog dialog-goods"
+    class="m-dialog dialog-store"
     :visible.sync="dialog.visible"
     :close-on-click-modal="false"
     width="900px"
@@ -13,7 +13,7 @@
     <div class="modal-body">
       <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
-          <el-input v-model="search.keyWord" style="width: 240px" placeholder="门店编码/门店名称" size="small" />
+          <el-input v-model="searchParams.keyWord" style="width: 240px" placeholder="门店编码/门店名称" size="small" />
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
@@ -22,48 +22,35 @@
       <el-table
         ref="multipleTable"
         border
-        size="small"
+        size="mini"
         :data="tableData"
         style="width: 100%;margin-top: 20px"
         max-height="256"
         @select-all="handleSelectAllChange"
         @select="handleSelect"
       >
+        <!-- <div v-if="searchParams.keyWord === ''" slot="empty">
+          当前无上线门店，先去维护<el-button type="text" @click="toStoreSetting">上线门店</el-button>吧
+        </div> -->
         <el-table-column type="selection" align="center" width="50" />
-        <el-table-column align="center" label="图片" min-width="120">
+        <el-table-column property="stCode" label="门店编码" width="150" show-overflow-tooltip />
+        <el-table-column label="门店名称">
           <template slot-scope="scope">
-            <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
-              <div class="x-image__preview">
-                <el-image
-                  fit="scale-down"
-                  :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[showImg(scope.row.mainPic)]"
-                />
-              </div>
-            </div>
-            <div v-else style="line-height: 32px">暂无上传</div>
+            <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" class="item">
+              <span>{{ scope.row.stName }}</span>
+              <!--              <span>说的是大三大萨达萨达撒打撒大撒的萨达萨达撒</span>-->
+            </el-badge>
+            <span v-else>{{ scope.row.stName }}</span>
           </template>
-          <!-- <template slot-scope="scope">
-            <div class="img-wrap">
-              <img :src="showImg(scope.row.mainPic)">
-            </div>
-          </template> -->
         </el-table-column>
-        <el-table-column prop="commodityName" label="门店编码" align="center" min-width="150" />
-        <el-table-column prop="commodityName" label="门店名称" align="center" min-width="150" />
-        <el-table-column prop="price" label="门店地址" align="price" min-width="150" />
-        <el-table-column prop="stock" label="门店电话" align="center" min-width="100" />
-        <!-- <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
-          </template>
-        </el-table-column>-->
+        <el-table-column property="address" label="门店地址" show-overflow-tooltip />
+        <el-table-column property="mobile" label="门店电话" show-overflow-tooltip />
       </el-table>
       <el-pagination
         background
         style="text-align: right;margin-top: 20px"
         :current-page="pager.current"
-        :page-sizes="[5, 10, 15, 20]"
+        :page-sizes="[10, 15, 20, 50]"
         :page-size="pager.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pager.total"
@@ -74,11 +61,11 @@
         <div class="blank-line" />
         <div class="title">
           <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
-          <span v-else style="color: red">请选取门店</span>
+          <span v-else>请选取门店</span>
         </div>
         <div class="label-line">
           <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-            <span v-text="mItem.commodityName" />
+            <span v-text="mItem.stName" />
             <i
               v-if="editable"
               class="icon el-icon-close"
@@ -90,16 +77,17 @@
     </div>
     <span slot="footer" class="dialog-footer">
       <template v-if="editable">
-        <el-button type="primary" size="small" @click="confirm()">确 定</el-button>
-        <el-button size="small" @click="dialog.visible = false">取 消</el-button>
+        <el-button type="primary" size="mini" @click="confirm()">确 定</el-button>
+        <el-button size="mini" @click="dialog.visible = false">取 消</el-button>
       </template>
-      <el-button v-else @click="dialog.visible = false">关 闭</el-button>
+      <el-button v-else size="mini" @click="dialog.visible = false">关 闭</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-import { getProductList } from '@/api/wxmall'
+import { queryStores } from '@/api/common'
+import { mapGetters } from 'vuex'
 export default {
   name: 'DialogGoods',
   props: {
@@ -116,14 +104,14 @@ export default {
   data() {
     return {
       dialog: {
-        visible: false
+        visible: true
       },
       pager: {
         current: 1,
-        size: 5,
+        size: 20,
         total: 0
       },
-      search: {
+      searchParams: {
         keyWord: ''
       },
       tableData: [],
@@ -131,8 +119,13 @@ export default {
       mySelectList: []
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {},
-  mounted() {},
+  mounted() {
+    this.fetchData()
+  },
   methods: {
     // 获取数据
     fetchData() {
@@ -152,7 +145,7 @@ export default {
         size: 10,
         total: 0
       }
-      this.search = {
+      this.searchParams = {
         keyWord: ''
       }
     },
@@ -190,11 +183,11 @@ export default {
     handleSelectAllChange(allList) {
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.commodityId === item.commodityId
+          return mItem.id === item.id
         })
         if (index > -1) {
           if (allList.length > 0) {
-            console.log('已存在' + item.commodityId + ':' + item.commodityName)
+            console.log('已存在' + item.id + ':' + item.stName)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
@@ -207,7 +200,7 @@ export default {
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.commodityId === row.commodityId
+        return mItem.id === row.id
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
@@ -218,7 +211,7 @@ export default {
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
       const index = this.tableData.findIndex(item => {
-        return item.commodityId === myItem.commodityId
+        return item.id === myItem.id
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
@@ -230,7 +223,7 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.commodityId === item.commodityId
+          return mItem.id === item.id
         })
         if (index > -1) {
           currentCheckedList.push(item)
@@ -243,23 +236,19 @@ export default {
       this.pager.total = 0
       this._getTableData()
     },
+    toStoreSetting() {
+      this.$router.push({ path: '/storeSetting/setting' })
+    },
     _getTableData() {
-      // this.tableData = []
-      /* setTimeout(() => {
-          this.tableData = this.tableArr.slice()
-          this.$nextTick(() => {
-            this.updateChecked()
-          })
-        }, 1000)
-        return false*/
       const params = {
-        storeId: '',
-        keyWord: this.search.keyWord.trim(),
+        merCode: this.merCode,
+        onlineStatus: 1, // integer($int32) 是否上线门店（0非上线门店，1上线门店）
+        searchKey: this.searchParams.keyWord.trim(),
         currentPage: this.pager.current,
-        pageSize: this.pager.size
+        pageSize: this.pager.size,
+        excelFlag: false
       }
-      console.log('params', params)
-      getProductList(params).then(res => {
+      queryStores(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []
           this.pager.total = res.data.totalCount
@@ -276,7 +265,7 @@ export default {
 </script>
 
 <style lang="scss">
-.dialog-goods {
+.dialog-store {
   .el-dialog__header {
     height: 0;
     padding: 0;
@@ -304,18 +293,19 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.dialog-goods {
+.dialog-store {
   .modal-header {
-    height: 30px;
-    line-height: 30px;
+    height: 40px;
+    line-height: 40px;
     font-size: 14px;
     font-weight: bold;
     text-align: left;
     background: #f2f2f2;
 
     .title {
-      margin-left: 15px;
-      font-size: 15px;
+      margin-left: 20px;
+      font-size: 16px;
+      color: #333;
     }
   }
 
@@ -348,9 +338,9 @@ export default {
 
       .title {
         margin-top: 10px;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 40px;
-        color: black;
+        color: #999;
       }
 
       .label-line {

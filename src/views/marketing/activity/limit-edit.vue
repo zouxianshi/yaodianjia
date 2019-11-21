@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <div class="app-container">
       <section class="form-box">
-        <el-form :model="xForm" size="small">
+        <el-form :model="xForm" size="small" label-width="80px">
           <el-form-item label="活动类型">
             <el-radio-group v-model="xForm.type">
               <el-radio label="限时优惠" value="1" />
@@ -10,13 +10,13 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="活动名称" required>
-            <el-input placeholder="不超过20字" />
+            <el-input placeholder="不超过20字" style="width: 320px;" />
           </el-form-item>
           <el-form-item label="活动描述">
-            <el-input type="textarea" placeholder="不超过50字" />
+            <el-input type="textarea" placeholder="不超过50字" style="width: 320px;" />
           </el-form-item>
           <el-form-item label="生效时间" required>
-            <el-time-picker v-model="xForm.startTime" placeholder="开始时间" />
+            <el-time-picker v-model="xForm.startTime" placeholder="开始时间" /> -
             <el-time-picker v-model="xForm.startTime" placeholder="结束时间" />
           </el-form-item>
           <el-form-item label="优惠模式">
@@ -29,34 +29,43 @@
             <el-radio-group v-model="xForm.range">
               <el-radio label="全部门店" value="1" />
               <el-radio label="部分门店" value="2" />
+              <el-button type="text" @click="toSelectStore">选取门店</el-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="是否免运">
-            <el-checkbox v-model="xForm.isBY" label="快递包邮" value="1" />
-            <el-checkbox v-model="xForm.isPS" label="免配送费" value="1" />
-            <el-checkbox v-model="xForm.isMY" label="否" value="1" />
+            <el-radio-group v-model="xForm.range">
+              <el-radio label="否" value="0" />
+              <el-radio label="是" value="1" />
+            </el-radio-group>
+            <template>
+              <el-checkbox v-model="xForm.isBY" label="快递包邮" value="1" />
+              <el-checkbox v-model="xForm.isPS" label="免配送费" value="1" />
+            </template>
           </el-form-item>
         </el-form>
         <div class="table-box">
           <div class="muti-set">
-            <span>批量设置</span>
-            <el-select v-model="xForm.mutiSetMode" placeholder="批量设置">
-              <template>
-                <el-option label="批量设置折扣" :value="1" />
-                <el-option label="批量设置减价" :value="2" />
-                <el-option label="批量设置限购" :value="3" />
-                <el-option label="批量设置库存" :value="4" />
-              </template>
-            </el-select>
+            <el-form label-width="80px">
+              <el-form-item label="批量设置">
+                <el-select v-model="mutiSetType" placeholder="批量设置" @change="mutiSetChange">
+                  <template>
+                    <el-option label="批量设置折扣" value="1" />
+                    <el-option label="批量设置减价" value="2" />
+                    <el-option label="批量设置限购" value="3" />
+                    <el-option label="批量设置库存" value="4" />
+                  </template>
+                </el-select>
+              </el-form-item>
+            </el-form>
           </div>
-          <el-table :data="tabData">
+          <el-table :data="tabData" size="small" style="margin: 20px 0">
             <el-table-column label="序号" type="index" />
             <el-table-column label="商品名称" prop="name" min-width="150px" />
             <el-table-column label="规格" prop="name" min-width="100px" />
             <el-table-column label="生产厂家" prop="name" min-width="120px" />
             <el-table-column label="折扣" prop="name" min-width="100px">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.value" style="width: 40px" @blur="valueChange" />
+                <el-input v-model="scope.row.value" style="width: 40px" />
                 <span>折</span>
                 <span>元</span>
               </template>
@@ -77,10 +86,11 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-button type="primary" size="small" @click="toSelectGoods">选择商品</el-button>
         </div>
       </section>
     </div>
-    <dialog-set ref="dialogSet" />
+    <dialog-set ref="dialogSet" :type="mutiSetType" />
     <dialog-goods ref="dialogGoods" />
     <dialog-store ref="dialogStore" />
   </div>
@@ -155,7 +165,7 @@ export default {
         ]
       },
       editDetail: null, // 编辑详情
-      formLabelWidth: '80px'
+      mutiSetType: '' // 设置类型 1.折扣 2.减价 3限购 4.库存
     }
   },
   computed: {
@@ -176,7 +186,17 @@ export default {
   created() {
     // this.fetchData()
   },
-  methods: {}
+  methods: {
+    mutiSetChange(val) {
+      this.$refs.dialogSet.open()
+    },
+    toSelectGoods() {
+      this.$refs.dialogGoods.open()
+    },
+    toSelectStore() {
+      this.$refs.dialogStore.open()
+    }
+  }
 }
 </script>
 <style lang="scss">

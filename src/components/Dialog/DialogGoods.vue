@@ -247,7 +247,7 @@ export default {
         return false*/
       const params = {
         storeId: '',
-        keyWord: this.search.keyWord.trim(),
+        name: this.search.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size
       }
@@ -299,8 +299,8 @@ export default {
 <style lang="scss" scoped>
 .dialog-goods {
   .modal-header {
-    height: 30px;
-    line-height: 30px;
+    height: 40px;
+    line-height: 40px;
     font-size: 14px;
     font-weight: bold;
     text-align: left;

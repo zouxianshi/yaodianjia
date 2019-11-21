@@ -8,7 +8,7 @@ import config from '@/utils/config'
 // 查询活动列表
 export function getActivityList(params) {
   return request({
-    url: `${config.merGoods}/1.0/admin/activities/_search`,
+    url: `${config.merPromote}/1.0/admin/activities/_search`,
     method: 'post',
     data: params
   })
