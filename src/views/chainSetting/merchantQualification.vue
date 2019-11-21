@@ -22,6 +22,7 @@
               @click="onEdit(scope.row)"
             >待完善</el-button>
             <el-button v-else type="text" icon="el-icon-edit" @click="onEdit(scope.row)" />
+            <el-button v-if="scope.$index > 6" type="text" icon="el-icon-delete" @click="onDel(scope.row)" />
             <!--            <span style="font-size: 14px;color: #ffffff;background-color: orangered;padding-left: 5px;padding-right: 5px">待完善</span>-->
             <!--            <el-button type="text" icon="el-icon-delete" style="margin-left: 10px" v-if="!scope.row.id" @click="onDel(scope.$index)"></el-button>-->
           </el-col>
@@ -59,29 +60,31 @@
         label-width="110px"
       >
         <el-form-item label="证书名称：" prop="certificateName">
-          <el-input v-model="form.certificateName" style="width: 260px" :disabled="form.sortNumber <= 6" maxlength="30" />
+          <el-input v-model.trim="form.certificateName" style="width: 260px" :disabled="form.sortNumber <= 6" maxlength="30" />
         </el-form-item>
         <el-form-item label="证书编号：" prop="certificateCode">
-          <el-input v-model="form.certificateCode" style="width: 260px" maxlength="30" />
+          <el-input v-model.trim="form.certificateCode" style="width: 260px" maxlength="30" />
         </el-form-item>
-        <el-form-item label="证书图片：" prop="certificatePicture">
-          <el-input v-model="form.certificatePicture" style="display: none" />
-          <el-upload
-            class="avatar-uploader"
-            :headers="headers"
-            :action="upLoadUrl"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
-          >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
-          </el-upload>
-        </el-form-item>
+        <div v-loading="uploadLoading">
+          <el-form-item label="证书图片：" prop="certificatePicture">
+            <el-input v-model="form.certificatePicture" style="display: none" />
+            <el-upload
+              class="avatar-uploader"
+              :headers="headers"
+              :action="upLoadUrl"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageUrl" :src="imageUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon" />
+            </el-upload>
+          </el-form-item>
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit('form')">确定</el-button>
+        <el-button type="primary" size="small" :loading="loading" @click="handleSubmit('form')">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -94,12 +97,24 @@ import config from '../../utils/config'
 import {
   getMerCertificate,
   createMerCertificate,
-  editMerCertificate
+  editMerCertificate,
+  delMerCertificate
 } from '../../api/chainSetting'
 export default {
   name: 'MerchantQualification',
   data() {
+    const _checkName = (rule, value, callback) => {
+      const reg = /^[A-Za-z0-9]+$/
+      if (!reg.test(value)) {
+        callback(new Error('只能输入中英文或数字'))
+      } else {
+        callback()
+      }
+    }
     return {
+      uploadLoading: false,
+      loading: false,
+      popVisible: false,
       visable: false,
       defaultName: [
         '营业执照',
@@ -124,7 +139,8 @@ export default {
           { required: true, message: '请输入证书名称', trgger: 'blur' }
         ],
         certificateCode: [
-          { required: true, message: '请输入证书编号', trgger: 'blur' }
+          { required: true, message: '请输入证书编号', trgger: 'blur' },
+          { validator: _checkName, message: '只能输入数字和英文字母', trigger: 'blur' }
         ],
         certificatePicture: [
           { required: true, message: '请上传证书图片', trgger: 'blur' }
@@ -200,6 +216,16 @@ export default {
         console.log('res-3', res.data)
       })
     },
+    onDel(row) {
+      this.$confirm('确定删除吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.del(row)
+      }).catch(() => {
+      })
+    },
     onEdit(row) {
       this.form = _.cloneDeep(row)
       console.log(this.form.certificatePicture)
@@ -214,6 +240,10 @@ export default {
       this.visable = true
     },
     save() {
+      if (this.uploadLoading) {
+        return
+      }
+      this.loading = true
       this.form.merCode = this.merCode
       if (this.form.id) {
         editMerCertificate(this.form).then(res => {
@@ -259,6 +289,31 @@ export default {
         })
       }
     },
+    del(row) {
+      this.loading = true
+      delMerCertificate({
+        merCode: this.merCode,
+        id: row.id
+      }).then(res => {
+        if (res.code === '10000') {
+          this.loading = false
+          this.$message({
+            message: '删除',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.getData()
+        } else {
+          this.loading = false
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        console.log('res-3', res.data)
+      })
+    },
     submit() {
       /* let sortNumber = 0
       _.map(this.list, (o) => {
@@ -288,6 +343,7 @@ export default {
     handleAvatarSuccess(res, file) {
       this.form.certificatePicture = res.data
       this.imageUrl = URL.createObjectURL(file.raw)
+      this.uploadLoading = false
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
@@ -300,6 +356,7 @@ export default {
       if (!isLt2M) {
         this.$message.error('上传证书图片大小不能超过 2MB!')
       }
+      this.uploadLoading = true
       return (isJPG || isPNG) && isLt2M
     }
   }

@@ -87,7 +87,7 @@
       </el-table>
       <!--      <el-button size="small" type="primary" style="margin-top: 10px" @click="visable = true">新增区域</el-button>-->
       <div style="margin-top: 20px;font-size: 14px">
-        <el-button type="text" @click="visable = true">按区域设置配送费用</el-button>
+        <el-button type="text" @click="onEdit(-1)">按区域设置配送费用</el-button>
         <span style="color: #99a9bf">如全部设置为0，表示包邮</span>
       </div>
       <div style="text-align: center;margin-top: 20px">
@@ -102,21 +102,23 @@
       :close-on-click-modal="false"
       @close="dismiss"
     >
-      <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
-      <div style="margin: 15px 0;" />
-      <span
-        v-for="city in showCities"
-        :key="city.id"
-      >
-        <el-checkbox
-          v-model="city.checked"
-          :label="city.id"
-          size="mini"
-          style="width: 150px"
-          :disabled="isSelected(city.id)"
-          @change="onCheck($event,city)"
-        >{{ city.name }}</el-checkbox>
-      </span>
+      <div v-if="visable">
+        <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
+        <div style="margin: 15px 0;" />
+        <span
+          v-for="city in showCities"
+          :key="city.id"
+        >
+          <el-checkbox
+            v-model="city.checked"
+            :label="city.id"
+            size="mini"
+            style="width: 150px"
+            :disabled="isSelected(city.id)"
+            @change="onCheck($event,city)"
+          >{{ city.name }}</el-checkbox>
+        </span>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取消</el-button>
         <el-button type="primary" size="small" @click="save">确定</el-button>
@@ -197,6 +199,12 @@ export default {
     },
     onEdit(index) {
       this.editPosition = index
+      if (index === -1) {
+        this.checkAll = false
+        this.isIndeterminate = false
+        this.visable = true
+        return
+      }
       const arr = []
       _.map(this.form.list[this.editPosition].rangeResDTOList, (v) => {
         arr.push({
@@ -315,9 +323,11 @@ export default {
       this.visable = false
       this.checkedCities = []
       this.isIndeterminate = false
+      this.checkAll = false
     },
     handleCheckAllChange(val) {
       if (val) {
+        console.log('da')
         const that = this
         if (this.editPosition === -1) {
           this.checkedCities = _.filter(this.cities, function(o) { return that.selected.indexOf(o.id) === -1 })
@@ -337,22 +347,30 @@ export default {
           o.checked = ids.indexOf(o.id) !== -1
         })
       } else {
+        console.log('db')
         this.checkedCities = []
         _.map(this.showCities, function(o) {
           o.checked = false
         })
       }
+      console.log(this.checkedCities)
       if (this.checkedCities.length > 0) {
+        console.log('aa')
         this.isIndeterminate = true
         if (this.selected.length === this.cities.length) {
+          console.log('bb')
           this.checkAll = true
         } else {
+          console.log('cc')
           this.checkAll = false
         }
       } else {
+        console.log('dd')
         this.isIndeterminate = false
         this.checkAll = false
       }
+      this.isIndeterminate = this.checkedCities.length > 0
+      this.checkAll = (this.checkedCities.length + this.selected.length) === this.cities.length
     },
     onCheck(value, item) {
       console.log(value, item)
@@ -365,7 +383,11 @@ export default {
       } else {
         this.checkedCities = _.filter(this.checkedCities, function(o) { return o.id !== item.id })
       }
+      console.log(this.cities)
+      console.log(this.selected)
       console.log(this.checkedCities)
+      this.isIndeterminate = this.checkedCities.length > 0
+      this.checkAll = (this.checkedCities.length + this.selected.length) === this.cities.length
     },
     submit() {
       if (this.cities.length - this.selected.length > 0) {

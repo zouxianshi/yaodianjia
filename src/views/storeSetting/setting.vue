@@ -10,9 +10,10 @@
       </template>
     </el-alert>
     <div>
-      <el-button type="primary" size="small" style="margin-top: 20px" @click="visable = true">添加上线门店</el-button>
+      <el-button type="primary" size="small" style="margin-top: 20px" @click="showDialog">添加上线门店</el-button>
+
       <div style="float: right">
-        <el-input v-model="searchParams.searchKey" size="small" style="width: 200px;margin-top: 20px;margin-left: 80px;" placeholder="门店编码/门店名称" />
+        <el-input v-model="searchVal" size="small" style="width: 200px;margin-top: 20px;margin-left: 80px;" placeholder="门店编码/门店名称" />
         <el-button type="primary" size="small" style="margin-left: 10px" @click="getData">查询</el-button>
         <el-button type="primary" size="small" @click="handleExport">导出<i class="el-icon-download el-icon--right" /></el-button>
       </div>
@@ -26,7 +27,14 @@
       :close-on-click-modal="false"
       @close="dismiss"
     >
-      <div>
+      <div
+        style=" font-size: 14px;
+    font-weight: 400;
+    color: #99a9bf"
+      >
+        上线门店需配置门店地址、门店电话、配送方式，未配置的门店无法上线门店商城
+      </div>
+      <div style="margin-top: 10px">
         <span>选择门店：</span>
         <el-input v-model="diaLogSearchParams.searchKey" size="small" placeholder="门店编码/名称" style="width: 180px" />
         <el-button size="small" type="primary" style="margin-left: 5px" @click="getDialogData">查询</el-button>
@@ -85,15 +93,34 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="pages">
-        <el-pagination
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="diaLogTotalCount"
-          :current-page="diaLogSearchParams.currentPage"
-          :page-size="diaLogSearchParams.pageSize"
-          @current-change="dialogPageChange"
-        />
+      <div style="position: relative">
+        <span
+          v-if="dialogSelectedStore"
+          style="
+        position: absolute;
+        margin-top: 25px;
+        width: 250px;
+        display: block;
+        overflow: hidden;
+        height:16px;
+        line-height: 16px;
+        text-overflow: ellipsis;
+        -ms-text-overflow: ellipsis;
+        white-space:nowrap;"
+        >
+          已选门店：{{ dialogSelectedStore }}
+        </span>
+        <div class="pages">
+          <el-pagination
+            background
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="diaLogTotalCount"
+            :current-page="diaLogSearchParams.currentPage"
+            :page-size="diaLogSearchParams.pageSize"
+            @size-change="dialogPageSizeChange"
+            @current-change="dialogPageChange"
+          />
+        </div>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取 消</el-button>
@@ -108,7 +135,7 @@
         @selection-change="handleSelectionChange"
       >
         <div slot="empty">
-          当前无上线门店，上线商城需添加<el-button type="text" @click="visable = true">上线门店</el-button>
+          当前无上线门店，上线商城需添加<el-button type="text" @click="showDialog">上线门店</el-button>
         </div>
         <el-table-column
           type="selection"
@@ -166,7 +193,8 @@
         <el-table-column label="操作" width="100px">
           <template slot-scope="scope">
             <!--            <el-button size="small" type="text">编辑</el-button>-->
-            <el-button size="small" type="text" :disabled="scope.row.centerStore === 1" @click="offline(scope.row.stCode)">下线</el-button>
+            <el-button type="text" @click="onEdit">编辑</el-button>
+            <el-button type="text" :disabled="scope.row.centerStore === 1" @click="offline(scope.row.stCode)">下线</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -177,6 +205,7 @@
           :total="totalCount"
           :current-page="searchParams.currentPage"
           :page-size="searchParams.pageSize"
+          @size-change="pageSizeChange"
           @current-change="pageChange"
         />
       </div>
@@ -215,17 +244,21 @@ export default {
         currentPage: 1,
         pageSize: 20,
         searchKey: null,
-        onlineStatus: 1
+        onlineStatus: 1,
+        status: 1
       },
+      searchVal: null,
       diaLogSearchParams: {
         merCode: null,
         currentPage: 1,
         pageSize: 20,
         searchKey: null,
-        onlineStatus: 0
+        onlineStatus: 0,
+        status: 1
       },
       multipleSelection: [],
       dialogMultipleSelection: [],
+      dialogSelectedStore: null,
       onlineStore: 0,
       offlineStore: 0,
       list: [],
@@ -237,16 +270,26 @@ export default {
   },
   created() {
     this.getData()
-    this.getDialogData()
+    // this.getDialogData()
   },
   methods: {
+    _getData: _.debounce(function() {
+      this.getData()
+    }, 300, {
+      'leading': false,
+      'trailing': true
+    }),
+    onEdit() {
+      window.location.href = window.location.origin + '/merchant/#/institution/list'
+    },
     getData() {
       this.loading = true
       this.searchParams.merCode = this.merCode
       queryStore({
         merCode: this.merCode,
         currentPage: 1,
-        pageSize: 200000
+        pageSize: 200000,
+        status: 1
       }).then(res => {
         if (res.code === '10000') {
           this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
@@ -270,6 +313,10 @@ export default {
         }
         console.log('res-2', this.list)
       })
+    },
+    showDialog() {
+      this.visable = true
+      this.getDialogData()
     },
     getDialogData() {
       this.dialogLoading = true
@@ -360,8 +407,16 @@ export default {
             type: 'success',
             duration: 5 * 1000
           })
-          this.getData()
           this.loading = false
+          // this.totalCount = params.list.length
+          // this.list = _.cloneDeep(_.filter(this.list, o => {
+          //     return _.indexOf(params.list, o.stCode) === -1
+          // }))
+          // console.log(this.multipleSelection.length, this.list.length, this.currentPage)
+          if (this.multipleSelection.length >= this.list.length && this.searchParams.currentPage > 1) {
+            this.searchParams.currentPage--
+          }
+          this.getData()
         } else {
           this.loading = false
           this.$message({
@@ -382,12 +437,37 @@ export default {
     handleDialogSelectionChange(val) {
       this.dialogMultipleSelection = val
       console.log(this.dialogMultipleSelection)
+      this.dialogSelectedStore = ''
+      _.map(_.cloneDeep(this.dialogMultipleSelection), o => {
+        this.dialogSelectedStore = this.dialogSelectedStore + o.stName + ' '
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
     },
+    pageSizeChange(pageSize) {
+      this.loading = true
+      this.searchParams.pageSize = pageSize
+      queryStore(this.searchParams).then(res => {
+        if (res.code === '10000') {
+          this.list = _.cloneDeep(res.data.data)
+          this.totalCount = res.data.totalCount
+          this.loading = false
+          console.log(this.list, this.dialogList)
+        } else {
+          this.loading = false
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        console.log('res-2', this.list)
+      })
+    },
     pageChange(currentPage) {
+      console.log(currentPage)
       this.loading = true
       this.searchParams.currentPage = currentPage
       queryStore(this.searchParams).then(res => {
@@ -407,8 +487,14 @@ export default {
         console.log('res-2', this.list)
       })
     },
+    dialogPageSizeChange(pageSize) {
+      this.diaLogSearchParams.pageSize = pageSize
+      this.getDialogData()
+    },
     dialogPageChange(currentPage) {
-      this.loading = true
+      this.diaLogSearchParams.currentPage = currentPage
+      this.getDialogData()
+      /* this.loading = true
       this.diaLogSearchParams.currentPage = currentPage
       this.diaLogSearchParams.merCode = this.merCode
       queryStore(this.diaLogSearchParams).then(res => {
@@ -426,7 +512,7 @@ export default {
           })
         }
         console.log('res-2', this.list)
-      })
+      })*/
     },
     handleExport() {
       this.searchParams.excelFlag = true
@@ -439,7 +525,7 @@ export default {
               type: 'error'
             })
           } else {
-            download.blob(res)
+            download.blob(res, '上线门店')
             this.$message({
               message: '数据导出成功',
               type: 'success'
@@ -452,6 +538,7 @@ export default {
     },
     dismiss() {
       this.visable = false
+      this.diaLogSearchParams.searchKey = null
       this.dialogMultipleSelection = null
     },
     getDeliveryFun(row) {
@@ -479,6 +566,12 @@ export default {
         funNum++
       }
       return funVal
+    }
+  },
+  watch: {
+    searchVal() {
+      this.searchParams.searchKey = this.searchVal
+      this._getData()
     }
   }
 }
