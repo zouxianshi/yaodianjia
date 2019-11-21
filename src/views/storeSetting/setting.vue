@@ -259,6 +259,12 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
+  watch: {
+    searchVal() {
+      this.searchParams.searchKey = this.searchVal
+      this._getData()
+    }
+  },
   created() {
     this.getData()
     // this.getDialogData()
@@ -558,12 +564,6 @@ export default {
         funNum++
       }
       return funVal
-    }
-  },
-  watch: {
-    searchVal() {
-      this.searchParams.searchKey = this.searchVal
-      this._getData()
     }
   }
 }
