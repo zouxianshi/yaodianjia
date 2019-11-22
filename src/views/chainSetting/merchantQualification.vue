@@ -333,6 +333,7 @@ export default {
 
     },
     dismiss() {
+      this.uploadLoading = false
       this.form.id = null
       this.form.certificatePicture = null
       this.form.certificateName = null
@@ -341,8 +342,13 @@ export default {
       this.visable = false
     },
     handleAvatarSuccess(res, file) {
-      this.form.certificatePicture = res.data
-      this.imageUrl = URL.createObjectURL(file.raw)
+      if (res.code === '10000') {
+        this.form.certificatePicture = res.data
+        console.log(this.form.certificatePicture)
+        this.imageUrl = URL.createObjectURL(file.raw)
+      } else {
+        this.$message.error(res.msg)
+      }
       this.uploadLoading = false
     },
     beforeAvatarUpload(file) {
@@ -356,8 +362,11 @@ export default {
       if (!isLt2M) {
         this.$message.error('上传证书图片大小不能超过 2MB!')
       }
-      this.uploadLoading = true
-      return (isJPG || isPNG) && isLt2M
+      const result = (isJPG || isPNG) && isLt2M
+      if (result) {
+        this.uploadLoading = true
+      }
+      return result
     }
   }
 }

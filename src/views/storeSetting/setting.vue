@@ -13,7 +13,7 @@
       <el-button type="primary" size="small" style="margin-top: 20px" @click="showDialog">添加上线门店</el-button>
 
       <div style="float: right">
-        <el-input v-model="searchVal" size="small" style="width: 200px;margin-top: 20px;margin-left: 80px;" placeholder="门店编码/门店名称" />
+        <el-input v-model="searchParams.searchKey" size="small" style="width: 200px;margin-top: 20px;margin-left: 80px;" placeholder="门店编码/门店名称" />
         <el-button type="primary" size="small" style="margin-left: 10px" @click="getData">查询</el-button>
         <el-button type="primary" size="small" @click="handleExport">导出<i class="el-icon-download el-icon--right" /></el-button>
       </div>
@@ -238,7 +238,6 @@ export default {
         onlineStatus: 1,
         status: 1
       },
-      searchVal: null,
       diaLogSearchParams: {
         merCode: null,
         currentPage: 1,
@@ -291,10 +290,14 @@ export default {
       queryStore(this.searchParams).then(res => {
         if (res.code === '10000') {
           this.list = _.cloneDeep(res.data.data)
+          if (!this.list) {
+            this.searchParams.currentPage = 1
+          }
           this.totalCount = res.data.totalCount
           this.loading = false
           console.log(this.list, this.dialogList)
         } else {
+          this.searchParams.currentPage = 1
           this.loading = false
           this.$message({
             message: res.msg,
@@ -317,6 +320,9 @@ export default {
           this.dialogList = _.cloneDeep(res.data.data)
           this.diaLogTotalCount = res.data.totalCount
           this.dialogLoading = false
+          if (!this.dialogList) {
+            this.diaLogSearchParams.currentPage = 1
+          }
           console.log(this.list, this.dialogList)
         } else {
           this.dialogLoading = false
@@ -404,7 +410,7 @@ export default {
           //     return _.indexOf(params.list, o.stCode) === -1
           // }))
           // console.log(this.multipleSelection.length, this.list.length, this.currentPage)
-          if (this.multipleSelection.length >= this.list.length && this.searchParams.currentPage > 1) {
+          if ((this.multipleSelection.length >= this.list.length || this.list.length <= 1) && this.searchParams.currentPage > 1) {
             this.searchParams.currentPage--
           }
           this.getData()
@@ -506,8 +512,22 @@ export default {
       })*/
     },
     handleExport() {
-      this.searchParams.excelFlag = true
-      exportData(this.searchParams)
+      if (this.multipleSelection.length <= 0) {
+        this.$message({
+          message: '请至少选择一个门店',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        return
+      }
+      const stCodeList = _.map(this.multipleSelection, (o) => {
+        return o.stCode
+      })
+      // this.searchParams.excelFlag = true
+      exportData({
+        merCode: this.merCode,
+        stCodeList: stCodeList
+      })
         .then(res => {
           this.searchParams.excelFlag = null
           if (res.type === 'application/json') {
@@ -561,10 +581,6 @@ export default {
     }
   },
   watch: {
-    searchVal() {
-      this.searchParams.searchKey = this.searchVal
-      this._getData()
-    }
   }
 }
 </script>

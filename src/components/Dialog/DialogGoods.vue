@@ -100,6 +100,10 @@ export default {
       type: Array,
       default: () => []
     },
+    limitMax: { // 选取数量限制个数 0表示不限制
+      type: Number,
+      default: 0
+    },
     editable: {
       // 是否可编辑
       type: Boolean,
@@ -133,7 +137,9 @@ export default {
     },
     open() {
       this.dialog.visible = true
-      this.mySelectList = this.list.slice()
+      if (this.list && this.list.length > 0) {
+        this.mySelectList = this.list.slice()
+      }
       this.fetchData()
     },
     close() {
@@ -152,6 +158,10 @@ export default {
     confirm() {
       if (this.mySelectList && this.mySelectList.length === 0) {
         this.$message({ type: 'warning', message: '请选取商品' })
+        return false
+      }
+      if (this.limitMax !== 0 && this.mySelectList.length > this.limitMax) {
+        this.$message({ type: 'warning', message: '最多只能选取' + this.limitMax + '个商品' })
         return false
       }
       this.$emit('confirm', this.mySelectList)
@@ -247,7 +257,7 @@ export default {
         return false*/
       const params = {
         storeId: '',
-        keyWord: this.search.keyWord.trim(),
+        name: this.search.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size
       }
@@ -299,16 +309,17 @@ export default {
 <style lang="scss" scoped>
 .dialog-goods {
   .modal-header {
-    height: 30px;
-    line-height: 30px;
+    height: 40px;
+    line-height: 40px;
     font-size: 14px;
     font-weight: bold;
     text-align: left;
     background: #f2f2f2;
 
     .title {
-      margin-left: 15px;
-      font-size: 15px;
+      margin-left: 20px;
+      font-size: 16px;
+      color: #333;
     }
   }
 
@@ -341,9 +352,9 @@ export default {
 
       .title {
         margin-top: 10px;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 40px;
-        color: black;
+        color: #999;
       }
 
       .label-line {
