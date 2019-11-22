@@ -107,3 +107,9 @@ export function checkEmail(value) {
     return true
   }
 }
+
+// 校验两位小数
+export function checkNumberdouble(value) {
+  const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
+  return reg.test(value)
+}

@@ -62,7 +62,7 @@
           </span>
         </el-form-item>
         <el-form-item v-if="form.isfreeShipping === 1" label="免运门槛：" prop="freeEntryThreshold">
-          <el-input v-model="form.freeEntryThreshold" style="width: 100px" size="mini" type="number" />
+          <el-input v-model="form.freeEntryThreshold" style="width: 100px" size="mini" maxlength="5" />
           元
           <span style="font-size: 12px;font-weight: 400;color: #99a9bf;margin-left: 5px">
             订单超过多少金额可以免配送费
@@ -80,10 +80,11 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit('form')">确定</el-button>
+        <el-button type="primary" size="small" :loading="loading" @click="handleSubmit('form')">确定</el-button>
       </div>
     </el-dialog>
     <el-table
+      v-loading="loading"
       :data="list"
       height="550"
       style="margin-top: 20px"
@@ -136,16 +137,17 @@ export default {
   name: 'DeliverySetting',
   data() {
     return {
+      loading: false,
       visable: false,
       multipleSelection: [],
       list: [],
       form: {
-        cashOnDelivery: 0.0,
+        cashOnDelivery: null,
         deliveryTime: null,
-        distributionFee: 0,
-        floatOverKilometers: 0,
-        freeEntryThreshold: 0,
-        initialDeliveryPrice: 0,
+        distributionFee: null,
+        floatOverKilometers: null,
+        freeEntryThreshold: null,
+        initialDeliveryPrice: null,
         isfloatingFreight: 0,
         isfreeShipping: 0,
         merCode: null,
@@ -178,7 +180,7 @@ export default {
                 callback()
               }
             } else {
-              callback()
+              return callback(new Error('请输入配送费'))
             }
           }, trgger: 'blur' }
         ],
@@ -219,6 +221,7 @@ export default {
       })
     },
     getData() {
+      this.loading = true
       getDeliverySettings(this.merCode).then(res => {
         if (res.code === '10000') {
           this.list = _.cloneDeep(res.data)
@@ -262,12 +265,12 @@ export default {
           })
           return
         }
-        this.form.cashOnDelivery = 0
+        this.form.cashOnDelivery = null
         this.form.deliveryTime = null
-        this.form.distributionFee = 0
-        this.form.floatOverKilometers = 0
-        this.form.freeEntryThreshold = 0
-        this.form.initialDeliveryPrice = 0
+        this.form.distributionFee = null
+        this.form.floatOverKilometers = null
+        this.form.freeEntryThreshold = null
+        this.form.initialDeliveryPrice = null
         this.form.isfloatingFreight = 0
         this.form.isfreeShipping = 0
         this.form.merCode = null
@@ -289,10 +292,12 @@ export default {
         this.form.freeEntryThreshold = null
       }
       console.log(this.form)
+      this.loading = true
       saveDeliverySettings(this.form).then(res => {
         if (res.code === '10000') {
           this.loading = false
           this.dismiss()
+          this.loading = false
           this.$message({
             message: '保存成功',
             type: 'success',
@@ -300,6 +305,7 @@ export default {
           })
           this.getData()
         } else {
+          this.loading = false
           this.loading = false
           this.$message({
             message: res.msg,

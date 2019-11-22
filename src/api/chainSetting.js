@@ -127,6 +127,14 @@ export function editMerCertificate(params) {
     data: params
   })
 }
+// 删除商家资质
+export function delMerCertificate(params) {
+  return request({
+    url: `${api_wxmall}/1.0/mer-certificate/${params.merCode}/${params.id}/`,
+    method: 'delete',
+    data: params
+  })
+}
 // 上线或下线门店
 export function onOffStore(params) {
   return request({

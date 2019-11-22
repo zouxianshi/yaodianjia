@@ -72,7 +72,6 @@
           :data="tableData"
           stripe
           style="width: 100%"
-          @current-change="handleCurrentChange"
         >
           <el-table-column
             prop="orCode"
@@ -146,6 +145,16 @@
             min-width="155"
             label="申请人"
           />
+          <el-table-column
+            prop="createName"
+            align="left"
+            label="操作"
+            fixed="right"
+          >
+            <template slot-scope="scope">
+              <el-button size="mini" @click="handleCurrentChange(scope.row)">查看</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="table-footer">
           <pagination

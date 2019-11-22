@@ -90,7 +90,8 @@ export default {
       queryStore({
         merCode: this.merCode,
         currentPage: 1,
-        pageSize: 200000
+        pageSize: 200000,
+        status: 1
       }).then(res => {
         if (res.code === '10000') {
           this.list = _.cloneDeep(res.data.data)

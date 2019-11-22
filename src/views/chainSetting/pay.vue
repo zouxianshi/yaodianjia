@@ -58,7 +58,7 @@
     >
       <el-form ref="form" :model="form" :rules="rules" label-position="right" label-width="140px">
         <el-form-item label="支付授权配置：">
-          <span v-if="data && data.payAutoConfig">
+          <span>
             <span>{{ form.payAutoConfig }}</span>
             <el-button type="text" style="margin-left: 20px" class="copy-key" :data-clipboard-text="form.payAutoConfig" @click="onCopyLink">复制</el-button>
             <el-popover
@@ -67,18 +67,24 @@
               width="500"
               trigger="click"
             >
-              <span>
-                1：进入微信商户平台<el-link href="https://pay.weixin.qq.com/" type="primary" :underline="false" target="_blank">https://pay.weixin.qq.com/</el-link><br>
+              <span style="line-height: 30px">
+                1：进入微信商户平台<br>
                 2：点击“产品中心”，点击“开发配置”<br>
                 3：找到支付配置，公众号支付配置，点击“添加”<br>
                 4：选择左侧相应的支付授权链接复制<br>
-                5：粘贴到输入框中<br>
+                5：粘贴到输入框中,<el-button type="text" @click="showGuide(4)">点击查看图片</el-button><br>
                 6：支付授权目录开始下拉框切记选择https://
               </span>
-              <el-button slot="reference" type="text" class="el-icon-question" style="margin-left: 5px" />
+              <el-image
+                id="imgWechatGuide4"
+                style="width: 0px; height: 0px"
+                :src="wechatGuide4"
+                :preview-src-list="wechatGuideList4"
+              />
+              <el-button slot="reference" type="text" size="mini" class="el-icon-question" style="margin-left: 5px" />
             </el-popover>
           </span>
-          <span v-else>
+          <!--<span v-else>
             <el-input v-model="form.payAutoConfig" style="width: 300px" maxlength="100" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
             <el-popover
               placement="right"
@@ -96,7 +102,7 @@
               </span>
               <el-button slot="reference" type="text" class="el-icon-question" style="margin-left: 5px" />
             </el-popover>
-          </span>
+          </span>-->
         </el-form-item>
         <el-form-item :label="isWechat ? '微信支付商户号：' : '支付宝商户号：'" prop="merchantCode">
           <el-input v-model="form.merchantCode" style="width: 300px" maxlength="50" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
@@ -106,14 +112,18 @@
             width="500"
             trigger="click"
           >
-            <span>
+            <span style="line-height: 30px">
               1：进入微信商户平台<el-link href="https://pay.weixin.qq.com/" type="primary" :underline="false" target="_blank">https://pay.weixin.qq.com/</el-link><br>
-              2：点击“产品中心”，点击“开发配置”<br>
-              3：找到支付配置，公众号支付配置，点击“添加”<br>
-              4：选择左侧相应的支付授权链接复制<br>
-              5：粘贴到输入框中<br>
-              6：支付授权目录开始下拉框切记选择https://
+              2：点击“微信支付”，复制微信支付商户号<br>
+              3：粘贴到输入框中,
+              <el-button type="text" @click="showGuide(1)">点击查看图片</el-button>
             </span>
+            <el-image
+              id="imgWechatGuide1"
+              style="width: 0px; height: 0px"
+              :src="wechatGuide1"
+              :preview-src-list="wechatGuideList1"
+            />
             <el-button slot="reference" type="text" class="el-icon-question" style="margin-left: 5px" />
           </el-popover>
         </el-form-item>
@@ -125,39 +135,67 @@
             width="500"
             trigger="click"
           >
-            <span>
+            <span style="line-height: 30px">
               1：进入微信商户平台<el-link href="https://pay.weixin.qq.com/" type="primary" :underline="false" target="_blank">https://pay.weixin.qq.com/</el-link><br>
-              2：点击“产品中心”，点击“开发配置”<br>
-              3：找到支付配置，公众号支付配置，点击“添加”<br>
-              4：选择左侧相应的支付授权链接复制<br>
-              5：粘贴到输入框中<br>
-              6：支付授权目录开始下拉框切记选择https://
+              2：点击“API安全”，根据要求安装相关证书，已安装略过<br>
+              3：点击“设置秘钥”，
+              <el-button type="text" @click="showGuide(2)">点击查看图片</el-button>
             </span>
+            <el-image
+              id="imgWechatGuide2"
+              style="width: 0px; height: 0px"
+              :src="wechatGuide2"
+              :preview-src-list="wechatGuideList2"
+            />
             <el-button slot="reference" type="text" class="el-icon-question" style="margin-left: 5px" />
           </el-popover>
         </el-form-item>
-        <el-form-item label="商户证书：" prop="merchantCertificate">
-          <el-input v-model="form.merchantCertificate" style="display: none" />
-          <el-upload
-            class="upload-demo"
-            :headers="headers"
-            :action="upLoadUrl"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            :limit="1"
-            :on-exceed="handleExceed"
-            :on-success="handleUploadSuccess"
-            :file-list="fileList"
-          >
-            <el-button size="small" type="primary">点击上传</el-button>
+        <div v-loading="uploadLoading">
+          <el-form-item label="商户证书：" prop="merchantCertificate">
+            <el-input v-model="form.merchantCertificate" style="display: none" />
+            <el-upload
+              class="upload-demo"
+              :headers="headers"
+              :action="upLoadUrl"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :before-remove="beforeRemove"
+              :limit="1"
+              :on-exceed="handleExceed"
+              :on-success="handleUploadSuccess"
+              :before-upload="handleBefore"
+              :file-list="fileList"
+            >
+              <el-button size="small" type="primary">点击上传</el-button>
+
             <!--            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
+            </el-upload>
+            <el-popover
+              placement="right"
+              title="操作提示："
+              width="500"
+              trigger="click"
+            >
+              <span style="line-height: 30px">
+                1：进入微信商户平台  https://pay.weixin.qq.com/<br>
+                2：进入账户中心>API安全>下载证书<br>
+                3：<el-button type="text" @click="showGuide(3)">点击查看图片</el-button>
+              </span>
+              <el-image
+                id="imgWechatGuide3"
+                style="width: 0px; height: 0px"
+                :src="wechatGuide3"
+                :preview-src-list="wechatGuideList3"
+              />
+              <el-button slot="reference" type="text" class="el-icon-question" style="margin-top: 5px" />
+            </el-popover>
+          </el-form-item>
+
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dismiss">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit('form')">确定</el-button>
+        <el-button type="primary" size="small" :loading="loading" @click="handleSubmit('form')">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -178,6 +216,8 @@ export default {
   name: 'Pay',
   data() {
     return {
+      uploadLoading: false,
+      loading: false,
       visable: false,
       wechat: false,
       alipay: false,
@@ -198,6 +238,14 @@ export default {
         status: 0
       },
       fileList: [],
+      wechatGuide1: require('../../assets/image/chainSetting/img_wechat_guide1.png'),
+      wechatGuide2: require('../../assets/image/chainSetting/img_wechat_guide2.jpg'),
+      wechatGuide3: require('../../assets/image/chainSetting/img_wechat_guide3.png'),
+      wechatGuide4: require('../../assets/image/chainSetting/img_wechat_guide4.jpg'),
+      wechatGuideList1: [require('../../assets/image/chainSetting/img_wechat_guide1.png')],
+      wechatGuideList2: [require('../../assets/image/chainSetting/img_wechat_guide2.jpg')],
+      wechatGuideList3: [require('../../assets/image/chainSetting/img_wechat_guide3.png')],
+      wechatGuideList4: [require('../../assets/image/chainSetting/img_wechat_guide4.jpg')],
       rules: {
         merchantCode: [
           { required: true, message: '请输入支付商户号', trgger: 'blur' }
@@ -235,6 +283,7 @@ export default {
       })
     },
     onSetting(isWechat) {
+      this.form.payAutoConfig = 'xxx.xxxx.xx/xx/xxxx/'
       this.isWechat = isWechat
       this.visable = true
     },
@@ -403,10 +452,14 @@ export default {
       })
     },
     submit() {
+      if (this.uploadLoading) {
+        return
+      }
       this.loading = true
       this.form.merCode = this.merCode
       setPayset(this.form).then(res => {
         if (res.code === '10000') {
+          this.loading = false
           this.$message({
             message: '保存成功',
             type: 'success',
@@ -460,12 +513,26 @@ export default {
       this.form.status = 1*/
       this.visable = false
     },
+    showGuide(index) {
+      if (index === 1) {
+        document.getElementById('imgWechatGuide1').click()
+      } else if (index === 2) {
+        document.getElementById('imgWechatGuide2').click()
+      } else if (index === 3) {
+        document.getElementById('imgWechatGuide3').click()
+      } else if (index === 4) {
+        document.getElementById('imgWechatGuide4').click()
+      }
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList)
       this.form.merchantCertificate = null
     },
     handlePreview(file) {
       console.log(file)
+    },
+    handleBefore() {
+      this.uploadLoading = true
     },
     handleExceed(files, fileList) {
       console.log(this.fileList)
@@ -475,6 +542,7 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`)
     },
     handleUploadSuccess(res, file) {
+      this.uploadLoading = false
       this.form.merchantCertificate = res.data
       console.log(this.form.merchantCertificate)
     },
