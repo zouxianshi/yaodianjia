@@ -52,8 +52,7 @@ export function delActivity(params) {
 // 失效活动（限时优惠）
 export function disableActivity(params) {
   return request({
-    url: `${config.merPromote}/1.0/admin/activities/${params.id}`,
-    method: 'delete',
-    data: params
+    url: `${config.merPromote}/1.0/admin/activities/_invalid/${params.id}`,
+    method: 'put'
   })
 }
