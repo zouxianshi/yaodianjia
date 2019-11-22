@@ -9,7 +9,8 @@ const state = {
   userId: '',
   merCode: '',
   introduction: '',
-  roles: []
+  roles: [],
+  resList: []
 }
 
 const mutations = {
@@ -33,6 +34,9 @@ const mutations = {
   },
   SET_MERCODE: (state, code) => {
     state.merCode = code
+  },
+  SET_RESLIST: (state, resList) => {
+    state.resList = resList
   }
 }
 
@@ -44,6 +48,7 @@ const actions = {
         const { data } = response
         const { account, avatarPath, merCode, resList, superAdmin } = data
         commit('SET_ROLES', superAdmin ? ['admin'] : resList)
+        commit('SET_RESLIST', resList)
         commit('SET_NAME', account)
         commit('SET_AVATAR', avatarPath)
         commit('SET_MERCODE', merCode)

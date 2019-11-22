@@ -103,6 +103,12 @@ export default {
         this.is_file = false
         return false
       }
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('上传文件大小不能超过 2MB!')
+        return false
+      }
+
       return true
     },
     handleUpload() {

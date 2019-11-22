@@ -21,29 +21,29 @@ class InnerCtor {
         name: '商品管理',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('merchant-org'),
+        disabled: this.get('commodity'),
         children: [
           {
             name: '商品库',
             path: '/goods-manage/depot',
-            disabled: this.get('merchant-org.merchant-org-org'),
+            disabled: this.get('commodity.commodity-lib'),
           },
           {
             name: `自建新品`,
             path: '/goods-manage/apply',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('commodity.commodity-self')
           },{
             name:'新品审核',
             path: '/goods-manage/examine',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('commodity.commodity-check')
           },{
             name: `自定义分组`,
             path: '/goods-manage/group',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('commodity.commodity-group')
           },{
             name: `门店商品管理`,
             path: '/goods-manage/store-goods',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('commodity.commodity-store')
           },{
             name: `组合商品`,
             path: '/goods-manage/constitute-goods',
@@ -158,23 +158,23 @@ class InnerCtor {
 
 
   get (str) {
-    return true
-    // let p = this.p;
-    // if (_.isEmpty(p)) {
-    //   p = this.handlerPs()
-    // }
-    // const strArr = _.split(str, '.')
-    // const leven1Code = strArr[0]
-    // const leven2Code = strArr[1]
-    // const leven3Code = strArr[2] || ''
-    // switch (strArr.length) {
-    //   case 1:
-    //     return _.has(p, leven1Code)
-    //   case 2:
-    //     return _.has(p[leven1Code], leven2Code)
-    //   default:
-    //     return p[leven1Code][leven2Code].includes(leven3Code)
-    // }
+    
+    let p = this.p;
+    if (_.isEmpty(p)) {
+      p = this.handlerPs()
+    }
+    const strArr = _.split(str, '.')
+    const leven1Code = strArr[0]
+    const leven2Code = strArr[1]
+    const leven3Code = strArr[2] || ''
+    switch (strArr.length) {
+      case 1:
+        return _.has(p, leven1Code)
+      case 2:
+        return _.has(p[leven1Code], leven2Code)
+      default:
+        return p[leven1Code][leven2Code].includes(leven3Code)
+    }
   }
 }
 
