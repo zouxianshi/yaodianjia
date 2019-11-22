@@ -47,7 +47,7 @@ class InnerCtor {
           },{
             name: `组合商品`,
             path: '/goods-manage/constitute-goods',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: true
           }
         ]
       },
@@ -55,7 +55,7 @@ class InnerCtor {
         name: '内容管理',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('merchant-org'),
+        disabled: true,
         children: [
           {
             name: '首页轮播图',
@@ -81,14 +81,14 @@ class InnerCtor {
         name: '连锁设置',
         icon: 'icongoods',
         path: '/chainSetting',
-        disabled: true,
+        disabled: this.get('merchant-org'),
         children: []
       },
       {
         name: '门店设置',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('merchant-org'),
+        disabled: true,
         children: [
           /*{
             name: '所有门店',
@@ -141,8 +141,6 @@ class InnerCtor {
       }
     ]
   }
-
-
   handlerPs() {
     let p = {}
     _.map(store.state.user.resList, v => {
@@ -158,7 +156,7 @@ class InnerCtor {
 
 
   get (str) {
-    
+    return true
     let p = this.p;
     if (_.isEmpty(p)) {
       p = this.handlerPs()

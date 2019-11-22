@@ -118,6 +118,7 @@
             align="left"
             min-width="180"
             label="生产企业"
+            show-overflow-tooltip
           >
             <template slot-scope="scope">
               <div>

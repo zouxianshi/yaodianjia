@@ -187,7 +187,7 @@ export default {
         this.info.pic = res.data
       } else {
         this.$message({
-          message: '上传失败',
+          message: res.msg,
           type: 'error'
         })
       }

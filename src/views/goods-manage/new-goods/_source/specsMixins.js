@@ -37,7 +37,7 @@ const mixin = {
       if (this.basicForm.origin === 1) {
         if (keys === 'erpCode') {
           const findIndex = findArray(this.specsForm.specs, { erpCode: row[keys] })
-          if (findIndex > -1) {
+          if (findIndex > -1 && this.specsForm.specs[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
               type: 'error'
@@ -56,14 +56,15 @@ const mixin = {
       } else {
         if (keys === 'erpCode') {
           const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
-          if (findIndex > -1) {
+          if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
               type: 'error'
             })
             return
           }
-        } else if (keys === 'barCode') {
+        // eslint-disable-next-line no-undef
+        } else if (keys === 'barCode' && this.editSpecsData[findIndex].id !== row.id) {
           const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
           if (findIndex > -1) {
             this.$message({

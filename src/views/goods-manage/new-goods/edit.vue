@@ -40,7 +40,7 @@
           </div>
         </div>
         <!-- 商品信息 -->
-        <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicRules">
+        <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicForm.origin===2?basicRules:{}">
           <div class="edit-card">
             <div class="header">
               <span>商品信息</span>
@@ -827,16 +827,31 @@ export default {
       }
     },
     handleImgSuccess(res, fileList, index) {
-      if (!this.fileList[index]) {
-        this.fileList.push({ imgUrl: this.showImg(res), picUrl: res })
+      if (res.code === '10000') {
+        if (!this.fileList[index]) {
+          this.fileList.push({ imgUrl: this.showImg(res.data), picUrl: res.data })
+        } else {
+          this.fileList[index].imgUrl = this.showImg(res.data)
+          this.fileList[index].picUrl = res.data
+        }
       } else {
-        this.fileList[index].imgUrl = this.showImg(res)
-        this.fileList[index].picUrl = res
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
       }
+
       this.pageLoading.close()
     },
     handleAvatarSuccessEdit(res, fileList, index) {
-      this.editSpecsData[this.uploadIndex].picUrl = res.data
+      if (res.code === '10000') {
+        this.editSpecsData[this.uploadIndex].picUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
       this.pageLoading.close()
     },
     handleImgError(row) {

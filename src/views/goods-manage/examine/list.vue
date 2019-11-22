@@ -111,6 +111,7 @@
             align="left"
             min-width="120"
             prop="manufacture"
+            show-overflow-tooltip
             label="生产企业"
           />
           <el-table-column

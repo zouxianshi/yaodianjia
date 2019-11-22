@@ -86,7 +86,7 @@
           </template>
         </el-table-column>
         <el-table-column label="条码" prop="barCode" />
-        <el-table-column label="生产企业" prop="manufacture" />
+        <el-table-column label="生产企业" prop="manufacture" show-overflow-tooltip />
         <el-table-column label="品牌" prop="brandName" />
         <el-table-column label="商品分类" min-width="140">
           <template slot-scope="scope">
