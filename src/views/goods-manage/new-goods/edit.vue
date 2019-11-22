@@ -76,7 +76,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="重量" prop="weight">
-                  <el-input v-model="basicForm.weight" maxlength="11" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
+                  <el-input v-model="basicForm.weight" maxlength="11" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:210px">
                     <template slot="append">克</template>
                   </el-input>
                 </el-form-item>
@@ -889,45 +889,13 @@ export default {
         this.pageLoading.close()
         return false
       }
-      return true
-      // var err = false
-      // const isSize = new Promise(function(resolve, reject) {
-      //   const _URL = window.URL || window.webkitURL
-      //   const img = new Image()
-      //   img.onload = function() {
-      //     const valid = img.width === img.height
-      //     valid ? resolve() : reject()
-      //   }
-      //   img.src = _URL.createObjectURL(file)
-      // }).then(() => {
-      //   err = false
-      //   return file
-      // }).catch(() => {
-      //   this.$message.error('请上传1：1比例的图片')
-      //   err = true
-      //   return Promise.reject()
-      // })
-      // console.log(err)
-      // return isSize
-    },
-    _checkImg(file) {
-      return new Promise((reslove, reject) => {
-        var reader = new FileReader()
-        reader.onload = function(event) {
-          var image = new Image()
-          image.onload = function() {
-            var width = this.width
-            var height = this.height
-            if (width !== height) {
-              reject()
-            } else {
-              reslove()
-            }
-          }
-          image.src = event.target.result
-        }
-        reader.readAsDataURL(file)
+      this.pageLoading = this.$loading({
+        lock: true,
+        text: '图片上传中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
       })
+      return true
     },
     handleUploadIndex(index) {
       this.uploadIndex = index

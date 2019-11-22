@@ -165,6 +165,9 @@ export default {
           }
         },
         onSuccess: res => {
+          if (res.code !== '10000') {
+            this.fileList.splice(index, 1)
+          }
           this.$emit('onSuccess', res, this.fileList, index)
           this.fileList[index].status = 'success'
         },

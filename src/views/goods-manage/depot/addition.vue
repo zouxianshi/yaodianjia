@@ -41,9 +41,9 @@
           没有想要商品，去<router-link tag="span" class="link" to="/goods-manage/apply">创建自有新品</router-link>
         </p>
       </el-alert>
-      <el-table :data="tableData" stripe>
+      <el-table v-loading="loading" :data="tableData" stripe>
         <template slot="empty">
-          <div class="table-nodata">
+          <div v-show="!loading" class="table-nodata">
             <p class="text-center">搜索无结果</p>
             <p class="text-center">未找到您要创建的商品，您可尝试其他名称搜索，您也可以自行创建标库没有的新品 <router-link tag="span" to="/goods-manage/apply" class="link">自建新品</router-link></p>
             <p class="text-center">自主创建的商品由运营人员自行审核上架</p>

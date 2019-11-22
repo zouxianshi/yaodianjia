@@ -129,8 +129,8 @@
           >
             <template slot-scope="scope">
               <div>
-                <p>门店编号：{{ chooseStore.stCode }}</p>
-                <p>门店名称：{{ scope.row.storeName }}</p>
+                <p class="ellipsis">门店编号：{{ chooseStore.stCode }}</p>
+                <p class="ellipsis">门店名称：{{ scope.row.storeName }}</p>
               </div>
             </template>
           </el-table-column>

@@ -82,7 +82,7 @@ export default {
       return width
     },
     upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImg`
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload`
     },
     ...mapGetters(['token', 'merCode'])
   },
@@ -179,7 +179,7 @@ export default {
           xhr.setRequestHeader('Authorization', this.$store.getters.token)
           const formData = new FormData()
           formData.append('file', file)
-          var _this = this
+          // var _this = this
           xhr.onload = function(e) {
             var json
             if (xhr.status !== 200) {
@@ -193,7 +193,7 @@ export default {
               return
             }
             // console.log(json.location)
-            success(_this.showImg(json.data))
+            success(json.data)
           }
           xhr.send(formData)
         }
