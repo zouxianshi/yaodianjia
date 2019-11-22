@@ -81,24 +81,20 @@ export default {
     },
     open() {
       this.dialog.visible = true
-      this.fetchData()
+      // this.fetchData()
     },
     close() {
       this.dialog.visible = false
+      this.reset()
     },
     reset() {
-      this.pager = {
-        current: 1,
-        size: 10,
-        total: 0
-      }
-      this.search = {
-        keyWord: ''
+      this.xForm = {
+        value: ''
       }
     },
     submit() {
       console.log('on-submit', this.xForm)
-      this.$emit('on-submit', this.xForm)
+      this.$emit('on-change', this.xForm)
     },
     handlerClose() {
       this.reset()
