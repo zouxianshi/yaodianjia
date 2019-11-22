@@ -177,7 +177,7 @@
               trigger="click"
             >
               <span style="line-height: 30px">
-                1：进入微信商户平台  https://pay.weixin.qq.com/<br>
+                1：进入微信商户平台  <el-link href="https://pay.weixin.qq.com/" type="primary" :underline="false" target="_blank">https://pay.weixin.qq.com/</el-link><br>
                 2：进入账户中心>API安全>下载证书<br>
                 3：<el-button type="text" @click="showGuide(3)">点击查看图片</el-button>
               </span>
@@ -478,6 +478,7 @@ export default {
       })
     },
     dismiss() {
+      this.uploadLoading = false
       if (this.data) {
         this.form = _.cloneDeep(this.data)
         this.form.id = this.data.id
