@@ -1034,6 +1034,14 @@ export default {
             })
             this.subLoading = true
             if (this.basicForm.id) {
+              if (this.chooseTypeList.length !== 3) {
+                this.$message({
+                  message: '分类选择不完整，分类必须三级',
+                  type: 'error'
+                })
+                this.subLoading = false
+                return
+              }
               data.firstTypeId = this.chooseTypeList[0].id
               data.secondTypeId = this.chooseTypeList[1].id
               data.commodityId = data.id
