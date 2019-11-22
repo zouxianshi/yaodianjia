@@ -579,8 +579,6 @@ export default {
       }
       return funVal
     }
-  },
-  watch: {
   }
 }
 </script>
