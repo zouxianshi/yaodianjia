@@ -238,7 +238,7 @@ export default {
         onlineStatus: 1,
         status: 1
       },
-      searchVal: null,
+      searchVal: '',
       diaLogSearchParams: {
         merCode: null,
         currentPage: 1,
