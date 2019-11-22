@@ -1,5 +1,5 @@
 import { getSelfSpecsInfo, setSpecsData, getSpecsProductSKU, getSpecs } from '@/api/new-goods'
-import { checkNumberdouble } from '@/utils/validate'
+import { checkNumberdouble, checkZmSZ } from '@/utils/validate'
 import { findArray } from '@/utils/index'
 const mixin = {
   data() {
@@ -16,7 +16,8 @@ const mixin = {
       chooseSpec: [], // 选中的规格参数
       specsList: [], // 规格
       mprice_err: false,
-      erpCode_err: false
+      erpCode_err: false,
+      barCode_err: false
     }
   },
   watch: {
@@ -36,7 +37,7 @@ const mixin = {
       if (this.basicForm.origin === 1) {
         if (keys === 'erpCode') {
           const findIndex = findArray(this.specsForm.specs, { erpCode: row[keys] })
-          if (findIndex > -1) {
+          if (findIndex > -1 && this.specsForm.specs[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
               type: 'error'
@@ -55,14 +56,15 @@ const mixin = {
       } else {
         if (keys === 'erpCode') {
           const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
-          if (findIndex > -1) {
+          if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
               type: 'error'
             })
             return
           }
-        } else if (keys === 'barCode') {
+        // eslint-disable-next-line no-undef
+        } else if (keys === 'barCode' && this.editSpecsData[findIndex].id !== row.id) {
           const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
           if (findIndex > -1) {
             this.$message({
@@ -263,6 +265,13 @@ const mixin = {
             })
             return
           }
+          if (this.barCode_err) {
+            this.$message({
+              message: '规格中存在条码输入非法值，请输入正确的值',
+              type: 'error'
+            })
+            return
+          }
           this.subSpecs(data)
         }
       }
@@ -312,7 +321,8 @@ const mixin = {
                   this.dynamicProp.push({
                     name: vs.skuKeyName,
                     id: vs.skuKeyId,
-                    keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`
+                    keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
+                    checked: true
                   })
                 })
               }
@@ -398,6 +408,7 @@ const mixin = {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
+      this.specsForm.specs = []
       this.specsForm.specs.push(data)
       /** **
        *
@@ -443,29 +454,32 @@ const mixin = {
         }
       }
     },
-    input_checkMprice(value) { // 校验价格
+    input_checkMprice(row, index) { // 校验价格
+      var value = row.mprice
       if (value > 99999999) {
         this.$message({
-          message: '最多只能输入8位数',
+          message: '价格最多只能输入8位数',
           type: 'error'
         })
         this.mprice_err = true
         return
       }
-      if (!checkNumberdouble(value)) {
+      if (value && !checkNumberdouble(value)) {
         this.$message({
-          message: '只能设置最多两位小数的正数',
+          message: '价格只能设置最多两位小数的正数',
           type: 'error'
         })
         this.mprice_err = true
         return
+      }
+      if (!/^([1-9]\d*|0)(\.\d*[1-9])?$/.exec(value)) {
+        row.mprice = ~~value
+        this.$set(this.specsForm.specs, index, row)
       }
       this.mprice_err = false
     },
     input_checkErpcode(value) {
-      console.log(value)
-      console.log(/^[0-9]+$/.test(value))
-      if (!/^[0-9]+$/.test(value)) {
+      if (value && !/^[0-9]+$/.test(value)) {
         this.$message({
           message: '商品编码只能为纯数字',
           type: 'error'
@@ -474,6 +488,17 @@ const mixin = {
         return
       }
       this.erpCode_err = false
+    },
+    input_checkBarCode(value) {
+      if (value && !checkZmSZ(value)) {
+        this.$message({
+          message: '规格只能输入数字、英文、字符',
+          type: 'error'
+        })
+        this.barCode_err = true
+        return
+      }
+      this.barCode_err = false
     }
   }
 }

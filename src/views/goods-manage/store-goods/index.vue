@@ -129,8 +129,8 @@
           >
             <template slot-scope="scope">
               <div>
-                <p>门店编号：{{ chooseStore.stCode }}</p>
-                <p>门店名称：{{ scope.row.storeName }}</p>
+                <p class="ellipsis">门店编号：{{ chooseStore.stCode }}</p>
+                <p class="ellipsis">门店名称：{{ scope.row.storeName }}</p>
               </div>
             </template>
           </el-table-column>
@@ -144,7 +144,7 @@
             <template slot-scope="scope">
               <template v-if="scope.row.mainPic">
                 <el-image
-                  style="width: 60px; height: 60px"
+                  style="width: 70px; height: 70px"
                   :src="showImg(scope.row.mainPic)"
                   lazy
                   fit="contain"
@@ -253,6 +253,7 @@
             v-model="formData.unlockTime"
             value-format="yyyy-MM-dd HH:mm:ss"
             type="datetime"
+            class="custom-class"
             placeholder="选择日期时间"
           />
         </el-form-item>
@@ -431,15 +432,7 @@ export default {
       })
     },
     _loadList() {
-      if (!this.listQuery.storeId) {
-        this.$message({
-          message: '请选择门店',
-          type: 'error'
-        })
-        return
-      }
       this.loading = true
-      console.log('this.listQuery--xf:', this.listQuery)
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
@@ -461,6 +454,7 @@ export default {
       return new Promise((resolve, reject) => {
         getStoreList({ pageSize: 100, currentPage: 1, storeName: val, onlineStatus: 1 }).then(res => {
           const { data } = res.data
+          data.unshift({ id: '', stName: '全部' })
           this.storeList = data
           this.selectloading = false
           resolve(data)
@@ -651,6 +645,13 @@ export default {
 }
 </script>
 <style lang="scss">
+.el-picker-panel__footer{
+  .el-button--text{
+    display: none
+  }
+}
+</style>
+<style lang="scss" scoped>
 .store-goods-wrapper {
   .search-form {
     .search-item {

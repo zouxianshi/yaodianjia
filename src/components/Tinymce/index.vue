@@ -1,9 +1,9 @@
 <template>
   <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
     <textarea :id="tinymceId" class="tinymce-textarea" />
-    <!-- <div class="editor-custom-btn-container">
-      <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" />
-    </div> -->
+    <div class="editor-custom-btn-container">
+      <!-- <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" /> -->
+    </div>
   </div>
 </template>
 
@@ -82,7 +82,7 @@ export default {
       return width
     },
     upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImg`
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload`
     },
     ...mapGetters(['token', 'merCode'])
   },
@@ -130,6 +130,7 @@ export default {
         object_resizing: false,
         toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
         menubar: this.menubar,
+        removed_menuitems: 'spellchecker',
         plugins: plugins,
         readonly: this.readonly ? 1 : 0,
         end_container_on_empty_block: true,
@@ -161,13 +162,24 @@ export default {
           })
         },
         images_upload_handler: (blobInfo, success, failure) => {
+          const file = blobInfo.blob()
+          const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+          const isLt2M = file.size / 1024 / 1024 < 2
+          if (!isImg) {
+            failure('只能上传格式为 jpg、jpeg、png的图片')
+            return false
+          }
+          if (!isLt2M) {
+            failure('上传图片大小不能超过 2MB!')
+            return false
+          }
           const xhr = new XMLHttpRequest()
           xhr.withCredentials = false
           xhr.open('POST', `${this.upLoadUrl}?merCode=${this.merCode}`)
           xhr.setRequestHeader('Authorization', this.$store.getters.token)
           const formData = new FormData()
-          formData.append('file', blobInfo.blob())
-          var _this = this
+          formData.append('file', file)
+          // var _this = this
           xhr.onload = function(e) {
             var json
             if (xhr.status !== 200) {
@@ -181,7 +193,7 @@ export default {
               return
             }
             // console.log(json.location)
-            success(_this.showImg(json.data))
+            success(json.data)
           }
           xhr.send(formData)
         }
@@ -206,7 +218,7 @@ export default {
     imageSuccessCBK(arr) {
       const _this = this
       arr.forEach(v => {
-        window.tinymce.get(_this.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" >`)
+        window.tinymce.get(_this.tinymceId).insertContent(`<video control class="wscnph" style="width:100%" src="${v.url}" >`)
       })
     }
   }

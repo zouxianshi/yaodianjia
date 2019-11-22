@@ -79,7 +79,7 @@
           <div class="search-item">
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
-            <el-button type="danger" size="small" @click="handleBatchDel">批量删除</el-button>
+            <el-button v-if="listQuery.status===0" type="danger" size="small" @click="handleBatchDel">批量删除</el-button>
           </div>
         </div>
       </section>
@@ -118,6 +118,7 @@
             align="left"
             min-width="180"
             label="生产企业"
+            show-overflow-tooltip
           >
             <template slot-scope="scope">
               <div>
