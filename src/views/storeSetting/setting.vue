@@ -247,7 +247,7 @@ export default {
         onlineStatus: 1,
         status: 1
       },
-      searchVal: null,
+      searchVal: '',
       diaLogSearchParams: {
         merCode: null,
         currentPage: 1,
@@ -267,6 +267,12 @@ export default {
   },
   computed: {
     ...mapGetters(['merCode'])
+  },
+  watch: {
+    searchVal() {
+      this.searchParams.searchKey = this.searchVal
+      this._getData()
+    }
   },
   created() {
     this.getData()
@@ -566,12 +572,6 @@ export default {
         funNum++
       }
       return funVal
-    }
-  },
-  watch: {
-    searchVal() {
-      this.searchParams.searchKey = this.searchVal
-      this._getData()
     }
   }
 }
