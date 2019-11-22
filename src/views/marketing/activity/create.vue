@@ -10,7 +10,7 @@
           <ul class="ul-list">
             <li class="li-item">
               <div class="li-left">
-                <img src="">
+                <img src="../../../assets/image/icon_limit.png">
               </div>
               <div class="li-center">
                 <div class="title">限时优惠</div>
@@ -22,7 +22,7 @@
             </li>
             <li class="li-item">
               <div class="li-left">
-                <img src="">
+                <img src="../../../assets/image/icon_DM.png">
               </div>
               <div class="li-center">
                 <div class="title">电子DM单</div>
@@ -34,7 +34,7 @@
             </li>
             <li class="li-item">
               <div class="li-left">
-                <img src="">
+                <img src="../../../assets/image/icon_share_hb.png">
               </div>
               <div class="li-center">
                 <div class="title">分享红包</div>
