@@ -76,18 +76,18 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="重量" prop="weight">
-                  <el-input v-model="basicForm.weight" maxlength="5" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
-                    <template slot="append">公斤</template>
+                  <el-input v-model="basicForm.weight" maxlength="11" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
+                    <template slot="append">克</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="长宽高：" style="display:inline-block" prop="long">
                   <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:160px">
-                    <template slot="append">m*</template>
+                    <template slot="append">m</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" label-width="0px" style="display:inline-block" prop="width">
                   <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
-                    <template slot="append">m*</template>
+                    <template slot="append">m</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" label-width="0px" style="display:inline-block" prop="height">
@@ -360,12 +360,12 @@
                       </el-form-item>
                       <el-form-item>
                         <span slot="label"><span class="tip">*</span> 价格</span>
-                        <el-input v-model.trim="item.mprice" placeholder="输入价格" @blur="input_checkMprice(item.mprice)" />
+                        <el-input v-model.trim="item.mprice" placeholder="输入价格" @blur="input_checkMprice(item,index)" />
                       </el-form-item>
                       <el-form-item label="商品图片">
                         <span slot="label"><span class="tip">*</span> 商品图片</span>
                         <el-upload
-                          class="avatar-uploader specs-img"
+                          class="avatar-uploader specs-img-table"
                           :action="upLoadUrl"
                           :headers="headers"
                           :disabled="is_query"
@@ -516,9 +516,9 @@ export default {
           if (value <= 0 || value % 1 !== 0) {
             return callback(new Error('必须大于0的整数'))
           }
-          if (value > 99000) {
-            return callback(new Error('重量不能大于99000公斤'))
-          }
+          // if (value > 99000000) {
+          //   return callback(new Error('重量不能大于99000000克'))
+          // }
         }
         if (rule.field === 'long' || rule.field === 'height' || rule.field === 'width') {
           if ((value && value <= 0) || value > 999) {
@@ -1134,6 +1134,19 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.specs-img-table{
+     .avatar-uploader-icon{
+        width: 60px;
+        height: 60px;
+        line-height: 60px!important;
+      }
+      .avatar{
+         width: 60px;
+        height: 60px;
+      }
+ }
+</style>
 <style lang="scss" scoped>
 .edit-wrapper {
    color: #333;
@@ -1256,17 +1269,6 @@ export default {
         padding: 12px;
         .el-input{
           width: 250px;
-        }
-        .specs-img-table{
-          .avatar-uploader-icon{
-            width: 60px;
-            height: 60px;
-            line-height: 80px!important;
-          }
-          .avatar{
-             width: 60px;
-            height: 60px;
-          }
         }
         .specs-img{
           .avatar-uploader-icon{

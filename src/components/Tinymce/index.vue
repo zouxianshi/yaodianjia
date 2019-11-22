@@ -130,6 +130,7 @@ export default {
         object_resizing: false,
         toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
         menubar: this.menubar,
+        removed_menuitems: 'spellchecker',
         plugins: plugins,
         readonly: this.readonly ? 1 : 0,
         end_container_on_empty_block: true,

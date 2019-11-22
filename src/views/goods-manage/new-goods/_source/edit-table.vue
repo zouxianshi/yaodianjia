@@ -107,6 +107,11 @@ export default {
             return
           }
           this.err_show = false
+          if (this.keys === 'mprice') {
+            if (!/^([1-9]\d*|0)(\.\d*[1-9])?$/.exec(this.infoData.mprice)) {
+              this.infoData.mprice = ~~this.infoData.mprice
+            }
+          }
           this.$emit('saveInfo', this.infoData, this.keys, this.index)
           this.isShow = false
         } else {

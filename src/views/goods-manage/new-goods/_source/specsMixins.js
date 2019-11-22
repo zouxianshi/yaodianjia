@@ -453,7 +453,8 @@ const mixin = {
         }
       }
     },
-    input_checkMprice(value) { // 校验价格
+    input_checkMprice(row, index) { // 校验价格
+      var value = row.mprice
       if (value > 99999999) {
         this.$message({
           message: '价格最多只能输入8位数',
@@ -469,6 +470,10 @@ const mixin = {
         })
         this.mprice_err = true
         return
+      }
+      if (!/^([1-9]\d*|0)(\.\d*[1-9])?$/.exec(value)) {
+        row.mprice = ~~value
+        this.$set(this.specsForm.specs, index, row)
       }
       this.mprice_err = false
     },
