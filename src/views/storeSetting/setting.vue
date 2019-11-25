@@ -565,7 +565,10 @@ export default {
           this.list = _.cloneDeep(res.data.data)
           this.totalCount = res.data.totalCount
           this.loading = false
-          console.log(this.list, this.dialogList)
+          this.$nextTick(() => {
+            this.updateChecked()
+          })
+          console.log(this.list, this.list)
         } else {
           this.loading = false
           this.$message({
