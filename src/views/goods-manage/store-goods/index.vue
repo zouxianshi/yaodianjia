@@ -56,6 +56,17 @@
         </div>
         <div class="search-form">
           <div class="search-item">
+            <span class="label-name">商品分组</span>
+            <el-cascader
+              v-model="groupId"
+              class="cascader"
+              :props="defaultProps"
+              :options="groupData"
+              size="small"
+              @change="handleChangeGroup"
+            />
+          </div>
+          <div class="search-item">
             <span class="label-name">条形码</span>
             <el-input
               v-model.trim="listQuery.barCode"
@@ -71,23 +82,13 @@
               placeholder="生产企业"
             />
           </div>
-          <div class="search-item">
-            <span class="label-name">商品分组</span>
-            <el-cascader
-              v-model="groupId"
-              style="width:300px"
-              class="cascader"
-              :props="defaultProps"
-              :options="groupData"
-              size="small"
-              @change="handleChangeGroup"
-            />
-          </div>
+
           <div class="search-item">
             <span class="label-name">商品类型</span>
             <el-select
               v-model="listQuery.commodityType"
               filterable
+              size="small"
               placeholder="普通商品/组合商品"
               @change="handleChangeCommodityType"
             >
@@ -95,7 +96,7 @@
               <el-option label="组合商品" value="2" />
             </el-select>
           </div>
-          <div class="search-item">
+          <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
@@ -129,7 +130,7 @@
           >
             <template slot-scope="scope">
               <div>
-                <p>门店编号：{{ chooseStore.stCode }}</p>
+                <p class="ellipsis">门店编号：{{ scope.row.storeCode }}</p>
                 <p class="ellipsis">门店名称：{{ scope.row.storeName }}</p>
               </div>
             </template>
@@ -159,12 +160,19 @@
           <el-table-column
             align="left"
             min-width="150"
+            show-overflow-tooltip
             label="商品信息"
           >
             <template slot-scope="scope">
               <div>
                 <p>{{ scope.row.name }}</p>
-                <p>{{ scope.row.approvalNumber }}</p>
+                <p class="ellipsis">
+                  <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                    {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                  </span>
+                </p>
+                <p class="ellipsis" v-text="'条码：'+scope.row.barCode" />
+                <p class="ellipsis">{{ scope.row.approvalNumber }}</p>
               </div>
             </template></el-table-column>
           <el-table-column

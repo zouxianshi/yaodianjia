@@ -47,7 +47,7 @@ class InnerCtor {
           },{
             name: `组合商品`,
             path: '/goods-manage/constitute-goods',
-            disabled: true
+            disabled: this.get('commodity.commodity-combine')
           }
         ]
       },
@@ -55,25 +55,25 @@ class InnerCtor {
         name: '内容管理',
         icon: 'icongoods',
         path: '',
-        disabled: true,
+        disabled: this.get('yaodianjia-wxmall'),
         children: [
           {
             name: '首页轮播图',
             path: '/wxmall/banner',
-            disabled: this.get('merchant-org.merchant-org-org'),
+            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-banner'),
           },
           {
             name: '公告',
             path: '/wxmall/notice',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-notice')
           },{
             name:'分类广告位',
             path: '/wxmall/ad-position',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-ad-position')
           },{
             name:'主页设置',
             path: '/wxmall/home-set',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
           }
         ]
       },
@@ -81,14 +81,14 @@ class InnerCtor {
         name: '连锁设置',
         icon: 'icongoods',
         path: '/chainSetting',
-        disabled: this.get('merchant-org'),
+        disabled: this.get('merchant'),
         children: []
       },
       {
         name: '门店设置',
         icon: 'icongoods',
         path: '',
-        disabled: true,
+        disabled: this.get('store'),
         children: [
           /*{
             name: '所有门店',
@@ -98,12 +98,12 @@ class InnerCtor {
           {
             name: '上线门店设置',
             path: '/storeSetting/setting',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('store.store-up')
           },
           {
             name: '门店配送',
             path: '/storeSetting/deliverySetting',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('store.store-deliver')
           }
         ]
       },
@@ -111,31 +111,31 @@ class InnerCtor {
         name: '内部链接',
         icon: 'icongoods',
         path: '/internalLink',
-        disabled: true,
+        disabled: this.get('inner-link'),
         children: []
       },
       {
         name: '营销活动',
         icon: 'icongoods',
         path: '/marketing/activity',
-        disabled: this.get('merchant-org'),
+        disabled: this.get('marketing'),
         children: [
           {
             name: '新建活动',
             path: '/marketing/activity/create',
-            disabled: this.get('merchant-org.merchant-org-org'),
-            children: [
-              {
-                name: '新建限时优惠',
-                path: '/marketing/activity/limit-edit',
-                disabled: this.get('merchant-org.merchant-org-org'),
-              }
-            ]
+            disabled: this.get('marketing.marketing-create')
+            // children: [
+            //   {
+            //     name: '新建限时优惠',
+            //     path: '/marketing/activity/limit-edit',
+            //     disabled: this.get('marketing.marketing-create'),
+            //   }
+            // ]
           },
           {
             name: '活动管理',
             path: '/marketing/activity',
-            disabled: this.get('merchant-org.merchant-org-org'),
+            disabled: this.get('marketing.marketing-manager'),
           }
         ]
       }
@@ -156,7 +156,6 @@ class InnerCtor {
 
 
   get (str) {
-    return true
     let p = this.p;
     if (_.isEmpty(p)) {
       p = this.handlerPs()
