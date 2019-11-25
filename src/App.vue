@@ -13,6 +13,7 @@ export default {
     }
   },
   mounted() {
+    // 修复 a标签在IE下不跳转，跳转失效
     function checkIE() {
       return '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style
     }
