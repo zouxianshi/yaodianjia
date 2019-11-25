@@ -28,3 +28,14 @@ export function setUpdatePriceStock(data) {
     noMerCode: true
   })
 }
+
+// 根据按照门店-规格维度更新门店规格状态
+
+export function setUpdateStoreData(data) {
+  return request({
+    url: `${config.merGoods}/1.0/store-spec/store-spec`,
+    method: 'put',
+    data: data,
+    noMerCode: true
+  })
+}
