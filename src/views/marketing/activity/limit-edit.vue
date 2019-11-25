@@ -54,8 +54,7 @@
               <el-radio :label="true">是</el-radio>
             </el-radio-group>
             <template v-if="xForm.freePostFee">
-              <el-checkbox v-model="xForm.freePostWay">快递包邮</el-checkbox>
-              <el-checkbox v-model="xForm.freePostWay">免配送费</el-checkbox>
+              <span class="note-grey" style="margin-left: 15px;">选择是表示免配送费或快递费用</span>
             </template>
           </el-form-item>
         </el-form>
@@ -170,8 +169,7 @@ export default {
         endTime: '',
         mode: 1, // 优惠模式: 1-折扣, 2-减价
         storeRange: 0, // 门店活动范围: 0-全部, 1-指定门店
-        freePostFee: false, // 是否免邮
-        freePostWay: 2 // 免运费配送方式：1-快递包邮, 2-免费配送
+        freePostFee: false // 是否免邮 免运费配送
       },
       xRules: {
         name: [{
@@ -402,7 +400,6 @@ export default {
         mode: this.xForm.mode,
         storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
-        freePostWay: this.xForm.freePostWay,
         items: this.selectedGoods,
         storeIds: data.storeIds,
         storeNames: data.storeNames
@@ -429,7 +426,6 @@ export default {
         mode: this.xForm.mode,
         storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
-        freePostWay: this.xForm.freePostWay,
         items: this.selectedGoods,
         storeIds: data.storeIds,
         storeNames: data.storeNames

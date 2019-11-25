@@ -97,63 +97,27 @@
           />
           <el-table-column label="时间状态" min-width="80" align="center">
             <template slot-scope="scope">
-              <el-tag
-                v-if="scope.row.status && scope.row.timeStatus === -1"
-                size="small"
-                type="info"
-              >未开始</el-tag>
-              <el-tag
-                v-if="scope.row.status && scope.row.timeStatus === 1"
-                size="small"
-                type="success"
-              >进行中</el-tag>
-              <el-tag
-                v-if="!scope.row.status || scope.row.timeStatus === 0"
-                size="small"
-                type="danger"
-              >已结束</el-tag>
+              <el-tag v-if="scope.row.status && scope.row.timeStatus === -1" size="small" type="info">未开始</el-tag>
+              <el-tag v-if="scope.row.status && scope.row.timeStatus === 1" size="small" type="success">进行中</el-tag>
+              <el-tag v-if="!scope.row.status || scope.row.timeStatus === 0" size="small" type="danger">已结束</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="状态" min-width="60" align="center">
             <template slot-scope="scope">
-              <el-tag
-                v-if="scope.row.status && scope.row.timeStatus !== 0"
-                size="small"
-              >生效</el-tag>
+              <el-tag v-if="scope.row.status && scope.row.timeStatus !== 0" size="small">生效</el-tag>
               <el-tag v-else size="small" type="info">已失效</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" min-width="220">
             <template slot-scope="scope">
-              <el-button
-                v-if="scope.row.status && scope.row.timeStatus === -1"
-                plain
-                size="mini"
-                @click="toEdit(scope.row)"
-              >编辑</el-button>
+              <el-button v-if="scope.row.status && scope.row.timeStatus === -1" plain size="mini" @click="toEdit(scope.row)">编辑</el-button>
+              <el-button v-else plain size="mini" @click="toEdit(scope.row, 1)">查看</el-button>
               <template v-if="scope.row.status && scope.row.timeStatus === 1">
-                <el-button
-                  plain
-                  size="mini"
-                  @click="doCopy(scope.row)"
-                >复制链接</el-button>
-                <el-button
-                  type="danger"
-                  size="mini"
-                  @click="handleDisable(scope.row)"
-                >失效</el-button>
+                <el-button plain size="mini" @click="doCopy(scope.row)">复制链接</el-button>
+                <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
               </template>
               <template v-if="!scope.row.status || scope.row.timeStatus === 0">
-                <el-button
-                  plain
-                  size="mini"
-                  @click="toEdit(scope.row, 1)"
-                >查看</el-button>
-                <el-button
-                  type="danger"
-                  size="mini"
-                  @click="handleDel(scope.row)"
-                >删除</el-button>
+                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
             </template>
           </el-table-column>
