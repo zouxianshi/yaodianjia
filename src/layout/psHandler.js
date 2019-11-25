@@ -88,7 +88,7 @@ class InnerCtor {
         name: '门店设置',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('merchant-org'),
+        disabled: this.get('commodity'),
         children: [
           /*{
             name: '所有门店',
@@ -98,12 +98,12 @@ class InnerCtor {
           {
             name: '上线门店设置',
             path: '/storeSetting/setting',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('commodity.commodity-lib')
           },
           {
             name: '门店配送',
             path: '/storeSetting/deliverySetting',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: this.get('commodity.commodity-lib')
           }
         ]
       },
@@ -158,7 +158,7 @@ class InnerCtor {
 
 
   get (str) {
-    
+
     let p = this.p;
     if (_.isEmpty(p)) {
       p = this.handlerPs()

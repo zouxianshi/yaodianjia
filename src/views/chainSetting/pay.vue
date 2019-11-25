@@ -105,7 +105,7 @@
           </span>-->
         </el-form-item>
         <el-form-item :label="isWechat ? '微信支付商户号：' : '支付宝商户号：'" prop="merchantCode">
-          <el-input v-model="form.merchantCode" style="width: 300px" maxlength="50" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
+          <el-input v-model.trim="form.merchantCode" style="width: 300px" maxlength="50" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
           <el-popover
             placement="right"
             title="操作提示："
@@ -128,7 +128,7 @@
           </el-popover>
         </el-form-item>
         <el-form-item :label="isWechat ? '微信支付key：' : '支付宝key：'" prop="payKey">
-          <el-input v-model="form.payKey" style="width: 300px" maxlength="60" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
+          <el-input v-model.trim="form.payKey" style="width: 300px" maxlength="60" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
           <el-popover
             placement="right"
             title="操作提示："
