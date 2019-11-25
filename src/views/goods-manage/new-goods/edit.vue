@@ -76,7 +76,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="重量" prop="weight">
-                  <el-input v-model="basicForm.weight" maxlength="11" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:210px">
+                  <el-input v-model="basicForm.weight" maxlength="10" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:210px">
                     <template slot="append">克</template>
                   </el-input>
                 </el-form-item>
@@ -161,7 +161,7 @@
                     size="small"
                   />
                 </el-form-item>
-                <el-form-item label="有效期：">
+                <el-form-item label="有效期：" prop="days">
                   <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="-1" size="small">无</el-radio>
                   <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="1" size="small">
                     <el-input v-model="basicForm.days" :disabled="basicForm.origin===1||is_query" maxlength="8" style="width:80px" size="small" placeholder="" />
@@ -446,15 +446,14 @@
       title="选择分类"
       :visible.sync="typeVisible"
       :close-on-click-modal="false"
-      width="30%"
+      width="600px"
       append-to-body
     >
       <div class="modal-body">
-        <el-cascader
+        <el-cascader-panel
           v-model="chooseList"
           v-loading="loading"
           class="cascader"
-          style="width:300px"
           :options="typeList"
           :props="defaultProps"
         />
@@ -486,21 +485,21 @@ export default {
   data() {
     const _checkName = (rule, value, callback) => {
       if (!value) {
-        if (rule.field === 'commonName') {
-          if (this.basicForm.origin !== 1 && this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '中西药品') {
-            return callback(new Error('请输入通用名'))
-          } else {
-            callback()
-          }
+        if (this.basicForm.origin !== 1 && this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '中西药品') {
+          callback(new Error('请输入通用名'))
+        } else {
+          callback()
         }
-        return callback(new Error('请输入内容'))
-      }
-      const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
-      if (!reg.test(value)) {
-        callback(new Error('只能输入中英文或数字'))
+        // return callback(new Error('请输入内容'))
       } else {
         callback()
       }
+      // const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+      // if (!reg.test(value)) {
+      //   callback(new Error('只能输入中英文或数字'))
+      // } else {
+      //   callback()
+      // }
     }
     const _checkFloat = (rule, value, callback) => {
       if (!value) {
@@ -531,9 +530,17 @@ export default {
     const _checkDays = (rule, value, callback) => {
       if (value) {
         if (value % 1 !== 0) {
-          callback(new Error('请输入整数'))
+          callback(new Error('请输入大于0的整数'))
+        } else {
+          if (value <= 0) {
+            console.log('value', value)
+            return callback(new Error('请输入大于0的整数'))
+          }
+          callback()
         }
       } else {
+        console.log(value)
+
         callback()
       }
     }
@@ -581,7 +588,7 @@ export default {
       },
       basicRules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-        commonName: [{ validator: _checkName, message: '请输入通用名称', trigger: 'blur' }],
+        commonName: [{ validator: _checkName, trigger: 'blur' }],
         unit: [{ required: true, message: '请输入选择单位', trigger: 'change' }],
         brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }],
         weight: [
@@ -840,7 +847,6 @@ export default {
           type: 'error'
         })
       }
-
       this.pageLoading.close()
     },
     handleAvatarSuccessEdit(res, fileList, index) {
@@ -903,6 +909,11 @@ export default {
     handleAvatarSuccess(res, file) { // 规格图片上传成功
       if (res.code === '10000') {
         this.specsForm.specs[this.uploadIndex].picUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
       }
       this.pageLoading.close()
     },
@@ -1032,16 +1043,15 @@ export default {
             this.chooseGroup.map(v => {
               data.groupIds.push(v[2].id)
             })
+            if (this.chooseTypeList.length !== 3) {
+              this.$message({
+                message: '分类选择不完整，分类必须三级',
+                type: 'error'
+              })
+              return
+            }
             this.subLoading = true
             if (this.basicForm.id) {
-              if (this.chooseTypeList.length !== 3) {
-                this.$message({
-                  message: '分类选择不完整，分类必须三级',
-                  type: 'error'
-                })
-                this.subLoading = false
-                return
-              }
               data.firstTypeId = this.chooseTypeList[0].id
               data.secondTypeId = this.chooseTypeList[1].id
               data.commodityId = data.id

@@ -129,7 +129,7 @@
           >
             <template slot-scope="scope">
               <div>
-                <p class="ellipsis">门店编号：{{ chooseStore.stCode }}</p>
+                <p>门店编号：{{ chooseStore.stCode }}</p>
                 <p class="ellipsis">门店名称：{{ scope.row.storeName }}</p>
               </div>
             </template>
@@ -360,8 +360,7 @@ export default {
       lockFlag: [],
       formData: {
         'lockFlag': 0,
-        'specIds': [],
-        'storeId': '',
+        'lockList': [],
         'unlockTime': '',
         'unlockType': 0
       },
@@ -581,11 +580,12 @@ export default {
       const ary = []
       // 获取规格id
       this.multipleSelection.map(v => {
-        ary.push(v.id)
+        ary.push({
+          'specId': v.id,
+          'storeId': v.storeId
+        })
       })
-      this.formData.specIds = ary
-      this.formData.storeId = this.listQuery.storeId
-
+      this.formData.lockList = ary
       if (this.lockFlag.length === 0) { // 全部锁定
         this.formData.lockFlag = 0
       }
