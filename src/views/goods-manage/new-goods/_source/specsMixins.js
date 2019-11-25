@@ -334,10 +334,11 @@ const mixin = {
           this.specsForm.specs = res.data
           if (this.$route.query.type === 'query') {
             $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input').addClass('is-disabled') // 设置全选disabeld
+            res.data.forEach((value, index) => {
+              $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled') // 设置该条数据不可选择
+            })
           }
-          res.data.forEach((value, index) => {
-            $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled') // 设置该条数据不可选择
-          })
+
           this._loadSpecs()
         })
       } else {
