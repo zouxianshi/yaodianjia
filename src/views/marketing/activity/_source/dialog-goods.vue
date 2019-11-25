@@ -143,7 +143,6 @@ export default {
     open() {
       this.dialog.visible = true
       if (this.list && this.list.length > 0) {
-        console.log('this.list99999', this.list)
         this.mySelectList = this.list.slice()
       } else {
         this.mySelectList = []
