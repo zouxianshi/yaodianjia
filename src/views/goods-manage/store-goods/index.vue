@@ -287,8 +287,8 @@ import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
 import { getTypeTree } from '@/api/group'
-import { getStoreGoodsList, setLockPrice, setUpdatePriceStock } from '@/api/store-goods'
-import { getStoreList, setBatchUpdown } from '@/api/depot'
+import { getStoreGoodsList, setLockPrice, setUpdatePriceStock, setUpdateStoreData } from '@/api/store-goods'
+import { getStoreList } from '@/api/depot'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -533,19 +533,20 @@ export default {
       const status = row.status === 0 ? 1 : 0
       const data = {
         'isAll': false,
-        'specIds': [
-          row.id
-        ],
         'status': status,
-        'storeIds': [
-          this.listQuery.storeId
+        'updateList': [
+          {
+            'specId': row.id,
+            'storeId': row.storeId
+          }
         ],
-        'userName': this.name
+        'userName': this.name,
+        'merCode': this.merCode
       }
       this._SetUpDown(data)
     },
     _SetUpDown(data) { // 执行上下架请求
-      setBatchUpdown(data).then(res => {
+      setUpdateStoreData(data).then(res => {
         this.$message({
           message: '操作成功',
           type: 'success'
@@ -563,16 +564,18 @@ export default {
         return
       }
       this.multipleSelection.map(v => {
-        ary.push(v.id)
+        ary.push({
+          'specId': v.id,
+          'storeId': v.storeId
+        })
       })
       const data = {
         'isAll': false,
         'specIds': ary,
         'status': status,
-        'storeIds': [
-          this.listQuery.storeId
-        ],
-        'userName': this.name
+        'updateList': ary,
+        'userName': this.name,
+        'merCode': this.merCode
       }
       this._SetUpDown(data)
     },
