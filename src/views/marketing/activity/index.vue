@@ -1,7 +1,12 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-button class="btn btn-add" type="primary" size="small" @click.stop="toCreate()">新建活动</el-button>
+      <el-button
+        class="btn btn-add"
+        type="primary"
+        size="small"
+        @click.stop="toCreate()"
+      >新建活动</el-button>
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
@@ -20,7 +25,11 @@
           </div>
           <div class="search-item">
             <span class="label-name" style="width: 80px">活动名称</span>
-            <el-input v-model.trim="searchForm.name" size="small" style="width: 200px" />
+            <el-input
+              v-model.trim="searchForm.name"
+              size="small"
+              style="width: 200px"
+            />
           </div>
           <div class="search-item">
             <span class="label-name" style="width: 80px">活动状态</span>
@@ -45,7 +54,8 @@
               value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="开始时间"
               @change="handleTimeChange($event, 1)"
-            /> -
+            />
+            -
             <el-date-picker
               v-model="searchForm.endTime"
               size="small"
@@ -60,41 +70,90 @@
           </div>
         </div>
       </section>
-      <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
+      <section
+        class="table-box webkit-scroll"
+        style="height: calc(100% - 180px);overflow: auto"
+      >
         <el-table :data="tableData" style="width: 100%" size="small">
           <el-table-column prop="startTime" label="活动类型" min-width="80">
             <template slot-scope="scope">
-              <span v-if="scope.row.type===10">电子DM单</span>
-              <span v-if="scope.row.type===11">限时特惠</span>
-              <span v-if="scope.row.type===12">限时秒杀</span>
+              <span v-if="scope.row.type === 10">电子DM单</span>
+              <span v-if="scope.row.type === 11">限时特惠</span>
+              <span v-if="scope.row.type === 12">限时秒杀</span>
             </template>
           </el-table-column>
           <el-table-column prop="name" label="标题" min-width="150" />
-          <el-table-column prop="startTime" label="活动开始时间" min-width="120" align="center" />
-          <el-table-column prop="endTime" label="活动结束时间" min-width="120" align="center" />
+          <el-table-column
+            prop="startTime"
+            label="活动开始时间"
+            min-width="120"
+            align="center"
+          />
+          <el-table-column
+            prop="endTime"
+            label="活动结束时间"
+            min-width="120"
+            align="center"
+          />
           <el-table-column label="时间状态" min-width="80" align="center">
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.status && scope.row.timeStatus === -1" size="small" type="info">未开始</el-tag>
-              <el-tag v-if="scope.row.status && scope.row.timeStatus === 1" size="small" type="success">进行中</el-tag>
-              <el-tag v-if="!scope.row.status || scope.row.timeStatus === 0" size="small" type="danger">已结束</el-tag>
+              <el-tag
+                v-if="scope.row.status && scope.row.timeStatus === -1"
+                size="small"
+                type="info"
+              >未开始</el-tag>
+              <el-tag
+                v-if="scope.row.status && scope.row.timeStatus === 1"
+                size="small"
+                type="success"
+              >进行中</el-tag>
+              <el-tag
+                v-if="!scope.row.status || scope.row.timeStatus === 0"
+                size="small"
+                type="danger"
+              >已结束</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="状态" min-width="60" align="center">
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.status && scope.row.timeStatus !== 0" size="small">生效</el-tag>
+              <el-tag
+                v-if="scope.row.status && scope.row.timeStatus !== 0"
+                size="small"
+              >生效</el-tag>
               <el-tag v-else size="small" type="info">已失效</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" min-width="220">
             <template slot-scope="scope">
-              <el-button v-if="scope.row.status && scope.row.timeStatus === -1" plain size="mini" @click="toEdit(scope.row)">编辑</el-button>
+              <el-button
+                v-if="scope.row.status && scope.row.timeStatus === -1"
+                plain
+                size="mini"
+                @click="toEdit(scope.row)"
+              >编辑</el-button>
               <template v-if="scope.row.status && scope.row.timeStatus === 1">
-                <el-button plain size="mini" @click="doCopy(scope.row)">复制链接</el-button>
-                <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
+                <el-button
+                  plain
+                  size="mini"
+                  @click="doCopy(scope.row)"
+                >复制链接</el-button>
+                <el-button
+                  type="danger"
+                  size="mini"
+                  @click="handleDisable(scope.row)"
+                >失效</el-button>
               </template>
               <template v-if="!scope.row.status || scope.row.timeStatus === 0">
-                <el-button plain size="mini" @click="toEdit(scope.row, 1)">查看</el-button>
-                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
+                <el-button
+                  plain
+                  size="mini"
+                  @click="toEdit(scope.row, 1)"
+                >查看</el-button>
+                <el-button
+                  type="danger"
+                  size="mini"
+                  @click="handleDel(scope.row)"
+                >删除</el-button>
               </template>
             </template>
           </el-table-column>
@@ -118,9 +177,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import {
-  getActivityList, delActivity, disableActivity
-} from '@/api/marketing'
+import { getActivityList, delActivity, disableActivity } from '@/api/marketing'
 import config from '@/utils/config'
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
@@ -152,7 +209,7 @@ export default {
       return `${this.uploadFileURL}`
     },
     headers() {
-      return { 'Authorization': this.$store.getters.token }
+      return { Authorization: this.$store.getters.token }
     },
     merCode() {
       return this.$store.state.user.merCode || ''
@@ -180,18 +237,28 @@ export default {
     },
     handleTimeChange(val, type) {
       console.log(val, type)
-      if (type === 1 || type === 2) { // 搜索栏 1.开始时间 2.结束时间
+      if (type === 1 || type === 2) {
+        // 搜索栏 1.开始时间 2.结束时间
         if (!val) {
-          type === 1 ? this.searchForm.startTime = '' : this.searchForm.endTime = ''
+          type === 1
+            ? (this.searchForm.startTime = '')
+            : (this.searchForm.endTime = '')
         } else {
           console.log('this.searchForm', this.searchForm)
-          if (this.searchForm.startTime && this.searchForm.endTime && this.searchForm.startTime !== '' && this.searchForm.endTime !== '') {
+          if (
+            this.searchForm.startTime &&
+            this.searchForm.endTime &&
+            this.searchForm.startTime !== '' &&
+            this.searchForm.endTime !== ''
+          ) {
             // 比较时间
             const start = this.searchForm.startTime.replace(/[- :]/g, '')
             const end = this.searchForm.endTime.replace(/[- :]/g, '')
             if (parseInt(start) > parseInt(end)) {
               this.$message('结束时间必须大于开始时间')
-              type === 1 ? this.searchForm.startTime = '' : this.searchForm.endTime = ''
+              type === 1
+                ? (this.searchForm.startTime = '')
+                : (this.searchForm.endTime = '')
               return
             }
           }
@@ -203,7 +270,8 @@ export default {
         //   this.searchForm.startTime = ''
         //   this.searchForm.endTime = ''
         // }
-      } else if (type === 3) { // dialog
+      } else if (type === 3) {
+        // dialog
         if (val && val.length === 2) {
           this.xForm.startTime = val[0]
           this.xForm.endTime = val[1]
@@ -215,13 +283,16 @@ export default {
     },
     // 复制
     doCopy(row) {
-      this.$copyText('www.baidu.com').then(e => {
-        console.log(e)
-        this.$message.success('复制成功')
-      }, (e) => {
-        console.log(e)
-        this.$message.warning('复制失败')
-      })
+      this.$copyText('www.baidu.com').then(
+        e => {
+          console.log(e)
+          this.$message.success('复制成功')
+        },
+        e => {
+          console.log(e)
+          this.$message.warning('复制失败')
+        }
+      )
     },
     // 查询
     search() {
@@ -236,9 +307,13 @@ export default {
       // 限时优惠
       if (row.type === 11 || row.type === 12) {
         if (op) {
-          this.$router.push(`/marketing/activity/limit-edit?id=${row.id}&&_ck=1&&type=${row.type}`)
+          this.$router.push(
+            `/marketing/activity/limit-edit?id=${row.id}&&_ck=1&&type=${row.type}`
+          )
         } else {
-          this.$router.push(`/marketing/activity/limit-edit?id=${row.id}&&type=${row.type}`)
+          this.$router.push(
+            `/marketing/activity/limit-edit?id=${row.id}&&type=${row.type}`
+          )
         }
       } else {
         console.log('row', row)
@@ -276,7 +351,6 @@ export default {
         timeStatus: this.searchForm.timeStatus,
         currentPage: this.pager.current,
         pageSize: this.pager.size
-
       }
       console.log('params', params)
       getActivityList(params).then(res => {

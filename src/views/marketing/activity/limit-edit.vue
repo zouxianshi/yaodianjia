@@ -13,7 +13,13 @@
             <el-input v-model="xForm.name" placeholder="不超过20字" maxlength="20" style="width: 380px;" />
           </el-form-item>
           <el-form-item label="活动描述">
-            <el-input v-model="xForm.description" type="textarea" placeholder="不超过50字" maxlength="50" style="width: 380px;" />
+            <el-input
+              v-model="xForm.description"
+              type="textarea"
+              placeholder="不超过50字"
+              maxlength="50"
+              style="width: 380px;"
+            />
           </el-form-item>
           <el-form-item label="生效时间" prop="startTime">
             <el-date-picker
@@ -112,7 +118,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+  mapGetters
+} from 'vuex'
 import dialogSet from './_source/dialog-set'
 import dialogGoods from './_source/dialog-goods'
 import dialogStore from '@/components/Dialog/DialogStore'
@@ -166,12 +174,16 @@ export default {
         freePostWay: 2 // 免运费配送方式：1-快递包邮, 2-免费配送
       },
       xRules: {
-        name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' }
-        ],
-        startTime: [
-          { required: true, message: '请选择时间段', trigger: 'change' }
-        ]
+        name: [{
+          required: true,
+          message: '请输入活动名称',
+          trigger: 'blur'
+        }],
+        startTime: [{
+          required: true,
+          message: '请选择时间段',
+          trigger: 'change'
+        }]
       },
       editDetail: null, // 编辑详情
       mutiSetType: '', // 设置类型 1.折扣 2.减价 3限购 4.库存
@@ -188,7 +200,9 @@ export default {
       return `${this.uploadFileURL}`
     },
     headers() {
-      return { 'Authorization': this.$store.getters.token }
+      return {
+        'Authorization': this.$store.getters.token
+      }
     },
     merCode() {
       return this.$store.state.user.merCode || ''
@@ -344,7 +358,8 @@ export default {
           }
           const data = {
             storeIds: this.xForm.storeRange === 1 && this.storeIds.length > 0 ? this.storeIds.join(',') : '',
-            storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',') : ''
+            storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
+              : ''
           }
           if (this.xForm.id && this.xForm.id !== '') {
             this._updateActivity(data)
@@ -434,45 +449,52 @@ export default {
 }
 </script>
 <style lang="scss">
-.scope-img-wrap {
-  width: 60px;
-  height: 40px;
-  background: #f5f5f5;
-  margin: auto;
-  img {
-    width: 100%;
-    height: 100%;
-  }
-}
-.x-dialog-body {
-  width: 100%;
-  display: flex;
-  .form-box {
-    flex: 1;
-  }
-  .preview-box {
-    flex: 0 0 250px;
-    .title {
-      font-size: 18px;
-    }
-    .prview-pic {
-      margin-top: 20px;
+  .scope-img-wrap {
+    width: 60px;
+    height: 40px;
+    background: #f5f5f5;
+    margin: auto;
+
+    img {
       width: 100%;
-      height: 450px;
+      height: 100%;
     }
   }
-  .test-1 {
-    color: red;
+
+  .x-dialog-body {
+    width: 100%;
+    display: flex;
+
+    .form-box {
+      flex: 1;
+    }
+
+    .preview-box {
+      flex: 0 0 250px;
+
+      .title {
+        font-size: 18px;
+      }
+
+      .prview-pic {
+        margin-top: 20px;
+        width: 100%;
+        height: 450px;
+      }
+    }
+
+    .test-1 {
+      color: red;
+    }
   }
-}
 
-.note-grey {
-  font-size: 14px;
-  line-height: 1.1;
-  color: #999999;
-}
+  .note-grey {
+    font-size: 14px;
+    line-height: 1.1;
+    color: #999999;
+  }
 
-.form-footer{
-  text-align: center
-}
+  .form-footer {
+    text-align: center
+  }
 </style>
