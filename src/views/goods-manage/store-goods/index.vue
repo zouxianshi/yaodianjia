@@ -295,8 +295,7 @@ import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
 import { getTypeTree } from '@/api/group'
-import { getStoreGoodsList, setLockPrice, setUpdatePriceStock, setUpdateStoreData } from '@/api/store-goods'
-import { getStoreList } from '@/api/depot'
+import { getStoreGoodsList, setLockPrice, setUpdatePriceStock, setUpdateStoreData, getMyStoreList } from '@/api/store-goods'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -459,7 +458,7 @@ export default {
     },
     _loadStoreList(val = '') { // 加载门店数据
       return new Promise((resolve, reject) => {
-        getStoreList({ pageSize: 100, currentPage: 1, storeName: val, onlineStatus: 1 }).then(res => {
+        getMyStoreList({ pageSize: 1000, currentPage: 1, storeName: val, onlineStatus: 1, status: 1 }).then(res => {
           const { data } = res.data
           data.unshift({ id: '', stName: '全部' })
           this.storeList = data

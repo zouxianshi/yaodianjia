@@ -54,8 +54,8 @@ const mixin = {
           }
         }
       } else {
+        const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
         if (keys === 'erpCode') {
-          const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
           if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
@@ -64,9 +64,9 @@ const mixin = {
             return
           }
         // eslint-disable-next-line no-undef
-        } else if (keys === 'barCode' && this.editSpecsData[findIndex].id !== row.id) {
-          const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
-          if (findIndex > -1) {
+        } else if (keys === 'barCode') {
+          // const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
+          if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的条形码,请重新编辑输入',
               type: 'error'

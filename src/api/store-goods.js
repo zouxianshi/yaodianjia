@@ -39,3 +39,12 @@ export function setUpdateStoreData(data) {
     noMerCode: true
   })
 }
+
+// 获取当前账号下的门店
+export function getMyStoreList(data) {
+  return request({
+    url: `${config.merchant}/1.0/store/my`,
+    method: 'post',
+    data: data
+  })
+}
