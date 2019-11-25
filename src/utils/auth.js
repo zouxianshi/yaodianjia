@@ -12,7 +12,8 @@ export function removeToken() {
 }
 
 export function setToken(token) {
-  return Cookies.set(TokenKey, token, { expires: 7, path: '/', domain: doMain })
+  var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000)
+  return Cookies.set(TokenKey, token, { expires: inFifteenMinutes, path: '/', domain: doMain })
 }
 
 export function setSystem(name, cvalue) {

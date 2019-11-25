@@ -104,7 +104,7 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="关键字：">
+                <el-form-item label="关键字：" prop="keyWord">
                   <el-input v-model="basicForm.keyWord" maxlength="512" :disabled="basicForm.origin===1||is_query" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
                 </el-form-item>
               </div>
@@ -544,6 +544,18 @@ export default {
         callback()
       }
     }
+    const _checkKeyWord = (rule, value, callback) => {
+      if (value) {
+        var reg = new RegExp(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\、]/g)
+        if (!reg.test(value)) {
+          callback(new Error('仅支持录入英文、汉字、数字、顿号'))
+        } else {
+          callback()
+        }
+      } else {
+        callback()
+      }
+    }
     return {
       step: 1,
       chooseTypeList: [], // 选中的分类
@@ -600,7 +612,8 @@ export default {
         long: [{ validator: _checkFloat, trigger: 'blur' }],
         height: [{ validator: _checkFloat, trigger: 'blur' }],
         width: [{ validator: _checkFloat, trigger: 'blur' }],
-        days: [{ validator: _checkDays, trigger: 'blur' }]
+        days: [{ validator: _checkDays, trigger: 'blur' }],
+        keyWord: [{ validator: _checkKeyWord, trigger: 'blur' }]
       },
       dialogVisible: false,
       unit: [],
@@ -768,7 +781,7 @@ export default {
           this.expireDays = -1
         } else {
           this.expireDays = 1
-          this.basicForm.days = data.expireDays
+          data.days = data.expireDays
           this.timeTypes = '3'
         }
         const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
