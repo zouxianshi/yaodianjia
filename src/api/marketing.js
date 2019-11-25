@@ -8,7 +8,7 @@ import config from '@/utils/config'
 // 查询活动列表
 export function getActivityList(params) {
   return request({
-    url: `${config.merPromote}/1.0/admin/activities/_search`,
+    url: `${config.merPromote}/1.0/activities/_search`,
     method: 'post',
     data: params
   })
@@ -17,7 +17,7 @@ export function getActivityList(params) {
 // 查询活动详情（限时优惠）
 export function getActivityDetail(params) {
   return request({
-    url: `${config.merPromote}/1.0/admin/activities/${params.id}`,
+    url: `${config.merPromote}/1.0/activities/${params.id}`,
     method: 'get'
   })
 }
