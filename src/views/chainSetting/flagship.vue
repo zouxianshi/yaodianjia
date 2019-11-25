@@ -127,6 +127,9 @@ export default {
           this.list = res.data.data
           this.totalCount = res.data.totalCount
           this.loading = false
+          if (!this.list) {
+            this.searchParams.currentPage = 1
+          }
         } else {
           this.loading = false
           this.$message({
