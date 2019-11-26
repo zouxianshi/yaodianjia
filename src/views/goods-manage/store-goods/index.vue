@@ -458,14 +458,22 @@ export default {
     },
     _loadStoreList(val = '') { // 加载门店数据
       return new Promise((resolve, reject) => {
+        const loading = this.$loading({
+          lock: true,
+          text: '数据初始化中....',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
         getMyStoreList({ pageSize: 10000, currentPage: 1, storeName: val, onlineStatus: 1, status: 1 }).then(res => {
           const { data } = res.data
           data.unshift({ id: '', stName: '全部' })
           this.storeList = data
           this.selectloading = false
+          loading.close()
           resolve(data)
         }).catch((err) => {
           this.selectloading = false
+          loading.close()
           reject(err)
         })
       })

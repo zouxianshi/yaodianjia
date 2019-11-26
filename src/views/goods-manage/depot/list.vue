@@ -149,7 +149,7 @@
             >
               <template slot-scope="scope">
                 <div style="overflow: hidden;text-overflow: ellipsis;">
-                  <p v-text="scope.row.name" />
+                  <p class="ellipsis" v-text="scope.row.name" />
                   <p class="ellipsis">
                     <span v-for="(item,index) in scope.row.specSkuList" :key="index">
                       {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
