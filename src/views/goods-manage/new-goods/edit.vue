@@ -800,6 +800,7 @@ export default {
         }
         // 赋值值
         this.basicForm = data
+        this.$refs.editor.setContent(this.basicForm.intro)
         this.basicLoading = false
       }).catch(_ => {
         this.basicLoading = false
