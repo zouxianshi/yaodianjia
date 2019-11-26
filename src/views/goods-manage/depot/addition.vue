@@ -75,13 +75,13 @@
         <el-table-column label="商品信息" min-width="120" show-overflow-tooltip>
           <template slot-scope="scope">
             <div>
-              <p v-text="scope.row.name" />
-              <p style="overflow: hidden;text-overflow: ellipsis;">
+              <p class="ellipsis" v-text="scope.row.name" />
+              <p class="ellipsis">
                 <span v-for="(item,index) in scope.row.specSkuList" :key="index">
                   {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
                 </span>
               </p>
-              <p v-text="scope.row.approvalNumber" />
+              <p class="ellipsis" v-text="scope.row.approvalNumber" />
             </div>
           </template>
         </el-table-column>

@@ -36,7 +36,13 @@ class InnerCtor {
             name:'新品审核',
             path: '/goods-manage/examine',
             disabled: this.get('commodity.commodity-check')
-          },{
+          },
+          {
+            name:'新品申请记录',
+            path: '/goods-manage/apply-record',
+            disabled: this.get('commodity.commodity-new-record')
+          }
+          ,{
             name: `自定义分组`,
             path: '/goods-manage/group',
             disabled: this.get('commodity.commodity-group')
@@ -111,7 +117,7 @@ class InnerCtor {
         name: '内部链接',
         icon: 'icongoods',
         path: '/internalLink',
-        disabled: this.get('inner-link'),
+        disabled: this.get('link'),
         children: []
       },
       {
