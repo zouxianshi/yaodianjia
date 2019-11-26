@@ -48,14 +48,14 @@
             <div class="edit-card-cnt">
               <div class="content">
                 <el-form-item label="商品名称：" prop="name">
-                  <el-input v-model.trim="basicForm.name" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
+                  <el-input v-model.trim="basicForm.name" maxlength="30" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
                 <el-form-item prop="commonName">
                   <span slot="label">
                     <span v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" class="tip">*</span>
                     通用名：
                   </span>
-                  <el-input v-model.trim="basicForm.commonName" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
+                  <el-input v-model.trim="basicForm.commonName" maxlength="20" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
                 </el-form-item>
                 <el-form-item label="所属品牌：" prop="brandId">
                   <el-select
@@ -76,22 +76,22 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="重量" prop="weight">
-                  <el-input v-model="basicForm.weight" maxlength="10" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:210px">
+                  <el-input v-model="basicForm.weight" maxlength="6" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:210px">
                     <template slot="append">克</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="长宽高：" style="display:inline-block" prop="long">
-                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:160px">
+                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" maxlength="2" style="width:160px">
                     <template slot="append">m</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" label-width="0px" style="display:inline-block" prop="width">
-                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
+                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" maxlength="2" style="width:160px">
                     <template slot="append">m</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" label-width="0px" style="display:inline-block" prop="height">
-                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" style="width:160px">  <template slot="append">m*</template>
+                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" maxlength="2" style="width:160px">  <template slot="append">m*</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="单位：" prop="unit">
@@ -545,13 +545,9 @@ export default {
       }
     }
     const _checkKeyWord = (rule, value, callback) => {
-      if (value) {
-        var reg = new RegExp(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\、]/g)
-        if (!reg.test(value)) {
-          callback(new Error('仅支持录入英文、汉字、数字、顿号'))
-        } else {
-          callback()
-        }
+      const reg = /[^A-Za-z0-9\u4e00-\u9fa5、]/g
+      if (value !== '' && reg.test(value)) {
+        callback(new Error('仅支持输入英文、汉字、数字或顿号'))
       } else {
         callback()
       }

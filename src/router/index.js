@@ -4,12 +4,18 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import _ from 'lodash'
 
 /* Router Modules */
 import routeZ from './modules/router-z'
 import routeX from './modules/router-x'
 import routeR from './modules/router-r'
+import { mUsersModule } from '@merchant/commons'
 
+// merge component layout module
+const userModule = _.assign(mUsersModule, {
+  component: Layout
+})
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -59,7 +65,8 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'home', affix: true }
       }
     ]
-  }
+  },
+  userModule
 ]
 
 /**

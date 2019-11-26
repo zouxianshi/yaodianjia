@@ -111,7 +111,7 @@ class InnerCtor {
         name: '内部链接',
         icon: 'icongoods',
         path: '/internalLink',
-        disabled: this.get('inner-link'),
+        disabled: this.get('link'),
         children: []
       },
       {
