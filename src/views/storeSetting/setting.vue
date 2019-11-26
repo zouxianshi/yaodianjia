@@ -154,9 +154,10 @@
         v-loading="loading"
         :data="list"
         style="width: 100%"
-        @select="handleSelectChange"
-        @select-all="handleSelectAllChange"
+        @selection-change="handleSelectionChange"
       >
+        <!--        @select="handleSelectChange"-->
+        <!--        @select-all="handleSelectAllChange"-->
         <div slot="empty">
           当前无上线门店，上线商城需添加<el-button type="text" @click="showDialog">上线门店</el-button>
         </div>
@@ -231,7 +232,7 @@
           @current-change="pageChange"
         />
       </div>
-      <div class="result-section">
+      <!--<div class="result-section">
         <div class="blank-line" />
         <div class="title">
           <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
@@ -241,16 +242,16 @@
           <span v-for="(mItem, index2) in mySelectList" :key="index2" class="label" style="margin-right: 15px">
             <span v-text="mItem.stName" />
             <el-button type="text" size="mini" class="icon el-icon-close" @click="removeMyselectItem(mItem, index2)" />
-            <!--<i
+            &lt;!&ndash;<i
                 class="icon el-icon-close"
                 @click.stop="removeDialogMyselectItem(mItem, index2)"
-              />-->
+              />&ndash;&gt;
           </span>
         </div>
-      </div>
+      </div>-->
     </section>
     <div style="margin-top: 10px">
-      <span style="font-size: 14px">已选{{ mySelectList.length }}家门店</span>
+      <span style="font-size: 14px">已选{{ multipleSelection.length }}家门店</span>
       <el-button type="primary" size="mini" @click="offline(null)">下线</el-button>
     </div>
     <!--<div style="margin-top: 10px;font-size: 14px;font-weight: 400;color:#99a9bf;line-height: 20px">
@@ -300,8 +301,8 @@ export default {
       offlineStore: 0,
       list: [],
       dialogList: [],
-      myDialogSelectList: [],
-      mySelectList: []
+      myDialogSelectList: []
+      // mySelectList: []
     }
   },
   computed: {
@@ -352,9 +353,9 @@ export default {
           }
           this.totalCount = res.data.totalCount
           this.loading = false
-          this.$nextTick(() => {
+          /* this.$nextTick(() => {
             this.updateChecked()
-          })
+          })*/
           console.log(this.list, this.dialogList)
         } else {
           this.searchParams.currentPage = 1
@@ -447,8 +448,8 @@ export default {
         console.log(id)
         params.list = [id]
       } else {
-        console.log(this.mySelectList.length)
-        if (this.mySelectList.length <= 0) {
+        console.log(this.multipleSelection.length)
+        if (this.multipleSelection.length <= 0) {
           this.$message({
             message: '请至少选择一个门店',
             type: 'error',
@@ -456,7 +457,7 @@ export default {
           })
           return
         }
-        params.list = _.map(this.mySelectList, (o) => {
+        params.list = _.map(this.multipleSelection, (o) => {
           return o.stCode
         })
       }
@@ -476,11 +477,11 @@ export default {
           if ((this.multipleSelection.length >= this.list.length || this.list.length <= 1) && this.searchParams.currentPage > 1) {
             this.searchParams.currentPage--
           }
-          if (id) {
+          /* if (id) {
             this.mySelectList = _.filter(_.cloneDeep(this.mySelectList), o => o.stCode !== id)
           } else {
             this.mySelectList = []
-          }
+          }*/
           this.getData()
         } else {
           this.loading = false
@@ -529,7 +530,10 @@ export default {
         this.myDialogSelectList.push(row)
       }
     },
-    handleSelectAllChange(allList) {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    /* handleSelectAllChange(allList) {
       this.list.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
           return mItem.stCode === item.stCode
@@ -556,7 +560,7 @@ export default {
       } else {
         this.mySelectList.push(row)
       }
-    },
+    },*/
     pageSizeChange(pageSize) {
       this.loading = true
       this.searchParams.pageSize = pageSize
@@ -565,10 +569,10 @@ export default {
           this.list = _.cloneDeep(res.data.data)
           this.totalCount = res.data.totalCount
           this.loading = false
-          this.$nextTick(() => {
+          /* this.$nextTick(() => {
             this.updateChecked()
-          })
-          console.log(this.list, this.list)
+          })*/
+          console.log(this.list, this.dialogList)
         } else {
           this.loading = false
           this.$message({
@@ -589,9 +593,9 @@ export default {
           this.list = _.cloneDeep(res.data.data)
           this.totalCount = res.data.totalCount
           this.loading = false
-          this.$nextTick(() => {
+          /* this.$nextTick(() => {
             this.updateChecked()
-          })
+          })*/
           console.log(this.list, this.dialogList)
         } else {
           this.loading = false
@@ -731,7 +735,7 @@ export default {
         console.log('da')
         this.$refs.multipleDialogTable.clearSelection()
       }
-    },
+    }/*,
     removeMyselectItem(myItem, index2) {
       const index = this.list.findIndex(item => {
         return item.stCode === myItem.stCode
@@ -764,7 +768,7 @@ export default {
         console.log('da')
         this.$refs.multipleTable.clearSelection()
       }
-    }
+    }*/
   }
 }
 </script>
