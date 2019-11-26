@@ -151,7 +151,7 @@ export default {
   computed: {
     ...mapGetters(['merCode']),
     upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImgAny?merCode=${this.merCode}`
     },
     headers() {
       return { 'Authorization': this.$store.getters.token }
