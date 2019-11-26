@@ -166,7 +166,6 @@
                 :on-success="handleUploadSuccess"
                 :before-upload="handleBefore"
                 :file-list="fileList"
-                :auto-upload="false"
                 style="position: relative;"
               >
                 <el-button slot="trigger" size="small" type="primary">点击上传</el-button>
