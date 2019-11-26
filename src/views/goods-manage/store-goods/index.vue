@@ -458,7 +458,7 @@ export default {
     },
     _loadStoreList(val = '') { // 加载门店数据
       return new Promise((resolve, reject) => {
-        getMyStoreList({ pageSize: 1000, currentPage: 1, storeName: val, onlineStatus: 1, status: 1 }).then(res => {
+        getMyStoreList({ pageSize: 10000, currentPage: 1, storeName: val, onlineStatus: 1, status: 1 }).then(res => {
           const { data } = res.data
           data.unshift({ id: '', stName: '全部' })
           this.storeList = data

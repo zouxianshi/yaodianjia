@@ -540,7 +540,6 @@ export default {
         }
       } else {
         console.log(value)
-
         callback()
       }
     }
