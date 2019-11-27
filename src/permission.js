@@ -65,7 +65,6 @@ router.beforeEach(async(to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      console.log('MC.merHomeAddr', MC.merHomeAddr)
       setTimeout(() => {
         window.location.href = MC.merHomeAddr
       }, 500)

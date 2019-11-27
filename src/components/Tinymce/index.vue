@@ -82,12 +82,13 @@ export default {
       return width
     },
     upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImg`
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload`
     },
     ...mapGetters(['token', 'merCode'])
   },
   watch: {
     value(val) {
+      console.log('watch', val)
       if (!this.hasChange && this.hasInit) {
         this.$nextTick(() =>
           window.tinymce.get(this.tinymceId).setContent(val || ''))
@@ -144,12 +145,12 @@ export default {
         link_title: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
         init_instance_callback: editor => {
-          if (_this.value) {
-            editor.setContent(_this.value)
-          }
           _this.hasInit = true
           if (this.id === 'basicInfo') {
             this.$emit('onload')
+          }
+          if (_this.value) {
+            editor.setContent(_this.value)
           }
           editor.on('NodeChange Change KeyUp SetContent', () => {
             this.hasChange = true
@@ -179,7 +180,7 @@ export default {
           xhr.setRequestHeader('Authorization', this.$store.getters.token)
           const formData = new FormData()
           formData.append('file', file)
-          var _this = this
+          // var _this = this
           xhr.onload = function(e) {
             var json
             if (xhr.status !== 200) {
@@ -193,7 +194,7 @@ export default {
               return
             }
             // console.log(json.location)
-            success(_this.showImg(json.data))
+            success(json.data)
           }
           xhr.send(formData)
         }

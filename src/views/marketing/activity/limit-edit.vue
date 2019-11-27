@@ -13,7 +13,13 @@
             <el-input v-model="xForm.name" placeholder="不超过20字" maxlength="20" style="width: 380px;" />
           </el-form-item>
           <el-form-item label="活动描述">
-            <el-input v-model="xForm.description" type="textarea" placeholder="不超过50字" maxlength="50" style="width: 380px;" />
+            <el-input
+              v-model="xForm.description"
+              type="textarea"
+              placeholder="不超过50字"
+              maxlength="50"
+              style="width: 380px;"
+            />
           </el-form-item>
           <el-form-item label="生效时间" prop="startTime">
             <el-date-picker
@@ -48,8 +54,7 @@
               <el-radio :label="true">是</el-radio>
             </el-radio-group>
             <template v-if="xForm.freePostFee">
-              <el-checkbox v-model="xForm.freePostWay">快递包邮</el-checkbox>
-              <el-checkbox v-model="xForm.freePostWay">免配送费</el-checkbox>
+              <span class="note-grey" style="margin-left: 15px;">选择是表示免配送费或快递费用</span>
             </template>
           </el-form-item>
         </el-form>
@@ -112,7 +117,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+  mapGetters
+} from 'vuex'
 import dialogSet from './_source/dialog-set'
 import dialogGoods from './_source/dialog-goods'
 import dialogStore from '@/components/Dialog/DialogStore'
@@ -132,22 +139,6 @@ export default {
     dialogStore
   },
   data() {
-    // const checkWebsite = (rule, value, callback) => {
-    //   console.log('value', value)
-    //   if (value === '') {
-    //     callback(new Error('请输入链接地址'))
-    //   }
-    //   if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-    //     callback(new Error('链接格式不正确，例：http://111.com'))
-    //   }
-    //   callback()
-    // }
-    // const checkNum = (rule, value, callback) => {
-    //   if (value !== '' && !/^[1-9]([0-9])*$/.test(value)) {
-    //     callback(new Error('请输入正整数'))
-    //   }
-    //   callback()
-    // }
     return {
       disabled: false,
       dataid: '',
@@ -162,16 +153,19 @@ export default {
         endTime: '',
         mode: 1, // 优惠模式: 1-折扣, 2-减价
         storeRange: 0, // 门店活动范围: 0-全部, 1-指定门店
-        freePostFee: false, // 是否免邮
-        freePostWay: 2 // 免运费配送方式：1-快递包邮, 2-免费配送
+        freePostFee: false // 是否免邮 免运费配送
       },
       xRules: {
-        name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' }
-        ],
-        startTime: [
-          { required: true, message: '请选择时间段', trigger: 'change' }
-        ]
+        name: [{
+          required: true,
+          message: '请输入活动名称',
+          trigger: 'blur'
+        }],
+        startTime: [{
+          required: true,
+          message: '请选择时间段',
+          trigger: 'change'
+        }]
       },
       editDetail: null, // 编辑详情
       mutiSetType: '', // 设置类型 1.折扣 2.减价 3限购 4.库存
@@ -188,7 +182,9 @@ export default {
       return `${this.uploadFileURL}`
     },
     headers() {
-      return { 'Authorization': this.$store.getters.token }
+      return {
+        'Authorization': this.$store.getters.token
+      }
     },
     merCode() {
       return this.$store.state.user.merCode || ''
@@ -200,15 +196,15 @@ export default {
   created() {
     const dataid = this.$route.query.id || ''
     const type = this.$route.query.type || ''
-    const _ck = this.$route.query._ck
+    // const _ck = this.$route.query._ck
     if (dataid && dataid !== '' && type !== '') {
       this.dataid = dataid
       this.type = type
       this._getDetailData()
     }
-    if (_ck === '1') {
-      this.disabled = true
-    }
+    // if (_ck === '1') {
+    //   this.disabled = true
+    // }
     // this.fetchData()
   },
   methods: {
@@ -298,7 +294,6 @@ export default {
               productName: goods.name || '',
               productSpecId: goods.specId || '',
               productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
-              saleAmount: goods.saleAmount || '',
               stockAmount: goods.stockAmount || ''
             }
             this.selectedGoods.push(item)
@@ -344,7 +339,8 @@ export default {
           }
           const data = {
             storeIds: this.xForm.storeRange === 1 && this.storeIds.length > 0 ? this.storeIds.join(',') : '',
-            storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',') : ''
+            storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
+              : ''
           }
           if (this.xForm.id && this.xForm.id !== '') {
             this._updateActivity(data)
@@ -387,7 +383,6 @@ export default {
         mode: this.xForm.mode,
         storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
-        freePostWay: this.xForm.freePostWay,
         items: this.selectedGoods,
         storeIds: data.storeIds,
         storeNames: data.storeNames
@@ -414,7 +409,6 @@ export default {
         mode: this.xForm.mode,
         storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
-        freePostWay: this.xForm.freePostWay,
         items: this.selectedGoods,
         storeIds: data.storeIds,
         storeNames: data.storeNames
@@ -434,45 +428,52 @@ export default {
 }
 </script>
 <style lang="scss">
-.scope-img-wrap {
-  width: 60px;
-  height: 40px;
-  background: #f5f5f5;
-  margin: auto;
-  img {
-    width: 100%;
-    height: 100%;
-  }
-}
-.x-dialog-body {
-  width: 100%;
-  display: flex;
-  .form-box {
-    flex: 1;
-  }
-  .preview-box {
-    flex: 0 0 250px;
-    .title {
-      font-size: 18px;
-    }
-    .prview-pic {
-      margin-top: 20px;
+  .scope-img-wrap {
+    width: 60px;
+    height: 40px;
+    background: #f5f5f5;
+    margin: auto;
+
+    img {
       width: 100%;
-      height: 450px;
+      height: 100%;
     }
   }
-  .test-1 {
-    color: red;
+
+  .x-dialog-body {
+    width: 100%;
+    display: flex;
+
+    .form-box {
+      flex: 1;
+    }
+
+    .preview-box {
+      flex: 0 0 250px;
+
+      .title {
+        font-size: 18px;
+      }
+
+      .prview-pic {
+        margin-top: 20px;
+        width: 100%;
+        height: 450px;
+      }
+    }
+
+    .test-1 {
+      color: red;
+    }
   }
-}
 
-.note-grey {
-  font-size: 14px;
-  line-height: 1.1;
-  color: #999999;
-}
+  .note-grey {
+    font-size: 14px;
+    line-height: 1.1;
+    color: #999999;
+  }
 
-.form-footer{
-  text-align: center
-}
+  .form-footer {
+    text-align: center
+  }
 </style>

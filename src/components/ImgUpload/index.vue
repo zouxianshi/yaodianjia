@@ -125,7 +125,6 @@ export default {
   },
   methods: {
     handeDragEnd() {
-      console.log('onsort')
       this.$emit('onsort', this.fileList)// 排序成功之后抛出数据
     },
     getFileList() { // 获取已上传的文件列表
@@ -166,7 +165,10 @@ export default {
           }
         },
         onSuccess: res => {
-          this.$emit('onSuccess', res.data, this.fileList, index)
+          if (res.code !== '10000') {
+            this.fileList.splice(index, 1)
+          }
+          this.$emit('onSuccess', res, this.fileList, index)
           this.fileList[index].status = 'success'
         },
         onError: err => {
@@ -217,6 +219,7 @@ export default {
     opacity: 0;
     cursor: pointer;
     width: 100px;
+    height: 100px;
   }
   .process {
     height: 100px;

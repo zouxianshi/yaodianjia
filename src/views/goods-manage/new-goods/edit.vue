@@ -40,7 +40,7 @@
           </div>
         </div>
         <!-- 商品信息 -->
-        <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicRules">
+        <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicForm.origin===2?basicRules:{}">
           <div class="edit-card">
             <div class="header">
               <span>商品信息</span>
@@ -48,14 +48,14 @@
             <div class="edit-card-cnt">
               <div class="content">
                 <el-form-item label="商品名称：" prop="name">
-                  <el-input v-model.trim="basicForm.name" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
+                  <el-input v-model.trim="basicForm.name" maxlength="30" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
                 </el-form-item>
                 <el-form-item prop="commonName">
                   <span slot="label">
                     <span v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" class="tip">*</span>
                     通用名：
                   </span>
-                  <el-input v-model.trim="basicForm.commonName" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
+                  <el-input v-model.trim="basicForm.commonName" maxlength="20" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
                 </el-form-item>
                 <el-form-item label="所属品牌：" prop="brandId">
                   <el-select
@@ -76,22 +76,22 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="重量" prop="weight">
-                  <el-input v-model="basicForm.weight" maxlength="11" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:193px">
+                  <el-input v-model="basicForm.weight" maxlength="6" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:210px">
                     <template slot="append">克</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="长宽高：" style="display:inline-block" prop="long">
-                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:160px">
+                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" maxlength="2" style="width:160px">
                     <template slot="append">m</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" label-width="0px" style="display:inline-block" prop="width">
-                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
+                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" maxlength="2" style="width:160px">
                     <template slot="append">m</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" label-width="0px" style="display:inline-block" prop="height">
-                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" style="width:160px">  <template slot="append">m*</template>
+                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" maxlength="2" style="width:160px">  <template slot="append">m*</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="单位：" prop="unit">
@@ -104,7 +104,7 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="关键字：">
+                <el-form-item label="关键字：" prop="keyWord">
                   <el-input v-model="basicForm.keyWord" maxlength="512" :disabled="basicForm.origin===1||is_query" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
                 </el-form-item>
               </div>
@@ -161,7 +161,7 @@
                     size="small"
                   />
                 </el-form-item>
-                <el-form-item label="有效期：">
+                <el-form-item label="有效期：" prop="days">
                   <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="-1" size="small">无</el-radio>
                   <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="1" size="small">
                     <el-input v-model="basicForm.days" :disabled="basicForm.origin===1||is_query" maxlength="8" style="width:80px" size="small" placeholder="" />
@@ -446,15 +446,14 @@
       title="选择分类"
       :visible.sync="typeVisible"
       :close-on-click-modal="false"
-      width="30%"
+      width="600px"
       append-to-body
     >
       <div class="modal-body">
-        <el-cascader
+        <el-cascader-panel
           v-model="chooseList"
           v-loading="loading"
           class="cascader"
-          style="width:300px"
           :options="typeList"
           :props="defaultProps"
         />
@@ -486,21 +485,21 @@ export default {
   data() {
     const _checkName = (rule, value, callback) => {
       if (!value) {
-        if (rule.field === 'commonName') {
-          if (this.basicForm.origin !== 1 && this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '中西药品') {
-            return callback(new Error('请输入通用名'))
-          } else {
-            callback()
-          }
+        if (this.basicForm.origin !== 1 && this.chooseTypeList.length !== 0 && this.chooseTypeList[0].name === '中西药品') {
+          callback(new Error('请输入通用名'))
+        } else {
+          callback()
         }
-        return callback(new Error('请输入内容'))
-      }
-      const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
-      if (!reg.test(value)) {
-        callback(new Error('只能输入中英文或数字'))
+        // return callback(new Error('请输入内容'))
       } else {
         callback()
       }
+      // const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+      // if (!reg.test(value)) {
+      //   callback(new Error('只能输入中英文或数字'))
+      // } else {
+      //   callback()
+      // }
     }
     const _checkFloat = (rule, value, callback) => {
       if (!value) {
@@ -531,8 +530,23 @@ export default {
     const _checkDays = (rule, value, callback) => {
       if (value) {
         if (value % 1 !== 0) {
-          callback(new Error('请输入整数'))
+          callback(new Error('请输入大于0的整数'))
+        } else {
+          if (value <= 0) {
+            console.log('value', value)
+            return callback(new Error('请输入大于0的整数'))
+          }
+          callback()
         }
+      } else {
+        console.log(value)
+        callback()
+      }
+    }
+    const _checkKeyWord = (rule, value, callback) => {
+      const reg = /[^A-Za-z0-9\u4e00-\u9fa5、]/g
+      if (value !== '' && reg.test(value)) {
+        callback(new Error('仅支持输入英文、汉字、数字或顿号'))
       } else {
         callback()
       }
@@ -581,7 +595,7 @@ export default {
       },
       basicRules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-        commonName: [{ validator: _checkName, message: '请输入通用名称', trigger: 'blur' }],
+        commonName: [{ validator: _checkName, trigger: 'blur' }],
         unit: [{ required: true, message: '请输入选择单位', trigger: 'change' }],
         brandId: [{ required: true, message: '请选择所属品牌', trigger: 'change' }],
         weight: [
@@ -593,7 +607,8 @@ export default {
         long: [{ validator: _checkFloat, trigger: 'blur' }],
         height: [{ validator: _checkFloat, trigger: 'blur' }],
         width: [{ validator: _checkFloat, trigger: 'blur' }],
-        days: [{ validator: _checkDays, trigger: 'blur' }]
+        days: [{ validator: _checkDays, trigger: 'blur' }],
+        keyWord: [{ validator: _checkKeyWord, trigger: 'blur' }]
       },
       dialogVisible: false,
       unit: [],
@@ -761,7 +776,7 @@ export default {
           this.expireDays = -1
         } else {
           this.expireDays = 1
-          this.basicForm.days = data.expireDays
+          data.days = data.expireDays
           this.timeTypes = '3'
         }
         const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
@@ -785,6 +800,7 @@ export default {
         }
         // 赋值值
         this.basicForm = data
+        this.$refs.editor.setContent(this.basicForm.intro)
         this.basicLoading = false
       }).catch(_ => {
         this.basicLoading = false
@@ -827,16 +843,30 @@ export default {
       }
     },
     handleImgSuccess(res, fileList, index) {
-      if (!this.fileList[index]) {
-        this.fileList.push({ imgUrl: this.showImg(res), picUrl: res })
+      if (res.code === '10000') {
+        if (!this.fileList[index]) {
+          this.fileList.push({ imgUrl: this.showImg(res.data), picUrl: res.data })
+        } else {
+          this.fileList[index].imgUrl = this.showImg(res.data)
+          this.fileList[index].picUrl = res.data
+        }
       } else {
-        this.fileList[index].imgUrl = this.showImg(res)
-        this.fileList[index].picUrl = res
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
       }
       this.pageLoading.close()
     },
     handleAvatarSuccessEdit(res, fileList, index) {
-      this.editSpecsData[this.uploadIndex].picUrl = res.data
+      if (res.code === '10000') {
+        this.editSpecsData[this.uploadIndex].picUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
       this.pageLoading.close()
     },
     handleImgError(row) {
@@ -874,45 +904,13 @@ export default {
         this.pageLoading.close()
         return false
       }
-      return true
-      // var err = false
-      // const isSize = new Promise(function(resolve, reject) {
-      //   const _URL = window.URL || window.webkitURL
-      //   const img = new Image()
-      //   img.onload = function() {
-      //     const valid = img.width === img.height
-      //     valid ? resolve() : reject()
-      //   }
-      //   img.src = _URL.createObjectURL(file)
-      // }).then(() => {
-      //   err = false
-      //   return file
-      // }).catch(() => {
-      //   this.$message.error('请上传1：1比例的图片')
-      //   err = true
-      //   return Promise.reject()
-      // })
-      // console.log(err)
-      // return isSize
-    },
-    _checkImg(file) {
-      return new Promise((reslove, reject) => {
-        var reader = new FileReader()
-        reader.onload = function(event) {
-          var image = new Image()
-          image.onload = function() {
-            var width = this.width
-            var height = this.height
-            if (width !== height) {
-              reject()
-            } else {
-              reslove()
-            }
-          }
-          image.src = event.target.result
-        }
-        reader.readAsDataURL(file)
+      this.pageLoading = this.$loading({
+        lock: true,
+        text: '图片上传中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
       })
+      return true
     },
     handleUploadIndex(index) {
       this.uploadIndex = index
@@ -920,6 +918,11 @@ export default {
     handleAvatarSuccess(res, file) { // 规格图片上传成功
       if (res.code === '10000') {
         this.specsForm.specs[this.uploadIndex].picUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
       }
       this.pageLoading.close()
     },
@@ -1049,6 +1052,13 @@ export default {
             this.chooseGroup.map(v => {
               data.groupIds.push(v[2].id)
             })
+            if (this.chooseTypeList.length !== 3) {
+              this.$message({
+                message: '分类选择不完整，分类必须三级',
+                type: 'error'
+              })
+              return
+            }
             this.subLoading = true
             if (this.basicForm.id) {
               data.firstTypeId = this.chooseTypeList[0].id

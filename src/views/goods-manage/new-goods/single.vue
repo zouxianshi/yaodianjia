@@ -98,7 +98,7 @@ export default {
         return
       } else if (this.chooseList.length !== 3) {
         this.$message({
-          message: '分类选择有误',
+          message: '请选择三级分类',
           type: 'error'
         })
         return

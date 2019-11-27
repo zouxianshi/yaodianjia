@@ -41,9 +41,9 @@
           没有想要商品，去<router-link tag="span" class="link" to="/goods-manage/apply">创建自有新品</router-link>
         </p>
       </el-alert>
-      <el-table :data="tableData" stripe>
+      <el-table v-loading="loading" :data="tableData" stripe>
         <template slot="empty">
-          <div class="table-nodata">
+          <div v-show="!loading" class="table-nodata">
             <p class="text-center">搜索无结果</p>
             <p class="text-center">未找到您要创建的商品，您可尝试其他名称搜索，您也可以自行创建标库没有的新品 <router-link tag="span" to="/goods-manage/apply" class="link">自建新品</router-link></p>
             <p class="text-center">自主创建的商品由运营人员自行审核上架</p>
@@ -75,18 +75,18 @@
         <el-table-column label="商品信息" min-width="120" show-overflow-tooltip>
           <template slot-scope="scope">
             <div>
-              <p v-text="scope.row.name" />
-              <p style="overflow: hidden;text-overflow: ellipsis;">
+              <p class="ellipsis" v-text="scope.row.name" />
+              <p class="ellipsis">
                 <span v-for="(item,index) in scope.row.specSkuList" :key="index">
                   {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
                 </span>
               </p>
-              <p v-text="scope.row.approvalNumber" />
+              <p class="ellipsis" v-text="scope.row.approvalNumber" />
             </div>
           </template>
         </el-table-column>
         <el-table-column label="条码" prop="barCode" />
-        <el-table-column label="生产企业" prop="manufacture" />
+        <el-table-column label="生产企业" prop="manufacture" show-overflow-tooltip />
         <el-table-column label="品牌" prop="brandName" />
         <el-table-column label="商品分类" min-width="140">
           <template slot-scope="scope">

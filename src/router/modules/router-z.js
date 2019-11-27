@@ -96,8 +96,7 @@ const router = [
         name: 'goodsRecord',
         meta: {
           title: '新品申请记录',
-          noCache: true,
-          activeMenu: '/goods-manage/apply'
+          noCache: true
         }
       }, {
         path: 'group',

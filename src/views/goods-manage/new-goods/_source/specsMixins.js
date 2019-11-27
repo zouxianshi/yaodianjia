@@ -24,6 +24,7 @@ const mixin = {
     step(val) {
       if (val === 2) {
         // 获取规格
+        this.specsForm.specs = []
         try {
           this._loadSpces() // 获取规格
         } catch (error) {
@@ -37,7 +38,7 @@ const mixin = {
       if (this.basicForm.origin === 1) {
         if (keys === 'erpCode') {
           const findIndex = findArray(this.specsForm.specs, { erpCode: row[keys] })
-          if (findIndex > -1) {
+          if (findIndex > -1 && this.specsForm.specs[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
               type: 'error'
@@ -54,18 +55,19 @@ const mixin = {
           }
         }
       } else {
+        const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
         if (keys === 'erpCode') {
-          const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
-          if (findIndex > -1) {
+          if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
               type: 'error'
             })
             return
           }
+        // eslint-disable-next-line no-undef
         } else if (keys === 'barCode') {
-          const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
-          if (findIndex > -1) {
+          // const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
+          if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的条形码,请重新编辑输入',
               type: 'error'
@@ -331,6 +333,13 @@ const mixin = {
             }
           })
           this.specsForm.specs = res.data
+          if (this.$route.query.type === 'query') {
+            $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input').addClass('is-disabled') // 设置全选disabeld
+            res.data.forEach((value, index) => {
+              $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled') // 设置该条数据不可选择
+            })
+          }
+
           this._loadSpecs()
         })
       } else {
@@ -407,7 +416,6 @@ const mixin = {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
-      this.specsForm.specs = []
       this.specsForm.specs.push(data)
       /** **
        *
