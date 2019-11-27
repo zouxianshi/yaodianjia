@@ -25,7 +25,7 @@
                   {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}
                 </span>
               </el-tag>
-              <span v-if="!chooseTypeList.length" class="link link-btn" @click="typeVisible=true;_loadClassList()">选择分类</span>
+              <span v-if="!this.$route.query.id" class="link link-btn" @click="typeVisible=true;_loadClassList()">选择分类</span>
             </p>
             <div class="type-list groups">
               <span class="type-list-title">
