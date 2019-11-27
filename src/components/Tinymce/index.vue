@@ -149,7 +149,6 @@ export default {
           if (this.id === 'basicInfo') {
             this.$emit('onload')
           }
-          console.log('this.value', _this.value)
           if (_this.value) {
             editor.setContent(_this.value)
           }
