@@ -1,23 +1,14 @@
 <template>
   <div class="app-container">
     <div class="store-goods-wrapper">
-      <el-radio-group
-        v-model="listQuery.status"
-        size="small"
-        @change="_loadList"
-      >
-        <el-radio-button :label="1">在售</el-radio-button>
-        <el-radio-button :label="0">下架</el-radio-button>
-        <el-radio-button :label="2">售馨</el-radio-button>
-        <el-radio-button :label="3">锁定</el-radio-button>
-      </el-radio-group>
+
       <section @keydown.enter="_loadList">
         <div
           class="search-form"
           style="margin-top:20px;margin-bottom:10px"
         >
           <div class="search-item">
-            <span class="label-name">选择门店</span>
+            <span class="label-name">订单搜索</span>
             <el-select
               v-model="listQuery.storeId"
               filterable
@@ -26,10 +17,20 @@
               :loading="selectloading"
               @change="handleChangeStore"
             >
-              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName" :value="item.id" />
+              <el-option label="订单号" value="订单号" />
+              <el-option label="收货人姓名" value="收货人姓名" />
+              <el-option label="收货人手机" value="收货人手机" />
+              <el-option label="会员卡号" value="会员卡号" />
             </el-select>
           </div>
           <div class="search-item">
+            <el-input
+              v-model.trim="listQuery.name"
+              size="small"
+              placeholder=""
+            />
+          </div>
+          <!-- <div class="search-item">
             <span class="label-name">商品名称</span>
             <el-input
               v-model.trim="listQuery.name"
@@ -52,47 +53,143 @@
               size="small"
               placeholder="批准文号"
             />
+          </div> -->
+        </div>
+        <div class="search-form" style="margin-bottom:10px">
+          <div class="search-item">
+            <div class="block">
+              <span class="label-name">下单时间</span>
+              <el-date-picker
+                v-model="value2"
+                type="datetimerange"
+                :picker-options="pickerOptions"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+              />
+            </div>
           </div>
         </div>
         <div class="search-form">
           <div class="search-item">
-            <span class="label-name">条形码</span>
+            <span class="label-name">商品名称</span>
             <el-input
               v-model.trim="listQuery.barCode"
               size="small"
-              placeholder="条形码"
+              placeholder="商品名称"
             />
           </div>
           <div class="search-item">
-            <span class="label-name">生产企业</span>
-            <el-input
-              v-model.trim="listQuery.manufacture"
-              size="small"
-              placeholder="生产企业"
-            />
-          </div>
-          <div class="search-item">
-            <span class="label-name">商品分组</span>
-            <el-cascader
-              v-model="groupId"
-              style="width:300px"
-              class="cascader"
-              :props="defaultProps"
-              :options="groupData"
-              size="small"
-              @change="handleChangeGroup"
-            />
-          </div>
-          <div class="search-item">
-            <span class="label-name">商品类型</span>
+            <span class="label-name">订单类型</span>
             <el-select
               v-model="listQuery.commodityType"
               filterable
-              placeholder="普通商品/组合商品"
+              placeholder="订单类型"
               @change="handleChangeCommodityType"
             >
-              <el-option label="普通商品" value="1" />
-              <el-option label="组合商品" value="2" />
+              <el-option label="全部" value="1" />
+              <el-option label="普通订单" value="2" />
+              <el-option label="处方药订单" value="3" />
+              <el-option label="积分订单" value="4" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">订单来源</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="订单来源"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="全部" value="1" />
+              <el-option label="微商城" value="2" />
+              <el-option label="小程序" value="3" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">订单状态</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="订单状态"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="全部" value="0" />
+              <el-option label="待付款" value="1" />
+              <el-option label="待发货" value="2" />
+              <el-option label="待收货" value="3" />
+              <el-option label="待提货" value="4" />
+              <el-option label="已完成" value="5" />
+              <el-option label="待退款" value="6" />
+              <el-option label="退货中" value="7" />
+              <el-option label="退款完成" value="8" />
+              <el-option label="已取消" value="9" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">订单来源</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="订单来源"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="全部" value="1" />
+              <el-option label="微商城" value="2" />
+              <el-option label="小程序" value="3" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">订单来源</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="订单来源"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="全部" value="1" />
+              <el-option label="微商城" value="2" />
+              <el-option label="小程序" value="3" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">订单来源</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="订单来源"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="全部" value="1" />
+              <el-option label="微商城" value="2" />
+              <el-option label="小程序" value="3" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">订单来源</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="订单来源"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="全部" value="1" />
+              <el-option label="微商城" value="2" />
+              <el-option label="小程序" value="3" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">订单来源</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              placeholder="订单来源"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="全部" value="1" />
+              <el-option label="微商城" value="2" />
+              <el-option label="小程序" value="3" />
             </el-select>
           </div>
           <div class="search-item">
@@ -101,135 +198,233 @@
           </div>
         </div>
       </section>
+      <el-radio-group
+        v-model="listQuery.status"
+        size="small"
+        @change="_loadList"
+      >
+        <el-radio-button :label="1">全部</el-radio-button>
+        <el-radio-button :label="0">待付款</el-radio-button>
+        <el-radio-button :label="2">
+          待发货
+          <template>
+            <span class="badge">11</span>
+          </template>
+        </el-radio-button>
+        <el-radio-button :label="3">待收货</el-radio-button>
+        <el-radio-button :label="2">待提货</el-radio-button>
+        <el-radio-button :label="3">已完成</el-radio-button>
+        <el-radio-button :label="2">待退款</el-radio-button>
+        <el-radio-button :label="3">退货中</el-radio-button>
+        <el-radio-button :label="2">退款完成</el-radio-button>
+        <el-radio-button :label="3">已取消</el-radio-button>
+      </el-radio-group>
       <div class="table-box">
-        <div class="choose-num">
-          <div>
-            <el-button v-if="listQuery.status!==1&&listQuery.status!==2" type="primary" size="small" @click="handleBatchUpDown(1)">批量上架</el-button>
-            <el-button v-if="listQuery.status!==0" type="danger" size="small" @click="handleBatchUpDown(0)">批量下架</el-button>
-            <el-button type="" size="small" @click="handleLock">批量锁定库存价格</el-button>
+        <div class="order-table">
+          <div class="order-table-header">
+            <div class="header-left">
+              <div class="header-cell">商品</div>
+              <div class="header-cell">商品编号</div>
+              <div class="header-cell">单价/数量</div>
+            </div>
+            <div class="header-cell">收货人</div>
+            <div class="header-cell">下单时间</div>
+            <div class="header-cell">订单状态</div>
+            <div class="header-cell">订单来源</div>
+            <div class="header-cell">优惠金额</div>
+            <div class="header-cell">实付金额</div>
           </div>
-          <span>已选中（{{ multipleSelection.length }}）个</span>
-        </div>
-        <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column
-            type="selection"
-            width="55"
-          />
-          <el-table-column
-            align="left"
-            min-width="140"
-            :show-overflow-tooltip="true"
-            label="门店信息"
-          >
-            <template slot-scope="scope">
-              <div>
-                <p>门店编号：{{ chooseStore.stCode }}</p>
-                <p>门店名称：{{ scope.row.storeName }}</p>
+          <div class="order-table-body">
+            <div class="order-detail-header">
+              <div class="header-left">
+                <div class="header-cell">
+                  订单编号：
+                </div>
+                <div class="header-cell">
+                  888888***********（处方药订单）
+                </div>
               </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="orCode"
-            align="left"
-            min-width="120"
-            label="商品图片"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">
-              <template v-if="scope.row.mainPic">
-                <el-image
-                  style="width: 60px; height: 60px"
-                  :src="showImg(scope.row.mainPic)"
-                  lazy
-                  fit="contain"
-                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
-                />
-              </template>
-              <template v-else>
-                <p class="">暂未上传</p>
-              </template>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="left"
-            min-width="150"
-            label="商品信息"
-          >
-            <template slot-scope="scope">
-              <div>
-                <p>{{ scope.row.name }}</p>
-                <p>{{ scope.row.approvalNumber }}</p>
+              <div class="header-right">
+                <div class="header-cell">
+                  订单详情
+                </div>
               </div>
-            </template></el-table-column>
-          <el-table-column
-            prop="erpCode"
-            label="ERP编码"
-            align="left"
-          />
-          <el-table-column
-            prop="mprice"
-            label="参考价格"
-            align="left"
-          />
-          <el-table-column
-            prop="createTime"
-            align="left"
-            min-width="120"
-            label="门店价格"
-          >
-            <template slot-scope="scope">
-              <div class="edit-tip">
-                <span style="display:inline-block;margin-right:10px" v-text="scope.row.price" />
-                <i class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'price')" />
+            </div>
+            <div class="order-detail-body">
+              <div class="body-cell cell-left">
+                <div class="goods-list">
+                  <div class="goods-item">
+                    <div class="goods-img padding10">
+                      <img src="" width="100" height="100">
+                    </div>
+                    <div class="goods-info padding10">
+                      <div class="goods-name" title="邦迪创可贴邦迪创可贴">邦迪创可贴</div>
+                      <div class="goods-state">(退款完成)</div>
+                      <div class="goods-number marginTop20">000001</div>
+                    </div>
+                    <div class="goods-info padding10">
+                      <div class="goods-price">￥90.00</div>
+                      <div class="goods-num">(1件)</div>
+                      <div class="goods-remark marginTop20">查看退款理由</div>
+                    </div>
+                  </div>
+
+                  <div class="goods-item">
+                    <div class="goods-img padding10">
+                      <img src="" width="100" height="100">
+                    </div>
+                    <div class="goods-info padding10">
+                      <div class="goods-name" title="邦迪创可贴邦迪创可贴">邦迪创可贴</div>
+                      <div class="goods-state">(退款完成)</div>
+                      <div class="goods-number marginTop20">000001</div>
+                    </div>
+                    <div class="goods-info padding10">
+                      <div class="goods-price">￥90.00</div>
+                      <div class="goods-num">(1件)</div>
+                      <div class="goods-remark marginTop20">查看退款理由</div>
+                    </div>
+                  </div>
+
+                  <div class="goods-item">
+                    <div class="goods-img padding10">
+                      <img src="" width="100" height="100">
+                    </div>
+                    <div class="goods-info padding10">
+                      <div class="goods-name" title="邦迪创可贴邦迪创可贴">邦迪创可贴</div>
+                      <div class="goods-state">(退款完成)</div>
+                      <div class="goods-number marginTop20">000001</div>
+                    </div>
+                    <div class="goods-info padding10">
+                      <div class="goods-price">￥90.00</div>
+                      <div class="goods-num">(1件)</div>
+                      <div class="goods-remark marginTop20">查看退款理由</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="left"
-            min-width="120"
-            label="门店库存"
-          >
-            <template slot-scope="scope">
-              <div class="edit-tip">
-                <span style="display:inline-block;margin-right:10px" v-text="scope.row.stock" />
-                <i class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'stock')" />
+              <div class="body-cell cell-right padding10">
+                <div class="cell-text">
+                  <div>收货人</div>
+                  <div>131****9723</div>
+                </div>
               </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="address"
-            align="left"
-            fixed="right"
-            label="操作"
-            min-width="150"
-          >
-            <template slot-scope="scope">
-              <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
-              <el-button
-                v-if="scope.row.status===0"
-                type="primary"
-                size="mini"
-                @click="handleUpDown(scope.row)"
-              >上架</el-button>
-              <el-button v-else type="danger" size="mini" @click="handleUpDown(scope.row)">下架</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="table-footer">
-          <pagination
-            :total="total"
-            :page.sync="listQuery.currentPage"
-            :limit.sync="listQuery.pageSize"
-            @pagination="_loadList"
-          />
+              <div class="body-cell cell-right padding10">
+                <div class="cell-text">
+                  <div>2019-01-11</div>
+                  <div>12:11:12</div>
+                </div>
+              </div>
+              <div class="body-cell cell-right padding10">
+                <div class="cell-text">
+                  <template>
+                    <div>待付款</div>
+                  </template>
+                  <template>
+                    <div>待发货</div>
+                    <div><input type="button" value="立即发货"></div>
+                  </template>
+                  <template>
+                    <div>待提货</div>
+                  </template>
+                  <template>
+                    <div>待发货</div>
+                    <div><input type="button" value="立即发货"></div>
+                  </template>
+                  <template>
+                    <div>已发货</div>
+                  </template>
+                  <template>
+                    <div>待退款</div>
+                    <div><input type="button" value="拒绝"> <input type="button" value="退款"></div>
+                  </template>
+                  <template>
+                    <div>退货中</div>
+                    <div><input type="button" value="收到退货"></div>
+                  </template>
+                  <template>
+                    <div>已取消</div>
+                  </template>
+                  <template>
+                    <div>已完成</div>
+                  </template>
+                </div>
+              </div>
+              <div class="body-cell cell-right padding10"><div class="cell-text">微商城</div></div>
+              <div class="body-cell cell-right padding10"><div class="cell-text">0.00</div></div>
+              <div class="body-cell cell-right padding10">
+                <div class="cell-text">
+                  <div>￥90.00</div>
+                  <div>（含运费0.00元）</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <!-- <div class="table-box">
+        <div class="listheader">
+          <div class="goods_title">
+            <div class="padding10"><span>商品</span></div>
+            <div class="padding10"><span>商品编码</span></div>
+            <div class="padding10"><span>单价/数量</span></div>
+          </div>
+
+          <div class="padding10"><span>收货人</span></div>
+          <div class="padding10"><span>下单时间</span></div>
+          <div class="padding10"><span>订单来源</span></div>
+          <div class="padding10"><span>优惠金额</span></div>
+          <div class="padding10"><span>实付金额</span></div>
+        </div>
+
+        <div class="order_detail_title">
+          <div class="left">订单号：23222223223（处方药订单）</div>
+          <div class="right">订单详情</div>
+        </div>
+        <div class="listheader">
+          <div class="order_shop_con border_right">
+            <div class="goods_list">
+              <div class="goods_item">
+                <div class="goods_img">
+                  <div><img width="100" height="100" src="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/ydjia-merchant-manager/666666/img/20191121/baba62d52f7642498ce66e9aa4102dda.jpg"></div>
+                </div>
+                <div class="good_item_center">
+                  <p>邦迪创可贴</p>
+                  <p class="color_red">(退款完成)</p>
+                  <p>0000001</p>
+                </div>
+                <div class="goods_item_right">
+                  <p>90(件)</p>
+                  <p>(1件)</p>
+                  <p class="color_green">查看退款理由</p>
+                </div>
+              </div>
+
+              <div class="goods_item">
+                <div class="goods_img">
+                  <div><img width="100" height="100" src="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/ydjia-merchant-manager/666666/img/20191121/baba62d52f7642498ce66e9aa4102dda.jpg"></div>
+                </div>
+                <div class="good_item_center">
+                  <p>邦迪创可贴</p>
+                  <p>(退款完成)</p>
+                  <p>0000001</p>
+                </div>
+                <div class="goods_item_right">
+                  <p>90（件）</p>
+                  <p>(1件)</p>
+                  <p>查看退款理由</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="padding10 border_right"><span class="sort">收货人</span></div>
+          <div class="padding10 border_right"><span class="sort">下单时间</span></div>
+          <div class="padding10 border_right"><span class="sort">订单来源</span></div>
+          <div class="padding10 border_right"><span class="sort">优惠金额</span></div>
+          <div class="padding10"><span>实付金额</span></div>
+        </div>
+
+      </div> -->
+
     </div>
     <el-dialog
       title="锁定库存价格"
@@ -283,13 +478,13 @@
 </template>
 <script>
 import mixins from '@/utils/mixin'
-import Pagination from '@/components/Pagination'
+
 import { mapGetters } from 'vuex'
 import { getTypeTree } from '@/api/group'
 import { getStoreGoodsList, setLockPrice, setUpdatePriceStock } from '@/api/store-goods'
 import { getStoreList, setBatchUpdown } from '@/api/depot'
 export default {
-  components: { Pagination },
+
   mixins: [mixins],
   data() {
     const _checkTime = (rule, value, callback) => {
@@ -347,6 +542,58 @@ export default {
       }
     }
     return {
+      pickerOptions: { // 时间控件相关
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            const end = new Date()
+            let start = new Date()
+            const year = new Date().getFullYear()
+            const month = new Date().getMonth() + 1
+            const day = new Date().getDate()
+            start = year + '-' + month + '-' + day + ' ' + '00:00:00'
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            let end = new Date()
+            let start = new Date()
+            const year = new Date().getFullYear()
+            const month = new Date().getMonth() + 1
+            const day = new Date().getDate() - 1
+            start = year + '-' + month + '-' + day + ' ' + '00:00:00'
+            end = year + '-' + month + '-' + day + ' ' + '23:59:59'
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+      value2: '',
       keyword: '',
       tableData: [],
       multipleSelection: [],
@@ -651,6 +898,147 @@ export default {
 }
 </script>
 <style lang="scss">
+//订单详情
+.order-table{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100vh;
+
+  .order-table-header{
+    background: #ebebeb;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border: solid 1px #dfe6ec;
+
+    .header-left{
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 30vw;
+      .header-cell{
+        flex: 1;
+        text-align: center;
+      }
+    }
+    .header-cell{
+      color: #606266;
+      font-size: 14px;
+      flex: 1;
+      text-align: center;
+    }
+  }
+  .order-table-body{
+    margin: 10px 0 0 0;
+    border: solid 1px #dfe6ec;
+    .order-detail-header{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: solid 1px #dfe6ec;
+      padding:10px;
+      background:#f8f8f9;
+      .header-left{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        .header-cell{
+          color: #606266;
+          font-size: 14px;
+
+        }
+      }
+      .header-right{
+        .header-cell{
+          color: blue;
+          font-size: 14px;
+        }
+      }
+    }
+    .order-detail-body{
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      .body-cell{
+        flex: 1;
+        font-size: 14px;
+        color: #606266;
+        line-height: 22px;
+        &:nth-last-child(1){
+          border-right: none;
+        }
+        &.cell-left{
+          border-right: 1px solid #dfe6ec
+        }
+        &.cell-right{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex: 1;
+          border-right: 1px solid #dfe6ec;
+          .cell-text{
+            text-align: center;
+          }
+        }
+        .goods-list{
+          width: 30vw;
+          .goods-item{
+            display: flex;
+            // justify-content: flex-start;
+            // align-items: center;
+            border-bottom: solid 1px #dfe6ec;
+            &:nth-last-child(1){
+              border-bottom: none;
+            }
+            .goods-img{
+              width: 100px;
+              height: 100px;
+              overflow: hidden;
+              img{
+                width: 100%;
+                height: 100%;
+              }
+            }
+            .goods-info{
+              flex: 1;
+              .goods-name{
+                text-align: left;
+                overflow: hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
+                width: 200px;
+              }
+              .goods-state{
+                color:red;
+                text-align: left;
+              }
+              .goods-number{
+                text-align: left;
+              }
+            }
+            .goods-info{
+              flex: 1;
+              .goods-price{
+                text-align: right;
+              }
+              .goods-num{
+                text-align: right;
+              }
+              .goods-remark{
+                text-align: right;
+                color: green;
+                align-items: flex-end;
+                align-content:space-between;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 .store-goods-wrapper {
   .search-form {
     .search-item {
@@ -681,4 +1069,19 @@ export default {
     }
   }
 }
+.badge{
+  background: red;
+  color:#fff;
+  position: absolute;
+  top: 3px;
+  border-radius: 50%;
+  padding: 2px;
+  right: 10px;
+}
+
+.padding10{padding:10px;}
+.marginTop20{ margin-top: 20px;}
+
+.el-date-range-picker{left:270px!important} //时间控件弹出框
+.el-radio-button--small .el-radio-button__inner{padding:12px 30px}
 </style>
