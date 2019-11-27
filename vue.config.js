@@ -51,7 +51,7 @@ module.exports = {
     }
   },
   devServer: {
-    disableHostCheck: true,
+    disableHostCheck: false,
     port: port,
     open: false,
     overlay: {

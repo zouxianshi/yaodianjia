@@ -139,22 +139,6 @@ export default {
     dialogStore
   },
   data() {
-    // const checkWebsite = (rule, value, callback) => {
-    //   console.log('value', value)
-    //   if (value === '') {
-    //     callback(new Error('请输入链接地址'))
-    //   }
-    //   if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-    //     callback(new Error('链接格式不正确，例：http://111.com'))
-    //   }
-    //   callback()
-    // }
-    // const checkNum = (rule, value, callback) => {
-    //   if (value !== '' && !/^[1-9]([0-9])*$/.test(value)) {
-    //     callback(new Error('请输入正整数'))
-    //   }
-    //   callback()
-    // }
     return {
       disabled: false,
       dataid: '',
@@ -212,15 +196,15 @@ export default {
   created() {
     const dataid = this.$route.query.id || ''
     const type = this.$route.query.type || ''
-    const _ck = this.$route.query._ck
+    // const _ck = this.$route.query._ck
     if (dataid && dataid !== '' && type !== '') {
       this.dataid = dataid
       this.type = type
       this._getDetailData()
     }
-    if (_ck === '1') {
-      this.disabled = true
-    }
+    // if (_ck === '1') {
+    //   this.disabled = true
+    // }
     // this.fetchData()
   },
   methods: {
