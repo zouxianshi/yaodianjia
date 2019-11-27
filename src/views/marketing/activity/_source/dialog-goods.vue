@@ -1,19 +1,12 @@
 <template>
-  <el-dialog
-    append-to-body
-    class="m-dialog dialog-store"
-    :visible.sync="dialog.visible"
-    :close-on-click-modal="false"
-    width="900px"
-    @close="handlerClose"
-  >
+  <el-dialog append-to-body class="m-dialog dialog-goods" :visible.sync="dialog.visible" :close-on-click-modal="false" width="920px" @close="handlerClose">
     <div class="modal-header">
-      <div class="title">选取门店</div>
+      <div class="title">选取商品</div>
     </div>
     <div class="modal-body">
       <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
-          <el-input v-model="searchParams.keyWord" style="width: 240px" placeholder="门店编码/门店名称" size="small" />
+          <el-input v-model="search.keyWord" style="width: 240px" placeholder="搜索" size="small" />
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
@@ -22,29 +15,47 @@
       <el-table
         ref="multipleTable"
         border
-        size="mini"
+        size="small"
         :data="tableData"
         style="width: 100%;margin-top: 20px"
         max-height="256"
         @select-all="handleSelectAllChange"
         @select="handleSelect"
       >
-        <!-- <div v-if="searchParams.keyWord === ''" slot="empty">
-          当前无上线门店，先去维护<el-button type="text" @click="toStoreSetting">上线门店</el-button>吧
-        </div> -->
         <el-table-column type="selection" align="center" width="50" />
-        <el-table-column property="stCode" label="门店编码" width="150" show-overflow-tooltip />
-        <el-table-column label="门店名称">
+        <el-table-column align="center" label="商品图片" min-width="60">
           <template slot-scope="scope">
-            <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" class="item">
-              <span>{{ scope.row.stName }}</span>
-              <!--              <span>说的是大三大萨达萨达撒打撒大撒的萨达萨达撒</span>-->
-            </el-badge>
-            <span v-else>{{ scope.row.stName }}</span>
+            <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
+              <div class="x-image__preview">
+                <el-image
+                  style="width: 60px; height: 36px"
+                  fit="contain"
+                  :src="showImg(scope.row.mainPic)"
+                  :preview-src-list="[showImg(scope.row.mainPic)]"
+                />
+              </div>
+            </div>
+            <div v-else style="line-height: 32px">暂无上传</div>
+          </template>
+          <!-- <template slot-scope="scope">
+            <div class="img-wrap">
+              <img :src="showImg(scope.row.mainPic)">
+            </div>
+          </template> -->
+        </el-table-column>
+        <el-table-column prop="name" label="商品名称" align="center" min-width="120" />
+        <el-table-column prop="brandName" label="品牌" align="center" min-width="100" />
+        <el-table-column label="规格信息" align="center" min-width="100">
+          <template slot-scope="scope">
+            <span v-text="formatSkuInfo(scope.row.specSkuList)" />
           </template>
         </el-table-column>
-        <el-table-column property="address" label="门店地址" show-overflow-tooltip />
-        <el-table-column property="mobile" label="门店电话" show-overflow-tooltip />
+        <el-table-column prop="manufacture" label="生产厂家" align="center" min-width="120" />
+        <!-- <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
+          </template>
+        </el-table-column>-->
       </el-table>
       <el-pagination
         background
@@ -60,14 +71,14 @@
       <div class="result-section">
         <div class="blank-line" />
         <div class="title">
-          <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
-          <span v-else>请选取门店</span>
+          <span v-if="mySelectList && mySelectList.length>0">已选商品：</span>
+          <span v-else>请选取商品</span>
         </div>
         <div class="label-line">
           <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-            <span v-text="mItem.stName" />
+            <span v-text="mItem.name" />
             <i
-              v-if="editable"
+              v-if="editable && !mItem.checked"
               class="icon el-icon-close"
               @click.stop="removeMyselectItem(mItem, index2)"
             />
@@ -77,23 +88,26 @@
     </div>
     <span slot="footer" class="dialog-footer">
       <template v-if="editable">
-        <el-button type="primary" size="mini" @click="confirm()">确 定</el-button>
-        <el-button size="mini" @click="dialog.visible = false">取 消</el-button>
+        <el-button type="primary" size="small" @click="confirm()">确 定</el-button>
+        <el-button size="small" @click="dialog.visible = false">取 消</el-button>
       </template>
-      <el-button v-else size="mini" @click="dialog.visible = false">关 闭</el-button>
+      <el-button v-else @click="dialog.visible = false">关 闭</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-import { queryStores } from '@/api/common'
-import { mapGetters } from 'vuex'
+import { queryGoods } from '@/api/common'
 export default {
   name: 'DialogGoods',
   props: {
     list: {
       type: Array,
       default: () => []
+    },
+    limitMax: { // 选取数量限制个数 0表示不限制
+      type: Number,
+      default: 0
     },
     editable: {
       // 是否可编辑
@@ -111,7 +125,7 @@ export default {
         size: 20,
         total: 0
       },
-      searchParams: {
+      search: {
         keyWord: ''
       },
       tableData: [],
@@ -119,13 +133,8 @@ export default {
       mySelectList: []
     }
   },
-  computed: {
-    ...mapGetters(['merCode'])
-  },
   created() {},
-  mounted() {
-    this.fetchData()
-  },
+  mounted() {},
   methods: {
     // 获取数据
     fetchData() {
@@ -149,7 +158,7 @@ export default {
         size: 20,
         total: 0
       }
-      this.searchParams = {
+      this.search = {
         keyWord: ''
       }
     },
@@ -158,9 +167,22 @@ export default {
         this.$message({ type: 'warning', message: '请选取商品' })
         return false
       }
-      console.log('on-change', this.mySelectList)
+      if (this.limitMax !== 0 && this.mySelectList.length > this.limitMax) {
+        this.$message({ type: 'warning', message: '最多只能选取' + this.limitMax + '个商品' })
+        return false
+      }
+      console.log('confirm', this.mySelectList)
       this.$emit('on-change', this.mySelectList)
       this.close()
+    },
+    formatSkuInfo(skuList) {
+      let skuStr = ''
+      if (skuList && skuList.length > 0) {
+        skuList.forEach(v => {
+          skuStr += `${v.skuKeyName}:${v.skuValue}，`
+        })
+      }
+      return skuStr
     },
     handlerClose() {
       this.reset()
@@ -188,11 +210,11 @@ export default {
     handleSelectAllChange(allList) {
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.id === item.id
+          return mItem.specId === item.specId
         })
         if (index > -1) {
           if (allList.length > 0) {
-            console.log('已存在' + item.id + ':' + item.stName)
+            console.log('已存在' + item.specId + ':' + item.name)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
@@ -205,7 +227,7 @@ export default {
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.id === row.id
+        return mItem.specId === row.specId
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
@@ -215,8 +237,14 @@ export default {
     },
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
+      if (myItem.checked) {
+        console.log('外层已选取得数据只能在外层删掉')
+        return false
+      }
       const index = this.tableData.findIndex(item => {
-        return item.id === myItem.id
+        console.log('222item', item)
+        console.log('myItem', myItem)
+        return item.specId === myItem.specId
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
@@ -228,7 +256,7 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.id === item.id
+          return mItem.specId === item.specId
         })
         if (index > -1) {
           currentCheckedList.push(item)
@@ -241,19 +269,25 @@ export default {
       this.pager.total = 0
       this._getTableData()
     },
-    toStoreSetting() {
-      this.$router.push({ path: '/storeSetting/setting' })
-    },
     _getTableData() {
+      // this.tableData = []
+      /* setTimeout(() => {
+          this.tableData = this.tableArr.slice()
+          this.$nextTick(() => {
+            this.updateChecked()
+          })
+        }, 1000)
+        return false*/
       const params = {
-        merCode: this.merCode,
-        onlineStatus: 1, // integer($int32) 是否上线门店（0非上线门店，1上线门店）
-        searchKey: this.searchParams.keyWord.trim(),
+        typeId: '',
+        hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
+        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
+        auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
+        name: this.search.keyWord.trim(),
         currentPage: this.pager.current,
-        pageSize: this.pager.size,
-        excelFlag: false
+        pageSize: this.pager.size
       }
-      queryStores(params).then(res => {
+      queryGoods(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []
           this.pager.total = res.data.totalCount
@@ -270,7 +304,7 @@ export default {
 </script>
 
 <style lang="scss">
-.dialog-store {
+.dialog-goods {
   .el-dialog__header {
     height: 0;
     padding: 0;
@@ -298,7 +332,7 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.dialog-store {
+.dialog-goods {
   .modal-header {
     height: 40px;
     line-height: 40px;

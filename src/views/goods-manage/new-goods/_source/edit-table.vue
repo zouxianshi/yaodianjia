@@ -16,6 +16,7 @@
               <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
             </span>
             <p v-if="keys==='erpCode'&&err_show" class="tip">商品编码只能为纯数字</p>
+            <p v-show="keys==='barCode'&&err_show" class="tip">只能输入数字、英文、字符</p>
           </el-form-item>
           <el-form-item v-else label="" :prop="keys">
             <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
@@ -23,7 +24,6 @@
               <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
               <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
             </span>
-            <p v-if="keys==='erpCode'&&err_show" class="tip">商品编码只能为纯数字</p>
           </el-form-item>
         </el-form>
       </div>
@@ -32,7 +32,7 @@
   </span>
 </template>
 <script>
-import { checkNumberdouble } from '@/utils/validate'
+import { checkNumberdouble, checkZmSZ } from '@/utils/validate'
 
 export default {
   name: 'EditTable',
@@ -102,7 +102,16 @@ export default {
             this.err_show = true
             return
           }
+          if (this.keys === 'barCode' && !checkZmSZ(this.infoData[this.keys])) {
+            this.err_show = true
+            return
+          }
           this.err_show = false
+          if (this.keys === 'mprice') {
+            if (!/^([1-9]\d*|0)(\.\d*[1-9])?$/.exec(this.infoData.mprice)) {
+              this.infoData.mprice = ~~this.infoData.mprice
+            }
+          }
           this.$emit('saveInfo', this.infoData, this.keys, this.index)
           this.isShow = false
         } else {
@@ -117,3 +126,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.tip{
+  font-size: 12px;
+}
+</style>

@@ -232,7 +232,7 @@
           </el-form-item>
           <div v-show="rejectForm.id==='3'">
             <el-form-item label="驳回原因" prop="reason">
-              <el-input v-model="rejectForm.reason" placeholder="输入原因" type="textarea" :rows="2" />
+              <el-input v-model="rejectForm.reason" maxlength="127" show-word-limit placeholder="输入原因" type="textarea" :rows="2" />
               <span v-show="is_err" class="tip">请填写驳回原因</span>
             </el-form-item>
           </div>
@@ -397,6 +397,13 @@ export default {
     },
     handleReject() {
       let reason = ''
+      if (!this.rejectForm.id) {
+        this.$message({
+          message: '请选择拒绝原因',
+          type: 'error'
+        })
+        return
+      }
       if (this.rejectForm.id === '1') {
         reason = '药店加平台已存在改商品'
       } else if (this.rejectForm.id === '2') {

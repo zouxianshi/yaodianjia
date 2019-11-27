@@ -5,6 +5,7 @@
       :visible.sync="isShow"
       append-to-body
       width="700px"
+      :close-on-press-escape="false"
       :show-close="false"
       :close-on-click-modal="false"
     >
@@ -117,9 +118,10 @@ export default {
     },
     _loadStoreData() {
       const query = {
-        storeName: this.storeCode,
+        searchKey: this.storeCode,
         currentPage: this.currentPage,
-        onlineStatus: 1
+        onlineStatus: 1,
+        status: 1
       }
       getStoreList(query).then(res => {
         const { data, totalCount } = res.data

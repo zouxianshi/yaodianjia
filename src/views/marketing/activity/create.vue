@@ -10,7 +10,7 @@
           <ul class="ul-list">
             <li class="li-item">
               <div class="li-left">
-                <img src="">
+                <img src="../../../assets/image/icon_limit.png">
               </div>
               <div class="li-center">
                 <div class="title">限时优惠</div>
@@ -22,7 +22,7 @@
             </li>
             <li class="li-item">
               <div class="li-left">
-                <img src="">
+                <img src="../../../assets/image/icon_DM.png">
               </div>
               <div class="li-center">
                 <div class="title">电子DM单</div>
@@ -34,7 +34,7 @@
             </li>
             <li class="li-item">
               <div class="li-left">
-                <img src="">
+                <img src="../../../assets/image/icon_share_hb.png">
               </div>
               <div class="li-center">
                 <div class="title">分享红包</div>
@@ -89,7 +89,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'ActivityCreate',
   created() {
@@ -105,111 +104,126 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.app-container{
-  padding: 24px;
-}
-.x-panel {
-  margin-bottom: 40px;
-  font-family: Microsoft YaHei;
-  .header {
-    .title {
-      font-size: 28px;
-      font-weight: 400;
-      color:#303133;
-    }
-    .desc {
-      margin-top: 12px;
-      font-size:14px;
-      font-weight:400;
-      color:#303133;
-    }
+  .app-container {
+    padding: 24px;
   }
-  .content {
-    margin-top: 20px;
-    .ul-list2 {
-      display: flex;
-      flex-wrap: wrap;
-      .li-item {
+
+  .x-panel {
+    margin-bottom: 40px;
+    font-family: Microsoft YaHei;
+
+    .header {
+      .title {
+        font-size: 28px;
+        font-weight: 400;
+        color: #303133;
+      }
+
+      .desc {
+        margin-top: 12px;
+        font-size: 14px;
+        font-weight: 400;
+        color: #303133;
+      }
+    }
+
+    .content {
+      margin-top: 20px;
+
+      .ul-list2 {
         display: flex;
-        flex: 0 0 auto;
-        width:380px;
-        height:120px;
-        margin-right: 15px;
-        background:rgba(227,227,227,0.3);
-        border:1px solid rgba(220,223,230,1);
-        border-radius:4;
-        overflow: hidden;
-        box-sizing: border-box;
-        padding: 20px 10px 10px 15px;
-        margin-bottom: 15px;
-        .li-left {
-          .text-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            background:rgba(227,227,227,0.3);
-            border:1px solid rgba(220,223,230,1);
-            border-radius:4px;
-            font-size:38px;
-            color: #cccccc;
+        flex-wrap: wrap;
+
+        .li-item {
+          display: flex;
+          flex: 0 0 auto;
+          width: 380px;
+          height: 120px;
+          margin-right: 15px;
+          background: rgba(227, 227, 227, 0.3);
+          border: 1px solid rgba(220, 223, 230, 1);
+          border-radius: 4;
+          overflow: hidden;
+          box-sizing: border-box;
+          padding: 20px 10px 10px 15px;
+          margin-bottom: 15px;
+
+          .li-left {
+            .text-box {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 60px;
+              height: 60px;
+              background: rgba(227, 227, 227, 0.3);
+              border: 1px solid rgba(220, 223, 230, 1);
+              border-radius: 4px;
+              font-size: 38px;
+              color: #cccccc;
+            }
+          }
+
+          .li-center {
+            flex: 1;
+            margin-left: 15px;
+
+            .title {
+              height: 17px;
+              font-size: 18px;
+              color: #303133;
+            }
+
+            .desc {
+              margin-top: 10px;
+              font-size: 14px;
+              line-height: 24px;
+              height: 50px;
+              color: #606266;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 3;
+              overflow: hidden;
+            }
           }
         }
-        .li-center {
-          flex: 1;
-          margin-left: 15px;
-          .title {
-            height:17px;
-            font-size:18px;
-            color:#303133;
+      }
+
+      .ul-list {
+        .li-item {
+          display: flex;
+          width: 700px;
+          border-bottom: 1px solid rgba(220, 223, 230, 1);
+          padding: 24px 0;
+
+          .li-left {
+            img {
+              width: 64px;
+              height: 64px;
+              border-radius: 4px;
+              overflow: hidden;
+              background: linear-gradient(146deg, rgba(118, 235, 216, 1), rgba(24, 179, 210, 1));
+            }
           }
-          .desc {
-            margin-top: 10px;
-            font-size:14px;
-            line-height: 24px;
-            height: 50px;
-            color: #606266;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 3;
-            overflow: hidden;
+
+          .li-center {
+            flex: 1;
+            margin-left: 20px;
+
+            .title {
+              height: 17px;
+              font-size: 18px;
+              color: #303133;
+            }
+
+            .desc {
+              margin-top: 10px;
+              font-size: 14px;
+              line-height: 24px;
+              color: #606266;
+            }
           }
         }
       }
     }
-    .ul-list {
-      .li-item {
-        display: flex;
-        width: 700px;
-        border-bottom: 1px solid rgba(220,223,230,1);
-        padding: 24px 0;
-        .li-left {
-          img {
-            width:64px;
-            height:64px;
-            border-radius: 4px;
-            overflow: hidden;
-            background:linear-gradient(146deg,rgba(118,235,216,1),rgba(24,179,210,1));
-          }
-        }
-        .li-center {
-          flex: 1;
-          margin-left: 20px;
-          .title {
-            height:17px;
-            font-size:18px;
-            color:#303133;
-          }
-          .desc {
-            margin-top: 10px;
-            font-size:14px;
-            line-height: 24px;
-            color: #606266;
-          }
-        }
-      }
-    }
   }
-}
 </style>

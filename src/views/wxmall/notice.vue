@@ -4,7 +4,7 @@
       <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加公告</el-button>
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-          <div class="search-item">
+          <!-- <div class="search-item">
             <span class="label-name">有效时间</span>
             <el-date-picker
               v-model="searchForm.timeBeg"
@@ -22,7 +22,7 @@
               placeholder="结束时间"
               @change="handleTimeChange($event, 2)"
             />
-          </div>
+          </div> -->
           <div class="search-item">
             <span class="label-name" style="width: 50px">状态</span>
             <el-select

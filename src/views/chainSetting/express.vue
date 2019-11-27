@@ -149,7 +149,8 @@ export default {
       editPosition: -1,
       form: {
         list: []
-      }
+      },
+      selectableCount: 0
     }
   },
   computed: {
@@ -203,7 +204,20 @@ export default {
         this.checkAll = false
         this.isIndeterminate = false
         this.visable = true
+        this.selectableCount = this.cities.length - this.selected.length
+        console.log('selectableCount', this.selectableCount)
         return
+      } else {
+        const selectedRangid = []
+        _.filter(_.cloneDeep(this.selected), o => {
+          _.map(this.form.list[this.editPosition].rangeResDTOList, (v) => {
+            if (o === v.rangeId) {
+              selectedRangid.push(o)
+            }
+          })
+        })
+        this.selectableCount = this.cities.length - this.selected.length + selectedRangid.length
+        console.log('selectableCount', this.selectableCount)
       }
       const arr = []
       _.map(this.form.list[this.editPosition].rangeResDTOList, (v) => {
@@ -214,12 +228,18 @@ export default {
       })
       this.checkedCities = arr
       if (this.checkedCities.length > 0) {
-        this.isIndeterminate = true
+        this.checkAll = this.checkedCities.length === this.selectableCount
+        if (this.checkAll) {
+          this.isIndeterminate = false
+        } else {
+          this.isIndeterminate = true
+        }
+        /* this.isIndeterminate = true
         if (this.selected.length === this.cities.length) {
           this.checkAll = true
         } else {
           this.checkAll = false
-        }
+        }*/
       } else {
         this.isIndeterminate = false
         this.checkAll = false
@@ -356,21 +376,27 @@ export default {
       console.log(this.checkedCities)
       if (this.checkedCities.length > 0) {
         console.log('aa')
-        this.isIndeterminate = true
+        this.checkAll = this.checkedCities.length === this.selectableCount
+        if (this.checkAll) {
+          this.isIndeterminate = false
+        } else {
+          this.isIndeterminate = true
+        }
+        /* this.isIndeterminate = true
         if (this.selected.length === this.cities.length) {
           console.log('bb')
           this.checkAll = true
         } else {
           console.log('cc')
           this.checkAll = false
-        }
+        }*/
       } else {
         console.log('dd')
         this.isIndeterminate = false
         this.checkAll = false
       }
-      this.isIndeterminate = this.checkedCities.length > 0
-      this.checkAll = (this.checkedCities.length + this.selected.length) === this.cities.length
+      // this.isIndeterminate = this.checkedCities.length > 0
+      // this.checkAll = (this.checkedCities.length + this.selected.length) === this.cities.length
     },
     onCheck(value, item) {
       console.log(value, item)
@@ -383,11 +409,18 @@ export default {
       } else {
         this.checkedCities = _.filter(this.checkedCities, function(o) { return o.id !== item.id })
       }
-      console.log(this.cities)
-      console.log(this.selected)
-      console.log(this.checkedCities)
-      this.isIndeterminate = this.checkedCities.length > 0
-      this.checkAll = (this.checkedCities.length + this.selected.length) === this.cities.length
+      console.log('selectableCount:', this.selectableCount)
+      console.log('cities:', this.cities)
+      console.log('selected:', this.selected)
+      console.log('checkedCities:', this.checkedCities)
+      this.checkAll = this.checkedCities.length === this.selectableCount
+      if (!this.checkAll) {
+        this.isIndeterminate = this.checkedCities.length > 0
+      } else {
+        this.isIndeterminate = false
+      }
+      console.log('isIndeterminate', this.isIndeterminate)
+      console.log('checkAll', this.checkAll)
     },
     submit() {
       if (this.cities.length - this.selected.length > 0) {
@@ -447,6 +480,7 @@ export default {
       })
     },
     dismiss() {
+      this.selectableCount = 0
       this.checkedCities = []
       this.checkAll = false
       this.isIndeterminate = false

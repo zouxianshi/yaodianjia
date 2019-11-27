@@ -128,7 +128,7 @@
               <template slot-scope="scope">
                 <template v-if="scope.row.mainPic">
                   <el-image
-                    style="width: 60px; height: 60px"
+                    style="width: 70px; height: 70px"
                     :src="showImg(scope.row.mainPic)"
                     lazy
                     fit="contain"
@@ -149,13 +149,14 @@
             >
               <template slot-scope="scope">
                 <div style="overflow: hidden;text-overflow: ellipsis;">
-                  <p v-text="scope.row.name" />
-                  <p style="overflow: hidden;text-overflow: ellipsis;">
+                  <p class="ellipsis" v-text="scope.row.name" />
+                  <p class="ellipsis">
                     <span v-for="(item,index) in scope.row.specSkuList" :key="index">
                       {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
                     </span>
                   </p>
-                  <p style="overflow: hidden;text-overflow: ellipsis;" v-text="'条码：'+scope.row.barCode" />
+                  <p class="ellipsis" v-text="'条码：'+scope.row.barCode" />
+                  <p class="ellipsis" v-text="scope.row.approvalNumber" />
                 </div>
               </template>
             </el-table-column>
@@ -163,6 +164,7 @@
               align="left"
               min-width="120"
               label="生产企业"
+              show-overflow-tooltip
               prop="manufacture"
             />
             <el-table-column

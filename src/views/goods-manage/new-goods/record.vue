@@ -53,7 +53,7 @@
           <div class="search-item">
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
-            <el-button type="danger" size="small" @click="handleBatchDel">删除</el-button>
+            <el-button v-if="listQuery.auditStatus==='3'||listQuery.auditStatus==='2'||listQuery.auditStatus==='0'" type="danger" size="small" @click="handleBatchDel">删除</el-button>
           </div>
         </div>
       </section>
@@ -79,7 +79,7 @@
             <template slot-scope="scope">
               <template v-if="scope.row.mainPic">
                 <el-image
-                  style="width: 60px; height: 60px"
+                  style="width: 70px; height: 70px"
                   :src="showImg(scope.row.mainPic)"
                   lazy
                   fit="contain"
@@ -111,6 +111,7 @@
             align="left"
             min-width="120"
             prop="manufacture"
+            show-overflow-tooltip
             label="生产企业"
           />
           <el-table-column
@@ -159,7 +160,12 @@
                   <el-button type="" size="mini">查看</el-button>
                 </a>
               </template>
-              <template v-if="scope.row.origin===1||listQuery.auditStatus==='-1'||((scope.row.infoStatus<=15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))">
+              <template v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!=='-1'&&((scope.row.infoStatus<15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))">
+                <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                  <el-button type="" size="mini">完善信息</el-button>
+                </a>
+              </template>
+              <template v-if="scope.row.origin===1&&scope.row.origin!==2&&((scope.row.infoStatus<15)&&scope.row.auditStatus===1)||listQuery.auditStatus==='-1'">
                 <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">完善信息</el-button>
                 </a>
@@ -249,9 +255,6 @@ export default {
           message: '操作成功',
           type: 'success'
         })
-        if (this.listQuery.auditStatus === '0') {
-          this.$router.push(`/goods-manage/edit?id=${row.id}`)
-        }
         this.getList()
       })
     },

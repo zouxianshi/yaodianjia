@@ -105,7 +105,7 @@
           </span>-->
         </el-form-item>
         <el-form-item :label="isWechat ? '微信支付商户号：' : '支付宝商户号：'" prop="merchantCode">
-          <el-input v-model="form.merchantCode" style="width: 300px" maxlength="50" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
+          <el-input v-model.trim="form.merchantCode" style="width: 300px" maxlength="50" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
           <el-popover
             placement="right"
             title="操作提示："
@@ -128,7 +128,7 @@
           </el-popover>
         </el-form-item>
         <el-form-item :label="isWechat ? '微信支付key：' : '支付宝key：'" prop="payKey">
-          <el-input v-model="form.payKey" style="width: 300px" maxlength="60" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
+          <el-input v-model.trim="form.payKey" style="width: 300px" maxlength="60" onkeyup="this.value=this.value.replace(/[，。、！？：“”［］【】——（）…！＠＃￥＆＊＋＞＜；：‘\u4E00-\u9FA5]/g,'');" />
           <el-popover
             placement="right"
             title="操作提示："
@@ -153,42 +153,46 @@
         <div v-loading="uploadLoading">
           <el-form-item label="商户证书：" prop="merchantCertificate">
             <el-input v-model="form.merchantCertificate" style="display: none" />
-            <el-upload
-              class="upload-demo"
-              :headers="headers"
-              :action="upLoadUrl"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :before-remove="beforeRemove"
-              :limit="1"
-              :on-exceed="handleExceed"
-              :on-success="handleUploadSuccess"
-              :before-upload="handleBefore"
-              :file-list="fileList"
-            >
-              <el-button size="small" type="primary">点击上传</el-button>
+            <div style="position: relative">
+              <el-upload
+                class="upload-demo"
+                :headers="headers"
+                :action="upLoadUrl"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :before-remove="beforeRemove"
+                :limit="1"
+                :on-exceed="handleExceed"
+                :on-success="handleUploadSuccess"
+                :before-upload="handleBefore"
+                :file-list="fileList"
+                style="position: relative;"
+              >
+                <el-button slot="trigger" size="small" type="primary">点击上传</el-button>
 
-            <!--            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
-            </el-upload>
-            <el-popover
-              placement="right"
-              title="操作提示："
-              width="500"
-              trigger="click"
-            >
-              <span style="line-height: 30px">
-                1：进入微信商户平台  https://pay.weixin.qq.com/<br>
-                2：进入账户中心>API安全>下载证书<br>
-                3：<el-button type="text" @click="showGuide(3)">点击查看图片</el-button>
-              </span>
-              <el-image
-                id="imgWechatGuide3"
-                style="width: 0px; height: 0px"
-                :src="wechatGuide3"
-                :preview-src-list="wechatGuideList3"
-              />
-              <el-button slot="reference" type="text" class="el-icon-question" style="margin-top: 5px" />
-            </el-popover>
+                <!--            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
+              </el-upload>
+              <el-popover
+                placement="right"
+                title="操作提示："
+                width="500"
+                trigger="click"
+                style="position: absolute;top:-3px;left:90px"
+              >
+                <span style="line-height: 30px">
+                  1：进入微信商户平台  <el-link href="https://pay.weixin.qq.com/" type="primary" :underline="false" target="_blank">https://pay.weixin.qq.com/</el-link><br>
+                  2：进入账户中心>API安全>下载证书<br>
+                  3：<el-button type="text" @click="showGuide(3)">点击查看图片</el-button>
+                </span>
+                <el-image
+                  id="imgWechatGuide3"
+                  style="width: 0px; height: 0px"
+                  :src="wechatGuide3"
+                  :preview-src-list="wechatGuideList3"
+                />
+                <el-button slot="reference" type="text" class="el-icon-question" style="margin-top: 5px" />
+              </el-popover>
+            </div>
           </el-form-item>
 
         </div>
@@ -478,6 +482,7 @@ export default {
       })
     },
     dismiss() {
+      this.uploadLoading = false
       if (this.data) {
         this.form = _.cloneDeep(this.data)
         this.form.id = this.data.id

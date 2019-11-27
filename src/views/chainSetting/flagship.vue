@@ -28,7 +28,7 @@
           prefix-icon="el-icon-search"
           style="width: 200px;margin-right: 5px"
         />
-        <el-button type="primary" @click="getStore">查询</el-button>
+        <el-button type="primary" @click="onSearch">查询</el-button>
       </div>
       <el-table :data="list" stripe height="250">
         <div slot="empty">
@@ -118,6 +118,10 @@ export default {
         console.log('res-1', res)
       })
     },
+    onSearch() {
+      this.searchParams.currentPage = 1
+      this.getStore()
+    },
     getStore() {
       this.loading = true
       this.searchParams.onlineStatus = 1
@@ -127,6 +131,9 @@ export default {
           this.list = res.data.data
           this.totalCount = res.data.totalCount
           this.loading = false
+          if (!this.list) {
+            this.searchParams.currentPage = 1
+          }
         } else {
           this.loading = false
           this.$message({

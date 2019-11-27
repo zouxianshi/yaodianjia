@@ -59,6 +59,14 @@ const mixin = {
         this.loading = false
       })
     },
+    getTypeListData() {
+      return new Promise((resolve, reject) => {
+        getTypeTree({ merCode: 'hydee', type: 1, dimensionId: '', issTree: true }).then(res => {
+          this.typeList = res.data
+          resolve(res)
+        })
+      })
+    },
     handleSaveType() { // 保存
       this._filtersTypes(this.chooseList)
       this.typeVisible = false

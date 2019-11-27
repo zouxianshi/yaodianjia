@@ -214,6 +214,13 @@ export default {
         })
       } else { // 修改分组
         const data = []
+        if (this.chooseGroup.length === 0) {
+          this.$message({
+            message: '请选择至少一个分组',
+            type: 'error'
+          })
+          return
+        }
         this.chooseGroup.map(v => {
           data.push([v[0].id, v[1].id, v[2].id])
         })

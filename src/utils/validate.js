@@ -113,3 +113,9 @@ export function checkNumberdouble(value) {
   const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
   return reg.test(value)
 }
+
+//  只能输入 字母数字 字符
+export function checkZmSZ(value) {
+  const reg = /^[0-9a-zA-Z]*$/g
+  return reg.test(value)
+}

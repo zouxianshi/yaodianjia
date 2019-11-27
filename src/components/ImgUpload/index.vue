@@ -11,7 +11,7 @@
             <el-progress type="circle" :width="80" :percentage="item.process" />
           </div>
           <div v-else class="uploaded-img">
-            <img :src="item.imgUrl" alt="">
+            <el-image style="width: 100px; height: 100px" :src="item.imgUrl" />
             <div class="action">
               <i class="el-icon-zoom-in" @click="handlePreview(item)" />
               <i class="el-icon-delete" @click.stop="handleRemove(index)" />
@@ -125,7 +125,6 @@ export default {
   },
   methods: {
     handeDragEnd() {
-      console.log('onsort')
       this.$emit('onsort', this.fileList)// 排序成功之后抛出数据
     },
     getFileList() { // 获取已上传的文件列表
@@ -166,7 +165,10 @@ export default {
           }
         },
         onSuccess: res => {
-          this.$emit('onSuccess', res.data, this.fileList, index)
+          if (res.code !== '10000') {
+            this.fileList.splice(index, 1)
+          }
+          this.$emit('onSuccess', res, this.fileList, index)
           this.fileList[index].status = 'success'
         },
         onError: err => {
@@ -181,7 +183,9 @@ export default {
       }
     },
     handlePreview(val) {
-      this.$emit('preview', val)
+      if (val.imgUrl) {
+        this.$emit('preview', val)
+      }
     },
     handleRemove(index) {
       this.fileList.splice(index, 1)
@@ -215,6 +219,7 @@ export default {
     opacity: 0;
     cursor: pointer;
     width: 100px;
+    height: 100px;
   }
   .process {
     height: 100px;

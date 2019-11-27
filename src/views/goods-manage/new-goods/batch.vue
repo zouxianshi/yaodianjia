@@ -22,6 +22,7 @@
             :headers="headers"
             :on-success="handleFileSuccess"
             :on-error="handleFileError"
+            :before-upload="beforeUpload"
           >
             <el-button
               size="small"
@@ -162,6 +163,23 @@ export default {
     this._loadFileResultList()
   },
   methods: {
+    beforeUpload(file) {
+      const type = file.name.split('.')
+      if (type[1] !== 'xls') {
+        this.$message({
+          message: '请上传正确的模板',
+          type: 'warning'
+        })
+        this.is_file = false
+        return false
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('上传文件大小不能超过 2MB!')
+        return false
+      }
+      return true
+    },
     handleFileSuccess(res) {
       if (res.code === '10000') {
         this.$message({

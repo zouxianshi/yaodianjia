@@ -25,7 +25,7 @@
                   {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}
                 </span>
               </el-tag>
-              <span class="link link-btn" @click="typeVisible=true;_loadClassList()">选择分类</span>
+              <span v-if="!this.$route.query.id" class="link link-btn" @click="typeVisible=true;_loadClassList()">选择分类</span>
             </p>
             <div class="type-list groups">
               <span class="type-list-title">
@@ -280,6 +280,7 @@ export default {
         firstTypeId: '', // 一级分类
         secondTypeId: '', // 二级分类
         typeId: '', // 三级分类
+        detail: '', // 富文本内容
         image: '', // 组合图片
         price: 0, // 组合商品价格
         limitNum: 0, // 限购数量
@@ -472,8 +473,9 @@ export default {
         // this._loadgroupGather('2', [res.data.groupId])
         const { data } = res
 
-        // 赋值值
+        // 赋值
         this.basicForm = data
+        this.$refs.editor.setContent(this.basicForm.detail)
         this.childCommodities = data.childCommodities
         // console.log('this.basicForm:', this.basicForm)
       })

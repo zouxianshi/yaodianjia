@@ -56,6 +56,17 @@
         </div>
         <div class="search-form">
           <div class="search-item">
+            <span class="label-name">商品分组</span>
+            <el-cascader
+              v-model="groupId"
+              class="cascader"
+              :props="defaultProps"
+              :options="groupData"
+              size="small"
+              @change="handleChangeGroup"
+            />
+          </div>
+          <div class="search-item">
             <span class="label-name">条形码</span>
             <el-input
               v-model.trim="listQuery.barCode"
@@ -71,23 +82,13 @@
               placeholder="生产企业"
             />
           </div>
-          <div class="search-item">
-            <span class="label-name">商品分组</span>
-            <el-cascader
-              v-model="groupId"
-              style="width:300px"
-              class="cascader"
-              :props="defaultProps"
-              :options="groupData"
-              size="small"
-              @change="handleChangeGroup"
-            />
-          </div>
+
           <div class="search-item">
             <span class="label-name">商品类型</span>
             <el-select
               v-model="listQuery.commodityType"
               filterable
+              size="small"
               placeholder="普通商品/组合商品"
               @change="handleChangeCommodityType"
             >
@@ -95,7 +96,7 @@
               <el-option label="组合商品" value="2" />
             </el-select>
           </div>
-          <div class="search-item">
+          <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
@@ -129,8 +130,8 @@
           >
             <template slot-scope="scope">
               <div>
-                <p>门店编号：{{ chooseStore.stCode }}</p>
-                <p>门店名称：{{ scope.row.storeName }}</p>
+                <p class="ellipsis">门店编号：{{ scope.row.storeCode }}</p>
+                <p class="ellipsis">门店名称：{{ scope.row.storeName }}</p>
               </div>
             </template>
           </el-table-column>
@@ -144,7 +145,7 @@
             <template slot-scope="scope">
               <template v-if="scope.row.mainPic">
                 <el-image
-                  style="width: 60px; height: 60px"
+                  style="width: 70px; height: 70px"
                   :src="showImg(scope.row.mainPic)"
                   lazy
                   fit="contain"
@@ -159,12 +160,19 @@
           <el-table-column
             align="left"
             min-width="150"
+            show-overflow-tooltip
             label="商品信息"
           >
             <template slot-scope="scope">
               <div>
                 <p>{{ scope.row.name }}</p>
-                <p>{{ scope.row.approvalNumber }}</p>
+                <p class="ellipsis">
+                  <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+                    {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+                  </span>
+                </p>
+                <p class="ellipsis" v-text="'条码：'+scope.row.barCode" />
+                <p class="ellipsis">{{ scope.row.approvalNumber }}</p>
               </div>
             </template></el-table-column>
           <el-table-column
@@ -253,6 +261,7 @@
             v-model="formData.unlockTime"
             value-format="yyyy-MM-dd HH:mm:ss"
             type="datetime"
+            class="custom-class"
             placeholder="选择日期时间"
           />
         </el-form-item>
@@ -286,8 +295,7 @@ import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
 import { getTypeTree } from '@/api/group'
-import { getStoreGoodsList, setLockPrice, setUpdatePriceStock } from '@/api/store-goods'
-import { getStoreList, setBatchUpdown } from '@/api/depot'
+import { getStoreGoodsList, setLockPrice, setUpdatePriceStock, setUpdateStoreData, getMyStoreList } from '@/api/store-goods'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -359,8 +367,7 @@ export default {
       lockFlag: [],
       formData: {
         'lockFlag': 0,
-        'specIds': [],
-        'storeId': '',
+        'lockList': [],
         'unlockTime': '',
         'unlockType': 0
       },
@@ -431,15 +438,7 @@ export default {
       })
     },
     _loadList() {
-      if (!this.listQuery.storeId) {
-        this.$message({
-          message: '请选择门店',
-          type: 'error'
-        })
-        return
-      }
       this.loading = true
-      console.log('this.listQuery--xf:', this.listQuery)
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
@@ -459,13 +458,22 @@ export default {
     },
     _loadStoreList(val = '') { // 加载门店数据
       return new Promise((resolve, reject) => {
-        getStoreList({ pageSize: 100, currentPage: 1, storeName: val, onlineStatus: 1 }).then(res => {
+        const loading = this.$loading({
+          lock: true,
+          text: '数据初始化中....',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        getMyStoreList({ pageSize: 10000, currentPage: 1, storeName: val, onlineStatus: 1, status: 1 }).then(res => {
           const { data } = res.data
+          data.unshift({ id: '', stName: '全部' })
           this.storeList = data
           this.selectloading = false
+          loading.close()
           resolve(data)
         }).catch((err) => {
           this.selectloading = false
+          loading.close()
           reject(err)
         })
       })
@@ -540,19 +548,20 @@ export default {
       const status = row.status === 0 ? 1 : 0
       const data = {
         'isAll': false,
-        'specIds': [
-          row.id
-        ],
         'status': status,
-        'storeIds': [
-          this.listQuery.storeId
+        'updateList': [
+          {
+            'specId': row.id,
+            'storeId': row.storeId
+          }
         ],
-        'userName': this.name
+        'userName': this.name,
+        'merCode': this.merCode
       }
       this._SetUpDown(data)
     },
     _SetUpDown(data) { // 执行上下架请求
-      setBatchUpdown(data).then(res => {
+      setUpdateStoreData(data).then(res => {
         this.$message({
           message: '操作成功',
           type: 'success'
@@ -570,16 +579,18 @@ export default {
         return
       }
       this.multipleSelection.map(v => {
-        ary.push(v.id)
+        ary.push({
+          'specId': v.id,
+          'storeId': v.storeId
+        })
       })
       const data = {
         'isAll': false,
         'specIds': ary,
         'status': status,
-        'storeIds': [
-          this.listQuery.storeId
-        ],
-        'userName': this.name
+        'updateList': ary,
+        'userName': this.name,
+        'merCode': this.merCode
       }
       this._SetUpDown(data)
     },
@@ -587,11 +598,12 @@ export default {
       const ary = []
       // 获取规格id
       this.multipleSelection.map(v => {
-        ary.push(v.id)
+        ary.push({
+          'specId': v.id,
+          'storeId': v.storeId
+        })
       })
-      this.formData.specIds = ary
-      this.formData.storeId = this.listQuery.storeId
-
+      this.formData.lockList = ary
       if (this.lockFlag.length === 0) { // 全部锁定
         this.formData.lockFlag = 0
       }
@@ -651,6 +663,13 @@ export default {
 }
 </script>
 <style lang="scss">
+.el-picker-panel__footer{
+  .el-button--text{
+    display: none
+  }
+}
+</style>
+<style lang="scss" scoped>
 .store-goods-wrapper {
   .search-form {
     .search-item {
