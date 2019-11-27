@@ -473,8 +473,9 @@ export default {
         // this._loadgroupGather('2', [res.data.groupId])
         const { data } = res
 
-        // 赋值值
+        // 赋值
         this.basicForm = data
+        this.$refs.editor.setContent(this.basicForm.detail)
         this.childCommodities = data.childCommodities
         // console.log('this.basicForm:', this.basicForm)
       })
