@@ -423,8 +423,15 @@
           <div class="padding10"><span>实付金额</span></div>
         </div>
 
+        <div class="table-footer">
+          <pagination
+            :total="total"
+            :page.sync="listQuery.currentPage"
+            :limit.sync="listQuery.pageSize"
+            @pagination="_loadList"
+          />
+        </div>
       </div> -->
-
     </div>
     <el-dialog
       title="锁定库存价格"
@@ -478,13 +485,13 @@
 </template>
 <script>
 import mixins from '@/utils/mixin'
-
+// import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
 import { getTypeTree } from '@/api/group'
 import { getStoreGoodsList, setLockPrice, setUpdatePriceStock } from '@/api/store-goods'
 import { getStoreList, setBatchUpdown } from '@/api/depot'
 export default {
-
+  // components: { Pagination },
   mixins: [mixins],
   data() {
     const _checkTime = (rule, value, callback) => {
