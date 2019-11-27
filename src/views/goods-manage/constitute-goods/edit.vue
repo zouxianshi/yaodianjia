@@ -537,6 +537,12 @@ export default {
       // 图片上传成功
       if (res.code === '10000') {
         this.basicForm.image = res.data
+      } else {
+        this.loading = false
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
       }
     },
     handleDelete(index, row) {
