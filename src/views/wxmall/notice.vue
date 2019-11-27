@@ -360,10 +360,15 @@ export default {
       // 表单验证
       this.$refs[formName].validate((valid) => {
         // 验证结束时间
+        const start_time = new Date(this.xForm.startTime).getTime()
         const end_time = new Date(this.xForm.endTime).getTime()
         const current_time = new Date().getTime()
-        if (end_time <= current_time) {
-          this.$message.warning('结束时间不能小于当前时间')
+        if (start_time >= end_time) {
+          this.$message.warning('结束时间必要大于开始时间')
+          return false
+        }
+        if (current_time >= end_time) {
+          this.$message.warning('结束时间必要大于当前时间')
           return false
         }
         if (valid) {
@@ -386,9 +391,9 @@ export default {
     handleUploadSuccess(res, file) {
       if (res.code === '10000') {
         this.xForm.imgUrl = res.data || ''
-        this.$refs.xForm.validate()
+        this.$refs.xForm.clearValidate('imgUrl')
       } else {
-        this.$message.error('上传失败!')
+        this.$message.error(res.msg)
       }
       this.uploadLoading = false
     },
