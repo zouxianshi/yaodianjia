@@ -24,6 +24,7 @@ const mixin = {
     step(val) {
       if (val === 2) {
         // 获取规格
+        this.specsForm.specs = []
         try {
           this._loadSpces() // 获取规格
         } catch (error) {
@@ -415,7 +416,6 @@ const mixin = {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
-      this.specsForm.specs = []
       this.specsForm.specs.push(data)
       /** **
        *

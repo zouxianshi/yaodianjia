@@ -88,6 +88,7 @@ export default {
   },
   watch: {
     value(val) {
+      console.log('watch', val)
       if (!this.hasChange && this.hasInit) {
         this.$nextTick(() =>
           window.tinymce.get(this.tinymceId).setContent(val || ''))
@@ -144,12 +145,13 @@ export default {
         link_title: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
         init_instance_callback: editor => {
-          if (_this.value) {
-            editor.setContent(_this.value)
-          }
           _this.hasInit = true
           if (this.id === 'basicInfo') {
             this.$emit('onload')
+          }
+          console.log('this.value', _this.value)
+          if (_this.value) {
+            editor.setContent(_this.value)
           }
           editor.on('NodeChange Change KeyUp SetContent', () => {
             this.hasChange = true

@@ -219,6 +219,7 @@ export default {
     opacity: 0;
     cursor: pointer;
     width: 100px;
+    height: 100px;
   }
   .process {
     height: 100px;
