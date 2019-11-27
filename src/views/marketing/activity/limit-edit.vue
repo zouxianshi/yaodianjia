@@ -310,7 +310,6 @@ export default {
               productName: goods.name || '',
               productSpecId: goods.specId || '',
               productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
-              saleAmount: goods.saleAmount || '',
               stockAmount: goods.stockAmount || ''
             }
             this.selectedGoods.push(item)
