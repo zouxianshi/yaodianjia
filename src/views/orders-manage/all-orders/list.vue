@@ -30,30 +30,6 @@
               placeholder=""
             />
           </div>
-          <!-- <div class="search-item">
-            <span class="label-name">商品名称</span>
-            <el-input
-              v-model.trim="listQuery.name"
-              size="small"
-              placeholder="商品名称"
-            />
-          </div>
-          <div class="search-item">
-            <span class="label-name">ERP编码</span>
-            <el-input
-              v-model.trim="listQuery.erpCode"
-              size="small"
-              placeholder="ERP编码"
-            />
-          </div>
-          <div class="search-item">
-            <span class="label-name">批准文号</span>
-            <el-input
-              v-model.trim="listQuery.approvalNumber"
-              size="small"
-              placeholder="批准文号"
-            />
-          </div> -->
         </div>
         <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
@@ -128,29 +104,30 @@
             </el-select>
           </div>
           <div class="search-item">
-            <span class="label-name">订单来源</span>
+            <span class="label-name">收货方式</span>
             <el-select
               v-model="listQuery.commodityType"
               filterable
-              placeholder="订单来源"
+              placeholder="收货方式"
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value="1" />
-              <el-option label="微商城" value="2" />
-              <el-option label="小程序" value="3" />
+              <el-option label="普通快递" value="2" />
+              <el-option label="配送上门" value="3" />
+              <el-option label="门店自提" value="4" />
             </el-select>
           </div>
           <div class="search-item">
-            <span class="label-name">订单来源</span>
+            <span class="label-name">配送方式</span>
             <el-select
               v-model="listQuery.commodityType"
               filterable
-              placeholder="订单来源"
+              placeholder="配送方式"
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value="1" />
-              <el-option label="微商城" value="2" />
-              <el-option label="小程序" value="3" />
+              <el-option label="快递配送" value="2" />
+              <el-option label="门店员工配送" value="3" />
             </el-select>
           </div>
           <div class="search-item">
@@ -423,15 +400,16 @@
           <div class="padding10"><span>实付金额</span></div>
         </div>
 
-        <div class="table-footer">
-          <pagination
-            :total="total"
-            :page.sync="listQuery.currentPage"
-            :limit.sync="listQuery.pageSize"
-            @pagination="_loadList"
-          />
-        </div>
       </div> -->
+
+      <div class="table-footer">
+        <pagination
+          :total="total"
+          :page.sync="listQuery.currentPage"
+          :limit.sync="listQuery.pageSize"
+          @pagination="_loadList"
+        />
+      </div>
     </div>
     <el-dialog
       title="锁定库存价格"
@@ -485,13 +463,13 @@
 </template>
 <script>
 import mixins from '@/utils/mixin'
-// import Pagination from '@/components/Pagination'
+import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
 import { getTypeTree } from '@/api/group'
 import { getStoreGoodsList, setLockPrice, setUpdatePriceStock } from '@/api/store-goods'
 import { getStoreList, setBatchUpdown } from '@/api/depot'
 export default {
-  // components: { Pagination },
+  components: { Pagination },
   mixins: [mixins],
   data() {
     const _checkTime = (rule, value, callback) => {
@@ -574,7 +552,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '最近一周',
+          text: '最近7天',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -582,22 +560,24 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '最近一个月',
+          text: '最近30天',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
             picker.$emit('pick', [start, end])
           }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
+        }
+        // }, {
+        //   text: '最近三个月',
+        //   onClick(picker) {
+        //     const end = new Date()
+        //     const start = new Date()
+        //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+        //     picker.$emit('pick', [start, end])
+        //   }
+        // }
+        ]
       },
       value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
       value2: '',
