@@ -47,7 +47,7 @@
             </div>
           </div>
         </div>
-        <div class="search-form">
+        <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品名称</span>
             <el-input
@@ -83,6 +83,8 @@
               <el-option label="小程序" value="3" />
             </el-select>
           </div>
+        </div>
+        <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">订单状态</span>
             <el-select
@@ -130,45 +132,50 @@
               <el-option label="门店员工配送" value="3" />
             </el-select>
           </div>
+        </div>
+        <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
-            <span class="label-name">订单来源</span>
+            <span class="label-name">所在门店</span>
             <el-select
               v-model="listQuery.commodityType"
               filterable
-              placeholder="订单来源"
+              placeholder="所在门店"
               @change="handleChangeCommodityType"
             >
-              <el-option label="全部" value="1" />
-              <el-option label="微商城" value="2" />
-              <el-option label="小程序" value="3" />
+              <el-option label="搜索" value="1" />
+              <el-option label="海典麓谷店" value="2" />
+              <el-option label="海典麓谷店2" value="3" />
             </el-select>
           </div>
           <div class="search-item">
-            <span class="label-name">订单来源</span>
+            <span class="label-name">接单员工</span>
             <el-select
               v-model="listQuery.commodityType"
               filterable
-              placeholder="订单来源"
+              placeholder="接单员工"
               @change="handleChangeCommodityType"
             >
-              <el-option label="全部" value="1" />
-              <el-option label="微商城" value="2" />
-              <el-option label="小程序" value="3" />
+              <el-option label="选择员工" value="1" />
+              <el-option label="张三" value="2" />
+              <el-option label="本本" value="3" />
             </el-select>
           </div>
           <div class="search-item">
-            <span class="label-name">订单来源</span>
+            <span class="label-name">支付方式</span>
             <el-select
               v-model="listQuery.commodityType"
               filterable
-              placeholder="订单来源"
+              placeholder="支付方式"
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value="1" />
-              <el-option label="微商城" value="2" />
-              <el-option label="小程序" value="3" />
+              <el-option label="在线支付" value="2" />
+              <el-option label="货到付款" value="3" />
+              <el-option label="到店支付" value="4" />
             </el-select>
           </div>
+        </div>
+        <div class="search-form" style="margin-bottom:10px;margin-left:80px">
           <div class="search-item">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
@@ -890,7 +897,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100vh;
+  // height: 100vh;
 
   .order-table-header{
     background: #ebebeb;

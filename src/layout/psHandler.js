@@ -21,17 +21,17 @@ class InnerCtor {
         name: '订单管理',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('merchant-org'),
+        disabled: true,
         children: [
           {
             name: `所有订单`,
             path: '/orders-manage/all-orders/list',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: true
           },
           {
             name: `订单设置`,
             path: '/orders-manage/settings',
-            disabled: this.get('merchant-org.merchant-org-store')
+            disabled: true
           }
         ]
       },{
