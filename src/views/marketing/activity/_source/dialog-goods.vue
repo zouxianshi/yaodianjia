@@ -1,17 +1,41 @@
 <template>
-  <el-dialog append-to-body class="m-dialog dialog-goods" :visible.sync="dialog.visible" :close-on-click-modal="false" width="920px" @close="handlerClose">
-    <div class="modal-header">
-      <div class="title">选取商品</div>
-    </div>
+  <el-dialog title="选取商品" append-to-body class="m-dialog m-dialog-goods" :visible.sync="dialog.visible" :close-on-click-modal="false" width="920px" @close="handlerClose">
     <div class="modal-body">
       <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
-          <el-input v-model="search.keyWord" style="width: 240px" placeholder="搜索" size="small" />
+          <span class="label">选择分类：</span>
+          <el-select
+            v-model="type1"
+            size="small"
+            placeholder="请选择"
+            @change="onTypeChange($event, 1)"
+          >
+            <el-option v-for="item1 in typeOption1" :key="item1.id" :label="item1.name" :value="item1.id" />
+          </el-select>
+          <el-select
+            v-model="type2"
+            size="small"
+            placeholder="请选择"
+            @change="onTypeChange($event, 2)"
+          >
+            <el-option v-for="item2 in typeOption2" :key="item2.id" :label="item2.name" :value="item2.id" />
+          </el-select>
+          <el-select
+            v-model="type3"
+            size="small"
+            placeholder="请选择"
+            @change="onTypeChange($event, 3)"
+          >
+            <el-option v-for="item3 in typeOption3" :key="item3.id" :label="item3.name" :value="item3.id" />
+          </el-select>
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
         </div>
       </div>
+      <p class="note-text">当前类目下<span v-if="pager.total>0">包括101个商品</span>
+        <span v-else>暂无商品</span>
+      </p>
       <el-table
         ref="multipleTable"
         border
@@ -25,10 +49,10 @@
         <el-table-column type="selection" align="center" width="50" />
         <el-table-column align="center" label="商品图片" min-width="60">
           <template slot-scope="scope">
-            <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 36px">
+            <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 60px">
               <div class="x-image__preview">
                 <el-image
-                  style="width: 60px; height: 36px"
+                  style="width: 60px; height: 60px"
                   fit="contain"
                   :src="showImg(scope.row.mainPic)"
                   :preview-src-list="[showImg(scope.row.mainPic)]"
@@ -97,7 +121,7 @@
 </template>
 
 <script>
-import { queryGoods } from '@/api/common'
+import { queryGoods, getTypeTree } from '@/api/common'
 export default {
   name: 'DialogGoods',
   props: {
@@ -114,31 +138,69 @@ export default {
       type: Boolean,
       default: true
     }
+    // typeList: {
+    //   type: Array,
+    //   default: _ => {
+    //     return []
+    //   }
+    // }
   },
   data() {
     return {
       dialog: {
-        visible: false
+        visible: true
       },
       pager: {
         current: 1,
         size: 20,
         total: 0
       },
-      search: {
-        keyWord: ''
+      searchForm: {
+        keyWord: '',
+        typeid: '',
+        typeLevel: ''
       },
+      type1: '',
+      type2: '',
+      type3: '',
+      typeOption1: [],
+      typeOption2: [],
+      typeOption3: [],
       tableData: [],
       multipleSelection: [],
-      mySelectList: []
+      mySelectList: [],
+      typeList: []
     }
   },
-  created() {},
+  created() {
+    this.fetchData()
+  },
   mounted() {},
   methods: {
     // 获取数据
     fetchData() {
       this._getTableData() // 统计列表
+      this._getTypeTree() // 分类类表
+    },
+    onTypeChange(typeid, level) { // 分类切换
+      this.searchForm.typeid = typeid
+      this.searchForm.typeLevel = level
+      if (level === 1) {
+        this.type2 = ''
+        this.type3 = ''
+        const index1 = this.typeOption1.findIndex(v => {
+          return v.id === typeid
+        })
+        this.typeOption2 = index1 > -1 ? this.typeOption1[index1].children || '' : []
+      } else if (level === 2) {
+        this.type3 = ''
+        const index2 = this.typeOption2.findIndex(v => {
+          return v.id === typeid
+        })
+        this.typeOption3 = index2 > -1 ? this.typeOption2[index2].children : []
+      }
+      console.log('searchForm', this.searchForm)
+      this.forSearch()
     },
     open() {
       this.dialog.visible = true
@@ -158,7 +220,7 @@ export default {
         size: 20,
         total: 0
       }
-      this.search = {
+      this.searchForm = {
         keyWord: ''
       }
     },
@@ -270,6 +332,30 @@ export default {
       this._getTableData()
     },
     _getTableData() {
+      const params = {
+        level: this.searchForm.typeLevel,
+        typeId: this.searchForm.typeid,
+        hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
+        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
+        auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
+        name: this.searchForm.keyWord.trim(),
+        currentPage: this.pager.current,
+        pageSize: this.pager.size
+      }
+
+      queryGoods(params).then(res => {
+        if (res.code === '10000' && res.data) {
+          this.tableData = res.data.data || []
+          this.pager.total = res.data.totalCount
+          this.$nextTick(() => {
+            this.updateChecked()
+          })
+        } else {
+          this.tableData = []
+        }
+      })
+    },
+    _getTypeTree() {
       // this.tableData = []
       /* setTimeout(() => {
           this.tableData = this.tableArr.slice()
@@ -283,19 +369,22 @@ export default {
         hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
         infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
         auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
-        name: this.search.keyWord.trim(),
+        name: this.searchForm.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size
       }
-      queryGoods(params).then(res => {
+      getTypeTree(params).then(res => {
         if (res.code === '10000' && res.data) {
-          this.tableData = res.data.data || []
-          this.pager.total = res.data.totalCount
-          this.$nextTick(() => {
-            this.updateChecked()
+          this.typeTree = res.data
+          this.typeOption1 = this.typeTree.map(v => {
+            return {
+              id: v.id,
+              name: v.name,
+              children: v.children
+            }
           })
         } else {
-          this.tableData = []
+          this.typeTree = []
         }
       })
     }
@@ -303,55 +392,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.dialog-goods {
-  .el-dialog__header {
-    height: 0;
-    padding: 0;
-  }
-  .el-dialog__body {
-    padding: 0;
-  }
-
-  .el-dialog__headerbtn {
-    top: 8px;
-    right: 12px;
-  }
-  .el-table thead th {
-    height: 40px;
-  }
-  .img-wrap{
-    margin: 0 auto;
-    width: 50px;
-    height: 32px;
-    img{
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
-</style>
 <style lang="scss" scoped>
-.dialog-goods {
-  .modal-header {
-    height: 40px;
-    line-height: 40px;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: left;
-    background: #f2f2f2;
-
-    .title {
-      margin-left: 20px;
-      font-size: 16px;
-      color: #333;
-    }
-  }
-
+.m-dialog-goods {
   .modal-body {
     box-sizing: border-box;
-    padding: 20px;
-
     .md-search {
       display: flex;
 
@@ -398,6 +442,10 @@ export default {
         }
       }
     }
+  }
+  .note-text{
+    margin-top: 24px;
+    color: #888888;
   }
 }
 </style>
