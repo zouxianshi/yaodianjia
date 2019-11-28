@@ -196,16 +196,15 @@ export default {
   created() {
     const dataid = this.$route.query.id || ''
     const type = this.$route.query.type || ''
-    // const _ck = this.$route.query._ck
+    const _ck = this.$route.query._ck
     if (dataid && dataid !== '' && type !== '') {
       this.dataid = dataid
       this.type = type
       this._getDetailData()
     }
-    // if (_ck === '1') {
-    //   this.disabled = true
-    // }
-    // this.fetchData()
+    if (_ck === '1') {
+      this.disabled = true
+    }
   },
   methods: {
     handleTimeChange(val, type) {
