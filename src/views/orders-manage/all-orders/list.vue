@@ -15,7 +15,6 @@
               placeholder="请输入关键词"
               :remote-method="remoteMethod"
               :loading="selectloading"
-              @change="handleChangeStore"
             >
               <el-option label="订单号" value="订单号" />
               <el-option label="收货人姓名" value="收货人姓名" />
@@ -88,10 +87,10 @@
           <div class="search-item">
             <span class="label-name">订单状态</span>
             <el-select
-              v-model="listQuery.commodityType"
+              v-model="listQuery.orderStatus"
               filterable
               placeholder="订单状态"
-              @change="handleChangeCommodityType"
+              @change="handleChangeOrderStatus"
             >
               <el-option label="全部" value="0" />
               <el-option label="待付款" value="1" />
@@ -137,14 +136,14 @@
           <div class="search-item">
             <span class="label-name">所在门店</span>
             <el-select
-              v-model="listQuery.commodityType"
+              v-model="listQuery.storeId"
               filterable
-              placeholder="所在门店"
-              @change="handleChangeCommodityType"
+              placeholder="请输入关键词"
+              :remote-method="remoteMethod"
+              :loading="selectloading"
+              @change="handleChangeStore"
             >
-              <el-option label="搜索" value="1" />
-              <el-option label="海典麓谷店" value="2" />
-              <el-option label="海典麓谷店2" value="3" />
+              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName" :value="item.id" />
             </el-select>
           </div>
           <div class="search-item">
@@ -188,20 +187,20 @@
         @change="_loadList"
       >
         <el-radio-button :label="1">全部</el-radio-button>
-        <el-radio-button :label="0">待付款</el-radio-button>
-        <el-radio-button :label="2">
+        <el-radio-button :label="2">待付款</el-radio-button>
+        <el-radio-button :label="3">
           待发货
           <template>
             <span class="badge">11</span>
           </template>
         </el-radio-button>
-        <el-radio-button :label="3">待收货</el-radio-button>
-        <el-radio-button :label="2">待提货</el-radio-button>
-        <el-radio-button :label="3">已完成</el-radio-button>
-        <el-radio-button :label="2">待退款</el-radio-button>
-        <el-radio-button :label="3">退货中</el-radio-button>
-        <el-radio-button :label="2">退款完成</el-radio-button>
-        <el-radio-button :label="3">已取消</el-radio-button>
+        <el-radio-button :label="4">待收货</el-radio-button>
+        <el-radio-button :label="5">待提货</el-radio-button>
+        <el-radio-button :label="6">已完成</el-radio-button>
+        <el-radio-button :label="7">待退款</el-radio-button>
+        <el-radio-button :label="8">退货中</el-radio-button>
+        <el-radio-button :label="9">退款完成</el-radio-button>
+        <el-radio-button :label="10">已取消</el-radio-button>
       </el-radio-group>
       <div class="table-box">
         <div class="order-table">
@@ -305,25 +304,28 @@
                   </template>
                   <template>
                     <div>待发货</div>
-                    <div><input type="button" value="立即发货"></div>
+                    <div><el-button type="primary" size="mini">立即发货</el-button></div>
                   </template>
                   <template>
                     <div>待提货</div>
-                  </template>
-                  <template>
-                    <div>待发货</div>
-                    <div><input type="button" value="立即发货"></div>
+                    <div><el-button type="primary" size="mini">确认提货</el-button></div>
                   </template>
                   <template>
                     <div>已发货</div>
                   </template>
                   <template>
                     <div>待退款</div>
-                    <div><input type="button" value="拒绝"> <input type="button" value="退款"></div>
+                    <div class="order_btn">
+                      <el-button type="warning" size="mini">拒绝</el-button>
+                      <el-button type="success" size="mini">退款</el-button>
+                    </div>
                   </template>
                   <template>
                     <div>退货中</div>
-                    <div><input type="button" value="收到退货"></div>
+                    <div><el-button type="primary" size="mini">收到退货</el-button></div>
+                  </template>
+                  <template>
+                    <div>退款完成</div>
                   </template>
                   <template>
                     <div>已取消</div>
@@ -345,69 +347,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="table-box">
-        <div class="listheader">
-          <div class="goods_title">
-            <div class="padding10"><span>商品</span></div>
-            <div class="padding10"><span>商品编码</span></div>
-            <div class="padding10"><span>单价/数量</span></div>
-          </div>
-
-          <div class="padding10"><span>收货人</span></div>
-          <div class="padding10"><span>下单时间</span></div>
-          <div class="padding10"><span>订单来源</span></div>
-          <div class="padding10"><span>优惠金额</span></div>
-          <div class="padding10"><span>实付金额</span></div>
-        </div>
-
-        <div class="order_detail_title">
-          <div class="left">订单号：23222223223（处方药订单）</div>
-          <div class="right">订单详情</div>
-        </div>
-        <div class="listheader">
-          <div class="order_shop_con border_right">
-            <div class="goods_list">
-              <div class="goods_item">
-                <div class="goods_img">
-                  <div><img width="100" height="100" src="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/ydjia-merchant-manager/666666/img/20191121/baba62d52f7642498ce66e9aa4102dda.jpg"></div>
-                </div>
-                <div class="good_item_center">
-                  <p>邦迪创可贴</p>
-                  <p class="color_red">(退款完成)</p>
-                  <p>0000001</p>
-                </div>
-                <div class="goods_item_right">
-                  <p>90(件)</p>
-                  <p>(1件)</p>
-                  <p class="color_green">查看退款理由</p>
-                </div>
-              </div>
-
-              <div class="goods_item">
-                <div class="goods_img">
-                  <div><img width="100" height="100" src="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/ydjia-merchant-manager/666666/img/20191121/baba62d52f7642498ce66e9aa4102dda.jpg"></div>
-                </div>
-                <div class="good_item_center">
-                  <p>邦迪创可贴</p>
-                  <p>(退款完成)</p>
-                  <p>0000001</p>
-                </div>
-                <div class="goods_item_right">
-                  <p>90（件）</p>
-                  <p>(1件)</p>
-                  <p>查看退款理由</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="padding10 border_right"><span class="sort">收货人</span></div>
-          <div class="padding10 border_right"><span class="sort">下单时间</span></div>
-          <div class="padding10 border_right"><span class="sort">订单来源</span></div>
-          <div class="padding10 border_right"><span class="sort">优惠金额</span></div>
-          <div class="padding10"><span>实付金额</span></div>
-        </div>
-
-      </div> -->
 
       <div class="table-footer">
         <pagination
@@ -418,121 +357,19 @@
         />
       </div>
     </div>
-    <el-dialog
-      title="锁定库存价格"
-      :visible.sync="dialogVisible"
-      width="30%"
-      append-to-body
-      :close-on-click-modal="false"
-    >
-      <el-form ref="lockForm" :model="formData" :rules="rules" label-width="100px" size="small">
-        <el-form-item label="锁定商品属性">
-          <el-checkbox-group v-model="lockFlag">
-            <el-checkbox :label="1">价格</el-checkbox>
-            <el-checkbox :label="2">库存</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="定时解锁设置">
-          <el-checkbox v-model="formData.unlockType" :true-label="1" :false-label="0" @change="unlockTypeChange">定时解锁</el-checkbox>
-        </el-form-item>
-        <el-form-item v-if="formData.unlockType===1" label="解锁时间" prop="unlockTime">
-          <el-date-picker
-            v-model="formData.unlockTime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            type="datetime"
-            placeholder="选择日期时间"
-          />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitLock">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      :title="`修改${type=='price'?'价格':'库存'}`"
-      :visible.sync="isShow"
-      width="20%"
-      append-to-body
-      :close-on-click-modal="false"
-    >
-      <el-form ref="editData" :model="editData" :rules="editRules">
-        <el-form-item label="" :prop="type=='price'?'price':'stock'">
-          <el-input v-model="editData[type]" size="small" />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="isShow = false">取 消</el-button>
-        <el-button type="primary" size="small" :loading="subLoading" @click="handleSetPriceStock">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 <script>
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
-import { getTypeTree } from '@/api/group'
-import { getStoreGoodsList, setLockPrice, setUpdatePriceStock } from '@/api/store-goods'
-import { getStoreList, setBatchUpdown } from '@/api/depot'
+// import { getTypeTree } from '@/api/group'
+import { getStoreGoodsList } from '@/api/store-goods'
+import { getStoreList } from '@/api/depot'
 export default {
   components: { Pagination },
   mixins: [mixins],
   data() {
-    const _checkTime = (rule, value, callback) => {
-      if (value) {
-        const chooseTime = Date.parse(new Date(value))
-        const nowTime = Date.parse(new Date())
-        if (chooseTime < nowTime) {
-          callback(new Error('选择时间必须大于当前时间'))
-        } else {
-          callback()
-        }
-      } else {
-        if (this.formData.unlockType === 1) {
-          callback(new Error('请选择解锁时间'))
-        } else {
-          callback()
-        }
-      }
-    }
-    const _checkFloat = (rule, value, callback) => {
-      const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
-      if (value) {
-        if (value <= 0) {
-          if (rule.field === 'stock') {
-            if (value < 0) {
-              callback(new Error('请输入大于等于0的值'))
-            }
-            return callback()
-          }
-          callback(new Error('请输入大于0的值'))
-        } else {
-          if (rule.field === 'stock') {
-            if (!/^\d+$/.test(value)) {
-              return callback(new Error('库存只能输入正整数'))
-            }
-          }
-          if (!reg.test(value)) {
-            return callback(new Error('只能设置最多两位小数的正数'))
-          }
-          if (value > 99999999) {
-            callback(new Error('最多只能输入8位数'))
-          } else {
-            callback()
-          }
-        }
-      } else {
-        if (value === 0) {
-          if (rule.field === 'stock') {
-            return callback()
-          }
-          callback(new Error('请输入大于0的值'))
-        } else {
-          callback(new Error('不能为空'))
-        }
-      }
-    }
     return {
       pickerOptions: { // 时间控件相关
         shortcuts: [{
@@ -597,22 +434,6 @@ export default {
         label: 'name',
         value: 'id'
       },
-      lockFlag: [],
-      formData: {
-        'lockFlag': 0,
-        'specIds': [],
-        'storeId': '',
-        'unlockTime': '',
-        'unlockType': 0
-      },
-      rules: {
-        unlockTime: [{ validator: _checkTime, trigger: 'change' }]
-      },
-      editRules: {
-        price: [{ required: true, validator: _checkFloat, trigger: 'blur' }],
-        stock: [{ required: true, validator: _checkFloat, trigger: 'blur' }]
-      },
-      groupData: [],
       chooseStore: {},
       loading: false,
       selectloading: false,
@@ -629,7 +450,6 @@ export default {
         'auditStatus': 1
       },
       storeList: [],
-      groupId: '',
       subLoading: false,
       editData: 0,
       type: 'price',
@@ -641,7 +461,6 @@ export default {
   },
   created() {
     this.getList()
-    this._loadTypeList()
   },
   methods: {
     resetQuery() {
@@ -658,9 +477,6 @@ export default {
         'commodityType': ''
       }
       this.getList()
-    },
-    unlockTypeChange() { // 定时解锁 chang
-      this.formData.unlockTime = ''
     },
     getList() {
       this._loadStoreList().then(res => {
@@ -692,12 +508,6 @@ export default {
         this.loading = false
       })
     },
-    _loadTypeList() { // 获取分组
-      getTypeTree({ merCode: this.merCode, type: 2, use: true }).then(res => {
-        this.groupData = res.data
-        this.groupData.unshift({ name: '全部', id: '' })
-      })
-    },
     _loadStoreList(val = '') { // 加载门店数据
       return new Promise((resolve, reject) => {
         getStoreList({ pageSize: 100, currentPage: 1, storeName: val, onlineStatus: 1 }).then(res => {
@@ -710,9 +520,6 @@ export default {
           reject(err)
         })
       })
-    },
-    handleChangeGroup(val) {
-      this.listQuery.groupId = val[val.length - 1]
     },
     remoteMethod(val) {
       this.selectloading = true
@@ -734,6 +541,15 @@ export default {
       })
       this._loadList()
     },
+    handleChangeOrderStatus(val) { // 订单状态改变时触发
+      this.storeList.map(v => {
+        if (v.id === val) {
+          this.chooseStore = v
+        }
+      })
+      this.listQuery.currentPage = 1
+      this._loadList()
+    },
     handleLock() {
       if (this.multipleSelection.length === 0) {
         this.$message({
@@ -746,147 +562,6 @@ export default {
       this.lockFlag = []
       this.formData.unlockType = 0
       this.formData.unlockTime = ''
-    },
-    handleSetPriceStock() {
-      this.$refs['editData'].validate((valid) => {
-        if (valid) {
-          this.subLoading = true
-          const data = {
-            'commodityId': this.editData.commodityId,
-            'price': this.editData.price,
-            'specId': this.editData.id,
-            'stock': this.editData.stock,
-            'storeId': this.editData.storeId,
-            'merCode': this.merCode
-          }
-
-          setUpdatePriceStock({ list: [data] }).then(res => {
-            this.subLoading = false
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            this._loadList()
-            this.isShow = false
-          }).catch(() => {
-            this.subLoading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
-    handleUpDown(row) { // 单个上下级
-      const status = row.status === 0 ? 1 : 0
-      const data = {
-        'isAll': false,
-        'specIds': [
-          row.id
-        ],
-        'status': status,
-        'storeIds': [
-          this.listQuery.storeId
-        ],
-        'userName': this.name
-      }
-      this._SetUpDown(data)
-    },
-    _SetUpDown(data) { // 执行上下架请求
-      setBatchUpdown(data).then(res => {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
-        this._loadList()
-      })
-    },
-    handleBatchUpDown(status) { // 批量上下架
-      const ary = []
-      if (this.multipleSelection.length === 0) {
-        this.$message({
-          message: '请选择上下架的数据',
-          type: 'warning'
-        })
-        return
-      }
-      this.multipleSelection.map(v => {
-        ary.push(v.id)
-      })
-      const data = {
-        'isAll': false,
-        'specIds': ary,
-        'status': status,
-        'storeIds': [
-          this.listQuery.storeId
-        ],
-        'userName': this.name
-      }
-      this._SetUpDown(data)
-    },
-    handleSubmitLock() { // 执行锁定请求
-      const ary = []
-      // 获取规格id
-      this.multipleSelection.map(v => {
-        ary.push(v.id)
-      })
-      this.formData.specIds = ary
-      this.formData.storeId = this.listQuery.storeId
-
-      if (this.lockFlag.length === 0) { // 全部锁定
-        this.formData.lockFlag = 0
-      }
-      if (this.lockFlag.includes(1)) { // 锁定价格
-        this.formData.lockFlag = 1
-      }
-      if (this.lockFlag.includes(2)) {
-        this.formData.lockFlag = 2 // 锁定库存
-      }
-      if (this.lockFlag.includes(2) && this.lockFlag.includes(1)) {
-        this.formData.lockFlag = 3 // 锁定价格和库存
-      }
-
-      this.$refs['lockForm'].validate((valid) => {
-        if (valid) {
-          if (this.formData.unlockType === 1 && this.formData.unlockTime !== '' && this.lockFlag.length === 0) {
-            this.$message({
-              message: '请选择锁定属性',
-              type: 'error'
-            })
-            return
-          }
-          this.subLoading = true
-          setLockPrice(this.formData).then(res => {
-            this.$message({
-              message: '操作成功',
-              type: 'success'
-            })
-            this.dialogVisible = false
-            this.subLoading = false
-            this._loadList()
-          }).catch(() => {
-            this.subLoading = false
-            this.dialogVisible = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
-    handleEditData(row, key) {
-      this.editData = JSON.parse(JSON.stringify(row))
-      this.type = key
-      this.isShow = true
-      this.$nextTick(_ => {
-        this.$refs.editData.clearValidate()
-      })
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    handleClick() {
-      this.$router.push('/goods-manage/mate')
     }
   }
 }
@@ -1078,4 +753,11 @@ export default {
 
 .el-date-range-picker{left:270px!important} //时间控件弹出框
 .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
+
+.order_btn button{
+  width: 40px;
+  text-align: center;
+  padding-left:0;
+  padding-right:0;
+}
 </style>

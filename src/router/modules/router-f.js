@@ -17,17 +17,16 @@ const router = [
         name: 'orders-manage',
         meta: {
           title: '所有订单',
-          noCache: true,
-          activeMenu: '/goods-manage/orders-goods'
+          noCache: true
         }
       }, {
-        path: 'details',
+        path: 'all-orders/details',
         component: () => import('@/views/orders-manage/all-orders/details'),
         name: 'orders-manage',
         meta: {
           title: '订单详情',
           noCache: true,
-          activeMenu: '/goods-manage/orders-goods'
+          activeMenu: '/orders-manage/all-orders/list'
         }
       }, {
         path: 'settings',
@@ -35,8 +34,7 @@ const router = [
         name: 'orders-manage',
         meta: {
           title: '订单设置',
-          noCache: true,
-          activeMenu: '/goods-manage/orders-goods'
+          noCache: true
         }
       }
     ]
