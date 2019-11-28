@@ -304,11 +304,11 @@
                   </template>
                   <template>
                     <div>待发货</div>
-                    <div><el-button type="primary" size="mini">立即发货</el-button></div>
+                    <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true">立即发货</el-button></div>
                   </template>
                   <template>
                     <div>待提货</div>
-                    <div><el-button type="primary" size="mini">确认提货</el-button></div>
+                    <div><el-button type="primary" size="mini" @click="dialogPickUpVisible = true">确认提货</el-button></div>
                   </template>
                   <template>
                     <div>已发货</div>
@@ -316,13 +316,13 @@
                   <template>
                     <div>待退款</div>
                     <div class="order_btn">
-                      <el-button type="warning" size="mini">拒绝</el-button>
-                      <el-button type="success" size="mini">退款</el-button>
+                      <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true">拒绝</el-button>
+                      <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true">退款</el-button>
                     </div>
                   </template>
                   <template>
                     <div>退货中</div>
-                    <div><el-button type="primary" size="mini">收到退货</el-button></div>
+                    <div><el-button type="primary" size="mini" @click="dialogConfirmReturnVisible = true">收到退货</el-button></div>
                   </template>
                   <template>
                     <div>退款完成</div>
@@ -357,6 +357,184 @@
         />
       </div>
     </div>
+
+    <!-- 立即发货弹出框 -->
+    <el-dialog title="请选择发货商品" :show-close="false" width="40%" :visible.sync="dialogDeliveryVisible" append-to-body>
+      <el-table
+        ref="multipleTable"
+        border
+        size="small"
+        :data="tableData"
+        style="width: 100%;margin-top: 20px"
+        max-height="256"
+        @select-all="handleSelectAllChange"
+        @select="handleSelect"
+      >
+        <el-table-column type="selection" align="center" width="50" />
+        <el-table-column align="center" label="商品图片" width="120">
+          <template slot-scope="scope">
+            <div
+              v-if="scope.row.mainPic && scope.row.mainPic!==''"
+              class="x-img-mini"
+              style="width: 60px; height: 36px"
+            >
+              <div class="x-image__preview">
+                <el-image
+                  fit="scale-down"
+                  :src="showImg(scope.row.mainPic)"
+                  :preview-src-list="[scope.row.imageUrl]"
+                />
+              </div>
+            </div>
+            <div v-else style="line-height: 32px">暂无上传</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="commodityName" label="商品名称" min-width="150">
+          <template slot-scope="scope">
+            <div>{{ scope.row.name }}</div>
+            <div>商品编码222222</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="commodityName" label="单价/数量" align="right" min-width="150">
+          <template slot-scope="scope">
+            <div>规格 {{ scope.row.name }}</div>
+            <div>￥90.00(3件)</div>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <!-- <el-form :model="form">
+        <el-form-item label="活动名称" label-width="200">
+          <el-input v-model="form.name" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="活动区域" label-width="200">
+          <el-select v-model="form.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai" />
+            <el-option label="区域二" value="beijing" />
+          </el-select>
+        </el-form-item>
+      </el-form> -->
+      <el-form class="marginTop20">
+        <el-form-item label="订单号：" prop="22113333333333" :label-width="labelWidth" />
+        <!-- 普通发货 -->
+        <template>
+          <el-form-item label="快递公司：" :label-width="labelWidth">
+            <el-select placeholder="请选择活动区域">
+              <el-option label="申通" value="申通" />
+              <el-option label="圆通" value="圆通" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="快递单号：" prop="2333" :label-width="labelWidth">
+            <el-input autocomplete="off" style="width:200px;" value="" placeholder="请输入快递单号" size="small" />
+          </el-form-item>
+        </template>
+        <!-- 配送发货 -->
+        <template>
+          <el-form-item label="配送员：" :label-width="labelWidth">
+            <el-select placeholder="搜索">
+              <el-option label="张三 131111111133" value="张三 131111111133" />
+              <el-option label="李四 132323233332" value="李四 132323233332" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="当前已选：" prop="李四 132323233332" :label-width="labelWidth" />
+          <el-form-item label="常用配送员：" prop="2333" :label-width="labelWidth">
+            <el-button type="">李国</el-button>
+            <el-button type="">王一</el-button>
+            <el-button type="">李大</el-button>
+          </el-form-item>
+        </template>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeliveryVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogDeliveryVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 待退款 拒绝-->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogPendingRefundVisible"
+      width="30%"
+      :before-close="handleClose"
+      append-to-body
+    >
+      <div>拒绝订单201905067591的退款吗？</div>
+      <div>拒绝退款后买家将不能再次发起申请，请确保与买家协商一致后再拒绝 <a href="">联系买家</a></div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogPendingRefundVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogPendingRefundVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 待退款 同意-->
+    <el-dialog
+      title="退款确认"
+      :visible.sync="dialogPendingAgreeVisible"
+      width="30%"
+      :before-close="handleClose"
+      append-to-body
+    >
+      <el-form class="marginTop20">
+        <el-form-item label="请输入退款金额：" :label-width="labelWidth">
+          <el-input autocomplete="off" style="width:200px;" value="" placeholder="请输入退款金额" size="small" />
+        </el-form-item>
+        <el-form-item label="快递单号：" prop="2333" :label-width="labelWidth">
+          <div><span class="color-red">￥21.00</span> <span class="color-gray">(不可大于商品实付金额)</span></div>
+        </el-form-item>
+        <el-form-item label="请输入密码：" :label-width="labelWidth">
+          <el-input autocomplete="off" style="width:200px;" value="" placeholder="请输入密码" size="small" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogPendingAgreeVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogPendingAgreeVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 待提货 确认提货-->
+    <el-dialog
+      title="请输入提货码"
+      :visible.sync="dialogPickUpVisible"
+      width="30%"
+      :before-close="handleClose"
+      append-to-body
+    >
+      <el-form class="marginTop20">
+        <el-input autocomplete="off" style="width:340px;margin-left:30px;" value="" placeholder="请输入提货码" size="small" />
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogPickUpVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogPickUpVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 确认退货 收到退货-->
+    <el-dialog
+      title="确认退货"
+      :visible.sync="dialogConfirmReturnVisible"
+      width="30%"
+      :before-close="handleClose"
+      append-to-body
+    >
+      <div style="text-align:center;font-size:18px">确认收到退货吗？</div>
+      <div class="color-gray marginTop20" style="text-align:center">同意退款后将退回该待退款订单中的货款</div>
+      <el-form class="marginTop20">
+        <el-form-item label="请输入退款金额：" :label-width="labelWidth">
+          <el-input autocomplete="off" style="width:200px;" value="" placeholder="请输入退款金额" size="small" />
+        </el-form-item>
+        <el-form-item label="快递单号：" prop="2333" :label-width="labelWidth">
+          <div><span class="color-red">￥21.00</span> <span class="color-gray">(不可大于商品实付金额)</span></div>
+        </el-form-item>
+        <el-form-item label="请输入密码：" :label-width="labelWidth">
+          <el-input autocomplete="off" style="width:200px;" value="" placeholder="请输入密码" size="small" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogConfirmReturnVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogConfirmReturnVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 <script>
@@ -453,7 +631,14 @@ export default {
       subLoading: false,
       editData: 0,
       type: 'price',
-      isShow: false
+      isShow: false,
+      dialogDeliveryVisible: false, // 立即发货
+      dialogPendingRefundVisible: false, // 退款拒绝
+      dialogPendingAgreeVisible: false, // 退款同意
+      dialogPickUpVisible: false, // 确认提货
+      dialogConfirmReturnVisible: false, // 确认退货
+      labelWidth: '170px',
+      mySelectList: [] // 选择的商品
     }
   },
   computed: {
@@ -562,6 +747,39 @@ export default {
       this.lockFlag = []
       this.formData.unlockType = 0
       this.formData.unlockTime = ''
+    },
+    // 选取商品 表格选取（全选/反选），更新 mySelectList
+    handleSelectAllChange(allList) {
+      this.tableData.forEach(item => {
+        const index = this.mySelectList.findIndex(mItem => {
+          return mItem.commodityId === item.commodityId
+        })
+        // this.referPrice = item.mprice
+        // item.price = ''
+        // this.number = 0
+        if (index > -1) {
+          if (allList.length > 0) {
+            console.log('已存在' + item.commodityId + ':' + item.commodityName)
+          } else {
+            // 反选
+            this.mySelectList.splice(index, 1)
+          }
+        } else {
+          this.mySelectList.push(item)
+        }
+      })
+      // console.log('mySelectList:', this.mySelectList)
+    },
+    // 选取商品 表格选取（单选/取消），更新 mySelectList
+    handleSelect(val, row) {
+      const index = this.mySelectList.findIndex(mItem => {
+        return mItem.commodityId === row.commodityId
+      })
+      if (index > -1) {
+        this.mySelectList.splice(index, 1)
+      } else {
+        this.mySelectList.push(row)
+      }
     }
   }
 }
@@ -760,4 +978,6 @@ export default {
   padding-left:0;
   padding-right:0;
 }
+.color-red{color:red;}
+.color-gray{color:#aaa;}
 </style>
