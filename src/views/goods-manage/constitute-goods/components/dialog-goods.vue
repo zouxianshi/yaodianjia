@@ -11,14 +11,14 @@
       <div class="title">选取商品</div>
     </div>
     <div class="modal-body">
-      <!-- <div class="md-search">
+      <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
           <el-input v-model="search.keyWord" style="width: 240px" placeholder="搜索" size="small" />
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
         </div>
-      </div>-->
+      </div>
       <el-table
         ref="multipleTable"
         border

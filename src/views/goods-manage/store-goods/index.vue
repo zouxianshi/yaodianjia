@@ -431,13 +431,22 @@ export default {
     getList() {
       this._loadStoreList().then(res => {
         if (res) {
-          this.listQuery.storeId = res[0] ? res[0].id : ''
-          this.chooseStore = res[0]
+          this.listQuery.storeId = res[1] ? res[1].id : ''
+          // this.chooseStore = res[
           this._loadList()
         }
       })
     },
     _loadList() {
+      if (this.listQuery.storeId === '') {
+        if (this.listQuery.name === '' && this.listQuery.erpCode === '' && this.listQuery.barCode === '') {
+          this.$message({
+            message: '选择全部门店时，请输入商品名称或ERP编码、条形码',
+            type: 'warning'
+          })
+          return
+        }
+      }
       this.loading = true
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false

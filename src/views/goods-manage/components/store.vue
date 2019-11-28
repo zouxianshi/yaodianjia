@@ -121,7 +121,8 @@ export default {
         searchKey: this.storeCode,
         currentPage: this.currentPage,
         onlineStatus: 1,
-        status: 1
+        status: 1,
+        pageSize: 10
       }
       getStoreList(query).then(res => {
         const { data, totalCount } = res.data
