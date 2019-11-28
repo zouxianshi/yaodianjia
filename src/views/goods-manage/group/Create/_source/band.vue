@@ -96,7 +96,7 @@
             small
             :current-page="listQuery.currentPage"
             background
-            :page-size="8"
+            :page-size="10"
             layout="total, prev, pager, next"
             :total="total"
             @current-change="handleCurrentChange"

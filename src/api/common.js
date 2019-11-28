@@ -27,3 +27,12 @@ export function queryGoods(params) {
   })
 }
 
+// 获取商品分类树
+export function getTypeTree(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-type/getTypeTree`,
+    method: 'post',
+    data: params
+  })
+}
+
