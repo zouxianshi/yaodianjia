@@ -116,7 +116,7 @@
                 <el-button plain size="mini" @click="doCopy(scope.row)">复制链接</el-button>
                 <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
               </template>
-              <template v-if="!scope.row.status || scope.row.timeStatus === 0">
+              <template v-if="!(scope.row.status && scope.row.timeStatus === 1)">
                 <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
             </template>
