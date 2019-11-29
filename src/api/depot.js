@@ -73,6 +73,15 @@ export function setBatchGroup(params) {
   })
 }
 
+// 批量设置限购
+export function setLimitBuyNum(params) {
+  return request({
+    url: `${config.merchandise}/1.0/comm-spec/_limit`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 导入历史
 export function getImportList(params) {
   return request({
