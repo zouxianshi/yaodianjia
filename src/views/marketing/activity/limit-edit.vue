@@ -66,7 +66,7 @@
                   <el-option v-if="xForm.mode === 1" label="批量设置折扣" value="1" />
                   <el-option v-if="xForm.mode === 2" label="批量设置减价" value="2" />
                   <el-option label="批量设置限购" value="3" />
-                  <el-option label="批量设置库存" value="4" />
+                  <el-option v-if="xForm.type === 12" label="批量设置库存" value="4" />
                 </el-select>
               </el-form-item>
             </el-form>
@@ -292,6 +292,7 @@ export default {
         this.$refs.dialogSet.open()
       } else {
         this.$message('请选择商品后再设置')
+        this.mutiSetType = ''
       }
     },
     toSelectStore() {
@@ -344,13 +345,13 @@ export default {
             const item = {
               id: '',
               activityId: this.dataid,
-              discount: goods.discount || '',
-              limitAmount: goods.limitAmount || '',
+              discount: (goods.discount || '') + '',
+              limitAmount: (goods.limitAmount || '') + '',
               productManufacture: goods.manufacture || '',
               productName: goods.name || '',
               productSpecId: goods.specId || '',
               productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
-              stockAmount: goods.stockAmount || ''
+              stockAmount: (goods.stockAmount || '') + ''
             }
             this.tableForm.selectedGoods.push(item)
           } else {
@@ -430,8 +431,17 @@ export default {
           // / this.xForm = ''
           const data = res.data
           this.tableForm.selectedGoods = data.items.map((item) => {
-            delete item.mode
-            return item
+            return {
+              activityId: item.activityId,
+              discount: '' + item.discount,
+              id: item.id,
+              limitAmount: '' + item.limitAmount,
+              productManufacture: item.productManufacture,
+              productName: item.productName,
+              productSpecId: item.productSpecId,
+              productSpecName: item.productSpecName,
+              stockAmount: (item.stockAmount || '') + ''
+            }
           })
           console.log('this.xForm', this.xForm)
           this.xForm = Object.assign(data, {
