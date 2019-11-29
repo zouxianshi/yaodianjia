@@ -248,7 +248,7 @@
                     <div class="goods-info padding10">
                       <div class="goods-price">￥90.00</div>
                       <div class="goods-num">(1件)</div>
-                      <div class="goods-remark marginTop20">查看退款理由</div>
+                      <div class="goods-remark marginTop20" @click="dialogRefundReasonVisible = true">查看退款理由</div>
                     </div>
                   </div>
 
@@ -264,7 +264,7 @@
                     <div class="goods-info padding10">
                       <div class="goods-price">￥90.00</div>
                       <div class="goods-num">(1件)</div>
-                      <div class="goods-remark marginTop20">查看退款理由</div>
+                      <div class="goods-remark marginTop20" @click="dialogRefundReasonVisible = true">查看退款理由</div>
                     </div>
                   </div>
 
@@ -280,7 +280,7 @@
                     <div class="goods-info padding10">
                       <div class="goods-price">￥90.00</div>
                       <div class="goods-num">(1件)</div>
-                      <div class="goods-remark marginTop20">查看退款理由</div>
+                      <div class="goods-remark marginTop20" @click="dialogRefundReasonVisible = true">查看退款理由</div>
                     </div>
                   </div>
                 </div>
@@ -535,6 +535,40 @@
       </span>
     </el-dialog>
 
+    <!-- 退款理由 -->
+    <el-dialog
+      title="退款理由"
+      :visible.sync="dialogRefundReasonVisible"
+      width="30%"
+      :before-close="handleClose"
+      append-to-body
+    >
+      <el-form class="marginTop20">
+        <el-form-item label="退款原因：" :label-width="labelWidth100">
+          <!-- <template slot-scope="scope"> -->
+          <div>退款原因</div>
+          <!-- </template> -->
+        </el-form-item>
+        <el-form-item label="退款说明：" :label-width="labelWidth100">
+          <!-- <template slot-scope="scope"> -->
+          <div>退款说明退款说明退款说明退款说明退款说明退款说明退款说明退款说明退款说明退款说明退款说明退款说明</div>
+          <!-- </template> -->
+        </el-form-item>
+        <el-form-item label="图片凭证：" :label-width="labelWidth100">
+          <!-- <template slot-scope="scope"> -->
+          <div><img src="" width="100" height="100"> <img src="" width="100" height="100"> <img src="" width="100" height="100"></div>
+          <!-- </template> -->
+        </el-form-item>
+        <div class="float-right">
+          <a href="">联系买家</a>
+        </div>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogRefundReasonVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogRefundReasonVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 <script>
@@ -637,7 +671,9 @@ export default {
       dialogPendingAgreeVisible: false, // 退款同意
       dialogPickUpVisible: false, // 确认提货
       dialogConfirmReturnVisible: false, // 确认退货
+      dialogRefundReasonVisible: false, // 查看退款理由
       labelWidth: '170px',
+      labelWidth100: '100px',
       mySelectList: [] // 选择的商品
     }
   },
@@ -980,4 +1016,5 @@ export default {
 }
 .color-red{color:red;}
 .color-gray{color:#aaa;}
+.float-right{float:right}
 </style>
