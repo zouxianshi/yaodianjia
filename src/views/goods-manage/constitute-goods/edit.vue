@@ -54,7 +54,7 @@
             >
               <el-form-item label="组合商品图片：" prop="file" required>
                 <el-upload
-                  class="avatar-uploader specs-img"
+                  class="avatar-uploader x-uploader"
                   :action="upLoadUrl"
                   :headers="headers"
                   :show-file-list="false"
@@ -62,12 +62,17 @@
                   :before-upload="beforeUpload"
                   @preview="handlePreview"
                 >
-                  <img
-                    v-if="basicForm.image"
-                    style="width:100px;height:100px"
-                    :src="showImg(basicForm.image)"
-                    class="avatar"
-                  >
+                  <div v-if="basicForm.image" class="el-img-box">
+                    <img
+                      style="width:120px;height:120px"
+                      :src="showImg(basicForm.image)"
+                      class="avatar"
+                    >
+                    <div class="img-actions" @click.stop>
+                      <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
+                      <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
+                    </div>
+                  </div>
                   <i v-else class="el-icon-plus avatar-uploader-icon" />
                 </el-upload>
               </el-form-item>
@@ -475,8 +480,11 @@ export default {
 
         // 赋值
         this.basicForm = data
-        this.$refs.editor.setContent(this.basicForm.detail)
         this.childCommodities = data.childCommodities
+        if (this.basicForm.detail) {
+          this.$refs.editor.setContent(this.basicForm.detail)
+        }
+
         // console.log('this.basicForm:', this.basicForm)
       })
     },
@@ -532,6 +540,12 @@ export default {
     },
     handleUploadIndex(index) {
       this.uploadIndex = index
+    },
+    handleUpload() {
+      $('.el-img-box').click()
+    },
+    handleRemove() {
+      this.basicForm.image = ''
     },
     handleAvatarSuccess(res, file) {
       // 图片上传成功
@@ -948,5 +962,13 @@ export default {
 .footer {
   text-align: center;
   margin: 50px auto;
+}
+.avatar-uploader-icon{
+  font-size: 28px;
+    color: #8c939d;
+    width: 120px;
+    height: 120px;
+    line-height: 120px !important;
+    text-align: center;
 }
 </style>

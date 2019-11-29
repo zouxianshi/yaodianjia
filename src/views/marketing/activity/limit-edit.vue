@@ -1,22 +1,22 @@
 <template>
   <div class="dashboard-container">
-    <div class="app-container">
+    <div class="app-container" :class="disabled ? 'x-disabled-container': ''">
       <section class="form-box">
         <el-form ref="xForm" :model="xForm" :rules="xRules" size="small" label-width="80px" :disabled="disabled">
           <el-form-item label="活动类型">
             <el-radio-group v-model="xForm.type">
-              <el-radio :label="11">限时优惠</el-radio>
+              <el-radio :label="11">限时特惠</el-radio>
               <el-radio :label="12">限时秒杀</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="活动名称" prop="name">
-            <el-input v-model="xForm.name" placeholder="不超过20字" maxlength="20" style="width: 380px;" />
+            <el-input v-model="xForm.name" :placeholder="disabled ? '':'不超过20字'" maxlength="20" style="width: 380px;" />
           </el-form-item>
           <el-form-item label="活动描述">
             <el-input
               v-model="xForm.description"
               type="textarea"
-              placeholder="不超过50字"
+              :placeholder="disabled ? '':'不超过50字'"
               maxlength="50"
               style="width: 380px;"
             />
@@ -42,14 +42,14 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="活动范围">
-            <el-radio-group v-model="xForm.storeRange" @change="onChange()">
+            <el-radio-group v-model="xForm.storeRange">
               <el-radio :label="0">全部门店</el-radio>
               <el-radio :label="1">部分门店</el-radio>
               <el-button v-if="xForm.storeRange === 1" type="text" @click="toSelectStore">选取门店</el-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="是否免运">
-            <el-radio-group v-model="xForm.freePostFee" @change="onChange()">
+            <el-radio-group v-model="xForm.freePostFee">
               <el-radio :label="false">否</el-radio>
               <el-radio :label="true">是</el-radio>
             </el-radio-group>
@@ -66,39 +66,57 @@
                   <el-option v-if="xForm.mode === 1" label="批量设置折扣" value="1" />
                   <el-option v-if="xForm.mode === 2" label="批量设置减价" value="2" />
                   <el-option label="批量设置限购" value="3" />
-                  <el-option label="批量设置库存" value="4" />
+                  <el-option v-if="xForm.type === 12" label="批量设置库存" value="4" />
                 </el-select>
               </el-form-item>
             </el-form>
           </div>
-          <el-table :data="selectedGoods" size="small" style="margin: 20px 0">
-            <el-table-column label="序号" type="index" />
-            <el-table-column label="商品名称" prop="productName" min-width="150px" />
-            <el-table-column label="规格" prop="productSpecName" min-width="100px" />
-            <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
-            <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="100px">
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.discount" style="width:80px" :disabled="disabled" />
-                <span v-if="xForm.mode===1">折</span>
-                <span v-else>元</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="限购" prop="name" min-width="100px">
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.limitAmount" style="width: 80px" :disabled="disabled" />
-              </template>
-            </el-table-column>
-            <el-table-column label="库存" prop="name" min-width="100px">
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.stockAmount" style="width:80px" :disabled="disabled" />
-              </template>
-            </el-table-column>
-            <el-table-column v-if="!disabled" label="操作" prop="name" min-width="120px">
-              <template slot-scope="scope">
-                <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+          <el-form ref="tableForm" :model="tableForm" class="table-form">
+            <el-table :data="tableForm.selectedGoods" size="small" style="margin: 20px 0">
+              <el-table-column label="序号" type="index" />
+              <el-table-column label="商品名称" prop="productName" min-width="150px" />
+              <el-table-column label="规格" prop="productSpecName" min-width="100px" />
+              <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
+              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="120px">
+                <template slot-scope="scope">
+                  <el-form-item
+                    :prop="'selectedGoods.' + scope.$index + '.discount'"
+                    :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
+                  >
+                    <el-input v-model="scope.row.discount" style="width:70px" :disabled="disabled" maxlength="8" />
+                    <span v-if="xForm.mode===1" style="margin-left: 5px">折</span>
+                    <span v-else style="margin-left: 5px">元</span>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column label="限购" prop="name" min-width="120px">
+                <template slot-scope="scope">
+                  <el-form-item
+                    :prop="'selectedGoods.' + scope.$index + '.limitAmount'"
+                    :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
+                  >
+                    <el-input v-model="scope.row.limitAmount" style="width:70px;text-align:center" :disabled="disabled" maxlength="8" />
+                    <span v-show="scope.row.limitAmount ==='0'" style="margin-left: 5px;color: #e6a23c;">不限购</span>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column v-if="xForm.type === 12" label="库存" prop="name" min-width="120px">
+                <template slot-scope="scope">
+                  <el-form-item
+                    :prop="'selectedGoods.' + scope.$index + '.stockAmount'"
+                    :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
+                  >
+                    <el-input v-model="scope.row.stockAmount" style="width:70px" :disabled="disabled" maxlength="8" />
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column v-if="!disabled" label="操作" prop="name" min-width="120px" align="center">
+                <template slot-scope="scope">
+                  <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form>
           <el-button v-if="!disabled" type="primary" size="small" @click="toSelectedGoods">选择商品</el-button>
         </div>
       </section>
@@ -123,6 +141,7 @@ import {
 import dialogSet from './_source/dialog-set'
 import dialogGoods from './_source/dialog-goods'
 import dialogStore from '@/components/Dialog/DialogStore'
+import { checkNumberdouble } from '@/utils/validate'
 
 import {
   getActivityDetail,
@@ -139,7 +158,40 @@ export default {
     dialogStore
   },
   data() {
+    const check_discount = (rule, value, callback) => {
+      console.log('rule', rule)
+      if (rule.required && !value) {
+        callback(new Error('请输入数值'))
+      }
+      if (value !== '' && !checkNumberdouble(value)) {
+        callback(new Error('请输入最多2位小数的正数'))
+      }
+      callback()
+    }
+    const check_limit = (rule, value, callback) => {
+      const reg = /[^0-9]/
+      if (rule.required && !value) {
+        callback(new Error('请输入数值'))
+      }
+      if (value !== '' && reg.test(value)) {
+        callback(new Error('请输入正整数'))
+      }
+      callback()
+    }
+    const check_num = (rule, value, callback) => {
+      const reg = /[^0-9]/
+      if (rule.required && !value) {
+        callback(new Error('请输入数值'))
+      }
+      if (value !== '' && reg.test(value) || value === '0') {
+        callback(new Error('请输入正整数'))
+      }
+      callback()
+    }
     return {
+      check_discount: check_discount,
+      check_limit: check_limit,
+      check_num: check_num,
       disabled: false,
       dataid: '',
       type: '',
@@ -167,13 +219,17 @@ export default {
           trigger: 'change'
         }]
       },
+      tableForm: {
+        selectedGoods: []
+      },
       editDetail: null, // 编辑详情
       mutiSetType: '', // 设置类型 1.折扣 2.减价 3限购 4.库存
       propGoodsList: [],
       selectedGoods: [],
       selectedStore: [],
       storeIds: [],
-      storeNames: []
+      storeNames: [],
+      placeText: '不限购'
     }
   },
   computed: {
@@ -217,8 +273,9 @@ export default {
       }
     },
     handleDel(item, index) {
-      this.selectedGoods.splice(index, 1)
+      this.tableForm.selectedGoods.splice(index, 1)
     },
+
     modeChange(val) {
       if (val === 1 && this.mutiSetType === '2') {
         this.mutiSetType = '1'
@@ -226,15 +283,16 @@ export default {
       if (val === 2 && this.mutiSetType === '1') {
         this.mutiSetType = '2'
       }
-    },
-    onChange(val) {
-      console.log('val', this.xForm)
+      this.tableForm.selectedGoods.forEach(v => {
+        v.discount = ''
+      })
     },
     mutiSetChange(val) {
-      if (this.selectedGoods && this.selectedGoods.length > 0) {
+      if (this.tableForm.selectedGoods && this.tableForm.selectedGoods.length > 0) {
         this.$refs.dialogSet.open()
       } else {
         this.$message('请选择商品后再设置')
+        this.mutiSetType = ''
       }
     },
     toSelectStore() {
@@ -242,7 +300,7 @@ export default {
     },
     onSetChange(data) {
       // 设置类型 1.折扣 2.减价 3限购 4.库存
-      this.selectedGoods.forEach(goods => {
+      this.tableForm.selectedGoods.forEach(goods => {
         if (this.mutiSetType === '1' || this.mutiSetType === '2') {
           goods.discount = data.value
         } else if (this.mutiSetType === '3') {
@@ -263,7 +321,7 @@ export default {
       }
     },
     toSelectedGoods() {
-      this.propGoodsList = this.selectedGoods.map(goods => {
+      this.propGoodsList = this.tableForm.selectedGoods.map(goods => {
         const item = {
           checked: true,
           specId: goods.productSpecId,
@@ -280,22 +338,22 @@ export default {
       if (list && list.length > 0) {
         console.log('onSelectedGoods', list)
         list.forEach(goods => {
-          const index = this.selectedGoods.findIndex(v => {
+          const index = this.tableForm.selectedGoods.findIndex(v => {
             return goods.specId === v.productSpecId
           })
           if (index === -1) {
             const item = {
               id: '',
               activityId: this.dataid,
-              discount: goods.discount || '',
-              limitAmount: goods.limitAmount || '',
+              discount: (goods.discount || '') + '',
+              limitAmount: (goods.limitAmount || '') + '',
               productManufacture: goods.manufacture || '',
               productName: goods.name || '',
               productSpecId: goods.specId || '',
               productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
-              stockAmount: goods.stockAmount || ''
+              stockAmount: (goods.stockAmount || '') + ''
             }
-            this.selectedGoods.push(item)
+            this.tableForm.selectedGoods.push(item)
           } else {
             console.log('已存在')
           }
@@ -303,7 +361,7 @@ export default {
         // this.selectedStore = list
         // this.storeIds = this.selectedStore.map(store => store.id)
         // this.storeNames = this.selectedStore.map(store => store.stName)
-        console.log(this.selectedGoods)
+        console.log(this.tableForm.selectedGoods)
       }
     },
     formatSkuInfo(skuList) {
@@ -318,36 +376,47 @@ export default {
     submit() {
       console.log('xForm', this.xForm)
       // 表单验证
-      // 表单验证
       this.$refs.xForm.validate((valid) => {
         if (valid) {
-          // 验证结束时间
+          // 验证时间
+          const start_time = new Date(this.xForm.startTime).getTime()
           const end_time = new Date(this.xForm.endTime).getTime()
           const current_time = new Date().getTime()
-          if (end_time <= current_time) {
-            this.$message.warning('结束时间必须大于当前时间')
+          if (start_time < current_time) {
+            this.$message.warning('活动开始时间不能小于当前时间')
+            return false
+          }
+          if (end_time <= start_time) {
+            this.$message.warning('活动结束时间必须大于开始时间')
             return false
           }
           if (this.xForm.storeRange === 1 && this.storeIds.length === 0) {
             this.$message.warning('请选取门店')
             return false
           }
-          if (this.selectedGoods.length === 0) {
+          if (this.tableForm.selectedGoods.length === 0) {
             this.$message.warning('请选取商品')
             return false
           }
-          const data = {
-            storeIds: this.xForm.storeRange === 1 && this.storeIds.length > 0 ? this.storeIds.join(',') : '',
-            storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
-              : ''
-          }
-          if (this.xForm.id && this.xForm.id !== '') {
-            this._updateActivity(data)
-          } else {
-            this._addActivity(data)
-          }
+          this.$refs.tableForm.validate((valid) => {
+            if (valid) {
+              const data = {
+                storeIds: this.xForm.storeRange === 1 && this.storeIds.length > 0 ? this.storeIds.join(',') : '',
+                storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
+                  : ''
+              }
+              if (this.xForm.id && this.xForm.id !== '') {
+                this._updateActivity(data)
+              } else {
+                this._addActivity(data)
+              }
+            } else {
+              this.$message.warning('请完善商品信息')
+              return false
+            }
+          })
         } else {
-          console.log('error submit!!')
+          console.log('请完善活动信息!')
           return false
         }
       })
@@ -360,12 +429,26 @@ export default {
       getActivityDetail(params).then(res => {
         if (res.code === '10000') {
           // / this.xForm = ''
-          this.xForm = res.data
-          this.selectedGoods = this.xForm.items.map((item) => {
-            delete item.mode
-            return item
+          const data = res.data
+          this.tableForm.selectedGoods = data.items.map((item) => {
+            return {
+              activityId: item.activityId,
+              discount: '' + item.discount,
+              id: item.id,
+              limitAmount: '' + item.limitAmount,
+              productManufacture: item.productManufacture,
+              productName: item.productName,
+              productSpecId: item.productSpecId,
+              productSpecName: item.productSpecName,
+              stockAmount: (item.stockAmount || '') + ''
+            }
           })
-          this.xForm.dateRange = [res.data.startTime, res.data.endTime]
+          console.log('this.xForm', this.xForm)
+          this.xForm = Object.assign(data, {
+            'dateRange': [res.data.startTime, res.data.endTime]
+          })
+          this.storeIds = this.xForm.storeIds && this.xForm.storeIds !== '' ? this.xForm.storeIds.split(',') : []
+          console.log('this.storeIds', this.storeIds)
         }
       }).catch(err => {
         console.log('err', err)
@@ -382,7 +465,7 @@ export default {
         mode: this.xForm.mode,
         storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
-        items: this.selectedGoods,
+        items: this.tableForm.selectedGoods,
         storeIds: data.storeIds,
         storeNames: data.storeNames
       }
@@ -408,7 +491,7 @@ export default {
         mode: this.xForm.mode,
         storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
-        items: this.selectedGoods,
+        items: this.tableForm.selectedGoods,
         storeIds: data.storeIds,
         storeNames: data.storeNames
       }
@@ -427,51 +510,34 @@ export default {
 }
 </script>
 <style lang="scss">
-  .scope-img-wrap {
-    width: 60px;
-    height: 40px;
-    background: #f5f5f5;
-    margin: auto;
-
-    img {
-      width: 100%;
-      height: 100%;
+  .table-form{
+    .el-form-item{
+      margin: 15px 0;
     }
-  }
-
-  .x-dialog-body {
-    width: 100%;
-    display: flex;
-
-    .form-box {
-      flex: 1;
-    }
-
-    .preview-box {
-      flex: 0 0 250px;
-
-      .title {
-        font-size: 18px;
-      }
-
-      .prview-pic {
-        margin-top: 20px;
-        width: 100%;
-        height: 450px;
+    .el-input{
+      input {
+        padding: 0 8px;
+        text-align: center;
       }
     }
-
-    .test-1 {
-      color: red;
-    }
   }
-
+</style>
+<style lang="scss" scoped>
+  .m-opacity{
+    opacity: 0;
+  }
+  .input-text{
+    position: relative;
+    z-index: 10;
+  }
+  .place-text{
+    margin-left: -80px;
+  }
   .note-grey {
     font-size: 14px;
     line-height: 1.1;
     color: #999999;
   }
-
   .form-footer {
     text-align: center
   }
