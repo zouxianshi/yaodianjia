@@ -104,6 +104,7 @@
               <el-button type="danger" size="mini" @click="handleChangeUpdown(0)">批量下架</el-button>
             </template>
             <el-button type="" size="mini" @click="handleUpGroup">批量修改分组</el-button>
+            <el-button type="info" size="mini" @click="handleSettingLimitBuy">批量设置限购</el-button>
           </div>
         </div>
         <div class="table-box" style="margin-top:0px">
@@ -155,7 +156,7 @@
                       {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
                     </span>
                   </p>
-                  <p class="ellipsis" v-text="'条码：'+scope.row.barCode" />
+                  <p v-if="scope.row.barCode" class="ellipsis" v-text="'条码：'+scope.row.barCode" />
                   <p class="ellipsis" v-text="scope.row.approvalNumber" />
                 </div>
               </template>
@@ -199,7 +200,7 @@
                   <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-button type="info" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template>
-                <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                <a v-if="scope.row.commodityType!==2" :href="`#/goods-manage/edit?id=${scope.row.id}`">
                   <el-button type="" size="mini">编辑</el-button>
                 </a>
               </template>
@@ -216,6 +217,7 @@
     </div>
     <store :status="status" :choose-num="specData.length" :spec-data="specData" :is-show="dialogVisible" @close="dialogVisible=false" />
     <group :is-show="groupVisible" :group-data="groupData" :goods-data="goodsData" @close="groupVisible=false" />
+    <limit-buy :is-show="limitVisible" :spec-data="specData" @close="limitVisible=false" />
   </div>
 </template>
 <script>
@@ -226,8 +228,9 @@ import mixins from '@/utils/mixin'
 import download from '@hydee/download'
 import store from '../components/store'
 import group from '../components/grouping'
+import limitBuy from './_source/limit-buy'
 export default {
-  components: { Pagination, store, group },
+  components: { Pagination, store, group, limitBuy },
   mixins: [mixins],
   data() {
     return {
@@ -247,6 +250,7 @@ export default {
       loading: false,
       tableData: [],
       dialogVisible: false,
+      limitVisible: false,
       total: 0,
       subLoading: false,
       groupVisible: false,
@@ -267,6 +271,31 @@ export default {
     this._loadTypeList()
   },
   methods: {
+    handleSettingLimitBuy() { // 设置限购
+      this.specData = []
+      if (this.multiselect.length === 0) {
+        this.$message({
+          message: '请选择商品',
+          type: 'warning'
+        })
+        return
+      }
+      let flag = true
+      this.multiselect.map(res => {
+        if (res.commodityType === 2) {
+          flag = false
+        }
+        this.specData.push(`${res.specId}`)
+      })
+      if (!flag) {
+        this.$message({
+          message: '当前页面不允许操作组合商品，请重新选择',
+          type: 'error'
+        })
+        return
+      }
+      this.limitVisible = true
+    },
     resetQuery() { // 重置
       this.listQuery = {
         approvalNumber: '',
@@ -320,9 +349,20 @@ export default {
         })
         return
       }
+      let flag = true
       this.multiselect.map(res => {
+        if (res.commodityType === 2) {
+          flag = false
+        }
         this.specData.push(`${res.specId}`)
       })
+      if (!flag) {
+        this.$message({
+          message: '当前页面不允许操作组合商品，请重新选择',
+          type: 'error'
+        })
+        return
+      }
       this.status = status
       this.dialogVisible = true
     },
@@ -343,9 +383,20 @@ export default {
         })
         return
       }
+      let flag = true
       this.multiselect.map(res => {
+        if (res.commodityType === 2) {
+          flag = false
+        }
         this.goodsData.push(res.id)
       })
+      if (!flag) {
+        this.$message({
+          message: '当前页面不允许操作组合商品，请重新选择',
+          type: 'error'
+        })
+        return
+      }
       this.groupVisible = true
     },
     handleExport() { // 商品导出
