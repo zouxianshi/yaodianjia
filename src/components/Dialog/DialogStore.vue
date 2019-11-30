@@ -277,11 +277,9 @@ export default {
     box-sizing: border-box;
     .md-search {
       display: flex;
-
       .search-item {
         flex: 0 0 auto;
       }
-
       .search-btns {
         margin-left: 20px;
       }
