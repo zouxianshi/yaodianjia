@@ -14,7 +14,7 @@
               </div>
               <div class="li-center">
                 <div class="title">限时优惠</div>
-                <div class="desc">包含限时秒杀和限时优惠券两种活动方式，秒杀更强调高时效性的低价刺激，可设 置独立库存，限时折扣则更侧重于优惠折扣。设置固定周期</div>
+                <div class="desc">包含限时秒杀和限时特惠两种活动方式，秒杀更强调高时效性的低价刺激，可设 置独立库存，限时折扣则更侧重于优惠折扣。设置固定周期</div>
               </div>
               <div class="li-right">
                 <el-button class="btn-create" type="primary" size="mini" @click="toCreate(1)">创建</el-button>

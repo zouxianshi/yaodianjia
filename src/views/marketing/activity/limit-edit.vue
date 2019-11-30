@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div class="app-container" :class="disabled ? 'x-disabled-container': ''">
+    <div v-loading="loading" class="app-container" :class="disabled ? 'x-disabled-container': ''" element-loading-text="加载中">
       <section class="form-box">
         <el-form ref="xForm" :model="xForm" :rules="xRules" size="small" label-width="80px" :disabled="disabled">
           <el-form-item label="活动类型">
@@ -10,7 +10,7 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="活动名称" prop="name">
-            <el-input v-model="xForm.name" :placeholder="disabled ? '':'不超过20字'" maxlength="20" style="width: 380px;" />
+            <el-input v-model="xForm.name" :placeholder="disabled ? '':'不超过20字'" maxlength="20" style="width: 380px;" show-word-limit />
           </el-form-item>
           <el-form-item label="活动描述">
             <el-input
@@ -18,6 +18,8 @@
               type="textarea"
               :placeholder="disabled ? '':'不超过50字'"
               maxlength="50"
+              :rows="4"
+              show-word-limit
               style="width: 380px;"
             />
           </el-form-item>
@@ -44,9 +46,9 @@
           <el-form-item label="活动范围">
             <el-radio-group v-model="xForm.storeRange">
               <el-radio :label="0">全部门店</el-radio>
-              <el-radio :label="1">部分门店</el-radio>
-              <el-button v-if="xForm.storeRange === 1" type="text" @click="toSelectStore">选取门店</el-button>
+              <el-radio style="margin-right:10px" :label="1">部分门店</el-radio>
             </el-radio-group>
+            <div v-if="xForm.storeRange === 1" class="btn-select-store" @click="toSelectStore"><span v-if="!disabled">选取门店/</span>查看已选门店</div>
           </el-form-item>
           <el-form-item label="是否免运">
             <el-radio-group v-model="xForm.freePostFee">
@@ -61,9 +63,9 @@
         <div class="table-box">
           <div class="muti-set">
             <el-form label-width="80px">
-              <el-form-item label="批量设置">
+              <el-form-item v-if="!disabled" label="批量设置">
                 <el-select v-model="mutiSetType" placeholder="批量设置" @change="mutiSetChange">
-                  <el-option v-if="xForm.mode === 1" label="批量设置折扣" value="1" />
+                  <el-option v-if="xForm.mode === 1" class="x-option" label="批量设置折扣" value="1" />
                   <el-option v-if="xForm.mode === 2" label="批量设置减价" value="2" />
                   <el-option label="批量设置限购" value="3" />
                   <el-option v-if="xForm.type === 12" label="批量设置库存" value="4" />
@@ -77,7 +79,7 @@
               <el-table-column label="商品名称" prop="productName" min-width="150px" />
               <el-table-column label="规格" prop="productSpecName" min-width="100px" />
               <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
-              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="120px">
+              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="130px">
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'selectedGoods.' + scope.$index + '.discount'"
@@ -100,7 +102,7 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column v-if="xForm.type === 12" label="库存" prop="name" min-width="120px">
+              <el-table-column v-if="xForm.type === 12" label="库存" prop="name" min-width="130px">
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'selectedGoods.' + scope.$index + '.stockAmount'"
@@ -110,7 +112,7 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column v-if="!disabled" label="操作" prop="name" min-width="120px" align="center">
+              <el-table-column v-if="!disabled" label="操作" prop="name" width="100px" align="center">
                 <template slot-scope="scope">
                   <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
                 </template>
@@ -128,9 +130,9 @@
         <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
       </section>
     </div>
-    <dialog-set ref="dialogSet" :type="mutiSetType" @on-change="onSetChange" />
-    <dialog-goods ref="dialogGoods" :list="propGoodsList" @on-change="onSelectedGoods" />
-    <dialog-store ref="dialogStore" :list="selectedStore" @on-change="onSelectedStore" />
+    <dialog-set v-if="!disabled" ref="dialogSet" :type="mutiSetType" @on-change="onSetChange" @on-reset="onSetReset" />
+    <dialog-goods ref="dialogGoods" :editable="!disabled" :list="propGoodsList" @on-change="onSelectedGoods" />
+    <dialog-store ref="dialogStore" :editable="!disabled" :list="selectedStore" @on-change="onSelectedStore" />
   </div>
 </template>
 
@@ -163,8 +165,22 @@ export default {
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
-      if (value !== '' && !checkNumberdouble(value)) {
-        callback(new Error('请输入最多2位小数的正数'))
+      if (value !== '') {
+        if (this.xForm.mode === 2 && !checkNumberdouble(value)) { // 2.减价
+          callback(new Error('请输入最多2位小数的正数'))
+        }
+        if (this.xForm.mode === 1) { // 1.折扣
+          const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1}))$)/
+          if (!reg.test(value)) {
+            callback(new Error('请输入最多1位小数的正数'))
+          }
+          if (value <= 0 || value >= 10) {
+            callback(new Error('折扣值应大于0小于10'))
+          }
+        }
+      }
+      if (value > 10000) {
+        callback(new Error('最大值不能超过10000'))
       }
       callback()
     }
@@ -176,6 +192,9 @@ export default {
       if (value !== '' && reg.test(value)) {
         callback(new Error('请输入正整数'))
       }
+      if (value > 10000) {
+        callback(new Error('最大值不能超过10000'))
+      }
       callback()
     }
     const check_num = (rule, value, callback) => {
@@ -185,6 +204,9 @@ export default {
       }
       if (value !== '' && reg.test(value) || value === '0') {
         callback(new Error('请输入正整数'))
+      }
+      if (value > 1000000) {
+        callback(new Error('最大值不能超过1000000'))
       }
       callback()
     }
@@ -275,7 +297,6 @@ export default {
     handleDel(item, index) {
       this.tableForm.selectedGoods.splice(index, 1)
     },
-
     modeChange(val) {
       if (val === 1 && this.mutiSetType === '2') {
         this.mutiSetType = '1'
@@ -286,6 +307,7 @@ export default {
       this.tableForm.selectedGoods.forEach(v => {
         v.discount = ''
       })
+      this.$refs.tableForm.clearValidate()
     },
     mutiSetChange(val) {
       if (this.tableForm.selectedGoods && this.tableForm.selectedGoods.length > 0) {
@@ -297,6 +319,9 @@ export default {
     },
     toSelectStore() {
       this.$refs.dialogStore.open()
+    },
+    onSetReset() {
+      this.mutiSetType = ''
     },
     onSetChange(data) {
       // 设置类型 1.折扣 2.减价 3限购 4.库存
@@ -323,7 +348,6 @@ export default {
     toSelectedGoods() {
       this.propGoodsList = this.tableForm.selectedGoods.map(goods => {
         const item = {
-          checked: true,
           specId: goods.productSpecId,
           name: goods.productName
         }
@@ -337,11 +361,21 @@ export default {
     onSelectedGoods(list) {
       if (list && list.length > 0) {
         console.log('onSelectedGoods', list)
-        list.forEach(goods => {
-          const index = this.tableForm.selectedGoods.findIndex(v => {
-            return goods.specId === v.productSpecId
+        // 1.移除table list中不在选取中的数据
+        this.tableForm.selectedGoods.forEach((item, index) => {
+          const inIndex = list.findIndex(v => {
+            return v.specId === item.productSpecId
           })
-          if (index === -1) {
+          if (inIndex === -1) {
+            this.tableForm.selectedGoods.splice(index, 1)
+          }
+        })
+        // 1.在table list中添加选取中没有的数据
+        list.forEach(goods => {
+          const inIndex = this.tableForm.selectedGoods.findIndex(item => {
+            return goods.specId === item.productSpecId
+          })
+          if (inIndex === -1) {
             const item = {
               id: '',
               activityId: this.dataid,
@@ -353,7 +387,7 @@ export default {
               productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
               stockAmount: (goods.stockAmount || '') + ''
             }
-            this.tableForm.selectedGoods.push(item)
+            this.tableForm.selectedGoods.unshift(item)
           } else {
             console.log('已存在')
           }
@@ -370,7 +404,9 @@ export default {
         skuList.forEach(v => {
           skuStr += `${v.skuKeyName}:${v.skuValue}，`
         })
+        skuStr = skuStr.substr(0, skuStr.length - 1)
       }
+      console.log('skuStr', skuStr)
       return skuStr
     },
     submit() {
@@ -422,6 +458,7 @@ export default {
       })
     },
     _getDetailData() {
+      this.loading = true
       const params = {
         id: this.dataid
       }
@@ -448,9 +485,23 @@ export default {
             'dateRange': [res.data.startTime, res.data.endTime]
           })
           this.storeIds = this.xForm.storeIds && this.xForm.storeIds !== '' ? this.xForm.storeIds.split(',') : []
+          this.storeNames = this.xForm.storeNames && this.xForm.storeNames !== '' ? this.xForm.storeNames.split(',') : []
+          if (this.storeIds && this.storeIds.length > 0) {
+            this.selectedStore = this.storeIds.map((v, index) => {
+              const store = {
+                id: v,
+                stName: this.storeNames[index] ? this.storeNames[index] : ''
+              }
+              return store
+            })
+          }
+
           console.log('this.storeIds', this.storeIds)
+          console.log('this.storeNames', this.storeNames)
         }
+        this.loading = false
       }).catch(err => {
+        this.loading = false
         console.log('err', err)
       })
     },
@@ -523,6 +574,29 @@ export default {
   }
 </style>
 <style lang="scss" scoped>
+  .btn-select-store{
+    display: inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #DCDFE6;
+    border-color: #DCDFE6;
+    color: #606266;
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+    margin: 0;
+    font-weight: 400;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 3px
+  }
+  .btn-select-store:hover{
+    color: #147de8;
+    border-color: #b9d8f8;
+    background-color: #e8f2fd;
+  }
   .m-opacity{
     opacity: 0;
   }
