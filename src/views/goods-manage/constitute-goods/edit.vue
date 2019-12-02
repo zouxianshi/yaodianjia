@@ -101,7 +101,7 @@
             <div class="table-box">
               <el-table v-loading="loading" :data="childCommodities" stripe style="width: 100%">
                 <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
-                <el-table-column align="left" min-width="120" prop="packStandard" label="规格" />
+                <!-- <el-table-column align="left" min-width="120" prop="packStandard" label="规格" /> -->
                 <!-- <el-form
               ref="basic"
               :model="childCommodities"
@@ -109,6 +109,7 @@
               label-width="160px"
               :rules="basicRules"
             > -->
+                <el-table-column prop="standard" label="规格" align="center" min-width="150" />
                 <el-table-column
 
                   align="left"
@@ -359,13 +360,13 @@ export default {
           // item.id = null
         })
 
-        this.basicForm.price = price
-        this.basicForm.mprice = mprice
-        console.log('newval:', newval)
+        // this.basicForm.price = price.toFixed(2)
+        // this.basicForm.mprice = mprice.toFixed(2)
+        // console.log('newval:', newval)
 
         this.$nextTick(function() {
-          this.basicForm.price = price
-          this.basicForm.mprice = mprice
+          this.basicForm.price = price.toFixed(2)
+          this.basicForm.mprice = mprice.toFixed(2)
         })
       },
       deep: true

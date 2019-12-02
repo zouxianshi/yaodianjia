@@ -18,7 +18,7 @@
             prop="value"
             :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
           >
-            <el-input v-model="xForm.value" style="width: 200px" placeholder="" />
+            <el-input v-model="xForm.value" style="width: 200px" placeholder="" maxlength="8" />
             <span>折</span>
             <span class="note-text">填写折扣，如8</span>
           </el-form-item>
@@ -29,7 +29,7 @@
             prop="value"
             :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
           >
-            <el-input v-model="xForm.value" style="width: 200px" placeholder="" />
+            <el-input v-model="xForm.value" style="width: 200px" placeholder="" maxlength="8" />
             <span class="note-text">填写减价金额，如减价10元则填10</span>
           </el-form-item>
         </template>
@@ -39,7 +39,7 @@
             prop="value"
             :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
           >
-            <el-input v-model="xForm.value" style="width: 200px" placeholder="" />
+            <el-input v-model="xForm.value" style="width: 200px" placeholder="" maxlength="8" />
             <span class="note-text">填写限购数量，如0表示不限购</span>
           </el-form-item>
         </template>
@@ -86,8 +86,22 @@ export default {
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
-      if (value !== '' && !checkNumberdouble(value)) {
-        callback(new Error('请输入最多2位小数的正数'))
+      if (value !== '') {
+        if (this.type === '2' && !checkNumberdouble(value)) { // 2.减价
+          callback(new Error('请输入最多2位小数的正数'))
+        }
+        if (this.type === '1') { // 1.折扣
+          const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1}))$)/
+          if (!reg.test(value)) {
+            callback(new Error('请输入最多1位小数的正数'))
+          }
+          if (value <= 0 || value >= 10) {
+            callback(new Error('折扣值应大于0小于10'))
+          }
+        }
+      }
+      if (value > 999999) {
+        callback(new Error('最大值不能超过999999'))
       }
       callback()
     }
@@ -99,6 +113,9 @@ export default {
       if (value !== '' && reg.test(value)) {
         callback(new Error('请输入正整数'))
       }
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
+      }
       callback()
     }
     const check_num = (rule, value, callback) => {
@@ -108,6 +125,9 @@ export default {
       }
       if (value !== '' && reg.test(value) || value === '0') {
         callback(new Error('请输入正整数'))
+      }
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
       }
       callback()
     }
@@ -155,6 +175,7 @@ export default {
     },
     handlerClose() {
       this.reset()
+      this.$emit('on-reset')
     }
   }
 }

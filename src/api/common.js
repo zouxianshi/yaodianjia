@@ -18,7 +18,7 @@ export function queryStores(params) {
   })
 }
 
-// 查询商品列表
+// 查询商品列表 1
 export function queryGoods(params) {
   return request({
     url: `${config.merGoods}/1.0/commodity/list`,
@@ -27,12 +27,14 @@ export function queryGoods(params) {
   })
 }
 
-// 获取商品分类树
+// 获取商品分类树(	integer(类型，1-分类，2-分组)
 export function getTypeTree(params) {
+  console.log('params', params)
   return request({
     url: `${config.merGoods}/1.0/comm-type/getTypeTree`,
     method: 'post',
-    data: params
+    data: params,
+    noMerCode: true
   })
 }
 
