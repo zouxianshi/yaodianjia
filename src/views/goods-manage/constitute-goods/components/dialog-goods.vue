@@ -21,6 +21,7 @@
       </div>
       <el-table
         ref="multipleTable"
+        v-loading="loading"
         border
         size="small"
         :data="tableData"
@@ -126,6 +127,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       dialog: {
         visible: false
       },
@@ -265,6 +267,7 @@ export default {
       this._getTableData()
     },
     _getTableData() {
+      this.loading = true
       const params = {
         searchKeyWord: this.search.keyWord.trim(), // 搜索的关键字
         currentPage: this.pager.current,
@@ -283,6 +286,9 @@ export default {
         } else {
           this.tableData = []
         }
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
       })
     }
   }

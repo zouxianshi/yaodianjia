@@ -103,17 +103,8 @@
             <div class="table-box">
               <el-table v-loading="loading" :data="childCommodities" stripe style="width: 100%">
                 <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
-                <!-- <el-table-column align="left" min-width="120" prop="packStandard" label="规格" /> -->
-                <!-- <el-form
-              ref="basic"
-              :model="childCommodities"
-              status-icon
-              label-width="160px"
-              :rules="basicRules"
-            > -->
                 <el-table-column prop="standard" label="规格" align="center" min-width="150" />
                 <el-table-column
-
                   align="left"
                   label="组合数量"
                   :show-overflow-tooltip="true"
@@ -190,6 +181,7 @@
               <el-form-item label="限购设置：">
                 <span>单个用户限购数量为</span>
                 <el-input v-model="basicForm.limitNum" placeholder="0" size="mini" class="inp_mini" />
+                <span v-show="basicForm.limitNum <= 0 && basicForm.limitNum >= 0" style="margin-left: 5px;margin-right: 10px;color: #e6a23c;">不限购</span>
                 <span class="color_gray">同一个用户限制购买的数量</span>
               </el-form-item>
             </el-form>
@@ -201,6 +193,7 @@
     <div class="footer">
       <span>
         <!-- <el-button size="small" @click="groupVisible = false">取 消</el-button> -->
+        <el-button size="small" @click="$router.go(-1)">取 消</el-button>
         <el-button type="primary" size="small" @click="handleConstituteGoods">确 定</el-button>
       </span>
     </div>
@@ -227,13 +220,14 @@
       </span>
     </el-dialog>
     <el-dialog
+
       title="选择分类"
       :visible.sync="typeVisible"
       :close-on-click-modal="false"
       width="30%"
       append-to-body
     >
-      <div class="modal-body">
+      <div v-loading="loading" class="modal-body">
         <el-cascader
           v-model="chooseList"
           class="cascader"
@@ -283,7 +277,7 @@ export default {
         label: 'name',
         value: 'id'
       },
-      loading: false,
+      loading: false, // 加载分类
       basicForm: {
         firstTypeId: '', // 一级分类
         secondTypeId: '', // 二级分类
@@ -530,11 +524,20 @@ export default {
         file.type === 'image/jpeg' ||
         file.type === 'image/png' ||
         file.type === 'image/jpg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message({
+          message: '上传图片大小不能超过 2MB!',
+          type: 'warning'
+        })
+        return false
+      }
       if (!isImg) {
         this.$message({
           message: '只能上传图片',
           type: 'warning'
         })
+        return false
       }
       if (isImg) {
         this.uploadLoading = true
