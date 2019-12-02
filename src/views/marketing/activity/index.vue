@@ -108,7 +108,7 @@
               <el-tag v-else size="small" type="info">已失效</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="220">
+          <el-table-column label="操作" width="262">
             <template slot-scope="scope">
               <el-button v-if="scope.row.status && scope.row.timeStatus === -1" plain size="mini" @click="toEdit(scope.row)">编辑</el-button>
               <el-button v-else plain size="mini" @click="toEdit(scope.row, 1)">查看</el-button>
@@ -116,7 +116,7 @@
                 <el-button plain size="mini" @click="doCopy(scope.row)">复制链接</el-button>
                 <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
               </template>
-              <template v-if="!scope.row.status || scope.row.timeStatus === 0">
+              <template v-if="!(scope.row.status && scope.row.timeStatus === 1)">
                 <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
             </template>

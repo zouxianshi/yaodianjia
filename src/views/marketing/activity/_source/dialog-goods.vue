@@ -7,7 +7,7 @@
           <el-select
             v-model="type1"
             size="small"
-            placeholder="请选择"
+            placeholder="一级分类"
             @change="onTypeChange($event, 1)"
           >
             <el-option v-for="item1 in typeOption1" :key="item1.id" :label="item1.name" :value="item1.id" />
@@ -15,7 +15,8 @@
           <el-select
             v-model="type2"
             size="small"
-            placeholder="请选择"
+            placeholder="二级分类"
+            @focus="onFocus(2)"
             @change="onTypeChange($event, 2)"
           >
             <el-option v-for="item2 in typeOption2" :key="item2.id" :label="item2.name" :value="item2.id" />
@@ -23,7 +24,8 @@
           <el-select
             v-model="type3"
             size="small"
-            placeholder="请选择"
+            placeholder="三级分类"
+            @focus="onFocus(3)"
             @change="onTypeChange($event, 3)"
           >
             <el-option v-for="item3 in typeOption3" :key="item3.id" :label="item3.name" :value="item3.id" />
@@ -33,7 +35,9 @@
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
         </div>
       </div>
-      <p class="note-text">当前类目下<span v-if="pager.total>0">包括101个商品</span>
+      <p class="note-text">
+        <span v-if="type1 && type1!=''">当前类目下</span>
+        <span v-else>当前所有分类</span><span v-if="pager.total>0">包括 <span v-text="pager.total" /> 个商品</span>
         <span v-else>暂无商品</span>
       </p>
       <el-table
@@ -148,7 +152,7 @@ export default {
   data() {
     return {
       dialog: {
-        visible: true
+        visible: false
       },
       pager: {
         current: 1,
@@ -181,6 +185,13 @@ export default {
     fetchData() {
       this._getTableData() // 统计列表
       this._getTypeTree() // 分类类表
+    },
+    onFocus(level) {
+      if (level === 2 && this.type1 === '') {
+        this.$message('请先选择一级分类')
+      } else if (level === 3 && this.type2 === '') {
+        this.$message('请先选择二级分类')
+      }
     },
     onTypeChange(typeid, level) { // 分类切换
       this.searchForm.typeid = typeid
@@ -333,6 +344,7 @@ export default {
     },
     _getTableData() {
       const params = {
+        commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
         level: this.searchForm.typeLevel,
         typeId: this.searchForm.typeid,
         hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含

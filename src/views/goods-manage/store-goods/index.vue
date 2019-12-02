@@ -38,7 +38,7 @@
             />
           </div>
           <div class="search-item">
-            <span class="label-name">ERP编码</span>
+            <span class="label-name">商品编码</span>
             <el-input
               v-model.trim="listQuery.erpCode"
               size="small"
@@ -171,13 +171,13 @@
                     {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
                   </span>
                 </p>
-                <p class="ellipsis" v-text="'条码：'+scope.row.barCode" />
+                <p v-if="scope.row.barCode" class="ellipsis" v-text="'条码：'+scope.row.barCode" />
                 <p class="ellipsis">{{ scope.row.approvalNumber }}</p>
               </div>
             </template></el-table-column>
           <el-table-column
             prop="erpCode"
-            label="ERP编码"
+            label="商品编码"
             align="left"
           />
           <el-table-column
@@ -431,13 +431,22 @@ export default {
     getList() {
       this._loadStoreList().then(res => {
         if (res) {
-          this.listQuery.storeId = res[0] ? res[0].id : ''
-          this.chooseStore = res[0]
+          this.listQuery.storeId = res[1] ? res[1].id : ''
+          // this.chooseStore = res[
           this._loadList()
         }
       })
     },
     _loadList() {
+      if (this.listQuery.storeId === '') {
+        if (this.listQuery.name === '' && this.listQuery.erpCode === '' && this.listQuery.barCode === '') {
+          this.$message({
+            message: '选择全部门店时，请输入商品名称或ERP编码、条形码',
+            type: 'warning'
+          })
+          return
+        }
+      }
       this.loading = true
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
