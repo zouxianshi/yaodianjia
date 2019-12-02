@@ -10,6 +10,7 @@
               status-icon
               label-width="160px"
               :rules="basicRules"
+              @submit.native.prevent
             >
               <el-form-item label="组合商品名称：" prop="name">
                 <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
@@ -54,6 +55,7 @@
             >
               <el-form-item label="组合商品图片：" prop="file" required>
                 <el-upload
+                  v-loading="uploadLoading"
                   class="avatar-uploader x-uploader"
                   :action="upLoadUrl"
                   :headers="headers"
@@ -77,7 +79,7 @@
                 </el-upload>
               </el-form-item>
 
-              <el-form-item label="关键字：" prop="keyWord">
+              <el-form-item label="关键字：" prop="keyWord" @submit.native.prevent>
                 <el-input v-model="basicForm.keyWord" placeholder="请输入关键字" size="small" />&nbsp;用、隔开
               </el-form-item>
 
@@ -184,7 +186,7 @@
               </el-form-item>
             </el-form>
 
-            <el-form ref="basic" :model="basicForm" status-icon label-width="160px">
+            <el-form ref="basic" :model="basicForm" status-icon label-width="160px" @submit.native.prevent>
               <el-form-item label="限购设置：">
                 <span>单个用户限购数量为</span>
                 <el-input v-model="basicForm.limitNum" placeholder="0" size="mini" class="inp_mini" />
@@ -321,8 +323,9 @@ export default {
       // },
       uploadIndex: 0,
       subLoading: false,
-      chooseTableSpec: []
-      // leaveAction: false // 离开页面动作，true为保存离开  false异常离开
+      chooseTableSpec: [],
+      uploadLoading: false,
+      leaveAction: false // 离开页面动作，true为保存离开  false异常离开
     }
   },
   computed: {
@@ -360,32 +363,28 @@ export default {
           // item.id = null
         })
 
-        // this.basicForm.price = price.toFixed(2)
-        // this.basicForm.mprice = mprice.toFixed(2)
-        // console.log('newval:', newval)
-
         this.$nextTick(function() {
-          this.basicForm.price = price.toFixed(2)
-          this.basicForm.mprice = mprice.toFixed(2)
+          this.basicForm.price = parseFloat(price.toFixed(2))
+          this.basicForm.mprice = parseFloat(mprice.toFixed(2))
         })
       },
       deep: true
     }
   },
-  // beforeRouteLeave(to, from, next) {
-  //   // 路由离开关闭标签
-  //   if (!this.leaveAction) {
-  //     const answer = window.confirm('你还有数据没有保存，是否确认退出')
-  //     if (answer) {
-  //       this.$store.dispatch('tagsView/delView', from)
-  //       next()
-  //     } else {
-  //       next(false)
-  //     }
-  //   } else {
-  //     next()
-  //   }
-  // },
+  beforeRouteLeave(to, from, next) {
+    // 路由离开关闭标签
+    if (!this.leaveAction) {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        this.$store.dispatch('tagsView/delView', from)
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
+    }
+  },
   created() {
     if (this.$route.query.id) {
       // this._loadBasicInfo()
@@ -537,6 +536,9 @@ export default {
           type: 'warning'
         })
       }
+      if (isImg) {
+        this.uploadLoading = true
+      }
       return isImg
     },
     handleUploadIndex(index) {
@@ -559,6 +561,7 @@ export default {
           type: 'error'
         })
       }
+      this.uploadLoading = false
     },
     handleDelete(index, row) {
       // 删除组合商品
@@ -647,6 +650,7 @@ export default {
     },
     _CreateBasicInfo(data) {
       // 创建基本信息
+      this.leaveAction = true
       addConstituteGoods(data)
         .then(res => {
           this.$message({
@@ -663,6 +667,7 @@ export default {
     },
     _UpdateBasicInfo(data) {
       // 更新基本信息
+      this.leaveAction = true
       updateConstituteGoods(data)
         .then(res => {
           this.$message({
