@@ -79,13 +79,13 @@
               <el-table-column label="商品名称" prop="productName" min-width="150px" />
               <el-table-column label="规格" prop="productSpecName" min-width="100px" />
               <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
-              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="150px">
+              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="180px">
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'selectedGoods.' + scope.$index + '.discount'"
                     :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.discount" style="width:70px" :disabled="disabled" maxlength="8" />
+                    <el-input v-model="scope.row.discount" style="width:80px" :disabled="disabled" maxlength="10" />
                     <span v-if="xForm.mode===1" style="margin-left: 5px">折</span>
                     <span v-else style="margin-left: 5px">元</span>
                   </el-form-item>
@@ -97,7 +97,7 @@
                     :prop="'selectedGoods.' + scope.$index + '.limitAmount'"
                     :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.limitAmount" style="width:70px;text-align:center" :disabled="disabled" maxlength="9" />
+                    <el-input v-model="scope.row.limitAmount" style="width:80px;text-align:center" :disabled="disabled" maxlength="9" />
                     <span v-show="scope.row.limitAmount ==='0'" style="margin-left: 5px;color: #e6a23c;">不限购</span>
                   </el-form-item>
                 </template>
@@ -108,7 +108,7 @@
                     :prop="'selectedGoods.' + scope.$index + '.stockAmount'"
                     :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.stockAmount" style="width:70px" :disabled="disabled" maxlength="9" />
+                    <el-input v-model="scope.row.stockAmount" style="width:80px" :disabled="disabled" maxlength="9" />
                   </el-form-item>
                 </template>
               </el-table-column>
@@ -179,8 +179,8 @@ export default {
           }
         }
       }
-      if (value > 999999) {
-        callback(new Error('最大值不能超过999999'))
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
       }
       callback()
     }
