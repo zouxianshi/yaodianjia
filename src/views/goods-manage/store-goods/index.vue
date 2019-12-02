@@ -38,7 +38,7 @@
             />
           </div>
           <div class="search-item">
-            <span class="label-name">ERP编码</span>
+            <span class="label-name">商品编码</span>
             <el-input
               v-model.trim="listQuery.erpCode"
               size="small"
@@ -171,13 +171,13 @@
                     {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
                   </span>
                 </p>
-                <p class="ellipsis" v-text="'条码：'+scope.row.barCode" />
+                <p v-if="scope.row.barCode" class="ellipsis" v-text="'条码：'+scope.row.barCode" />
                 <p class="ellipsis">{{ scope.row.approvalNumber }}</p>
               </div>
             </template></el-table-column>
           <el-table-column
             prop="erpCode"
-            label="ERP编码"
+            label="商品编码"
             align="left"
           />
           <el-table-column

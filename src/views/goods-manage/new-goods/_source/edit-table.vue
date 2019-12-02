@@ -17,6 +17,7 @@
             </span>
             <p v-if="keys==='erpCode'&&err_show" class="tip">商品编码只能为纯数字</p>
             <p v-show="keys==='barCode'&&err_show" class="tip">只能输入数字、英文、字符</p>
+            <p v-show="keys==='limitNum'&&err_show" class="tip">只能输入不能小于0的整数</p>
           </el-form-item>
           <el-form-item v-else label="" :prop="keys">
             <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
@@ -110,6 +111,12 @@ export default {
           if (this.keys === 'mprice') {
             if (!/^([1-9]\d*|0)(\.\d*[1-9])?$/.exec(this.infoData.mprice)) {
               this.infoData.mprice = ~~this.infoData.mprice
+            }
+          }
+          if (this.keys === 'limitNum') {
+            if (this.infoData.limitNum % 1 !== 0 || this.infoData.limitNum < 0) {
+              this.err_show = true
+              return
             }
           }
           this.$emit('saveInfo', this.infoData, this.keys, this.index)

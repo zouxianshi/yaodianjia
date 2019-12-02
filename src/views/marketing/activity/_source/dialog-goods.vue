@@ -7,7 +7,7 @@
           <el-select
             v-model="type1"
             size="small"
-            placeholder="请选择"
+            placeholder="一级分类"
             @change="onTypeChange($event, 1)"
           >
             <el-option v-for="item1 in typeOption1" :key="item1.id" :label="item1.name" :value="item1.id" />
@@ -15,7 +15,8 @@
           <el-select
             v-model="type2"
             size="small"
-            placeholder="请选择"
+            placeholder="二级分类"
+            @focus="onFocus(2)"
             @change="onTypeChange($event, 2)"
           >
             <el-option v-for="item2 in typeOption2" :key="item2.id" :label="item2.name" :value="item2.id" />
@@ -23,7 +24,8 @@
           <el-select
             v-model="type3"
             size="small"
-            placeholder="请选择"
+            placeholder="三级分类"
+            @focus="onFocus(3)"
             @change="onTypeChange($event, 3)"
           >
             <el-option v-for="item3 in typeOption3" :key="item3.id" :label="item3.name" :value="item3.id" />
@@ -33,11 +35,15 @@
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
         </div>
       </div>
-      <p class="note-text">当前类目下<span v-if="pager.total>0">包括101个商品</span>
+      <p class="note-text">
+        <span v-if="type1 && type1!=''">当前类目下</span>
+        <span v-else>当前所有分类</span><span v-if="pager.total>0">包括 <span v-text="pager.total" /> 个商品</span>
         <span v-else>暂无商品</span>
       </p>
       <el-table
         ref="multipleTable"
+        v-loading="loading"
+        element-loading-text="加载中"
         border
         size="small"
         :data="tableData"
@@ -67,14 +73,14 @@
             </div>
           </template> -->
         </el-table-column>
-        <el-table-column prop="name" label="商品名称" align="center" min-width="120" />
-        <el-table-column prop="brandName" label="品牌" align="center" min-width="100" />
-        <el-table-column label="规格信息" align="center" min-width="100">
+        <el-table-column prop="name" label="商品名称" min-width="120" />
+        <el-table-column prop="brandName" label="品牌" min-width="100" />
+        <el-table-column label="规格信息" min-width="100">
           <template slot-scope="scope">
-            <span v-text="formatSkuInfo(scope.row.specSkuList)" />
+            <div v-html="formatSkuInfo(scope.row.specSkuList)" />
           </template>
         </el-table-column>
-        <el-table-column prop="manufacture" label="生产厂家" align="center" min-width="120" />
+        <el-table-column prop="manufacture" label="生产厂家" min-width="120" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
@@ -85,7 +91,7 @@
         background
         style="text-align: right;margin-top: 20px"
         :current-page="pager.current"
-        :page-sizes="[10, 15, 20, 50]"
+        :page-sizes="[20, 15, 20, 50]"
         :page-size="pager.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pager.total"
@@ -102,7 +108,7 @@
           <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
             <span v-text="mItem.name" />
             <i
-              v-if="editable && !mItem.checked"
+              v-if="editable"
               class="icon el-icon-close"
               @click.stop="removeMyselectItem(mItem, index2)"
             />
@@ -147,6 +153,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       dialog: {
         visible: false
       },
@@ -172,15 +179,30 @@ export default {
       typeList: []
     }
   },
-  created() {
-    this.fetchData()
+  computed: {
+    merCode() {
+      return this.$store.state.user.merCode || ''
+    }
   },
-  mounted() {},
+  created() {
+    // this.fetchData()
+  },
   methods: {
     // 获取数据
     fetchData() {
       this._getTableData() // 统计列表
       this._getTypeTree() // 分类类表
+    },
+    onFocus(level) {
+      if (level === 2 && this.type1 === '') {
+        this.$message('请先选择一级分类')
+      } else if (level === 3 && this.type2 === '') {
+        if (this.typid1 === '') {
+          this.$message('请先选择二级分类')
+        } else {
+          this.$message('请先选择二级分类')
+        }
+      }
     },
     onTypeChange(typeid, level) { // 分类切换
       this.searchForm.typeid = typeid
@@ -188,6 +210,8 @@ export default {
       if (level === 1) {
         this.type2 = ''
         this.type3 = ''
+        this.typeOption2 = ''
+        this.typeOption3 = ''
         const index1 = this.typeOption1.findIndex(v => {
           return v.id === typeid
         })
@@ -241,7 +265,7 @@ export default {
       let skuStr = ''
       if (skuList && skuList.length > 0) {
         skuList.forEach(v => {
-          skuStr += `${v.skuKeyName}:${v.skuValue}，`
+          skuStr += `<div>${v.skuKeyName}: ${v.skuValue}</div>`
         })
       }
       return skuStr
@@ -299,10 +323,6 @@ export default {
     },
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
-      if (myItem.checked) {
-        console.log('外层已选取得数据只能在外层删掉')
-        return false
-      }
       const index = this.tableData.findIndex(item => {
         console.log('222item', item)
         console.log('myItem', myItem)
@@ -318,6 +338,8 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
+          console.log(mItem)
+          console.log(item)
           return mItem.specId === item.specId
         })
         if (index > -1) {
@@ -332,7 +354,9 @@ export default {
       this._getTableData()
     },
     _getTableData() {
+      this.loading = true
       const params = {
+        commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
         level: this.searchForm.typeLevel,
         typeId: this.searchForm.typeid,
         hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
@@ -353,25 +377,17 @@ export default {
         } else {
           this.tableData = []
         }
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
       })
     },
     _getTypeTree() {
-      // this.tableData = []
-      /* setTimeout(() => {
-          this.tableData = this.tableArr.slice()
-          this.$nextTick(() => {
-            this.updateChecked()
-          })
-        }, 1000)
-        return false*/
       const params = {
-        typeId: '',
-        hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
-        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
-        auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
-        name: this.searchForm.keyWord.trim(),
-        currentPage: this.pager.current,
-        pageSize: this.pager.size
+        dimensionId: '',
+        merCode: 'hydee',
+        type: 1, //	integer($int32)类型，1-分类，2-分组
+        use: false
       }
       getTypeTree(params).then(res => {
         if (res.code === '10000' && res.data) {

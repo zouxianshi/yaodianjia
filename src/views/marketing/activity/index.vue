@@ -45,7 +45,7 @@
               <el-option label="已结束" :value="0" />
             </el-select>
           </div>
-          <div class="search-item">
+          <!-- <div class="search-item">
             <span class="label-name">有效时间</span>
             <el-date-picker
               v-model="searchForm.startTime"
@@ -64,7 +64,7 @@
               placeholder="结束时间"
               @change="handleTimeChange($event, 2)"
             />
-          </div>
+          </div> -->
           <div class="search-item">
             <el-button size="small" @click="search()">查 询</el-button>
           </div>
@@ -116,7 +116,7 @@
                 <el-button plain size="mini" @click="doCopy(scope.row)">复制链接</el-button>
                 <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
               </template>
-              <template v-if="!scope.row.status || scope.row.timeStatus === 0">
+              <template v-if="!(scope.row.status && scope.row.timeStatus === 1)">
                 <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
             </template>
@@ -161,7 +161,7 @@ export default {
       tableData: [],
       pager: {
         current: 1,
-        size: 20,
+        size: 10,
         total: 0
       },
       dialogFormVisible: false
@@ -260,6 +260,11 @@ export default {
     },
     // 查询
     search() {
+      this.pager = {
+        current: 1,
+        size: 10,
+        total: 0
+      }
       this._getTableData()
     },
     // 创建
