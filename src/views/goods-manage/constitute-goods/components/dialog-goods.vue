@@ -54,9 +54,15 @@
           </template>-->
         </el-table-column>
         <el-table-column prop="commodityName" label="名称" align="center" min-width="150" />
-        <el-table-column prop="packStandard" label="包装规格" align="center" min-width="150" />
-        <el-table-column prop="price" label="价格" align="center" width="100" />
-        <el-table-column prop="stock" label="库存" align="center" width="100" />
+        <!-- <el-table-column label="规格" align="center" min-width="150">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+              {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+            </span>
+          </template>
+        </el-table-column> -->
+        <el-table-column prop="standard" label="规格" align="center" min-width="150" />
+        <el-table-column prop="mprice" label="价格" align="center" width="100" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
@@ -103,7 +109,8 @@
 </template>
 
 <script>
-import { getProductList } from '../../../../api/wxmall'
+import { mapGetters } from 'vuex'
+import { getcommSpecGoodsList } from '../../../../api/constitute-goods'
 export default {
   name: 'DialogGoods',
   props: {
@@ -135,8 +142,11 @@ export default {
       mySelectList: []
     }
   },
-  created() {},
-  mounted() {},
+  computed: {
+    ...mapGetters(['merCode'])
+  },
+  created() { },
+  mounted() { },
   methods: {
     // 获取数据
     fetchData() {
@@ -192,16 +202,17 @@ export default {
     },
     // 选取store-1.表格选取（全选/反选），更新 mySelectList
     handleSelectAllChange(allList) {
+      console.log()
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.commodityId === item.commodityId
+          return mItem.specId === item.specId
         })
         // this.referPrice = item.mprice
         // item.price = ''
         // this.number = 0
         if (index > -1) {
           if (allList.length > 0) {
-            console.log('已存在' + item.commodityId + ':' + item.commodityName)
+            console.log('已存在' + item.specId + ':' + item.commodityName)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
@@ -215,7 +226,7 @@ export default {
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.commodityId === row.commodityId
+        return mItem.specId === row.specId
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
@@ -226,7 +237,7 @@ export default {
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
       const index = this.tableData.findIndex(item => {
-        return item.commodityId === myItem.commodityId
+        return item.specId === myItem.specId
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
@@ -238,8 +249,10 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.commodityId === item.commodityId
+          return mItem.specId === item.specId
         })
+        console.log('商品tableData：', this.tableData)
+        console.log('商品index', index)
         if (index > -1) {
           currentCheckedList.push(item)
         }
@@ -252,22 +265,15 @@ export default {
       this._getTableData()
     },
     _getTableData() {
-      // this.tableData = []
-      /* setTimeout(() => {
-          this.tableData = this.tableArr.slice()
-          this.$nextTick(() => {
-            this.updateChecked()
-          })
-        }, 1000)
-        return false*/
       const params = {
-        storeId: '',
-        keyWord: this.search.keyWord.trim(),
+        searchKeyWord: this.search.keyWord.trim(), // 搜索的关键字
         currentPage: this.pager.current,
         pageSize: this.pager.size,
-        commodityType: 1
+        commodityType: 1,
+        merCode: this.merCode
       }
-      getProductList(params).then(res => {
+
+      getcommSpecGoodsList(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []
           this.pager.total = res.data.totalCount
