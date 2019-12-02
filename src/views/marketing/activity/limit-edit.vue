@@ -79,7 +79,7 @@
               <el-table-column label="商品名称" prop="productName" min-width="150px" />
               <el-table-column label="规格" prop="productSpecName" min-width="100px" />
               <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
-              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="130px">
+              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="140px">
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'selectedGoods.' + scope.$index + '.discount'"
@@ -179,8 +179,8 @@ export default {
           }
         }
       }
-      if (value > 10000) {
-        callback(new Error('最大值不能超过10000'))
+      if (value > 999999) {
+        callback(new Error('最大值不能超过999999'))
       }
       callback()
     }
@@ -192,8 +192,8 @@ export default {
       if (value !== '' && reg.test(value)) {
         callback(new Error('请输入正整数'))
       }
-      if (value > 10000) {
-        callback(new Error('最大值不能超过10000'))
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
       }
       callback()
     }
@@ -205,8 +205,8 @@ export default {
       if (value !== '' && reg.test(value) || value === '0') {
         callback(new Error('请输入正整数'))
       }
-      if (value > 1000000) {
-        callback(new Error('最大值不能超过1000000'))
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
       }
       callback()
     }
@@ -304,10 +304,10 @@ export default {
       if (val === 2 && this.mutiSetType === '1') {
         this.mutiSetType = '2'
       }
-      this.tableForm.selectedGoods.forEach(v => {
+      this.tableForm.selectedGoods.forEach((v, index) => {
         v.discount = ''
+        this.$refs.tableForm.clearValidate('selectedGoods.' + index + '.discount')
       })
-      this.$refs.tableForm.clearValidate()
     },
     mutiSetChange(val) {
       if (this.tableForm.selectedGoods && this.tableForm.selectedGoods.length > 0) {
@@ -325,13 +325,16 @@ export default {
     },
     onSetChange(data) {
       // 设置类型 1.折扣 2.减价 3限购 4.库存
-      this.tableForm.selectedGoods.forEach(goods => {
+      this.tableForm.selectedGoods.forEach((goods, index) => {
         if (this.mutiSetType === '1' || this.mutiSetType === '2') {
           goods.discount = data.value
+          this.$refs.tableForm.clearValidate('selectedGoods.' + index + '.discount')
         } else if (this.mutiSetType === '3') {
           goods.limitAmount = data.value
+          this.$refs.tableForm.clearValidate('selectedGoods.' + index + '.limitAmount')
         } else if (this.mutiSetType === '4') {
           goods.stockAmount = data.value
+          this.$refs.tableForm.clearValidate('selectedGoods.' + index + '.stockAmount')
         }
       })
       this.$refs.dialogSet.close()

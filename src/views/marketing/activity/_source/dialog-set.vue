@@ -100,8 +100,8 @@ export default {
           }
         }
       }
-      if (value > 10000) {
-        callback(new Error('最大值不能超过10000'))
+      if (value > 999999) {
+        callback(new Error('最大值不能超过999999'))
       }
       callback()
     }
@@ -113,8 +113,8 @@ export default {
       if (value !== '' && reg.test(value)) {
         callback(new Error('请输入正整数'))
       }
-      if (value > 10000) {
-        callback(new Error('最大值不能超过10000'))
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
       }
       callback()
     }
@@ -126,8 +126,8 @@ export default {
       if (value !== '' && reg.test(value) || value === '0') {
         callback(new Error('请输入正整数'))
       }
-      if (value > 1000000) {
-        callback(new Error('最大值不能超过1000000'))
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
       }
       callback()
     }
