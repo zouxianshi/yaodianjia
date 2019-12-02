@@ -114,7 +114,6 @@ export default {
   methods: {
     _onStartLevel1() {},
     handleSort(row, level) { // 排序
-      console.log(row, '---')
       const data = []
       row.map(v => {
         data.push({
