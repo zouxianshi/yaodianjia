@@ -79,7 +79,7 @@
               <el-table-column label="商品名称" prop="productName" min-width="150px" />
               <el-table-column label="规格" prop="productSpecName" min-width="100px" />
               <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
-              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="140px">
+              <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="150px">
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'selectedGoods.' + scope.$index + '.discount'"
@@ -91,24 +91,24 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column label="限购" prop="name" min-width="120px">
+              <el-table-column label="限购" prop="name" min-width="160px">
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'selectedGoods.' + scope.$index + '.limitAmount'"
                     :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.limitAmount" style="width:70px;text-align:center" :disabled="disabled" maxlength="8" />
+                    <el-input v-model="scope.row.limitAmount" style="width:70px;text-align:center" :disabled="disabled" maxlength="9" />
                     <span v-show="scope.row.limitAmount ==='0'" style="margin-left: 5px;color: #e6a23c;">不限购</span>
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column v-if="xForm.type === 12" label="库存" prop="name" min-width="130px">
+              <el-table-column v-if="xForm.type === 12" label="库存" prop="name" min-width="160px">
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'selectedGoods.' + scope.$index + '.stockAmount'"
                     :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.stockAmount" style="width:70px" :disabled="disabled" maxlength="8" />
+                    <el-input v-model="scope.row.stockAmount" style="width:70px" :disabled="disabled" maxlength="9" />
                   </el-form-item>
                 </template>
               </el-table-column>
