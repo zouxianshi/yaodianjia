@@ -14,6 +14,7 @@
             >
               <el-form-item label="组合商品名称：" prop="name">
                 <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
+                <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
               </el-form-item>
             </el-form>
             <p class="type-list">
@@ -81,6 +82,7 @@
 
               <el-form-item label="关键字：" prop="keyWord" @submit.native.prevent>
                 <el-input v-model="basicForm.keyWord" placeholder="请输入关键字" size="small" />&nbsp;用、隔开
+                <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
               </el-form-item>
 
               <el-form-item label="组合商品详细信息：">
@@ -523,7 +525,7 @@ export default {
     },
     handleDelete(index, row) {
       // 删除组合商品
-      this.$confirm('是否确定删除', '提示', {
+      this.$confirm('是否确认删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
