@@ -34,14 +34,18 @@
         <el-table-column property="stCode" label="门店编码" width="150" show-overflow-tooltip />
         <el-table-column label="门店名称">
           <template slot-scope="scope">
-            <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" style="margin-top: 8px">
+            <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" style="margin-top: 8px;margin-right:32px;">
               <span>{{ scope.row.stName }}</span>
               <!--              <span>说的是大三大萨达萨达撒打撒大撒的萨达萨达撒</span>-->
             </el-badge>
             <span v-else>{{ scope.row.stName }}</span>
           </template>
         </el-table-column>
-        <el-table-column property="address" label="门店地址" show-overflow-tooltip />
+        <el-table-column property="address" label="门店地址" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span v-text="`${_isProvince(scope.row.province)}${scope.row.city}${scope.row.area}${scope.row.address}`" />
+          </template>
+        </el-table-column>
         <el-table-column property="mobile" label="门店电话" show-overflow-tooltip>
           <template slot-scope="scope">
             <div style="line-height: 40px;">{{ scope.row.mobile }}</div>
@@ -118,7 +122,8 @@ export default {
       },
       tableData: [],
       multipleSelection: [],
-      mySelectList: []
+      mySelectList: [],
+      TheCitys: ['北京', '天津', '上海', '重庆']
     }
   },
   computed: {
@@ -267,6 +272,15 @@ export default {
           this.tableData = []
         }
       })
+    },
+    _isProvince(val) {
+      const index = this.TheCitys.findIndex(name => {
+        return val === name
+      })
+      if (index > -1) {
+        return ''
+      }
+      return val
     }
   }
 }

@@ -18,7 +18,7 @@
             prop="value"
             :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
           >
-            <el-input v-model="xForm.value" style="width: 200px" placeholder="" maxlength="8" />
+            <el-input v-model="xForm.value" style="width: 200px" placeholder="" maxlength="5" />
             <span>折</span>
             <span class="note-text">填写折扣，如8</span>
           </el-form-item>
@@ -29,7 +29,7 @@
             prop="value"
             :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
           >
-            <el-input v-model="xForm.value" style="width: 200px" placeholder="" maxlength="8" />
+            <el-input v-model="xForm.value" style="width: 200px" placeholder="" maxlength="11" />
             <span class="note-text">填写减价金额，如减价10元则填10</span>
           </el-form-item>
         </template>
@@ -100,8 +100,11 @@ export default {
           }
         }
       }
-      if (value > 999999) {
-        callback(new Error('最大值不能超过999999'))
+      if (value <= 0) {
+        callback(new Error('最小值必须大于0'))
+      }
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
       }
       callback()
     }
