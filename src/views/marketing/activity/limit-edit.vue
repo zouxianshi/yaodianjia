@@ -214,6 +214,8 @@ export default {
       callback()
     }
     return {
+      pageLoading: false,
+      leaveAction: false,
       check_discount: check_discount,
       check_limit: check_limit,
       check_num: check_num,
@@ -258,7 +260,7 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
-    if (this.disabled) {
+    if (this.disabled || this.leaveAction) {
       next()
       if (this.pageLoading) {
         this.pageLoading.close()
@@ -462,6 +464,7 @@ export default {
                 storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
                   : ''
               }
+              this.leaveAction = true
               if (this.xForm.id && this.xForm.id !== '') {
                 this._updateActivity(data)
               } else {
@@ -579,7 +582,7 @@ export default {
       updateActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('保存成功')
-          // this.$router.push('/marketing/activity')
+          this.$router.push('/marketing/activity')
         }
       }).catch(err => {
         console.log('err', err)

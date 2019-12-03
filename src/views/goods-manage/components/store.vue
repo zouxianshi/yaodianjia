@@ -49,8 +49,8 @@
         </div>
         <el-divider content-position="left">未选择门店的销售状态保持不变</el-divider>
         <ul class="choose-box">
-          <template v-if="!isAll&&multipleSelection.length!==0">
-            <li v-for="(item,index) in multipleSelection" :key="index">
+          <template v-if="!isAll&&chooseStore.length!==0">
+            <li v-for="(item,index) in chooseStore" :key="index">
               <el-tag type="info" size="small" closable @close="handleTagClose(item)">{{ item.stName }}</el-tag>
             </li>
           </template>
@@ -68,6 +68,7 @@
 </template>
 <script>
 import { getStoreList, setBatchUpdown } from '@/api/depot'
+import { findArray } from '@/utils/index'
 export default {
   props: {
     isShow: {
@@ -138,13 +139,23 @@ export default {
               this.$refs.multipleTable.toggleRowSelection(v)
             })
           }, 300)
+        } else {
+          setTimeout(() => {
+            // 翻页 如果存在之前选中的就选中
+            this.chooseStore.map(v => {
+              const index = findArray(this.list, { id: v.id })
+              if (index > -1) {
+                this.$refs.multipleTable.toggleRowSelection(this.list[index])
+              }
+            })
+          }, 300)
         }
       })
     },
     handleSubmit() {
       const data = []
       if (!this.isAll) {
-        this.multipleSelection.map(res => {
+        this.chooseStore.map(res => {
           data.push(res.id)
         })
       }
@@ -170,13 +181,24 @@ export default {
           message: '操作成功',
           type: 'success'
         })
-        this.$emit('close')
+        this.$emit('complete')
       }).catch(() => {
         this.subLoading = false
       })
     },
     handleSelectionChangeStore(val) { // 门店列表选中事件
-      this.multipleSelection = val
+      if (this.isAll) {
+        this.multipleSelection = val
+      } else {
+        this.multipleSelection = val
+        // 重复数据不添加进去数组当中
+        val.map(v => {
+          const index = findArray(this.chooseStore, { id: v.id })
+          if (index === -1) {
+            this.chooseStore.push(v)
+          }
+        })
+      }
     },
     handleTagClose(row) {
       this.$refs.multipleTable.toggleRowSelection(row)
