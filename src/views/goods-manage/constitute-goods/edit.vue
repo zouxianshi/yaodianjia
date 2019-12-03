@@ -346,23 +346,27 @@ export default {
     childCommodities: {
       // 组合商品价格
       handler: function(newval) {
-        let price = 0
-        let mprice = 0
-        console.log('newval:', newval)
-        // let price
-        // let mprice
+        let priceAll = 0
+        let mpriceAll = 0
+        this.basicForm.price = 0
+        this.basicForm.mprice = 0
 
         newval.forEach(function(item, index) {
-          price += item.number * item.price
-          mprice += item.number * item.mprice
+          const number1 = item.number && item.number !== '' ? item.number : 0
+          const price = item.price && item.price !== '' ? item.price : 0
+          const mprice = item.mprice && item.mprice !== '' ? item.mprice : 0
+
+          priceAll += number1 * price
+          mpriceAll += number1 * mprice
 
           // item.specId = item.id
           // item.id = null
+          // item.number = 1
         })
 
         this.$nextTick(function() {
-          this.basicForm.price = parseFloat(price.toFixed(2))
-          this.basicForm.mprice = parseFloat(mprice.toFixed(2))
+          this.basicForm.price = parseFloat(priceAll.toFixed(2))
+          this.basicForm.mprice = parseFloat(mpriceAll.toFixed(2))
         })
       },
       deep: true
@@ -384,21 +388,10 @@ export default {
   },
   created() {
     if (this.$route.query.id) {
-      // this._loadBasicInfo()
-      // this._loadGoodsDetails()
-      // this._loadGoodsImgAry()
       this._loadInfo()
-
       this._loadClassList() // 获取分类
-    } else {
-      // const data = sessionStorage.getItem('types')
-      // this.chooseTypeList = JSON.parse(data)
     }
     this._loadTypeList() // 获取分组
-
-    // this.childCommodities.forEach(function(item, index) {
-    //   item.price = ''
-    // })
   },
   methods: {
     // 选取商品
@@ -406,18 +399,12 @@ export default {
       this.$refs.goodsDialog.open()
     },
     goodsSelectChange(list) {
-      // list.forEach(function(item) {
-      //   item.number = 0
-      // })
-
       this.childCommodities = list.map(item => {
-        item.specId = item.id
         item.id = null
         item.price = ''
         // item.number = 0
         return item
       })
-      console.log('this.childCommodities-----', this.childCommodities)
 
       this.$refs.goodsDialog.close()
     },
@@ -442,17 +429,6 @@ export default {
             ]
           }
         } else {
-          // 分组
-          // const datas = res.data
-          // ids.map(v => {
-          //   const dat = datas[v]
-          //   this.chooseGroup.push([
-          //     { name: dat.name, id: dat.id },
-          //     { name: dat.child.name, id: dat.child.id },
-          //     { name: dat.child.child.name, id: dat.child.child.id }
-          //   ])
-          // })
-
           const datas = res.data[ids[0]]
           if (datas !== undefined) {
             this.chooseGroup = [
@@ -485,30 +461,6 @@ export default {
         // console.log('this.basicForm:', this.basicForm)
       })
     },
-    // _loadBasicInfo() {
-    //   // 加载基本信息
-    //   getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
-    //     // 分组处理
-    //     this._loadgroupGather('1', [res.data.typeId])
-    //     if (res.data.groupIds && res.data.groupIds.length > 0) {
-    //       this._loadgroupGather('2', [res.data.groupId])
-    //       // alert('分组不为空')
-    //     }
-    //     const { data } = res
-
-    //     // 赋值
-    //     this.basicForm = data
-    //   })
-    // },
-    // _loadGoodsDetails() {
-    //   // 加载商品详情
-    //   const id = this.$route.query.id
-    //   getGoodsDetails(id).then(res => {
-    //     if (res.data) {
-    //       this.goodsIntro.content = res.data.content
-    //     }
-    //   })
-    // },
     handleSelectionChange(row) {
       this.chooseTableSpec = row
     },
@@ -571,7 +523,7 @@ export default {
     },
     handleDelete(index, row) {
       // 删除组合商品
-      this.$confirm('是否确实删除', '提示', {
+      this.$confirm('是否确定删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

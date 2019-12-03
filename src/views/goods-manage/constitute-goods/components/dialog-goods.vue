@@ -156,8 +156,9 @@ export default {
     },
     open() {
       this.dialog.visible = true
-      console.log('open-this.mySelectList:', this.mySelectList)
+
       this.mySelectList = this.list.slice()
+      console.log('open-this.mySelectList:', this.mySelectList)
       this.fetchData()
     },
     close() {
@@ -178,6 +179,10 @@ export default {
         this.$message({ type: 'warning', message: '请选取商品' })
         return false
       }
+      if (this.mySelectList.length > 5) {
+        this.$message({ type: 'warning', message: '最多只能选取5个商品' })
+        return false
+      }
       this.$emit('confirm', this.mySelectList)
       this.close()
     },
@@ -185,12 +190,12 @@ export default {
       this.reset()
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      // console.log(`每页 ${val} 条`)
       this.pager.size = val
       this.fetchData()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      // console.log(`当前页: ${val}`)
       this.pager.current = val
       this.fetchData()
     },
@@ -210,8 +215,7 @@ export default {
         const index = this.mySelectList.findIndex(mItem => {
           return mItem.specId === item.specId
         })
-        // this.referPrice = item.mprice
-        // item.price = ''
+
         // item.number = 1 // 添加的组合商品的子商品数量默认为1
         if (index > -1) {
           if (allList.length > 0) {
@@ -259,14 +263,11 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         // item.number = 1 // 添加的组合商品的子商品数量默认为1
-
         const index = this.mySelectList.findIndex(mItem => {
-          console.log('mItem.specId:', mItem.specId)
-          console.log('item.specId:', item.specId)
           return mItem.specId === item.specId
         })
-        console.log('商品tableData：', this.tableData)
-        console.log('商品index', index)
+        // console.log('商品tableData：', this.tableData)
+        // console.log('商品index', index)
         if (index > -1) {
           currentCheckedList.push(item)
         }
