@@ -8,6 +8,7 @@
       :visible.sync="dialogVisible"
       width="50%"
       append-to-body
+      :lock-scroll="true"
       :close-on-click-modal="false"
     >
       <div style="margin-bottom:10px">
@@ -45,10 +46,12 @@
       </section>
       <div>
         <el-table
+          ref="multipleTable"
           v-loading="loading"
           :data="tableData"
           stripe
           style="width: 100%"
+          max-height="300"
           @selection-change="handleSelectionChange"
         >
           <el-table-column
@@ -105,15 +108,15 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="handleSubBand">确 定</el-button>
+        <el-button size="small" type="primary" :loading="subLoading" @click="handleSubBand">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getGoodsList } from '@/api/depot'
-import { bandGoods } from '@/api/group'
+import { bandGoods, getGoodsList } from '@/api/group'
 import { mapGetters } from 'vuex'
+import { findArray } from '@/utils/index'
 export default {
   props: {
     info: {
@@ -135,24 +138,29 @@ export default {
         pageSize: 10,
         name: '',
         manufacture: '',
-        onlyCom: true
+        onlyCom: true,
+        typeId: ''
       },
+      is_choose: [],
       total: 0
     }
   },
   computed: {
-    ...mapGetters(['name'])
+    ...mapGetters(['name', 'merCode'])
   },
   created() {
-    this.getList()
   },
   methods: {
     getList() {
       this.loading = true
+      this.listQuery.typeId = this.info.id
       getGoodsList(this.listQuery).then(res => {
         const { data, totalCount } = res.data
         if (data) {
           this.tableData = data
+          setTimeout(() => {
+            this.setChoose()
+          }, 500)
           this.total = totalCount
         }
         this.loading = false
@@ -160,11 +168,23 @@ export default {
         this.loading = false
       })
     },
+    setChoose() {
+      this.tableData.forEach(v => {
+        if (v.currentType) {
+          const findIndex = findArray(this.is_choose, { id: v.id })
+          if (findIndex === -1) { // 不存在的放入储存的数组中
+            this.is_choose.push(v)
+          }
+          this.$refs.multipleTable.toggleRowSelection(v)
+        }
+      })
+    },
     handleSelectionChange(row) {
       this.multipleSelection = row
     },
     handleShow() {
       this.getList()
+      this.is_choose = []
       this.dialogVisible = true
     },
     resetQuery() {
@@ -175,14 +195,23 @@ export default {
     },
     handleSubBand() {
       const data = {
-        'ids': [],
-        'typeIds': [
-          this.info.id
-        ],
+        'addIds': [],
+        'delIds': [],
+        'empty': true,
+        'merCode': this.merCode,
+        'typeId': this.info.id,
         'userName': this.name
       }
       this.multipleSelection.map(v => {
-        data.ids.push(v.id)
+        if (!v.currentType) {
+          data.addIds.push(v.id)
+        }
+      })
+      this.is_choose.map(v => {
+        const findIndex = findArray(this.multipleSelection, { id: v.id })
+        if (findIndex === -1) {
+          data.delIds.push(v.id)
+        }
       })
       this.subLoading = true
       bandGoods(data).then(res => {

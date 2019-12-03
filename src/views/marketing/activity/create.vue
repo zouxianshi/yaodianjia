@@ -14,7 +14,11 @@
               </div>
               <div class="li-center">
                 <div class="title">限时优惠</div>
-                <div class="desc">包含限时秒杀和限时优惠券两种活动方式，秒杀更强调高时效性的低价刺激，可设 置独立库存，限时折扣则更侧重于优惠折扣。设置固定周期</div>
+                <div class="desc">
+                  包含限时秒杀和限时特惠两种活动方式，秒杀更强调高时效性的低价刺激，可设
+                  置独立库存，限时折扣则更侧重于优惠折扣。设置固定周期的限时活动，可提高顾
+                  客粘性。
+                </div>
               </div>
               <div class="li-right">
                 <el-button class="btn-create" type="primary" size="mini" @click="toCreate(1)">创建</el-button>
@@ -26,7 +30,11 @@
               </div>
               <div class="li-center">
                 <div class="title">电子DM单</div>
-                <div class="desc">药店加为商家提供不同节日氛围的DM单模板；丰富的DM单组件，支持商家自己编 辑设计专属单页，打破服务号每周四次的图文推送限制，</div>
+                <div class="desc">
+                  药店加为商家提供不同节日氛围的DM单模板；丰富的DM单组件，支持商家自己编
+                  辑设计专属单页，打破服务号每周四次的图文推送限制，实现不限次数的定向精准推
+                  送给顾客，并可以通过好友和朋友圈裂变传播。
+                </div>
               </div>
               <div class="li-right">
                 <el-button class="btn-create" type="primary" size="mini" disabled>创建</el-button>
@@ -38,7 +46,10 @@
               </div>
               <div class="li-center">
                 <div class="title">分享红包</div>
-                <div class="desc">分享红包能够通过优惠券裂变，从而达到社群营销，通过用户主动行为触发分享红包 活动，发送到群，用户通过打开链接，领取红包。 </div>
+                <div class="desc">
+                  分享红包能够通过优惠券裂变，从而达到社群营销，通过用户主动行为触发分享红包
+                  活动，发送到群，用户通过打开链接，领取红包。
+                </div>
               </div>
               <div class="li-right">
                 <el-button class="btn-create" type="primary" size="mini" disabled>创建</el-button>

@@ -14,7 +14,7 @@
           <el-form-item label="">
             <el-radio-group v-model="modalForm.type">
               <el-radio :label="0">不限购</el-radio>
-              <el-radio :label="1"><span style="color:#333">单个用户限购数量为&nbsp;<el-input v-model="modalForm.limit" size="small" style="width:100px" />&nbsp;用户限制的最大购买数量，可防止某些商品被恶意下单占用库存</span></el-radio>
+              <el-radio :label="1"><span style="color:#333">单个用户限购数量为&nbsp;<el-input v-model="modalForm.limit" maxlength="8" size="small" style="width:100px" />&nbsp;<span style="color:#999">用户限制的最大购买数量，可防止某些商品被恶意下单占用库存</span></span></el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
@@ -96,6 +96,7 @@ export default {
           message: '操作成功',
           type: 'success'
         })
+        this.$emit('complete')
         this.handleColse()
       })
     }
