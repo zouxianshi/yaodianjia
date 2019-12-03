@@ -248,7 +248,7 @@ export default {
       this.typeid = ''
       this.pager = {
         current: 1,
-        size: 10,
+        size: 20,
         total: 0
       }
       this.searchForm = {

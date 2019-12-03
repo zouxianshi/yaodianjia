@@ -60,7 +60,11 @@
             min-width="80"
           />
           <el-table-column prop="price" label="售价(元)" align="left" min-width="80" />
-          <el-table-column prop="limitNum" align="left" min-width="80" label="限购数量" />
+          <el-table-column align="left" min-width="80" label="限购数量">
+            <template slot-scope="scope">
+              <div>{{ scope.row.limitNum?scope.row.limitNum:'不限购' }}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="modifyTime" align="left" min-width="110" label="修改时间" />
           <el-table-column align="left" min-width="150" label="操作">
             <template slot-scope="scope">
@@ -74,8 +78,8 @@
         <div class="table-footer">
           <pagination
             :total="total"
-            :page.sync="listQuery.page"
-            :limit.sync="listQuery.limit"
+            :page.sync="searchParams.currentPage"
+            :limit.sync="searchParams.pageSize"
             @pagination="getList"
           />
         </div>
