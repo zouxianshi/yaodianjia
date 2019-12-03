@@ -196,7 +196,7 @@
               :min-width="!listQuery.infoFlag?'100':'220'"
             >
               <template slot-scope="scope">
-                <template v-if="listQuery.infoFlag">
+                <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
                   <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-button type="info" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template>
@@ -215,9 +215,9 @@
         />
       </section>
     </div>
-    <store :status="status" :choose-num="specData.length" :spec-data="specData" :is-show="dialogVisible" @close="dialogVisible=false" />
-    <group :is-show="groupVisible" :group-data="groupData" :goods-data="goodsData" @close="groupVisible=false" />
-    <limit-buy :is-show="limitVisible" :spec-data="specData" @close="limitVisible=false" />
+    <store :status="status" :choose-num="specData.length" :spec-data="specData" :is-show="dialogVisible" @close="dialogVisible=false" @complete="dialogVisible=false;getList()" />
+    <group :is-show="groupVisible" :group-data="groupData" :goods-data="goodsData" @complete="groupVisible=false;getList()" @close="groupVisible=false" />
+    <limit-buy :is-show="limitVisible" :spec-data="specData" @complete="limitVisible=false;getList()" @close="limitVisible=false" />
   </div>
 </template>
 <script>

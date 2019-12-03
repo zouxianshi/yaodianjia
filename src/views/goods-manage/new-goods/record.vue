@@ -156,7 +156,7 @@
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
               </template>
               <template v-else>
-                <a :href="`#/goods-manage/edit?id=${scope.row.id}&type=query`">
+                <a v-if="scope.row.commodityType!==2" :href="`#/goods-manage/edit?id=${scope.row.id}&type=query`">
                   <el-button type="" size="mini">查看</el-button>
                 </a>
               </template>
