@@ -348,6 +348,9 @@ export default {
       handler: function(newval) {
         let price = 0
         let mprice = 0
+        console.log('newval:', newval)
+        // let price
+        // let mprice
 
         newval.forEach(function(item, index) {
           price += item.number * item.price
@@ -534,7 +537,7 @@ export default {
       }
       if (!isImg) {
         this.$message({
-          message: '只能上传图片',
+          message: '请上传jpeg、png、jpg格式的图片',
           type: 'warning'
         })
         return false
