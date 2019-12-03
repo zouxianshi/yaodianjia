@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="选取商品" append-to-body class="m-dialog m-dialog-goods" :visible.sync="dialog.visible" :close-on-click-modal="false" width="920px" @close="handlerClose">
+  <el-dialog title="选取商品" append-to-body class="m-dialog m-dialog-goods" :visible.sync="dialog.visible" :close-on-click-modal="false" width="1024px" @close="handlerClose">
     <div class="modal-body">
       <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
@@ -33,6 +33,7 @@
         </div>
         <div class="search-btns">
           <el-button type="primary" size="small" @click.stop="forSearch()">查 询</el-button>
+          <el-button size="small" @click.stop="forReset()">重 置</el-button>
         </div>
       </div>
       <p class="note-text">
@@ -74,12 +75,13 @@
           </template> -->
         </el-table-column>
         <el-table-column prop="name" label="商品名称" min-width="120" />
-        <el-table-column prop="brandName" label="品牌" min-width="100" />
+        <el-table-column prop="brandName" label="品牌" min-width="80" />
         <el-table-column label="规格信息" min-width="100">
           <template slot-scope="scope">
             <div v-html="formatSkuInfo(scope.row.specSkuList)" />
           </template>
         </el-table-column>
+        <el-table-column prop="mprice" label="参考价格" min-width="60" align="center" />
         <el-table-column prop="manufacture" label="生产厂家" min-width="120" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
@@ -87,17 +89,20 @@
           </template>
         </el-table-column>-->
       </el-table>
-      <el-pagination
-        background
-        style="text-align: right;margin-top: 20px"
-        :current-page="pager.current"
-        :page-sizes="[20, 15, 20, 50]"
-        :page-size="pager.size"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pager.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <div class="table-footer">
+        <el-pagination
+          background
+          style="text-align: right;margin-top: 20px"
+          :current-page="pager.current"
+          :page-sizes="[10, 15, 20, 50]"
+          :page-size="pager.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pager.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+
       <div class="result-section">
         <div class="blank-line" />
         <div class="title">
@@ -176,7 +181,8 @@ export default {
       tableData: [],
       multipleSelection: [],
       mySelectList: [],
-      typeList: []
+      typeList: [],
+      checkAll: false
     }
   },
   computed: {
@@ -239,14 +245,22 @@ export default {
       this.dialog.visible = false
     },
     reset() {
+      this.typeid = ''
       this.pager = {
         current: 1,
-        size: 20,
+        size: 10,
         total: 0
       }
       this.searchForm = {
-        keyWord: ''
+        keyWord: '',
+        typeid: '',
+        typeLevel: ''
       }
+      this.type1 = ''
+      this.type2 = ''
+      this.type3 = ''
+      this.typeOption2 = []
+      this.typeOption3 = []
     },
     confirm() {
       if (this.mySelectList && this.mySelectList.length === 0) {
@@ -276,12 +290,15 @@ export default {
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.pager.size = val
-      this.fetchData()
+      this._getTableData()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.pager.current = val
-      this.fetchData()
+      this._getTableData()
+    },
+    handleCheckAllChange(val) {
+      this.$refs.multipleTable.toggleAllSelection()
     },
     toggleSelection(rows) {
       if (rows) {
@@ -348,10 +365,23 @@ export default {
       })
       this.toggleSelection(currentCheckedList)
     },
+    initClass() {
+      this.typeOption1 = this.typeTree.map(v => {
+        return {
+          id: v.id,
+          name: v.name,
+          children: v.children
+        }
+      })
+    },
     forSearch() {
       this.pager.current = 1
       this.pager.total = 0
       this._getTableData()
+    },
+    forReset() {
+      this.reset()
+      this.forSearch()
     },
     _getTableData() {
       this.loading = true
@@ -392,13 +422,7 @@ export default {
       getTypeTree(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.typeTree = res.data
-          this.typeOption1 = this.typeTree.map(v => {
-            return {
-              id: v.id,
-              name: v.name,
-              children: v.children
-            }
-          })
+          this.initClass()
         } else {
           this.typeTree = []
         }

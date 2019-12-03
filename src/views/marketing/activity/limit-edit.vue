@@ -79,13 +79,14 @@
               <el-table-column label="商品名称" prop="productName" min-width="150px" />
               <el-table-column label="规格" prop="productSpecName" min-width="100px" />
               <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
+              <!-- <el-table-column label="原价" prop="mprice" min-width="120px" /> -->
               <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="180px">
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'selectedGoods.' + scope.$index + '.discount'"
                     :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.discount" style="width:80px" :disabled="disabled" maxlength="10" />
+                    <el-input v-model="scope.row.discount" style="width:80px" :disabled="disabled" maxlength="11" />
                     <span v-if="xForm.mode===1" style="margin-left: 5px">折</span>
                     <span v-else style="margin-left: 5px">元</span>
                   </el-form-item>
@@ -161,7 +162,6 @@ export default {
   },
   data() {
     const check_discount = (rule, value, callback) => {
-      console.log('rule', rule)
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
@@ -178,6 +178,9 @@ export default {
             callback(new Error('折扣值应大于0小于10'))
           }
         }
+      }
+      if (value <= 0) {
+        callback(new Error('最小值必须大于0'))
       }
       if (value > 99999999) {
         callback(new Error('最大值不能超过99999999'))
@@ -252,6 +255,24 @@ export default {
       storeIds: [],
       storeNames: [],
       placeText: '不限购'
+    }
+  },
+  beforeRouteLeave(to, from, next) { // 路由离开关闭标签
+    if (this.disabled) {
+      next()
+      if (this.pageLoading) {
+        this.pageLoading.close()
+      }
+    } else {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        if (this.pageLoading) {
+          this.pageLoading.close()
+        }
+        next()
+      } else {
+        next(false)
+      }
     }
   },
   computed: {
@@ -344,8 +365,6 @@ export default {
         this.selectedStore = list
         this.storeIds = this.selectedStore.map(store => store.id)
         this.storeNames = this.selectedStore.map(store => store.stName)
-        console.log(this.storeIds)
-        console.log(this.storeNames)
       }
     },
     toSelectedGoods() {
@@ -356,14 +375,12 @@ export default {
         }
         return item
       })
-      console.log('propGoodsList', this.propGoodsList)
       this.$nextTick(_ => {
         this.$refs.dialogGoods.open()
       })
     },
     onSelectedGoods(list) {
       if (list && list.length > 0) {
-        console.log('onSelectedGoods', list)
         // 1.移除table list中不在选取中的数据
         this.tableForm.selectedGoods.forEach((item, index) => {
           const inIndex = list.findIndex(v => {
@@ -389,6 +406,7 @@ export default {
               productSpecId: goods.specId || '',
               productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
               stockAmount: (goods.stockAmount || '') + ''
+              // mprice: goods.mprice // 参考
             }
             this.tableForm.selectedGoods.unshift(item)
           } else {
@@ -460,6 +478,16 @@ export default {
         }
       })
     },
+    formatItems(goodsList) {
+      let ret = []
+      ret = goodsList.map(v => {
+        const item = v
+        delete item.mprice
+        return item
+      })
+      console.log('formatItems', ret)
+      return ret
+    },
     _getDetailData() {
       this.loading = true
       const params = {
@@ -498,7 +526,6 @@ export default {
               return store
             })
           }
-
           console.log('this.storeIds', this.storeIds)
           console.log('this.storeNames', this.storeNames)
         }
@@ -524,7 +551,6 @@ export default {
         storeNames: data.storeNames
       }
       const params = Object.assign(data, formData)
-      console.log('params', params)
       addActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('创建成功')
@@ -545,7 +571,7 @@ export default {
         mode: this.xForm.mode,
         storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
-        items: this.tableForm.selectedGoods,
+        items: this.formatItems(this.tableForm.selectedGoods),
         storeIds: data.storeIds,
         storeNames: data.storeNames
       }
@@ -553,7 +579,7 @@ export default {
       updateActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('保存成功')
-          this.$router.push('/marketing/activity')
+          // this.$router.push('/marketing/activity')
         }
       }).catch(err => {
         console.log('err', err)
