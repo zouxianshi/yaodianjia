@@ -247,10 +247,11 @@ export default {
     },
     // 复制
     doCopy(row) {
-      this.$copyText('www.baidu.com').then(
+      const herfUrl = window.location.href
+      this.$copyText(herfUrl).then(
         e => {
           console.log(e)
-          this.$message.success('复制成功')
+          this.$message.info('此功能C端暂未开放，敬请期待')
         },
         e => {
           console.log(e)
@@ -277,11 +278,11 @@ export default {
       if (row.type === 11 || row.type === 12) {
         if (op) {
           this.$router.push(
-            `/marketing/activity/limit-edit?id=${row.id}&&_ck=1&&type=${row.type}`
+            `/marketing/activity/limit-edit?id=${row.id}&_ck=1&type=${row.type}`
           )
         } else {
           this.$router.push(
-            `/marketing/activity/limit-edit?id=${row.id}&&type=${row.type}`
+            `/marketing/activity/limit-edit?id=${row.id}&type=${row.type}`
           )
         }
       } else {
