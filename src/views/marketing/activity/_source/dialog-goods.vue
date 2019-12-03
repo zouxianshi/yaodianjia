@@ -74,15 +74,15 @@
             </div>
           </template> -->
         </el-table-column>
-        <el-table-column prop="name" label="商品名称" min-width="120" />
-        <el-table-column prop="brandName" label="品牌" min-width="80" />
-        <el-table-column label="规格信息" min-width="100">
-          <template slot-scope="scope">
+        <el-table-column prop="name" label="商品名称" min-width="120" :show-overflow-tooltip="true" />
+        <el-table-column prop="brandName" label="品牌" min-width="80" :show-overflow-tooltip="true" />
+        <el-table-column label="规格信息" min-width="100" :show-overflow-tooltip="true">
+          <template slot-scope="scope" :show-overflow-tooltip="true">
             <div v-html="formatSkuInfo(scope.row.specSkuList)" />
           </template>
         </el-table-column>
-        <el-table-column prop="mprice" label="参考价格" min-width="60" align="center" />
-        <el-table-column prop="manufacture" label="生产厂家" min-width="120" />
+        <el-table-column prop="mprice" label="参考价格" min-width="60" align="center" :show-overflow-tooltip="true" />
+        <el-table-column prop="manufacture" label="生产厂家" min-width="120" :show-overflow-tooltip="true" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
