@@ -20,9 +20,10 @@
             <el-button type="primary" size="mini" @click="_loadStoreData">查询</el-button>
           </div>
         </div>
-        <el-table ref="multipleTable" :data="list" stripe style="width: 100%" @selection-change="handleSelectionChangeStore">
+        <el-table ref="multipleTable" :data="list" stripe style="width: 100%" max-height="300" @selection-change="handleSelectionChangeStore">
           <el-table-column
             type="selection"
+            :selectable="checkSelectable"
             width="55"
           />
           <el-table-column label="门店编号" prop="stCode" />
@@ -111,6 +112,9 @@ export default {
 
   },
   methods: {
+    checkSelectable() {
+      return !this.isAll
+    },
     handleChooseStore() { // 选择全部
       this.list.map(v => {
         this.$refs.multipleTable.toggleRowSelection(v)
@@ -129,9 +133,11 @@ export default {
         this.list = data
         this.total = totalCount
         if (this.isAll) { // 选择全部  选中门店
-          this.list.map(v => {
-            this.$refs.multipleTable.toggleRowSelection(v)
-          })
+          setTimeout(() => {
+            this.list.map(v => {
+              this.$refs.multipleTable.toggleRowSelection(v)
+            })
+          }, 300)
         }
       })
     },

@@ -33,3 +33,12 @@ export function updateConstituteGoods(params) {
     data: params
   })
 }
+
+// 查询商品
+export function getcommSpecGoodsList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-spec/_searchSku`,
+    method: 'post',
+    data: params
+  })
+}

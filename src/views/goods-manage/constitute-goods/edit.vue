@@ -10,6 +10,7 @@
               status-icon
               label-width="160px"
               :rules="basicRules"
+              @submit.native.prevent
             >
               <el-form-item label="组合商品名称：" prop="name">
                 <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
@@ -54,6 +55,7 @@
             >
               <el-form-item label="组合商品图片：" prop="file" required>
                 <el-upload
+                  v-loading="uploadLoading"
                   class="avatar-uploader x-uploader"
                   :action="upLoadUrl"
                   :headers="headers"
@@ -77,7 +79,7 @@
                 </el-upload>
               </el-form-item>
 
-              <el-form-item label="关键字：" prop="keyWord">
+              <el-form-item label="关键字：" prop="keyWord" @submit.native.prevent>
                 <el-input v-model="basicForm.keyWord" placeholder="请输入关键字" size="small" />&nbsp;用、隔开
               </el-form-item>
 
@@ -101,16 +103,8 @@
             <div class="table-box">
               <el-table v-loading="loading" :data="childCommodities" stripe style="width: 100%">
                 <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
-                <el-table-column align="left" min-width="120" prop="packStandard" label="规格" />
-                <!-- <el-form
-              ref="basic"
-              :model="childCommodities"
-              status-icon
-              label-width="160px"
-              :rules="basicRules"
-            > -->
+                <el-table-column prop="standard" label="规格" align="center" min-width="150" />
                 <el-table-column
-
                   align="left"
                   label="组合数量"
                   :show-overflow-tooltip="true"
@@ -183,10 +177,11 @@
               </el-form-item>
             </el-form>
 
-            <el-form ref="basic" :model="basicForm" status-icon label-width="160px">
+            <el-form ref="basic" :model="basicForm" status-icon label-width="160px" @submit.native.prevent>
               <el-form-item label="限购设置：">
                 <span>单个用户限购数量为</span>
                 <el-input v-model="basicForm.limitNum" placeholder="0" size="mini" class="inp_mini" />
+                <span v-show="basicForm.limitNum <= 0 && basicForm.limitNum >= 0" style="margin-left: 5px;margin-right: 10px;color: #e6a23c;">不限购</span>
                 <span class="color_gray">同一个用户限制购买的数量</span>
               </el-form-item>
             </el-form>
@@ -198,6 +193,7 @@
     <div class="footer">
       <span>
         <!-- <el-button size="small" @click="groupVisible = false">取 消</el-button> -->
+        <el-button size="small" @click="$router.go(-1)">取 消</el-button>
         <el-button type="primary" size="small" @click="handleConstituteGoods">确 定</el-button>
       </span>
     </div>
@@ -224,13 +220,14 @@
       </span>
     </el-dialog>
     <el-dialog
+
       title="选择分类"
       :visible.sync="typeVisible"
       :close-on-click-modal="false"
       width="30%"
       append-to-body
     >
-      <div class="modal-body">
+      <div v-loading="loading" class="modal-body">
         <el-cascader
           v-model="chooseList"
           class="cascader"
@@ -280,7 +277,7 @@ export default {
         label: 'name',
         value: 'id'
       },
-      loading: false,
+      loading: false, // 加载分类
       basicForm: {
         firstTypeId: '', // 一级分类
         secondTypeId: '', // 二级分类
@@ -320,8 +317,9 @@ export default {
       // },
       uploadIndex: 0,
       subLoading: false,
-      chooseTableSpec: []
-      // leaveAction: false // 离开页面动作，true为保存离开  false异常离开
+      chooseTableSpec: [],
+      uploadLoading: false,
+      leaveAction: false // 离开页面动作，true为保存离开  false异常离开
     }
   },
   computed: {
@@ -359,32 +357,28 @@ export default {
           // item.id = null
         })
 
-        this.basicForm.price = price
-        this.basicForm.mprice = mprice
-        console.log('newval:', newval)
-
         this.$nextTick(function() {
-          this.basicForm.price = price
-          this.basicForm.mprice = mprice
+          this.basicForm.price = parseFloat(price.toFixed(2))
+          this.basicForm.mprice = parseFloat(mprice.toFixed(2))
         })
       },
       deep: true
     }
   },
-  // beforeRouteLeave(to, from, next) {
-  //   // 路由离开关闭标签
-  //   if (!this.leaveAction) {
-  //     const answer = window.confirm('你还有数据没有保存，是否确认退出')
-  //     if (answer) {
-  //       this.$store.dispatch('tagsView/delView', from)
-  //       next()
-  //     } else {
-  //       next(false)
-  //     }
-  //   } else {
-  //     next()
-  //   }
-  // },
+  beforeRouteLeave(to, from, next) {
+    // 路由离开关闭标签
+    if (!this.leaveAction) {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        this.$store.dispatch('tagsView/delView', from)
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
+    }
+  },
   created() {
     if (this.$route.query.id) {
       // this._loadBasicInfo()
@@ -530,11 +524,23 @@ export default {
         file.type === 'image/jpeg' ||
         file.type === 'image/png' ||
         file.type === 'image/jpg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message({
+          message: '上传图片大小不能超过 2MB!',
+          type: 'warning'
+        })
+        return false
+      }
       if (!isImg) {
         this.$message({
           message: '只能上传图片',
           type: 'warning'
         })
+        return false
+      }
+      if (isImg) {
+        this.uploadLoading = true
       }
       return isImg
     },
@@ -558,6 +564,7 @@ export default {
           type: 'error'
         })
       }
+      this.uploadLoading = false
     },
     handleDelete(index, row) {
       // 删除组合商品
@@ -646,6 +653,7 @@ export default {
     },
     _CreateBasicInfo(data) {
       // 创建基本信息
+      this.leaveAction = true
       addConstituteGoods(data)
         .then(res => {
           this.$message({
@@ -662,6 +670,7 @@ export default {
     },
     _UpdateBasicInfo(data) {
       // 更新基本信息
+      this.leaveAction = true
       updateConstituteGoods(data)
         .then(res => {
           this.$message({

@@ -179,4 +179,11 @@ export default {
   }
 }
 .ellipsis{ width:100%;overflow: hidden; text-overflow: ellipsis;white-space: nowrap}
+.el-tag.el-tag--info {
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    height: inherit;
+    margin-bottom: 5px;
+}
 </style>
