@@ -10,21 +10,21 @@
           <div class="search-item">
             <span class="label-name">订单搜索</span>
             <el-select
-              v-model="listQuery.storeId"
+              v-model="listQuery.orderSearchType"
               filterable
               placeholder="请输入关键词"
               :remote-method="remoteMethod"
               :loading="selectloading"
             >
-              <el-option label="订单号" value="订单号" />
-              <el-option label="收货人姓名" value="收货人姓名" />
-              <el-option label="收货人手机" value="收货人手机" />
-              <el-option label="会员卡号" value="会员卡号" />
+              <el-option label="订单号" value="1" />
+              <el-option label="收货人姓名" value="2" />
+              <el-option label="收货人手机" value="3" />
+              <el-option label="会员卡号" value="4" />
             </el-select>
           </div>
           <div class="search-item">
             <el-input
-              v-model.trim="listQuery.name"
+              v-model.trim="listQuery.searchValue"
               size="small"
               placeholder=""
             />
@@ -35,7 +35,7 @@
             <div class="block">
               <span class="label-name">下单时间</span>
               <el-date-picker
-                v-model="value2"
+                v-model="dateSelect"
                 type="datetimerange"
                 :picker-options="pickerOptions"
                 range-separator="至"
@@ -50,7 +50,7 @@
           <div class="search-item">
             <span class="label-name">商品名称</span>
             <el-input
-              v-model.trim="listQuery.barCode"
+              v-model.trim="listQuery.proName"
               size="small"
               placeholder="商品名称"
             />
@@ -58,28 +58,23 @@
           <div class="search-item">
             <span class="label-name">订单类型</span>
             <el-select
-              v-model="listQuery.commodityType"
+              v-model="listQuery.orderType"
               filterable
               placeholder="订单类型"
               @change="handleChangeCommodityType"
             >
-              <el-option label="全部" value="1" />
-              <el-option label="普通订单" value="2" />
-              <el-option label="处方药订单" value="3" />
-              <el-option label="积分订单" value="4" />
+              <el-option label="微商城订单" value="1" />
             </el-select>
           </div>
           <div class="search-item">
             <span class="label-name">订单来源</span>
             <el-select
-              v-model="listQuery.commodityType"
+              v-model="listQuery.orderSource"
               filterable
               placeholder="订单来源"
               @change="handleChangeCommodityType"
             >
-              <el-option label="全部" value="1" />
-              <el-option label="微商城" value="2" />
-              <el-option label="小程序" value="3" />
+              <el-option label="微商城" value="1" />
             </el-select>
           </div>
         </div>
@@ -92,22 +87,22 @@
               placeholder="订单状态"
               @change="handleChangeOrderStatus"
             >
-              <el-option label="全部" value="0" />
-              <el-option label="待付款" value="1" />
-              <el-option label="待发货" value="2" />
-              <el-option label="待收货" value="3" />
-              <el-option label="待提货" value="4" />
-              <el-option label="已完成" value="5" />
-              <el-option label="待退款" value="6" />
-              <el-option label="退货中" value="7" />
-              <el-option label="退款完成" value="8" />
-              <el-option label="已取消" value="9" />
+              <el-option label="待付款" value="2" />
+              <el-option label="待发货" value="4" />
+              <el-option label="待收货" value="6" />
+              <!-- <el-option label="待提货" value="6" /> -->
+              <el-option label="已完成" value="12" />
+              <el-option label="待退款" value="10" />
+              <!-- <el-option label="退货中" value="10" /> -->
+              <el-option label="退款完成" value="30" />
+              <el-option label="已取消" value="20" />
+              <el-option label="待退货" value="8" />
             </el-select>
           </div>
           <div class="search-item">
             <span class="label-name">收货方式</span>
             <el-select
-              v-model="listQuery.commodityType"
+              v-model="listQuery.receive"
               filterable
               placeholder="收货方式"
               @change="handleChangeCommodityType"
@@ -121,7 +116,7 @@
           <div class="search-item">
             <span class="label-name">配送方式</span>
             <el-select
-              v-model="listQuery.commodityType"
+              v-model="listQuery.distribution"
               filterable
               placeholder="配送方式"
               @change="handleChangeCommodityType"
@@ -149,7 +144,7 @@
           <div class="search-item">
             <span class="label-name">接单员工</span>
             <el-select
-              v-model="listQuery.commodityType"
+              v-model="listQuery.empId"
               filterable
               placeholder="接单员工"
               @change="handleChangeCommodityType"
@@ -162,7 +157,7 @@
           <div class="search-item">
             <span class="label-name">支付方式</span>
             <el-select
-              v-model="listQuery.commodityType"
+              v-model="listQuery.payment"
               filterable
               placeholder="支付方式"
               @change="handleChangeCommodityType"
@@ -576,8 +571,9 @@ import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
 // import { getTypeTree } from '@/api/group'
-import { getStoreGoodsList } from '@/api/store-goods'
+// import { getStoreGoodsList } from '@/api/store-goods'
 import { getStoreList } from '@/api/depot'
+import { getOrderList } from '@/api/order'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -635,8 +631,8 @@ export default {
         // }
         ]
       },
-      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-      value2: '',
+      // value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+      dateSelect: [],
       keyword: '',
       tableData: [],
       multipleSelection: [],
@@ -650,16 +646,20 @@ export default {
       loading: false,
       selectloading: false,
       listQuery: {
-        'commodityType': '',
-        'approvalNumber': '',
-        'barCode': '',
-        'erpCode': '',
-        'groupId': '',
-        'manufacture': '',
-        'name': '',
-        'storeId': '',
-        'status': 1,
-        'auditStatus': 1
+        'distribution': '', // 配送方式
+        'empId': '', // 接单员工
+        'endDate': '', // 下单结束时间
+        'merCode': '',
+        'orderSearchType': '', // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
+        'orderSource': 1, // 订单来源 1.微商城
+        'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
+        'orderType': '', // 订单类型 1.微商城订单
+        'payment': '', // 支付方式
+        'proName': '', // 商品名称
+        'receive': '', // 收货方式
+        'searchValue': '', // 搜索内容
+        'startDate': '', // 下单开始时间
+        'storeId': '' // 下单门店id
       },
       storeList: [],
       subLoading: false,
@@ -686,16 +686,20 @@ export default {
   methods: {
     resetQuery() {
       this.listQuery = {
-        'approvalNumber': '',
-        'barCode': '',
-        'erpCode': '',
-        'groupId': '',
-        'manufacture': '',
-        'name': '',
-        'storeId': '',
-        'status': this.listQuery.status,
-        'auditStatus': this.listQuery.auditStatus,
-        'commodityType': ''
+        'distribution': '', // 配送方式
+        'empId': '', // 接单员工
+        'endDate': '', // 下单结束时间
+        'merCode': this.merCode,
+        'orderSearchType': '', // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
+        'orderSource': 1, // 订单来源 1.微商城
+        'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
+        'orderType': '', // 订单类型 1.微商城订单
+        'payment': '', // 支付方式
+        'proName': '', // 商品名称
+        'receive': '', // 收货方式
+        'searchValue': '', // 搜索内容
+        'startDate': '', // 下单开始时间
+        'storeId': '' // 下单门店id
       }
       this.getList()
     },
@@ -704,9 +708,25 @@ export default {
         if (res) {
           this.listQuery.storeId = res[0] ? res[0].id : ''
           this.chooseStore = res[0]
+          console.log('this.dateSelect:', this.dateSelect)
+          this.listQuery.startDate = ''
+          this.listQuery.endDate = ''
+          if (!this.dateSelect) {
+            this.listQuery.startDate = this.dateSelect[0]
+            this.listQuery.endDate = this.dateSelect[1]
+          }
+          console.log('this.listQuery.startDate:', toString(this.listQuery.startDate))
           this._loadList()
         }
       })
+      // this.getOrderList(this.listQuery).then(res => {
+      //   this.loading = false
+      //   const { data, totalCount } = res.data
+      //   if (data) {
+      //     this.tableData = data
+      //     this.total = totalCount
+      //   }
+      // })
     },
     _loadList() {
       if (!this.listQuery.storeId) {
@@ -718,7 +738,7 @@ export default {
       }
       this.loading = true
       console.log('this.listQuery--xf:', this.listQuery)
-      getStoreGoodsList(this.listQuery).then(res => {
+      getOrderList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
         if (data) {
@@ -771,6 +791,10 @@ export default {
       this.listQuery.currentPage = 1
       this._loadList()
     },
+    handleClose() {
+      this.reset()
+    },
+
     handleLock() {
       if (this.multipleSelection.length === 0) {
         this.$message({
@@ -805,6 +829,16 @@ export default {
         }
       })
       // console.log('mySelectList:', this.mySelectList)
+    },
+    reset() {
+      this.pager = {
+        current: 1,
+        size: 10,
+        total: 0
+      }
+      this.search = {
+        keyWord: ''
+      }
     },
     // 选取商品 表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {

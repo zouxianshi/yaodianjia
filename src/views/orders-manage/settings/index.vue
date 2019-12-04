@@ -40,51 +40,48 @@
         </div>
       </div>
 
+      <div>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="handleSaveSetting">保 存</el-button>
+        </span>
+      </div>
+
     </div>
   </div>
 </template>
 <script>
 import mixins from '@/utils/mixin'
 import { mapGetters } from 'vuex'
+import { getOrderSetUp, getGoodsDetail } from '@/api/order'
 export default {
   mixins: [mixins],
   data() {
     return {
-      listQuery: {
-        'commodityType': '',
-        'approvalNumber': '',
-        'barCode': '',
-        'erpCode': '',
-        'groupId': '',
-        'manufacture': '',
-        'name': '',
-        'storeId': '',
-        'status': 1,
-        'auditStatus': 1
-      }
+      setupData: [],
+      radio: ''
+      // allocationMethod: '',
+      // couponCost: '',
+      // createName: ''
     }
   },
   computed: {
     ...mapGetters(['merCode', 'name'])
   },
   created() {
-
+    this.getData()
   },
   methods: {
-    resetQuery() {
-      this.listQuery = {
-        'approvalNumber': '',
-        'barCode': '',
-        'erpCode': '',
-        'groupId': '',
-        'manufacture': '',
-        'name': '',
-        'storeId': '',
-        'status': this.listQuery.status,
-        'auditStatus': this.listQuery.auditStatus,
-        'commodityType': ''
-      }
-      this.getList()
+    getData() {
+      getOrderSetUp(this.merCode).then(res => {
+        console.log('res.data：', res.data)
+      })
+
+      getGoodsDetail('2233333').then(res => {
+        console.log('res.data：', res.data)
+      })
+    },
+    handleSaveSetting() {
+
     }
 
   }
