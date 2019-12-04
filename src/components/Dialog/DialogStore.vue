@@ -32,7 +32,7 @@
         </div> -->
         <el-table-column v-if="editable" type="selection" align="center" width="50" />
         <el-table-column property="stCode" label="门店编码" width="150" show-overflow-tooltip />
-        <el-table-column label="门店名称">
+        <el-table-column label="门店名称" min-width="150" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" style="margin-top: 8px;margin-right:32px;">
               <span>{{ scope.row.stName }}</span>
@@ -41,12 +41,12 @@
             <span v-else>{{ scope.row.stName }}</span>
           </template>
         </el-table-column>
-        <el-table-column property="address" label="门店地址" show-overflow-tooltip>
+        <el-table-column property="address" label="门店地址" :show-overflow-tooltip="true">>
           <template slot-scope="scope">
             <span v-text="`${_isProvince(scope.row.province)}${scope.row.city}${scope.row.area}${scope.row.address}`" />
           </template>
         </el-table-column>
-        <el-table-column property="mobile" label="门店电话" show-overflow-tooltip>
+        <el-table-column property="mobile" label="门店电话" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             <div style="line-height: 40px;">{{ scope.row.mobile }}</div>
           </template>
