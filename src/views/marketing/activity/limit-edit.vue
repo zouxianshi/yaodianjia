@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div v-loading="loading" class="app-container" :class="disabled ? 'x-disabled-container': ''" element-loading-text="加载中">
+    <div v-loading="pageLoading" class="app-container" :class="disabled ? 'x-disabled-container': ''" element-loading-text="加载中">
       <section class="form-box">
         <el-form ref="xForm" :model="xForm" :rules="xRules" size="small" label-width="80px" :disabled="disabled">
           <el-form-item label="活动类型">
@@ -75,10 +75,10 @@
           </div>
           <el-form ref="tableForm" :model="tableForm" class="table-form">
             <el-table :data="tableForm.selectedGoods" size="small" style="margin: 20px 0">
-              <el-table-column label="序号" type="index" />
-              <el-table-column label="商品名称" prop="productName" min-width="150px" />
-              <el-table-column label="规格" prop="productSpecName" min-width="100px" />
-              <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
+              <el-table-column label="序号" type="index" min-width="50px" align="center" />
+              <el-table-column label="商品名称" prop="productName" min-width="120px" :show-overflow-tooltip="true" />
+              <el-table-column label="规格" prop="productSpecName" min-width="120px" :show-overflow-tooltip="true" />
+              <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" :show-overflow-tooltip="true" />
               <!-- <el-table-column label="原价" prop="mprice" min-width="120px" /> -->
               <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="180px">
                 <template slot-scope="scope">
@@ -214,6 +214,9 @@ export default {
       callback()
     }
     return {
+      pageLoading: false, // 页面加载loading
+      pageStatus: 1, // 1.新增 2.编辑 3.查看
+      leaveAction: false,
       check_discount: check_discount,
       check_limit: check_limit,
       check_num: check_num,
@@ -258,7 +261,7 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
-    if (this.disabled) {
+    if (this.disabled || this.leaveAction) {
       next()
       if (this.pageLoading) {
         this.pageLoading.close()
@@ -299,11 +302,24 @@ export default {
     if (dataid && dataid !== '' && type !== '') {
       this.dataid = dataid
       this.type = type
+      if (_ck === '1') {
+        this.pageStatus = 3
+      } else {
+        this.pageStatus = 2
+      }
       this._getDetailData()
     }
-    if (_ck === '1') {
+    let pageTitle = '限时优惠'
+    if (this.pageStatus === 2) { // pageStatus 1.新增 2.编辑 3.查看
+      pageTitle = '限时优惠编辑'
+    } else if (this.pageStatus === 3) {
+      pageTitle = '限时优惠详情'
       this.disabled = true
+    } else {
+      pageTitle = '限时优惠新建'
     }
+    this.$route.meta.title = pageTitle
+    document.title = pageTitle
   },
   methods: {
     handleTimeChange(val, type) {
@@ -408,7 +424,7 @@ export default {
               stockAmount: (goods.stockAmount || '') + ''
               // mprice: goods.mprice // 参考
             }
-            this.tableForm.selectedGoods.unshift(item)
+            this.tableForm.selectedGoods.push(item)
           } else {
             console.log('已存在')
           }
@@ -462,6 +478,7 @@ export default {
                 storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
                   : ''
               }
+              this.leaveAction = true
               if (this.xForm.id && this.xForm.id !== '') {
                 this._updateActivity(data)
               } else {
@@ -473,7 +490,7 @@ export default {
             }
           })
         } else {
-          console.log('请完善活动信息!')
+          this.$message.warning('请完善活动信息')
           return false
         }
       })
@@ -489,7 +506,7 @@ export default {
       return ret
     },
     _getDetailData() {
-      this.loading = true
+      this.pageLoading = true
       const params = {
         id: this.dataid
       }
@@ -529,9 +546,9 @@ export default {
           console.log('this.storeIds', this.storeIds)
           console.log('this.storeNames', this.storeNames)
         }
-        this.loading = false
+        this.pageLoading = false
       }).catch(err => {
-        this.loading = false
+        this.pageLoading = false
         console.log('err', err)
       })
     },
@@ -579,7 +596,7 @@ export default {
       updateActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('保存成功')
-          // this.$router.push('/marketing/activity')
+          this.$router.push('/marketing/activity')
         }
       }).catch(err => {
         console.log('err', err)
@@ -592,7 +609,7 @@ export default {
 <style lang="scss">
   .table-form{
     .el-form-item{
-      margin: 15px 0;
+      margin: 16px 0;
     }
     .el-input{
       input {

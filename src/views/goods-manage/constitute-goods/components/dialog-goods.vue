@@ -35,8 +35,6 @@
           <template slot-scope="scope">
             <div
               v-if="scope.row.mainPic && scope.row.mainPic!==''"
-              class="x-img-mini"
-              style="width: 60px; height: 36px"
             >
               <div class="x-image__preview">
                 <el-image
@@ -403,5 +401,10 @@ export default {
       }
     }
   }
+}
+</style>
+<style>
+.el-table .cell .el-image img{
+  text-align: center;
 }
 </style>
