@@ -2,12 +2,22 @@
   <div class="container">
     <h3>旗舰店</h3>
     <!--    <h6>旗舰店是连锁的最大且最为丰富齐全的一家营业店，旗舰店可为全国范围的会员提供最丰富的商品，且可提供<span style="color: #409eff">快递服务</span>的门店</h6>-->
-    <h6 style="line-height: 20px">
+    <el-alert
+      type="info"
+      :closable="false"
+      style="line-height:20px"
+    >
+      旗舰店是可提供快递服务的一家线上中心营业店，可为全国范围的会员提供最丰富的商品，旗舰店必须设置，且只有一个。<br>
+      旗舰店和非旗舰店的区别:<br>
+      1.旗舰店：提供B2C服务，固定在商城首页，用户默认进入该门店。<br>
+      2.非旗舰店：提供o2o服务，用户可就近选择非旗舰店门店购物，享受快捷的配送及自提服务。
+    </el-alert>
+    <!--<h6 style="line-height: 20px">
       旗舰店是可提供快递服务的一家线上中心营业店，可为全国范围的会员提供最丰富的商品，旗舰店必须设置，且只有一个。<br><br>
       旗舰店和非旗舰店的区别:<br>
       1.旗舰店：提供B2C服务，固定在商城首页，用户默认进入该门店。<br>
       2.非旗舰店：提供o2o服务，用户可就近选择非旗舰店门店购物，享受快捷的配送及自提服务。
-    </h6>
+    </h6>-->
     <div style="padding-top: 5px;padding-bottom: 5px">
       <span class="label-name">设置旗舰店：</span>
       <span id="flagship-name">{{ flagShipName }}</span>
