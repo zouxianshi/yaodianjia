@@ -221,7 +221,8 @@
       </span>
     </el-dialog>
     <!--弹窗--选择商品-->
-    <dialog-goods ref="goodsDialog" :list="basicForm.childCommodities" @confirm="goodsSelectChange" />
+    <dialog-goods ref="goodsDialog" :list="propGoodsList" @confirm="goodsSelectChange" @on-change="onSelectedGoods" />
+    <!--弹窗--选择分组-->
     <edit-group :is-show="groupVisible" type="1" :group-data="groupDataDimens" @back="handleSaveGroup" @close="groupVisible=false" />
   </div>
 </template>
@@ -331,16 +332,17 @@ export default {
         price: [{ required: true, trigger: 'blur' }],
         limitNum: [{ validator: _checklimitNum, trigger: 'blur' }]
       },
-      childCommoditiesRules: {
-        number: [{ required: true, trigger: 'blur' }],
-        price: [{ required: true, trigger: 'blur' }]
-      },
+      // childCommoditiesRules: {
+      //   number: [{ required: true, trigger: 'blur' }],
+      //   price: [{ required: true, trigger: 'blur' }]
+      // },
       dialogVisible: false,
       // value: '',
       // dialogImageUrl: '',
       fileList: [],
       groupData: [], // 分组数据
       groupDataDimens: [],
+      propGoodsList: [],
       // goodsIntro: {
       //   // 商品信息
       //   content: ''
@@ -448,17 +450,60 @@ export default {
   methods: {
     // 选取商品
     toSelectGoods() {
-      this.$refs.goodsDialog.open()
+      this.propGoodsList = this.basicForm.childCommodities
+      this.$nextTick(_ => {
+        this.$refs.goodsDialog.open()
+      })
     },
     goodsSelectChange(list) {
       this.basicForm.childCommodities = list.map(item => {
         item.id = null
-        item.price = ''
+        // item.price = ''
         // item.number = 0
         return item
       })
 
       this.$refs.goodsDialog.close()
+    },
+    onSelectedGoods(list) {
+      if (list && list.length > 0) {
+        // 1.移除table list中不在选取中的数据
+        this.basicForm.childCommodities.forEach((item, index) => {
+          const inIndex = list.findIndex(v => {
+            return v.specId === item.specId
+          })
+          if (inIndex === -1) {
+            this.basicForm.childCommodities.splice(index, 1)
+          }
+        })
+        // 1.在table list中添加选取中没有的数据
+        list.forEach(goods => {
+          const inIndex = this.basicForm.childCommodities.findIndex(item => {
+            return goods.specId === item.specId
+          })
+          if (inIndex === -1) {
+            const item = {
+              id: '',
+              activityId: this.dataid,
+              productManufacture: goods.manufacture || '',
+              productName: goods.name || '',
+              productSpecId: goods.specId || '',
+              productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
+              stockAmount: (goods.stockAmount || '') + '',
+              number: (goods.number || '') + '',
+              price: (goods.price || '') + '',
+              mprice: goods.mprice // 参考
+            }
+            this.basicForm.childCommodities.unshift(item)
+          } else {
+            console.log('已存在')
+          }
+        })
+        // this.selectedStore = list
+        // this.storeIds = this.selectedStore.map(store => store.id)
+        // this.storeNames = this.selectedStore.map(store => store.stName)
+        console.log(this.tableForm.childCommodities)
+      }
     },
     _loadgroupGather(type, ids) {
       // 查询分类和分组的父类
@@ -469,27 +514,6 @@ export default {
       }
 
       getPreGroupList(data).then(res => {
-        // if (type === '1') {
-        //   // 分类
-        //   const datas = res.data[ids[0]]
-        //   // console.log('datas:', datas)
-        //   if (datas !== undefined) {
-        //     this.chooseTypeList = [
-        //       { name: datas.name, id: datas.id },
-        //       { name: datas.child.name, id: datas.child.id },
-        //       { name: datas.child.child.name, id: datas.child.child.id }
-        //     ]
-        //   }
-        // } else {
-        //   const datas = res.data[ids[0]]
-        //   if (datas !== undefined) {
-        //     this.chooseGroup = [
-        //       { name: datas.name, id: datas.id },
-        //       { name: datas.child.name, id: datas.child.id },
-        //       { name: datas.child.child.name, id: datas.child.child.id }
-        //     ]
-        //   }
-        // }
         if (type === '1') { // 分类
           const datas = res.data[ids[0]]
           if (datas) {
@@ -812,15 +836,9 @@ export default {
             this.chooseTypeList.length - 3
           ].id // 第一级分类id
           const data = JSON.parse(JSON.stringify(this.basicForm))
-          // data.groupIds = []
-          // this.chooseGroup.map(v => {
-          //   data.groupIds.push(v[2].id)
-          // })
-          console.log('chooseGroup:', this.chooseGroup)
-          data.groupId = this.chooseGroup[this.chooseTypeList.length - 1].id
-          debugger
-          // console.log('data.groupId:', data.groupId)
-          // console.log('新增的数据：', data)
+
+          data.groupId = this.chooseGroup[0][2].id // 第三级分组的id
+
           data.merCode = this.merCode
           this.subLoading = true
           if (this.basicForm.id) {
