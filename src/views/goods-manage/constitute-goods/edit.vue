@@ -1,60 +1,54 @@
 <template>
   <div class="app-container">
-    <div class="edit-wrapper">
-      <div class="edit-card">
-        <div class="edit-card-cnt">
-          <div class="content">
-            <el-form
-              ref="basic"
-              :model="basicForm"
-              status-icon
-              label-width="160px"
-              :rules="basicRules"
-              @submit.native.prevent
-            >
+    <el-form
+      ref="basic"
+      :model="basicForm"
+      label-width="160px"
+      :rules="basicRules"
+      @submit.native.prevent
+    >
+      <div class="edit-wrapper">
+        <div class="edit-card">
+          <div class="edit-card-cnt">
+            <div class="content">
               <el-form-item label="组合商品名称：" prop="name">
                 <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
                 <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
               </el-form-item>
-            </el-form>
-            <p class="type-list">
-              <span class="type-list-title">
-                <span class="color_red">*</span> 组合商品分类：
-              </span>
-              <el-tag v-if="chooseTypeList.length">
-                <span v-if="chooseTypeList.length">
-                  {{ chooseTypeList[0].name }}&nbsp;>&nbsp;
-                  {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}
+              <p class="type-list">
+                <span class="type-list-title">
+                  <span class="color_red">*</span> 组合商品分类：
                 </span>
-              </el-tag>
-              <span v-if="!this.$route.query.id" class="link link-btn" @click="typeVisible=true;_loadClassList()">选择分类</span>
-            </p>
-            <div class="type-list groups">
-              <span class="type-list-title">
-                <span class="color_red">*</span> 组合商品分组：
-              </span>
-              <p class="group-list">
-                <el-tag v-if="chooseGroup.length" style="margin-right:10px">
-                  <span v-if="chooseGroup.length">
-                    {{ chooseGroup[0].name }}&nbsp;>&nbsp;
-                    {{ chooseGroup[1].name }}&nbsp;>&nbsp;{{ chooseGroup[2].name }}
+                <el-tag v-if="chooseTypeList.length">
+                  <span v-if="chooseTypeList.length">
+                    {{ chooseTypeList[0].name }}&nbsp;>&nbsp;
+                    {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}
                   </span>
                 </el-tag>
+                <span v-if="!this.$route.query.id" class="link link-btn" @click="typeVisible=true;_loadClassList()">选择分类</span>
               </p>
-              <span class="opreate">
-                <span class="link link-btn" @click="groupVisible=true">选择分组</span>
-                <span class="link link-btn" @click="handleRefresh">刷新</span>
-              </span>
-            </div>
+              <div class="type-list groups">
+                <span class="type-list-title">
+                  <span class="color_red">*</span> 组合商品分组：
+                </span>
+                <p class="group-list">
+                  <!-- <el-tag v-if="chooseGroup.length" style="margin-right:10px">
+                    <span v-if="chooseGroup.length">
+                      {{ chooseGroup[0].name }}&nbsp;>&nbsp;
+                      {{ chooseGroup[1].name }}&nbsp;>&nbsp;{{ chooseGroup[2].name }}
+                    </span>
+                  </el-tag> -->
+                  <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                    <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                  </el-tag>
+                </p>
+                <span class="opreate">
+                  <span class="link link-btn" @click="groupVisible=true">选择分组</span>
+                  <span class="link link-btn" @click="handleRefresh">刷新</span>
+                </span>
+              </div>
 
-            <el-form
-              ref="basic"
-              :model="basicForm"
-              status-icon
-              label-width="160px"
-              :rules="basicRules"
-            >
-              <el-form-item label="组合商品图片：" prop="file" required>
+              <el-form-item label="组合商品图片：" prop="file">
                 <el-upload
                   v-loading="uploadLoading"
                   class="avatar-uploader x-uploader"
@@ -89,70 +83,68 @@
                 <p class="color_gray">填写商品说明书，详细介绍文字</p>
                 <Tinymce ref="editor" v-model="basicForm.detail" :height="400" />
               </el-form-item>
-            </el-form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="edit-wrapper">
-      <div class="edit-card">
-        <div class="header">
-          <span>选择商品</span>
-        </div>
-        <div class="edit-card-cnt">
-          <div class="content">
-            <div class="table-box">
-              <el-table v-loading="loading" :data="childCommodities" stripe style="width: 100%">
-                <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
-                <el-table-column prop="standard" label="规格" align="center" min-width="150" />
-                <el-table-column
-                  align="left"
-                  label="组合数量"
-                  :show-overflow-tooltip="true"
-                  min-width="120"
-                >
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.number" size="small" class="inp_mini" />
-                  </template>
-                </el-table-column>
-                <!-- </el-form-item> -->
-                <el-table-column
-                  prop="mprice"
-                  align="left"
-                  label="参考价(元)"
-                  :show-overflow-tooltip="true"
-                  min-width="100"
-                />
-                <el-table-column prop="price" label="组合单价(元)" min-width="120" align="left">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.price" size="small" class="inp_mini" />
-                  </template>
-                </el-table-column>
-                <!-- </el-form> -->
-                <el-table-column prop="erpCode" align="left" min-width="120" label="商品编码" />
-                <el-table-column align="left" min-width="130" label="操作">
-                  <template slot-scope="scope">
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      @click="handleDelete(scope.$index,scope.row)"
-                    >删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
+      <div class="edit-wrapper">
+        <div class="edit-card">
+          <div class="header">
+            <span>选择商品</span>
+          </div>
+          <div class="edit-card-cnt">
+            <div class="content">
+              <div class="table-box">
+                <el-table v-loading="loading" :data="basicForm.childCommodities" stripe style="width: 100%" class="table-form">
+                  <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
+                  <el-table-column prop="standard" label="规格" align="center" min-width="150" />
+                  <el-table-column
+                    align="left"
+                    label="组合数量"
 
-            <el-form
-              ref="basic"
-              :model="basicForm"
-              status-icon
-              label-width="160px"
-              :rules="basicRules"
-            >
-              <!-- <el-form-item label="选择商品" prop="name"> -->
-              <!-- <el-input v-model="basicForm.name" placeholder="组合商品名称" size="small" /> -->
-              <!-- </el-form-item> -->
+                    min-width="120"
+                  >
+                    <template slot-scope="scope">
+                      <el-form-item
+                        label-width="0"
+                        :prop="'childCommodities.' + scope.$index + '.number'"
+                        :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
+                      >
+                        <el-input v-model="scope.row.number" size="small" class="inp_mini" />
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="mprice"
+                    align="left"
+                    label="参考价(元)"
+                    :show-overflow-tooltip="true"
+                    min-width="100"
+                  />
+                  <el-table-column prop="price" label="组合单价(元)" min-width="160" align="left">
+                    <template slot-scope="scope">
+                      <el-form-item
+                        label-width="0"
+                        :prop="'childCommodities.' + scope.$index + '.price'"
+                        :rules="[{ required: true, validator: check_price, trigger: 'blur' }]"
+                      >
+                        <el-input v-model="scope.row.price" size="small" class="inp_mini" />
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="erpCode" align="left" min-width="120" label="商品编码" />
+                  <el-table-column align="left" min-width="130" label="操作">
+                    <template slot-scope="scope">
+                      <el-button
+                        type="primary"
+                        size="mini"
+                        @click="handleDelete(scope.$index,scope.row)"
+                      >删除</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
 
               <div class="icon-add icon_items" @click.stop="toSelectGoods">
                 <el-button type="primary" size="small">选择商品</el-button>
@@ -160,41 +152,26 @@
 
               <el-form-item label="组合商品价格(元)：" prop="price" required>
                 <span>{{ basicForm.price }}</span>
-                <!-- <el-input
-                  v-model="basicForm.price"
-                  placeholder="组合商品价格"
-                  size="small"
-                  type="hidden"
-                />-->
               </el-form-item>
 
               <el-form-item label="参考价(元)：" prop="mprice" required>
                 <span>{{ basicForm.mprice }}</span>
-                <!-- <el-input
-                  v-model="basicForm.referPrice"
-                  placeholder="参考价（元）："
-                  size="small"
-                  type="hidden"
-                />-->
               </el-form-item>
-            </el-form>
 
-            <el-form ref="basic" :model="basicForm" status-icon label-width="160px" @submit.native.prevent>
-              <el-form-item label="限购设置：">
+              <el-form-item label="限购设置：" prop="limitNum" required>
                 <span>单个用户限购数量为</span>
                 <el-input v-model="basicForm.limitNum" placeholder="0" size="mini" class="inp_mini" />
                 <span v-show="basicForm.limitNum <= 0 && basicForm.limitNum >= 0" style="margin-left: 5px;margin-right: 10px;color: #e6a23c;">不限购</span>
                 <span class="color_gray">同一个用户限制购买的数量</span>
               </el-form-item>
-            </el-form>
+
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
+    </el-form>
     <div class="footer">
       <span>
-        <!-- <el-button size="small" @click="groupVisible = false">取 消</el-button> -->
         <el-button size="small" @click="$router.go(-1)">取 消</el-button>
         <el-button type="primary" size="small" @click="handleConstituteGoods">确 定</el-button>
       </span>
@@ -244,14 +221,15 @@
       </span>
     </el-dialog>
     <!--弹窗--选择商品-->
-    <!-- <dialog-goods ref="goodsDialog" :list="[]" @confirm="goodsSelectChange" /> -->
-    <dialog-goods ref="goodsDialog" :list="childCommodities" @confirm="goodsSelectChange" />
+    <dialog-goods ref="goodsDialog" :list="propGoodsList" @confirm="goodsSelectChange" @on-change="onSelectedGoods" />
+    <!--弹窗--选择分组-->
+    <edit-group :is-show="groupVisible" type="1" :group-data="groupDataDimens" @back="handleSaveGroup" @close="groupVisible=false" />
   </div>
 </template>
 <script>
 import dialogGoods from './components/dialog-goods'
 import Tinymce from '@/components/Tinymce'
-import { getTypeTree, getPreGroupList } from '@/api/group'
+import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import {
@@ -264,12 +242,60 @@ import {
   updateConstituteGoods,
   getConstituteGoodsInfo
 } from '@/api/constitute-goods'
+import { checkNumberdouble } from '@/utils/validate'
+import editGroup from '../components/grouping'
+import { findArray } from '@/utils/index'
 export default {
-  components: { Tinymce, dialogGoods },
+  components: { Tinymce, dialogGoods, editGroup },
   mixins: [mixins, specsMixin],
   data() {
+    const _check_price = (rule, value, callback) => {
+      if (rule.required && !value) {
+        callback(new Error('请输入数值'))
+      }
+      if (value !== '') {
+        if (!checkNumberdouble(value)) {
+          callback(new Error('请输入最多2位小数的正数'))
+        }
+      }
+      if (value <= 0) {
+        callback(new Error('最小值必须大于0'))
+      }
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
+      }
+      callback()
+    }
+    const _check_num = (rule, value, callback) => {
+      const reg = /[^0-9]/
+      if (rule.required && !value) {
+        callback(new Error('请输入数值'))
+      }
+      if (value !== '' && reg.test(value) || value === '0') {
+        callback(new Error('请输入正整数'))
+      }
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
+      }
+      callback()
+    }
+    const _checklimitNum = (rule, value, callback) => { // 限购数量验证
+      const reg = /[^0-9]/
+      if (rule.required && !value) {
+        callback(new Error('请输入数值'))
+      }
+      if (value !== '' && reg.test(value) || value === '0') {
+        callback(new Error('请输入正整数'))
+      }
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
+      }
+      callback()
+    }
     return {
       // goodsData: [],
+      check_price: _check_price,
+      check_num: _check_num,
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组(id+name)
       groupVisible: false,
@@ -291,28 +317,32 @@ export default {
         mprice: 0, // 参考价格
         keyWord: '', // 关键字
         name: '', // 商品名
+        childCommodities: [], // 子商品信息
         // groupIds: [], // 分组的ids
         groupId: '' // 分组id
       },
-      childCommodities: [], // 子商品信息
+      // childCommodities: [], // 子商品信息
       basicRules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' },
           { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
         ],
-        file: [{ required: true, message: '请上传图片' }],
+        // file: [{ required: true, message: '请上传图片' }],
         keyWord: [{ min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }],
         number: [{ required: true, trigger: 'blur' }],
-        price: [{ required: true, trigger: 'blur' }]
+        price: [{ required: true, trigger: 'blur' }],
+        limitNum: [{ validator: _checklimitNum, trigger: 'blur' }]
       },
-      childCommoditiesRules: {
-        number: [{ required: true, trigger: 'blur' }],
-        price: [{ required: true, trigger: 'blur' }]
-      },
+      // childCommoditiesRules: {
+      //   number: [{ required: true, trigger: 'blur' }],
+      //   price: [{ required: true, trigger: 'blur' }]
+      // },
       dialogVisible: false,
       // value: '',
       // dialogImageUrl: '',
       fileList: [],
       groupData: [], // 分组数据
+      groupDataDimens: [],
+      propGoodsList: [],
       // goodsIntro: {
       //   // 商品信息
       //   content: ''
@@ -345,8 +375,8 @@ export default {
     // }
   },
   watch: {
-    childCommodities: {
-      // 组合商品价格
+    'basicForm.childCommodities': {
+      // 监听组合商品总价格
       handler: function(newval) {
         let priceAll = 0
         let mpriceAll = 0
@@ -357,13 +387,35 @@ export default {
           const number1 = item.number && item.number !== '' ? item.number : 0
           const price = item.price && item.price !== '' ? item.price : 0
           const mprice = item.mprice && item.mprice !== '' ? item.mprice : 0
+          // 子商品的数量验证
+          const reg = /[^0-9]/
+          if (!number1) {
+            return false
+          }
+          if (number1 !== '' && reg.test(number1) || number1 === '0') {
+            return false
+          }
+          if (number1 > 99999999) {
+            return false
+          }
+          // 子商品的价格验证
+          if (!price) {
+            return false
+          }
+          if (price !== '') {
+            if (!checkNumberdouble(price)) {
+              return false
+            }
+          }
+          if (price <= 0) {
+            return false
+          }
+          if (price > 99999999) {
+            return false
+          }
 
           priceAll += number1 * price
           mpriceAll += number1 * mprice
-
-          // item.specId = item.id
-          // item.id = null
-          // item.number = 1
         })
 
         this.$nextTick(function() {
@@ -398,17 +450,60 @@ export default {
   methods: {
     // 选取商品
     toSelectGoods() {
-      this.$refs.goodsDialog.open()
+      this.propGoodsList = this.basicForm.childCommodities
+      this.$nextTick(_ => {
+        this.$refs.goodsDialog.open()
+      })
     },
     goodsSelectChange(list) {
-      this.childCommodities = list.map(item => {
+      this.basicForm.childCommodities = list.map(item => {
         item.id = null
-        item.price = ''
+        // item.price = ''
         // item.number = 0
         return item
       })
 
       this.$refs.goodsDialog.close()
+    },
+    onSelectedGoods(list) {
+      if (list && list.length > 0) {
+        // 1.移除table list中不在选取中的数据
+        this.basicForm.childCommodities.forEach((item, index) => {
+          const inIndex = list.findIndex(v => {
+            return v.specId === item.specId
+          })
+          if (inIndex === -1) {
+            this.basicForm.childCommodities.splice(index, 1)
+          }
+        })
+        // 1.在table list中添加选取中没有的数据
+        list.forEach(goods => {
+          const inIndex = this.basicForm.childCommodities.findIndex(item => {
+            return goods.specId === item.specId
+          })
+          if (inIndex === -1) {
+            const item = {
+              id: '',
+              activityId: this.dataid,
+              productManufacture: goods.manufacture || '',
+              productName: goods.name || '',
+              productSpecId: goods.specId || '',
+              productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
+              stockAmount: (goods.stockAmount || '') + '',
+              number: (goods.number || '') + '',
+              price: (goods.price || '') + '',
+              mprice: goods.mprice // 参考
+            }
+            this.basicForm.childCommodities.unshift(item)
+          } else {
+            console.log('已存在')
+          }
+        })
+        // this.selectedStore = list
+        // this.storeIds = this.selectedStore.map(store => store.id)
+        // this.storeNames = this.selectedStore.map(store => store.stName)
+        console.log(this.tableForm.childCommodities)
+      }
     },
     _loadgroupGather(type, ids) {
       // 查询分类和分组的父类
@@ -419,26 +514,17 @@ export default {
       }
 
       getPreGroupList(data).then(res => {
-        if (type === '1') {
-          // 分类
+        if (type === '1') { // 分类
           const datas = res.data[ids[0]]
-          // console.log('datas:', datas)
-          if (datas !== undefined) {
-            this.chooseTypeList = [
-              { name: datas.name, id: datas.id },
-              { name: datas.child.name, id: datas.child.id },
-              { name: datas.child.child.name, id: datas.child.child.id }
-            ]
+          if (datas) {
+            this.chooseTypeList = [{ name: datas.name, id: datas.id }, { name: datas.child.name, id: datas.child.id }, { name: datas.child.child.name, id: datas.child.child.id }]
           }
-        } else {
-          const datas = res.data[ids[0]]
-          if (datas !== undefined) {
-            this.chooseGroup = [
-              { name: datas.name, id: datas.id },
-              { name: datas.child.name, id: datas.child.id },
-              { name: datas.child.child.name, id: datas.child.child.id }
-            ]
-          }
+        } else { // 分组
+          const datas = res.data
+          ids.map(v => {
+            const dat = datas[v]
+            this.chooseGroup.push([{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }, { name: dat.child.child.name, id: dat.child.child.id }])
+          })
         }
       })
     },
@@ -455,7 +541,7 @@ export default {
 
         // 赋值
         this.basicForm = data
-        this.childCommodities = data.childCommodities
+        this.basicForm.childCommodities = data.childCommodities
         if (this.basicForm.detail) {
           this.$refs.editor.setContent(this.basicForm.detail)
         }
@@ -530,7 +616,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.childCommodities.splice(index, 1)
+        this.basicForm.childCommodities.splice(index, 1)
       })
     },
     _loadTypeList(isRefresh) {
@@ -544,17 +630,26 @@ export default {
           })
         }
       })
+      getTypeDimensionList(this.$store.state.user.merCode).then(res => {
+        this.groupDataDimens = res.data
+      })
     },
-    handleSaveGroup() {
-      // 保存数据
-      if (this.chooseArray.length !== 3) {
-        this.$message({
-          message: '分组选择不完整',
-          type: 'error'
-        })
-        return
-      }
-      // console.log('this.chooseArray', this.chooseArray.id)
+    // handleSaveGroup() {
+    //   // 保存数据
+    //   if (this.chooseArray.length !== 3) {
+    //     this.$message({
+    //       message: '分组选择不完整',
+    //       type: 'error'
+    //     })
+    //     return
+    //   }
+    //   // console.log('this.chooseArray', this.chooseArray.id)
+    //   this._filters(this.chooseArray)
+    //   this.groupVisible = false
+    // },
+    handleSaveGroup(row) { // 保存数据
+      this.chooseArray = row
+      this.chooseGroup = []
       this._filters(this.chooseArray)
       this.groupVisible = false
     },
@@ -566,26 +661,52 @@ export default {
       // 删除选择的分组
       this.chooseGroup.splice(index, 1)
     },
-    _filters(data, index) {
-      this.chooseGroup = []
-      this.groupData.map(v => {
-        if (v.id === data[0]) {
-          this.chooseGroup.push({ name: v.name, id: v.id, dimensionId: v.dimensionId })
-          // console.log('维度id:', v.dimensionId)
-        }
-        if (v.children) {
-          v.children.map(v1 => {
-            if (v1.id === data[1]) {
-              this.chooseGroup.push({ name: v1.name, id: v1.id })
-            }
-            if (v1.children) {
-              v1.children.map(v2 => {
-                if (v2.id === data[2]) {
-                  this.chooseGroup.push({ name: v2.name, id: v2.id })
+    // _filters(data, index) {
+    //   this.chooseGroup = []
+    //   this.groupData.map(v => {
+    //     if (v.id === data[0]) {
+    //       this.chooseGroup.push({ name: v.name, id: v.id, dimensionId: v.dimensionId })
+    //       // console.log('维度id:', v.dimensionId)
+    //     }
+    //     if (v.children) {
+    //       v.children.map(v1 => {
+    //         if (v1.id === data[1]) {
+    //           this.chooseGroup.push({ name: v1.name, id: v1.id })
+    //         }
+    //         if (v1.children) {
+    //           v1.children.map(v2 => {
+    //             if (v2.id === data[2]) {
+    //               this.chooseGroup.push({ name: v2.name, id: v2.id })
+    //             }
+    //           })
+    //         }
+    //       })
+    //     }
+    //   })
+    // },
+    _filters(data) {
+      data.forEach((val, index1) => {
+        const findIndex = findArray(this.groupData, { id: val[0] })
+        if (findIndex > -1) { // 找一级
+          if (!this.chooseGroup[index1]) {
+            this.chooseGroup.push([])
+          }
+          const row = this.groupData[findIndex]
+          this.chooseGroup[index1].push({ name: row.name, id: row.id })
+          if (row.children) { // 找二级
+            const findIndex_child = findArray(row.children, { id: val[1] })
+            if (findIndex_child > -1) {
+              const child = row.children[findIndex_child]
+              this.chooseGroup[index1].push({ name: child.name, id: child.id })
+              if (child.children) { // 找三级
+                const findIndex_children = findArray(child.children, { id: val[2] })
+                if (findIndex_children > -1) {
+                  const children = child.children[findIndex_children]
+                  this.chooseGroup[index1].push({ name: children.name, id: children.id })
                 }
-              })
+              }
             }
-          })
+          }
         }
       })
     },
@@ -673,7 +794,7 @@ export default {
     handleConstituteGoods() {
       // 保存商品详情
       this.subLoading = true
-      this.basicForm.childCommodities = this.childCommodities
+      // this.basicForm.childCommodities = this.childCommodities
       // const data = {
       //   content: this.basicForm,
       //   id: this.basicForm.id
@@ -686,23 +807,24 @@ export default {
         this.$message({ type: 'warning', message: '请选择分组' })
         return false
       }
-      if (!this.childCommodities.length) {
+      if (!this.basicForm.childCommodities.length) {
         this.$message({ type: 'warning', message: '请选择商品' })
         return false
       }
 
-      for (let i = 0; i < this.childCommodities.length; i++) {
-        if (!this.childCommodities[i].number) {
+      for (let i = 0; i < this.basicForm.childCommodities.length; i++) {
+        if (!this.basicForm.childCommodities[i].number) {
           this.$message({ type: 'warning', message: '请输入组合数量' })
           return false
         }
-        if (!this.childCommodities[i].price) {
+        if (!this.basicForm.childCommodities[i].price) {
           this.$message({ type: 'warning', message: '请输入组合单价' })
           return false
         }
       }
 
       this.$refs['basic'].validate(valid => {
+        console.log('valid:', valid)
         if (valid) {
           this.basicForm.typeId = this.chooseTypeList[
             this.chooseTypeList.length - 1
@@ -714,13 +836,9 @@ export default {
             this.chooseTypeList.length - 3
           ].id // 第一级分类id
           const data = JSON.parse(JSON.stringify(this.basicForm))
-          // data.groupIds = []
-          // this.chooseGroup.map(v => {
-          //   data.groupIds.push(v[2].id)
-          // })
-          data.groupId = this.chooseGroup[this.chooseTypeList.length - 1].id
-          // console.log('data.groupId:', data.groupId)
-          // console.log('新增的数据：', data)
+
+          data.groupId = this.chooseGroup[0][2].id // 第三级分组的id
+
           data.merCode = this.merCode
           this.subLoading = true
           if (this.basicForm.id) {
@@ -915,7 +1033,8 @@ export default {
 </style>
 <style>
 .edit-wrapper .edit-card .el-input.inp_mini {
-  width: 100px;
+  width: 90px;
+  min-width: 90px;
   padding: 0 5px;
 }
 .icon_items {
@@ -937,4 +1056,21 @@ export default {
     line-height: 120px !important;
     text-align: center;
 }
+
 </style>
+<style lang="scss">
+.table-form{
+  .el-form-item{
+    margin: 15px 0;
+  }
+  .el-input{
+    input {
+      text-align: center;
+    }
+  }
+}
+.edit-wrapper .edit-card .el-input.inp_mini {
+    width: 110px;
+    }
+</style>
+
