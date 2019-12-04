@@ -20,7 +20,15 @@
             <el-button type="primary" size="mini" @click="_loadStoreData">查询</el-button>
           </div>
         </div>
-        <el-table ref="multipleTable" :data="list" stripe style="width: 100%" max-height="300" @selection-change="handleSelectionChangeStore">
+        <el-table
+          ref="multipleTable"
+          :data="list"
+          stripe
+          style="width: 100%"
+          max-height="300"
+          @select-all="handleSelectionChangeStore"
+          @select="handleSelect"
+        >
           <el-table-column
             type="selection"
             :selectable="checkSelectable"
@@ -49,9 +57,9 @@
         </div>
         <el-divider content-position="left">未选择门店的销售状态保持不变</el-divider>
         <ul class="choose-box">
-          <template v-if="!isAll&&chooseStore.length!==0">
-            <li v-for="(item,index) in chooseStore" :key="index">
-              <el-tag type="info" size="small" closable @close="handleTagClose(item)">{{ item.stName }}</el-tag>
+          <template v-if="!isAll&&multipleSelection.length!==0">
+            <li v-for="(item,index) in multipleSelection" :key="index">
+              <el-tag type="info" size="small" closable @close="handleTagClose(item)"><span :title="item.stName">{{ item.stName }}</span></el-tag>
             </li>
           </template>
           <template v-else>
@@ -68,7 +76,6 @@
 </template>
 <script>
 import { getStoreList, setBatchUpdown } from '@/api/depot'
-import { findArray } from '@/utils/index'
 export default {
   props: {
     isShow: {
@@ -105,6 +112,7 @@ export default {
   watch: {
     isShow(val) {
       if (val) {
+        this.multipleSelection = []
         this._loadStoreData()
       }
     }
@@ -117,6 +125,7 @@ export default {
       return !this.isAll
     },
     handleChooseStore() { // 选择全部
+      this.$refs.multipleTable.clearSelection()
       this.list.map(v => {
         this.$refs.multipleTable.toggleRowSelection(v)
       })
@@ -142,10 +151,12 @@ export default {
         } else {
           setTimeout(() => {
             // 翻页 如果存在之前选中的就选中
-            this.chooseStore.map(v => {
-              const index = findArray(this.list, { id: v.id })
+            this.list.map(v => {
+              const index = this.multipleSelection.findIndex(item => {
+                return item.id === v.id
+              })
               if (index > -1) {
-                this.$refs.multipleTable.toggleRowSelection(this.list[index])
+                this.$refs.multipleTable.toggleRowSelection(v)
               }
             })
           }, 300)
@@ -155,7 +166,7 @@ export default {
     handleSubmit() {
       const data = []
       if (!this.isAll) {
-        this.chooseStore.map(res => {
+        this.multipleSelection.map(res => {
           data.push(res.id)
         })
       }
@@ -186,21 +197,33 @@ export default {
         this.subLoading = false
       })
     },
-    handleSelectionChangeStore(val) { // 门店列表选中事件
-      if (this.isAll) {
-        this.multipleSelection = val
-      } else {
-        this.multipleSelection = val
-        // 重复数据不添加进去数组当中
-        val.map(v => {
-          const index = findArray(this.chooseStore, { id: v.id })
-          if (index === -1) {
-            this.chooseStore.push(v)
-          }
+    handleSelectionChangeStore(val) { // 门店列表选中事件 表格全选事件
+      val.map(v => {
+        const index = this.multipleSelection.findIndex(item => {
+          return item.id === v.id
         })
+        if (index === -1) {
+          this.multipleSelection.push(v)
+        }
+      })
+    },
+    handleSelect(selection, row) { // 单个选择
+      const index = this.multipleSelection.findIndex(v => {
+        return v.id === row.id
+      })
+      if (index > -1) {
+        this.multipleSelection.splice(index, 1)
+      } else {
+        this.multipleSelection.push(row)
       }
     },
     handleTagClose(row) {
+      const index = this.multipleSelection.findIndex(v => {
+        return v.id === row.id
+      })
+      if (index > -1) {
+        this.multipleSelection.splice(index, 1)
+      }
       this.$refs.multipleTable.toggleRowSelection(row)
     },
     handleCanle() {
@@ -237,6 +260,22 @@ export default {
       li{
           display: inline-block;
           margin-right: 10px;
+          margin-bottom: 10px;
+          .el-tag{
+            display: flex;
+            align-items: center;
+            span{
+              display: inline-block;
+              overflow: hidden;
+              max-width: 200px;
+              text-overflow:ellipsis;
+            }
+
+          }
+           .el-tag__close{
+              display: inline-block;
+              margin-top: 5px;
+            }
       }
   }
 }

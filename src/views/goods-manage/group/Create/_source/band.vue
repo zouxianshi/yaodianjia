@@ -52,7 +52,8 @@
           stripe
           style="width: 100%"
           max-height="300"
-          @selection-change="handleSelectionChange"
+          @select-all="handleSelectionChange"
+          @select="handleSelect"
         >
           <el-table-column
             type="selection"
@@ -131,6 +132,7 @@ export default {
       dialogVisible: false,
       loading: false,
       multipleSelection: [],
+      chooseArray: [],
       tableData: [],
       subLoading: false,
       listQuery: {
@@ -171,18 +173,49 @@ export default {
     setChoose() {
       this.tableData.forEach(v => {
         if (v.currentType) {
-          const findIndex = findArray(this.is_choose, { id: v.id })
+          // const findIndex = findArray(this.is_choose, { id: v.id })
+          const findIndex = this.is_choose.findIndex(item => {
+            return item.id === v.id
+          })
           if (findIndex === -1) { // 不存在的放入储存的数组中
             this.is_choose.push(v)
+            this.multipleSelection.push(v)
           }
           this.$refs.multipleTable.toggleRowSelection(v)
+        } else {
+          const index = this.multipleSelection.findIndex(item => {
+            return item.id === v.id
+          })
+          if (index > -1) {
+            this.$refs.multipleTable.toggleRowSelection(v)
+          }
         }
       })
     },
-    handleSelectionChange(row) {
-      this.multipleSelection = row
+    handleSelectionChange(row) { // 全选事件
+      // 为了解决翻页之后全选不覆盖上次全选的数据
+      row.map(v => {
+        const index = this.multipleSelection.findIndex(item => {
+          return item.id === v.id
+        })
+        if (index === -1) {
+          this.multipleSelection.push(v)
+        }
+      })
+    },
+    handleSelect(selection, row) { // 单个选择
+      const index = this.multipleSelection.findIndex(v => {
+        return v.id === row.id
+      })
+      if (index > -1) {
+        this.multipleSelection.splice(-1)
+      } else {
+        this.multipleSelection.push(row)
+      }
     },
     handleShow() {
+      this.listQuery.currentPage = 1
+      this.multipleSelection = []
       this.getList()
       this.is_choose = []
       this.dialogVisible = true
@@ -213,6 +246,10 @@ export default {
           data.delIds.push(v.id)
         }
       })
+      if (data.addIds.length === 0 && data.delIds.length === 0) {
+        this.dialogVisible = false
+        return
+      }
       this.subLoading = true
       bandGoods(data).then(res => {
         this.$message({

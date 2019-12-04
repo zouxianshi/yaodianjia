@@ -42,7 +42,7 @@
             <el-input
               v-model.trim="listQuery.erpCode"
               size="small"
-              placeholder="ERP编码"
+              placeholder="商品编码"
             />
           </div>
           <div class="search-item">
@@ -194,7 +194,7 @@
             <template slot-scope="scope">
               <div class="edit-tip">
                 <span style="display:inline-block;margin-right:10px" v-text="scope.row.price" />
-                <i class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'price')" />
+                <i v-if="scope.row.commodityType!==2" class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'price')" />
               </div>
             </template>
           </el-table-column>
@@ -206,7 +206,7 @@
             <template slot-scope="scope">
               <div class="edit-tip">
                 <span style="display:inline-block;margin-right:10px" v-text="scope.row.stock" />
-                <i class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'stock')" />
+                <i v-if="scope.row.commodityType!==2" class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'stock')" />
               </div>
             </template>
           </el-table-column>
