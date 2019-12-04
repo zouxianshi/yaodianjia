@@ -190,4 +190,8 @@ export default {
     height: inherit;
     margin-bottom: 5px;
 }
+.el-image img{
+  width: 55px;
+  height: 55px;
+}
 </style>
