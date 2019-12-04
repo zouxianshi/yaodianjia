@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div v-loading="loading" class="app-container" :class="disabled ? 'x-disabled-container': ''" element-loading-text="加载中">
+    <div v-loading="pageLoading" class="app-container" :class="disabled ? 'x-disabled-container': ''" element-loading-text="加载中">
       <section class="form-box">
         <el-form ref="xForm" :model="xForm" :rules="xRules" size="small" label-width="80px" :disabled="disabled">
           <el-form-item label="活动类型">
@@ -214,7 +214,8 @@ export default {
       callback()
     }
     return {
-      pageLoading: false,
+      pageLoading: false, // 页面加载loading
+      pageStatus: 1, // 1.新增 2.编辑 3.查看
       leaveAction: false,
       check_discount: check_discount,
       check_limit: check_limit,
@@ -301,11 +302,24 @@ export default {
     if (dataid && dataid !== '' && type !== '') {
       this.dataid = dataid
       this.type = type
+      if (_ck === '1') {
+        this.pageStatus = 3
+      } else {
+        this.pageStatus = 2
+      }
       this._getDetailData()
     }
-    if (_ck === '1') {
+    let pageTitle = '限时优惠'
+    if (this.pageStatus === 2) { // pageStatus 1.新增 2.编辑 3.查看
+      pageTitle = '限时优惠编辑'
+    } else if (this.pageStatus === 3) {
+      pageTitle = '限时优惠详情'
       this.disabled = true
+    } else {
+      pageTitle = '限时优惠新建'
     }
+    this.$route.meta.title = pageTitle
+    document.title = pageTitle
   },
   methods: {
     handleTimeChange(val, type) {
@@ -492,7 +506,7 @@ export default {
       return ret
     },
     _getDetailData() {
-      this.loading = true
+      this.pageLoading = true
       const params = {
         id: this.dataid
       }
@@ -532,9 +546,9 @@ export default {
           console.log('this.storeIds', this.storeIds)
           console.log('this.storeNames', this.storeNames)
         }
-        this.loading = false
+        this.pageLoading = false
       }).catch(err => {
-        this.loading = false
+        this.pageLoading = false
         console.log('err', err)
       })
     },
