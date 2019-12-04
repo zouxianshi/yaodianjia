@@ -158,7 +158,7 @@
                 <span>{{ basicForm.mprice }}</span>
               </el-form-item>
 
-              <el-form-item label="限购设置：" prop="limitNum" required>
+              <el-form-item label="限购设置：" prop="limitNum">
                 <span>单个用户限购数量为</span>
                 <el-input v-model="basicForm.limitNum" placeholder="0" size="mini" class="inp_mini" />
                 <span v-show="basicForm.limitNum <= 0 && basicForm.limitNum >= 0" style="margin-left: 5px;margin-right: 10px;color: #e6a23c;">不限购</span>
@@ -258,11 +258,11 @@ export default {
           callback(new Error('请输入最多2位小数的正数'))
         }
       }
-      if (value <= 0) {
-        callback(new Error('最小值必须大于0'))
+      if (value < 0) {
+        callback(new Error('最小值必须大于等于0'))
       }
-      if (value > 99999999) {
-        callback(new Error('最大值不能超过99999999'))
+      if (value > 99999) {
+        callback(new Error('最大值不能超过99999'))
       }
       callback()
     }
@@ -274,8 +274,8 @@ export default {
       if (value !== '' && reg.test(value) || value === '0') {
         callback(new Error('请输入正整数'))
       }
-      if (value > 99999999) {
-        callback(new Error('最大值不能超过99999999'))
+      if (value > 99) {
+        callback(new Error('最大值不能超过99'))
       }
       callback()
     }
@@ -284,8 +284,8 @@ export default {
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
-      if (value !== '' && reg.test(value) || value === '0') {
-        callback(new Error('请输入正整数'))
+      if (value !== '' && reg.test(value)) {
+        callback(new Error('请输入非负整数'))
       }
       if (value > 99999999) {
         callback(new Error('最大值不能超过99999999'))
@@ -395,7 +395,7 @@ export default {
           if (number1 !== '' && reg.test(number1) || number1 === '0') {
             return false
           }
-          if (number1 > 99999999) {
+          if (number1 > 99) {
             return false
           }
           // 子商品的价格验证
@@ -407,10 +407,10 @@ export default {
               return false
             }
           }
-          if (price <= 0) {
+          if (price < 0) {
             return false
           }
-          if (price > 99999999) {
+          if (price > 99999) {
             return false
           }
 
@@ -458,8 +458,6 @@ export default {
     goodsSelectChange(list) {
       this.basicForm.childCommodities = list.map(item => {
         item.id = null
-        // item.price = ''
-        // item.number = 0
         return item
       })
 
@@ -650,6 +648,10 @@ export default {
     handleSaveGroup(row) { // 保存数据
       this.chooseArray = row
       this.chooseGroup = []
+      if (this.chooseArray.length > 1) {
+        this.$message({ type: 'warning', message: '组合商品分组有且只能选择一个' })
+        return false
+      }
       this._filters(this.chooseArray)
       this.groupVisible = false
     },

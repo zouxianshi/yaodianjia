@@ -406,5 +406,7 @@ export default {
 <style>
 .el-table .cell .el-image img{
   text-align: center;
+  width:55px;
+  height: 55px;
 }
 </style>
