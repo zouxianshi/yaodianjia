@@ -251,7 +251,7 @@ export default {
       this.$copyText(herfUrl).then(
         e => {
           console.log(e)
-          this.$message.info('此功能C端暂未开放，敬请期待')
+          this.$message.info('活动功能C端暂未开放，敬请期待')
         },
         e => {
           console.log(e)

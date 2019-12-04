@@ -74,9 +74,9 @@ const router = [
         component: () => import('@/views/marketing/activity/limit-edit'),
         name: 'limitEdit',
         meta: {
-          title: '新建限时优惠',
+          title: '限时优惠',
           noCache: true,
-          activeMenu: '/marketing/activity/create'
+          activeMenu: '/marketing/activity'
         }
       },
       {
