@@ -177,7 +177,7 @@
       </span>
     </div>
 
-    <el-dialog
+    <!-- <el-dialog
       title="选择分组"
       :visible.sync="groupVisible"
       :close-on-click-modal="false"
@@ -197,7 +197,7 @@
         <el-button size="small" @click="groupVisible = false">取 消</el-button>
         <el-button type="primary" size="small" @click="handleSaveGroup">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog
 
       title="选择分类"

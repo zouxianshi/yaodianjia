@@ -89,7 +89,7 @@
     <!--弹窗--选择门店-->
     <dialog-shops ref="shopsDialog" :list="[]" @confirm="shopsSelectChange" />
     <!--弹窗--上下架-->
-    <store :status="status" :choose-num="specData.length" :spec-data="specData" :is-show="dialogVisible" @close="dialogVisible=false" />
+    <store :status="status" :choose-num="specData.length" :spec-data="specData" :is-show="dialogVisible" @close="dialogVisible=false" @complete="dialogVisible=false" />
   </div>
 </template>
 <script>
