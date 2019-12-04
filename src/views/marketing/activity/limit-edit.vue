@@ -75,10 +75,10 @@
           </div>
           <el-form ref="tableForm" :model="tableForm" class="table-form">
             <el-table :data="tableForm.selectedGoods" size="small" style="margin: 20px 0">
-              <el-table-column label="序号" type="index" />
-              <el-table-column label="商品名称" prop="productName" min-width="150px" />
-              <el-table-column label="规格" prop="productSpecName" min-width="100px" />
-              <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" />
+              <el-table-column label="序号" type="index" min-width="50px" align="center" />
+              <el-table-column label="商品名称" prop="productName" min-width="120px" :show-overflow-tooltip="true" />
+              <el-table-column label="规格" prop="productSpecName" min-width="120px" :show-overflow-tooltip="true" />
+              <el-table-column label="生产厂家" prop="productManufacture" min-width="120px" :show-overflow-tooltip="true" />
               <!-- <el-table-column label="原价" prop="mprice" min-width="120px" /> -->
               <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="180px">
                 <template slot-scope="scope">
@@ -410,7 +410,7 @@ export default {
               stockAmount: (goods.stockAmount || '') + ''
               // mprice: goods.mprice // 参考
             }
-            this.tableForm.selectedGoods.unshift(item)
+            this.tableForm.selectedGoods.push(item)
           } else {
             console.log('已存在')
           }
@@ -476,7 +476,7 @@ export default {
             }
           })
         } else {
-          console.log('请完善活动信息!')
+          this.$message.warning('请完善活动信息')
           return false
         }
       })
@@ -595,7 +595,7 @@ export default {
 <style lang="scss">
   .table-form{
     .el-form-item{
-      margin: 15px 0;
+      margin: 16px 0;
     }
     .el-input{
       input {
