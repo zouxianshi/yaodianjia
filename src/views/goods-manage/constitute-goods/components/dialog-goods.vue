@@ -21,6 +21,7 @@
       </div>
       <el-table
         ref="multipleTable"
+        v-loading="loading"
         border
         size="small"
         :data="tableData"
@@ -34,8 +35,6 @@
           <template slot-scope="scope">
             <div
               v-if="scope.row.mainPic && scope.row.mainPic!==''"
-              class="x-img-mini"
-              style="width: 60px; height: 36px"
             >
               <div class="x-image__preview">
                 <el-image
@@ -54,9 +53,15 @@
           </template>-->
         </el-table-column>
         <el-table-column prop="commodityName" label="名称" align="center" min-width="150" />
-        <el-table-column prop="packStandard" label="包装规格" align="center" min-width="150" />
-        <el-table-column prop="price" label="价格" align="center" width="100" />
-        <el-table-column prop="stock" label="库存" align="center" width="100" />
+        <!-- <el-table-column label="规格" align="center" min-width="150">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.specSkuList" :key="index">
+              {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
+            </span>
+          </template>
+        </el-table-column> -->
+        <el-table-column prop="standard" label="规格" align="center" min-width="150" />
+        <el-table-column prop="mprice" label="价格" align="center" width="100" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
@@ -103,7 +108,8 @@
 </template>
 
 <script>
-import { getProductList } from '../../../../api/wxmall'
+import { mapGetters } from 'vuex'
+import { getcommSpecGoodsList } from '../../../../api/constitute-goods'
 export default {
   name: 'DialogGoods',
   props: {
@@ -119,6 +125,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       dialog: {
         visible: false
       },
@@ -135,8 +142,11 @@ export default {
       mySelectList: []
     }
   },
-  created() {},
-  mounted() {},
+  computed: {
+    ...mapGetters(['merCode'])
+  },
+  created() { },
+  mounted() { },
   methods: {
     // 获取数据
     fetchData() {
@@ -144,7 +154,9 @@ export default {
     },
     open() {
       this.dialog.visible = true
+
       this.mySelectList = this.list.slice()
+      console.log('open-this.mySelectList:', this.mySelectList)
       this.fetchData()
     },
     close() {
@@ -165,6 +177,10 @@ export default {
         this.$message({ type: 'warning', message: '请选取商品' })
         return false
       }
+      if (this.mySelectList.length > 5) {
+        this.$message({ type: 'warning', message: '最多只能选取5个商品' })
+        return false
+      }
       this.$emit('confirm', this.mySelectList)
       this.close()
     },
@@ -172,12 +188,12 @@ export default {
       this.reset()
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      // console.log(`每页 ${val} 条`)
       this.pager.size = val
       this.fetchData()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      // console.log(`当前页: ${val}`)
       this.pager.current = val
       this.fetchData()
     },
@@ -192,16 +208,16 @@ export default {
     },
     // 选取store-1.表格选取（全选/反选），更新 mySelectList
     handleSelectAllChange(allList) {
+      console.log('this.tableData:', this.tableData)
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.commodityId === item.commodityId
+          return mItem.specId === item.specId
         })
-        // this.referPrice = item.mprice
-        // item.price = ''
-        // this.number = 0
+
+        // item.number = 1 // 添加的组合商品的子商品数量默认为1
         if (index > -1) {
           if (allList.length > 0) {
-            console.log('已存在' + item.commodityId + ':' + item.commodityName)
+            console.log('已存在' + item.specId + ':' + item.commodityName)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
@@ -215,31 +231,41 @@ export default {
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.commodityId === row.commodityId
+        return mItem.specId === row.specId
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
       } else {
         this.mySelectList.push(row)
       }
+      this.tableData.forEach(item => {
+        // item.number = 1 // 添加的组合商品的子商品数量默认为1
+      })
+      console.log('mySelectList2:', this.mySelectList)
     },
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
       const index = this.tableData.findIndex(item => {
-        return item.commodityId === myItem.commodityId
+        return item.specId === myItem.specId
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
       }
+      this.tableData.forEach(item => {
+        // item.number = 1 // 添加的组合商品的子商品数量默认为1
+      })
       this.mySelectList.splice(index2, 1)
     },
     // 选取store-4. table数据更新时(初次,切页面等), 根据 mySelectList 更新table的列表选中
     updateChecked() {
       const currentCheckedList = []
       this.tableData.forEach(item => {
+        // item.number = 1 // 添加的组合商品的子商品数量默认为1
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.commodityId === item.commodityId
+          return mItem.specId === item.specId
         })
+        // console.log('商品tableData：', this.tableData)
+        // console.log('商品index', index)
         if (index > -1) {
           currentCheckedList.push(item)
         }
@@ -252,22 +278,16 @@ export default {
       this._getTableData()
     },
     _getTableData() {
-      // this.tableData = []
-      /* setTimeout(() => {
-          this.tableData = this.tableArr.slice()
-          this.$nextTick(() => {
-            this.updateChecked()
-          })
-        }, 1000)
-        return false*/
+      this.loading = true
       const params = {
-        storeId: '',
-        keyWord: this.search.keyWord.trim(),
+        searchKeyWord: this.search.keyWord.trim(), // 搜索的关键字
         currentPage: this.pager.current,
         pageSize: this.pager.size,
-        commodityType: 1
+        commodityType: 1,
+        merCode: this.merCode
       }
-      getProductList(params).then(res => {
+
+      getcommSpecGoodsList(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []
           this.pager.total = res.data.totalCount
@@ -277,6 +297,9 @@ export default {
         } else {
           this.tableData = []
         }
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
       })
     }
   }
@@ -378,5 +401,12 @@ export default {
       }
     }
   }
+}
+</style>
+<style>
+.el-table .cell .el-image img{
+  text-align: center;
+  width:55px;
+  height: 55px;
 }
 </style>

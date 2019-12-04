@@ -208,7 +208,7 @@ export default {
             type: 'success'
           })
           this.subLoading = false
-          this.$emit('close')
+          this.$emit('complete')
         }).catch(() => {
           this.subLoading = false
         })
