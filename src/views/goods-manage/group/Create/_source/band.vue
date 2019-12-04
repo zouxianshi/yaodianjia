@@ -192,14 +192,21 @@ export default {
         }
       })
     },
-    handleSelectionChange(row) { // 全选事件
+    handleSelectionChange(allList) { // 全选事件
       // 为了解决翻页之后全选不覆盖上次全选的数据
-      row.map(v => {
-        const index = this.multipleSelection.findIndex(item => {
-          return item.id === v.id
+      this.tableData.map(item => {
+        const index = this.multipleSelection.findIndex(mItem => {
+          return mItem.id === item.id
         })
-        if (index === -1) {
-          this.multipleSelection.push(v)
+        if (index > -1) {
+          if (allList.length > 0) {
+            // console.log('已存在' + item.commodityId + ':' + item.commodityName)
+          } else {
+            // 反选
+            this.multipleSelection.splice(index, 1)
+          }
+        } else {
+          this.multipleSelection.push(item)
         }
       })
     },

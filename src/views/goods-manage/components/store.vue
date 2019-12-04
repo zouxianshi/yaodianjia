@@ -197,13 +197,20 @@ export default {
         this.subLoading = false
       })
     },
-    handleSelectionChangeStore(val) { // 门店列表选中事件 表格全选事件
-      val.map(v => {
-        const index = this.multipleSelection.findIndex(item => {
-          return item.id === v.id
+    handleSelectionChangeStore(allList) { // 门店列表选中事件 表格全选事件
+      this.list.map(item => {
+        const index = this.multipleSelection.findIndex(mItem => {
+          return mItem.id === item.id
         })
-        if (index === -1) {
-          this.multipleSelection.push(v)
+        if (index > -1) {
+          if (allList.length > 0) {
+            // console.log('已存在' + item.commodityId + ':' + item.commodityName)
+          } else {
+            // 反选
+            this.multipleSelection.splice(index, 1)
+          }
+        } else {
+          this.multipleSelection.push(item)
         }
       })
     },
