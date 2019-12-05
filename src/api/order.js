@@ -18,10 +18,3 @@ export function getOrderSetUp(mercode) {
   })
 }
 
-// 获取商家订单配置
-export function getGoodsDetail(mercode) {
-  return request({
-    url: `${config.merGoods}/1.0/comm-detail/${mercode}`,
-    method: 'get'
-  })
-}

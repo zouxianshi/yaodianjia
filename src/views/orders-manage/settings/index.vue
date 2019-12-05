@@ -52,7 +52,7 @@
 <script>
 import mixins from '@/utils/mixin'
 import { mapGetters } from 'vuex'
-import { getOrderSetUp, getGoodsDetail } from '@/api/order'
+import { getOrderSetUp } from '@/api/order'
 export default {
   mixins: [mixins],
   data() {
@@ -73,10 +73,6 @@ export default {
   methods: {
     getData() {
       getOrderSetUp(this.merCode).then(res => {
-        console.log('res.data：', res.data)
-      })
-
-      getGoodsDetail('2233333').then(res => {
         console.log('res.data：', res.data)
       })
     },
