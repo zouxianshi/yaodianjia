@@ -49,7 +49,7 @@
             prop="value"
             :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
           >
-            <el-input v-model="xForm.value" style="width: 200px" placeholder="" />
+            <el-input v-model="xForm.value" style="width: 200px" placeholder="" maxlength="8" />
             <span class="note-text">填写秒杀库存数量，大于0</span>
           </el-form-item>
         </template>
