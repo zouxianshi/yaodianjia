@@ -9,3 +9,17 @@ export function queryStaffList(params) {
     data: params
   })
 }
+
+// 新增客服
+export function addStaff(params) {
+  return request({
+    url: `${config.merGoods}/1.0/csd-staff`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 根据条件查询门店员工列表
+export function queryMerStaffList(params) {
+
+}

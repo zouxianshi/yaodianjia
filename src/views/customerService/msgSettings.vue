@@ -2,7 +2,7 @@
   <div class="msg-settings-container">
     <div class="app-container">
       <div class="table-header">
-        <el-button class="add-btn" type="primary" @click="addBtnClick">添加快捷回复</el-button>
+        <el-button class="add-btn" type="primary" size="mini" @click="addBtnClick">添加快捷回复</el-button>
       </div>
       <msg-table :table-data="tableData" />
     </div>
@@ -72,6 +72,10 @@ export default {
           isOpen: true
         }
       ]
+      this.$message({
+        type: 'success',
+        message: '添加成功'
+      })
     },
     handleClick(tab, event) {
       console.log('tab', tab, 'event', event)
@@ -83,6 +87,7 @@ export default {
 <style scoped lang="scss">
 	.table-header {
 		.add-btn {
+      margin-bottom: 10px;
 			float: right;
 		}
 	}

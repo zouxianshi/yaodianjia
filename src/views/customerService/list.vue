@@ -1,7 +1,10 @@
+<!-- 客服列表页面 -->
+
 <template>
   <div class="customer-service-list-container">
     <div class="app-container">
       <div class="table-header">
+        <!-- 筛选 -->
         <div class="filter">
           <span class="filter-desc">筛选：客服状态</span>
           <el-dropdown @command="handleCommand">
@@ -15,14 +18,12 @@
                 :key="index"
                 :command="item.symbol"
               >{{ item.text }}</el-dropdown-item>
-              <!-- <el-dropdown-item command="online">在线</el-dropdown-item>
-							<el-dropdown-item command="offline">离线</el-dropdown-item>-->
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <el-button class="add" type="primary" size="small" @click="dialogTableVisible = true">添加客服</el-button>
+        <!-- 添加客服 -->
+        <el-button class="add" type="primary" size="mini" @click="dialogTableVisible = true">添加客服</el-button>
         <el-dialog title="添加客服" :visible.sync="dialogTableVisible" width="80%">
-          <!-- <div class="add-server-dialog"> -->
           <div class="search-filter">
             <div class="search-filter-item">
               <span class="search-filter-item-text">员工姓名</span>
@@ -65,24 +66,54 @@
             已选员工：
             <span>张三 0021，李四 0025</span>
           </div>
-          <!-- </div> -->
         </el-dialog>
       </div>
-      <charactor-table :table-data="tableData" />
+
+      <!-- 客服列表 -->
+      <!-- <support-staff :total="total" @pageno-change="pageNoChange" @size-change="pageSizeChange" :table-data="tableData" /> -->
+      <div class="support-staff-comp">
+        <el-table :data="tableData" style="width: 100%">
+          <el-table-column prop="id" label="序号" width="180" />
+          <el-table-column prop="isOnline" label="在线状态" width="180">
+            <template slot-scope="scope">{{ scope.row.isOnline ? '在线' : '不在线' }}</template>
+          </el-table-column>
+          <el-table-column prop="name" label="客服名称" />
+          <el-table-column prop="actions" label="操作">
+            <template slot-scope="scope">
+              <el-button type="text" size="small" @click="viewHistoryMsg(scope.row)">查看消息记录</el-button>
+              <el-button type="text" size="small" @click="delStaff(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          class="pagination"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="10"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import charactorTable from './components/charactorTable'
+import { mapGetters } from 'vuex'
+// import supportStaff from './components/support-staff'
+// import Pagination from '@/components/Pagination'
 import { queryStaffList } from '@/api/customer-service'
 export default {
   components: {
-    charactorTable
+    // supportStaff
+    // Pagination
   },
   props: {},
   data() {
     return {
+      total: 100,
       currentPage4: 4,
       dialogTableVisible: false,
       selectedStatus: '全部',
@@ -101,28 +132,7 @@ export default {
         }
       ],
       activeName: 'first',
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ],
+      tableData: [],
       gridData: [
         {
           date: '2016-05-02',
@@ -147,13 +157,34 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
-    this.queryStaffList()
+    this.queryStaffList({
+      currentPage: 1,
+      merCode: this.merCode,
+      pageSize: 20,
+      empName: '',
+      subOrgName: ''
+    })
   },
   methods: {
-    queryStaffList() {
-      queryStaffList().then(res => {
+    // 进入页面获取客服列表
+    queryStaffList(params) {
+      console.log('this.merCode', this.merCode)
+      queryStaffList(params).then(res => {
         console.log('res', res)
+        const data = []
+        for (let i = 0; i < 58; i++) {
+          data.push({
+            id: '01',
+            isOnline: true,
+            name: '客服名称01',
+            address: '上海市普陀区金沙江路 1518 弄'
+          })
+        }
+        this.tableData = data
       })
     },
     handleClick(tab, e) {
@@ -182,6 +213,28 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
+    },
+    // 主列表页码切换
+    pageNoChange(data) {
+      console.log('emit data', data)
+      this.queryStaffList({
+        currentPage: data.curPageNo,
+        merCode: this.merCode,
+        pageSize: data.curPageSize,
+        empName: '',
+        subOrgName: ''
+      })
+    },
+    // 主列表单页条数切换
+    pageSizeChange(data) {
+      console.log('emit data pagesize', data)
+      this.queryStaffList({
+        currentPage: data.curPageNo,
+        merCode: this.merCode,
+        pageSize: data.curPageSize,
+        empName: '',
+        subOrgName: ''
+      })
     }
   }
 }
@@ -197,6 +250,7 @@ export default {
 	}
 	.table-header {
 		overflow: hidden;
+		margin-bottom: 10px;
 		.filter {
 			float: left;
 

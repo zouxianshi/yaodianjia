@@ -1,11 +1,12 @@
 <template>
   <div class="user-info-item-comp">
-    <div class="user-info-item-name">
+    <span class="user-info-item-name">
       {{ name }}
-    </div>
-    <div class="user-info-item-value">
+    </span>
+    :
+    <span class="user-info-item-value">
       {{ value }}
-    </div>
+    </span>
   </div>
 </template>
 
@@ -28,5 +29,19 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+.user-info-item-comp {
+  height: 36px;
+  border-bottom: 1px solid #eff0f5;
+  padding: 0 10px;
+  line-height: 36px;
+  font-size: 12px;
+
+  .user-info-item-name {
+
+  }
+  .user-info-item-value {
+
+  }
+}
 </style>
