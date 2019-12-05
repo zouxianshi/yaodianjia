@@ -126,9 +126,11 @@ export default {
     },
     handleChooseStore() { // 选择全部
       this.$refs.multipleTable.clearSelection()
-      this.list.map(v => {
-        this.$refs.multipleTable.toggleRowSelection(v)
-      })
+      if (this.isAll) {
+        this.list.map(v => {
+          this.$refs.multipleTable.toggleRowSelection(v)
+        })
+      }
     },
     _loadStoreData() {
       const query = {
