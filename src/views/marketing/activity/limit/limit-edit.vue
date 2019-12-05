@@ -43,12 +43,12 @@
               <el-radio :label="2">减价</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="活动范围">
-            <el-radio-group v-model="xForm.storeRange">
+          <el-form-item label="选取门店">
+            <!-- <el-radio-group v-model="xForm.storeRange">
               <el-radio :label="0">全部门店</el-radio>
               <el-radio style="margin-right:10px" :label="1">部分门店</el-radio>
-            </el-radio-group>
-            <div v-if="xForm.storeRange === 1" class="btn-select-store" @click="toSelectStore"><span v-if="!disabled">选取门店/</span>查看已选门店</div>
+            </el-radio-group> -->
+            <div class="btn-select-store" @click="toSelectStore"><span v-if="!disabled">选取门店/</span>查看已选门店</div>
           </el-form-item>
           <el-form-item label="是否免运">
             <el-radio-group v-model="xForm.freePostFee">
@@ -109,7 +109,7 @@
                     :prop="'selectedGoods.' + scope.$index + '.stockAmount'"
                     :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.stockAmount" style="width:92px" :disabled="disabled" maxlength="8" />
+                    <el-input v-model="scope.row.stockAmount" style="width: 92px" :disabled="disabled" maxlength="8" />
                   </el-form-item>
                 </template>
               </el-table-column>
@@ -255,6 +255,7 @@ export default {
       propGoodsList: [],
       selectedGoods: [],
       selectedStore: [],
+      allStore: false,
       storeIds: [],
       storeNames: [],
       placeText: '不限购'
@@ -376,11 +377,13 @@ export default {
       })
       this.$refs.dialogSet.close()
     },
-    onSelectedStore(list) {
+    onSelectedStore(list, checkedAll) {
+      this.allStore = checkedAll
       if (list && list.length > 0) {
-        this.selectedStore = list
-        this.storeIds = this.selectedStore.map(store => store.id)
-        this.storeNames = this.selectedStore.map(store => store.stName)
+        this.selectedStore = list.slice()
+        console.log('selectedStore-----', this.selectedStore)
+        // this.storeIds = this.selectedStore.map(store => store.id)
+        // this.storeNames = this.selectedStore.map(store => store.stName)
       }
     },
     toSelectedGoods() {
@@ -463,7 +466,7 @@ export default {
             this.$message.warning('活动结束时间必须大于开始时间')
             return false
           }
-          if (this.xForm.storeRange === 1 && this.storeIds.length === 0) {
+          if (!this.allStore && this.selectedStore.length === 0) {
             this.$message.warning('请选取门店')
             return false
           }
@@ -473,11 +476,11 @@ export default {
           }
           this.$refs.tableForm.validate((valid) => {
             if (valid) {
-              const data = {
-                storeIds: this.xForm.storeRange === 1 && this.storeIds.length > 0 ? this.storeIds.join(',') : '',
-                storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
-                  : ''
-              }
+              // const data = {
+              //   storeIds: this.xForm.storeRange === 1 && this.storeIds.length > 0 ? this.storeIds.join(',') : '',
+              //   storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
+              //     : ''
+              // }
               if (this.xForm.type === 12) { // 限时秒杀
                 const resultIndex = this.tableForm.selectedGoods.findIndex(item => {
                   console.log('goods item', item)
@@ -488,7 +491,16 @@ export default {
                   return false
                 }
               }
-
+              const data = {
+                allStore: this.allStore,
+                stores: this.allStore ? [] : this.selectedStore.map((item) => {
+                  return {
+                    storeId: item.id,
+                    storeName: item.stName
+                  }
+                })
+              }
+              console.log('data', data)
               this.leaveAction = true
               if (this.xForm.id && this.xForm.id !== '') {
                 this._updateActivity(data)
@@ -543,19 +555,14 @@ export default {
           this.xForm = Object.assign(data, {
             'dateRange': [res.data.startTime, res.data.endTime]
           })
-          this.storeIds = this.xForm.storeIds && this.xForm.storeIds !== '' ? this.xForm.storeIds.split(',') : []
-          this.storeNames = this.xForm.storeNames && this.xForm.storeNames !== '' ? this.xForm.storeNames.split(',') : []
-          if (this.storeIds && this.storeIds.length > 0) {
-            this.selectedStore = this.storeIds.map((v, index) => {
-              const store = {
-                id: v,
-                stName: this.storeNames[index] ? this.storeNames[index] : ''
-              }
-              return store
-            })
-          }
-          console.log('this.storeIds', this.storeIds)
-          console.log('this.storeNames', this.storeNames)
+          this.selectedStore = data.stores.map(v => {
+            const store = {
+              id: v.storeId,
+              stName: v.storeName
+            }
+            return store
+          })
+          console.log('this.selectedStore', this.selectedStore)
         }
         this.pageLoading = false
       }).catch(err => {
@@ -572,7 +579,6 @@ export default {
         startTime: this.xForm.startTime,
         endTime: this.xForm.endTime,
         mode: this.xForm.mode,
-        storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
         items: this.tableForm.selectedGoods,
         storeIds: data.storeIds,
@@ -597,7 +603,6 @@ export default {
         startTime: this.xForm.startTime,
         endTime: this.xForm.endTime,
         mode: this.xForm.mode,
-        storeRange: this.xForm.storeRange,
         freePostFee: this.xForm.freePostFee,
         items: this.formatItems(this.tableForm.selectedGoods),
         storeIds: data.storeIds,

@@ -52,32 +52,42 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        style="text-align: right;margin-top: 20px"
-        :current-page="pager.current"
-        :page-sizes="[10, 15, 20, 50]"
-        :page-size="pager.size"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pager.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <div style="display: flex;">
+        <el-checkbox v-model="checkedAll" style="margin-top: 22px;" @change="onChangeAll">选取全部门店</el-checkbox>
+        <el-pagination
+          background
+          style="text-align: right;margin-top: 20px;flex: 1"
+          :current-page="pager.current"
+          :page-sizes="[1, 15, 20, 50]"
+          :page-size="pager.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pager.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
       <div class="result-section">
         <div class="blank-line" />
         <div class="title">
-          <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
-          <span v-else-if="editable">请选取门店</span>
+          <div v-if="checkedAll" style="color: #333">已选取了全部门店</div>
+          <template v-else>
+            <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
+            <span v-else-if="editable">请选取门店</span>
+          </template>
         </div>
         <div class="label-line">
-          <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-            <span v-text="mItem.stName" />
-            <i
-              v-if="editable"
-              class="icon el-icon-close"
-              @click.stop="removeMyselectItem(mItem, index2)"
-            />
-          </div>
+          <template v-if="!checkedAll">
+            <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
+              <span v-text="mItem.stName" />
+              <i
+                v-if="editable"
+                title="移除"
+                class="icon el-icon-close"
+                @click.stop="removeMyselectItem(mItem, index2)"
+              />
+            </div>
+          </template>
+
         </div>
       </div>
     </div>
@@ -114,13 +124,14 @@ export default {
       },
       pager: {
         current: 1,
-        size: 20,
+        size: 1,
         total: 0
       },
       searchParams: {
         keyWord: ''
       },
       tableData: [],
+      checkedAll: false, // 全选按钮
       multipleSelection: [],
       mySelectList: [],
       TheCitys: ['北京', '天津', '上海', '重庆']
@@ -161,12 +172,13 @@ export default {
       }
     },
     confirm() {
-      if (this.mySelectList && this.mySelectList.length === 0) {
+      console.log('on-change', this.mySelectList)
+      console.log('on-change', this.checkedAll)
+      if (this.mySelectList && this.mySelectList.length === 0 && !this.checkedAll) {
         this.$message({ type: 'warning', message: '请选取门店' })
         return false
       }
-      console.log('on-change', this.mySelectList)
-      this.$emit('on-change', this.mySelectList)
+      this.$emit('on-change', this.mySelectList, this.checkedAll)
       this.close()
     },
     handlerClose() {
@@ -181,6 +193,14 @@ export default {
       console.log(`当前页: ${val}`)
       this.pager.current = val
       this.fetchData()
+    },
+    onChangeAll(val) { // 是否全选
+      // if (val) {
+      //   this.toggleSelection(this.tableData, true)
+      // } else {
+      //   this.$refs.multipleTable.clearSelection()
+      // }
+      this.mySelectList = []
     },
     toggleSelection(rows) {
       if (rows) {
@@ -232,6 +252,10 @@ export default {
     },
     // 选取store-4. table数据更新时(初次,切页面等), 根据 mySelectList 更新table的列表选中
     updateChecked() {
+      if (this.checkedAll) {
+        this.onChangeAll(true)
+        return
+      }
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
