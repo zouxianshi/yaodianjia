@@ -86,7 +86,7 @@
                     :prop="'selectedGoods.' + scope.$index + '.discount'"
                     :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.discount" style="width:92px" :disabled="disabled" maxlength="11" />
+                    <el-input v-model="scope.row.discount" style="width:100px" :disabled="disabled" maxlength="11" />
                     <span v-if="xForm.mode===1" style="margin-left: 5px">折</span>
                     <span v-else style="margin-left: 5px">元</span>
                   </el-form-item>
