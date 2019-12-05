@@ -86,7 +86,7 @@
                     :prop="'selectedGoods.' + scope.$index + '.discount'"
                     :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.discount" style="width:80px" :disabled="disabled" maxlength="11" />
+                    <el-input v-model="scope.row.discount" style="width:92px" :disabled="disabled" maxlength="11" />
                     <span v-if="xForm.mode===1" style="margin-left: 5px">折</span>
                     <span v-else style="margin-left: 5px">元</span>
                   </el-form-item>
@@ -98,7 +98,7 @@
                     :prop="'selectedGoods.' + scope.$index + '.limitAmount'"
                     :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.limitAmount" style="width:80px;text-align:center" :disabled="disabled" maxlength="9" />
+                    <el-input v-model="scope.row.limitAmount" style="width:92px;text-align:center" :disabled="disabled" maxlength="8" />
                     <span v-show="scope.row.limitAmount ==='0'" style="margin-left: 5px;color: #e6a23c;">不限购</span>
                   </el-form-item>
                 </template>
@@ -109,11 +109,11 @@
                     :prop="'selectedGoods.' + scope.$index + '.stockAmount'"
                     :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
                   >
-                    <el-input v-model="scope.row.stockAmount" style="width:80px" :disabled="disabled" maxlength="9" />
+                    <el-input v-model="scope.row.stockAmount" style="width:92px" :disabled="disabled" maxlength="8" />
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column v-if="!disabled" label="操作" prop="name" width="100px" align="center">
+              <el-table-column v-if="!disabled" label="操作" prop="name" width="90px" align="center">
                 <template slot-scope="scope">
                   <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
                 </template>
@@ -141,8 +141,8 @@
 import {
   mapGetters
 } from 'vuex'
-import dialogSet from './_source/dialog-set'
-import dialogGoods from './_source/dialog-goods'
+import dialogSet from '../_source/dialog-set'
+import dialogGoods from '../_source/dialog-goods'
 import dialogStore from '@/components/Dialog/DialogStore'
 import { checkNumberdouble } from '@/utils/validate'
 
@@ -478,6 +478,17 @@ export default {
                 storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
                   : ''
               }
+              if (this.xForm.type === 12) { // 限时秒杀
+                const resultIndex = this.tableForm.selectedGoods.findIndex(item => {
+                  console.log('goods item', item)
+                  return item.limitAmount > item.stockAmount
+                })
+                if (resultIndex > -1) {
+                  this.$message.warning('秒杀的限购数不能大于当前设置的库存数')
+                  return false
+                }
+              }
+
               this.leaveAction = true
               if (this.xForm.id && this.xForm.id !== '') {
                 this._updateActivity(data)
