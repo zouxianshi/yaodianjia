@@ -127,6 +127,7 @@ export default {
     handleChooseStore() { // 选择全部
       this.$refs.multipleTable.clearSelection()
       if (this.isAll) {
+        this.multipleSelection = []
         this.list.map(v => {
           this.$refs.multipleTable.toggleRowSelection(v)
         })
