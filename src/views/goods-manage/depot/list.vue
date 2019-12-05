@@ -18,7 +18,7 @@
         </a>
         <!-- <el-button type="" size="small" icon="el-icon-download" @click="handleExport">导出</el-button> -->
       </div>
-      <section @keydown.enter="getList">
+      <section @keydown.enter="handleQuery">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品名称</span>
@@ -51,7 +51,7 @@
             </el-select>
           </div>
           <div class="search-item">
-            <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="primary" size="small" @click="handleQuery">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
@@ -307,6 +307,10 @@ export default {
         auditStatus: 1,
         groupId: '' // 分组id
       }
+      this.getList()
+    },
+    handleQuery() {
+      this.listQuery.currentPage = 1
       this.getList()
     },
     getList() {
