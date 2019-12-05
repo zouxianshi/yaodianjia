@@ -492,6 +492,7 @@ const mixin = {
             type: 'error'
           })
           this.limit_err = true
+          return
         } else {
           if (value <= 0) {
             this.$message({
