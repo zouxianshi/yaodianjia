@@ -144,6 +144,34 @@ class InnerCtor {
             disabled: this.get('marketing.marketing-manager'),
           }
         ]
+      },
+      {
+        name: '客服管理',
+        icon: 'icongoods',
+        path: '/customerService',
+        disabled: true,
+        children: [
+          {
+            name: '客服列表',
+            path: '/customerService/list',
+            disabled: true
+          },
+          {
+            name: '快捷消息设置',
+            path: '/customerService/msgSettings',
+            disabled: true
+          },
+          {
+            name: '客服咨询',
+            path: '/customerService/consultation',
+            disabled: true
+          },
+          {
+            name: '历史消息',
+            path: '/customerService/historyMsg',
+            disabled: true
+          },
+        ]
       }
     ]
   }
