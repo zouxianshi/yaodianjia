@@ -63,6 +63,9 @@
         <el-table-column label="门店地址">
           <template slot-scope="scope">
             <span v-if="scope.row.address">
+              {{ scope.row.province }}
+              {{ scope.row.city }}
+              {{ scope.row.area }}
               {{ scope.row.address }}
             </span>
             <span v-else style="color: red">未配置</span>
@@ -186,6 +189,9 @@
         <el-table-column label="门店地址" show-overflow-tooltip>
           <template slot-scope="scope">
             <span v-if="scope.row.address">
+              {{ scope.row.province }}
+              {{ scope.row.city }}
+              {{ scope.row.area }}
               {{ scope.row.address }}
             </span>
             <span v-else style="color: red">未配置</span>
