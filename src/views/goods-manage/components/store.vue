@@ -200,21 +200,23 @@ export default {
       })
     },
     handleSelectionChangeStore(allList) { // 门店列表选中事件 表格全选事件
-      this.list.map(item => {
-        const index = this.multipleSelection.findIndex(mItem => {
-          return mItem.id === item.id
-        })
-        if (index > -1) {
-          if (allList.length > 0) {
+      if (!this.isAll) {
+        this.list.map(item => {
+          const index = this.multipleSelection.findIndex(mItem => {
+            return mItem.id === item.id
+          })
+          if (index > -1) {
+            if (allList.length > 0) {
             // console.log('已存在' + item.commodityId + ':' + item.commodityName)
-          } else {
+            } else {
             // 反选
-            this.multipleSelection.splice(index, 1)
+              this.multipleSelection.splice(index, 1)
+            }
+          } else {
+            this.multipleSelection.push(item)
           }
-        } else {
-          this.multipleSelection.push(item)
-        }
-      })
+        })
+      }
     },
     handleSelect(selection, row) { // 单个选择
       const index = this.multipleSelection.findIndex(v => {
