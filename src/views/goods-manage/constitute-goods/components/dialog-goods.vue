@@ -40,7 +40,6 @@
                 <el-image
                   fit="scale-down"
                   :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[scope.row.imageUrl]"
                 />
               </div>
             </div>
@@ -284,6 +283,7 @@ export default {
         currentPage: this.pager.current,
         pageSize: this.pager.size,
         commodityType: 1,
+        auditStatus: 1,
         merCode: this.merCode
       }
 
