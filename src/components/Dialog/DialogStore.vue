@@ -30,7 +30,7 @@
         <!-- <div v-if="searchParams.keyWord === ''" slot="empty">
           当前无上线门店，先去维护<el-button type="text" @click="toStoreSetting">上线门店</el-button>吧
         </div> -->
-        <el-table-column v-if="editable" type="selection" align="center" width="50" />
+        <el-table-column v-if="editable" type="selection" align="center" width="50" :disabled="checkedAll" />
         <el-table-column property="stCode" label="门店编码" width="150" show-overflow-tooltip />
         <el-table-column label="门店名称" min-width="150" :show-overflow-tooltip="true">
           <template slot-scope="scope">
@@ -41,7 +41,7 @@
             <span v-else>{{ scope.row.stName }}</span>
           </template>
         </el-table-column>
-        <el-table-column property="address" label="门店地址" :show-overflow-tooltip="true">>
+        <el-table-column property="address" label="门店地址" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             <span v-text="`${_isProvince(scope.row.province)}${scope.row.city}${scope.row.area}${scope.row.address}`" />
           </template>
