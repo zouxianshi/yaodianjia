@@ -61,6 +61,7 @@
           </el-form-item>
           <el-form-item label="限购商品总数" label-width="120px" prop="limitAmount">
             <el-input v-model="xForm.limitAmount" class="input-center" maxlength="8" style="width: 100px;" />
+            <span v-show="xForm.limitAmount ==='0' || xForm.limitAmount === 0" style="display:inline-block;width: 45px;margin-left: 5px;color: #e6a23c;">不限购</span>
             <span class="note-grey" style="margin-left: 15px;">1个用户在该活动下可多次购买的商品总件数，输入0代表不限购</span>
           </el-form-item>
         </el-form>
