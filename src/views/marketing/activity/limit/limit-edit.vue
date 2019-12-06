@@ -243,7 +243,7 @@ export default {
       xRules: {
         name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
         startTime: [{ required: true, message: '请选择时间段', trigger: 'change' }],
-        limitAmount: [{ required: true, validator: check_limit, trigger: 'blur' }]
+        limitAmount: [{ validator: check_limit, trigger: 'blur' }]
       },
       tableForm: {
         selectedGoods: []
