@@ -107,6 +107,11 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'DialogGoods',
   props: {
+    allStore: {
+      // 是否全选
+      type: Boolean,
+      default: false
+    },
     list: {
       type: Array,
       default: () => []
@@ -151,6 +156,7 @@ export default {
     },
     open() {
       this.dialog.visible = true
+      this.checkedAll = this.allStore
       if (this.list && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
@@ -170,6 +176,7 @@ export default {
       this.searchParams = {
         keyWord: ''
       }
+      this.checkedAll = false
     },
     confirm() {
       console.log('on-change', this.mySelectList)
