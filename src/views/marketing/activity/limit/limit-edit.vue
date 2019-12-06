@@ -579,7 +579,7 @@ export default {
         endTime: this.xForm.endTime,
         mode: this.xForm.mode,
         freePostFee: this.xForm.freePostFee,
-        limitAmount: this.xForm.limitAmount,
+        limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
         items: this.formatItems(this.tableForm.selectedGoods)
       }
       const params = Object.assign(data, formData)
@@ -602,7 +602,7 @@ export default {
         endTime: this.xForm.endTime,
         mode: this.xForm.mode,
         freePostFee: this.xForm.freePostFee,
-        limitAmount: this.xForm.limitAmount,
+        limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
         items: this.formatItems(this.tableForm.selectedGoods)
       }
       const params = Object.assign(data, formData)
