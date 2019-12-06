@@ -59,6 +59,11 @@
               <span class="note-grey" style="margin-left: 15px;">选择是表示免配送费或快递费用</span>
             </template>
           </el-form-item>
+          <el-form-item label="限购商品总数" label-width="108px" prop="limitAmount">
+            <el-input v-model="xForm.limitAmount" class="input-center" maxlength="8" style="width: 100px;" placeholder="0" />
+            <span v-show="xForm.limitAmount ==='0' || xForm.limitAmount === 0 || xForm.limitAmount === ''" style="display:inline-block;width: 45px;margin-left: 5px;color: #e6a23c;">不限购</span>
+            <span class="note-grey" style="margin-left: 15px;">1个用户在该活动下可多次购买的商品总件数，输入0代表不限购</span>
+          </el-form-item>
         </el-form>
         <div class="table-box">
           <div class="muti-set">
@@ -73,7 +78,7 @@
               </el-form-item>
             </el-form>
           </div>
-          <el-form ref="tableForm" :model="tableForm" class="table-form">
+          <el-form ref="tableForm" :model="tableForm" class="table-form" size="small">
             <el-table :data="tableForm.selectedGoods" size="small" style="margin: 20px 0">
               <el-table-column label="序号" type="index" min-width="50px" align="center" />
               <el-table-column label="商品名称" prop="productName" min-width="120px" :show-overflow-tooltip="true" />
@@ -133,7 +138,7 @@
     </div>
     <dialog-set v-if="!disabled" ref="dialogSet" :type="mutiSetType" @on-change="onSetChange" @on-reset="onSetReset" />
     <dialog-goods ref="dialogGoods" :editable="!disabled" :list="propGoodsList" @on-change="onSelectedGoods" />
-    <dialog-store ref="dialogStore" :editable="!disabled" :list="selectedStore" @on-change="onSelectedStore" />
+    <dialog-store ref="dialogStore" :all-store="allStore" :editable="!disabled" :list="selectedStore" @on-change="onSelectedStore" />
   </div>
 </template>
 
@@ -233,19 +238,13 @@ export default {
         endTime: '',
         mode: 1, // 优惠模式: 1-折扣, 2-减价
         storeRange: 0, // 门店活动范围: 0-全部, 1-指定门店
-        freePostFee: false // 是否免邮 免运费配送
+        freePostFee: false, // 是否免邮 免运费配送
+        limitAmount: ''
       },
       xRules: {
-        name: [{
-          required: true,
-          message: '请输入活动名称',
-          trigger: 'blur'
-        }],
-        startTime: [{
-          required: true,
-          message: '请选择时间段',
-          trigger: 'change'
-        }]
+        name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
+        startTime: [{ required: true, message: '请选择时间段', trigger: 'change' }],
+        limitAmount: [{ validator: check_limit, trigger: 'blur' }]
       },
       tableForm: {
         selectedGoods: []
@@ -484,7 +483,7 @@ export default {
               if (this.xForm.type === 12) { // 限时秒杀
                 const resultIndex = this.tableForm.selectedGoods.findIndex(item => {
                   console.log('goods item', item)
-                  return item.limitAmount > item.stockAmount
+                  return parseFloat(item.limitAmount) > parseFloat(item.stockAmount)
                 })
                 if (resultIndex > -1) {
                   this.$message.warning('秒杀的限购数不能大于当前设置的库存数')
@@ -580,9 +579,8 @@ export default {
         endTime: this.xForm.endTime,
         mode: this.xForm.mode,
         freePostFee: this.xForm.freePostFee,
-        items: this.tableForm.selectedGoods,
-        storeIds: data.storeIds,
-        storeNames: data.storeNames
+        limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
+        items: this.formatItems(this.tableForm.selectedGoods)
       }
       const params = Object.assign(data, formData)
       addActivity(params).then(res => {
@@ -604,9 +602,8 @@ export default {
         endTime: this.xForm.endTime,
         mode: this.xForm.mode,
         freePostFee: this.xForm.freePostFee,
-        items: this.formatItems(this.tableForm.selectedGoods),
-        storeIds: data.storeIds,
-        storeNames: data.storeNames
+        limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
+        items: this.formatItems(this.tableForm.selectedGoods)
       }
       const params = Object.assign(data, formData)
       updateActivity(params).then(res => {
@@ -632,6 +629,12 @@ export default {
         padding: 0 8px;
         text-align: center;
       }
+    }
+  }
+  .input-center {
+    input {
+      padding: 0 8px;
+      text-align: center;
     }
   }
 </style>
