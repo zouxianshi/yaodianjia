@@ -29,7 +29,7 @@
                 <div class="desc">药店加为商家提供不同节日氛围的DM单模板；丰富的DM单组件，支持商家自己编辑设计专属单页，打破服务号每周四次的图文推送限制，实现不限次数的定向精准推送给顾客，并可以通过好友和朋友圈裂变传播。</div>
               </div>
               <div class="li-right">
-                <el-button class="btn-create" type="primary" size="mini" disabled @click="toCreate(2)">创建</el-button>
+                <el-button class="btn-create" type="primary" size="mini" @click="toCreate(2)">创建</el-button>
               </div>
             </li>
             <li class="li-item">

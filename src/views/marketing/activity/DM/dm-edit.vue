@@ -15,7 +15,7 @@
               <span class="text">主页名称</span>
             </div>
             <div class="m-body">
-              <el-form ref="xForm1" :rules="xRules1" :model="xForm1">
+              <el-form ref="xForm1" :rules="xRules1" :model="xForm1" label-width="auto">
                 <el-form-item label="名称" prop="name">
                   <el-input
                     v-model="xForm1.name"
@@ -36,22 +36,38 @@
               </div>
             </div>
           </div>
-          <div class="set-module app-title" :class="{'active': xFormSet.formName==='xForm1'}">
+          <div class="set-module app-coupon" :class="{'active': xFormSet.formName==='xForm2'}">
             <div class="m-header">
               <span class="text">优惠券设置</span>
             </div>
             <div class="m-body">
-              <el-form ref="xForm1" class="form-title" :rules="xRules1" :model="xForm1">
-                <el-form-item label="设置标题" prop="name" style="position: relative; margin-bottom: 50px">
+              <el-form ref="xForm2" class="form-title" :rules="xRules2" :model="xForm2" label-width="auto">
+                <el-form-item label="设置标题" prop="name">
                   <el-input
-                    v-model="xForm1.name"
+                    v-model="xForm2.name"
                     type="text"
-                    size="small"
                     style="width: 280px;"
-                    placeholder="请输入主页名称"
-                    maxlength="20"
+                    placeholder="少于5个字"
+                    maxlength="5"
                   />
-                  <p class="form-notes">建议不超过20字</p>
+                </el-form-item>
+                <el-form-item label="优惠券一" prop="name">
+                  <div class="x-item-add">
+                    <img src="">
+                    <i class="el-icon-plus icon-add" />
+                  </div>
+                </el-form-item>
+                <el-form-item label="优惠券二" prop="name">
+                  <div class="x-item-add">
+                    <img src="">
+                    <i class="el-icon-plus icon-add" />
+                  </div>
+                </el-form-item>
+                <el-form-item label="优惠券三" prop="name">
+                  <div class="x-item-add">
+                    <img src="">
+                    <i class="el-icon-plus icon-add" />
+                  </div>
                 </el-form-item>
               </el-form>
               <div class="btn-line">
@@ -60,55 +76,137 @@
                   class="btn-submit"
                   plain
                   size="small"
-                  @click="submitForm('xForm1')"
+                  @click="submitForm('xForm2')"
                 >提交</el-button>
               </div>
             </div>
           </div>
-          <div class="set-module app-title" :class="{'active': xFormSet.formName==='xForm1'}">
+          <div class="set-module app-goods-recomend" :class="{'active': xFormSet.formName==='xForm3'}">
             <div class="m-header">
               <span class="text">爆款推荐</span>
             </div>
             <div class="m-body">
+              <el-form ref="xForm1" class="form-title" :rules="xRules3" :model="xForm3" label-width="auto">
+                <el-form-item label="设置标题" prop="name">
+                  <el-input
+                    v-model="xForm3.name"
+                    type="text"
+                    style="width: 280px;"
+                    placeholder="少于5个字"
+                    maxlength="5"
+                  />
+                </el-form-item>
+                <el-form-item label="选取商品" prop="name">
+                  <ul class="m-goods-list webkit-scroll">
+                    <template v-if="xForm3.selectGoodsList && xForm3.selectGoodsList.length>0">
+                      <li v-for="(goods, $index) in xForm3.selectGoodsList" :key="$index" class="goods-item">
+                        <div class="cover-box">
+                          <div class="cover" :style="`backgroundImage: url('${showImg(goods.mainPic)}')`" />
+                          <div class="btn-remove" title="移除" @click.stop="removeGoods($index, 'xForm3')" />
+                        </div>
+                        <div class="caption" :title="goods.commodityName" v-text="goods.commodityName">修正VE软胶</div>
+                        <div class="price">
+                          <span class="current">
+                            <span class="sign">￥</span>{{ goods.price }}
+                          </span>
+                          <span v-if="goods.price !== goods.mprice" class="original">
+                            <span class="sign">￥</span>{{ goods.mprice }}
+                          </span>
+                        </div>
+                      </li>
+                    </template>
+                    <li class="goods-item x-item-add" style="width: 88px;height: 88px;" @click.stop="toSelectGoods('xForm3')">
+                      <div class="el-icon-plus  icon-add" />
+                    </li>
+                  </ul>
+                </el-form-item>
+              </el-form>
               <div class="btn-line">
                 <el-button
                   type="primary"
                   class="btn-submit"
                   plain
                   size="small"
-                  @click="submitForm('xForm1')"
+                  @click="submitForm('xForm3')"
                 >提交</el-button>
               </div>
             </div>
           </div>
-          <div class="set-module app-title" :class="{'active': xFormSet.formName==='xForm1'}">
+          <div class="set-module app-goods-limit" :class="{'active': xFormSet.formName==='xForm4'}">
             <div class="m-header">
               <span class="text">限时购</span>
             </div>
             <div class="m-body">
+              <el-form ref="xForm4" class="form-title" :rules="xRules4" :model="xForm4" label-width="auto">
+                <el-form-item label="设置标题" prop="name">
+                  <el-input
+                    v-model="xForm4.name"
+                    type="text"
+                    style="width: 280px;"
+                    placeholder="少于5个字"
+                    maxlength="5"
+                  />
+                  <p class="note-text">注：限时优惠模块，自动实时同步进行中的限时优惠信息。该模块需要先在营销模块设置限时优惠活动，且活动需为进行中，否则会显示空白。</p>
+                </el-form-item>
+              </el-form>
               <div class="btn-line">
                 <el-button
                   type="primary"
                   class="btn-submit"
                   plain
                   size="small"
-                  @click="submitForm('xForm1')"
+                  @click="submitForm('xForm4')"
                 >提交</el-button>
               </div>
             </div>
           </div>
-          <div class="set-module app-title" :class="{'active': xFormSet.formName==='xForm1'}">
+          <div class="set-module app-goods-topic" :class="{'active': xFormSet.formName==='xForm5'}">
             <div class="m-header">
               <span class="text">新春专享</span>
             </div>
             <div class="m-body">
+              <el-form ref="xForm5" class="form-title" :rules="xRules5" :model="xForm5" label-width="auto">
+                <el-form-item label="设置标题" prop="name">
+                  <el-input
+                    v-model="xForm5.name"
+                    type="text"
+                    style="width: 280px;"
+                    placeholder="少于5个字"
+                    maxlength="5"
+                  />
+                </el-form-item>
+                <el-form-item label="选取商品" prop="name">
+                  <ul class="m-goods-list webkit-scroll">
+                    <template v-if="xForm5.selectGoodsList && xForm5.selectGoodsList.length>0">
+                      <li v-for="(goods, $index) in xForm5.selectGoodsList" :key="$index" class="goods-item">
+                        <div class="cover-box">
+                          <div class="cover" :style="`backgroundImage: url('${showImg(goods.mainPic)}')`" />
+                          <div class="btn-remove" title="移除" @click.stop="removeGoods($index, 'xForm5')" />
+                        </div>
+                        <div class="caption" :title="goods.commodityName" v-text="goods.commodityName">修正VE软胶</div>
+                        <div class="price">
+                          <span class="current">
+                            <span class="sign">￥</span>{{ goods.price }}
+                          </span>
+                          <span v-if="goods.price !== goods.mprice" class="original">
+                            <span class="sign">￥</span>{{ goods.mprice }}
+                          </span>
+                        </div>
+                      </li>
+                    </template>
+                    <li class="goods-item x-item-add" style="width: 88px;height: 88px;" @click.stop="toSelectGoods('xForm5')">
+                      <div class="el-icon-plus  icon-add" />
+                    </li>
+                  </ul>
+                </el-form-item>
+              </el-form>
               <div class="btn-line">
                 <el-button
                   type="primary"
                   class="btn-submit"
                   plain
                   size="small"
-                  @click="submitForm('xForm1')"
+                  @click="submitForm('xForm5')"
                 >提交</el-button>
               </div>
             </div>
@@ -119,12 +217,19 @@
         <!-- 分页器 -->
       </section>
     </div>
+    <!--弹窗--商品选取-->
+    <dialog-goods ref="goodsDialog" :list="currentSelectList" @confirm="goodsSelectChange" />
   </div>
 </template>
 
 <script>
 // import h5Template1 from './_source/h5Template/template-1'
+import dialogGoods from '@/components/Dialog/DialogGoods'
 export default {
+  name: 'DmEdit',
+  components: {
+    dialogGoods
+  },
   data() {
     return {
       pageLoading: false,
@@ -137,32 +242,79 @@ export default {
       xForm1: {
         name: ''
       },
+      xForm2: {
+        name: '',
+        couponList: ''
+      },
+      xForm3: {
+        name: '',
+        selectGoodsList: []
+      },
+      xForm4: {
+        name: ''
+      },
+      xForm5: {
+        name: '',
+        selectGoodsList: []
+      },
       xRules1: {
         name: [
-          { required: true, message: '请输入主页名称', trigger: 'blur' }
+          { required: true, message: '请输入标题', trigger: 'blur' }
+        ]
+      },
+      xRules2: {
+        name: [
+          { required: true, message: '请输入标题', trigger: 'blur' }
+        ]
+      },
+      xRules3: {
+        name: [
+          { required: true, message: '请输入标题', trigger: 'blur' }
         ]
       },
       xRules4: {
-        imgUrl: [
-          { required: true, message: '请上传图片', trigger: 'blur' }
+        name: [
+          { required: true, message: '请输入标题', trigger: 'blur' }
         ]
       },
       xRules5: {
-        imgUrl: [
-          { required: true, message: '请上传图片', trigger: 'blur' }
-        ]
-      },
-      xRules7: {
-        imgUrl: [
-          { required: true, message: '请上传图片', trigger: 'blur' }
+        name: [
+          { required: true, message: '请输入标题', trigger: 'blur' }
         ]
       }
+    }
+  },
+  computed: {
+    currentSelectList() {
+      let ret = []
+      if (this[this.xFormSet.formName] && this[this.xFormSet.formName].selectGoodsList && this[this.xFormSet.formName].selectGoodsList.length > 0) {
+        ret = this[this.xFormSet.formName].selectGoodsList
+      }
+      return ret
     }
   },
   created() {
   },
   methods: {
-
+    // 选取商品
+    toSelectGoods(formName) {
+      this.xFormSet.formName = formName
+      console.log('this.currentSelectList', this.currentSelectList)
+      this.$nextTick(_ => {
+        this.$refs.goodsDialog.open()
+      })
+    },
+    // 移除商品
+    removeGoods(index, formName) {
+      this[formName].selectGoodsList.splice(index, 1)
+    },
+    goodsSelectChange(list) {
+      console.log('list', list)
+      // const currentForm = this[this.xFormSet.formName]
+      this[this.xFormSet.formName].selectGoodsList = list
+      this.$refs.goodsDialog.close()
+      // this.xForm2.couponList = list
+    }
   }
 }
 </script>
@@ -226,7 +378,7 @@ export default {
           .cover {
             width: 100%;
             height: 100%;
-            // background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100% 100%;
+            background: no-repeat center/100% 100%;
           }
           .btn-remove {
             position: absolute;
@@ -235,7 +387,8 @@ export default {
             z-index: 20;
             width: 14px;
             height: 14px;
-            // background: url('../../assets/image/h5/close.png') no-repeat center/100% 100%;
+            background: url('../../../../assets/image/h5/close.png') no-repeat center/100% 100%;
+            cursor: pointer;
           }
         }
         .caption {
@@ -270,22 +423,6 @@ export default {
           }
         }
       }
-      .item-add {
-        display: flex;
-        margin-right: 0;
-        width: 88px;
-        height: 88px;
-        background: rgba(255, 255, 255, 1);
-        border: 1px solid rgba(220, 223, 230, 1);
-        border-radius: 5px;
-        cursor: pointer;
-        .icon-add {
-          margin: auto;
-          width: 31px;
-          height: 31px;
-          // background: url('../../assets/image/h5/add.png') no-repeat center/100% 100%;
-        }
-      }
     }
   }
   .form-title {
@@ -303,6 +440,31 @@ export default {
   .module-activity,
   .module-activity2 {
     width: 382px;
+  }
+  .note-text{
+    margin-top: 10px;
+    font-size: 14px;
+    color: #999999;
+    line-height: 1.3;
+  }
+}
+
+.x-item-add {
+  display: flex;
+  width: 60px;
+  height: 60px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  &:hover{
+    border-color: #409eff;
+  }
+  .icon-add {
+    margin: auto;
+    font-size: 20px;
+    color: #8c939d;
   }
 }
 </style>
