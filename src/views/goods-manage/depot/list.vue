@@ -44,7 +44,7 @@
           </div>
           <div class="search-item">
             <span class="label-name">商品来源</span>
-            <el-select v-model="listQuery.origin" placeholder="选择商品来源" size="small" @change="getList">
+            <el-select v-model="listQuery.origin" placeholder="选择商品来源" size="small" @change="handleQuery">
               <el-option label="全部" value="" />
               <el-option label="海典商品库" value="1" />
               <el-option label="自建商品库" value="2" />

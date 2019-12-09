@@ -483,6 +483,16 @@ const mixin = {
         }
       }
     },
+    handleLimitChange(row, index) { // 设置
+      if (row.limitType === 0) {
+        this.limit_err = false
+      } else {
+        var value = row.limit
+        if (value) {
+          this.input_checkLimit(row, index)
+        }
+      }
+    },
     input_checkLimit(row, index) {
       var value = row.limit
       if (row.limitType === 1) {

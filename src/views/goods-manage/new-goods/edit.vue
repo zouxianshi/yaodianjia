@@ -379,12 +379,14 @@
                         <el-input v-model.trim="item.mprice" placeholder="输入价格" @blur="input_checkMprice(item,index)" />
                       </el-form-item>
                       <el-form-item label="限购">
-                        <el-radio-group v-model="item.limitType">
-                          <el-radio :label="0">不限购</el-radio>
-                          <el-radio :label="1">
-                            <span style="color:#333">单个用户限购数量为&nbsp;<el-input v-model="item.limit" maxlength="8" :disabled="item.limitType===0" style="width:100px" @blur="input_checkLimit(item,index)" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span></span>
-                          </el-radio>
-                        </el-radio-group>
+                        <div style="padding-top:10px;">
+                          <el-radio-group v-model="item.limitType" @change="handleLimitChange(item,index)">
+                            <el-radio :label="0">不限购</el-radio>
+                            <el-radio :label="1">
+                              <span style="color:#333">单个用户限购数量为&nbsp;<el-input v-model="item.limit" maxlength="8" :disabled="item.limitType===0" style="width:100px" @blur="input_checkLimit(item,index)" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span></span>
+                            </el-radio>
+                          </el-radio-group>
+                        </div>
                       </el-form-item>
                       <el-form-item label="商品图片">
                         <span slot="label"><span class="tip">*</span> 商品图片</span>
