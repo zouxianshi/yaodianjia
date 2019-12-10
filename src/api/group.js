@@ -99,7 +99,7 @@ export function updateSort(params) {
 // 绑定商品
 export function bandGoods(params) {
   return request({
-    url: `${config.merGoods}/1.0/comm-relate/_group`,
+    url: `${config.merGoods}/1.0/comm-relate/_groupChoose`,
     method: 'post',
     data: params
   })
@@ -112,5 +112,14 @@ export function getPreGroupList(params) {
     method: 'post',
     data: params,
     noMerCode: true
+  })
+}
+
+// 查询商品
+export function getGoodsList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-relate/list`,
+    method: 'post',
+    data: params
   })
 }

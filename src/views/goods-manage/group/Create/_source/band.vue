@@ -8,6 +8,7 @@
       :visible.sync="dialogVisible"
       width="50%"
       append-to-body
+      :lock-scroll="true"
       :close-on-click-modal="false"
     >
       <div style="margin-bottom:10px">
@@ -45,11 +46,14 @@
       </section>
       <div>
         <el-table
+          ref="multipleTable"
           v-loading="loading"
           :data="tableData"
           stripe
           style="width: 100%"
-          @selection-change="handleSelectionChange"
+          max-height="300"
+          @select-all="handleSelectionChange"
+          @select="handleSelect"
         >
           <el-table-column
             type="selection"
@@ -96,7 +100,7 @@
             small
             :current-page="listQuery.currentPage"
             background
-            :page-size="8"
+            :page-size="10"
             layout="total, prev, pager, next"
             :total="total"
             @current-change="handleCurrentChange"
@@ -105,15 +109,15 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="handleSubBand">确 定</el-button>
+        <el-button size="small" type="primary" :loading="subLoading" @click="handleSubBand">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getGoodsList } from '@/api/depot'
-import { bandGoods } from '@/api/group'
+import { bandGoods, getGoodsList } from '@/api/group'
 import { mapGetters } from 'vuex'
+import { findArray } from '@/utils/index'
 export default {
   props: {
     info: {
@@ -128,6 +132,7 @@ export default {
       dialogVisible: false,
       loading: false,
       multipleSelection: [],
+      chooseArray: [],
       tableData: [],
       subLoading: false,
       listQuery: {
@@ -135,24 +140,29 @@ export default {
         pageSize: 10,
         name: '',
         manufacture: '',
-        onlyCom: true
+        onlyCom: true,
+        typeId: ''
       },
+      is_choose: [],
       total: 0
     }
   },
   computed: {
-    ...mapGetters(['name'])
+    ...mapGetters(['name', 'merCode'])
   },
   created() {
-    this.getList()
   },
   methods: {
     getList() {
       this.loading = true
+      this.listQuery.typeId = this.info.id
       getGoodsList(this.listQuery).then(res => {
         const { data, totalCount } = res.data
         if (data) {
           this.tableData = data
+          setTimeout(() => {
+            this.setChoose()
+          }, 500)
           this.total = totalCount
         }
         this.loading = false
@@ -160,11 +170,61 @@ export default {
         this.loading = false
       })
     },
-    handleSelectionChange(row) {
-      this.multipleSelection = row
+    setChoose() {
+      this.tableData.forEach(v => {
+        if (v.currentType) {
+          // const findIndex = findArray(this.is_choose, { id: v.id })
+          const findIndex = this.is_choose.findIndex(item => {
+            return item.id === v.id
+          })
+          if (findIndex === -1) { // 不存在的放入储存的数组中
+            this.is_choose.push(v)
+            this.multipleSelection.push(v)
+          }
+          this.$refs.multipleTable.toggleRowSelection(v)
+        } else {
+          const index = this.multipleSelection.findIndex(item => {
+            return item.id === v.id
+          })
+          if (index > -1) {
+            this.$refs.multipleTable.toggleRowSelection(v)
+          }
+        }
+      })
+    },
+    handleSelectionChange(allList) { // 全选事件
+      // 为了解决翻页之后全选不覆盖上次全选的数据
+      this.tableData.map(item => {
+        const index = this.multipleSelection.findIndex(mItem => {
+          return mItem.id === item.id
+        })
+        if (index > -1) {
+          if (allList.length > 0) {
+            // console.log('已存在' + item.commodityId + ':' + item.commodityName)
+          } else {
+            // 反选
+            this.multipleSelection.splice(index, 1)
+          }
+        } else {
+          this.multipleSelection.push(item)
+        }
+      })
+    },
+    handleSelect(selection, row) { // 单个选择
+      const index = this.multipleSelection.findIndex(v => {
+        return v.id === row.id
+      })
+      if (index > -1) {
+        this.multipleSelection.splice(-1)
+      } else {
+        this.multipleSelection.push(row)
+      }
     },
     handleShow() {
+      this.listQuery.currentPage = 1
+      this.multipleSelection = []
       this.getList()
+      this.is_choose = []
       this.dialogVisible = true
     },
     resetQuery() {
@@ -175,15 +235,28 @@ export default {
     },
     handleSubBand() {
       const data = {
-        'ids': [],
-        'typeIds': [
-          this.info.id
-        ],
+        'addIds': [],
+        'delIds': [],
+        'empty': true,
+        'merCode': this.merCode,
+        'typeId': this.info.id,
         'userName': this.name
       }
       this.multipleSelection.map(v => {
-        data.ids.push(v.id)
+        if (!v.currentType) {
+          data.addIds.push(v.id)
+        }
       })
+      this.is_choose.map(v => {
+        const findIndex = findArray(this.multipleSelection, { id: v.id })
+        if (findIndex === -1) {
+          data.delIds.push(v.id)
+        }
+      })
+      if (data.addIds.length === 0 && data.delIds.length === 0) {
+        this.dialogVisible = false
+        return
+      }
       this.subLoading = true
       bandGoods(data).then(res => {
         this.$message({

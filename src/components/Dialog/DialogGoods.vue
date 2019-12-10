@@ -139,6 +139,8 @@ export default {
       this.dialog.visible = true
       if (this.list && this.list.length > 0) {
         this.mySelectList = this.list.slice()
+      } else {
+        this.mySelectList = []
       }
       this.fetchData()
     },
@@ -154,6 +156,7 @@ export default {
       this.search = {
         keyWord: ''
       }
+      this.mySelectList = []
     },
     confirm() {
       if (this.mySelectList && this.mySelectList.length === 0) {

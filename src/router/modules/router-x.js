@@ -70,22 +70,42 @@ const router = [
         }
       },
       {
-        path: 'activity/limit-edit',
-        component: () => import('@/views/marketing/activity/limit-edit'),
-        name: 'limitEdit',
-        meta: {
-          title: '新建限时优惠',
-          noCache: true,
-          activeMenu: '/marketing/activity/create'
-        }
-      },
-      {
         path: 'activity',
         component: () => import('@/views/marketing/activity/index'),
         name: 'activity',
         meta: {
           title: '活动管理',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+        }
+      },
+      {
+        path: 'activity/limit-edit',
+        component: () => import('@/views/marketing/activity/limit/limit-edit'),
+        name: 'limitEdit',
+        meta: {
+          title: '限时优惠',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/dm-template',
+        component: () => import('@/views/marketing/activity/DM/template'),
+        name: 'template',
+        meta: {
+          title: 'DM单模板',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/dm-edit',
+        component: () => import('@/views/marketing/activity/DM/dm-edit'),
+        name: 'dmEdit',
+        meta: {
+          title: 'DM单模板',
+          noCache: true,
+          activeMenu: '/marketing/activity'
         }
       }
     ]

@@ -1,15 +1,13 @@
 <template>
   <el-dialog
+    title="选取门店"
     append-to-body
-    class="m-dialog dialog-store"
+    class="m-dialog m-dialog-store"
     :visible.sync="dialog.visible"
     :close-on-click-modal="false"
     width="900px"
     @close="handlerClose"
   >
-    <div class="modal-header">
-      <div class="title">选取门店</div>
-    </div>
     <div class="modal-body">
       <div class="md-search">
         <div class="search-item" @keyup.enter="forSearch()">
@@ -22,7 +20,7 @@
       <el-table
         ref="multipleTable"
         border
-        size="mini"
+        size="small"
         :data="tableData"
         style="width: 100%;margin-top: 20px"
         max-height="256"
@@ -32,46 +30,64 @@
         <!-- <div v-if="searchParams.keyWord === ''" slot="empty">
           当前无上线门店，先去维护<el-button type="text" @click="toStoreSetting">上线门店</el-button>吧
         </div> -->
-        <el-table-column type="selection" align="center" width="50" />
+        <el-table-column v-if="editable" type="selection" :selectable="selectable" align="center" width="50" />
         <el-table-column property="stCode" label="门店编码" width="150" show-overflow-tooltip />
-        <el-table-column label="门店名称">
+        <el-table-column label="门店名称" min-width="150" :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" class="item">
+            <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" style="margin-top: 8px;margin-right:32px;">
               <span>{{ scope.row.stName }}</span>
               <!--              <span>说的是大三大萨达萨达撒打撒大撒的萨达萨达撒</span>-->
             </el-badge>
             <span v-else>{{ scope.row.stName }}</span>
           </template>
         </el-table-column>
-        <el-table-column property="address" label="门店地址" show-overflow-tooltip />
-        <el-table-column property="mobile" label="门店电话" show-overflow-tooltip />
+        <el-table-column property="address" label="门店地址" :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            <span v-text="`${_isProvince(scope.row.province)}${scope.row.city}${scope.row.area}${scope.row.address}`" />
+          </template>
+        </el-table-column>
+        <el-table-column property="mobile" label="门店电话" :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            <div style="line-height: 40px;">{{ scope.row.mobile }}</div>
+          </template>
+        </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        style="text-align: right;margin-top: 20px"
-        :current-page="pager.current"
-        :page-sizes="[10, 15, 20, 50]"
-        :page-size="pager.size"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pager.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <div style="display: flex;">
+        <el-checkbox v-model="checkedAll" style="margin-top: 22px;" @change="onChangeAll">选取全部门店</el-checkbox>
+        <el-pagination
+          background
+          style="text-align: right;margin-top: 20px;flex: 1"
+          :current-page="pager.current"
+          :page-sizes="[10, 15, 20, 50]"
+          :page-size="pager.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pager.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
       <div class="result-section">
         <div class="blank-line" />
         <div class="title">
-          <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
-          <span v-else>请选取门店</span>
+          <div v-if="checkedAll" style="color: #333">已选取了全部门店</div>
+          <template v-else>
+            <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
+            <span v-else-if="editable">请选取门店</span>
+          </template>
         </div>
         <div class="label-line">
-          <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-            <span v-text="mItem.stName" />
-            <i
-              v-if="editable"
-              class="icon el-icon-close"
-              @click.stop="removeMyselectItem(mItem, index2)"
-            />
-          </div>
+          <template v-if="!checkedAll">
+            <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
+              <span v-text="mItem.stName" />
+              <i
+                v-if="editable"
+                title="移除"
+                class="icon el-icon-close"
+                @click.stop="removeMyselectItem(mItem, index2)"
+              />
+            </div>
+          </template>
+
         </div>
       </div>
     </div>
@@ -91,6 +107,11 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'DialogGoods',
   props: {
+    allStore: {
+      // 是否全选
+      type: Boolean,
+      default: false
+    },
     list: {
       type: Array,
       default: () => []
@@ -115,8 +136,10 @@ export default {
         keyWord: ''
       },
       tableData: [],
+      checkedAll: false, // 全选按钮
       multipleSelection: [],
-      mySelectList: []
+      mySelectList: [],
+      TheCitys: ['北京', '天津', '上海', '重庆']
     }
   },
   computed: {
@@ -133,6 +156,7 @@ export default {
     },
     open() {
       this.dialog.visible = true
+      this.checkedAll = this.allStore
       if (this.list && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
@@ -152,15 +176,24 @@ export default {
       this.searchParams = {
         keyWord: ''
       }
+      this.checkedAll = false
     },
     confirm() {
-      if (this.mySelectList && this.mySelectList.length === 0) {
-        this.$message({ type: 'warning', message: '请选取商品' })
+      console.log('on-change', this.mySelectList)
+      console.log('on-change', this.checkedAll)
+      if (this.mySelectList && this.mySelectList.length === 0 && !this.checkedAll) {
+        this.$message({ type: 'warning', message: '请选取门店' })
         return false
       }
-      console.log('on-change', this.mySelectList)
-      this.$emit('on-change', this.mySelectList)
+      this.$emit('on-change', this.mySelectList, this.checkedAll)
       this.close()
+    },
+    selectable() {
+      if (this.checkedAll) {
+        return false
+      } else {
+        return true
+      }
     },
     handlerClose() {
       this.reset()
@@ -174,6 +207,15 @@ export default {
       console.log(`当前页: ${val}`)
       this.pager.current = val
       this.fetchData()
+    },
+    onChangeAll(val) { // 是否全选
+      // if (val) {
+      //   this.toggleSelection(this.tableData, true)
+      // } else {
+      //   this.$refs.multipleTable.clearSelection()
+      // }
+      this.mySelectList = []
+      this.$refs.multipleTable.clearSelection()
     },
     toggleSelection(rows) {
       if (rows) {
@@ -225,6 +267,10 @@ export default {
     },
     // 选取store-4. table数据更新时(初次,切页面等), 根据 mySelectList 更新table的列表选中
     updateChecked() {
+      if (this.checkedAll) {
+        this.onChangeAll(true)
+        return
+      }
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
@@ -248,6 +294,7 @@ export default {
       const params = {
         merCode: this.merCode,
         onlineStatus: 1, // integer($int32) 是否上线门店（0非上线门店，1上线门店）
+        status: 1, // 状态（0停用，1启用）
         searchKey: this.searchParams.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size,
@@ -264,67 +311,28 @@ export default {
           this.tableData = []
         }
       })
+    },
+    _isProvince(val) {
+      const index = this.TheCitys.findIndex(name => {
+        return val === name
+      })
+      if (index > -1) {
+        return ''
+      }
+      return val
     }
   }
 }
 </script>
-
-<style lang="scss">
-.dialog-store {
-  .el-dialog__header {
-    height: 0;
-    padding: 0;
-  }
-  .el-dialog__body {
-    padding: 0;
-  }
-
-  .el-dialog__headerbtn {
-    top: 8px;
-    right: 12px;
-  }
-  .el-table thead th {
-    height: 40px;
-  }
-  .img-wrap{
-    margin: 0 auto;
-    width: 50px;
-    height: 32px;
-    img{
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
-</style>
 <style lang="scss" scoped>
-.dialog-store {
-  .modal-header {
-    height: 40px;
-    line-height: 40px;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: left;
-    background: #f2f2f2;
-
-    .title {
-      margin-left: 20px;
-      font-size: 16px;
-      color: #333;
-    }
-  }
-
+.m-dialog-store {
   .modal-body {
     box-sizing: border-box;
-    padding: 20px;
-
     .md-search {
       display: flex;
-
       .search-item {
         flex: 0 0 auto;
       }
-
       .search-btns {
         margin-left: 20px;
       }
@@ -364,6 +372,10 @@ export default {
         }
       }
     }
+  }
+  .note-text{
+    margin-top: 24px;
+    color: #888888;
   }
 }
 </style>

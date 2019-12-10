@@ -17,7 +17,8 @@ const mixin = {
       specsList: [], // 规格
       mprice_err: false,
       erpCode_err: false,
-      barCode_err: false
+      barCode_err: false,
+      limit_err: false
     }
   },
   watch: {
@@ -177,6 +178,12 @@ const mixin = {
           v.valueList = []
           v.commodityId = this.basicForm.id
           v.merCode = this.merCode
+          // 限购数据处理
+          if (v.limitType === 0) {
+            v.limitNum = 0
+          } else {
+            v.limitNum = v.limit
+          }
           for (const key in v) {
             if (v.hasOwnProperty(key)) {
               const val = key.split('_')
@@ -227,6 +234,13 @@ const mixin = {
             })
             flag = false
           }
+          if (flag && v.limitType === 1 && !v.limit) {
+            this.$message({
+              message: '请输入限购值',
+              type: 'error'
+            })
+            flag = false
+          }
         })
         if (flag) {
           // return
@@ -269,6 +283,13 @@ const mixin = {
           if (this.barCode_err) {
             this.$message({
               message: '规格中存在条码输入非法值，请输入正确的值',
+              type: 'error'
+            })
+            return
+          }
+          if (this.limit_err) {
+            this.$message({
+              message: '规格中存在限购输入非法制，请输入正确的值',
               type: 'error'
             })
             return
@@ -398,6 +419,7 @@ const mixin = {
                 row.erpCode = v.erpCode
                 row.isCheck = true // 数据做标识  选中
                 row.picUrl = v.picUrl
+                row.limitNum = v.limitNum
                 this.$set(this.specsForm.specs, findIndex, row)
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
               }
@@ -411,7 +433,7 @@ const mixin = {
       return findIndex > -1
     },
     handleAddSpec() { // 增加 规格
-      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '' }
+      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '', limitType: 0, limit: '' }
       this.specsList.map(v => {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
@@ -460,6 +482,29 @@ const mixin = {
           this.specsForm.specsData.splice(findIndex, 1)
         }
       }
+    },
+    input_checkLimit(row, index) {
+      var value = row.limit
+      if (row.limitType === 1) {
+        if (value > 0 && value % 1 !== 0) {
+          this.$message({
+            message: '请输入大于0的整数',
+            type: 'error'
+          })
+          this.limit_err = true
+          return
+        } else {
+          if (value <= 0) {
+            this.$message({
+              message: '请输入大于0的整数',
+              type: 'error'
+            })
+            this.limit_err = true
+            return
+          }
+        }
+      }
+      this.limit_err = false
     },
     input_checkMprice(row, index) { // 校验价格
       var value = row.mprice

@@ -10,12 +10,20 @@
         <span class="label-name">配送订单：</span>
         <el-checkbox v-model="distributionOrder" :true-label="1" :false-label="0" @change="changeOrderPayset">货到付款</el-checkbox>
       </div>
-      <div style="margin-top: 10px">
+      <el-alert
+        type="warning"
+        :closable="false"
+        style="line-height:20px;margin-top:10px"
+      >
+        后台所有订单都支持在线支付，自提订单支持在线支付及到店支付。<br>
+        此处选择商户自行配置，提示：为了避免顾客与商家之间关于付款或退款的纠纷，建议商家送货上门的订单不要选择货到付款
+      </el-alert>
+      <!--<div style="margin-top: 10px">
         <h6 style="line-height: 20px">
           后台所有订单都支持在线支付，自提订单支持在线支付及到店支付。<br>
           此处选择商户自行配置，提示：为了避免顾客与商家之间关于付款或退款的纠纷，建议商家送货上门的订单不要选择货到付款
         </h6>
-      </div>
+      </div>-->
     </div>
     <h3 style="margin-top: 30px">下单付款方式</h3>
     <div class="border" style="display:inline-block;width: 100%;margin-top: 10px">
@@ -405,7 +413,7 @@ export default {
       })
     },
     setStatus() {
-      this.loading = true
+      // this.loading = true
       this.form.merCode = this.merCode
       if (!this.form.merchantCode || !this.form.payKey || !this.form.merchantCertificate) {
         this.$message({
@@ -415,8 +423,10 @@ export default {
         })
         if (this.form.status === 0) {
           this.form.status = 1
+          this.data.status = 1
         } else {
           this.form.status = 0
+          this.data.status = 0
         }
         return
       }
@@ -440,12 +450,15 @@ export default {
             type: 'success',
             duration: 5 * 1000
           })
+          this.data.status = this.form.status
         } else {
           this.loading = false
           if (this.form.status === 0) {
             this.form.status = 1
+            this.data.status = 1
           } else {
             this.form.status = 0
+            this.data.status = 0
           }
           this.$message({
             message: res.msg,

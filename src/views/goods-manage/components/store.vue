@@ -20,9 +20,18 @@
             <el-button type="primary" size="mini" @click="_loadStoreData">查询</el-button>
           </div>
         </div>
-        <el-table ref="multipleTable" :data="list" stripe style="width: 100%" @selection-change="handleSelectionChangeStore">
+        <el-table
+          ref="multipleTable"
+          :data="list"
+          stripe
+          style="width: 100%"
+          max-height="300"
+          @select-all="handleSelectionChangeStore"
+          @select="handleSelect"
+        >
           <el-table-column
             type="selection"
+            :selectable="checkSelectable"
             width="55"
           />
           <el-table-column label="门店编号" prop="stCode" />
@@ -50,7 +59,7 @@
         <ul class="choose-box">
           <template v-if="!isAll&&multipleSelection.length!==0">
             <li v-for="(item,index) in multipleSelection" :key="index">
-              <el-tag type="info" size="small" closable @close="handleTagClose(item)">{{ item.stName }}</el-tag>
+              <el-tag type="info" size="small" closable @close="handleTagClose(item)"><span :title="item.stName">{{ item.stName }}</span></el-tag>
             </li>
           </template>
           <template v-else>
@@ -103,6 +112,7 @@ export default {
   watch: {
     isShow(val) {
       if (val) {
+        this.multipleSelection = []
         this._loadStoreData()
       }
     }
@@ -111,26 +121,48 @@ export default {
 
   },
   methods: {
+    checkSelectable() {
+      return !this.isAll
+    },
     handleChooseStore() { // 选择全部
-      this.list.map(v => {
-        this.$refs.multipleTable.toggleRowSelection(v)
-      })
+      this.$refs.multipleTable.clearSelection()
+      if (this.isAll) {
+        this.multipleSelection = []
+        this.list.map(v => {
+          this.$refs.multipleTable.toggleRowSelection(v)
+        })
+      }
     },
     _loadStoreData() {
       const query = {
         searchKey: this.storeCode,
         currentPage: this.currentPage,
         onlineStatus: 1,
-        status: 1
+        status: 1,
+        pageSize: 10
       }
       getStoreList(query).then(res => {
         const { data, totalCount } = res.data
         this.list = data
         this.total = totalCount
         if (this.isAll) { // 选择全部  选中门店
-          this.list.map(v => {
-            this.$refs.multipleTable.toggleRowSelection(v)
-          })
+          setTimeout(() => {
+            this.list.map(v => {
+              this.$refs.multipleTable.toggleRowSelection(v)
+            })
+          }, 300)
+        } else {
+          setTimeout(() => {
+            // 翻页 如果存在之前选中的就选中
+            this.list.map(v => {
+              const index = this.multipleSelection.findIndex(item => {
+                return item.id === v.id
+              })
+              if (index > -1) {
+                this.$refs.multipleTable.toggleRowSelection(v)
+              }
+            })
+          }, 300)
         }
       })
     },
@@ -163,15 +195,47 @@ export default {
           message: '操作成功',
           type: 'success'
         })
-        this.$emit('close')
+        this.$emit('complete')
       }).catch(() => {
         this.subLoading = false
       })
     },
-    handleSelectionChangeStore(val) { // 门店列表选中事件
-      this.multipleSelection = val
+    handleSelectionChangeStore(allList) { // 门店列表选中事件 表格全选事件
+      if (!this.isAll) {
+        this.list.map(item => {
+          const index = this.multipleSelection.findIndex(mItem => {
+            return mItem.id === item.id
+          })
+          if (index > -1) {
+            if (allList.length > 0) {
+            // console.log('已存在' + item.commodityId + ':' + item.commodityName)
+            } else {
+            // 反选
+              this.multipleSelection.splice(index, 1)
+            }
+          } else {
+            this.multipleSelection.push(item)
+          }
+        })
+      }
+    },
+    handleSelect(selection, row) { // 单个选择
+      const index = this.multipleSelection.findIndex(v => {
+        return v.id === row.id
+      })
+      if (index > -1) {
+        this.multipleSelection.splice(index, 1)
+      } else {
+        this.multipleSelection.push(row)
+      }
     },
     handleTagClose(row) {
+      const index = this.multipleSelection.findIndex(v => {
+        return v.id === row.id
+      })
+      if (index > -1) {
+        this.multipleSelection.splice(index, 1)
+      }
       this.$refs.multipleTable.toggleRowSelection(row)
     },
     handleCanle() {
@@ -208,6 +272,22 @@ export default {
       li{
           display: inline-block;
           margin-right: 10px;
+          margin-bottom: 10px;
+          .el-tag{
+            display: flex;
+            align-items: center;
+            span{
+              display: inline-block;
+              overflow: hidden;
+              max-width: 200px;
+              text-overflow:ellipsis;
+            }
+
+          }
+           .el-tag__close{
+              display: inline-block;
+              margin-top: 5px;
+            }
       }
   }
 }

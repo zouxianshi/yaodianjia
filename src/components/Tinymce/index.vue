@@ -88,7 +88,6 @@ export default {
   },
   watch: {
     value(val) {
-      console.log('watch', val)
       if (!this.hasChange && this.hasInit) {
         this.$nextTick(() =>
           window.tinymce.get(this.tinymceId).setContent(val || ''))
@@ -127,11 +126,13 @@ export default {
         selector: `#${this.tinymceId}`,
         language: this.languageTypeList['zh'],
         height: this.height,
+        min_height: 350,
+        max_height: 650,
         body_class: 'panel-body ',
         object_resizing: false,
         toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
         menubar: this.menubar,
-        removed_menuitems: 'spellchecker',
+        removed_menuitems: 'spellchecker,paste,copy,cut,pastetext',
         plugins: plugins,
         readonly: this.readonly ? 1 : 0,
         end_container_on_empty_block: true,

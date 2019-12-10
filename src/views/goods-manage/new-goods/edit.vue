@@ -81,17 +81,17 @@
                   </el-input>
                 </el-form-item>
                 <el-form-item label="长宽高：" style="display:inline-block" prop="long">
-                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" maxlength="2" style="width:160px">
+                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:160px">
                     <template slot="append">m</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" label-width="0px" style="display:inline-block" prop="width">
-                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" maxlength="2" style="width:160px">
+                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
                     <template slot="append">m</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" label-width="0px" style="display:inline-block" prop="height">
-                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" maxlength="2" style="width:160px">  <template slot="append">m*</template>
+                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" style="width:160px">  <template slot="append">m*</template>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="单位：" prop="unit">
@@ -256,6 +256,14 @@
                       </template>
                     </template>
                   </el-table-column>
+                  <el-table-column label="限购数量">
+                    <template slot-scope="scope">
+                      <span v-text="scope.row.limitNum?scope.row.limitNum:'不限购'" />
+                      <template v-if="!is_query">
+                        <edit-table title="限购数量" keys="limitNum" max-length="8" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                      </template>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="商品图片">
                     <template slot-scope="scope">
                       <el-upload
@@ -315,6 +323,14 @@
                           </template>
                         </template>
                       </el-table-column>
+                      <el-table-column label="限购数量">
+                        <template slot-scope="scope">
+                          <span v-text="scope.row.limitNum?scope.row.limitNum:'不限购'" />
+                          <template v-if="!is_query">
+                            <edit-table title="限购数量" keys="limitNum" max-length="8" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
+                          </template>
+                        </template>
+                      </el-table-column>
                       <el-table-column label="商品图片">
                         <template slot-scope="scope">
                           <el-upload
@@ -361,6 +377,14 @@
                       <el-form-item>
                         <span slot="label"><span class="tip">*</span> 价格</span>
                         <el-input v-model.trim="item.mprice" placeholder="输入价格" @blur="input_checkMprice(item,index)" />
+                      </el-form-item>
+                      <el-form-item label="限购">
+                        <el-radio-group v-model="item.limitType">
+                          <el-radio :label="0">不限购</el-radio>
+                          <el-radio :label="1">
+                            <span style="color:#333">单个用户限购数量为&nbsp;<el-input v-model="item.limit" maxlength="8" :disabled="item.limitType===0" style="width:100px" @blur="input_checkLimit(item,index)" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span></span>
+                          </el-radio>
+                        </el-radio-group>
                       </el-form-item>
                       <el-form-item label="商品图片">
                         <span slot="label"><span class="tip">*</span> 商品图片</span>
@@ -520,8 +544,8 @@ export default {
           // }
         }
         if (rule.field === 'long' || rule.field === 'height' || rule.field === 'width') {
-          if ((value && value <= 0) || value > 999) {
-            return callback(new Error('长宽高必须大于0 小于999'))
+          if ((value && value <= 0) || value >= 100) {
+            return callback(new Error('长宽高必须大于0 小于100'))
           }
         }
         callback()
@@ -1259,7 +1283,7 @@ export default {
     }
   }
   .spec-list{
-    width: 500px;
+    width: 550px;
     border-radius:5px;
     border: 1px solid #c9c9cc;
     margin-left: 80px;
