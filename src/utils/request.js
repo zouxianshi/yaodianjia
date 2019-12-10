@@ -35,9 +35,14 @@ service.interceptors.request.use(
       if (config.noMerCode) {
         delete authParams.merCode
       }
-      config.data = {
-        ...config.data,
-        ...authParams
+      // 兼容请求参数为数组的情况
+      if (typeof config.data === 'object' && config.data.length) {
+        config.data = [...config.data]
+      } else {
+        config.data = {
+          ...config.data,
+          ...authParams
+        }
       }
     }
 

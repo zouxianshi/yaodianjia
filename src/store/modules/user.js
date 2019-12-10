@@ -37,6 +37,9 @@ const mutations = {
   },
   SET_RESLIST: (state, resList) => {
     state.resList = resList
+  },
+  SET_ACCOUNT: (state, id) => {
+    state.account = id
   }
 }
 
@@ -46,12 +49,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-        const { account, avatarPath, merCode, resList, superAdmin } = data
+        console.log('login data', data)
+        const { account, avatarPath, merCode, resList, superAdmin, id } = data
         commit('SET_ROLES', superAdmin ? ['admin'] : resList)
         commit('SET_RESLIST', resList)
         commit('SET_NAME', account)
         commit('SET_AVATAR', avatarPath)
         commit('SET_MERCODE', merCode)
+        commit('SET_USERID', id)
         MC.setConfig({
           userInfo: data || {}
         })

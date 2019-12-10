@@ -7,7 +7,7 @@
         <el-input id size="mini" class="search-input" type="search" name placeholder="请输入客户名称" />
       </div>
       <div class="user-list">
-        <user v-for="(item,index) in userList" :key="index" />
+        <user v-for="(item,index) in conversationList" :key="index" />
       </div>
     </div>
     <div class="chat-window">
@@ -75,7 +75,12 @@ export default {
     user,
     listItem
   },
-  props: {},
+  props: {
+    // conversationList: {
+    //   type: Array,
+    //   default: null
+    // }
+  },
   data() {
     return {
       // 当前选中的标签页标识
@@ -85,7 +90,7 @@ export default {
       // 左侧用户列表
       userList: new Array(10),
       // 当前用户聊天记录
-      curUserChatRecord: [
+      conversationList: [
         {
           date: '2019-06-07',
           list: [
@@ -174,6 +179,9 @@ export default {
         }
       ]
     }
+  },
+  created() {
+    console.log('this.conversationList', this.conversationList)
   },
   methods: {
     // 右侧标签页切换

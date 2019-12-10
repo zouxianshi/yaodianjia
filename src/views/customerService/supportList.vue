@@ -69,9 +69,9 @@
             <el-table-column prop="id" label="员工编码" width="120" />
             <el-table-column prop="empName" label="姓名" width="120" />
             <el-table-column prop="name" label="性别" width="120">
-              <!-- <template slot-scope="scope"> -->
-              <!-- <span>{{ sexEnum[scope.row.sex] }}</span> -->
-              <!-- </template> -->
+              <template slot-scope="scope">
+                <span>{{ sexEnum[scope.row.sex] }}</span>
+              </template>
             </el-table-column>
             <el-table-column prop="mobile" label="手机号" width="120" />
             <el-table-column prop="post" label="职位" width="120" />
@@ -108,21 +108,21 @@
         <el-table :data="merSupportTableData.list" style="width: 100%">
           <el-table-column prop="id" label="序号" width="180" />
           <el-table-column prop="isOnline" label="在线状态" width="180">
-            <!-- <template slot-scope="scope">
+            <template slot-scope="scope">
               <div v-if="scope.row.onlineStatus === 1" class="online-text">在线</div>
               <div v-else class="offline-text">不在线</div>
-            </template>-->
+            </template>
           </el-table-column>
           <el-table-column prop="name" label="客服名称" />
           <el-table-column prop="actions" label="操作">
-            <!-- <template slot-scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" size="small" @click="viewHistoryMsg(scope.row)">查看消息记录</el-button>
               <el-button type="text" size="small" @click="toggleSupportStaffStatus(scope.row)">
                 {{
                   scope.row.status === 1 ? '停用' : '启用'
                 }}
               </el-button>
-            </template>-->
+            </template>
           </el-table-column>
         </el-table>
         <el-pagination

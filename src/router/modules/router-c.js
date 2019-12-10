@@ -14,7 +14,7 @@ const router = [
     children: [
       {
         path: 'msgSettings',
-        component: () => import('@/views/customerService/msgSettings'),
+        component: () => import('@/views/customerService/msgConfig'),
         name: 'msgSettings',
         meta: {
           title: '快捷消息设置',
@@ -23,7 +23,7 @@ const router = [
       },
       {
         path: 'consultation',
-        component: () => import('@/views/customerService/consultation'),
+        component: () => import('@/views/customerService/consulting'),
         name: 'consultation',
         meta: {
           title: '客服咨询',
@@ -32,7 +32,7 @@ const router = [
       },
       {
         path: 'list',
-        component: () => import('@/views/customerService/list'),
+        component: () => import('@/views/customerService/supportList'),
         name: 'list',
         meta: {
           title: '客服列表',
