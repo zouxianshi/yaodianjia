@@ -10,22 +10,19 @@
           <!-- <h5-template1 :data="detailData" /> -->
         </section>
         <section class="h5-settings">
-          <div class="set-app-module app-title" :class="{'active': xFormSet.formName==='xForm1'}">
+          <div class="set-module app-title" :class="{'active': xFormSet.formName==='xForm1'}">
             <div class="m-header">
               <span class="text">主页名称</span>
             </div>
             <div class="m-body">
-              <el-form ref="xForm1" class="form-title" :rules="xRules1" :model="xForm1">
-                <el-form-item label="名称" prop="name" style="position: relative; margin-bottom: 50px">
+              <el-form ref="xForm1" :rules="xRules1" :model="xForm1">
+                <el-form-item label="名称" prop="name">
                   <el-input
                     v-model="xForm1.name"
                     type="text"
-                    size="small"
                     style="width: 280px;"
-                    placeholder="请输入主页名称"
-                    maxlength="20"
+                    placeholder="少于5个字"
                   />
-                  <p class="form-notes">少于5个字</p>
                 </el-form-item>
               </el-form>
               <div class="btn-line">
@@ -45,7 +42,7 @@
             </div>
             <div class="m-body">
               <el-form ref="xForm1" class="form-title" :rules="xRules1" :model="xForm1">
-                <el-form-item label="名称" prop="name" style="position: relative; margin-bottom: 50px">
+                <el-form-item label="设置标题" prop="name" style="position: relative; margin-bottom: 50px">
                   <el-input
                     v-model="xForm1.name"
                     type="text"
@@ -178,7 +175,6 @@ export default {
     position: relative;
     border-radius: 3px;
     border: 1px solid rgba(220, 223, 230, 1);
-    display: none;
     &.active{
       display: block;
     }

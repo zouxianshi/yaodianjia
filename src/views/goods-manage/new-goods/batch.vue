@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="batch-wrapper">
       <div class="note_napl">因为批量创建新品无法上传图片，所以创建成功的中西医药、营养保健和医疗器械类新品会进入新品申请页面的
-        <a href="#/new_apply_jl/wtj">
+        <a href="#/goods-manage/apply-record">
           <button
             type="button"
             class="el-button el-button--text"
