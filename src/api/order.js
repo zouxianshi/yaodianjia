@@ -10,6 +10,94 @@ export function getOrderList(params) {
   })
 }
 
+// 根据订单明细id获取退货退款申请单
+export function getRefundReturn(detailId) {
+  return request({
+    url: `${config.merGoods}/1.0/order-return/${detailId}`,
+    method: 'get'
+  })
+}
+
+// 多条件查询员工
+export function employeeSearch(data) {
+  console.log('data:', data)
+  return request({
+    url: `${config.merGoods}/1.0/employee/_search`,
+    method: 'post',
+    data
+  })
+}
+
+// 拒绝退款
+export function setRejectRefund(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-return/_reject`,
+    method: 'post',
+    data
+  })
+}
+
+// 同意退款
+export function setAgreeRefund(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-return/_agree`,
+    method: 'post',
+    data
+  })
+}
+
+// 统计待发货数量
+export function getCountReceived(mercode) {
+  return request({
+    url: `${config.merGoods}/1.0/order-info/countReceived/${mercode}`,
+    method: 'get'
+  })
+}
+
+// 获取待发货的商品数据
+export function getUnReceiveData(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-detail/unReceived`,
+    method: 'post',
+    data
+  })
+}
+
+// 获取快递公司
+export function getExpressCompany(data) {
+  return request({
+    url: `${config.merGoods}/1.0/express-company/_query`,
+    method: 'post',
+    data
+  })
+}
+
+// 获取常用配送员
+export function getEmployeeUsual(merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/employee/getUsual/${merCode}`,
+    method: 'get'
+  })
+}
+
+// 立即发货
+export function setOrderSend(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-detail/_send`,
+    method: 'post',
+    data
+  })
+}
+
+// 获取订单详情
+export function getOrderDetail(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-info/get`,
+    method: 'post',
+    data
+  })
+}
+
 // 获取商家订单配置
 export function getOrderSetUp(mercode) {
   return request({
@@ -18,3 +106,11 @@ export function getOrderSetUp(mercode) {
   })
 }
 
+// 更新商家订单配置
+export function updateOrderSetUp(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-setup`,
+    method: 'post',
+    data
+  })
+}
