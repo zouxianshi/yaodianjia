@@ -149,27 +149,27 @@ class InnerCtor {
         name: '客服管理',
         icon: 'icongoods',
         path: '/customerService',
-        disabled: true,
+        disabled: this.get('staff'),
         children: [
           {
             name: '客服列表',
             path: '/customerService/list',
-            disabled: true
+            disabled: this.get('staff.staff-list'),
           },
           {
             name: '快捷消息设置',
             path: '/customerService/msgSettings',
-            disabled: true
+            disabled: this.get('staff.quick-message-set')
           },
           {
             name: '客服咨询',
             path: '/customerService/consultation',
-            disabled: true
+            disabled: this.get('staff.online-ask')
           },
           {
             name: '历史消息',
             path: '/customerService/historyMsg',
-            disabled: true
+            disabled: this.get('staff.message-record')
           },
         ]
       }

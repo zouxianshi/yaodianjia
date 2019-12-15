@@ -41,6 +41,9 @@ const mutations = {
   SET_ACCOUNT: (state, id) => {
     state.account = id
   }
+  // SET_MERLOGO: (state, merLogo) => {
+  //   state.merLogo = merLogo
+  // }
 }
 
 const actions = {
@@ -49,7 +52,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-        console.log('login data', data)
         const { account, avatarPath, merCode, resList, superAdmin, id } = data
         commit('SET_ROLES', superAdmin ? ['admin'] : resList)
         commit('SET_RESLIST', resList)
@@ -57,6 +59,7 @@ const actions = {
         commit('SET_AVATAR', avatarPath)
         commit('SET_MERCODE', merCode)
         commit('SET_USERID', id)
+        // commid('SET_MERLOGO', merLogo)
         MC.setConfig({
           userInfo: data || {}
         })

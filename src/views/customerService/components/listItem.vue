@@ -36,12 +36,5 @@ export default {
   padding: 0 10px;
   line-height: 36px;
   font-size: 12px;
-
-  .user-info-item-name {
-
-  }
-  .user-info-item-value {
-
-  }
 }
 </style>

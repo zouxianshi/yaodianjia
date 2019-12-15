@@ -1,15 +1,12 @@
 import { mapGetters } from 'vuex'
-import {
-  queryMerSupportStaffList,
-  queryMerStaffList,
-  addSupportStaff,
-  updateSupportStaff
-} from '@/api/customer-service'
+import CustomerService from '@/api/customer-service'
 
 export default {
   components: {},
   data() {
     return {
+      // 表格高度
+      tableHeight: document.documentElement.clientHeight - 158 - 38 - 40 - 42,
       // 性别枚举
       sexEnum: {
         0: '男',
@@ -121,7 +118,7 @@ export default {
 
     // 进入页面获取客服列表
     querySupportStaffList() {
-      queryMerSupportStaffList(this.merSupportQuery).then(res => {
+      CustomerService.queryMerSupportStaffList(this.merSupportQuery).then(res => {
         const result = res.data
         this.merSupportTableData = {
           ...this.merSupportTableData,
@@ -133,9 +130,8 @@ export default {
 
     // 客服启用停用状态切换
     toggleSupportStaffStatus(row) {
-      console.log('toggle row', row)
       // 这里请求启用停用接口
-      updateSupportStaff({
+      CustomerService.updateSupportStaff({
         avatarPath: 'https://xxx.png', // 头像地址
         empName: row.name, // 客服名称
         id: row.id, // 客服id
@@ -152,7 +148,6 @@ export default {
 
     // 切换客服状态筛选条件
     handleCommand(command) {
-      console.log('command', command)
       // 更新筛选条件
       const selectedFilter = this.statusMap.find(
         item => item.symbol === command
@@ -186,14 +181,12 @@ export default {
 
     // 查看历史消息
     viewHistoryMsg(row) {
-      console.log('row', row)
       this.$router.push({
         path: '/customerService/historyMsg',
         query: {
-          id: '123'
+          id: row.id
         }
       })
-      console.log('row', row)
     },
 
     /**
@@ -203,8 +196,7 @@ export default {
     queryMerStaffList() {
       // 这里用接口请求替代
       return new Promise((resolve, reject) => {
-        queryMerStaffList(this.merStaffQuery).then(res => {
-          console.log('queryMerStaffList res', res)
+        CustomerService.queryMerStaffList(this.merStaffQuery).then(res => {
           const result = res.data
           this.merStaffTableData = {
             ...this.merStaffTableData,
@@ -223,7 +215,6 @@ export default {
 
     // 员工所属机构输入
     handleStaffDepInput(value) {
-      console.log('value', value)
       this.merStaffQuery.subOrgName = value
     },
 
@@ -234,12 +225,11 @@ export default {
 
     // 员工选择复选框是否可选中
     selectable(row, index) {
-      return row.staff
+      return !row.staff
     },
 
     // 员工选择
     handleSelectionChange(val) {
-      console.log('val', val)
       const selectedStaffList = []
       val.forEach((item, index) => {
         selectedStaffList.push({
@@ -251,19 +241,16 @@ export default {
         })
       })
       this.merStaffTableData.selectedList = selectedStaffList
-      console.log('this.merStaffTableData', this.merStaffTableData)
     },
 
     // 员工列表页码切换
     handleStaffPageChange(val) {
-      console.log('val', val)
       this.merStaffQuery.currentPage = val
       this.queryMerStaffList()
     },
 
     // 员工列表pageSize切换
     handleStaffSizeChange(val) {
-      console.log('val', val)
       this.merStaffQuery.pageSize = val
       this.queryMerStaffList()
     },
@@ -284,7 +271,7 @@ export default {
       selectedList.forEach((item, index) => {
         addStaffQuery.push(item)
       })
-      addSupportStaff(addStaffQuery).then(res => {
+      CustomerService.addSupportStaff(addStaffQuery).then(res => {
         // 这里请求添加客服接口
         this.$message({
           message: '添加成功',
@@ -301,7 +288,6 @@ export default {
     }
   },
   created() {
-    console.log('this.merSupportPageSizes', this.merSupportPageSizes)
     this.querySupportStaffList()
   }
 }

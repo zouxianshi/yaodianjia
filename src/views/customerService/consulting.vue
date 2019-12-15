@@ -1,87 +1,241 @@
 <template>
-  <div class="container">
-    <!-- <button @click="sendMsg">发送消息</button> -->
-    <!-- <chat-room :conversationList="conversationList" /> -->
+  <div class="consulting-page">
     <div class="chat-room-comp app-container">
       <div class="chat-list">
         <div class="search-box">
-          <el-input id size="mini" class="search-input" type="search" name placeholder="请输入客户名称" />
+          <el-input
+            id
+            v-model="searchText"
+            size="mini"
+            class="search-input"
+            type="search"
+            name
+            placeholder="请输入客户名称"
+            @input="handleSearchInput"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="searchBtnClick" />
+          </el-input>
         </div>
+        <div v-if="hasNewMsg" class="no-content" />
         <div class="user-list">
-          <user v-for="(item,index) in conversationList" :key="index" :data="item" :selected="index===0" />
-        </div>
-      </div>
-      <div class="chat-window">
-        <div class="msg-box">
-          <div class="cur-user-name">{{ currentUser }}</div>
-          <div class="chat-detail-list">
-            <!-- <div class="view-more">查看更多消息</div> -->
-            <div v-for="(item,index) in conversationList" :key="index" class="date-list">
-              <div class="date">2019-06-07</div>
-              <div class="date-chat-record">
-                <div v-for="(dItem,dIndex) in item.list" :key="dIndex" class="date-chat-item">
-                  <div class="chat-item-info">@用户名 10:23:11</div>
-                  <div class="chat-item-text">聊天内容</div>
-                </div>
+          <div
+            v-for="(item,index) in onlineConversationData.list"
+            :key="index"
+            :class="`user-comp ${curUserNameId=item.targetId?'selected':''}`"
+            @click="handleUserClick(item)"
+          >
+            <el-badge :max="99" :hidden="item.newMsgNum<=0" :value="item.newMsgNum" class="item">
+              <div class="user-avatar">
+                <img :src="showImg(item.latestMessage.content.extra.headimgurl)">
               </div>
+            </el-badge>
+            <div v-if="item" class="user-chat-info">
+              <div class="chat-info-top">
+                <span class="user-name">{{ item.latestMessage.content.extra.nickName || '我是谁' }}</span>
+                <span class="chat-time">
+                  {{
+                    item
+                      ? `${new Date(item.sentTime).getMonth() + 1}-${new Date(
+                        item.sentTime
+                      ).getDate()}`
+                      : "" }}
+                </span>
+              </div>
+              <div v-if="item" class="user-chat-content">{{ item.latestMessage.content.content }}</div>
             </div>
-          </div>
-        </div>
-        <div class="send-msg-box">
-          <div class="action-list">
-            <i class="el-icon-picture-outline-round action-item" @click="handleActionClick('emoji')" />
-            <i class="el-icon-picture action-item" @click="handleActionClick('pic')" />
-            <i class="el-icon-chat-square action-item" @click="handleActionClick('answer')" />
-            <i class="el-icon-shopping-bag-2 action-item" @click="handleActionClick('mall')" />
-          </div>
-          <div class="text-area">
-            <el-input v-model="textarea" class="" type="textarea" rows="5" placeholder="请输入内容" @input="handleTextAreaChange" />
-            <!--  -->
-            <!-- <textarea placeholder="请输入文本内容" name="" id="" @input="textAreaChange"></textarea> -->
-          </div>
-          <div class="send-msg-box-bottom">
-            <el-button type="primary" size="mini" @click="sendMsg">发送</el-button>
           </div>
         </div>
       </div>
-      <div class="chat-info">
-        <el-tabs v-model="activeName" @tab-click="handleRightTabClick">
-          <el-tab-pane label="个人资料" name="first">
-            <div class="cur-user-info">
-              <list-item name="姓名" value="翁师" />
-              <list-item name="昵称" value="翁小茉" />
-              <list-item name="手机" value="18676878776" />
-              <list-item name="会员卡号" value="20178799927" />
-              <div class="divider" />
-              <list-item name="购买次数" value="2" />
-              <list-item name="购买均价" value="10" />
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="订单信息" name="second">
-            <div class="cur-user-orders">
-              <div v-for="(item,index) in orderList" :key="index" class="order-item">
-                <div class="order-item-top">
-                  <div class="order-no">单号：{{ item.orderNo }}</div>
-                  <div class="order-time">{{ item.time }}</div>
-                </div>
-                <div class="order-goods-list">
-                  <div v-for="(gItem,gIndex) in item.goodsList" :key="gIndex" class="goods-item">
-                    <img src alt class="goods-img">
-                    <div class="goods-info">
-                      <div class="goods-info-top">
-                        <span class="goods-name">{{ gItem.name }}</span>
-                        <span class="goods-no">x{{ gItem.number }}</span>
-                      </div>
-                      <div class="goods-size">{{ gItem.weight }}克✖{{ gItem.size }}粒</div>
-                      <div class="manufacturer">{{ gItem.manufacturer }}</div>
+      <template v-if="onlineConversationData.list&&onlineConversationData.list.length>0">
+        <div class="chat-window">
+          <div class="msg-box">
+            <div class="cur-user-name">{{ curUserName }}</div>
+            <div id="chat-detail-list" class="chat-detail-list">
+              <view-more v-if="curOnlineUserData.hasMore" @handleClick="viewMoreClick" />
+              <div
+                v-for="(dItem,index) in curOnlineUserData.list"
+                :key="index"
+                :class="`date-list`"
+              >
+                <div :class="`date-chat-item ${dItem.fromUserId == targetId? '': 'right-align'}`">
+                  <template v-if="dItem.fromUserId == targetId">
+                    <div class="chat-dItem-avatar">
+                      <el-image
+                        fit="scale-down"
+                        :src="showImg(dItem.img)"
+                        :preview-src-list="[showImg(dItem.img)]"
+                      />
                     </div>
-                  </div>
+                    <div class="chat-dItem-content">
+                      <div
+                        v-if="dItem.messageType==='RC:TxtMsg'"
+                        class="chat-text"
+                      >{{ dItem.content.includes('[') ? symbolToEmoji(dItem.content) : dItem.content }}</div>
+                      <el-image
+                        v-else-if="dItem.messageType==='RC:ImgMsg'"
+                        fit="scale-down"
+                        :src="dItem.content"
+                        :preview-src-list="[dItem.content]"
+                      />
+                      <div v-else class="goods-card">
+                        <div class="goods-card-header">为你推荐</div>
+                        <div class="goods-card-main">
+                          <div class="goods-img">
+                            <el-image
+                              fit="scale-down"
+                              :src="showImg(dItem.content.img)"
+                              :preview-src-list="[showImg(dItem.content.img)]"
+                            />
+                          </div>
+                          <div class="goods-info">
+                            <div class="goods-name">{{ dItem.content.name }}</div>
+                            <div class="goods-price">¥{{ dItem.content.price }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="chat-dItem-content">
+                      <!-- <template v-if="dItem.type==='text'"></template> -->
+                      <div
+                        v-if="dItem.messageType==='RC:TxtMsg'"
+                        class="chat-text"
+                      >{{ dItem.content }}</div>
+                      <el-image
+                        v-else-if="dItem.messageType==='RC:ImgMsg'"
+                        fit="scale-down"
+                        :src="dItem.content"
+                        :preview-src-list="[dItem.content]"
+                      />
+                      <div v-else class="goods-card">
+                        <div class="goods-card-header">为你推荐</div>
+                        <div class="goods-card-main">
+                          <div class="goods-img">
+                            <el-image
+                              fit="scale-down"
+                              :src="showImg(dItem.content.img)"
+                              :preview-src-list="[showImg(dItem.content.img)]"
+                            />
+                          </div>
+                          <div class="goods-info">
+                            <div class="goods-name">{{ dItem.content.name }}</div>
+                            <div class="goods-price">{{ dItem.content.price }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="chat-dItem-avatar">
+                      <el-image
+                        fit="scale-down"
+                        :src="showImg(merLogo)"
+                        :preview-src-list="[showImg(dItem.img)]"
+                      />
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+          </div>
+          <div class="send-msg-box">
+            <div class="action-list">
+              <el-popover
+                v-model="emojiPopVisible"
+                placement="top-start"
+                width="350"
+                trigger="click"
+              >
+                <div class="emoji-list">
+                  <span
+                    v-for="(item,index) in emojiList"
+                    :key="index"
+                    class="emoji-item"
+                    @click="emojiItemClick(item)"
+                  >{{ item.emoji }}</span>
+                </div>
+                <i slot="reference" class="el-icon-picture-outline-round action-item" />
+              </el-popover>
+              <input
+                id="pic"
+                type="file"
+                name="pic"
+                accept="image/gif, image/jpeg, image/png, image/webp"
+                @change="handleChange"
+              >
+              <i class="el-icon-picture action-item" @click="handleActionClick('pic')" />
+
+              <el-popover
+                v-model="cannedRepliesVisible"
+                placement="top"
+                width="200"
+                trigger="click"
+              >
+                <div class="canned-msg-list">
+                  <div
+                    v-for="(item,index) in cannedResList"
+                    :key="index"
+                    class="canned-msg-item"
+                    @click="msgItemClick(item)"
+                  >{{ item.msg }}</div>
+                </div>
+                <i slot="reference" class="el-icon-chat-square action-item" />
+              </el-popover>
+              <i class="el-icon-shopping-bag-2 action-item" @click="handleActionClick('goods')" />
+              <el-dialog
+                title="选择商品"
+                append-to-body
+                :visible="selectGoodsDialogVisible"
+                width="600"
+                :before-close="handleSelectGoodsDialogClose"
+              >
+                <el-table
+                  ref="multipleTable"
+                  height="400"
+                  :data="goodsList"
+                  tooltip-effect="dark"
+                  style="width: 100%"
+                >
+                  <el-table-column prop="image" label="图片" width="150">
+                    <template slot-scope="scope">
+                      <el-image
+                        fit="scale-down"
+                        :src="showImg(scope.row.mainPic)"
+                        :preview-src-list="[showImg(scope.row.mainPic)]"
+                      />
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="name" label="名称" width="150" />
+                  <el-table-column prop="packStandard" label="规格" width="150" />
+                  <el-table-column prop="action" label="操作" width="150">
+                    <template slot-scope="scope">
+                      <el-button
+                        type="primary"
+                        size="small"
+                        @click="handleGoodsSelect(scope.row)"
+                      >选择</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-dialog>
+            </div>
+            <div class="text-area">
+              <el-input
+                v-model="textMsgValue"
+                class
+                type="textarea"
+                rows="5"
+                placeholder="请输入内容"
+                @input="handleTextAreaChange"
+              />
+            </div>
+            <div class="send-msg-box-bottom">
+              <el-button type="primary" size="mini" @click="sendMsg">发送</el-button>
+            </div>
+          </div>
+        </div>
+        <user-info :member-info="memberInfo" :bought-record="boughtRecord" :order-list="orderList" />
+      </template>
+      <no-data v-else />
     </div>
   </div>
 </template>
@@ -91,6 +245,6 @@ import consultation from './consultation'
 export default consultation
 </script>
 
-<style  lang="scss">
+<style lang="scss">
   @import "./consultation.scss";
 </style>

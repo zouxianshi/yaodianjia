@@ -39,9 +39,12 @@ service.interceptors.request.use(
       if (typeof config.data === 'object' && config.data.length) {
         config.data = [...config.data]
       } else {
-        config.data = {
-          ...config.data,
-          ...authParams
+        // 判断如果是formData不做扩展操作
+        if (config.headers['Content-Type'] !== 'multipart/form-data') {
+          config.data = {
+            ...config.data,
+            ...authParams
+          }
         }
       }
     }

@@ -3,31 +3,13 @@
     <div class="app-container">
       <div class="table-header">
         <el-button class="add-btn" type="primary" size="mini" @click="addBtnClick">添加快捷回复</el-button>
-        <el-dialog
-          class="add-dialog"
-          append-to-body
-          title="添加快捷回复"
-          :visible.sync="editDialogVisible"
-          width="45%"
-          :before-close="handleClose"
-        >
-          <el-input v-model="msgContent" type="text" placeholder="请输入消息内容" @input="handleMsgInput" />
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="editDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="handleMsgConfirm">确 定</el-button>
-          </span>
-        </el-dialog>
       </div>
 
       <div class="msg-table-comp">
-        <el-table :data="msgList" style="width: 100%">
+        <el-table :data="msgList" :style="`width: 100%; max-height:${tableHeight}px`" :height="tableHeight">
           <el-table-column prop="id" label="序号" width="180" />
           <el-table-column prop="msgType" label="消息类型" width="180">
-            <template slot-scope="scope">
-              {{
-                msgTypeMap[scope.row.type]
-              }}
-            </template>
+            <template slot-scope="scope">{{ msgTypeMap[scope.row.type] }}</template>
           </el-table-column>
           <el-table-column prop="address" label="快捷消息">
             <template slot-scope="scope">
@@ -50,6 +32,7 @@
               <template v-else>
                 <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
                 <el-dialog
+                  :close-on-click-modal="false"
                   append-to-body
                   title="提示"
                   :visible.sync="deleteDialogVisible"
@@ -69,6 +52,7 @@
 
       <el-dialog
         class="edit-dialog"
+        :close-on-click-modal="false"
         append-to-body
         :title="dialogType === 'add' ? '新增' : '编辑'"
         :visible.sync="editDialogVisible"

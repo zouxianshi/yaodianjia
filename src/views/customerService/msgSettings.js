@@ -1,15 +1,14 @@
 import { mapGetters } from 'vuex'
-import {
-  querySupportMsgList,
-  addSupportMsg,
-  updateSupportMsg,
-  delSupportMsg
-} from '@/api/customer-service'
+import CustomerService from '@/api/customer-service'
 
 export default {
   name: 'MsgSetting',
   data() {
     return {
+
+      // 表格高度
+      tableHeight: document.documentElement.clientHeight - 158 - 38 - 40,
+
       // 消息类型枚举
       msgTypeMap: {
         1: '不在线推送',
@@ -58,11 +57,6 @@ export default {
       return [1, 2].includes(this.selectedMsgType)
     }
   },
-  created() {
-    console.log('merCode', this.merCode)
-    this.editMsgQuery.merCode = this.merCode
-    this.queryMsgList()
-  },
   methods: {
     // 清空编辑弹窗数据
     clearEditDialogData() {
@@ -78,7 +72,7 @@ export default {
     },
     // 进入页面查询消息列表
     queryMsgList() {
-      querySupportMsgList(this.listQuery).then(res => {
+      CustomerService.querySupportMsgList(this.listQuery).then(res => {
         const result = res.data
         this.msgList = result.data
       })
@@ -87,16 +81,11 @@ export default {
       this.dialogType = 'add'
       this.editDialogVisible = true
     },
-    handleClick(tab, event) {
-      console.log('tab', tab, 'event', event)
-    },
     handleDel(rowData) {
-      console.log('rowData', rowData)
       this.deleteDialogVisible = true
       this.rowData = rowData
     },
     handleSave(rowData) {
-      console.log('rowData', rowData)
       this.queryMsgList()
       this.$message({
         message: '保存成功',
@@ -104,13 +93,11 @@ export default {
       })
     },
     handleContentInput(val) {
-      console.log('val', val)
       this.msgContent = val
     },
     // 删除确认弹窗确认按钮点击
     handleConfirmDel() {
-      console.log('row', this.rowData)
-      delSupportMsg({
+      CustomerService.delSupportMsg({
         id: this.rowData.id
       }).then(res => {
         this.deleteDialogVisible = false
@@ -123,8 +110,7 @@ export default {
     },
     // 开关切换
     handleSwitch(row) {
-      console.log('row', row)
-      updateSupportMsg({
+      CustomerService.updateSupportMsg({
         id: row.id,
         merCode: this.merCode,
         msg: row.msg,
@@ -169,12 +155,11 @@ export default {
     },
     // 确认添加按钮点击
     handleMsgConfirm() {
-      console.log('editMsgQuery', this.editMsgQuery)
       if (!this.validateMsgQuery()) {
         return
       }
       if (this.dialogType === 'add') {
-        addSupportMsg(this.editMsgQuery).then(res => {
+        CustomerService.addSupportMsg(this.editMsgQuery).then(res => {
           this.$message({
             type: 'success',
             message: res.msg
@@ -184,7 +169,7 @@ export default {
           this.queryMsgList()
         })
       } else {
-        updateSupportMsg(this.editMsgQuery).then(res => {
+        CustomerService.updateSupportMsg(this.editMsgQuery).then(res => {
           this.$message({
             type: 'success',
             message: res.msg
@@ -197,7 +182,6 @@ export default {
     },
     // 编辑按钮点击
     handleEdit(row) {
-      console.log('handleEdit row', row)
       this.dialogType = 'edit'
       this.editDialogVisible = true
       this.editMsgQuery = {
@@ -211,16 +195,17 @@ export default {
     },
     // 消息类型切换
     handleMsgTypeToggle(command) {
-      console.log('command', command)
       this.selectedMsgType = command
       this.editMsgQuery.type = command
-      console.log('this.selectedMsgType', this.selectedMsgType)
     },
     // 消息开关切换
     handleDialogSwitchToggle(e) {
-      console.log('e', e)
       this.dialogSwitch = e
       this.editMsgQuery.status = e ? 1 : 0
     }
+  },
+  created() {
+    this.editMsgQuery.merCode = this.merCode
+    this.queryMsgList()
   }
 }

@@ -1,403 +1,434 @@
 // import chatRoom from './components/chatRoom'
 import user from './components/user'
 import listItem from './components/listItem'
-import { getToken } from '@/utils/auth'
-import { querySupportStaffById } from '@/api/customer-service'
-import { mapGetters } from 'vuex'
+import userInfo from './components/userInfo'
+import viewMore from './components/viewMore'
+import noData from '@/components/NoData'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
+import CustomerService from '@/api/customer-service'
+import {
+  queryGoods
+} from '@/api/common'
+import Chat from '@/utils/chat'
 export default {
   name: 'Consultation',
   components: {
-    // chatRoom,
     user,
-    listItem
+    listItem,
+    userInfo,
+    viewMore,
+    noData
   },
   data() {
     return {
-      // 当前选中的标签页标识
-      activeName: 'first',
-      // 当前打开的聊天窗口用户名
-      currentUser: '@用户名',
-      // 左侧用户列表
-      userList: new Array(10),
-      // 当前用户聊天记录
-      conversationList: [
-        {
-          date: '2019-06-07',
-          list: [
-            {
-              from: 'user',
-              text: 'hahhh',
-              time: '10:23:00'
-            },
-            {
-              from: 'merchant',
-              text: 'bububu',
-              time: '10:22:38'
-            }
-          ]
-        },
-        {
-          date: '2019-06-06',
-          list: [
-            {
-              from: 'user',
-              text: 'hahhh',
-              time: '10:23:00'
-            },
-            {
-              from: 'merchant',
-              text: 'bububu',
-              time: '10:22:38'
-            }
-          ]
-        }
-      ],
-      orderList: [
-        {
-          orderNo: 2012012001201212,
-          time: '2018-05-02 19:23',
-          goodsList: [
-            {
-              manufacturer: '湖南九芝堂股份有限公司',
-              weight: 0.25,
-              size: 12,
-              name: '阿莫西林胶囊',
-              number: 2
-            },
-            {
-              manufacturer: '湖南九芝堂股份有限公司',
-              weight: 0.25,
-              size: 12,
-              name: '阿莫西林胶囊',
-              number: 2
-            },
-            {
-              manufacturer: '湖南九芝堂股份有限公司',
-              weight: 0.25,
-              size: 12,
-              name: '阿莫西林胶囊',
-              number: 2
-            }
-          ]
-        },
-        {
-          orderNo: 2012012001201212,
-          time: '2018-05-02 19:23',
-          goodsList: [
-            {
-              manufacturer: '湖南九芝堂股份有限公司',
-              weight: 0.25,
-              size: 12,
-              name: '阿莫西林胶囊',
-              number: 2
-            },
-            {
-              manufacturer: '湖南九芝堂股份有限公司',
-              weight: 0.25,
-              size: 12,
-              name: '阿莫西林胶囊',
-              number: 2
-            },
-            {
-              manufacturer: '湖南九芝堂股份有限公司',
-              weight: 0.25,
-              size: 12,
-              name: '阿莫西林胶囊',
-              number: 2
-            }
-          ]
-        }
-      ],
-      textarea: ''
+      merLogo: '', // 商户头像 用作聊天窗口的客服头像展示
+      searchText: '', // 搜索框文字
+      boughtRecord: null, // 用户购买记录
+      orderList: [], // 订单列表
+      memberInfo: null, // 会员个人资料
+      targetId: 20, // 当前会话用户id
+      selectGoodsDialogVisible: false, // 选择商品对话框是否展示
+      goodsList: [], // 选择商品弹窗商品列表
+      listQuery: { // 快捷回复列表请求参数
+        currentPage: 1, // 当前页
+        isAll: true, // 是否全选
+        merCode: this.merCode, // 商户编码
+        pageSize: 20, // 每页条数
+        status: 1, // 消息状态，0-未开启，1-已开启
+        type: 3 // 客服消息类型，1-不在线推送，2-首次进入推送，3-快捷回复
+      },
+      curUserName: '', // 当前打开的聊天窗口用户名
+      textMsgValue: '', // 消息发送框中输入的文本值
+      cannedRepliesVisible: false, // 快捷回复弹窗是否展示
+      cannedResList: [], // 快捷回复列表
+      emojiPopVisible: false, // 表情弹窗是否展示
+      emojiList: [], // emoji表情列表
+      fileList: [], // 图片input文件列表
+      extra: { // 融云消息扩展字段
+        merCode: '', // 商户编码
+        userAccount: '', // 如果是客服，对应中台sys_user.account
+        userId: '', // 用户id 这里是自己的id
+        userName: '', // 用户姓名
+        nickName: '', // 昵称
+        age: '', // 年龄
+        sex: '' // 性别（男，女，未知）
+      }
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId'])
-  },
-  created() {
-    console.error(
-      'this',
-      this,
-      'merCode',
-      this.merCode,
-      'account',
-      this.account,
-      'token',
-      this.token,
-      'userId',
-      this.userId
-    )
-
-    // 创建客服在线状态长连接
-    this.createSocketConnection()
-
-    this.querySupportStaffById().then(() => {
-      // 获取到融云token后 开始IMLib初始化 设置监听器 连接服务器
-      const _this = this
-      const RYAppKey = 'lmxuhwagl5sad'
-      const RongIMClient = this.ryInit(RYAppKey)
-      var RongIMLib = window.RongIMLib
-
-      // 获取会话列表
-      console.log('开始获取会话列表')
-      // 获取的会话类型
-      var conversationTypes = [RongIMLib.ConversationType.PRIVATE]
-      // 获取的会话最大数量
-      var count = 150
-      RongIMClient.getInstance().getConversationList(
-        {
-          onSuccess: function(list) {
-            console.log('获取会话列表成功', list)
-            _this.conversationList = list
-            // list => 会话列表集合
-          },
-          onError: function(error) {
-            // do something
-            console.log('获取会话列表失败', error)
-          }
-        },
-        conversationTypes,
-        count
-      )
-    })
+    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg'])
   },
   methods: {
-
-    // 融云IMLib初始化
-    ryInit(RYAppKey) {
-      var RongIMLib = window.RongIMLib
-      var RongIMClient = RongIMLib.RongIMClient
-      console.log('RongIMClient', RongIMClient)
-      RongIMClient.init(RYAppKey)
-
-      // 连接状态监听器
-      console.log('设置连接状态监听器')
-      RongIMClient.setConnectionStatusListener({
-        onChanged: function(status) {
-          console.log('连接状态监听器触发, status: ', status)
-          // status 标识当前连接状态
-          switch (status) {
-            case RongIMLib.ConnectionStatus.CONNECTED:
-              console.log('链接成功')
-              break
-            case RongIMLib.ConnectionStatus.CONNECTING:
-              console.log('正在链接')
-              break
-            case RongIMLib.ConnectionStatus.DISCONNECTED:
-              console.log('断开连接')
-              break
-            case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
-              console.log('其他设备登录')
-              break
-            case RongIMLib.ConnectionStatus.DOMAIN_INCORRECT:
-              console.log('域名不正确')
-              break
-            case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
-              console.log('网络不可用')
-              break
-          }
+    ...mapActions({
+      querySupportHistoryRecord: 'customerService/querySupportHistoryRecord',
+      queryOnlineCurUserMsgList: 'customerService/queryOnlineCurUserMsgList',
+      queryOnlineConversationList: 'customerService/queryOnlineConversationList'
+    }),
+    ...mapMutations({
+      addMsgToOnlineCurUserMsgList: 'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
+      resetCurOnlineUserData: 'customerService/resetOnlineUserMsgData',
+      setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID',
+      setHasNewMsg: 'customerService/setHasNewMsg'
+    }),
+    symbolToEmoji: Chat.symbolToEmoji,
+    queryRYConversationList(searchParam) {
+      const _this = this
+      // 获取会话列表
+      this.queryOnlineConversationList(searchParam).then(list => {
+        if (list.length > 0) {
+          this.setCurOnlineUserId({
+            userId: list[0].targetId
+          })
+          _this.targetId = list[0].targetId
+          _this.curUserName = list[0].latestMessage.content.extra.nickName
+          // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
+          // 历史消息
+          _this.queryHistoryMessage()
+          // 会员信息
+          _this.queryMemberInfo()
+          // 购买记录
+          _this.queryUserBoughtRecord()
+          // 订单列表
+          _this.queryUserOrderList()
         }
       })
-
-      // 消息监听器
-      console.log('设置消息监听器')
-      RongIMClient.setOnReceiveMessageListener({
-        // 接收到的消息
-        onReceived: function(message) {
-          console.error('融云消息监听, 收到消息：', message)
-          // 判断消息类型
-          switch (message.messageType) {
-            case RongIMClient.MessageType.TextMessage:
-              // message.content.content => 文字内容
-              break
-            case RongIMClient.MessageType.VoiceMessage:
-              // message.content.content => 格式为 AMR 的音频 base64
-              break
-            case RongIMClient.MessageType.ImageMessage:
-              // message.content.content => 图片缩略图 base64
-              // message.content.imageUri => 原图 URL
-              break
-            case RongIMClient.MessageType.LocationMessage:
-              // message.content.latiude => 纬度
-              // message.content.longitude => 经度
-              // message.content.content => 位置图片 base64
-              break
-            case RongIMClient.MessageType.RichContentMessage:
-              // message.content.content => 文本消息内容
-              // message.content.imageUri => 图片 base64
-              // message.content.url => 原图 URL
-              break
-            case RongIMClient.MessageType.InformationNotificationMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.ContactNotificationMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.ProfileNotificationMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.CommandNotificationMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.CommandMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.UnknownMessage:
-              // do something
-              break
-            default:
-            // do something
-          }
-        }
-      })
-
-      // 连接融云服务器
-      console.log('连接融云服务器')
-      RongIMClient.connect(this.ryToken, {
-        onSuccess: function(userId) {
-          console.log('Connect successfully. ' + userId)
-        },
-        onTokenIncorrect: function() {
-          console.log('token 无效')
-        },
-        onError: function(errorCode) {
-          console.log('connect errorCode', errorCode)
-          var info = ''
-          switch (errorCode) {
-            case RongIMLib.ErrorCode.TIMEOUT:
-              info = '超时'
-              break
-            case RongIMLib.ConnectionState.UNACCEPTABLE_PAROTOCOL_VERSION:
-              info = '不可接受的协议版本'
-              break
-            case RongIMLib.ConnectionState.IDENTIFIER_REJECTED:
-              info = 'appkey不正确'
-              break
-            case RongIMLib.ConnectionState.SERVER_UNAVAILABLE:
-              info = '服务器不可用'
-              break
-          }
-          console.log('info', info)
-        }
-      })
-      this.RongIMClient = RongIMClient
-      return RongIMClient
     },
 
-    // 通过token生成融云token
-    querySupportStaffById() {
-      return new Promise((resolve, reject) => {
-        querySupportStaffById().then(res => {
-          console.log('获取登录客服信息', res)
-          const result = res.data
-          this.ryToken = result.token
-          resolve()
-        })
+    // 根据用户id查询用户信息
+    queryMemberInfo() {
+      CustomerService.queryUserInfoById({
+        mercode: this.merCode,
+        userIds: [this.targetId]
+      }).then(res => {
+        this.memberInfo = res.data
       })
     },
-    textAreaChange(e) {
-      console.log('e', e)
+
+    // 根据用户id查询用户购买记录
+    queryUserBoughtRecord() {
+      CustomerService.queryUserBoughtRecord({
+        memberId: this.targetId
+      }).then((res) => {
+        this.boughtRecord = res.data
+      })
     },
+
+    // 根据用户id获取订单列表
+    queryUserOrderList() {
+      CustomerService.queryUserOrderList({
+        currentPage: 1, // 页码 从1开始
+        memberId: this.targetId, // 用户id
+        merCode: this.merCode, // 商户编码
+        pageSize: 20 // 每页条数
+      }).then(res => {
+        this.orderList = res.data.data
+      })
+    },
+
+    // 发送消息按钮点击
     sendMsg() {
       var msgInfo = {
-        content: this.textarea,
-        extra: '附加信息'
+        content: this.textMsgValue,
+        extra: this.extra
       }
-      var RongIMLib = window.RongIMLib
-      console.log('msgInfo', msgInfo)
-      var msg = new RongIMLib.TextMessage(msgInfo)
-      var conversationType = RongIMLib.ConversationType.PRIVATE // 单聊
-      var targetId = '9509f1082bee4623b5b74e5c35fd0156' // 用户 B 的 userId
-      this.RongIMClient.getInstance().sendMessage(conversationType, targetId, msg, {
-        onSuccess: function(message) {
-          // message 为发送的消息对象并且包含服务器返回的消息唯一 Id 和发送消息时间戳
-          console.log('Send successfully', message)
-        },
-        onError: function(errorCode, message) {
-          console.log('send message error', errorCode, message)
-        }
+      Chat.sendMessage({
+        targetId: this.targetId, // this.targetId,
+        msgInfo
+      }).then(res => {
+        // 发送成功清空消息内容
+        this.textMsgValue = ''
+        this.addMsgToOnlineCurUserMsgList({
+          content: msgInfo.content, // 消息内容
+          coversionType: 'PERSON', // 消息类型
+          fromUserId: this.userId, // 发送用户id
+          merCode: this.merCode, // 商户编码
+          messageType: 'RC:TxtMsg', // 消息类型
+          msgUid: `${Math.random()}`, // 消息id
+          timeStamp: new Date(), // 时间戳
+          toUserId: this.targetId, // 接收用户id
+          userId: this.targetId // 接收用户id
+        })
+        this.scrollToBottom()
+      }).catch((err, msg) => {
+        console.error('send message error', err, msg)
       })
     },
 
-    // textarae change
+    /**
+     * 聊天框相关
+     */
+
+    // textarea change
     handleTextAreaChange(val) {
-      console.log('val', val)
-      this.textarea = val
+      this.textMsgValue = val
     },
 
     // action click
     handleActionClick(type) {
-      console.log('type', type)
-    },
-
-    // 新建客服状态websocket连接
-    createSocketConnection() {
-      const self = this
-      if ('WebSocket' in window) {
-        console.warn('您的浏览器支持 WebSocket!')
-
-        // 打开一个 web socket
-        var ws = new WebSocket('ws://middle.dev.ydjia.cn:5416/ws')
-
-        var cToken = getToken()
-        console.log('用户token', cToken)
-
-        ws.onopen = function() {
-          const data = {
-            account: self.userId, // 账号
-            accountType: 1, // 	账号类型，1-客服，2-非客服
-            cmd: 1, // 命令,1-连接，2-心跳，3-关闭连接
-            deviceId: '1111', // 设备ID
-            merCode: self.merCode, // 商户编号
-            msgtype: 1, // 消息类型,1-请求，2-应答
-            platform: 3, // 平台,1-android,2-ios,3-web
-            platformVersion: 'v1', // 平台版本
-            systemType: 2, //  1-小蜜，2-药店加
-            token: cToken, // 	中台用户登录的token
-            version: 1 // 协议版本
-          }
-          console.log('连接data', data)
-
-          // Web Socket 已连接上，使用 send() 方法发送数据
-          ws.send(JSON.stringify(data))
-          console.warn('数据发送中...')
-
-          // 设置心跳
-          setInterval(() => {
-            // 设置心跳
-            const heartBeatData = {
-              cmd: 2,
-              deviceId: '1111',
-              merCode: self.merCode,
-              msgtype: 1,
-              platform: 3,
-              platformVersion: 'v1',
-              systemType: 2,
-              token: cToken,
-              version: 1
-            }
-            console.log('设置心跳, 参数：', heartBeatData)
-            ws.send(JSON.stringify(heartBeatData))
-          }, 60000)
-        }
-
-        ws.onmessage = function(evt) {
-          var received_msg = evt.data
-          console.warn('客户端数据接收', received_msg)
-        }
-
-        ws.onclose = function() {
-          // 关闭 websocket
-          console.warn('连接已关闭')
-        }
+      if (type === 'answer') {
+        // 获取快捷消息列表并弹出
+        this.queryCannedRepliesList()
+        this.cannedRepliesVisible = true
+      } else if (type === 'goods') {
+        this.selectGoodsDialogVisible = true
+      } else if (type === 'emoji') {
+        this.emojiPopVisible = true
+      } else if (type === 'pic') {
+        document.getElementById('pic').click()
       } else {
-        // 浏览器不支持 WebSocket
-        console.error('您的浏览器不支持 WebSocket!')
+        console.error('handleActionClick: 不支持的类型')
       }
     },
-    // 右侧标签页切换
-    handleRightTabClick(tab, e) {
-      console.log('tab', tab, 'e', e)
+
+    // 获取快捷回复列表
+    queryCannedRepliesList() {
+      CustomerService.querySupportMsgList(this.listQuery).then(res => {
+        const result = res.data
+        this.cannedResList = result.data
+      })
+    },
+    // 快捷回复点击
+    msgItemClick(item) {
+      this.textMsgValue = item.msg
+      this.cannedRepliesVisible = false
+    },
+    queryGoods() {
+      queryGoods({
+        approvalNumber: '', // 批准文号
+        auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
+        barCode: '', // 条形码
+        commodityIds: [], // 商品id数组
+        commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
+        currentPage: 1, // 页码
+        erpCode: '', // 商品编码
+        groupId: '', // 分组id,如果是1，2级分组时，请与level字段共用
+        infoFlag: '', // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
+        level: 0, // 分组或分类level,1-一级，2-二级，3-三级，为null和0时不做处理
+        manufacture: '', // 生产企业
+        merCode: this.merCode, // 商家编码
+        name: '', // 商品名称
+        onlyCom: '', // 商品查询标志,true-只查商品信息，其他包括规格信息
+        origin: 0, // 商品来源，1-海典，2-商家
+        pageSize: 20, // 每页显示条数，不传默认20
+        typeId: '' // 分类id,如果是1，2级分类时，请与level字段共用
+      }).then(res => {
+        this.goodsList = res.data.data
+      })
+    },
+    handleSelectGoodsDialogClose() {
+      this.selectGoodsDialogVisible = false
+    },
+    // 商品选择按钮点击
+    handleGoodsSelect(row) {
+      this.selectedGoods = row
+      this.selectGoodsDialogVisible = false
+
+      const msgInfo = {
+        content: {
+          title: row.name,
+          desc: row.keyWord,
+          imageUri: this.showImg(row.mainPic),
+          url: '',
+          price: row.mprice.toFixed(2)
+        },
+        extra: this.extra
+      }
+
+      Chat.sendMessage({
+        targetId: this.targetId,
+        msgInfo
+      }).then(res => {
+        this.addMsgToOnlineCurUserMsgList({
+          content: msgInfo.content, // 消息内容
+          coversionType: 'PERSON', // 消息类型
+          fromUserId: this.userId, // 发送用户id
+          merCode: this.merCode, // 商户编码
+          messageType: 'RC:TxtMsg', // 消息类型
+          msgUid: `${Math.random()}`, // 消息id
+          timeStamp: new Date(), // 时间戳
+          toUserId: this.targetId, // 接收用户id
+          userId: this.targetId // 用户id
+        })
+        // 这里追加当前消息到消息列表
+      }).catch((errCode, errMessage) => {
+        console.error('商品消息发送成功失败，errCode：', errCode, '\nerrMessage：', errMessage)
+      })
+    },
+
+    // 点击左边用户列表切换
+    handleUserClick(data) {
+      if (data.targetId === this.targetId) {
+        this.setCurOnlineUserId({
+          userId: data.targetId
+        })
+      } else {
+        // 重置所有数据并重新请求
+        this.targetId = data.targetId
+        this.curUserName = data.latestMessage.content.extra.nickName
+        this.setCurOnlineUserId({
+          userId: data.targetId
+        })
+        this.resetRightData()
+      }
+    },
+
+    // 查询历史消息
+    queryHistoryMessage() {
+      const {
+        curPageNo,
+        curPageSize
+      } = this.curOnlineUserData
+      const params = {
+        merCode: this.merCode, // 商户编码
+        userId: this.targetId, // 用户编码 如果有传入参数则使用参数 否则使用组件实例中的属性
+        currentPage: curPageNo, // 当前页码
+        pageSize: curPageSize // 每页条数
+      }
+      this.queryOnlineCurUserMsgList(params).then(res => {
+        setTimeout(() => {
+          if (curPageNo === 1) {
+            this.scrollToBottom()
+          } else {
+            this.scrolltoTop()
+          }
+        }, 50)
+      })
+    },
+    scrollToBottom: function() {
+      this.$nextTick(() => {
+        var container = this.$el.querySelector('#chat-detail-list')
+        if (container) {
+          container.scrollTop = container.scrollHeight
+        } else {
+          console.error(`找不到元素：#chat-detail-list`)
+        }
+      })
+    },
+    scrolltoTop: function() {
+      this.$nextTick(() => {
+        var container = this.$el.querySelector('#chat-detail-list')
+        container.scrollTop = 0
+      })
+    },
+    // emoji item点击
+    emojiItemClick(emoji) {
+      this.textMsgValue = `${this.textMsgValue}${emoji.emoji}`
+      this.emojiPopVisible = false
+    },
+    submitUpload() {
+      this.$refs.upload.submit()
+    },
+    // 图片选择
+    handleChange(e) {
+      const file = e.target.files
+      const formData = new FormData()
+      formData.append('file', file[0])
+
+      // 上传图片
+      CustomerService.fileUpload(formData).then(res => {
+        const image = res.data
+
+        const msgInfo = {
+          content: this.showImg(image),
+          extra: this.extra,
+          imageUri: this.showImg(image)
+        }
+
+        Chat.sendMessage({
+          targetId: this.targetId,
+          msgInfo,
+          messageType: 'image'
+        }).then(res => {
+          this.addMsgToOnlineCurUserMsgList({
+            content: msgInfo.content, // 消息内容
+            coversionType: 'PERSON', // 消息类型
+            fromUserId: this.userId, // 发送用户id
+            merCode: this.merCode, // 商户编码
+            messageType: 'RC:ImgMsg', // 消息类型
+            msgUid: res.messageUId, // 消息id
+            timeStamp: new Date(), // 时间戳
+            toUserId: this.targetId, // 接收用户id
+            userId: this.targetId // 用户id
+          })
+        }).catch((errCode, errMessage) => {
+          console.error('err', errCode, errMessage)
+        })
+      }).catch(_ => {
+        this.$message({
+          message: '图片上传失败',
+          type: 'error'
+        })
+      })
+    },
+    blobToDataURL(blob, callback) {
+      const a = new FileReader()
+      a.onload = function(e) { callback(e.target.result) }
+      a.readAsDataURL(blob)
+    },
+    // 搜索按钮点击
+    searchBtnClick() {
+      this.resetRightData()
+      this.queryRYConversationList({
+        searchText: this.searchText
+      })
+    },
+    resetData() {
+      this.conversationList = []
+    },
+    // 重置聊天记录及右侧个人资料
+    resetRightData() {
+      // 重置vuex中的聊天相关数据
+      this.resetCurOnlineUserData()
+      // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
+      // 历史消息
+      this.queryHistoryMessage()
+      // 会员信息
+      this.queryMemberInfo()
+      // 购买记录
+      this.queryUserBoughtRecord()
+      // 订单列表
+      this.queryUserOrderList()
+    },
+    handleSearchInput(val) {
+      this.searchText = val
+    },
+    // 查看更多消息按钮
+    viewMoreClick() {
+      this.queryHistoryMessage()
+    }
+  },
+  created() {
+    this.emojiList = Chat.getEmojiList()
+    const {
+      targetId
+    } = this.$route.query
+    this.targetId = targetId || 20
+
+    this.extra = {
+      merCode: this.merCode, // 商户编码
+      userAccount: this.name, // 如果是客服，对应中台sys_user.account
+      userId: this.userId, // 用户id 这里是自己的id 不是目标用户的id
+      userName: '', // 用户姓名
+      nickName: '', // 昵称
+      age: '', // 年龄
+      sex: '' // 性别（男，女，未知）
+    }
+
+    // 获取商品列表
+    this.queryGoods()
+    // 获取快捷回复列表
+    this.queryCannedRepliesList()
+    // 获取融云会话列表
+    this.resetCurOnlineUserData()
+    this.queryRYConversationList()
+  },
+  updated() {
+    // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
+    if (this.hasNewMsg) {
+      if (this.onlineConversationData && this.onlineConversationData.list.length === 0) {
+        this.setHasNewMsg(false)
+        this.queryRYConversationList()
+      }
     }
   }
 }

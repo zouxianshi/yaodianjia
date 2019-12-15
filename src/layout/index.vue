@@ -11,10 +11,7 @@
       </div>
       <div class="app-main-box" :style="_styleToggle">
         <div class="flx" :style="_styleToggle">
-          <!-- 新消息图标 暂时用定位放在这里 -->
-          <el-badge :value="12" class="msg-notice-btn" is-dot>
-            <i class="el-icon-chat-dot-round" @click="msgBtnClick" />
-          </el-badge>
+          <r-y />
           <m-header>
             <breadcrumb slot="breadcrumb" />
             <tags-view slot="tags" />
@@ -36,6 +33,8 @@
   import { mSidebar, mHeader, MC } from "@merchant/commons";
   import RightPanel from "@/components/RightPanel";
   import { AppMain, TagsView } from "./components";
+  // 融云消息按钮 sdk初始化
+  import RY from '@/components/RY'
   import Breadcrumb from "@/components/Breadcrumb";
   import ps from "./psHandler";
   import { removeToken } from "@/utils/auth";
@@ -49,7 +48,7 @@
         isOpen: false
       };
     },
-    components: { mSidebar, TagsView, AppMain, RightPanel, mHeader, Breadcrumb },
+    components: { mSidebar, TagsView, AppMain, RightPanel, mHeader, Breadcrumb, RY },
     mixins: [ResizeMixin],
     computed: {
       ...mapState({
@@ -109,13 +108,6 @@
           path: v.path
         });
       },
-      // 消息按钮点击 跳转客服咨询页面
-      msgBtnClick() {
-        this.$router.push({
-          path: '/customerService/consultation',
-          query: {}
-        })
-      }
     }
   };
 </script>
@@ -198,11 +190,5 @@
   .mobile .fixed-header {
     width: 100%;
   }
-  .msg-notice-btn {
-    position: fixed;
-    top: 16px;
-    right: 330px;
-    z-index: 200;
-    color: #fff;
-  }
+
 </style>

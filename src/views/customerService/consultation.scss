@@ -1,19 +1,21 @@
 .text-overflow-1 {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .text-overflow-2 {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .chat-room-comp {
-  padding: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  padding: 0;
   width: 100%;
   border-bottom: 1px solid #ddd;
   // height: 500px;
@@ -23,8 +25,7 @@
     height: 100%;
     overflow: auto;
     border-right: 1px solid #ddd;
-    float: left;
-    width: 20%;
+    width: 220px;
 
     .search-box {
       width: 100%;
@@ -50,13 +51,16 @@
   .chat-window {
     display: flex;
     flex-direction: column;
-    width: 55%;
-    float: left;
     height: 100%;
     overflow: auto;
+    flex: 1;
 
     .msg-box {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      // padding: 20px;
 
       .cur-user-name {
         height: 48px;
@@ -67,21 +71,16 @@
       }
 
       .chat-detail-list {
-        padding: 0 20px;
-
-        .view-more {
-          padding: 10px 0;
-          text-align: center;
-          font-size: 12px;
-          color: #45aafa;
-        }
+        flex: 1;
+        padding: 0 20px 40px;
+        overflow: auto;
 
         .date-list {
           text-align: center;
 
           .date {
             display: inline-block;
-            margin: 10px auto 0;
+            margin: 20px auto 0;
             border-radius: 6px;
             background: #ccc;
             padding: 4px 40px;
@@ -89,30 +88,138 @@
             color: #fff;
           }
 
-          .date-chat-record {
+          .chat-dItem-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #eff0f5;
+          }
+
+          .chat-dItem-content {
+            overflow: hidden;
+            position: relative;
+            min-height: 40px;
+            border: 1px solid #eff0f5;
+            margin: 0 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            max-width: 240px;
             text-align: left;
 
-            .date-chat-item {
-              margin-top: 10px;
+            .goods-card {
+              min-width: 200px;
+              max-width: 280px;
 
-              .chat-item-info {
-                font-size: 12px;
+              .goods-card-header {
+                height: 44px;
+                line-height: 44px;
+                padding: 0 10px;
+                border-bottom: 1px dotted #eff0f5;
+              }
+
+              .goods-card-main {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+
+                .goods-img {
+                  width: 56px;
+                  height: 56px;
+
+                  .el-image {
+                    width: 100%;
+                    height: 100%;
+                  }
+                }
+
+                .goods-info {
+                  flex: 1;
+                  overflow: hidden;
+                  display: flex;
+                  flex-direction: column;
+                  height: 56px;
+                  justify-content: space-between;
+                  margin-left: 8px;
+
+                  .goods-name {
+                    @extend .text-overflow-2;
+                    font-size: 14px;
+                    color: #222;
+                  }
+
+                  .goods-price {
+                    font-size: 10px;
+                    color: #ff4a4a;
+                  }
+                }
+              }
+            }
+
+            .chat-text {
+              min-height: 40px;
+              padding: 0 10px;
+              text-align: left;
+              line-height: 40px;
+            }
+
+            // &::before {
+            //   position: absolute;
+            //   right: 0;
+            //   top: 50%;
+            //   transform: translate(100%, -50%);
+            //   display: block;
+            //   content: '';
+            //   // width: 10px;
+            //   // height: 10px;
+            //   width: 5px;
+            //   height: 5px;
+            //   border: 10px solid black;
+            //   background: #45aafa;
+            //   border-right: 0;
+            //   border-top: 0;
+            //   border-bottom: 0;
+            // }
+          }
+
+          .date-chat-item {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 20px;
+
+            &.right-align {
+              justify-content: flex-end;
+
+              .chat-dItem-content {
+                .chat-text {
+                  background: #45aafa;
+                }
+              }
+            }
+
+            .chat-dItem-avatar {
+              width: 40px;
+              height: 40px;
+              background-color: #eff0f5;
+            }
+
+
+            .chat-item-info {
+              font-size: 12px;
+              color: #45aafa;
+
+              &.user {
                 color: #45aafa;
-
-                &.user {
-                  color: #45aafa;
-                }
-
-                &.self {
-                  color: green;
-                }
               }
 
-              .chat-item-text {
-                margin-top: 10px;
-                font-size: 12px;
-                color: #222;
+              &.self {
+                color: green;
               }
+            }
+
+            .chat-item-text {
+              text-align: left;
+              margin-top: 10px;
+              font-size: 12px;
+              color: #222;
             }
           }
         }
@@ -122,7 +229,9 @@
     .send-msg-box {
       display: flex;
       flex-direction: column;
-      height: 200px;
+      height: 220px;
+      box-sizing: border-box;
+      padding-bottom: 20px;
 
       .action-list {
         display: flex;
@@ -135,6 +244,7 @@
         .action-item {
           margin: 0 10px;
         }
+
       }
 
       .text-area {
@@ -155,6 +265,7 @@
             outline: 0;
             border: 0;
             resize: none;
+            font-size: 15px;
           }
         }
       }
@@ -174,95 +285,118 @@
   .chat-window::-webkit-scrollbar {
     display: none; //Safari and Chrome
   }
+}
 
-  .chat-info {
-    width: 25%;
-    height: 100%;
-    overflow: auto;
-    float: right;
-    border-left: 1px solid #eff0f5;
+.canned-msg-list {
+  .canned-msg-item {
+    height: 36px;
+    line-height: 36px;
+    @extend .text-overflow-1;
+  }
+}
 
-    .el-tabs {
-      // background: #45aafa;
 
-      .el-tabs__header {
-        // background: #ffe400;
+.text-overflow-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-        .el-tabs__nav-wrap {
-          // background: #000;
-        }
-      }
-    }
+.text-overflow-2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
 
-    .el-tabs__item {
-      // width: 50%;
-      height: 48px !important;
-    }
+.user-comp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 10px;
+  width: 100%;
 
-    .cur-user-info {
-      .divider {
-        height: 12px;
-        background: #eff0f5;
-      }
-    }
+  &.selected {
+    background-color: #ddd;
+  }
 
-    .cur-user-orders {
-      .order-item {
-        padding: 0 10px;
-        margin-bottom: 20px;
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #45aafa;
+    overflow: hidden;
 
-        .order-item-top {
-          overflow: hidden;
-          border-bottom: 1px solid #eff0f5;
-          font-size: 11px;
-          padding: 5px 0;
-
-          .order-no {
-            float: left;
-          }
-
-          .order-time {
-            float: right;
-          }
-        }
-
-        .order-goods-list {
-          .goods-item {
-            padding: 5px 0;
-
-            .goods-img {
-              display: inline-block;
-              width: 40px;
-              height: 40px;
-              background: #ddd;
-            }
-
-            .goods-info {
-              display: inline-block;
-
-              .goods-info-top {
-                .goods-name {
-                  font-size: 11px;
-                }
-
-                .goods-no {
-                  font-size: 12px;
-                }
-              }
-
-              .goods-size {
-                margin-top: 5px;
-                font-size: 10px;
-              }
-
-              .manufacturer {
-                margin-top: 5px;
-                font-size: 10px;
-              }
-            }
-          }
-        }
-      }
+    img {
+      width: 100%;
+      height: 100%;
     }
   }
+
+  .user-chat-info {
+    overflow: hidden;
+    flex: 1;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 8px;
+
+    .chat-info-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+
+      .user-name {
+        @extend .text-overflow-1;
+        font-size: 14px;
+        // font-weight: 700;
+      }
+
+      .chat-time {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+
+    .user-chat-content {
+      font-size: 12px;
+      color: #999;
+      @extend .text-overflow-1;
+    }
+  }
+}
+
+.el-popover {
+
+  // max-height: 300px;
+  // overflow: auto;
+  .canned-msg-list {
+    max-height: 300px;
+    overflow: auto;
+  }
+}
+
+
+.emoji-list {
+  display: flex;
+  flex-wrap: wrap;
+  height: 200px;
+  overflow: auto;
+
+  .emoji-item {
+    display: block;
+    width: 28px;
+    height: 28px;
+    font-size: 24px;
+    line-height: 28px;
+    text-align: center;
+  }
+}
+
+#pic {
+  display: none;
 }

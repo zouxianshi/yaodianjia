@@ -41,11 +41,11 @@ const router = [
       },
       {
         path: 'historyMsg',
-        component: () => import('@/views/customerService/historyMsg'),
+        component: () => import('@/views/customerService/historyMsgs'),
         name: 'historyMsg',
         meta: {
           title: '历史消息',
-          noCache: true
+          noCache: false
         }
       }
     ]

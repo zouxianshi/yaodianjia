@@ -1,12 +1,19 @@
 <template>
-  <div :class="`user-comp ${selected?'selected':''}`">
-    <img src alt class="user-avatar">
-    <div class="user-chat-info">
-      <!-- <div class="chat-info-top"> -->
-      <!-- <span class="user-name">{{data.senderUserId}}</span>
-        <span class="chat-time">{{sentTime}}</span>
+  <div :class="`user-comp ${selected?'selected':''}`" @click="handleUserClick">
+    <div class="user-avatar">
+      <img :src="data.latestMessage.content.extra.headimgurl" alt>
+      <!-- <el-image
+        fit="scale-down"
+        :src="showImg(data.latestMessage.content.extra.headimgurl)"
+        :preview-src-list="[showImg(data.latestMessage.content.extra.headimgurl)]"
+      /> -->
+    </div>
+    <div v-if="data" class="user-chat-info">
+      <div class="chat-info-top">
+        <span class="user-name">{{ data.latestMessage.content.extra.nickName }}</span>
+        <span class="chat-time">{{ sentTime }}</span>
       </div>
-      <div class="user-chat-content">{{data.latestMessage.content.content}}</div> -->
+      <div v-if="data" class="user-chat-content">{{ data.latestMessage.content.content }}</div>
     </div>
   </div>
 </template>
@@ -25,7 +32,19 @@ export default {
   },
   computed: {
     sentTime() {
-      return `${new Date(this.data.sentTime).getMonth() + 1}-${new Date(this.data.sentTime).getDate()}`
+      return this.data
+        ? `${new Date(this.data.sentTime).getMonth() + 1}-${new Date(
+          this.data.sentTime
+        ).getDate()}`
+        : ''
+    }
+  },
+  created() {
+    console.log('this', this.data)
+  },
+  methods: {
+    handleUserClick() {
+      this.$emit('handleUserClick', this.data)
     }
   }
 }
@@ -48,8 +67,9 @@ export default {
   .user-comp {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     overflow: hidden;
-    padding: 10px 5%;
+    padding: 10px;
 
     &.selected {
       background-color: #ddd;
@@ -61,26 +81,33 @@ export default {
       height: 40px;
       border-radius: 50%;
       background-color: #45aafa;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
     }
     .user-chat-info {
+      overflow: hidden;
       flex: 1;
       height: 40px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       margin-left: 8px;
-      max-width: 65%;
 
       .chat-info-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         overflow: hidden;
 
         .user-name {
-          float: left;
+          @extend .text-overflow-1;
           font-size: 14px;
           // font-weight: 700;
         }
         .chat-time {
-          float: right;
           font-size: 12px;
           color: #999;
         }

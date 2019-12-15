@@ -103,9 +103,8 @@
       </div>
 
       <!-- 客服列表 -->
-      <!-- <support-staff :total="total" @pageno-change="pageNoChange" @size-change="pageSizeChange" :table-data="tableData" /> -->
       <div class="support-staff-comp">
-        <el-table :data="merSupportTableData.list" style="width: 100%">
+        <el-table :data="merSupportTableData.list" :style="`width: 100%; max-height:${tableHeight}+'px `">
           <el-table-column prop="id" label="序号" width="180" />
           <el-table-column prop="isOnline" label="在线状态" width="180">
             <template slot-scope="scope">
