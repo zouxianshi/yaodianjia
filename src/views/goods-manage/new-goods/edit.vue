@@ -436,7 +436,23 @@
               <el-dialog append-to-body :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt="">
               </el-dialog>
-              <p class="img-tips" style="margin-top:10px;color:#E6A23C">提示：上传图片后可在线编辑图片，支持鼠标拖拽排序</p>
+              <ol class="img-tips">
+                <li>
+                  1、药品图片应体现：主商品+商品外包装（包装正面须包括：[药品名称]、 [OTC标识]及[包装详情] ，包装侧面须包括：[成份]、[性状]、[适应症]、[规格]、[用法用量]、[不良反应]、[禁忌]、[注意事项]、[执行标准]、[批准文号]、[生产企业]、[UPC码]）。
+                </li>
+                <li>
+                  2、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。
+                </li>
+                <li>
+                  3、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。
+                </li>
+                <li>
+                  4、图片内容展示方向，应始终保持文字正向。
+                </li>
+                <li>
+                  5、请上传商品正面、侧面、背面不少于3张图片，药品需上传药品说明书图片，器械需上传器械注册证图片
+                </li>
+              </ol>
               <div class="text-center">
                 <el-button type="" size="small" @click="step=2">上一步</el-button>
                 <el-button v-if="!is_query" type="primary" size="small" @click="handleSubImg">保存</el-button>
@@ -922,9 +938,9 @@ export default {
         this.pageLoading.close()
         return
       }
-      if (size < 200 || size > 500) {
+      if (size > 1024) {
         this.$message({
-          message: '请上传大小为200kb~500kb的图片',
+          message: '最大只能上传1MB的图片',
           type: 'warning'
         })
         this.pageLoading.close()
@@ -1188,6 +1204,12 @@ export default {
    color: #333;
    .img-tips{
      font-size: 12px;
+     margin-bottom: 10px;
+     margin-top:10px;
+     color:#E6A23C;
+     li{
+       margin-bottom: 5px;
+     }
    }
    .specs-box{
      margin-top: 20px;
