@@ -54,7 +54,7 @@
             />
           </div>
         </div>
-        <div class="search-form">
+        <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品分组</span>
             <el-cascader
@@ -96,6 +96,8 @@
               <el-option label="组合商品" value="2" />
             </el-select>
           </div>
+        </div>
+        <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
