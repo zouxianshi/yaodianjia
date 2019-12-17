@@ -3,8 +3,11 @@
     <div :model="detailsData" class="store-goods-wrapper">
       <div class="wrapper">
         <div class="item">
-          <div class="item-left">订单号：{{ detailsData.serialNumber }}</div>
-          <div class="item-right"><el-button type="primary" size="mini">补推至ERP</el-button></div>
+          <div class="item-left">
+            订单号：{{ detailsData.serialNumber }}
+            <template v-if="detailsData.orderType==='R'">（{{ detailsData.orderType | orderType }}）</template>
+          </div>
+          <div class="item-right"><el-button type="primary" size="mini">补推到ERP</el-button></div>
         </div>
         <div class="item">
           <div class="item-left">
@@ -67,7 +70,7 @@
       <template v-if="detailsData.recordList && (detailsData.orderStatus===6 ||detailsData.orderStatus===8||detailsData.orderStatus===12||detailsData.orderStatus===30)">
         <div v-for="(item,indexSend) in detailsData.recordList" :key="indexSend" class="info">
           <div class="info-item info-left">
-            <div class="title">配送信息</div>
+            <div class="title">配送信息{{ indexSend+1 }}</div>
             <div class="con">配送方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
             <div class="con">快递公司：盛辉物流</div>
             <div class="con">快递单号：{{ item.number }}</div>
@@ -236,20 +239,27 @@
                         <div class="cell-text">{{ item.commodityNumber }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div class="cell-text">{{ item.totalAmount }}</div>
+                        <div class="cell-text">{{ item.totalActualAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div class="cell-text">{{ detailsData.orderStatus | orderStatus }}</div>
+                        <div class="cell-text">{{ item.couponAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div class="cell-text">{{ detailsData.actualFreightAmount }}</div>
+                        <div class="cell-text">
+                          <template v-if="item.status===6">
+                            <template v-if="detailsData.deliveryType===2">待提货</template>
+                            <template v-else>已发货</template>
+                          </template>
+                          <template v-else>{{ item.status | orderStatus }}</template>
+                          <div v-if="item.orderPackage" class="marginTop20">快递单号<span class="font12">{{ item.orderPackage.packageNo }}</span></div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="body-cell body-right">
-                <div class="cell-text">￥7.00元</div>
+                <div class="cell-text">￥{{ detailsData.actualFreightAmount }}元</div>
               </div>
             </div>
 
@@ -283,8 +293,11 @@ export default {
       if (value === 4) {
         return '待发货'
       }
-      if (value === 6) {
+      if (value === 7) {
         return '待提货'
+      }
+      if (value === 6) {
+        return '已发货'
       }
       if (value === 8) {
         return '待退货'
@@ -668,4 +681,6 @@ export default {
   }
 }
 .marginRight20{margin-right: 20px}
+.marginTop20{margin-top:20px}
+.font12{font-size: 12px}
 </style>

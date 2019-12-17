@@ -49,8 +49,8 @@ export function setAgreeRefund(data) {
 // 统计待发货数量
 export function getCountReceived(mercode) {
   return request({
-    url: `${config.merGoods}/1.0/order-info/countReceived/${mercode}`,
-    method: 'get'
+    url: `${config.merGoods}/1.0/order-info/countReceived`,
+    method: 'post'
   })
 }
 
