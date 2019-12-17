@@ -265,7 +265,7 @@
                         <template v-if="item.orderStatus===10">
                           <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.orderId)">查看退款理由</div>
                         </template>
-                        <template v-if="item.orderStatus===10 && item.deliveryType!==2 && item.deliveryType!==2 && item.detailList.length>1">
+                        <template v-if="item.orderStatus===10 &&item.deliveryType!==2 && item.detailList.length>1">
                           <div class="order_btn" style="text-align:right">
                             <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(list.id,list.commodityName)">拒绝</el-button>
                             <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(list.id,list.totalActualAmount)">退款</el-button>
@@ -298,9 +298,11 @@
                     <template v-if="item.orderStatus===2">
                       <div>待付款</div>
                     </template>
-                    <template v-if="item.orderStatus===4 && item.deliveryType!==2">
+                    <template v-if="item.orderStatus===4">
                       <div>待发货</div>
-                      <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
+                      <template v-if="item.deliveryType!==2">
+                        <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
+                      </template>
                     </template>
                     <template v-if="item.orderStatus===6 && item.deliveryType===2">
                       <div>待提货</div>
@@ -499,9 +501,11 @@
         <el-form-item label="最高退款金额:" :label-width="labelWidth">
           <div><span class="color-red">￥{{ payMoney }}</span> <span class="color-gray">(不可大于商品实付金额)</span></div>
         </el-form-item>
-        <el-form-item label="请输入密码：" prop="pwd" :label-width="labelWidth" required>
-          <el-input v-model="agreeRefundForm.pwd" type="password" autocomplete="off" style="width:200px;" placeholder="请输入密码" size="small" />
-        </el-form-item>
+        <template v-if="isCheckPwd===0">
+          <el-form-item label="请输入密码：" prop="pwd" :label-width="labelWidth" required>
+            <el-input v-model="agreeRefundForm.pwd" type="password" autocomplete="off" style="width:200px;" placeholder="请输入密码" size="small" />
+          </el-form-item>
+        </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogPendingAgreeVisible = false">取 消</el-button>
@@ -546,9 +550,11 @@
         <el-form-item label="最高退款金额" :label-width="labelWidth">
           <div><span class="color-red">￥{{ payMoney }}</span> <span class="color-gray">(不可大于商品实付金额)</span></div>
         </el-form-item>
-        <el-form-item label="请输入密码：" :label-width="labelWidth">
-          <el-input v-model="agreeRefundForm.pwd" autocomplete="off" style="width:200px;" placeholder="请输入密码" size="small" />
-        </el-form-item>
+        <template v-if="isCheckPwd===0">
+          <el-form-item label="请输入密码：" :label-width="labelWidth">
+            <el-input v-model="agreeRefundForm.pwd" autocomplete="off" style="width:200px;" placeholder="请输入密码" size="small" />
+          </el-form-item>
+        </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogConfirmReturnOnlVisible = false">取 消</el-button>
@@ -620,7 +626,7 @@ import { getMyStoreList } from '@/api/store-goods'
 // import { getStoreList } from '@/api/depot'
 import { checkNumberdouble } from '@/utils/validate'
 import crypto from 'crypto'
-import { getOrderList, getRefundReturn, employeeSearch, setRejectRefund, setAgreeRefund, getCountReceived, getUnReceiveData, getExpressCompany, setOrderSend, getEmployeeUsual } from '@/api/order'
+import { getOrderList, getRefundReturn, employeeSearch, setRejectRefund, setAgreeRefund, getCountReceived, getUnReceiveData, getExpressCompany, setOrderSend, getEmployeeUsual, getCheckPwd } from '@/api/order'
 export default {
   components: { Pagination },
   filters: {
@@ -802,6 +808,7 @@ export default {
         refundReturnDesc: '无',
         pictureVoucher: ''
       },
+      isCheckPwd: 0, // 是否需要再次输入密码
       ExpressData: [], // 物流公司列表
       deliveryType: 0, // 配送方式
       deliveryStuffData: {}, // 当前选择的配送员
@@ -874,6 +881,14 @@ export default {
         }
       })
     },
+    checkPwd() {
+      getCheckPwd().then(res => {
+        // console.log('密码验证：', res)
+        if (res) {
+          this.isCheckPwd = res.data
+        }
+      })
+    },
     _loadList() {
       this.loading = true
       let isSuper = 0
@@ -930,7 +945,7 @@ export default {
         isSuper: isSuper,
         storeId: this.listQuery.storeId
       }
-      console.log('获取待发货商品数量datas', datas)
+      // console.log('获取待发货商品数量datas', datas)
       getCountReceived(datas).then(res => {
         if (res.data) {
           this.preSendNum = res.data
@@ -1148,11 +1163,12 @@ export default {
       })
     },
     agreeRefund(detailId, money) { // 同意退款弹框
-      console.log('detailId:', detailId)
+      // console.log('detailId:', detailId)
       this.orderDetailId = detailId
       this.payMoney = money
       this.agreeRefundForm.actualRefundAmount = 0
       this.agreeRefundForm.pwd = ''
+      this.checkPwd() // 10分钟内不用再次输入密码
     },
     agreeRefundEnter() { // 同意退款确定
       if (this.agreeRefundForm.pwd !== '') {

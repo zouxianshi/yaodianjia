@@ -18,6 +18,14 @@ export function getRefundReturn(detailId) {
   })
 }
 
+// 决断是否需要再次输入密码
+export function getCheckPwd(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-return/checkPwd`,
+    method: 'get'
+  })
+}
+
 // 多条件查询员工
 export function employeeSearch(data) {
   console.log('data:', data)
