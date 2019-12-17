@@ -159,7 +159,7 @@ import {
 import config from '@/utils/config'
 
 export default {
-  name: 'Banner',
+  name: 'LimitEdit',
   components: {
     dialogSet,
     dialogGoods,
