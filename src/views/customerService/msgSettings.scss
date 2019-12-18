@@ -1,0 +1,31 @@
+.msg-settings-container {
+  .app-container {
+    .table-header {
+      .add-btn {
+        margin-bottom: 10px;
+        float: right;
+      }
+      .add-dialog {
+
+      }
+    }
+    .msg-table-comp {
+
+    }
+  }
+}
+.edit-dialog {
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
+  .msg-input {
+    margin-top: 12px;
+  }
+  .edit-dialog-switch {
+    margin-top: 12px;
+  }
+}

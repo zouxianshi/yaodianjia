@@ -1,0 +1,337 @@
+@import './../../assets/scss/helpers/mixins';
+
+.chat-list {
+  height: 100%;
+  overflow: auto;
+  width: 220px;
+  background-color: #F4F4F4;
+
+  .search-box {
+    width: 100%;
+    height: 48px;
+    padding: 10px;
+  }
+
+  .user-list {
+    padding: 10px 0;
+  }
+}
+
+.send-msg-box {
+  display: flex;
+  flex-direction: column;
+  height: 220px;
+  box-sizing: border-box;
+  padding-bottom: 20px;
+
+  .action-list {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    line-height: 36px;
+    border-top: 1px solid #eff0f5;
+    padding: 0 10px;
+
+    .action-item {
+      margin: 0 10px;
+
+      &::before {
+        font-size: 20px;
+      }
+    }
+
+  }
+
+  .text-area {
+    flex: 1;
+
+    .el-textarea {
+      width: 100%;
+      height: 100%;
+      padding: 0 20px;
+      outline: 0;
+      border: 0;
+
+      .el-textarea__inner {
+        display: block;
+        height: 100%;
+        padding: 8px 0 0 0;
+        outline: 0;
+        border: 0;
+        resize: none;
+        font-size: 15px;
+      }
+    }
+  }
+
+  .send-msg-box-bottom {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 20px;
+
+    .send-btn {}
+  }
+}
+
+.chat-detail-list {
+  flex: 1;
+  padding: 0 20px 40px;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none; //Safari and Chrome
+  }
+
+  .date-list {
+    text-align: center;
+
+    .date {
+      display: inline-block;
+      margin: 20px auto 0;
+      border-radius: 6px;
+      background: #ccc;
+      padding: 4px 40px;
+      font-size: 12px;
+      color: #fff;
+    }
+
+    .chat-dItem-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #eff0f5;
+    }
+
+    .chat-dItem-content {
+      // overflow: hidden;
+      position: relative;
+      min-height: 40px;
+      border: 1px solid #eff0f5;
+      margin: 0 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      max-width: 240px;
+      text-align: left;
+      background-color: #eff0f5;
+
+      &::before {
+        position: absolute;
+        top: 14px;
+        left: 0;
+        transform: translateX(-50%) rotate(45deg);
+        display: block;
+        content: '';
+        background: #A0E759;
+        width: 0px;
+        height: 0px;
+        border: 6px solid #eff0f5;
+      }
+
+      .image-message {
+        padding: 10px;
+        border-radius: 5px;
+
+        .el-image {
+          border-radius: 5px;
+        }
+      }
+
+      .goods-card {
+        width: 200px;
+
+        .chat-goods-inner {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          border-radius: 5px;
+          // background: #eff0f5;
+          width: auto;
+
+          .chat-goods-img {
+            width: 56px;
+            height: 56px;
+            overflow: hidden;
+          }
+
+          .chat-goods-info {
+            flex: 1;
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 56px;
+            justify-content: space-between;
+
+            .goods-name {
+              font-size: 14px;
+              color: #222;
+            }
+
+            .goods-price {
+              font-size: 14px;
+              color: #ff4a4a;
+            }
+          }
+        }
+
+        .goods-card-header {
+          height: 36px;
+          line-height: 36px;
+          padding: 0 10px;
+          border-bottom: 1px dotted #eff0f5;
+        }
+
+        .goods-card-main {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+
+          .goods-img {
+            width: 56px;
+            height: 56px;
+
+            .el-image {
+              width: 100%;
+              height: 100%;
+            }
+          }
+
+          .goods-info {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 56px;
+            justify-content: space-between;
+            margin-left: 8px;
+
+            .goods-name {
+              @include multi-line(2);
+              font-size: 14px;
+              color: #222;
+            }
+
+            .goods-price {
+              font-size: 10px;
+              color: #ff4a4a;
+            }
+          }
+        }
+      }
+
+      .chat-text {
+        overflow: hidden;
+        word-break: break-all;
+        min-height: 40px;
+        padding: 0 10px;
+        text-align: left;
+        line-height: 40px;
+      }
+    }
+
+    .date-chat-item {
+      display: flex;
+      align-items: flex-start;
+      margin-top: 20px;
+      position: relative;
+
+      &.right-align {
+        justify-content: flex-end;
+
+        .chat-dItem-content {
+          background: #A0E759;
+
+          &::before {
+            background: #A0E759;
+            border-color: #A0E759;
+            left: 100%;
+          }
+
+          .chat-text {
+            background: #A0E759;
+          }
+        }
+      }
+
+      .chat-dItem-avatar {
+        width: 40px;
+        height: 40px;
+        background-color: #eff0f5;
+      }
+
+
+      .chat-item-info {
+        font-size: 12px;
+        color: #45aafa;
+
+        &.user {
+          color: #45aafa;
+        }
+
+        &.self {
+          color: green;
+        }
+      }
+
+      .chat-item-text {
+        text-align: left;
+        margin-top: 10px;
+        font-size: 12px;
+        color: #222;
+      }
+    }
+  }
+}
+
+.canned-msg-list {
+  .canned-msg-item {
+    @include multi-line(2);
+    height: 36px;
+    line-height: 36px;
+  }
+}
+
+.el-popover {
+  .canned-msg-list {
+    max-height: 300px;
+    overflow: auto;
+  }
+}
+
+
+.emoji-list {
+  display: flex;
+  flex-wrap: wrap;
+  height: 200px;
+  overflow: auto;
+
+  .emoji-item {
+    display: block;
+    width: 28px;
+    height: 28px;
+    font-size: 24px;
+    line-height: 28px;
+    text-align: center;
+  }
+}
+
+#pic {
+  display: none;
+}
+
+
+.el-pagination {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.search-filter-item {
+  margin-bottom: 12px;
+
+  .search-filter-item-text {
+  }
+  .search-filter-item-input {
+    width: 180px;
+  }
+  .search-filter-btn {
+    margin-left: 12px;
+  }
+}
