@@ -39,7 +39,7 @@
                 <!-- slides -->
                 <swiper-slide v-for="item in xForm2.detail" :key="item.id" class="slider-item">
                   <div class="img-wrap">
-                    <img :src="item.imageUrl">
+                    <img :src="showImg(item.imageUrl)">
                   </div>
                 </swiper-slide>
               </swiper>
@@ -160,7 +160,7 @@
                 <div class="card_left">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 1}" @click.stop="setEdit('xForm4', 1)">
                     <template v-if="xForm4.detail && xForm4.detail[0] && xForm4.detail[0].imageUrl && xForm4.detail[0].imageUrl!==''">
-                      <img :src="xForm4.detail[0].imageUrl">
+                      <img :src="showImg(xForm4.detail[0].imageUrl)">
                     </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_1.png">
@@ -173,7 +173,7 @@
                 <div class="card_right">
                   <div class="pos-2 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 2}" @click.stop="setEdit('xForm4', 2)">
                     <template v-if="xForm4.detail && xForm4.detail[1] && xForm4.detail[1].imageUrl && xForm4.detail[1].imageUrl!==''">
-                      <img :src="xForm4.detail[1].imageUrl">
+                      <img :src="showImg(xForm4.detail[1].imageUrl)">
                     </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_2.png">
@@ -184,7 +184,7 @@
                   </div>
                   <div class="pos-3 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 3}" @click.stop="setEdit('xForm4', 3)">
                     <template v-if="xForm4.detail && xForm4.detail[2] && xForm4.detail[2].imageUrl && xForm4.detail[2].imageUrl!==''">
-                      <img :src="xForm4.detail[2].imageUrl">
+                      <img :src="showImg(xForm4.detail[2].imageUrl)">
                     </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_3.png">
@@ -195,7 +195,7 @@
                   </div>
                   <div class="pos-4 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 4}" @click.stop="setEdit('xForm4', 4)">
                     <template v-if="xForm4.detail && xForm4.detail[3] && xForm4.detail[3].imageUrl && xForm4.detail[3].imageUrl!==''">
-                      <img :src="xForm4.detail[3].imageUrl">
+                      <img :src="showImg(xForm4.detail[3].imageUrl)">
                     </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_4.png">
@@ -212,7 +212,7 @@
                 <div class="card_top">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm5'}" @click.stop="setEdit('xForm5', '')">
                     <template v-if="xForm5.detail && xForm5.detail.imageUrl!==''">
-                      <img :src="xForm5.detail.imageUrl">
+                      <img :src="showImg(xForm5.detail.imageUrl)">
                     </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_top_1.png">
@@ -281,7 +281,7 @@
                 <div class="card_top">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm7'}" @click.stop="setEdit('xForm7', '')">
                     <template v-if="xForm7.detail && xForm7.detail.imageUrl!==''">
-                      <img :src="xForm7.detail.imageUrl">
+                      <img :src="showImg(xForm7.detail.imageUrl)">
                     </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_top_2.png">
