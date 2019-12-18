@@ -447,7 +447,7 @@
                 <div class="cover-wrap" :class="xFormSet.position === 1 ? 'cover-left':'cover-right'">
                   <div v-if="xForm4.imgUrl==''" class="cover" />
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${xForm4.imgUrl}')`" />
+                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm4.imgUrl)}')`" />
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm4')" />
                     </div>
@@ -493,7 +493,7 @@
                 <div class="cover-wrap cover-top">
                   <div v-if="xForm5.imgUrl==''" class="cover" />
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${xForm5.imgUrl}')`" />
+                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm5.imgUrl)}')`" />
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm5')" />
                     </div>
@@ -586,7 +586,7 @@
                 <div class="cover-wrap cover-top">
                   <div v-if="xForm7.imgUrl==''" class="cover" />
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${xForm7.imgUrl}')`" />
+                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm7.imgUrl)}')`" />
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm7')" />
                     </div>
