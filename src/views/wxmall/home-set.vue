@@ -160,7 +160,7 @@
                 <div class="card_left">
                   <div class="pos-1 set-hover" :class="{'set-active': xFormSet.formName==='xForm4' && xFormSet.position === 1}" @click.stop="setEdit('xForm4', 1)">
                     <template v-if="xForm4.detail && xForm4.detail[0] && xForm4.detail[0].imageUrl && xForm4.detail[0].imageUrl!==''">
-                      <img :src="xForm4.detail[0].imageUrl">
+                      <img :src="showImg(xForm4.detail[0].imageUrl)">
                     </template>
                     <template v-else>
                       <img src="../../assets/image/h5/pic_pos_1.png">
