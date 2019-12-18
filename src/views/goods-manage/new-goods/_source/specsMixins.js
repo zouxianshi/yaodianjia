@@ -162,16 +162,16 @@ const mixin = {
         let index = 0
         let flag = true
         if (this.editSpecsData.length !== 0) {
-          for (let index = 0; index < this.editSpecsData.length; index++) {
-            const element = this.editSpecsData[index]
-            if (!element.picUrl) {
-              this.$message({
-                message: '已存在的规格中存在图片未上传，请上传图片',
-                type: 'error'
-              })
-              return
-            }
-          }
+          // for (let index = 0; index < this.editSpecsData.length; index++) {
+          //   const element = this.editSpecsData[index]
+          //   if (!element.picUrl) {
+          //     this.$message({
+          //       message: '已存在的规格中存在图片未上传，请上传图片',
+          //       type: 'error'
+          //     })
+          //     return
+          //   }
+          // }
         }
         this.specsForm.specs.map(v => {
           index++
@@ -227,13 +227,13 @@ const mixin = {
             })
             flag = false
           }
-          if (flag && !v.picUrl) {
-            this.$message({
-              message: `请上传规格${index}中的图片`,
-              type: 'error'
-            })
-            flag = false
-          }
+          // if (flag && !v.picUrl) {
+          //   this.$message({
+          //     message: `请上传规格${index}中的图片`,
+          //     type: 'error'
+          //   })
+          //   flag = false
+          // }
           if (flag && v.limitType === 1 && !v.limit) {
             this.$message({
               message: '请输入限购值',
@@ -483,6 +483,16 @@ const mixin = {
         }
       }
     },
+    handleLimitChange(row, index) { // 设置
+      if (row.limitType === 0) {
+        this.limit_err = false
+      } else {
+        var value = row.limit
+        if (value) {
+          this.input_checkLimit(row, index)
+        }
+      }
+    },
     input_checkLimit(row, index) {
       var value = row.limit
       if (row.limitType === 1) {
@@ -492,6 +502,7 @@ const mixin = {
             type: 'error'
           })
           this.limit_err = true
+          return
         } else {
           if (value <= 0) {
             this.$message({

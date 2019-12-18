@@ -63,8 +63,8 @@
                   <el-image
                     style="width: 50px;height: 50px;"
                     fit="contain"
-                    :src="scope.row.imageUrl"
-                    :preview-src-list="[scope.row.imageUrl]"
+                    :src="showImg(scope.row.imageUrl)"
+                    :preview-src-list="[showImg(scope.row.imageUrl)]"
                   />
                 </div>
               </div>
@@ -146,7 +146,7 @@
                 :before-upload="beforeUpload"
               >
                 <div v-if="xForm.imgUrl" class="el-img-box">
-                  <img :src="xForm.imgUrl" class="image">
+                  <img :src="showImg(xForm.imgUrl)" class="image">
                   <div class="img-actions" @click.stop>
                     <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
                     <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
@@ -307,7 +307,7 @@ export default {
       return this.$store.state.user.merCode || ''
     },
     upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
     }
   },
   created() {

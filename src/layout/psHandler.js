@@ -18,6 +18,23 @@ class InnerCtor {
         children: []
       },
       {
+        name: '订单管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: true,
+        children: [
+          {
+            name: `所有订单`,
+            path: '/orders-manage/all-orders/list',
+            disabled: true
+          },
+          {
+            name: `订单设置`,
+            path: '/orders-manage/settings',
+            disabled: true
+          }
+        ]
+      },{
         name: '商品管理',
         icon: 'icongoods',
         path: '',

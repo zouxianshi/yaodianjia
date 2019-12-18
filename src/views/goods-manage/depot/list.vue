@@ -18,7 +18,7 @@
         </a>
         <!-- <el-button type="" size="small" icon="el-icon-download" @click="handleExport">导出</el-button> -->
       </div>
-      <section @keydown.enter="getList">
+      <section @keydown.enter="handleQuery">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品名称</span>
@@ -44,14 +44,14 @@
           </div>
           <div class="search-item">
             <span class="label-name">商品来源</span>
-            <el-select v-model="listQuery.origin" placeholder="选择商品来源" size="small" @change="getList">
+            <el-select v-model="listQuery.origin" placeholder="选择商品来源" size="small" @change="handleQuery">
               <el-option label="全部" value="" />
               <el-option label="海典商品库" value="1" />
               <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
           <div class="search-item">
-            <el-button type="primary" size="small" @click="getList">查询</el-button>
+            <el-button type="primary" size="small" @click="handleQuery">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
@@ -307,6 +307,10 @@ export default {
         auditStatus: 1,
         groupId: '' // 分组id
       }
+      this.getList()
+    },
+    handleQuery() {
+      this.listQuery.currentPage = 1
       this.getList()
     },
     getList() {

@@ -42,7 +42,7 @@
             <el-input
               v-model.trim="listQuery.erpCode"
               size="small"
-              placeholder="ERP编码"
+              placeholder="商品编码"
             />
           </div>
           <div class="search-item">
@@ -54,7 +54,7 @@
             />
           </div>
         </div>
-        <div class="search-form">
+        <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品分组</span>
             <el-cascader
@@ -96,6 +96,8 @@
               <el-option label="组合商品" value="2" />
             </el-select>
           </div>
+        </div>
+        <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
@@ -194,7 +196,7 @@
             <template slot-scope="scope">
               <div class="edit-tip">
                 <span style="display:inline-block;margin-right:10px" v-text="scope.row.price" />
-                <i class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'price')" />
+                <i v-if="scope.row.commodityType!==2" class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'price')" />
               </div>
             </template>
           </el-table-column>
@@ -206,7 +208,7 @@
             <template slot-scope="scope">
               <div class="edit-tip">
                 <span style="display:inline-block;margin-right:10px" v-text="scope.row.stock" />
-                <i class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'stock')" />
+                <i v-if="scope.row.commodityType!==2" class="el-icon-edit" size="mini" circle @click="handleEditData(scope.row,'stock')" />
               </div>
             </template>
           </el-table-column>
