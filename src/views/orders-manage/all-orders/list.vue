@@ -66,6 +66,7 @@
               placeholder="订单类型"
               @change="handleChangeCommodityType"
             >
+              <el-option label="全部" value="" />
               <el-option label="处方药" value="R" />
               <el-option label="正常订单" value="N" />
               <el-option label="虚拟商品订单" value="V" />
@@ -90,6 +91,7 @@
               placeholder="订单状态"
               @change="handleChangeOrderStatus"
             >
+              <el-option label="全部" value="" />
               <el-option label="待付款" value="2" />
               <el-option label="待发货" value="4" />
               <el-option label="待提货" value="7" />
@@ -111,7 +113,7 @@
               placeholder="收货方式"
               @change="handleChangeCommodityType"
             >
-              <!-- <el-option label="全部" value="0" /> -->
+              <el-option label="全部" value="" />
               <el-option label="普通快递" value="0" />
               <el-option label="配送上门" value="1" />
               <el-option label="门店自提" value="2" />
@@ -151,6 +153,7 @@
               placeholder="请输入关键词"
               @change="handleChangeEmpId"
             >
+              <!-- <el-option label="全部" value="" /> -->
               <el-option v-for="(item,indexEmp) in employeeData" :key="indexEmp" :label="item.empName" :value="item.id" />
             </el-select>
           </div>
@@ -162,7 +165,7 @@
               placeholder="支付方式"
               @change="handleChangeCommodityType"
             >
-              <!-- <el-option label="全部" value="1" /> -->
+              <el-option label="全部" value="" />
               <el-option label="在线支付" value="0" />
               <el-option label="货到付款" value="1" />
             </el-select>
@@ -184,7 +187,7 @@
         <el-radio-button label="2">待付款</el-radio-button>
         <el-radio-button label="4">
           待发货
-          <template>
+          <template v-if="preSendNum>0">
             <span class="badge">{{ preSendNum }}</span>
           </template>
         </el-radio-button>
@@ -285,7 +288,9 @@
                 <div class="body-cell cell-right padding10">
                   <div v-if="item.orderDeliveryAddress" class="cell-text">
                     <div>{{ item.orderDeliveryAddress.receiver }}</div>
-                    <div>{{ item.orderDeliveryAddress.receiverMobile | receiverMobile }}</div>
+                    <template v-if="item.orderDeliveryAddress.receiverMobile">
+                      <div>{{ item.orderDeliveryAddress.receiverMobile | receiverMobile }}</div>
+                    </template>
                   </div>
                 </div>
                 <div class="body-cell cell-right padding10">
@@ -677,7 +682,7 @@ export default {
   },
   mixins: [mixins],
   data() {
-    const _checkRefundAmount = (rule, value, callback) => { // 限购数量验证
+    const _checkRefundAmount = (rule, value, callback) => { // 退款金额验证
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }

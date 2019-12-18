@@ -30,14 +30,26 @@
           <div class="con">身份证号：<template v-if="detailsData.memberInfoVo">{{ detailsData.memberInfoVo.idcard }}</template><template v-else>无</template></div>
         </div>
         <div class="info-item">
-          <div class="title">收货人信息</div>
-          <div class="con">姓名：<template v-if="detailsData.orderDeliveryAddress">{{ detailsData.orderDeliveryAddress.receiver }}</template><template v-else>无</template></div>
-          <div class="con">电话：<template v-if="detailsData.orderDeliveryAddress">{{ detailsData.orderDeliveryAddress.receiverMobile }}</template><template v-else>无</template></div>
-          <div class="con">
-            <div class="lh18">地址：<template v-if="detailsData.orderDeliveryAddress">{{ detailsData.orderDeliveryAddress.fullDetaiAddress }}</template><template v-else>无</template></div>
-          </div>
-          <div class="con">发票：{{ detailsData.isInvoice ? '需要':'不需要' }}</div>
-          <div class="con">备注：{{ detailsData.orderRemark ? detailsData.orderRemark :'无' }}</div>
+          <template v-if="detailsData.deliveryType===2">
+            <div class="title">提货信息</div>
+            <div class="con">提货门店：<template v-if="detailsData.storeResDTO">{{ detailsData.storeResDTO.stName }}</template><template v-else>无</template></div>
+            <div class="con">
+              <div class="lh18">提货地址：<template v-if="detailsData.storeResDTO">{{ detailsData.storeResDTO.address }}</template><template v-else>无</template></div>
+            </div>
+            <div class="con">联系电话：<template v-if="detailsData.storeResDTO">{{ detailsData.storeResDTO.mobile }}</template><template v-else>无</template></div>
+            <div class="con">发票：{{ detailsData.isInvoice ? '需要':'不需要' }}</div>
+            <div class="con">备注：{{ detailsData.orderRemark ? detailsData.orderRemark :'无' }}</div>
+          </template>
+          <template v-else>
+            <div class="title">收货人信息</div>
+            <div class="con">姓名：<template v-if="detailsData.orderDeliveryAddress">{{ detailsData.orderDeliveryAddress.receiver }}</template><template v-else>无</template></div>
+            <div class="con">电话：<template v-if="detailsData.orderDeliveryAddress">{{ detailsData.orderDeliveryAddress.receiverMobile }}</template><template v-else>无</template></div>
+            <div class="con">
+              <div class="lh18">地址：<template v-if="detailsData.orderDeliveryAddress">{{ detailsData.orderDeliveryAddress.fullDetaiAddress }}</template><template v-else>无</template></div>
+            </div>
+            <div class="con">发票：{{ detailsData.isInvoice ? '需要':'不需要' }}</div>
+            <div class="con">备注：{{ detailsData.orderRemark ? detailsData.orderRemark :'无' }}</div>
+          </template>
         </div>
         <div class="info-item">
           <div class="title">订单信息</div>
