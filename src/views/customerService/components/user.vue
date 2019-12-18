@@ -1,33 +1,73 @@
 <template>
-  <div :class="`user-comp ${selected?'selected':''}`" @click="handleUserClick">
-    <div class="user-avatar">
-      <img :src="data.latestMessage.content.extra.headimgurl" alt>
-      <!-- <el-image
-        fit="scale-down"
-        :src="showImg(data.latestMessage.content.extra.headimgurl)"
-        :preview-src-list="[showImg(data.latestMessage.content.extra.headimgurl)]"
-      /> -->
-    </div>
+  <div :class="`user-comp ${selected?'selected':''}`" @click="handleClick">
+    <el-badge :max="99" :hidden="data.newMsgNum<=0" :value="data.newMsgNum" class="item">
+      <div class="user-avatar">
+        <img :src="avatar">
+      </div>
+    </el-badge>
     <div v-if="data" class="user-chat-info">
       <div class="chat-info-top">
-        <span class="user-name">{{ data.latestMessage.content.extra.nickName }}</span>
-        <span class="chat-time">{{ sentTime }}</span>
+        <span class="user-name">{{ nickName || '我是谁' }}</span>
+        <span class="chat-time">{{ date }}</span>
       </div>
-      <div v-if="data" class="user-chat-content">{{ data.latestMessage.content.content }}</div>
+      <div v-if="data" class="user-chat-content">
+        {{
+          messageType === RYMessageType.TextMessage ?
+            content :
+            messageType === RYMessageType.ImageMessage ?
+              '[图片消息]' :
+              messageType === RYMessageType.GoodsMessage ?
+                '[商品消息]' :
+                content
+        }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Chat from '@/utils/chat'
 export default {
   props: {
+    // 数据对象
+    data: {
+      type: Object,
+      default: null
+    },
+    // 是否选中
     selected: {
       type: Boolean,
       default: false
     },
-    data: {
-      type: Object,
-      default: null
+    // 消息类型
+    messageType: {
+      type: String,
+      default: 'RC:TxtMsg'
+    },
+    // 头像
+    avatar: {
+      type: String,
+      default: ''
+    },
+    // 用户名
+    nickName: {
+      type: String,
+      default: ''
+    },
+    // 时间
+    date: {
+      type: String,
+      default: ''
+    },
+    // 内容
+    content: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      RYMessageType: Chat.MessageType
     }
   },
   computed: {
@@ -43,8 +83,8 @@ export default {
     console.log('this', this.data)
   },
   methods: {
-    handleUserClick() {
-      this.$emit('handleUserClick', this.data)
+    handleClick() {
+      this.$emit('handleClick', this.data)
     }
   }
 }
@@ -64,33 +104,36 @@ export default {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+
   .user-comp {
     display: flex;
     align-items: center;
     justify-content: space-between;
     overflow: hidden;
-    padding: 10px;
+    padding: 14px 10px;
+    width: 100%;
 
     &.selected {
-      background-color: #ddd;
+      background-color: #dbdbdb;
     }
 
     .user-avatar {
-      max-width: 30%;
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background-color: #45aafa;
+      overflow: hidden;
 
       img {
         width: 100%;
         height: 100%;
       }
     }
+
     .user-chat-info {
       overflow: hidden;
       flex: 1;
-      height: 40px;
+      height: 48px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -104,16 +147,18 @@ export default {
 
         .user-name {
           @extend .text-overflow-1;
-          font-size: 14px;
+          font-size: 16px;
           // font-weight: 700;
         }
+
         .chat-time {
-          font-size: 12px;
+          font-size: 14px;
           color: #999;
         }
       }
+
       .user-chat-content {
-        font-size: 12px;
+        font-size: 14px;
         color: #999;
         @extend .text-overflow-1;
       }

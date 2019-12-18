@@ -3,6 +3,14 @@ import config from '@/utils/config'
 
 class CustomerService {
   /**
+   * 连接客服IMServer
+   */
+  connectToIMServer() {
+    const webSocketURL = process.env.VUE_APP_WEBSOCKET_BASE || 'ws://middle.dev.ydjia.cn:5416/ws'
+    return new WebSocket(webSocketURL)
+  }
+
+  /**
    * 查询商家客服列表
    * @param {object} params
    */

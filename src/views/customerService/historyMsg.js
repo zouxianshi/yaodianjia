@@ -7,29 +7,38 @@ import noData from '@/components/NoData'
 import CustomerService from '@/api/customer-service'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import Chat from '@/utils/chat'
+console.log('Chat', Chat)
 export default {
   components: {
     user,
     listItem,
     userInfo,
-    noData,
     chatRoom,
-    viewMore
+    viewMore,
+    noData
   },
   data() {
     return {
+      orderListLoading: false, // 订单列表正在加载
+      orderListHasMore: true, // 订单是否加载更多数据
+      orderListCurPageNo: 1, // 订单当前页码
+      orderListPageSize: 10, // 订单列表pageSize
+      MessageType: Chat.MessageType, // 消息类型枚举
+      messageLoading: false, // 正在加载消息列表
+      curConversationPageNo: 1, // 会话列表页码
+      curConversationPageSize: 1000, // 会话列表pageSize
       conversationList: [], // 当前客服历史会话列表
       historyMsgList: [], // 聊天历史记录
       supporterId: '', // 客服id
       currentUser: '', // 当前打开的聊天窗口用户名
       curChatUserId: '', // 当前打开的聊天窗口用户id
-      orderList: [], // 订单列表
       searchText: '', // 搜索框文字
-      memberInfo: null,
-      boughtRecord: null,
-      historyMsgPageSize: 20,
+      orderList: [], // 订单列表
+      memberInfo: null, // 会员信息
+      boughtRecord: null, // 会员购买记录
+      historyMsgPageSize: 20, // 历史消息每页条数
       historyMsgCurPage: 1, // 历史消息分页页码
-      showViewMore: true
+      showViewMore: true // 是否展示查看更多消息按钮
     }
   },
   computed: {
@@ -49,7 +58,7 @@ export default {
     ...mapMutations({
       setCurUser: 'customerService/SET_HIS_CUR_USERID'
     }),
-    symbolToEmoji: Chat.symbolToEmoji,
+    ...Chat.mapChat(),
     // 搜索按钮点击
     searchBtnClick() {
       this.resetData()
@@ -58,6 +67,7 @@ export default {
     resetData() {
       this.currentUser = ''
       this.curChatUserId = ''
+      this.curConversationPageNo = 1
       this.historyMsgList = []
       this.historyMsgCurPage = 1
       this.memberInfo = null
@@ -74,18 +84,18 @@ export default {
         pageSize: this.historyMsgPageSize // 每页条数
       }
 
+      this.messageLoading = true
+
       CustomerService.queryHistoryMessage(params).then(res => {
+        this.messageLoading = false
         const { data, count } = res.data
         if (Array.isArray(data) && count > this.historyMsgList.length) {
           const historyList = this.historyMsgList
           data.forEach((item, index) => {
-            historyList.unshift(JSON.parse(item))
+            const parsedItem = item
+            historyList.unshift(parsedItem)
           })
           this.historyMsgList = historyList
-          this.$nextTick(() => {
-            const msg = document.getElementById('chat-detail-list') // 获取对象
-            msg.scrollTop = msg.scrollHeight // 滚动高度
-          })
           setTimeout(() => {
             if (this.historyMsgCurPage === 1) {
               this.scrollToBottom()
@@ -97,10 +107,10 @@ export default {
         } else {
           this.showViewMore = false
         }
+      }).catch(err => {
+        console.error(err)
+        this.messageLoading = false
       })
-    },
-    resetHistoryMsgList() {
-
     },
     // 刷新页面数据
     refreshPageData() {
@@ -116,16 +126,20 @@ export default {
     // 查询会话列表
     queryConversationList() {
       this.getSupportHistoryConversationList({
-        currentPage: 1,
+        currentPage: this.curConversationPageNo,
         merCode: this.merCode,
-        pageSize: 20,
+        pageSize: this.curConversationPageSize,
         userId: this.supporterId,
         name: this.searchText // 搜索框中输入的用户名字
       }).then(res => {
         if (this.historyConversationList.length > 0) {
           this.curChatUserId = this.historyConversationList[0].userId
           this.currentUser = this.historyConversationList[0].nickName
-          this.refreshPageData()
+          // 如果是第一页则默认请求第一个用户的信息
+          if (this.curConversationPageNo === 1) {
+            this.refreshPageData()
+          }
+          this.curConversationPageNo++
         }
       })
     },
@@ -150,13 +164,28 @@ export default {
 
     // 根据用户id获取订单列表
     queryUserOrderList() {
+      console.log('into queryUserOrderList')
+      this.orderListLoading = true
       CustomerService.queryUserOrderList({
-        currentPage: 1, // 页码 从1开始
+        currentPage: this.orderListCurPageNo, // 页码 从1开始
         memberId: this.curChatUserId, // 用户id
         merCode: this.merCode, // 商户编码
-        pageSize: 20 // 每页条数
+        pageSize: this.orderListPageSize // 每页条数
       }).then(res => {
-        this.orderList = res.data.data
+        this.orderListLoading = false
+        console.log('into queryUserOrderList success', res)
+        const { data } = res.data
+        if (data && data.length > 0) {
+          this.orderListCurPageNo++
+          this.orderList = [
+            ...this.orderList,
+            ...data
+          ]
+        } else {
+          this.orderListHasMore = false
+        }
+      }).catch(() => {
+        this.orderListLoading = false
       })
     },
     // 会话列表输入框输入
@@ -189,6 +218,20 @@ export default {
         this.refreshPageData()
       } else {
         console.warn('click current item, do nothing.')
+      }
+    },
+    // 会话列表触发加载
+    load() {
+      console.log('load')
+      if (this.curConversationPageNo > 1) {
+        this.queryConversationList()
+      }
+    },
+    handleGoodsClick(item) {
+      console.log('goods item', item)
+      const itemData = JSON.parse(item.content)
+      if (itemData.url) {
+        window.open(itemData.url)
       }
     }
   },

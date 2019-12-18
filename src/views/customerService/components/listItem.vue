@@ -31,10 +31,10 @@ export default {
 
 <style scoped lang="scss">
 .user-info-item-comp {
-  height: 36px;
+  height: 42px;
   border-bottom: 1px solid #eff0f5;
   padding: 0 10px;
-  line-height: 36px;
-  font-size: 12px;
+  line-height: 42px;
+  font-size: 14px;
 }
 </style>

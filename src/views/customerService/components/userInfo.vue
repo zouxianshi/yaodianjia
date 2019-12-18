@@ -1,30 +1,35 @@
 <template>
   <div class="chat-info-comp">
-    <el-tabs v-model="activeName" @tab-click="handleRightTabClick">
-      <div class="tab-box">
-        <div :class="`tab-item ${selectedTab==='info'?'selected':''}`" @click="handleTabClick('info')">
-          个人资料
-        </div>
-        <div :class="`tab-item ${selectedTab==='order'?'selected':''}`" @click="handleTabClick('order')">
-          订单信息
-        </div>
-      </div>
+    <div class="tab-box">
+      <div
+        :class="`tab-item ${selectedTab==='info'?'selected':''}`"
+        @click="handleTabClick('info')"
+      >个人资料</div>
+      <div
+        :class="`tab-item ${selectedTab==='order'?'selected':''}`"
+        @click="handleTabClick('order')"
+      >订单信息</div>
+    </div>
+    <div class="tab-content">
       <div v-if="memberInfo && selectedTab==='info'" class="cur-user-info">
         <list-item name="昵称" :value="memberInfo.nickName" />
         <list-item name="手机" :value="memberInfo.memberPhone" />
         <list-item name="会员卡号" :value="memberInfo.cardNumber" />
         <div class="divider" />
         <template v-if="boughtRecord">
-          <list-item name="购买次数" :value="boughtRecord.buyAvg" />
-          <list-item name="购买均价" :value="boughtRecord.buyNum" />
+          <list-item name="购买次数" :value="boughtRecord.buyNum" />
+          <list-item name="购买均价" :value="boughtRecord.buyAvg" />
         </template>
       </div>
-      <div v-if="orderList && selectedTab === 'order'" class="cur-user-orders">
+      <div
+        v-if="orderList && selectedTab === 'order'"
+        v-infinite-scroll="loadOrderData"
+        class="cur-user-orders"
+        :infinite-scroll-disabled="!orderListHasMore||orderListLoading"
+      >
         <div v-for="(item,index) in orderList" :key="index" class="order-item">
           <div class="order-item-top">
-            <div class="order-item-top-status">
-              {{ orderStatusMap[item.orderStatus] }}
-            </div>
+            <div class="order-item-top-status">{{ orderStatusMap[item.orderStatus] }}</div>
             <div class="order-item-top-right">
               <div class="order-no">单号：{{ item.id }}</div>
               <div class="order-time">{{ item.orderTime }}</div>
@@ -39,13 +44,19 @@
                   <span class="goods-no">x {{ gItem.commodityNumber }}</span>
                 </div>
                 <div class="goods-size">{{ gItem.skuValue }}123</div>
-                <!-- <div class="manufacturer">{{ item.storeName }}</div> -->
               </div>
             </div>
           </div>
         </div>
+        <div class="no-more">
+          <span v-if="orderListHasMore">
+            加载中
+            <i class="el-icon-loading" />
+          </span>
+          <span v-else>—— 没有更多了 ——</span>
+        </div>
       </div>
-    </el-tabs>
+    </div>
   </div>
 </template>
 
@@ -64,9 +75,20 @@ export default {
       type: Object,
       default: null
     },
+    // 订单列表
     orderList: {
       type: Array,
       default: null
+    },
+    // 订单列表是否加载更多
+    orderListHasMore: {
+      type: Boolean,
+      default: true
+    },
+    // 订单列表是否正在加载
+    orderListLoading: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -84,21 +106,19 @@ export default {
         20: '已取消',
         30: '退款完成'
       },
-      // 当前选中的标签页标识
-      activeName: 'first'
+      loaderDisabled: false // 禁用订单滚动加载
     }
   },
   created() {
     console.log('this.boughtRecord', this.boughtRecord)
   },
   methods: {
-    // 右侧标签页切换
-    handleRightTabClick(tab, e) {
-      console.log('tab', tab, 'e', e)
-    },
     // tab click
     handleTabClick(type) {
       this.selectedTab = type
+    },
+    loadOrderData() {
+      this.$emit('loadOrderData')
     }
   }
 }
@@ -111,24 +131,6 @@ export default {
     white-space: nowrap;
   }
 
-  .tab-box {
-    border-bottom: 1px solid #ddd;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    .tab-item {
-      width: 50%;
-      text-align: center;
-      height: 48px;
-      line-height: 48px;
-      cursor: pointer;
-
-      &.selected {
-        border-bottom: 2px solid #45aafa;
-      }
-    }
-  }
-
   .text-overflow-2 {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -137,36 +139,49 @@ export default {
     -webkit-box-orient: vertical;
   }
   .chat-info-comp {
-    width: 280px;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
     height: 100%;
     overflow: auto;
-    float: right;
     border-left: 1px solid #eff0f5;
 
-    .el-tabs {
-      // background: #45aafa;
+    .tab-box {
+      border-bottom: 1px solid #eff0f5;
+      height: 48px;
+      box-sizing: border-box;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      .tab-item {
+        position: relative;
+        width: 50%;
+        text-align: center;
+        height: 48px;
+        line-height: 48px;
+        cursor: pointer;
 
-      .el-tabs__header {
-        margin-bottom: 0;
-        // background: #ffe400;
-
-        .el-tabs__nav-wrap {
-          background: #000;
-
-          .el-tabs__nav-scroll {
-            background: #ffe400;
-
-            .el-tabs__nav {
-              background: blue;
-            }
+        &.selected {
+          // border-bottom: 2px solid #45aafa;
+          &::before {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 3px;
+            width: 64px;
+            background: #45aafa;
+            display: block;
+            content: "";
+            border-radius: 50%;
           }
         }
       }
     }
 
-    .el-tabs__item {
-      // width: 50%;
-      height: 48px !important;
+    .tab-content {
+      flex: 1;
+      overflow: auto;
     }
 
     .cur-user-info {
@@ -179,7 +194,7 @@ export default {
     .cur-user-orders {
       .order-item {
         padding: 16px 12px;
-        border-bottom: 1px dashed #ddd;
+        border-bottom: 12px solid #eff0f5;
 
         .order-item-top {
           display: flex;
@@ -191,18 +206,25 @@ export default {
           // padding: 0 10px;
 
           .order-item-top-status {
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 700;
             color: #45aafa;
           }
 
           .order-item-top-right {
+            flex: 1;
+            overflow: hidden;
+            margin-left: 8px;
             text-align: right;
+
             .order-no {
+              font-size: 14px;
               flex: 1;
               @extend .text-overflow-1;
             }
 
             .order-time {
+              font-size: 14px;
               margin-top: 8px;
               color: #999;
             }
@@ -213,7 +235,7 @@ export default {
           .goods-item {
             display: flex;
             align-items: center;
-            padding: 10px 0 0;
+            padding: 12px 0 0;
 
             .goods-img {
               display: inline-block;
@@ -235,31 +257,31 @@ export default {
                 display: flex;
                 align-items: center;
                 .goods-name {
+                  font-size: 14px;
                   @extend .text-overflow-1;
                   flex: 1;
-                  font-size: 11px;
                 }
 
                 .goods-no {
                   margin-left: 8px;
-                  font-size: 12px;
+                  font-size: 14px;
                 }
               }
 
               .goods-size {
                 color: #666;
-                // margin-top: 5px;
-                font-size: 10px;
-              }
-
-              .manufacturer {
-                color: #999;
-                // margin-top: 5px;
-                font-size: 10px;
+                font-size: 12px;
               }
             }
           }
         }
+      }
+      .no-more {
+        height: 48px;
+        line-height: 48px;
+        text-align: center;
+        font-size: 14px;
+        color: #999;
       }
     }
   }

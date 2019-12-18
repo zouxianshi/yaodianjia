@@ -8,6 +8,7 @@
 <script>
 import CustomerService from '@/api/customer-service'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
+import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 export default {
   data() {
@@ -22,24 +23,86 @@ export default {
     ...mapGetters(['merCode', 'userId', 'curOnlineUserData'])
   },
   created() {
+    const _this = this
     this.createSocketConnection()
     this.querySupportStaffById()
       .then(() => {
-        // 获取到融云token后 开始IMLib初始化 设置监听器 连接服务器
-        const RYAppKey = 'lmxuhwagl5sad'
-        this.ryInit(RYAppKey)
+        // 获取到融云token后 开始IMLib初始化
+        Chat.init({
+          ryToken: this.ryToken,
+          onReceived: message => {
+            this.newMsg = message
+            // 通知在线咨询组件有新消息
+            console.log('setHasNewMsg')
+            this.setHasNewMsg(true)
+
+            // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知
+            if (_this.$route.path === '/customerService/consultation') {
+              console.log('curOnlineUserData', _this.curOnlineUserData)
+
+              const { userId } = _this.curOnlineUserData
+
+              // 判断接收的消息是否来自当前打开窗口的用户 是则直接追加消息 否则在左侧会话头像添加徽标
+              if (userId === message.senderUserId) {
+                _this.addMsgToOnlineCurUserMsgList({
+                  content: message.content.content, // 消息内容
+                  coversionType: 'PERSON', // 消息类型
+                  fromUserId: message.senderUserId, // 发送用户id
+                  merCode: _this.merCode, // 商户编码
+                  messageType: message.objectName, // 消息类型 这里不能取messageType
+                  msgUid: message.messageUId, // 消息id
+                  timeStamp: message.sentTime, // 时间戳
+                  toUserId: _this.userId, // 接收用户id
+                  userId: message.targetId // 用户id
+                })
+                setTimeout(() => {
+                  _this.scrollToBottom()
+                }, 100)
+              } else {
+                _this.addBadgeToOnlineUser({
+                  userId: message.senderUserId
+                })
+              }
+            } else {
+              _this.newMsgComing = true
+              _this.$notify({
+                type: 'info',
+                title: '您有新的消息',
+                message: message.content.content,
+                duration: 5000,
+                onClick: e => {
+                  console.log('click e', e)
+                  _this.newMsgComing = false
+                  console.log('newMsgComing', _this.newMsg)
+                  _this.$notify.close()
+                  _this.$router.push({
+                    path: '/customerService/consultation',
+                    query: {
+                      targetId: _this.newMsg.targetId,
+                      msgInfo: JSON.stringify(_this.newMsg)
+                    }
+                  })
+                }
+              })
+            }
+          }
+        }).then(res => {
+          console.log('ry init 初始化成功')
+          this.setRyConnected(true)
+        })
       })
       .catch(err => {
         console.error('err', err)
       })
   },
   methods: {
-    ...mapActions({
-    }),
+    ...mapActions({}),
     ...mapMutations({
-      addMsgToOnlineCurUserMsgList: 'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
+      addMsgToOnlineCurUserMsgList:
+          'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
       addBadgeToOnlineUser: 'customerService/addBadgeToOnlineUser',
-      setHasNewMsg: 'customerService/setHasNewMsg'
+      setHasNewMsg: 'customerService/setHasNewMsg',
+      setRyConnected: 'customerService/SET_RY_INIT_STATUS'
     }),
     // 通过token生成融云token
     querySupportStaffById() {
@@ -55,183 +118,6 @@ export default {
           }
         })
       })
-    },
-    // 融云IMLib初始化
-    ryInit(RYAppKey) {
-      const _this = this
-      var RongIMLib = window.RongIMLib
-      var RongIMClient = RongIMLib.RongIMClient
-      console.log('RongIMClient', RongIMClient)
-      RongIMClient.init(RYAppKey)
-      RongIMLib.RongIMEmoji.init()
-
-      // 连接状态监听器
-      console.log('设置连接状态监听器')
-      RongIMClient.setConnectionStatusListener({
-        onChanged: function(status) {
-          console.log('连接状态监听器触发, status: ', status)
-          // status 标识当前连接状态
-          switch (status) {
-            case RongIMLib.ConnectionStatus.CONNECTED:
-              console.log('链接成功')
-              break
-            case RongIMLib.ConnectionStatus.CONNECTING:
-              console.log('正在链接')
-              break
-            case RongIMLib.ConnectionStatus.DISCONNECTED:
-              console.log('断开连接')
-              break
-            case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
-              console.log('其他设备登录')
-              break
-            case RongIMLib.ConnectionStatus.DOMAIN_INCORRECT:
-              console.log('域名不正确')
-              break
-            case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
-              console.log('网络不可用')
-              break
-          }
-        }
-      })
-
-      // 消息监听器
-      console.log('设置消息监听器')
-      RongIMClient.setOnReceiveMessageListener({
-        // 接收到的消息
-        onReceived: function(message) {
-          console.error('融云消息监听, 收到消息：', message)
-          _this.newMsg = message
-
-          // 通知在线咨询组件有新消息
-          _this.setHasNewMsg(true)
-
-          // 判断消息类型
-          switch (message.messageType) {
-            case RongIMClient.MessageType.TextMessage:
-              // message.content.content => 文字内容
-              break
-            case RongIMClient.MessageType.VoiceMessage:
-              // message.content.content => 格式为 AMR 的音频 base64
-              break
-            case RongIMClient.MessageType.ImageMessage:
-              // message.content.content => 图片缩略图 base64
-              // message.content.imageUri => 原图 URL
-              break
-            case RongIMClient.MessageType.LocationMessage:
-              // message.content.latiude => 纬度
-              // message.content.longitude => 经度
-              // message.content.content => 位置图片 base64
-              break
-            case RongIMClient.MessageType.RichContentMessage:
-              // message.content.content => 文本消息内容
-              // message.content.imageUri => 图片 base64
-              // message.content.url => 原图 URL
-              break
-            case RongIMClient.MessageType.InformationNotificationMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.ContactNotificationMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.ProfileNotificationMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.CommandNotificationMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.CommandMessage:
-              // do something
-              break
-            case RongIMClient.MessageType.UnknownMessage:
-              // do something
-              break
-            default:
-              // do something
-          }
-
-          // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知
-          if (_this.$route.path === '/customerService/consultation') {
-            console.log('curOnlineUserData', _this.curOnlineUserData)
-
-            const { userId } = _this.curOnlineUserData
-
-            // 判断接收的消息是否来自当前打开窗口的用户 是则直接追加消息 否则在左侧会话头像添加徽标
-            if (userId === message.senderUserId) {
-              _this.addMsgToOnlineCurUserMsgList({
-                content: message.content.content, // 消息内容
-                coversionType: 'PERSON', // 消息类型
-                fromUserId: message.senderUserId, // 发送用户id
-                merCode: _this.merCode, // 商户编码
-                messageType: 'RC:TxtMsg', // 消息类型
-                msgUid: message.messageUId, // 消息id
-                timeStamp: message.sentTime, // 时间戳
-                toUserId: _this.userId, // 接收用户id
-                userId: message.targetId // 用户id
-              })
-              setTimeout(() => {
-                _this.scrollToBottom()
-              }, 100)
-            } else {
-              _this.addBadgeToOnlineUser({
-                userId: message.senderUserId
-              })
-            }
-          } else {
-            _this.newMsgComing = true
-            _this.$notify({
-              type: 'info',
-              title: '您有新的消息',
-              message: message.content.content,
-              duration: 5000,
-              onClick: e => {
-                console.log('click e', e)
-                _this.newMsgComing = false
-                console.log('newMsgComing', _this.newMsg)
-                _this.$notify.close()
-                _this.$router.push({
-                  path: '/customerService/consultation',
-                  query: {
-                    targetId: _this.newMsg.targetId,
-                    msgInfo: JSON.stringify(_this.newMsg)
-                  }
-                })
-              }
-            })
-          }
-        }
-      })
-
-      // 连接融云服务器
-      console.log('连接融云服务器')
-      RongIMClient.connect(this.ryToken, {
-        onSuccess: function(userId) {
-          console.log('Connect successfully. ' + userId)
-        },
-        onTokenIncorrect: function() {
-          console.log('token 无效')
-        },
-        onError: function(errorCode) {
-          console.log('connect errorCode', errorCode)
-          var info = ''
-          switch (errorCode) {
-            case RongIMLib.ErrorCode.TIMEOUT:
-              info = '超时'
-              break
-            case RongIMLib.ConnectionState.UNACCEPTABLE_PAROTOCOL_VERSION:
-              info = '不可接受的协议版本'
-              break
-            case RongIMLib.ConnectionState.IDENTIFIER_REJECTED:
-              info = 'appkey不正确'
-              break
-            case RongIMLib.ConnectionState.SERVER_UNAVAILABLE:
-              info = '服务器不可用'
-              break
-          }
-          console.log('info', info)
-        }
-      })
-      this.RongIMClient = RongIMClient
-      return RongIMClient
     },
     // 消息按钮点击 跳转逻辑
     msgBtnClick() {
@@ -261,7 +147,9 @@ export default {
     createSocketConnection() {
       const self = this
       if ('WebSocket' in window) {
-        var ws = new WebSocket('ws://middle.dev.ydjia.cn:5416/ws')
+        var ws = CustomerService.connectToIMServer()
+
+        console.log('IMServer WS', ws)
 
         var cToken = getToken()
 
@@ -305,7 +193,8 @@ export default {
         }
 
         ws.onmessage = function(evt) {
-          // var received_msg = evt.data
+          var received_msg = evt.data
+          console.log('接收消息', received_msg)
         }
 
         ws.onclose = function() {

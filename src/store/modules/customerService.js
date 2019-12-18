@@ -19,10 +19,20 @@ const state = {
     list: [], // 会话列表
     hasNewMsg: false // 是否有新消息
   },
-  hasNewMsg: false
+  hasNewMsg: false,
+  ryConnected: false // 融云连接服务器成功
 }
 
 const mutations = {
+
+  /**
+   * 融云相关
+   */
+  SET_RY_INIT_STATUS(state, payload) {
+    console.log('into SET_RY_INIT_STATUS')
+    state.ryConnected = true
+  },
+
   /**
    * 历史消息相关
    */
@@ -77,7 +87,8 @@ const mutations = {
     } = payload
     const tempList = state.curOnlineUserData.list
     list.forEach(element => {
-      tempList.unshift(JSON.parse(element))
+      const parsedData = element
+      tempList.unshift(parsedData)
     })
     state.curOnlineUserData.curPageNo++
     state.curOnlineUserData.list = tempList
@@ -86,7 +97,55 @@ const mutations = {
   // push一条消息到在线咨询当前用户消息列表
   ADD_MSG_TO_ONLINE_MSG_LIST(state, payload) {
     console.log('into ADD_MSG_TO_ONLINE_MSG_LIST')
-    state.curOnlineUserData.list.push(payload)
+
+    const {
+      merCode,
+      // msgInfo,
+      msgResult
+    } = payload
+    // 组装历史消息数据
+    const curWindowPush = {
+      content: msgResult.content.content, // 消息内容
+      coversionType: 'PERSON', // 消息类型
+      fromUserId: msgResult.senderUserId, // 发送用户id
+      merCode: merCode, // 商户编码
+      messageType: msgResult.objectName, // 消息类型
+      msgUid: msgResult.messageUId, // 消息id
+      timeStamp: msgResult.sentTime, // 时间戳
+      toUserId: msgResult.targetId, // 接收用户id
+      userId: msgResult.targetId // 接收用户id
+    }
+    // push消息到当前聊天框
+    state.curOnlineUserData.list.push(curWindowPush)
+
+    // 组装会话item最近一条消息数据
+    // 向localStorage中push一条latestMessage数据
+    const curLocalPush = {
+      latestMessage: {
+        content: msgResult.content,
+        conversationType: 1,
+        objectName: msgResult.objectName,
+        senderUserId: msgResult.senderUserId,
+        messageUId: msgResult.messageUId,
+        targetId: msgResult.targetId
+      }
+    }
+    if (localStorage.getItem('ryConversationList')) {
+      const localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
+      localConversationList.forEach((element) => {
+        if (element.targetId === msgResult.targetId) {
+          element.latestMessage = {
+            ...element.latestMessage,
+            ...curLocalPush.latestMessage,
+            content: {
+              ...element.latestMessage.content,
+              ...curLocalPush.latestMessage.content
+            }
+          }
+        }
+      })
+      localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
+    }
   },
   // 添加未读消息徽标至会话列表item头像
   addBadgeToOnlineUser(state, payload) {
@@ -110,7 +169,33 @@ const mutations = {
   },
   // 获取在线咨询会话列表
   SET_ONLINE_CONVERSATIONLIST(state, payload) {
-    state.onlineConversationData.list = payload
+    // 这里对比本地缓存中的数据并合并 完成之后更新本地存储
+    // localStorage.setItem('ryConversationList', JSON.stringify(payload))
+    let localConversationList = []
+    // 如果有本地缓存 对比本地缓存并合并数据
+    if (localStorage.getItem('ryConversationList')) {
+      localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
+      console.log('localConversationList', localConversationList)
+      payload.forEach((item, index) => {
+        console.log('item', item)
+        const existedIndex = localConversationList.findIndex(element => {
+          return item.targetId === element.targetId
+        })
+        console.log('existedIndex', existedIndex)
+        if (existedIndex >= 0) {
+          console.log(`${item.targetId}存在本地了`, '替换')
+          localConversationList[existedIndex] = item
+        } else {
+          localConversationList.push(item)
+        }
+      })
+      localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
+      state.onlineConversationData.list = localConversationList
+    } else {
+      state.onlineConversationData.list = payload
+      localStorage.setItem('ryConversationList', JSON.stringify(payload))
+    }
+
     console.log('通过vuex获取并添加字段的会话列表', state.onlineConversationData)
   }
 }
@@ -153,8 +238,6 @@ const actions = {
         list.forEach(element => {
           // 添加新消息数量字段 用于徽标显示
           if (payload && payload.searchText) {
-            console.log('element.latestMessage.content.extra.nickName.', element.latestMessage.content.extra.nickName)
-            console.log('payload.searchText', payload.searchText, element.latestMessage.content.extra.nickName.indexOf(payload.searchText))
             if (element.latestMessage.content.extra.nickName.indexOf(payload.searchText) > -1) {
               tempList.push({
                 ...element,

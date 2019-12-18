@@ -17,7 +17,8 @@ const getters = {
   historyConversationList: state => state.customerService.historyConversationList,
   curOnlineUserData: state => state.customerService.curOnlineUserData,
   onlineConversationData: state => state.customerService.onlineConversationData,
-  hasNewMsg: state => state.customerService.hasNewMsg
+  hasNewMsg: state => state.customerService.hasNewMsg,
+  ryConnected: state => state.customerService.ryConnected
 }
 
 export default getters

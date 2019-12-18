@@ -1,8 +1,8 @@
-// import chatRoom from './components/chatRoom'
 import user from './components/user'
 import listItem from './components/listItem'
 import userInfo from './components/userInfo'
 import viewMore from './components/viewMore'
+import chatRoom from './components/chatRoom'
 import noData from '@/components/NoData'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import CustomerService from '@/api/customer-service'
@@ -10,6 +10,7 @@ import {
   queryGoods
 } from '@/api/common'
 import Chat from '@/utils/chat'
+console.log('consultation', Chat)
 export default {
   name: 'Consultation',
   components: {
@@ -17,10 +18,20 @@ export default {
     listItem,
     userInfo,
     viewMore,
-    noData
+    noData,
+    chatRoom
   },
   data() {
     return {
+      consultingLoading: true, // 整页loading
+      messageLoading: false, // 历史消息是否正在加载
+      orderListLoading: false, // 订单列表是否正在加载
+      orderListHasMore: true, // 订单是否加载更多数据
+      orderListCurPageNo: 1, // 订单当前页码
+      orderListPageSize: 10, // 订单列表pageSize
+      curUserAvatar: '', // 聊天框中显示的用户logo
+      MessageType: Chat.MessageType, // 消息类型枚举
+      isFirstQueryFinished: false, // 第一次融云会话请求是否已经完成 不要去改这个变量
       merLogo: '', // 商户头像 用作聊天窗口的客服头像展示
       searchText: '', // 搜索框文字
       boughtRecord: null, // 用户购买记录
@@ -44,19 +55,41 @@ export default {
       emojiPopVisible: false, // 表情弹窗是否展示
       emojiList: [], // emoji表情列表
       fileList: [], // 图片input文件列表
-      extra: { // 融云消息扩展字段
-        merCode: '', // 商户编码
-        userAccount: '', // 如果是客服，对应中台sys_user.account
-        userId: '', // 用户id 这里是自己的id
-        userName: '', // 用户姓名
-        nickName: '', // 昵称
-        age: '', // 年龄
-        sex: '' // 性别（男，女，未知）
+      curLatestMessageInfo: null, // 最近一条消息对象
+      goodsQuery: { // 商品查询分页参数
+        initialPageSize: 10,
+        currentPage: 1,
+        pageSize: 10,
+        name: '' // 商品名称
       }
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg'])
+    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg', 'ryConnected']),
+    goodsPagination() {
+      return {
+        pageSizes: [
+          this.goodsQuery.initialPageSize,
+          this.goodsQuery.initialPageSize * 2,
+          this.goodsQuery.initialPageSize * 3,
+          this.goodsQuery.initialPageSize * 5
+        ],
+        total: 100
+      }
+    },
+    extra() {
+      return {
+        merCode: this.merCode, // 商户编码
+        userAccount: this.name, // 如果是客服，对应中台sys_user.account
+        userId: this.userId, // 用户id 这里是自己的id 不是目标用户的id
+        userName: this.curLatestMessageInfo.content.extra.userName || '', // 用户姓名
+        nickName: this.curLatestMessageInfo.content.extra.nickName, // 昵称
+        age: this.curLatestMessageInfo.content.extra.age, // 年龄
+        sex: this.curLatestMessageInfo.content.extra.sex, // 性别（男，女，未知）
+        userLogo: this.curUserAvatar,
+        platform: 1 // 平台 Number 0-app 1-web端
+      }
+    }
   },
   methods: {
     ...mapActions({
@@ -73,14 +106,20 @@ export default {
     symbolToEmoji: Chat.symbolToEmoji,
     queryRYConversationList(searchParam) {
       const _this = this
+      this.isFirstQueryFinished = true
       // 获取会话列表
-      this.queryOnlineConversationList(searchParam).then(list => {
+      this.queryOnlineConversationList(searchParam).then(() => {
+        this.consultingLoading = false
+        const list = this.onlineConversationData.list
+        console.log('queryOnlineConversationList', list)
         if (list.length > 0) {
           this.setCurOnlineUserId({
             userId: list[0].targetId
           })
+          _this.curLatestMessageInfo = list[0].latestMessage
           _this.targetId = list[0].targetId
           _this.curUserName = list[0].latestMessage.content.extra.nickName
+          _this.curUserAvatar = list[0].latestMessage.content.extra.userLogo
           // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
           // 历史消息
           _this.queryHistoryMessage()
@@ -91,6 +130,8 @@ export default {
           // 订单列表
           _this.queryUserOrderList()
         }
+      }).catch(() => {
+        this.consultingLoading = false
       })
     },
 
@@ -115,13 +156,26 @@ export default {
 
     // 根据用户id获取订单列表
     queryUserOrderList() {
+      this.orderListLoading = true
       CustomerService.queryUserOrderList({
-        currentPage: 1, // 页码 从1开始
+        currentPage: this.orderListCurPageNo, // 页码 从1开始
         memberId: this.targetId, // 用户id
         merCode: this.merCode, // 商户编码
-        pageSize: 20 // 每页条数
+        pageSize: this.orderListPageSize // 每页条数
       }).then(res => {
-        this.orderList = res.data.data
+        this.orderListLoading = false
+        const { data } = res.data
+        if (data && data.length > 0) {
+          this.orderListCurPageNo++
+          this.orderList = [
+            ...this.orderList,
+            ...data
+          ]
+        } else {
+          this.orderListHasMore = false
+        }
+      }).catch(() => {
+        this.orderListLoading = false
       })
     },
 
@@ -133,20 +187,17 @@ export default {
       }
       Chat.sendMessage({
         targetId: this.targetId, // this.targetId,
-        msgInfo
+        msgInfo: {
+          content: Chat.emojiToSymbol(msgInfo.content),
+          extra: this.extra
+        }
       }).then(res => {
         // 发送成功清空消息内容
         this.textMsgValue = ''
         this.addMsgToOnlineCurUserMsgList({
-          content: msgInfo.content, // 消息内容
-          coversionType: 'PERSON', // 消息类型
-          fromUserId: this.userId, // 发送用户id
-          merCode: this.merCode, // 商户编码
-          messageType: 'RC:TxtMsg', // 消息类型
-          msgUid: `${Math.random()}`, // 消息id
-          timeStamp: new Date(), // 时间戳
-          toUserId: this.targetId, // 接收用户id
-          userId: this.targetId // 接收用户id
+          merCode: this.merCode,
+          msgInfo: msgInfo,
+          msgResult: res
         })
         this.scrollToBottom()
       }).catch((err, msg) => {
@@ -192,6 +243,11 @@ export default {
       this.textMsgValue = item.msg
       this.cannedRepliesVisible = false
     },
+    // 商品名称输入框
+    handleGoodsNameInput(val) {
+      console.log('val', val)
+      this.goodsQuery.name = val
+    },
     queryGoods() {
       queryGoods({
         approvalNumber: '', // 批准文号
@@ -199,21 +255,41 @@ export default {
         barCode: '', // 条形码
         commodityIds: [], // 商品id数组
         commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
-        currentPage: 1, // 页码
+        currentPage: this.goodsQuery.currentPage, // 页码
         erpCode: '', // 商品编码
         groupId: '', // 分组id,如果是1，2级分组时，请与level字段共用
         infoFlag: '', // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
         level: 0, // 分组或分类level,1-一级，2-二级，3-三级，为null和0时不做处理
         manufacture: '', // 生产企业
         merCode: this.merCode, // 商家编码
-        name: '', // 商品名称
+        name: this.goodsQuery.name, // 商品名称
         onlyCom: '', // 商品查询标志,true-只查商品信息，其他包括规格信息
         origin: 0, // 商品来源，1-海典，2-商家
-        pageSize: 20, // 每页显示条数，不传默认20
+        pageSize: this.goodsQuery.pageSize, // 每页显示条数，不传默认20
         typeId: '' // 分类id,如果是1，2级分类时，请与level字段共用
       }).then(res => {
-        this.goodsList = res.data.data
+        if (res.data) {
+          console.log('商品数据', res.data)
+          const {
+            totalCount,
+            data
+          } = res.data
+          this.goodsPagination.total = totalCount
+          // this.goodsQuery.currentPage = this.goodsQuery.curPage + 1
+          this.goodsList = data
+          console.log('goodsList', this.goodsList)
+        }
       })
+    },
+    // 商品pagesizechange
+    handleGoodsDialogSizeChange(val) {
+      this.goodsQuery.pageSize = val
+      this.queryGoods()
+    },
+    // 商品curPage change
+    handleGoodsDialogCurPageChange(val) {
+      this.goodsQuery.currentPage = val
+      this.queryGoods()
     },
     handleSelectGoodsDialogClose() {
       this.selectGoodsDialogVisible = false
@@ -223,47 +299,67 @@ export default {
       this.selectedGoods = row
       this.selectGoodsDialogVisible = false
 
+      console.log('选中的商品row', row)
+
       const msgInfo = {
         content: {
           title: row.name,
           desc: row.keyWord,
           imageUri: this.showImg(row.mainPic),
-          url: '',
+          url: `${this.h5Base}pages/details/index?productId=${row.id}`,
           price: row.mprice.toFixed(2)
         },
         extra: this.extra
       }
 
+      console.warn('即将发送消息', msgInfo)
+
       Chat.sendMessage({
         targetId: this.targetId,
-        msgInfo
+        msgInfo,
+        messageType: Chat.MessageType.GoodsMessage
       }).then(res => {
+        console.log('h5Base', this.h5Base)
+        console.log('sendMessage successfully', res)
+        // this.addMsgToOnlineCurUserMsgList({
+        //   content: JSON.stringify({
+        //     title: row.name,
+        //     desc: row.keyWord,
+        //     imageUri: this.showImg(row.mainPic),
+        //     url: `pages/details/index?productId=1650807554132934657`,
+        //     price: row.mprice.toFixed(2)
+        //   }), // 消息内容
+        //   coversionType: 'PERSON', // 消息类型
+        //   fromUserId: this.userId, // 发送用户id
+        //   merCode: this.merCode, // 商户编码
+        //   messageType: Chat.MessageType.GoodsMessage, // 消息类型
+        //   msgUid: `${Math.random()}`, // 消息id
+        //   timeStamp: new Date(), // 时间戳
+        //   toUserId: this.targetId, // 接收用户id
+        //   userId: this.targetId // 用户id
+        // })
         this.addMsgToOnlineCurUserMsgList({
-          content: msgInfo.content, // 消息内容
-          coversionType: 'PERSON', // 消息类型
-          fromUserId: this.userId, // 发送用户id
-          merCode: this.merCode, // 商户编码
-          messageType: 'RC:TxtMsg', // 消息类型
-          msgUid: `${Math.random()}`, // 消息id
-          timeStamp: new Date(), // 时间戳
-          toUserId: this.targetId, // 接收用户id
-          userId: this.targetId // 用户id
+          merCode: this.merCode,
+          msgInfo: msgInfo,
+          msgResult: res
         })
         // 这里追加当前消息到消息列表
       }).catch((errCode, errMessage) => {
-        console.error('商品消息发送成功失败，errCode：', errCode, '\nerrMessage：', errMessage)
+        console.error('商品消息发送失败，errCode：', errCode, '\nerrMessage：', errMessage)
       })
     },
 
     // 点击左边用户列表切换
     handleUserClick(data) {
+      console.log('handleUserClick', data)
       if (data.targetId === this.targetId) {
         this.setCurOnlineUserId({
           userId: data.targetId
         })
       } else {
-        // 重置所有数据并重新请求
+        // 重置所有数据并重新请求s
         this.targetId = data.targetId
+        this.curUserAvatar = data.latestMessage.content.extra.userLogo
         this.curUserName = data.latestMessage.content.extra.nickName
         this.setCurOnlineUserId({
           userId: data.targetId
@@ -284,7 +380,10 @@ export default {
         currentPage: curPageNo, // 当前页码
         pageSize: curPageSize // 每页条数
       }
+      this.messageLoading = true
       this.queryOnlineCurUserMsgList(params).then(res => {
+        this.messageLoading = false
+        console.log('curOnlineUserData: 历史消息列表等', this.curOnlineUserData)
         setTimeout(() => {
           if (curPageNo === 1) {
             this.scrollToBottom()
@@ -292,6 +391,8 @@ export default {
             this.scrolltoTop()
           }
         }, 50)
+      }).catch(() => {
+        this.messageLoading = false
       })
     },
     scrollToBottom: function() {
@@ -321,6 +422,16 @@ export default {
     // 图片选择
     handleChange(e) {
       const file = e.target.files
+
+      // 图片转base64作为缩略图
+      let base64Url = ''
+      var reader = new FileReader()
+      reader.readAsDataURL(file[0]) // 读取图片输入为base64
+      reader.onloadend = function() {
+        base64Url = reader.result
+        console.log('base64图片', base64Url)
+      }
+
       const formData = new FormData()
       formData.append('file', file[0])
 
@@ -329,7 +440,7 @@ export default {
         const image = res.data
 
         const msgInfo = {
-          content: this.showImg(image),
+          content: base64Url,
           extra: this.extra,
           imageUri: this.showImg(image)
         }
@@ -337,19 +448,25 @@ export default {
         Chat.sendMessage({
           targetId: this.targetId,
           msgInfo,
-          messageType: 'image'
+          messageType: Chat.MessageType.ImageMessage
         }).then(res => {
+          // this.addMsgToOnlineCurUserMsgList({
+          //   content: msgInfo.content, // 消息内容
+          //   coversionType: 'PERSON', // 消息类型
+          //   fromUserId: this.userId, // 发送用户id
+          //   merCode: this.merCode, // 商户编码
+          //   messageType: Chat.MessageType.ImageMessage, // 消息类型
+          //   msgUid: res.messageUId, // 消息id
+          //   timeStamp: new Date(), // 时间戳
+          //   toUserId: this.targetId, // 接收用户id
+          //   userId: this.targetId // 用户id
+          // })
           this.addMsgToOnlineCurUserMsgList({
-            content: msgInfo.content, // 消息内容
-            coversionType: 'PERSON', // 消息类型
-            fromUserId: this.userId, // 发送用户id
-            merCode: this.merCode, // 商户编码
-            messageType: 'RC:ImgMsg', // 消息类型
-            msgUid: res.messageUId, // 消息id
-            timeStamp: new Date(), // 时间戳
-            toUserId: this.targetId, // 接收用户id
-            userId: this.targetId // 用户id
+            merCode: this.merCode,
+            msgInfo: msgInfo,
+            msgResult: res
           })
+          // 这里
         }).catch((errCode, errMessage) => {
           console.error('err', errCode, errMessage)
         })
@@ -395,6 +512,15 @@ export default {
     // 查看更多消息按钮
     viewMoreClick() {
       this.queryHistoryMessage()
+    },
+    handleGoodsClick(item) {
+      console.log('item', item)
+      const itemData = JSON.parse(item.content)
+      if (itemData && itemData.url) {
+        window.open(itemData.url)
+      } else {
+        console.log('no url')
+      }
     }
   },
   created() {
@@ -404,23 +530,13 @@ export default {
     } = this.$route.query
     this.targetId = targetId || 20
 
-    this.extra = {
-      merCode: this.merCode, // 商户编码
-      userAccount: this.name, // 如果是客服，对应中台sys_user.account
-      userId: this.userId, // 用户id 这里是自己的id 不是目标用户的id
-      userName: '', // 用户姓名
-      nickName: '', // 昵称
-      age: '', // 年龄
-      sex: '' // 性别（男，女，未知）
-    }
-
     // 获取商品列表
     this.queryGoods()
     // 获取快捷回复列表
     this.queryCannedRepliesList()
     // 获取融云会话列表
     this.resetCurOnlineUserData()
-    this.queryRYConversationList()
+    // this.queryRYConversationList()
   },
   updated() {
     // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
@@ -429,6 +545,10 @@ export default {
         this.setHasNewMsg(false)
         this.queryRYConversationList()
       }
+    }
+    console.log('ryConnected', this.ryConnected)
+    if (this.ryConnected && !this.isFirstQueryFinished) {
+      this.queryRYConversationList()
     }
   }
 }
