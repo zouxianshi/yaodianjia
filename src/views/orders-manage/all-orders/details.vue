@@ -64,7 +64,7 @@
         <div class="info-item">
           <div class="title">付款信息</div>
           <div class="con">付款方式：{{ detailsData.payMode ? '货到付款':'在线支付' }}</div>
-          <div class="con">商品总额：{{ detailsData.totalOrderAmount }}</div>
+          <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
           <div class="con">优惠：￥{{ detailsData.activityDiscountAmont }}</div>
           <div class="con">应付总额：￥{{ detailsData.actuallyPaid }}</div>
@@ -245,13 +245,13 @@
                     </div>
                     <div class="detail-item-middle">
                       <div class="item-cell cell-con">
-                        <div class="cell-text">{{ item.commodityPrice }}</div>
+                        <div class="cell-text">￥{{ item.commodityPrice }}</div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">{{ item.commodityNumber }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div class="cell-text">{{ item.totalActualAmount }}</div>
+                        <div class="cell-text">￥{{ item.totalActualAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">{{ item.couponAmount }}</div>
