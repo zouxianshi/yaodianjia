@@ -6,7 +6,11 @@
       </div>
 
       <div class="msg-table-comp">
-        <el-table :data="msgList" :style="`width: 100%; max-height:${tableHeight}px`" :height="tableHeight">
+        <el-table
+          :data="msgList"
+          :style="`width: 100%; max-height:${tableHeight}px`"
+          :height="tableHeight"
+        >
           <el-table-column prop="id" label="序号" width="180" />
           <el-table-column prop="msgType" label="消息类型" width="180">
             <template slot-scope="scope">{{ msgTypeMap[scope.row.type] }}</template>
@@ -19,17 +23,8 @@
           <el-table-column prop="actions" label="操作">
             <template slot-scope="scope">
               <el-button type="text" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-              <!-- 不在线推送和首次进入推送显示开关 -->
-              <template v-if="[1,2].includes(scope.row.type)">
-                <el-switch
-                  :value="scope.row.status===1"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                  @change="handleSwitch(scope.row)"
-                />
-              </template>
               <!-- 快捷消息显示删除按钮 -->
-              <template v-else>
+              <template>
                 <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
                 <el-dialog
                   :close-on-click-modal="false"
@@ -44,6 +39,15 @@
                     <el-button type="primary" @click="handleConfirmDel(scope.row)">确 定</el-button>
                   </span>
                 </el-dialog>
+              </template>
+              <!-- 不在线推送和首次进入推送显示开关 -->
+              <template v-if="[1,2].includes(scope.row.type)">
+                <el-switch
+                  :value="scope.row.status===1"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  @change="handleSwitch(scope.row)"
+                />
               </template>
             </template>
           </el-table-column>
@@ -77,6 +81,8 @@
           class="msg-input"
           type="text"
           placeholder="请输入消息内容"
+          maxlength="50"
+          :autosize="true"
           @input="handleMsgInput"
         />
         <div v-if="showSwitch" class="edit-dialog-switch">

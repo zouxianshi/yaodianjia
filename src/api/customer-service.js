@@ -22,6 +22,17 @@ class CustomerService {
     })
   }
 
+  /**
+   * 删除客服
+   */
+  delSupportStaff(params) {
+    return request({
+      url: `${config.merGoods}/1.0/csd-staff/${params.id}`,
+      method: 'delete',
+      data: params
+    })
+  }
+
   // 查询客服消息列表
   querySupportMsgList(params) {
     return request({
