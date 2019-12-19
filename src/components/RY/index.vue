@@ -109,12 +109,20 @@ export default {
       return new Promise((resolve, reject) => {
         CustomerService.querySupportStaffById().then(res => {
           console.log('获取登录客服信息', res)
-          const result = res.data
-          if (result.token) {
-            this.ryToken = result.token
-            resolve()
+          if (res.data) {
+            const result = res.data
+            if (result.token) {
+              this.ryToken = result.token
+              resolve()
+            } else {
+              reject(res.data)
+            }
           } else {
-            reject(res.data)
+            this.$message({
+              message: '获取融云token失败',
+              type: 'error'
+            })
+            reject('获取登录客服信息失败')
           }
         })
       })
