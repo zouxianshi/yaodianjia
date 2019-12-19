@@ -7,7 +7,7 @@
         <!-- 筛选 -->
         <div class="filter">
           <span class="filter-desc">筛选：客服状态</span>
-          <el-dropdown @command="handleCommand">
+          <el-dropdown @command="handleStatusToggle">
             <span class="el-dropdown-link">
               {{ merStaffTableData.selectedFilterText }}
               <i
@@ -66,6 +66,12 @@
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="55" :selectable="selectable" />
+            <!-- <el-table-column width="55" :selectable="selectable">
+              <template slot-scope="scope">
+                {{scope.row.name}}
+                <el-checkbox v-model="true"></el-checkbox>
+              </template>
+            </el-table-column> -->
             <el-table-column prop="id" label="员工编码" width="120" />
             <el-table-column prop="empName" label="姓名" width="120" />
             <el-table-column prop="name" label="性别" width="120">
@@ -90,7 +96,7 @@
           <div class="selected-staff">
             已选员工：
             <span
-              v-for="(item,index) in merStaffTableData.selectedList"
+              v-for="(item,index) in merStaffTableData.list"
               :key="index"
               class="selected-staff-item"
             >{{ item.empName }} {{ item.id }}，</span>
@@ -121,6 +127,7 @@
                   scope.row.status === 1 ? '停用' : '启用'
                 }}
               </el-button>
+              <el-button type="text" size="small" @click="delSupportItem(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

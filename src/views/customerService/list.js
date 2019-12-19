@@ -5,6 +5,7 @@ export default {
   components: {},
   data() {
     return {
+      checked: true, // 是否选中
       // 表格高度
       tableHeight: document.documentElement.clientHeight - 158 - 38 - 40 - 42,
       // 性别枚举
@@ -125,6 +126,7 @@ export default {
           total: result.totalCount,
           list: result.data
         }
+        console.log('merSupportTableData', this.merSupportTableData)
       })
     },
 
@@ -132,7 +134,7 @@ export default {
     toggleSupportStaffStatus(row) {
       // 这里请求启用停用接口
       CustomerService.updateSupportStaff({
-        avatarPath: 'https://xxx.png', // 头像地址
+        avatarPath: '', // 头像地址
         empName: row.name, // 客服名称
         id: row.id, // 客服id
         merCode: this.merCode, // 商户编码
@@ -146,8 +148,23 @@ export default {
       })
     },
 
-    // 切换客服状态筛选条件
-    handleCommand(command) {
+    // 客服删除
+    delSupportItem(row) {
+      console.log('row', row)
+      CustomerService.delSupportStaff({
+        id: row.id
+      }).then(res => {
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+        this.resetData()
+        this.querySupportStaffList()
+      })
+    },
+
+    // 客服状态下拉框切换
+    handleStatusToggle(command) {
       // 更新筛选条件
       const selectedFilter = this.statusMap.find(
         item => item.symbol === command

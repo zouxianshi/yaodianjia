@@ -269,8 +269,7 @@ class Chat {
       getEmojiList: this.getEmojiList,
       symbolToEmoji: this.symbolToEmoji,
       getConversationList: this.getConversationList,
-      sendMessage: this.sendMessage,
-      MessageType: this.MessageType
+      sendMessage: this.sendMessage
     }
   }
 }

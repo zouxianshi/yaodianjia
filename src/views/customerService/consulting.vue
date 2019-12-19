@@ -41,104 +41,57 @@
         <!-- curOnlineUserData.list.length{{curOnlineUserData.list.length}} -->
         <template v-if="curOnlineUserData.list.length>0">
           <view-more v-if="curOnlineUserData.hasMore" @handleClick="viewMoreClick" />
-          <div v-for="(dItem,index) in curOnlineUserData.list" :key="index" :class="`date-list`">
-            <div :class="`date-chat-item ${dItem.fromUserId == targetId? '': 'right-align'}`">
-              <template v-if="dItem.fromUserId == targetId">
-                <div class="chat-dItem-avatar">
-                  <el-image
-                    fit="scale-down"
-                    :src="curUserAvatar"
-                    :preview-src-list="[curUserAvatar]"
-                  />
-                </div>
-                <div class="chat-dItem-content">
-                  <div
-                    v-if="dItem.messageType===MessageType.TextMessage"
-                    class="chat-text"
-                  >{{ symbolToEmoji(dItem.content) }}</div>
-                  <div
-                    v-else-if="dItem.messageType===MessageType.ImageMessage"
-                    class="image-message"
-                  >
+          <div
+            v-for="(dItem,index) in curOnlineUserData.list"
+            :key="index"
+            :class="`chat-item-box ${dItem.fromUserId == targetId? '': 'right-align'}`"
+          >
+            <!-- 用户发的头像靠左 -->
+            <div v-if="dItem.fromUserId === targetId" class="chat-item-avatar">
+              <el-image fit="scale-down" :src="curUserAvatar" :preview-src-list="[curUserAvatar]" />
+            </div>
+            <!-- 聊天内容 -->
+            <div :class="`chat-item-content ${computeChatItemType(dItem.messageType)}`">
+              <div
+                v-if="dItem.messageType===MessageType.TextMessage"
+                class="text-message"
+              >{{ symbolToEmoji(dItem.content) }}</div>
+              <div v-else-if="dItem.messageType===MessageType.ImageMessage" class="image-message">
+                <el-image
+                  fit="scale-down"
+                  :src="dItem.content"
+                  :preview-src-list="[dItem.content]"
+                />
+              </div>
+              <div
+                v-else-if="dItem.messageType===MessageType.GoodsMessage"
+                class="goods-message"
+                @click="handleGoodsClick(dItem)"
+              >
+                <div class="goods-message-header">为你推荐</div>
+                <div class="goods-message-inner">
+                  <div class="goods-message-img">
                     <el-image
                       fit="scale-down"
-                      :src="dItem.content"
-                      :preview-src-list="[dItem.content]"
+                      :src="JSON.parse(dItem.content).imageUri"
                     />
                   </div>
-                  <div
-                    v-else-if="dItem.messageType===MessageType.GoodsMessage"
-                    class="goods-card"
-                    @click="handleGoodsClick(dItem)"
-                  >
-                    <div class="goods-card-header">商品消息</div>
+                  <div class="goods-message-info">
+                    <div class="goods-name">{{ JSON.parse(dItem.content).title }}</div>
                     <div
-                      class="chat-goods-inner"
-                    >
-                      <div class="chat-goods-img">
-                        <el-image
-                          fit="scale-down"
-                          :src="JSON.parse(dItem.content).imageUri"
-                          :preview-src-list="[JSON.parse(dItem.content).imageUri]"
-                        />
-                      </div>
-                      <div class="chat-goods-info">
-                        <div class="goods-name">{{ JSON.parse(dItem.content).title }}</div>
-                        <div
-                          class="goods-price"
-                        >¥{{ Number(JSON.parse(dItem.content).price).toFixed(2) }}</div>
-                      </div>
-                    </div>
+                      class="goods-price"
+                    >¥{{ Number(JSON.parse(dItem.content).price).toFixed(2) }}</div>
                   </div>
                 </div>
-              </template>
-              <template v-else>
-                <div class="chat-dItem-content">
-                  <div
-                    v-if="dItem.messageType===MessageType.TextMessage"
-                    class="chat-text"
-                  >{{ symbolToEmoji(dItem.content) }}</div>
-                  <div
-                    v-else-if="dItem.messageType===MessageType.ImageMessage"
-                    class="image-message"
-                  >
-                    <el-image
-                      fit="scale-down"
-                      :src="dItem.content"
-                      :preview-src-list="[dItem.content]"
-                    />
-                  </div>
-                  <div
-                    v-else-if="dItem.messageType===MessageType.GoodsMessage"
-                    class="goods-card"
-                    @click="handleGoodsClick(dItem)"
-                  >
-                    <div class="goods-card-header">为你推荐</div>
-                    <div class="chat-goods-inner">
-                      <div class="chat-goods-img">
-                        <el-image
-                          fit="scale-down"
-                          :src="JSON.parse(dItem.content).imageUri"
-                          :preview-src-list="[JSON.parse(dItem.content).imageUri]"
-                        />
-                      </div>
-                      <div class="chat-goods-info">
-                        <div class="goods-name">{{ JSON.parse(dItem.content).title }}</div>
-                        <div
-                          class="goods-price"
-                        >¥{{ Number(JSON.parse(dItem.content).price).toFixed(2) }}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="chat-dItem-avatar">
-                  <el-image
-                    fit="scale-down"
-                    :src="showImg(merLogo)"
-                    :preview-src-list="[showImg(dItem.img)]"
-                  />
-                </div>
-              </template>
+              </div>
+            </div>
+            <!-- 客服发的头像靠右 -->
+            <div v-if="dItem.fromUserId !== targetId" class="chat-item-avatar">
+              <el-image
+                fit="scale-down"
+                :src="showImg(merLogo)"
+                :preview-src-list="[showImg(dItem.img)]"
+              />
             </div>
           </div>
         </template>
@@ -194,11 +147,20 @@
                 placeholder="请输入关键字搜索"
                 @input="handleGoodsNameInput"
               />
-              <el-button class="search-filter-btn" type="primary" size="small" @click="queryGoods">
-                搜索
-              </el-button>
+              <el-button
+                class="search-filter-btn"
+                type="primary"
+                size="small"
+                @click="queryGoods"
+              >搜索</el-button>
             </div>
-            <el-table ref="multipleTable" width="100%" height="400" :data="goodsList" tooltip-effect="dark">
+            <el-table
+              ref="multipleTable"
+              width="100%"
+              height="400"
+              :data="goodsList"
+              tooltip-effect="dark"
+            >
               <el-table-column prop="image" label="图片" width="150">
                 <template slot-scope="scope">
                   <el-image

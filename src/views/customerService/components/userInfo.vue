@@ -17,8 +17,8 @@
         <list-item name="会员卡号" :value="memberInfo.cardNumber" />
         <div class="divider" />
         <template v-if="boughtRecord">
-          <list-item name="购买次数" :value="boughtRecord.buyNum" />
-          <list-item name="购买均价" :value="boughtRecord.buyAvg" />
+          <list-item name="购买次数" :value="`${boughtRecord.buyNum}`" />
+          <list-item name="购买均价" :value="`${boughtRecord.buyAvg}`" />
         </template>
       </div>
       <div
