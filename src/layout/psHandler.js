@@ -18,6 +18,23 @@ class InnerCtor {
         children: []
       },
       {
+        name: '订单管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: true,
+        children: [
+          {
+            name: `所有订单`,
+            path: '/orders-manage/all-orders/list',
+            disabled: true
+          },
+          {
+            name: `订单设置`,
+            path: '/orders-manage/settings',
+            disabled: true
+          }
+        ]
+      },{
         name: '商品管理',
         icon: 'icongoods',
         path: '',
@@ -143,6 +160,34 @@ class InnerCtor {
             path: '/marketing/activity',
             disabled: this.get('marketing.marketing-manager'),
           }
+        ]
+      },
+      {
+        name: '客服管理',
+        icon: 'icongoods',
+        path: '/customerService',
+        disabled: this.get('staff'),
+        children: [
+          {
+            name: '客服列表',
+            path: '/customerService/list',
+            disabled: this.get('staff.staff-list'),
+          },
+          {
+            name: '快捷消息设置',
+            path: '/customerService/msgSettings',
+            disabled: this.get('staff.quick-message-set')
+          },
+          {
+            name: '客服咨询',
+            path: '/customerService/consultation',
+            disabled: this.get('staff.online-ask')
+          },
+          {
+            name: '历史消息',
+            path: '/customerService/historyMsg',
+            disabled: this.get('staff.message-record')
+          },
         ]
       }
     ]

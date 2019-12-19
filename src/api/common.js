@@ -29,7 +29,6 @@ export function queryGoods(params) {
 
 // 获取商品分类树(	integer(类型，1-分类，2-分组)
 export function getTypeTree(params) {
-  console.log('params', params)
   return request({
     url: `${config.merGoods}/1.0/comm-type/getTypeTree`,
     method: 'post',

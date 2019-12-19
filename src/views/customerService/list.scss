@@ -1,0 +1,57 @@
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409eff;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
+}
+.table-header {
+  overflow: hidden;
+  margin-bottom: 10px;
+  .filter {
+    float: left;
+
+    .filter-desc {
+      margin-right: 10px;
+      font-size: 14px;
+    }
+  }
+  .add {
+    float: right;
+  }
+}
+.search-filter {
+  margin-bottom: 10px;
+  overflow: hidden;
+
+  .search-filter-item {
+    float: left;
+    margin-right: 10px;
+
+    .search-filter-item-text {
+    }
+    .search-filter-item-input {
+      width: 180px;
+    }
+  }
+}
+.pagination {
+  margin-top: 10px;
+  text-align: right;
+}
+.selected-staff {
+  margin: 10px 0;
+}
+.staff-dialog-bottom {
+  text-align: right;
+  .confirm-btn {
+  }
+}
+.support-staff-comp {
+  .online-text {
+    color: green;
+  }
+  .offline-text {
+    color: red;
+  }
+}
