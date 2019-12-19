@@ -103,7 +103,17 @@ export default {
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID',
       setHasNewMsg: 'customerService/setHasNewMsg'
     }),
-    symbolToEmoji: Chat.symbolToEmoji,
+    ...Chat.mapChat(),
+    // 根据消息类型返回对应类名
+    computeChatItemType(messageType) {
+      if (messageType === this.MessageType.ImageMessage) {
+        return 'image'
+      } else if (messageType === this.MessageType.GoodsMessage) {
+        return 'goods'
+      } else {
+        return 'text'
+      }
+    },
     queryRYConversationList(searchParam) {
       const _this = this
       this.isFirstQueryFinished = true
@@ -186,7 +196,7 @@ export default {
         extra: this.extra
       }
       Chat.sendMessage({
-        targetId: this.targetId, // this.targetId,
+        targetId: this.targetId, // 目标用户id,
         msgInfo: {
           content: Chat.emojiToSymbol(msgInfo.content),
           extra: this.extra
@@ -536,7 +546,10 @@ export default {
     this.queryCannedRepliesList()
     // 获取融云会话列表
     this.resetCurOnlineUserData()
-    // this.queryRYConversationList()
+
+    setTimeout(() => {
+      this.consultingLoading = false
+    }, 3000)
   },
   updated() {
     // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
