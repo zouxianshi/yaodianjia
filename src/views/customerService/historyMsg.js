@@ -65,6 +65,7 @@ export default {
       this.queryConversationList()
     },
     resetData() {
+      this.showViewMore = true
       this.currentUser = ''
       this.curChatUserId = ''
       this.curConversationPageNo = 1
@@ -79,7 +80,8 @@ export default {
     queryHistoryMessage() {
       const params = {
         merCode: this.merCode, // 商户编码
-        userId: this.userId, // 用户编码
+        // userId: this.userId, // 用户编码
+        userId: this.curChatUserId, // 用户编码
         currentPage: this.historyMsgCurPage, // 当前页码
         pageSize: this.historyMsgPageSize // 每页条数
       }
