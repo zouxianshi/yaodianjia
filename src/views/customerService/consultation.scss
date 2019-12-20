@@ -260,7 +260,16 @@
     @include multi-line(2);
     height: 36px;
     line-height: 36px;
+    cursor: pointer;
   }
+}
+
+.add-reply-btn {
+  @include multi-line(2);
+  height: 36px;
+  line-height: 36px;
+  color: #45aafa;
+  cursor: pointer;
 }
 
 .el-popover {

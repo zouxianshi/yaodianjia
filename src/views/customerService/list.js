@@ -178,6 +178,7 @@ export default {
 
     // 添加客服按钮点击
     handleAddSupportStaff() {
+      this.resetMerStaffData()
       // 获取成功数据后展示弹窗
       this.queryMerStaffList().then(() => {
         this.addDialogVisible = true
@@ -235,6 +236,17 @@ export default {
       this.merStaffQuery.subOrgName = value
     },
 
+    // 重置商家员工数据
+    resetMerStaffData() {
+      this.merStaffQuery.currentPage = 1
+      this.merStaffQuery.empName = ''
+      this.merStaffQuery.pageSize = 10
+      this.merStaffQuery.subOrgName = ''
+      this.merStaffTableData.list = []
+      this.merStaffTableData.total = 0
+      this.merStaffTableData.selectedList = []
+    },
+
     // 查询商家员工按钮点击
     handleSearchSubmit() {
       this.queryMerStaffList()
@@ -245,20 +257,41 @@ export default {
       return !row.staff
     },
 
-    // 员工选择
-    handleSelectionChange(val) {
-      const selectedStaffList = []
-      val.forEach((item, index) => {
-        selectedStaffList.push({
+    // 复选框选中
+    handleStaffSelect(row) {
+      console.log('row', row)
+      const { selectedList } = this.merStaffTableData
+      const existedIndex = selectedList.findIndex(element => {
+        return element.id === row.id
+      })
+      if (existedIndex > -1) {
+        selectedList.splice(existedIndex, 1)
+      } else {
+        this.merStaffTableData.selectedList.push({
           avatarPath: 'https://xxx.dfs.com/img.png',
-          empName: item.empName,
-          id: item.id,
+          empName: row.empName,
+          id: row.id,
           merCode: this.merCode,
           status: 1
         })
-      })
-      this.merStaffTableData.selectedList = selectedStaffList
+      }
     },
+
+    // 员工选择
+    // handleSelectionChange(val) {
+    //   const selectedStaffList = []
+    //   val.forEach((item, index) => {
+    //     selectedStaffList.push({
+    //       avatarPath: 'https://xxx.dfs.com/img.png',
+    //       empName: item.empName,
+    //       id: item.id,
+    //       merCode: this.merCode,
+    //       status: 1
+    //     })
+    //   })
+    //   console.log('selectedStaffList', selectedStaffList)
+    //   this.merStaffTableData.selectedList = selectedStaffList
+    // },
 
     // 员工列表页码切换
     handleStaffPageChange(val) {

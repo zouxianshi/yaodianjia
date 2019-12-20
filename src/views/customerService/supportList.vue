@@ -63,15 +63,19 @@
             :data="merStaffTableData.list"
             tooltip-effect="dark"
             style="width: 100%"
-            @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="55" :selectable="selectable" />
-            <!-- <el-table-column width="55" :selectable="selectable">
+            <el-table-column width="55" :selectable="selectable">
               <template slot-scope="scope">
-                {{scope.row.name}}
-                <el-checkbox v-model="true"></el-checkbox>
+                <el-tooltip v-if="scope.row.staff" content="该员工已经是客服了" placement="top">
+                  <el-checkbox :value="scope.row.staff" disabled />
+                </el-tooltip>
+                <el-checkbox
+                  v-else
+                  :value="scope.row.checked"
+                  @change="handleStaffSelect(scope.row)"
+                />
               </template>
-            </el-table-column> -->
+            </el-table-column>
             <el-table-column prop="id" label="员工编码" width="120" />
             <el-table-column prop="empName" label="姓名" width="120" />
             <el-table-column prop="name" label="性别" width="120">
@@ -96,7 +100,7 @@
           <div class="selected-staff">
             已选员工：
             <span
-              v-for="(item,index) in merStaffTableData.list"
+              v-for="(item,index) in merStaffTableData.selectedList"
               :key="index"
               class="selected-staff-item"
             >{{ item.empName }} {{ item.id }}，</span>
@@ -110,7 +114,10 @@
 
       <!-- 客服列表 -->
       <div class="support-staff-comp">
-        <el-table :data="merSupportTableData.list" :style="`width: 100%; max-height:${tableHeight}+'px `">
+        <el-table
+          :data="merSupportTableData.list"
+          :style="`width: 100%; max-height:${tableHeight}+'px `"
+        >
           <el-table-column prop="id" label="序号" width="180" />
           <el-table-column prop="isOnline" label="在线状态" width="180">
             <template slot-scope="scope">

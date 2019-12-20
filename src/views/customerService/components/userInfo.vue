@@ -17,8 +17,8 @@
         <list-item name="会员卡号" :value="memberInfo.cardNumber" />
         <div class="divider" />
         <template v-if="boughtRecord">
-          <list-item name="购买次数" :value="`${boughtRecord.buyNum}`" />
-          <list-item name="购买均价" :value="`${boughtRecord.buyAvg}`" />
+          <list-item name="购买次数" :value="`${boughtRecord.buyNum||0}`" />
+          <list-item name="购买均价" :value="`${boughtRecord.buyAvg||0}`" />
         </template>
       </div>
       <div
@@ -43,7 +43,7 @@
                   <span class="goods-name">{{ gItem.commodityName }}</span>
                   <span class="goods-no">x {{ gItem.commodityNumber }}</span>
                 </div>
-                <div class="goods-size">{{ gItem.skuValue }}123</div>
+                <div class="goods-size">{{ gItem.skuValue }}</div>
               </div>
             </div>
           </div>
