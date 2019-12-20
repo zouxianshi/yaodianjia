@@ -45,7 +45,7 @@ export default {
               // 判断接收的消息是否来自当前打开窗口的用户 是则直接追加消息 否则在左侧会话头像添加徽标
               if (userId === message.senderUserId) {
                 _this.addMsgToOnlineCurUserMsgList({
-                  content: message.content.content, // 消息内容
+                  content: Chat.symbolToEmoji(message.content.content), // 消息内容
                   coversionType: 'PERSON', // 消息类型
                   fromUserId: message.senderUserId, // 发送用户id
                   merCode: _this.merCode, // 商户编码
@@ -68,7 +68,7 @@ export default {
               _this.$notify({
                 type: 'info',
                 title: '您有新的消息',
-                message: message.content.content,
+                message: Chat.symbolToEmoji(message.content.content),
                 duration: 5000,
                 onClick: e => {
                   console.log('click e', e)
@@ -118,11 +118,11 @@ export default {
               reject(res.data)
             }
           } else {
-            this.$message({
-              message: '获取融云token失败',
-              type: 'error'
-            })
-            reject('获取登录客服信息失败')
+            // this.$message({
+            //   message: '获取融云token失败',
+            //   type: 'error'
+            // })
+            reject('获取融云token失败')
           }
         })
       })
@@ -157,7 +157,7 @@ export default {
       if ('WebSocket' in window) {
         var ws = CustomerService.connectToIMServer()
 
-        console.log('IMServer WS', ws)
+        console.warn('Websocket对象', ws)
 
         var cToken = getToken()
 
@@ -175,7 +175,7 @@ export default {
             token: cToken, // 	中台用户登录的token
             version: 1 // 协议版本
           }
-          console.log('连接data', data)
+          console.warn('websocket连接data', data)
 
           // Web Socket 已连接上，使用 send() 方法发送数据
           ws.send(JSON.stringify(data))

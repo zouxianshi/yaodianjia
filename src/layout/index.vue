@@ -11,7 +11,7 @@
       </div>
       <div class="app-main-box" :style="_styleToggle">
         <div class="flx" :style="_styleToggle">
-          <r-y />
+          <r-y v-if="showMsgBtn" />
           <m-header>
             <breadcrumb slot="breadcrumb" />
             <tags-view slot="tags" />
@@ -44,6 +44,7 @@
     data() {
       return {
         navList: ps.navList(),
+        showMsgBtn: ps.showMsgBtn(),
         defPage: "/home",
         isOpen: false
       };

@@ -76,7 +76,7 @@ export default {
   methods: {
     getData() {
       getOrderSetUp(this.merCode).then(res => {
-        if (res) {
+        if (res.data) {
           this.settingData = res.data
         }
       })

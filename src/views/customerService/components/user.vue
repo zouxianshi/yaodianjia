@@ -2,26 +2,30 @@
   <div :class="`user-comp ${selected?'selected':''}`" @click="handleClick">
     <el-badge :max="99" :hidden="data.newMsgNum<=0" :value="data.newMsgNum" class="item">
       <div class="user-avatar">
-        <img :src="avatar">
+        <el-image fit="cover" :src="avatar" />
       </div>
     </el-badge>
     <div v-if="data" class="user-chat-info">
       <div class="chat-info-top">
-        <span class="user-name">{{ nickName || '我是谁' }}</span>
+        <span class="user-name">{{ nickName || '暂无用户名' }}</span>
         <span class="chat-time">{{ date }}</span>
       </div>
       <div v-if="data" class="user-chat-content">
-        {{
-          messageType === RYMessageType.TextMessage ?
-            content :
-            messageType === RYMessageType.ImageMessage ?
-              '[图片消息]' :
-              messageType === RYMessageType.GoodsMessage ?
-                '[商品消息]' :
-                content
-        }}
+        <div class="content-preview">
+          {{
+            messageType === RYMessageType.TextMessage ?
+              content :
+              messageType === RYMessageType.ImageMessage ?
+                '[图片消息]' :
+                messageType === RYMessageType.GoodsMessage ?
+                  '[商品消息]' :
+                  content
+          }}
+        </div>
+        <i v-if="showDelIcon" class="el-icon-delete" @click="handleDel" />
       </div>
     </div>
+    <slot />
   </div>
 </template>
 
@@ -63,6 +67,11 @@ export default {
     content: {
       type: String,
       default: ''
+    },
+    // 移入是否展示删除按钮
+    showDelIcon: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -85,6 +94,9 @@ export default {
   methods: {
     handleClick() {
       this.$emit('handleClick', this.data)
+    },
+    handleDel() {
+      this.$emit('handleDel')
     }
   }
 }
@@ -124,6 +136,11 @@ export default {
       background-color: #45aafa;
       overflow: hidden;
 
+      .el-image {
+        width: 100%;
+        height: 100%;
+      }
+
       img {
         width: 100%;
         height: 100%;
@@ -158,9 +175,14 @@ export default {
       }
 
       .user-chat-content {
-        font-size: 14px;
-        color: #999;
-        @extend .text-overflow-1;
+        display: flex;
+        justify-content: space-between;
+
+        .content-preview {
+          font-size: 14px;
+          color: #999;
+          @extend .text-overflow-1;
+        }
       }
     }
   }

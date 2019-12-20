@@ -56,6 +56,7 @@ const mutations = {
    * 在线咨询相关
    */
 
+  // 设置是否有新消息
   setHasNewMsg(state, payload) {
     console.log('into mutation')
     state.onlineConversationData.hasNewMsg = payload
@@ -94,6 +95,30 @@ const mutations = {
     state.curOnlineUserData.list = tempList
     state.curOnlineUserData.hasMore = list.length > 0
   },
+
+  // 删除在线咨询会话item
+  DEL_ONLINE_CONVERSATOIN(state, payload) {
+    console.log('payload', payload)
+    // 删除localStorage 中的item
+    let localConversationList = null
+    if (localStorage.getItem('ryConversationList')) {
+      localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
+      localConversationList.forEach((element, index) => {
+        if (element.targetId === payload) {
+          localConversationList.splice(index, 1)
+        }
+      })
+      localStorage.setItem('ryConversationList', localConversationList)
+    }
+    // 删除vuex中的item
+    const { list } = state.onlineConversationData
+    list.forEach((element, index) => {
+      if (element.targetId === payload) {
+        list.splice(index, 1)
+      }
+    })
+  },
+
   // push一条消息到在线咨询当前用户消息列表
   ADD_MSG_TO_ONLINE_MSG_LIST(state, payload) {
     console.log('into ADD_MSG_TO_ONLINE_MSG_LIST')
@@ -105,7 +130,7 @@ const mutations = {
     } = payload
     // 组装历史消息数据
     const curWindowPush = {
-      content: msgResult.content.content, // 消息内容
+      content: Chat.symbolToEmoji(msgResult.content.content), // 消息内容
       coversionType: 'PERSON', // 消息类型
       fromUserId: msgResult.senderUserId, // 发送用户id
       merCode: merCode, // 商户编码

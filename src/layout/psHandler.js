@@ -8,6 +8,10 @@ class InnerCtor {
   constructor () {
     this.p = {}
   }
+  // 客服消息按钮权限
+  showMsgBtn() {
+    return this.get('staff.online-ask')
+  }
   navList (){
     return [
       {
