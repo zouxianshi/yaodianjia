@@ -31,8 +31,23 @@
               item.sentTime
             ).getDate()}`"
             :content="item.latestMessage.content.content"
+            :show-del-icon="true"
             @handleClick="handleUserClick(item)"
-          />
+            @handleDel="handleUserDel(item)"
+          >
+            <el-dialog
+              append-to-body
+              title="提示"
+              :visible="delUserDialogVisible"
+              width="30%"
+            >
+              <span>确认删除当前会话吗？</span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="delUserDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="delDialogConfirmBtnClick(item)">确 定</el-button>
+              </span>
+            </el-dialog>
+          </user>
         </div>
       </div>
     </template>
@@ -71,10 +86,7 @@
                 <div class="goods-message-header">为你推荐</div>
                 <div class="goods-message-inner">
                   <div class="goods-message-img">
-                    <el-image
-                      fit="scale-down"
-                      :src="JSON.parse(dItem.content).imageUri"
-                    />
+                    <el-image fit="scale-down" :src="JSON.parse(dItem.content).imageUri" />
                   </div>
                   <div class="goods-message-info">
                     <div class="goods-name">{{ JSON.parse(dItem.content).title }}</div>
@@ -128,6 +140,7 @@
                 @click="msgItemClick(item)"
               >{{ item.msg }}</div>
             </div>
+            <div class="add-reply-btn" type="text" @click="addCannedReply">新增快捷回复</div>
             <i slot="reference" class="el-icon-chat-square action-item" />
           </el-popover>
           <i class="el-icon-shopping-bag-2 action-item" @click="handleActionClick('goods')" />

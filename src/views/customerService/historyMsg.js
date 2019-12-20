@@ -73,14 +73,16 @@ export default {
       this.historyMsgCurPage = 1
       this.memberInfo = null
       this.boughtRecord = null
-      this.orderList = null
+      // 重置订单数据
+      this.orderListHasMore = true
+      this.orderList = []
+      this.orderListCurPageNo = 1
     },
 
     // 查询历史消息
     queryHistoryMessage() {
       const params = {
         merCode: this.merCode, // 商户编码
-        // userId: this.userId, // 用户编码
         userId: this.curChatUserId, // 用户编码
         currentPage: this.historyMsgCurPage, // 当前页码
         pageSize: this.historyMsgPageSize // 每页条数
@@ -175,17 +177,21 @@ export default {
         pageSize: this.orderListPageSize // 每页条数
       }).then(res => {
         this.orderListLoading = false
-        console.log('into queryUserOrderList success', res)
+        console.log('into queryUserOrderList success11111', res)
         const { data } = res.data
         if (data && data.length > 0) {
-          this.orderListCurPageNo++
+          console.log('data', data)
+          console.log('合并', this.orderList, data)
           this.orderList = [
             ...this.orderList,
             ...data
           ]
+          console.log('this.orderList', this.orderList)
+          this.orderListCurPageNo = this.orderListCurPageNo + 1
         } else {
           this.orderListHasMore = false
         }
+        console.log('queryUserOrderList this.orderList', this.orderList)
       }).catch(() => {
         this.orderListLoading = false
       })
