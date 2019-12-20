@@ -175,11 +175,18 @@ export default {
             token: cToken, // 	中台用户登录的token
             version: 1 // 协议版本
           }
-          console.warn('websocket连接data', data)
+          console.warn('websocket open', data)
 
-          // Web Socket 已连接上，使用 send() 方法发送数据
-          ws.send(JSON.stringify(data))
-          console.warn('数据发送中...')
+          if (ws.readyState === window.WebSocket.OPEN) {
+            console.warn('准备发送数据...')
+            // Web Socket 已连接上，使用 send() 方法发送数据
+            try {
+              ws.send(JSON.stringify(data))
+            } catch (error) {
+              console.error('websocket发送消息失败', error)
+            }
+            console.warn('数据发送中...')
+          }
 
           // 设置心跳
           setInterval(() => {
