@@ -10,7 +10,7 @@ const router = [
         component: () => import('@/views/chainSetting/index'),
         name: 'chainSetting',
         hidden: true,
-        meta: { title: '连锁设置', icon: 'chainSetting', affix: true }
+        meta: { title: '连锁设置', icon: 'chainSetting' }
       }
     ]
   },
@@ -24,21 +24,21 @@ const router = [
         component: () => import('@/views/storeSetting/index'),
         name: 'index',
         hidden: true,
-        meta: { title: '所有门店', icon: 'storeSetting', affix: true }
+        meta: { title: '所有门店', icon: 'storeSetting' }
       },
       {
         path: 'setting',
         component: () => import('@/views/storeSetting/setting'),
         name: 'setting',
         hidden: true,
-        meta: { title: '门店设置', icon: 'storeSetting', affix: true }
+        meta: { title: '门店设置', icon: 'storeSetting' }
       },
       {
         path: 'deliverySetting',
         component: () => import('@/views/storeSetting/deliverySetting'),
         name: 'deliverySetting',
         hidden: true,
-        meta: { title: '门店配送', icon: 'storeSetting', affix: true }
+        meta: { title: '门店配送', icon: 'storeSetting' }
       }
     ]
   },
@@ -52,7 +52,7 @@ const router = [
         component: () => import('@/views/internalLink/index'),
         name: 'internalLink',
         hidden: true,
-        meta: { title: '内部链接', icon: 'internalLink', affix: true }
+        meta: { title: '内部链接', icon: 'internalLink' }
       }
     ]
   },
