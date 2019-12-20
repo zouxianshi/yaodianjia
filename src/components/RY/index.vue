@@ -118,11 +118,11 @@ export default {
               reject(res.data)
             }
           } else {
-            this.$message({
-              message: '获取融云token失败',
-              type: 'error'
-            })
-            reject('获取登录客服信息失败')
+            // this.$message({
+            //   message: '获取融云token失败',
+            //   type: 'error'
+            // })
+            reject('获取融云token失败')
           }
         })
       })
