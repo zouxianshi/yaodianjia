@@ -10,6 +10,8 @@ import _ from 'lodash'
 import routeZ from './modules/router-z'
 import routeX from './modules/router-x'
 import routeR from './modules/router-r'
+import routeC from './modules/router-c'
+import routeF from './modules/router-f'
 import { mUsersModule } from '@merchant/commons'
 
 // merge component layout module
@@ -76,7 +78,9 @@ export const constantRoutes = [
 export const asyncRoutes = [
   ...routeZ,
   ...routeX,
-  ...routeR
+  ...routeR,
+  ...routeC,
+  ...routeF
 ]
 
 const createRouter = () => new Router({

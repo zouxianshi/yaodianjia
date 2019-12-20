@@ -41,7 +41,7 @@
             <span v-else>{{ scope.row.stName }}</span>
           </template>
         </el-table-column>
-        <el-table-column property="address" label="门店地址" :show-overflow-tooltip="true">>
+        <el-table-column property="address" label="门店地址" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             <span v-text="`${_isProvince(scope.row.province)}${scope.row.city}${scope.row.area}${scope.row.address}`" />
           </template>

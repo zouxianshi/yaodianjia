@@ -101,7 +101,7 @@ const router = [
       {
         path: 'activity/dm-edit',
         component: () => import('@/views/marketing/activity/DM/dm-edit'),
-        name: 'template',
+        name: 'dmEdit',
         meta: {
           title: 'DM单模板',
           noCache: true,
