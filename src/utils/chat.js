@@ -2,6 +2,8 @@
  * 融云聊天/消息类
  */
 
+import { Message } from 'element-ui'
+
 const RongIMClient = window.RongIMClient
 const RongIMLib = window.RongIMLib
 
@@ -73,10 +75,16 @@ class Chat {
               console.log('正在链接')
               break
             case RongIMLib.ConnectionStatus.DISCONNECTED:
-              console.warn('断开连接')
+              Message({
+                type: 'error',
+                message: '断开连接'
+              })
               break
             case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
-              console.warn('其他设备登录')
+              Message({
+                type: 'error',
+                message: '其他设备登录'
+              })
               break
             case RongIMLib.ConnectionStatus.DOMAIN_INCORRECT:
               console.error('域名不正确')
