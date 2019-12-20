@@ -121,7 +121,7 @@ const mutations = {
 
   // push一条消息到在线咨询当前用户消息列表
   ADD_MSG_TO_ONLINE_MSG_LIST(state, payload) {
-    console.log('into ADD_MSG_TO_ONLINE_MSG_LIST')
+    console.log('into ADD_MSG_TO_ONLINE_MSG_LIST', payload)
 
     const {
       merCode,
