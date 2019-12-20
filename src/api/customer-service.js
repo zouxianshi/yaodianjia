@@ -6,7 +6,13 @@ class CustomerService {
    * 连接客服IMServer
    */
   connectToIMServer() {
-    const webSocketURL = process.env.VUE_APP_WEBSOCKET_BASE || 'ws://middle.dev.ydjia.cn:5416/ws'
+    console.log('window.location.protocol', location.protocol)
+    let webSocketURL = ''
+    if (location.protocol === 'http:') {
+      webSocketURL = process.env.VUE_APP_WEBSOCKET_BASE || 'ws://middle.dev.ydjia.cn:5416/ws'
+    } else {
+      webSocketURL = process.env.VUE_APP_WEBSOCKET_BASE_WSS || 'wss://middle.dev.ydjia.cn:5416/ws'
+    }
     return new WebSocket(webSocketURL)
   }
 
