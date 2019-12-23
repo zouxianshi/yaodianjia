@@ -16,7 +16,7 @@
                 <template v-if="detailsData.deliveryType===2">
                   <div>待提货</div>
                 </template>
-                <template v-if="detailsData.deliveryType!==2">
+                <template v-else>
                   <div>已发货</div>
                 </template>
               </template>
