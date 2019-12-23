@@ -1,7 +1,7 @@
 <template>
   <!-- 新消息图标 暂时用定位放在这里 -->
   <el-badge class="msg-notice-btn" :is-dot="newMsgComing">
-    <i class="el-icon-chat-dot-round" @click="msgBtnClick" />
+    <i :class="`el-icon-chat-dot-round ${newMsgComing&&'shaking'}`" @click="msgBtnClick" />
   </el-badge>
 </template>
 
@@ -234,5 +234,34 @@ export default {
     right: 330px;
     z-index: 200;
     color: #fff;
+
+    @keyframes fade {
+      from {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.4;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @-webkit-keyframes fade {
+      from {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.4;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    i {
+      &.shaking {
+        animation: fade 1000ms infinite;
+      }
+    }
   }
 </style>
