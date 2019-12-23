@@ -134,7 +134,7 @@ export default {
     toggleSupportStaffStatus(row) {
       // 这里请求启用停用接口
       CustomerService.updateSupportStaff({
-        avatarPath: '', // 头像地址
+        avatarPath: 'https://xxx.dfs.com/img.png', // 头像地址
         empName: row.name, // 客服名称
         id: row.id, // 客服id
         merCode: this.merCode, // 商户编码
