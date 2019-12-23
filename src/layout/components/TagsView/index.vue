@@ -205,7 +205,7 @@ export default {
       // 关闭操作
       if (type.includes('all')) {
         // 关闭所有，除了home
-        this.closeAllTags(this.selectedTag)
+        this.closeAllTags(this.$route)
       } else if (type.includes('others')) {
         // 关闭除当前页和home页的其他页
         this.closeOthersTags()
@@ -234,7 +234,9 @@ export default {
         })
     },
     closeOthersTags() {
-      this.$router.push(this.selectedTag)
+      if (this.selectedTag.path) {
+        this.$router.push(this.$route.path)
+      }
       this.selectedTag = this.$route
       this.$store
         .dispatch('tagsView/delOthersViews', this.selectedTag)
@@ -244,20 +246,18 @@ export default {
     },
     closeAllTags(view) {
       this.$store.dispatch('tagsView/delAllViews').then(({ visitedViews }) => {
-        if (this.affixTags.some(tag => tag.path === view.path)) {
-          return
-        }
         this.toLastView(visitedViews, view)
       })
     },
     toLastView(visitedViews, view) {
+      console.log(visitedViews, view)
       const latestView = visitedViews.slice(-1)[0]
       if (latestView) {
         this.$router.push(latestView)
       } else {
         // now the default is to redirect to the home page if there is no tags-view,
         // you can adjust it according to your needs.
-        if (view.name === 'Dashboard') {
+        if (view.name === 'home') {
           // to reload home page
           this.$router.replace({ path: '/redirect' + view.fullPath })
         } else {
