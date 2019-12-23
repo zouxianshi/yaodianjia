@@ -27,6 +27,7 @@
             :date="`${new Date(item.createTime).getMonth() + 1}-${new Date(
               item.createTime
             ).getDate()}`"
+            @handleClick="handleUserClick(item)"
           />
         </div>
       </div>

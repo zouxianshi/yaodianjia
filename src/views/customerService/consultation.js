@@ -23,6 +23,7 @@ export default {
   },
   data() {
     return {
+      delUserDialogVisible: false, // 删除确认弹窗是否展示
       consultingLoading: true, // 整页loading
       messageLoading: false, // 历史消息是否正在加载
       orderListLoading: false, // 订单列表是否正在加载
@@ -101,7 +102,8 @@ export default {
       addMsgToOnlineCurUserMsgList: 'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
       resetCurOnlineUserData: 'customerService/resetOnlineUserMsgData',
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID',
-      setHasNewMsg: 'customerService/setHasNewMsg'
+      setHasNewMsg: 'customerService/setHasNewMsg',
+      delOnlineConversation: 'customerService/DEL_ONLINE_CONVERSATOIN'
     }),
     ...Chat.mapChat(),
     // 根据消息类型返回对应类名
@@ -184,6 +186,7 @@ export default {
         } else {
           this.orderListHasMore = false
         }
+        console.log('queryUserOrderList this.orderList', this.orderList)
       }).catch(() => {
         this.orderListLoading = false
       })
@@ -206,7 +209,10 @@ export default {
         this.textMsgValue = ''
         this.addMsgToOnlineCurUserMsgList({
           merCode: this.merCode,
-          msgInfo: msgInfo,
+          msgInfo: {
+            ...msgInfo,
+            content: Chat.symbolToEmoji(msgInfo.content)
+          },
           msgResult: res
         })
         this.scrollToBottom()
@@ -331,23 +337,6 @@ export default {
       }).then(res => {
         console.log('h5Base', this.h5Base)
         console.log('sendMessage successfully', res)
-        // this.addMsgToOnlineCurUserMsgList({
-        //   content: JSON.stringify({
-        //     title: row.name,
-        //     desc: row.keyWord,
-        //     imageUri: this.showImg(row.mainPic),
-        //     url: `pages/details/index?productId=1650807554132934657`,
-        //     price: row.mprice.toFixed(2)
-        //   }), // 消息内容
-        //   coversionType: 'PERSON', // 消息类型
-        //   fromUserId: this.userId, // 发送用户id
-        //   merCode: this.merCode, // 商户编码
-        //   messageType: Chat.MessageType.GoodsMessage, // 消息类型
-        //   msgUid: `${Math.random()}`, // 消息id
-        //   timeStamp: new Date(), // 时间戳
-        //   toUserId: this.targetId, // 接收用户id
-        //   userId: this.targetId // 用户id
-        // })
         this.addMsgToOnlineCurUserMsgList({
           merCode: this.merCode,
           msgInfo: msgInfo,
@@ -376,6 +365,72 @@ export default {
         })
         this.resetRightData()
       }
+    },
+
+    // 删除确认弹窗确认按钮点击
+    delDialogConfirmBtnClick(data) {
+      this.delOnlineConversation(data.targetId)
+      if (this.onlineConversationData.list.length > 0) {
+        const firstConversation = this.onlineConversationData.list
+        this.targetId = firstConversation.targetId
+        this.curUserAvatar = firstConversation.latestMessage.content.extra.userLogo
+        this.curUserName = firstConversation.latestMessage.content.extra.nickName
+        this.setCurOnlineUserId({
+          userId: data.targetId
+        })
+        this.resetRightData()
+      } else {
+        this.targetId = ''
+        this.curUserAvatar = ''
+        this.curUserName = ''
+        this.setCurOnlineUserId({
+          userId: ''
+        })
+        this.resetRightData()
+      }
+    },
+
+    // 删除会话
+    handleUserDel(data) {
+      console.log('data', data)
+      this.curDelData = data
+      this.delUserDialogVisible = true
+      // this.$confirm('确定要删除当前会话吗?', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   console.log('into then')
+      //   this.delOnlineConversation(data.targetId)
+      //   this.$message({
+      //     type: 'success',
+      //     message: '删除成功!'
+      //   });
+      //   // if ( this.onlineConversationData.list.length > 0 ) {
+      //   //   const firstConversation = this.onlineConversationData.list
+      //   //   this.targetId = firstConversation.targetId
+      //   //   this.curUserAvatar = firstConversation.latestMessage.content.extra.userLogo
+      //   //   this.curUserName = firstConversation.latestMessage.content.extra.nickName
+      //   //   this.setCurOnlineUserId({
+      //   //     userId: data.targetId
+      //   //   })
+      //   //   this.resetRightData()
+      //   // } else {
+      //   //   this.targetId = ''
+      //   //   this.curUserAvatar = ''
+      //   //   this.curUserName = ''
+      //   //   this.setCurOnlineUserId({
+      //   //     userId: ''
+      //   //   })
+      //   //   this.resetRightData()
+      //   // }
+      // }).catch(() => {
+      //   console.log('into catch')
+      //   // this.$message({
+      //   //   type: 'info',
+      //   //   message: '已取消删除'
+      //   // });
+      // });
     },
 
     // 查询历史消息
@@ -460,17 +515,6 @@ export default {
           msgInfo,
           messageType: Chat.MessageType.ImageMessage
         }).then(res => {
-          // this.addMsgToOnlineCurUserMsgList({
-          //   content: msgInfo.content, // 消息内容
-          //   coversionType: 'PERSON', // 消息类型
-          //   fromUserId: this.userId, // 发送用户id
-          //   merCode: this.merCode, // 商户编码
-          //   messageType: Chat.MessageType.ImageMessage, // 消息类型
-          //   msgUid: res.messageUId, // 消息id
-          //   timeStamp: new Date(), // 时间戳
-          //   toUserId: this.targetId, // 接收用户id
-          //   userId: this.targetId // 用户id
-          // })
           this.addMsgToOnlineCurUserMsgList({
             merCode: this.merCode,
             msgInfo: msgInfo,
@@ -504,17 +548,21 @@ export default {
     },
     // 重置聊天记录及右侧个人资料
     resetRightData() {
-      // 重置vuex中的聊天相关数据
-      this.resetCurOnlineUserData()
-      // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
-      // 历史消息
-      this.queryHistoryMessage()
-      // 会员信息
-      this.queryMemberInfo()
-      // 购买记录
-      this.queryUserBoughtRecord()
-      // 订单列表
-      this.queryUserOrderList()
+      if (this.targetId) {
+        // 重置vuex中的聊天相关数据
+        this.resetCurOnlineUserData()
+        // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
+        // 历史消息
+        this.queryHistoryMessage()
+        // 会员信息
+        this.queryMemberInfo()
+        // 购买记录
+        this.queryUserBoughtRecord()
+        // 订单列表
+        this.queryUserOrderList()
+      } else {
+        this.resetCurOnlineUserData()
+      }
     },
     handleSearchInput(val) {
       this.searchText = val
@@ -531,6 +579,12 @@ export default {
       } else {
         console.log('no url')
       }
+    },
+    // 添加快捷回复
+    addCannedReply() {
+      this.$router.push({
+        path: '/customerService/msgSettings'
+      })
     }
   },
   created() {
