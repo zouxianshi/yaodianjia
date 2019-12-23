@@ -11,7 +11,19 @@
         </div>
         <div class="item">
           <div class="item-left">
-            <div class="color-red item-text">{{ detailsData.orderStatus | orderStatus }}</div>
+            <div class="color-red item-text">
+              <template v-if="detailsData.orderStatus===6">
+                <template v-if="detailsData.deliveryType===2">
+                  <div>待提货</div>
+                </template>
+                <template v-if="detailsData.deliveryType!==2">
+                  <div>已发货</div>
+                </template>
+              </template>
+              <template v-else>
+                {{ detailsData.orderStatus | orderStatus }}
+              </template>
+            </div>
           </div>
           <div class="item-right">
             <el-tag type="success">{{ detailsData.payMode | payment }}</el-tag>
