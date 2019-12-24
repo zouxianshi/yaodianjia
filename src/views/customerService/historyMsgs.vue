@@ -24,9 +24,7 @@
             :selected="curChatUserId===item.userId"
             :avatar="item.headImgUrl"
             :nick-name="item.nickName"
-            :date="`${new Date(item.createTime).getMonth() + 1}-${new Date(
-              item.createTime
-            ).getDate()}`"
+            :date="`${formatTime(item.createTime, 'MM-DD')}`"
             @handleClick="handleUserClick(item)"
           />
         </div>
@@ -41,6 +39,9 @@
             :key="msgIndex"
             :class="`chat-item ${msgItem.fromUserId===supporterId?'green':''}`"
           >
+            <div v-if="!showDate(msgItem, historyMsgList[msgIndex-1])" class="date-item">
+              <div class="date-item-inner">{{ formatTime(msgItem.timeStamp, 'YYYY-MM-DD') }}</div>
+            </div>
             <div class="chat-item-top">
               <span class="chat-user-name">
                 {{ msgItem.fromUserId===supporterId?
@@ -48,9 +49,7 @@
                   :`${currentUser||'暂无用户名'}`
                 }}
               </span>
-              <span
-                class="chat-time"
-              >{{ `${new Date(msgItem.timeStamp).getHours()}:${new Date(msgItem.timeStamp).getMinutes()}:${new Date(msgItem.timeStamp).getSeconds()}` }}</span>
+              <span class="chat-time">{{ formatTime(msgItem.timeStamp, 'HH:mm:ss') }}</span>
             </div>
             <div class="chat-item-content">
               <div
