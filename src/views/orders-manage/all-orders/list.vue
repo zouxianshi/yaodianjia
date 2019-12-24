@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="store-goods-wrapper">
+    <div class="store-goods-wrapper order-list">
 
       <section @keydown.enter="_loadList">
         <div
@@ -1479,7 +1479,7 @@ export default {
   text-align: center;
   color: #606266
 }
-.el-input--small .el-input__inner {
+.order-list .el-input--small .el-input__inner {
     height: 36px;
     line-height: 36px;
 }
