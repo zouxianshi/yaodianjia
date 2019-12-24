@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import user from './components/user'
 import listItem from './components/listItem'
 import userInfo from './components/userInfo'
@@ -59,6 +60,9 @@ export default {
       setCurUser: 'customerService/SET_HIS_CUR_USERID'
     }),
     ...Chat.mapChat(),
+    formatTime(time, format) {
+      return dayjs(time).format(format)
+    },
     // 搜索按钮点击
     searchBtnClick() {
       this.resetData()

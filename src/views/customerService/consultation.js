@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import user from './components/user'
 import listItem from './components/listItem'
 import userInfo from './components/userInfo'
@@ -106,6 +107,9 @@ export default {
       delOnlineConversation: 'customerService/DEL_ONLINE_CONVERSATOIN'
     }),
     ...Chat.mapChat(),
+    formatTime(time, format) {
+      return dayjs(time).format(format)
+    },
     // 根据消息类型返回对应类名
     computeChatItemType(messageType) {
       if (messageType === this.MessageType.ImageMessage) {

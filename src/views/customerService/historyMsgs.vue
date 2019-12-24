@@ -24,9 +24,7 @@
             :selected="curChatUserId===item.userId"
             :avatar="item.headImgUrl"
             :nick-name="item.nickName"
-            :date="`${new Date(item.createTime).getMonth() + 1}-${new Date(
-              item.createTime
-            ).getDate()}`"
+            :date="`${formatTime(item.createTime, 'MM-DD')}`"
             @handleClick="handleUserClick(item)"
           />
         </div>
@@ -50,7 +48,9 @@
               </span>
               <span
                 class="chat-time"
-              >{{ `${new Date(msgItem.timeStamp).getHours()}:${new Date(msgItem.timeStamp).getMinutes()}:${new Date(msgItem.timeStamp).getSeconds()}` }}</span>
+              >
+                {{ formatTime(msgItem.timeStamp, 'YYYY-MM-DD HH:mm:ss') }}
+              </span>
             </div>
             <div class="chat-item-content">
               <div
