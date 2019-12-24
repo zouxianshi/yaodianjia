@@ -10,7 +10,7 @@
       </div>
 
       <el-form :model="settingData">
-        <div class="item">
+        <div class="setting_item">
           <div class="title">
             待付款订单取消时间设置
           </div>
@@ -23,7 +23,7 @@
           </el-form-item>
         </div>
 
-        <div class="item">
+        <div class="setting_item">
           <div class="title">
             现金购买类型优惠券计入成本设置
           </div>
@@ -175,7 +175,7 @@ export default {
   }
 }
 
-.item{
+.setting_item{
   margin-bottom: 30px;
   color: #606266;
   .title{
@@ -199,4 +199,5 @@ export default {
     line-height: 22px;
   }
 }
+
 </style>
