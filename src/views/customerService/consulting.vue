@@ -27,20 +27,13 @@
             :message-type="item.latestMessage.objectName"
             :avatar="item.latestMessage.content.extra.userLogo"
             :nick-name="item.latestMessage.content.extra.nickName"
-            :date="`${new Date(item.sentTime).getMonth() + 1}-${new Date(
-              item.sentTime
-            ).getDate()}`"
+            :date="`${formatTime(item.sentTime, 'MM-DD')}`"
             :content="item.latestMessage.content.content"
             :show-del-icon="true"
             @handleClick="handleUserClick(item)"
             @handleDel="handleUserDel(item)"
           >
-            <el-dialog
-              append-to-body
-              title="提示"
-              :visible="delUserDialogVisible"
-              width="30%"
-            >
+            <el-dialog append-to-body title="提示" :visible="delUserDialogVisible" width="30%">
               <span>确认删除当前会话吗？</span>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="delUserDialogVisible = false">取 消</el-button>
@@ -59,51 +52,60 @@
           <div
             v-for="(dItem,index) in curOnlineUserData.list"
             :key="index"
-            :class="`chat-item-box ${dItem.fromUserId == targetId? '': 'right-align'}`"
+            :class="`chat-item-box`"
           >
-            <!-- 用户发的头像靠左 -->
-            <div v-if="dItem.fromUserId === targetId" class="chat-item-avatar">
-              <el-image fit="scale-down" :src="curUserAvatar" :preview-src-list="[curUserAvatar]" />
+            <div v-if="!showDate(dItem, curOnlineUserData.list[index-1])" class="date-item">
+              <div class="date-item-inner">{{ formatTime(dItem.timeStamp, 'YYYY-MM-DD HH:mm:ss') }}</div>
             </div>
-            <!-- 聊天内容 -->
-            <div :class="`chat-item-content ${computeChatItemType(dItem.messageType)}`">
-              <div
-                v-if="dItem.messageType===MessageType.TextMessage"
-                class="text-message"
-              >{{ symbolToEmoji(dItem.content) }}</div>
-              <div v-else-if="dItem.messageType===MessageType.ImageMessage" class="image-message">
+            <div :class="`chat-item-inner ${dItem.fromUserId == targetId? '': 'right-align'}`">
+              <!-- 用户发的头像靠左 -->
+              <div v-if="dItem.fromUserId === targetId" class="chat-item-avatar">
                 <el-image
                   fit="scale-down"
-                  :src="dItem.content"
-                  :preview-src-list="[dItem.content]"
+                  :src="curUserAvatar"
+                  :preview-src-list="[curUserAvatar]"
                 />
               </div>
-              <div
-                v-else-if="dItem.messageType===MessageType.GoodsMessage"
-                class="goods-message"
-                @click="handleGoodsClick(dItem)"
-              >
-                <div class="goods-message-header">为你推荐</div>
-                <div class="goods-message-inner">
-                  <div class="goods-message-img">
-                    <el-image fit="scale-down" :src="JSON.parse(dItem.content).imageUri" />
-                  </div>
-                  <div class="goods-message-info">
-                    <div class="goods-name">{{ JSON.parse(dItem.content).title }}</div>
-                    <div
-                      class="goods-price"
-                    >¥{{ Number(JSON.parse(dItem.content).price).toFixed(2) }}</div>
+              <!-- 聊天内容 -->
+              <div :class="`chat-item-content ${computeChatItemType(dItem.messageType)}`">
+                <div
+                  v-if="dItem.messageType===MessageType.TextMessage"
+                  class="text-message"
+                >{{ symbolToEmoji(dItem.content) }}</div>
+                <div v-else-if="dItem.messageType===MessageType.ImageMessage" class="image-message">
+                  <el-image
+                    fit="scale-down"
+                    :src="dItem.content"
+                    :preview-src-list="[dItem.content]"
+                  />
+                </div>
+                <div
+                  v-else-if="dItem.messageType===MessageType.GoodsMessage"
+                  class="goods-message"
+                  @click="handleGoodsClick(dItem)"
+                >
+                  <div class="goods-message-header">为你推荐</div>
+                  <div class="goods-message-inner">
+                    <div class="goods-message-img">
+                      <el-image fit="scale-down" :src="JSON.parse(dItem.content).imageUri" />
+                    </div>
+                    <div class="goods-message-info">
+                      <div class="goods-name">{{ JSON.parse(dItem.content).title }}</div>
+                      <div
+                        class="goods-price"
+                      >¥{{ Number(JSON.parse(dItem.content).price).toFixed(2) }}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <!-- 客服发的头像靠右 -->
-            <div v-if="dItem.fromUserId !== targetId" class="chat-item-avatar">
-              <el-image
-                fit="scale-down"
-                :src="showImg(merLogo)"
-                :preview-src-list="[showImg(dItem.img)]"
-              />
+              <!-- 客服发的头像靠右 -->
+              <div v-if="dItem.fromUserId !== targetId" class="chat-item-avatar">
+                <el-image
+                  fit="scale-down"
+                  :src="showImg(merLogo)"
+                  :preview-src-list="[showImg(dItem.img)]"
+                />
+              </div>
             </div>
           </div>
         </template>
