@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="store-goods-wrapper">
-      <div class="wrapper">
+      <div class="setting_wrapper">
         <div class="con">
           <div class="title">订单自动确认收货规则</div>
           <div>普通的O2O订单，门店发货48小时后自动确认收货</div>
@@ -154,7 +154,7 @@ export default {
   }
 }
 
-.wrapper{
+.setting_wrapper{
   width: 100%;
   background:#fff7e8;
   padding:20px 20px 0 20px;
