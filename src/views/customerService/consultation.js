@@ -38,7 +38,7 @@ export default {
       boughtRecord: null, // 用户购买记录
       orderList: [], // 订单列表
       memberInfo: null, // 会员个人资料
-      targetId: 20, // 当前会话用户id
+      targetId: '', // 当前会话用户id
       selectGoodsDialogVisible: false, // 选择商品对话框是否展示
       goodsList: [], // 选择商品弹窗商品列表
       listQuery: { // 快捷回复列表请求参数
@@ -540,7 +540,7 @@ export default {
     searchBtnClick() {
       this.resetRightData()
       this.queryRYConversationList({
-        searchText: this.searchText
+        searchText: this.searchText.replace(/\s*/g, '')
       })
     },
     resetData() {
@@ -589,10 +589,6 @@ export default {
   },
   created() {
     this.emojiList = Chat.getEmojiList()
-    const {
-      targetId
-    } = this.$route.query
-    this.targetId = targetId || 20
 
     // 获取商品列表
     this.queryGoods()

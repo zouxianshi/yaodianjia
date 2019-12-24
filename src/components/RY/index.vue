@@ -134,7 +134,7 @@ export default {
       // 如果没有新消息则跳转历史消息 否则跳转在线咨询
       if (!this.newMsgComing) {
         this.$router.push({
-          path: '/customerService/historyMsg'
+          path: '/customerService/consultation'
         })
       } else {
         this.newMsgComing = false
