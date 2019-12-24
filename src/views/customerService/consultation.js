@@ -110,6 +110,10 @@ export default {
     formatTime(time, format) {
       return dayjs(time).format(format)
     },
+    // 计算日期
+    showDate(curTime, lastTime) {
+      return this.formatTime(curTime, 'YYYY-MM-DD') === this.formatTime(lastTime, 'YYYY-MM-DD')
+    },
     // 根据消息类型返回对应类名
     computeChatItemType(messageType) {
       if (messageType === this.MessageType.ImageMessage) {

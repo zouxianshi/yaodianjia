@@ -68,6 +68,10 @@ export default {
       this.resetData()
       this.queryConversationList()
     },
+    // 计算日期
+    showDate(curTime, lastTime) {
+      return this.formatTime(curTime, 'YYYY-MM-DD') === this.formatTime(lastTime, 'YYYY-MM-DD')
+    },
     resetData() {
       this.showViewMore = true
       this.currentUser = ''

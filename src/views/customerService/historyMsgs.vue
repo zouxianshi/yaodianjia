@@ -39,6 +39,9 @@
             :key="msgIndex"
             :class="`chat-item ${msgItem.fromUserId===supporterId?'green':''}`"
           >
+            <div v-if="!showDate(msgItem, historyMsgList[msgIndex-1])" class="date-item">
+              <div class="date-item-inner">{{ formatTime(msgItem.timeStamp, 'YYYY-MM-DD') }}</div>
+            </div>
             <div class="chat-item-top">
               <span class="chat-user-name">
                 {{ msgItem.fromUserId===supporterId?
@@ -46,11 +49,7 @@
                   :`${currentUser||'暂无用户名'}`
                 }}
               </span>
-              <span
-                class="chat-time"
-              >
-                {{ formatTime(msgItem.timeStamp, 'YYYY-MM-DD HH:mm:ss') }}
-              </span>
+              <span class="chat-time">{{ formatTime(msgItem.timeStamp, 'HH:mm:ss') }}</span>
             </div>
             <div class="chat-item-content">
               <div
