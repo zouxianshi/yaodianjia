@@ -7,13 +7,13 @@ class CustomerService {
    */
   connectToIMServer() {
     console.log('window.location.protocol', location.protocol)
-    let webSocketURL = ''
+    let webSocketBase = ''
     if (location.protocol === 'http:') {
-      webSocketURL = process.env.VUE_APP_WEBSOCKET_BASE || 'ws://middle.dev.ydjia.cn:5416/ws'
+      webSocketBase = process.env.VUE_APP_WEBSOCKET_BASE || 'ws://middle.dev.ydjia.cn'
     } else {
-      webSocketURL = process.env.VUE_APP_WEBSOCKET_BASE_WSS || 'wss://middle.dev.ydjia.cn:5416/ws'
+      webSocketBase = process.env.VUE_APP_WEBSOCKET_BASE_WSS || 'wss://middle.dev.ydjia.cn'
     }
-    return new WebSocket(webSocketURL)
+    return new WebSocket(`${webSocketBase}/websocket/ws`)
   }
 
   /**
