@@ -8,7 +8,7 @@ const RongIMClient = window.RongIMClient
 const RongIMLib = window.RongIMLib
 
 class Chat {
-  RYAppKey = 'lmxuhwagl5sad'
+  RYAppKey = process.env.VUE_APP_RY_KEY || 'lmxuhwagl5sad'
   RongIMLib = window.RongIMLib
   RongIMClient = window.RongIMClient
 
