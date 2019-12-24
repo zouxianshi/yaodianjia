@@ -134,7 +134,7 @@ export default {
         merCode: this.merCode,
         pageSize: this.curConversationPageSize,
         userId: this.supporterId,
-        name: this.searchText // 搜索框中输入的用户名字
+        name: this.searchText.replace(/\s*/g, '') // 搜索框中输入的用户名字
       }).then(res => {
         if (this.historyConversationList.length > 0) {
           this.curChatUserId = this.historyConversationList[0].userId

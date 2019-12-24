@@ -214,7 +214,11 @@ export default {
     queryMerStaffList() {
       // 这里用接口请求替代
       return new Promise((resolve, reject) => {
-        CustomerService.queryMerStaffList(this.merStaffQuery).then(res => {
+        CustomerService.queryMerStaffList({
+          ...this.merStaffQuery,
+          subOrgName: this.merStaffQuery.subOrgName.replace(/\s*/g, ''),
+          empName: this.merStaffQuery.empName.replace(/\s*/g, '')
+        }).then(res => {
           const result = res.data
           this.merStaffTableData = {
             ...this.merStaffTableData,

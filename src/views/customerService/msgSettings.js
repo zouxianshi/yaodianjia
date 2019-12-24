@@ -159,7 +159,10 @@ export default {
         return
       }
       if (this.dialogType === 'add') {
-        CustomerService.addSupportMsg(this.editMsgQuery).then(res => {
+        CustomerService.addSupportMsg({
+          ...this.editMsgQuery,
+          msg: this.editMsgQuery.msg.trim()
+        }).then(res => {
           this.$message({
             type: 'success',
             message: res.msg
