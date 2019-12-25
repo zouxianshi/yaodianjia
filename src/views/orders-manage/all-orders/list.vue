@@ -44,6 +44,7 @@
                 align="right"
                 format="yyyy-MM-dd HH:mm:ss"
                 value-format="yyyy-MM-dd HH:mm:ss"
+                popper-class="order_dataTimepicker"
                 @change="chooseTimeRange"
               />
             </div>
@@ -306,7 +307,7 @@
                     <template v-if="item.orderStatus===4">
                       <div>待发货</div>
                       <template v-if="item.deliveryType!==2">
-                        <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
+                        <div><el-button v-if="showSendGoodsBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
                       </template>
                     </template>
                     <template v-if="item.orderStatus===6 && item.deliveryType===2">
@@ -432,8 +433,8 @@
         <!-- 普通发货 -->
         <template v-if="deliveryType===0">
           <el-form-item label="快递公司：" :label-width="labelWidth">
-            <el-select v-model="expressQuery.expComName" filterable placeholder="请输入关键词" @change="handleChangeExpress">
-              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="item.expComName" />
+            <el-select v-model="expressQuery.expComCode" filterable placeholder="请输入关键词" @change="handleChangeExpress">
+              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="item.expComCode" />
             </el-select>
           </el-form-item>
           <el-form-item label="快递单号：" :label-width="labelWidth">
@@ -623,6 +624,7 @@
   </div>
 </template>
 <script>
+// import ps from '@/layout/psHandler'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
@@ -756,6 +758,7 @@ export default {
         // }
         ]
       },
+      // showSendGoodsBtn: ps.showSendGoodsBtn(), //立即发货鉴权
       // value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
       dateSelect: [], // 选择下单时间
       keyword: '',
@@ -788,6 +791,7 @@ export default {
         'storeId': '' // 下单门店id
       },
       expressQuery: { // 快递公司搜索关键字
+        'expComCode': '', // 快递公司编号
         'expComName': '' // 快递公司名称
       },
       storeList: [], // 门店
@@ -1019,7 +1023,7 @@ export default {
     handleChangeExpress(val) { // 快递公司选择改变时触发
       this.expressQuery.currentPage = 1
       // console.log('expressQuery-item:', val)
-      this.expressQuery.expComName = val
+      this.expressQuery.expComCode = val
       this.ExpressCompany()
     },
     handleClose() {
@@ -1037,11 +1041,11 @@ export default {
       })
 
       // 待发货商品数据
-      getUnReceiveData({ merCode: this.merCode, orderId: item.id }).then(res => {
-        this.unReceivedData = res.data
+      getUnReceiveData({ merCode: this.merCode, orderId: item.id, currentPage: 1, pageSize: 20 }).then(res => {
+        this.unReceivedData = res.data.data
       })
       this.mySelectList = [] // 打开时清空已选择的商品信息
-      this.expressQuery.expComName = ''// 弹出时清空已选快递公司
+      this.expressQuery.expComCode = ''// 弹出时清空已选快递公司
       this.packageNo = ''// 弹出时清空快递单号
       this.ExpressCompany() // 快递公司
     },
@@ -1067,7 +1071,7 @@ export default {
         detailsId = mySelectList.map(item => { return item.id })// 订单明细id集合
       }
       if (this.deliveryType === 0) {
-        if (!this.expressQuery.expComName) {
+        if (!this.expressQuery.expComCode) {
           this.dialogDeliveryVisible = true
           this.$message({
             message: '请选择快递公司',
@@ -1085,7 +1089,8 @@ export default {
         }
 
         this.orderSendData = {
-          'companyName': this.expressQuery.expComName,
+          // 'companyName': this.expressQuery.expComName,
+          'companyNo': this.expressQuery.expComCode,
           'merCode': this.merCode,
           'modifyName': this.name,
           'orderId': this.orderId,
@@ -1103,7 +1108,8 @@ export default {
           return
         }
         this.orderSendData = {
-          'companyName': this.expressQuery.expComName,
+          // 'companyName': this.expressQuery.expComName,
+          'companyNo': this.expressQuery.expComCode,
           'merCode': this.merCode,
           'modifyName': this.name,
           'orderId': this.orderId,
@@ -1123,7 +1129,7 @@ export default {
       })
     },
     ExpressCompany() { // 获取快递公司
-      getExpressCompany().then(res => {
+      getExpressCompany({ pageSize: 2000 }).then(res => {
         this.ExpressData = res.data.data
       })
     },
@@ -1458,8 +1464,8 @@ export default {
 .marginTop10{ margin-top: 10px;}
 .marginTop20{ margin-top: 20px;}
 
-.el-date-range-picker{left:270px!important} //时间控件弹出框
-.el-radio-button--small .el-radio-button__inner{padding:12px 30px}
+.order_dataTimepicker.el-date-range-picker{left:270px!important} //时间控件弹出框
+//.el-radio-button--small .el-radio-button__inner{padding:12px 30px}
 
 .order_btn button{
   width: 40px;
@@ -1483,4 +1489,8 @@ export default {
     height: 36px;
     line-height: 36px;
 }
+</style>
+<style scoped>
+.el-date-range-picker{left:270px!important} /*时间控件弹出框*/
+.el-radio-button--small .el-radio-button__inner{padding:12px 30px}
 </style>

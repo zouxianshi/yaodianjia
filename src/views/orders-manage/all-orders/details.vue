@@ -275,7 +275,7 @@
                             <template v-else>已发货</template>
                           </template>
                           <template v-else>{{ item.status | orderStatus }}</template>
-                          <div v-if="item.orderPackage" class="marginTop20">快递单号<span class="font12">{{ item.orderPackage.packageNo }}</span></div>
+                          <div v-if="item.orderPackage" class="marginTop20"><span class="font12">快递单号</span><span class="font12">{{ item.orderPackage.packageNo }}</span></div>
                         </div>
                       </div>
                     </div>
