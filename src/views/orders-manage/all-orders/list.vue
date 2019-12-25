@@ -278,8 +278,8 @@
                           </div>
                         </template>
                         <template v-if="list.status===8 && item.detailList.length>1">
-                          <div class="order_btn" style="text-align:right">
-                            <div><el-button type="primary" size="small" @click="item.paymode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount)">收到退货</el-button></div>
+                          <div class="order_btn btn_normal" style="text-align:right">
+                            <div><el-button type="primary" size="mini" @click="item.paymode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount)">收到退货</el-button></div>
                           </div>
                         </template>
 
@@ -1475,6 +1475,10 @@ export default {
   text-align: center;
   padding-left:0;
   padding-right:0;
+}
+.btn_normal button{
+  width: inherit;
+  font-size: 12px;
 }
 .color-red{color:red;}
 .color-gray{color:#aaa;}
