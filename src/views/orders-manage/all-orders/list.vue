@@ -279,7 +279,7 @@
                         </template>
                         <template v-if="list.status===8 && item.detailList.length>1">
                           <div class="order_btn" style="text-align:right">
-                            <div><el-button type="primary" size="mini" @click="item.paymode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount)">收到退货</el-button></div>
+                            <div><el-button type="primary" size="small" @click="item.paymode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount)">收到退货</el-button></div>
                           </div>
                         </template>
 
