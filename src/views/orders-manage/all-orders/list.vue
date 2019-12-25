@@ -307,8 +307,8 @@
                     <template v-if="item.orderStatus===4">
                       <div>待发货</div>
                       <template v-if="item.deliveryType!==2">
-                        <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
-                        <!-- <div><el-button v-if="showSendGoodsBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
+                        <!-- <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
+                        <div><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
                       </template>
                     </template>
                     <template v-if="item.orderStatus===6 && item.deliveryType===2">
@@ -625,7 +625,7 @@
   </div>
 </template>
 <script>
-// import ps from '@/layout/psHandler'
+import ps from '@/layout/psHandler'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
@@ -759,7 +759,7 @@ export default {
         // }
         ]
       },
-      // showSendGoodsBtn: ps.showSendGoodsBtn(), //立即发货鉴权
+      showSendBtn: ps.showSendGoodsBtn(), // 立即发货鉴权
       // value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
       dateSelect: [], // 选择下单时间
       keyword: '',
