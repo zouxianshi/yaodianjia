@@ -134,7 +134,7 @@ export default {
         menubar: this.menubar,
         removed_menuitems: 'spellchecker,paste,copy,cut,pastetext',
         plugins: plugins,
-        readonly: this.readonly ? 1 : 0,
+        readonly: this.readonly,
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,
