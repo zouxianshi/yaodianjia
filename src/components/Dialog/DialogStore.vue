@@ -139,6 +139,7 @@ export default {
       checkedAll: false, // 全选按钮
       multipleSelection: [],
       mySelectList: [],
+      allStoreList: [],
       TheCitys: ['北京', '天津', '上海', '重庆']
     }
   },
@@ -152,7 +153,8 @@ export default {
   methods: {
     // 获取数据
     fetchData() {
-      this._getTableData() // 统计列表
+      this._getTableData() // 列表
+      this._getStoreAll() // 列表
     },
     open() {
       this.dialog.visible = true
@@ -185,7 +187,11 @@ export default {
         this.$message({ type: 'warning', message: '请选取门店' })
         return false
       }
-      this.$emit('on-change', this.mySelectList, this.checkedAll)
+      if (this.checkedAll) {
+        this.$emit('on-change', this.allStoreList, this.checkedAll)
+      } else {
+        this.$emit('on-change', this.mySelectList, this.checkedAll)
+      }
       this.close()
     },
     selectable() {
@@ -309,6 +315,24 @@ export default {
           })
         } else {
           this.tableData = []
+        }
+      })
+    },
+    _getStoreAll() {
+      const params = {
+        merCode: this.merCode,
+        onlineStatus: 1, // integer($int32) 是否上线门店（0非上线门店，1上线门店）
+        status: 1, // 状态（0停用，1启用）
+        searchKey: '',
+        currentPage: 1,
+        pageSize: 10000,
+        excelFlag: false
+      }
+      queryStores(params).then(res => {
+        if (res.code === '10000' && res.data) {
+          this.allStoreList = res.data.data || []
+        } else {
+          this.allStoreList = []
         }
       })
     },
