@@ -277,7 +277,7 @@
                             <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(list.id,list.totalActualAmount)">退款</el-button>
                           </div>
                         </template>
-                        <template v-if="item.orderStatus===8 && item.detailList.length>1">
+                        <template v-if="list.status===8 && item.detailList.length>1">
                           <div class="order_btn" style="text-align:right">
                             <div><el-button type="primary" size="mini" @click="item.paymode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount)">收到退货</el-button></div>
                           </div>
@@ -761,7 +761,7 @@ export default {
         // }
         ]
       },
-      showSendBtn: ps.showSendGoodsBtn(), // 立即发货鉴权
+      showSendBtn: ps.showSendGoodsBtn() || false, // 立即发货鉴权
       // value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
       dateSelect: [], // 选择下单时间
       keyword: '',

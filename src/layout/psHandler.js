@@ -15,7 +15,6 @@ class InnerCtor {
    // 订单立即发货按钮权限
   showSendGoodsBtn() { //立即发货鉴权
     return this.get('order.order-all.immediate-delivery')
-    // return this.get('order')
   }
   navList (){
     return [
