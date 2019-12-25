@@ -345,7 +345,7 @@
                   </div>
                 </div>
                 <div class="body-cell cell-right padding10"><div class="cell-text">微商城</div></div>
-                <div class="body-cell cell-right padding10"><div class="cell-text">￥{{ item.activityDiscountAmont }}</div></div>
+                <div class="body-cell cell-right padding10"><div class="cell-text">￥{{ item.couponDeduction }}</div></div>
                 <div class="body-cell cell-right padding10">
                   <div class="cell-text">
                     <div>￥{{ item.actuallyPaid }}</div>
