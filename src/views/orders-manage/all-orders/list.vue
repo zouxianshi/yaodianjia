@@ -179,28 +179,30 @@
           </div>
         </div>
       </section>
-      <el-radio-group
-        v-model="listQuery.orderStatus"
-        size="small"
-        @change="listQuery.currentPage = 1;_loadList()"
-      >
-        <el-radio-button label="">全部</el-radio-button>
-        <el-radio-button label="2">待付款</el-radio-button>
-        <el-radio-button label="4">
-          待发货
-          <template v-if="preSendNum>0">
-            <span class="badge">{{ preSendNum }}</span>
-          </template>
-        </el-radio-button>
-        <el-radio-button label="7">待提货</el-radio-button>
-        <el-radio-button label="6">已发货</el-radio-button>
-        <el-radio-button label="12">已完成</el-radio-button>
-        <!-- <el-radio-button label="8">待退货</el-radio-button> -->
-        <el-radio-button label="10">待退款</el-radio-button>
-        <el-radio-button label="8">退货中</el-radio-button>
-        <el-radio-button label="30">退款完成</el-radio-button>
-        <el-radio-button label="20">已取消</el-radio-button>
-      </el-radio-group>
+      <div class="order_tab">
+        <el-radio-group
+          v-model="listQuery.orderStatus"
+          size="small"
+          @change="listQuery.currentPage = 1;_loadList()"
+        >
+          <el-radio-button label="">全部</el-radio-button>
+          <el-radio-button label="2">待付款</el-radio-button>
+          <el-radio-button label="4">
+            待发货
+            <template v-if="preSendNum>0">
+              <span class="badge">{{ preSendNum }}</span>
+            </template>
+          </el-radio-button>
+          <el-radio-button label="7">待提货</el-radio-button>
+          <el-radio-button label="6">已发货</el-radio-button>
+          <el-radio-button label="12">已完成</el-radio-button>
+          <!-- <el-radio-button label="8">待退货</el-radio-button> -->
+          <el-radio-button label="10">待退款</el-radio-button>
+          <el-radio-button label="8">退货中</el-radio-button>
+          <el-radio-button label="30">退款完成</el-radio-button>
+          <el-radio-button label="20">已取消</el-radio-button>
+        </el-radio-group>
+      </div>
       <div class="table-box">
         <div class="order-table">
           <div class="order-table-header">
@@ -1466,7 +1468,7 @@ export default {
 .marginTop20{ margin-top: 20px;}
 
 .order_dataTimepicker.el-date-range-picker{left:270px!important} //时间控件弹出框
-//.el-radio-button--small .el-radio-button__inner{padding:12px 30px}
+.order_tab .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
 
 .order_btn button{
   width: 40px;
