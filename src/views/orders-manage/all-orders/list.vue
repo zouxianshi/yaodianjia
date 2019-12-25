@@ -224,7 +224,7 @@
                     订单编号：
                   </div>
                   <div class="header-cell">
-                    {{ item.orderId }}（{{ item.orderType | orderType }}）
+                    {{ item.serialNumber }}（{{ item.orderType | orderType }}）
                   </div>
                 </div>
                 <div class="header-right">
