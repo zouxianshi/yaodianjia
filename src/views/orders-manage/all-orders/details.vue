@@ -5,7 +5,7 @@
         <div class="item">
           <div class="item-left">
             订单号：{{ detailsData.serialNumber }}
-            <template v-if="detailsData.orderType==='R'">（{{ detailsData.orderType | orderType }}）</template>
+            <template v-if="detailsData.prescriptionSheetMark==='1'">（{{ detailsData.prescriptionSheetMark | orderType }}）</template>
           </div>
           <div class="item-right"><el-button type="primary" size="mini">补推到ERP</el-button></div>
         </div>
@@ -70,7 +70,7 @@
           <div class="con">发货门店：<template v-if="detailsData.storeResDTO && detailsData.storeResDTO.stName"><span>{{ detailsData.storeResDTO.stName }}</span></template></div>
           <div class="con">收货方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
           <div class="con">订单来源：微商城</div>
-          <div class="con">订单类型：{{ detailsData.orderType | orderType }}</div>
+          <div class="con">订单类型：{{ detailsData.prescriptionSheetMark | orderType }}</div>
           <div v-if="detailsData.orderStatus!==6" class="con">配送方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
         </div>
         <div class="info-item">
@@ -122,7 +122,7 @@
       </template>
 
       <!-- 处方申请单 -->
-      <template v-if="detailsData.orderType==='R'&&detailsData.prescriptionApproval">
+      <template v-if="detailsData.prescriptionSheetMark==='1'&&detailsData.prescriptionApproval">
         <div class="info">
           <div class="info-item info-left">
             <div class="title">处方申请单</div>
@@ -300,15 +300,15 @@ import { getOrderDetail } from '@/api/order'
 export default {
   filters: {
     orderType: function(value) { // 订单类型
-      if (value === 'N') {
+      if (value === '0') {
         return '正常订单'
       }
-      if (value === 'R') {
+      if (value === '1') {
         return '处方药'
       }
-      if (value === 'V') {
-        return '虚拟商品订单'
-      }
+      // if (value === 'V') {
+      //   return '积分订单'
+      // }
     },
     orderStatus: function(value) { // 订单状态
       if (value === 2) {

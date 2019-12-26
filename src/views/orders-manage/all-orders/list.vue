@@ -62,15 +62,15 @@
           <div class="search-item">
             <span class="label-name">订单类型</span>
             <el-select
-              v-model="listQuery.orderType"
+              v-model="listQuery.prescriptionSheetMark"
               filterable
               placeholder="订单类型"
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value="" />
-              <el-option label="处方药" value="R" />
-              <el-option label="正常订单" value="N" />
-              <el-option label="虚拟商品订单" value="V" />
+              <el-option label="处方药" value="1" />
+              <el-option label="正常订单" value="0" />
+              <!-- <el-option label="积分订单" value="V" /> -->
             </el-select>
           </div>
           <!-- <div class="search-item">
@@ -226,7 +226,7 @@
                     订单编号：
                   </div>
                   <div class="header-cell">
-                    {{ item.serialNumber }}（{{ item.orderType | orderType }}）
+                    {{ item.serialNumber }}（{{ item.prescriptionSheetMark | orderType }}）
                   </div>
                 </div>
                 <div class="header-right">
@@ -269,7 +269,7 @@
                         <div class="goods-price">￥{{ list.commodityPrice }}</div>
                         <div class="goods-num">({{ list.commodityNumber }}件)</div>
                         <template v-if="item.orderStatus===10">
-                          <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.orderId)">查看退款理由</div>
+                          <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.id)">查看退款理由</div>
                         </template>
                         <template v-if="item.orderStatus===10 &&item.deliveryType!==2 && item.detailList.length>1">
                           <div class="order_btn" style="text-align:right">
@@ -641,15 +641,15 @@ export default {
   components: { Pagination },
   filters: {
     orderType: function(value) { // 订单类型
-      if (value === 'N') {
+      if (value === '0') {
         return '正常订单'
       }
-      if (value === 'R') {
+      if (value === '1') {
         return '处方药'
       }
-      if (value === 'V') {
-        return '虚拟商品订单'
-      }
+      // if (value === 'V') {
+      //   return '积分订单'
+      // }
     },
     orderStatus: function(value) { // 订单状态
       if (value === 2) {
@@ -784,7 +784,7 @@ export default {
         'orderSearchType': '', // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
         'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货7) ===已发货 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        'orderType': '', // 订单类型 1.微商城订单
+        'prescriptionSheetMark': '', // 订单类型 是不是处方单1、0
         'payment': '', // 支付方式
         'proName': '', // 商品名称
         'receive': '', // 收货方式
@@ -869,7 +869,7 @@ export default {
         'orderSearchType': '', // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
         'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        'orderType': '', // 订单类型 1.微商城订单
+        'prescriptionSheetMark': '', // 订单类型 是不是处方单1、0
         'payment': '', // 支付方式
         'proName': '', // 商品名称
         'receive': '', // 收货方式
