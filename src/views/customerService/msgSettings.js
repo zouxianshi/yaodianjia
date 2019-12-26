@@ -62,11 +62,11 @@ export default {
     clearEditDialogData() {
       this.selectedMsgType = ''
       this.editMsgQuery = {
-        ...this.editMsgQuery,
         id: '',
         msg: '',
         status: 1,
-        type: ''
+        type: '',
+        merCode: this.merCode
       }
       this.editDialogVisible = false
     },
@@ -188,7 +188,7 @@ export default {
       this.dialogType = 'edit'
       this.editDialogVisible = true
       this.editMsgQuery = {
-        ...this.editMsgQuery,
+        merCode: this.merCode,
         msg: row.msg,
         id: row.id,
         type: row.type,
