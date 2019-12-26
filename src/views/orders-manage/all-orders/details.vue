@@ -5,7 +5,7 @@
         <div class="item">
           <div class="item-left">
             订单号：{{ detailsData.serialNumber }}
-            <template v-if="detailsData.orderType==='R'">（{{ detailsData.orderType | orderType }}）</template>
+            <template v-if="detailsData.prescriptionSheetMark==='1'">（{{ detailsData.prescriptionSheetMark | orderType }}）</template>
           </div>
           <div class="item-right"><el-button type="primary" size="mini">补推到ERP</el-button></div>
         </div>
@@ -70,7 +70,7 @@
           <div class="con">发货门店：<template v-if="detailsData.storeResDTO && detailsData.storeResDTO.stName"><span>{{ detailsData.storeResDTO.stName }}</span></template></div>
           <div class="con">收货方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
           <div class="con">订单来源：微商城</div>
-          <div class="con">订单类型：{{ detailsData.orderType | orderType }}</div>
+          <div class="con">订单类型：{{ detailsData.prescriptionSheetMark | orderType }}</div>
           <div v-if="detailsData.orderStatus!==6" class="con">配送方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
         </div>
         <div class="info-item">
@@ -78,7 +78,7 @@
           <div class="con">付款方式：{{ detailsData.payMode ? '货到付款':'在线支付' }}</div>
           <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
-          <div class="con">优惠：￥{{ detailsData.activityDiscountAmont }}</div>
+          <div class="con">优惠：￥{{ detailsData.couponDeduction }}</div>
           <div class="con">应付总额：￥{{ detailsData.amountTobepaid }}</div>
         </div>
         <div class="info-item">
@@ -122,7 +122,7 @@
       </template>
 
       <!-- 处方申请单 -->
-      <template v-if="detailsData.orderType==='R'&&detailsData.prescriptionApproval">
+      <template v-if="detailsData.prescriptionSheetMark==='1'&&detailsData.prescriptionApproval">
         <div class="info">
           <div class="info-item info-left">
             <div class="title">处方申请单</div>
@@ -275,7 +275,7 @@
                             <template v-else>已发货</template>
                           </template>
                           <template v-else>{{ item.status | orderStatus }}</template>
-                          <div v-if="item.orderPackage" class="marginTop20">快递单号<span class="font12">{{ item.orderPackage.packageNo }}</span></div>
+                          <div v-if="item.orderPackage" class="marginTop20"><span class="font12">快递单号</span><span class="font12">{{ item.orderPackage.packageNo }}</span></div>
                         </div>
                       </div>
                     </div>
@@ -300,15 +300,15 @@ import { getOrderDetail } from '@/api/order'
 export default {
   filters: {
     orderType: function(value) { // 订单类型
-      if (value === 'N') {
+      if (value === '0') {
         return '正常订单'
       }
-      if (value === 'R') {
+      if (value === '1') {
         return '处方药'
       }
-      if (value === 'V') {
-        return '虚拟商品订单'
-      }
+      // if (value === 'V') {
+      //   return '积分订单'
+      // }
     },
     orderStatus: function(value) { // 订单状态
       if (value === 2) {

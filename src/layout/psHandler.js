@@ -12,6 +12,10 @@ class InnerCtor {
   showMsgBtn() {
     return this.get('staff.online-ask')
   }
+   // 订单立即发货按钮权限
+  showSendGoodsBtn() { //立即发货鉴权
+    return this.get('order.order-all.immediate-delivery')
+  }
   navList (){
     return [
       {
@@ -25,7 +29,7 @@ class InnerCtor {
         name: '订单管理',
         icon: 'icongoods',
         path: '',
-        disabled: true,
+        disabled: this.get('order'),
         children: [
           {
             name: `所有订单`,
@@ -229,5 +233,6 @@ class InnerCtor {
     }
   }
 }
+
 
 export default ps()

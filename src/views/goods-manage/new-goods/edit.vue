@@ -389,7 +389,6 @@
                         </div>
                       </el-form-item>
                       <el-form-item label="商品图片">
-                        <span slot="label"><span class="tip">*</span> 商品图片</span>
                         <el-upload
                           class="avatar-uploader specs-img-table"
                           :action="upLoadUrl"
