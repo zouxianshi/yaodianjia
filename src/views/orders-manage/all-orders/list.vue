@@ -231,7 +231,7 @@
                 </div>
                 <div class="header-right">
                   <div class="header-cell" @click="orderDetail(item.id,item.orderStatus)">
-                    订单详情
+                    订单详情 ({{ item.payMode }})
                   </div>
                 </div>
               </div>
@@ -279,7 +279,7 @@
                         </template>
                         <template v-if="list.status===8 && item.detailList.length>1">
                           <div class="order_btn btn_normal" style="text-align:right">
-                            <div><el-button type="primary" size="mini" @click="item.paymode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount,item.paymode)">收到退货</el-button></div>
+                            <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount,item.payMode)">收到退货</el-button></div>
                           </div>
                         </template>
 
