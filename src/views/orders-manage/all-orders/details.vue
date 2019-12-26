@@ -133,7 +133,7 @@
             <div class="con">身份证：{{ detailsData.prescriptionApproval.cerNo }}</div>
           </div>
           <div class="info-item info-right">
-            <div class="block">
+            <div class="block prescriptionA_img">
               <div
                 v-if="detailsData.prescriptionApproval.image && detailsData.prescriptionApproval.image!==''"
               >
@@ -707,4 +707,10 @@ export default {
 .marginRight20{margin-right: 20px}
 .marginTop20{margin-top:20px}
 .font12{font-size: 12px}
+.prescriptionA_img {
+  .el-image{
+    width: 30%;
+    max-height: 300px;
+  }
+}
 </style>
