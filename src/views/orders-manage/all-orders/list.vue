@@ -231,7 +231,7 @@
                 </div>
                 <div class="header-right">
                   <div class="header-cell" @click="orderDetail(item.id,item.orderStatus)">
-                    订单详情 ({{ item.payMode }})
+                    订单详情
                   </div>
                 </div>
               </div>
@@ -279,7 +279,7 @@
                         </template>
                         <template v-if="list.status===8 && item.detailList.length>1">
                           <div class="order_btn btn_normal" style="text-align:right">
-                            <div>payMode:{{ item.payMode }}<el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount,item.payMode)">收到退货</el-button></div>
+                            <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount)">收到退货</el-button></div>
                           </div>
                         </template>
 
@@ -331,7 +331,7 @@
                     </template>
                     <template v-if="item.orderStatus===8 && item.detailList.length===1">
                       <div>待退货</div>
-                      <div><el-button type="primary" size="mini" @click="dialogConfirmReturnVisible = true;agreeRefund(item.detailList[0].id,item.detailList[0].totalActualAmount)">收到退货</el-button></div>
+                      <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.detailList[0].id,item.detailList[0].totalActualAmount)">收到退货</el-button></div>
                     </template>
                     <template v-if="item.orderStatus===30">
                       <div>退款完成</div>
@@ -1183,8 +1183,8 @@ export default {
         }
       })
     },
-    agreeRefund(detailId, money, paymode) { // 同意退款弹框
-      console.log('paymode:', paymode)
+    agreeRefund(detailId, money) { // 同意退款弹框
+      // console.log('paymode:', paymode)
       this.orderDetailId = detailId
       this.payMoney = money
       this.agreeRefundForm.actualRefundAmount = 0
