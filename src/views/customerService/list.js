@@ -51,7 +51,8 @@ export default {
       // 客服表格数据相关属性
       merSupportTableData: {
         list: [], // 客服列表数据
-        total: 0 // 客服总数
+        total: 0, // 客服总数
+        selectedFilterText: '全部' // 筛选条件文字
       },
 
       /**
@@ -72,8 +73,7 @@ export default {
       merStaffTableData: {
         list: [],
         total: 0,
-        selectedList: [],
-        selectedFilterText: '全部' // 筛选条件文字
+        selectedList: []
       }
     }
   },
@@ -169,6 +169,7 @@ export default {
       const selectedFilter = this.statusMap.find(
         item => item.symbol === command
       )
+      console.log('fiter', selectedFilter)
       this.merSupportTableData.selectedFilterText = selectedFilter.text
       this.merSupportQuery.onlineStatus = selectedFilter.onlineStatus
       // 重置客服列表数据并重新发起请求

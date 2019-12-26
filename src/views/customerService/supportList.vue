@@ -9,7 +9,7 @@
           <span class="filter-desc">筛选：客服状态</span>
           <el-dropdown @command="handleStatusToggle">
             <span class="el-dropdown-link">
-              {{ merStaffTableData.selectedFilterText }}
+              {{ merSupportTableData.selectedFilterText }}
               <i
                 class="el-icon-arrow-down el-icon--right"
               />
