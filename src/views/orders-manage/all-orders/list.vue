@@ -279,7 +279,7 @@
                         </template>
                         <template v-if="list.status===8 && item.detailList.length>1">
                           <div class="order_btn btn_normal" style="text-align:right">
-                            <div><el-button type="primary" size="mini" @click="item.paymode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount)">收到退货</el-button></div>
+                            <div><el-button type="primary" size="mini" @click="item.paymode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.id,list.totalActualAmount,item.paymode)">收到退货</el-button></div>
                           </div>
                         </template>
 
@@ -1183,8 +1183,8 @@ export default {
         }
       })
     },
-    agreeRefund(detailId, money) { // 同意退款弹框
-      // console.log('detailId:', detailId)
+    agreeRefund(detailId, money, paymode) { // 同意退款弹框
+      console.log('paymode:', paymode)
       this.orderDetailId = detailId
       this.payMoney = money
       this.agreeRefundForm.actualRefundAmount = 0
