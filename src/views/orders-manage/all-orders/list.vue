@@ -268,10 +268,10 @@
                       <div class="goods-info padding10">
                         <div class="goods-price">￥{{ list.commodityPrice }}</div>
                         <div class="goods-num">({{ list.commodityNumber }}件)</div>
-                        <template v-if="item.orderStatus===10">
+                        <template v-if="list.status===10">
                           <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.id)">查看退款理由</div>
                         </template>
-                        <template v-if="item.orderStatus===10 &&item.deliveryType!==2 && item.detailList.length>1">
+                        <template v-if="list.status===10 &&item.deliveryType!==2 && item.detailList.length>1">
                           <div class="order_btn" style="text-align:right">
                             <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(list.id,list.commodityName)">拒绝</el-button>
                             <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(list.id,list.totalActualAmount)">退款</el-button>
