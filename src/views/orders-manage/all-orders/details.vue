@@ -79,7 +79,7 @@
           <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
           <div class="con">优惠：￥{{ detailsData.couponDeduction }}</div>
-          <div class="con">应付总额：￥{{ detailsData.amountTobepaid }}</div>
+          <div class="con">应付总额：￥{{ detailsData.totalActualOrderAmount }}</div>
         </div>
         <div class="info-item">
           <div class="title">操作人信息</div>

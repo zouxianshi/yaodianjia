@@ -612,7 +612,12 @@
           <div>{{ refundData.refundReturnDesc }}</div>
         </el-form-item>
         <el-form-item label="图片凭证：" :label-width="labelWidth100">
-          <div><img v-for="(picItem,index3) in refundPic" :key="index3" src="" width="100" height="100"> </div>
+          <template v-if="refundPic!==[]">
+            <div><img v-for="(picItem,index3) in refundPic" :key="index3" src="" width="100" height="100"> </div>
+          </template>
+          <template v-else>
+            <div>未上传图片凭证</div>
+          </template>
         </el-form-item>
         <!-- <div class="float-right">
           <a href="">联系买家</a>
@@ -1141,10 +1146,12 @@ export default {
         if (res.data) {
           this.refundData = res.data
           let pics = []
-          pics = this.refundData.pictureVoucher // 图片凭证
-          pics = pics.split(',')
+          if (this.refundData.pictureVoucher) {
+            pics = this.refundData.pictureVoucher // 图片凭证
+            pics = pics.split(',')
 
-          this.refundPic = pics
+            this.refundPic = pics
+          }
         }
       })
     },
