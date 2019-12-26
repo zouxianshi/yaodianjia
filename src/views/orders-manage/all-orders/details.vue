@@ -159,7 +159,7 @@
             <div class="con">退款说明：{{ item.refundReturnDesc }}</div>
           </div>
           <div class="info-item info-right">
-            <div class="block">
+            <div class="block prescriptionA_img">
               <div
                 v-if="item.mpic && item.mpic!==''"
               >
