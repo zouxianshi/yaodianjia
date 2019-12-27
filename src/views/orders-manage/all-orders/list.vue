@@ -345,11 +345,11 @@
                   </div>
                 </div>
                 <div class="body-cell cell-right padding10"><div class="cell-text">微商城</div></div>
-                <div class="body-cell cell-right padding10"><div class="cell-text">￥{{ item.couponDeduction }}</div></div>
+                <div class="body-cell cell-right padding10"><div class="cell-text">￥<template v-if="item.couponDeduction"><span>{{ item.couponDeduction }}</span></template><template v-else><span>0</span></template></div></div>
                 <div class="body-cell cell-right padding10">
                   <div class="cell-text">
-                    <div>￥{{ item.actuallyPaid }}</div>
-                    <div>（含运费{{ item.actualFreightAmount }}元）</div>
+                    <div>￥<template v-if="item.actuallyPaid"><span>{{ item.actuallyPaid }}</span></template><template v-else><span>0</span></template></div>
+                    <div>（含运费<template v-if="item.actualFreightAmount"><span>{{ item.actualFreightAmount }}</span></template><template v-else><span>0</span></template>元）</div>
                   </div>
                 </div>
               </div>
@@ -1134,6 +1134,7 @@ export default {
           type: 'success'
         })
         this.getList()
+        this.getpreSendNum() // 获取待发货商品数量
       })
     },
     ExpressCompany() { // 获取快递公司
