@@ -921,10 +921,15 @@ export default {
       this.listQuery.isSuper = isSuper
       getOrderList(this.listQuery).then(res => {
         this.loading = false
-        const { data, totalCount } = res.data
+        // const { data, totalCount } = res.data
+        const data = res.data
         if (data) {
-          this.tableData = data
-          this.total = totalCount
+          const filtersData = data.filetr((item, i) => {
+            return item.prescriptionSheetMark === '0' || (item.prescriptionSheetMark === '1' && item.prescriptionStatus === 2)
+          })
+          this.tableData = filtersData
+          this.total = filtersData.length
+          console.log('this.tableData22222:', this.tableData)
         } else {
           this.tableData = []
         }
