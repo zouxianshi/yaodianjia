@@ -313,8 +313,8 @@
                     <template v-if="item.orderStatus===4">
                       <div>待发货</div>
                       <template v-if="item.deliveryType!==2 && item.detailList.length===1">
-                        <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
-                        <!-- <div><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
+                        <!-- <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
+                        <div><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
                       </template>
                     </template>
                     <template v-if="item.orderStatus===6 && item.deliveryType===2">
