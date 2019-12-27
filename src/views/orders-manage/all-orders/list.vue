@@ -924,7 +924,9 @@ export default {
         // const { data, totalCount } = res.data
         const data = res.data
         if (data) {
-          const filtersData = data.filetr((item, i) => {
+          console.log('data：', data)
+          console.log('data.data：', data.data)
+          const filtersData = data.data.filetr((item, i) => {
             return item.prescriptionSheetMark === '0' || (item.prescriptionSheetMark === '1' && item.prescriptionStatus === 2)
           })
           this.tableData = filtersData
