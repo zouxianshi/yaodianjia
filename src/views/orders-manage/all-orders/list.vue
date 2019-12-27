@@ -268,14 +268,14 @@
                       <div class="goods-info padding10">
                         <div class="goods-price">￥{{ list.commodityPrice }}</div>
                         <div class="goods-num">({{ list.commodityNumber }}件)</div>
-                        <template v-if="list.status===4&&item.deliveryType!==2 && item.detailList.length>1">
+                        <template v-if="list.status===4&& item.deliveryType!==2 && item.detailList.length>1">
                           <!-- <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
-                          <div class="order_btn btn_normal"><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
+                          <div class="order_btn btn_normal" style="text-align:right"><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
                         </template>
                         <template v-if="list.status===10">
                           <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.id)">查看退款理由</div>
                         </template>
-                        <template v-if="list.status===10 &&item.deliveryType!==2 && item.detailList.length>1">
+                        <template v-if="list.status===10 && item.deliveryType!==2 && item.detailList.length>1">
                           <div class="order_btn" style="text-align:right">
                             <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(list.id,list.commodityName)">拒绝</el-button>
                             <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(list.id,list.totalActualAmount)">退款</el-button>
@@ -313,8 +313,8 @@
                     <template v-if="item.orderStatus===4">
                       <div>待发货</div>
                       <template v-if="item.deliveryType!==2 && item.detailList.length===1">
-                        <!-- <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
-                        <div><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
+                        <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
+                        <!-- <div><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
                       </template>
                     </template>
                     <template v-if="item.orderStatus===6 && item.deliveryType===2">
@@ -922,16 +922,12 @@ export default {
       getOrderList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
-        // const data = res.data
         if (data) {
-          console.log('data：', data)
-          console.log('data.data：', data.data)
           // const filtersData = data.data.filetr((item, i) => {
           //   return item.prescriptionSheetMark === '0' || (item.prescriptionSheetMark === '1' && item.prescriptionStatus === 2)
           // })
           this.tableData = data
           this.total = totalCount
-          // console.log('this.tableData22222:', this.tableData)
         } else {
           this.tableData = []
         }
@@ -1498,6 +1494,8 @@ export default {
 .btn_normal button{
   width: inherit;
   font-size: 12px;
+  padding-left:8px;
+  padding-right:8px;
 }
 .color-red{color:red;}
 .color-gray{color:#aaa;}
