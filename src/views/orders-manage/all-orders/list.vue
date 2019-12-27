@@ -1170,7 +1170,7 @@ export default {
         if (res.code === '10000') {
           this.loading = false
           this.$message({
-            message: '设置成功',
+            message: '拒绝退款成功',
             type: 'success',
             duration: 5 * 1000
           })
@@ -1220,7 +1220,7 @@ export default {
             if (res.code === '10000') {
               this.loading = false
               this.$message({
-                message: '设置成功',
+                message: '退款成功',
                 type: 'success',
                 duration: 5 * 1000
               })
