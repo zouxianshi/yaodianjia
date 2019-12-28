@@ -5,6 +5,7 @@ export default {
   components: {},
   data() {
     return {
+      delDialogVisible: false,
       checked: true, // 是否选中
       // 表格高度
       tableHeight: document.documentElement.clientHeight - 158 - 38 - 40 - 42,
@@ -121,6 +122,18 @@ export default {
     querySupportStaffList() {
       CustomerService.queryMerSupportStaffList(this.merSupportQuery).then(res => {
         const result = res.data
+        result.data.forEach((item, index) => {
+          const formatIndex = (index) => {
+            if (index < 10) {
+              return `00${index}`
+            } else if (index < 100) {
+              return `0${index}`
+            } else {
+              return index
+            }
+          }
+          item.index = formatIndex(index + (this.merSupportQuery.currentPage - 1) * this.merSupportQuery.pageSize + 1)
+        })
         this.merSupportTableData = {
           ...this.merSupportTableData,
           total: result.totalCount,
@@ -154,6 +167,7 @@ export default {
       CustomerService.delSupportStaff({
         id: row.id
       }).then(res => {
+        this.delDialogVisible = false
         this.$message({
           type: 'success',
           message: '删除成功'
