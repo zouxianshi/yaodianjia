@@ -11,7 +11,11 @@
           :style="`width: 100%; max-height:${tableHeight}px`"
           :height="tableHeight"
         >
-          <el-table-column prop="id" label="序号" width="180" />
+          <el-table-column prop="id" label="序号" width="180">
+            <template slot-scope="scope">
+              {{ scope.row.index }}
+            </template>
+          </el-table-column>
           <el-table-column prop="msgType" label="消息类型" width="180">
             <template slot-scope="scope">{{ msgTypeMap[scope.row.type] }}</template>
           </el-table-column>

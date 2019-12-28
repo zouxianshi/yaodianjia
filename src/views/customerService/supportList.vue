@@ -118,7 +118,11 @@
           :data="merSupportTableData.list"
           :style="`width: 100%; max-height:${tableHeight}+'px `"
         >
-          <el-table-column prop="id" label="序号" width="180" />
+          <el-table-column prop="id" label="序号" width="180">
+            <template slot-scope="scope">
+              {{ scope.row.index }}
+            </template>
+          </el-table-column>
           <el-table-column prop="isOnline" label="在线状态" width="180">
             <template slot-scope="scope">
               <div v-if="scope.row.onlineStatus === 1" class="online-text">在线</div>
@@ -134,14 +138,20 @@
                   scope.row.status === 1 ? '停用' : '启用'
                 }}
               </el-button>
-              <el-button type="text" size="small" @click="delSupportItem(scope.row)">删除</el-button>
+              <el-button type="text" size="small" @click="delDialogVisible=true">删除</el-button>
               <el-dialog
-                :before-close="handleAddDialogClose"
-                title="添加客服"
+                :show-close="false"
                 append-to-body
-                :visible="addDialogVisible"
-                width="80%"
-              />
+                title="提示"
+                :visible="delDialogVisible"
+                width="30%"
+              >
+                <span>确认删除此客服？</span>
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="delDialogVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="delSupportItem(scope.row)">确 定</el-button>
+                </span>
+              </el-dialog>
             </template>
           </el-table-column>
         </el-table>
