@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="store-goods-wrapper">
-      <div class="wrapper">
+      <div class="setting_wrapper">
         <div class="con">
           <div class="title">订单自动确认收货规则</div>
           <div>普通的O2O订单，门店发货48小时后自动确认收货</div>
@@ -10,7 +10,7 @@
       </div>
 
       <el-form :model="settingData">
-        <div class="item">
+        <div class="setting_item">
           <div class="title">
             待付款订单取消时间设置
           </div>
@@ -23,25 +23,22 @@
           </el-form-item>
         </div>
 
-        <div class="item">
+        <!-- <div class="setting_item">
           <div class="title">
             现金购买类型优惠券计入成本设置
           </div>
           <div class="con">
-            <!-- <el-form-item> -->
-            <!-- <el-radio-group> -->
             <el-radio-group v-model="settingData.couponCost">
               <el-radio name="radio_coupon" :label="0">计入优惠券金额</el-radio>
               <el-radio name="radio_coupon" :label="1">不计入优惠券金额</el-radio>
             </el-radio-group>
-            <!-- </el-form-item> -->
           </div>
           <div class="note">
             <div>例：顾客花10元购买50元优惠券，下单金额为200元，用该券抵扣后支付150元</div>
             <div>如选择计入优惠券金额，计算该单实际优惠为40元</div>
             <div>如选择不计入优惠券金额，该单将拆分为两条明细，一条为100购买商品，一条为10元购买50元优惠券</div>
           </div>
-        </div>
+        </div> -->
       </el-form>
 
       <div>
@@ -62,7 +59,7 @@ export default {
   data() {
     return {
       settingData: {
-        couponCost: 1,
+        // couponCost: 1,
         orderCancelTime: 0
       }
     }
@@ -76,19 +73,19 @@ export default {
   methods: {
     getData() {
       getOrderSetUp(this.merCode).then(res => {
-        if (res) {
+        if (res.data) {
           this.settingData = res.data
         }
       })
     },
     handleSaveSetting() {
       // console.log('this.settingData.couponCost:', this.settingData.couponCost)
-      if (this.settingData.couponCost === null) {
-        this.$message({
-          message: '请完成现金购买类型优惠券是否计入成本的设置',
-          type: 'error'
-        })
-      }
+      // if (this.settingData.couponCost === null) {
+      //   this.$message({
+      //     message: '请完成现金购买类型优惠券是否计入成本的设置',
+      //     type: 'error'
+      //   })
+      // }
 
       const reg = /[^0-9]/
       if (!this.settingData.orderCancelTime) {
@@ -157,7 +154,7 @@ export default {
   }
 }
 
-.wrapper{
+.setting_wrapper{
   width: 100%;
   background:#fff7e8;
   padding:20px 20px 0 20px;
@@ -175,7 +172,7 @@ export default {
   }
 }
 
-.item{
+.setting_item{
   margin-bottom: 30px;
   color: #606266;
   .title{
@@ -199,4 +196,5 @@ export default {
     line-height: 22px;
   }
 }
+
 </style>

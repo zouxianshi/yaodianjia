@@ -38,7 +38,6 @@
   import Breadcrumb from "@/components/Breadcrumb";
   import ps from "./psHandler";
   import { removeToken } from "@/utils/auth";
-
   export default {
     name: "merchant-commons-app",
     data() {

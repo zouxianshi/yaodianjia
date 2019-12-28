@@ -134,7 +134,7 @@ export default {
         menubar: this.menubar,
         removed_menuitems: 'spellchecker,paste,copy,cut,pastetext',
         plugins: plugins,
-        readonly: this.readonly ? 1 : 0,
+        readonly: this.readonly,
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,
@@ -181,7 +181,7 @@ export default {
           xhr.setRequestHeader('Authorization', this.$store.getters.token)
           const formData = new FormData()
           formData.append('file', file)
-          // var _this = this
+          var _this = this
           xhr.onload = function(e) {
             var json
             if (xhr.status !== 200) {
@@ -195,7 +195,7 @@ export default {
               return
             }
             // console.log(json.location)
-            success(json.data)
+            success(_this.showImg(json.data))
           }
           xhr.send(formData)
         }

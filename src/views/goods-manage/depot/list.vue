@@ -6,7 +6,7 @@
         :closable="false"
       >
         <p slot="title" class="alret-title">
-          海典药品库包含50万商品，为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您<router-link tag="span" class="link" to="/home">自建新品</router-link>
+          海典药品库包含50万商品，为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您<router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
         </p>
       </el-alert>
       <div style="margin-top:20px">

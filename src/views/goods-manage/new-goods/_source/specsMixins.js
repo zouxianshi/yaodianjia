@@ -496,6 +496,14 @@ const mixin = {
     input_checkLimit(row, index) {
       var value = row.limit
       if (row.limitType === 1) {
+        if (isNaN(value)) {
+          this.$message({
+            message: '请输入数字',
+            type: 'error'
+          })
+          this.limit_err = true
+          return
+        }
         if (value > 0 && value % 1 !== 0) {
           this.$message({
             message: '请输入大于0的整数',
