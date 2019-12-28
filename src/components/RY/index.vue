@@ -34,7 +34,6 @@ export default {
             this.newMsg = message
             // 通知在线咨询组件有新消息
             console.log('setHasNewMsg')
-            this.setHasNewMsg(true)
 
             // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知
             if (_this.$route.path === '/customerService/consultation') {
@@ -49,13 +48,15 @@ export default {
                   merCode: _this.merCode,
                   msgResult: {
                     content: {
-                      content: Chat.symbolToEmoji(message.content.content)
+                      content: Chat.symbolToEmoji(message.content.content),
+                      extra: message.content.extra
                     }, // 消息内容
                     senderUserId: message.senderUserId, // 发送用户id
                     objectName: message.objectName, // 消息类型 这里不能取messageType
                     messageUId: message.messageUId, // 消息id
                     sentTime: message.sentTime, // 时间戳
-                    targetId: _this.userId // 接收用户id
+                    // targetId: _this.userId // 接收用户id
+                    targetId: message.targetId // 接收用户id
                   }
                 })
                 setTimeout(() => {
@@ -63,10 +64,27 @@ export default {
                 }, 100)
               } else {
                 _this.addBadgeToOnlineUser({
-                  userId: message.senderUserId
+                  userId: message.senderUserId,
+                  message
+                })
+                _this.addMsgToOnlineCurUserMsgList({
+                  type: 'listener', // 类型 来自融云消息监听
+                  merCode: _this.merCode,
+                  msgResult: {
+                    content: {
+                      content: Chat.symbolToEmoji(message.content.content),
+                      extra: message.content.extra
+                    }, // 消息内容
+                    senderUserId: message.senderUserId, // 发送用户id
+                    objectName: message.objectName, // 消息类型 这里不能取messageType
+                    messageUId: message.messageUId, // 消息id
+                    sentTime: message.sentTime, // 时间戳
+                    targetId: message.targetId // 接收用户id
+                  }
                 })
               }
             } else {
+              this.setHasNewMsg(true)
               _this.newMsgComing = true
               _this.$notify({
                 type: 'info',
