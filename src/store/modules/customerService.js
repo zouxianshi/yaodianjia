@@ -105,10 +105,14 @@ const mutations = {
       localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
       localConversationList.forEach((element, index) => {
         if (element.targetId === payload) {
+          console.log('处理前的localConversationList', localConversationList)
           localConversationList.splice(index, 1)
         }
       })
-      localStorage.setItem('ryConversationList', localConversationList)
+      console.log('处理后的localConversationList', localConversationList)
+      if (Array.isArray(localConversationList)) {
+        localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
+      }
     }
     // 删除vuex中的item
     const { list } = state.onlineConversationData
@@ -193,13 +197,37 @@ const mutations = {
   },
   // 添加未读消息徽标至会话列表item头像
   addBadgeToOnlineUser(state, payload) {
-    const { userId } = payload
+    const { userId, message } = payload
+    console.log('addBadgeToOnlineUser', message)
     const tempList = state.onlineConversationData.list
+    let hasItem = false
     tempList.forEach(element => {
       if (element.targetId === userId) {
+        hasItem = true
         element.newMsgNum++
       }
     })
+    // 如果是新来的用户 则往会话列表中添加一条数据
+    if (!hasItem) {
+      tempList.push({
+        conversationTitle: '',
+        conversationType: message.conversationType,
+        latestMessage: {
+          content: {
+            messageName: message.content.messageName,
+            content: message.content.content,
+            extra: message.content.extra
+          },
+          conversationType: message.conversationType,
+          objectName: message.objectName
+        },
+        latestMessageId: message.messageId,
+        sentTime: message.sentTime,
+        targetId: message.targetId,
+        newMsgNum: 1
+      })
+    }
+    localStorage.setItem('ryConversationList', JSON.stringify(tempList))
     state.onlineConversationData.list = tempList
   },
 
@@ -219,6 +247,9 @@ const mutations = {
     // 如果有本地缓存 对比本地缓存并合并数据
     if (localStorage.getItem('ryConversationList')) {
       localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
+      if (typeof localConversationList !== 'object') {
+        return
+      }
       console.log('localConversationList', localConversationList)
       payload.forEach((item, index) => {
         console.log('item', item)
