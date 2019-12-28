@@ -18,11 +18,7 @@
         </div>
         <div v-if="hasNewMsg" class="no-content" />
         <div v-if="ryConnected" class="no-content" />
-        user-list-outside
         <div v-if="onlineConversationData.list.length>0" class="user-list">
-          会话列表如下：
-          会话列表：{{ onlineConversationData.list }}
-          会话列表长度：{{ onlineConversationData.list.length }}
           <user
             v-for="(item,index) in onlineConversationData.list"
             :key="index"
@@ -45,31 +41,6 @@
               </span>
             </el-dialog>
           </user>
-          <div v-for="(item,index) in onlineConversationData.list" :key="index" class="copy">
-            copy demo
-          </div>
-          <user-item
-            v-for="(item,index) in onlineConversationData.list"
-            :key="index"
-            :data="item"
-            :selected="targetId===item.targetId"
-            :message-type="item.latestMessage.objectName"
-            :avatar="item.latestMessage.content.extra.userLogo"
-            :nick-name="item.latestMessage.content.extra.nickName"
-            :date="`${formatTime(item.sentTime, 'MM-DD')}`"
-            :content="item.latestMessage.content.content"
-            :show-del-icon="true"
-            @handleClick="handleUserClick(item)"
-            @handleDel="handleUserDel(item)"
-          >
-            <el-dialog :show-close="false" append-to-body title="提示" :visible="delUserDialogVisible" width="30%">
-              <span>确认删除当前会话吗？</span>
-              <span slot="footer" class="dialog-footer">
-                <el-button @click="delUserDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="delDialogConfirmBtnClick(item)">确 定</el-button>
-              </span>
-            </el-dialog>
-          </user-item>
         </div>
       </div>
     </template>
