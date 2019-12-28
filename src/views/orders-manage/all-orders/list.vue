@@ -154,7 +154,7 @@
               placeholder="请输入关键词"
               @change="handleChangeEmpId"
             >
-              <!-- <el-option label="全部" value="" /> -->
+              <el-option label="全部" value="" />
               <el-option v-for="(item,indexEmp) in employeeData" :key="indexEmp" :label="item.empName" :value="item.id" />
             </el-select>
           </div>
@@ -617,7 +617,11 @@
         </el-form-item>
         <el-form-item label="图片凭证：" :label-width="labelWidth100">
           <template v-if="refundPic!==[]">
-            <div><img v-for="(picItem,index3) in refundPic" :key="index3" src="" width="100" height="100"> </div>
+            <div>
+              <span v-for="(picItem,index3) in refundPic" :key="index3" class="marginRight10">
+                <img :src="showImg(picItem)" width="100" height="100">
+              </span>
+            </div>
           </template>
           <template v-else>
             <div>未上传图片凭证</div>
@@ -1513,6 +1517,7 @@ export default {
     height: 36px;
     line-height: 36px;
 }
+.marginRight10{margin-right: 10px}
 </style>
 <style scoped>
 .el-date-range-picker{left:270px!important} /*时间控件弹出框*/
