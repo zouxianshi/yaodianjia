@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
 import user from './components/user'
-import userItem from './components/userItem'
 import listItem from './components/listItem'
 import userInfo from './components/userInfo'
 import viewMore from './components/viewMore'
@@ -21,8 +20,7 @@ export default {
     userInfo,
     viewMore,
     noData,
-    chatRoom,
-    userItem
+    chatRoom
   },
   data() {
     return {
