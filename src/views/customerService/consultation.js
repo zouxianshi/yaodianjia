@@ -131,7 +131,7 @@ export default {
       this.queryOnlineConversationList(searchParam).then(() => {
         this.consultingLoading = false
         const list = this.onlineConversationData.list
-        console.log('queryOnlineConversationList', list)
+        console.log('获取融云会话列表成功：', list)
         if (list.length > 0) {
           this.setCurOnlineUserId({
             userId: list[0].targetId
@@ -150,7 +150,8 @@ export default {
           // 订单列表
           _this.queryUserOrderList()
         }
-      }).catch(() => {
+      }).catch((err) => {
+        console.error('获取融云会话列表失败', err)
         this.consultingLoading = false
       })
     },
@@ -377,16 +378,17 @@ export default {
 
     // 删除确认弹窗确认按钮点击
     delDialogConfirmBtnClick(data) {
+      this.delUserDialogVisible = false
       this.delOnlineConversation(data.targetId)
       if (this.onlineConversationData.list.length > 0) {
-        const firstConversation = this.onlineConversationData.list
+        const firstConversation = this.onlineConversationData.list[0]
         this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra.userLogo
         this.curUserName = firstConversation.latestMessage.content.extra.nickName
         this.setCurOnlineUserId({
           userId: data.targetId
         })
-        this.resetRightData()
+        // this.resetRightData()
       } else {
         this.targetId = ''
         this.curUserAvatar = ''
@@ -394,14 +396,13 @@ export default {
         this.setCurOnlineUserId({
           userId: ''
         })
-        this.resetRightData()
+        // this.resetRightData()
       }
     },
 
     // 删除会话
     handleUserDel(data) {
       console.log('data', data)
-      this.curDelData = data
       this.delUserDialogVisible = true
       // this.$confirm('确定要删除当前会话吗?', '提示', {
       //   confirmButtonText: '确定',
@@ -611,14 +612,17 @@ export default {
   },
   updated() {
     // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
+    console.error('hasNeweMsg', this.hasNewMsg)
     if (this.hasNewMsg) {
+      console.log('进了hasnewmsg')
       if (this.onlineConversationData && this.onlineConversationData.list.length === 0) {
         this.setHasNewMsg(false)
         this.queryRYConversationList()
       }
     }
-    console.log('ryConnected', this.ryConnected)
+    console.log('ryConnected', this.ryConnected, this.isFirstQueryFinished)
     if (this.ryConnected && !this.isFirstQueryFinished) {
+      console.log('进了ryConnected')
       this.queryRYConversationList()
     }
   }

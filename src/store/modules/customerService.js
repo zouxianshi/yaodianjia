@@ -105,10 +105,14 @@ const mutations = {
       localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
       localConversationList.forEach((element, index) => {
         if (element.targetId === payload) {
+          console.log('处理前的localConversationList', localConversationList)
           localConversationList.splice(index, 1)
         }
       })
-      localStorage.setItem('ryConversationList', localConversationList)
+      console.log('处理后的localConversationList', localConversationList)
+      if (Array.isArray(localConversationList)) {
+        localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
+      }
     }
     // 删除vuex中的item
     const { list } = state.onlineConversationData
@@ -126,7 +130,8 @@ const mutations = {
     const {
       merCode,
       // msgInfo,
-      msgResult
+      msgResult,
+      type
     } = payload
     // 组装历史消息数据
     const curWindowPush = {
@@ -144,7 +149,7 @@ const mutations = {
     state.curOnlineUserData.list.push(curWindowPush)
 
     // 组装会话item最近一条消息数据
-    // 向localStorage中push一条latestMessage数据
+    // 向localStorage中push一条latestMessage数据 并push到当前会话的最近消息
     const curLocalPush = {
       latestMessage: {
         content: msgResult.content,
@@ -155,10 +160,28 @@ const mutations = {
         targetId: msgResult.targetId
       }
     }
+
+    // 更新当前窗口最近消息
+    console.log('更新当前窗口最近消息', state.onlineConversationData.list)
+    const tempOnlineConversationList = state.onlineConversationData.list
+    tempOnlineConversationList.forEach((item, index) => {
+      if (item.targetId === msgResult.targetId || (item.targetId === msgResult.senderUserId && type === 'listener')) {
+        item.latestMessage = {
+          ...item.latestMessage,
+          ...curLocalPush.latestMessage,
+          content: {
+            ...item.latestMessage.content,
+            ...curLocalPush.latestMessage.content
+          }
+        }
+      }
+    })
+
+    // 更新localStorage会话列表数据
     if (localStorage.getItem('ryConversationList')) {
       const localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
       localConversationList.forEach((element) => {
-        if (element.targetId === msgResult.targetId) {
+        if (element.targetId === msgResult.targetId || (element.targetId === msgResult.senderUserId && type === 'listener')) {
           element.latestMessage = {
             ...element.latestMessage,
             ...curLocalPush.latestMessage,
@@ -174,13 +197,37 @@ const mutations = {
   },
   // 添加未读消息徽标至会话列表item头像
   addBadgeToOnlineUser(state, payload) {
-    const { userId } = payload
+    const { userId, message } = payload
+    console.log('addBadgeToOnlineUser', message)
     const tempList = state.onlineConversationData.list
+    let hasItem = false
     tempList.forEach(element => {
       if (element.targetId === userId) {
+        hasItem = true
         element.newMsgNum++
       }
     })
+    // 如果是新来的用户 则往会话列表中添加一条数据
+    if (!hasItem) {
+      tempList.push({
+        conversationTitle: '',
+        conversationType: message.conversationType,
+        latestMessage: {
+          content: {
+            messageName: message.content.messageName,
+            content: message.content.content,
+            extra: message.content.extra
+          },
+          conversationType: message.conversationType,
+          objectName: message.objectName
+        },
+        latestMessageId: message.messageId,
+        sentTime: message.sentTime,
+        targetId: message.targetId,
+        newMsgNum: 1
+      })
+    }
+    localStorage.setItem('ryConversationList', JSON.stringify(tempList))
     state.onlineConversationData.list = tempList
   },
 
@@ -200,6 +247,9 @@ const mutations = {
     // 如果有本地缓存 对比本地缓存并合并数据
     if (localStorage.getItem('ryConversationList')) {
       localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
+      if (typeof localConversationList !== 'object') {
+        return
+      }
       console.log('localConversationList', localConversationList)
       payload.forEach((item, index) => {
         console.log('item', item)

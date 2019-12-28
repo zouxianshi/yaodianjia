@@ -62,11 +62,11 @@ export default {
     clearEditDialogData() {
       this.selectedMsgType = ''
       this.editMsgQuery = {
-        ...this.editMsgQuery,
         id: '',
         msg: '',
         status: 1,
-        type: ''
+        type: '',
+        merCode: this.merCode
       }
       this.editDialogVisible = false
     },
@@ -74,6 +74,18 @@ export default {
     queryMsgList() {
       CustomerService.querySupportMsgList(this.listQuery).then(res => {
         const result = res.data
+        result.data.forEach((item, index) => {
+          const formatIndex = (index) => {
+            if (index < 10) {
+              return `00${index}`
+            } else if (index < 100) {
+              return `0${index}`
+            } else {
+              return index
+            }
+          }
+          item.index = formatIndex(index + (this.listQuery.currentPage - 1) * this.listQuery.pageSize + 1)
+        })
         this.msgList = result.data
       })
     },
@@ -188,7 +200,7 @@ export default {
       this.dialogType = 'edit'
       this.editDialogVisible = true
       this.editMsgQuery = {
-        ...this.editMsgQuery,
+        merCode: this.merCode,
         msg: row.msg,
         id: row.id,
         type: row.type,
