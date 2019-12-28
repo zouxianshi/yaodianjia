@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import user from './components/user'
+import userItem from './components/userItem'
 import listItem from './components/listItem'
 import userInfo from './components/userInfo'
 import viewMore from './components/viewMore'
@@ -20,7 +21,8 @@ export default {
     userInfo,
     viewMore,
     noData,
-    chatRoom
+    chatRoom,
+    userItem
   },
   data() {
     return {
@@ -612,15 +614,13 @@ export default {
   },
   updated() {
     // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
-    console.error('hasNeweMsg', this.hasNewMsg)
     if (this.hasNewMsg) {
-      console.log('进了hasnewmsg')
+      console.warn('new msg coming')
       if (this.onlineConversationData && this.onlineConversationData.list.length === 0) {
         this.setHasNewMsg(false)
         this.queryRYConversationList()
       }
     }
-    console.log('ryConnected', this.ryConnected, this.isFirstQueryFinished)
     if (this.ryConnected && !this.isFirstQueryFinished) {
       console.log('进了ryConnected')
       this.queryRYConversationList()
