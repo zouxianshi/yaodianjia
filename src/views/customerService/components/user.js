@@ -44,9 +44,6 @@ export default {
       default: false
     }
   },
-  data() {
-    return {}
-  },
   computed: {
     sentTime() {
       return this.data
@@ -69,7 +66,7 @@ export default {
     }
   },
   created() {
-    console.log('this', this, this.getEmojiList)
+    console.log('user component this.data', this.data)
   },
   methods: {
     handleClick() {

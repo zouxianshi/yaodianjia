@@ -1,10 +1,12 @@
 <template>
   <div :class="`user-comp ${selected?'selected':''}`" @click="handleClick">
+    用户item
     <el-badge :max="99" :hidden="data.newMsgNum<=0" :value="data.newMsgNum" class="item">
       <div class="user-avatar">
         <el-image fit="cover" :src="avatar" />
       </div>
     </el-badge>
+    to data
     <div v-if="data" class="user-chat-info">
       <div class="chat-info-top">
         <span class="user-name">{{ nickName || '暂无用户名' }}</span>
@@ -24,8 +26,9 @@
 </template>
 
 <script>
-import User from './user'
-export default User
+import user from './user'
+console.log('user组件script')
+export default user
 </script>
 
 <style scoped lang="scss">
