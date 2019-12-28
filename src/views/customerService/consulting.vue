@@ -33,7 +33,7 @@
             @handleClick="handleUserClick(item)"
             @handleDel="handleUserDel(item)"
           >
-            <el-dialog append-to-body title="提示" :visible="delUserDialogVisible" width="30%">
+            <el-dialog :show-close="false" append-to-body title="提示" :visible="delUserDialogVisible" width="30%">
               <span>确认删除当前会话吗？</span>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="delUserDialogVisible = false">取 消</el-button>
@@ -54,7 +54,7 @@
             :key="index"
             :class="`chat-item-box`"
           >
-            <div v-if="!showDate(dItem, curOnlineUserData.list[index-1])" class="date-item">
+            <div v-if="index===0 || index>0 && !showDate(dItem.timeStamp, curOnlineUserData.list[index-1].timeStamp)" class="date-item">
               <div class="date-item-inner">{{ formatTime(dItem.timeStamp, 'YYYY-MM-DD HH:mm:ss') }}</div>
             </div>
             <div :class="`chat-item-inner ${dItem.fromUserId == targetId? '': 'right-align'}`">

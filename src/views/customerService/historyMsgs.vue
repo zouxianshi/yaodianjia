@@ -39,7 +39,7 @@
             :key="msgIndex"
             :class="`chat-item ${msgItem.fromUserId===supporterId?'green':''}`"
           >
-            <div v-if="!showDate(msgItem, historyMsgList[msgIndex-1])" class="date-item">
+            <div v-if="msgIndex===0 || msgIndex > 0 && !showDate(msgItem.timeStamp, historyMsgList[msgIndex-1].timeStamp)" class="date-item">
               <div class="date-item-inner">{{ formatTime(msgItem.timeStamp, 'YYYY-MM-DD') }}</div>
             </div>
             <div class="chat-item-top">
