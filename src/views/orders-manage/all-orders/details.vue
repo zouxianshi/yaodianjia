@@ -95,17 +95,16 @@
         <div v-for="(item,indexSend) in detailsData.recordList" :key="indexSend" class="info">
           <div class="info-item info-left">
             <div class="title">配送信息{{ indexSend+1 }}</div>
-            <div class="con">配送方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
-            <div class="con">快递公司：盛辉物流</div>
+            <div class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
+            <div class="con">快递公司：{{ item.companyName }}</div>
             <div class="con">快递单号：{{ item.number }}</div>
-            <div class="con">商品名称：{{ item.number }}</div>
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
             <div class="block">
               <el-timeline>
                 <el-timeline-item
-                  v-for="(logistical, index) in sendLogisticals"
+                  v-for="(logistical, index) in sendLogisticals[indexSend]"
                   :key="index"
                   :type="logistical.type"
                   :color="logistical.color"
@@ -113,7 +112,7 @@
                   :timestamp="logistical.timestamp"
                   :hide-timestamp="true"
                 >
-                  {{ logistical.content }}
+                  {{ logistical.timestamp }}{{ logistical.content }}
                 </el-timeline-item>
               </el-timeline>
             </div>
@@ -179,7 +178,7 @@
 
       <!-- 物流信息 --退货物流-->
       <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)">
-        <div v-for="(item,indexSend) in detailsData.retRecordList" :key="indexSend" class="info">
+        <div v-for="(item,indexReturn) in detailsData.retRecordList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="title">退货信息</div>
             <div class="con">配送方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
@@ -191,7 +190,7 @@
             <div class="block">
               <el-timeline>
                 <el-timeline-item
-                  v-for="(logistical, index) in refundLogisticals"
+                  v-for="(logistical, index) in refundLogisticals[indexReturn]"
                   :key="index"
                   :type="logistical.type"
                   :color="logistical.color"
@@ -199,7 +198,7 @@
                   :timestamp="logistical.timestamp"
                   :hide-timestamp="true"
                 >
-                  {{ logistical.content }}
+                  {{ logistical.timestamp }}{{ logistical.content }}
                 </el-timeline-item>
               </el-timeline>
             </div>
@@ -366,7 +365,8 @@ export default {
       dialogVisible: false,
       loading: false,
       selectloading: false,
-      sendLogisticals: [{ // 发货物流信息
+      sendLogisticals: [
+        // { // 发货物流信息
       //   content: '2019-10-14 07:24:31[淮北市]离开【淮北邮件处理中心】,下一站【淮北濉溪韩村支局】',
       //   timestamp: '2019-10-14 07:24:31',
       //   color: 'red'
@@ -397,7 +397,8 @@ export default {
       // }, {
       //   content: '2019-10-10 12:56:13[合肥市]【邮政合肥市包裹业务局】已收件,揽投员:周磊,电话:15156693985',
       //   timestamp: '2019-10-10 12:56:13'
-      }],
+      // }
+      ],
       refundLogisticals: [], // 退货物流信息
       subLoading: false
     }
@@ -407,6 +408,7 @@ export default {
   },
   created() {
     this.getDetail()
+    // console.log('this.sendLogisticals：', this.sendLogisticals)
   },
   methods: {
     getDetail() {
@@ -418,13 +420,31 @@ export default {
       getOrderDetail(dataParams).then(res => { // 获取商品详情
         // console.log('details', res.data)
         this.detailsData = res.data
-        if (this.detailsData.recordList && this.detailsData.recordList.data) { // 发货物流
-          const paramsSend = JSON.parse(this.detailsData.recordList.data)
-          this.sendLogisticals = this.logisticsFormat(paramsSend)
+        // console.log('this.detailsData.recordList:', this.detailsData.recordList)
+        const recordListData = this.detailsData.recordList
+        if (this.detailsData.recordList) { // 发货物流
+          recordListData.forEach((item, index) => {
+            const paramsSend = JSON.parse(item.data)
+            // console.log('paramsSend:', paramsSend)
+            // const sendLogisticalsData
+            // sendLogisticalsData = this.logisticsFormat(paramsSend)
+            // sendLogisticalsData.timestamp = item.modifyTime
+            // this.sendLogisticals.push(this.logisticsFormat(paramsSend))
+            this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
+          })
+          // console.log('this.sendLogisticals:', this.sendLogisticals)
         }
+
+        const retRecordListData = this.detailsData.retRecordList
         if (this.detailsData.retRecordList && this.detailsData.retRecordList.data) { // 退货物流
-          const paramsRefund = JSON.parse(this.detailsData.retRecordList.data)
-          this.refundLogisticals = this.logisticsFormat(paramsRefund)
+          // const paramsRefund = JSON.parse(this.detailsData.retRecordList.data)
+          // this.refundLogisticals = this.logisticsFormat(paramsRefund)
+
+          retRecordListData.forEach((item, index) => {
+            const paramsRefund = JSON.parse(item.data)
+            // console.log('paramsRefund:', paramsRefund)
+            this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
+          })
         }
         if (this.detailsData.returnList && this.detailsData.returnList.length > 0) { // 处理用逗号分隔的图片成数组
           for (let i = 0; i < this.detailsData.returnList.length; i++) {
@@ -452,16 +472,18 @@ export default {
       return pics
     },
     logisticsFormat(data) { // 格式化物流信息
-      console.log('物流data:', data)
+      // console.log('物流data:', data)
       const arr = []
       for (let i = 0; i < data.length; i++) {
-        arr[i].content = data[i].time + '[' + data[i].areaName + ']' + data[i].context
-        arr[i].timestamp = data[i].time
-        if (i === 1) {
-          arr[i].color = 'red'
+        const object = {}
+        object.content = data[i].context
+        object.timestamp = data[i].ftime
+        if (i === 0) {
+          object.color = 'red'
         }
+        arr[i] = object
       }
-      console.log('临时arr:', arr)
+      // console.log('临时arr:', arr)
       return arr
     }
 
