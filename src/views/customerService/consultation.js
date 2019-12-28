@@ -131,7 +131,7 @@ export default {
       this.queryOnlineConversationList(searchParam).then(() => {
         this.consultingLoading = false
         const list = this.onlineConversationData.list
-        console.log('queryOnlineConversationList', list)
+        console.log('获取融云会话列表成功：', list)
         if (list.length > 0) {
           this.setCurOnlineUserId({
             userId: list[0].targetId
@@ -150,7 +150,8 @@ export default {
           // 订单列表
           _this.queryUserOrderList()
         }
-      }).catch(() => {
+      }).catch((err) => {
+        console.error('获取融云会话列表失败', err)
         this.consultingLoading = false
       })
     },
@@ -377,6 +378,7 @@ export default {
 
     // 删除确认弹窗确认按钮点击
     delDialogConfirmBtnClick(data) {
+      this.delUserDialogVisible = false
       this.delOnlineConversation(data.targetId)
       if (this.onlineConversationData.list.length > 0) {
         const firstConversation = this.onlineConversationData.list
