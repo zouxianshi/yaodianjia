@@ -13,13 +13,7 @@
       <div v-if="data" class="user-chat-content">
         <div class="content-preview">
           {{
-            messageType === RYMessageType.TextMessage ?
-              content :
-              messageType === RYMessageType.ImageMessage ?
-                '[图片消息]' :
-                messageType === RYMessageType.GoodsMessage ?
-                  '[商品消息]' :
-                  content
+            computedContent
           }}
         </div>
         <i v-if="showDelIcon" class="el-icon-delete" @click="handleDel" />
@@ -30,76 +24,8 @@
 </template>
 
 <script>
-import Chat from '@/utils/chat'
-export default {
-  props: {
-    // 数据对象
-    data: {
-      type: Object,
-      default: null
-    },
-    // 是否选中
-    selected: {
-      type: Boolean,
-      default: false
-    },
-    // 消息类型
-    messageType: {
-      type: String,
-      default: 'RC:TxtMsg'
-    },
-    // 头像
-    avatar: {
-      type: String,
-      default: ''
-    },
-    // 用户名
-    nickName: {
-      type: String,
-      default: ''
-    },
-    // 时间
-    date: {
-      type: String,
-      default: ''
-    },
-    // 内容
-    content: {
-      type: String,
-      default: ''
-    },
-    // 移入是否展示删除按钮
-    showDelIcon: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data() {
-    return {
-      RYMessageType: Chat.MessageType
-    }
-  },
-  computed: {
-    sentTime() {
-      return this.data
-        ? `${new Date(this.data.sentTime).getMonth() + 1}-${new Date(
-          this.data.sentTime
-        ).getDate()}`
-        : ''
-    }
-  },
-  created() {
-    console.log('this', this.data)
-  },
-  methods: {
-    handleClick() {
-      this.$emit('handleClick', this.data)
-    },
-    handleDel() {
-      this.$emit('handleDel')
-    }
-  }
-}
+import User from './user'
+export default User
 </script>
 
 <style scoped lang="scss">
@@ -169,6 +95,7 @@ export default {
         }
 
         .chat-time {
+          width: 40px;
           font-size: 14px;
           color: #999;
         }
