@@ -18,7 +18,9 @@
         </div>
         <div v-if="hasNewMsg" class="no-content" />
         <div v-if="ryConnected" class="no-content" />
+        user-list-outside
         <div v-if="onlineConversationData.list.length>0" class="user-list">
+          会话列表如下：
           <user
             v-for="(item,index) in onlineConversationData.list"
             :key="index"
