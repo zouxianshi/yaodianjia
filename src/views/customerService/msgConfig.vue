@@ -11,11 +11,15 @@
           :style="`width: 100%; max-height:${tableHeight}px`"
           :height="tableHeight"
         >
-          <el-table-column prop="id" label="序号" width="180" />
+          <el-table-column prop="id" label="序号" width="180">
+            <template slot-scope="scope">
+              {{ scope.row.index }}
+            </template>
+          </el-table-column>
           <el-table-column prop="msgType" label="消息类型" width="180">
             <template slot-scope="scope">{{ msgTypeMap[scope.row.type] }}</template>
           </el-table-column>
-          <el-table-column prop="address" label="快捷消息">
+          <el-table-column prop="address" label="快捷消息（50字以内）">
             <template slot-scope="scope">
               <div>{{ scope.row.msg }}</div>
             </template>
@@ -25,7 +29,7 @@
               <el-button type="text" size="small" @click="handleEdit(scope.row)">编辑</el-button>
               <!-- 快捷消息显示删除按钮 -->
               <template>
-                <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
+                <el-button v-if="scope.row.type===3" type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
                 <el-dialog
                   :close-on-click-modal="false"
                   append-to-body
@@ -63,7 +67,8 @@
         :before-close="clearEditDialogData"
         width="45%"
       >
-        <el-dropdown @command="handleMsgTypeToggle">
+        <!-- 暂时不展示了 -->
+        <!-- <el-dropdown @command="handleMsgTypeToggle">
           <span class="el-dropdown-link">
             消息类型：{{ msgTypeMap[selectedMsgType] || '请选择' }}
             <i
@@ -75,7 +80,7 @@
             <el-dropdown-item :command="2">首次进入推送</el-dropdown-item>
             <el-dropdown-item :command="3">快捷回复</el-dropdown-item>
           </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown> -->
         <el-input
           v-model="editMsgQuery.msg"
           class="msg-input"

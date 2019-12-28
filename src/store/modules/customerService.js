@@ -126,7 +126,8 @@ const mutations = {
     const {
       merCode,
       // msgInfo,
-      msgResult
+      msgResult,
+      type
     } = payload
     // 组装历史消息数据
     const curWindowPush = {
@@ -144,7 +145,7 @@ const mutations = {
     state.curOnlineUserData.list.push(curWindowPush)
 
     // 组装会话item最近一条消息数据
-    // 向localStorage中push一条latestMessage数据
+    // 向localStorage中push一条latestMessage数据 并push到当前会话的最近消息
     const curLocalPush = {
       latestMessage: {
         content: msgResult.content,
@@ -155,10 +156,28 @@ const mutations = {
         targetId: msgResult.targetId
       }
     }
+
+    // 更新当前窗口最近消息
+    console.log('更新当前窗口最近消息', state.onlineConversationData.list)
+    const tempOnlineConversationList = state.onlineConversationData.list
+    tempOnlineConversationList.forEach((item, index) => {
+      if (item.targetId === msgResult.targetId || (item.targetId === msgResult.senderUserId && type === 'listener')) {
+        item.latestMessage = {
+          ...item.latestMessage,
+          ...curLocalPush.latestMessage,
+          content: {
+            ...item.latestMessage.content,
+            ...curLocalPush.latestMessage.content
+          }
+        }
+      }
+    })
+
+    // 更新localStorage会话列表数据
     if (localStorage.getItem('ryConversationList')) {
       const localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
       localConversationList.forEach((element) => {
-        if (element.targetId === msgResult.targetId) {
+        if (element.targetId === msgResult.targetId || (element.targetId === msgResult.senderUserId && type === 'listener')) {
           element.latestMessage = {
             ...element.latestMessage,
             ...curLocalPush.latestMessage,
