@@ -135,6 +135,13 @@
                 }}
               </el-button>
               <el-button type="text" size="small" @click="delSupportItem(scope.row)">删除</el-button>
+              <el-dialog
+                :before-close="handleAddDialogClose"
+                title="添加客服"
+                append-to-body
+                :visible="addDialogVisible"
+                width="80%"
+              />
             </template>
           </el-table-column>
         </el-table>
