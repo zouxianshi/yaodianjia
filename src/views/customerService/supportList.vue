@@ -42,6 +42,7 @@
                 class="search-filter-item-input"
                 type="text"
                 placeholder="请输入员工姓名"
+                maxlength="30"
                 @input="handleStaffNameInput"
               />
             </div>
@@ -52,6 +53,7 @@
                 class="search-filter-item-input"
                 type="text"
                 placeholder="请输入员工机构部门"
+                maxlength="30"
                 @input="handleStaffDepInput"
               />
             </div>

@@ -10,6 +10,7 @@
             class="search-input"
             type="search"
             name
+            maxlength="30"
             placeholder="请输入客户名称"
             @input="handleSearchInput"
           >
@@ -24,7 +25,7 @@
             :selected="curChatUserId===item.userId"
             :avatar="item.headImgUrl"
             :nick-name="item.nickName"
-            :date="`${formatTime(item.createTime, 'MM-DD')}`"
+            :date="`${formatTime(item.updateTime, 'MM-DD')}`"
             @handleClick="handleUserClick(item)"
           />
         </div>
@@ -37,14 +38,14 @@
           <div
             v-for="(msgItem,msgIndex) in historyMsgList"
             :key="msgIndex"
-            :class="`chat-item ${msgItem.fromUserId===supporterId?'green':''}`"
+            :class="`chat-item ${msgItem.toUserId===curChatUserId?'green':''}`"
           >
             <div v-if="msgIndex===0 || msgIndex > 0 && !showDate(msgItem.timeStamp, historyMsgList[msgIndex-1].timeStamp)" class="date-item">
               <div class="date-item-inner">{{ formatTime(msgItem.timeStamp, 'YYYY-MM-DD') }}</div>
             </div>
             <div class="chat-item-top">
               <span class="chat-user-name">
-                {{ msgItem.fromUserId===supporterId?
+                {{ msgItem.toUserId===curChatUserId?
                   `客服${msgItem.fromUserId}`
                   :`${currentUser||'暂无用户名'}`
                 }}

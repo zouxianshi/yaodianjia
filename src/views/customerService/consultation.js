@@ -80,6 +80,7 @@ export default {
       }
     },
     extra() {
+      console.log('compute extra', this.curLatestMessageInfo)
       return {
         merCode: this.merCode, // 商户编码
         userAccount: this.name, // 如果是客服，对应中台sys_user.account
@@ -91,6 +92,18 @@ export default {
         userLogo: this.curUserAvatar,
         platform: 1 // 平台 Number 0-app 1-web端
       }
+    }
+  },
+  watch: {
+    'onlineConversationData.list': {
+      handler(list) {
+        console.log('into value', list)
+        if (list.length === 1) {
+          this.curLatestMessageInfo = list[0].latestMessage
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
@@ -125,7 +138,6 @@ export default {
       }
     },
     queryRYConversationList(searchParam) {
-      const _this = this
       this.isFirstQueryFinished = true
       // 获取会话列表
       this.queryOnlineConversationList(searchParam).then(() => {
@@ -136,19 +148,19 @@ export default {
           this.setCurOnlineUserId({
             userId: list[0].targetId
           })
-          _this.curLatestMessageInfo = list[0].latestMessage
-          _this.targetId = list[0].targetId
-          _this.curUserName = list[0].latestMessage.content.extra.nickName
-          _this.curUserAvatar = list[0].latestMessage.content.extra.userLogo
+          this.curLatestMessageInfo = list[0].latestMessage
+          this.targetId = list[0].targetId
+          this.curUserName = list[0].latestMessage.content.extra.nickName
+          this.curUserAvatar = list[0].latestMessage.content.extra.userLogo
           // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
           // 历史消息
-          _this.queryHistoryMessage()
+          this.queryHistoryMessage()
           // 会员信息
-          _this.queryMemberInfo()
+          this.queryMemberInfo()
           // 购买记录
-          _this.queryUserBoughtRecord()
+          this.queryUserBoughtRecord()
           // 订单列表
-          _this.queryUserOrderList()
+          this.queryUserOrderList()
         }
       }).catch((err) => {
         console.error('获取融云会话列表失败', err)
@@ -185,13 +197,16 @@ export default {
         pageSize: this.orderListPageSize // 每页条数
       }).then(res => {
         this.orderListLoading = false
-        const { data } = res.data
+        const { data, totalCount } = res.data
         if (data && data.length > 0) {
-          this.orderListCurPageNo++
+          this.orderListCurPageNo = this.orderListCurPageNo + 1
           this.orderList = [
             ...this.orderList,
             ...data
           ]
+          if (this.orderList.length >= totalCount) {
+            this.orderListHasMore = false
+          }
         } else {
           this.orderListHasMore = false
         }
@@ -203,10 +218,19 @@ export default {
 
     // 发送消息按钮点击
     sendMsg() {
+      if (!this.textMsgValue.trim()) {
+        this.$message({
+          type: 'warning',
+          message: '请先输入消息内容'
+        })
+        return
+      }
+      console.log('sendMsg')
       var msgInfo = {
         content: this.textMsgValue,
         extra: this.extra
       }
+      console.log('msgInfo', msgInfo)
       Chat.sendMessage({
         targetId: this.targetId, // 目标用户id,
         msgInfo: {
@@ -214,6 +238,7 @@ export default {
           extra: this.extra
         }
       }).then(res => {
+        console.log('发送消息成功', res)
         // 发送成功清空消息内容
         this.textMsgValue = ''
         this.addMsgToOnlineCurUserMsgList({
@@ -224,6 +249,7 @@ export default {
           },
           msgResult: res
         })
+        console.log('after addMsgToOnlineCurUserMsgList')
         this.scrollToBottom()
       }).catch((err, msg) => {
         console.error('send message error', err, msg)
@@ -367,6 +393,7 @@ export default {
       } else {
         // 重置所有数据并重新请求s
         this.targetId = data.targetId
+        this.curLatestMessageInfo = data.latestMessage
         this.curUserAvatar = data.latestMessage.content.extra.userLogo
         this.curUserName = data.latestMessage.content.extra.nickName
         this.setCurOnlineUserId({
