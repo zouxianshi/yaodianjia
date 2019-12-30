@@ -103,8 +103,7 @@
               <div v-if="dItem.toUserId === targetId" class="chat-item-avatar">
                 <el-image
                   fit="scale-down"
-                  :src="showImg(merLogo)"
-                  :preview-src-list="[showImg(dItem.img)]"
+                  :src="merLogo"
                 />
               </div>
             </div>
