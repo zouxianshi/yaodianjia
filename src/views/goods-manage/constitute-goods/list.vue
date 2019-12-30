@@ -16,7 +16,7 @@
           <el-button type="primary" size="small" @click="getList">查询</el-button>
         </div>
       </div>
-      <div class="table-box">
+      <div class="table-box tableBox_constitute">
         <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
           <el-table-column align="left" min-width="140" prop="erpCode" label="商品编码">
             <template slot-scope="scope">
@@ -33,6 +33,7 @@
                     fit="scale-down"
                     :src="showImg(scope.row.mainPic)"
                     :preview-src-list="[showImg(scope.row.mainPic)]"
+                    style="width: 55px; height: 55px;"
                   />
                 </div>
               </div>
@@ -172,7 +173,7 @@ export default {
   }
 }
 </script>
-    <style lang="scss">
+    <style lang="scss" scoped>
 .examine-wrapper {
   .search-form {
     .search-item {
@@ -190,8 +191,8 @@ export default {
     height: inherit;
     margin-bottom: 5px;
 }
-.el-image img{
-  width: 55px;
-  height: 55px;
-}
+// .tableBox_constitute .el-image img{
+//   width: 55px;
+//   height: 55px;
+// }
 </style>

@@ -40,6 +40,7 @@
                 <el-image
                   fit="scale-down"
                   :src="showImg(scope.row.mainPic)"
+                  style="width: 55px; height: 55px;"
                 />
               </div>
             </div>
@@ -403,10 +404,4 @@ export default {
   }
 }
 </style>
-<style>
-.el-table .cell .el-image img{
-  text-align: center;
-  width:55px;
-  height: 55px;
-}
-</style>
+

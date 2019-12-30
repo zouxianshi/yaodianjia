@@ -733,6 +733,10 @@ export default {
   .el-image{
     width: 30%;
     max-height: 300px;
+    img{
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 </style>
