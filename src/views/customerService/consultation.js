@@ -313,7 +313,7 @@ export default {
         level: 0, // 分组或分类level,1-一级，2-二级，3-三级，为null和0时不做处理
         manufacture: '', // 生产企业
         merCode: this.merCode, // 商家编码
-        name: this.goodsQuery.name, // 商品名称
+        name: this.goodsQuery.name.replace(/\s*/g, ''), // 商品名称
         onlyCom: '', // 商品查询标志,true-只查商品信息，其他包括规格信息
         origin: 0, // 商品来源，1-海典，2-商家
         pageSize: this.goodsQuery.pageSize, // 每页显示条数，不传默认20
