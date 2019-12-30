@@ -138,7 +138,7 @@
                   scope.row.status === 1 ? '停用' : '启用'
                 }}
               </el-button>
-              <el-button type="text" size="small" @click="delDialogVisible=true">删除</el-button>
+              <el-button type="text" size="small" @click="handleDelBtnClick(scope.row)">删除</el-button>
               <el-dialog
                 :show-close="false"
                 append-to-body
@@ -149,7 +149,7 @@
                 <span>确认删除此客服？</span>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="delDialogVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="delSupportItem(scope.row)">确 定</el-button>
+                  <el-button type="primary" @click="delSupportItem">确 定</el-button>
                 </span>
               </el-dialog>
             </template>
