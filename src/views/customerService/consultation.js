@@ -197,13 +197,16 @@ export default {
         pageSize: this.orderListPageSize // 每页条数
       }).then(res => {
         this.orderListLoading = false
-        const { data } = res.data
+        const { data, totalCount } = res.data
         if (data && data.length > 0) {
-          this.orderListCurPageNo++
+          this.orderListCurPageNo = this.orderListCurPageNo + 1
           this.orderList = [
             ...this.orderList,
             ...data
           ]
+          if (this.orderList.length >= totalCount) {
+            this.orderListHasMore = false
+          }
         } else {
           this.orderListHasMore = false
         }
