@@ -25,7 +25,7 @@
             :selected="curChatUserId===item.userId"
             :avatar="item.headImgUrl"
             :nick-name="item.nickName"
-            :date="`${formatTime(item.createTime, 'MM-DD')}`"
+            :date="`${formatTime(item.updateTime, 'MM-DD')}`"
             @handleClick="handleUserClick(item)"
           />
         </div>

@@ -28,7 +28,7 @@
             :message-type="item.latestMessage.objectName"
             :avatar="item.latestMessage.content.extra.userLogo"
             :nick-name="item.latestMessage.content.extra.nickName"
-            :date="`${formatTime(item.sentTime, 'MM-DD')}`"
+            :date="`${formatTime(item.latestMessage.sentTime, 'MM-DD')}`"
             :content="item.latestMessage.content.content"
             :show-del-icon="true"
             @handleClick="handleUserClick(item)"
