@@ -94,6 +94,7 @@ export default {
                 duration: 5000,
                 onClick: e => {
                   console.log('click e', e)
+                  _this.setHasNewMsg(false)
                   _this.newMsgComing = false
                   console.log('newMsgComing', _this.newMsg)
                   _this.$notify.close()
