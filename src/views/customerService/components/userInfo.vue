@@ -37,7 +37,7 @@
           </div>
           <div class="order-goods-list">
             <div v-for="(gItem,gIndex) in item.detailList" :key="gIndex" class="goods-item">
-              <img :src="showImg(gItem.mpic)" alt class="goods-img">
+              <img :src="showImg(gItem.mpic)" alt class="goods-img" @error="handleError">
               <div class="goods-info">
                 <div class="goods-info-top">
                   <span class="goods-name">{{ gItem.commodityName }}</span>
@@ -61,7 +61,9 @@
 </template>
 
 <script>
+import defaultImg from './../../../assets/image/h5/pic_b.png'
 import listItem from './listItem'
+console.log('defaultImg', defaultImg)
 export default {
   components: {
     listItem
@@ -93,6 +95,7 @@ export default {
   },
   data() {
     return {
+      errorImg: defaultImg,
       // 选中的tab标识
       selectedTab: 'info',
       // 订单状态 2.待付款 4.待发货 6.待收货 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
@@ -119,6 +122,10 @@ export default {
     },
     loadOrderData() {
       this.$emit('loadOrderData')
+    },
+    handleError(e) {
+      console.log('eeeee', e)
+      e.target.src = this.errorImg
     }
   }
 }
