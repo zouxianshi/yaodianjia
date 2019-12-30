@@ -454,8 +454,8 @@ export default {
           }
         }
 
-        if (this.detailsData.prescriptionApproval && this.detailsData.prescriptionApproval.image !== '') { // 处理处方单分号分隔的图片成数组
-          this.detailsData.prescriptionApproval.image = this.picFormatSemicolon(this.detailsData.prescriptionApproval.image)
+        if (this.detailsData.prescriptionApproval && this.detailsData.prescriptionApproval.image !== '') { // 处理处方单逗号分隔的图片成数组
+          this.detailsData.prescriptionApproval.image = this.picFormat(this.detailsData.prescriptionApproval.image)
         }
       })
     },
