@@ -34,12 +34,12 @@ class InnerCtor {
           {
             name: `所有订单`,
             path: '/orders-manage/all-orders/list',
-            disabled: true
+            disabled: this.get('order.order-all'),
           },
           {
             name: `订单设置`,
             path: '/orders-manage/settings',
-            disabled: true
+            disabled: this.get('order.order-set'),
           }
         ]
       },{
