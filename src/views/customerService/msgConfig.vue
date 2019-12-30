@@ -40,7 +40,7 @@
                   <span>确认要删除吗？</span>
                   <span slot="footer" class="dialog-footer">
                     <el-button @click="deleteDialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="handleConfirmDel(scope.row)">确 定</el-button>
+                    <el-button type="primary" @click="handleConfirmDel">确 定</el-button>
                   </span>
                 </el-dialog>
               </template>
