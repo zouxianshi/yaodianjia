@@ -215,6 +215,13 @@ export default {
 
     // 发送消息按钮点击
     sendMsg() {
+      if (!this.textMsgValue.trim()) {
+        this.$message({
+          type: 'warning',
+          message: '请先输入消息内容'
+        })
+        return
+      }
       console.log('sendMsg')
       var msgInfo = {
         content: this.textMsgValue,
