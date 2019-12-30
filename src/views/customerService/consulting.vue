@@ -9,6 +9,7 @@
             size="mini"
             class="search-input"
             type="search"
+            maxlength="30"
             name
             placeholder="请输入客户名称"
             @input="handleSearchInput"
@@ -160,6 +161,7 @@
                 class="search-filter-item-input"
                 type="text"
                 placeholder="请输入关键字搜索"
+                maxlength="30"
                 @input="handleGoodsNameInput"
               />
               <el-button

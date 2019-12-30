@@ -10,6 +10,7 @@
             class="search-input"
             type="search"
             name
+            maxlength="30"
             placeholder="请输入客户名称"
             @input="handleSearchInput"
           >
