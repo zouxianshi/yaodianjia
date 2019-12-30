@@ -190,7 +190,8 @@ export default {
           'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
       addBadgeToOnlineUser: 'customerService/addBadgeToOnlineUser',
       setHasNewMsg: 'customerService/setHasNewMsg',
-      setRyConnected: 'customerService/SET_RY_INIT_STATUS'
+      setRyConnected: 'customerService/SET_RY_INIT_STATUS',
+      setMerLogo: 'customerService/SET_MER_LOGO'
     }),
     // 通过token生成融云token
     querySupportStaffById() {
@@ -199,6 +200,7 @@ export default {
           console.log('获取登录客服信息', res)
           if (res.data) {
             const result = res.data
+            this.setMerLogo(this.showImg(result.merLogo))
             if (result.token) {
               this.ryToken = result.token
               resolve()

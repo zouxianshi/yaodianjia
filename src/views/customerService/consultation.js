@@ -34,7 +34,7 @@ export default {
       curUserAvatar: '', // 聊天框中显示的用户logo
       MessageType: Chat.MessageType, // 消息类型枚举
       isFirstQueryFinished: false, // 第一次融云会话请求是否已经完成 不要去改这个变量
-      merLogo: '', // 商户头像 用作聊天窗口的客服头像展示
+      // merLogo: '', // 商户头像 用作聊天窗口的客服头像展示
       searchText: '', // 搜索框文字
       boughtRecord: null, // 用户购买记录
       orderList: [], // 订单列表
@@ -67,7 +67,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg', 'ryConnected']),
+    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg', 'ryConnected', 'merLogo']),
     goodsPagination() {
       return {
         pageSizes: [
@@ -313,7 +313,7 @@ export default {
         level: 0, // 分组或分类level,1-一级，2-二级，3-三级，为null和0时不做处理
         manufacture: '', // 生产企业
         merCode: this.merCode, // 商家编码
-        name: this.goodsQuery.name, // 商品名称
+        name: this.goodsQuery.name.replace(/\s*/g, ''), // 商品名称
         onlyCom: '', // 商品查询标志,true-只查商品信息，其他包括规格信息
         origin: 0, // 商品来源，1-海典，2-商家
         pageSize: this.goodsQuery.pageSize, // 每页显示条数，不传默认20
@@ -631,6 +631,7 @@ export default {
     }
   },
   created() {
+    console.log('11111111111111this.logo', this.merLogo)
     this.emojiList = Chat.getEmojiList()
 
     // 获取商品列表
