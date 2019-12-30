@@ -9,6 +9,7 @@
             size="mini"
             class="search-input"
             type="search"
+            maxlength="30"
             name
             placeholder="请输入客户名称"
             @input="handleSearchInput"
@@ -27,7 +28,7 @@
             :message-type="item.latestMessage.objectName"
             :avatar="item.latestMessage.content.extra.userLogo"
             :nick-name="item.latestMessage.content.extra.nickName"
-            :date="`${formatTime(item.sentTime, 'MM-DD')}`"
+            :date="`${formatTime(item.latestMessage.sentTime, 'MM-DD')}`"
             :content="item.latestMessage.content.content"
             :show-del-icon="true"
             @handleClick="handleUserClick(item)"
@@ -59,7 +60,7 @@
             </div>
             <div :class="`chat-item-inner ${dItem.fromUserId == targetId? '': 'right-align'}`">
               <!-- 用户发的头像靠左 -->
-              <div v-if="dItem.fromUserId === targetId" class="chat-item-avatar">
+              <div v-if="dItem.toUserId !== targetId" class="chat-item-avatar">
                 <el-image
                   fit="scale-down"
                   :src="curUserAvatar"
@@ -84,7 +85,7 @@
                   class="goods-message"
                   @click="handleGoodsClick(dItem)"
                 >
-                  <div class="goods-message-header">为你推荐</div>
+                  <div v-if="targetId===dItem.toUserId" class="goods-message-header">为你推荐</div>
                   <div class="goods-message-inner">
                     <div class="goods-message-img">
                       <el-image fit="scale-down" :src="JSON.parse(dItem.content).imageUri" />
@@ -99,7 +100,7 @@
                 </div>
               </div>
               <!-- 客服发的头像靠右 -->
-              <div v-if="dItem.fromUserId !== targetId" class="chat-item-avatar">
+              <div v-if="dItem.toUserId === targetId" class="chat-item-avatar">
                 <el-image
                   fit="scale-down"
                   :src="showImg(merLogo)"
@@ -160,6 +161,7 @@
                 class="search-filter-item-input"
                 type="text"
                 placeholder="请输入关键字搜索"
+                maxlength="30"
                 @input="handleGoodsNameInput"
               />
               <el-button

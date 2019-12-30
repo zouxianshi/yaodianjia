@@ -2,8 +2,6 @@
  * 融云聊天/消息类
  */
 
-import { Message } from 'element-ui'
-
 const RongIMClient = window.RongIMClient
 const RongIMLib = window.RongIMLib
 
@@ -26,7 +24,7 @@ class Chat {
   }
 
   // 初始化融云 IMLib
-  init({ ryToken, onReceived }) {
+  init({ ryToken, onReceived, onStatusChange }) {
     return new Promise((resolve, reject) => {
       this.ryToken = ryToken
       var RongIMLib = window.RongIMLib
@@ -35,7 +33,7 @@ class Chat {
       RongIMLib.RongIMEmoji.init()
 
       // 设置监听器
-      this.setConnectionStatusListener()
+      this.setConnectionStatusListener(onStatusChange)
       this.setOnReceiveMessageListener(onReceived)
 
       // 注册自定义消息类
@@ -60,43 +58,13 @@ class Chat {
   }
 
   // 设置连接状态监听器
-  setConnectionStatusListener() {
-    return new Promise((resolve, reject) => {
-      RongIMClient.setConnectionStatusListener({
-        onChanged: function(status) {
-          console.log('触发融云连接状态监听器，状态码：', status)
-          // status 标识当前连接状态
-          switch (status) {
-            case RongIMLib.ConnectionStatus.CONNECTED:
-              console.log('链接成功')
-              resolve()
-              break
-            case RongIMLib.ConnectionStatus.CONNECTING:
-              console.log('正在链接')
-              break
-            case RongIMLib.ConnectionStatus.DISCONNECTED:
-              Message({
-                type: 'error',
-                message: '断开连接'
-              })
-              break
-            case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
-              Message({
-                type: 'error',
-                message: '其他设备登录'
-              })
-              break
-            case RongIMLib.ConnectionStatus.DOMAIN_INCORRECT:
-              console.error('域名不正确')
-              reject('域名不正确')
-              break
-            case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
-              console.error('网络不可用')
-              reject('网络不可用')
-              break
-          }
-        }
-      })
+  setConnectionStatusListener(statusChangeCb) {
+    console.log('RongIMLib.ConnectionStatus', RongIMLib.ConnectionStatus)
+    RongIMClient.setConnectionStatusListener({
+      onChanged: function(status) {
+        console.log('触发融云连接状态监听器，状态码：', status)
+        statusChangeCb(status)
+      }
     })
   }
 

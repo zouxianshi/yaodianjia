@@ -186,14 +186,17 @@ export default {
       }).then(res => {
         this.orderListLoading = false
         console.log('into queryUserOrderList success11111', res)
-        const { data } = res.data
+        const { data, totalCount } = res.data
         if (data && data.length > 0) {
-          console.log('data', data)
+          console.log('data', data, totalCount)
           console.log('合并', this.orderList, data)
           this.orderList = [
             ...this.orderList,
             ...data
           ]
+          if (this.orderList.length >= totalCount) {
+            this.orderListHasMore = false
+          }
           console.log('this.orderList', this.orderList)
           this.orderListCurPageNo = this.orderListCurPageNo + 1
         } else {
