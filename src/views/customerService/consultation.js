@@ -495,6 +495,12 @@ export default {
     },
     // 图片选择
     handleChange(e) {
+      const loading = this.$loading({
+        lock: true,
+        text: '正在上传图片...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       const file = e.target.files
 
       // 图片转base64作为缩略图
@@ -514,16 +520,16 @@ export default {
         const image = res.data
 
         const msgInfo = {
-          content: base64Url,
+          content: this.showImg(image),
           extra: this.extra,
           imageUri: this.showImg(image)
         }
-
         Chat.sendMessage({
           targetId: this.targetId,
           msgInfo,
           messageType: Chat.MessageType.ImageMessage
         }).then(res => {
+          loading.close()
           this.addMsgToOnlineCurUserMsgList({
             merCode: this.merCode,
             msgInfo: msgInfo,
@@ -531,6 +537,7 @@ export default {
           })
           // 这里
         }).catch((errCode, errMessage) => {
+          loading.close()
           console.error('err', errCode, errMessage)
         })
       }).catch(_ => {

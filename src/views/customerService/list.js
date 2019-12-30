@@ -5,7 +5,8 @@ export default {
   components: {},
   data() {
     return {
-      delDialogVisible: false,
+      delDialogVisible: false, // 删除对话框是否展示
+      curDelRow: null, // 当前删除按钮所在的行数据
       checked: true, // 是否选中
       // 表格高度
       tableHeight: document.documentElement.clientHeight - 158 - 38 - 40 - 42,
@@ -161,11 +162,20 @@ export default {
       })
     },
 
+    // 客服删除按钮点击
+    handleDelBtnClick(row) {
+      this.curDelRow = row
+      this.delDialogVisible = true
+      console.log('删除按钮的当前行', row)
+    },
+
     // 客服删除
-    delSupportItem(row) {
-      console.log('row', row)
+    delSupportItem() {
+      if (!this.curDelRow) {
+        return
+      }
       CustomerService.delSupportStaff({
-        id: row.id
+        id: this.curDelRow.id
       }).then(res => {
         this.delDialogVisible = false
         this.$message({

@@ -142,7 +142,7 @@
                 @click="msgItemClick(item)"
               >{{ item.msg }}</div>
             </div>
-            <div class="add-reply-btn" type="text" @click="addCannedReply">新增快捷回复</div>
+            <!-- <div class="add-reply-btn" type="text" @click="addCannedReply">新增快捷回复</div> -->
             <i slot="reference" class="el-icon-chat-square action-item" />
           </el-popover>
           <i class="el-icon-shopping-bag-2 action-item" @click="handleActionClick('goods')" />
