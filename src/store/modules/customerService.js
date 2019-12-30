@@ -75,6 +75,7 @@ const mutations = {
         element.newMsgNum = 0
       }
     })
+    localStorage.setItem('ryConversationList', JSON.stringify(onlineUserList))
     state.onlineConversationData.list = onlineUserList
   },
 
