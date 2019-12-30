@@ -220,7 +220,7 @@
 .send-msg-box {
   display: flex;
   flex-direction: column;
-  height: 220px;
+  height: 250px;
   box-sizing: border-box;
   padding-bottom: 20px;
 
@@ -243,6 +243,7 @@
   }
 
   .text-area {
+    overflow: hidden;
     flex: 1;
 
     .el-textarea {
