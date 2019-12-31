@@ -90,7 +90,7 @@
           :autosize="true"
           @input="handleMsgInput"
         />
-        <div v-if="showSwitch" class="edit-dialog-switch">
+        <!-- <div v-if="showSwitch" class="edit-dialog-switch">
           是否开启：
           <el-switch
             :value="dialogSwitch"
@@ -98,7 +98,7 @@
             inactive-color="#ff4949"
             @change="handleDialogSwitchToggle"
           />
-        </div>
+        </div> -->
         <span slot="footer" class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="handleMsgConfirm">确 定</el-button>
