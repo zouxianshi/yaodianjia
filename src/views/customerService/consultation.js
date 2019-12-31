@@ -631,7 +631,6 @@ export default {
     }
   },
   created() {
-    console.log('11111111111111this.logo', this.merLogo)
     this.emojiList = Chat.getEmojiList()
 
     // 获取商品列表
