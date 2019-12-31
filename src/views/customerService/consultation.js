@@ -645,6 +645,9 @@ export default {
       this.consultingLoading = false
     }, 3000)
   },
+  onShow() {
+    this.setHasNewMsg(false)
+  },
   updated() {
     // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
     if (this.hasNewMsg) {

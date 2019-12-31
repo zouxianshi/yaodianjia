@@ -167,12 +167,10 @@ export default {
     },
     // 确认添加按钮点击
     handleMsgConfirm() {
-      if (!this.validateMsgQuery()) {
-        return
-      }
       if (this.dialogType === 'add') {
         CustomerService.addSupportMsg({
           ...this.editMsgQuery,
+          type: 3, // 快捷消息
           msg: this.editMsgQuery.msg.trim()
         }).then(res => {
           this.$message({
@@ -208,11 +206,11 @@ export default {
       }
       this.selectedMsgType = row.type
     },
-    // 消息类型切换
-    handleMsgTypeToggle(command) {
-      this.selectedMsgType = command
-      this.editMsgQuery.type = command
-    },
+    // // 消息类型切换
+    // handleMsgTypeToggle(command) {
+    //   this.selectedMsgType = command
+    //   this.editMsgQuery.type = command
+    // },
     // 消息开关切换
     handleDialogSwitchToggle(e) {
       this.dialogSwitch = e
