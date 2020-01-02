@@ -60,7 +60,8 @@
             </div>
             <div :class="`chat-item-inner ${dItem.fromUserId == targetId? '': 'right-align'}`">
               <!-- 用户发的头像靠左 -->
-              <div v-if="dItem.toUserId !== targetId" class="chat-item-avatar">
+              <!-- <div v-if="dItem.toUserId !== targetId" class="chat-item-avatar"> -->
+              <div v-if="dItem.fromUserId === targetId" class="chat-item-avatar">
                 <el-image
                   fit="scale-down"
                   :src="curUserAvatar"
@@ -100,7 +101,7 @@
                 </div>
               </div>
               <!-- 客服发的头像靠右 -->
-              <div v-if="dItem.toUserId === targetId" class="chat-item-avatar">
+              <div v-if="dItem.fromUserId !== targetId" class="chat-item-avatar">
                 <el-image
                   fit="scale-down"
                   :src="merLogo"
