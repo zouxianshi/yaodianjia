@@ -90,6 +90,7 @@ export default {
       })
     },
     addBtnClick() {
+      this.clearEditDialogData()
       this.dialogType = 'add'
       this.editDialogVisible = true
     },

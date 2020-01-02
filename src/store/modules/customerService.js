@@ -21,10 +21,18 @@ const state = {
   },
   hasNewMsg: false,
   ryConnected: false, // 融云连接服务器成功
+  webSocketConnected: false, // websocket是否连接成功
   merLogo: '123' // 商家头像 用于客服头像展示
 }
 
 const mutations = {
+
+  /**
+   * 设置websocket连接状态
+   */
+  setWebSocketConnectionStatus(state, payload) {
+    state.webSocketConnected = payload
+  },
 
   /**
    * 设置客服头像
