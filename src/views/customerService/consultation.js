@@ -24,6 +24,7 @@ export default {
   },
   data() {
     return {
+      delUserRow: null, // 要删除的数据item
       delUserDialogVisible: false, // 删除确认弹窗是否展示
       consultingLoading: true, // 整页loading
       messageLoading: false, // 历史消息是否正在加载
@@ -144,7 +145,15 @@ export default {
         this.consultingLoading = false
         const list = this.onlineConversationData.list
         console.log('获取融云会话列表成功：', list)
-        if (list.length > 0) {
+        if (this.curOnlineUserData.userId) {
+          const userItem = list.find(element => element.targetId === this.curOnlineUserData.userId)
+          if (userItem) {
+            this.curLatestMessageInfo = userItem.latestMessage
+            this.targetId = userItem.targetId
+            this.curUserName = userItem.latestMessage.content.extra.nickName
+            this.curUserAvatar = userItem.latestMessage.content.extra.userLogo
+          }
+        } else if (list.length > 0) {
           this.setCurOnlineUserId({
             userId: list[0].targetId
           })
@@ -152,16 +161,16 @@ export default {
           this.targetId = list[0].targetId
           this.curUserName = list[0].latestMessage.content.extra.nickName
           this.curUserAvatar = list[0].latestMessage.content.extra.userLogo
-          // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
-          // 历史消息
-          this.queryHistoryMessage()
-          // 会员信息
-          this.queryMemberInfo()
-          // 购买记录
-          this.queryUserBoughtRecord()
-          // 订单列表
-          this.queryUserOrderList()
         }
+        // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
+        // 历史消息
+        this.queryHistoryMessage()
+        // 会员信息
+        this.queryMemberInfo()
+        // 购买记录
+        this.queryUserBoughtRecord()
+        // 订单列表
+        this.queryUserOrderList()
       }).catch((err) => {
         console.error('获取融云会话列表失败', err)
         this.consultingLoading = false
@@ -404,18 +413,19 @@ export default {
     },
 
     // 删除确认弹窗确认按钮点击
-    delDialogConfirmBtnClick(data) {
+    delDialogConfirmBtnClick() {
       this.delUserDialogVisible = false
-      this.delOnlineConversation(data.targetId)
+      this.delOnlineConversation(this.delUserRow.targetId)
+      console.log('after delOnlineConversation', this.onlineConversationData.list)
       if (this.onlineConversationData.list.length > 0) {
         const firstConversation = this.onlineConversationData.list[0]
+        this.setCurOnlineUserId({
+          userId: firstConversation.targetId
+        })
         this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra.userLogo
         this.curUserName = firstConversation.latestMessage.content.extra.nickName
-        this.setCurOnlineUserId({
-          userId: data.targetId
-        })
-        // this.resetRightData()
+        this.resetRightData()
       } else {
         this.targetId = ''
         this.curUserAvatar = ''
@@ -430,6 +440,7 @@ export default {
     // 删除会话
     handleUserDel(data) {
       console.log('data', data)
+      this.delUserRow = data
       this.delUserDialogVisible = true
       // this.$confirm('确定要删除当前会话吗?', '提示', {
       //   confirmButtonText: '确定',

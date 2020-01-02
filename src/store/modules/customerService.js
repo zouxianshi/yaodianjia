@@ -21,10 +21,18 @@ const state = {
   },
   hasNewMsg: false,
   ryConnected: false, // 融云连接服务器成功
+  webSocketConnected: false, // websocket是否连接成功
   merLogo: '123' // 商家头像 用于客服头像展示
 }
 
 const mutations = {
+
+  /**
+   * 设置websocket连接状态
+   */
+  setWebSocketConnectionStatus(state, payload) {
+    state.webSocketConnected = payload
+  },
 
   /**
    * 设置客服头像
@@ -214,12 +222,41 @@ const mutations = {
     tempList.forEach(element => {
       if (element.targetId === userId) {
         hasItem = true
+        // element = {
+        //   conversationTitle: '',
+        //   conversationType: message.conversationType,
+        // latestMessage: {
+        //   content: {
+        //     messageName: message.content.messageName,
+        //     content: message.content.content,
+        //     extra: message.content.extra
+        //   },
+        //   conversationType: message.conversationType,
+        //   objectName: message.objectName
+        // },
+        //   latestMessageId: message.messageId,
+        //   sentTime: message.sentTime,
+        //   targetId: message.targetId,
+        //   newMsgNum: 1
+        // }
+        element.sentTime = message.sentTime
+        element.latestMessageId = message.messageId
+        element.targetId = message.targetId
+        element.latestMessage = {
+          content: {
+            messageName: message.content.messageName,
+            content: message.content.content,
+            extra: message.content.extra
+          },
+          conversationType: message.conversationType,
+          objectName: message.objectName
+        }
         element.newMsgNum++
       }
     })
     // 如果是新来的用户 则往会话列表中添加一条数据
     if (!hasItem) {
-      tempList.push({
+      tempList.unshift({
         conversationTitle: '',
         conversationType: message.conversationType,
         latestMessage: {
@@ -271,14 +308,14 @@ const mutations = {
           console.log(`${item.targetId}存在本地了`, '替换')
           localConversationList[existedIndex] = item
         } else {
-          localConversationList.push(item)
+          // localConversationList.push(item)
         }
       })
       localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
       state.onlineConversationData.list = localConversationList
     } else {
-      state.onlineConversationData.list = payload
-      localStorage.setItem('ryConversationList', JSON.stringify(payload))
+      // state.onlineConversationData.list = payload
+      // localStorage.setItem('ryConversationList', JSON.stringify(payload))
     }
 
     console.log('通过vuex获取并添加字段的会话列表', state.onlineConversationData)
