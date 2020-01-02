@@ -94,9 +94,9 @@
         <div class="info-item">
           <div class="title">操作人信息</div>
           <div class="con">推广员：	无</div>
-          <div class="con">退款操作人：	<template v-if="detailsData.returnList">{{ detailsData.returnList.modifyName }}</template><template v-else><span>无</span></template></div>
+          <!-- <div class="con">退款操作人：	<template v-if="detailsData.returnList">{{ detailsData.returnList.modifyName }}</template><template v-else><span>无</span></template></div>
           <div class="con">退款申请时间：<template v-if="detailsData.returnList">{{ detailsData.returnList.createTime }}</template><template v-else><span>无</span></template></div>
-          <div class="con">退款处理时间：<template v-if="detailsData.returnList">{{ detailsData.returnList.modifyTime }}</template><template v-else><span>无</span></template></div>
+          <div class="con">退款处理时间：<template v-if="detailsData.returnList">{{ detailsData.returnList.modifyTime }}</template><template v-else><span>无</span></template></div> -->
         </div>
       </div>
 
@@ -166,6 +166,9 @@
           <div class="info-item info-left">
             <div class="con">退款原因：{{ item.refundReason }}</div>
             <div class="con">退款说明：{{ item.refundReturnDesc }}</div>
+            <div class="con">退款操作人：<template v-if="item.modifyName">{{ item.modifyName }}</template><template v-else>无</template></div>
+            <div class="con">退款申请时间：<template v-if="item.createTime">{{ item.createTime }}</template><template v-else>无</template></div>
+            <div class="con">退款处理时间：<template v-if="item.modifyTime">{{ item.modifyTime }}</template><template v-else>无</template></div>
           </div>
           <div class="info-item info-right">
             <div class="block prescriptionA_img">
@@ -279,12 +282,24 @@
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">
-                          <template v-if="item.status===6">
-                            <template v-if="detailsData.deliveryType===2">待提货</template>
-                            <template v-else>已发货</template>
+                          <template v-if="detailsData.prescriptionSheetMark === '1'">
+                            <template v-if="detailsData.prescriptionStatus===0||detailsData.prescriptionStatus===1">
+                              <div>待审批</div>
+                            </template>
+                            <template v-if="detailsData.prescriptionStatus===3">
+                              <div>审批未通过</div>
+                            </template>
                           </template>
-                          <template v-else>{{ item.status | orderStatus }}</template>
-                          <div v-if="item.orderPackage" class="marginTop20"><span class="font12">快递单号</span><span class="font12">{{ item.orderPackage.packageNo }}</span></div>
+                          <template v-else>
+                            <template v-if="item.status===6">
+                              <template v-if="detailsData.deliveryType===2">待提货</template>
+                              <template v-else>已发货</template>
+                            </template>
+                            <template v-else>{{ item.status | orderStatus }}</template>
+                          </template>
+                          <div v-if="item.orderPackage && item.status!==8 && item.status!==10 && item.status!==20 && item.status!==30" class="marginTop20">
+                            <span class="font12">快递单号</span><span class="font12">{{ item.orderPackage.packageNo }}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
