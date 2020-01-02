@@ -279,14 +279,14 @@ const mutations = {
           console.log(`${item.targetId}存在本地了`, '替换')
           localConversationList[existedIndex] = item
         } else {
-          localConversationList.push(item)
+          // localConversationList.push(item)
         }
       })
       localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
       state.onlineConversationData.list = localConversationList
     } else {
-      state.onlineConversationData.list = payload
-      localStorage.setItem('ryConversationList', JSON.stringify(payload))
+      // state.onlineConversationData.list = payload
+      // localStorage.setItem('ryConversationList', JSON.stringify(payload))
     }
 
     console.log('通过vuex获取并添加字段的会话列表', state.onlineConversationData)
