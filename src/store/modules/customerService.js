@@ -222,12 +222,41 @@ const mutations = {
     tempList.forEach(element => {
       if (element.targetId === userId) {
         hasItem = true
+        // element = {
+        //   conversationTitle: '',
+        //   conversationType: message.conversationType,
+        // latestMessage: {
+        //   content: {
+        //     messageName: message.content.messageName,
+        //     content: message.content.content,
+        //     extra: message.content.extra
+        //   },
+        //   conversationType: message.conversationType,
+        //   objectName: message.objectName
+        // },
+        //   latestMessageId: message.messageId,
+        //   sentTime: message.sentTime,
+        //   targetId: message.targetId,
+        //   newMsgNum: 1
+        // }
+        element.sentTime = message.sentTime
+        element.latestMessageId = message.messageId
+        element.targetId = message.targetId
+        element.latestMessage = {
+          content: {
+            messageName: message.content.messageName,
+            content: message.content.content,
+            extra: message.content.extra
+          },
+          conversationType: message.conversationType,
+          objectName: message.objectName
+        }
         element.newMsgNum++
       }
     })
     // 如果是新来的用户 则往会话列表中添加一条数据
     if (!hasItem) {
-      tempList.push({
+      tempList.unshift({
         conversationTitle: '',
         conversationType: message.conversationType,
         latestMessage: {
