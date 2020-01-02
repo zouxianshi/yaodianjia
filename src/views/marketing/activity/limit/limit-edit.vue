@@ -491,7 +491,7 @@ export default {
                 }
               }
               const data = {
-                allStore: false,
+                allStore: this.allStore,
                 stores: this.selectedStore.map((item) => {
                   return {
                     storeId: item.id,
