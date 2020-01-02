@@ -20,10 +20,19 @@ const state = {
     hasNewMsg: false // 是否有新消息
   },
   hasNewMsg: false,
-  ryConnected: false // 融云连接服务器成功
+  ryConnected: false, // 融云连接服务器成功
+  merLogo: '123' // 商家头像 用于客服头像展示
 }
 
 const mutations = {
+
+  /**
+   * 设置客服头像
+   */
+  SET_MER_LOGO(state, payload) {
+    state.merLogo = payload
+    console.error('state', state)
+  },
 
   /**
    * 融云相关
@@ -75,6 +84,7 @@ const mutations = {
         element.newMsgNum = 0
       }
     })
+    localStorage.setItem('ryConversationList', JSON.stringify(onlineUserList))
     state.onlineConversationData.list = onlineUserList
   },
 

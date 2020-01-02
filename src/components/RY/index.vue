@@ -30,6 +30,7 @@ export default {
         // 获取到融云token后 开始IMLib初始化
         Chat.init({
           ryToken: this.ryToken,
+          // 收到消息监听
           onReceived: message => {
             this.newMsg = message
             // 通知在线咨询组件有新消息
@@ -93,6 +94,7 @@ export default {
                 duration: 5000,
                 onClick: e => {
                   console.log('click e', e)
+                  _this.setHasNewMsg(false)
                   _this.newMsgComing = false
                   console.log('newMsgComing', _this.newMsg)
                   _this.$notify.close()
@@ -105,6 +107,71 @@ export default {
                   })
                 }
               })
+            }
+          },
+          // 状态监听
+          onStatusChange: status => {
+            const RongIMLib = window.RongIMLib
+            console.warn('融云聊天服务: onStatusChange', status)
+            // status 标识当前连接状态
+            switch (status) {
+              // CONNECTED: 0
+              // CONNECTING: 1
+              // DISCONNECTED: 2
+              // KICKED_OFFLINE_BY_OTHER_CLIENT: 6
+              // WEBSOCKET_UNAVAILABLE: 7
+              // NETWORK_UNAVAILABLE: 3
+              // DOMAIN_INCORRECT: 12
+              // APPKEY_IS_FAKE: 20
+              // CONNECTION_CLOSED: 4
+              // ULTRALIMIT: 1101
+              // REQUEST_NAVI: 201
+              // RESPONSE_NAVI: 202
+              // RESPONSE_NAVI_ERROR: 203
+              // RESPONSE_NAVI_TIMEOUT: 204
+              case RongIMLib.ConnectionStatus.CONNECTED:
+                console.log('连接融云聊天服务器成功')
+                this.$message({
+                  type: 'success',
+                  message: '聊天服务连接成功'
+                })
+                break
+              case RongIMLib.ConnectionStatus.CONNECTING:
+                console.log('正在连接融云聊天服务器')
+                break
+              case RongIMLib.ConnectionStatus.DISCONNECTED:
+                this.$confirm(
+                  '融云聊天服务断开连接，是否重新连接？',
+                  '提示',
+                  {
+                    distinguishCancelAndClose: true,
+                    confirmButtonText: '继续聊天',
+                    cancelButtonText: '取消'
+                  }
+                )
+                break
+              case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
+                console.error('融云聊天服务: 其他设备登录')
+                this.$confirm(
+                  '当前账号已在其他设备登录，是否切换至当前设备继续聊天？',
+                  '提示',
+                  {
+                    distinguishCancelAndClose: true,
+                    confirmButtonText: '继续聊天',
+                    cancelButtonText: '取消'
+                  }
+                ).then(res => {
+                  Chat.connect()
+                })
+                break
+              case RongIMLib.ConnectionStatus.DOMAIN_INCORRECT:
+                console.error('融云聊天服务: 域名不正确')
+                break
+              case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
+                console.error('融云聊天服务: 网络不可用')
+                break
+              case RongIMLib.ConnectionStatus.CONNECTION_CLOSED:
+                console.error('融云聊天服务: 连接已关闭')
             }
           }
         }).then(res => {
@@ -123,7 +190,8 @@ export default {
           'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
       addBadgeToOnlineUser: 'customerService/addBadgeToOnlineUser',
       setHasNewMsg: 'customerService/setHasNewMsg',
-      setRyConnected: 'customerService/SET_RY_INIT_STATUS'
+      setRyConnected: 'customerService/SET_RY_INIT_STATUS',
+      setMerLogo: 'customerService/SET_MER_LOGO'
     }),
     // 通过token生成融云token
     querySupportStaffById() {
@@ -132,6 +200,7 @@ export default {
           console.log('获取登录客服信息', res)
           if (res.data) {
             const result = res.data
+            this.setMerLogo(this.showImg(result.merLogo))
             if (result.token) {
               this.ryToken = result.token
               resolve()

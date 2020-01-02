@@ -42,6 +42,7 @@
                 class="search-filter-item-input"
                 type="text"
                 placeholder="请输入员工姓名"
+                maxlength="30"
                 @input="handleStaffNameInput"
               />
             </div>
@@ -52,6 +53,7 @@
                 class="search-filter-item-input"
                 type="text"
                 placeholder="请输入员工机构部门"
+                maxlength="30"
                 @input="handleStaffDepInput"
               />
             </div>
@@ -76,7 +78,7 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column prop="id" label="员工编码" width="120" />
+            <el-table-column prop="empCode" label="员工编码" width="120" />
             <el-table-column prop="empName" label="姓名" width="120" />
             <el-table-column prop="name" label="性别" width="120">
               <template slot-scope="scope">
