@@ -1,10 +1,11 @@
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import CustomerService from '@/api/customer-service'
 
 export default {
   components: {},
   data() {
     return {
+      isFirstQueryFinished: false,
       delDialogVisible: false, // 删除对话框是否展示
       curDelRow: null, // 当前删除按钮所在的行数据
       checked: true, // 是否选中
@@ -80,7 +81,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode']),
+    ...mapState({
+      webSocketConnected: state => state.customerService.webSocketConnected
+    }),
+    ...mapGetters(['merCode', 'ryConnected']),
     merSupportPageSizes() {
       return [
         this.merSupportInitialPageSize,
@@ -120,7 +124,11 @@ export default {
     },
 
     // 进入页面获取客服列表
-    querySupportStaffList() {
+    querySupportStaffList(createdSign) {
+      if (createdSign) {
+        console.log('第一次进入页面，融云连接成功，开始客服列表请求')
+        this.isFirstQueryFinished = true
+      }
       CustomerService.queryMerSupportStaffList(this.merSupportQuery).then(res => {
         const result = res.data
         result.data.forEach((item, index) => {
@@ -367,6 +375,26 @@ export default {
     }
   },
   created() {
-    this.querySupportStaffList()
+  },
+  watch: {
+    ryConnected(value) {
+      console.log('watch: ryconnnected change', value, this.isFirstQueryFinished)
+      console.log('isFirstQueryFinished',)
+      if (value && this.webSocketConnected && !this.isFirstQueryFinished) {
+        this.querySupportStaffList('first')
+      }
+    },
+    webSocketConnected(value) {
+      console.warn('watch: webSocketConnected change', value)
+      if (value && this.ryConnected && !this.isFirstQueryFinished) {
+        this.querySupportStaffList('first')
+      }
+    }
+  },
+  updated() {
+    console.log('udpated: this.ryConnected', this.ryConnected, this.isFirstQueryFinished)
+    if (this.ryConnected && !this.isFirstQueryFinished) {
+      this.querySupportStaffList('first')
+    }
   }
 }

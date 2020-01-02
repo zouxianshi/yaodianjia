@@ -21,10 +21,18 @@ const state = {
   },
   hasNewMsg: false,
   ryConnected: false, // 融云连接服务器成功
+  webSocketConnected: false, // websocket是否连接成功
   merLogo: '123' // 商家头像 用于客服头像展示
 }
 
 const mutations = {
+
+  /**
+   * 设置websocket连接状态
+   */
+  setWebSocketConnectionStatus(state, payload) {
+    state.webSocketConnected = payload
+  },
 
   /**
    * 设置客服头像
@@ -271,14 +279,14 @@ const mutations = {
           console.log(`${item.targetId}存在本地了`, '替换')
           localConversationList[existedIndex] = item
         } else {
-          localConversationList.push(item)
+          // localConversationList.push(item)
         }
       })
       localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
       state.onlineConversationData.list = localConversationList
     } else {
-      state.onlineConversationData.list = payload
-      localStorage.setItem('ryConversationList', JSON.stringify(payload))
+      // state.onlineConversationData.list = payload
+      // localStorage.setItem('ryConversationList', JSON.stringify(payload))
     }
 
     console.log('通过vuex获取并添加字段的会话列表', state.onlineConversationData)

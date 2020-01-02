@@ -191,7 +191,8 @@ export default {
       addBadgeToOnlineUser: 'customerService/addBadgeToOnlineUser',
       setHasNewMsg: 'customerService/setHasNewMsg',
       setRyConnected: 'customerService/SET_RY_INIT_STATUS',
-      setMerLogo: 'customerService/SET_MER_LOGO'
+      setMerLogo: 'customerService/SET_MER_LOGO',
+      setWebSocketConnectionStatus: 'customerService/setWebSocketConnectionStatus'
     }),
     // 通过token生成融云token
     querySupportStaffById() {
@@ -265,6 +266,7 @@ export default {
             token: cToken, // 	中台用户登录的token
             version: 1 // 协议版本
           }
+          self.setWebSocketConnectionStatus(true)
           console.warn('websocket open', data)
 
           if (ws.readyState === window.WebSocket.OPEN) {

@@ -24,6 +24,7 @@ export default {
   },
   data() {
     return {
+      delUserRow: null, // 要删除的数据item
       delUserDialogVisible: false, // 删除确认弹窗是否展示
       consultingLoading: true, // 整页loading
       messageLoading: false, // 历史消息是否正在加载
@@ -404,16 +405,16 @@ export default {
     },
 
     // 删除确认弹窗确认按钮点击
-    delDialogConfirmBtnClick(data) {
+    delDialogConfirmBtnClick() {
       this.delUserDialogVisible = false
-      this.delOnlineConversation(data.targetId)
+      this.delOnlineConversation(this.delUserRow.targetId)
       if (this.onlineConversationData.list.length > 0) {
         const firstConversation = this.onlineConversationData.list[0]
         this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra.userLogo
         this.curUserName = firstConversation.latestMessage.content.extra.nickName
         this.setCurOnlineUserId({
-          userId: data.targetId
+          userId: this.delUserRow.targetId
         })
         // this.resetRightData()
       } else {
@@ -430,6 +431,7 @@ export default {
     // 删除会话
     handleUserDel(data) {
       console.log('data', data)
+      this.delUserRow = data
       this.delUserDialogVisible = true
       // this.$confirm('确定要删除当前会话吗?', '提示', {
       //   confirmButtonText: '确定',
