@@ -314,22 +314,6 @@ export default {
       }
     },
 
-    // 员工选择
-    // handleSelectionChange(val) {
-    //   const selectedStaffList = []
-    //   val.forEach((item, index) => {
-    //     selectedStaffList.push({
-    //       avatarPath: 'https://xxx.dfs.com/img.png',
-    //       empName: item.empName,
-    //       id: item.id,
-    //       merCode: this.merCode,
-    //       status: 1
-    //     })
-    //   })
-    //   console.log('selectedStaffList', selectedStaffList)
-    //   this.merStaffTableData.selectedList = selectedStaffList
-    // },
-
     // 员工列表页码切换
     handleStaffPageChange(val) {
       this.merStaffQuery.currentPage = val
@@ -377,23 +361,16 @@ export default {
   created() {
   },
   watch: {
-    ryConnected(value) {
-      console.log('watch: ryconnnected change', value, this.isFirstQueryFinished)
-      console.log('isFirstQueryFinished',)
-      if (value && this.webSocketConnected && !this.isFirstQueryFinished) {
-        this.querySupportStaffList('first')
-      }
-    },
     webSocketConnected(value) {
       console.warn('watch: webSocketConnected change', value)
-      if (value && this.ryConnected && !this.isFirstQueryFinished) {
+      if (value && !this.isFirstQueryFinished) {
         this.querySupportStaffList('first')
       }
     }
   },
   updated() {
     console.log('udpated: this.ryConnected', this.ryConnected, this.isFirstQueryFinished)
-    if (this.ryConnected && !this.isFirstQueryFinished) {
+    if (this.webSocketConnected && !this.isFirstQueryFinished) {
       this.querySupportStaffList('first')
     }
   }
