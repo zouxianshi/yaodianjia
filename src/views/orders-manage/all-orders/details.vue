@@ -92,7 +92,7 @@
 
       <!-- 物流信息 --发货物流-->
       <template v-if="detailsData.recordList && (detailsData.orderStatus===6 ||detailsData.orderStatus===8||detailsData.orderStatus===12||detailsData.orderStatus===30)">
-        <div v-for="(item,indexSend) in detailsData.recordList" :key="indexSend" class="info">
+        <div v-for="(item,indexSend) in detailsData.recordList" :key="item.id" class="info">
           <div class="info-item info-left">
             <div class="title">配送信息{{ indexSend+1 }}</div>
             <div class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
@@ -104,8 +104,8 @@
             <div class="block">
               <el-timeline>
                 <el-timeline-item
-                  v-for="(logistical, index) in sendLogisticals[indexSend]"
-                  :key="index"
+                  v-for="(logistical, indexS) in sendLogisticals[indexSend]"
+                  :key="indexS"
                   :type="logistical.type"
                   :color="logistical.color"
                   :size="logistical.size"
@@ -136,7 +136,7 @@
               <div
                 v-if="detailsData.prescriptionApproval.image && detailsData.prescriptionApproval.image!==''"
               >
-                <span v-for="(picItem,picIndex) in detailsData.prescriptionApproval.image" :key="picIndex" class="x-image__preview marginRight20">
+                <span v-for="(picItem,picPrescIndex) in detailsData.prescriptionApproval.image" :key="picPrescIndex" class="x-image__preview marginRight20">
                   <el-image
                     fit="scale-down"
                     :src="showImg(picItem)"
@@ -160,7 +160,7 @@
           <div class="info-item info-right">
             <div class="block prescriptionA_img">
               <div
-                v-if="item.mpic && item.mpic!==''"
+                v-if="item.pictureVoucher && item.pictureVoucher!==''"
               >
                 <span v-for="(picItem,picIndex) in item.pictureVoucher" :key="picIndex" class="x-image__preview marginRight20">
                   <el-image
@@ -181,8 +181,8 @@
         <div v-for="(item,indexReturn) in detailsData.retRecordList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="title">退货信息</div>
-            <div class="con">配送方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
-            <div class="con">快递公司：盛辉物流</div>
+            <div class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
+            <div class="con">快递公司：{{ item.companyName }}</div>
             <div class="con">快递单号：{{ item.number }}</div>
           </div>
           <div class="info-item info-right">
@@ -190,8 +190,8 @@
             <div class="block">
               <el-timeline>
                 <el-timeline-item
-                  v-for="(logistical, index) in refundLogisticals[indexReturn]"
-                  :key="index"
+                  v-for="(logistical, indexF) in refundLogisticals[indexReturn]"
+                  :key="indexF"
                   :type="logistical.type"
                   :color="logistical.color"
                   :size="logistical.size"
@@ -425,24 +425,19 @@ export default {
         if (this.detailsData.recordList) { // 发货物流
           recordListData.forEach((item, index) => {
             const paramsSend = JSON.parse(item.data)
-            // console.log('paramsSend:', paramsSend)
-            // const sendLogisticalsData
-            // sendLogisticalsData = this.logisticsFormat(paramsSend)
-            // sendLogisticalsData.timestamp = item.modifyTime
-            // this.sendLogisticals.push(this.logisticsFormat(paramsSend))
             this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
           })
           // console.log('this.sendLogisticals:', this.sendLogisticals)
         }
 
         const retRecordListData = this.detailsData.retRecordList
-        if (this.detailsData.retRecordList && this.detailsData.retRecordList.data) { // 退货物流
-          // const paramsRefund = JSON.parse(this.detailsData.retRecordList.data)
-          // this.refundLogisticals = this.logisticsFormat(paramsRefund)
+        console.log('retRecordListData:', retRecordListData)
 
+        if (this.detailsData.retRecordList) { // 退货物流
           retRecordListData.forEach((item, index) => {
             const paramsRefund = JSON.parse(item.data)
-            // console.log('paramsRefund:', paramsRefund)
+            console.log('paramsRefund:', paramsRefund)
+
             this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
           })
         }
