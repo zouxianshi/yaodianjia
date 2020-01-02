@@ -12,16 +12,26 @@
         <div class="item">
           <div class="item-left">
             <div class="color-red item-text">
-              <template v-if="detailsData.orderStatus===6">
-                <template v-if="detailsData.deliveryType===2">
-                  <div>待提货</div>
+              <template v-if="detailsData.prescriptionSheetMark === '1'">
+                <template v-if="detailsData.prescriptionStatus===0||detailsData.prescriptionStatus===1">
+                  <div>待审批</div>
                 </template>
-                <template v-else>
-                  <div>已发货</div>
+                <template v-if="detailsData.prescriptionStatus===3">
+                  <div>审批未通过</div>
                 </template>
               </template>
               <template v-else>
-                {{ detailsData.orderStatus | orderStatus }}
+                <template v-if="detailsData.orderStatus===6">
+                  <template v-if="detailsData.deliveryType===2">
+                    <div>待提货</div>
+                  </template>
+                  <template v-else>
+                    <div>已发货</div>
+                  </template>
+                </template>
+                <template v-else>
+                  {{ detailsData.orderStatus | orderStatus }}
+                </template>
               </template>
             </div>
           </div>
