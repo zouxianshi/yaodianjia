@@ -166,9 +166,9 @@
           <div class="info-item info-left">
             <div class="con">退款原因：{{ item.refundReason }}</div>
             <div class="con">退款说明：{{ item.refundReturnDesc }}</div>
-            <div class="con">退款操作人：<template v-if="item.modifyName">{{ item.modifyName }}</template><template v-else>无</template></div>
-            <div class="con">退款申请时间：<template v-if="item.createTime">{{ item.createTime }}</template><template v-else>无</template></div>
-            <div class="con">退款处理时间：<template v-if="item.modifyTime">{{ item.modifyTime }}</template><template v-else>无</template></div>
+            <template v-if="item.modifyName"><div class="con">退款操作人：{{ item.modifyName }}</div></template>
+            <template v-if="item.createTime"><div class="con">退款申请时间：{{ item.createTime }}</div></template>
+            <template v-if="item.modifyTime"><div class="con">退款处理时间：{{ item.modifyTime }}</div></template>
           </div>
           <div class="info-item info-right">
             <div class="block prescriptionA_img">
