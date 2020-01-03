@@ -24,9 +24,9 @@
   padding: 0 20px 40px;
   overflow: auto;
 
-  &::-webkit-scrollbar {
-    display: none; //Safari and Chrome
-  }
+  // &::-webkit-scrollbar {
+  //   display: none; //Safari and Chrome
+  // }
 
   .chat-item-box {
 
