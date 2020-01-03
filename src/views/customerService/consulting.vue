@@ -214,6 +214,7 @@
             type="textarea"
             rows="5"
             placeholder="请输入内容"
+            maxlength="512"
             @input="handleTextAreaChange"
           />
         </div>
