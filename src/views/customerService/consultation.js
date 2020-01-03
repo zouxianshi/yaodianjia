@@ -246,6 +246,13 @@ export default {
         })
         return
       }
+      if (this.textMsgValue.length >= 512) {
+        this.$message({
+          type: 'warning',
+          message: '消息长度不能超过512个字！'
+        })
+        return
+      }
       console.log('sendMsg')
       var msgInfo = {
         content: this.textMsgValue,
