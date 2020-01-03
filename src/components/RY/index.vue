@@ -24,7 +24,6 @@ export default {
   },
   created() {
     const _this = this
-    this.createSocketConnection()
     this.querySupportStaffById()
       .then(() => {
         // 获取到融云token后 开始IMLib初始化
@@ -224,16 +223,17 @@ export default {
             const result = res.data
             this.setMerLogo(this.showImg(result.merLogo))
             if (result.token) {
+              // 有token, 是客服才连接websocket
               this.ryToken = result.token
+              this.createSocketConnection()
               resolve()
             } else {
+              // 否则直接将websocket连接设置为true 用于在页面中控制需要websocket之后的请求
+              this.setWebSocketConnectionStatus(true)
               reject(res.data)
             }
           } else {
-            // this.$message({
-            //   message: '获取融云token失败',
-            //   type: 'error'
-            // })
+            this.setWebSocketConnectionStatus(true)
             reject('获取融云token失败')
           }
         })
