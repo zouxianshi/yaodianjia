@@ -55,7 +55,7 @@
             :key="index"
             :class="`chat-item-box`"
           >
-            <div v-if="index===0 || index>0 && !showDate(dItem.timeStamp, curOnlineUserData.list[index-1].timeStamp)" class="date-item">
+            <div v-if="index===0 || index>0 && showDate(dItem.timeStamp, curOnlineUserData.list[index-1].timeStamp)" class="date-item">
               <div class="date-item-inner">{{ formatTime(dItem.timeStamp, 'YYYY-MM-DD HH:mm:ss') }}</div>
             </div>
             <div :class="`chat-item-inner ${dItem.fromUserId == targetId? '': 'right-align'}`">

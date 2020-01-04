@@ -129,7 +129,11 @@ export default {
     },
     // 计算日期
     showDate(curTime, lastTime) {
-      return this.formatTime(curTime, 'YYYY-MM-DD') === this.formatTime(lastTime, 'YYYY-MM-DD')
+      if (dayjs(curTime).subtract(5, 'minutes').isBefore(dayjs(lastTime))) {
+        return false
+      } else {
+        return true
+      }
     },
     // 根据消息类型返回对应类名
     computeChatItemType(messageType) {
@@ -243,13 +247,6 @@ export default {
         this.$message({
           type: 'warning',
           message: '请先输入消息内容'
-        })
-        return
-      }
-      if (this.textMsgValue.length >= 512) {
-        this.$message({
-          type: 'warning',
-          message: '消息长度不能超过512个字！'
         })
         return
       }
@@ -452,7 +449,6 @@ export default {
         this.setCurOnlineUserId({
           userId: ''
         })
-        // this.resetRightData()
       }
     },
 
@@ -461,42 +457,6 @@ export default {
       console.log('data', data)
       this.delUserRow = data
       this.delUserDialogVisible = true
-      // this.$confirm('确定要删除当前会话吗?', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
-      //   console.log('into then')
-      //   this.delOnlineConversation(data.targetId)
-      //   this.$message({
-      //     type: 'success',
-      //     message: '删除成功!'
-      //   });
-      //   // if ( this.onlineConversationData.list.length > 0 ) {
-      //   //   const firstConversation = this.onlineConversationData.list
-      //   //   this.targetId = firstConversation.targetId
-      //   //   this.curUserAvatar = firstConversation.latestMessage.content.extra.userLogo
-      //   //   this.curUserName = firstConversation.latestMessage.content.extra.nickName
-      //   //   this.setCurOnlineUserId({
-      //   //     userId: data.targetId
-      //   //   })
-      //   //   this.resetRightData()
-      //   // } else {
-      //   //   this.targetId = ''
-      //   //   this.curUserAvatar = ''
-      //   //   this.curUserName = ''
-      //   //   this.setCurOnlineUserId({
-      //   //     userId: ''
-      //   //   })
-      //   //   this.resetRightData()
-      //   // }
-      // }).catch(() => {
-      //   console.log('into catch')
-      //   // this.$message({
-      //   //   type: 'info',
-      //   //   message: '已取消删除'
-      //   // });
-      // });
     },
 
     // 查询历史消息
@@ -658,48 +618,6 @@ export default {
         })
         console.log('localstorage after setCurOnlineUserId', localStorage.getItem('ryConversationList'))
       }
-      // this.setOnlineConversationList({
-      //   list: [],
-      //   searchText: this.searchText.replace(/\s*/g, '')
-      // })
-      // console.log('this.onlineConversationData.list', this.onlineConversationData)
-      // if (this.onlineConversationData.list && this.onlineConversationData.list.length > 0) {
-      //   const firstConversation = this.onlineConversationData.list[0]
-      //   this.setCurOnlineUserId({
-      //     userId: firstConversation.targetId
-      //   })
-      //   this.targetId = firstConversation.targetId
-      //   this.curUserAvatar = firstConversation.latestMessage.content.extra.userLogo
-      //   this.curUserName = firstConversation.latestMessage.content.extra.nickName
-      // } else {
-      //   this.targetId = ''
-      //   this.curUserAvatar = ''
-      //   this.curUserName = ''
-      //   this.setCurOnlineUserId({
-      //     userId: ''
-      //   })
-      // }
-      // this.queryRYConversationList({r
-      //   searchText: this.searchText.replace(/\s*/g, '')
-      // }).then(()=>{
-      //   if (this.onlineConversationData.list.length > 0) {
-      //     const firstConversation = this.onlineConversationData.list[0]
-      //     this.setCurOnlineUserId({
-      //       userId: firstConversation.targetId
-      //     })
-      //     this.targetId = firstConversation.targetId
-      //     this.curUserAvatar = firstConversation.latestMessage.content.extra.userLogo
-      //     this.curUserName = firstConversation.latestMessage.content.extra.nickName
-      //     this.resetRightData()
-      //   } else {
-      //     this.targetId = ''
-      //     this.curUserAvatar = ''
-      //     this.curUserName = ''
-      //     this.setCurOnlineUserId({
-      //       userId: ''
-      //     })
-      //   }
-      // })
     },
     resetData() {
       this.conversationList = []
