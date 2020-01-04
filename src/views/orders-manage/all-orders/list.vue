@@ -959,6 +959,7 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+      this.getpreSendNum() // 获取待发货商品数量
     },
     _loadStoreList(val = '') { // 加载门店数据
       return new Promise((resolve, reject) => {
@@ -983,20 +984,36 @@ export default {
       })
     },
     getpreSendNum() { // 获取待发货商品数量
-      let isSuper = 0
-      if (this.roles.includes('admin')) {
-        isSuper = 1
-      } else {
-        isSuper = 0
-      }
-      const datas = {
-        merCode: this.merCode,
-        isSuper: isSuper,
-        storeId: this.listQuery.storeId
-      }
+      // let isSuper = 0
+      // if (this.roles.includes('admin')) {
+      //   isSuper = 1
+      // } else {
+      //   isSuper = 0
+      // }
+      // const datas = {
+      //   merCode: this.merCode,
+      //   isSuper: isSuper,
+      //   storeId: this.listQuery.storeId
+      // }
+      // const datas = {
+      //   'empId': this.listQuery.empId, // 接单员工
+      //   'endDate': '', // 下单结束时间
+      //   'merCode': this.merCode,
+      //   'orderSearchType': '', // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
+      //   // 'orderSource': '', // 订单来源 1.微商城
+      //   'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
+      //   'prescriptionSheetMark': '', // 订单类型 是不是处方单1、0
+      //   'payment': '', // 支付方式
+      //   'proName': '', // 商品名称
+      //   'receive': '', // 收货方式
+      //   'searchValue': '', // 搜索内容
+      //   'startDate': '', // 下单开始时间
+      //   'isSuper': isSuper, // 是否是超级管理员
+      //   'storeId': this.listQuery.storeId // 下单门店id
+      // }
       // console.log('获取待发货商品数量datas', datas)
-      getCountReceived(datas).then(res => {
-        if (res.data) {
+      getCountReceived(this.listQuery).then(res => {
+        if (res.data >= 0) {
           this.preSendNum = res.data
         }
       })
@@ -1024,6 +1041,7 @@ export default {
       })
       this.listQuery.currentPage = 1
       this._loadList()
+      this.getpreSendNum() // 获取待发货商品数量
     },
     handleChangeEmpId(val) { // 接单员工选择改变时触发
       this.storeList.map(v => {
@@ -1033,6 +1051,7 @@ export default {
       })
       this.listQuery.currentPage = 1
       this._loadList()
+      this.getpreSendNum() // 获取待发货商品数量
     },
     handleChangeCommodityType(val) { // 商品类型改变时触发
       this.storeList.map(v => {
@@ -1059,15 +1078,18 @@ export default {
           this.deliveryStuffData.deliveryMobile = item.mobile
         }
       })
+      this.getpreSendNum() // 获取待发货商品数量
     },
     handleChangeExpress(val) { // 快递公司选择改变时触发
       this.expressQuery.currentPage = 1
       // console.log('expressQuery-item:', val)
       this.expressQuery.expComCode = val
       this.ExpressCompany()
+      this.getpreSendNum() // 获取待发货商品数量
     },
     handleClose() {
       this.reset()
+      this.getpreSendNum() // 获取待发货商品数量
     },
     immediateDelivery(item) { // 立即发货弹出框
       // console.log('item:', item)
