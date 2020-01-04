@@ -48,7 +48,13 @@
               <el-radio :label="0">全部门店</el-radio>
               <el-radio style="margin-right:10px" :label="1">部分门店</el-radio>
             </el-radio-group> -->
-            <div class="btn-select-store" @click="toSelectStore"><span v-if="!disabled">选取门店/</span>查看已选门店</div>
+            <div class="btn-select-store" @click="toSelectStore">
+              <span v-if="selectedStore && selectedStore.length>0">
+                <span v-if="allStore">已选取了全部门店</span>
+                <span v-else>已选取了{{ selectedStore.length }}个门店</span>
+              </span>
+              <span v-else>选取门店</span>
+            </div>
           </el-form-item>
           <el-form-item label="是否免运">
             <el-radio-group v-model="xForm.freePostFee">
@@ -67,8 +73,8 @@
         </el-form>
         <div class="table-box">
           <div class="muti-set">
-            <el-form label-width="80px">
-              <el-form-item v-if="!disabled" label="批量设置">
+            <el-form label-width="80px" style="text-align: right">
+              <el-form-item v-if="!disabled" label="批量设置" style="display:inline-block;margin-bottom:0">
                 <el-select v-model="mutiSetType" placeholder="批量设置" @change="mutiSetChange">
                   <el-option v-if="xForm.mode === 1" class="x-option" label="批量设置折扣" value="1" />
                   <el-option v-if="xForm.mode === 2" label="批量设置减价" value="2" />
@@ -131,7 +137,7 @@
       <section class="form-footer">
         <template v-if="!disabled">
           <el-button size="small" @click="$router.go(-1)">取 消</el-button>
-          <el-button type="primary" size="small" @click="submit">确 认</el-button>
+          <el-button type="primary" size="small" :loading="saveLoading" @click="submit">保 存</el-button>
         </template>
         <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
       </section>
@@ -219,6 +225,7 @@ export default {
       callback()
     }
     return {
+      saveLoading: false, // 保存loading
       pageLoading: false, // 页面加载loading
       pageStatus: 1, // 1.新增 2.编辑 3.查看
       leaveAction: false,
@@ -570,6 +577,7 @@ export default {
       })
     },
     _addActivity(data) {
+      this.saveLoading = true
       const formData = {
         id: this.xForm.id,
         type: this.xForm.type,
@@ -586,13 +594,18 @@ export default {
       addActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('创建成功')
-          this.$router.push('/marketing/activity')
+          setTimeout(_ => {
+            this.$router.push('/marketing/activity')
+            this.saveLoading = false
+          }, 1000)
         }
       }).catch(err => {
         console.log('err', err)
+        this.saveLoading = false
       })
     },
     _updateActivity(data) {
+      this.saveLoading = true
       const formData = {
         id: this.xForm.id,
         type: this.xForm.type,
@@ -609,10 +622,14 @@ export default {
       updateActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('保存成功')
-          this.$router.push('/marketing/activity')
+          setTimeout(_ => {
+            this.$router.push('/marketing/activity')
+            this.saveLoading = false
+          }, 1000)
         }
       }).catch(err => {
         console.log('err', err)
+        this.saveLoading = false
       })
     }
 

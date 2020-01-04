@@ -190,7 +190,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit('xForm')">确 定</el-button>
+        <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="dialogVisible">
@@ -207,7 +207,8 @@ import {
   addPageSet,
   editPageSet,
   delPageSet,
-  updatePageSetStatus
+  updatePageSetStatus,
+  queryCenterStore
 } from '../../api/wxmall'
 import config from '../../utils/config'
 
@@ -215,7 +216,6 @@ export default {
   name: 'Banner',
   data() {
     const checkWebsite = (rule, value, callback) => {
-      console.log('value', value)
       if (value === '') {
         // callback(new Error('请输入链接地址'))
         callback()
@@ -232,6 +232,7 @@ export default {
       callback()
     }
     return {
+      saveLoading: false,
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
@@ -314,7 +315,22 @@ export default {
   },
   methods: {
     fetchData() {
-      this._getTableData()
+      this._queryCenterStore().then(res => {
+        if (res.code === '10000' && res.data) {
+          this._getTableData()
+        } else {
+          this.toSetCenterStore()
+        }
+      })
+    },
+    toSetCenterStore() {
+      this.$confirm('还未设置旗舰店，请先维护旗舰店, 去设置？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push('/chainSetting')
+      })
     },
     handleUpload() {
       $('.el-img-box').click()
@@ -333,12 +349,10 @@ export default {
       this._getTableData()
     },
     handleTimeChange(val, type) {
-      console.log(val, type)
       if (type === 1 || type === 2) { // 搜索栏 1.开始时间 2.结束时间
         if (!val) {
           type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
         } else {
-          console.log('this.searchForm', this.searchForm)
           if (this.searchForm.timeBeg && this.searchForm.timeEnd && this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
             // 比较时间
             const start = this.searchForm.timeBeg.replace(/[- :]/g, '')
@@ -477,6 +491,15 @@ export default {
       this.uploadLoading = true
       return isType && isLt2M
     },
+    _queryCenterStore() {
+      return new Promise((resolve, reject) => {
+        queryCenterStore({ merCode: this.merCode }).then(res => {
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
     // 获取列表数据
     _getTableData() {
       const params = {
@@ -503,7 +526,6 @@ export default {
             duration: 5 * 1000
           })
         }
-        console.log('res-1', res)
       })
     },
     // 获取数据详情
@@ -521,7 +543,7 @@ export default {
       }
       getPageSetDetail(params)
         .then(res => {
-          console.log('res-1', res)
+          console.log('_getDataDetail', res)
         })
         .catch(err => {
           console.log('err', err)
@@ -529,6 +551,7 @@ export default {
     },
     // 新增数据
     _addData() {
+      this.saveLoading = true
       const params = {
         announcement: '',
         classId: '',
@@ -561,10 +584,15 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.saveLoading = false
+      }).catch(err => {
+        console.log('err', err)
+        this.saveLoading = false
       })
     },
     // 修改数据
     _editData() {
+      this.saveLoading = true
       const params = {
         announcement: '',
         classId: '',
@@ -596,6 +624,10 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.saveLoading = false
+      }).catch(err => {
+        console.log('err', err)
+        this.saveLoading = false
       })
     },
     // 删除数据
