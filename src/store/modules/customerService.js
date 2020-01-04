@@ -92,7 +92,11 @@ const mutations = {
         element.newMsgNum = 0
       }
     })
-    localStorage.setItem('ryConversationList', JSON.stringify(onlineUserList))
+    // setStorage为false则不设置localStorage
+    if (payload.setStorage !== false) {
+      console.log('setStorage不为false, 设置缓存', payload.setStorage)
+      localStorage.setItem('ryConversationList', JSON.stringify(onlineUserList))
+    }
     state.onlineConversationData.list = onlineUserList
   },
 
@@ -222,41 +226,12 @@ const mutations = {
     tempList.forEach(element => {
       if (element.targetId === userId) {
         hasItem = true
-        // element = {
-        //   conversationTitle: '',
-        //   conversationType: message.conversationType,
-        // latestMessage: {
-        //   content: {
-        //     messageName: message.content.messageName,
-        //     content: message.content.content,
-        //     extra: message.content.extra
-        //   },
-        //   conversationType: message.conversationType,
-        //   objectName: message.objectName
-        // },
-        //   latestMessageId: message.messageId,
-        //   sentTime: message.sentTime,
-        //   targetId: message.targetId,
-        //   newMsgNum: 1
-        // }
-        element.sentTime = message.sentTime
-        element.latestMessageId = message.messageId
-        element.targetId = message.targetId
-        element.latestMessage = {
-          content: {
-            messageName: message.content.messageName,
-            content: message.content.content,
-            extra: message.content.extra
-          },
-          conversationType: message.conversationType,
-          objectName: message.objectName
-        }
         element.newMsgNum++
       }
     })
     // 如果是新来的用户 则往会话列表中添加一条数据
     if (!hasItem) {
-      tempList.unshift({
+      tempList.push({
         conversationTitle: '',
         conversationType: message.conversationType,
         latestMessage: {
@@ -286,6 +261,10 @@ const mutations = {
     state.curOnlineUserData.curPageSize = 20
     state.curOnlineUserData.hasMore = true
   },
+  // 强制更改store中的数据 不更改localStorage
+  FORCE_CHANGE_CONVERSATION_LIST(state, payload) {
+    state.onlineConversationData.list = payload
+  },
   // 获取在线咨询会话列表
   SET_ONLINE_CONVERSATIONLIST(state, payload) {
     // 这里对比本地缓存中的数据并合并 完成之后更新本地存储
@@ -308,14 +287,14 @@ const mutations = {
           console.log(`${item.targetId}存在本地了`, '替换')
           localConversationList[existedIndex] = item
         } else {
-          // localConversationList.push(item)
+          localConversationList.push(item)
         }
       })
       localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
       state.onlineConversationData.list = localConversationList
     } else {
-      // state.onlineConversationData.list = payload
-      // localStorage.setItem('ryConversationList', JSON.stringify(payload))
+      state.onlineConversationData.list = payload
+      localStorage.setItem('ryConversationList', JSON.stringify(payload))
     }
 
     console.log('通过vuex获取并添加字段的会话列表', state.onlineConversationData)
