@@ -587,7 +587,7 @@ export default {
       list.forEach((element) => {
         console.log('element.latestMessage.content.extra.nickName', element.latestMessage.content.extra.nickName)
         console.log('searchtext', this.searchText.replace(/\s*/g, ''))
-        if (element.latestMessage.content.extra.nickName.indexOf(this.searchText.replace(/\s*/g, '')) > -1) {
+        if (element.latestMessage.content.extra.nickName.toLowerCase().indexOf(this.searchText.toLowerCase().replace(/\s*/g, '')) > -1) {
           tempList.push({
             ...element,
             newMsgNum: 0
