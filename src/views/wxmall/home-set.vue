@@ -672,7 +672,7 @@
         </div>
       </div>
       <div class="footer-btns">
-        <el-button type="primary" @click.stop="submitSettings()">保存</el-button>
+        <el-button type="primary" :loading="saveLoading" @click.stop="submitSettings()">保存</el-button>
       </div>
     </div>
     <!--弹窗--商品选取-->
@@ -710,6 +710,7 @@ export default {
     return {
       loading: false, // 页面加载
       uploadLoading: false, // 上传加载
+      saveLoading: false, // 保存加载
       hasCenterStore: false,
       currentRole: 'adminDashboard',
       swiperOption: {
@@ -1220,7 +1221,7 @@ export default {
         endTime: '',
         positionCode: positonCode,
         remark: '',
-        sortOrder: '',
+        sortOrder: 1,
         status: 1 // integer($int32)状态0停用1启用
       }
       getPageSets(params).then(res => {
@@ -1311,6 +1312,7 @@ export default {
         return
       }
       console.log('ret', ret)
+      this.saveLoading = true
       const params = {
         createPageSetDTOS: ret
       }
@@ -1330,6 +1332,10 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.saveLoading = false
+      }).catch(err => {
+        console.log('err', err)
+        this.saveLoading = false
       })
     }
   }

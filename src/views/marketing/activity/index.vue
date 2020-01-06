@@ -292,7 +292,7 @@ export default {
     // 失效
     handleDisable(row) {
       console.log('delete row', row)
-      this.$confirm('确认失效吗, 是否继续?', '提示', {
+      this.$confirm('失效后该活动会立即结束，确定使该活动失效吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
