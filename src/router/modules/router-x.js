@@ -61,21 +61,21 @@ const router = [
     alwaysShow: true,
     children: [
       {
-        path: 'activity/create',
-        component: () => import('@/views/marketing/activity/create'),
-        name: 'create',
-        meta: {
-          title: '新建活动',
-          noCache: true
-        }
-      },
-      {
         path: 'activity',
         component: () => import('@/views/marketing/activity/index'),
         name: 'activity',
         meta: {
           title: '活动管理',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+        }
+      },
+      {
+        path: 'activity/create',
+        component: () => import('@/views/marketing/activity/create'),
+        name: 'create',
+        meta: {
+          title: '新建活动',
+          noCache: true
         }
       },
       {

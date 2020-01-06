@@ -487,7 +487,7 @@
           </el-form-item>
           <template v-if="employeeUsual.length>0">
             <el-form-item label="常用配送员：" :label-width="labelWidth">
-              <el-button v-for="(item,indexUsual) in employeeUsual" :key="indexUsual" type="" @click="setEmployeeData(item)">{{ item.deliveryUserName }}</el-button>
+              <el-button v-for="(itemEmployee,indexUsual) in employeeUsual" :key="indexUsual" type="" @click="setEmployeeData(itemEmployee)">{{ itemEmployee.deliveryUserName }}</el-button>
             </el-form-item>
           </template>
         </template>
@@ -1112,8 +1112,9 @@ export default {
       this.ExpressCompany() // 快递公司
     },
     setEmployeeData(item) { // 选择常用配送员
-      // console.log('选择常用配送员:', item)
+      console.log('选择常用配送员:', item)
       if (item) {
+        this.deliveryStuffData.deliveryUserId = item.deliveryUserId
         this.deliveryStuffData.deliveryName = item.deliveryUserName
         this.deliveryStuffData.deliveryMobile = item.deliveryUserPhone
       }
@@ -1177,6 +1178,7 @@ export default {
           'orderId': this.orderId,
           'deliveryType': this.deliveryType,
           'detailsList': detailsId,
+          'deliveryUserId': this.deliveryStuffData.deliveryUserId,
           'deliveryUserName': this.deliveryStuffData.deliveryName,
           'deliveryUserPhone': this.deliveryStuffData.deliveryMobile
         }
