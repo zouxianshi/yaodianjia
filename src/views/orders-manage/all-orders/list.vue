@@ -1572,5 +1572,5 @@ export default {
 <style scoped>
 .el-date-range-picker{left:270px!important} /*时间控件弹出框*/
 .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
-.search-form.order-form .search-item .label-name{ width: 80px;}
+.store-goods-wrapper.order-list .order-form .search-item .label-name{ width: 80px!important;}
 </style>
