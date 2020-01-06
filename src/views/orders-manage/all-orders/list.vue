@@ -4,7 +4,7 @@
 
       <section @keydown.enter="_loadList">
         <div
-          class="search-form"
+          class="search-form order-form"
           style="margin-top:20px;margin-bottom:10px"
         >
           <div class="search-item">
@@ -856,7 +856,11 @@ export default {
       isCheckPwd: 0, // 是否需要再次输入密码
       ExpressData: [], // 物流公司列表
       deliveryType: 0, // 配送方式
-      deliveryStuffData: {}, // 当前选择的配送员
+      deliveryStuffData: {
+        deliveryUserId: '',
+        deliveryName: '',
+        deliveryMobile: ''
+      }, // 当前选择的配送员
       detailsList: [], // 订单明细id集合
       preSendNum: 0, // 待发货的数量
       packageNo: '', // 物流快递单号
@@ -1074,6 +1078,7 @@ export default {
     handleChangeDelivery(val) { // 配送员改变时触发
       this.employeeData.forEach(item => {
         if (item.id === val) {
+          this.deliveryStuffData.deliveryUserId = item.id
           this.deliveryStuffData.deliveryName = item.empName
           this.deliveryStuffData.deliveryMobile = item.mobile
         }
@@ -1112,7 +1117,6 @@ export default {
       this.ExpressCompany() // 快递公司
     },
     setEmployeeData(item) { // 选择常用配送员
-      console.log('选择常用配送员:', item)
       if (item) {
         this.deliveryStuffData.deliveryUserId = item.deliveryUserId
         this.deliveryStuffData.deliveryName = item.deliveryUserName
@@ -1568,4 +1572,5 @@ export default {
 <style scoped>
 .el-date-range-picker{left:270px!important} /*时间控件弹出框*/
 .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
+.search-form.order-form .search-item .label-name{ width: 80px;}
 </style>
