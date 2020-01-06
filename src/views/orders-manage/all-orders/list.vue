@@ -1074,6 +1074,7 @@ export default {
     handleChangeDelivery(val) { // 配送员改变时触发
       this.employeeData.forEach(item => {
         if (item.id === val) {
+          this.deliveryStuffData.deliveryUserId = item.id
           this.deliveryStuffData.deliveryName = item.empName
           this.deliveryStuffData.deliveryMobile = item.mobile
         }
@@ -1114,7 +1115,7 @@ export default {
     setEmployeeData(item) { // 选择常用配送员
       console.log('选择常用配送员:', item)
       if (item) {
-        this.deliveryStuffData.deliveryUserId = item.deliveryUserId
+        this.deliveryStuffData.deliveryUserId = item.id
         this.deliveryStuffData.deliveryName = item.deliveryUserName
         this.deliveryStuffData.deliveryMobile = item.deliveryUserPhone
       }
@@ -1184,6 +1185,8 @@ export default {
         }
       }
 
+      console.log('this.orderSendData:', this.orderSendData)
+      debugger
       setOrderSend(this.orderSendData).then(res => { //
         this.$message({
           message: '发货成功',
