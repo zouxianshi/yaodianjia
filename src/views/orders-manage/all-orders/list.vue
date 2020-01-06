@@ -1185,8 +1185,6 @@ export default {
         }
       }
 
-      console.log('this.orderSendData:', this.orderSendData)
-      debugger
       setOrderSend(this.orderSendData).then(res => { //
         this.$message({
           message: '发货成功',
