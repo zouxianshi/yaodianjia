@@ -83,43 +83,37 @@ class InnerCtor {
         ]
       },
       {
-        name: '内容管理',
+        name: '商城装修',
         icon: 'icongoods',
         path: '',
         disabled: this.get('yaodianjia-wxmall'),
         children: [
+          {
+            name:'主页设置',
+            path: '/wxmall/home-set',
+            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
+          },
           {
             name: '首页轮播图',
             path: '/wxmall/banner',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-banner'),
           },
           {
-            name: '公告',
+            name: '首页公告栏',
             path: '/wxmall/notice',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-notice')
           },{
             name:'分类广告位',
             path: '/wxmall/ad-position',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-ad-position')
-          },{
-            name:'主页设置',
-            path: '/wxmall/home-set',
-            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
           }
         ]
       },
       {
-        name: '连锁设置',
-        icon: 'icongoods',
-        path: '/chainSetting',
-        disabled: this.get('merchant'),
-        children: []
-      },
-      {
-        name: '门店设置',
+        name: '设置中心',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('store'),
+        disabled: this.get('set'),
         children: [
           /*{
             name: '所有门店',
@@ -127,46 +121,45 @@ class InnerCtor {
             disabled: this.get('merchant-org.merchant-org-org'),
           },*/
           {
-            name: '上线门店设置',
+            name: '连锁设置',
+            path: '/chainSetting',
+            disabled: this.get('set.merchant-set'),
+            children: []
+          },
+          {
+            name: '上线门店',
             path: '/storeSetting/setting',
-            disabled: this.get('store.store-up')
+            disabled: this.get('set.store-up')
           },
           {
             name: '门店配送',
             path: '/storeSetting/deliverySetting',
-            disabled: this.get('store.store-deliver')
-          }
+            disabled: this.get('set.store-deliver')
+          },
+          {
+            name: '内部链接',
+            path: '/internalLink',
+            disabled: this.get('set.inner-link'),
+            children: []
+          },
         ]
       },
-      {
-        name: '内部链接',
-        icon: 'icongoods',
-        path: '/internalLink',
-        disabled: this.get('link'),
-        children: []
-      },
+      
       {
         name: '营销活动',
         icon: 'icongoods',
-        path: '/marketing/activity',
+        path: '',
         disabled: this.get('marketing'),
         children: [
           {
-            name: '活动管理',
-            path: '/marketing/activity',
-            disabled: this.get('marketing.marketing-manager'),
-          },
-          {
             name: '新建活动',
             path: '/marketing/activity/create',
-            disabled: this.get('marketing.marketing-create')
-            // children: [
-            //   {
-            //     name: '新建限时优惠',
-            //     path: '/marketing/activity/limit-edit',
-            //     disabled: this.get('marketing.marketing-create'),
-            //   }
-            // ]
+            disabled: this.get('marketing.marketing-create'),
+          },
+          {
+            name: '活动管理',
+            path: '/marketing/activity',
+            disabled: this.get('marketing.marketing-manager')
           }
         ]
       },

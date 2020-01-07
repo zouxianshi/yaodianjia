@@ -4,6 +4,10 @@ const router = [
     path: '/',
     component: Layout,
     redirect: '/chainSetting',
+    meta: {
+      title: '设置中心',
+      icon: 'goods'
+    },
     children: [
       {
         path: 'chainSetting',
@@ -17,7 +21,11 @@ const router = [
   {
     path: '/storeSetting',
     component: Layout,
-    redirect: '/storeSetting/index',
+    redirect: '/chainSetting',
+    meta: {
+      title: '设置中心',
+      icon: 'goods'
+    },
     children: [
       {
         path: 'index',
@@ -45,7 +53,11 @@ const router = [
   {
     path: '/',
     component: Layout,
-    redirect: '/internalLink',
+    redirect: '/chainSetting',
+    meta: {
+      title: '设置中心',
+      icon: 'goods'
+    },
     children: [
       {
         path: 'internalLink',

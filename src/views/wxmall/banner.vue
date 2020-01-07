@@ -202,13 +202,13 @@
 <script>
 import { mapGetters } from 'vuex'
 import {
+  queryCenterStore,
   getPageSets,
   getPageSetDetail,
   addPageSet,
   editPageSet,
   delPageSet,
-  updatePageSetStatus,
-  queryCenterStore
+  updatePageSetStatus
 } from '../../api/wxmall'
 import config from '../../utils/config'
 
@@ -491,6 +491,7 @@ export default {
       this.uploadLoading = true
       return isType && isLt2M
     },
+    // 查询中心店（旗舰店）
     _queryCenterStore() {
       return new Promise((resolve, reject) => {
         queryCenterStore({ merCode: this.merCode }).then(res => {
