@@ -25,7 +25,7 @@ class InnerCtor {
         disabled: true,
         children: []
       },{
-        name: '商品管理',
+        name: '商品中心',
         icon: 'icongoods',
         path: '',
         disabled: this.get('commodity'),
@@ -39,15 +39,16 @@ class InnerCtor {
             name: `自建新品`,
             path: '/goods-manage/apply',
             disabled: this.get('commodity.commodity-self')
-          },{
-            name:'新品审核',
-            path: '/goods-manage/examine',
-            disabled: this.get('commodity.commodity-check')
           },
           {
             name:'新品申请记录',
             path: '/goods-manage/apply-record',
             disabled: this.get('commodity.commodity-new-record')
+          },
+          {
+            name:'新品审核',
+            path: '/goods-manage/examine',
+            disabled: this.get('commodity.commodity-check')
           }
           ,{
             name: `自定义分组`,
@@ -61,24 +62,6 @@ class InnerCtor {
             name: `组合商品`,
             path: '/goods-manage/constitute-goods',
             disabled: this.get('commodity.commodity-combine')
-          }
-        ]
-      },
-      {
-        name: '订单中心',
-        icon: 'icongoods',
-        path: '',
-        disabled: this.get('order'),
-        children: [
-          {
-            name: `所有订单`,
-            path: '/orders-manage/all-orders/list',
-            disabled: this.get('order.order-all'),
-          },
-          {
-            name: `订单设置`,
-            path: '/orders-manage/settings',
-            disabled: this.get('order.order-set'),
           }
         ]
       },
@@ -107,6 +90,71 @@ class InnerCtor {
             path: '/wxmall/ad-position',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-ad-position')
           }
+        ]
+      },
+      {
+        name: '订单中心',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('order'),
+        children: [
+          {
+            name: `所有订单`,
+            path: '/orders-manage/all-orders/list',
+            disabled: this.get('order.order-all'),
+          },
+          {
+            name: `订单设置`,
+            path: '/orders-manage/settings',
+            disabled: this.get('order.order-set'),
+          }
+        ]
+      },
+      
+      {
+        name: '营销中心',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('marketing'),
+        children: [
+          {
+            name: '新建活动',
+            path: '/marketing/activity/create',
+            disabled: this.get('marketing.marketing-create'),
+          },
+          {
+            name: '活动管理',
+            path: '/marketing/activity',
+            disabled: this.get('marketing.marketing-manager')
+          }
+        ]
+      },
+      {
+        name: '客服中心',
+        icon: 'icongoods',
+        path: '/customerService',
+        disabled: this.get('staff'),
+        children: [
+          {
+            name: '客服列表',
+            path: '/customerService/list',
+            disabled: this.get('staff.staff-list'),
+          },
+          {
+            name: '快捷消息',
+            path: '/customerService/msgSettings',
+            disabled: this.get('staff.quick-message-set')
+          },
+          {
+            name: '客服咨询',
+            path: '/customerService/consultation',
+            disabled: this.get('staff.online-ask')
+          },
+          {
+            name: '历史消息',
+            path: '/customerService/historyMsg',
+            disabled: this.get('staff.message-record')
+          },
         ]
       },
       {
@@ -141,53 +189,6 @@ class InnerCtor {
             path: '/internalLink',
             disabled: this.get('set.inner-link'),
             children: []
-          },
-        ]
-      },
-      
-      {
-        name: '营销活动',
-        icon: 'icongoods',
-        path: '',
-        disabled: this.get('marketing'),
-        children: [
-          {
-            name: '新建活动',
-            path: '/marketing/activity/create',
-            disabled: this.get('marketing.marketing-create'),
-          },
-          {
-            name: '活动管理',
-            path: '/marketing/activity',
-            disabled: this.get('marketing.marketing-manager')
-          }
-        ]
-      },
-      {
-        name: '客服管理',
-        icon: 'icongoods',
-        path: '/customerService',
-        disabled: this.get('staff'),
-        children: [
-          {
-            name: '客服列表',
-            path: '/customerService/list',
-            disabled: this.get('staff.staff-list'),
-          },
-          {
-            name: '快捷消息设置',
-            path: '/customerService/msgSettings',
-            disabled: this.get('staff.quick-message-set')
-          },
-          {
-            name: '客服咨询',
-            path: '/customerService/consultation',
-            disabled: this.get('staff.online-ask')
-          },
-          {
-            name: '历史消息',
-            path: '/customerService/historyMsg',
-            disabled: this.get('staff.message-record')
           },
         ]
       }
