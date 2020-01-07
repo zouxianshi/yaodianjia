@@ -1494,11 +1494,11 @@ export default {
     }
   }
 }
-.store-goods-wrapper {
+.order-list {
   .search-form {
     .search-item {
       .label-name {
-        width: 60px;
+        width: 80px;
       }
       .el-input {
         width: 180px;
@@ -1574,5 +1574,5 @@ export default {
 <style scoped>
 .el-date-range-picker{left:270px!important} /*时间控件弹出框*/
 .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
-.store-goods-wrapper.order-list .order-form .search-item .label-name{ width: 80px!important;}
+.order-list .order-form .search-item .label-name{ width: 80px!important;}
 </style>

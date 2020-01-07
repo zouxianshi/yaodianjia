@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div :model="detailsData" class="store-goods-wrapper">
+    <div :model="detailsData" class="order-list">
       <div class="wrapper">
         <div class="item">
           <div class="item-left">
@@ -512,16 +512,6 @@ export default {
 </script>
 <style lang="scss">
 .store-goods-wrapper {
-  .search-form {
-    .search-item {
-      .label-name {
-        width: 60px;
-      }
-      .el-input {
-        width: 180px;
-      }
-    }
-  }
   .cascader{
       .el-input{
           width: 300px!important
