@@ -24,24 +24,6 @@ class InnerCtor {
         path: '/home',
         disabled: true,
         children: []
-      },
-      {
-        name: '订单管理',
-        icon: 'icongoods',
-        path: '',
-        disabled: this.get('order'),
-        children: [
-          {
-            name: `所有订单`,
-            path: '/orders-manage/all-orders/list',
-            disabled: this.get('order.order-all'),
-          },
-          {
-            name: `订单设置`,
-            path: '/orders-manage/settings',
-            disabled: this.get('order.order-set'),
-          }
-        ]
       },{
         name: '商品管理',
         icon: 'icongoods',
@@ -79,6 +61,24 @@ class InnerCtor {
             name: `组合商品`,
             path: '/goods-manage/constitute-goods',
             disabled: this.get('commodity.commodity-combine')
+          }
+        ]
+      },
+      {
+        name: '订单中心',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('order'),
+        children: [
+          {
+            name: `所有订单`,
+            path: '/orders-manage/all-orders/list',
+            disabled: this.get('order.order-all'),
+          },
+          {
+            name: `订单设置`,
+            path: '/orders-manage/settings',
+            disabled: this.get('order.order-set'),
           }
         ]
       },
