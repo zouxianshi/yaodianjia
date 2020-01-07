@@ -65,24 +65,6 @@ class InnerCtor {
         ]
       },
       {
-        name: '订单中心',
-        icon: 'icongoods',
-        path: '',
-        disabled: this.get('order'),
-        children: [
-          {
-            name: `所有订单`,
-            path: '/orders-manage/all-orders/list',
-            disabled: this.get('order.order-all'),
-          },
-          {
-            name: `订单设置`,
-            path: '/orders-manage/settings',
-            disabled: this.get('order.order-set'),
-          }
-        ]
-      },
-      {
         name: '商城装修',
         icon: 'icongoods',
         path: '',
@@ -106,6 +88,24 @@ class InnerCtor {
             name:'分类广告位',
             path: '/wxmall/ad-position',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-ad-position')
+          }
+        ]
+      },
+      {
+        name: '订单中心',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('order'),
+        children: [
+          {
+            name: `所有订单`,
+            path: '/orders-manage/all-orders/list',
+            disabled: this.get('order.order-all'),
+          },
+          {
+            name: `订单设置`,
+            path: '/orders-manage/settings',
+            disabled: this.get('order.order-set'),
           }
         ]
       },
