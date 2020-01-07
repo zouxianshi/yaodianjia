@@ -338,12 +338,14 @@
                         <div>已发货</div>
                       </template>
                       <template v-if="item.detailList">
-                        <template v-if="item.orderStatus===10 && item.detailList.length===1">
+                        <template v-if="item.orderStatus===10">
                           <div>待退款</div>
-                          <div class="order_btn">
-                            <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
-                            <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.detailList[0].id,item.detailList[0].totalActualAmount)">退款</el-button>
-                          </div>
+                          <template v-if="item.detailList.length===1">
+                            <div class="order_btn">
+                              <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
+                              <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.detailList[0].id,item.detailList[0].totalActualAmount)">退款</el-button>
+                            </div>
+                          </template>
                         </template>
                       </template>
                       <template v-if="item.orderStatus===8 && item.detailList.length===1">
