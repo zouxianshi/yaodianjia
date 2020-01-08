@@ -310,12 +310,87 @@
                   <div class="cell-text">
                     <template v-if="item.prescriptionSheetMark === '1'">
                       <template v-if="item.prescriptionStatus===0||item.prescriptionStatus===1">
-                        <div>待审批</div>
+                        <template v-if="item.orderStatus===2">
+                          <div>待付款</div>
+                        </template>
+                        <template v-if="item.orderStatus===4">
+                          <div>待发货</div>
+                        </template>
+                        <template v-if="item.orderStatus===6 && item.deliveryType===2">
+                          <div>待提货</div>
+                        </template>
+                        <template v-if="item.orderStatus===6 && item.deliveryType!==2">
+                          <div>已发货</div>
+                        </template>
+                        <template v-if="item.detailList">
+                          <template v-if="item.orderStatus===10">
+                            <div>待退款</div>
+                          </template>
+                        </template>
+                        <template v-if="item.orderStatus===8 && item.detailList.length===1">
+                          <div>待退货</div>
+                        </template>
+                        <template v-if="item.orderStatus===30">
+                          <div>退款完成</div>
+                        </template>
+                        <template v-if="item.orderStatus===20">
+                          <div>已取消</div>
+                        </template>
+                        <template v-if="item.orderStatus===12">
+                          <div>已完成</div>
+                        </template>
+                        <div>(处方待审批)</div>
                       </template>
                       <template v-if="item.prescriptionStatus===3">
-                        <div>审批未通过</div>
+                        <template v-if="item.orderStatus===2">
+                          <div>待付款</div>
+                          <div>（审批未通过）</div>
+                        </template>
+                        <template v-if="item.orderStatus===4">
+                          <div>待发货</div>
+                          <div>（审批未通过）</div>
+                        </template>
+                        <template v-if="item.orderStatus===6 && item.deliveryType===2">
+                          <div>待提货</div>
+                          <div>（审批未通过）</div>
+                        </template>
+                        <template v-if="item.orderStatus===6 && item.deliveryType!==2">
+                          <div>已发货</div>
+                          <div>（审批未通过）</div>
+                        </template>
+                        <template v-if="item.detailList">
+                          <template v-if="item.orderStatus===10">
+                            <div>待退款</div>
+                            <div>（审批未通过）</div>
+                            <template v-if="item.detailList.length===1">
+                              <div class="order_btn">
+                                <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
+                                <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.detailList[0].id,item.detailList[0].totalActualAmount)">退款</el-button>
+                              </div>
+                            </template>
+                          </template>
+                        </template>
+                        <template v-if="item.orderStatus===8 && item.detailList.length===1">
+                          <div>待退货</div>
+                          <div>（审批未通过）</div>
+                          <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.detailList[0].id,item.detailList[0].totalActualAmount)">收到退货</el-button></div>
+                        </template>
+                        <template v-if="item.orderStatus===30">
+                          <div>退款完成</div>
+                          <div>（审批未通过）</div>
+                        </template>
+                        <template v-if="item.orderStatus===20">
+                          <div>已取消</div>
+                          <div>（审批未通过）</div>
+                        </template>
+                        <template v-if="item.orderStatus===12">
+                          <div>已完成</div>
+                          <div>（审批未通过）</div>
+                        </template>
+
                       </template>
                     </template>
+
                     <template v-else>
                       <template v-if="item.orderStatus===2">
                         <div>待付款</div>

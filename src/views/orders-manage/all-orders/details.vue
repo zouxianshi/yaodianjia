@@ -14,19 +14,41 @@
             <div class="color-red item-text">
               <template v-if="detailsData.prescriptionSheetMark === '1'">
                 <template v-if="detailsData.prescriptionStatus===0||detailsData.prescriptionStatus===1">
-                  <div>待审批</div>
+                  <template v-if="detailsData.orderStatus===6">
+                    <template v-if="detailsData.deliveryType===2">
+                      <span>待提货</span>
+                    </template>
+                    <template v-else>
+                      <span>已发货</span>
+                    </template>
+                  </template>
+                  <template v-else>
+                    {{ detailsData.orderStatus | orderStatus }}
+                  </template>
+                  <span class="f16">（处方待审批）</span>
                 </template>
                 <template v-if="detailsData.prescriptionStatus===3">
-                  <div>审批未通过</div>
+                  <template v-if="detailsData.orderStatus===6">
+                    <template v-if="detailsData.deliveryType===2">
+                      <span>待提货</span>
+                    </template>
+                    <template v-else>
+                      <span>已发货</span>
+                    </template>
+                  </template>
+                  <template v-else>
+                    {{ detailsData.orderStatus | orderStatus }}
+                  </template>
+                  <span>（审批未通过）</span>
                 </template>
               </template>
               <template v-else>
                 <template v-if="detailsData.orderStatus===6">
                   <template v-if="detailsData.deliveryType===2">
-                    <div>待提货</div>
+                    <span>待提货</span>
                   </template>
                   <template v-else>
-                    <div>已发货</div>
+                    <span>已发货</span>
                   </template>
                 </template>
                 <template v-else>
@@ -136,8 +158,13 @@
           <div class="info-item info-left">
             <div class="title">处方申请单</div>
             <div class="con">用药人：<template v-if="detailsData.prescriptionApproval.userName">{{ detailsData.prescriptionApproval.userName }}</template></div>
-            <div class="con">性别：{{ detailsData.prescriptionApproval.refundReturnDesc }}</div>
-            <div class="con">年龄：{{ detailsData.prescriptionApproval.refundReason }}</div>
+            <div class="con">性别：
+              <template v-if=" handlerAnalyzeIDCard(detailsData.prescriptionApproval.cerNo).sex==='1'">
+                男
+              </template>
+              <template v-else>女</template>
+            </div>
+            <div class="con">年龄：{{ handlerAnalyzeIDCard(detailsData.prescriptionApproval.cerNo).age }} 岁</div>
             <div class="con">过敏史：{{ detailsData.prescriptionApproval.allergyHistory ? '有':'无' }}</div>
             <div class="con">身份证：{{ detailsData.prescriptionApproval.cerNo }}</div>
           </div>
@@ -282,21 +309,11 @@
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">
-                          <template v-if="detailsData.prescriptionSheetMark === '1'">
-                            <template v-if="detailsData.prescriptionStatus===0||detailsData.prescriptionStatus===1">
-                              <div>待审批</div>
-                            </template>
-                            <template v-if="detailsData.prescriptionStatus===3">
-                              <div>审批未通过</div>
-                            </template>
+                          <template v-if="item.status===6">
+                            <template v-if="detailsData.deliveryType===2">待提货</template>
+                            <template v-else>已发货</template>
                           </template>
-                          <template v-else>
-                            <template v-if="item.status===6">
-                              <template v-if="detailsData.deliveryType===2">待提货</template>
-                              <template v-else>已发货</template>
-                            </template>
-                            <template v-else>{{ item.status | orderStatus }}</template>
-                          </template>
+                          <template v-else>{{ item.status | orderStatus }}</template>
                           <div v-if="item.orderPackage && item.status!==8 && item.status!==10 && item.status!==20 && item.status!==30" class="marginTop20">
                             <span class="font12">快递单号</span><span class="font12">{{ item.orderPackage.packageNo }}</span>
                           </div>
@@ -505,6 +522,91 @@ export default {
       }
       // console.log('临时arr:', arr)
       return arr
+    },
+    /**
+     * 分析身份证，计算年龄，性别
+     * @param {string} identityCard 身份证号码
+     */
+    handlerAnalyzeIDCard(IDCard) {
+      console.log('idcard', IDCard)
+
+      /**
+         * 解析完成的信息对象
+         */
+      const msgObj = {
+        /**
+           * 是否合法
+           */
+        isValid: true,
+        /**
+           * 性别 1-男 0-女
+           */
+        sex: '1',
+        /**
+           * 年龄 number
+           */
+        age: 0
+      }
+
+      if (!(/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(IDCard))) {
+        console.warn('into reg')
+        msgObj.isValid = false
+        return msgObj
+      }
+
+      const getCardInfos = (IDCard) => {
+        const cardInfos = {
+          yearBirth: '',
+          monthBirth: '',
+          dayBirth: ''
+        }
+        if (IDCard.length === 15) {
+          cardInfos.yearBirth = `19${IDCard.substring(6, 8)}`
+          cardInfos.monthBirth = IDCard.substring(8, 10)
+          cardInfos.dayBirth = IDCard.substring(10, 12)
+        } else {
+          cardInfos.yearBirth = IDCard.substring(6, 10)
+          cardInfos.monthBirth = IDCard.substring(10, 12)
+          cardInfos.dayBirth = IDCard.substring(12, 14)
+        }
+        return cardInfos
+      }
+
+      // 获取用户身份证号码
+      const userCard = IDCard
+
+      // 获取性别
+      if (parseInt(userCard.substr(userCard.length - 2, 1)) % 2 === 1) {
+        msgObj.sex = '1'
+      } else {
+        msgObj.sex = '0'
+      }
+      // 获取出生年月日
+      // userCard.substring(6,10) + "-" + userCard.substring(10,12) + "-" + userCard.substring(12,14);
+      const cardInfos = getCardInfos(userCard)
+      if (cardInfos.yearBirth < 1900 || cardInfos.yearBirth > new Date().getFullYear() || cardInfos.monthBirth > 12 || cardInfos.dayBirth > 31) {
+        // console.log('cardInfos.yearBirth < 1900', cardInfos.yearBirth < 1900)
+        // console.log('cardInfos.yearBirth > new Date().getFullYear()', cardInfos.yearBirth > new Date().getFullYear())
+        // console.log('cardInfos.monthBirth>12', cardInfos.monthBirth > 12)
+        // console.log('cardInfos.dayBirth>31', cardInfos.dayBirth > 31)
+        msgObj.isValid = false
+      }
+      const yearBirth = cardInfos.yearBirth
+      const monthBirth = cardInfos.monthBirth
+      const dayBirth = cardInfos.dayBirth
+      // 获取当前年月日并计算年龄
+      const myDate = new Date()
+      const monthNow = myDate.getMonth() + 1
+      const dayNow = myDate.getDay()
+      let age = myDate.getFullYear() - yearBirth
+      if (monthNow < monthBirth || (monthNow === monthBirth && dayNow < dayBirth)) {
+        age--
+      }
+      // 得到年龄
+      msgObj.age = age
+
+      // 返回解析信息对象
+      return msgObj
     }
 
   }
