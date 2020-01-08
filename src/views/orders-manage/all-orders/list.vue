@@ -1479,7 +1479,7 @@ export default {
       }
       .header-right{
         .header-cell{
-          color: blue;
+          color: #147de8;
           font-size: 14px;
           cursor: pointer;
         }
