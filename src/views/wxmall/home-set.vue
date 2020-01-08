@@ -536,9 +536,9 @@
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
-            <div style="display: flex">
-              <div style="flex: 0 0 auto;">图片</div>
-              <div class="flex: 1;margin-left: 10px;">
+            <div class="goods_box">
+              <div class="g_label">图片</div>
+              <div class="g_content">
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸 1:1</p>
                 <ul class="m-goods-list webkit-scroll">
@@ -630,9 +630,9 @@
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
-            <div style="display: flex">
-              <div style="flex: 0 0 auto;">图片</div>
-              <div class="flex: 1;margin-left: 10px;">
+            <div class="goods_box">
+              <div class="g_label">图片</div>
+              <div class="g_content">
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸 1:1 比列</p>
                 <ul class="m-goods-list webkit-scroll">
@@ -2171,7 +2171,7 @@ export default {
         line-height: 1.1;
         margin-right: 6px;
         flex: 0 0 auto;
-        width: 88px;
+        width: 89px;
         margin-bottom: 10px;
         &:nth-child(3) {
           margin-right: 0;
@@ -2249,6 +2249,18 @@ export default {
           background: url('../../assets/image/h5/add.png') no-repeat center/100%
             100%;
         }
+      }
+    }
+    .goods_box{
+      display: flex;
+      .g_label {
+        flex: 0 0 auto;
+      }
+      .g_content {
+        flex: 1;
+        max-width: 310px;
+        overflow: hidden;
+        margin-left: 10px;
       }
     }
   }
