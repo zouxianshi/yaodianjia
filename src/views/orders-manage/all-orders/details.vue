@@ -100,7 +100,18 @@
           <div class="con">下单时间：{{ detailsData.orderTime }}</div>
           <!-- <div class="con">下单门店：{{ detailsData.storeName }}</div> -->
           <div class="con">发货门店：<template v-if="detailsData.storeResDTO && detailsData.storeResDTO.stName"><span>{{ detailsData.storeResDTO.stName }}</span></template></div>
-          <div class="con">收货方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
+          <div class="con">收货方式：
+            <template v-if="detailsData.deliveryType===0">
+              快递配送
+            </template>
+            <template v-if="detailsData.deliveryType===1">
+              门店员工配送
+            </template>
+            <template v-if="detailsData.deliveryType===2">
+              门店自提
+            </template>
+            <!-- {{ detailsData.deliveryType ?'门店员工配送':'快递配送' }} -->
+          </div>
           <div class="con">订单来源：微商城</div>
           <div class="con">订单类型：{{ detailsData.prescriptionSheetMark | orderType }}</div>
           <div v-if="detailsData.orderStatus!==6" class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
