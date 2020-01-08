@@ -227,7 +227,7 @@ export default {
     return {
       saveLoading: false, // 保存loading
       pageLoading: false, // 页面加载loading
-      pageStatus: 1, // 1.新增 2.编辑 3.查看
+      pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
       leaveAction: false,
       check_discount: check_discount,
       check_limit: check_limit,
@@ -534,6 +534,20 @@ export default {
       console.log('formatItems', ret)
       return ret
     },
+    updateActivityStatus(activity) {
+      console.log('activity', activity)
+      if (activity.status && activity.timeStatus === -1) { // 未开始
+        console.log('活动未开始！')
+      } else if (activity.status && activity.timeStatus === 1) { // 进行中
+        this.pageStatus = 3
+        this.disabled = true
+        this.$message.warning('活动已开始！')
+      } else if (activity.status || activity.timeStatus === 0) { // 已结束
+        this.pageStatus = 3
+        this.disabled = true
+        this.$message('活动已结束！')
+      }
+    },
     _getDetailData() {
       this.pageLoading = true
       const params = {
@@ -569,6 +583,10 @@ export default {
             return store
           })
           console.log('this.selectedStore', this.selectedStore)
+          // 编辑状态时，更新页面当前状态
+          if (this.pageStatus === 2) {
+            this.updateActivityStatus(data)
+          }
         }
         this.pageLoading = false
       }).catch(err => {

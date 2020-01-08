@@ -35,7 +35,7 @@
         <el-table-column label="门店名称" min-width="150" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             <el-badge v-if="scope.row.centerStore === 1" value="旗舰店" style="margin-top: 8px;margin-right:32px;">
-              <span>{{ scope.row.stName }}</span>
+              <span style="padding: 5px 5px 0 0">{{ scope.row.stName }}</span>
               <!--              <span>说的是大三大萨达萨达撒打撒大撒的萨达萨达撒</span>-->
             </el-badge>
             <span v-else>{{ scope.row.stName }}</span>
