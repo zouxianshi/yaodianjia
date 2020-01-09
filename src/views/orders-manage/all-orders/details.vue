@@ -42,7 +42,7 @@
                   <span>（审批未通过）</span>
                 </template>
               </template>
-              <template v-else>
+              <template v-if="detailsData.prescriptionSheetMark === '0'||detailsData.prescriptionStatus===2">
                 <template v-if="detailsData.orderStatus===6">
                   <template v-if="detailsData.deliveryType===2">
                     <span>待提货</span>
@@ -490,7 +490,7 @@ export default {
         }
         if (this.detailsData.returnList && this.detailsData.returnList.length > 0) { // 处理用逗号分隔的图片成数组
           for (let i = 0; i < this.detailsData.returnList.length; i++) {
-            if (this.detailsData.returnList[i].pictureVoucher !== '') {
+            if (this.detailsData.returnList[i].pictureVoucher && this.detailsData.returnList[i].pictureVoucher !== '') {
               this.detailsData.returnList[i].pictureVoucher = this.picFormat(this.detailsData.returnList[i].pictureVoucher)
             }
           }
