@@ -686,7 +686,7 @@ import 'swiper/dist/css/swiper.css'
 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import dialogGoods from '@/components/Dialog/DialogGoods'
-import { getPageSets, mutilAddPageSet, queryCenterStore } from '@/api/wxmall'
+import { getPageSets, mutilAddPageSet, queryCenterStore, delProductList } from '@/api/wxmall'
 import config from '../../utils/config'
 
 export default {
@@ -1047,7 +1047,32 @@ export default {
         }
       }
       // 提交数据
-      this._mutilAddPageSet(ret)
+      if (ret.length === 0) {
+        this.$message.warning('请提交修改数据')
+        return
+      }
+      console.log('ret', ret)
+      // 是否清空商品列表（I-F1-2， I-F2-2）
+      const posCodes = []
+      if (this.xForm6.detail && this.xForm6.detail.length === 0) {
+        posCodes.push('I-F1-2')
+      }
+      if (this.xForm8.detail && this.xForm8.detail.length === 0) {
+        posCodes.push('I-F2-2')
+      }
+      this.saveLoading = true
+      if (posCodes && posCodes.length > 0) {
+        this._delProductList(posCodes).then(res => {
+          if (res) {
+            this._mutilAddPageSet(ret)
+          }
+          this.saveLoading = false
+        }).catch(res => {
+          this.saveLoading = false
+        })
+      } else {
+        this._mutilAddPageSet(ret)
+      }
     },
     formatGoodsData(list, positionCode) {
       const detailList = list.map((v, i) => {
@@ -1306,13 +1331,25 @@ export default {
         console.log(err)
       })
     },
+    _delProductList(posCodes) {
+      return new Promise((resolve, reject) => {
+        delProductList({ list: posCodes }).then(res => {
+          if (res.code === '10000') {
+            resolve(res)
+          // this.dialogFormVisible = false
+          // 更新table
+          } else {
+            reject(res)
+            console.log('del err', res.msg)
+          }
+          this.saveLoading = false
+        }).catch(err => {
+          console.log('err', err)
+          reject(err)
+        })
+      })
+    },
     _mutilAddPageSet(ret) {
-      if (ret.length === 0) {
-        this.$message.warning('请提交修改数据')
-        return
-      }
-      console.log('ret', ret)
-      this.saveLoading = true
       const params = {
         createPageSetDTOS: ret
       }
