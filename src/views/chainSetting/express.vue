@@ -2,7 +2,7 @@
   <div class="container">
     <h3>快递运费</h3>
     <el-alert
-      v-if="cities && cities.length && cities.length - selected.length > 0"
+      v-if="cities && cities.length && selected && selected.length && cities.length - selected.length > 0"
       type="warning"
       :closable="false"
     >
@@ -145,7 +145,7 @@ export default {
       checkedCities: [],
       cities: null,
       showCities: [],
-      selected: [],
+      selected: null,
       editPosition: -1,
       form: {
         list: []
@@ -164,7 +164,6 @@ export default {
       this.loading = true
       getProvince().then(res => {
         if (res.code === '10000') {
-          this.cities = _.cloneDeep(res.data)
           // this.showCities = _.cloneDeep(res.data)
           this.showCities = _.map(_.cloneDeep(res.data), (v) => {
             return _.assign(v, { checked: false })
@@ -187,6 +186,9 @@ export default {
                 duration: 5 * 1000
               })
             }
+            this.cities = _.cloneDeep(res.data)
+          }).catch(_ => {
+            this.cities = _.cloneDeep(res.data)
           })
         } else {
           this.$message({
