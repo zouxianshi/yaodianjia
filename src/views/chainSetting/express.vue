@@ -143,7 +143,7 @@ export default {
       checkAll: false,
       isIndeterminate: false,
       checkedCities: [],
-      cities: [],
+      cities: null,
       showCities: [],
       selected: [],
       editPosition: -1,
