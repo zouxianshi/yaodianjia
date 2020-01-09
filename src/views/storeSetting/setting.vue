@@ -40,7 +40,8 @@
           <template slot-scope="scope">
             <el-image
               style="width: 70px; height: 70px"
-              :src="scope.row.stPath"
+              :src="showImg(scope.row.stPath)"
+              :preview-src-list="[`${showImg(scope.row.stPath)}`]"
             />
           </template>
         </el-table-column>
