@@ -280,12 +280,12 @@
                           <template v-if="list.status===10 && item.deliveryType!==2 && item.detailList.length>1">
                             <div class="order_btn" style="text-align:right">
                               <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,list.id,list.commodityName)">拒绝</el-button>
-                              <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount)">退款</el-button>
+                              <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)">退款</el-button>
                             </div>
                           </template>
                           <template v-if="list.status===8 && item.detailList.length>1">
                             <div class="order_btn btn_normal" style="text-align:right">
-                              <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount)">收到退货</el-button></div>
+                              <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)">收到退货</el-button></div>
                             </div>
                           </template>
 
@@ -366,7 +366,7 @@
                               <template v-if="item.detailList.length===1">
                                 <div class="order_btn">
                                   <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
-                                  <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount)">退款</el-button>
+                                  <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">退款</el-button>
                                 </div>
                               </template>
                             </template>
@@ -375,7 +375,7 @@
                             <div>待退货</div>
                             <div>（审批未通过）</div>
                             <template v-if="item.detailList.length===1">
-                              <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount)">收到退货</el-button></div>
+                              <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
                             </template>
                           </template>
                           <template v-if="item.orderStatus===30">
@@ -421,7 +421,7 @@
                             <template v-if="item.detailList.length===1">
                               <div class="order_btn">
                                 <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
-                                <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount)">退款</el-button>
+                                <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">退款</el-button>
                               </div>
                             </template>
                           </template>
@@ -429,7 +429,7 @@
                         <template v-if="item.orderStatus===8">
                           <div>待退货</div>
                           <template v-if="item.detailList.length===1">
-                            <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount)">收到退货</el-button></div>
+                            <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
                           </template>
                         </template>
                         <template v-if="item.orderStatus===30">
@@ -677,7 +677,7 @@
           <el-form-item label="是否退回运费：" :label-width="labelWidth">
             <template>
               <div class="con">
-                <el-radio-group v-model="isReturnFreightRadio">  <!--v-model="settingData.couponCost"-->
+                <el-radio-group v-model="isReturnFreight">  <!--v-model="settingData.couponCost"-->
                   <el-radio name="radio_coupon" :label="0">否</el-radio>
                   <el-radio name="radio_coupon" :label="1">是</el-radio>
                 </el-radio-group>
@@ -692,7 +692,7 @@
         </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogConfirmReturnOnlVisible = false;isReturnFreightRadio=0">取 消</el-button>
+        <el-button @click="dialogConfirmReturnOnlVisible = false;isReturnFreight=0">取 消</el-button>
         <el-button type="primary" @click="dialogConfirmReturnOnlVisible = false;agreeRefundEnter()">确 定</el-button>
       </span>
     </el-dialog>
@@ -978,7 +978,6 @@ export default {
       },
       isLastRefund: 0, // 是否最后一笔退款明细
       isReturnFreight: 0, // 是否退回运费
-      isReturnFreightRadio: 0, // 是否退回运费单选
       refundOrderId: '', // 同意退款的订单id
       basicRules: {
         actualRefundAmount: [{ required: true, message: '请输入退款金额' },
@@ -1372,7 +1371,7 @@ export default {
         }
       })
     },
-    agreeRefund(orderId, detailId, money, freight) { // 同意退款弹框
+    agreeRefund(orderId, detailId, money, freight, orderStatus) { // 同意退款弹框
       // console.log('paymode:', paymode)
       this.orderDetailId = detailId
       this.payMoney = money
@@ -1389,13 +1388,16 @@ export default {
         if (res.data === 1) {
           this.isLastRefund = 1
           // this.payMoney = money + freight
-          this.isReturnFreight = 1
+          if (orderStatus === 10) {
+            this.isReturnFreight = 1
+          }
         } else {
           this.isLastRefund = 0
           // this.payMoney = money
-          this.isReturnFreight = 0
+          if (orderStatus === 10) {
+            this.isReturnFreight = 0
+          }
         }
-        // this.isReturnFreightRadio = this.isReturnFreight
       })
     },
     agreeRefundEnter() { // 同意退款确定
@@ -1411,8 +1413,9 @@ export default {
         actualRefundAmount: this.agreeRefundForm.actualRefundAmount,
         pwd: this.agreeRefundForm.pwd,
         orderId: this.refundOrderId,
-        isReturnFreight: this.isReturnFreightRadio
+        isReturnFreight: this.isReturnFreight
       }
+
       this.$refs['basic'].validate(valid => {
         if (valid) {
           if (this.agreeRefundForm.actualRefundAmount > this.payMoney) {
@@ -1432,6 +1435,7 @@ export default {
                 type: 'success',
                 duration: 5 * 1000
               })
+              this.isReturnFreight = 0 // 成功之后把是否退回运费置为否
               this.getList()
             } else {
               this.dialogPendingAgreeVisible = true
@@ -1456,11 +1460,11 @@ export default {
     handleSelectAllChange(allList) {
       this.unReceivedData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.commodityId === item.commodityId
+          return mItem.id === item.id
         })
         if (index > -1) {
           if (allList.length > 0) {
-            // console.log('已存在' + item.commodityId + ':' + item.commodityName)
+            //  console.log('已存在' + item.commodityId + ':' + item.commodityName)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
