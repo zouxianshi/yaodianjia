@@ -619,7 +619,7 @@
           <div>
             <span class="color-red">￥{{ payMoney }}</span>
             <span class="color-gray">
-              <template v-if="isRefundFreight">(不可大于商品实付金额,当前订单未发货，运费将随最后一笔退款明细自动退回)</template>
+              <template v-if="isLastRefund">(不可大于商品实付金额,当前订单未发货，运费将随最后一笔退款明细自动退回)</template>
               <template v-else>(不可大于商品实付金额)</template>
             </span>
           </div>
@@ -673,11 +673,11 @@
         <el-form-item label="最高退款金额：" :label-width="labelWidth">
           <div><span class="color-red">￥{{ payMoney }}</span> <span class="color-gray">(不可大于商品实付金额)</span></div>
         </el-form-item>
-        <template v-if="isRefundFreight">
+        <template v-if="isLastRefund">
           <el-form-item label="是否退回运费：" :label-width="labelWidth">
             <template>
               <div class="con">
-                <el-radio-group>  <!--v-model="settingData.couponCost"-->
+                <el-radio-group v-model="isReturnFreightRadio">  <!--v-model="settingData.couponCost"-->
                   <el-radio name="radio_coupon" :label="0">否</el-radio>
                   <el-radio name="radio_coupon" :label="1">是</el-radio>
                 </el-radio-group>
@@ -692,7 +692,7 @@
         </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogConfirmReturnOnlVisible = false">取 消</el-button>
+        <el-button @click="dialogConfirmReturnOnlVisible = false;isReturnFreightRadio=0">取 消</el-button>
         <el-button type="primary" @click="dialogConfirmReturnOnlVisible = false;agreeRefundEnter()">确 定</el-button>
       </span>
     </el-dialog>
@@ -976,7 +976,9 @@ export default {
         actualRefundAmount: 0,
         pwd: ''
       },
-      isRefundFreight: false, // 是否退回运费
+      isLastRefund: 0, // 是否最后一笔退款明细
+      isReturnFreight: 0, // 是否退回运费
+      isReturnFreightRadio: 0, // 是否退回运费单选
       refundOrderId: '', // 同意退款的订单id
       basicRules: {
         actualRefundAmount: [{ required: true, message: '请输入退款金额' },
@@ -1247,6 +1249,7 @@ export default {
           message: '请选择要发货的商品',
           type: 'error'
         })
+        this.loadingSendNow = false
         return
       } else {
         const mySelectList = this.mySelectList
@@ -1259,6 +1262,7 @@ export default {
             message: '请选择快递公司',
             type: 'error'
           })
+          this.loadingSendNow = false
           return
         }
         if (!this.packageNo) {
@@ -1267,6 +1271,7 @@ export default {
             message: '请输入快递单号',
             type: 'error'
           })
+          this.loadingSendNow = false
           return
         }
 
@@ -1287,6 +1292,7 @@ export default {
             message: '请选择配送员',
             type: 'error'
           })
+          this.loadingSendNow = false
           return
         }
         this.orderSendData = {
@@ -1381,12 +1387,15 @@ export default {
       }
       getRefundFreight(params).then(res => { // 验证明细退款是否是最后一笔退款明细
         if (res.data === 1) {
-          this.isRefundFreight = true
-          this.payMoney = money + freight
+          this.isLastRefund = 1
+          // this.payMoney = money + freight
+          this.isReturnFreight = 1
         } else {
-          this.isRefundFreight = false
-          this.payMoney = money
+          this.isLastRefund = 0
+          // this.payMoney = money
+          this.isReturnFreight = 0
         }
+        // this.isReturnFreightRadio = this.isReturnFreight
       })
     },
     agreeRefundEnter() { // 同意退款确定
@@ -1401,7 +1410,8 @@ export default {
         orderDetailId: this.orderDetailId,
         actualRefundAmount: this.agreeRefundForm.actualRefundAmount,
         pwd: this.agreeRefundForm.pwd,
-        orderId: this.refundOrderId
+        orderId: this.refundOrderId,
+        isReturnFreight: this.isReturnFreightRadio
       }
       this.$refs['basic'].validate(valid => {
         if (valid) {
