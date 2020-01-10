@@ -295,7 +295,7 @@ export default {
       })
     },
     onSetting(isWechat) {
-      this.form.payAutoConfig = 'xxx.xxxx.xx/xx/xxxx/'
+      this.form.payAutoConfig = process.env.VUE_APP_H5_BASE
       this.isWechat = isWechat
       this.visable = true
     },
