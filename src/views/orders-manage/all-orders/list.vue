@@ -632,7 +632,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogPendingAgreeVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogPendingAgreeVisible = false;agreeRefundEnter()">确 定</el-button>
+        <el-button type="primary" @click="dialogPendingAgreeVisible = false;isRefundStatus='1';agreeRefundEnter()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -693,7 +693,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogConfirmReturnOnlVisible = false;isReturnFreight=0">取 消</el-button>
-        <el-button type="primary" @click="dialogConfirmReturnOnlVisible = false;agreeRefundEnter()">确 定</el-button>
+        <el-button type="primary" @click="dialogConfirmReturnOnlVisible = false;isRefundStatus='2';agreeRefundEnter()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -716,7 +716,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogConfirmReturnVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogConfirmReturnVisible = false;agreeRefundEnter()">确 定</el-button>
+        <el-button type="primary" @click="dialogConfirmReturnVisible = false;isRefundStatus='3';agreeRefundEnter()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -988,6 +988,7 @@ export default {
       highRefundMoney: 0, // 最高退款金额
       serialNum: '', // 主订单号
       payMoney: 0, // 实际支付的价格
+      isRefundStatus: '0', // 待退款为false 退款退货为true
       loadingList: false, // 加载订单列表
       loadingCountReceived: false, // 加载待发货数量
       loadingSend: false, // 加载待发货商品
@@ -1419,7 +1420,13 @@ export default {
       this.$refs['basic'].validate(valid => {
         if (valid) {
           if (this.agreeRefundForm.actualRefundAmount > this.payMoney) {
-            this.dialogPendingAgreeVisible = true
+            if (this.isRefundStatus === '1') {
+              this.dialogPendingAgreeVisible = true
+            } else if (this.isRefundStatus === '2') {
+              this.dialogConfirmReturnOnlVisible = true
+            } else if (this.isRefundStatus === '3') {
+              this.dialogConfirmReturnVisible = true
+            }
             this.$message({
               message: '退款金额不可大于商品实付金额',
               type: 'error',
@@ -1438,7 +1445,13 @@ export default {
               this.isReturnFreight = 0 // 成功之后把是否退回运费置为否
               this.getList()
             } else {
-              this.dialogPendingAgreeVisible = true
+              if (this.isRefundStatus === '1') {
+                this.dialogPendingAgreeVisible = true
+              } else if (this.isRefundStatus === '2') {
+                this.dialogConfirmReturnOnlVisible = true
+              } else if (this.isRefundStatus === '3') {
+                this.dialogConfirmReturnVisible = true
+              }
               this.$message({
                 message: res.msg,
                 type: 'error',
@@ -1447,7 +1460,13 @@ export default {
             }
           })
         } else {
-          this.dialogPendingAgreeVisible = true
+          if (this.isRefundStatus === '1') {
+            this.dialogPendingAgreeVisible = true
+          } else if (this.isRefundStatus === '2') {
+            this.dialogConfirmReturnOnlVisible = true
+          } else if (this.isRefundStatus === '3') {
+            this.dialogConfirmReturnVisible = true
+          }
           this.$message({
             message: '存在必填字段未填写',
             type: 'error'
