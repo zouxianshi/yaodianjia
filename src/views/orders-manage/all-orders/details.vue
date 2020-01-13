@@ -42,7 +42,7 @@
                   <span>（审批未通过）</span>
                 </template>
               </template>
-              <template v-else>
+              <template v-if="detailsData.prescriptionSheetMark === '0'||detailsData.prescriptionStatus===2">
                 <template v-if="detailsData.orderStatus===6">
                   <template v-if="detailsData.deliveryType===2">
                     <span>待提货</span>
@@ -101,15 +101,9 @@
           <!-- <div class="con">下单门店：{{ detailsData.storeName }}</div> -->
           <div class="con">发货门店：<template v-if="detailsData.storeResDTO && detailsData.storeResDTO.stName"><span>{{ detailsData.storeResDTO.stName }}</span></template></div>
           <div class="con">收货方式：
-            <template v-if="detailsData.deliveryType===0">
-              快递配送
-            </template>
-            <template v-if="detailsData.deliveryType===1">
-              门店员工配送
-            </template>
-            <template v-if="detailsData.deliveryType===2">
-              门店自提
-            </template>
+            <template v-if="detailsData.deliveryType===0">快递配送</template>
+            <template v-if="detailsData.deliveryType===1">门店员工配送</template>
+            <template v-if="detailsData.deliveryType===2">门店自提</template>
             <!-- {{ detailsData.deliveryType ?'门店员工配送':'快递配送' }} -->
           </div>
           <div class="con">订单来源：微商城</div>
@@ -353,7 +347,7 @@ export default {
   filters: {
     orderType: function(value) { // 订单类型
       if (value === '0') {
-        return '正常订单'
+        return '普通订单'
       }
       if (value === '1') {
         return '处方药'
@@ -496,7 +490,7 @@ export default {
         }
         if (this.detailsData.returnList && this.detailsData.returnList.length > 0) { // 处理用逗号分隔的图片成数组
           for (let i = 0; i < this.detailsData.returnList.length; i++) {
-            if (this.detailsData.returnList[i].pictureVoucher !== '') {
+            if (this.detailsData.returnList[i].pictureVoucher && this.detailsData.returnList[i].pictureVoucher !== '') {
               this.detailsData.returnList[i].pictureVoucher = this.picFormat(this.detailsData.returnList[i].pictureVoucher)
             }
           }
@@ -856,10 +850,10 @@ export default {
   .el-image{
     width: 30%;
     max-height: 300px;
-    img{
-      width: 100%;
-      height: 100%;
-    }
+    // img{
+    //   width: 100%;
+    //   height: 100%;
+    // }
   }
 }
 </style>
