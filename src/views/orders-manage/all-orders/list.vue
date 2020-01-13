@@ -16,10 +16,7 @@
               :remote-method="remoteMethod"
               :loading="selectloading"
             >
-              <el-option label="订单号" value="1" />
-              <el-option label="收货人姓名" value="2" />
-              <el-option label="收货人手机" value="3" />
-              <el-option label="会员卡号" value="4" />
+              <el-option v-for="itemOp in options" :key="itemOp.value" :value="itemOp.value" :label="itemOp.label" />
             </el-select>
           </div>
           <div class="search-item">
@@ -69,7 +66,7 @@
             >
               <el-option label="全部" value="" />
               <el-option label="处方药" value="1" />
-              <el-option label="正常订单" value="0" />
+              <el-option label="普通订单" value="0" />
               <!-- <el-option label="积分订单" value="V" /> -->
             </el-select>
           </div>
@@ -777,7 +774,7 @@ export default {
   filters: {
     orderType: function(value) { // 订单类型
       if (value === '0') {
-        return '正常订单'
+        return '普通订单'
       }
       if (value === '1') {
         return '处方药'
@@ -850,11 +847,13 @@ export default {
             const year = new Date().getFullYear()
             const month = new Date().getMonth() + 1
             const day = new Date().getDate()
-            const hours = end.getHours()
-            const minutes = end.getMinutes()
-            const seconds = end.getSeconds()
+            // const hours = end.getHours()
+            // const minutes = end.getMinutes()
+            // const seconds = end.getSeconds()
+            // end = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
             start = year + '-' + month + '-' + day + ' ' + '00:00:00'
-            end = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+            end = year + '-' + month + '-' + day + ' ' + '23:59:59'
+
             picker.$emit('pick', [start, end])
           }
         }, {
@@ -917,7 +916,7 @@ export default {
         'empId': '', // 接单员工
         'endDate': '', // 下单结束时间
         'merCode': '',
-        'orderSearchType': '', // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
+        'orderSearchType': 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
         'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货7) ===已发货 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
         'prescriptionSheetMark': '', // 订单类型 是不是处方单1、0
@@ -929,6 +928,19 @@ export default {
         'isSuper': 0, // 是否是超级管理员
         'storeId': '' // 下单门店id
       },
+      options: [{
+        value: 1,
+        label: '订单号'
+      }, {
+        value: 2,
+        label: '收货人姓名'
+      }, {
+        value: 3,
+        label: '收货人手机'
+      }, {
+        value: 4,
+        label: '会员卡号'
+      }],
       expressQuery: { // 快递公司搜索关键字
         'expComCode': '', // 快递公司编号
         'expComName': '' // 快递公司名称
@@ -1015,7 +1027,7 @@ export default {
         'empId': '', // 接单员工
         'endDate': '', // 下单结束时间
         'merCode': this.merCode,
-        'orderSearchType': '', // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
+        'orderSearchType': 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
         'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
         'prescriptionSheetMark': '', // 订单类型 是不是处方单1、0
@@ -1136,6 +1148,10 @@ export default {
       })
     },
     chooseTimeRange(date) { // 时间选择
+      if (!date) {
+        this.listQuery.startDate = ''
+        this.listQuery.endDate = ''
+      }
       if (date && date.length !== 0) {
         this.listQuery.startDate = this.dateSelect[0]
         this.listQuery.endDate = this.dateSelect[1]
@@ -1434,6 +1450,14 @@ export default {
             })
             return false
           }
+          if (this.agreeRefundForm.actualRefundAmount <= 0) {
+            this.$message({
+              message: '退款金额必须大于0',
+              type: 'error',
+              duration: 5 * 1000
+            })
+            return false
+          }
           setAgreeRefund(dataParam).then(res => {
             if (res.code === '10000') {
               this.loading = false
@@ -1506,7 +1530,7 @@ export default {
     // 选取商品 表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
       const index = this.mySelectList.findIndex(mItem => { // 没有符合条件的返回-1
-        return mItem.commodityId === row.commodityId
+        return mItem.id === row.id
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
