@@ -141,7 +141,8 @@
               :loading="selectloading"
               @change="handleChangeStore"
             >
-              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName" :value="item.id" />
+              <el-option label="全部" value="" />
+              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName+'('+item.stCode+')'" :value="item.id" />
             </el-select>
           </div>
           <div class="search-item">
@@ -153,7 +154,7 @@
               @change="handleChangeEmpId"
             >
               <el-option label="全部" value="" />
-              <el-option v-for="(item,indexEmp) in employeeData" :key="indexEmp" :label="item.empName" :value="item.id" />
+              <el-option v-for="(item,indexEmp) in employeeData" :key="indexEmp" :label="item.empName+'('+item.empCode+')'" :value="item.id" />
             </el-select>
           </div>
           <div class="search-item">
@@ -272,7 +273,7 @@
                           <!-- <template v-if="list.status===4&& item.deliveryType!==2 && item.detailList.length>1">
                             <div class="order_btn btn_normal" style="text-align:right"><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
                           </template> -->
-                          <template v-if="list.status===10">
+                          <template v-if="list.status===8||list.status===10">
                             <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.id)">查看退款理由</div>
                           </template>
                           <template v-if="list.status===10 && item.deliveryType!==2 && item.detailList.length>1">
@@ -1049,7 +1050,7 @@ export default {
           this._loadList()
         }
       })
-      employeeSearch({ merCode: this.merCode }).then(res => { // 获取门店员工
+      employeeSearch({ merCode: this.merCode, pageSize: 10000, status: 1 }).then(res => { // 获取门店员工
         if (res.data) {
           this.employeeData = res.data.data
         }
@@ -1096,7 +1097,7 @@ export default {
         })
         getMyStoreList({ pageSize: 10000, currentPage: 1, storeName: val, onlineStatus: 1, status: 1 }).then(res => {
           const { data } = res.data
-          data.unshift({ id: '', stName: '全部' })
+          // data.unshift({ id: '', stName: '全部' })
           this.storeList = data
           this.selectloading = false
           loading.close()
@@ -1756,7 +1757,7 @@ export default {
 .color-gray{color:#aaa;}
 .float-right{float:right}
 .el-dialog__body{line-height: 22px;}
-.dialog-title{font-size: 16px; font-weight: bold;text-align: center;margin-bottom: 10px;}
+.dialog-title{font-size: 16px; font-weight: bold;margin-bottom: 10px;}
 .noneData{
   border:1px solid #dfe6ec;
   border-top: none;
