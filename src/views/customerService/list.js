@@ -230,7 +230,7 @@ export default {
       this.querySupportStaffList()
     },
 
-    // 查看历史消息
+    // 查看消息记录
     viewHistoryMsg(row) {
       this.$router.push({
         path: '/customerService/historyMsg',

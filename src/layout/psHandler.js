@@ -187,12 +187,12 @@ class InnerCtor {
             disabled: this.get('staff.quick-message-set')
           },
           {
-            name: '客服咨询',
+            name: '在线咨询',
             path: '/customerService/consultation',
             disabled: this.get('staff.online-ask')
           },
           {
-            name: '历史消息',
+            name: '消息记录',
             path: '/customerService/historyMsg',
             disabled: this.get('staff.message-record')
           },
