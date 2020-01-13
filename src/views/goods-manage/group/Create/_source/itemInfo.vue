@@ -5,7 +5,7 @@
       <el-image
         v-if="itemInfo.pic"
         style="width: 30px; height: 30px"
-        :preview-src-list="[showImg(itemInfo.pic)]"
+        :preview-src-list="[showImg(itemInfo.pic)+'?x-oss-process=style/w_800']"
         :src="showImg(itemInfo.pic)"
         fit="cover"
       />
