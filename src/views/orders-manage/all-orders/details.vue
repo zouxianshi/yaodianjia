@@ -115,7 +115,11 @@
           <div class="con">付款方式：{{ detailsData.payMode ? '货到付款':'在线支付' }}</div>
           <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
-          <div class="con">优惠：￥{{ detailsData.couponDeduction }}</div>
+          <template v-if="detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont">
+            <div class="con">优惠：￥
+              {{ detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont }}
+            </div>
+          </template>
           <div class="con">应付总额：￥{{ detailsData.totalActualOrderAmount }}</div>
         </div>
         <div class="info-item">
@@ -222,7 +226,8 @@
       </template>
 
       <!-- 物流信息 --退货物流-->
-      <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.retRecordList">
         <div v-for="(item,indexReturn) in detailsData.retRecordList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="title">退货信息</div>

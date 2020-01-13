@@ -15,6 +15,7 @@
               placeholder="请输入关键词"
               :remote-method="remoteMethod"
               :loading="selectloading"
+              @change="searchSelectChange"
             >
               <el-option v-for="itemOp in options" :key="itemOp.value" :value="itemOp.value" :label="itemOp.label" />
             </el-select>
@@ -1056,7 +1057,6 @@ export default {
     },
     checkPwd() {
       getCheckPwd().then(res => {
-        // console.log('密码验证：', res)
         if (res) {
           this.isCheckPwd = res.data
         }
@@ -1076,10 +1076,10 @@ export default {
         const { data, totalCount } = res.data
         if (data) {
           this.tableData = data
-          this.total = totalCount
         } else {
           this.tableData = []
         }
+        this.total = totalCount
       }).catch(() => {
         this.loadingList = false
       })
@@ -1450,14 +1450,14 @@ export default {
             })
             return false
           }
-          if (this.agreeRefundForm.actualRefundAmount <= 0) {
-            this.$message({
-              message: '退款金额必须大于0',
-              type: 'error',
-              duration: 5 * 1000
-            })
-            return false
-          }
+          // if (this.agreeRefundForm.actualRefundAmount <= 0) {
+          //   this.$message({
+          //     message: '退款金额必须大于0',
+          //     type: 'error',
+          //     duration: 5 * 1000
+          //   })
+          //   return false
+          // }
           setAgreeRefund(dataParam).then(res => {
             if (res.code === '10000') {
               this.loading = false
@@ -1498,6 +1498,9 @@ export default {
           return
         }
       })
+    },
+    searchSelectChange(data) {
+      this.listQuery.searchValue = ''
     },
     // 选取商品 表格选取（全选/反选），更新 mySelectList
     handleSelectAllChange(allList) {
