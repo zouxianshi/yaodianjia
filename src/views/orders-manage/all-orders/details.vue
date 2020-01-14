@@ -140,21 +140,24 @@
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <div class="block">
-              <el-timeline>
-                <el-timeline-item
-                  v-for="(logistical, indexS) in sendLogisticals[indexSend]"
-                  :key="indexS"
-                  :type="logistical.type"
-                  :color="logistical.color"
-                  :size="logistical.size"
-                  :timestamp="logistical.timestamp"
-                  :hide-timestamp="true"
-                >
-                  {{ logistical.timestamp }}{{ logistical.content }}
-                </el-timeline-item>
-              </el-timeline>
-            </div>
+            <template v-if="item.data">
+              <div class="block">
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(logistical, indexS) in sendLogisticals[indexSend]"
+                    :key="indexS"
+                    :type="logistical.type"
+                    :color="logistical.color"
+                    :size="logistical.size"
+                    :timestamp="logistical.timestamp"
+                    :hide-timestamp="true"
+                  >
+                    {{ logistical.timestamp }}{{ logistical.content }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+            </template>
+            <template v-else>暂无物流信息</template>
           </div>
         </div>
       </template>
@@ -235,21 +238,24 @@
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <div class="block">
-              <el-timeline>
-                <el-timeline-item
-                  v-for="(logistical, indexF) in refundLogisticals[indexReturn]"
-                  :key="indexF"
-                  :type="logistical.type"
-                  :color="logistical.color"
-                  :size="logistical.size"
-                  :timestamp="logistical.timestamp"
-                  :hide-timestamp="true"
-                >
-                  {{ logistical.timestamp }}{{ logistical.content }}
-                </el-timeline-item>
-              </el-timeline>
-            </div>
+            <template v-if="item.data">
+              <div class="block">
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(logistical, indexF) in refundLogisticals[indexReturn]"
+                    :key="indexF"
+                    :type="logistical.type"
+                    :color="logistical.color"
+                    :size="logistical.size"
+                    :timestamp="logistical.timestamp"
+                    :hide-timestamp="true"
+                  >
+                    {{ logistical.timestamp }}{{ logistical.content }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+            </template>
+            <template v-else>暂无物流信息</template>
           </div>
         </div>
       </template>
