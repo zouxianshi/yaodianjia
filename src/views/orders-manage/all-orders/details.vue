@@ -198,7 +198,8 @@
       </template>
 
       <!-- 退款原因 -->
-      <template v-if="detailsData.returnList && (detailsData.orderStatus===8||detailsData.orderStatus===10||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.returnList && (detailsData.orderStatus===8||detailsData.orderStatus===10||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.returnList">
         <div v-for="(item,indexReturn) in detailsData.returnList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="con">退款原因：{{ item.refundReason }}</div>
