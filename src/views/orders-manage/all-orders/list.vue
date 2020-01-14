@@ -915,6 +915,7 @@ export default {
       loading: false,
       selectloading: false,
       listQuery: {
+        'currentPage': 1,
         // 'distribution': '', // 配送方式
         'empId': '', // 接单员工
         'endDate': '', // 下单结束时间
@@ -1026,6 +1027,7 @@ export default {
         isSuper = 0
       }
       this.listQuery = {
+        'currentPage': 1,
         // 'distribution': '', // 配送方式
         'empId': '', // 接单员工
         'endDate': '', // 下单结束时间
@@ -1778,5 +1780,5 @@ export default {
 <style scoped>
 .el-date-range-picker{left:270px!important} /*时间控件弹出框*/
 .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
-.order-list .order-form .search-item .label-name{ width: 80px!important;}
+/* .order-list .order-form .search-item .label-name{ width: 80px!important;} */
 </style>

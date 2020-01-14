@@ -100,10 +100,8 @@
           <div class="con">下单时间：{{ detailsData.orderTime }}</div>
           <!-- <div class="con">下单门店：{{ detailsData.storeName }}</div> -->
           <div class="con">发货门店：<template v-if="detailsData.storeResDTO && detailsData.storeResDTO.stName"><span>{{ detailsData.storeResDTO.stName }}</span></template></div>
-          <div class="con">收货方式：
-            <template v-if="detailsData.deliveryType===0">普通快递</template>
-            <template v-if="detailsData.deliveryType===1">门店员工配送</template>
-            <template v-if="detailsData.deliveryType===2">门店自提</template>
+          <div class="con">
+            收货方式：<template v-if="detailsData.deliveryType===0">普通快递</template><template v-if="detailsData.deliveryType===1">配送上门</template><template v-if="detailsData.deliveryType===2">门店自提</template>
             <!-- {{ detailsData.deliveryType ?'门店员工配送':'快递配送' }} -->
           </div>
           <div class="con">订单来源：微商城</div>
@@ -162,7 +160,7 @@
       </template>
 
       <!-- 处方申请单 -->
-      <template v-if="detailsData.prescriptionSheetMark==='1'&&detailsData.prescriptionApproval">
+      <template v-if="detailsData.prescriptionSheetMark==='1' && detailsData.prescriptionStatus ===2 && detailsData.prescriptionApproval">
         <div class="info">
           <div class="info-item info-left">
             <div class="title">处方申请单</div>
