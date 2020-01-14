@@ -405,8 +405,24 @@ export default {
         }
       })
     },
-    handleUploadError() {
+    handleUploadError(err) {
       this.uploadLoading = false
+      if (err) {
+        let res = JSON.stringify(err) || ''
+        res = JSON.parse(res)
+        if (res.status === 403) {
+          this.$message.error('用户信息过期，请重新登录')
+          this.$store.dispatch('user/resetToken').then(() => {
+            setTimeout(() => {
+              location.reload()
+            }, 1000)
+          })
+        } else {
+          this.$message.error(res.msg || '服务器错误，请稍后重试')
+        }
+      } else {
+        this.$message.error('图片上传失败')
+      }
     },
     handleUploadSuccess(res, file) {
       if (res.code === '10000') {

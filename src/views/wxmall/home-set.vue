@@ -445,9 +445,13 @@
             <el-form ref="xForm4" :rules="xRules4" :model="xForm4">
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap" :class="xFormSet.position === 1 ? 'cover-left':'cover-right'">
-                  <div v-if="xForm4.imgUrl==''" class="cover" />
+                  <template v-if="xForm4.imgUrl===''">
+                    <img v-if="xFormSet.position === 1" class="img" src="../../assets/image/h5/pic_d.png">
+                    <img v-else class="img" src="../../assets/image/h5/pic_c.png">
+                  </template>
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm4.imgUrl)}')`" />
+                    <!-- <div class="cover" :style="`backgroundImage: url('${showImg(xForm4.imgUrl)}')`" /> -->
+                    <img class="img" :src="`${showImg(xForm4.imgUrl)}`">
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm4')" />
                     </div>
@@ -462,6 +466,7 @@
                   :headers="headers"
                   :action="upLoadUrl"
                   :show-file-list="false"
+                  :on-error="handleUploadError"
                   :on-success="handleUploadSuccess"
                   :before-upload="beforeUpload"
                 >
@@ -491,9 +496,10 @@
             <el-form ref="xForm5" :rules="xRules5" :model="xForm5">
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap cover-top">
-                  <div v-if="xForm5.imgUrl==''" class="cover" />
+                  <img v-if="xForm5.imgUrl===''" class="img" src="../../assets/image/h5/pic_e.png">
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm5.imgUrl)}')`" />
+                    <!-- <div class="cover" :style="`backgroundImage: url('${showImg(xForm5.imgUrl)}')`" /> -->
+                    <img class="img" :src="`${showImg(xForm5.imgUrl)}`">
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm5')" />
                     </div>
@@ -505,6 +511,7 @@
                   :headers="headers"
                   :action="upLoadUrl"
                   :show-file-list="false"
+                  :on-error="handleUploadError"
                   :on-success="handleUploadSuccess"
                   :before-upload="beforeUpload"
                 >
@@ -584,9 +591,9 @@
             <el-form ref="xForm7" :rules="xRules7" :model="xForm7">
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap cover-top">
-                  <div v-if="xForm7.imgUrl==''" class="cover" />
+                  <img v-if="xForm7.imgUrl===''" class="img" src="../../assets/image/h5/pic_e.png">
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm7.imgUrl)}')`" />
+                    <img class="img" :src="`${showImg(xForm7.imgUrl)}`">
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm7')" />
                     </div>
@@ -688,6 +695,8 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import dialogGoods from '@/components/Dialog/DialogGoods'
 import { getPageSets, mutilAddPageSet, queryCenterStore, delProductList } from '@/api/wxmall'
 import config from '../../utils/config'
+import defaultGoodsImg from '@/assets/image/h5/pic_e.png'
+import defaultGoodsImg2 from '@/assets/image/h5/pic_d.png'
 
 export default {
   name: 'HomeSet',
@@ -855,10 +864,16 @@ export default {
     this.fetchData()
   },
   methods: {
-    imgLoadErr(e, url) {
-      console.log('eeeeee', e)
-      console.log('url', url)
-      // e.target.src = url
+    handleImgError(e, formName) {
+      if (formName === 'xForm4') {
+        if (this.xFormSet.position === 1) {
+          e.target.src = defaultGoodsImg2
+          return
+        }
+      }
+      e.target.src = defaultGoodsImg
+      console.log('e', e)
+      console.log('formName', formName)
     },
     toSetCenterStore() {
       this.$confirm('还未设置旗舰店，请先维护旗舰店, 去设置？', '提示', {
@@ -1159,8 +1174,24 @@ export default {
     handleRemove(formName) {
       this[formName].imgUrl = ''
     },
-    handleUploadError() {
+    handleUploadError(err) {
       this.uploadLoading = false
+      if (err) {
+        let res = JSON.stringify(err) || ''
+        res = JSON.parse(res)
+        if (res.status === 403) {
+          this.$message.error('用户信息过期，请重新登录')
+          this.$store.dispatch('user/resetToken').then(() => {
+            setTimeout(() => {
+              location.reload()
+            }, 1000)
+          })
+        } else {
+          this.$message.error(res.msg || '服务器错误，请稍后重试')
+        }
+      } else {
+        this.$message.error('图片上传失败')
+      }
     },
     handleUploadSuccess(res, file) {
       this.uploadLoading = false
@@ -2332,12 +2363,17 @@ export default {
     height: 120px;
     border-radius: 5px;
     overflow: hidden;
+    background: #f9f9f9;
     .cover {
       width: 100%;
       height: 100%;
       border: 1px solid #dedede;
       background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
         100%;
+    }
+    .img{
+      width: 100%;
+      height: 100%;
     }
     &:hover{
       .x-img-actions{
