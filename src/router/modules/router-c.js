@@ -26,7 +26,7 @@ const router = [
         component: () => import('@/views/customerService/consulting'),
         name: 'consultation',
         meta: {
-          title: '客服咨询',
+          title: '在线咨询',
           noCache: true
         }
       },
@@ -44,7 +44,7 @@ const router = [
         component: () => import('@/views/customerService/historyMsgs'),
         name: 'historyMsg',
         meta: {
-          title: '历史消息',
+          title: '消息记录',
           noCache: false
         }
       }

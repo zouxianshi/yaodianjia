@@ -37,8 +37,8 @@ export default {
       orderList: [], // 订单列表
       memberInfo: null, // 会员信息
       boughtRecord: null, // 会员购买记录
-      historyMsgPageSize: 20, // 历史消息每页条数
-      historyMsgCurPage: 1, // 历史消息分页页码
+      historyMsgPageSize: 20, // 消息记录每页条数
+      historyMsgCurPage: 1, // 消息记录分页页码
       showViewMore: true // 是否展示查看更多消息按钮
     }
   },
@@ -87,7 +87,7 @@ export default {
       this.orderListCurPageNo = 1
     },
 
-    // 查询历史消息
+    // 查询消息记录
     queryHistoryMessage() {
       const params = {
         merCode: this.merCode, // 商户编码
