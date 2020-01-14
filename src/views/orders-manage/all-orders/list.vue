@@ -43,6 +43,7 @@
                 format="yyyy-MM-dd HH:mm:ss"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 popper-class="order_dataTimepicker"
+                :default-time="['00:00:00', '23:59:59']"
                 @change="chooseTimeRange"
               />
             </div>
@@ -543,8 +544,8 @@
         <!-- 普通发货 -->
         <template v-if="deliveryType===0">
           <el-form-item label="快递公司：" :label-width="labelWidth">
-            <el-select v-model="expressQuery.expComCode" filterable placeholder="请输入关键词" @change="handleChangeExpress">
-              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="item.expComCode" />
+            <el-select v-model="expressQuery.expComName" filterable placeholder="请输入关键词" @change="handleChangeExpress">
+              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="[item.expComCode,item.expComName]" />
             </el-select>
           </el-form-item>
           <el-form-item label="快递单号：" :label-width="labelWidth">
@@ -1218,7 +1219,9 @@ export default {
     handleChangeExpress(val) { // 快递公司选择改变时触发
       this.expressQuery.currentPage = 1
       // console.log('expressQuery-item:', val)
-      this.expressQuery.expComCode = val
+      this.expressQuery.expComCode = val[0]
+      this.expressQuery.expComName = val[1]
+
       this.ExpressCompany()
       this.getpreSendNum() // 获取待发货商品数量
     },
@@ -1282,6 +1285,7 @@ export default {
           this.loadingSendNow = false
           return
         }
+
         if (!this.packageNo) {
           this.dialogDeliveryVisible = true
           this.$message({
@@ -1293,7 +1297,7 @@ export default {
         }
 
         this.orderSendData = {
-          // 'companyName': this.expressQuery.expComName,
+          'companyName': this.expressQuery.expComName,
           'companyNo': this.expressQuery.expComCode,
           'merCode': this.merCode,
           'modifyName': this.name,
@@ -1313,7 +1317,7 @@ export default {
           return
         }
         this.orderSendData = {
-          // 'companyName': this.expressQuery.expComName,
+          'companyName': this.expressQuery.expComName,
           'companyNo': this.expressQuery.expComCode,
           'merCode': this.merCode,
           'modifyName': this.name,
@@ -1493,7 +1497,7 @@ export default {
             this.dialogConfirmReturnVisible = true
           }
           this.$message({
-            message: '存在必填字段未填写',
+            message: '请填写密码验证身份',
             type: 'error'
           })
           return
