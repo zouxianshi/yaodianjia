@@ -241,7 +241,7 @@ export default {
     },
     // 消息按钮点击 跳转逻辑
     msgBtnClick() {
-      // 如果没有新消息则跳转历史消息 否则跳转在线咨询
+      // 如果没有新消息则跳转消息记录 否则跳转在线咨询
       if (!this.newMsgComing) {
         this.$router.push({
           path: '/customerService/consultation'

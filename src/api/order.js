@@ -54,6 +54,15 @@ export function setAgreeRefund(data) {
   })
 }
 
+// 验证明细退款是否是最后一笔退款明细
+export function getRefundFreight(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-return/_check`,
+    method: 'post',
+    data
+  })
+}
+
 // 统计待发货数量
 export function getCountReceived(data) {
   return request({

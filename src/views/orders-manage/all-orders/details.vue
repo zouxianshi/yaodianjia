@@ -42,7 +42,7 @@
                   <span>（审批未通过）</span>
                 </template>
               </template>
-              <template v-else>
+              <template v-if="detailsData.prescriptionSheetMark === '0'||detailsData.prescriptionStatus===2">
                 <template v-if="detailsData.orderStatus===6">
                   <template v-if="detailsData.deliveryType===2">
                     <span>待提货</span>
@@ -115,7 +115,11 @@
           <div class="con">付款方式：{{ detailsData.payMode ? '货到付款':'在线支付' }}</div>
           <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
-          <div class="con">优惠：￥{{ detailsData.couponDeduction }}</div>
+          <template v-if="detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont">
+            <div class="con">优惠：￥
+              {{ detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont }}
+            </div>
+          </template>
           <div class="con">应付总额：￥{{ detailsData.totalActualOrderAmount }}</div>
         </div>
         <div class="info-item">
@@ -222,7 +226,8 @@
       </template>
 
       <!-- 物流信息 --退货物流-->
-      <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.retRecordList">
         <div v-for="(item,indexReturn) in detailsData.retRecordList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="title">退货信息</div>
@@ -347,7 +352,7 @@ export default {
   filters: {
     orderType: function(value) { // 订单类型
       if (value === '0') {
-        return '正常订单'
+        return '普通订单'
       }
       if (value === '1') {
         return '处方药'
@@ -490,7 +495,7 @@ export default {
         }
         if (this.detailsData.returnList && this.detailsData.returnList.length > 0) { // 处理用逗号分隔的图片成数组
           for (let i = 0; i < this.detailsData.returnList.length; i++) {
-            if (this.detailsData.returnList[i].pictureVoucher !== '') {
+            if (this.detailsData.returnList[i].pictureVoucher && this.detailsData.returnList[i].pictureVoucher !== '') {
               this.detailsData.returnList[i].pictureVoucher = this.picFormat(this.detailsData.returnList[i].pictureVoucher)
             }
           }
@@ -850,10 +855,10 @@ export default {
   .el-image{
     width: 30%;
     max-height: 300px;
-    img{
-      width: 100%;
-      height: 100%;
-    }
+    // img{
+    //   width: 100%;
+    //   height: 100%;
+    // }
   }
 }
 </style>

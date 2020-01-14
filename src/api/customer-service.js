@@ -107,7 +107,7 @@ class CustomerService {
     })
   }
 
-  // 查询历史消息
+  // 查询消息记录
   queryHistoryMessage(params) {
     return request({
       url: `${config.merGoods}/1.0/csd-staff/_msg`,

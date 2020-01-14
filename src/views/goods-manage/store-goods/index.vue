@@ -148,10 +148,10 @@
               <template v-if="scope.row.mainPic">
                 <el-image
                   style="width: 70px; height: 70px"
-                  :src="showImg(scope.row.mainPic)"
+                  :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
                   lazy
                   fit="contain"
-                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
+                  :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
                 />
               </template>
               <template v-else>
