@@ -25,6 +25,7 @@
               v-model.trim="listQuery.searchValue"
               size="small"
               placeholder=""
+              @keyup.enter.native="listQuery.currentPage=1;_loadList()"
             />
           </div>
         </div>
