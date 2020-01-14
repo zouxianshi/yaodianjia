@@ -101,7 +101,7 @@
           <!-- <div class="con">下单门店：{{ detailsData.storeName }}</div> -->
           <div class="con">发货门店：<template v-if="detailsData.storeResDTO && detailsData.storeResDTO.stName"><span>{{ detailsData.storeResDTO.stName }}</span></template></div>
           <div class="con">收货方式：
-            <template v-if="detailsData.deliveryType===0">快递配送</template>
+            <template v-if="detailsData.deliveryType===0">普通快递</template>
             <template v-if="detailsData.deliveryType===1">门店员工配送</template>
             <template v-if="detailsData.deliveryType===2">门店自提</template>
             <!-- {{ detailsData.deliveryType ?'门店员工配送':'快递配送' }} -->
@@ -355,7 +355,7 @@ export default {
         return '普通订单'
       }
       if (value === '1') {
-        return '处方药'
+        return '处方药订单'
       }
       // if (value === 'V') {
       //   return '积分订单'

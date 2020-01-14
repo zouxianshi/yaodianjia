@@ -67,7 +67,7 @@
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value="" />
-              <el-option label="处方药" value="1" />
+              <el-option label="处方药订单" value="1" />
               <el-option label="普通订单" value="0" />
               <!-- <el-option label="积分订单" value="V" /> -->
             </el-select>
@@ -780,7 +780,7 @@ export default {
         return '普通订单'
       }
       if (value === '1') {
-        return '处方药'
+        return '处方药订单'
       }
       // if (value === 'V') {
       //   return '积分订单'
