@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="store-goods-wrapper order-list">
+    <div v-loading="loadingList" class="store-goods-wrapper order-list">
 
       <section @keydown.enter="_loadList">
         <div
@@ -202,7 +202,7 @@
           <el-radio-button label="20">已取消</el-radio-button>
         </el-radio-group>
       </div>
-      <div v-loading="loadingList" class="table-box">
+      <div class="table-box">
         <div class="order-table">
           <div class="order-table-header">
             <div class="header-left">

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div :model="detailsData" class="order-list">
+    <div v-loading="detailLoading" :model="detailsData" class="order-list">
       <div class="wrapper">
         <div class="item">
           <div class="item-left">
@@ -413,6 +413,7 @@ export default {
   mixins: [mixins],
   data() {
     return {
+      detailLoading: false, // 订单详情加载
       detailsData: {},
       dialogVisible: false,
       loading: false,
@@ -469,8 +470,10 @@ export default {
         orderId: this.$route.query.id,
         state: this.$route.query.state
       }
+      this.detailLoading = true
       getOrderDetail(dataParams).then(res => { // 获取商品详情
         // console.log('details', res.data)
+        this.detailLoading = false
         this.detailsData = res.data
         // console.log('this.detailsData.recordList:', this.detailsData.recordList)
         const recordListData = this.detailsData.recordList
@@ -504,6 +507,8 @@ export default {
         if (this.detailsData.prescriptionApproval && this.detailsData.prescriptionApproval.image !== '') { // 处理处方单逗号分隔的图片成数组
           this.detailsData.prescriptionApproval.image = this.picFormat(this.detailsData.prescriptionApproval.image)
         }
+      }).catch(() => {
+        this.detailLoading = false
       })
     },
     picFormat(data) { // 格式化图片凭证  用逗号分隔的
