@@ -73,6 +73,7 @@
               :headers="headers"
               :action="upLoadUrl"
               :show-file-list="false"
+              :on-error="handleUploadError"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
             >
@@ -340,6 +341,25 @@ export default {
       this.form.certificateCode = null
       this.imageUrl = null
       this.visable = false
+    },
+    handleUploadError(e) {
+      this.uploadLoading = false
+      if (e) {
+        let res = JSON.stringify(e) || ''
+        res = JSON.parse(res)
+        if (res.status === 403) {
+          this.$message.error('用户信息过期，请重新登录')
+          this.$store.dispatch('user/resetToken').then(() => {
+            setTimeout(() => {
+              location.reload()
+            }, 1000)
+          })
+        } else {
+          this.$message.error(res.msg || '服务器错误，请稍后重试')
+        }
+      } else {
+        this.$message.error('图片上传失败')
+      }
     },
     handleAvatarSuccess(res, file) {
       if (res.code === '10000') {
