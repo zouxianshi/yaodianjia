@@ -158,7 +158,7 @@
                 </el-timeline>
               </div>
             </template>
-            <template v-else>暂无物流信息</template>
+            <template v-else>暂未同步到物流信息</template>
           </div>
         </div>
       </template>
@@ -207,7 +207,7 @@
             <div class="con">退款说明：{{ item.refundReturnDesc }}</div>
             <template v-if="item.modifyName"><div class="con">退款操作人：{{ item.modifyName }}</div></template>
             <template v-if="item.createTime"><div class="con">退款申请时间：{{ item.createTime }}</div></template>
-            <template v-if="item.modifyTime"><div class="con">退款处理时间：{{ item.modifyTime }}</div></template>
+            <template v-if="!(item.status===0 || item.status===1)"><div class="con">退款处理时间：{{ item.modifyTime }}</div></template>
           </div>
           <div class="info-item info-right">
             <div class="block prescriptionA_img">
@@ -257,7 +257,7 @@
                 </el-timeline>
               </div>
             </template>
-            <template v-else>暂无物流信息</template>
+            <template v-else>暂未同步到物流信息</template>
           </div>
         </div>
       </template>
