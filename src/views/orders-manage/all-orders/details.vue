@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div :model="detailsData" class="order-list">
+    <div v-loading="detailLoading" :model="detailsData" class="order-list">
       <div class="wrapper">
         <div class="item">
           <div class="item-left">
@@ -100,10 +100,8 @@
           <div class="con">下单时间：{{ detailsData.orderTime }}</div>
           <!-- <div class="con">下单门店：{{ detailsData.storeName }}</div> -->
           <div class="con">发货门店：<template v-if="detailsData.storeResDTO && detailsData.storeResDTO.stName"><span>{{ detailsData.storeResDTO.stName }}</span></template></div>
-          <div class="con">收货方式：
-            <template v-if="detailsData.deliveryType===0">快递配送</template>
-            <template v-if="detailsData.deliveryType===1">门店员工配送</template>
-            <template v-if="detailsData.deliveryType===2">门店自提</template>
+          <div class="con">
+            收货方式：<template v-if="detailsData.deliveryType===0">普通快递</template><template v-if="detailsData.deliveryType===1">配送上门</template><template v-if="detailsData.deliveryType===2">门店自提</template>
             <!-- {{ detailsData.deliveryType ?'门店员工配送':'快递配送' }} -->
           </div>
           <div class="con">订单来源：微商城</div>
@@ -115,7 +113,11 @@
           <div class="con">付款方式：{{ detailsData.payMode ? '货到付款':'在线支付' }}</div>
           <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
-          <div class="con">优惠：￥{{ detailsData.couponDeduction }}</div>
+          <template v-if="detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont">
+            <div class="con">优惠：￥
+              {{ detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont }}
+            </div>
+          </template>
           <div class="con">应付总额：￥{{ detailsData.totalActualOrderAmount }}</div>
         </div>
         <div class="info-item">
@@ -128,7 +130,8 @@
       </div>
 
       <!-- 物流信息 --发货物流-->
-      <template v-if="detailsData.recordList && (detailsData.orderStatus===6 ||detailsData.orderStatus===8||detailsData.orderStatus===12||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.recordList && (detailsData.orderStatus===6 ||detailsData.orderStatus===8||detailsData.orderStatus===12||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.recordList">
         <div v-for="(item,indexSend) in detailsData.recordList" :key="item.id" class="info">
           <div class="info-item info-left">
             <div class="title">配送信息{{ indexSend+1 }}</div>
@@ -138,27 +141,30 @@
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <div class="block">
-              <el-timeline>
-                <el-timeline-item
-                  v-for="(logistical, indexS) in sendLogisticals[indexSend]"
-                  :key="indexS"
-                  :type="logistical.type"
-                  :color="logistical.color"
-                  :size="logistical.size"
-                  :timestamp="logistical.timestamp"
-                  :hide-timestamp="true"
-                >
-                  {{ logistical.timestamp }}{{ logistical.content }}
-                </el-timeline-item>
-              </el-timeline>
-            </div>
+            <template v-if="item.data">
+              <div class="block">
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(logistical, indexS) in sendLogisticals[indexSend]"
+                    :key="indexS"
+                    :type="logistical.type"
+                    :color="logistical.color"
+                    :size="logistical.size"
+                    :timestamp="logistical.timestamp"
+                    :hide-timestamp="true"
+                  >
+                    {{ logistical.timestamp }}{{ logistical.content }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+            </template>
+            <template v-else>暂未同步到物流信息</template>
           </div>
         </div>
       </template>
 
       <!-- 处方申请单 -->
-      <template v-if="detailsData.prescriptionSheetMark==='1'&&detailsData.prescriptionApproval">
+      <template v-if="detailsData.prescriptionSheetMark==='1' && detailsData.prescriptionStatus ===2 && detailsData.prescriptionApproval">
         <div class="info">
           <div class="info-item info-left">
             <div class="title">处方申请单</div>
@@ -193,14 +199,15 @@
       </template>
 
       <!-- 退款原因 -->
-      <template v-if="detailsData.returnList && (detailsData.orderStatus===8||detailsData.orderStatus===10||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.returnList && (detailsData.orderStatus===8||detailsData.orderStatus===10||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.returnList">
         <div v-for="(item,indexReturn) in detailsData.returnList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="con">退款原因：{{ item.refundReason }}</div>
             <div class="con">退款说明：{{ item.refundReturnDesc }}</div>
             <template v-if="item.modifyName"><div class="con">退款操作人：{{ item.modifyName }}</div></template>
             <template v-if="item.createTime"><div class="con">退款申请时间：{{ item.createTime }}</div></template>
-            <template v-if="item.modifyTime"><div class="con">退款处理时间：{{ item.modifyTime }}</div></template>
+            <template v-if="!(item.status===0 || item.status===1)"><div class="con">退款处理时间：{{ item.modifyTime }}</div></template>
           </div>
           <div class="info-item info-right">
             <div class="block prescriptionA_img">
@@ -222,7 +229,8 @@
       </template>
 
       <!-- 物流信息 --退货物流-->
-      <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.retRecordList">
         <div v-for="(item,indexReturn) in detailsData.retRecordList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="title">退货信息</div>
@@ -232,21 +240,24 @@
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <div class="block">
-              <el-timeline>
-                <el-timeline-item
-                  v-for="(logistical, indexF) in refundLogisticals[indexReturn]"
-                  :key="indexF"
-                  :type="logistical.type"
-                  :color="logistical.color"
-                  :size="logistical.size"
-                  :timestamp="logistical.timestamp"
-                  :hide-timestamp="true"
-                >
-                  {{ logistical.timestamp }}{{ logistical.content }}
-                </el-timeline-item>
-              </el-timeline>
-            </div>
+            <template v-if="item.data">
+              <div class="block">
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(logistical, indexF) in refundLogisticals[indexReturn]"
+                    :key="indexF"
+                    :type="logistical.type"
+                    :color="logistical.color"
+                    :size="logistical.size"
+                    :timestamp="logistical.timestamp"
+                    :hide-timestamp="true"
+                  >
+                    {{ logistical.timestamp }}{{ logistical.content }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+            </template>
+            <template v-else>暂未同步到物流信息</template>
           </div>
         </div>
       </template>
@@ -350,7 +361,7 @@ export default {
         return '普通订单'
       }
       if (value === '1') {
-        return '处方药'
+        return '处方药订单'
       }
       // if (value === 'V') {
       //   return '积分订单'
@@ -370,7 +381,7 @@ export default {
         return '已发货'
       }
       if (value === 8) {
-        return '待退货'
+        return '退货中'
       }
       if (value === 10) {
         return '待退款'
@@ -408,6 +419,7 @@ export default {
   mixins: [mixins],
   data() {
     return {
+      detailLoading: false, // 订单详情加载
       detailsData: {},
       dialogVisible: false,
       loading: false,
@@ -464,8 +476,10 @@ export default {
         orderId: this.$route.query.id,
         state: this.$route.query.state
       }
+      this.detailLoading = true
       getOrderDetail(dataParams).then(res => { // 获取商品详情
         // console.log('details', res.data)
+        this.detailLoading = false
         this.detailsData = res.data
         // console.log('this.detailsData.recordList:', this.detailsData.recordList)
         const recordListData = this.detailsData.recordList
@@ -484,6 +498,8 @@ export default {
           retRecordListData.forEach((item, index) => {
             const paramsRefund = JSON.parse(item.data)
             console.log('paramsRefund:', paramsRefund)
+            alert('物流')
+            debugger
 
             this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
           })
@@ -499,6 +515,8 @@ export default {
         if (this.detailsData.prescriptionApproval && this.detailsData.prescriptionApproval.image !== '') { // 处理处方单逗号分隔的图片成数组
           this.detailsData.prescriptionApproval.image = this.picFormat(this.detailsData.prescriptionApproval.image)
         }
+      }).catch(() => {
+        this.detailLoading = false
       })
     },
     picFormat(data) { // 格式化图片凭证  用逗号分隔的

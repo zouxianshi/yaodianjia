@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="store-goods-wrapper order-list">
+    <div v-loading="loadingList" class="store-goods-wrapper order-list">
 
       <section @keydown.enter="_loadList">
         <div
@@ -15,6 +15,7 @@
               placeholder="请输入关键词"
               :remote-method="remoteMethod"
               :loading="selectloading"
+              @change="searchSelectChange"
             >
               <el-option v-for="itemOp in options" :key="itemOp.value" :value="itemOp.value" :label="itemOp.label" />
             </el-select>
@@ -24,6 +25,7 @@
               v-model.trim="listQuery.searchValue"
               size="small"
               placeholder=""
+              @keyup.enter.native="listQuery.currentPage=1;_loadList()"
             />
           </div>
         </div>
@@ -42,6 +44,7 @@
                 format="yyyy-MM-dd HH:mm:ss"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 popper-class="order_dataTimepicker"
+                :default-time="['00:00:00', '23:59:59']"
                 @change="chooseTimeRange"
               />
             </div>
@@ -65,7 +68,7 @@
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value="" />
-              <el-option label="处方药" value="1" />
+              <el-option label="处方药订单" value="1" />
               <el-option label="普通订单" value="0" />
               <!-- <el-option label="积分订单" value="V" /> -->
             </el-select>
@@ -140,7 +143,8 @@
               :loading="selectloading"
               @change="handleChangeStore"
             >
-              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName" :value="item.id" />
+              <el-option label="全部" value="" />
+              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName+'('+item.stCode+')'" :value="item.id" />
             </el-select>
           </div>
           <div class="search-item">
@@ -152,7 +156,7 @@
               @change="handleChangeEmpId"
             >
               <el-option label="全部" value="" />
-              <el-option v-for="(item,indexEmp) in employeeData" :key="indexEmp" :label="item.empName" :value="item.id" />
+              <el-option v-for="(item,indexEmp) in employeeData" :key="indexEmp" :label="item.empName+'('+item.empCode+')'" :value="item.id" />
             </el-select>
           </div>
           <div class="search-item">
@@ -200,7 +204,7 @@
           <el-radio-button label="20">已取消</el-radio-button>
         </el-radio-group>
       </div>
-      <div v-loading="loadingList" class="table-box">
+      <div class="table-box">
         <div class="order-table">
           <div class="order-table-header">
             <div class="header-left">
@@ -271,7 +275,7 @@
                           <!-- <template v-if="list.status===4&& item.deliveryType!==2 && item.detailList.length>1">
                             <div class="order_btn btn_normal" style="text-align:right"><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
                           </template> -->
-                          <template v-if="list.status===10">
+                          <template v-if="list.status===8||list.status===10">
                             <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.id)">查看退款理由</div>
                           </template>
                           <template v-if="list.status===10 && item.deliveryType!==2 && item.detailList.length>1">
@@ -326,7 +330,7 @@
                             </template>
                           </template>
                           <template v-if="item.orderStatus===8 && item.detailList.length===1">
-                            <div>待退货</div>
+                            <div>退货中</div>
                           </template>
                           <template v-if="item.orderStatus===30">
                             <div>退款完成</div>
@@ -369,7 +373,7 @@
                             </template>
                           </template>
                           <template v-if="item.orderStatus===8">
-                            <div>待退货</div>
+                            <div>退货中</div>
                             <div>（审批未通过）</div>
                             <template v-if="item.detailList.length===1">
                               <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
@@ -424,7 +428,7 @@
                           </template>
                         </template>
                         <template v-if="item.orderStatus===8">
-                          <div>待退货</div>
+                          <div>退货中</div>
                           <template v-if="item.detailList.length===1">
                             <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
                           </template>
@@ -541,8 +545,8 @@
         <!-- 普通发货 -->
         <template v-if="deliveryType===0">
           <el-form-item label="快递公司：" :label-width="labelWidth">
-            <el-select v-model="expressQuery.expComCode" filterable placeholder="请输入关键词" @change="handleChangeExpress">
-              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="item.expComCode" />
+            <el-select v-model="expressQuery.expComName" filterable placeholder="请输入关键词" @change="handleChangeExpress">
+              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="[item.expComCode,item.expComName]" />
             </el-select>
           </el-form-item>
           <el-form-item label="快递单号：" :label-width="labelWidth">
@@ -777,7 +781,7 @@ export default {
         return '普通订单'
       }
       if (value === '1') {
-        return '处方药'
+        return '处方药订单'
       }
       // if (value === 'V') {
       //   return '积分订单'
@@ -797,7 +801,7 @@ export default {
         return '已发货'
       }
       if (value === 8) {
-        return '待退货'
+        return '退货中'
       }
       if (value === 10) {
         return '待退款'
@@ -912,6 +916,7 @@ export default {
       loading: false,
       selectloading: false,
       listQuery: {
+        'currentPage': 1,
         // 'distribution': '', // 配送方式
         'empId': '', // 接单员工
         'endDate': '', // 下单结束时间
@@ -1023,6 +1028,7 @@ export default {
         isSuper = 0
       }
       this.listQuery = {
+        'currentPage': 1,
         // 'distribution': '', // 配送方式
         'empId': '', // 接单员工
         'endDate': '', // 下单结束时间
@@ -1048,7 +1054,7 @@ export default {
           this._loadList()
         }
       })
-      employeeSearch({ merCode: this.merCode }).then(res => { // 获取门店员工
+      employeeSearch({ merCode: this.merCode, pageSize: 10000, status: 1 }).then(res => { // 获取门店员工
         if (res.data) {
           this.employeeData = res.data.data
         }
@@ -1056,7 +1062,6 @@ export default {
     },
     checkPwd() {
       getCheckPwd().then(res => {
-        // console.log('密码验证：', res)
         if (res) {
           this.isCheckPwd = res.data
         }
@@ -1076,10 +1081,10 @@ export default {
         const { data, totalCount } = res.data
         if (data) {
           this.tableData = data
-          this.total = totalCount
         } else {
           this.tableData = []
         }
+        this.total = totalCount
       }).catch(() => {
         this.loadingList = false
       })
@@ -1096,7 +1101,7 @@ export default {
         })
         getMyStoreList({ pageSize: 10000, currentPage: 1, storeName: val, onlineStatus: 1, status: 1 }).then(res => {
           const { data } = res.data
-          data.unshift({ id: '', stName: '全部' })
+          // data.unshift({ id: '', stName: '全部' })
           this.storeList = data
           this.selectloading = false
           loading.close()
@@ -1217,7 +1222,9 @@ export default {
     handleChangeExpress(val) { // 快递公司选择改变时触发
       this.expressQuery.currentPage = 1
       // console.log('expressQuery-item:', val)
-      this.expressQuery.expComCode = val
+      this.expressQuery.expComCode = val[0]
+      this.expressQuery.expComName = val[1]
+
       this.ExpressCompany()
       this.getpreSendNum() // 获取待发货商品数量
     },
@@ -1281,6 +1288,7 @@ export default {
           this.loadingSendNow = false
           return
         }
+
         if (!this.packageNo) {
           this.dialogDeliveryVisible = true
           this.$message({
@@ -1292,7 +1300,7 @@ export default {
         }
 
         this.orderSendData = {
-          // 'companyName': this.expressQuery.expComName,
+          'companyName': this.expressQuery.expComName,
           'companyNo': this.expressQuery.expComCode,
           'merCode': this.merCode,
           'modifyName': this.name,
@@ -1312,7 +1320,7 @@ export default {
           return
         }
         this.orderSendData = {
-          // 'companyName': this.expressQuery.expComName,
+          'companyName': this.expressQuery.expComName,
           'companyNo': this.expressQuery.expComCode,
           'merCode': this.merCode,
           'modifyName': this.name,
@@ -1450,14 +1458,14 @@ export default {
             })
             return false
           }
-          if (this.agreeRefundForm.actualRefundAmount <= 0) {
-            this.$message({
-              message: '退款金额必须大于0',
-              type: 'error',
-              duration: 5 * 1000
-            })
-            return false
-          }
+          // if (this.agreeRefundForm.actualRefundAmount <= 0) {
+          //   this.$message({
+          //     message: '退款金额必须大于0',
+          //     type: 'error',
+          //     duration: 5 * 1000
+          //   })
+          //   return false
+          // }
           setAgreeRefund(dataParam).then(res => {
             if (res.code === '10000') {
               this.loading = false
@@ -1492,12 +1500,15 @@ export default {
             this.dialogConfirmReturnVisible = true
           }
           this.$message({
-            message: '存在必填字段未填写',
+            message: '请填写密码验证身份',
             type: 'error'
           })
           return
         }
       })
+    },
+    searchSelectChange(data) {
+      this.listQuery.searchValue = ''
     },
     // 选取商品 表格选取（全选/反选），更新 mySelectList
     handleSelectAllChange(allList) {
@@ -1753,7 +1764,7 @@ export default {
 .color-gray{color:#aaa;}
 .float-right{float:right}
 .el-dialog__body{line-height: 22px;}
-.dialog-title{font-size: 16px; font-weight: bold;text-align: center;margin-bottom: 10px;}
+.dialog-title{font-size: 16px; font-weight: bold;margin-bottom: 10px;}
 .noneData{
   border:1px solid #dfe6ec;
   border-top: none;
@@ -1770,5 +1781,5 @@ export default {
 <style scoped>
 .el-date-range-picker{left:270px!important} /*时间控件弹出框*/
 .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
-.order-list .order-form .search-item .label-name{ width: 80px!important;}
+/* .order-list .order-form .search-item .label-name{ width: 80px!important;} */
 </style>

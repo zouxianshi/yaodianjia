@@ -27,7 +27,7 @@ export default {
       delUserRow: null, // 要删除的数据item
       delUserDialogVisible: false, // 删除确认弹窗是否展示
       consultingLoading: true, // 整页loading
-      messageLoading: false, // 历史消息是否正在加载
+      messageLoading: false, // 消息记录是否正在加载
       orderListLoading: false, // 订单列表是否正在加载
       orderListHasMore: true, // 订单是否加载更多数据
       orderListCurPageNo: 1, // 订单当前页码
@@ -159,8 +159,8 @@ export default {
             this.targetId = userItem.targetId
             this.curUserName = userItem.latestMessage.content.extra.nickName
             this.curUserAvatar = userItem.latestMessage.content.extra.userLogo
-            // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
-            // 历史消息
+            // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
+            // 消息记录
             this.queryHistoryMessage()
             // 会员信息
             this.queryMemberInfo()
@@ -177,8 +177,8 @@ export default {
           this.targetId = list[0].targetId
           this.curUserName = list[0].latestMessage.content.extra.nickName
           this.curUserAvatar = list[0].latestMessage.content.extra.userLogo
-          // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
-          // 历史消息
+          // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
+          // 消息记录
           this.queryHistoryMessage()
           // 会员信息
           this.queryMemberInfo()
@@ -459,7 +459,7 @@ export default {
       this.delUserDialogVisible = true
     },
 
-    // 查询历史消息
+    // 查询消息记录
     queryHistoryMessage() {
       const {
         curPageNo,
@@ -474,7 +474,7 @@ export default {
       this.messageLoading = true
       this.queryOnlineCurUserMsgList(params).then(res => {
         this.messageLoading = false
-        console.log('curOnlineUserData: 历史消息列表等', this.curOnlineUserData)
+        console.log('curOnlineUserData: 消息记录列表等', this.curOnlineUserData)
         setTimeout(() => {
           if (curPageNo === 1) {
             this.scrollToBottom()
@@ -627,8 +627,8 @@ export default {
       if (this.targetId) {
         // 重置vuex中的聊天相关数据
         this.resetCurOnlineUserData()
-        // 查询会话列表中第一个用户的历史消息、个人资料、订单信息等
-        // 历史消息
+        // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
+        // 消息记录
         this.queryHistoryMessage()
         // 会员信息
         this.queryMemberInfo()

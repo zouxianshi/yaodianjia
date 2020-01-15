@@ -4,8 +4,8 @@
       <div class="setting_wrapper">
         <div class="con">
           <div class="title">订单自动确认收货规则</div>
-          <div>普通的O2O订单，门店发货48小时后自动确认收货</div>
-          <div>对于位置偏远，发快递配送的订单，发货7天后自动确认收货</div>
+          <div>普通的O2O订单，门店发货4小时后自动确认收货</div>
+          <div>对于位置偏远，发快递配送的订单，发货15天后自动确认收货</div>
         </div>
       </div>
 

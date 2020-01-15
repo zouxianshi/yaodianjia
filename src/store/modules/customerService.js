@@ -51,7 +51,7 @@ const mutations = {
   },
 
   /**
-   * 历史消息相关
+   * 消息记录相关
    */
 
   // 设置客服历史会话列表
@@ -155,7 +155,7 @@ const mutations = {
       msgResult,
       type
     } = payload
-    // 组装历史消息数据
+    // 组装消息记录数据
     const curWindowPush = {
       content: Chat.symbolToEmoji(msgResult.content.content), // 消息内容
       coversionType: 'PERSON', // 消息类型
