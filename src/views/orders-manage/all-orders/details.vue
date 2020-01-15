@@ -483,9 +483,9 @@ export default {
         this.detailLoading = false
         this.detailsData = res.data
         // console.log('this.detailsData.recordList:', this.detailsData.recordList)
-        alert('this.detailsData:', this.detailsData)
-        const recordListData = this.detailsData.recordList
+
         if (this.detailsData.recordList) { // 发货物流
+          const recordListData = this.detailsData.recordList
           recordListData.forEach((item, index) => {
             const paramsSend = JSON.parse(item.data)
             this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
@@ -493,15 +493,14 @@ export default {
           // console.log('this.sendLogisticals:', this.sendLogisticals)
         }
 
-        const retRecordListData = this.detailsData.retRecordList
-        console.log('retRecordListData:', retRecordListData)
-
         if (this.detailsData.retRecordList) { // 退货物流
+          const retRecordListData = this.detailsData.retRecordList
+          console.log('retRecordListData:', retRecordListData)
           retRecordListData.forEach((item, index) => {
             const paramsRefund = JSON.parse(item.data)
             console.log('paramsRefund:', paramsRefund)
-            alert('物流')
-            debugger
+            // alert('物流')
+            // debugger
 
             this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
           })
