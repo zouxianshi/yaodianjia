@@ -498,6 +498,8 @@ export default {
           retRecordListData.forEach((item, index) => {
             const paramsRefund = JSON.parse(item.data)
             console.log('paramsRefund:', paramsRefund)
+            alert('物流')
+            debugger
 
             this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
           })
