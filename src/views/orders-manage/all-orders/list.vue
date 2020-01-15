@@ -330,7 +330,7 @@
                             </template>
                           </template>
                           <template v-if="item.orderStatus===8 && item.detailList.length===1">
-                            <div>待退货</div>
+                            <div>退货中</div>
                           </template>
                           <template v-if="item.orderStatus===30">
                             <div>退款完成</div>
@@ -373,7 +373,7 @@
                             </template>
                           </template>
                           <template v-if="item.orderStatus===8">
-                            <div>待退货</div>
+                            <div>退货中</div>
                             <div>（审批未通过）</div>
                             <template v-if="item.detailList.length===1">
                               <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
@@ -428,7 +428,7 @@
                           </template>
                         </template>
                         <template v-if="item.orderStatus===8">
-                          <div>待退货</div>
+                          <div>退货中</div>
                           <template v-if="item.detailList.length===1">
                             <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
                           </template>
@@ -801,7 +801,7 @@ export default {
         return '已发货'
       }
       if (value === 8) {
-        return '待退货'
+        return '退货中'
       }
       if (value === 10) {
         return '待退款'

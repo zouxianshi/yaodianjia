@@ -380,7 +380,7 @@ export default {
         return '已发货'
       }
       if (value === 8) {
-        return '待退货'
+        return '退货中'
       }
       if (value === 10) {
         return '待退款'
