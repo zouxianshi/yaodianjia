@@ -130,7 +130,8 @@
       </div>
 
       <!-- 物流信息 --发货物流-->
-      <template v-if="detailsData.recordList && (detailsData.orderStatus===6 ||detailsData.orderStatus===8||detailsData.orderStatus===12||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.recordList && (detailsData.orderStatus===6 ||detailsData.orderStatus===8||detailsData.orderStatus===12||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.recordList">
         <div v-for="(item,indexSend) in detailsData.recordList" :key="item.id" class="info">
           <div class="info-item info-left">
             <div class="title">配送信息{{ indexSend+1 }}</div>
