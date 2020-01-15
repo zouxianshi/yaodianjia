@@ -141,7 +141,7 @@
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <template v-if="item.data">
+            <template v-if="item.data||item.data!==[]">
               <div class="block">
                 <el-timeline>
                   <el-timeline-item
@@ -240,7 +240,7 @@
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <template v-if="item.data">
+            <template v-if="item.data||item.data!==[]">
               <div class="block">
                 <el-timeline>
                   <el-timeline-item
@@ -486,7 +486,7 @@ export default {
         if (this.detailsData.recordList) { // 发货物流
           const recordListData = this.detailsData.recordList
           recordListData.forEach((item, index) => {
-            if (item.data) {
+            if (item.data || item.data !== []) {
               const paramsSend = JSON.parse(item.data)
               this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
             }
@@ -496,7 +496,7 @@ export default {
         if (this.detailsData.retRecordList) { // 退货物流
           const retRecordListData = this.detailsData.retRecordList
           retRecordListData.forEach((item, index) => {
-            if (item.data) {
+            if (item.data || item.data !== []) {
               const paramsRefund = JSON.parse(item.data)
               this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
             }
