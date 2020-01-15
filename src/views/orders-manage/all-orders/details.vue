@@ -478,39 +478,38 @@ export default {
       }
       this.detailLoading = true
       getOrderDetail(dataParams).then(res => { // 获取商品详情
-        console.log('details', res.data)
+        // console.log('details', res.data)
 
         this.detailLoading = false
         this.detailsData = res.data
-        // console.log('this.detailsData.recordList:', this.detailsData.recordList)
 
         if (this.detailsData.recordList) { // 发货物流
           const recordListData = this.detailsData.recordList
           recordListData.forEach((item, index) => {
-            const paramsSend = JSON.parse(item.data)
-            this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
+            if (item.data) {
+              const paramsSend = JSON.parse(item.data)
+              this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
+            }
           })
-          // console.log('this.sendLogisticals:', this.sendLogisticals)
         }
 
         if (this.detailsData.retRecordList) { // 退货物流
           const retRecordListData = this.detailsData.retRecordList
-          console.log('retRecordListData:', retRecordListData)
           retRecordListData.forEach((item, index) => {
-            const paramsRefund = JSON.parse(item.data)
-            console.log('paramsRefund:', paramsRefund)
-            // alert('物流')
-            // debugger
-
-            this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
+            if (item.data) {
+              const paramsRefund = JSON.parse(item.data)
+              this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
+            }
           })
         }
+
         if (this.detailsData.returnList && this.detailsData.returnList.length > 0) { // 处理用逗号分隔的图片成数组
           for (let i = 0; i < this.detailsData.returnList.length; i++) {
             if (this.detailsData.returnList[i].pictureVoucher && this.detailsData.returnList[i].pictureVoucher !== '') {
               this.detailsData.returnList[i].pictureVoucher = this.picFormat(this.detailsData.returnList[i].pictureVoucher)
             }
           }
+          // console.log('this.detailsData.returnList.pictureVoucher:', this.detailsData.returnList.pictureVoucher)
         }
 
         if (this.detailsData.prescriptionApproval && this.detailsData.prescriptionApproval.image !== '') { // 处理处方单逗号分隔的图片成数组
@@ -534,6 +533,7 @@ export default {
     },
     logisticsFormat(data) { // 格式化物流信息
       // console.log('物流data:', data)
+      // alert(data)
       const arr = []
       for (let i = 0; i < data.length; i++) {
         const object = {}
@@ -545,6 +545,7 @@ export default {
         arr[i] = object
       }
       // console.log('临时arr:', arr)
+      // alert(arr)
       return arr
     },
     /**
