@@ -478,10 +478,12 @@ export default {
       }
       this.detailLoading = true
       getOrderDetail(dataParams).then(res => { // 获取商品详情
-        // console.log('details', res.data)
+        console.log('details', res.data)
+
         this.detailLoading = false
         this.detailsData = res.data
         // console.log('this.detailsData.recordList:', this.detailsData.recordList)
+        alert('this.detailsData:', this.detailsData)
         const recordListData = this.detailsData.recordList
         if (this.detailsData.recordList) { // 发货物流
           recordListData.forEach((item, index) => {
