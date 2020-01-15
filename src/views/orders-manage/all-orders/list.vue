@@ -95,8 +95,8 @@
               <el-option label="全部" value="" />
               <el-option label="待付款" value="2" />
               <el-option label="待发货" value="4" />
-              <el-option label="待提货" value="7" />
               <el-option label="已发货" value="6" />
+              <el-option label="待提货" value="7" />
               <el-option label="已完成" value="12" />
               <el-option label="待退款" value="10" />
               <!-- <el-option label="退货中" value="10" /> -->
@@ -194,8 +194,8 @@
               <span class="badge">{{ preSendNum }}</span>
             </template>
           </el-radio-button>
-          <el-radio-button label="7">待提货</el-radio-button>
           <el-radio-button label="6">已发货</el-radio-button>
+          <el-radio-button label="7">待提货</el-radio-button>
           <el-radio-button label="12">已完成</el-radio-button>
           <!-- <el-radio-button label="8">待退货</el-radio-button> -->
           <el-radio-button label="10">待退款</el-radio-button>
