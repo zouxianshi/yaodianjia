@@ -307,6 +307,7 @@ export default {
         this.merStaffTableData.selectedList.push({
           avatarPath: 'https://xxx.dfs.com/img.png',
           empName: row.empName,
+          empCode: row.empCode,
           id: row.id,
           merCode: this.merCode,
           status: 1
