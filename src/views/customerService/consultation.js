@@ -91,7 +91,8 @@ export default {
         age: this.curLatestMessageInfo.content.extra.age, // 年龄
         sex: this.curLatestMessageInfo.content.extra.sex, // 性别（男，女，未知）
         userLogo: this.curUserAvatar,
-        platform: 1 // 平台 Number 0-app 1-web端
+        platform: 1, // 平台 Number 0-app 1-web端
+        staffName: this.name
       }
     }
   },
@@ -416,7 +417,7 @@ export default {
           userId: data.targetId
         })
       } else {
-        // 重置所有数据并重新请求s
+        // 重置所有数据并重新请求
         this.targetId = data.targetId
         this.curLatestMessageInfo = data.latestMessage
         this.curUserAvatar = data.latestMessage.content.extra.userLogo
@@ -512,13 +513,17 @@ export default {
     },
     // 图片选择
     handleChange(e) {
+      const file = e.target.files
+      console.error('file', file)
+      if (!file || (file && file.length <= 0)) {
+        return
+      }
       const loading = this.$loading({
         lock: true,
         text: '正在上传图片...',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      const file = e.target.files
 
       // 图片转base64作为缩略图
       let base64Url = ''
@@ -624,6 +629,11 @@ export default {
     },
     // 重置聊天记录及右侧个人资料
     resetRightData() {
+      this.orderListCurPageNo = 1
+      this.orderListHasMore = true
+      this.orderListLoading = false
+      this.orderList = []
+      console.log('into resetrightdata ', this.targetId)
       if (this.targetId) {
         // 重置vuex中的聊天相关数据
         this.resetCurOnlineUserData()
