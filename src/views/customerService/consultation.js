@@ -299,6 +299,7 @@ export default {
         this.cannedRepliesVisible = true
       } else if (type === 'goods') {
         this.selectGoodsDialogVisible = true
+        this.queryGoods()
       } else if (type === 'emoji') {
         this.emojiPopVisible = true
       } else if (type === 'pic') {
@@ -306,6 +307,13 @@ export default {
       } else {
         console.error('handleActionClick: 不支持的类型')
       }
+    },
+
+    // 商品搜索按钮点击
+    goodsSearchBtnClick() {
+      this.goodsQuery.currentPage = 1
+      this.goodsList = []
+      this.queryGoods()
     },
 
     // 获取快捷回复列表
@@ -370,6 +378,9 @@ export default {
     },
     handleSelectGoodsDialogClose() {
       this.selectGoodsDialogVisible = false
+      this.goodsQuery.currentPage = 1
+      this.goodsQuery.name = ''
+      this.goodsList = []
     },
     // 商品选择按钮点击
     handleGoodsSelect(row) {

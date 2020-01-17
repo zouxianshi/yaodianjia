@@ -299,7 +299,7 @@ export default {
       this.merStaffQuery.pageSize = 10
       this.merStaffTableData.list = []
       this.merStaffTableData.total = 0
-      this.merStaffTableData.selectedList = []
+      // this.merStaffTableData.selectedList = []
       this.queryMerStaffList()
     },
 
