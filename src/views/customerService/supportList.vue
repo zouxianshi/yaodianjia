@@ -28,6 +28,7 @@
         <el-button class="add" type="primary" size="mini" @click.stop="handleAddSupportStaff()">添加客服</el-button>
 
         <el-dialog
+          :close-on-click-modal="false"
           :before-close="handleAddDialogClose"
           title="添加客服"
           append-to-body
@@ -105,7 +106,7 @@
               v-for="(item,index) in merStaffTableData.selectedList"
               :key="index"
               class="selected-staff-item"
-            >{{ item.empName }} {{ item.id }}，</span>
+            >{{ item.empName }} {{ item.empCode }}，</span>
           </div>
           <div class="staff-dialog-bottom">
             <el-button @click="addDialogVisible=false">取消</el-button>
