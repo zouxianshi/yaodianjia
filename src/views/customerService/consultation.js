@@ -299,6 +299,7 @@ export default {
         this.cannedRepliesVisible = true
       } else if (type === 'goods') {
         this.selectGoodsDialogVisible = true
+        this.queryGoods()
       } else if (type === 'emoji') {
         this.emojiPopVisible = true
       } else if (type === 'pic') {
@@ -306,6 +307,13 @@ export default {
       } else {
         console.error('handleActionClick: 不支持的类型')
       }
+    },
+
+    // 商品搜索按钮点击
+    goodsSearchBtnClick() {
+      this.goodsQuery.currentPage = 1
+      this.goodsList = []
+      this.queryGoods()
     },
 
     // 获取快捷回复列表
@@ -335,7 +343,7 @@ export default {
         currentPage: this.goodsQuery.currentPage, // 页码
         erpCode: '', // 商品编码
         groupId: '', // 分组id,如果是1，2级分组时，请与level字段共用
-        infoFlag: '', // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
+        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
         level: 0, // 分组或分类level,1-一级，2-二级，3-三级，为null和0时不做处理
         manufacture: '', // 生产企业
         merCode: this.merCode, // 商家编码
@@ -370,11 +378,17 @@ export default {
     },
     handleSelectGoodsDialogClose() {
       this.selectGoodsDialogVisible = false
+      this.goodsQuery.currentPage = 1
+      this.goodsQuery.name = ''
+      this.goodsList = []
     },
     // 商品选择按钮点击
     handleGoodsSelect(row) {
       this.selectedGoods = row
       this.selectGoodsDialogVisible = false
+      this.goodsQuery.currentPage = 1
+      this.goodsQuery.name = ''
+      this.goodsList = []
 
       console.log('选中的商品row', row)
 

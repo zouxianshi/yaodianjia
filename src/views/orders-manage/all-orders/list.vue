@@ -1016,11 +1016,15 @@ export default {
     ...mapGetters(['merCode', 'name', 'roles'])
   },
   created() {
+    if (sessionStorage.getItem('listQ')) {
+      this.listQuery = JSON.parse(sessionStorage.getItem('listQ'))
+    }
     this.getList()
     this.getpreSendNum()
   },
   methods: {
     resetQuery() {
+      sessionStorage.removeItem('listQ')
       let isSuper = 0
       if (this.roles.includes('admin')) {
         isSuper = 1
@@ -1163,6 +1167,7 @@ export default {
       }
     },
     orderDetail(id, state) { // 跳转订单详情
+      sessionStorage.setItem('listQ', JSON.stringify(this.listQuery))
       this.$router.push({
         path: `/orders-manage/all-orders/details`,
         query: { id: id, state: state }

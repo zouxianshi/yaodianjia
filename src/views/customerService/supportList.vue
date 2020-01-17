@@ -28,6 +28,7 @@
         <el-button class="add" type="primary" size="mini" @click.stop="handleAddSupportStaff()">添加客服</el-button>
 
         <el-dialog
+          :close-on-click-modal="false"
           :before-close="handleAddDialogClose"
           title="添加客服"
           append-to-body

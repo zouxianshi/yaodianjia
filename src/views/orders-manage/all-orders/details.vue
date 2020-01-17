@@ -136,7 +136,7 @@
           <div class="info-item info-left">
             <div class="title">配送信息{{ indexSend+1 }}</div>
             <div class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
-            <div class="con">快递公司：{{ item.companyName }}</div>
+            <div class="con">快递公司：<template v-if="item.companyName">{{ item.companyName }}</template><template v-else>-</template></div>
             <div class="con">快递单号：{{ item.number }}</div>
           </div>
           <div class="info-item info-right">
@@ -235,7 +235,7 @@
           <div class="info-item info-left">
             <div class="title">退货信息</div>
             <!-- <div class="con">配送方式：{{ detailsData.returnList[indexReturn].refundType ?'快递寄回':'送回门店' }}</div> -->
-            <div class="con">快递公司：{{ item.companyName }}</div>
+            <div class="con">快递公司：<template v-if="item.companyName">{{ item.companyName }}</template><template v-else>-</template></div>
             <div class="con">快递单号：{{ item.number }}</div>
           </div>
           <div class="info-item info-right">
