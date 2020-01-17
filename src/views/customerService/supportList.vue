@@ -105,7 +105,7 @@
               v-for="(item,index) in merStaffTableData.selectedList"
               :key="index"
               class="selected-staff-item"
-            >{{ item.empName }} {{ item.id }}，</span>
+            >{{ item.empName }} {{ item.empCode }}，</span>
           </div>
           <div class="staff-dialog-bottom">
             <el-button @click="addDialogVisible=false">取消</el-button>
