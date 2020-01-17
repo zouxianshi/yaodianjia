@@ -386,6 +386,9 @@ export default {
     handleGoodsSelect(row) {
       this.selectedGoods = row
       this.selectGoodsDialogVisible = false
+      this.goodsQuery.currentPage = 1
+      this.goodsQuery.name = ''
+      this.goodsList = []
 
       console.log('选中的商品row', row)
 
