@@ -335,7 +335,7 @@ export default {
         currentPage: this.goodsQuery.currentPage, // 页码
         erpCode: '', // 商品编码
         groupId: '', // 分组id,如果是1，2级分组时，请与level字段共用
-        infoFlag: '', // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
+        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
         level: 0, // 分组或分类level,1-一级，2-二级，3-三级，为null和0时不做处理
         manufacture: '', // 生产企业
         merCode: this.merCode, // 商家编码
