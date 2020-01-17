@@ -141,7 +141,7 @@
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <template v-if="item.data">
+            <template v-if="item.data&&item.data!=='[]'">
               <div class="block">
                 <el-timeline>
                   <el-timeline-item
@@ -234,13 +234,13 @@
         <div v-for="(item,indexReturn) in detailsData.retRecordList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="title">退货信息</div>
-            <div class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
+            <!-- <div class="con">配送方式：{{ detailsData.returnList[indexReturn].refundType ?'快递寄回':'送回门店' }}</div> -->
             <div class="con">快递公司：{{ item.companyName }}</div>
             <div class="con">快递单号：{{ item.number }}</div>
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <template v-if="item.data">
+            <template v-if="item.data&&item.data!=='[]'">
               <div class="block">
                 <el-timeline>
                   <el-timeline-item
@@ -479,37 +479,37 @@ export default {
       this.detailLoading = true
       getOrderDetail(dataParams).then(res => { // 获取商品详情
         // console.log('details', res.data)
+
         this.detailLoading = false
         this.detailsData = res.data
-        // console.log('this.detailsData.recordList:', this.detailsData.recordList)
-        const recordListData = this.detailsData.recordList
-        if (this.detailsData.recordList) { // 发货物流
-          recordListData.forEach((item, index) => {
-            const paramsSend = JSON.parse(item.data)
-            this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
-          })
-          // console.log('this.sendLogisticals:', this.sendLogisticals)
-        }
 
-        const retRecordListData = this.detailsData.retRecordList
-        console.log('retRecordListData:', retRecordListData)
+        if (this.detailsData.recordList) { // 发货物流
+          const recordListData = this.detailsData.recordList
+          recordListData.forEach((item, index) => {
+            if (item.data && item.data !== '[]') {
+              const paramsSend = JSON.parse(item.data)
+              this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
+            }
+          })
+        }
 
         if (this.detailsData.retRecordList) { // 退货物流
+          const retRecordListData = this.detailsData.retRecordList
           retRecordListData.forEach((item, index) => {
-            const paramsRefund = JSON.parse(item.data)
-            console.log('paramsRefund:', paramsRefund)
-            alert('物流')
-            debugger
-
-            this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
+            if (item.data && item.data !== '[]') {
+              const paramsRefund = JSON.parse(item.data)
+              this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
+            }
           })
         }
+
         if (this.detailsData.returnList && this.detailsData.returnList.length > 0) { // 处理用逗号分隔的图片成数组
           for (let i = 0; i < this.detailsData.returnList.length; i++) {
             if (this.detailsData.returnList[i].pictureVoucher && this.detailsData.returnList[i].pictureVoucher !== '') {
               this.detailsData.returnList[i].pictureVoucher = this.picFormat(this.detailsData.returnList[i].pictureVoucher)
             }
           }
+          // console.log('this.detailsData.returnList.pictureVoucher:', this.detailsData.returnList.pictureVoucher)
         }
 
         if (this.detailsData.prescriptionApproval && this.detailsData.prescriptionApproval.image !== '') { // 处理处方单逗号分隔的图片成数组
@@ -533,6 +533,7 @@ export default {
     },
     logisticsFormat(data) { // 格式化物流信息
       // console.log('物流data:', data)
+      // alert(data)
       const arr = []
       for (let i = 0; i < data.length; i++) {
         const object = {}
@@ -544,6 +545,7 @@ export default {
         arr[i] = object
       }
       // console.log('临时arr:', arr)
+      // alert(arr)
       return arr
     },
     /**
