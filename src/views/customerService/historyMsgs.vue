@@ -46,7 +46,7 @@
             <div class="chat-item-top">
               <span class="chat-user-name">
                 {{ msgItem.toUserId===curChatUserId?
-                  `客服${msgItem.fromUserId}`
+                  `客服(${msgItem.staffName ? msgItem.staffName : msgItem.fromUserId})`
                   :`${currentUser||'暂无用户名'}`
                 }}
               </span>

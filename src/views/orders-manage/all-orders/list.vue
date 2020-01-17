@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="store-goods-wrapper order-list">
+    <div v-loading="loadingList" class="store-goods-wrapper order-list">
 
       <section @keydown.enter="_loadList">
         <div
@@ -25,6 +25,7 @@
               v-model.trim="listQuery.searchValue"
               size="small"
               placeholder=""
+              @keyup.enter.native="listQuery.currentPage=1;_loadList()"
             />
           </div>
         </div>
@@ -43,6 +44,7 @@
                 format="yyyy-MM-dd HH:mm:ss"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 popper-class="order_dataTimepicker"
+                :default-time="['00:00:00', '23:59:59']"
                 @change="chooseTimeRange"
               />
             </div>
@@ -66,7 +68,7 @@
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value="" />
-              <el-option label="处方药" value="1" />
+              <el-option label="处方药订单" value="1" />
               <el-option label="普通订单" value="0" />
               <!-- <el-option label="积分订单" value="V" /> -->
             </el-select>
@@ -93,8 +95,8 @@
               <el-option label="全部" value="" />
               <el-option label="待付款" value="2" />
               <el-option label="待发货" value="4" />
-              <el-option label="待提货" value="7" />
               <el-option label="已发货" value="6" />
+              <el-option label="待提货" value="7" />
               <el-option label="已完成" value="12" />
               <el-option label="待退款" value="10" />
               <!-- <el-option label="退货中" value="10" /> -->
@@ -192,8 +194,8 @@
               <span class="badge">{{ preSendNum }}</span>
             </template>
           </el-radio-button>
-          <el-radio-button label="7">待提货</el-radio-button>
           <el-radio-button label="6">已发货</el-radio-button>
+          <el-radio-button label="7">待提货</el-radio-button>
           <el-radio-button label="12">已完成</el-radio-button>
           <!-- <el-radio-button label="8">待退货</el-radio-button> -->
           <el-radio-button label="10">待退款</el-radio-button>
@@ -202,7 +204,7 @@
           <el-radio-button label="20">已取消</el-radio-button>
         </el-radio-group>
       </div>
-      <div v-loading="loadingList" class="table-box">
+      <div class="table-box">
         <div class="order-table">
           <div class="order-table-header">
             <div class="header-left">
@@ -328,7 +330,7 @@
                             </template>
                           </template>
                           <template v-if="item.orderStatus===8 && item.detailList.length===1">
-                            <div>待退货</div>
+                            <div>退货中</div>
                           </template>
                           <template v-if="item.orderStatus===30">
                             <div>退款完成</div>
@@ -371,7 +373,7 @@
                             </template>
                           </template>
                           <template v-if="item.orderStatus===8">
-                            <div>待退货</div>
+                            <div>退货中</div>
                             <div>（审批未通过）</div>
                             <template v-if="item.detailList.length===1">
                               <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
@@ -426,7 +428,7 @@
                           </template>
                         </template>
                         <template v-if="item.orderStatus===8">
-                          <div>待退货</div>
+                          <div>退货中</div>
                           <template v-if="item.detailList.length===1">
                             <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
                           </template>
@@ -543,8 +545,8 @@
         <!-- 普通发货 -->
         <template v-if="deliveryType===0">
           <el-form-item label="快递公司：" :label-width="labelWidth">
-            <el-select v-model="expressQuery.expComCode" filterable placeholder="请输入关键词" @change="handleChangeExpress">
-              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="item.expComCode" />
+            <el-select v-model="expressQuery.expComName" filterable placeholder="请输入关键词" @change="handleChangeExpress">
+              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="[item.expComCode,item.expComName]" />
             </el-select>
           </el-form-item>
           <el-form-item label="快递单号：" :label-width="labelWidth">
@@ -779,7 +781,7 @@ export default {
         return '普通订单'
       }
       if (value === '1') {
-        return '处方药'
+        return '处方药订单'
       }
       // if (value === 'V') {
       //   return '积分订单'
@@ -799,7 +801,7 @@ export default {
         return '已发货'
       }
       if (value === 8) {
-        return '待退货'
+        return '退货中'
       }
       if (value === 10) {
         return '待退款'
@@ -914,6 +916,7 @@ export default {
       loading: false,
       selectloading: false,
       listQuery: {
+        'currentPage': 1,
         // 'distribution': '', // 配送方式
         'empId': '', // 接单员工
         'endDate': '', // 下单结束时间
@@ -1013,11 +1016,15 @@ export default {
     ...mapGetters(['merCode', 'name', 'roles'])
   },
   created() {
+    if (sessionStorage.getItem('listQ')) {
+      this.listQuery = JSON.parse(sessionStorage.getItem('listQ'))
+    }
     this.getList()
     this.getpreSendNum()
   },
   methods: {
     resetQuery() {
+      sessionStorage.removeItem('listQ')
       let isSuper = 0
       if (this.roles.includes('admin')) {
         isSuper = 1
@@ -1025,6 +1032,7 @@ export default {
         isSuper = 0
       }
       this.listQuery = {
+        'currentPage': 1,
         // 'distribution': '', // 配送方式
         'empId': '', // 接单员工
         'endDate': '', // 下单结束时间
@@ -1159,6 +1167,7 @@ export default {
       }
     },
     orderDetail(id, state) { // 跳转订单详情
+      sessionStorage.setItem('listQ', JSON.stringify(this.listQuery))
       this.$router.push({
         path: `/orders-manage/all-orders/details`,
         query: { id: id, state: state }
@@ -1218,7 +1227,9 @@ export default {
     handleChangeExpress(val) { // 快递公司选择改变时触发
       this.expressQuery.currentPage = 1
       // console.log('expressQuery-item:', val)
-      this.expressQuery.expComCode = val
+      this.expressQuery.expComCode = val[0]
+      this.expressQuery.expComName = val[1]
+
       this.ExpressCompany()
       this.getpreSendNum() // 获取待发货商品数量
     },
@@ -1282,6 +1293,7 @@ export default {
           this.loadingSendNow = false
           return
         }
+
         if (!this.packageNo) {
           this.dialogDeliveryVisible = true
           this.$message({
@@ -1293,7 +1305,7 @@ export default {
         }
 
         this.orderSendData = {
-          // 'companyName': this.expressQuery.expComName,
+          'companyName': this.expressQuery.expComName,
           'companyNo': this.expressQuery.expComCode,
           'merCode': this.merCode,
           'modifyName': this.name,
@@ -1313,7 +1325,7 @@ export default {
           return
         }
         this.orderSendData = {
-          // 'companyName': this.expressQuery.expComName,
+          'companyName': this.expressQuery.expComName,
           'companyNo': this.expressQuery.expComCode,
           'merCode': this.merCode,
           'modifyName': this.name,
@@ -1493,7 +1505,7 @@ export default {
             this.dialogConfirmReturnVisible = true
           }
           this.$message({
-            message: '存在必填字段未填写',
+            message: '请填写密码验证身份',
             type: 'error'
           })
           return
@@ -1774,5 +1786,5 @@ export default {
 <style scoped>
 .el-date-range-picker{left:270px!important} /*时间控件弹出框*/
 .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
-.order-list .order-form .search-item .label-name{ width: 80px!important;}
+/* .order-list .order-form .search-item .label-name{ width: 80px!important;} */
 </style>

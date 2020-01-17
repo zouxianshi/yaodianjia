@@ -168,12 +168,19 @@ export default {
     },
     // 确认添加按钮点击
     handleMsgConfirm() {
+      const loading = this.$loading({
+        lock: true,
+        text: '加载中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       if (this.dialogType === 'add') {
         CustomerService.addSupportMsg({
           ...this.editMsgQuery,
           type: 3, // 快捷消息
           msg: this.editMsgQuery.msg.trim()
         }).then(res => {
+          loading.close()
           this.$message({
             type: 'success',
             message: res.msg
@@ -181,9 +188,12 @@ export default {
           this.editDialogVisible = false
           this.msgContent = ''
           this.queryMsgList()
+        }).catch(() => {
+          loading.close()
         })
       } else {
         CustomerService.updateSupportMsg(this.editMsgQuery).then(res => {
+          loading.close()
           this.$message({
             type: 'success',
             message: res.msg
@@ -191,6 +201,8 @@ export default {
           this.editDialogVisible = false
           this.msgContent = ''
           this.queryMsgList()
+        }).catch(() => {
+          loading.close()
         })
       }
     },

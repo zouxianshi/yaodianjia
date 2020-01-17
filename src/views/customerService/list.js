@@ -247,17 +247,26 @@ export default {
     queryMerStaffList() {
       // 这里用接口请求替代
       return new Promise((resolve, reject) => {
+        const { selectedList } = this.merStaffTableData
         CustomerService.queryMerStaffList({
           ...this.merStaffQuery,
           subOrgName: this.merStaffQuery.subOrgName.replace(/\s*/g, ''),
           empName: this.merStaffQuery.empName.replace(/\s*/g, '')
         }).then(res => {
           const result = res.data
+          result.data.forEach(ele => {
+            let hasFlag = false
+            if (selectedList.findIndex(selEle => selEle.id === ele.id) > -1) {
+              hasFlag = true
+            }
+            ele.checked = hasFlag
+          })
           this.merStaffTableData = {
             ...this.merStaffTableData,
             list: result.data,
             total: result.totalCount
           }
+          console.error('merStaffTableData', this.merStaffTableData)
           resolve()
         })
       })
@@ -286,6 +295,11 @@ export default {
 
     // 查询商家员工按钮点击
     handleSearchSubmit() {
+      this.merStaffQuery.currentPage = 1
+      this.merStaffQuery.pageSize = 10
+      this.merStaffTableData.list = []
+      this.merStaffTableData.total = 0
+      // this.merStaffTableData.selectedList = []
       this.queryMerStaffList()
     },
 
@@ -297,16 +311,24 @@ export default {
     // 复选框选中
     handleStaffSelect(row) {
       console.log('row', row)
-      const { selectedList } = this.merStaffTableData
+      const { selectedList, list } = this.merStaffTableData
       const existedIndex = selectedList.findIndex(element => {
         return element.id === row.id
       })
+      const tempList = [...list]
+      tempList.forEach((ele) => {
+        if (ele.id === row.id) {
+          ele.checked = !ele.checked
+        }
+      })
+      this.merStaffTableData.list = tempList
       if (existedIndex > -1) {
         selectedList.splice(existedIndex, 1)
       } else {
         this.merStaffTableData.selectedList.push({
           avatarPath: 'https://xxx.dfs.com/img.png',
           empName: row.empName,
+          empCode: row.empCode,
           id: row.id,
           merCode: this.merCode,
           status: 1
