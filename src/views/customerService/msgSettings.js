@@ -188,6 +188,8 @@ export default {
           this.editDialogVisible = false
           this.msgContent = ''
           this.queryMsgList()
+        }).catch(() => {
+          loading.close()
         })
       } else {
         CustomerService.updateSupportMsg(this.editMsgQuery).then(res => {
@@ -199,6 +201,8 @@ export default {
           this.editDialogVisible = false
           this.msgContent = ''
           this.queryMsgList()
+        }).catch(() => {
+          loading.close()
         })
       }
     },
