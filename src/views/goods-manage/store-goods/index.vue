@@ -456,7 +456,7 @@ export default {
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
-        if (data.length === 0 && this.currentPage !== 1) {
+        if (data.length === 0 && this.listQuery.currentPage !== 1) {
           this.listQuery.currentPage--
           this._loadList()
         }
