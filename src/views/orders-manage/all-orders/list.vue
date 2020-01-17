@@ -1024,6 +1024,7 @@ export default {
   },
   methods: {
     resetQuery() {
+      sessionStorage.removeItem('listQ')
       let isSuper = 0
       if (this.roles.includes('admin')) {
         isSuper = 1
