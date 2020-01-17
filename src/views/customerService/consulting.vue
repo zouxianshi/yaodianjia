@@ -188,7 +188,15 @@
                 </template>
               </el-table-column>
               <el-table-column prop="name" label="名称" width="150" />
-              <el-table-column prop="packStandard" label="规格" width="150" />
+              <el-table-column prop="packStandard" label="规格" width="150">
+                <template slot-scope="scope">
+                  <div v-if="scope.row.specSkuList && scope.row.specSkuList.length > 0">
+                    <div v-for="(item,index) in scope.row.specSkuList" :key="index" class="inner">
+                      {{ item.skuKeyName }}:{{ item.skuValue }}
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
               <el-table-column prop="action" label="操作">
                 <template slot-scope="scope">
                   <el-button type="primary" size="small" @click="handleGoodsSelect(scope.row)">选择</el-button>
