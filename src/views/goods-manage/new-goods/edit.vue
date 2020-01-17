@@ -276,7 +276,7 @@
                         :on-error="handleImgError"
                         :before-upload="beforeUpload"
                       >
-                        <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                        <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)" @click="handleUploadIndex(scope.$index)">
                           <div slot="placeholder" class="image-slot">
                             加载中<span class="dot">...</span>
                           </div>
@@ -343,7 +343,7 @@
                             :on-error="handleImgError"
                             :before-upload="beforeUpload"
                           >
-                            <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                            <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)" @click="handleUploadIndex(scope.$index)">
                               <div slot="placeholder" class="image-slot">
                                 加载中<span class="dot">...</span>
                               </div>
@@ -400,7 +400,7 @@
                           :on-error="handleImgError"
                           :before-upload="beforeUpload"
                         >
-                          <el-image v-if="item.picUrl" class="avatar" style="width:80px;height:80px" :src="showImg(item.picUrl)">
+                          <el-image v-if="item.picUrl" class="avatar" style="width:80px;height:80px" :src="showImg(item.picUrl)" @click="handleUploadIndex(index)">
                             <div slot="placeholder" class="image-slot">
                               加载中<span class="dot">...</span>
                             </div>
@@ -954,6 +954,7 @@ export default {
       return true
     },
     handleUploadIndex(index) {
+      console.log('index:---', index)
       this.uploadIndex = index
     },
     handleAvatarSuccess(res, file) { // 规格图片上传成功
