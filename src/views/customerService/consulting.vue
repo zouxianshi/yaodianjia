@@ -168,7 +168,7 @@
                 class="search-filter-btn"
                 type="primary"
                 size="small"
-                @click="queryGoods"
+                @click="goodsSearchBtnClick"
               >搜索</el-button>
             </div>
             <el-table
