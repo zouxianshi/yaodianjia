@@ -286,6 +286,11 @@ export default {
 
     // 查询商家员工按钮点击
     handleSearchSubmit() {
+      this.merStaffQuery.currentPage = 1
+      this.merStaffQuery.pageSize = 10
+      this.merStaffTableData.list = []
+      this.merStaffTableData.total = 0
+      this.merStaffTableData.selectedList = []
       this.queryMerStaffList()
     },
 
