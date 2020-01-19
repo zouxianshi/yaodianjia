@@ -67,21 +67,6 @@ export default {
                   userId: message.senderUserId,
                   message
                 })
-                // _this.addMsgToOnlineCurUserMsgList({
-                //   type: "listener", // 类型 来自融云消息监听
-                //   merCode: _this.merCode,
-                //   msgResult: {
-                //     content: {
-                //       content: Chat.symbolToEmoji(message.content.content),
-                //       extra: message.content.extra
-                //     }, // 消息内容
-                //     senderUserId: message.senderUserId, // 发送用户id
-                //     objectName: message.objectName, // 消息类型 这里不能取messageType
-                //     messageUId: message.messageUId, // 消息id
-                //     sentTime: message.sentTime, // 时间戳
-                //     targetId: message.targetId // 接收用户id
-                //   }
-                // });
               }
             } else {
               this.setHasNewMsg(true)

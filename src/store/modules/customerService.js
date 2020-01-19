@@ -339,7 +339,7 @@ const actions = {
         list.forEach(element => {
           // 添加新消息数量字段 用于徽标显示
           if (payload && payload.searchText) {
-            if (element.latestMessage.content.extra.nickName.indexOf(payload.searchText) > -1) {
+            if (element.latestMessage.content.extra ? element.latestMessage.content.extra.nickName.indexOf(payload.searchText) > -1 : false) {
               tempList.push({
                 ...element,
                 newMsgNum: 0
