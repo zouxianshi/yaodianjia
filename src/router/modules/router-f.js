@@ -3,7 +3,7 @@ const router = [
   {
     path: '/orders-manage',
     component: Layout,
-    redirect: '/orders-manage/all-orders',
+    redirect: '/orders-manage/list',
     name: 'orders-manage',
     meta: {
       title: '订单中心',
@@ -12,7 +12,7 @@ const router = [
     alwaysShow: true,
     children: [
       {
-        path: 'all-orders/list',
+        path: 'list',
         component: () => import('@/views/orders-manage/all-orders/list'),
         name: 'orders-manage',
         meta: {
@@ -20,13 +20,13 @@ const router = [
           noCache: true
         }
       }, {
-        path: 'all-orders/details',
+        path: `details`,
         component: () => import('@/views/orders-manage/all-orders/details'),
         name: 'orders-manage',
         meta: {
-          title: '订单详情',
-          noCache: true,
-          activeMenu: '/orders-manage/all-orders/list'
+          title: '订单详情'
+          // noCache: true,
+          // activeMenu: '/orders-manage/all-orders/list'
         }
       }, {
         path: 'settings',

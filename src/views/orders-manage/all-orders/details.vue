@@ -7,7 +7,7 @@
             订单号：{{ detailsData.serialNumber }}
             <template v-if="detailsData.prescriptionSheetMark==='1'">（{{ detailsData.prescriptionSheetMark | orderType }}）</template>
           </div>
-          <div class="item-right"><el-button type="primary" size="mini">补推到ERP</el-button></div>
+          <div class="item-right"><el-button type="primary" size="mini" @click="handleSetPushErp(detailsData.serialNumber)">补推到ERP</el-button></div>
         </div>
         <div class="item">
           <div class="item-left">
@@ -353,7 +353,7 @@
 <script>
 import mixins from '@/utils/mixin'
 import { mapGetters } from 'vuex'
-import { getOrderDetail } from '@/api/order'
+import { getOrderDetail, setPushErp } from '@/api/order'
 export default {
   filters: {
     orderType: function(value) { // 订单类型
@@ -548,6 +548,21 @@ export default {
       // alert(arr)
       return arr
     },
+    handleSetPushErp(orderId) {
+      setPushErp(orderId).then(res => {
+        if (res.data) {
+          this.$message({
+            message: '成功补推到ERP',
+            type: 'success'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: '补推到ERP失败',
+          type: 'error'
+        })
+      })
+    },
     /**
      * 分析身份证，计算年龄，性别
      * @param {string} identityCard 身份证号码
@@ -693,7 +708,7 @@ export default {
   color: #606266;
   margin-bottom: 20px;
   .info-item{
-    padding:10px;
+    padding:10px 8px;
     width: 20%;
     border-right:1px dashed #dfe6ec;
     line-height: 28px;

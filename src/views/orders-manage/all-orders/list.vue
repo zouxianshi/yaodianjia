@@ -233,7 +233,8 @@
                   </div>
                   <div class="header-right">
                     <div class="header-cell" @click="orderDetail(item.id,item.orderStatus)">
-                      订单详情
+                      <!-- <div class="header-cell" @click="orderDetail(item.id,item.orderStatus)"> -->
+                      <a :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"> 订单详情</a>
                     </div>
                   </div>
                 </div>
@@ -278,13 +279,13 @@
                           <template v-if="list.status===8||list.status===10">
                             <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.id)">查看退款理由</div>
                           </template>
-                          <template v-if="list.status===10 && item.deliveryType!==2 && item.detailList.length>1">
+                          <template v-if="list.status===10 && item.payMode===0">
                             <div class="order_btn" style="text-align:right">
                               <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,list.id,list.commodityName)">拒绝</el-button>
                               <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)">退款</el-button>
                             </div>
                           </template>
-                          <template v-if="list.status===8 && item.detailList.length>1">
+                          <template v-if="list.status===8">
                             <div class="order_btn btn_normal" style="text-align:right">
                               <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)">收到退货</el-button></div>
                             </div>
@@ -364,20 +365,20 @@
                             <template v-if="item.orderStatus===10">
                               <div>待退款</div>
                               <div>（审批未通过）</div>
-                              <template v-if="item.detailList.length===1">
+                              <!-- <template v-if="item.detailList.length===1 && item.payMode===0">
                                 <div class="order_btn">
                                   <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
                                   <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">退款</el-button>
                                 </div>
-                              </template>
+                              </template> -->
                             </template>
                           </template>
                           <template v-if="item.orderStatus===8">
                             <div>退货中</div>
                             <div>（审批未通过）</div>
-                            <template v-if="item.detailList.length===1">
+                            <!-- <template v-if="item.detailList.length===1">
                               <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
-                            </template>
+                            </template> -->
                           </template>
                           <template v-if="item.orderStatus===30">
                             <div>退款完成</div>
@@ -419,19 +420,19 @@
                         <template v-if="item.detailList">
                           <template v-if="item.orderStatus===10">
                             <div>待退款</div>
-                            <template v-if="item.detailList.length===1">
+                            <!-- <template v-if="item.detailList.length===1 && item.payMode===0">
                               <div class="order_btn">
                                 <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
                                 <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">退款</el-button>
                               </div>
-                            </template>
+                            </template> -->
                           </template>
                         </template>
                         <template v-if="item.orderStatus===8">
                           <div>退货中</div>
-                          <template v-if="item.detailList.length===1">
+                          <!-- <template v-if="item.detailList.length===1">
                             <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
-                          </template>
+                          </template> -->
                         </template>
                         <template v-if="item.orderStatus===30">
                           <div>退款完成</div>
@@ -740,9 +741,15 @@
         </el-form-item>
         <el-form-item label="图片凭证：" :label-width="labelWidth100">
           <template v-if="refundPic!==[]">
-            <div>
+            <div class="refund-box">
               <span v-for="(picItem,index3) in refundPic" :key="index3" class="marginRight10">
-                <img :src="showImg(picItem)" width="100" height="100">
+                <!-- <img :src="showImg(picItem)" :preview-src-list="[showImg(picItem)]" width="100" height="100"> -->
+                <el-image
+                  fit="scale-down"
+                  :src="showImg(picItem)"
+                  :preview-src-list="[showImg(picItem)]"
+                  :label-width="labelWidth100"
+                />
               </span>
             </div>
           </template>
@@ -1166,13 +1173,13 @@ export default {
         this.listQuery.endDate = this.dateSelect[1]
       }
     },
-    orderDetail(id, state) { // 跳转订单详情
-      sessionStorage.setItem('listQ', JSON.stringify(this.listQuery))
-      this.$router.push({
-        path: `/orders-manage/all-orders/details`,
-        query: { id: id, state: state }
-      })
-    },
+    // orderDetail(id, state) { // 跳转订单详情
+    //   sessionStorage.setItem('listQ', JSON.stringify(this.listQuery))
+    //   this.$router.push({
+    //     path: `/orders-manage/all-orders/details`,
+    //     query: { id: id, state: state }
+    //   })
+    // },
     remoteMethod(val) {
       this.selectloading = true
     },
@@ -1284,7 +1291,7 @@ export default {
         detailsId = mySelectList.map(item => { return item.id })// 订单明细id集合
       }
       if (this.deliveryType === 0) {
-        if (!this.expressQuery.expComCode) {
+        if (!this.expressQuery.expComName) {
           this.dialogDeliveryVisible = true
           this.$message({
             message: '请选择快递公司',
@@ -1346,6 +1353,7 @@ export default {
           message: '发货成功',
           type: 'success'
         })
+        this.expressQuery.expComName = ''
         this.getList()
         this.getpreSendNum() // 获取待发货商品数量
       }).catch(res => {
@@ -1559,6 +1567,10 @@ export default {
 </script>
 <style lang="scss">
 //订单详情
+.order-table-body-box {
+    height: calc(100vh - 324px);
+    overflow: auto;
+  }
 .order-table{
   display: flex;
   flex-direction: column;
@@ -1782,9 +1794,16 @@ export default {
     line-height: 36px;
 }
 .marginRight10{margin-right: 10px}
+.refund-box {
+  .el-image {
+    width: 100px;
+    height: 100px;
+  }
+}
 </style>
 <style scoped>
 .el-date-range-picker{left:270px!important} /*时间控件弹出框*/
 .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
 /* .order-list .order-form .search-item .label-name{ width: 80px!important;} */
+
 </style>
