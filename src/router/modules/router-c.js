@@ -14,7 +14,7 @@ const router = [
     children: [
       {
         path: 'msgSettings',
-        component: () => import('@/views/customerService/msgConfig'),
+        component: () => import('@/views/customerService/msgSettings.vue'),
         name: 'msgSettings',
         meta: {
           title: '快捷消息设置',
@@ -23,7 +23,7 @@ const router = [
       },
       {
         path: 'consultation',
-        component: () => import('@/views/customerService/consulting'),
+        component: () => import('@/views/customerService/consultation.vue'),
         name: 'consultation',
         meta: {
           title: '在线咨询',
@@ -32,7 +32,7 @@ const router = [
       },
       {
         path: 'list',
-        component: () => import('@/views/customerService/supportList'),
+        component: () => import('@/views/customerService/list.vue'),
         name: 'list',
         meta: {
           title: '客服列表',
@@ -41,7 +41,7 @@ const router = [
       },
       {
         path: 'historyMsg',
-        component: () => import('@/views/customerService/historyMsgs'),
+        component: () => import('@/views/customerService/historyMsg.vue'),
         name: 'historyMsg',
         meta: {
           title: '消息记录',
