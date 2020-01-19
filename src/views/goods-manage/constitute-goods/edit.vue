@@ -11,10 +11,17 @@
         <div class="edit-card">
           <div class="edit-card-cnt">
             <div class="content">
-              <el-form-item label="组合商品名称：" prop="name" required>
+              <p class="type-list">
+                <span class="type-list-title">
+                  <span class="color_red">*</span> 组合商品名称：
+                </span>
                 <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
                 <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
-              </el-form-item>
+              </p>
+              <!-- <el-form-item label="组合商品名称：" prop="name" required>
+                <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
+                <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
+              </el-form-item> -->
               <p class="type-list">
                 <span class="type-list-title">
                   <span class="color_red">*</span> 组合商品分类：
