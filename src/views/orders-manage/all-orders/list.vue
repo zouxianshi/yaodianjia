@@ -232,7 +232,7 @@
                     </div>
                   </div>
                   <div class="header-right">
-                    <div class="header-cell" @click="orderDetail(item.id,item.orderStatus)">
+                    <div class="header-cell">
                       <!-- <div class="header-cell" @click="orderDetail(item.id,item.orderStatus)"> -->
                       <a :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"> 订单详情</a>
                     </div>
