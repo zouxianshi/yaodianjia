@@ -119,7 +119,7 @@ export function getOrderDetail(data) {
 // 补推到ERP
 export function setPushErp(orderId) {
   return request({
-    url: `${config.merGoods}/1.0/pushMq/${orderId}`,
+    url: `${config.merGoods}/1.0/order-info/pushMq/${orderId}`,
     method: 'get'
   })
 }

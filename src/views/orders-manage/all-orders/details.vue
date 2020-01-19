@@ -550,7 +550,7 @@ export default {
     },
     handleSetPushErp(orderId) {
       setPushErp(orderId).then(res => {
-        if (res.data) {
+        if (res.code === '10000') {
           this.$message({
             message: '成功补推到ERP',
             type: 'success'
