@@ -19,7 +19,7 @@
           <el-table-column prop="msgType" label="消息类型" width="180">
             <template slot-scope="scope">{{ msgTypeMap[scope.row.type] }}</template>
           </el-table-column>
-          <el-table-column prop="address" label="快捷消息（50字以内）">
+          <el-table-column prop="address" label="快捷消息(30字以内）">
             <template slot-scope="scope">
               <div>{{ scope.row.msg }}</div>
             </template>
@@ -86,7 +86,7 @@
           class="msg-input"
           type="text"
           placeholder="请输入消息内容"
-          maxlength="50"
+          maxlength="30"
           :autosize="true"
           @input="handleMsgInput"
         />
