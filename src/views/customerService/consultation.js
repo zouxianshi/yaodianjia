@@ -298,8 +298,22 @@ export default {
         this.queryCannedRepliesList()
         this.cannedRepliesVisible = true
       } else if (type === 'goods') {
-        this.selectGoodsDialogVisible = true
-        this.queryGoods()
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        this.queryGoods().then(() => {
+          loading.close()
+          this.selectGoodsDialogVisible = true
+        }).catch(() => {
+          loading.close()
+          this.$message({
+            message: '获取商品数据失败',
+            type: 'error'
+          })
+        })
       } else if (type === 'emoji') {
         this.emojiPopVisible = true
       } else if (type === 'pic') {
@@ -334,36 +348,43 @@ export default {
       this.goodsQuery.name = val
     },
     queryGoods() {
-      queryGoods({
-        approvalNumber: '', // 批准文号
-        auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
-        barCode: '', // 条形码
-        commodityIds: [], // 商品id数组
-        commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
-        currentPage: this.goodsQuery.currentPage, // 页码
-        erpCode: '', // 商品编码
-        groupId: '', // 分组id,如果是1，2级分组时，请与level字段共用
-        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
-        level: 0, // 分组或分类level,1-一级，2-二级，3-三级，为null和0时不做处理
-        manufacture: '', // 生产企业
-        merCode: this.merCode, // 商家编码
-        name: this.goodsQuery.name.replace(/\s*/g, ''), // 商品名称
-        onlyCom: '', // 商品查询标志,true-只查商品信息，其他包括规格信息
-        origin: 0, // 商品来源，1-海典，2-商家
-        pageSize: this.goodsQuery.pageSize, // 每页显示条数，不传默认20
-        typeId: '' // 分类id,如果是1，2级分类时，请与level字段共用
-      }).then(res => {
-        if (res.data) {
-          console.log('商品数据', res.data)
-          const {
-            totalCount,
-            data
-          } = res.data
-          this.goodsPagination.total = totalCount
-          // this.goodsQuery.currentPage = this.goodsQuery.curPage + 1
-          this.goodsList = data
-          console.log('goodsList', this.goodsList)
-        }
+      return new Promise((resolve, reject) => {
+        queryGoods({
+          approvalNumber: '', // 批准文号
+          auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
+          barCode: '', // 条形码
+          commodityIds: [], // 商品id数组
+          commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
+          currentPage: this.goodsQuery.currentPage, // 页码
+          erpCode: '', // 商品编码
+          groupId: '', // 分组id,如果是1，2级分组时，请与level字段共用
+          infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
+          level: 0, // 分组或分类level,1-一级，2-二级，3-三级，为null和0时不做处理
+          manufacture: '', // 生产企业
+          merCode: this.merCode, // 商家编码
+          name: this.goodsQuery.name.replace(/\s*/g, ''), // 商品名称
+          onlyCom: '', // 商品查询标志,true-只查商品信息，其他包括规格信息
+          origin: 0, // 商品来源，1-海典，2-商家
+          pageSize: this.goodsQuery.pageSize, // 每页显示条数，不传默认20
+          typeId: '' // 分类id,如果是1，2级分类时，请与level字段共用
+        }).then(res => {
+          if (res.data) {
+            resolve(res.data)
+            console.log('商品数据', res.data)
+            const {
+              totalCount,
+              data
+            } = res.data
+            this.goodsPagination.total = totalCount
+            // this.goodsQuery.currentPage = this.goodsQuery.curPage + 1
+            this.goodsList = data
+            console.log('goodsList', this.goodsList)
+          } else {
+            reject('获取商品数据失败')
+          }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     // 商品pagesizechange
@@ -690,8 +711,8 @@ export default {
   created() {
     this.emojiList = Chat.getEmojiList()
 
-    // 获取商品列表
-    this.queryGoods()
+    // // 获取商品列表
+    // this.queryGoods()
     // 获取快捷回复列表
     this.queryCannedRepliesList()
     // 获取融云会话列表
