@@ -7,7 +7,7 @@
             订单号：{{ detailsData.serialNumber }}
             <template v-if="detailsData.prescriptionSheetMark==='1'">（{{ detailsData.prescriptionSheetMark | orderType }}）</template>
           </div>
-          <div class="item-right"><el-button type="primary" size="mini">补推到ERP</el-button></div>
+          <div class="item-right"><el-button type="primary" size="mini" @click="handleSetPushErp(detailsData.serialNumber)">补推到ERP</el-button></div>
         </div>
         <div class="item">
           <div class="item-left">
@@ -203,6 +203,7 @@
       <template v-if="detailsData.returnList">
         <div v-for="(item,indexReturn) in detailsData.returnList" :key="indexReturn" class="info">
           <div class="info-item info-left">
+            <div class="con">商品名称：{{ item.commodityName }}</div>
             <div class="con">退款原因：{{ item.refundReason }}</div>
             <div class="con">退款说明：{{ item.refundReturnDesc }}</div>
             <template v-if="item.modifyName"><div class="con">退款操作人：{{ item.modifyName }}</div></template>
@@ -353,7 +354,7 @@
 <script>
 import mixins from '@/utils/mixin'
 import { mapGetters } from 'vuex'
-import { getOrderDetail } from '@/api/order'
+import { getOrderDetail, setPushErp } from '@/api/order'
 export default {
   filters: {
     orderType: function(value) { // 订单类型
@@ -548,6 +549,21 @@ export default {
       // alert(arr)
       return arr
     },
+    handleSetPushErp(orderId) {
+      setPushErp(orderId).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '成功补推到ERP',
+            type: 'success'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: '补推到ERP失败',
+          type: 'error'
+        })
+      })
+    },
     /**
      * 分析身份证，计算年龄，性别
      * @param {string} identityCard 身份证号码
@@ -693,7 +709,7 @@ export default {
   color: #606266;
   margin-bottom: 20px;
   .info-item{
-    padding:10px;
+    padding:10px 8px;
     width: 20%;
     border-right:1px dashed #dfe6ec;
     line-height: 28px;
@@ -876,4 +892,5 @@ export default {
     // }
   }
 }
+.color-red{color: red}
 </style>

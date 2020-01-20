@@ -26,8 +26,8 @@
             :data="item"
             :selected="targetId===item.targetId"
             :message-type="item.latestMessage.objectName"
-            :avatar="item.latestMessage.content.extra.userLogo"
-            :nick-name="item.latestMessage.content.extra.nickName"
+            :avatar="item.latestMessage.content.extra ? item.latestMessage.content.extra.userLogo: ''"
+            :nick-name="item.latestMessage.content.extra ? item.latestMessage.content.extra.nickName : '暂无用户昵称'"
             :date="`${formatTime(item.latestMessage.sentTime, 'MM-DD')}`"
             :content="item.latestMessage.content.content"
             :show-del-icon="true"
@@ -151,7 +151,6 @@
             title="选择商品"
             :visible.sync="selectGoodsDialogVisible"
             append-to-body
-            width="60%"
             :close-on-click-modal="false"
             :before-close="handleSelectGoodsDialogClose"
           >
@@ -173,12 +172,12 @@
             </div>
             <el-table
               ref="multipleTable"
-              width="100%"
-              height="400"
+              fit
               :data="goodsList"
               tooltip-effect="dark"
+              height="300"
             >
-              <el-table-column prop="image" label="图片" width="150">
+              <el-table-column fixed="left" prop="image" label="图片" width="150">
                 <template slot-scope="scope">
                   <el-image
                     fit="scale-down"
@@ -197,7 +196,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="action" label="操作">
+              <el-table-column fixed="right" prop="action" label="操作">
                 <template slot-scope="scope">
                   <el-button type="primary" size="small" @click="handleGoodsSelect(scope.row)">选择</el-button>
                 </template>

@@ -62,6 +62,7 @@
         </el-table-column> -->
         <el-table-column prop="standard" label="规格" align="center" min-width="150" />
         <el-table-column prop="mprice" label="价格" align="center" width="100" />
+        <el-table-column prop="weight" label="重量" align="center" width="100" style="display:none" />
         <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
@@ -238,9 +239,6 @@ export default {
       } else {
         this.mySelectList.push(row)
       }
-      this.tableData.forEach(item => {
-        // item.number = 1 // 添加的组合商品的子商品数量默认为1
-      })
       console.log('mySelectList2:', this.mySelectList)
     },
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中

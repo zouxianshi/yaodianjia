@@ -178,7 +178,7 @@ export default {
         CustomerService.addSupportMsg({
           ...this.editMsgQuery,
           type: 3, // 快捷消息
-          msg: this.editMsgQuery.msg.trim()
+          msg: this.editMsgQuery.msg.replace(/\s*/g, '')
         }).then(res => {
           loading.close()
           this.$message({

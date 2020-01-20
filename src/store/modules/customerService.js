@@ -221,16 +221,26 @@ const mutations = {
   addBadgeToOnlineUser(state, payload) {
     const { userId, message } = payload
     console.log('addBadgeToOnlineUser', message)
-    const tempList = state.onlineConversationData.list
+    // const tempList = state.onlineConversationData.list
+    let tempList = []
+    const storageList = localStorage.getItem('ryConversationList')
+    console.log('缓存中的数据', storageList)
+    if (storageList) {
+      tempList = JSON.parse(storageList)
+    }
+    console.log('tempList', tempList)
     let hasItem = false
     tempList.forEach(element => {
+      console.log('element.targetid', element.targetId, userId)
       if (element.targetId === userId) {
         hasItem = true
-        element.newMsgNum++
+        // 如果是已经存在的用户 则直接徽标加1
+        element.newMsgNum = element.newMsgNum + 1
       }
     })
     // 如果是新来的用户 则往会话列表中添加一条数据
     if (!hasItem) {
+      console.error('新来的用户 则往会话列表中添加一条数据')
       tempList.push({
         conversationTitle: '',
         conversationType: message.conversationType,
@@ -339,7 +349,7 @@ const actions = {
         list.forEach(element => {
           // 添加新消息数量字段 用于徽标显示
           if (payload && payload.searchText) {
-            if (element.latestMessage.content.extra.nickName.indexOf(payload.searchText) > -1) {
+            if (element.latestMessage.content.extra ? element.latestMessage.content.extra.nickName.indexOf(payload.searchText) > -1 : false) {
               tempList.push({
                 ...element,
                 newMsgNum: 0
