@@ -85,7 +85,7 @@ export default {
       return {
         merCode: this.merCode, // 商户编码
         userAccount: this.name, // 如果是客服，对应中台sys_user.account
-        userId: this.userId, // 用户id 这里是自己的id 不是目标用户的id
+        userId: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.userId : this.userId, // 用户id 这里是自己的id 不是目标用户的id
         userName: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.userName : '暂无用户昵称', // 用户姓名
         nickName: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.nickName : '', // 昵称
         age: this.curLatestMessageInfo.content.extra.age, // 年龄
@@ -145,7 +145,7 @@ export default {
         return 'text'
       }
     },
-    queryRYConversationList(searchParam) {
+    queryryCSList(searchParam) {
       this.isFirstQueryFinished = true
       // 获取会话列表
       this.queryOnlineConversationList(searchParam).then(() => {
@@ -274,7 +274,7 @@ export default {
           },
           msgResult: res
         })
-        console.log('after addMsgToOnlineCurUserMsgList')
+        console.log('after addMsgToOnlineCurUserMsgList', localStorage.getItem('ryCSList'))
         this.scrollToBottom()
       }).catch((err, msg) => {
         console.error('send message error', err, msg)
@@ -612,11 +612,11 @@ export default {
     // 搜索按钮点击
     searchBtnClick() {
       console.log('searchtext', this.searchText)
-      if (!localStorage.getItem('ryConversationList')) {
+      if (!localStorage.getItem('ryCSList')) {
         return
       }
       console.log('有缓存')
-      const list = [...JSON.parse(localStorage.getItem('ryConversationList'))]
+      const list = [...JSON.parse(localStorage.getItem('ryCSList'))]
       if (!this.searchText.replace(/\s*/g, '')) {
         console.log('!ssearchtext')
         this.forceChangeConversationList(list)
@@ -647,7 +647,7 @@ export default {
         this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : '暂无用户昵称'
         this.resetRightData()
       } else {
-        console.log('localstorage', localStorage.getItem('ryConversationList'))
+        console.log('localstorage', localStorage.getItem('ryCSList'))
         console.log('no this.onlineConversationData.list')
         this.targetId = ''
         this.curUserAvatar = ''
@@ -656,7 +656,7 @@ export default {
           userId: '',
           setStorage: false
         })
-        console.log('localstorage after setCurOnlineUserId', localStorage.getItem('ryConversationList'))
+        console.log('localstorage after setCurOnlineUserId', localStorage.getItem('ryCSList'))
       }
     },
     resetData() {
@@ -731,12 +731,12 @@ export default {
       console.warn('new msg coming')
       if (this.onlineConversationData && this.onlineConversationData.list.length === 0) {
         this.setHasNewMsg(false)
-        this.queryRYConversationList()
+        this.queryryCSList()
       }
     }
     if (this.ryConnected && !this.isFirstQueryFinished) {
       console.log('进了ryConnected')
-      this.queryRYConversationList()
+      this.queryryCSList()
     }
   }
 }

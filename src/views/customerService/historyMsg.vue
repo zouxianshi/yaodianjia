@@ -19,7 +19,7 @@
         </div>
         <div class="user-list">
           <user
-            v-for="(item,index) in historyConversationList"
+            v-for="(item,index) in historyCSList"
             :key="index"
             :data="item"
             :selected="curChatUserId===item.userId"

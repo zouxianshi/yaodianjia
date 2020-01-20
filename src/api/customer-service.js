@@ -84,7 +84,7 @@ class CustomerService {
   /**
    * 查询客服历史会话列表
    */
-  querySupportHistoryConversationList(params) {
+  querySupportHistoryCSList(params) {
     return request({
       url: `${config.merGoods}/1.0/csd-record/user`,
       method: 'post',
