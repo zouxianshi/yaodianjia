@@ -100,7 +100,6 @@ export default {
     'onlineConversationData.list': {
       handler(list) {
         console.log('into value', list)
-        console.log('localstrage in watch', localStorage.getItem('ryConversationList'))
         if (list.length === 1) {
           this.curLatestMessageInfo = list[0].latestMessage
         }
