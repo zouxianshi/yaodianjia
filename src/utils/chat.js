@@ -68,14 +68,32 @@ class Chat {
     })
   }
 
+  /**
+   * 验证消息类型
+   */
+  validateMessageType(message) {
+    if ([this.MessageType.TextMessage, this.MessageType.ImageMessage, this.MessageType.GoodsMessage].indexOf(message.objectName) > -1) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   // 设置消息监听器
   setOnReceiveMessageListener(receivedCb) {
-    // var _this = this
+    var _this = this
     console.log('设置消息监听器')
     RongIMClient.setOnReceiveMessageListener({
       // 接收到的消息
       onReceived: function(message) {
         console.warn('融云消息监听, 收到消息：', message)
+
+        // 验证消息类型 只接收文本/图片/商品消息
+        if (!_this.validateMessageType(message)) {
+          console.log('不用于展示的消息', message)
+          return
+        }
+
         if (message.content) {
           if (typeof message.content.extra === 'string') {
             message.content.extra = JSON.parse(message.content.extra)
@@ -188,12 +206,14 @@ class Chat {
   getConversationList() {
     const conversationTypes = [window.RongIMLib.ConversationType.PRIVATE]
     const count = 150
+    const _self = this
     return new Promise((resolve, reject) => {
       window.RongIMClient.getInstance().getConversationList(
         {
           onSuccess: function(list) {
-            const tempList = [...list]
-            tempList.forEach(element => {
+            console.warn('融云初始化的会话列表', list)
+            const tempList = []
+            list.forEach(element => {
               if (element.latestMessage) {
                 if (element.latestMessage.content) {
                   if (element.latestMessage.content.extra && typeof element.latestMessage.content.extra === 'string') {
@@ -201,7 +221,12 @@ class Chat {
                   }
                 }
               }
+              // 验证消息类型
+              if (_self.validateMessageType(element.latestMessage)) {
+                tempList.push(element)
+              }
             })
+            console.error('Chat.getConversationList返回的会话列表', tempList)
             resolve(tempList)
           },
           onError: function(error) {
