@@ -620,7 +620,7 @@
           <div>
             <span class="color-red">￥{{ payMoney }}</span>
             <span class="color-gray">
-              <template v-if="isLastRefund">(不可大于商品实付金额,当前订单未发货，运费将随最后一笔退款明细自动退回)</template>
+              <template v-if="isLastRefund">(不可大于商品实付金额，当前订单未发货，运费将随最后一笔退款明细自动退回)</template>
               <template v-else>(不可大于商品实付金额)</template>
             </span>
           </div>
