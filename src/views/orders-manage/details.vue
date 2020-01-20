@@ -203,6 +203,7 @@
       <template v-if="detailsData.returnList">
         <div v-for="(item,indexReturn) in detailsData.returnList" :key="indexReturn" class="info">
           <div class="info-item info-left">
+            <div class="con">商品名称：{{ item.commodityName }}</div>
             <div class="con">退款原因：{{ item.refundReason }}</div>
             <div class="con">退款说明：{{ item.refundReturnDesc }}</div>
             <template v-if="item.modifyName"><div class="con">退款操作人：{{ item.modifyName }}</div></template>
@@ -891,4 +892,5 @@ export default {
     // }
   }
 }
+.color-red{color: red}
 </style>
