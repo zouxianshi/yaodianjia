@@ -224,11 +224,14 @@ const mutations = {
     // const tempList = state.onlineConversationData.list
     let tempList = []
     const storageList = localStorage.getItem('ryConversationList')
+    console.log('缓存中的数据', storageList)
     if (storageList) {
       tempList = JSON.parse(storageList)
     }
+    console.log('tempList', tempList)
     let hasItem = false
     tempList.forEach(element => {
+      console.log('element.targetid', element.targetId, userId)
       if (element.targetId === userId) {
         hasItem = true
         // 如果是已经存在的用户 则直接徽标加1

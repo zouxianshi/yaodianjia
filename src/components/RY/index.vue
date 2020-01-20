@@ -39,7 +39,7 @@ export default {
 
             // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知
             if (_this.$route.path === '/customerService/consultation') {
-              console.log('curOnlineUserData', _this.curOnlineUserData, message.senderUserId)
+              console.log('当前在咨询页面:curOnlineUserData', _this.curOnlineUserData, message.senderUserId)
 
               // 判断接收的消息是否来自当前打开窗口的用户 是则直接追加消息 否则在左侧会话头像添加徽标
               if (userId === message.senderUserId) {
@@ -63,18 +63,22 @@ export default {
                   _this.scrollToBottom()
                 }, 100)
               } else {
+                console.log('into ')
                 _this.addBadgeToOnlineUser({
                   userId: message.senderUserId,
                   message
                 })
               }
             } else {
+              console.log('当前不在咨询页面', message)
               this.setHasNewMsg(true)
               _this.newMsgComing = true
+              console.log('goto addBadgeToOnlineUser')
               _this.addBadgeToOnlineUser({
                 userId: message.senderUserId,
                 message
               })
+              console.log('goto setCurOnlineUserId')
               _this.setCurOnlineUserId({
                 userId: message.senderUserId
               })
