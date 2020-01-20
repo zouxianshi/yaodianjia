@@ -249,7 +249,6 @@
                           >
                             <div class="x-image__preview">
                               <el-image
-                                fit="scale-down"
                                 :src="showImg(list.mpic)"
                                 :preview-src-list="[showImg(list.mpic)]"
                               />
