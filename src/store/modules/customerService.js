@@ -2,7 +2,7 @@ import Chat from '@/utils/chat'
 import CustomerService from '@/api/customer-service'
 const state = {
   // 历史会话列表
-  historyConversationList: [],
+  historyCSList: [],
   // 当前历史会话消息记录
   curHistoryMsgList: [],
   // 在线咨询当前用户数据
@@ -26,6 +26,10 @@ const state = {
 }
 
 const mutations = {
+  // 设置缓存中的会话列表
+  setConversationListToLocalStorage(state, payload) {
+
+  },
 
   /**
    * 设置websocket连接状态
@@ -57,7 +61,7 @@ const mutations = {
   // 设置客服历史会话列表
   SET_HISTORY_CONVERSATIONLIST: (state, payload) => {
     console.log('mutations payload', payload)
-    state.historyConversationList = payload.conversationList
+    state.historyCSList = payload.conversationList
   },
   // 设置当前选中的会话用户ID
   SET_HIS_CUR_USERID(state, payload) {
@@ -95,7 +99,8 @@ const mutations = {
     // setStorage为false则不设置localStorage
     if (payload.setStorage !== false) {
       console.log('setStorage不为false, 设置缓存', payload.setStorage)
-      localStorage.setItem('ryConversationList', JSON.stringify(onlineUserList))
+      console.log(' SET_CUR_ONLINE_USERID 的localStorage设置')
+      localStorage.setItem('ryCSList', JSON.stringify(onlineUserList))
     }
     state.onlineConversationData.list = onlineUserList
   },
@@ -120,20 +125,18 @@ const mutations = {
 
   // 删除在线咨询会话item
   DEL_ONLINE_CONVERSATOIN(state, payload) {
-    console.log('payload', payload)
     // 删除localStorage 中的item
     let localConversationList = null
-    if (localStorage.getItem('ryConversationList')) {
-      localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
+    if (localStorage.getItem('ryCSList')) {
+      localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
       localConversationList.forEach((element, index) => {
         if (element.targetId === payload) {
-          console.log('处理前的localConversationList', localConversationList)
           localConversationList.splice(index, 1)
         }
       })
-      console.log('处理后的localConversationList', localConversationList)
       if (Array.isArray(localConversationList)) {
-        localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
+        console.log('DEL_ONLINE_CONVERSATOIN 的locaStorage设置')
+        localStorage.setItem('ryCSList', JSON.stringify(localConversationList))
       }
     }
     // 删除vuex中的item
@@ -184,7 +187,6 @@ const mutations = {
     }
 
     // 更新当前窗口最近消息
-    console.log('更新当前窗口最近消息', state.onlineConversationData.list)
     const tempOnlineConversationList = state.onlineConversationData.list
     tempOnlineConversationList.forEach((item, index) => {
       if (item.targetId === msgResult.targetId || (item.targetId === msgResult.senderUserId && type === 'listener')) {
@@ -200,10 +202,12 @@ const mutations = {
     })
 
     // 更新localStorage会话列表数据
-    if (localStorage.getItem('ryConversationList')) {
-      const localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
+    if (localStorage.getItem('ryCSList')) {
+      const localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
       localConversationList.forEach((element) => {
-        if (element.targetId === msgResult.targetId || (element.targetId === msgResult.senderUserId && type === 'listener')) {
+        // if (element.targetId === msgResult.targetId || (element.targetId === msgResult.senderUserId && type === 'listener')) {
+
+        if (element.latestMessage.content.extra.userId === msgResult.content.extra.userId) {
           element.latestMessage = {
             ...element.latestMessage,
             ...curLocalPush.latestMessage,
@@ -214,7 +218,8 @@ const mutations = {
           }
         }
       })
-      localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
+      console.log('ADD_MSG_TO_ONLINE_MSG_LIST 的locaStorage设置')
+      localStorage.setItem('ryCSList', JSON.stringify(localConversationList))
     }
   },
   // 添加未读消息徽标至会话列表item头像
@@ -223,7 +228,7 @@ const mutations = {
     console.log('addBadgeToOnlineUser', message)
     // const tempList = state.onlineConversationData.list
     let tempList = []
-    const storageList = localStorage.getItem('ryConversationList')
+    const storageList = localStorage.getItem('ryCSList')
     console.log('缓存中的数据', storageList)
     if (storageList) {
       tempList = JSON.parse(storageList)
@@ -232,7 +237,7 @@ const mutations = {
     let hasItem = false
     tempList.forEach(element => {
       console.log('element.targetid', element.targetId, userId)
-      if (element.targetId === userId) {
+      if (element.targetId === message.senderUserId || element.targetId === message.targetId) {
         hasItem = true
         // 如果是已经存在的用户 则直接徽标加1
         element.newMsgNum = element.newMsgNum + 1
@@ -259,7 +264,8 @@ const mutations = {
         newMsgNum: 1
       })
     }
-    localStorage.setItem('ryConversationList', JSON.stringify(tempList))
+    console.log('addBadgeToOnlineUser 的localStorage设置')
+    localStorage.setItem('ryCSList', JSON.stringify(tempList))
     state.onlineConversationData.list = tempList
   },
 
@@ -277,20 +283,48 @@ const mutations = {
   },
   // 获取在线咨询会话列表
   SET_ONLINE_CONVERSATIONLIST(state, payload) {
+    console.log('into SET_ONLINE_CONVERSATIONLIST', '对比本地缓存中的数据并合并 完成之后更新本地存储')
     // 这里对比本地缓存中的数据并合并 完成之后更新本地存储
-    // localStorage.setItem('ryConversationList', JSON.stringify(payload))
+    // localStorage.setItem('ryCSList', JSON.stringify(payload))
     let localConversationList = []
     // 如果有本地缓存 对比本地缓存并合并数据
-    if (localStorage.getItem('ryConversationList')) {
-      localConversationList = JSON.parse(localStorage.getItem('ryConversationList'))
+    if (localStorage.getItem('ryCSList')) {
+      localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
       if (typeof localConversationList !== 'object') {
         return
       }
-      console.log('localConversationList', localConversationList)
+
+      // localstorage数据去重
+      console.warn('开始缓存数据去重')
+      const tempLocalList = []
+      const forEachLocalList = [...localConversationList]
+      for (let i = 0; i < forEachLocalList.length; i++) {
+        const outerItem = forEachLocalList[i]
+        if (!tempLocalList.find(ele => {
+          outerItem.latestMessage.content.extra.userId === ele.latestMessage.content.extra.userId
+        })) {
+          tempLocalList.push(outerItem)
+        }
+      }
+      console.log('去重后的缓存聊天列表', tempLocalList)
+
+      localConversationList = tempLocalList
+
+      console.log('缓存中的会话列表', localConversationList)
       payload.forEach((item, index) => {
         console.log('item', item)
         const existedIndex = localConversationList.findIndex(element => {
-          return item.targetId === element.targetId
+          // element.targetId === message.senderUserId || element.targetId === message.targetId
+          let flag = false
+          // 客服发送给用户 则判断targetId
+          if (item.latestMessage.content.extra.userId === element.latestMessage.content.extra.userId) {
+            flag = true
+          }
+          if (flag === false) {
+            console.log('item', item)
+            console.log('element', element)
+          }
+          return flag
         })
         console.log('existedIndex', existedIndex)
         if (existedIndex >= 0) {
@@ -300,11 +334,13 @@ const mutations = {
           localConversationList.push(item)
         }
       })
-      localStorage.setItem('ryConversationList', JSON.stringify(localConversationList))
+      console.log('SET_ONLINE_CONVERSATIONLIST 的localStorage设置1')
+      localStorage.setItem('ryCSList', JSON.stringify(localConversationList))
       state.onlineConversationData.list = localConversationList
     } else {
       state.onlineConversationData.list = payload
-      localStorage.setItem('ryConversationList', JSON.stringify(payload))
+      console.log('SET_ONLINE_CONVERSATIONLIST 的localStorage设置2')
+      localStorage.setItem('ryCSList', JSON.stringify(payload))
     }
 
     console.log('通过vuex获取并添加字段的会话列表', state.onlineConversationData)
@@ -313,10 +349,10 @@ const mutations = {
 
 const actions = {
   // 获取客服历史会话列表
-  querySupportHistoryConversationList({ commit, state }, payload) {
+  querySupportHistoryCSList({ commit, state }, payload) {
     console.log('querySupportHistoryRecord action state', state, payload)
     return new Promise((resolve, reject) => {
-      CustomerService.querySupportHistoryConversationList(payload).then(res => {
+      CustomerService.querySupportHistoryCSList(payload).then(res => {
         const { data } = res
         console.log('querySupportHistoryRecord data', data)
         commit('SET_HISTORY_CONVERSATIONLIST', {

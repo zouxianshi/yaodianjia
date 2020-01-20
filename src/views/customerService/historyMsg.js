@@ -48,12 +48,12 @@ export default {
       'userId'
     ]),
     ...mapGetters({
-      historyConversationList: 'historyConversationList'
+      historyCSList: 'historyCSList'
     })
   },
   methods: {
     ...mapActions({
-      getSupportHistoryConversationList: 'customerService/querySupportHistoryConversationList',
+      getSupportHistoryCSList: 'customerService/querySupportHistoryCSList',
       queryHistoryMsgListByUserId: 'customerService/queryHistoryMsgListByUserId'
     }),
     ...mapMutations({
@@ -66,7 +66,7 @@ export default {
     // 搜索按钮点击
     searchBtnClick() {
       this.resetData()
-      this.queryConversationList()
+      this.queryCSList()
     },
     // 计算日期
     showDate(curTime, lastTime) {
@@ -136,17 +136,17 @@ export default {
       this.queryUserOrderList()
     },
     // 查询会话列表
-    queryConversationList() {
-      this.getSupportHistoryConversationList({
+    queryCSList() {
+      this.getSupportHistoryCSList({
         currentPage: this.curConversationPageNo,
         merCode: this.merCode,
         pageSize: this.curConversationPageSize,
         userId: this.supporterId,
         name: this.searchText.replace(/\s*/g, '') // 搜索框中输入的用户名字
       }).then(res => {
-        if (this.historyConversationList.length > 0) {
-          this.curChatUserId = this.historyConversationList[0].userId
-          this.currentUser = this.historyConversationList[0].nickName
+        if (this.historyCSList.length > 0) {
+          this.curChatUserId = this.historyCSList[0].userId
+          this.currentUser = this.historyCSList[0].nickName
           // 如果是第一页则默认请求第一个用户的信息
           if (this.curConversationPageNo === 1) {
             this.refreshPageData()
@@ -243,7 +243,7 @@ export default {
     load() {
       console.log('load')
       if (this.curConversationPageNo > 1) {
-        this.queryConversationList()
+        this.queryCSList()
       }
     },
     handleGoodsClick(item) {
@@ -258,6 +258,6 @@ export default {
     // 接收从客服列表跳转过来的客服id
     this.supporterId = this.$route.query.id || this.userId
     // 查询客服历史会话列表
-    this.queryConversationList()
+    this.queryCSList()
   }
 }
