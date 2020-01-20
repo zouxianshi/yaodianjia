@@ -395,6 +395,7 @@ export default {
     // 商品curPage change
     handleGoodsDialogCurPageChange(val) {
       this.goodsQuery.currentPage = val
+      this.$refs.multipleTable.bodyWrapper.scrollTop = 0
       this.queryGoods()
     },
     handleSelectGoodsDialogClose() {
