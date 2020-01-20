@@ -822,8 +822,12 @@ export default {
       //   content: this.basicForm,
       //   id: this.basicForm.id
       // }
-      if (!this.basicForm.name || (this.basicForm.name.length < 1 && this.basicForm.name.length > 30)) {
-        this.$message({ type: 'warning', message: '请输入商品名称且长度在1到30个字符' })
+      if (!this.basicForm.name) {
+        this.$message({ type: 'warning', message: '请输入商品名称' })
+        return false
+      }
+      if (this.basicForm.name.length < 1 || this.basicForm.name.length > 30) {
+        this.$message({ type: 'warning', message: '商品名称长度在1到30个字符' })
         return false
       }
       if (!this.chooseTypeList.length) {
