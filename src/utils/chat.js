@@ -76,6 +76,11 @@ class Chat {
       // 接收到的消息
       onReceived: function(message) {
         console.warn('融云消息监听, 收到消息：', message)
+        if (message.content) {
+          if (typeof message.content.extra === 'string') {
+            message.content.extra = JSON.parse(message.content.extra)
+          }
+        }
 
         // 调用消息监听回调
         receivedCb(message)
@@ -187,7 +192,17 @@ class Chat {
       window.RongIMClient.getInstance().getConversationList(
         {
           onSuccess: function(list) {
-            resolve(list)
+            const tempList = [...list]
+            tempList.forEach(element => {
+              if (element.latestMessage) {
+                if (element.latestMessage.content) {
+                  if (element.latestMessage.content.extra && typeof element.latestMessage.content.extra === 'string') {
+                    element.latestMessage.content.extra = JSON.parse(element.latestMessage.content.extra)
+                  }
+                }
+              }
+            })
+            resolve(tempList)
           },
           onError: function(error) {
             reject(error)
