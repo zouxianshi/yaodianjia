@@ -13,25 +13,25 @@ const router = [
     children: [
       {
         path: 'list',
-        component: () => import('@/views/orders-manage/all-orders/list'),
-        name: 'orders-manage',
+        component: () => import('@/views/orders-manage/list'),
+        name: 'orders-manage-list',
         meta: {
           title: '所有订单',
           noCache: true
         }
       }, {
         path: `details`,
-        component: () => import('@/views/orders-manage/all-orders/details'),
-        name: 'orders-manage',
+        component: () => import('@/views/orders-manage/details'),
+        name: 'orders-manage-details',
         meta: {
-          title: '订单详情'
+          title: '订单详情',
           // noCache: true,
-          // activeMenu: '/orders-manage/all-orders/list'
+          activeMenu: '/orders-manage/list'
         }
       }, {
         path: 'settings',
         component: () => import('@/views/orders-manage/settings'),
-        name: 'orders-manage',
+        name: 'orders-manage-settings',
         meta: {
           title: '订单设置',
           noCache: true
