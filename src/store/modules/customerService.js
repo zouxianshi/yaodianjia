@@ -237,12 +237,12 @@ const mutations = {
     let hasItem = false
     tempList.forEach(element => {
       console.log('element.targetid', element.targetId, userId)
-      if (element.targetId === message.senderUserId || element.targetId === message.targetId) {
+      if (element.latestMessage.content.extra.userId === message.latestMessage.content.extra.userId) {
         hasItem = true
+        element.latestMessage = message
         // 如果是已经存在的用户 则直接徽标加1
         if (message.messageDirection === 2) {
           element.newMsgNum = element.newMsgNum + 1
-          element.latestMessage = message
         }
       }
     })
