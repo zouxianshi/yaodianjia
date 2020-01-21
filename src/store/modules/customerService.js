@@ -240,7 +240,10 @@ const mutations = {
       if (element.targetId === message.senderUserId || element.targetId === message.targetId) {
         hasItem = true
         // 如果是已经存在的用户 则直接徽标加1
-        element.newMsgNum = element.newMsgNum + 1
+        if (message.messageDirection === 2) {
+          element.newMsgNum = element.newMsgNum + 1
+          element.latestMessage = message
+        }
       }
     })
     // 如果是新来的用户 则往会话列表中添加一条数据
@@ -250,18 +253,19 @@ const mutations = {
         conversationTitle: '',
         conversationType: message.conversationType,
         latestMessage: {
-          content: {
-            messageName: message.content.messageName,
-            content: message.content.content,
-            extra: message.content.extra
-          },
-          conversationType: message.conversationType,
-          objectName: message.objectName
+          ...message
+          // content: {
+          //   messageName: message.content.messageName,
+          //   content: message.content.content,
+          //   extra: message.content.extra
+          // },
+          // conversationType: message.conversationType,
+          // objectName: message.objectName
         },
         latestMessageId: message.messageId,
         sentTime: message.sentTime,
         targetId: message.targetId,
-        newMsgNum: 1
+        newMsgNum: message.messageDirection === 2 ? 1 : 0
       })
     }
     console.log('addBadgeToOnlineUser 的localStorage设置')
@@ -295,7 +299,7 @@ const mutations = {
       }
 
       // localstorage数据去重
-      console.warn('开始缓存数据去重')
+      console.warn('开始缓存数据去重', localConversationList)
       const tempLocalList = []
       const forEachLocalList = [...localConversationList]
       for (let i = 0; i < forEachLocalList.length; i++) {
