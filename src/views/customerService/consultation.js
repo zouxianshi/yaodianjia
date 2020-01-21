@@ -135,6 +135,13 @@ export default {
         return true
       }
     },
+    /**
+     * 文本框
+     */
+    handleTextAreaKeyup(e) {
+      console.log('文本按键', e)
+      this.sendMsg()
+    },
     // 根据消息类型返回对应类名
     computeChatItemType(messageType) {
       if (messageType === this.MessageType.ImageMessage) {
