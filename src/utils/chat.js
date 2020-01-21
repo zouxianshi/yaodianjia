@@ -23,6 +23,14 @@ class Chat {
     GoodsMessage: 'custom:commodity' // 商品消息
   }
 
+  // 判断两条消息是不是来自一个用户
+  isUserEqual(msg1, msg2) {
+    if (msg1.content.extra.userId.toString() === msg2.content.extra.userId.toString()) {
+      return true
+    }
+    return false
+  }
+
   // 初始化融云 IMLib
   init({ ryToken, onReceived, onStatusChange }) {
     return new Promise((resolve, reject) => {
