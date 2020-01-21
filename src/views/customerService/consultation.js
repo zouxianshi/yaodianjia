@@ -266,7 +266,8 @@ export default {
       Chat.sendMessage({
         targetId: this.targetId, // 目标用户id,
         msgInfo: {
-          content: Chat.emojiToSymbol(msgInfo.content),
+          // content: Chat.emojiToSymbol(msgInfo.content),
+          content: msgInfo.content,
           extra: this.extra
         }
       }).then(res => {
