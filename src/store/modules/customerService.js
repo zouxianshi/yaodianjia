@@ -26,6 +26,24 @@ const state = {
 }
 
 const mutations = {
+
+  // 接收到已读回执的处理
+  readMessage(state, payload) {
+    const tempList = [...state.onlineConversationData.list]
+    const curItem = tempList.find(item => {
+      if (item.latestMessage.content.extra.userId === payload.targetId && payload.messageDirection === 1) {
+        return true
+      } return false
+    })
+    if (curItem) {
+      if (curItem.newMsgNum > 0) {
+        curItem.newMsgNum = curItem.newMsgNum - 1
+      }
+    }
+    state.onlineConversationData.list = tempList
+    localStorage.setItem('ryCSList', JSON.stringify(tempList))
+  },
+
   // 设置缓存中的会话列表
   setConversationListToLocalStorage(state, payload) {
 

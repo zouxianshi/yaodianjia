@@ -460,6 +460,8 @@ export default {
           userId: data.targetId
         })
       } else {
+        // 发送已读通知
+        Chat.sendReceiptMessage(data.latestMessage)
         // 重置所有数据并重新请求
         this.targetId = data.targetId
         this.curLatestMessageInfo = data.latestMessage
