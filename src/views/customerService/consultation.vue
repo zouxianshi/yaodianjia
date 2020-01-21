@@ -223,6 +223,7 @@
             placeholder="请输入内容"
             maxlength="512"
             @input="handleTextAreaChange"
+            @keyup.enter.native="handleTextAreaKeyup"
           />
         </div>
         <div class="send-msg-box-bottom">
