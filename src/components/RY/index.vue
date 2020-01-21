@@ -71,7 +71,9 @@ export default {
               }
             } else {
               console.log('当前不在咨询页面', message)
-              this.setHasNewMsg(true)
+              if (message.messageDirection === 2) {
+                this.setHasNewMsg(true)
+              }
               _this.newMsgComing = true
               console.log('goto addBadgeToOnlineUser')
               _this.addBadgeToOnlineUser({
