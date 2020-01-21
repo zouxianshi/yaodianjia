@@ -42,7 +42,7 @@ export default {
               console.log('当前在咨询页面:curOnlineUserData', _this.curOnlineUserData, message.senderUserId)
 
               // 判断接收的消息是否来自当前打开窗口的用户 是则直接追加消息 否则在左侧会话头像添加徽标
-              if (userId === message.content.extra.userId) {
+              if (userId.toString() === message.content.extra.userId.toString()) {
                 _this.addMsgToOnlineCurUserMsgList({
                   type: 'listener', // 类型 来自融云消息监听
                   merCode: _this.merCode,

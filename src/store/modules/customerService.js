@@ -155,8 +155,8 @@ const mutations = {
     const {
       merCode,
       // msgInfo,
-      msgResult,
-      type
+      msgResult
+      // type
     } = payload
     // 组装消息记录数据
     const curWindowPush = {
@@ -189,7 +189,8 @@ const mutations = {
     // 更新当前窗口最近消息
     const tempOnlineConversationList = state.onlineConversationData.list
     tempOnlineConversationList.forEach((item, index) => {
-      if (item.targetId === msgResult.targetId || (item.targetId === msgResult.senderUserId && type === 'listener')) {
+      if (Chat.isUserEqual(item.latestMessage, msgResult)) {
+      // if (item.targetId === msgResult.targetId || (item.targetId === msgResult.senderUserId && type === 'listener')) {
         item.latestMessage = {
           ...item.latestMessage,
           ...curLocalPush.latestMessage,
@@ -205,9 +206,7 @@ const mutations = {
     if (localStorage.getItem('ryCSList')) {
       const localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
       localConversationList.forEach((element) => {
-        // if (element.targetId === msgResult.targetId || (element.targetId === msgResult.senderUserId && type === 'listener')) {
-
-        if (element.latestMessage.content.extra.userId === msgResult.content.extra.userId) {
+        if (Chat.isUserEqual(element.latestMessage, msgResult)) {
           element.latestMessage = {
             ...element.latestMessage,
             ...curLocalPush.latestMessage,
@@ -237,7 +236,8 @@ const mutations = {
     let hasItem = false
     tempList.forEach(element => {
       console.log('element.targetid', element.targetId, userId)
-      if (element.latestMessage.content.extra.userId === message.latestMessage.content.extra.userId) {
+      if (Chat.isUserEqual(element.latestMessage, message)) {
+      // if (element.latestMessage.content.extra.userId === message.latestMessage.content.extra.userId) {
         hasItem = true
         element.latestMessage = message
         // 如果是已经存在的用户 则直接徽标加1
@@ -305,7 +305,8 @@ const mutations = {
       for (let i = 0; i < forEachLocalList.length; i++) {
         const outerItem = forEachLocalList[i]
         if (!tempLocalList.find(ele => {
-          outerItem.latestMessage.content.extra.userId === ele.latestMessage.content.extra.userId
+          return Chat.isUserEqual(outerItem.latestMessage, ele.latestMessage)
+          // outerItem.latestMessage.content.extra.userId === ele.latestMessage.content.extra.userId
         })) {
           tempLocalList.push(outerItem)
         }
@@ -321,7 +322,8 @@ const mutations = {
           // element.targetId === message.senderUserId || element.targetId === message.targetId
           let flag = false
           // 客服发送给用户 则判断targetId
-          if (item.latestMessage.content.extra.userId === element.latestMessage.content.extra.userId) {
+          if (Chat.isUserEqual(item.latestMessage, element.latestMessage)) {
+          // if (item.latestMessage.content.extra.userId === element.latestMessage.content.extra.userId) {
             flag = true
           }
           if (flag === false) {
