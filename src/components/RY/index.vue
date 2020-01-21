@@ -33,7 +33,7 @@ export default {
           onReceived: message => {
             this.newMsg = message
             // 通知在线咨询组件有新消息
-            console.log('setHasNewMsg')
+            console.log('消息组件，收到消息', message)
 
             const { userId } = _this.curOnlineUserData
 
@@ -98,26 +98,30 @@ export default {
                   targetId: message.targetId // 接收用户id
                 }
               })
-              _this.$notify({
-                type: 'info',
-                title: '您有新的消息',
-                message: Chat.symbolToEmoji(message.content.content),
-                duration: 5000,
-                onClick: e => {
-                  console.log('click e', e)
-                  _this.setHasNewMsg(false)
-                  _this.newMsgComing = false
-                  console.log('newMsgComing', _this.newMsg)
-                  _this.$notify.close()
-                  _this.$router.push({
-                    path: '/customerService/consultation',
-                    query: {
-                      targetId: _this.newMsg.targetId,
-                      msgInfo: JSON.stringify(_this.newMsg)
-                    }
-                  })
-                }
-              })
+              // 只有C端发送的消息才弹出通知
+              if (message.messageDirection === 2) {
+                _this.$notify({
+                  type: 'info',
+                  title: '您有新的消息',
+                  message: Chat.symbolToEmoji(message.content.content),
+                  duration: 5000,
+                  onClick: e => {
+                    console.log('click e', e)
+                    _this.setHasNewMsg(false)
+                    _this.newMsgComing = false
+                    console.log('newMsgComing', _this.newMsg)
+                    _this.$notify.close()
+                    _this.$router.push({
+                      path: '/customerService/consultation',
+                      query: {
+                        targetId: _this.newMsg.targetId,
+                        msgInfo: JSON.stringify(_this.newMsg)
+                      }
+                    })
+                  }
+                })
+              }
+              // if
             }
           },
           // 状态监听
