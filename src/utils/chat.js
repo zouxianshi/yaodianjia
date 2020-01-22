@@ -342,6 +342,26 @@ class Chat {
       }
     })
   }
+
+  // 同步消息状态到其他端
+  syncReadStatus(data) {
+    console.log('into 同步消息状态到其他端')
+    // 从消息里获取服务器端时间，以最近一条已读 message 为准
+    var msg = {
+      lastMessageSendTime: data.sentTime
+    }
+    var conversationType = RongIMLib.ConversationType.PRIVATE
+    msg = new RongIMLib.SyncReadStatusMessage(msg)
+    var sendSyncStutus = RongIMClient.getInstance().sendMessage
+    sendSyncStutus(conversationType, data.targetId, msg, {
+      onSuccess: function(e) {
+        console.log('同步消息状态成功', e)
+      },
+      onError: function(e) {
+        console.error('同步消息状态失败', e)
+      }
+    })
+  }
 }
 
 export default new Chat()
