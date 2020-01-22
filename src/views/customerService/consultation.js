@@ -644,7 +644,8 @@ export default {
         if (element.latestMessage.content.extra.nickName ? element.latestMessage.content.extra.nickName.toLowerCase().indexOf(this.searchText.toLowerCase().replace(/\s*/g, '')) > -1 : false) {
           tempList.push({
             ...element,
-            newMsgNum: 0
+            newMsgNum: 0,
+            unreadMessageCount: 0
           })
         }
       })

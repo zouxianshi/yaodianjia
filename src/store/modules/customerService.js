@@ -38,6 +38,7 @@ const mutations = {
     })
     if (curItem) {
       if (curItem.newMsgNum > 0) {
+        curItem.unreadMessageCount = 0
         curItem.newMsgNum = 0
       }
     }
@@ -58,6 +59,7 @@ const mutations = {
     })
     if (curItem) {
       if (curItem.newMsgNum > 0) {
+        curItem.unreadMessageCount = 0
         curItem.newMsgNum = 0
       }
     }
@@ -133,6 +135,7 @@ const mutations = {
     onlineUserList.forEach((element) => {
       if (element.targetId === userId) {
         element.newMsgNum = 0
+        element.unreadMessageCount = 0
       }
     })
     // setStorage为false则不设置localStorage
@@ -280,6 +283,7 @@ const mutations = {
         // 如果是已经存在的用户 则直接徽标加1
         if (message.messageDirection === 2) {
           element.newMsgNum = element.newMsgNum + 1
+          element.unreadMessageCount = element.unreadMessageCount + 1
         }
       }
     })
@@ -302,7 +306,8 @@ const mutations = {
         latestMessageId: message.messageId,
         sentTime: message.sentTime,
         targetId: message.targetId,
-        newMsgNum: message.messageDirection === 2 ? 1 : 0
+        newMsgNum: message.messageDirection === 2 ? 1 : 0,
+        unreadMessageCount: message.messageDirection === 2 ? 1 : 0
       })
     }
     console.log('addBadgeToOnlineUser 的localStorage设置')
@@ -431,13 +436,15 @@ const actions = {
             if (element.latestMessage.content.extra ? element.latestMessage.content.extra.nickName.indexOf(payload.searchText) > -1 : false) {
               tempList.push({
                 ...element,
-                newMsgNum: 0
+                newMsgNum: 0,
+                unreadMessageCount: 0
               })
             }
           } else {
             tempList.push({
               ...element,
-              newMsgNum: 0
+              newMsgNum: 0,
+              unreadMessageCount: 0
             })
           }
         })
