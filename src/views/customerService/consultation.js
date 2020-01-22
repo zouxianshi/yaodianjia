@@ -464,6 +464,8 @@ export default {
         Chat.sendReceiptMessage(data.latestMessage)
         // 清空指定会话未读数
         Chat.clearUserUnreadMessage(data)
+        // 同步阅读状态到其他端
+        Chat.syncReadStatus(data.latestMessage)
         // 重置所有数据并重新请求
         this.targetId = data.targetId
         this.curLatestMessageInfo = data.latestMessage
