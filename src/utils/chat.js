@@ -109,7 +109,7 @@ class Chat {
           return
         }
 
-        if (message.objectName === this.MessageType.ImageMessage) {
+        if (message.objectName === _this.MessageType.ImageMessage) {
           console.log('图片消息', message)
           message.content.content = message.content.imageUri
         }
