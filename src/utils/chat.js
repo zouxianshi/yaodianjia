@@ -102,6 +102,9 @@ class Chat {
             console.log('这是一条已读消息回执')
             store.commit('customerService/readMessage', message)
           }
+          if (message.objectName === 'RC:SRSMsg') {
+            store.commit('customerService/syncReadStatus', message)
+          }
           return
         }
 

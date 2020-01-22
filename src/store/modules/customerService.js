@@ -27,6 +27,26 @@ const state = {
 
 const mutations = {
 
+  // 同步阅读状态
+  syncReadStatus(state, payload) {
+    console.log('接收到已读回执处理', payload)
+    const tempList = [...state.onlineConversationData.list]
+    const curItem = tempList.find(item => {
+      if (item.latestMessage.content.extra.userId.toString() === payload.targetId.toString() && payload.messageDirection === 1) {
+        return true
+      } return false
+    })
+    if (curItem) {
+      if (curItem.newMsgNum > 0) {
+        curItem.newMsgNum = 0
+      }
+    }
+    // 清除未读消息数
+    Chat.clearUserUnreadMessage(payload)
+    state.onlineConversationData.list = tempList
+    localStorage.setItem('ryCSList', JSON.stringify(tempList))
+  },
+
   // 接收到已读回执的处理
   readMessage(state, payload) {
     console.log('接收到已读回执处理', payload)
