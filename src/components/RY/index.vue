@@ -47,16 +47,11 @@ export default {
                   type: 'listener', // 类型 来自融云消息监听
                   merCode: _this.merCode,
                   msgResult: {
+                    ...message,
                     content: {
-                      content: Chat.symbolToEmoji(message.content.content),
-                      extra: message.content.extra
-                    }, // 消息内容
-                    senderUserId: message.senderUserId, // 发送用户id
-                    objectName: message.objectName, // 消息类型 这里不能取messageType
-                    messageUId: message.messageUId, // 消息id
-                    sentTime: message.sentTime, // 时间戳
-                    // targetId: _this.userId // 接收用户id
-                    targetId: message.targetId // 接收用户id
+                      ...message.content,
+                      content: message.content.content ? Chat.symbolToEmoji(message.content.content) : ''
+                    }
                   }
                 })
                 setTimeout(() => {

@@ -147,23 +147,21 @@ const mutations = {
     let localConversationList = null
     if (localStorage.getItem('ryCSList')) {
       localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
+      const tempList = []
       localConversationList.forEach((element, index) => {
-        if (element.targetId === payload) {
-          localConversationList.splice(index, 1)
+        if (element.latestMessage.content.extra.userId !== payload) {
+          tempList.push(element)
         }
       })
-      if (Array.isArray(localConversationList)) {
+      if (Array.isArray(tempList)) {
         console.log('DEL_ONLINE_CONVERSATOIN 的locaStorage设置')
-        localStorage.setItem('ryCSList', JSON.stringify(localConversationList))
+        state.onlineConversationData.list = tempList
+        localStorage.setItem('ryCSList', JSON.stringify(tempList))
+      } else {
+        state.onlineConversationData.list = []
+        localStorage.setItem('ryCSList', JSON.stringify([]))
       }
     }
-    // 删除vuex中的item
-    const { list } = state.onlineConversationData
-    list.forEach((element, index) => {
-      if (element.targetId === payload) {
-        list.splice(index, 1)
-      }
-    })
   },
 
   // push一条消息到在线咨询当前用户消息列表
