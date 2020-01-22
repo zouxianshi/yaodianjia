@@ -149,7 +149,7 @@ const mutations = {
       localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
       const tempList = []
       localConversationList.forEach((element, index) => {
-        if (element.latestMessage.content.extra.userId !== payload) {
+        if (element.latestMessage.content.extra.userId.toString() !== payload.toString()) {
           tempList.push(element)
         }
       })

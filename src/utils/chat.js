@@ -11,10 +11,6 @@ class Chat {
   RongIMLib = window.RongIMLib
   RongIMClient = window.RongIMClient
 
-  ConversationType = {
-
-  }
-
   /**
    * 消息类型
    */

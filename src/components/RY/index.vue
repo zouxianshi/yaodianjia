@@ -289,6 +289,8 @@ export default {
               console.error('websocket发送消息失败', error)
             }
             console.warn('数据发送中...')
+          } else {
+            console.error('监听到webscoket状态改变')
           }
 
           // 设置心跳
@@ -315,9 +317,20 @@ export default {
           console.log('接收消息', received_msg)
         }
 
-        ws.onclose = function() {
+        ws.onclose = function(e) {
           // 关闭 websocket
-          console.error('连接已关闭')
+          console.error('连接已关闭', e)
+          self.$confirm(
+            '由于网络状况等原因，聊天连接已断开，是否重新连接？',
+            '提示',
+            {
+              distinguishCancelAndClose: true,
+              confirmButtonText: '重新连接',
+              cancelButtonText: '取消'
+            }
+          ).then(res => {
+            window.location.reload()
+          })
         }
       } else {
         // 浏览器不支持 WebSocket
