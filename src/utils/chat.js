@@ -110,6 +110,7 @@ class Chat {
         }
 
         if (message.content) {
+          message.content.content = message.content.content || ''
           if (typeof message.content.extra === 'string') {
             message.content.extra = JSON.parse(message.content.extra)
           }
