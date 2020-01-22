@@ -327,6 +327,21 @@ class Chat {
       }
     })
   }
+
+  // 清除指定会话未读数
+  clearUserUnreadMessage(data) {
+    console.log('into 清除指定会话未读数', data)
+    var conversationType = RongIMLib.ConversationType.PRIVATE
+    var targetId = data.targetId
+    RongIMClient.getInstance().clearUnreadCount(conversationType, targetId, {
+      onSuccess: function() {
+        console.log('清除指定会话未读消息数成功')
+      },
+      onError: function(error) {
+        console.log('清除指定会话未读消息数失败', error)
+      }
+    })
+  }
 }
 
 export default new Chat()
