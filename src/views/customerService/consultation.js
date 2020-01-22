@@ -461,7 +461,7 @@ export default {
         })
       } else {
         // 发送已读通知
-        Chat.sendReceiptMessage(data.latestMessage)
+        // Chat.sendReceiptMessage(data.latestMessage)
         // 清空指定会话未读数
         Chat.clearUserUnreadMessage(data)
         // 同步阅读状态到其他端
