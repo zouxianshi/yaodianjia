@@ -37,7 +37,7 @@ const mutations = {
     })
     if (curItem) {
       if (curItem.newMsgNum > 0) {
-        curItem.newMsgNum = curItem.newMsgNum - 1
+        curItem.newMsgNum = 0
       }
     }
     state.onlineConversationData.list = tempList
