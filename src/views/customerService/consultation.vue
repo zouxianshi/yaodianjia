@@ -77,8 +77,8 @@
                 <div v-else-if="dItem.messageType===MessageType.ImageMessage" class="image-message">
                   <el-image
                     fit="scale-down"
-                    :src="dItem.imageUri"
-                    :preview-src-list="[dItem.imageUri]"
+                    :src="dItem.content"
+                    :preview-src-list="[dItem.content]"
                   />
                 </div>
                 <div

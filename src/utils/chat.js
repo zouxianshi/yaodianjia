@@ -109,6 +109,11 @@ class Chat {
           return
         }
 
+        if (message.objectName === this.MessageType.ImageMessage) {
+          console.log('图片消息', message)
+          message.content.content = message.content.imageUri
+        }
+
         if (message.content) {
           message.content.content = message.content.content || ''
           if (typeof message.content.extra === 'string') {
