@@ -157,7 +157,7 @@ export default {
         initialDeliveryPrice: [
           { validator: (rule, value, callback) => {
             console.log('value', value)
-            if (value) {
+            if (value !== null && value.trim().length > 0) {
               if (value < 0) {
                 return callback(new Error('不能输入负数'))
               } else if (!/^\d+(\.\d{0,2})?$/.test(value)) {
@@ -211,7 +211,6 @@ export default {
   },
   methods: {
     handleSubmit(form) { // 保存
-      console.log('form', form)
       console.log(this.$refs[form])
       this.$refs[form].validate((valid) => {
         console.log(valid)
