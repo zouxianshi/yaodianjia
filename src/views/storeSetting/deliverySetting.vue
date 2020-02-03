@@ -157,8 +157,6 @@ export default {
         initialDeliveryPrice: [
           { validator: (rule, value, callback) => {
             value += ''
-            console.log('value', value)
-
             if (value) {
               if (value < 0) {
                 return callback(new Error('不能输入负数'))
@@ -174,6 +172,7 @@ export default {
         ],
         distributionFee: [
           { validator: (rule, value, callback) => {
+            value += ''
             if (value) {
               if (value < 0) {
                 return callback(new Error('不能输入负数'))
@@ -189,6 +188,7 @@ export default {
         ],
         freeEntryThreshold: [
           { validator: (rule, value, callback) => {
+            value += ''
             if (value) {
               if (value < 0) {
                 return callback(new Error('不能输入负数'))
