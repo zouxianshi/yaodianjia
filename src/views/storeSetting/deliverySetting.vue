@@ -156,6 +156,7 @@ export default {
       rules: {
         initialDeliveryPrice: [
           { validator: (rule, value, callback) => {
+            console.log('value', value)
             if (value) {
               if (value < 0) {
                 return callback(new Error('不能输入负数'))
