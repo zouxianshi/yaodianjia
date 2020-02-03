@@ -156,8 +156,10 @@ export default {
       rules: {
         initialDeliveryPrice: [
           { validator: (rule, value, callback) => {
+            value += ''
             console.log('value', value)
-            if (value !== null && value.trim().length > 0) {
+
+            if (value) {
               if (value < 0) {
                 return callback(new Error('不能输入负数'))
               } else if (!/^\d+(\.\d{0,2})?$/.test(value)) {
