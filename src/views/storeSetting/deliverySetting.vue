@@ -211,6 +211,7 @@ export default {
   },
   methods: {
     handleSubmit(form) { // 保存
+      console.log('form', form)
       console.log(this.$refs[form])
       this.$refs[form].validate((valid) => {
         console.log(valid)
