@@ -120,7 +120,7 @@ const mutations = {
 
   // 设置是否有新消息
   setHasNewMsg(state, payload) {
-    console.log('into mutation')
+    console.log('设置是否有新消息', payload)
     state.onlineConversationData.hasNewMsg = payload
     state.hasNewMsg = payload
   },

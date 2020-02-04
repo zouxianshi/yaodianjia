@@ -5,7 +5,7 @@ import userInfo from './components/userInfo'
 import viewMore from './components/viewMore'
 import chatRoom from './components/chatRoom'
 import noData from '@/components/NoData'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 import CustomerService from '@/api/customer-service'
 import {
   queryGoods
@@ -68,7 +68,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg', 'ryConnected', 'merLogo']),
+    ...mapGetters([
+      'merCode',
+      'userId',
+      'name'
+    ]),
+    ...mapState('customerService', [
+      'curOnlineUserData',
+      'onlineConversationData',
+      'hasNewMsg',
+      'ryConnected',
+      'merLogo'
+    ]),
     goodsPagination() {
       return {
         pageSizes: [
@@ -618,11 +629,7 @@ export default {
         })
       })
     },
-    blobToDataURL(blob, callback) {
-      const a = new FileReader()
-      a.onload = function(e) { callback(e.target.result) }
-      a.readAsDataURL(blob)
-    },
+
     // 搜索按钮点击
     searchBtnClick() {
       console.log('searchtext', this.searchText)

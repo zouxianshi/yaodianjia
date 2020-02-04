@@ -7,20 +7,22 @@
 
 <script>
 import CustomerService from '@/api/customer-service'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 export default {
   data() {
     return {
-      // 是否有新消息 有则展示红点
-      hasNewMsg: false,
       // 收到的新消息体
       newMsg: null
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'curOnlineUserData', 'hasNewMsg'])
+    ...mapGetters(['merCode', 'userId']),
+    ...mapState('customerService', [
+      'curOnlineUserData',
+      'hasNewMsg'
+    ])
   },
   created() {
     const _this = this
@@ -228,7 +230,6 @@ export default {
     },
     // 消息按钮点击 跳转逻辑
     msgBtnClick() {
-      // 如果没有新消息则跳转消息记录 否则跳转在线咨询
       if (!this.hasNewMsg) {
         this.$router.push({
           path: '/customerService/consultation'
