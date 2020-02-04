@@ -238,6 +238,19 @@ class InnerCtor {
             path: "/distribution/weapp-setting",
             disabled: true,
             children: []
+          },
+          {
+            name: "预约商品管理",
+            path: "/distribution/reservation-product",
+            disabled: true,
+            children: [
+            ]
+          },
+          {
+            name: "提货点管理",
+            path: "/distribution/pickup-point",
+            disabled: true,
+            children: []
           }
         ]
       }

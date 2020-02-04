@@ -44,6 +44,22 @@ const router = [
         meta: {
           title: '小程序设置'
         }
+      },
+      {
+        path: 'reservation-product',
+        component: () => import('@/views/distribution/reservation-product/index.vue'),
+        name: 'reservation-product',
+        meta: {
+          title: '预约商品管理'
+        }
+      },
+      {
+        path: 'pickup-point',
+        component: () => import('@/views/distribution/pickup-point/index.vue'),
+        name: 'pickup-point',
+        meta: {
+          title: '提货点管理'
+        }
       }
     ]
   }
