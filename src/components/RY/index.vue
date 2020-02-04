@@ -235,7 +235,7 @@ export default {
           path: '/customerService/consultation'
         })
       } else {
-        this.hasNewMsg = false
+        this.setHasNewMsg(false)
         this.$router.push({
           path: '/customerService/consultation',
           query: {
