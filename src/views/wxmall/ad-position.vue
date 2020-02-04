@@ -196,7 +196,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSubmit('xForm')">确 定</el-button>
+        <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -205,6 +205,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import {
+  queryCenterStore,
   getPageSets,
   getPageSetDetail,
   addPageSet,
@@ -236,6 +237,7 @@ export default {
       callback()
     }
     return {
+      saveLoading: false,
       currentRole: 'adminDashboard',
       // I-01	轮播图
       // I-02	公告
@@ -315,8 +317,23 @@ export default {
   },
   methods: {
     fetchData() {
-      this._getTableData()
-      this._getADClass() // 获取广告分分类列表
+      this._queryCenterStore().then(res => {
+        if (res.code === '10000' && res.data) {
+          this._getTableData()
+          this._getADClass() // 获取广告分分类列表
+        } else {
+          this.toSetCenterStore()
+        }
+      })
+    },
+    toSetCenterStore() {
+      this.$confirm('还未设置旗舰店，请先维护旗舰店, 去设置？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push('/chainSetting')
+      })
     },
     handleUpload() {
       $('.el-img-box').click()
@@ -459,8 +476,24 @@ export default {
         }
       })
     },
-    handleUploadError() {
+    handleUploadError(err) {
       this.uploadLoading = false
+      if (err) {
+        let res = JSON.stringify(err) || ''
+        res = JSON.parse(res)
+        if (res.status === 403) {
+          this.$message.error('用户信息过期，请重新登录')
+          this.$store.dispatch('user/resetToken').then(() => {
+            setTimeout(() => {
+              location.reload()
+            }, 1000)
+          })
+        } else {
+          this.$message.error(res.msg || '服务器错误，请稍后重试')
+        }
+      } else {
+        this.$message.error('图片上传失败')
+      }
     },
     handleUploadSuccess(res, file) {
       if (res.code === '10000') {
@@ -484,6 +517,16 @@ export default {
       }
       this.uploadLoading = true
       return isType && isLt2M
+    },
+    // 查询中心店（旗舰店）
+    _queryCenterStore() {
+      return new Promise((resolve, reject) => {
+        queryCenterStore({ merCode: this.merCode }).then(res => {
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
     },
     // 获取列表数据
     _getTableData() {
@@ -557,6 +600,7 @@ export default {
     },
     // 新增数据
     _addData() {
+      this.saveLoading = true
       const params = {
         announcement: '',
         classId: this.xForm.classId,
@@ -589,10 +633,15 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.saveLoading = false
+      }).catch(err => {
+        console.log('err', err)
+        this.saveLoading = false
       })
     },
     // 修改数据
     _editData() {
+      this.saveLoading = true
       const params = {
         announcement: '',
         classId: this.xForm.classId,
@@ -624,6 +673,10 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.saveLoading = false
+      }).catch(err => {
+        console.log('err', err)
+        this.saveLoading = false
       })
     },
     // 删除数据

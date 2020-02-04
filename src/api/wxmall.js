@@ -89,3 +89,12 @@ export function getProductList(params) {
     data: params
   })
 }
+
+// 商品查询
+export function delProductList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/pageset/codes`,
+    method: 'post',
+    data: params
+  })
+}

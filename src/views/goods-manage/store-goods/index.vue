@@ -58,6 +58,7 @@
           <div class="search-item">
             <span class="label-name">商品分组</span>
             <el-cascader
+              ref="groupRef"
               v-model="groupId"
               class="cascader"
               :props="defaultProps"
@@ -148,10 +149,10 @@
               <template v-if="scope.row.mainPic">
                 <el-image
                   style="width: 70px; height: 70px"
-                  :src="showImg(scope.row.mainPic)"
+                  :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
                   lazy
                   fit="contain"
-                  :preview-src-list="[`${showImg(scope.row.mainPic)}`]"
+                  :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
                 />
               </template>
               <template v-else>
@@ -397,7 +398,7 @@ export default {
         'auditStatus': 1
       },
       storeList: [],
-      groupId: '',
+      groupId: [],
       subLoading: false,
       editData: 0,
       type: 'price',
@@ -420,11 +421,13 @@ export default {
         'groupId': '',
         'manufacture': '',
         'name': '',
-        'storeId': '',
+        'storeId': this.listQuery.storeId,
         'status': this.listQuery.status,
         'auditStatus': this.listQuery.auditStatus,
         'commodityType': ''
       }
+      this.$refs.groupRef.clearCheckedNodes
+      this.groupId = ['']
       this.getList()
     },
     unlockTypeChange() { // 定时解锁 chang
@@ -453,6 +456,10 @@ export default {
       getStoreGoodsList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
+        if (data.length === 0 && this.listQuery.currentPage !== 1) {
+          this.listQuery.currentPage--
+          this._loadList()
+        }
         if (data) {
           this.tableData = data
           this.total = totalCount
@@ -490,6 +497,7 @@ export default {
       })
     },
     handleChangeGroup(val) {
+      console.log(val)
       this.listQuery.groupId = val[val.length - 1]
     },
     remoteMethod(val) {

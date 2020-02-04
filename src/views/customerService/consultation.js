@@ -5,7 +5,7 @@ import userInfo from './components/userInfo'
 import viewMore from './components/viewMore'
 import chatRoom from './components/chatRoom'
 import noData from '@/components/NoData'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 import CustomerService from '@/api/customer-service'
 import {
   queryGoods
@@ -68,7 +68,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg', 'ryConnected', 'merLogo']),
+    ...mapGetters([
+      'merCode',
+      'userId',
+      'name'
+    ]),
+    ...mapState('customerService', [
+      'curOnlineUserData',
+      'onlineConversationData',
+      'hasNewMsg',
+      'ryConnected',
+      'merLogo'
+    ]),
     goodsPagination() {
       return {
         pageSizes: [
@@ -461,7 +472,11 @@ export default {
         })
       } else {
         // 发送已读通知
-        Chat.sendReceiptMessage(data.latestMessage)
+        // Chat.sendReceiptMessage(data.latestMessage)
+        // 清空指定会话未读数
+        Chat.clearUserUnreadMessage(data)
+        // 同步阅读状态到其他端
+        Chat.syncReadStatus(data.latestMessage)
         // 重置所有数据并重新请求
         this.targetId = data.targetId
         this.curLatestMessageInfo = data.latestMessage
@@ -614,11 +629,7 @@ export default {
         })
       })
     },
-    blobToDataURL(blob, callback) {
-      const a = new FileReader()
-      a.onload = function(e) { callback(e.target.result) }
-      a.readAsDataURL(blob)
-    },
+
     // 搜索按钮点击
     searchBtnClick() {
       console.log('searchtext', this.searchText)
@@ -640,7 +651,8 @@ export default {
         if (element.latestMessage.content.extra.nickName ? element.latestMessage.content.extra.nickName.toLowerCase().indexOf(this.searchText.toLowerCase().replace(/\s*/g, '')) > -1 : false) {
           tempList.push({
             ...element,
-            newMsgNum: 0
+            newMsgNum: 0,
+            unreadMessageCount: 0
           })
         }
       })

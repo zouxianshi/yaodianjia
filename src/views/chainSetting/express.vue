@@ -143,7 +143,7 @@ export default {
       checkAll: false,
       isIndeterminate: false,
       checkedCities: [],
-      cities: [],
+      cities: null,
       showCities: [],
       selected: [],
       editPosition: -1,
@@ -164,7 +164,7 @@ export default {
       this.loading = true
       getProvince().then(res => {
         if (res.code === '10000') {
-          this.cities = _.cloneDeep(res.data)
+          const tempData = res.data
           // this.showCities = _.cloneDeep(res.data)
           this.showCities = _.map(_.cloneDeep(res.data), (v) => {
             return _.assign(v, { checked: false })
@@ -187,6 +187,9 @@ export default {
                 duration: 5 * 1000
               })
             }
+            this.cities = _.cloneDeep(tempData)
+          }).catch(() => {
+            this.cities = _.cloneDeep(tempData)
           })
         } else {
           this.$message({

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div :model="detailsData" class="store-goods-wrapper">
+    <div v-loading="detailLoading" :model="detailsData" class="order-list">
       <div class="wrapper">
         <div class="item">
           <div class="item-left">
@@ -12,16 +12,48 @@
         <div class="item">
           <div class="item-left">
             <div class="color-red item-text">
-              <template v-if="detailsData.orderStatus===6">
-                <template v-if="detailsData.deliveryType===2">
-                  <div>待提货</div>
+              <template v-if="detailsData.prescriptionSheetMark === '1'">
+                <template v-if="detailsData.prescriptionStatus===0||detailsData.prescriptionStatus===1">
+                  <template v-if="detailsData.orderStatus===6">
+                    <template v-if="detailsData.deliveryType===2">
+                      <span>待提货</span>
+                    </template>
+                    <template v-else>
+                      <span>已发货</span>
+                    </template>
+                  </template>
+                  <template v-else>
+                    {{ detailsData.orderStatus | orderStatus }}
+                  </template>
+                  <span class="f16">（处方待审批）</span>
                 </template>
-                <template v-else>
-                  <div>已发货</div>
+                <template v-if="detailsData.prescriptionStatus===3">
+                  <template v-if="detailsData.orderStatus===6">
+                    <template v-if="detailsData.deliveryType===2">
+                      <span>待提货</span>
+                    </template>
+                    <template v-else>
+                      <span>已发货</span>
+                    </template>
+                  </template>
+                  <template v-else>
+                    {{ detailsData.orderStatus | orderStatus }}
+                  </template>
+                  <span>（审批未通过）</span>
                 </template>
               </template>
-              <template v-else>
-                {{ detailsData.orderStatus | orderStatus }}
+              <template v-if="detailsData.prescriptionSheetMark === '0'||detailsData.prescriptionStatus===2">
+                <template v-if="detailsData.orderStatus===6">
+                  <template v-if="detailsData.deliveryType===2">
+                    <span>待提货</span>
+                  </template>
+                  <template v-else>
+                    <span>已发货</span>
+                  </template>
+                </template>
+                <template v-else>
+                  {{ detailsData.orderStatus | orderStatus }}
+                </template>
               </template>
             </div>
           </div>
@@ -68,66 +100,82 @@
           <div class="con">下单时间：{{ detailsData.orderTime }}</div>
           <!-- <div class="con">下单门店：{{ detailsData.storeName }}</div> -->
           <div class="con">发货门店：<template v-if="detailsData.storeResDTO && detailsData.storeResDTO.stName"><span>{{ detailsData.storeResDTO.stName }}</span></template></div>
-          <div class="con">收货方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
+          <div class="con">
+            收货方式：<template v-if="detailsData.deliveryType===0">普通快递</template><template v-if="detailsData.deliveryType===1">配送上门</template><template v-if="detailsData.deliveryType===2">门店自提</template>
+            <!-- {{ detailsData.deliveryType ?'门店员工配送':'快递配送' }} -->
+          </div>
           <div class="con">订单来源：微商城</div>
           <div class="con">订单类型：{{ detailsData.prescriptionSheetMark | orderType }}</div>
-          <div v-if="detailsData.orderStatus!==6" class="con">配送方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
+          <div v-if="detailsData.orderStatus!==6" class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
         </div>
         <div class="info-item">
           <div class="title">付款信息</div>
           <div class="con">付款方式：{{ detailsData.payMode ? '货到付款':'在线支付' }}</div>
           <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
-          <div class="con">优惠：￥{{ detailsData.couponDeduction }}</div>
+          <template v-if="detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont">
+            <div class="con">优惠：￥
+              {{ detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont }}
+            </div>
+          </template>
           <div class="con">应付总额：￥{{ detailsData.totalActualOrderAmount }}</div>
         </div>
         <div class="info-item">
           <div class="title">操作人信息</div>
           <div class="con">推广员：	无</div>
-          <div class="con">退款操作人：	<template v-if="detailsData.returnList">{{ detailsData.returnList.modifyName }}</template><template v-else><span>无</span></template></div>
+          <!-- <div class="con">退款操作人：	<template v-if="detailsData.returnList">{{ detailsData.returnList.modifyName }}</template><template v-else><span>无</span></template></div>
           <div class="con">退款申请时间：<template v-if="detailsData.returnList">{{ detailsData.returnList.createTime }}</template><template v-else><span>无</span></template></div>
-          <div class="con">退款处理时间：<template v-if="detailsData.returnList">{{ detailsData.returnList.modifyTime }}</template><template v-else><span>无</span></template></div>
+          <div class="con">退款处理时间：<template v-if="detailsData.returnList">{{ detailsData.returnList.modifyTime }}</template><template v-else><span>无</span></template></div> -->
         </div>
       </div>
 
       <!-- 物流信息 --发货物流-->
-      <template v-if="detailsData.recordList && (detailsData.orderStatus===6 ||detailsData.orderStatus===8||detailsData.orderStatus===12||detailsData.orderStatus===30)">
-        <div v-for="(item,indexSend) in detailsData.recordList" :key="indexSend" class="info">
+      <!-- <template v-if="detailsData.recordList && (detailsData.orderStatus===6 ||detailsData.orderStatus===8||detailsData.orderStatus===12||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.recordList">
+        <div v-for="(item,indexSend) in detailsData.recordList" :key="item.id" class="info">
           <div class="info-item info-left">
             <div class="title">配送信息{{ indexSend+1 }}</div>
             <div class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
-            <div class="con">快递公司：{{ item.companyName }}</div>
+            <div class="con">快递公司：<template v-if="item.companyName">{{ item.companyName }}</template><template v-else>-</template></div>
             <div class="con">快递单号：{{ item.number }}</div>
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <div class="block">
-              <el-timeline>
-                <el-timeline-item
-                  v-for="(logistical, index) in sendLogisticals[indexSend]"
-                  :key="index"
-                  :type="logistical.type"
-                  :color="logistical.color"
-                  :size="logistical.size"
-                  :timestamp="logistical.timestamp"
-                  :hide-timestamp="true"
-                >
-                  {{ logistical.timestamp }}{{ logistical.content }}
-                </el-timeline-item>
-              </el-timeline>
-            </div>
+            <template v-if="item.data&&item.data!=='[]'">
+              <div class="block">
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(logistical, indexS) in sendLogisticals[indexSend]"
+                    :key="indexS"
+                    :type="logistical.type"
+                    :color="logistical.color"
+                    :size="logistical.size"
+                    :timestamp="logistical.timestamp"
+                    :hide-timestamp="true"
+                  >
+                    {{ logistical.timestamp }}{{ logistical.content }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+            </template>
+            <template v-else>暂未同步到物流信息</template>
           </div>
         </div>
       </template>
 
       <!-- 处方申请单 -->
-      <template v-if="detailsData.prescriptionSheetMark==='1'&&detailsData.prescriptionApproval">
+      <template v-if="detailsData.prescriptionSheetMark==='1' && detailsData.prescriptionStatus ===2 && detailsData.prescriptionApproval">
         <div class="info">
           <div class="info-item info-left">
             <div class="title">处方申请单</div>
             <div class="con">用药人：<template v-if="detailsData.prescriptionApproval.userName">{{ detailsData.prescriptionApproval.userName }}</template></div>
-            <div class="con">性别：{{ detailsData.prescriptionApproval.refundReturnDesc }}</div>
-            <div class="con">年龄：{{ detailsData.prescriptionApproval.refundReason }}</div>
+            <div class="con">性别：
+              <template v-if=" handlerAnalyzeIDCard(detailsData.prescriptionApproval.cerNo).sex==='1'">
+                男
+              </template>
+              <template v-else>女</template>
+            </div>
+            <div class="con">年龄：{{ handlerAnalyzeIDCard(detailsData.prescriptionApproval.cerNo).age }} 岁</div>
             <div class="con">过敏史：{{ detailsData.prescriptionApproval.allergyHistory ? '有':'无' }}</div>
             <div class="con">身份证：{{ detailsData.prescriptionApproval.cerNo }}</div>
           </div>
@@ -136,7 +184,7 @@
               <div
                 v-if="detailsData.prescriptionApproval.image && detailsData.prescriptionApproval.image!==''"
               >
-                <span v-for="(picItem,picIndex) in detailsData.prescriptionApproval.image" :key="picIndex" class="x-image__preview marginRight20">
+                <span v-for="(picItem,picPrescIndex) in detailsData.prescriptionApproval.image" :key="picPrescIndex" class="x-image__preview marginRight20">
                   <el-image
                     fit="scale-down"
                     :src="showImg(picItem)"
@@ -151,16 +199,20 @@
       </template>
 
       <!-- 退款原因 -->
-      <template v-if="detailsData.returnList && (detailsData.orderStatus===8||detailsData.orderStatus===10||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.returnList && (detailsData.orderStatus===8||detailsData.orderStatus===10||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.returnList">
         <div v-for="(item,indexReturn) in detailsData.returnList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="con">退款原因：{{ item.refundReason }}</div>
             <div class="con">退款说明：{{ item.refundReturnDesc }}</div>
+            <template v-if="item.modifyName"><div class="con">退款操作人：{{ item.modifyName }}</div></template>
+            <template v-if="item.createTime"><div class="con">退款申请时间：{{ item.createTime }}</div></template>
+            <template v-if="!(item.status===0 || item.status===1)"><div class="con">退款处理时间：{{ item.modifyTime }}</div></template>
           </div>
           <div class="info-item info-right">
             <div class="block prescriptionA_img">
               <div
-                v-if="item.mpic && item.mpic!==''"
+                v-if="item.pictureVoucher && item.pictureVoucher!==''"
               >
                 <span v-for="(picItem,picIndex) in item.pictureVoucher" :key="picIndex" class="x-image__preview marginRight20">
                   <el-image
@@ -177,31 +229,35 @@
       </template>
 
       <!-- 物流信息 --退货物流-->
-      <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)">
+      <!-- <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)"> -->
+      <template v-if="detailsData.retRecordList">
         <div v-for="(item,indexReturn) in detailsData.retRecordList" :key="indexReturn" class="info">
           <div class="info-item info-left">
             <div class="title">退货信息</div>
-            <div class="con">配送方式：{{ detailsData.deliveryType ?'快递配送':'门店员工配送' }}</div>
-            <div class="con">快递公司：盛辉物流</div>
+            <!-- <div class="con">配送方式：{{ detailsData.returnList[indexReturn].refundType ?'快递寄回':'送回门店' }}</div> -->
+            <div class="con">快递公司：<template v-if="item.companyName">{{ item.companyName }}</template><template v-else>-</template></div>
             <div class="con">快递单号：{{ item.number }}</div>
           </div>
           <div class="info-item info-right">
             <div class="title">物流信息</div>
-            <div class="block">
-              <el-timeline>
-                <el-timeline-item
-                  v-for="(logistical, index) in refundLogisticals[indexReturn]"
-                  :key="index"
-                  :type="logistical.type"
-                  :color="logistical.color"
-                  :size="logistical.size"
-                  :timestamp="logistical.timestamp"
-                  :hide-timestamp="true"
-                >
-                  {{ logistical.timestamp }}{{ logistical.content }}
-                </el-timeline-item>
-              </el-timeline>
-            </div>
+            <template v-if="item.data&&item.data!=='[]'">
+              <div class="block">
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(logistical, indexF) in refundLogisticals[indexReturn]"
+                    :key="indexF"
+                    :type="logistical.type"
+                    :color="logistical.color"
+                    :size="logistical.size"
+                    :timestamp="logistical.timestamp"
+                    :hide-timestamp="true"
+                  >
+                    {{ logistical.timestamp }}{{ logistical.content }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+            </template>
+            <template v-else>暂未同步到物流信息</template>
           </div>
         </div>
       </template>
@@ -274,7 +330,9 @@
                             <template v-else>已发货</template>
                           </template>
                           <template v-else>{{ item.status | orderStatus }}</template>
-                          <div v-if="item.orderPackage" class="marginTop20"><span class="font12">快递单号</span><span class="font12">{{ item.orderPackage.packageNo }}</span></div>
+                          <div v-if="item.orderPackage && item.status!==8 && item.status!==10 && item.status!==20 && item.status!==30" class="marginTop20">
+                            <span class="font12">快递单号</span><span class="font12">{{ item.orderPackage.packageNo }}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -300,10 +358,10 @@ export default {
   filters: {
     orderType: function(value) { // 订单类型
       if (value === '0') {
-        return '正常订单'
+        return '普通订单'
       }
       if (value === '1') {
-        return '处方药'
+        return '处方药订单'
       }
       // if (value === 'V') {
       //   return '积分订单'
@@ -323,7 +381,7 @@ export default {
         return '已发货'
       }
       if (value === 8) {
-        return '待退货'
+        return '退货中'
       }
       if (value === 10) {
         return '待退款'
@@ -361,6 +419,7 @@ export default {
   mixins: [mixins],
   data() {
     return {
+      detailLoading: false, // 订单详情加载
       detailsData: {},
       dialogVisible: false,
       loading: false,
@@ -417,46 +476,47 @@ export default {
         orderId: this.$route.query.id,
         state: this.$route.query.state
       }
+      this.detailLoading = true
       getOrderDetail(dataParams).then(res => { // 获取商品详情
         // console.log('details', res.data)
+
+        this.detailLoading = false
         this.detailsData = res.data
-        // console.log('this.detailsData.recordList:', this.detailsData.recordList)
-        const recordListData = this.detailsData.recordList
+
         if (this.detailsData.recordList) { // 发货物流
+          const recordListData = this.detailsData.recordList
           recordListData.forEach((item, index) => {
-            const paramsSend = JSON.parse(item.data)
-            // console.log('paramsSend:', paramsSend)
-            // const sendLogisticalsData
-            // sendLogisticalsData = this.logisticsFormat(paramsSend)
-            // sendLogisticalsData.timestamp = item.modifyTime
-            // this.sendLogisticals.push(this.logisticsFormat(paramsSend))
-            this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
+            if (item.data && item.data !== '[]') {
+              const paramsSend = JSON.parse(item.data)
+              this.sendLogisticals[index] = this.logisticsFormat(paramsSend)
+            }
           })
-          // console.log('this.sendLogisticals:', this.sendLogisticals)
         }
 
-        const retRecordListData = this.detailsData.retRecordList
-        if (this.detailsData.retRecordList && this.detailsData.retRecordList.data) { // 退货物流
-          // const paramsRefund = JSON.parse(this.detailsData.retRecordList.data)
-          // this.refundLogisticals = this.logisticsFormat(paramsRefund)
-
+        if (this.detailsData.retRecordList) { // 退货物流
+          const retRecordListData = this.detailsData.retRecordList
           retRecordListData.forEach((item, index) => {
-            const paramsRefund = JSON.parse(item.data)
-            // console.log('paramsRefund:', paramsRefund)
-            this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
+            if (item.data && item.data !== '[]') {
+              const paramsRefund = JSON.parse(item.data)
+              this.refundLogisticals[index] = this.logisticsFormat(paramsRefund)
+            }
           })
         }
+
         if (this.detailsData.returnList && this.detailsData.returnList.length > 0) { // 处理用逗号分隔的图片成数组
           for (let i = 0; i < this.detailsData.returnList.length; i++) {
-            if (this.detailsData.returnList[i].pictureVoucher !== '') {
+            if (this.detailsData.returnList[i].pictureVoucher && this.detailsData.returnList[i].pictureVoucher !== '') {
               this.detailsData.returnList[i].pictureVoucher = this.picFormat(this.detailsData.returnList[i].pictureVoucher)
             }
           }
+          // console.log('this.detailsData.returnList.pictureVoucher:', this.detailsData.returnList.pictureVoucher)
         }
 
-        if (this.detailsData.prescriptionApproval && this.detailsData.prescriptionApproval.image !== '') { // 处理处方单分号分隔的图片成数组
-          this.detailsData.prescriptionApproval.image = this.picFormatSemicolon(this.detailsData.prescriptionApproval.image)
+        if (this.detailsData.prescriptionApproval && this.detailsData.prescriptionApproval.image !== '') { // 处理处方单逗号分隔的图片成数组
+          this.detailsData.prescriptionApproval.image = this.picFormat(this.detailsData.prescriptionApproval.image)
         }
+      }).catch(() => {
+        this.detailLoading = false
       })
     },
     picFormat(data) { // 格式化图片凭证  用逗号分隔的
@@ -473,6 +533,7 @@ export default {
     },
     logisticsFormat(data) { // 格式化物流信息
       // console.log('物流data:', data)
+      // alert(data)
       const arr = []
       for (let i = 0; i < data.length; i++) {
         const object = {}
@@ -484,7 +545,93 @@ export default {
         arr[i] = object
       }
       // console.log('临时arr:', arr)
+      // alert(arr)
       return arr
+    },
+    /**
+     * 分析身份证，计算年龄，性别
+     * @param {string} identityCard 身份证号码
+     */
+    handlerAnalyzeIDCard(IDCard) {
+      console.log('idcard', IDCard)
+
+      /**
+         * 解析完成的信息对象
+         */
+      const msgObj = {
+        /**
+           * 是否合法
+           */
+        isValid: true,
+        /**
+           * 性别 1-男 0-女
+           */
+        sex: '1',
+        /**
+           * 年龄 number
+           */
+        age: 0
+      }
+
+      if (!(/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(IDCard))) {
+        console.warn('into reg')
+        msgObj.isValid = false
+        return msgObj
+      }
+
+      const getCardInfos = (IDCard) => {
+        const cardInfos = {
+          yearBirth: '',
+          monthBirth: '',
+          dayBirth: ''
+        }
+        if (IDCard.length === 15) {
+          cardInfos.yearBirth = `19${IDCard.substring(6, 8)}`
+          cardInfos.monthBirth = IDCard.substring(8, 10)
+          cardInfos.dayBirth = IDCard.substring(10, 12)
+        } else {
+          cardInfos.yearBirth = IDCard.substring(6, 10)
+          cardInfos.monthBirth = IDCard.substring(10, 12)
+          cardInfos.dayBirth = IDCard.substring(12, 14)
+        }
+        return cardInfos
+      }
+
+      // 获取用户身份证号码
+      const userCard = IDCard
+
+      // 获取性别
+      if (parseInt(userCard.substr(userCard.length - 2, 1)) % 2 === 1) {
+        msgObj.sex = '1'
+      } else {
+        msgObj.sex = '0'
+      }
+      // 获取出生年月日
+      // userCard.substring(6,10) + "-" + userCard.substring(10,12) + "-" + userCard.substring(12,14);
+      const cardInfos = getCardInfos(userCard)
+      if (cardInfos.yearBirth < 1900 || cardInfos.yearBirth > new Date().getFullYear() || cardInfos.monthBirth > 12 || cardInfos.dayBirth > 31) {
+        // console.log('cardInfos.yearBirth < 1900', cardInfos.yearBirth < 1900)
+        // console.log('cardInfos.yearBirth > new Date().getFullYear()', cardInfos.yearBirth > new Date().getFullYear())
+        // console.log('cardInfos.monthBirth>12', cardInfos.monthBirth > 12)
+        // console.log('cardInfos.dayBirth>31', cardInfos.dayBirth > 31)
+        msgObj.isValid = false
+      }
+      const yearBirth = cardInfos.yearBirth
+      const monthBirth = cardInfos.monthBirth
+      const dayBirth = cardInfos.dayBirth
+      // 获取当前年月日并计算年龄
+      const myDate = new Date()
+      const monthNow = myDate.getMonth() + 1
+      const dayNow = myDate.getDay()
+      let age = myDate.getFullYear() - yearBirth
+      if (monthNow < monthBirth || (monthNow === monthBirth && dayNow < dayBirth)) {
+        age--
+      }
+      // 得到年龄
+      msgObj.age = age
+
+      // 返回解析信息对象
+      return msgObj
     }
 
   }
@@ -492,16 +639,6 @@ export default {
 </script>
 <style lang="scss">
 .store-goods-wrapper {
-  .search-form {
-    .search-item {
-      .label-name {
-        width: 60px;
-      }
-      .el-input {
-        width: 180px;
-      }
-    }
-  }
   .cascader{
       .el-input{
           width: 300px!important
@@ -733,6 +870,10 @@ export default {
   .el-image{
     width: 30%;
     max-height: 300px;
+    // img{
+    //   width: 100%;
+    //   height: 100%;
+    // }
   }
 }
 </style>

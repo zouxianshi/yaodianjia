@@ -6,7 +6,7 @@ const router = [
     redirect: '/orders-manage/all-orders',
     name: 'orders-manage',
     meta: {
-      title: '订单管理',
+      title: '订单中心',
       icon: 'goods'
     },
     alwaysShow: true,

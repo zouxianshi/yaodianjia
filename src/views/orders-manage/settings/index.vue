@@ -4,8 +4,8 @@
       <div class="setting_wrapper">
         <div class="con">
           <div class="title">订单自动确认收货规则</div>
-          <div>普通的O2O订单，门店发货48小时后自动确认收货</div>
-          <div>对于位置偏远，发快递配送的订单，发货7天后自动确认收货</div>
+          <div>普通的O2O订单，门店发货4小时后自动确认收货</div>
+          <div>对于位置偏远，发快递配送的订单，发货15天后自动确认收货</div>
         </div>
       </div>
 
@@ -18,7 +18,7 @@
             <div class="con">
               在线支付订单，拍下后
               <el-input v-model="settingData.orderCancelTime" :value="settingData.orderCancelTime" class="width80" placeholder="请输入" size="mini" />
-              分钟内未付款，自动取消订单订单优惠券分摊方式设置
+              分钟内未付款，自动取消订单
             </div>
           </el-form-item>
         </div>

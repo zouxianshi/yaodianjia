@@ -445,9 +445,13 @@
             <el-form ref="xForm4" :rules="xRules4" :model="xForm4">
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap" :class="xFormSet.position === 1 ? 'cover-left':'cover-right'">
-                  <div v-if="xForm4.imgUrl==''" class="cover" />
+                  <template v-if="xForm4.imgUrl===''">
+                    <img v-if="xFormSet.position === 1" class="img" src="../../assets/image/h5/pic_d.png">
+                    <img v-else class="img" src="../../assets/image/h5/pic_c.png">
+                  </template>
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm4.imgUrl)}')`" />
+                    <!-- <div class="cover" :style="`backgroundImage: url('${showImg(xForm4.imgUrl)}')`" /> -->
+                    <img class="img" :src="`${showImg(xForm4.imgUrl)}`">
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm4')" />
                     </div>
@@ -462,6 +466,7 @@
                   :headers="headers"
                   :action="upLoadUrl"
                   :show-file-list="false"
+                  :on-error="handleUploadError"
                   :on-success="handleUploadSuccess"
                   :before-upload="beforeUpload"
                 >
@@ -491,9 +496,10 @@
             <el-form ref="xForm5" :rules="xRules5" :model="xForm5">
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap cover-top">
-                  <div v-if="xForm5.imgUrl==''" class="cover" />
+                  <img v-if="xForm5.imgUrl===''" class="img" src="../../assets/image/h5/pic_e.png">
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm5.imgUrl)}')`" />
+                    <!-- <div class="cover" :style="`backgroundImage: url('${showImg(xForm5.imgUrl)}')`" /> -->
+                    <img class="img" :src="`${showImg(xForm5.imgUrl)}`">
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm5')" />
                     </div>
@@ -505,6 +511,7 @@
                   :headers="headers"
                   :action="upLoadUrl"
                   :show-file-list="false"
+                  :on-error="handleUploadError"
                   :on-success="handleUploadSuccess"
                   :before-upload="beforeUpload"
                 >
@@ -536,9 +543,9 @@
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
-            <div style="display: flex">
-              <div style="flex: 0 0 auto;">图片</div>
-              <div class="flex: 1;margin-left: 10px;">
+            <div class="goods_box">
+              <div class="g_label">图片</div>
+              <div class="g_content">
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸 1:1</p>
                 <ul class="m-goods-list webkit-scroll">
@@ -584,9 +591,9 @@
             <el-form ref="xForm7" :rules="xRules7" :model="xForm7">
               <el-form-item label="图片" class="upload-item" prop="imgUrl">
                 <div class="cover-wrap cover-top">
-                  <div v-if="xForm7.imgUrl==''" class="cover" />
+                  <img v-if="xForm7.imgUrl===''" class="img" src="../../assets/image/h5/pic_e.png">
                   <template v-else>
-                    <div class="cover" :style="`backgroundImage: url('${showImg(xForm7.imgUrl)}')`" />
+                    <img class="img" :src="`${showImg(xForm7.imgUrl)}`">
                     <div class="x-img-actions">
                       <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove('xForm7')" />
                     </div>
@@ -630,9 +637,9 @@
             <!-- <span class="text">右1图片</span> -->
           </div>
           <div class="m-body">
-            <div style="display: flex">
-              <div style="flex: 0 0 auto;">图片</div>
-              <div class="flex: 1;margin-left: 10px;">
+            <div class="goods_box">
+              <div class="g_label">图片</div>
+              <div class="g_content">
                 <p class="note-grey" style="margin: 0 10px;">( 为视觉效果更佳，建议选择3-10个商品 )</p>
                 <p class="note-grey" style="margin: 10px 10px;">建议尺寸 1:1 比列</p>
                 <ul class="m-goods-list webkit-scroll">
@@ -672,7 +679,7 @@
         </div>
       </div>
       <div class="footer-btns">
-        <el-button type="primary" @click.stop="submitSettings()">保存</el-button>
+        <el-button type="primary" :loading="saveLoading" @click.stop="submitSettings()">保存</el-button>
       </div>
     </div>
     <!--弹窗--商品选取-->
@@ -686,8 +693,10 @@ import 'swiper/dist/css/swiper.css'
 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import dialogGoods from '@/components/Dialog/DialogGoods'
-import { getPageSets, mutilAddPageSet, queryCenterStore } from '@/api/wxmall'
+import { getPageSets, mutilAddPageSet, queryCenterStore, delProductList } from '@/api/wxmall'
 import config from '../../utils/config'
+import defaultGoodsImg from '@/assets/image/h5/pic_e.png'
+import defaultGoodsImg2 from '@/assets/image/h5/pic_d.png'
 
 export default {
   name: 'HomeSet',
@@ -710,6 +719,7 @@ export default {
     return {
       loading: false, // 页面加载
       uploadLoading: false, // 上传加载
+      saveLoading: false, // 保存加载
       hasCenterStore: false,
       currentRole: 'adminDashboard',
       swiperOption: {
@@ -854,10 +864,16 @@ export default {
     this.fetchData()
   },
   methods: {
-    imgLoadErr(e, url) {
-      console.log('eeeeee', e)
-      console.log('url', url)
-      // e.target.src = url
+    handleImgError(e, formName) {
+      if (formName === 'xForm4') {
+        if (this.xFormSet.position === 1) {
+          e.target.src = defaultGoodsImg2
+          return
+        }
+      }
+      e.target.src = defaultGoodsImg
+      console.log('e', e)
+      console.log('formName', formName)
     },
     toSetCenterStore() {
       this.$confirm('还未设置旗舰店，请先维护旗舰店, 去设置？', '提示', {
@@ -1046,7 +1062,32 @@ export default {
         }
       }
       // 提交数据
-      this._mutilAddPageSet(ret)
+      if (ret.length === 0) {
+        this.$message.warning('请提交修改数据')
+        return
+      }
+      console.log('ret', ret)
+      // 是否清空商品列表（I-F1-2， I-F2-2）
+      const posCodes = []
+      if (this.xForm6.detail && this.xForm6.detail.length === 0) {
+        posCodes.push('I-F1-2')
+      }
+      if (this.xForm8.detail && this.xForm8.detail.length === 0) {
+        posCodes.push('I-F2-2')
+      }
+      this.saveLoading = true
+      if (posCodes && posCodes.length > 0) {
+        this._delProductList(posCodes).then(res => {
+          if (res) {
+            this._mutilAddPageSet(ret)
+          }
+          this.saveLoading = false
+        }).catch(res => {
+          this.saveLoading = false
+        })
+      } else {
+        this._mutilAddPageSet(ret)
+      }
     },
     formatGoodsData(list, positionCode) {
       const detailList = list.map((v, i) => {
@@ -1133,8 +1174,24 @@ export default {
     handleRemove(formName) {
       this[formName].imgUrl = ''
     },
-    handleUploadError() {
+    handleUploadError(err) {
       this.uploadLoading = false
+      if (err) {
+        let res = JSON.stringify(err) || ''
+        res = JSON.parse(res)
+        if (res.status === 403) {
+          this.$message.error('用户信息过期，请重新登录')
+          this.$store.dispatch('user/resetToken').then(() => {
+            setTimeout(() => {
+              location.reload()
+            }, 1000)
+          })
+        } else {
+          this.$message.error(res.msg || '服务器错误，请稍后重试')
+        }
+      } else {
+        this.$message.error('图片上传失败')
+      }
     },
     handleUploadSuccess(res, file) {
       this.uploadLoading = false
@@ -1220,7 +1277,7 @@ export default {
         endTime: '',
         positionCode: positonCode,
         remark: '',
-        sortOrder: '',
+        sortOrder: 1,
         status: 1 // integer($int32)状态0停用1启用
       }
       getPageSets(params).then(res => {
@@ -1305,12 +1362,25 @@ export default {
         console.log(err)
       })
     },
+    _delProductList(posCodes) {
+      return new Promise((resolve, reject) => {
+        delProductList({ list: posCodes }).then(res => {
+          if (res.code === '10000') {
+            resolve(res)
+          // this.dialogFormVisible = false
+          // 更新table
+          } else {
+            reject(res)
+            console.log('del err', res.msg)
+          }
+          this.saveLoading = false
+        }).catch(err => {
+          console.log('err', err)
+          reject(err)
+        })
+      })
+    },
     _mutilAddPageSet(ret) {
-      if (ret.length === 0) {
-        this.$message.warning('请提交修改数据')
-        return
-      }
-      console.log('ret', ret)
       const params = {
         createPageSetDTOS: ret
       }
@@ -1330,6 +1400,10 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.saveLoading = false
+      }).catch(err => {
+        console.log('err', err)
+        this.saveLoading = false
       })
     }
   }
@@ -2165,7 +2239,7 @@ export default {
         line-height: 1.1;
         margin-right: 6px;
         flex: 0 0 auto;
-        width: 88px;
+        width: 89px;
         margin-bottom: 10px;
         &:nth-child(3) {
           margin-right: 0;
@@ -2245,6 +2319,18 @@ export default {
         }
       }
     }
+    .goods_box{
+      display: flex;
+      .g_label {
+        flex: 0 0 auto;
+      }
+      .g_content {
+        flex: 1;
+        max-width: 310px;
+        overflow: hidden;
+        margin-left: 10px;
+      }
+    }
   }
   .form-title {
     .form-notes {
@@ -2277,12 +2363,17 @@ export default {
     height: 120px;
     border-radius: 5px;
     overflow: hidden;
+    background: #f9f9f9;
     .cover {
       width: 100%;
       height: 100%;
       border: 1px solid #dedede;
       background: url('../../assets/image/h5/pic_goods_1.png') no-repeat center/100%
         100%;
+    }
+    .img{
+      width: 100%;
+      height: 100%;
     }
     &:hover{
       .x-img-actions{

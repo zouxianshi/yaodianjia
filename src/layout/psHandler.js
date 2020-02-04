@@ -24,26 +24,8 @@ class InnerCtor {
         path: '/home',
         disabled: true,
         children: []
-      },
-      {
-        name: '订单管理',
-        icon: 'icongoods',
-        path: '',
-        disabled: this.get('order'),
-        children: [
-          {
-            name: `所有订单`,
-            path: '/orders-manage/all-orders/list',
-            disabled: true
-          },
-          {
-            name: `订单设置`,
-            path: '/orders-manage/settings',
-            disabled: true
-          }
-        ]
       },{
-        name: '商品管理',
+        name: '商品中心',
         icon: 'icongoods',
         path: '',
         disabled: this.get('commodity'),
@@ -57,15 +39,16 @@ class InnerCtor {
             name: `自建新品`,
             path: '/goods-manage/apply',
             disabled: this.get('commodity.commodity-self')
-          },{
-            name:'新品审核',
-            path: '/goods-manage/examine',
-            disabled: this.get('commodity.commodity-check')
           },
           {
             name:'新品申请记录',
             path: '/goods-manage/apply-record',
             disabled: this.get('commodity.commodity-new-record')
+          },
+          {
+            name:'新品审核',
+            path: '/goods-manage/examine',
+            disabled: this.get('commodity.commodity-check')
           }
           ,{
             name: `自定义分组`,
@@ -83,95 +66,71 @@ class InnerCtor {
         ]
       },
       {
-        name: '内容管理',
+        name: '商城装修',
         icon: 'icongoods',
         path: '',
         disabled: this.get('yaodianjia-wxmall'),
         children: [
+          {
+            name:'主页设置',
+            path: '/wxmall/home-set',
+            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
+          },
           {
             name: '首页轮播图',
             path: '/wxmall/banner',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-banner'),
           },
           {
-            name: '公告',
+            name: '首页公告栏',
             path: '/wxmall/notice',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-notice')
           },{
             name:'分类广告位',
             path: '/wxmall/ad-position',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-ad-position')
-          },{
-            name:'主页设置',
-            path: '/wxmall/home-set',
-            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
           }
         ]
       },
       {
-        name: '连锁设置',
-        icon: 'icongoods',
-        path: '/chainSetting',
-        disabled: this.get('merchant'),
-        children: []
-      },
-      {
-        name: '门店设置',
+        name: '订单中心',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('store'),
+        disabled: this.get('order'),
         children: [
-          /*{
-            name: '所有门店',
-            path: '/storeSetting/index',
-            disabled: this.get('merchant-org.merchant-org-org'),
-          },*/
           {
-            name: '上线门店设置',
-            path: '/storeSetting/setting',
-            disabled: this.get('store.store-up')
+            name: `所有订单`,
+            path: '/orders-manage/all-orders/list',
+            disabled: this.get('order.order-all'),
           },
           {
-            name: '门店配送',
-            path: '/storeSetting/deliverySetting',
-            disabled: this.get('store.store-deliver')
+            name: `订单设置`,
+            path: '/orders-manage/settings',
+            disabled: this.get('order.order-set'),
           }
         ]
       },
+      
       {
-        name: '内部链接',
+        name: '营销中心',
         icon: 'icongoods',
-        path: '/internalLink',
-        disabled: this.get('link'),
-        children: []
-      },
-      {
-        name: '营销活动',
-        icon: 'icongoods',
-        path: '/marketing/activity',
+        path: '',
         disabled: this.get('marketing'),
         children: [
           {
             name: '新建活动',
             path: '/marketing/activity/create',
-            disabled: this.get('marketing.marketing-create')
-            // children: [
-            //   {
-            //     name: '新建限时优惠',
-            //     path: '/marketing/activity/limit-edit',
-            //     disabled: this.get('marketing.marketing-create'),
-            //   }
-            // ]
+            disabled: this.get('marketing.marketing-create'),
           },
           {
             name: '活动管理',
             path: '/marketing/activity',
-            disabled: this.get('marketing.marketing-manager'),
+            disabled: this.get('marketing.marketing-manager')
           }
         ]
       },
       {
-        name: '客服管理',
+        name: '客服中心',
         icon: 'icongoods',
         path: '/customerService',
         disabled: this.get('staff'),
@@ -182,7 +141,7 @@ class InnerCtor {
             disabled: this.get('staff.staff-list'),
           },
           {
-            name: '快捷消息设置',
+            name: '快捷消息',
             path: '/customerService/msgSettings',
             disabled: this.get('staff.quick-message-set')
           },
@@ -195,6 +154,41 @@ class InnerCtor {
             name: '消息记录',
             path: '/customerService/historyMsg',
             disabled: this.get('staff.message-record')
+          },
+        ]
+      },
+      {
+        name: '设置中心',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('set'),
+        children: [
+          /*{
+            name: '所有门店',
+            path: '/storeSetting/index',
+            disabled: this.get('merchant-org.merchant-org-org'),
+          },*/
+          {
+            name: '连锁设置',
+            path: '/chainSetting',
+            disabled: this.get('set.merchant-set'),
+            children: []
+          },
+          {
+            name: '上线门店',
+            path: '/storeSetting/setting',
+            disabled: this.get('set.store-up')
+          },
+          {
+            name: '门店配送',
+            path: '/storeSetting/deliverySetting',
+            disabled: this.get('set.store-deliver')
+          },
+          {
+            name: '内部链接',
+            path: '/internalLink',
+            disabled: this.get('set.inner-link'),
+            children: []
           },
         ]
       }

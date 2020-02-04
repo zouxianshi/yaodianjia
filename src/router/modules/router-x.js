@@ -3,14 +3,24 @@ const router = [
   {
     path: '/wxmall',
     component: Layout,
-    redirect: '/wxmall/banner',
+    redirect: '/wxmall/home-set',
     name: 'wxmall',
     meta: {
-      title: '内容管理',
+      title: '商城装修',
       icon: 'goods'
     },
     alwaysShow: true,
     children: [
+      {
+        path: 'home-set',
+        component: () => import('@/views/wxmall/home-set'),
+        name: 'home-set',
+        meta: {
+          title: '主页设置',
+          noCache: true,
+          activeMenu: '/wxmall/home-set'
+        }
+      },
       {
         path: 'banner',
         component: () => import('@/views/wxmall/banner'),
@@ -24,7 +34,7 @@ const router = [
         component: () => import('@/views/wxmall/notice'),
         name: 'notice',
         meta: {
-          title: '公告',
+          title: '首页公告栏',
           noCache: true,
           activeMenu: '/wxmall/notice'
         }
@@ -37,22 +47,13 @@ const router = [
           noCache: true,
           activeMenu: '/wxmall/ad-position'
         }
-      }, {
-        path: 'home-set',
-        component: () => import('@/views/wxmall/home-set'),
-        name: 'home-set',
-        meta: {
-          title: '主页设置',
-          noCache: true,
-          activeMenu: '/wxmall/home-set'
-        }
       }
     ]
   },
   {
     path: '/marketing',
     component: Layout,
-    redirect: '/marketing/activity',
+    redirect: '/marketing/activity/create',
     name: 'marketing',
     meta: {
       title: '营销活动',
@@ -61,21 +62,21 @@ const router = [
     alwaysShow: true,
     children: [
       {
-        path: 'activity/create',
-        component: () => import('@/views/marketing/activity/create'),
-        name: 'create',
-        meta: {
-          title: '新建活动',
-          noCache: true
-        }
-      },
-      {
         path: 'activity',
         component: () => import('@/views/marketing/activity/index'),
         name: 'activity',
         meta: {
           title: '活动管理',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+        }
+      },
+      {
+        path: 'activity/create',
+        component: () => import('@/views/marketing/activity/create'),
+        name: 'create',
+        meta: {
+          title: '新建活动',
+          noCache: true
         }
       },
       {

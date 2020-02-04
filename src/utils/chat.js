@@ -11,10 +11,6 @@ class Chat {
   RongIMLib = window.RongIMLib
   RongIMClient = window.RongIMClient
 
-  ConversationType = {
-
-  }
-
   /**
    * 消息类型
    */
@@ -105,6 +101,9 @@ class Chat {
             // 已读通知则前往会话列表中减少一条消息数量
             console.log('这是一条已读消息回执')
             store.commit('customerService/readMessage', message)
+          }
+          if (message.objectName === 'RC:SRSMsg') {
+            store.commit('customerService/syncReadStatus', message)
           }
           return
         }
@@ -328,6 +327,41 @@ class Chat {
       },
       onError: function(errorCode) {
         console.log('发送已读通知失败', errorCode)
+      }
+    })
+  }
+
+  // 清除指定会话未读数
+  clearUserUnreadMessage(data) {
+    console.log('into 清除指定会话未读数', data)
+    var conversationType = RongIMLib.ConversationType.PRIVATE
+    var targetId = data.targetId
+    RongIMClient.getInstance().clearUnreadCount(conversationType, targetId, {
+      onSuccess: function() {
+        console.log('清除指定会话未读消息数成功')
+      },
+      onError: function(error) {
+        console.log('清除指定会话未读消息数失败', error)
+      }
+    })
+  }
+
+  // 同步消息状态到其他端
+  syncReadStatus(data) {
+    console.log('into 同步消息状态到其他端')
+    // 从消息里获取服务器端时间，以最近一条已读 message 为准
+    var msg = {
+      lastMessageSendTime: data.sentTime
+    }
+    var conversationType = RongIMLib.ConversationType.PRIVATE
+    msg = new RongIMLib.SyncReadStatusMessage(msg)
+    var sendSyncStutus = RongIMClient.getInstance().sendMessage
+    sendSyncStutus(conversationType, data.targetId, msg, {
+      onSuccess: function(e) {
+        console.log('同步消息状态成功', e)
+      },
+      onError: function(e) {
+        console.error('同步消息状态失败', e)
       }
     })
   }

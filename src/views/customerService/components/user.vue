@@ -1,6 +1,6 @@
 <template>
   <div :class="`user-comp ${selected?'selected':''}`" @click="handleClick">
-    <el-badge :max="99" :hidden="data.newMsgNum<=0" :value="data.newMsgNum" class="item">
+    <el-badge :max="99" :hidden="data.unreadMessageCount<=0" :value="data.unreadMessageCount" class="item">
       <div class="user-avatar">
         <el-image fit="cover" :src="avatar" />
       </div>

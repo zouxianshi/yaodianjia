@@ -61,11 +61,11 @@ module.exports = {
     proxy: {
       '/api': {
         // target: `http://middle.test.ydjia.cn/businesses-gateway`,
-        target: `http://middle.dev.ydjia.cn/businesses-gateway`,
+        target: `http://middle.test.ydjia.cn/businesses-gateway`,
         changeOrigin: true,
         pathRewrite: {
           // '^/api': `http://middle.test.ydjia.cn`
-          '^/api': `http://middle.dev.ydjia.cn`
+          '^/api': `http://middle.test.ydjia.cn`
         }
       }
     }

@@ -1,26 +1,28 @@
 <template>
   <!-- 新消息图标 暂时用定位放在这里 -->
-  <el-badge class="msg-notice-btn" :is-dot="newMsgComing">
-    <i :class="`el-icon-chat-dot-round ${newMsgComing&&'shaking'}`" @click="msgBtnClick" />
+  <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
+    <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
   </el-badge>
 </template>
 
 <script>
 import CustomerService from '@/api/customer-service'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 export default {
   data() {
     return {
-      // 是否有新消息 有则展示红点
-      newMsgComing: false,
       // 收到的新消息体
       newMsg: null
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'curOnlineUserData'])
+    ...mapGetters(['merCode', 'userId']),
+    ...mapState('customerService', [
+      'curOnlineUserData',
+      'hasNewMsg'
+    ])
   },
   created() {
     const _this = this
@@ -68,7 +70,6 @@ export default {
               console.log('当前不在咨询页面', message)
               if (message.messageDirection === 2) {
                 this.setHasNewMsg(true)
-                _this.newMsgComing = true
               }
               console.log('goto addBadgeToOnlineUser')
               _this.addBadgeToOnlineUser({
@@ -105,8 +106,6 @@ export default {
                   onClick: e => {
                     console.log('click e', e)
                     _this.setHasNewMsg(false)
-                    _this.newMsgComing = false
-                    console.log('newMsgComing', _this.newMsg)
                     _this.$notify.close()
                     _this.$router.push({
                       path: '/customerService/consultation',
@@ -231,13 +230,12 @@ export default {
     },
     // 消息按钮点击 跳转逻辑
     msgBtnClick() {
-      // 如果没有新消息则跳转消息记录 否则跳转在线咨询
-      if (!this.newMsgComing) {
+      if (!this.hasNewMsg) {
         this.$router.push({
           path: '/customerService/consultation'
         })
       } else {
-        this.newMsgComing = false
+        this.setHasNewMsg(false)
         this.$router.push({
           path: '/customerService/consultation',
           query: {
@@ -289,6 +287,8 @@ export default {
               console.error('websocket发送消息失败', error)
             }
             console.warn('数据发送中...')
+          } else {
+            console.error('监听到webscoket状态改变')
           }
 
           // 设置心跳
@@ -315,9 +315,20 @@ export default {
           console.log('接收消息', received_msg)
         }
 
-        ws.onclose = function() {
+        ws.onclose = function(e) {
           // 关闭 websocket
-          console.error('连接已关闭')
+          console.error('连接已关闭', e)
+          self.$confirm(
+            '由于网络状况等原因，聊天连接已断开，是否重新连接？',
+            '提示',
+            {
+              distinguishCancelAndClose: true,
+              confirmButtonText: '重新连接',
+              cancelButtonText: '取消'
+            }
+          ).then(res => {
+            window.location.reload()
+          })
         }
       } else {
         // 浏览器不支持 WebSocket
