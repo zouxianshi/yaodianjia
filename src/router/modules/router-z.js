@@ -144,7 +144,7 @@ const router = [
       }, {
         path: 'constitute-goods',
         component: () => import('@/views/goods-manage/constitute-goods/list'),
-        name: 'constituteGoods',
+        name: 'constituteGoods-list',
         meta: {
           title: '组合商品',
           noCache: true
@@ -152,7 +152,7 @@ const router = [
       }, {
         path: 'constitute-goods/edit',
         component: () => import('@/views/goods-manage/constitute-goods/edit'),
-        name: 'constituteGoods',
+        name: 'constituteGoods-edit',
         meta: {
           title: '组合商品',
           noCache: true,

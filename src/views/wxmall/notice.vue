@@ -405,48 +405,6 @@ export default {
         }
       })
     },
-    handleUploadError(err) {
-      this.uploadLoading = false
-      if (err) {
-        let res = JSON.stringify(err) || ''
-        res = JSON.parse(res)
-        if (res.status === 403) {
-          this.$message.error('用户信息过期，请重新登录')
-          this.$store.dispatch('user/resetToken').then(() => {
-            setTimeout(() => {
-              location.reload()
-            }, 1000)
-          })
-        } else {
-          this.$message.error(res.msg || '服务器错误，请稍后重试')
-        }
-      } else {
-        this.$message.error('图片上传失败')
-      }
-    },
-    handleUploadSuccess(res, file) {
-      if (res.code === '10000') {
-        this.xForm.imgUrl = res.data || ''
-        this.$refs.xForm.clearValidate('imgUrl')
-      } else {
-        this.$message.error(res.msg)
-      }
-      this.uploadLoading = false
-    },
-    beforeUpload(file) {
-      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isType) {
-        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
-        return false
-      }
-      if (!isLt2M) {
-        this.$message.warning('请上传不超过 2M 的图片！')
-        return false
-      }
-      this.uploadLoading = true
-      return isType && isLt2M
-    },
     // 查询中心店（旗舰店）
     _queryCenterStore() {
       return new Promise((resolve, reject) => {

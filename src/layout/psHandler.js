@@ -95,14 +95,19 @@ class InnerCtor {
       {
         name: '订单中心',
         icon: 'icongoods',
-        path: '',
+        path: '/orders-manage',
         disabled: this.get('order'),
         children: [
           {
             name: `所有订单`,
-            path: '/orders-manage/all-orders/list',
+            path: '/orders-manage/list',
             disabled: this.get('order.order-all'),
           },
+          // {
+          //   name: `订单详情`,
+          //   path: '/orders-manage/all-orders/details',
+          //   disabled: this.get('order.order-all'),
+          // },
           {
             name: `订单设置`,
             path: '/orders-manage/settings',

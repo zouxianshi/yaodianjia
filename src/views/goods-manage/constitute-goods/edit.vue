@@ -11,10 +11,17 @@
         <div class="edit-card">
           <div class="edit-card-cnt">
             <div class="content">
-              <el-form-item label="组合商品名称：" prop="name">
+              <p class="type-list">
+                <span class="type-list-title">
+                  <span class="color_red">*</span> 组合商品名称：
+                </span>
                 <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
                 <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
-              </el-form-item>
+              </p>
+              <!-- <el-form-item label="组合商品名称：" prop="name" required>
+                <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
+                <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
+              </el-form-item> -->
               <p class="type-list">
                 <span class="type-list-title">
                   <span class="color_red">*</span> 组合商品分类：
@@ -48,7 +55,7 @@
                 </span>
               </div>
 
-              <el-form-item label="组合商品图片：" prop="file">
+              <el-form-item label="组合商品图片：" prop="image" required>
                 <el-upload
                   v-loading="uploadLoading"
                   class="avatar-uploader x-uploader"
@@ -133,6 +140,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
+                  <!-- <el-table-column prop="weight" align="left" min-width="120" label="商品重量" style="display:none" /> -->
                   <el-table-column prop="erpCode" align="left" min-width="120" label="商品编码" />
                   <el-table-column align="left" min-width="130" label="操作">
                     <template slot-scope="scope">
@@ -156,6 +164,10 @@
 
               <el-form-item label="参考价(元)：" prop="mprice" required>
                 <span>{{ basicForm.mprice }}</span>
+              </el-form-item>
+
+              <el-form-item label="组合商品重量(克)：" prop="weight">
+                <span>{{ basicForm.weight }}</span>
               </el-form-item>
 
               <el-form-item label="限购设置：" prop="limitNum">
@@ -250,8 +262,8 @@ export default {
   mixins: [mixins, specsMixin],
   data() {
     const _check_price = (rule, value, callback) => {
-      if (rule.required && !value) {
-        callback(new Error('请输入数值'))
+      if (rule.required && value <= 0) {
+        callback(new Error('请输入正整数'))
       }
       if (value !== '') {
         if (!checkNumberdouble(value)) {
@@ -315,6 +327,7 @@ export default {
         price: 0, // 组合商品价格
         limitNum: 0, // 限购数量
         mprice: 0, // 参考价格
+        weight: 0, // 商品总重量
         keyWord: '', // 关键字
         name: '', // 商品名
         childCommodities: [], // 子商品信息
@@ -326,7 +339,7 @@ export default {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' },
           { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
         ],
-        // file: [{ required: true, message: '请上传图片' }],
+        image: [{ required: true, message: '请上传图片', trigger: 'blur' }],
         keyWord: [{ min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }],
         number: [{ required: true, trigger: 'blur' }],
         price: [{ required: true, trigger: 'blur' }],
@@ -380,13 +393,17 @@ export default {
       handler: function(newval) {
         let priceAll = 0
         let mpriceAll = 0
+        let weightAll = 0
         this.basicForm.price = 0
         this.basicForm.mprice = 0
+        this.basicForm.weight = 0
 
         newval.forEach(function(item, index) {
+          console.log('item.weight:::', item.weight)
           const number1 = item.number && item.number !== '' ? item.number : 0
           const price = item.price && item.price !== '' ? item.price : 0
           const mprice = item.mprice && item.mprice !== '' ? item.mprice : 0
+          const weight = item.weight && item.weight !== '' ? item.weight : 0
           // 子商品的数量验证
           const reg = /[^0-9]/
           if (!number1) {
@@ -416,11 +433,13 @@ export default {
 
           priceAll += number1 * price
           mpriceAll += number1 * mprice
+          weightAll += number1 * weight
         })
 
         this.$nextTick(function() {
           this.basicForm.price = parseFloat(priceAll.toFixed(2))
           this.basicForm.mprice = parseFloat(mpriceAll.toFixed(2))
+          this.basicForm.weight = parseFloat(weightAll.toFixed(2))
         })
       },
       deep: true
@@ -490,6 +509,7 @@ export default {
               stockAmount: (goods.stockAmount || '') + '',
               number: (goods.number || '') + '',
               price: (goods.price || '') + '',
+              weight: goods.weight,
               mprice: goods.mprice // 参考
             }
             this.basicForm.childCommodities.unshift(item)
@@ -538,6 +558,7 @@ export default {
         const { data } = res
 
         // 赋值
+        console.log('data=====', data)
         this.basicForm = data
         this.basicForm.childCommodities = data.childCommodities
         if (this.basicForm.detail) {
@@ -801,12 +822,24 @@ export default {
       //   content: this.basicForm,
       //   id: this.basicForm.id
       // }
+      if (!this.basicForm.name) {
+        this.$message({ type: 'warning', message: '请输入商品名称' })
+        return false
+      }
+      if (this.basicForm.name.length < 1 || this.basicForm.name.length > 30) {
+        this.$message({ type: 'warning', message: '商品名称长度在1到30个字符' })
+        return false
+      }
       if (!this.chooseTypeList.length) {
         this.$message({ type: 'warning', message: '请选择分类' })
         return false
       }
       if (!this.chooseGroup.length) {
         this.$message({ type: 'warning', message: '请选择分组' })
+        return false
+      }
+      if (!this.basicForm.image) {
+        this.$message({ type: 'warning', message: '请上传图片' })
         return false
       }
       if (!this.basicForm.childCommodities.length) {
@@ -819,8 +852,12 @@ export default {
           this.$message({ type: 'warning', message: '请输入组合数量' })
           return false
         }
-        if (!this.basicForm.childCommodities[i].price) {
+        if (this.basicForm.childCommodities[i].price < 0) {
           this.$message({ type: 'warning', message: '请输入组合单价' })
+          return false
+        }
+        if (this.basicForm.childCommodities[i].price === 0) {
+          this.$message({ type: 'warning', message: '组合单价必须大于0' })
           return false
         }
       }
