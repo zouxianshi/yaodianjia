@@ -162,6 +162,7 @@ class DistributionService {
   }
   /**
    * 查询门店列表数据
+   * @param {object} data
    */
   queryStoreList(data) {
     return this.service('post', `/1.0/b/store/_query`, data)
@@ -172,6 +173,21 @@ class DistributionService {
    */
   queryOrderListByType(data) {
     return this.service('post', `/1.0/b/order/list`, data)
+  }
+  /**
+   * 获取预约单详细信息
+   * @param {number} id
+   */
+  queryOrderById(id) {
+    return this.service('get', `/1.0/b/order/_get/${id}`)
+  }
+  /**
+   * 修改预约单详细信息
+   * @param {number} id
+   * @param {string} status
+   */
+  updateOrderStatus(data) {
+    return this.service('post', `/1.0/b/order/updateStatusById`, data)
   }
 }
 export default new DistributionService()

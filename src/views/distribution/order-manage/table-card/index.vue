@@ -11,43 +11,62 @@
       <div class="table-column flex-1">订单状态</div>
       <div class="table-column flex-2">提货门店</div>
     </div>
-    <div class="table-content">
+    <div v-for="item in tableData" :key="item.id" class="table-content">
       <div class="header">
-        <div class="gray">
-          预约单编号：12452904985048
-        </div>
+        <div class="gray">预约单编号：{{ item.id }}</div>
         <div class="blue">订单详情</div>
       </div>
       <div class="row">
         <div class="table-column content-container flex-3">
           <div class="image-box">
-            <img src="" class="pic">
+            <img :src="item.productImgUrl" class="pic">
             <div class="box">暂无图片</div>
           </div>
           <div class="content-box">
             <div class="desc">
-              预约单编号：12452904985048预约单编号：12452904985048预约单编号：12452904985048预约单编号：12452904985048
+              {{ item.productName }}
             </div>
             <div class="order">
-              预约单编号：12452904985048
-              预约单编号：12452904985048预约单编号：12452904985048预约单编
+              {{ item.productId }}
             </div>
           </div>
         </div>
-        <div class="table-column content-center flex-1">单价</div>
-        <div class="table-column content-center flex-1">数量</div>
-        <div class="table-column content-center flex-1">预约人</div>
-        <div class="table-column content-center flex-1">预约时间</div>
+        <div class="table-column content-center flex-1">
+          ¥ {{ item.productPrice }}
+        </div>
+        <div class="table-column content-center flex-1">
+          {{ item.productCount }}
+        </div>
+        <div class="table-column content-center flex-1">
+          {{ item.personName }}
+        </div>
+        <div class="table-column content-center flex-1">
+          {{ item.createTime }}
+        </div>
         <div class="table-column content-column content-center flex-1">
-          <span>订单状态</span><el-button
+          <span>{{
+            item.status === 'SUCCESS'
+              ? '待到货'
+              : item.status === 'ARRIVED'
+                ? '待核销'
+                : item.status === 'COMPLETE'
+                  ? '已完成'
+                  : '未知状态'
+          }}</span><el-button
+            v-if="item.status === 'SUCCESS'"
             style="margin-top:10px;"
             type="primary"
-            @click="emitClickHandler"
+            @click="emitClickHandler(item)"
           >确认收货</el-button>
+          <el-button
+            v-if="item.status === 'ARRIVED'"
+            style="margin-top:10px;"
+            type="primary"
+            @click="emitClickHandler(item)"
+          >确认核销</el-button>
         </div>
         <div class="table-column content-center flex-2">
-          长沙市岳麓区麓山南路店 NO.1234长沙市岳麓区麓山南路店
-          NO.1234长沙市岳麓区麓山南路店 NO.1234
+          {{ item.storeName }}
         </div>
       </div>
     </div>
@@ -56,12 +75,15 @@
 </template>
 <script>
 export default {
+  props: {
+    tableData: []
+  },
   data() {
     return {}
   },
   methods: {
-    emitClickHandler() {
-      this.$emit('button-click')
+    emitClickHandler(obj) {
+      this.$emit('button-click', obj)
     }
   }
 }
