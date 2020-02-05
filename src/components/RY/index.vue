@@ -7,20 +7,22 @@
 
 <script>
 import CustomerService from '@/api/customer-service'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 export default {
   data() {
     return {
-      // 是否有新消息 有则展示红点
-      hasNewMsg: false,
       // 收到的新消息体
       newMsg: null
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'curOnlineUserData', 'hasNewMsg'])
+    ...mapGetters(['merCode', 'userId']),
+    ...mapState('customerService', [
+      'curOnlineUserData',
+      'hasNewMsg'
+    ])
   },
   created() {
     const _this = this
@@ -66,6 +68,7 @@ export default {
               }
             } else {
               console.log('当前不在咨询页面', message)
+              // 判断如果是C端发来的消息 右上角消息图标闪烁
               if (message.messageDirection === 2) {
                 this.setHasNewMsg(true)
               }
@@ -228,13 +231,12 @@ export default {
     },
     // 消息按钮点击 跳转逻辑
     msgBtnClick() {
-      // 如果没有新消息则跳转消息记录 否则跳转在线咨询
       if (!this.hasNewMsg) {
         this.$router.push({
           path: '/customerService/consultation'
         })
       } else {
-        this.hasNewMsg = false
+        this.setHasNewMsg(false)
         this.$router.push({
           path: '/customerService/consultation',
           query: {
@@ -332,6 +334,13 @@ export default {
       } else {
         // 浏览器不支持 WebSocket
         console.error('您的浏览器不支持 WebSocket!')
+      }
+    }
+  },
+  watch: {
+    hasNewMsg: {
+      handler(value) {
+        console.log('ry组件监听到hasNewMsg改变', value)
       }
     }
   }

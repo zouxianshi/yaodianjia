@@ -84,7 +84,10 @@ export default {
     ...mapState({
       webSocketConnected: state => state.customerService.webSocketConnected
     }),
-    ...mapGetters(['merCode', 'ryConnected']),
+    ...mapGetters(['merCode']),
+    ...mapState('customerService', [
+      'ryConnected'
+    ]),
     merSupportPageSizes() {
       return [
         this.merSupportInitialPageSize,

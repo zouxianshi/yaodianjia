@@ -5,7 +5,7 @@ import userInfo from './components/userInfo'
 import viewMore from './components/viewMore'
 import chatRoom from './components/chatRoom'
 import noData from '@/components/NoData'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 import CustomerService from '@/api/customer-service'
 import {
   queryGoods
@@ -68,7 +68,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg', 'ryConnected', 'merLogo']),
+    ...mapGetters([
+      'merCode',
+      'userId',
+      'name'
+    ]),
+    ...mapState('customerService', [
+      'curOnlineUserData',
+      'onlineConversationData',
+      'hasNewMsg',
+      'ryConnected',
+      'merLogo'
+    ]),
     goodsPagination() {
       return {
         pageSizes: [
@@ -86,7 +97,7 @@ export default {
         merCode: this.merCode, // 商户编码
         userAccount: this.name, // 如果是客服，对应中台sys_user.account
         userId: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.userId : this.userId, // 用户id 这里是自己的id 不是目标用户的id
-        userName: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.userName : '暂无用户昵称', // 用户姓名
+        userName: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.userName : '', // 用户姓名
         nickName: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.nickName : '', // 昵称
         age: this.curLatestMessageInfo.content.extra.age, // 年龄
         sex: this.curLatestMessageInfo.content.extra.sex, // 性别（男，女，未知）
@@ -164,7 +175,7 @@ export default {
           if (userItem) {
             this.curLatestMessageInfo = userItem.latestMessage
             this.targetId = userItem.targetId
-            this.curUserName = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.nickName : '暂无用户名称'
+            this.curUserName = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.nickName : ''
             this.curUserAvatar = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.userLogo : ''
             // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
             // 消息记录
@@ -182,7 +193,7 @@ export default {
           })
           this.curLatestMessageInfo = list[0].latestMessage
           this.targetId = list[0].targetId
-          this.curUserName = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.nickName : '暂无用户昵称'
+          this.curUserName = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.nickName : ''
           this.curUserAvatar = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.userLogo : ''
           // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
           // 消息记录
@@ -470,7 +481,7 @@ export default {
         this.targetId = data.targetId
         this.curLatestMessageInfo = data.latestMessage
         this.curUserAvatar = data.latestMessage.content.extra ? data.latestMessage.content.extra.userLogo : ''
-        this.curUserName = data.latestMessage.content.extra ? data.latestMessage.content.extra.nickName : '暂无用户昵称'
+        this.curUserName = data.latestMessage.content.extra ? data.latestMessage.content.extra.nickName : ''
         this.setCurOnlineUserId({
           userId: data.targetId
         })
@@ -490,7 +501,7 @@ export default {
         })
         this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''
-        this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : '暂无用户昵称'
+        this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
       } else {
         this.targetId = ''
@@ -618,11 +629,7 @@ export default {
         })
       })
     },
-    blobToDataURL(blob, callback) {
-      const a = new FileReader()
-      a.onload = function(e) { callback(e.target.result) }
-      a.readAsDataURL(blob)
-    },
+
     // 搜索按钮点击
     searchBtnClick() {
       console.log('searchtext', this.searchText)
@@ -659,7 +666,7 @@ export default {
         })
         this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''
-        this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : '暂无用户昵称'
+        this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
       } else {
         console.log('localstorage', localStorage.getItem('ryCSList'))
