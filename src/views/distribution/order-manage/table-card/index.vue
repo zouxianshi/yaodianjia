@@ -38,7 +38,13 @@
         <div class="table-column content-center flex-1">数量</div>
         <div class="table-column content-center flex-1">预约人</div>
         <div class="table-column content-center flex-1">预约时间</div>
-        <div class="table-column content-center flex-1">订单状态</div>
+        <div class="table-column content-column content-center flex-1">
+          <span>订单状态</span><el-button
+            style="margin-top:10px;"
+            type="primary"
+            @click="emitClickHandler"
+          >确认收货</el-button>
+        </div>
         <div class="table-column content-center flex-2">
           长沙市岳麓区麓山南路店 NO.1234长沙市岳麓区麓山南路店
           NO.1234长沙市岳麓区麓山南路店 NO.1234
@@ -49,7 +55,16 @@
   </div>
 </template>
 <script>
-export default {}
+export default {
+  data() {
+    return {}
+  },
+  methods: {
+    emitClickHandler() {
+      this.$emit('button-click')
+    }
+  }
+}
 </script>
 <style lang="scss" scoped>
 .table-content {
@@ -99,6 +114,9 @@ export default {}
   padding: 10px;
   display: flex;
   align-items: center;
+  &.content-column {
+    flex-direction: column;
+  }
   &.content-container {
     display: flex;
     flex-direction: row;
