@@ -14,6 +14,7 @@ class DistributionService {
     })
     // request interceptor
     let isExport = false
+
     _service.interceptors.request.use(
       config => {
         if (store.getters.token) {
@@ -149,7 +150,21 @@ class DistributionService {
         return Promise.reject(error)
       }
     )
-    _service[method](url, method === 'get' ? { params } : params)
+    return new Promise((resolve, reject) => {
+      _service[method](url, method === 'get' ? { params } : params)
+        .then(res => {
+          resolve(res)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+  /**
+   * 查询门店列表数据
+   */
+  queryStoreList(data) {
+    return this.service('post', `/1.0/b/store/_query`, data)
   }
   /**
    *  查询预约单数据列表
