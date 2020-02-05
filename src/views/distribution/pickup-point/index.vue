@@ -21,11 +21,11 @@
     </div>
     <div class="page-box">
       <el-pagination
-        :current-page="currentPage4"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :current-page="pageInfo.currentPage"
+        :page-sizes="[10, 20, 30, 40]"
+        :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :total="pageInfo.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import { getResevation } from '@/api/reservation-product'
 export default {
   data() {
     return {
@@ -58,7 +59,28 @@ export default {
           name: '王小虎',
           address: '上海市普陀区金沙江路 1516 弄'
         }
-      ]
+      ],
+      pageInfo: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
+      }
+    }
+  },
+  created() {
+    this.getStoreData()
+  },
+  methods: {
+    getStoreData() {
+      var parmes = {
+
+      }
+      parmes.currentPage = this.pageInfo.currentPage
+      parmes.pageSize = this.pageInfo.pageSize
+      parmes.merCode = 666666
+      getResevation(parmes).then(res => {
+        console.log(res)
+      })
     }
   }
 }
@@ -66,7 +88,7 @@ export default {
 
 <style lang="scss" scoped>
 .content_pick{
-  padding: 10px 21px;
+  padding: 10px 21px;height: calc(100vh - 158px);overflow-y: scroll;
   .nav-btn{
     text-align: right;height: 40px;line-height: 40px
   }
