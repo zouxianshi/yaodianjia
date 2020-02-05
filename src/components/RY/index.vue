@@ -68,6 +68,7 @@ export default {
               }
             } else {
               console.log('当前不在咨询页面', message)
+              // 判断如果是C端发来的消息 右上角消息图标闪烁
               if (message.messageDirection === 2) {
                 this.setHasNewMsg(true)
               }
@@ -333,6 +334,13 @@ export default {
       } else {
         // 浏览器不支持 WebSocket
         console.error('您的浏览器不支持 WebSocket!')
+      }
+    }
+  },
+  watch: {
+    hasNewMsg: {
+      handler(value) {
+        console.log('ry组件监听到hasNewMsg改变', value)
       }
     }
   }
