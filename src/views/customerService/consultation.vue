@@ -27,7 +27,7 @@
             :selected="targetId===item.targetId"
             :message-type="item.latestMessage.objectName"
             :avatar="item.latestMessage.content.extra ? item.latestMessage.content.extra.userLogo: ''"
-            :nick-name="item.latestMessage.content.extra ? item.latestMessage.content.extra.nickName : '暂无用户昵称'"
+            :nick-name="item.latestMessage.content.extra ? item.latestMessage.content.extra.nickName : ''"
             :date="`${formatTime(item.latestMessage.sentTime, 'MM-DD')}`"
             :content="item.latestMessage.content.content"
             :show-del-icon="true"
