@@ -11,7 +11,7 @@
       <div class="table-column flex-1">订单状态</div>
       <div class="table-column flex-2">提货门店</div>
     </div>
-    <div v-if="tableData.length > 0">
+    <div v-if="tableData.length > 0" class="table-container">
       <div v-for="item in tableData" :key="item.id" class="table-content">
         <div class="header">
           <div class="gray">预约单编号：{{ item.id }}</div>
@@ -52,7 +52,7 @@
                   ? '待核销'
                   : item.status === 'COMPLETE'
                     ? '已完成'
-                    : '未知状态'
+                    : '取消预约'
             }}</span><el-button
               v-if="item.status === 'SUCCESS'"
               style="margin-top:10px;"
@@ -94,6 +94,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.table-container {
+  max-height: 380px;
+  overflow-y: scroll;
+}
 .table-empty {
   width: 100%;
   height: 80px;
@@ -184,6 +188,7 @@ export default {
         position: absolute;
         width: 72px;
         height: 72px;
+        z-index: 2;
       }
       .box {
         position: absolute;
@@ -194,6 +199,7 @@ export default {
         font-size: 14px;
         color: #9b9b9b;
         background-color: #ebebeb;
+        z-index: 1;
       }
     }
   }

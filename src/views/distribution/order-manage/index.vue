@@ -225,7 +225,7 @@ export default {
         orderId: this.orderNum,
         orderStatus: this.orderStatus,
         pageSize: this.pageSize,
-        storeId: this.selectStore.storeCode
+        storeId: this.selectStore.id
       }
       const { data, code } = await DistributionService.queryOrderListByType(
         params
