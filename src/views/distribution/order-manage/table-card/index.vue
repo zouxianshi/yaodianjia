@@ -76,7 +76,10 @@
 <script>
 export default {
   props: {
-    tableData: []
+    tableData: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {}
