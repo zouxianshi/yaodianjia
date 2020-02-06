@@ -20,6 +20,9 @@ class DistributionService {
         if (store.getters.token) {
           config.headers['Authorization'] = getToken()
         }
+        if (store.getters.name) {
+          config.headers['userName'] = store.getters.name
+        }
         isExport = config.isExport || false
         const authParams = {
           // 公共参数
@@ -172,6 +175,51 @@ class DistributionService {
    */
   queryOrderListByType(data) {
     return this.service('post', `/1.0/b/order/list`, data)
+  }
+
+  /**
+   *  查询取货点数据列表
+   *  @param {object} data 请求参数
+   */
+  getPointerList(data) {
+    return this.service('post', `/1.0/b/store/_query`, data)
+  }
+  /**
+   *  编辑取货点
+   *  @param {object} data 请求参数
+   */
+  savePointer(data) {
+    return this.service('post', `/1.0/b/store/_save`, data)
+  }
+  // 获取取货点编辑
+  getPointer(ids) {
+    return this.service('get', `/1.0/b/store/_get/${ids}`)
+  }
+  // 停启用取货点
+  _batchPoint(data) {
+    return this.service('post', `/1.0/b/store/_update`, data)
+  }
+  /**
+   *  查询预约商品数据列表
+   *  @param {object} data 请求参数
+   */
+  getProductList(data) {
+    return this.service('post', `/1.0/b/product/_query`, data)
+  }
+  // 获取商品编辑
+  getProduct(ids) {
+    return this.service('get', `/1.0/b/product/_get/${ids}`)
+  }
+  /**
+   *  编辑预约商品
+   *  @param {object} data 请求参数
+   */
+  saveProduct(data) {
+    return this.service('post', `/1.0/b/product/_save`, data)
+  }
+  // 商品上下架
+  _batchProduct(data) {
+    return this.service('post', `/1.0/b/product/_batch`, data)
   }
 }
 export default new DistributionService()

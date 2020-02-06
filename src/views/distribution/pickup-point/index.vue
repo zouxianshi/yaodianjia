@@ -1,105 +1,113 @@
 <template>
-  <div class="add">
-    <div class="product-info">
-      <h4>提货门店信息</h4>
-      <el-form ref="form" :model="form" label-width="110px">
-        <el-form-item label="提货门店名称:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="门店编码:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="门店地址:" style="padding-right:20%">
-          <el-input v-model="form.name" />
-          <el-button type="primary" class="position-btn">定位</el-button>
-        </el-form-item>
-        <div class="map-box">
-          地图
-        </div>
-        <el-form-item label="电话号码:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-      </el-form>
+  <div class="content_pick">
+    <div class="nav-btn">
+      <el-button type="primary" size="mini" @click="toAdd()">添加提货门店</el-button>
     </div>
-    <div class="product-img">
-      <h4>门店账号</h4>
-      <el-form ref="form" :model="form" label-width="110px">
-        <el-form-item label="账号设置:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="密码设置:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-      </el-form>
+    <div class="tabel-content">
+      <el-table :data="shopData" border style="width: 100%">
+        <el-table-column prop="storeName" label="提货门店名称" />
+        <el-table-column prop="storeCode" label="门店编码" />
+        <el-table-column prop="storeAddress" label="门店地址" />
+        <el-table-column prop="phoneNumber" label="电话号码" />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="160"
+        >
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" @click="updataStore(scope.row.id)">编辑</el-button>
+            <el-button v-if="scope.row.status==0" type="primary" size="mini" @click="changePointStatus(scope.row.id,scope.row.status)">启用</el-button>
+            <el-button v-else type="info" size="mini" @click="changePointStatus(scope.row.id,scope.row.status)">停用</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
-    <div class="submit-box">
-      <el-button type="primary" @click="submitData()">完成添加</el-button>
+    <div class="page-box">
+      <el-pagination
+        :current-page="pageInfo.currentPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="pageInfo.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pageInfo.total"
+        @size-change="changePageSize"
+        @current-change="changeIndex"
+      />
     </div>
   </div>
 </template>
+
 <script>
+import distributionService from '@/api/distributionService'
 export default {
   data() {
     return {
-      form: {
-        name: ''
+      pageInfo: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
       },
-      dialogImageUrl: '',
-      dialogVisible: false
+      shopData: []
     }
   },
+  created() {
+    this.getStoreData()
+  },
   methods: {
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
+    // 分页切换
+    changePageSize(pageSize) {
+      this.pageInfo.pageSize = pageSize
+      this.pageInfo.currentPage = 1
+      this.getStoreData()
     },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url
-      this.dialogVisible = true
+    changeIndex(index) {
+      this.pageInfo.currentPage = index
+      this.getStoreData()
     },
-    submitData() { // 提交数据
-      console.log(this.form)
+    getStoreData() {
+      var parmes = {
+
+      }
+      parmes.currentPage = this.pageInfo.currentPage
+      parmes.pageSize = this.pageInfo.pageSize
+      distributionService.getPointerList(parmes).then(res => {
+        if (res.data) {
+          var result = res.data
+          this.pageInfo.total = result.totalCount
+          this.shopData = result.data
+        }
+      })
+    },
+    changePointStatus(id, status) { // 修改 停、启用
+      var params = {
+        'id': id,
+        'status': status === 1 ? '0' : '1'
+      }
+      distributionService._batchPoint(params).then(res => {
+        this.$message({
+          message: res.msg,
+          type: 'success'
+        })
+        this.getStoreData()
+      })
+    },
+    toAdd() {
+      this.$router.push('/distribution/add-point')
+    },
+    updataStore(ids) {
+      this.$router.push(`/distribution/updata-point?id=${ids}`)
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
-.add {
-  padding: 10px 61px;height: calc(100vh - 158px);overflow-y: scroll;
-  .product-img, .product-info, .product-rules{
-    padding: 20px 0;
-    h4{
-      height: 30px;line-height: 30px;font-weight: 600;font-size: 16px;
-      margin-bottom: 21px;
-      .tips-yuyue{
-        font-size:14px;color:rgba(0,0,0,0.45);
-      }
-    }
-    form{
-      padding-left: 20%; width:80%;
-      .position-btn{
-        position: absolute;right: 0;transform: translateX(110%)
-      }
-      .map-box{
-        width: calc(100% - 110px);
-        margin: 20px 0;
-        margin-left: 110px;
-        height: 200px;
-        border: 1px solid #eee
-      }
-    }
-    .tips{
-      font-size:14px;
-      font-weight:400;
-      color:rgba(0,0,0,0.45);
-      line-height:20px;
-      margin-top: 10px
-    }
+.content_pick{
+  padding: 10px 21px;height: calc(100vh - 158px);overflow-y: scroll;
+  .nav-btn{
+    text-align: right;height: 40px;line-height: 40px
   }
-  .product-rules{
-    border-top: 1px solid #eee ;border-bottom: 1px solid #eee
-  }
-  .submit-box{
-    text-align: center;margin-top: 20px
+  .page-box{
+    height: 40px;line-height: 40px;margin-top: 21px;text-align: right
   }
 }
 </style>

@@ -1,111 +1,192 @@
 <template>
-  <div class="add">
-    <div class="product-info">
-      <h4>商品信息</h4>
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="商品名称:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="所属品牌:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="单位:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="标签价格:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="限购量:">
-          <el-input v-model="form.name" />
-        </el-form-item>
-      </el-form>
+  <div class="content_pick">
+    <div class="nav-btn">
+      <el-button type="primary" size="mini" @click="toAdd()">添加预约商品</el-button>
+      <el-button type="primary" size="mini" @click="removeProduct()">批量下架</el-button>
     </div>
-    <div class="product-rules">
-      <h4>预约规则
-        <span class="tips-yuyue">（预约规则为选填项，请您根据商品库存选择是否填写设置）</span>
-      </h4>
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="数量限制:">
-          一个ID仅可购买&nbsp; <el-input v-model="form.name" style="width:50px" /> &nbsp;个
-        </el-form-item>
-        <el-form-item label="ID限制:">
-          一个ID&nbsp; <el-input v-model="form.name" style="width:50px" /> &nbsp;天内仅可购买&nbsp;
-          <el-input v-model="form.name" style="width:50px" /> &nbsp;次
-        </el-form-item>
-      </el-form>
+    <div class="tabel-content">
+      <el-table :data="productList" border style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="45"
+          align="center"
+        />
+        <el-table-column
+          label="商品图片"
+          align="center"
+          width="102"
+        >
+          <template slot-scope="scope" style="text-align:center">
+            <img class="goods-logo" :src="showImg(scope.row.imgUrl)" alt="">
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="商品信息" />
+        <el-table-column prop="brandName" label="品牌" />
+        <el-table-column prop="price" label="标准价格" />
+        <el-table-column prop="inventory" label="库存" />
+        <el-table-column
+          label="预约规则"
+        >
+          <template v-if="scope.row.daysPerMember != 0 || scope.row.countPerMember != 0" slot-scope="scope">
+            每人{{ scope.row.daysPerMember }}天内限购{{ scope.row.countPerMember }}个。
+          </template>
+          <template v-else>
+            暂无预约规则。
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          width="160"
+        >
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" @click="updataProduct(scope.row.id)">编辑</el-button>
+            <el-button type="primary" size="mini" @click="changeProductStatus(scope.row.id,scope.row.status)">
+              {{ scope.row.status ==1 ? '下架':'上架' }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
-    <div class="product-img">
-      <h4>商品橱窗图</h4>
-      <el-upload
-        action="https://jsonplaceholder.typicode.com/posts/"
-        list-type="picture-card"
-        :on-preview="handlePictureCardPreview"
-        :on-remove="handleRemove"
-      >
-        <i class="el-icon-plus" />
-      </el-upload>
-      <p class="tips">1、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</p>
-      <p class="tips">2、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。</p>
-      <p class="tips">3、图片内容展示方向，应始终保持文字正向。</p>
-    </div>
-    <div class="submit-box">
-      <el-button type="primary" @click="submitData()">提交</el-button>
+    <div class="page-box">
+      <el-pagination
+        :current-page="pageInfo.currentPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="10"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pageInfo.total"
+        @size-change="changePageSize"
+        @current-change="changeIndex"
+      />
     </div>
   </div>
 </template>
+
 <script>
+import distributionService from '@/api/distributionService'
 export default {
   data() {
     return {
-      form: {
-        name: ''
+      tableData: [
+        {
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1517 弄'
+        },
+        {
+          date: '2016-05-01',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1519 弄'
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1516 弄'
+        }
+      ],
+      productList: [],
+      pageInfo: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
       },
-      dialogImageUrl: '',
-      dialogVisible: false
+      batchIds: []
     }
   },
+  created() {
+    this.getProductList()
+  },
   methods: {
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
+    // 分页切换
+    changePageSize(pageSize) {
+      this.pageInfo.pageSize = pageSize
+      this.pageInfo.currentPage = 1
+      this.getProductList()
     },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url
-      this.dialogVisible = true
+    changeIndex(index) {
+      this.pageInfo.currentPage = index
+      this.getProductList()
     },
-    submitData() { // 提交数据
-      console.log(this.form)
+    getProductList() {
+      var params = {
+      }
+      params.currentPage = this.pageInfo.currentPage
+      params.pageSize = this.pageInfo.pageSize
+      distributionService.getProductList(params).then(res => {
+        if (res.data) {
+          var result = res.data
+          this.pageInfo.total = result.totalCount
+          this.productList = result.data
+        }
+      })
+    },
+    toAdd() {
+      this.$router.push('/distribution/add-product')
+    },
+    updataProduct(id) {
+      this.$router.push(`/distribution/updata-product?id=${id}`)
+    },
+    changeProductStatus(ids, status) { // 上下架
+      var params = {
+        'ids': [
+          ids
+        ],
+        'status': status === 1 ? '0' : '1'
+      }
+      distributionService._batchProduct(params).then(res => {
+        this.$message({
+          message: res.msg,
+          type: 'success'
+        })
+        this.getProductList()
+      })
+    },
+    // 多选切换
+    handleSelectionChange(val) {
+      this.batchIds = []
+      this.batchIds = val.map(item => item.id)
+    },
+    // 批量下架
+    removeProduct() {
+      if (this.batchIds.length === 0) {
+        this.$message({
+          message: '请至少选择一项！',
+          type: 'message'
+        })
+        return
+      }
+      var params = {
+        'ids': this.batchIds,
+        'status': '0'
+      }
+      distributionService._batchProduct(params).then(res => {
+        this.$message({
+          message: res.msg,
+          type: 'success'
+        })
+        this.getProductList()
+      })
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
-.add {
-  padding: 10px 61px;height: calc(100vh - 158px);overflow-y: scroll;
-  .product-img, .product-info, .product-rules{
-    padding: 20px 0;
-    h4{
-      height: 30px;line-height: 30px;font-weight: 600;font-size: 16px;
-      margin-bottom: 21px;
-      .tips-yuyue{
-        font-size:14px;color:rgba(0,0,0,0.45);
-      }
-    }
-    form{
-      padding-left: 20%; width:80%;
-    }
-    .tips{
-      font-size:14px;
-      font-weight:400;
-      color:rgba(0,0,0,0.45);
-      line-height:20px;
-      margin-top: 10px
-    }
+.content_pick{
+  padding: 10px 21px;overflow: auto;height: calc(100vh - 158px);
+  .nav-btn{
+    text-align: right;height: 50px;line-height: 50px
   }
-  .product-rules{
-    border-top: 1px solid #eee ;border-bottom: 1px solid #eee
+  .goods-logo{
+    width: 81px;height: 81px;
   }
-  .submit-box{
-    text-align: center;margin-top: 20px
+  .page-box{
+    height: 40px;line-height: 40px;margin-top: 21px;text-align: right
   }
 }
 </style>

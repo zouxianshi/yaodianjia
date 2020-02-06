@@ -54,11 +54,43 @@ const router = [
         }
       },
       {
+        path: 'add-product',
+        component: () => import('@/views/distribution/reservation-product/add-reservation.vue'),
+        name: 'add-point',
+        meta: {
+          title: '添加预约商品'
+        }
+      },
+      {
+        path: 'updata-product',
+        component: () => import('@/views/distribution/reservation-product/updata-reservation.vue'),
+        name: 'updata-point',
+        meta: {
+          title: '编辑预约商品'
+        }
+      },
+      {
         path: 'pickup-point',
         component: () => import('@/views/distribution/pickup-point/index.vue'),
         name: 'pickup-point',
         meta: {
           title: '提货点管理'
+        }
+      },
+      {
+        path: 'add-point',
+        component: () => import('@/views/distribution/pickup-point/add-pickup.vue'),
+        name: 'add-point',
+        meta: {
+          title: '添加提货门店'
+        }
+      },
+      {
+        path: 'updata-point',
+        component: () => import('@/views/distribution/pickup-point/updata-pickup.vue'),
+        name: 'updata-point',
+        meta: {
+          title: '编辑提货门店'
         }
       }
     ]
