@@ -67,7 +67,10 @@
       </div>
     </div>
     <div class="table-panel">
-      <table-card :table-data="orderListData" @button-click="setDialogContent" />
+      <table-card
+        :table-data="orderListData"
+        @button-click="setDialogContent"
+      />
     </div>
     <div class="pagination-panel">
       <el-pagination
@@ -343,6 +346,13 @@ export default {
   }
   .table-panel {
     padding: 0 25px;
+  }
+  .pagination-panel {
+    padding: 0 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin:40px 0;
   }
   .dialog-pic {
     width: 72px;
