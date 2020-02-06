@@ -181,7 +181,10 @@ class DistributionService {
    * @param {*} data
    */
   updateOrderStatus(data) {
-    return this.service('post', `/1.0/b/order/updateStatusById`, data)
+    return this.service(
+      'post',
+      `/1.0/b/order/updateStatusById?id=${data.id}&status=${data.status}`
+    )
   }
   /**
    *  查询取货点数据列表

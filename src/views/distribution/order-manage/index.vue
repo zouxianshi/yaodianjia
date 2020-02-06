@@ -277,6 +277,7 @@ export default {
       if (code === '10000') {
         console.log(data)
         this.closeDialog()
+        this.getOrderListByTypeService()
       }
     },
 
