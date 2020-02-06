@@ -2,32 +2,32 @@
   <div class="add">
     <div class="product-info">
       <h4>提货门店信息</h4>
-      <el-form ref="form" :model="form" label-width="110px">
-        <el-form-item label="提货门店名称:">
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
+        <el-form-item label="提货门店名称:" prop="storeName">
           <el-input v-model="form.storeName" />
         </el-form-item>
-        <el-form-item label="门店编码:">
+        <el-form-item label="门店编码:" prop="storeCode">
           <el-input v-model="form.storeCode" />
         </el-form-item>
         <el-form-item label="门店地址:" style="padding-right:20%">
           <el-input v-model="form.storeAddress" />
-          <el-button type="primary" class="position-btn">定位</el-button>
+          <el-button type="primary" class="position-btn" @click="getLocation()">定位</el-button>
         </el-form-item>
         <div class="map-box">
-          地图
+          <tx-map ref="mapRef" :zoom="15" @ready="handlerLocation" @click="clickHandler()" />
         </div>
-        <el-form-item label="电话号码:">
+        <el-form-item label="电话号码:" prop="phoneNumber">
           <el-input v-model="form.phoneNumber" />
         </el-form-item>
       </el-form>
     </div>
     <div class="product-img">
       <h4>门店账号</h4>
-      <el-form ref="form" :model="form" label-width="110px">
-        <el-form-item label="账号设置:">
+      <el-form ref="form" :model="form" label-width="110px" :rules="rules">
+        <el-form-item label="账号设置:" prop="accountNumber">
           <el-input v-model="form.accountNumber" />
         </el-form-item>
-        <el-form-item label="密码设置:">
+        <el-form-item label="密码设置:" prop="password">
           <el-input v-model="form.password" />
         </el-form-item>
       </el-form>
@@ -39,9 +39,23 @@
 </template>
 <script>
 import distributionService from '@/api/distributionService'
+import txMap from '@/components/TxMap/map'
+var mapQQ
 export default {
+  components: { txMap },
   data() {
+    var checkPhone = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('联系方式不能为空'))
+      }
+      setTimeout(() => {
+        if (!(/^1[3456789]\d{9}$/.test(value))) {
+          callback(new Error('请输入正确的手机号'))
+        }
+      }, 1000)
+    }
     return {
+      TxMap: null,
       form: {
         'accountNumber': '',
         'latitude': '123.454353453453',
@@ -54,7 +68,24 @@ export default {
         'storeName': ''
       },
       dialogImageUrl: '',
-      dialogVisible: false
+      dialogVisible: false,
+      rules: {
+        storeName: [
+          { required: true, message: '请输入门店名称', trigger: 'blur' }
+        ],
+        storeCode: [
+          { required: true, message: '请输入门店编码', trigger: 'blur' }
+        ],
+        phoneNumber: [
+          { validator: checkPhone, trigger: 'blur' }
+        ],
+        accountNumber: [
+          { required: true, message: '请输入门店账号', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入门店密码', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -80,18 +111,52 @@ export default {
   },
   methods: {
     submitData() { // 提交数据
-      var params = {}
-      params = JSON.parse(JSON.stringify(this.form))
-      params.id = this.ids
-      distributionService.savePointer(params).then(res => {
-        if (res.code === '10000') {
-          this.$message({
-            message: res.msg,
-            type: 'success'
+      this.$refs['form'].validate((flag) => {
+        if (flag) {
+          var params = {}
+          params = JSON.parse(JSON.stringify(this.form))
+          params.id = this.ids
+          distributionService.savePointer(params).then(res => {
+            if (res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.$router.replace('/distribution/pickup-point')
+            }
           })
-          this.$router.replace('/distribution/pickup-point')
         }
       })
+    },
+    handlerLocation(map, qq) {
+      mapQQ = qq
+
+      // this.getLocation()
+      setTimeout(() => {
+        const center = new mapQQ.maps.LatLng(this.form.latitude, this.form.longitude)
+        this.$refs.mapRef.setCenter(center)
+        this.$refs.mapRef.setMarker(center)
+      }, 1000)
+    },
+    // 定位
+    getLocation() {
+      const geocoder = new mapQQ.maps.Geocoder({
+        complete: (result) => {
+          const location = result.detail.location
+          this.$refs.mapRef.setCenter(location)
+          this.form.latitude = location.lat
+          this.form.longitude = location.lng
+          this.$refs.mapRef.setMarker(location)
+        },
+        error: () => {
+          this.$message({
+            message: '未匹配到地址',
+            type: 'error'
+          })
+        }
+      })
+      // 通过getLocation();方法获取位置信息值
+      geocoder.getLocation(this.form.storeAddress)
     }
   }
 }
@@ -117,7 +182,7 @@ export default {
         width: calc(100% - 110px);
         margin: 20px 0;
         margin-left: 110px;
-        height: 200px;
+        height: 300px;
         border: 1px solid #eee
       }
     }

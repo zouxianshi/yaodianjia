@@ -2,27 +2,27 @@
   <div class="add">
     <div class="product-info">
       <h4>商品信息</h4>
-      <el-form ref="form" :model="form" label-width="100px">
-        <el-form-item label="商品名称：">
+      <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+        <el-form-item label="商品名称：" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="所属品牌：">
+        <el-form-item label="所属品牌：" prop="brandName">
           <el-input v-model="form.brandName" />
         </el-form-item>
-        <el-form-item label="标签价格：">
+        <el-form-item label="标签价格：" prop="price">
           <el-input v-model="form.price" />
         </el-form-item>
-        <el-form-item label="库存量：">
+        <el-form-item label="库存量：" prop="inventory">
           <el-input v-model="form.inventory" />
         </el-form-item>
       </el-form>
     </div>
     <div class="product-rules">
       <h4>预约规则<span class="rule-tips">（如无需设置限购条件，请填写0）</span></h4>
-      <el-form ref="form" :model="form" label-width="100px" class="demo-form-inline">
+      <el-form :model="form" label-width="100px" class="demo-form-inline">
         <el-form-item label="限购规则：">
-          每人&emsp;<el-input v-model="form.daysPerMember" class="inline-input" />&emsp;天内限购&emsp;
-          <el-input v-model="form.countPerMember" class="inline-input" />&emsp;个
+          每人&emsp;<el-input v-model="form.daysPerMember" class="inline-input" prop="daysPerMember" />&emsp;天内限购&emsp;
+          <el-input v-model="form.countPerMember" class="inline-input" prop="countPerMember" />&emsp;个
         </el-form-item>
       </el-form>
     </div>
@@ -55,13 +55,27 @@ export default {
     return {
       form: {
         'brandName': '',
-        'daysPerMember': '',
+        'daysPerMember': 0,
         'imgUrl': '',
         'inventory': '',
-        'countPerMember': '',
+        'countPerMember': 0,
         'name': '',
         'price': '',
         'status': '1'
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入商品名称', trigger: 'blur' }
+        ],
+        brandName: [
+          { required: true, message: '请输入品牌', trigger: 'blur' }
+        ],
+        price: [
+          { required: true, message: '请输入商品价格', trigger: 'blur' }
+        ],
+        inventory: [
+          { required: true, message: '请输入商品库存', trigger: 'blur' }
+        ]
       },
       dialogImageUrl: '',
       dialogVisible: false
@@ -84,10 +98,10 @@ export default {
         file.type === 'image/jpeg' ||
         file.type === 'image/png' ||
         file.type === 'image/jpg'
-      const isLt2M = file.size / 1024 / 1024 < 2
+      const isLt2M = file.size / 1024 / 1024 < 1
       if (!isLt2M) {
         this.$message({
-          message: '上传图片大小不能超过 2MB!',
+          message: '上传图片大小不能超过 1MB!',
           type: 'warning'
         })
         return false
@@ -116,16 +130,20 @@ export default {
       }
     },
     submitData() {
-      var params = {}
-      params = JSON.parse(JSON.stringify(this.form))
-      distributionService.saveProduct(params).then(res => {
-        console.log(res)
-        if (res.code === '10000') {
-          this.$message({
-            message: res.msg,
-            type: 'success'
+      this.$refs['form'].validate((flag) => {
+        if (flag) {
+          console.log(flag)
+          var params = {}
+          params = JSON.parse(JSON.stringify(this.form))
+          distributionService.saveProduct(params).then(res => {
+            if (res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.$router.replace('/distribution/reservation-product')
+            }
           })
-          this.$router.replace('/distribution/reservation-product')
         }
       })
     }
