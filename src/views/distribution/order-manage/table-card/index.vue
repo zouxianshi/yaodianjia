@@ -52,7 +52,9 @@
                   ? '待核销'
                   : item.status === 'COMPLETE'
                     ? '已完成'
-                    : '取消预约'
+                    : item.status === 'CANCEL'
+                      ? '取消预约'
+                      : '其他'
             }}</span><el-button
               v-if="item.status === 'SUCCESS'"
               style="margin-top:10px;"

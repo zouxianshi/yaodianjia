@@ -269,7 +269,8 @@ export default {
     async updateOrderStatusService() {
       const params = {
         id: this.dialogContent[0].id,
-        status: this.dialogContent[0].status
+        status:
+          this.dialogContent[0].status === 'SUCCESS' ? 'ARRIVED' : 'COMPLETE'
       }
       console.log('updateOrderStatusService ________________ ')
       const { data, code } = await DistributionService.updateOrderStatus(params)
