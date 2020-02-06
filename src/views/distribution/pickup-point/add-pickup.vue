@@ -11,10 +11,10 @@
         </el-form-item>
         <el-form-item label="门店地址:" style="padding-right:20%">
           <el-input v-model="form.storeAddress" />
-          <el-button type="primary" class="position-btn">定位</el-button>
+          <el-button type="primary" class="position-btn" @click="getLocation()">定位</el-button>
         </el-form-item>
         <div class="map-box">
-          地图
+          <tx-map ref="mapRef" :zoom="15" @ready="handlerLocation" @click="clickHandler()" />
         </div>
         <el-form-item label="电话号码:">
           <el-input v-model="form.phoneNumber" />
@@ -39,9 +39,13 @@
 </template>
 <script>
 import distributionService from '@/api/distributionService'
+import txMap from '@/components/TxMap/map'
+var mapQQ
 export default {
+  components: { txMap },
   data() {
     return {
+      TxMap: null,
       form: {
         'accountNumber': '',
         'latitude': '123.454353453453',
@@ -70,6 +74,30 @@ export default {
           this.$router.replace('/distribution/pickup-point')
         }
       })
+    },
+    handlerLocation(map, qq) {
+      mapQQ = qq
+      this.txMap = map
+    },
+    // 定位
+    getLocation() {
+      const geocoder = new mapQQ.maps.Geocoder({
+        complete: (result) => {
+          const location = result.detail.location
+          this.$refs.mapRef.setCenter(location)
+          this.form.latitude = location.latform
+          this.form.longitude = location.lng
+          this.$refs.mapRef.setMarker(location)
+        },
+        error: () => {
+          this.$message({
+            message: '未匹配到地址',
+            type: 'error'
+          })
+        }
+      })
+      // 通过getLocation();方法获取位置信息值
+      geocoder.getLocation(this.form.storeAddress)
     }
   }
 }
@@ -95,7 +123,7 @@ export default {
         width: calc(100% - 110px);
         margin: 20px 0;
         margin-left: 110px;
-        height: 200px;
+        height: 300px;
         border: 1px solid #eee
       }
     }
