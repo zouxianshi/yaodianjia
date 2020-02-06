@@ -66,10 +66,10 @@ export default {
       return this.$route.query.id
     }
   },
-  mounted() {
+  created() {
     distributionService.getPointer(this.ids).then(res => {
       var data = res.data
-      console.log(res)
+      console.log('获取经纬度')
       this.form = {
         'accountNumber': data.accountNumber,
         'latitude': data.latitude,
@@ -81,9 +81,6 @@ export default {
         'storeCode': data.storeCode,
         'storeName': data.storeName
       }
-      const center = new mapQQ.maps.LatLng(this.form.latitude, this.form.longitude)
-      this.$refs.mapRef.setCenter(center)
-      this.$refs.mapRef.setMarker(center)
     })
   },
   methods: {
@@ -103,10 +100,14 @@ export default {
     },
     handlerLocation(map, qq) {
       mapQQ = qq
-      // this.txMap = map
-      // if (this.$route.query.id && this.storeService) {
-      //   this.getInfo()
-      // }
+
+      // this.getLocation()
+      setTimeout(() => {
+        console.log('加载地图')
+        const center = new mapQQ.maps.LatLng(this.form.latitude, this.form.longitude)
+        this.$refs.mapRef.setCenter(center)
+        this.$refs.mapRef.setMarker(center)
+      }, 1000)
     },
     // 定位
     getLocation() {
