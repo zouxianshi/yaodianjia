@@ -11,66 +11,68 @@
       <div class="table-column flex-1">订单状态</div>
       <div class="table-column flex-2">提货门店</div>
     </div>
-    <div v-for="item in tableData" :key="item.id" class="table-content">
-      <div class="header">
-        <div class="gray">预约单编号：{{ item.id }}</div>
-        <div class="blue">订单详情</div>
-      </div>
-      <div class="row">
-        <div class="table-column content-container flex-3">
-          <div class="image-box">
-            <img :src="item.productImgUrl" class="pic">
-            <div class="box">暂无图片</div>
-          </div>
-          <div class="content-box">
-            <div class="desc">
-              {{ item.productName }}
+    <div v-if="tableData.length > 0">
+      <div v-for="item in tableData" :key="item.id" class="table-content">
+        <div class="header">
+          <div class="gray">预约单编号：{{ item.id }}</div>
+          <div class="blue">订单详情</div>
+        </div>
+        <div class="row">
+          <div class="table-column content-container flex-3">
+            <div class="image-box">
+              <img :src="item.productImgUrl" class="pic">
+              <div class="box">暂无图片</div>
             </div>
-            <div class="order">
-              {{ item.productId }}
+            <div class="content-box">
+              <div class="desc">
+                {{ item.productName }}
+              </div>
+              <div class="order">
+                {{ item.productId }}
+              </div>
             </div>
           </div>
-        </div>
-        <div class="table-column content-center flex-1">
-          ¥ {{ item.productPrice }}
-        </div>
-        <div class="table-column content-center flex-1">
-          {{ item.productCount }}
-        </div>
-        <div class="table-column content-center flex-1">
-          {{ item.personName }}
-        </div>
-        <div class="table-column content-center flex-1">
-          {{ item.createTime }}
-        </div>
-        <div class="table-column content-column content-center flex-1">
-          <span>{{
-            item.status === 'SUCCESS'
-              ? '待到货'
-              : item.status === 'ARRIVED'
-                ? '待核销'
-                : item.status === 'COMPLETE'
-                  ? '已完成'
-                  : '未知状态'
-          }}</span><el-button
-            v-if="item.status === 'SUCCESS'"
-            style="margin-top:10px;"
-            type="primary"
-            @click="emitClickHandler(item)"
-          >确认收货</el-button>
-          <el-button
-            v-if="item.status === 'ARRIVED'"
-            style="margin-top:10px;"
-            type="primary"
-            @click="emitClickHandler(item)"
-          >确认核销</el-button>
-        </div>
-        <div class="table-column content-center flex-2">
-          {{ item.storeName }}
+          <div class="table-column content-center flex-1">
+            ¥ {{ item.productPrice }}
+          </div>
+          <div class="table-column content-center flex-1">
+            {{ item.productCount }}
+          </div>
+          <div class="table-column content-center flex-1">
+            {{ item.personName }}
+          </div>
+          <div class="table-column content-center flex-1">
+            {{ item.createTime }}
+          </div>
+          <div class="table-column content-column content-center flex-1">
+            <span>{{
+              item.status === 'SUCCESS'
+                ? '待到货'
+                : item.status === 'ARRIVED'
+                  ? '待核销'
+                  : item.status === 'COMPLETE'
+                    ? '已完成'
+                    : '未知状态'
+            }}</span><el-button
+              v-if="item.status === 'SUCCESS'"
+              style="margin-top:10px;"
+              type="primary"
+              @click="emitClickHandler(item)"
+            >确认收货</el-button>
+            <el-button
+              v-if="item.status === 'ARRIVED'"
+              style="margin-top:10px;"
+              type="primary"
+              @click="emitClickHandler(item)"
+            >确认核销</el-button>
+          </div>
+          <div class="table-column content-center flex-2">
+            {{ item.storeName }}
+          </div>
         </div>
       </div>
     </div>
-    <div class="table-empty" />
+    <div v-else class="table-empty">暂无数据</div>
   </div>
 </template>
 <script>
@@ -92,10 +94,21 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.table-empty {
+  width: 100%;
+  height: 80px;
+  text-align: center;
+  line-height: 80px;
+  font-size: 14px;
+  color: #9b9b9b;
+  border: 1px solid #dfe6ec;
+  border-top: none;
+}
 .table-content {
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+
   .header {
     height: 32px;
     display: flex;

@@ -207,7 +207,7 @@ export default {
       const { data, code } = await DistributionService.queryStoreList({
         pageSize: 100
       })
-      if (code === '10000') {
+      if (code === '10000' && data.data.length > 0) {
         this.storeListData = data.data
         this.selectStore = {
           storeName: this.storeListData[0].storeName,
@@ -230,7 +230,7 @@ export default {
       const { data, code } = await DistributionService.queryOrderListByType(
         params
       )
-      if (code === '10000') {
+      if (code === '10000' && data.data.length > 0) {
         this.orderListData = data.data
         // this.orderListData = [
         //   {
@@ -352,7 +352,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    margin:40px 0;
+    margin: 40px 0;
   }
   .dialog-pic {
     width: 72px;
