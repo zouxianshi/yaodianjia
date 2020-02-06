@@ -4,47 +4,48 @@
       <div class="box">
         <div
           class="item frist"
-          :class="navItem === 'all' && 'active'"
-          @click="changeTableItem('all')"
+          :class="orderStatus === '' && 'active'"
+          @click="changeTableItem('')"
         >
           全部
         </div>
         <div class="cutoff" />
         <div
           class="item"
-          :class="navItem === 'receive' && 'active'"
-          @click="changeTableItem('receive')"
+          :class="orderStatus === 'SUCCESS' && 'active'"
+          @click="changeTableItem('SUCCESS')"
         >
           待到货
         </div>
         <div class="cutoff" />
         <div
           class="item"
-          :class="navItem === 'off' && 'active'"
-          @click="changeTableItem('off')"
+          :class="orderStatus === 'ARRIVED' && 'active'"
+          @click="changeTableItem('ARRIVED')"
         >
           待核销
         </div>
         <div class="cutoff" />
         <div
           class="item last"
-          :class="navItem === 'finish' && 'active'"
-          @click="changeTableItem('finish')"
+          :class="orderStatus === 'COMPLETE' && 'active'"
+          @click="changeTableItem('COMPLETE')"
         >
           已完成
         </div>
       </div>
       <el-select
-        v-model="value"
+        v-model="selectStore.storeName"
         filterable
         placeholder="选择门店"
         class="search"
+        @change="selectChange"
       >
         <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          v-for="item in storeListData"
+          :key="item.id"
+          :label="item.storeName"
+          :value="{ storeName: item.storeName, storeCode: item.storeCode }"
         />
       </el-select>
       <div class="search-container">
@@ -66,15 +67,15 @@
       </div>
     </div>
     <div class="table-panel">
-      <table-card @button-click="setDialogContent" />
+      <table-card :table-data="orderListData" @button-click="setDialogContent" />
     </div>
     <div class="pagination-panel">
       <el-pagination
-        :current-page="currentPage4"
+        :current-page="currentPage"
         :page-sizes="[10, 20, 50, 100]"
-        :page-size="10"
+        :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="4"
+        :total="totalCount"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -86,34 +87,67 @@
     >
       <el-table :data="dialogContent">
         <el-table-column property="pic" label="商品图片" width="150">
-          <div class="dialog-pic">暂无图片</div></el-table-column>
-        <el-table-column property="name" label="商品名称/编号" width="200" />
-        <el-table-column property="price" label="单价" />
-        <el-table-column property="count" label="数量" />
+          <div
+            class="dialog-pic"
+            style="width: 72px;
+    height: 72px;
+    text-align: center;
+    line-height: 72px;
+    font-size: 14px;
+    color: #9b9b9b;
+    background-color: #ebebeb;"
+          >
+            暂无图片
+          </div></el-table-column>
+        <el-table-column
+          property="productName"
+          label="商品名称/编号"
+          width="200"
+        />
+        <el-table-column property="productPrice" label="单价" />
+        <el-table-column property="productCount" label="数量" />
       </el-table>
       <div style="display:flex;flex-direction:row;margin-top:40px;">
         <div style="color:#000;font-size:14px">预约单号：</div>
         <div style="color:#000;font-size:14px;margin-left:20px;">
-          123456789012345
+          {{ dialogContent[0] && dialogContent[0].id }}
         </div>
       </div>
-      <div style="display:flex;flex-direction:row;margin-top:40px;">
-        <div style="color:#000;font-size:14px">预约单号：</div>
+      <div
+        v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
+        style="display:flex;flex-direction:row;margin-top:40px;"
+      >
+        <div style="color:#000;font-size:14px">预约人：</div>
         <div style="color:#000;font-size:14px;margin-left:20px;">
-          123456789012345
+          {{ dialogContent[0] && dialogContent[0].personName }}
         </div>
       </div>
-      <div style="display:flex;flex-direction:row;margin-top:40px;">
-        <div style="color:#000;font-size:14px">预约单号：</div>
+      <div
+        v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
+        style="display:flex;flex-direction:row;margin-top:40px;"
+      >
+        <div style="color:#000;font-size:14px">身份证号：</div>
         <div style="color:#000;font-size:14px;margin-left:20px;">
-          123456789012345
+          {{ dialogContent[0] && dialogContent[0].personId }}
+        </div>
+      </div>
+      <div
+        v-if="dialogContent[0] && dialogContent[0].status === 'SUCCESS'"
+        style="display:flex;flex-direction:row;margin-top:40px;"
+      >
+        <div style="color:#000;font-size:14px">收货门店：</div>
+        <div style="color:#000;font-size:14px;margin-left:20px;">
+          {{ dialogContent[0].storeName }}
         </div>
       </div>
       <div
         style="display:flex;flex-direction:row;margin-top:40px;justify-content: center;"
       >
         <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary">确认</el-button>
+        <el-button
+          type="primary"
+          @click="updateOrderStatusService"
+        >确认</el-button>
       </div>
     </el-dialog>
   </div>
@@ -126,11 +160,17 @@ export default {
   components: { tableCard },
   data() {
     return {
+      storeListData: [],
+      selectStore: {},
       dialogVisible: false,
       dialogTitle: '',
       dialogContent: [],
-      navItem: 'all',
-      orderNum: ''
+      orderStatus: '',
+      orderNum: '',
+      currentPage: 1,
+      pageSize: 10,
+      orderListData: [],
+      totalCount: 0
     }
   },
   watch: {
@@ -139,26 +179,109 @@ export default {
     }
   },
   mounted() {
-    const data = DistributionService.queryOrderListByType()
-    console.log('recvicesfdsfsfdsf ', data)
+    this.getStoreListServie()
   },
   methods: {
+    selectChange(e) {
+      this.selectStore = e
+      this.getOrderListByTypeService()
+    },
+    /*  */
+    handleSizeChange(e) {
+      this.pageSize = e
+      this.getOrderListByTypeService()
+    },
+    handleCurrentChange(e) {
+      this.currentPage = e
+      this.getOrderListByTypeService()
+    },
     /* 搜索 */
     forSearch() {
-      console.log('hey : search bar ')
+      this.getOrderListByTypeService()
     },
+    /* 查询门店列表 */
+    async getStoreListServie() {
+      const { data, code } = await DistributionService.queryStoreList({
+        pageSize: 100
+      })
+      if (code === '10000') {
+        this.storeListData = data.data
+        this.selectStore = {
+          storeName: this.storeListData[0].storeName,
+          storeCode: this.storeListData[0].storeCode
+        }
+        this.getOrderListByTypeService()
+      }
+    },
+    /**
+     * 查询订单
+     */
+    async getOrderListByTypeService() {
+      const params = {
+        currentPage: this.currentPage,
+        orderId: this.orderNum,
+        orderStatus: this.orderStatus,
+        pageSize: this.pageSize,
+        storeId: this.selectStore.storeCode
+      }
+      const { data, code } = await DistributionService.queryOrderListByType(
+        params
+      )
+      if (code === '10000') {
+        this.orderListData = data.data
+        // this.orderListData = [
+        //   {
+        //     address: 'string',
+        //     createTime: '2020-02-05T15:18:19.333Z',
+        //     id: 0,
+        //     memberId: 0,
+        //     merCode: 'string',
+        //     mobilePhone: 'string',
+        //     personId: 'string',
+        //     personName: 'string',
+        //     productCount: 0,
+        //     productId: 0,
+        //     productImgUrl: 'string',
+        //     productName: 'string',
+        //     productPrice: 0,
+        //     projectCountPerMember: 0,
+        //     projectDaysPerMember: 0,
+        //     projectLimitPerMember: 0,
+        //     status: 'SUCCESS',
+        //     storeName: 'string'
+        //   }
+        // ]
+      }
+      console.warn('getOrderListByTypeService _________________ ', data)
+    },
+    /* 核销 */
+    async updateOrderStatusService() {
+      const params = {
+        id: this.dialogContent[0].id,
+        status: this.dialogContent[0].status
+      }
+      const { data, code } = await DistributionService.updateOrderStatus(params)
+      if (code === '10000') {
+        console.log(data)
+        this.closeDialog()
+      }
+    },
+
     /* 切换展示数据类型 */
     changeTableItem(type) {
-      this.navItem = type
+      if (this.orderStatus === type) return
+      this.orderStatus = type
+      this.getOrderListByTypeService()
     },
     /* table-card 组件按钮点击 */
-    setDialogContent() {
+    setDialogContent(obj) {
       this.dialogVisible = true
-      // if (type === 'writeoff') {
-      //   this.dialogTitle = '确认核销'
-      // } else {
-      //   this.dialogTitle = '确认到货 (签收后预约单进入核销状态，请提醒用户上门)'
-      // }
+      if (obj.status === 'ARRIVED') {
+        this.dialogTitle = '确认核销'
+      } else if (obj.status === 'SUCCESS') {
+        this.dialogTitle = '确认到货 (签收后预约单进入核销状态，请提醒用户上门)'
+      }
+      this.dialogContent = [obj]
     },
     closeDialog() {
       this.dialogVisible = false

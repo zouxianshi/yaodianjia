@@ -228,27 +228,26 @@ class InnerCtor {
             path: '/distribution/order-manage',
             disabled: true
           },
+          // {
+          //   name: "核销管理",
+          //   path: "/distribution/write-off",
+          //   disabled: true
+          // },
+          // {
+          //   name: "小程序设置",
+          //   path: "/distribution/weapp-setting",
+          //   disabled: true,
+          //   children: []
+          // },
           {
-            name: "核销管理",
-            path: "/distribution/write-off",
-            disabled: true
-          },
-          {
-            name: "小程序设置",
-            path: "/distribution/weapp-setting",
+            name: '预约商品管理',
+            path: '/distribution/reservation-product',
             disabled: true,
             children: []
           },
           {
-            name: "预约商品管理",
-            path: "/distribution/reservation-product",
-            disabled: true,
-            children: [
-            ]
-          },
-          {
-            name: "提货点管理",
-            path: "/distribution/pickup-point",
+            name: '提货点管理',
+            path: '/distribution/pickup-point',
             disabled: true,
             children: []
           }
