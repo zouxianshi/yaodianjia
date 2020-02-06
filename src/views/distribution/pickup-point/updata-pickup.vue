@@ -56,6 +56,8 @@ export default {
     }
     return {
       TxMap: null,
+      oldAddress: '',
+      idTrueAddress: false,
       form: {
         'accountNumber': '',
         'latitude': '123.454353453453',
@@ -107,10 +109,25 @@ export default {
         'storeCode': data.storeCode,
         'storeName': data.storeName
       }
+      this.oldAddress = this.form.storeAddress
     })
   },
   methods: {
     submitData() { // 提交数据
+      if (!this.idTrueAddress) {
+        this.$message({
+          message: '请填写正确的地址并点击定位',
+          type: 'error'
+        })
+        return
+      }
+      if (this.oldAddress !== this.form.storeAddress) {
+        this.$message({
+          message: '请点击定位获取地址！',
+          type: 'error'
+        })
+        return
+      }
       this.$refs['form'].validate((flag) => {
         if (flag) {
           var params = {}
@@ -140,6 +157,7 @@ export default {
     },
     // 定位
     getLocation() {
+      this.oldAddress = this.form.storeAddress
       const geocoder = new mapQQ.maps.Geocoder({
         complete: (result) => {
           const location = result.detail.location
@@ -147,8 +165,10 @@ export default {
           this.form.latitude = location.lat
           this.form.longitude = location.lng
           this.$refs.mapRef.setMarker(location)
+          this.idTrueAddress = true
         },
         error: () => {
+          this.idTrueAddress = false
           this.$message({
             message: '未匹配到地址',
             type: 'error'
