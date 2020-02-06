@@ -260,6 +260,7 @@ export default {
         id: this.dialogContent[0].id,
         status: this.dialogContent[0].status
       }
+      console.log('updateOrderStatusService ________________ ')
       const { data, code } = await DistributionService.updateOrderStatus(params)
       if (code === '10000') {
         console.log(data)

@@ -8,7 +8,7 @@ class DistributionService {
    */
   service(method, url, params) {
     const _service = axios.create({
-      baseURL: '/hss',
+      baseURL: process.env.VUE_APP_API_BASE || '/hss',
       withCredentials: true, // send cookies when cross-domain requests
       timeout: 20000 // request timeout
     })
@@ -176,7 +176,13 @@ class DistributionService {
   queryOrderListByType(data) {
     return this.service('post', `/1.0/b/order/list`, data)
   }
-
+  /**
+   * 修改预约单状态
+   * @param {*} data
+   */
+  updateOrderStatus(data) {
+    return this.service('post', `/1.0/b/order/updateStatusById`, data)
+  }
   /**
    *  查询取货点数据列表
    *  @param {object} data 请求参数
