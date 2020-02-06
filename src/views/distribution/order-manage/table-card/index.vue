@@ -67,7 +67,7 @@
             >确认核销</el-button>
           </div>
           <div class="table-column content-center flex-2">
-            {{ item.storeName }}
+            {{ item.address }}
           </div>
         </div>
       </div>
