@@ -8,7 +8,7 @@ class DistributionService {
    */
   service(method, url, params) {
     const _service = axios.create({
-      baseURL: process.env.VUE_APP_API_BASE || '/hss',
+      baseURL: process.env.VUE_APP_HUDIT_CLOUD_BASE || '/hss',
       withCredentials: true, // send cookies when cross-domain requests
       timeout: 20000 // request timeout
     })
