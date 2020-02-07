@@ -356,33 +356,37 @@ const mutations = {
       localConversationList = tempLocalList
 
       console.log('缓存中的会话列表', localConversationList)
+
+      // 用于最终存储的数组
+      let newList = []
+
       payload.forEach((item, index) => {
         console.log('item', item)
+        // 获取到的会话列表放到最前
+        newList.push(payload)
+
+        // 判断localStorage里面是否有当前item 如果有就删除
         const existedIndex = localConversationList.findIndex(element => {
-          // element.targetId === message.senderUserId || element.targetId === message.targetId
           let flag = false
-          // 客服发送给用户 则判断targetId
           if (Chat.isUserEqual(item.latestMessage, element.latestMessage)) {
-          // if (item.latestMessage.content.extra.userId === element.latestMessage.content.extra.userId) {
             flag = true
-          }
-          if (flag === false) {
-            console.log('item', item)
-            console.log('element', element)
           }
           return flag
         })
         console.log('existedIndex', existedIndex)
         if (existedIndex >= 0) {
           console.log(`${item.targetId}存在本地了`, '替换')
-          localConversationList[existedIndex] = item
-        } else {
-          localConversationList.push(item)
+          // localConversationList[existedIndex] = item
+          localConversationList.splice(existedIndex, 1)
         }
+        //  else {
+        //   localConversationList.push(item)
+        // }
       })
-      console.log('本地有缓存：合并处理后的会话列表', localConversationList)
-      localStorage.setItem('ryCSList', JSON.stringify(localConversationList))
-      state.onlineConversationData.list = localConversationList
+      newList = [...newList, ...localConversationList]
+      console.log('本地有缓存：合并处理后的会话列表', newList)
+      localStorage.setItem('ryCSList', JSON.stringify(newList))
+      state.onlineConversationData.list = newList
     } else {
       state.onlineConversationData.list = payload
       console.log('SET_ONLINE_CONVERSATIONLIST 的localStorage设置2')
