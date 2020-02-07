@@ -210,7 +210,7 @@ class InnerCtor {
         icon: 'icongoods',
         path: '',
         // disabled: this.get("distribution"),
-        disabled: true,
+        disabled: this.get('appointment'),
         children: [
           /*{
             name: '所有门店',
@@ -226,7 +226,7 @@ class InnerCtor {
           {
             name: '预约单管理',
             path: '/distribution/order-manage',
-            disabled: true
+            disabled: this.get('appointment.order')
           },
           // {
           //   name: "核销管理",
@@ -242,13 +242,13 @@ class InnerCtor {
           {
             name: '预约商品管理',
             path: '/distribution/reservation-product',
-            disabled: true,
+            disabled: this.get('appointment.epidemic'),
             children: []
           },
           {
             name: '提货点管理',
             path: '/distribution/pickup-point',
-            disabled: true,
+            disabled: this.get('appointment.pick-set'),
             children: []
           }
           // {
