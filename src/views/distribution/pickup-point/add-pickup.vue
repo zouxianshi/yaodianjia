@@ -4,31 +4,20 @@
       <h4>提货门店信息</h4>
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="提货门店名称:" prop="storeName">
-          <el-input v-model="form.storeName" />
+          <el-input v-model="form.storeName" maxlength="100" />
         </el-form-item>
         <el-form-item label="门店编码:" prop="storeCode">
-          <el-input v-model="form.storeCode" />
+          <el-input v-model="form.storeCode" maxlength="50" />
         </el-form-item>
         <el-form-item label="门店地址:" style="padding-right:20%">
-          <el-input v-model="form.storeAddress" />
+          <el-input v-model="form.storeAddress" maxlength="1000" />
           <el-button type="primary" class="position-btn" @click="getLocation()">定位</el-button>
         </el-form-item>
         <div class="map-box">
           <tx-map ref="mapRef" :zoom="15" @ready="handlerLocation" @click="clickHandler()" />
         </div>
         <el-form-item label="电话号码:" prop="phoneNumber">
-          <el-input v-model="form.phoneNumber" />
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="product-img">
-      <h4>门店账号</h4>
-      <el-form ref="form" :model="form" label-width="110px" :rules="rules">
-        <el-form-item label="账号设置:" prop="accountNumber">
-          <el-input v-model="form.accountNumber" />
-        </el-form-item>
-        <el-form-item label="密码设置:" prop="password">
-          <el-input v-model="form.password" />
+          <el-input v-model="form.phoneNumber" maxlength="11" />
         </el-form-item>
       </el-form>
     </div>
@@ -47,22 +36,19 @@ export default {
     var checkPhone = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('联系方式不能为空'))
+      } else if (!(/^1[3456789]\d{9}$/.test(value))) {
+        callback(new Error('请输入正确的手机号'))
+      } else {
+        callback() // 添加成功回调
       }
-      setTimeout(() => {
-        if (!(/^1[3456789]\d{9}$/.test(value))) {
-          callback(new Error('请输入正确的手机号'))
-        }
-      }, 1000)
     }
     return {
       TxMap: null,
       oldAddress: '',
       idTrueAddress: false,
       form: {
-        'accountNumber': '',
         'latitude': '123.454353453453',
         'longitude': '130.656464564',
-        'password': '',
         'phoneNumber': '',
         'status': '0',
         'storeAddress': '',
@@ -80,12 +66,6 @@ export default {
         ],
         phoneNumber: [
           { validator: checkPhone, trigger: 'blur' }
-        ],
-        accountNumber: [
-          { required: true, message: '请输入门店账号', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入门店密码', trigger: 'blur' }
         ]
       }
     }
@@ -101,8 +81,7 @@ export default {
           type: 'error'
         })
         return
-      }
-      if (this.oldAddress !== this.form.storeAddress) {
+      } else if (this.oldAddress !== this.form.storeAddress) {
         this.$message({
           message: '请点击定位获取地址！',
           type: 'error'
@@ -136,7 +115,7 @@ export default {
         complete: (result) => {
           const location = result.detail.location
           this.$refs.mapRef.setCenter(location)
-          this.form.latitude = location.latform
+          this.form.latitude = location.lat
           this.form.longitude = location.lng
           this.$refs.mapRef.setMarker(location)
           this.idTrueAddress = true
