@@ -117,6 +117,13 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    'hasNewMsg': {
+      handler(value) {
+        console.log('consultation监听到hasNewMsg改变', value)
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
@@ -756,12 +763,14 @@ export default {
     }, 3000)
   },
   onShow() {
+    console.warn('consultation onShow: hasNewMsg', this.hasNewMsg)
     this.setHasNewMsg(false)
   },
   updated() {
+    console.log('consultation updated', this.hasNewMsg)
     // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
     if (this.hasNewMsg) {
-      console.warn('new msg coming')
+      console.warn('new msg coming', this.onlineConversationData)
       if (this.onlineConversationData && this.onlineConversationData.list.length === 0) {
         this.setHasNewMsg(false)
         this.queryryCSList()
