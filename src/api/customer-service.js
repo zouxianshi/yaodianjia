@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
+import store from '@/store'
 
 class CustomerService {
   /**
@@ -63,8 +64,9 @@ class CustomerService {
    * 统计用户购买记录
    */
   queryUserBoughtRecord(params) {
+    const merCode = store.state.user.merCode
     return request({
-      url: `${config.merGoods}/1.0/order-info/userCount/${params.memberId}`,
+      url: `${config.merGoods}/1.0/order-info/userCount/${params.memberId}/${merCode}`,
       method: 'get',
       data: params
     })
