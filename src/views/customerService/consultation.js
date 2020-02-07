@@ -770,9 +770,9 @@ export default {
     console.log('consultation updated', this.hasNewMsg)
     // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
     if (this.hasNewMsg) {
+      this.setHasNewMsg(false)
       console.warn('new msg coming', this.onlineConversationData)
       if (this.onlineConversationData && this.onlineConversationData.list.length === 0) {
-        this.setHasNewMsg(false)
         this.queryryCSList()
       }
     }
