@@ -4,16 +4,16 @@
       <h4>商品信息</h4>
       <el-form ref="form" :rules="rules" :model="form" label-width="100px">
         <el-form-item label="商品名称：" prop="name">
-          <el-input v-model="form.name" maxlength="255" />
+          <el-input v-model="form.name" maxlength="254" />
         </el-form-item>
         <el-form-item label="所属品牌：" prop="brandName">
-          <el-input v-model="form.brandName" maxlength="100" />
+          <el-input v-model="form.brandName" maxlength="99" />
         </el-form-item>
         <el-form-item label="标签价格：" prop="price">
-          <el-input v-model="form.price" type="number" maxlength="21" />
+          <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
         </el-form-item>
         <el-form-item label="库存量：" prop="inventory">
-          <el-input v-model="form.inventory" type="number" maxlength="11" />
+          <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
         </el-form-item>
       </el-form>
     </div>
@@ -21,8 +21,11 @@
       <h4>预约规则<span class="rule-tips">（如无需设置限购条件，请填写0）</span></h4>
       <el-form :model="form" label-width="100px" class="demo-form-inline">
         <el-form-item label="限购规则：">
-          每人&emsp;<el-input v-model="form.daysPerMember" type="number" maxlength="11" min="0" class="inline-input" prop="daysPerMember" />&emsp;天内限购&emsp;
-          <el-input v-model="form.countPerMember" type="number" maxlength="11" min="0" class="inline-input" prop="countPerMember" />&emsp;个
+          每人&emsp;
+          <el-input v-model="form.daysPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="daysPerMember" />
+          &emsp;天内限购&emsp;
+          <el-input v-model="form.countPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="countPerMember" />
+          &emsp;个
         </el-form-item>
       </el-form>
     </div>

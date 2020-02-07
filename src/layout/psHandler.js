@@ -236,7 +236,7 @@ class InnerCtor {
           {
             name: '小程序设置',
             path: '/distribution/weapp-setting',
-            disabled: true,
+            disabled: this.get('appointment.mini'),
             children: []
           },
           {

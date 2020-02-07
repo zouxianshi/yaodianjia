@@ -38,10 +38,11 @@
           <div class="table-column content-center flex-1">
             {{ item.productCount }}
           </div>
-          <div class="table-column content-center flex-1">
-            {{ item.personName }}
+          <div class="table-column content-center text-center flex-1">
+            {{ item.personName }}<br><br>
+            {{ item.mobilePhone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') }}
           </div>
-          <div class="table-column content-center flex-1">
+          <div class="table-column content-center text-center flex-1">
             {{ item.createTime }}
           </div>
           <div class="table-column content-column content-center flex-1">
@@ -97,7 +98,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .table-container {
-  max-height: 380px;
+  max-height: 440px;
   overflow-y: scroll;
 }
 .table-empty {
@@ -207,6 +208,9 @@ export default {
   }
   &.content-center {
     justify-content: center;
+  }
+  &.text-center {
+    text-align: center;
   }
 }
 .check-box {
