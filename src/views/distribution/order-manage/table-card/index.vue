@@ -42,7 +42,7 @@
             {{ item.personName }}<br><br>
             {{ item.mobilePhone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') }}
           </div>
-          <div class="table-column content-center flex-1">
+          <div class="table-column content-center text-center flex-1">
             {{ item.createTime }}
           </div>
           <div class="table-column content-column content-center flex-1">
