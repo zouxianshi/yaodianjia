@@ -10,7 +10,7 @@
           <el-input v-model="form.brandName" maxlength="100" />
         </el-form-item>
         <el-form-item label="标签价格：" prop="price">
-          <el-input v-model="form.price" type="number" maxlength="21" />
+          <el-input v-model="form.price" type="number" maxlength="19" />
         </el-form-item>
         <el-form-item label="库存量：" prop="inventory">
           <el-input v-model="form.inventory" type="number" readonly maxlength="11" />
