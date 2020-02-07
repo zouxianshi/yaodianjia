@@ -24,6 +24,13 @@ export default {
       'hasNewMsg'
     ])
   },
+  watch: {
+    hasNewMsg: {
+      handler(value) {
+        console.log('ry组件监听到hasNewMsg改变', value)
+      }
+    }
+  },
   created() {
     const _this = this
     this.querySupportStaffById()
@@ -334,13 +341,6 @@ export default {
       } else {
         // 浏览器不支持 WebSocket
         console.error('您的浏览器不支持 WebSocket!')
-      }
-    }
-  },
-  watch: {
-    hasNewMsg: {
-      handler(value) {
-        console.log('ry组件监听到hasNewMsg改变', value)
       }
     }
   }
