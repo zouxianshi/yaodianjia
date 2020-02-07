@@ -380,7 +380,7 @@ const mutations = {
           localConversationList.push(item)
         }
       })
-      console.log('SET_ONLINE_CONVERSATIONLIST 的localStorage设置1')
+      console.log('本地有缓存：合并处理后的会话列表', localConversationList)
       localStorage.setItem('ryCSList', JSON.stringify(localConversationList))
       state.onlineConversationData.list = localConversationList
     } else {
@@ -434,18 +434,17 @@ const actions = {
             if (element.latestMessage.content.extra ? element.latestMessage.content.extra.nickName.indexOf(payload.searchText) > -1 : false) {
               tempList.push({
                 ...element,
-                newMsgNum: 0,
-                unreadMessageCount: 0
+                newMsgNum: 0
               })
             }
           } else {
             tempList.push({
               ...element,
-              newMsgNum: 0,
-              unreadMessageCount: 0
+              newMsgNum: 0
             })
           }
         })
+        console.log('即将commit调用SET_ONLINE_CONVERSATIONLIST', tempList)
         commit('SET_ONLINE_CONVERSATIONLIST', tempList)
         resolve(tempList)
       }).catch((error) => {
