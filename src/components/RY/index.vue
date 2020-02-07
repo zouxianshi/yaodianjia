@@ -1,7 +1,7 @@
 <template>
   <!-- 新消息图标 暂时用定位放在这里 -->
-  <el-badge class="msg-notice-btn" :is-dot="newMsgComing">
-    <i :class="`el-icon-chat-dot-round ${newMsgComing&&'shaking'}`" @click="msgBtnClick" />
+  <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
+    <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
   </el-badge>
 </template>
 
@@ -14,13 +14,13 @@ export default {
   data() {
     return {
       // 是否有新消息 有则展示红点
-      newMsgComing: false,
+      hasNewMsg: false,
       // 收到的新消息体
       newMsg: null
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'curOnlineUserData'])
+    ...mapGetters(['merCode', 'userId', 'curOnlineUserData', 'hasNewMsg'])
   },
   created() {
     const _this = this
@@ -47,16 +47,11 @@ export default {
                   type: 'listener', // 类型 来自融云消息监听
                   merCode: _this.merCode,
                   msgResult: {
+                    ...message,
                     content: {
-                      content: Chat.symbolToEmoji(message.content.content),
-                      extra: message.content.extra
-                    }, // 消息内容
-                    senderUserId: message.senderUserId, // 发送用户id
-                    objectName: message.objectName, // 消息类型 这里不能取messageType
-                    messageUId: message.messageUId, // 消息id
-                    sentTime: message.sentTime, // 时间戳
-                    // targetId: _this.userId // 接收用户id
-                    targetId: message.targetId // 接收用户id
+                      ...message.content,
+                      content: message.content.content ? Chat.symbolToEmoji(message.content.content) : ''
+                    }
                   }
                 })
                 setTimeout(() => {
@@ -71,8 +66,9 @@ export default {
               }
             } else {
               console.log('当前不在咨询页面', message)
-              this.setHasNewMsg(true)
-              _this.newMsgComing = true
+              if (message.messageDirection === 2) {
+                this.setHasNewMsg(true)
+              }
               console.log('goto addBadgeToOnlineUser')
               _this.addBadgeToOnlineUser({
                 userId: message.senderUserId,
@@ -108,8 +104,6 @@ export default {
                   onClick: e => {
                     console.log('click e', e)
                     _this.setHasNewMsg(false)
-                    _this.newMsgComing = false
-                    console.log('newMsgComing', _this.newMsg)
                     _this.$notify.close()
                     _this.$router.push({
                       path: '/customerService/consultation',
@@ -235,12 +229,12 @@ export default {
     // 消息按钮点击 跳转逻辑
     msgBtnClick() {
       // 如果没有新消息则跳转消息记录 否则跳转在线咨询
-      if (!this.newMsgComing) {
+      if (!this.hasNewMsg) {
         this.$router.push({
           path: '/customerService/consultation'
         })
       } else {
-        this.newMsgComing = false
+        this.hasNewMsg = false
         this.$router.push({
           path: '/customerService/consultation',
           query: {
@@ -292,6 +286,8 @@ export default {
               console.error('websocket发送消息失败', error)
             }
             console.warn('数据发送中...')
+          } else {
+            console.error('监听到webscoket状态改变')
           }
 
           // 设置心跳
@@ -318,9 +314,20 @@ export default {
           console.log('接收消息', received_msg)
         }
 
-        ws.onclose = function() {
+        ws.onclose = function(e) {
           // 关闭 websocket
-          console.error('连接已关闭')
+          console.error('连接已关闭', e)
+          self.$confirm(
+            '由于网络状况等原因，聊天连接已断开，是否重新连接？',
+            '提示',
+            {
+              distinguishCancelAndClose: true,
+              confirmButtonText: '重新连接',
+              cancelButtonText: '取消'
+            }
+          ).then(res => {
+            window.location.reload()
+          })
         }
       } else {
         // 浏览器不支持 WebSocket

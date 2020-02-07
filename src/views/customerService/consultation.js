@@ -135,6 +135,13 @@ export default {
         return true
       }
     },
+    /**
+     * 文本框
+     */
+    handleTextAreaKeyup(e) {
+      console.log('文本按键', e)
+      this.sendMsg()
+    },
     // 根据消息类型返回对应类名
     computeChatItemType(messageType) {
       if (messageType === this.MessageType.ImageMessage) {
@@ -259,7 +266,8 @@ export default {
       Chat.sendMessage({
         targetId: this.targetId, // 目标用户id,
         msgInfo: {
-          content: Chat.emojiToSymbol(msgInfo.content),
+          // content: Chat.emojiToSymbol(msgInfo.content),
+          content: msgInfo.content,
           extra: this.extra
         }
       }).then(res => {
@@ -452,6 +460,12 @@ export default {
           userId: data.targetId
         })
       } else {
+        // 发送已读通知
+        // Chat.sendReceiptMessage(data.latestMessage)
+        // 清空指定会话未读数
+        Chat.clearUserUnreadMessage(data)
+        // 同步阅读状态到其他端
+        Chat.syncReadStatus(data.latestMessage)
         // 重置所有数据并重新请求
         this.targetId = data.targetId
         this.curLatestMessageInfo = data.latestMessage
@@ -630,7 +644,8 @@ export default {
         if (element.latestMessage.content.extra.nickName ? element.latestMessage.content.extra.nickName.toLowerCase().indexOf(this.searchText.toLowerCase().replace(/\s*/g, '')) > -1 : false) {
           tempList.push({
             ...element,
-            newMsgNum: 0
+            newMsgNum: 0,
+            unreadMessageCount: 0
           })
         }
       })

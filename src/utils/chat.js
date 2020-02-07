@@ -1,6 +1,7 @@
 /**
  * 融云聊天/消息类
  */
+import store from './../store'
 
 const RongIMClient = window.RongIMClient
 const RongIMLib = window.RongIMLib
@@ -10,10 +11,6 @@ class Chat {
   RongIMLib = window.RongIMLib
   RongIMClient = window.RongIMClient
 
-  ConversationType = {
-
-  }
-
   /**
    * 消息类型
    */
@@ -21,6 +18,7 @@ class Chat {
     TextMessage: 'RC:TxtMsg', // 文本消息
     ImageMessage: 'RC:ImgMsg', // 图片消息
     GoodsMessage: 'custom:commodity' // 商品消息
+    // RC:ReadNtf  // 已读通知
   }
 
   // 判断两条消息是不是来自一个用户
@@ -99,10 +97,24 @@ class Chat {
         // 验证消息类型 只接收文本/图片/商品消息
         if (!_this.validateMessageType(message)) {
           console.log('不用于展示的消息', message)
+          if (message.objectName === 'RC:ReadNtf') {
+            // 已读通知则前往会话列表中减少一条消息数量
+            console.log('这是一条已读消息回执')
+            store.commit('customerService/readMessage', message)
+          }
+          if (message.objectName === 'RC:SRSMsg') {
+            store.commit('customerService/syncReadStatus', message)
+          }
           return
         }
 
+        if (message.objectName === _this.MessageType.ImageMessage) {
+          console.log('图片消息', message)
+          message.content.content = message.content.imageUri
+        }
+
         if (message.content) {
+          message.content.content = message.content.content || ''
           if (typeof message.content.extra === 'string') {
             message.content.extra = JSON.parse(message.content.extra)
           }
@@ -295,6 +307,63 @@ class Chat {
       getConversationList: this.getConversationList,
       sendMessage: this.sendMessage
     }
+  }
+
+  // 发送已读通知
+  sendReceiptMessage(message) {
+    console.log('进入sendReceiptMessage', message)
+    var messageUId = message.messageUId // '1301-NBJQ-MK31-3417';  // 消息唯一 Id, message 中的 messageUid
+    var lastMessageSendTime = message.sentTime //  1550719033312;  // 最后一条消息的发送时间
+    var type = '1' // 备用，默认赋值 1 即可
+    // 以上 3 个属性在会话的最后一条消息中可以获得
+
+    var msg = new RongIMLib.ReadReceiptMessage({ messageUId: messageUId, lastMessageSendTime: lastMessageSendTime, type: type })
+    var conversationType = RongIMLib.ConversationType.PRIVATE
+    var targetId = message.content.extra.userId // 目标 Id
+
+    RongIMClient.getInstance().sendMessage(conversationType, targetId, msg, {
+      onSuccess: function(message) {
+        console.log('发送已读通知成功', message)
+      },
+      onError: function(errorCode) {
+        console.log('发送已读通知失败', errorCode)
+      }
+    })
+  }
+
+  // 清除指定会话未读数
+  clearUserUnreadMessage(data) {
+    console.log('into 清除指定会话未读数', data)
+    var conversationType = RongIMLib.ConversationType.PRIVATE
+    var targetId = data.targetId
+    RongIMClient.getInstance().clearUnreadCount(conversationType, targetId, {
+      onSuccess: function() {
+        console.log('清除指定会话未读消息数成功')
+      },
+      onError: function(error) {
+        console.log('清除指定会话未读消息数失败', error)
+      }
+    })
+  }
+
+  // 同步消息状态到其他端
+  syncReadStatus(data) {
+    console.log('into 同步消息状态到其他端')
+    // 从消息里获取服务器端时间，以最近一条已读 message 为准
+    var msg = {
+      lastMessageSendTime: data.sentTime
+    }
+    var conversationType = RongIMLib.ConversationType.PRIVATE
+    msg = new RongIMLib.SyncReadStatusMessage(msg)
+    var sendSyncStutus = RongIMClient.getInstance().sendMessage
+    sendSyncStutus(conversationType, data.targetId, msg, {
+      onSuccess: function(e) {
+        console.log('同步消息状态成功', e)
+      },
+      onError: function(e) {
+        console.error('同步消息状态失败', e)
+      }
+    })
   }
 }
 

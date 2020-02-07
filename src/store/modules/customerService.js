@@ -26,6 +26,47 @@ const state = {
 }
 
 const mutations = {
+
+  // 同步阅读状态
+  syncReadStatus(state, payload) {
+    console.log('接收到已读回执处理', payload)
+    const tempList = [...state.onlineConversationData.list]
+    const curItem = tempList.find(item => {
+      if (item.latestMessage.content.extra.userId.toString() === payload.targetId.toString() && payload.messageDirection === 1) {
+        return true
+      } return false
+    })
+    if (curItem) {
+      if (curItem.newMsgNum > 0) {
+        curItem.unreadMessageCount = 0
+        curItem.newMsgNum = 0
+      }
+    }
+    // 清除未读消息数
+    Chat.clearUserUnreadMessage(payload)
+    state.onlineConversationData.list = tempList
+    localStorage.setItem('ryCSList', JSON.stringify(tempList))
+  },
+
+  // 接收到已读回执的处理
+  readMessage(state, payload) {
+    console.log('接收到已读回执处理', payload)
+    const tempList = [...state.onlineConversationData.list]
+    const curItem = tempList.find(item => {
+      if (item.latestMessage.content.extra.userId.toString() === payload.targetId.toString() && payload.messageDirection === 1) {
+        return true
+      } return false
+    })
+    if (curItem) {
+      if (curItem.newMsgNum > 0) {
+        curItem.unreadMessageCount = 0
+        curItem.newMsgNum = 0
+      }
+    }
+    state.onlineConversationData.list = tempList
+    localStorage.setItem('ryCSList', JSON.stringify(tempList))
+  },
+
   // 设置缓存中的会话列表
   setConversationListToLocalStorage(state, payload) {
 
@@ -94,6 +135,7 @@ const mutations = {
     onlineUserList.forEach((element) => {
       if (element.targetId === userId) {
         element.newMsgNum = 0
+        element.unreadMessageCount = 0
       }
     })
     // setStorage为false则不设置localStorage
@@ -129,23 +171,21 @@ const mutations = {
     let localConversationList = null
     if (localStorage.getItem('ryCSList')) {
       localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
+      const tempList = []
       localConversationList.forEach((element, index) => {
-        if (element.targetId === payload) {
-          localConversationList.splice(index, 1)
+        if (element.latestMessage.content.extra.userId.toString() !== payload.toString()) {
+          tempList.push(element)
         }
       })
-      if (Array.isArray(localConversationList)) {
+      if (Array.isArray(tempList)) {
         console.log('DEL_ONLINE_CONVERSATOIN 的locaStorage设置')
-        localStorage.setItem('ryCSList', JSON.stringify(localConversationList))
+        state.onlineConversationData.list = tempList
+        localStorage.setItem('ryCSList', JSON.stringify(tempList))
+      } else {
+        state.onlineConversationData.list = []
+        localStorage.setItem('ryCSList', JSON.stringify([]))
       }
     }
-    // 删除vuex中的item
-    const { list } = state.onlineConversationData
-    list.forEach((element, index) => {
-      if (element.targetId === payload) {
-        list.splice(index, 1)
-      }
-    })
   },
 
   // push一条消息到在线咨询当前用户消息列表
@@ -243,6 +283,7 @@ const mutations = {
         // 如果是已经存在的用户 则直接徽标加1
         if (message.messageDirection === 2) {
           element.newMsgNum = element.newMsgNum + 1
+          element.unreadMessageCount = element.unreadMessageCount + 1
         }
       }
     })
@@ -265,7 +306,8 @@ const mutations = {
         latestMessageId: message.messageId,
         sentTime: message.sentTime,
         targetId: message.targetId,
-        newMsgNum: message.messageDirection === 2 ? 1 : 0
+        newMsgNum: message.messageDirection === 2 ? 1 : 0,
+        unreadMessageCount: message.messageDirection === 2 ? 1 : 0
       })
     }
     console.log('addBadgeToOnlineUser 的localStorage设置')
@@ -394,13 +436,15 @@ const actions = {
             if (element.latestMessage.content.extra ? element.latestMessage.content.extra.nickName.indexOf(payload.searchText) > -1 : false) {
               tempList.push({
                 ...element,
-                newMsgNum: 0
+                newMsgNum: 0,
+                unreadMessageCount: 0
               })
             }
           } else {
             tempList.push({
               ...element,
-              newMsgNum: 0
+              newMsgNum: 0,
+              unreadMessageCount: 0
             })
           }
         })
