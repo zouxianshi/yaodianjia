@@ -13,7 +13,7 @@
           <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
         </el-form-item>
         <el-form-item label="库存量：" prop="inventory">
-          <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" readonly maxlength="10" />
+          <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" disabled maxlength="10" />
         </el-form-item>
       </el-form>
     </div>
@@ -172,7 +172,7 @@ export default {
         return
       } else if (isNumber(this.form.daysPerMember) || isNumber(this.form.countPerMember)) {
         this.$message({
-          message: '限购规则中天数和数量不能为负数。',
+          message: '限购规则中天数和数量为正整数。',
           type: 'error'
         })
         return
