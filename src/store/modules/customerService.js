@@ -333,7 +333,7 @@ const mutations = {
     // 这里对比本地缓存中的数据并合并 完成之后更新本地存储
     let localConversationList = []
     // 如果有本地缓存 对比本地缓存并合并数据
-    if (storageList) {
+    if (storageList && storageList.length > 0) {
       localConversationList = storageList
       if (typeof localConversationList !== 'object') {
         return
@@ -363,10 +363,8 @@ const mutations = {
 
       payload.forEach((item, index) => {
         console.log('item', item)
-        // 获取到的会话列表放到最前
-        newList.push(item)
 
-        // 判断localStorage里面是否有当前item 如果有就删除
+        // 判断localStorage里面是否有当前item 如果有才push进结果数组
         const existedIndex = localConversationList.findIndex(element => {
           let flag = false
           if (Chat.isUserEqual(item.latestMessage, element.latestMessage)) {
@@ -376,13 +374,12 @@ const mutations = {
         })
         console.log('existedIndex', existedIndex)
         if (existedIndex >= 0) {
-          console.log(`${item.targetId}存在本地了`, '替换')
+          console.log(`本地会话列表存在${item.targetId}， push进新列表并删除换缓存列表中对应元素`, item)
           // localConversationList[existedIndex] = item
+          // 获取到的会话列表放到最前
+          newList.push(item)
           localConversationList.splice(existedIndex, 1)
         }
-        //  else {
-        //   localConversationList.push(item)
-        // }
       })
       newList = [...newList, ...localConversationList]
       console.log('本地有缓存：合并处理后的会话列表', newList)
