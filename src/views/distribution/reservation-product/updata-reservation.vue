@@ -4,16 +4,16 @@
       <h4>商品信息</h4>
       <el-form ref="form" :rules="rules" :model="form" label-width="100px">
         <el-form-item label="商品名称：" prop="name">
-          <el-input v-model="form.name" />
+          <el-input v-model="form.name" maxlength="255" />
         </el-form-item>
         <el-form-item label="所属品牌：" prop="brandName">
-          <el-input v-model="form.brandName" />
+          <el-input v-model="form.brandName" maxlength="100" />
         </el-form-item>
         <el-form-item label="标签价格：" prop="price">
-          <el-input v-model="form.price" />
+          <el-input v-model="form.price" type="number" maxlength="21" />
         </el-form-item>
         <el-form-item label="库存量：" prop="inventory">
-          <el-input v-model="form.inventory" />
+          <el-input v-model="form.inventory" type="number" readonly maxlength="11" />
         </el-form-item>
       </el-form>
     </div>
@@ -21,8 +21,8 @@
       <h4>预约规则<span class="rule-tips">（如无需设置限购条件，请填写0）</span></h4>
       <el-form :model="form" label-width="100px" class="demo-form-inline">
         <el-form-item label="限购规则：">
-          每人&emsp;<el-input v-model="form.daysPerMember" class="inline-input" prop="daysPerMember" />&emsp;天内限购&emsp;
-          <el-input v-model="form.countPerMember" class="inline-input" prop="countPerMember" />&emsp;个
+          每人&emsp;<el-input v-model="form.daysPerMember" type="number" maxlength="11" min="0" class="inline-input" prop="daysPerMember" />&emsp;天内限购&emsp;
+          <el-input v-model="form.countPerMember" type="number" maxlength="11" min="0" class="inline-input" prop="countPerMember" />&emsp;个
         </el-form-item>
       </el-form>
     </div>
@@ -54,6 +54,16 @@ import config from '@/utils/config'
 import distributionService from '@/api/distributionService'
 export default {
   data() {
+    var checkPrice = (rule, value, callback) => {
+      var val = '' + value
+      if (!val) {
+        return callback(new Error('请输入商品价格'))
+      } else if (val.includes('-')) {
+        callback(new Error('商品价格为正数'))
+      } else {
+        callback() // 添加成功回调
+      }
+    }
     return {
       form: {
         'brandName': '',
@@ -73,10 +83,7 @@ export default {
           { required: true, message: '请输入品牌', trigger: 'blur' }
         ],
         price: [
-          { required: true, message: '请输入商品价格', trigger: 'blur' }
-        ],
-        inventory: [
-          { required: true, message: '请输入商品库存', trigger: 'blur' }
+          { validator: checkPrice, trigger: 'blur' }
         ]
       },
       dialogImageUrl: '',
@@ -90,7 +97,7 @@ export default {
     },
     upLoadUrl() {
       return `${this.uploadFileURL}${
-        config.merGoods
+        config.mask
       }/1.0/file/_uploadImg?merCode=${this.merCode}`
     },
     ids() {
@@ -150,6 +157,23 @@ export default {
       }
     },
     submitData() {
+      function isNumber(val) {
+        val = '' + val
+        return val.includes('.') || val.includes('-')
+      }
+      if (this.form.imgUrl === '') {
+        this.$message({
+          message: '请上传商品图片',
+          type: 'error'
+        })
+        return
+      } else if (isNumber(this.form.daysPerMember) || isNumber(this.form.countPerMember)) {
+        this.$message({
+          message: '限购规则中天数和数量不能为负数。',
+          type: 'error'
+        })
+        return
+      }
       this.$refs['form'].validate((flag) => {
         if (flag) {
           var params = {}
@@ -178,7 +202,7 @@ export default {
     form{
       padding-left: 15%; width:80%;
       .inline-input{
-          width: 60px ;
+          width: 80px ;
       }
     }
     h4{

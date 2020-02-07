@@ -2,33 +2,22 @@
   <div class="add">
     <div class="product-info">
       <h4>提货门店信息</h4>
-      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
+      <el-form ref="form1" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="提货门店名称:" prop="storeName">
-          <el-input v-model="form.storeName" />
+          <el-input v-model="form.storeName" maxlength="64" />
         </el-form-item>
         <el-form-item label="门店编码:" prop="storeCode">
-          <el-input v-model="form.storeCode" />
+          <el-input v-model="form.storeCode" maxlength="64" />
         </el-form-item>
         <el-form-item label="门店地址:" style="padding-right:20%">
-          <el-input v-model="form.storeAddress" />
+          <el-input v-model="form.storeAddress" maxlength="1000" />
           <el-button type="primary" class="position-btn" @click="getLocation()">定位</el-button>
         </el-form-item>
         <div class="map-box">
           <tx-map ref="mapRef" :zoom="15" @ready="handlerLocation" @click="clickHandler()" />
         </div>
         <el-form-item label="电话号码:" prop="phoneNumber">
-          <el-input v-model="form.phoneNumber" />
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="product-img">
-      <h4>门店账号</h4>
-      <el-form ref="form" :model="form" label-width="110px" :rules="rules">
-        <el-form-item label="账号设置:" prop="accountNumber">
-          <el-input v-model="form.accountNumber" />
-        </el-form-item>
-        <el-form-item label="密码设置:" prop="password">
-          <el-input v-model="form.password" />
+          <el-input v-model="form.phoneNumber" maxlength="11" />
         </el-form-item>
       </el-form>
     </div>
@@ -47,22 +36,19 @@ export default {
     var checkPhone = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('联系方式不能为空'))
+      } else if (!(/^1[3456789]\d{9}$/.test(value))) {
+        callback(new Error('请输入正确的手机号'))
+      } else {
+        callback() // 添加成功回调
       }
-      setTimeout(() => {
-        if (!(/^1[3456789]\d{9}$/.test(value))) {
-          callback(new Error('请输入正确的手机号'))
-        }
-      }, 1000)
     }
     return {
       TxMap: null,
       oldAddress: '',
-      idTrueAddress: false,
+      idTrueAddress: true,
       form: {
-        'accountNumber': '',
         'latitude': '123.454353453453',
         'longitude': '130.656464564',
-        'password': '',
         'phoneNumber': '',
         'status': '0',
         'storeAddress': '',
@@ -80,12 +66,6 @@ export default {
         ],
         phoneNumber: [
           { validator: checkPhone, trigger: 'blur' }
-        ],
-        accountNumber: [
-          { required: true, message: '请输入门店账号', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入门店密码', trigger: 'blur' }
         ]
       }
     }
@@ -99,10 +79,8 @@ export default {
     distributionService.getPointer(this.ids).then(res => {
       var data = res.data
       this.form = {
-        'accountNumber': data.accountNumber,
         'latitude': data.latitude,
         'longitude': data.longitude,
-        'password': data.password,
         'phoneNumber': data.phoneNumber,
         'status': data.status,
         'storeAddress': data.storeAddress,
@@ -114,6 +92,7 @@ export default {
   },
   methods: {
     submitData() { // 提交数据
+      console.log('yes')
       if (!this.idTrueAddress) {
         this.$message({
           message: '请填写正确的地址并点击定位',
@@ -128,12 +107,15 @@ export default {
         })
         return
       }
-      this.$refs['form'].validate((flag) => {
+      this.$refs.form1.validate((flag) => {
+        console.log(flag)
         if (flag) {
           var params = {}
           params = JSON.parse(JSON.stringify(this.form))
           params.id = this.ids
+          console.log(params)
           distributionService.savePointer(params).then(res => {
+            console.log(res)
             if (res.code === '10000') {
               this.$message({
                 message: res.msg,
@@ -141,6 +123,11 @@ export default {
               })
               this.$router.replace('/distribution/pickup-point')
             }
+          })
+        } else {
+          this.$message({
+            message: '请正确填写完所有信息',
+            type: 'error'
           })
         }
       })

@@ -5,7 +5,12 @@
       <el-button type="primary" size="mini" @click="removeProduct()">批量下架</el-button>
     </div>
     <div class="tabel-content">
-      <el-table :data="productList" border style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table
+        :data="productList"
+        border
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column
           type="selection"
           width="45"
@@ -22,7 +27,7 @@
         </el-table-column>
         <el-table-column prop="name" label="商品信息" />
         <el-table-column prop="brandName" label="品牌" />
-        <el-table-column prop="price" label="标准价格" />
+        <el-table-column prop="price" width="110" sortable label="标准价格" />
         <el-table-column prop="inventory" label="库存" />
         <el-table-column
           label="预约规则"
@@ -118,6 +123,7 @@ export default {
       params.currentPage = this.pageInfo.currentPage
       params.pageSize = this.pageInfo.pageSize
       distributionService.getProductList(params).then(res => {
+        console.log(res)
         if (res.data) {
           var result = res.data
           this.pageInfo.total = result.totalCount
