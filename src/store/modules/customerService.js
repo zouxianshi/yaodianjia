@@ -363,7 +363,7 @@ const mutations = {
       payload.forEach((item, index) => {
         console.log('item', item)
         // 获取到的会话列表放到最前
-        newList.push(payload)
+        newList.push(item)
 
         // 判断localStorage里面是否有当前item 如果有就删除
         const existedIndex = localConversationList.findIndex(element => {
