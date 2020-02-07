@@ -5,7 +5,7 @@ import userInfo from './components/userInfo'
 import viewMore from './components/viewMore'
 import chatRoom from './components/chatRoom'
 import noData from '@/components/NoData'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 import CustomerService from '@/api/customer-service'
 import {
   queryGoods
@@ -68,7 +68,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'userId', 'name', 'curOnlineUserData', 'onlineConversationData', 'hasNewMsg', 'ryConnected', 'merLogo']),
+    ...mapGetters([
+      'merCode',
+      'userId',
+      'name'
+    ]),
+    ...mapState('customerService', [
+      'curOnlineUserData',
+      'onlineConversationData',
+      'hasNewMsg',
+      'ryConnected',
+      'merLogo'
+    ]),
     goodsPagination() {
       return {
         pageSizes: [
@@ -86,7 +97,7 @@ export default {
         merCode: this.merCode, // 商户编码
         userAccount: this.name, // 如果是客服，对应中台sys_user.account
         userId: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.userId : this.userId, // 用户id 这里是自己的id 不是目标用户的id
-        userName: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.userName : '暂无用户昵称', // 用户姓名
+        userName: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.userName : '', // 用户姓名
         nickName: this.curLatestMessageInfo.content.extra ? this.curLatestMessageInfo.content.extra.nickName : '', // 昵称
         age: this.curLatestMessageInfo.content.extra.age, // 年龄
         sex: this.curLatestMessageInfo.content.extra.sex, // 性别（男，女，未知）
@@ -103,6 +114,13 @@ export default {
         if (list.length === 1) {
           this.curLatestMessageInfo = list[0].latestMessage
         }
+      },
+      deep: true,
+      immediate: true
+    },
+    'hasNewMsg': {
+      handler(value) {
+        console.log('consultation监听到hasNewMsg改变', value)
       },
       deep: true,
       immediate: true
@@ -158,13 +176,22 @@ export default {
       this.queryOnlineConversationList(searchParam).then(() => {
         this.consultingLoading = false
         const list = this.onlineConversationData.list
-        console.log('获取融云会话列表成功：', list)
+        console.log('consultation页面获取融云会话列表成功：', list)
+        console.log('当前选中的userId', this.curOnlineUserData)
         if (this.curOnlineUserData.userId) {
           const userItem = list.find(element => element.targetId === this.curOnlineUserData.userId)
+          console.log('userItem', userItem)
           if (userItem) {
+            this.setCurOnlineUserId({
+              userId: userItem.targetId
+            })
+            // 清空指定会话未读数
+            Chat.clearUserUnreadMessage(userItem)
+            // 同步阅读状态到其他端
+            Chat.syncReadStatus(userItem.latestMessage)
             this.curLatestMessageInfo = userItem.latestMessage
             this.targetId = userItem.targetId
-            this.curUserName = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.nickName : '暂无用户名称'
+            this.curUserName = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.nickName : ''
             this.curUserAvatar = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.userLogo : ''
             // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
             // 消息记录
@@ -180,9 +207,13 @@ export default {
           this.setCurOnlineUserId({
             userId: list[0].targetId
           })
+          // 清空指定会话未读数
+          Chat.clearUserUnreadMessage(list[0])
+          // 同步阅读状态到其他端
+          Chat.syncReadStatus(list[0].latestMessage)
           this.curLatestMessageInfo = list[0].latestMessage
           this.targetId = list[0].targetId
-          this.curUserName = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.nickName : '暂无用户昵称'
+          this.curUserName = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.nickName : ''
           this.curUserAvatar = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.userLogo : ''
           // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
           // 消息记录
@@ -282,7 +313,6 @@ export default {
           },
           msgResult: res
         })
-        console.log('after addMsgToOnlineCurUserMsgList', localStorage.getItem('ryCSList'))
         this.scrollToBottom()
       }).catch((err, msg) => {
         console.error('send message error', err, msg)
@@ -470,7 +500,7 @@ export default {
         this.targetId = data.targetId
         this.curLatestMessageInfo = data.latestMessage
         this.curUserAvatar = data.latestMessage.content.extra ? data.latestMessage.content.extra.userLogo : ''
-        this.curUserName = data.latestMessage.content.extra ? data.latestMessage.content.extra.nickName : '暂无用户昵称'
+        this.curUserName = data.latestMessage.content.extra ? data.latestMessage.content.extra.nickName : ''
         this.setCurOnlineUserId({
           userId: data.targetId
         })
@@ -490,7 +520,7 @@ export default {
         })
         this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''
-        this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : '暂无用户昵称'
+        this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
       } else {
         this.targetId = ''
@@ -618,19 +648,16 @@ export default {
         })
       })
     },
-    blobToDataURL(blob, callback) {
-      const a = new FileReader()
-      a.onload = function(e) { callback(e.target.result) }
-      a.readAsDataURL(blob)
-    },
+
     // 搜索按钮点击
     searchBtnClick() {
       console.log('searchtext', this.searchText)
-      if (!localStorage.getItem('ryCSList')) {
+      const storageList = Chat.getStorageRyCSList()
+      if (!storageList) {
         return
       }
       console.log('有缓存')
-      const list = [...JSON.parse(localStorage.getItem('ryCSList'))]
+      const list = [...storageList]
       if (!this.searchText.replace(/\s*/g, '')) {
         console.log('!ssearchtext')
         this.forceChangeConversationList(list)
@@ -659,10 +686,10 @@ export default {
         })
         this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''
-        this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : '暂无用户昵称'
+        this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
       } else {
-        console.log('localstorage', localStorage.getItem('ryCSList'))
+        console.log('localstorage', storageList)
         console.log('no this.onlineConversationData.list')
         this.targetId = ''
         this.curUserAvatar = ''
@@ -671,7 +698,6 @@ export default {
           userId: '',
           setStorage: false
         })
-        console.log('localstorage after setCurOnlineUserId', localStorage.getItem('ryCSList'))
       }
     },
     resetData() {
@@ -738,14 +764,16 @@ export default {
     }, 3000)
   },
   onShow() {
+    console.warn('consultation onShow: hasNewMsg', this.hasNewMsg)
     this.setHasNewMsg(false)
   },
   updated() {
+    console.log('consultation updated', this.hasNewMsg)
     // 打开了在线咨询页面且当前没有会话列表 收到新消息时重新请求会话列表
     if (this.hasNewMsg) {
-      console.warn('new msg coming')
+      this.setHasNewMsg(false)
+      console.warn('new msg coming', this.onlineConversationData)
       if (this.onlineConversationData && this.onlineConversationData.list.length === 0) {
-        this.setHasNewMsg(false)
         this.queryryCSList()
       }
     }

@@ -181,7 +181,20 @@ class DistributionService {
    * @param {*} data
    */
   updateOrderStatus(data) {
-    return this.service('post', `/1.0/b/order/updateStatusById`, data)
+    return this.service(
+      'post',
+      `/1.0/b/order/updateStatusById?id=${data.id}&status=${data.status}`
+    )
+  }
+  /**
+   * 获取小程序二维码
+   * @param {*} data
+   */
+  getWeappCode() {
+    return this.service(
+      'post',
+      `/1.0/b/wxutils/getQRCode?memberCode=${store.state.user.merCode}`
+    )
   }
   /**
    *  查询取货点数据列表

@@ -1,5 +1,5 @@
 <template>
-  <div :class="`user-comp ${selected?'selected':''}`" @click="handleClick">
+  <div v-if="nickName&&avatar" :class="`user-comp ${selected?'selected':''}`" @click="handleClick">
     <el-badge :max="99" :hidden="data.unreadMessageCount<=0" :value="data.unreadMessageCount" class="item">
       <div class="user-avatar">
         <el-image fit="cover" :src="avatar" />
@@ -7,7 +7,7 @@
     </el-badge>
     <div v-if="data" class="user-chat-info">
       <div class="chat-info-top">
-        <span class="user-name">{{ nickName || '暂无用户名' }}</span>
+        <span class="user-name">{{ nickName }}</span>
         <span class="chat-time">{{ date }}</span>
       </div>
       <div v-if="data" class="user-chat-content">

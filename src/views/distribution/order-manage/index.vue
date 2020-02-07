@@ -45,7 +45,7 @@
           v-for="item in storeListData"
           :key="item.id"
           :label="item.storeName"
-          :value="{ storeName: item.storeName, storeCode: item.storeCode }"
+          :value="{ storeName: item.storeName, id: item.id }"
         />
       </el-select>
       <div class="search-container">
@@ -91,16 +91,26 @@
       <el-table :data="dialogContent">
         <el-table-column property="pic" label="商品图片" width="150">
           <div
-            class="dialog-pic"
             style="width: 72px;
+    height: 72px;position: relative;"
+          >
+            <img
+              :src="showImg(dialogContent[0] && dialogContent[0].productImgUrl)"
+              style="width: 72px;
+    height: 72px;z-index:2;position: absolute;"
+            >
+            <div
+              class="dialog-pic"
+              style="width: 72px;
     height: 72px;
     text-align: center;
     line-height: 72px;
     font-size: 14px;
     color: #9b9b9b;
-    background-color: #ebebeb;"
-          >
-            暂无图片
+    background-color: #ebebeb;z-index:1;position: absolute;"
+            >
+              暂无图片
+            </div>
           </div></el-table-column>
         <el-table-column
           property="productName"
@@ -140,7 +150,7 @@
       >
         <div style="color:#000;font-size:14px">收货门店：</div>
         <div style="color:#000;font-size:14px;margin-left:20px;">
-          {{ dialogContent[0].storeName }}
+          {{ dialogContent[0].address }}
         </div>
       </div>
       <div
@@ -164,7 +174,7 @@ export default {
   data() {
     return {
       storeListData: [],
-      selectStore: {},
+      selectStore: { storeName: '全部', id: '' },
       dialogVisible: false,
       dialogTitle: '',
       dialogContent: [],
@@ -207,12 +217,9 @@ export default {
       const { data, code } = await DistributionService.queryStoreList({
         pageSize: 100
       })
-      if (code === '10000' && data.data.length > 0) {
-        this.storeListData = data.data
-        this.selectStore = {
-          storeName: this.storeListData[0].storeName,
-          storeCode: this.storeListData[0].storeCode
-        }
+      if (code === '10000') {
+        this.storeListData = [{ storeName: '全部', id: '' }].concat(data.data)
+
         this.getOrderListByTypeService()
       }
     },
@@ -230,8 +237,9 @@ export default {
       const { data, code } = await DistributionService.queryOrderListByType(
         params
       )
-      if (code === '10000' && data.data.length > 0) {
+      if (code === '10000') {
         this.orderListData = data.data
+        this.totalCount = data.totalCount
         // this.orderListData = [
         //   {
         //     address: 'string',
@@ -261,13 +269,15 @@ export default {
     async updateOrderStatusService() {
       const params = {
         id: this.dialogContent[0].id,
-        status: this.dialogContent[0].status
+        status:
+          this.dialogContent[0].status === 'SUCCESS' ? 'ARRIVED' : 'COMPLETE'
       }
       console.log('updateOrderStatusService ________________ ')
       const { data, code } = await DistributionService.updateOrderStatus(params)
       if (code === '10000') {
         console.log(data)
         this.closeDialog()
+        this.getOrderListByTypeService()
       }
     },
 

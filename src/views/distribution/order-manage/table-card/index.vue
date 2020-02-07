@@ -15,12 +15,12 @@
       <div v-for="item in tableData" :key="item.id" class="table-content">
         <div class="header">
           <div class="gray">预约单编号：{{ item.id }}</div>
-          <div class="blue">订单详情</div>
+          <!-- <div class="blue">订单详情</div> -->
         </div>
         <div class="row">
           <div class="table-column content-container flex-3">
             <div class="image-box">
-              <img :src="item.productImgUrl" class="pic">
+              <img :src="showImg(item.productImgUrl)" class="pic">
               <div class="box">暂无图片</div>
             </div>
             <div class="content-box">
@@ -52,7 +52,9 @@
                   ? '待核销'
                   : item.status === 'COMPLETE'
                     ? '已完成'
-                    : '取消预约'
+                    : item.status === 'CANCEL'
+                      ? '取消预约'
+                      : '其他'
             }}</span><el-button
               v-if="item.status === 'SUCCESS'"
               style="margin-top:10px;"
@@ -67,7 +69,7 @@
             >确认核销</el-button>
           </div>
           <div class="table-column content-center flex-2">
-            {{ item.storeName }}
+            {{ item.address }}
           </div>
         </div>
       </div>
