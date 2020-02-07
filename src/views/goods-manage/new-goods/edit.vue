@@ -813,7 +813,6 @@ export default {
           }
         }
         // 药品类型处理 如果默认为3直接设置为空
-
         if (data.drugType && data.drugType > 2) {
           data.drugType = ''
         }
