@@ -187,6 +187,16 @@ class DistributionService {
     )
   }
   /**
+   * 获取小程序二维码
+   * @param {*} data
+   */
+  getWeappCode() {
+    return this.service(
+      'post',
+      `/1.0/b/wxutils/getQRCode?memberCode=${store.state.user.merCode}`
+    )
+  }
+  /**
    *  查询取货点数据列表
    *  @param {object} data 请求参数
    */
