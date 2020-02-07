@@ -16,8 +16,7 @@ const state = {
   },
   // 在线咨询会话列表相关
   onlineConversationData: {
-    list: [], // 会话列表
-    hasNewMsg: false // 是否有新消息
+    list: [] // 会话列表
   },
   hasNewMsg: false,
   ryConnected: false, // 融云连接服务器成功
@@ -120,8 +119,7 @@ const mutations = {
 
   // 设置是否有新消息
   setHasNewMsg(state, payload) {
-    console.log('into mutation')
-    state.onlineConversationData.hasNewMsg = payload
+    console.log('设置是否有新消息', payload)
     state.hasNewMsg = payload
   },
 

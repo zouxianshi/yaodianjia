@@ -106,7 +106,9 @@
           </div>
           <div class="con">订单来源：微商城</div>
           <div class="con">订单类型：{{ detailsData.prescriptionSheetMark | orderType }}</div>
-          <div v-if="detailsData.orderStatus!==6" class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
+          <div v-if="detailsData.deliveryType!==2">
+            <div v-if="detailsData.orderStatus!==6 && detailsData.deliveryType!==2" class="con">配送方式：{{ detailsData.deliveryType ?'门店员工配送':'快递配送' }}</div>
+          </div>
         </div>
         <div class="info-item">
           <div class="title">付款信息</div>

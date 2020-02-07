@@ -6,7 +6,7 @@ import chatRoom from './components/chatRoom'
 import viewMore from './components/viewMore'
 import noData from '@/components/NoData'
 import CustomerService from '@/api/customer-service'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 console.log('Chat', Chat)
 export default {
@@ -47,9 +47,9 @@ export default {
       'merCode',
       'userId'
     ]),
-    ...mapGetters({
-      historyCSList: 'historyCSList'
-    })
+    ...mapState('customerService', [
+      'historyCSList'
+    ])
   },
   methods: {
     ...mapActions({
