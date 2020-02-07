@@ -10,10 +10,10 @@
           <el-input v-model="form.brandName" maxlength="100" />
         </el-form-item>
         <el-form-item label="标签价格：" prop="price">
-          <el-input v-model="form.price" maxlength="21" />
+          <el-input v-model="form.price" type="number" maxlength="21" />
         </el-form-item>
         <el-form-item label="库存量：" prop="inventory">
-          <el-input v-model="form.inventory" maxlength="11" />
+          <el-input v-model="form.inventory" type="number" maxlength="11" />
         </el-form-item>
       </el-form>
     </div>
@@ -56,6 +56,26 @@ import config from '@/utils/config'
 import distributionService from '@/api/distributionService'
 export default {
   data() {
+    var checkKucun = (rule, value, callback) => {
+      var val = '' + value
+      if (!val) {
+        return callback(new Error('库存不能为空'))
+      } else if (val.includes('.') || val.includes('-')) {
+        callback(new Error('库存为正整数'))
+      } else {
+        callback() // 添加成功回调
+      }
+    }
+    var checkPrice = (rule, value, callback) => {
+      var val = '' + value
+      if (!val) {
+        return callback(new Error('请输入商品价格'))
+      } else if (val.includes('-')) {
+        callback(new Error('商品价格为正数'))
+      } else {
+        callback() // 添加成功回调
+      }
+    }
     return {
       form: {
         'brandName': '',
@@ -75,10 +95,10 @@ export default {
           { required: true, message: '请输入品牌', trigger: 'blur' }
         ],
         price: [
-          { required: true, message: '请输入商品价格', trigger: 'blur' }
+          { validator: checkPrice, trigger: 'blur' }
         ],
         inventory: [
-          { required: true, message: '请输入商品库存', trigger: 'blur' }
+          { validator: checkKucun, trigger: 'blur' }
         ]
       },
       dialogImageUrl: '',
@@ -135,6 +155,7 @@ export default {
     },
     submitData() {
       function isNumber(val) {
+        val = '' + val
         return val.includes('.') || val.includes('-')
       }
       if (this.form.imgUrl === '') {
@@ -178,7 +199,7 @@ export default {
     form{
       padding-left: 15%; width:80%;
       .inline-input{
-          width: 100px ;
+          width: 80px ;
       }
     }
     h4{
