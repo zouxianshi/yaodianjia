@@ -173,6 +173,13 @@ export default {
         if (this.curOnlineUserData.userId) {
           const userItem = list.find(element => element.targetId === this.curOnlineUserData.userId)
           if (userItem) {
+            this.setCurOnlineUserId({
+              userId: userItem.targetId
+            })
+            // 清空指定会话未读数
+            Chat.clearUserUnreadMessage(userItem)
+            // 同步阅读状态到其他端
+            Chat.syncReadStatus(userItem.latestMessage)
             this.curLatestMessageInfo = userItem.latestMessage
             this.targetId = userItem.targetId
             this.curUserName = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.nickName : ''
@@ -191,6 +198,10 @@ export default {
           this.setCurOnlineUserId({
             userId: list[0].targetId
           })
+          // 清空指定会话未读数
+          Chat.clearUserUnreadMessage(list[0])
+          // 同步阅读状态到其他端
+          Chat.syncReadStatus(list[0].latestMessage)
           this.curLatestMessageInfo = list[0].latestMessage
           this.targetId = list[0].targetId
           this.curUserName = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.nickName : ''
