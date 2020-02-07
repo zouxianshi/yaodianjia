@@ -176,9 +176,11 @@ export default {
       this.queryOnlineConversationList(searchParam).then(() => {
         this.consultingLoading = false
         const list = this.onlineConversationData.list
-        console.log('获取融云会话列表成功：', list)
+        console.log('consultation页面获取融云会话列表成功：', list)
+        console.log('当前选中的userId', this.curOnlineUserData)
         if (this.curOnlineUserData.userId) {
           const userItem = list.find(element => element.targetId === this.curOnlineUserData.userId)
+          console.log('userItem', userItem)
           if (userItem) {
             this.setCurOnlineUserId({
               userId: userItem.targetId
