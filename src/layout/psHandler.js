@@ -233,12 +233,12 @@ class InnerCtor {
           //   path: "/distribution/write-off",
           //   disabled: true
           // },
-          // {
-          //   name: "小程序设置",
-          //   path: "/distribution/weapp-setting",
-          //   disabled: true,
-          //   children: []
-          // },
+          {
+            name: '小程序设置',
+            path: '/distribution/weapp-setting',
+            disabled: true,
+            children: []
+          },
           {
             name: '预约商品管理',
             path: '/distribution/reservation-product',
