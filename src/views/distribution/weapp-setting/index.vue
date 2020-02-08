@@ -101,7 +101,7 @@ export default {
         this.link = `${data.page}?${data.parameter}`
         this.appid = data.appId
         this.qrCode = `data:image/png;base64,${data.data}`
-        this.storeName = data.memberName
+        this.storeName = data.memberName || ''
         this.getLoading = true
       }
     },
