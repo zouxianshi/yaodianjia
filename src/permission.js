@@ -23,6 +23,8 @@ router.beforeEach(async(to, from, next) => {
     }
   }
 
+  console.log(to.path + '__to.path')
+
   // const hasToken = true
   if (hasToken) {
     if (to.path === '/login') {
