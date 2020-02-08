@@ -285,6 +285,7 @@ export default {
     changeTableItem(type) {
       if (this.orderStatus === type) return
       this.orderStatus = type
+      this.currentPage = 1
       this.getOrderListByTypeService()
     },
     /* table-card 组件按钮点击 */
