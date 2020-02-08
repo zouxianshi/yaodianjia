@@ -40,7 +40,7 @@
           </div>
           <div class="table-column content-center text-center flex-1">
             {{ item.personName }}<br><br>
-            {{ item.mobilePhone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') }}
+            {{ item.mobilePhone }}
           </div>
           <div class="table-column content-center text-center flex-1">
             {{ item.createTime }}
