@@ -7,7 +7,7 @@
 
 <script>
 import CustomerService from '@/api/customer-service'
-import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 export default {
@@ -32,6 +32,7 @@ export default {
     }
   },
   created() {
+    console.log('消息图标组件, created', this.hasNewMsg)
     const _this = this
     this.querySupportStaffById()
       .then(() => {
@@ -199,7 +200,6 @@ export default {
       })
   },
   methods: {
-    ...mapActions({}),
     ...mapMutations({
       addMsgToOnlineCurUserMsgList:
           'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
