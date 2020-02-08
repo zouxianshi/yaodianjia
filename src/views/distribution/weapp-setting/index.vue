@@ -44,9 +44,29 @@
         <div class="panel">
           <div class="tips">商户名称：</div>
           <div class="txt">{{ storeName }}</div>
+          <el-button
+            class="copy"
+            type="primary"
+            @click="showUpdateDialog"
+          >修改名称</el-button>
         </div>
       </div>
     </div>
+    <el-dialog append-to-body title="修改商户名称" :visible.sync="updateDialog">
+      <el-input v-model="changeStoreName" placeholder="请输入商户名称" @ />
+      <div
+        style="display:flex;flex-direction:row;justify-content: center;margin-top:30px;"
+      >
+        <el-button
+          style="margin-right:20px;"
+          @click="hiddenUpdateDialog"
+        >取消</el-button>
+        <el-button
+          type="primary"
+          @click="updateStoreNameService"
+        >确认</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -60,7 +80,14 @@ export default {
       link: '',
       storeName: '',
       qrCode: '',
-      getLoading: false
+      getLoading: false,
+      changeStoreName: '',
+      updateDialog: false
+    }
+  },
+  watch: {
+    changeStoreName(newValue) {
+      this.changeStoreName = newValue
     }
   },
   mounted() {
@@ -74,7 +101,7 @@ export default {
         this.link = `${data.page}?${data.parameter}`
         this.appid = data.appId
         this.qrCode = `data:image/png;base64,${data.data}`
-        this.storeName = data.memberName
+        this.storeName = data.memberName || ''
         this.getLoading = true
       }
     },
@@ -89,6 +116,23 @@ export default {
         this.$message({ type: 'error', message: JSON.stringify(e) })
         clipboard.destroy()
       })
+    },
+    showUpdateDialog() {
+      this.updateDialog = true
+      this.changeStoreName = this.storeName
+    },
+    hiddenUpdateDialog() {
+      this.updateDialog = false
+    },
+    async updateStoreNameService() {
+      const { code } = await DistributionService.updateStoreName(
+        this.changeStoreName
+      )
+      if (code === '10000') {
+        this.$message({ type: 'success', message: '修改成功' })
+        this.hiddenUpdateDialog()
+        this.getQRCode()
+      }
     }
   }
 }
