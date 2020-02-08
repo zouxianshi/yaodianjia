@@ -187,6 +187,14 @@ class DistributionService {
     )
   }
   /**
+   * 修改商户名称  */
+  updateStoreName(name) {
+    return this.service(
+      'post',
+      `/1.0/b/wxutils/updateAppName?memberCode=${store.state.user.merCode}&name=${name}`
+    )
+  }
+  /**
    * 获取小程序二维码
    * @param {*} data
    */
