@@ -17,7 +17,7 @@
           <tx-map ref="mapRef" :zoom="15" @ready="handlerLocation" @click="clickHandler()" />
         </div>
         <el-form-item label="电话号码:" prop="phoneNumber">
-          <el-input v-model="form.phoneNumber" maxlength="11" />
+          <el-input v-model="form.phoneNumber" maxlength="18" />
         </el-form-item>
       </el-form>
     </div>
@@ -36,8 +36,8 @@ export default {
     var checkPhone = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('联系方式不能为空'))
-      } else if (!(/^1[3456789]\d{9}$/.test(value))) {
-        callback(new Error('请输入正确的手机号'))
+      } else if (!(/^[0-9]*-*[0-9]*$/.test(value))) {
+        callback(new Error('请输入正确的联系方式'))
       } else {
         callback() // 添加成功回调
       }
