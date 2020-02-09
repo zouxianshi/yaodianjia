@@ -1,5 +1,5 @@
 <template>
-  <div class="setting-container">
+  <div v-loading="loading" class="setting-container">
     <div v-show="getLoading" class="module">
       <div class="title">小程序二维码</div>
       <div class="content">
@@ -82,7 +82,8 @@ export default {
       qrCode: '',
       getLoading: false,
       changeStoreName: '',
-      updateDialog: false
+      updateDialog: false,
+      loading: true
     }
   },
   watch: {
@@ -96,7 +97,7 @@ export default {
   methods: {
     async getQRCode() {
       const { data, code } = await DistributionService.getWeappCode()
-
+      this.loading = false
       if (code === '10000') {
         this.link = `${data.page}?${data.parameter}`
         this.appid = data.appId

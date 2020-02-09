@@ -15,7 +15,7 @@
       <div v-for="item in tableData" :key="item.id" class="table-content">
         <div class="header">
           <div class="gray">预约单编号：{{ item.id }}</div>
-          <!-- <div class="blue">订单详情</div> -->
+          <!-- <div class="blue" @click="toDetails(item.id)">订单详情</div> -->
         </div>
         <div class="row">
           <div class="table-column content-container flex-3">
@@ -96,6 +96,9 @@ export default {
   methods: {
     emitClickHandler(obj) {
       this.$emit('button-click', obj)
+    },
+    toDetails(id) {
+      this.$router.push(`/distribution/order-details?id=${id}`)
     }
   }
 }
