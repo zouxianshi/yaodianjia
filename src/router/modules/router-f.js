@@ -7,7 +7,8 @@ const router = [
     name: 'orders-manage',
     meta: {
       title: '订单中心',
-      icon: 'goods'
+      icon: 'goods',
+      auth: 'order'
     },
     alwaysShow: true,
     children: [
@@ -17,7 +18,8 @@ const router = [
         name: 'orders-manage-list',
         meta: {
           title: '所有订单',
-          noCache: true
+          noCache: true,
+          auth: 'order.order-all'
         }
       }, {
         path: `details`,
@@ -34,7 +36,8 @@ const router = [
         name: 'orders-manage-settings',
         meta: {
           title: '订单设置',
-          noCache: true
+          noCache: true,
+          auth: 'order.order-set'
         }
       }
     ]

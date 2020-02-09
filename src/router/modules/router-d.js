@@ -24,7 +24,7 @@ const router = [
       {
         path: 'order-manage',
         component: () => import('@/views/distribution/order-manage/index.vue'),
-        name: 'consultation',
+        name: 'order-manage',
         meta: {
           title: '预约单管理'
         }
