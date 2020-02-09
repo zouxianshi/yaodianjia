@@ -47,21 +47,11 @@ Vue.prototype.payH5Base = process.env.VUE_APP_PAY_H5_BASE || 'm.dev.ydjia.cn/h5/
 MC.init({
   env: process.env.VUE_APP_ENV ? process.env.VUE_APP_ENV : 'local'
 }).then(() => {
-  Promise.all([
-    store.dispatch('user/getInfo'),
-    store.dispatch('user/getHoneyToken')
-  ]).then(() => {
-    new Vue({
-      router,
-      store,
-      render: h => h(App)
-    }).$mount('#app')
-  }).catch(res => {
-    console.log(res)
-    setTimeout(() => {
-      alert(`当前您切换的企业无权限，是否返回商户平台`)
-      window.location.href = MC.merHomeAddr
-    }, 500)
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
   })
 })
 
