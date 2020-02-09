@@ -182,7 +182,7 @@ class InnerCtor {
           },*/
           {
             name: '连锁设置',
-            path: '/chainSetting',
+            path: '/storeSetting/chainSetting',
             disabled: this.get('set.merchant-set'),
             children: []
           },
@@ -198,7 +198,7 @@ class InnerCtor {
           },
           {
             name: '内部链接',
-            path: '/internalLink',
+            path: '/storeSetting/internalLink',
             disabled: this.get('set.inner-link'),
             children: []
           }
