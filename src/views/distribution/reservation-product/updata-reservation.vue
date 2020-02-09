@@ -23,7 +23,7 @@
           <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
         </el-form-item>
         <el-form-item label="库存量：" prop="inventory">
-          <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" disabled maxlength="10" />
+          <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
         </el-form-item>
       </el-form>
     </div>
@@ -78,6 +78,7 @@ export default {
       }
     }
     return {
+      oldInventory: 0,
       form: {
         'brandName': '',
         'daysPerMember': '',
@@ -138,9 +139,12 @@ export default {
         'inventory': data.inventory,
         'countPerMember': data.countPerMember,
         'name': data.name,
+        'unit': data.unit,
         'price': data.price,
         'status': data.status
       }
+      this.oldInventory = this.form.inventory
+      console.log(this.oldInventory)
     })
   },
   methods: {
@@ -181,6 +185,14 @@ export default {
       }
     },
     submitData() {
+      console.log(this.oldInventory < this.form.inventory, this.oldInventory, this.form.inventory)
+      if (this.oldInventory > Number(this.form.inventory)) {
+        this.$message({
+          message: '库存量不能小于原库存量',
+          type: 'error'
+        })
+        return
+      }
       function isNumber(val) {
         val = '' + val
         return val.includes('.') || val.includes('-')
