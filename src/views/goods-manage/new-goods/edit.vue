@@ -797,6 +797,7 @@ export default {
     },
     _loadBasicInfo() { // 加载基本信息
       this.basicLoading = true
+      this.subLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
         this._loadgroupGather('1', [res.data.typeId])
@@ -852,8 +853,10 @@ export default {
         this.basicForm = data
         this.$refs.editor.setContent(this.basicForm.intro)
         this.basicLoading = false
+        this.subLoading = false
       }).catch(_ => {
         this.basicLoading = false
+        this.subLoading = false
       })
     },
     _loadGoodsImgAry() { // 加载商品图片
