@@ -226,7 +226,14 @@ class InnerCtor {
           {
             name: '预约单管理',
             path: '/distribution/order-manage',
-            disabled: this.get('appointment.order')
+            disabled: this.get('appointment.order'),
+            children: [
+              {
+                name: '预约单详情',
+                path: '/distribution/order-details',
+                disabled: this.get('appointment.order')
+              }
+            ]
           },
           // {
           //   name: "核销管理",
