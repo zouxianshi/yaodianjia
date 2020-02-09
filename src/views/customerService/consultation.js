@@ -313,7 +313,6 @@ export default {
           },
           msgResult: res
         })
-        console.log('after addMsgToOnlineCurUserMsgList', localStorage.getItem('ryCSList'))
         this.scrollToBottom()
       }).catch((err, msg) => {
         console.error('send message error', err, msg)
@@ -653,11 +652,12 @@ export default {
     // 搜索按钮点击
     searchBtnClick() {
       console.log('searchtext', this.searchText)
-      if (!localStorage.getItem('ryCSList')) {
+      const storageList = Chat.getStorageRyCSList()
+      if (!storageList) {
         return
       }
       console.log('有缓存')
-      const list = [...JSON.parse(localStorage.getItem('ryCSList'))]
+      const list = [...storageList]
       if (!this.searchText.replace(/\s*/g, '')) {
         console.log('!ssearchtext')
         this.forceChangeConversationList(list)
@@ -689,7 +689,7 @@ export default {
         this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
       } else {
-        console.log('localstorage', localStorage.getItem('ryCSList'))
+        console.log('localstorage', storageList)
         console.log('no this.onlineConversationData.list')
         this.targetId = ''
         this.curUserAvatar = ''
@@ -698,7 +698,6 @@ export default {
           userId: '',
           setStorage: false
         })
-        console.log('localstorage after setCurOnlineUserId', localStorage.getItem('ryCSList'))
       }
     },
     resetData() {

@@ -4,16 +4,26 @@
       <h4>商品信息</h4>
       <el-form ref="form" :rules="rules" :model="form" label-width="100px">
         <el-form-item label="商品名称：" prop="name">
-          <el-input v-model="form.name" />
+          <el-input v-model="form.name" maxlength="254" />
         </el-form-item>
         <el-form-item label="所属品牌：" prop="brandName">
-          <el-input v-model="form.brandName" />
+          <el-input v-model="form.brandName" maxlength="99" />
+        </el-form-item>
+        <el-form-item label="单位：" prop="unit">
+          <el-select v-model="form.unit" placeholder="请选择单位">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="标签价格：" prop="price">
-          <el-input v-model="form.price" />
+          <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
         </el-form-item>
         <el-form-item label="库存量：" prop="inventory">
-          <el-input v-model="form.inventory" />
+          <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" disabled maxlength="10" />
         </el-form-item>
       </el-form>
     </div>
@@ -21,8 +31,11 @@
       <h4>预约规则<span class="rule-tips">（如无需设置限购条件，请填写0）</span></h4>
       <el-form :model="form" label-width="100px" class="demo-form-inline">
         <el-form-item label="限购规则：">
-          每人&emsp;<el-input v-model="form.daysPerMember" class="inline-input" prop="daysPerMember" />&emsp;天内限购&emsp;
-          <el-input v-model="form.countPerMember" class="inline-input" prop="countPerMember" />&emsp;个
+          每人&emsp;
+          <el-input v-model="form.daysPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="daysPerMember" />
+          &emsp;天内限购&emsp;
+          <el-input v-model="form.countPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="countPerMember" />
+          &emsp;个
         </el-form-item>
       </el-form>
     </div>
@@ -54,6 +67,16 @@ import config from '@/utils/config'
 import distributionService from '@/api/distributionService'
 export default {
   data() {
+    var checkPrice = (rule, value, callback) => {
+      var val = '' + value
+      if (!val) {
+        return callback(new Error('请输入商品价格'))
+      } else if (val.includes('-')) {
+        callback(new Error('商品价格为正数'))
+      } else {
+        callback() // 添加成功回调
+      }
+    }
     return {
       form: {
         'brandName': '',
@@ -62,9 +85,17 @@ export default {
         'inventory': '',
         'countPerMember': '',
         'name': '',
+        'unit': '',
         'price': '',
-        'status': '1'
+        'status': ''
       },
+      options: [
+        { value: '个', label: '个' },
+        { value: '瓶', label: '瓶' },
+        { value: '盒', label: '盒' },
+        { value: '包', label: '包' },
+        { value: '件', label: '件' }
+      ],
       rules: {
         name: [
           { required: true, message: '请输入商品名称', trigger: 'blur' }
@@ -73,10 +104,10 @@ export default {
           { required: true, message: '请输入品牌', trigger: 'blur' }
         ],
         price: [
-          { required: true, message: '请输入商品价格', trigger: 'blur' }
+          { validator: checkPrice, trigger: 'blur' }
         ],
-        inventory: [
-          { required: true, message: '请输入商品库存', trigger: 'blur' }
+        unit: [
+          { required: true, message: '请选择单位', trigger: 'blur' }
         ]
       },
       dialogImageUrl: '',
@@ -90,7 +121,7 @@ export default {
     },
     upLoadUrl() {
       return `${this.uploadFileURL}${
-        config.merGoods
+        config.mask
       }/1.0/file/_uploadImg?merCode=${this.merCode}`
     },
     ids() {
@@ -150,6 +181,23 @@ export default {
       }
     },
     submitData() {
+      function isNumber(val) {
+        val = '' + val
+        return val.includes('.') || val.includes('-')
+      }
+      if (this.form.imgUrl === '') {
+        this.$message({
+          message: '请上传商品图片',
+          type: 'error'
+        })
+        return
+      } else if (isNumber(this.form.daysPerMember) || isNumber(this.form.countPerMember)) {
+        this.$message({
+          message: '限购规则中天数和数量为正整数。',
+          type: 'error'
+        })
+        return
+      }
       this.$refs['form'].validate((flag) => {
         if (flag) {
           var params = {}
@@ -178,7 +226,7 @@ export default {
     form{
       padding-left: 15%; width:80%;
       .inline-input{
-          width: 60px ;
+          width: 80px ;
       }
     }
     h4{

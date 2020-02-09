@@ -285,6 +285,7 @@ export default {
     changeTableItem(type) {
       if (this.orderStatus === type) return
       this.orderStatus = type
+      this.currentPage = 1
       this.getOrderListByTypeService()
     },
     /* table-card 组件按钮点击 */
@@ -306,10 +307,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-
+  overflow-y: scroll;
+  height: calc(100vh - 160px);
   .header-panel {
     padding: 10px 25px;
     display: flex;
@@ -362,7 +361,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    margin: 40px 0;
+    margin: 10px 0 20px 0;
   }
   .dialog-pic {
     width: 72px;

@@ -6,8 +6,8 @@
       <div class="table-column flex-2">商品编号</div>
       <div class="table-column flex-1">单价</div>
       <div class="table-column flex-1">数量</div>
-      <div class="table-column flex-1">预约人</div>
-      <div class="table-column flex-1">预约时间</div>
+      <div class="table-column flex-2">预约人</div>
+      <div class="table-column flex-2">预约时间</div>
       <div class="table-column flex-1">订单状态</div>
       <div class="table-column flex-2">提货门店</div>
     </div>
@@ -38,11 +38,16 @@
           <div class="table-column content-center flex-1">
             {{ item.productCount }}
           </div>
-          <div class="table-column content-center flex-1">
-            {{ item.personName }}
+          <div
+            class="table-column content-center flex-2 content-column flex-start"
+          >
+            姓名:{{ item.personName }}<br><br>
+            手机号:{{ item.mobilePhone }}<br><br>
+            身份证:<br>{{ item.personId }}
           </div>
-          <div class="table-column content-center flex-1">
-            {{ item.createTime }}
+          <div class="table-column content-center flex-2">
+            预约时间:{{ item.createTime }}<br><br>
+            领取时间:{{ item.updatetime || '' }}
           </div>
           <div class="table-column content-column content-center flex-1">
             <span>{{
@@ -97,8 +102,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .table-container {
-  max-height: 380px;
-  overflow-y: scroll;
 }
 .table-empty {
   width: 100%;
@@ -161,6 +164,10 @@ export default {
   &.content-column {
     flex-direction: column;
   }
+
+  &.flex-start {
+    justify-content: flex-start;
+  }
   &.content-container {
     display: flex;
     flex-direction: row;
@@ -207,6 +214,9 @@ export default {
   }
   &.content-center {
     justify-content: center;
+  }
+  &.text-center {
+    text-align: center;
   }
 }
 .check-box {
