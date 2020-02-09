@@ -2,8 +2,8 @@
   <div>
     <div class="table-header">
       <!-- <el-checkbox class="check-box" /> -->
-      <div class="table-column flex-1">商品</div>
-      <div class="table-column flex-2">商品编号</div>
+      <div class="table-column flex-3">商品</div>
+      <!-- <div class="table-column flex-2">商品编号</div> -->
       <div class="table-column flex-1">单价</div>
       <div class="table-column flex-1">数量</div>
       <div class="table-column flex-2">预约人</div>
@@ -14,7 +14,10 @@
     <div v-if="tableData.length > 0" class="table-container">
       <div v-for="item in tableData" :key="item.id" class="table-content">
         <div class="header">
-          <div class="gray">预约单编号：{{ item.id }}</div>
+          <div class="left">
+            <!-- <el-checkbox class="check-box" /> -->
+            <div class="gray">预约单编号：{{ item.id }}</div>
+          </div>
           <!-- <div class="blue" @click="toDetails(item.id)">订单详情</div> -->
         </div>
         <div class="row">
@@ -27,9 +30,9 @@
               <div class="desc">
                 {{ item.productName }}
               </div>
-              <div class="order">
+              <!-- <div class="order">
                 {{ item.productId }}
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="table-column content-center flex-1">
@@ -47,7 +50,12 @@
           </div>
           <div class="table-column content-center flex-2">
             预约时间:{{ item.createTime }}<br><br>
-            领取时间:{{ item.updatetime || '' }}
+            {{
+              item.status === 'COMPLETE'
+                ? `领取时间:${item.updateTime || ''}`
+                : ''
+            }}
+            <!-- 领取时间:{{ item.updateTime || '' }} -->
           </div>
           <div class="table-column content-column content-center flex-1">
             <span>{{
@@ -139,6 +147,12 @@ export default {
     }
     .blue {
       color: #1890ff;
+    }
+    .left {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
     }
   }
   .row {
