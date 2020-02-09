@@ -29,12 +29,14 @@
         <el-table-column prop="brandName" label="品牌" />
         <el-table-column prop="unit" label="规格" />
         <el-table-column prop="price" width="110" sortable label="标准价格" />
-        <el-table-column prop="inventory" label="库存" />
+        <el-table-column prop="inventory" label="可预约总量" />
+        <el-table-column prop="verificationNum" label="核销数量" />
+        <el-table-column prop="reserveNum" label="预约数量" />
         <el-table-column
           label="预约规则"
         >
           <template v-if="scope.row.daysPerMember != 0 || scope.row.countPerMember != 0" slot-scope="scope">
-            每人{{ scope.row.daysPerMember }}天内限购{{ scope.row.countPerMember }}个。
+            每人{{ scope.row.daysPerMember }}天内限购{{ scope.row.countPerMember }}{{ scope.row.unit }}。
           </template>
           <template v-else>
             暂无预约规则。

@@ -22,7 +22,7 @@
         <el-form-item label="标签价格：" prop="price">
           <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
         </el-form-item>
-        <el-form-item label="库存量：" prop="inventory">
+        <el-form-item label="可预约总量：" prop="inventory">
           <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
         </el-form-item>
       </el-form>
@@ -35,7 +35,7 @@
           <el-input v-model="form.daysPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="daysPerMember" />
           &emsp;天内限购&emsp;
           <el-input v-model="form.countPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="countPerMember" />
-          &emsp;个
+          &emsp;
         </el-form-item>
       </el-form>
     </div>
