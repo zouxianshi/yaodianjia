@@ -27,6 +27,7 @@
         </el-table-column>
         <el-table-column prop="name" label="商品信息" />
         <el-table-column prop="brandName" label="品牌" />
+        <el-table-column prop="unit" label="规格" />
         <el-table-column prop="price" width="110" sortable label="标准价格" />
         <el-table-column prop="inventory" label="库存" />
         <el-table-column
