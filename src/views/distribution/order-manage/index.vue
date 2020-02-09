@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-loading="loading" class="container">
     <div class="header-panel">
       <div class="box">
         <div
@@ -183,7 +183,8 @@ export default {
       currentPage: 1,
       pageSize: 10,
       orderListData: [],
-      totalCount: 0
+      totalCount: 0,
+      loading: true
     }
   },
   watch: {
@@ -202,6 +203,7 @@ export default {
     /*  */
     handleSizeChange(e) {
       this.pageSize = e
+      this.currentPage = 1
       this.getOrderListByTypeService()
     },
     handleCurrentChange(e) {
@@ -237,6 +239,7 @@ export default {
       const { data, code } = await DistributionService.queryOrderListByType(
         params
       )
+      this.loading = false
       if (code === '10000') {
         this.orderListData = data.data
         this.totalCount = data.totalCount
