@@ -7,7 +7,8 @@ const router = [
     name: 'wxmall',
     meta: {
       title: '商城装修',
-      icon: 'goods'
+      icon: 'goods',
+      auth: 'yaodianjia-wxmall'
     },
     alwaysShow: true,
     children: [
@@ -18,7 +19,8 @@ const router = [
         meta: {
           title: '主页设置',
           noCache: true,
-          activeMenu: '/wxmall/home-set'
+          activeMenu: '/wxmall/home-set',
+          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-home-set'
         }
       },
       {
@@ -27,7 +29,8 @@ const router = [
         name: 'banner',
         meta: {
           title: '首页轮播图',
-          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-banner'
         }
       }, {
         path: 'notice',
@@ -36,7 +39,8 @@ const router = [
         meta: {
           title: '首页公告栏',
           noCache: true,
-          activeMenu: '/wxmall/notice'
+          activeMenu: '/wxmall/notice',
+          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-notice'
         }
       }, {
         path: 'ad-position',
@@ -45,7 +49,8 @@ const router = [
         meta: {
           title: '分类广告位',
           noCache: true,
-          activeMenu: '/wxmall/ad-position'
+          activeMenu: '/wxmall/ad-position',
+          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-ad-position'
         }
       }
     ]
@@ -57,7 +62,8 @@ const router = [
     name: 'marketing',
     meta: {
       title: '营销活动',
-      icon: 'goods'
+      icon: 'goods',
+      auth: 'marketing'
     },
     alwaysShow: true,
     children: [
@@ -67,6 +73,7 @@ const router = [
         name: 'activity',
         meta: {
           title: '活动管理',
+          auth: 'marketing.marketing-create',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
@@ -76,6 +83,7 @@ const router = [
         name: 'create',
         meta: {
           title: '新建活动',
+          auth: 'marketing.marketing-manager',
           noCache: true
         }
       },
