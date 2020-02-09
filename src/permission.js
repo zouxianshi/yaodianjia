@@ -14,48 +14,8 @@ router.beforeEach(async(to, from, next) => {
       window._hmt.push(['_trackPageview', '/#' + to.fullPath])
     }
   }
-
-  console.log(to.path + '__to.path')
-
-  // const hasToken = true
-  if (hasToken) {
-    if (to.path === '/login') {
-      next({ path: '/' })
-      NProgress.done()
-    } else {
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      if (hasRoles) {
-        next()
-      } else {
-        try {
-          // 获取用户信息
-          // const { resList } = await store.dispatch('user/getInfo')
-          await store.dispatch('user/getInfo')
-          // if (to.path === '/403' || to.path === '/home') {
-          //   if (resList.length !== 0) {
-          //     const accessRoutes = await store.dispatch('permission/generateRoutes', resList)
-          //     router.addRoutes(accessRoutes)
-          //   }
-          //   next()
-          // } else if (resList.length === 0) {
-          //   next('/home')
-          // } else {
-          //   const accessRoutes = await store.dispatch('permission/generateRoutes', resList)
-          //   router.addRoutes(accessRoutes)
-          next({ ...to, replace: true })
-          // }
-        } catch (error) {
-          if (error.code && error.code === '50000') {
-            setTimeout(() => {
-              console.log(MC.merHomeAddr)
-              window.location.href = MC.merHomeAddr
-            }, 500)
-          }
-          NProgress.done()
-        }
-      }
-    }
-  } else {
+  const hasToken = getToken()
+  if (!hasToken) {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
