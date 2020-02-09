@@ -218,6 +218,13 @@ class DistributionService {
   savePointer(data) {
     return this.service('post', `/1.0/b/store/_save`, data)
   }
+  /**
+   * 查询订单详情
+   * @param {*} id 订单id
+   */
+  queryOrderDetailsById(id) {
+    return this.service('get', `/1.0/b/order/_get/${id}`)
+  }
   // 获取取货点编辑
   getPointer(ids) {
     return this.service('get', `/1.0/b/store/_get/${ids}`)
