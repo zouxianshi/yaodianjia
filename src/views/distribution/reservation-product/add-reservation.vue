@@ -9,6 +9,16 @@
         <el-form-item label="所属品牌：" prop="brandName">
           <el-input v-model="form.brandName" maxlength="99" />
         </el-form-item>
+        <el-form-item label="单位：" prop="unit">
+          <el-select v-model="form.unit" placeholder="请选择单位">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="标签价格：" prop="price">
           <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
         </el-form-item>
@@ -87,9 +97,17 @@ export default {
         'inventory': '',
         'countPerMember': 0,
         'name': '',
+        'unit': '',
         'price': '',
         'status': '1'
       },
+      options: [
+        { value: '个', label: '个' },
+        { value: '瓶', label: '瓶' },
+        { value: '盒', label: '盒' },
+        { value: '包', label: '包' },
+        { value: '件', label: '件' }
+      ],
       rules: {
         name: [
           { required: true, message: '请输入商品名称', trigger: 'blur' }
@@ -102,6 +120,9 @@ export default {
         ],
         inventory: [
           { validator: checkKucun, trigger: 'blur' }
+        ],
+        unit: [
+          { required: true, message: '请选择单位', trigger: 'blur' }
         ]
       },
       dialogImageUrl: '',
@@ -176,7 +197,6 @@ export default {
       }
       this.$refs['form'].validate((flag) => {
         if (flag) {
-          console.log(flag)
           var params = {}
           params = JSON.parse(JSON.stringify(this.form))
           distributionService.saveProduct(params).then(res => {
