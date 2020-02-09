@@ -31,7 +31,7 @@
                   <img style="width: 50px; height: 50px" src="../../../assets/image/excel_img.jpeg">
                   <span>通过条码匹配药品库.xls</span>
                 </div>
-                <a href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E5%AF%BC%E5%85%A5%E5%95%86%E5%93%81%E6%A8%A1%E6%9D%BF.xls" download="导入商品模板.xls">
+                <a href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%AF%BC%E5%85%A5%E5%95%86%E5%93%81%E6%A8%A1%E6%9D%BF.xls" download="导入商品模板.xls">
                   <i class="el-icon-download" />
                 </a>
               </div>

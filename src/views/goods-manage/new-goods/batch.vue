@@ -35,7 +35,7 @@
           <li class="zxy">
             <div class="m">
               <div class="name">中西医药模板.xls</div> <a
-                href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BF.xlsx"
+                href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BF.xls"
                 download="中西医药模板.xls"
               ><button
                 type="button"
@@ -47,7 +47,7 @@
           <li class="yxbj">
             <div class="m">
               <div class="name">营养保健模板.xls</div> <a
-                href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E8%90%A5%E5%85%BB%E4%BF%9D%E5%81%A5%E6%A8%A1%E6%9D%BF.xlsx"
+                href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E8%90%A5%E5%85%BB%E4%BF%9D%E5%81%A5%E6%A8%A1%E6%9D%BF.xls"
                 download="营养保健模板.xls"
               ><button
                 type="button"
@@ -60,7 +60,7 @@
           <li class="yl">
             <div class="m">
               <div class="name">医疗器械模板.xls</div> <a
-                href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E5%8C%BB%E7%96%97%E5%99%A8%E6%A2%B0%E6%A8%A1%E6%9D%BF.xls"
+                href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%8C%BB%E7%96%97%E5%99%A8%E6%A2%B0%E6%A8%A1%E6%9D%BF.xls"
                 download="医疗器械模板.xls"
               ><button
                 type="button"
@@ -73,7 +73,7 @@
           <li class="qt">
             <div class="m">
               <div class="name">其它模板.xls</div> <a
-                href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E5%85%B6%E4%BB%96%E6%A8%A1%E6%9D%BF.xls"
+                href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%85%B6%E4%BB%96%E6%A8%A1%E6%9D%BF.xls"
                 download="其它模板.xls"
               ><button
                 type="button"
