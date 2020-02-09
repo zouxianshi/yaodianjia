@@ -36,7 +36,7 @@
           label="预约规则"
         >
           <template v-if="scope.row.daysPerMember != 0 || scope.row.countPerMember != 0" slot-scope="scope">
-            每人{{ scope.row.daysPerMember }}天内限购{{ scope.row.countPerMember }}个。
+            每人{{ scope.row.daysPerMember }}天内限购{{ scope.row.countPerMember }}{{ scope.row.unit }}。
           </template>
           <template v-else>
             暂无预约规则。

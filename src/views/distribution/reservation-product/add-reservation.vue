@@ -35,7 +35,7 @@
           <el-input v-model="form.daysPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="daysPerMember" />
           &emsp;天内限购&emsp;
           <el-input v-model="form.countPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="countPerMember" />
-          &emsp;个
+          &emsp;{{ form.unit }}
         </el-form-item>
       </el-form>
     </div>
