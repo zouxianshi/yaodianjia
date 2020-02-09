@@ -22,7 +22,7 @@
         <el-form-item label="标签价格：" prop="price">
           <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
         </el-form-item>
-        <el-form-item label="库存量：" prop="inventory">
+        <el-form-item label="可预约总量：" prop="inventory">
           <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
         </el-form-item>
       </el-form>
