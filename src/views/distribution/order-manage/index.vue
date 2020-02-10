@@ -64,6 +64,12 @@
             @click.stop="forSearch()"
           >搜 索</el-button>
         </div>
+        <!-- <el-button
+          style="margin-left:20px;"
+          type="primary"
+          size="small"
+          @click.stop="exportDisplayHandler(true)"
+        >批量导出</el-button> -->
       </div>
     </div>
     <div class="table-panel">
@@ -167,6 +173,62 @@
         >确认</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      title="批量导出数据"
+      :visible.sync="exportDialogVisible"
+      append-to-body
+      width="60%"
+    >
+      <div class="line">
+        <el-select
+          v-model="selectStore.storeName"
+          filterable
+          placeholder="选择门店"
+          class="search"
+          @change="selectChange"
+        >
+          <el-option
+            v-for="item in storeListData"
+            :key="item.id"
+            :label="item.storeName"
+            :value="{ storeName: item.storeName, id: item.id }"
+          />
+        </el-select>
+        <el-select
+          v-model="selectStore.storeName"
+          filterable
+          placeholder="选择门店"
+          class="search"
+          @change="selectChange"
+        >
+          <el-option
+            v-for="item in storeListData"
+            :key="item.id"
+            :label="item.storeName"
+            :value="{ storeName: item.storeName, id: item.id }"
+          />
+        </el-select>
+        <el-select v-model="value" placeholder="请选择">
+          <el-option-group
+            v-for="group in options"
+            :key="group.label"
+            :label="group.label"
+          >
+            <el-option
+              v-for="item in group.options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-option-group>
+        </el-select>
+        <el-button
+          type="primary"
+          @click="updateOrderStatusService"
+        >搜索</el-button>
+        <el-button @click="updateOrderStatusService">重置</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -188,7 +250,8 @@ export default {
       pageSize: 10,
       orderListData: [],
       totalCount: 0,
-      loading: true
+      loading: true,
+      exportDialogVisible: false
     }
   },
   watch: {
@@ -198,6 +261,7 @@ export default {
   },
   mounted() {
     this.getStoreListServie()
+    console.log(new Date().valueOf())
   },
   methods: {
     selectChange(e) {
@@ -307,6 +371,9 @@ export default {
     },
     closeDialog() {
       this.dialogVisible = false
+    },
+    exportDisplayHandler(bol) {
+      this.exportDialogVisible = bol
     }
   }
 }
@@ -316,6 +383,7 @@ export default {
 .container {
   overflow-y: scroll;
   height: calc(100vh - 160px);
+
   .header-panel {
     padding: 10px 25px;
     display: flex;

@@ -53,7 +53,12 @@
       </div>
     </div>
     <el-dialog append-to-body title="修改商户名称" :visible.sync="updateDialog">
-      <el-input v-model="changeStoreName" maxlength="7" placeholder="请输入商户名称" @ />
+      <el-input
+        v-model="changeStoreName"
+        maxlength="7"
+        placeholder="请输入商户名称"
+        @
+      />
       <div
         style="display:flex;flex-direction:row;justify-content: center;margin-top:30px;"
       >
