@@ -44,7 +44,7 @@ const mutations = {
     // 清除未读消息数
     Chat.clearUserUnreadMessage(payload)
     state.onlineConversationData.list = tempList
-    localStorage.setItem('ryCSList', JSON.stringify(tempList))
+    Chat.setStorageRyCSList(tempList)
   },
 
   // 接收到已读回执的处理
@@ -63,7 +63,7 @@ const mutations = {
       }
     }
     state.onlineConversationData.list = tempList
-    localStorage.setItem('ryCSList', JSON.stringify(tempList))
+    Chat.setStorageRyCSList(tempList)
   },
 
   // 设置缓存中的会话列表
@@ -140,7 +140,7 @@ const mutations = {
     if (payload.setStorage !== false) {
       console.log('setStorage不为false, 设置缓存', payload.setStorage)
       console.log(' SET_CUR_ONLINE_USERID 的localStorage设置')
-      localStorage.setItem('ryCSList', JSON.stringify(onlineUserList))
+      Chat.setStorageRyCSList(onlineUserList)
     }
     state.onlineConversationData.list = onlineUserList
   },
@@ -165,10 +165,11 @@ const mutations = {
 
   // 删除在线咨询会话item
   DEL_ONLINE_CONVERSATOIN(state, payload) {
+    const storageList = Chat.getStorageRyCSList()
     // 删除localStorage 中的item
     let localConversationList = null
-    if (localStorage.getItem('ryCSList')) {
-      localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
+    if (storageList) {
+      localConversationList = storageList
       const tempList = []
       localConversationList.forEach((element, index) => {
         if (element.latestMessage.content.extra.userId.toString() !== payload.toString()) {
@@ -178,10 +179,10 @@ const mutations = {
       if (Array.isArray(tempList)) {
         console.log('DEL_ONLINE_CONVERSATOIN 的locaStorage设置')
         state.onlineConversationData.list = tempList
-        localStorage.setItem('ryCSList', JSON.stringify(tempList))
+        Chat.setStorageRyCSList(tempList)
       } else {
         state.onlineConversationData.list = []
-        localStorage.setItem('ryCSList', JSON.stringify([]))
+        Chat.setStorageRyCSList([])
       }
     }
   },
@@ -189,7 +190,7 @@ const mutations = {
   // push一条消息到在线咨询当前用户消息列表
   ADD_MSG_TO_ONLINE_MSG_LIST(state, payload) {
     console.log('into ADD_MSG_TO_ONLINE_MSG_LIST', payload)
-
+    const storageList = Chat.getStorageRyCSList()
     const {
       merCode,
       // msgInfo,
@@ -241,8 +242,8 @@ const mutations = {
     })
 
     // 更新localStorage会话列表数据
-    if (localStorage.getItem('ryCSList')) {
-      const localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
+    if (storageList) {
+      const localConversationList = storageList
       localConversationList.forEach((element) => {
         if (Chat.isUserEqual(element.latestMessage, msgResult)) {
           element.latestMessage = {
@@ -256,7 +257,7 @@ const mutations = {
         }
       })
       console.log('ADD_MSG_TO_ONLINE_MSG_LIST 的locaStorage设置')
-      localStorage.setItem('ryCSList', JSON.stringify(localConversationList))
+      Chat.setStorageRyCSList(localConversationList)
     }
   },
   // 添加未读消息徽标至会话列表item头像
@@ -265,10 +266,10 @@ const mutations = {
     console.log('addBadgeToOnlineUser', message)
     // const tempList = state.onlineConversationData.list
     let tempList = []
-    const storageList = localStorage.getItem('ryCSList')
+    const storageList = Chat.getStorageRyCSList()
     console.log('缓存中的数据', storageList)
     if (storageList) {
-      tempList = JSON.parse(storageList)
+      tempList = storageList
     }
     console.log('tempList', tempList)
     let hasItem = false
@@ -309,7 +310,7 @@ const mutations = {
       })
     }
     console.log('addBadgeToOnlineUser 的localStorage设置')
-    localStorage.setItem('ryCSList', JSON.stringify(tempList))
+    Chat.setStorageRyCSList(tempList)
     state.onlineConversationData.list = tempList
   },
 
@@ -327,13 +328,13 @@ const mutations = {
   },
   // 获取在线咨询会话列表
   SET_ONLINE_CONVERSATIONLIST(state, payload) {
+    const storageList = Chat.getStorageRyCSList()
     console.log('into SET_ONLINE_CONVERSATIONLIST', '对比本地缓存中的数据并合并 完成之后更新本地存储')
     // 这里对比本地缓存中的数据并合并 完成之后更新本地存储
-    // localStorage.setItem('ryCSList', JSON.stringify(payload))
     let localConversationList = []
     // 如果有本地缓存 对比本地缓存并合并数据
-    if (localStorage.getItem('ryCSList')) {
-      localConversationList = JSON.parse(localStorage.getItem('ryCSList'))
+    if (storageList && storageList.length > 0) {
+      localConversationList = storageList
       if (typeof localConversationList !== 'object') {
         return
       }
@@ -362,10 +363,8 @@ const mutations = {
 
       payload.forEach((item, index) => {
         console.log('item', item)
-        // 获取到的会话列表放到最前
-        newList.push(item)
 
-        // 判断localStorage里面是否有当前item 如果有就删除
+        // 判断localStorage里面是否有当前item 如果有才push进结果数组
         const existedIndex = localConversationList.findIndex(element => {
           let flag = false
           if (Chat.isUserEqual(item.latestMessage, element.latestMessage)) {
@@ -375,22 +374,21 @@ const mutations = {
         })
         console.log('existedIndex', existedIndex)
         if (existedIndex >= 0) {
-          console.log(`${item.targetId}存在本地了`, '替换')
+          console.log(`本地会话列表存在${item.targetId}， push进新列表并删除换缓存列表中对应元素`, item)
           // localConversationList[existedIndex] = item
+          // 获取到的会话列表放到最前
+          newList.push(item)
           localConversationList.splice(existedIndex, 1)
         }
-        //  else {
-        //   localConversationList.push(item)
-        // }
       })
       newList = [...newList, ...localConversationList]
       console.log('本地有缓存：合并处理后的会话列表', newList)
-      localStorage.setItem('ryCSList', JSON.stringify(newList))
+      Chat.setStorageRyCSList(newList)
       state.onlineConversationData.list = newList
     } else {
       state.onlineConversationData.list = payload
       console.log('SET_ONLINE_CONVERSATIONLIST 的localStorage设置2')
-      localStorage.setItem('ryCSList', JSON.stringify(payload))
+      Chat.setStorageRyCSList(payload)
     }
 
     console.log('通过vuex获取并添加字段的会话列表', state.onlineConversationData)
