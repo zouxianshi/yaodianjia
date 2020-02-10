@@ -64,12 +64,12 @@
             @click.stop="forSearch()"
           >搜 索</el-button>
         </div>
-        <!-- <el-button
+        <el-button
           style="margin-left:20px;"
           type="primary"
           size="small"
           @click.stop="exportDisplayHandler(true)"
-        >批量导出</el-button> -->
+        >批量导出</el-button>
       </div>
     </div>
     <div class="table-panel">
@@ -197,7 +197,7 @@
         <el-select
           v-model="selectStore.storeName"
           filterable
-          placeholder="选择门店"
+          placeholder="选择商品类型"
           class="search"
           @change="selectChange"
         >
@@ -208,25 +208,34 @@
             :value="{ storeName: item.storeName, id: item.id }"
           />
         </el-select>
-        <el-select v-model="value" placeholder="请选择">
+        <el-select
+          v-model="selectDayModule"
+          placeholder="请选择时间"
+          @change="selectDayChange"
+        >
           <el-option-group
-            v-for="group in options"
-            :key="group.label"
-            :label="group.label"
+            v-for="(group, idx) in dayOptions"
+            :key="idx"
+            label=""
           >
             <el-option
-              v-for="item in group.options"
-              :key="item.value"
+              v-for="(item, index) in group.options"
+              :key="index"
               :label="item.label"
               :value="item.value"
+              :disabled="item.disabled"
             />
           </el-option-group>
         </el-select>
         <el-button
+          style="margin-left:20px;"
           type="primary"
           @click="updateOrderStatusService"
         >搜索</el-button>
-        <el-button @click="updateOrderStatusService">重置</el-button>
+        <el-button
+          style="margin-left:20px;"
+          @click="updateOrderStatusService"
+        >重置</el-button>
       </div>
     </el-dialog>
   </div>
@@ -251,7 +260,84 @@ export default {
       orderListData: [],
       totalCount: 0,
       loading: true,
-      exportDialogVisible: false
+      exportDialogVisible: false,
+      selectDayModule: '16',
+      dayOptions: [
+        {
+          label: '',
+          options: [
+            {
+              value: '16',
+              label: '当天'
+            },
+            {
+              value: '15',
+              label: '最近一周'
+            },
+            {
+              value: '14',
+              label: '最近一个月'
+            },
+            {
+              value: '13',
+              label: '最近三个月'
+            }
+          ]
+        },
+        {
+          label: '',
+          options: [
+            {
+              value: '1',
+              label: '一月'
+            },
+            {
+              value: '2',
+              label: '二月'
+            },
+            {
+              value: '3',
+              label: '三月'
+            },
+            {
+              value: '4',
+              label: '四月'
+            },
+            {
+              value: '5',
+              label: '五月'
+            },
+            {
+              value: '6',
+              label: '六月'
+            },
+            {
+              value: '7',
+              label: '七月'
+            },
+            {
+              value: '8',
+              label: '八月'
+            },
+            {
+              value: '9',
+              label: '九月'
+            },
+            {
+              value: '10',
+              label: '十月'
+            },
+            {
+              value: '11',
+              label: '十一月'
+            },
+            {
+              value: '12',
+              label: '十二月'
+            }
+          ]
+        }
+      ]
     }
   },
   watch: {
@@ -261,9 +347,122 @@ export default {
   },
   mounted() {
     this.getStoreListServie()
-    console.log(new Date().valueOf())
+    const d = new Date()
+    this.dayOptions[1].options.map(item => {
+      if (Number(item.value) > d.getMonth() + 1) {
+        item.disabled = true
+      }
+    })
+    this.getMonthDay(3)
   },
   methods: {
+    selectDayChange(e) {
+      console.log('selectDayChange __________________ : ', e)
+    },
+    /**
+     * 选择几月份
+     */
+    selectMouth(num) {
+      const date = new Date()
+      const year = date.getFullYear()
+      const mouthDayArray = [
+        31,
+        this.isLeapYear(year) ? 29 : 28,
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31
+      ]
+      return {
+        start: `${year}-${num}-01 00:00:00`,
+        end: `${year}-${num}-${mouthDayArray[num - 1]} 23:59:59`
+      }
+    },
+    /**
+     * 解析时间天数
+     */
+    getMonthDay(num) {
+      const date = new Date()
+      const valueOfDate = date.valueOf()
+      const nowTime = date
+        .toLocaleDateString()
+        .toString()
+        .split('/')
+        .join('-')
+      const year = date.getFullYear()
+      const mouth = date.getMonth() + 1
+      const h = date.getHours()
+      const m = date.getMinutes()
+      const s = date.getSeconds()
+      const mouthDayArray = [
+        31,
+        this.isLeapYear(year) ? 29 : 28,
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31
+      ]
+      const temp = []
+      for (let i = 1; i <= num; i++) {
+        if (mouth - i - 1 >= 0) {
+          temp.push(mouthDayArray[mouth - i - 1])
+        } else {
+          temp.push(mouthDayArray[12 + mouth - i - 1])
+        }
+      }
+      console.log(temp)
+      const sum = temp.reduce((x, y) => x + y)
+      const resultTime = new Date(valueOfDate - 86400 * 1000 * sum)
+        .toLocaleDateString()
+        .toString()
+        .split('/')
+        .join('-')
+      console.log('resultTime ___________________ : ', {
+        start: `${nowTime} ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${
+          s < 10 ? '0' + s : s
+        }`,
+        end: `${resultTime} ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${
+          s < 10 ? '0' + s : s
+        }`
+      })
+      return {
+        start: `${nowTime} ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${
+          s < 10 ? '0' + s : s
+        }`,
+        end: `${resultTime} ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${
+          s < 10 ? '0' + s : s
+        }`
+      }
+    },
+    /**
+     * 判断是否是闰年
+     */
+    isLeapYear(year) {
+      const cond1 = year % 4 === 0 // 条件1：年份必须要能被4整除
+      const cond2 = year % 100 !== 0 // 条件2：年份不能是整百数
+      const cond3 = year % 400 === 0 // 条件3：年份是400的倍数
+      // 当条件1和条件2同时成立时，就肯定是闰年，所以条件1和条件2之间为“与”的关系。
+      // 如果条件1和条件2不能同时成立，但如果条件3能成立，则仍然是闰年。所以条件3与前2项为“或”的关系。
+      // 所以得出判断闰年的表达式：
+      const cond = (cond1 && cond2) || cond3
+      if (cond) {
+        return true
+      } else {
+        return false
+      }
+    },
     selectChange(e) {
       this.selectStore = e
       this.getOrderListByTypeService()

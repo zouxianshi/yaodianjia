@@ -17,6 +17,7 @@ class DistributionService {
 
     _service.interceptors.request.use(
       config => {
+        console.log('interceptors _____________ config : ', config)
         if (store.getters.token) {
           config.headers['Authorization'] = getToken()
         }
@@ -162,6 +163,20 @@ class DistributionService {
           reject(err)
         })
     })
+  }
+  /**
+   * 导出报告
+   * @param {*} data
+   */
+  exportReport(data) {
+    return this.service('post', '/1.0/b/order/_export', data)
+  }
+  /**
+   * 查询报告
+   * @param {*} data
+   */
+  queryReport(data) {
+    return this.service('post', '/1.0/b/order/_query', data)
   }
   /**
    * 查询门店列表数据
