@@ -121,6 +121,7 @@
             </div>
           </template>
           <div class="con">应付总额：￥{{ detailsData.totalActualOrderAmount }}</div>
+          <div class="con">实付总额：￥{{ detailsData.actuallyPaid }}</div>
         </div>
         <div class="info-item">
           <div class="title">操作人信息</div>
