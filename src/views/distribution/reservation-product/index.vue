@@ -22,7 +22,7 @@
           width="102"
         >
           <template slot-scope="scope" style="text-align:center">
-            <img class="goods-logo" :src="showImg(scope.row.imgUrl)" alt="">
+            <img class="goods-logo" :src="showImgHandler(scope.row.imgUrl)" alt="">
           </template>
         </el-table-column>
         <el-table-column prop="name" label="商品信息" />

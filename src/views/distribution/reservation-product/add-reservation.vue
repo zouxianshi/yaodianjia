@@ -53,7 +53,7 @@
         :on-success="uploadSuccess"
         :show-file-list="false"
       >
-        <img v-if="form.imgUrl" :src="showImg(form.imgUrl)" class="avatar">
+        <img v-if="form.imgUrl" :src="showImgHandler(form.imgUrl)" class="avatar">
         <div v-else style="width:148px;height:148px;text-align:center;line-height:148px">
           <i class="el-icon-plus" />
         </div>

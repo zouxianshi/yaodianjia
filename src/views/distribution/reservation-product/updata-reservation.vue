@@ -53,7 +53,7 @@
         :on-success="uploadSuccess"
         :show-file-list="false"
       >
-        <img v-if="form.imgUrl" :src="showImg(form.imgUrl)" class="avatar">
+        <img v-if="form.imgUrl" :src="showImgHandler(form.imgUrl)" class="avatar">
         <i v-else class="el-icon-plus" />
       </el-upload>
       <p class="tips">1、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</p>
