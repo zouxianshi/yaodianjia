@@ -22,7 +22,7 @@
           width="102"
         >
           <template slot-scope="scope" style="text-align:center">
-            <img class="goods-logo" :src="showImg(scope.row.imgUrl)" alt="">
+            <img class="goods-logo" :src="showImgHandler(scope.row.imgUrl)" alt="">
           </template>
         </el-table-column>
         <el-table-column prop="name" label="商品信息" />
@@ -48,10 +48,11 @@
           width="160"
         >
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="updataProduct(scope.row.id)">编辑</el-button>
-            <el-button type="primary" size="mini" @click="changeProductStatus(scope.row.id,scope.row.status)">
+            <el-button class="caozuo" type="primary" size="mini" @click="updataProduct(scope.row.id)">编辑</el-button>
+            <el-button class="caozuo" type="primary" size="mini" @click="changeProductStatus(scope.row.id,scope.row.status)">
               {{ scope.row.status ==1 ? '下架':'上架' }}
             </el-button>
+            <el-button v-if="scope.row.status===0" class="caozuo" type="primary" size="mini" @click="deleteProduct(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -155,6 +156,32 @@ export default {
         this.getProductList()
       })
     },
+    // 删除商品
+    deleteProduct(ids) {
+      this.$confirm('此操作将删除该预约商品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var params = {
+          'ids': [
+            ids
+          ]
+        }
+        distributionService._deleteProduct(params).then(res => {
+          this.$message({
+            message: res.msg,
+            type: 'success'
+          })
+          this.getProductList()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
     // 多选切换
     handleSelectionChange(val) {
       this.batchIds = []
@@ -196,6 +223,9 @@ export default {
   }
   .page-box{
     height: 40px;line-height: 40px;margin-top: 21px;text-align: right
+  }
+  .caozuo{
+    margin-top: 10px
   }
 }
 </style>
