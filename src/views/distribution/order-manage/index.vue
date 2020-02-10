@@ -181,31 +181,30 @@
     >
       <div class="line">
         <el-select
-          v-model="selectStore.storeName"
+          v-model="selectDayStore.storeName"
           filterable
           placeholder="选择门店"
           class="search"
-          @change="selectChange"
+          @change="changeSelectDayStoreID"
         >
           <el-option
-            v-for="item in storeListData"
+            v-for="item in storeListDayData"
             :key="item.id"
             :label="item.storeName"
             :value="{ storeName: item.storeName, id: item.id }"
           />
         </el-select>
         <el-select
-          v-model="selectStore.storeName"
+          v-model="selectDayGoods.label"
           filterable
           placeholder="选择商品类型"
           class="search"
-          @change="selectChange"
         >
           <el-option
-            v-for="item in storeListData"
+            v-for="item in selectDayGoodsList"
             :key="item.id"
-            :label="item.storeName"
-            :value="{ storeName: item.storeName, id: item.id }"
+            :label="item.label"
+            :value="{ label: item.label, id: item.id }"
           />
         </el-select>
         <el-select
@@ -230,12 +229,39 @@
         <el-button
           style="margin-left:20px;"
           type="primary"
-          @click="updateOrderStatusService"
+          @click="searchDayReport"
         >搜索</el-button>
         <el-button
           style="margin-left:20px;"
-          @click="updateOrderStatusService"
+          @click="resetSelectReport"
         >重置</el-button>
+      </div>
+      <el-table
+        :data="exportList"
+        style="width: 100%;margin-top:20px;"
+        height="400"
+        border
+      >
+        <el-table-column prop="id" label="预约单编号" />
+        <el-table-column prop="productName" label="商品" />
+        <el-table-column prop="productCount" label="数量" />
+        <el-table-column label="预约人姓名/手机号/身份证号">
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.memberPersonName }} /
+              {{ scope.row.memberMobilePhone }} / {{ scope.row.memberPersonId }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="预约时间" />
+        <el-table-column prop="updateTime" label="领取时间" />
+      </el-table>
+      <div style="margin-top:20px;">
+        已筛选出{{ exportList.length }}条预约单，是否全部导出数据？
+      </div>
+      <div style="margin-top:20px;display:flex;justify-content: flex-end;">
+        <el-button @click.stop="exportDisplayHandler(false)">取消</el-button>
+        <el-button type="primary" @click="donwloadExcel">导出</el-button>
       </div>
     </el-dialog>
   </div>
@@ -249,7 +275,11 @@ export default {
   data() {
     return {
       storeListData: [],
+      storeListDayData: [],
       selectStore: { storeName: '全部', id: '' },
+      selectDayStore: { storeName: '全部', id: '' },
+      selectDayGoodsList: [{ label: '全部', id: '' }],
+      selectDayGoods: { label: '全部', id: '' },
       dialogVisible: false,
       dialogTitle: '',
       dialogContent: [],
@@ -262,6 +292,9 @@ export default {
       loading: true,
       exportDialogVisible: false,
       selectDayModule: '16',
+      selectResult: {},
+      selectDayStoreID: '',
+      exportExcel: null,
       dayOptions: [
         {
           label: '',
@@ -337,7 +370,8 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      exportList: []
     }
   },
   watch: {
@@ -356,8 +390,91 @@ export default {
     this.getMonthDay(3)
   },
   methods: {
+    changeSelectDayStoreID(e) {
+      console.log('selectDayStoreID _________________ : ', e)
+      this.selectDayStoreID = e.id
+    },
+    searchDayReport() {
+      this.queryReportService()
+    },
+    async queryReportService() {
+      const storeId = this.selectDayStoreID
+      const { data } = await DistributionService.queryReport(
+        Object.assign(this.selectResult, { storeId })
+      )
+      this.exportList = data
+      // this.exportReportService()
+    },
+    async exportReportService() {
+      console.log(
+        'exportReportService ________________________________________'
+      )
+      const storeId = this.selectDayStoreID
+      const res = await DistributionService.exportReport(
+        Object.assign(this.selectResult, {
+          storeId,
+          responsetype: 'arraybuffer'
+        })
+      )
+      this.exportExcel = res
+    },
+    resetSelectReport() {
+      this.selectDayModule = '16'
+      this.selectDayStore = { storeName: '全部', id: '' }
+      this.selectDayStoreID = ''
+    },
+    donwloadExcel() {
+      const content = this.exportExcel
+      const blob = new Blob([content], { type: 'application/ms-excel' })
+
+      const fileName = 'export.xls'
+      if ('download' in document.createElement('a')) {
+        // 非IE下载
+        const elink = document.createElement('a')
+        elink.download = fileName
+        elink.style.display = 'none'
+        elink.href = URL.createObjectURL(blob)
+        document.body.appendChild(elink)
+        elink.click()
+        URL.revokeObjectURL(elink.href) // 释放URL 对象
+        document.body.removeChild(elink)
+      } else {
+        // IE10+下载
+        navigator.msSaveBlob(blob, fileName)
+      }
+    },
     selectDayChange(e) {
-      console.log('selectDayChange __________________ : ', e)
+      // 选择月份
+      console.log(e)
+      if (Number(e) <= 12) {
+        this.selectResult = this.selectMouth(e)
+      } else {
+        if (Number(e) === 13) {
+          // 3个月
+          this.selectResult = this.getMonthDay(3)
+        } else if (Number(e) === 14) {
+          // 1个月
+          this.selectResult = this.getMonthDay(1)
+        } else if (Number(e) === 15) {
+          // 一周\
+          this.selectResult = this.getDayWeek()
+        } else {
+          // 当天
+          const date = new Date()
+          // const valueOfDate = date.valueOf()
+          const nowTime = date
+            .toLocaleDateString()
+            .toString()
+            .split('/')
+            .join('-')
+
+          this.selectResult = {
+            startDate: `${nowTime} 00:00:00`,
+            endDate: `${nowTime} 23:59:59`
+          }
+        }
+      }
+      console.log('Result _________________________ : ', this.selectResult)
     },
     /**
      * 选择几月份
@@ -380,8 +497,26 @@ export default {
         31
       ]
       return {
-        start: `${year}-${num}-01 00:00:00`,
-        end: `${year}-${num}-${mouthDayArray[num - 1]} 23:59:59`
+        startDate: `${year}-${num}-${mouthDayArray[num - 1]} 00:00:00`,
+        endDate: `${year}-${num}-01 23:59:59`
+      }
+    },
+    getDayWeek() {
+      const date = new Date()
+      const valueOfDate = date.valueOf()
+      const nowTime = date
+        .toLocaleDateString()
+        .toString()
+        .split('/')
+        .join('-')
+      const resultTime = new Date(valueOfDate - 86400 * 1000 * 7)
+        .toLocaleDateString()
+        .toString()
+        .split('/')
+        .join('-')
+      return {
+        startDate: `${resultTime} 00:00:00`,
+        endDate: `${nowTime} 23:59:59`
       }
     },
     /**
@@ -430,20 +565,16 @@ export default {
         .split('/')
         .join('-')
       console.log('resultTime ___________________ : ', {
-        start: `${nowTime} ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${
-          s < 10 ? '0' + s : s
-        }`,
-        end: `${resultTime} ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${
-          s < 10 ? '0' + s : s
-        }`
+        startDate: `${nowTime} ${h < 10 ? '0' + h : h}:${
+          m < 10 ? '0' + m : m
+        }:${s < 10 ? '0' + s : s}`,
+        endDate: `${resultTime} ${h < 10 ? '0' + h : h}:${
+          m < 10 ? '0' + m : m
+        }:${s < 10 ? '0' + s : s}`
       })
       return {
-        start: `${nowTime} ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${
-          s < 10 ? '0' + s : s
-        }`,
-        end: `${resultTime} ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${
-          s < 10 ? '0' + s : s
-        }`
+        startDate: `${resultTime} 00:00:00`,
+        endDate: `${nowTime} 23:59:59`
       }
     },
     /**
@@ -467,6 +598,10 @@ export default {
       this.selectStore = e
       this.getOrderListByTypeService()
     },
+    selectDayStoreChange(e) {
+      this.selectDayStore = e
+      // this.getOrderListByTypeService()
+    },
     /*  */
     handleSizeChange(e) {
       this.pageSize = e
@@ -488,6 +623,9 @@ export default {
       })
       if (code === '10000') {
         this.storeListData = [{ storeName: '全部', id: '' }].concat(data.data)
+        this.storeListDayData = [{ storeName: '全部', id: '' }].concat(
+          data.data
+        )
 
         this.getOrderListByTypeService()
       }
@@ -573,6 +711,7 @@ export default {
     },
     exportDisplayHandler(bol) {
       this.exportDialogVisible = bol
+      if (bol) this.queryReportService()
     }
   }
 }

@@ -17,7 +17,12 @@ class DistributionService {
 
     _service.interceptors.request.use(
       config => {
-        console.log('interceptors _____________ config : ', config)
+        if (config.data.responsetype === 'arraybuffer') {
+          // config.header.responseType = config.data.responseType
+          config.headers['responseType'] = config.data.responsetype
+          delete config.data.responsetype
+          console.log('interceptors _____________ config : ', config.data)
+        }
         if (store.getters.token) {
           config.headers['Authorization'] = getToken()
         }
@@ -65,8 +70,12 @@ class DistributionService {
     // response interceptor
     _service.interceptors.response.use(
       response => {
+        console.log(
+          'response ______________________ : ',
+          response.config.headers.responseType === 'arraybuffer'
+        )
         const res = response.data
-        if (isExport) {
+        if (isExport || response.config.headers.responseType === 'arraybuffer') {
           // 如果是数据导出，直接pass
           return res
         }
