@@ -718,6 +718,8 @@ export default {
   },
   created() {
     if (this.$route.query.id) { // 如果是编辑
+      console.log('加载中...')
+      this.basicLoading = true
       this.getTypeListData().then(res => {
         this._loadBasicInfo()
       }).catch(_ => {
@@ -796,7 +798,6 @@ export default {
       })
     },
     _loadBasicInfo() { // 加载基本信息
-      this.basicLoading = true
       this.subLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
