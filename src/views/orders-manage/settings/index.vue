@@ -102,9 +102,16 @@ export default {
         })
         return
       }
-      if (this.settingData.orderCancelTime > 99999999) {
+      if (this.settingData.orderCancelTime < 5) {
         this.$message({
-          message: '最大值不能超过99999999',
+          message: '最小值不能小于5',
+          type: 'error'
+        })
+        return
+      }
+      if (this.settingData.orderCancelTime > 30) {
+        this.$message({
+          message: '最大值不能超过30',
           type: 'error'
         })
         return

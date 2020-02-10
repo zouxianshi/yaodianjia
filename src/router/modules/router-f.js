@@ -3,38 +3,41 @@ const router = [
   {
     path: '/orders-manage',
     component: Layout,
-    redirect: '/orders-manage/all-orders',
+    redirect: '/orders-manage/list',
     name: 'orders-manage',
     meta: {
       title: '订单中心',
-      icon: 'goods'
+      icon: 'goods',
+      auth: 'order'
     },
     alwaysShow: true,
     children: [
       {
-        path: 'all-orders/list',
-        component: () => import('@/views/orders-manage/all-orders/list'),
-        name: 'orders-manage',
+        path: 'list',
+        component: () => import('@/views/orders-manage/list'),
+        name: 'orders-manage-list',
         meta: {
           title: '所有订单',
-          noCache: true
+          noCache: true,
+          auth: 'order.order-all'
         }
       }, {
-        path: 'all-orders/details',
-        component: () => import('@/views/orders-manage/all-orders/details'),
-        name: 'orders-manage',
+        path: `details`,
+        component: () => import('@/views/orders-manage/details'),
+        name: 'orders-manage-details',
         meta: {
           title: '订单详情',
-          noCache: true,
-          activeMenu: '/orders-manage/all-orders/list'
+          // noCache: true,
+          activeMenu: '/orders-manage/list'
         }
       }, {
         path: 'settings',
         component: () => import('@/views/orders-manage/settings'),
-        name: 'orders-manage',
+        name: 'orders-manage-settings',
         meta: {
           title: '订单设置',
-          noCache: true
+          noCache: true,
+          auth: 'order.order-set'
         }
       }
     ]

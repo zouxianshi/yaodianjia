@@ -329,7 +329,7 @@ export default {
       'trailing': true
     }),
     onEdit(id) {
-      window.location.href = window.location.origin + '/merchant/#/institution/store-edit?id=' + id
+      window.open(window.location.origin + '/merchant/#/institution/store-edit?id=' + id)
     },
     onDialogSearch() {
       this.diaLogSearchParams.currentPage = 1

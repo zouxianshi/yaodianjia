@@ -53,7 +53,7 @@
           <div class="search-item">
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
-            <el-button v-if="listQuery.auditStatus==='3'||listQuery.auditStatus==='2'||listQuery.auditStatus==='0'" type="danger" size="small" @click="handleBatchDel">删除</el-button>
+            <el-button v-if="listQuery.auditStatus==='3'||listQuery.auditStatus==='2'||listQuery.auditStatus==='0'||listQuery.auditStatus==='-1'" type="danger" size="small" @click="handleBatchDel">删除</el-button>
           </div>
         </div>
       </section>

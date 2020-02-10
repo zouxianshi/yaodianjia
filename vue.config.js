@@ -63,9 +63,20 @@ module.exports = {
         // target: `http://middle.test.ydjia.cn/businesses-gateway`,
         target: `http://middle.test.ydjia.cn/businesses-gateway`,
         changeOrigin: true,
+        logLevel: 'debug',
         pathRewrite: {
           // '^/api': `http://middle.test.ydjia.cn`
           '^/api': `http://middle.test.ydjia.cn`
+        }
+      },
+      '/hss': {
+        // target: `http://middle.test.ydjia.cn/businesses-gateway`,
+        target: `https://middle.dev.ydjia.cn/businesses-gateway/mask`,
+        // target: `https://hudit-cloud.dev.ydjia.cn/businesses-gateway`,
+        changeOrigin: true,
+        pathRewrite: {
+          // '^/api': `http://middle.test.ydjia.cn`
+          '^/hss': ``
         }
       }
     }
@@ -120,6 +131,7 @@ module.exports = {
     ]
   },
   chainWebpack(config) {
+    config.output.filename('[name].[hash].js').end()
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 

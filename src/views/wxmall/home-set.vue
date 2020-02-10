@@ -408,6 +408,7 @@
         <div class="set-module module-app-title" :class="{'active': xFormSet.formName==='xForm1'}">
           <div class="m-header">
             <span class="text">主页名称</span>
+            <i class="el-icon-close icon-close" title="关闭" @click.stop="closeSet()" />
           </div>
           <div class="m-body">
             <el-form ref="xForm1" class="form-title" :rules="xRules1" :model="xForm1">
@@ -440,6 +441,7 @@
             <span v-else-if="xFormSet.position === 2" class="text">右1图片</span>
             <span v-else-if="xFormSet.position === 3" class="text">右2图片</span>
             <span v-else-if="xFormSet.position === 4" class="text">右3图片</span>
+            <i class="el-icon-close icon-close" title="关闭" @click.stop="closeSet()" />
           </div>
           <div v-loading="uploadLoading" class="m-body">
             <el-form ref="xForm4" :rules="xRules4" :model="xForm4">
@@ -491,6 +493,7 @@
         <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm5'}" style="top: 1020px">
           <div class="m-header">
             <span class="text">分组主图</span>
+            <i class="el-icon-close icon-close" title="关闭" @click.stop="closeSet()" />
           </div>
           <div class="m-body">
             <el-form ref="xForm5" :rules="xRules5" :model="xForm5">
@@ -540,7 +543,7 @@
         <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm6'}" style="top: 1114px">
           <div class="m-header">
             <span class="text">分组商品列表1</span>
-            <!-- <span class="text">右1图片</span> -->
+            <i class="el-icon-close icon-close" title="关闭" @click.stop="closeSet()" />
           </div>
           <div class="m-body">
             <div class="goods_box">
@@ -586,6 +589,7 @@
         <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm7'}" style="top: 1300px">
           <div class="m-header">
             <span class="text">分组主图2</span>
+            <i class="el-icon-close icon-close" title="关闭" @click.stop="closeSet()" />
           </div>
           <div class="m-body">
             <el-form ref="xForm7" :rules="xRules7" :model="xForm7">
@@ -634,7 +638,7 @@
         <div v-loading="uploadLoading" class="set-module module-activity" :class="{'active': xFormSet.formName==='xForm8'}" style="top: 1310px">
           <div class="m-header">
             <span class="text">分组商品列表2</span>
-            <!-- <span class="text">右1图片</span> -->
+            <i class="el-icon-close icon-close" title="关闭" @click.stop="closeSet()" />
           </div>
           <div class="m-body">
             <div class="goods_box">
@@ -921,6 +925,12 @@ export default {
           this.$message.error(err)
         })
     },
+    closeSet() {
+      this.xFormSet = {
+        formName: '',
+        position: ''
+      }
+    },
     setEdit(formName, position) {
       if (!this.hasCenterStore) {
         this.toSetCenterStore()
@@ -1029,6 +1039,11 @@ export default {
     submitSettings() {
       if (!this.hasCenterStore) {
         this.toSetCenterStore()
+        return
+      }
+      console.log(this.xFormSet)
+      if (this.xFormSet.formName && this.xFormSet.formName !== '') {
+        this.$message.warning('您还有数据没提交')
         return
       }
       let ret = []
@@ -2210,6 +2225,7 @@ export default {
     }
     .m-header {
       height: 40px;
+      position: relative;
       line-height: 40px;
       padding-left: 20px;
       background-color: #efefef;
@@ -2217,6 +2233,14 @@ export default {
         font-size: 14px;
         color: #333;
         font-weight: bold;
+      }
+      .icon-close{
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        font-size: 18px;
+        color: #999;
+        cursor: pointer;
       }
     }
     .m-body {

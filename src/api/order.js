@@ -116,6 +116,14 @@ export function getOrderDetail(data) {
   })
 }
 
+// 补推到ERP
+export function setPushErp(orderId) {
+  return request({
+    url: `${config.merGoods}/1.0/order-info/pushMq/${orderId}`,
+    method: 'get'
+  })
+}
+
 // 获取商家订单配置
 export function getOrderSetUp(mercode) {
   return request({
