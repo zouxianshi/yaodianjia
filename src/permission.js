@@ -7,7 +7,7 @@ import getPageTitle from '@/utils/get-page-title'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 import { MC } from '@merchant/commons'
 const whiteList = ['/login', '/check'] // no redirect whitelist
-
+import ps from '@/layout/psHandler'
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
@@ -37,19 +37,15 @@ router.beforeEach(async(to, from, next) => {
           // 获取用户信息
           // const { resList } = await store.dispatch('user/getInfo')
           await store.dispatch('user/getInfo')
-          // if (to.path === '/403' || to.path === '/home') {
-          //   if (resList.length !== 0) {
-          //     const accessRoutes = await store.dispatch('permission/generateRoutes', resList)
-          //     router.addRoutes(accessRoutes)
-          //   }
-          //   next()
-          // } else if (resList.length === 0) {
-          //   next('/home')
-          // } else {
-          //   const accessRoutes = await store.dispatch('permission/generateRoutes', resList)
-          //   router.addRoutes(accessRoutes)
-          next({ ...to, replace: true })
-          // }
+          if (to.meta.auth) {
+            if (ps.get(to.meta.auth)) {
+              next({ ...to, replace: true })
+            } else {
+              next('/403')
+            }
+          } else {
+            next({ ...to, replace: true })
+          }
         } catch (error) {
           if (error.code && error.code === '50000') {
             setTimeout(() => {

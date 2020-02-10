@@ -7,7 +7,7 @@
 
 <script>
 import CustomerService from '@/api/customer-service'
-import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 export default {
@@ -24,7 +24,15 @@ export default {
       'hasNewMsg'
     ])
   },
+  watch: {
+    hasNewMsg: {
+      handler(value) {
+        console.log('ry组件监听到hasNewMsg改变', value)
+      }
+    }
+  },
   created() {
+    console.log('消息图标组件, created', this.hasNewMsg)
     const _this = this
     this.querySupportStaffById()
       .then(() => {
@@ -192,7 +200,6 @@ export default {
       })
   },
   methods: {
-    ...mapActions({}),
     ...mapMutations({
       addMsgToOnlineCurUserMsgList:
           'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
@@ -334,13 +341,6 @@ export default {
       } else {
         // 浏览器不支持 WebSocket
         console.error('您的浏览器不支持 WebSocket!')
-      }
-    }
-  },
-  watch: {
-    hasNewMsg: {
-      handler(value) {
-        console.log('ry组件监听到hasNewMsg改变', value)
       }
     }
   }
