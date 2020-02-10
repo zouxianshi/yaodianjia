@@ -95,7 +95,11 @@
     height: 72px;position: relative;"
           >
             <img
-              :src="showImg(dialogContent[0] && dialogContent[0].productImgUrl)"
+              :src="
+                showImgHandler(
+                  dialogContent[0] && dialogContent[0].productImgUrl
+                )
+              "
               style="width: 72px;
     height: 72px;z-index:2;position: absolute;"
             >
