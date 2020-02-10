@@ -52,7 +52,7 @@
             <el-button class="caozuo" type="primary" size="mini" @click="changeProductStatus(scope.row.id,scope.row.status)">
               {{ scope.row.status ==1 ? '下架':'上架' }}
             </el-button>
-            <el-button class="caozuo" type="primary" size="mini" @click="deleteProduct(scope.row.id)">删除</el-button>
+            <el-button v-if="scope.row.status===0" class="caozuo" type="primary" size="mini" @click="deleteProduct(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
