@@ -158,7 +158,8 @@ export default {
         'name': data.name,
         'unit': data.unit,
         'price': data.price,
-        'status': data.status
+        'status': data.status,
+        'deliveryTime': data.deliveryTime
       }
       this.oldInventory = this.form.inventory
       console.log(this.oldInventory)
