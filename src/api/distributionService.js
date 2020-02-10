@@ -255,5 +255,9 @@ class DistributionService {
   _batchProduct(data) {
     return this.service('post', `/1.0/b/product/_batch`, data)
   }
+  // 商品删除
+  _deleteProduct(data) {
+    return this.service('post', `/1.0/b/product/_delete`, data)
+  }
 }
 export default new DistributionService()
