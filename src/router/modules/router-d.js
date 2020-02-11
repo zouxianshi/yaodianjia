@@ -85,6 +85,17 @@ const router = [
         }
       },
       {
+        path: 'store-reservation-setting',
+        component: () =>
+          import(
+            '@/views/distribution/reservation-product/store-reservation-setting.vue'
+          ),
+        name: 'updata-point',
+        meta: {
+          title: '门店预约量设置'
+        }
+      },
+      {
         path: 'pickup-point',
         component: () => import('@/views/distribution/pickup-point/index.vue'),
         name: 'pickup-point',
