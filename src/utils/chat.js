@@ -365,6 +365,31 @@ class Chat {
       }
     })
   }
+
+  // 获取当前客服的本地缓存在线咨询会话列表
+  getStorageRyCSList() {
+    const userId = store.state.user.userId
+    const merCode = store.state.user.merCode
+    console.log('获取本地会话列表', merCode, userId)
+    const storageData = localStorage.getItem(`RyCSListM${merCode}U${userId}`)
+    if (storageData && Array.isArray(JSON.parse(storageData))) {
+      return JSON.parse(storageData)
+    } else {
+      return null
+    }
+  }
+
+  // 设置当前客服的本地缓存在线咨询会话列表
+  setStorageRyCSList(list) {
+    const userId = store.state.user.userId
+    const merCode = store.state.user.merCode
+    console.log('缓存会话列表至本地', merCode, userId, list)
+    if (Array.isArray(list)) {
+      localStorage.setItem(`RyCSListM${merCode}U${userId}`, JSON.stringify(list))
+    } else {
+      console.error('setStorageRyCSList error: 非数组', list)
+    }
+  }
 }
 
 export default new Chat()
