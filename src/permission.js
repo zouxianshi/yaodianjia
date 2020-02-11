@@ -36,15 +36,19 @@ router.beforeEach(async(to, from, next) => {
         try {
           // 获取用户信息
           // const { resList } = await store.dispatch('user/getInfo')
-          await store.dispatch('user/getInfo')
-          if (to.meta.auth) {
-            if (ps.get(to.meta.auth)) {
-              next({ ...to, replace: true })
+          const { resList } = await store.dispatch('user/getInfo')
+          if (resList.length) {
+            if (to.meta.auth) {
+              if (ps.get(to.meta.auth)) {
+                next({ ...to, replace: true })
+              } else {
+                next('/403')
+              }
             } else {
-              next('/403')
+              next({ ...to, replace: true })
             }
           } else {
-            next({ ...to, replace: true })
+            next('/home')
           }
         } catch (error) {
           if (error.code && error.code === '50000') {
