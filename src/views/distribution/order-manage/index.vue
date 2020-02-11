@@ -506,8 +506,8 @@ export default {
         31
       ]
       return {
-        startDate: `${year}-${num}-${mouthDayArray[num - 1]} 00:00:00`,
-        endDate: `${year}-${num}-01 23:59:59`
+        startDate: `${year}-${num}-01 00:00:00`,
+        endDate: `${year}-${num}-${mouthDayArray[num - 1]} 23:59:59`
       }
     },
     getDayWeek() {
