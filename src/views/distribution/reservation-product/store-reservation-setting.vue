@@ -13,7 +13,7 @@
         placeholder="请输入城市"
       />
       <el-button type="primary" plain @click="getStoreInventory()">查询</el-button>
-      <el-button type="primary" plain>清空</el-button>
+      <el-button type="primary" plain @click="getDefaultStoreInventory()">清空</el-button>
     </div>
     <p class="search-tips">您可以通过门店名称或编号查询门店，也可以选择门店所在城市查询多个门店</p>
     <el-table :data="tableData" border style="width: 100%">
@@ -68,6 +68,18 @@ export default {
     this.getStoreInventory()
   },
   methods: {
+    // 重置
+    getDefaultStoreInventory() {
+      this.form = {
+        'city': '',
+        'storeName': ''
+      }
+      this.pageInfo = {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
+      }
+    },
     // 保存门店库存
     setStoreInventory(data) {
       var parmes = {}
@@ -82,7 +94,11 @@ export default {
         parmes.id = data.id
       }
       distributionService.setStoreInventory(parmes).then(res => {
-        console.log(res)
+        this.$message({
+          message: res.msg,
+          type: 'success'
+        })
+        this.getStoreInventory()
       })
     },
     // 获取门店商品库存
