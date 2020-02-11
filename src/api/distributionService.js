@@ -17,12 +17,25 @@ class DistributionService {
 
     _service.interceptors.request.use(
       config => {
+        if (
+          config.data &&
+          config.data.responsetype &&
+          (config.data.responsetype === 'arraybuffer' ||
+            config.data.responsetype === 'blob')
+        ) {
+          // config.header.responseType = config.data.responseType
+          config['responseType'] = config.data.responsetype
+          delete config.data.responsetype
+
+          console.log('interceptors _____________ config : ', config.data)
+        }
         if (store.getters.token) {
           config.headers['Authorization'] = getToken()
         }
         if (store.getters.name) {
           config.headers['userName'] = store.getters.name
         }
+        config.headers['merCode'] = store.state.user.merCode
         isExport = config.isExport || false
         const authParams = {
           // 公共参数
@@ -65,7 +78,12 @@ class DistributionService {
     _service.interceptors.response.use(
       response => {
         const res = response.data
-        if (isExport) {
+        if (
+          isExport ||
+          (response.config.responseType &&
+            (response.config.responseType === 'arraybuffer' ||
+              response.config.responseType === 'blob'))
+        ) {
           // 如果是数据导出，直接pass
           return res
         }
@@ -162,6 +180,20 @@ class DistributionService {
           reject(err)
         })
     })
+  }
+  /**
+   * 导出报告
+   * @param {*} data
+   */
+  exportReport(data) {
+    return this.service('post', '/1.0/b/order/_export', data)
+  }
+  /**
+   * 查询报告
+   * @param {*} data
+   */
+  queryReport(data) {
+    return this.service('post', '/1.0/b/order/_query', data)
   }
   /**
    * 查询门店列表数据
