@@ -9,7 +9,7 @@
       <div class="table-column flex-2">预约人</div>
       <div class="table-column flex-2">预约时间</div>
       <div class="table-column flex-1">订单状态</div>
-      <div class="table-column flex-2">提货门店地址</div>
+      <div class="table-column flex-2">提货门店/地址</div>
     </div>
     <div v-if="tableData.length > 0" class="table-container">
       <div v-for="item in tableData" :key="item.id" class="table-content">
@@ -82,7 +82,7 @@
             >确认核销</el-button>
           </div>
           <div class="table-column content-center flex-2">
-            {{ item.address }}
+            {{ item.storeName }} / {{ item.address }}
           </div>
         </div>
       </div>
