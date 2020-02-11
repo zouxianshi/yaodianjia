@@ -52,6 +52,31 @@
         </div>
       </div>
     </div>
+
+    <div class="module" style="border:0;">
+      <div class="title">规则设置</div>
+      <div class="content">
+        <div class="panel column">
+          <div class="row">
+            <div class="tips">规则设置：顾客收到领取通知后</div>
+            <el-input v-model="ruledays" class="rule-input" maxlength="3" />
+            <div class="tips">
+              天未前往线下进行购买取货，预约单将自动取消作废
+            </div>
+          </div>
+          <div
+            class="row"
+            style="width: 100%;justify-content: flex-end;margin-top:10px;"
+          >
+            <el-button
+              class="copy"
+              type="primary"
+              @click="setOrderBeyondTimeService"
+            >确认设置</el-button>
+          </div>
+        </div>
+      </div>
+    </div>
     <el-dialog append-to-body title="修改商户名称" :visible.sync="updateDialog">
       <el-input
         v-model="changeStoreName"
@@ -87,6 +112,7 @@ export default {
       qrCode: '',
       getLoading: false,
       changeStoreName: '',
+      ruledays: '',
       updateDialog: false,
       loading: true
     }
@@ -94,6 +120,13 @@ export default {
   watch: {
     changeStoreName(newValue) {
       this.changeStoreName = newValue
+    },
+    ruledays(newValue) {
+      if (/^[0-9]*$/.test(newValue)) {
+        this.ruledays = newValue
+      } else {
+        this.ruledays = ''
+      }
     }
   },
   mounted() {
@@ -130,6 +163,12 @@ export default {
     hiddenUpdateDialog() {
       this.updateDialog = false
     },
+    async setOrderBeyondTimeService() {
+      const { code } = await DistributionService.setOrderBeyondTime({
+        beyondTime: this.ruledays === '' ? 0 : Number(this.ruledays)
+      })
+      if (code === '10000') { this.$message({ type: 'success', message: '设置成功 !' }) }
+    },
     async updateStoreNameService() {
       const { code } = await DistributionService.updateStoreName(
         this.changeStoreName
@@ -151,26 +190,48 @@ export default {
   margin-bottom: 30px;
 }
 .module {
-  padding: 30px 69px;
+  padding: 30px 69px 50px 69px;
   display: flex;
   flex-direction: column;
+  border-bottom: 1px solid rgba(151, 151, 151, 0.3);
   .title {
     font-size: 16px;
     color: #000;
+  }
+  .right-items {
+    display: flex;
+    justify-content: flex-end;
   }
   .content {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
+
     .panel {
       display: flex;
       flex-direction: row;
       align-items: center;
       margin-top: 20px;
+
+      .row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+      }
+      &.column {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+      }
       .tips {
         color: #000000;
         font-size: 14px;
+      }
+      .rule-input {
+        width: 80px;
+        margin: 0 10px;
       }
       .txt {
         width: 360px;

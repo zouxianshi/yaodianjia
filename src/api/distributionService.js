@@ -182,6 +182,14 @@ class DistributionService {
     })
   }
   /**
+   * 订单超时时间设置
+   * @param {*} data
+   */
+  setOrderBeyondTime(data) {
+    const params = Object.assign({ memberCode: store.state.user.merCode }, data)
+    return this.service('post', '/1.0/b/wxutils/_updateBeyondTime', params)
+  }
+  /**
    * 导出报告
    * @param {*} data
    */
