@@ -10,7 +10,11 @@
           <el-input v-model="form.brandName" maxlength="99" />
         </el-form-item>
         <el-form-item label="单位：" prop="unit">
-          <el-select v-model="form.unit" style="width:200px" placeholder="请选择单位">
+          <el-select
+            v-model="form.unit"
+            style="width:200px"
+            placeholder="请选择单位"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -20,26 +24,60 @@
           </el-select>
         </el-form-item>
         <el-form-item label="标签价格：" prop="price">
-          <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
+          <el-input
+            v-model="form.price"
+            onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
+            maxlength="17"
+          />
         </el-form-item>
         <el-form-item label="可预约总量：" prop="inventory">
-          <el-input v-model="form.inventory" style="width:200px" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
-          <el-button class="set-store" type="primary" @click="goToSetting()">设置门店最大可预约总量</el-button>
+          <el-input
+            v-model="form.inventory"
+            style="width:200px"
+            onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
+            maxlength="10"
+          />
+          <el-button
+            class="set-store"
+            type="primary"
+            @click="goToSetting()"
+          >设置门店最大可预约总量</el-button>
         </el-form-item>
         <el-form-item label="预计到货时长：" prop="deliveryTime">
-          <el-input v-model="form.deliveryTime" style="width:60px" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
-          &emsp;天<span class="tips">&emsp;&emsp;预计到货时间仅供用户参考，以实际门店到货</span>
+          <el-input
+            v-model="form.deliveryTime"
+            style="width:60px"
+            onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
+            maxlength="10"
+          />
+          &emsp;天<span
+            class="tips"
+          >&emsp;&emsp;预计到货时间仅供用户参考，以实际门店到货</span>
         </el-form-item>
       </el-form>
     </div>
     <div class="product-rules">
-      <h4>预约规则<span class="rule-tips">（如无需设置限购条件，请填写0）</span></h4>
+      <h4>
+        预约规则<span class="rule-tips">（如无需设置限购条件，请填写0）</span>
+      </h4>
       <el-form :model="form" label-width="100px" class="demo-form-inline">
         <el-form-item label="限购规则：">
           每人&emsp;
-          <el-input v-model="form.daysPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="daysPerMember" />
+          <el-input
+            v-model="form.daysPerMember"
+            onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
+            maxlength="10"
+            class="inline-input"
+            prop="daysPerMember"
+          />
           &emsp;天内限购&emsp;
-          <el-input v-model="form.countPerMember" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" class="inline-input" prop="countPerMember" />
+          <el-input
+            v-model="form.countPerMember"
+            onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
+            maxlength="10"
+            class="inline-input"
+            prop="countPerMember"
+          />
           &emsp;
         </el-form-item>
       </el-form>
@@ -54,11 +92,17 @@
         :on-success="uploadSuccess"
         :show-file-list="false"
       >
-        <img v-if="form.imgUrl" :src="showImgHandler(form.imgUrl)" class="avatar">
+        <img
+          v-if="form.imgUrl"
+          :src="showImgHandler(form.imgUrl)"
+          class="avatar"
+        >
         <i v-else class="el-icon-plus" />
       </el-upload>
       <p class="tips">1、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</p>
-      <p class="tips">2、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。</p>
+      <p class="tips">
+        2、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。
+      </p>
       <p class="tips">3、图片内容展示方向，应始终保持文字正向。</p>
     </div>
     <div class="submit-box">
@@ -95,15 +139,15 @@ export default {
     return {
       oldInventory: 0,
       form: {
-        'brandName': '',
-        'daysPerMember': '',
-        'imgUrl': '',
-        'inventory': '',
-        'countPerMember': '',
-        'name': '',
-        'unit': '',
-        'price': '',
-        'status': ''
+        brandName: '',
+        daysPerMember: '',
+        imgUrl: '',
+        inventory: '',
+        countPerMember: '',
+        name: '',
+        unit: '',
+        price: '',
+        status: ''
       },
       options: [
         { value: '个', label: '个' },
@@ -113,21 +157,11 @@ export default {
         { value: '件', label: '件' }
       ],
       rules: {
-        name: [
-          { required: true, message: '请输入商品名称', trigger: 'blur' }
-        ],
-        brandName: [
-          { required: true, message: '请输入品牌', trigger: 'blur' }
-        ],
-        price: [
-          { validator: checkPrice, trigger: 'blur' }
-        ],
-        unit: [
-          { required: true, message: '请选择单位', trigger: 'blur' }
-        ],
-        deliveryTime: [
-          { validator: checkDeliveryTime, trigger: 'blur' }
-        ]
+        name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+        brandName: [{ required: true, message: '请输入品牌', trigger: 'blur' }],
+        price: [{ validator: checkPrice, trigger: 'blur' }],
+        unit: [{ required: true, message: '请选择单位', trigger: 'blur' }],
+        deliveryTime: [{ validator: checkDeliveryTime, trigger: 'blur' }]
       },
       dialogImageUrl: '',
       dialogVisible: false
@@ -136,12 +170,10 @@ export default {
   computed: {
     ...mapGetters(['merCode', 'name', 'token']),
     headers() {
-      return { Authorization: this.token }
+      return { Authorization: this.token, merCode: this.merCode }
     },
     upLoadUrl() {
-      return `${this.uploadFileURL}${
-        config.mask
-      }/1.0/file/_uploadImg?merCode=${this.merCode}`
+      return `${this.uploadFileURL}${config.mask}/1.0/file/_uploadImg?merCode=${this.merCode}`
     },
     ids() {
       return this.$route.query.id
@@ -151,16 +183,16 @@ export default {
     distributionService.getProduct(this.ids).then(res => {
       var data = res.data
       this.form = {
-        'brandName': data.brandName,
-        'daysPerMember': data.daysPerMember,
-        'imgUrl': data.imgUrl,
-        'inventory': data.inventory,
-        'countPerMember': data.countPerMember,
-        'name': data.name,
-        'unit': data.unit,
-        'price': data.price,
-        'status': data.status,
-        'deliveryTime': data.deliveryTime
+        brandName: data.brandName,
+        daysPerMember: data.daysPerMember,
+        imgUrl: data.imgUrl,
+        inventory: data.inventory,
+        countPerMember: data.countPerMember,
+        name: data.name,
+        unit: data.unit,
+        price: data.price,
+        status: data.status,
+        deliveryTime: data.deliveryTime
       }
       this.oldInventory = this.form.inventory
     })
@@ -220,14 +252,17 @@ export default {
           type: 'error'
         })
         return
-      } else if (isNumber(this.form.daysPerMember) || isNumber(this.form.countPerMember)) {
+      } else if (
+        isNumber(this.form.daysPerMember) ||
+        isNumber(this.form.countPerMember)
+      ) {
         this.$message({
           message: '限购规则中天数和数量为正整数。',
           type: 'error'
         })
         return
       }
-      this.$refs['form'].validate((flag) => {
+      this.$refs['form'].validate(flag => {
         if (flag) {
           var params = {}
           params = JSON.parse(JSON.stringify(this.form))
@@ -252,38 +287,49 @@ export default {
 </script>
 <style lang="scss" scoped>
 .add {
-  padding: 10px 61px;height: calc(100vh - 158px);overflow-y: scroll;
-  .product-img, .product-info, .product-rules{
+  padding: 10px 61px;
+  height: calc(100vh - 158px);
+  overflow-y: scroll;
+  .product-img,
+  .product-info,
+  .product-rules {
     padding: 20px 0;
-    form{
-      padding-left: 15%; width:80%;
-      .inline-input{
-          width: 80px ;
+    form {
+      padding-left: 15%;
+      width: 80%;
+      .inline-input {
+        width: 80px;
       }
     }
-    h4{
-      height: 30px;line-height: 30px;font-weight: 600;font-size: 16px;
+    h4 {
+      height: 30px;
+      line-height: 30px;
+      font-weight: 600;
+      font-size: 16px;
       margin-bottom: 21px;
-      .rule-tips{
-          font-size: 14px;color:rgba(0,0,0,0.45);
+      .rule-tips {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.45);
       }
     }
-    .tips{
-      font-size:14px;
-      font-weight:400;
-      color:rgba(0,0,0,0.45);
+    .tips {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.45);
       margin-top: 10px;
-      line-height:14px;
+      line-height: 14px;
     }
   }
-  .product-rules{
-    border-top: 1px solid #eee ;border-bottom: 1px solid #eee
+  .product-rules {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
   }
-  .submit-box{
-    text-align: center;margin-top: 20px
+  .submit-box {
+    text-align: center;
+    margin-top: 20px;
   }
-  .set-store{
-    margin-left: 20px
+  .set-store {
+    margin-left: 20px;
   }
 }
 </style>
