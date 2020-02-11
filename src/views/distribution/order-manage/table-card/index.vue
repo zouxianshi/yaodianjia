@@ -9,7 +9,7 @@
       <div class="table-column flex-2">预约人</div>
       <div class="table-column flex-2">预约时间</div>
       <div class="table-column flex-1">订单状态</div>
-      <div class="table-column flex-2">提货门店</div>
+      <div class="table-column flex-2">提货门店/地址</div>
     </div>
     <div v-if="tableData.length > 0" class="table-container">
       <div v-for="item in tableData" :key="item.id" class="table-content">
@@ -23,7 +23,7 @@
         <div class="row">
           <div class="table-column content-container flex-3">
             <div class="image-box">
-              <img :src="showImg(item.productImgUrl)" class="pic">
+              <img :src="showImgHandler(item.productImgUrl)" class="pic">
               <div class="box">暂无图片</div>
             </div>
             <div class="content-box">
@@ -82,7 +82,7 @@
             >确认核销</el-button>
           </div>
           <div class="table-column content-center flex-2">
-            {{ item.address }}
+            {{ item.storeName }} / {{ item.address }}
           </div>
         </div>
       </div>

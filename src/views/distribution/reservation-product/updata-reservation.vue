@@ -2,7 +2,7 @@
   <div class="add">
     <div class="product-info">
       <h4>商品信息</h4>
-      <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+      <el-form ref="form" :rules="rules" :model="form" label-width="120px">
         <el-form-item label="商品名称：" prop="name">
           <el-input v-model="form.name" maxlength="254" />
         </el-form-item>
@@ -10,7 +10,7 @@
           <el-input v-model="form.brandName" maxlength="99" />
         </el-form-item>
         <el-form-item label="单位：" prop="unit">
-          <el-select v-model="form.unit" placeholder="请选择单位">
+          <el-select v-model="form.unit" style="width:200px" placeholder="请选择单位">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -23,7 +23,11 @@
           <el-input v-model="form.price" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="17" />
         </el-form-item>
         <el-form-item label="可预约总量：" prop="inventory">
-          <el-input v-model="form.inventory" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
+          <el-input v-model="form.inventory" style="width:200px" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
+        </el-form-item>
+        <el-form-item label="预计到货时长：" prop="deliveryTime">
+          <el-input v-model="form.deliveryTime" style="width:60px" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
+          &emsp;天<span class="tips">&emsp;&emsp;预计到货时间仅供用户参考，以实际门店到货</span>
         </el-form-item>
       </el-form>
     </div>
@@ -49,7 +53,7 @@
         :on-success="uploadSuccess"
         :show-file-list="false"
       >
-        <img v-if="form.imgUrl" :src="showImg(form.imgUrl)" class="avatar">
+        <img v-if="form.imgUrl" :src="showImgHandler(form.imgUrl)" class="avatar">
         <i v-else class="el-icon-plus" />
       </el-upload>
       <p class="tips">1、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</p>
@@ -73,6 +77,16 @@ export default {
         return callback(new Error('请输入商品价格'))
       } else if (val.includes('-')) {
         callback(new Error('商品价格为正数'))
+      } else {
+        callback() // 添加成功回调
+      }
+    }
+    var checkDeliveryTime = (rule, value, callback) => {
+      var val = '' + value
+      if (!val) {
+        return callback(new Error('请输入商品预计到货时长'))
+      } else if (val.includes('-') || val.includes('.')) {
+        callback(new Error('商品预计到货时长为正整数'))
       } else {
         callback() // 添加成功回调
       }
@@ -109,6 +123,9 @@ export default {
         ],
         unit: [
           { required: true, message: '请选择单位', trigger: 'blur' }
+        ],
+        deliveryTime: [
+          { validator: checkDeliveryTime, trigger: 'blur' }
         ]
       },
       dialogImageUrl: '',
@@ -141,7 +158,8 @@ export default {
         'name': data.name,
         'unit': data.unit,
         'price': data.price,
-        'status': data.status
+        'status': data.status,
+        'deliveryTime': data.deliveryTime
       }
       this.oldInventory = this.form.inventory
       console.log(this.oldInventory)
