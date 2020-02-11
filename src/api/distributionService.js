@@ -273,6 +273,15 @@ class DistributionService {
   _batchPoint(data) {
     return this.service('post', `/1.0/b/store/_update`, data)
   }
+
+  // 查询门店商品库存
+  getStoreInventory(data) {
+    return this.service('post', `/1.0/b/store/_queryInventory`, data)
+  }
+  // 门店商品库存设置
+  setStoreInventory(data) {
+    return this.service('post', `/1.0/b/store/_saveInventory`, data)
+  }
   /**
    *  查询预约商品数据列表
    *  @param {object} data 请求参数
