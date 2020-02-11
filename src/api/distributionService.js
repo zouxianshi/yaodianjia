@@ -17,7 +17,10 @@ class DistributionService {
 
     _service.interceptors.request.use(
       config => {
-        if (config.data.responsetype === 'arraybuffer') {
+        if (
+          config.data.responsetype === 'arraybuffer' ||
+          config.data.responsetype === 'blob'
+        ) {
           // config.header.responseType = config.data.responseType
           config.headers['responseType'] = config.data.responsetype
           delete config.data.responsetype
@@ -75,7 +78,11 @@ class DistributionService {
           response.config.headers.responseType === 'arraybuffer'
         )
         const res = response.data
-        if (isExport || response.config.headers.responseType === 'arraybuffer') {
+        if (
+          isExport ||
+          response.config.headers.responseType === 'arraybuffer' ||
+          response.config.headers.responseType === 'blob'
+        ) {
           // 如果是数据导出，直接pass
           return res
         }

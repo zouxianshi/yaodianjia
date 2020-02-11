@@ -387,7 +387,6 @@ export default {
         item.disabled = true
       }
     })
-    this.getMonthDay(3)
   },
   methods: {
     changeSelectDayStoreID(e) {
@@ -403,7 +402,7 @@ export default {
         Object.assign(this.selectResult, { storeId })
       )
       this.exportList = data
-      // this.exportReportService()
+      this.exportReportService()
     },
     async exportReportService() {
       console.log(
@@ -413,7 +412,7 @@ export default {
       const res = await DistributionService.exportReport(
         Object.assign(this.selectResult, {
           storeId,
-          responsetype: 'arraybuffer'
+          responsetype: 'blob'
         })
       )
       this.exportExcel = res
@@ -425,7 +424,9 @@ export default {
     },
     donwloadExcel() {
       const content = this.exportExcel
-      const blob = new Blob([content], { type: 'application/ms-excel' })
+      const blob = new Blob([content], {
+        type: 'application/vnd.ms-excel;charset=UTF-8'
+      })
 
       const fileName = 'export.xls'
       if ('download' in document.createElement('a')) {
