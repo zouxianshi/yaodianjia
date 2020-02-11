@@ -79,6 +79,7 @@ export default {
         pageSize: 10,
         total: 0
       }
+      this.getStoreInventory()
     },
     // 保存门店库存
     setStoreInventory(data) {
