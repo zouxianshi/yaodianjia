@@ -22,8 +22,9 @@ class DistributionService {
           config.data.responsetype === 'blob'
         ) {
           // config.header.responseType = config.data.responseType
-          config.headers['responseType'] = config.data.responsetype
+          config['responseType'] = config.data.responsetype
           delete config.data.responsetype
+
           console.log('interceptors _____________ config : ', config.data)
         }
         if (store.getters.token) {
@@ -73,15 +74,12 @@ class DistributionService {
     // response interceptor
     _service.interceptors.response.use(
       response => {
-        console.log(
-          'response ______________________ : ',
-          response.config.headers.responseType === 'arraybuffer'
-        )
+        console.log('response ______________ : ', response.config.responseType)
         const res = response.data
         if (
           isExport ||
-          response.config.headers.responseType === 'arraybuffer' ||
-          response.config.headers.responseType === 'blob'
+          response.config.responseType === 'arraybuffer' ||
+          response.config.responseType === 'blob'
         ) {
           // 如果是数据导出，直接pass
           return res

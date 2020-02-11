@@ -425,7 +425,7 @@ export default {
     donwloadExcel() {
       const content = this.exportExcel
       const blob = new Blob([content], {
-        type: 'application/vnd.ms-excel;charset=UTF-8'
+        type: 'application/vnd.ms-excel;charset=utf-8'
       })
 
       const fileName = 'export.xls'
