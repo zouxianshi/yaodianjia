@@ -237,6 +237,7 @@
         >重置</el-button>
       </div>
       <el-table
+        v-loading="reportloading"
         :data="exportList"
         style="width: 100%;margin-top:20px;"
         height="400"
@@ -261,7 +262,11 @@
       </div>
       <div style="margin-top:20px;display:flex;justify-content: flex-end;">
         <el-button @click.stop="exportDisplayHandler(false)">取消</el-button>
-        <el-button type="primary" @click="donwloadExcel">导出</el-button>
+        <el-button
+          v-loading="reportloading"
+          type="primary"
+          @click="donwloadExcel"
+        >导出</el-button>
       </div>
     </el-dialog>
   </div>
@@ -371,7 +376,8 @@ export default {
           ]
         }
       ],
-      exportList: []
+      exportList: [],
+      reportloading: true
     }
   },
   watch: {
@@ -391,13 +397,14 @@ export default {
   methods: {
     changeSelectDayStoreID(e) {
       console.log('selectDayStoreID _________________ : ', e)
-      this.selectDayStoreID = e.id
+      this.selectDayStore = e
     },
     searchDayReport() {
       this.queryReportService()
     },
     async queryReportService() {
-      const storeId = this.selectDayStoreID
+      this.reportloading = true
+      const storeId = this.selectDayStore.id
       const { data } = await DistributionService.queryReport(
         Object.assign(this.selectResult, { storeId })
       )
@@ -408,7 +415,7 @@ export default {
       console.log(
         'exportReportService ________________________________________'
       )
-      const storeId = this.selectDayStoreID
+      const storeId = this.selectDayStore.id
       const res = await DistributionService.exportReport(
         Object.assign(this.selectResult, {
           storeId,
@@ -416,6 +423,7 @@ export default {
         })
       )
       this.exportExcel = res
+      this.reportloading = false
     },
     resetSelectReport() {
       this.selectDayModule = '16'
@@ -713,6 +721,7 @@ export default {
     exportDisplayHandler(bol) {
       this.exportDialogVisible = bol
       if (bol) this.queryReportService()
+      else this.resetSelectReport()
     }
   }
 }
