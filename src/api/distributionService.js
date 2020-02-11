@@ -182,6 +182,14 @@ class DistributionService {
     })
   }
   /**
+   * 订单超时时间设置
+   * @param {*} data
+   */
+  setOrderBeyondTime(data) {
+    const params = Object.assign({ memberCode: store.state.user.merCode }, data)
+    return this.service('post', '/1.0/b/wxutils/_updateBeyondTime', params)
+  }
+  /**
    * 导出报告
    * @param {*} data
    */
@@ -264,6 +272,15 @@ class DistributionService {
   // 停启用取货点
   _batchPoint(data) {
     return this.service('post', `/1.0/b/store/_update`, data)
+  }
+
+  // 查询门店商品库存
+  getStoreInventory(data) {
+    return this.service('post', `/1.0/b/store/_queryInventory`, data)
+  }
+  // 门店商品库存设置
+  setStoreInventory(data) {
+    return this.service('post', `/1.0/b/store/_saveInventory`, data)
   }
   /**
    *  查询预约商品数据列表
