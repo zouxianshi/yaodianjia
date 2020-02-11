@@ -163,7 +163,6 @@ export default {
         'deliveryTime': data.deliveryTime
       }
       this.oldInventory = this.form.inventory
-      console.log(this.oldInventory)
     })
   },
   methods: {

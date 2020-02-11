@@ -70,12 +70,16 @@ export default {
   methods: {
     // 保存门店库存
     setStoreInventory(data) {
-      var parmes = {
+      var parmes = {}
+      parmes = {
         'inventory': data.inventory,
         'productId': data.product_id,
         'storeCode': data.store_code,
         'storeId': data.store_id,
         'storeName': data.store_name
+      }
+      if (data.id) {
+        parmes.id = data.id
       }
       distributionService.setStoreInventory(parmes).then(res => {
         console.log(res)

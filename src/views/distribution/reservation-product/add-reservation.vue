@@ -24,6 +24,7 @@
         </el-form-item>
         <el-form-item label="可预约总量:" prop="inventory">
           <el-input v-model="form.inventory" style="width:200px" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
+          <el-button class="set-store" type="primary" @click="goToSetting()">设置门店最大可预约总量</el-button>
         </el-form-item>
         <el-form-item label="预计到货时长：" prop="deliveryTime">
           <el-input v-model="form.deliveryTime" style="width:60px" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="10" />
@@ -227,6 +228,9 @@ export default {
           })
         }
       })
+    },
+    goToSetting() {
+      this.$router.push('/distribution/store-reservation-setting')
     }
   }
 }
@@ -262,6 +266,9 @@ export default {
   }
   .submit-box{
     text-align: center;margin-top: 20px
+  }
+  .set-store{
+    margin-left: 20px
   }
 }
 </style>
