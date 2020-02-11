@@ -35,6 +35,7 @@ class DistributionService {
         if (store.getters.name) {
           config.headers['userName'] = store.getters.name
         }
+        config.headers['merCode'] = store.state.user.merCode
         isExport = config.isExport || false
         const authParams = {
           // 公共参数
