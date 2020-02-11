@@ -120,8 +120,11 @@
               {{ detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont }}
             </div>
           </template>
+
           <div class="con">应付总额：￥{{ detailsData.totalActualOrderAmount }}</div>
-          <!-- <div class="con">实付总额：￥{{ detailsData.actuallyPaid }}</div> -->
+          <template v-if="detailsData.payMode===0">
+            <div class="con">实付总额：￥{{ detailsData.actuallyPaid }}</div>
+          </template>
         </div>
         <div class="info-item">
           <div class="title">操作人信息</div>
