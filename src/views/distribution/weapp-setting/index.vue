@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <!-- <div class="module" style="border:0;">
+    <div class="module" style="border:0;">
       <div class="title">规则设置</div>
       <div class="content">
         <div class="panel column">
@@ -76,7 +76,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <el-dialog append-to-body title="修改商户名称" :visible.sync="updateDialog">
       <el-input
         v-model="changeStoreName"
@@ -112,7 +112,7 @@ export default {
       qrCode: '',
       getLoading: false,
       changeStoreName: '',
-      ruledays: '',
+      ruledays: 0,
       updateDialog: false,
       loading: true
     }
@@ -142,6 +142,7 @@ export default {
         this.qrCode = `data:image/png;base64,${data.data}`
         this.storeName = data.memberName || ''
         this.getLoading = true
+        this.ruledays = data.beyondTime
       }
     },
 
@@ -167,7 +168,10 @@ export default {
       const { code } = await DistributionService.setOrderBeyondTime({
         beyondTime: this.ruledays === '' ? 0 : Number(this.ruledays)
       })
-      if (code === '10000') { this.$message({ type: 'success', message: '设置成功 !' }) }
+      if (code === '10000') {
+        this.$message({ type: 'success', message: '设置成功 !' })
+        this.getQRCode()
+      }
     },
     async updateStoreNameService() {
       const { code } = await DistributionService.updateStoreName(

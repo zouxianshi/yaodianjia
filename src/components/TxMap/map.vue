@@ -1,6 +1,6 @@
 <template>
   <div class="map-wrapper">
-    <div id="map-container" :style="{width:width,height:height}" />
+    <div id="map-container" :style="{ width: width, height: height }" />
   </div>
 </template>
 
@@ -54,12 +54,14 @@ export default {
       })
     },
     setCenter(location) {
+      console.log('setCenter : ', location)
       this.map.setCenter(location)
     },
-    location() { // 定位当前位置
+    location() {
+      // 定位当前位置
       // 获取城市列表接口设置中心点
       const citylocation = new mapQQ.maps.CityService({
-        complete: (result) => {
+        complete: result => {
           this.map.setCenter(result.detail.latLng)
           this.setMarker(result.detail.latLng)
         }
@@ -77,7 +79,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.map-wrapper{
-    margin-top: 10px;
+.map-wrapper {
+  margin-top: 10px;
 }
 </style>
