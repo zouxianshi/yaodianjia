@@ -263,7 +263,7 @@ export default {
   data() {
     const _check_price = (rule, value, callback) => {
       if (rule.required && value <= 0) {
-        callback(new Error('请输入正整数'))
+        callback(new Error('请输入最多2位小数的正数'))
       }
       if (value !== '') {
         if (!checkNumberdouble(value)) {
