@@ -394,7 +394,7 @@ export default {
     }
   },
   updated() {
-    console.log('udpated: this.ryConnected', this.ryConnected, this.isFirstQueryFinished)
+    console.log('udpated: this.ryConnected', this.ryConnected, this.isFirstQueryFinished, this.webSocketConnected)
     if (this.webSocketConnected && !this.isFirstQueryFinished) {
       this.querySupportStaffList('first')
     }
