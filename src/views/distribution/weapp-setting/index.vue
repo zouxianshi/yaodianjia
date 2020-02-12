@@ -112,9 +112,9 @@ export default {
       qrCode: '',
       getLoading: false,
       changeStoreName: '',
-      ruledays: '',
+      ruledays: 0,
       updateDialog: false,
-      loading: false
+      loading: true
     }
   },
   watch: {
@@ -142,6 +142,7 @@ export default {
         this.qrCode = `data:image/png;base64,${data.data}`
         this.storeName = data.memberName || ''
         this.getLoading = true
+        this.ruledays = data.beyondTime
       }
     },
 
@@ -167,7 +168,10 @@ export default {
       const { code } = await DistributionService.setOrderBeyondTime({
         beyondTime: this.ruledays === '' ? 0 : Number(this.ruledays)
       })
-      if (code === '10000') { this.$message({ type: 'success', message: '设置成功 !' }) }
+      if (code === '10000') {
+        this.$message({ type: 'success', message: '设置成功 !' })
+        this.getQRCode()
+      }
     },
     async updateStoreNameService() {
       const { code } = await DistributionService.updateStoreName(
