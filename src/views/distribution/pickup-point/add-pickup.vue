@@ -11,15 +11,40 @@
         </el-form-item>
         <el-form-item label="门店地址:" style="padding-right:20%">
           <el-input v-model="form.storeAddress" maxlength="1000" />
-          <el-button type="primary" class="position-btn" @click="getLocation()">定位</el-button>
+          <el-button
+            type="primary"
+            class="position-btn"
+            @click="getLocation()"
+          >定位</el-button>
         </el-form-item>
         <div class="map-box">
-          <tx-map ref="mapRef" :zoom="15" @ready="handlerLocation" @click="clickHandler()" />
+          <tx-map
+            ref="mapRef"
+            :zoom="15"
+            @ready="handlerLocation"
+            @click="clickHandler()"
+          />
         </div>
         <el-form-item label="电话号码:" prop="phoneNumber">
           <el-input v-model="form.phoneNumber" maxlength="18" />
         </el-form-item>
       </el-form>
+    </div>
+    <div class="product-info">
+      <h4>门店流量设置</h4>
+      <div class="row-panel">
+        <div class="txt">每日最大到店领取人数：</div>
+        <div class="column">
+          <div class="input-line">
+            <el-input v-model="form.limitNumber" class="input" maxlength="10" />
+            <div class="default">人</div>
+          </div>
+          <div class="tips">
+            为避免疫情期间人流同时段在门店拥挤造成疫情危机，因此同一预约时段（日）可设置最大到店人数
+            同一预约时段由商品预计到货时间进行判断
+          </div>
+        </div>
+      </div>
     </div>
     <div class="submit-box">
       <el-button type="primary" @click="submitData()">完成添加</el-button>
@@ -36,7 +61,7 @@ export default {
     var checkPhone = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('联系方式不能为空'))
-      } else if (!(/^[0-9]*-*[0-9]*$/.test(value))) {
+      } else if (!/^[0-9]*-*[0-9]*$/.test(value)) {
         callback(new Error('请输入正确的联系方式'))
       } else {
         callback() // 添加成功回调
@@ -47,13 +72,14 @@ export default {
       oldAddress: '',
       idTrueAddress: false,
       form: {
-        'latitude': '123.454353453453',
-        'longitude': '130.656464564',
-        'phoneNumber': '',
-        'status': '0',
-        'storeAddress': '',
-        'storeCode': '',
-        'storeName': ''
+        latitude: '123.454353453453',
+        longitude: '130.656464564',
+        phoneNumber: '',
+        status: '0',
+        storeAddress: '',
+        storeCode: '',
+        storeName: '',
+        limitNumber: 0
       },
       dialogImageUrl: '',
       dialogVisible: false,
@@ -64,17 +90,21 @@ export default {
         storeCode: [
           { required: true, message: '请输入门店编码', trigger: 'blur' }
         ],
-        phoneNumber: [
-          { validator: checkPhone, trigger: 'blur' }
-        ]
+        phoneNumber: [{ validator: checkPhone, trigger: 'blur' }]
       }
+    }
+  },
+  watch: {
+    'form.limitNumber'(newValue) {
+      if (!/^[0-9]*$/.test(newValue)) this.form.limitNumber = 0
     }
   },
   created() {
     this.oldAddress = this.form.storeAddress
   },
   methods: {
-    submitData() { // 提交数据
+    submitData() {
+      // 提交数据
       if (!this.idTrueAddress) {
         this.$message({
           message: '请填写正确的地址并点击定位',
@@ -88,7 +118,7 @@ export default {
         })
         return
       }
-      this.$refs['form'].validate((flag) => {
+      this.$refs['form'].validate(flag => {
         if (flag) {
           var params = {}
           params = JSON.parse(JSON.stringify(this.form))
@@ -112,7 +142,7 @@ export default {
     getLocation() {
       this.oldAddress = this.form.storeAddress
       const geocoder = new mapQQ.maps.Geocoder({
-        complete: (result) => {
+        complete: result => {
           const location = result.detail.location
           this.$refs.mapRef.setCenter(location)
           this.form.latitude = location.lat
@@ -136,42 +166,86 @@ export default {
 </script>
 <style lang="scss" scoped>
 .add {
-  padding: 10px 61px;height: calc(100vh - 158px);overflow-y: scroll;
-  .product-img, .product-info, .product-rules{
+  padding: 10px 61px;
+  height: calc(100vh - 158px);
+  overflow-y: scroll;
+  .product-img,
+  .product-info,
+  .product-rules {
     padding: 20px 0;
-    h4{
-      height: 30px;line-height: 30px;font-weight: 600;font-size: 16px;
-      margin-bottom: 21px;
-      .tips-yuyue{
-        font-size:14px;color:rgba(0,0,0,0.45);
+    .row-panel {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      justify-content: center;
+      .txt {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+        margin-top: 12px;
+      }
+      .column {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 500px;
+        .input-line {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          .default {
+            color: rgba(0, 0, 0, 0.85);
+            font-size: 14px;
+            margin-left: 18px;
+          }
+        }
+        .tips {
+          font-size: 12px;
+          color: rgba(245, 166, 35, 1);
+        }
       }
     }
-    form{
-      padding-left: 15%; width:80%;
-      .position-btn{
-        position: absolute;right: 0;transform: translateX(110%)
+    h4 {
+      height: 30px;
+      line-height: 30px;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 21px;
+      .tips-yuyue {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.45);
       }
-      .map-box{
+    }
+    form {
+      padding-left: 15%;
+      width: 80%;
+      .position-btn {
+        position: absolute;
+        right: 0;
+        transform: translateX(110%);
+      }
+      .map-box {
         width: calc(100% - 110px);
         margin: 20px 0;
         margin-left: 110px;
         height: 300px;
-        border: 1px solid #eee
+        border: 1px solid #eee;
       }
     }
-    .tips{
-      font-size:14px;
-      font-weight:400;
-      color:rgba(0,0,0,0.45);
-      line-height:20px;
-      margin-top: 10px
+    .tips {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.45);
+      line-height: 20px;
+      margin-top: 10px;
     }
   }
-  .product-rules{
-    border-top: 1px solid #eee ;border-bottom: 1px solid #eee
+  .product-rules {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
   }
-  .submit-box{
-    text-align: center;margin-top: 20px
+  .submit-box {
+    text-align: center;
+    margin-top: 20px;
   }
 }
 </style>
