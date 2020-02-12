@@ -111,6 +111,7 @@
             <el-button v-if="listQuery.status!==1&&listQuery.status!==2" type="primary" size="small" @click="handleBatchUpDown(1)">批量上架</el-button>
             <el-button v-if="listQuery.status!==0" type="danger" size="small" @click="handleBatchUpDown(0)">批量下架</el-button>
             <el-button type="" size="small" @click="handleLock">批量锁定库存价格</el-button>
+            <el-button type="" size="small" @click="handleSynchro">批量同步库存价格</el-button>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -298,7 +299,7 @@ import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
 import { getTypeTree } from '@/api/group'
-import { getStoreGoodsList, setLockPrice, setUpdatePriceStock, setUpdateStoreData, getMyStoreList } from '@/api/store-goods'
+import { getStoreGoodsList, setLockPrice, setUpdatePriceStock, setUpdateStoreData, getMyStoreList, setSynchro } from '@/api/store-goods'
 export default {
   components: { Pagination },
   mixins: [mixins],
@@ -494,6 +495,40 @@ export default {
           loading.close()
           reject(err)
         })
+      })
+    },
+    handleSynchro() { // 同步价格
+      const ary = []
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请选择商品',
+          type: 'warning'
+        })
+        return
+      }
+      this.multipleSelection.map(v => {
+        ary.push({
+          'erpCode': v.erpCode,
+          'storeSpecId': v.storeSpecId
+        })
+      })
+      const findIndex = this.storeList.findIndex(mItem => {
+        return mItem.id === this.listQuery.storeId
+      })
+      const data = {
+        'merCode': this.merCode,
+        'storeCode': this.storeList[findIndex].stCode,
+        'storeId': this.listQuery.storeId,
+        'specs': ary
+      }
+      setSynchro(data).then(res => {
+        this.$message({
+          message: '价格同步成功',
+          type: 'success'
+        })
+        this.multipleSelection = []
+      }).catch(err => {
+        console.log(err)
       })
     },
     handleChangeGroup(val) {
