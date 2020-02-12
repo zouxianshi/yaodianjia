@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <!-- <div class="module" style="border:0;">
+    <div class="module" style="border:0;">
       <div class="title">规则设置</div>
       <div class="content">
         <div class="panel column">
@@ -76,7 +76,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <el-dialog append-to-body title="修改商户名称" :visible.sync="updateDialog">
       <el-input
         v-model="changeStoreName"
@@ -114,7 +114,7 @@ export default {
       changeStoreName: '',
       ruledays: '',
       updateDialog: false,
-      loading: true
+      loading: false
     }
   },
   watch: {
