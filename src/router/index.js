@@ -5,13 +5,13 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 import _ from 'lodash'
-
 /* Router Modules */
 import routeZ from './modules/router-z'
 import routeX from './modules/router-x'
 import routeR from './modules/router-r'
 import routeC from './modules/router-c'
 import routeF from './modules/router-f'
+import routeD from './modules/router-d'
 import { mUsersModule } from '@merchant/commons'
 
 // merge component layout module
@@ -80,7 +80,8 @@ export const asyncRoutes = [
   ...routeX,
   ...routeR,
   ...routeC,
-  ...routeF
+  ...routeF,
+  ...routeD
 ]
 
 const createRouter = () => new Router({
@@ -92,7 +93,7 @@ const createRouter = () => new Router({
 
 const router = createRouter()
 
-// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+// // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router

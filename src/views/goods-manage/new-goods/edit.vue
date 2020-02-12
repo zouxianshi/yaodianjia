@@ -9,201 +9,206 @@
       <!-- 第一步 -->
       <div
         v-show="step===1"
-        v-loading="basicLoading"
       >
-        <!-- 分类信息 -->
-        <div class="edit-card">
-          <div class="header">
-            <span>分类信息</span>
-          </div>
-          <div class="edit-card-cnt">
-            <div class="content">
-              <p class="type-list">商品分类：
-                <el-tag v-if="chooseTypeList.length">
-                  <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;
-                    <span v-if="chooseTypeList[1]">>&nbsp;{{ chooseTypeList[1].name }}&nbsp;>&nbsp;</span><span v-if="chooseTypeList[2]">{{ chooseTypeList[2].name }}</span></span>
-                </el-tag>
-                <span v-if="(basicForm.id!==1&&!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
-              <div class="type-list groups">商品分组：
-                <p class="group-list">
-                  <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
-                    <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+        <section
+          v-loading="basicLoading"
+          element-loading-text="拼命加载中"
+        >
+          <!-- 分类信息 -->
+          <div class="edit-card">
+            <div class="header">
+              <span>分类信息</span>
+            </div>
+            <div class="edit-card-cnt">
+              <div class="content">
+                <p class="type-list">商品分类：
+                  <el-tag v-if="chooseTypeList.length">
+                    <span v-if="chooseTypeList.length">{{ chooseTypeList[0].name }}&nbsp;
+                      <span v-if="chooseTypeList[1]">>&nbsp;{{ chooseTypeList[1].name }}&nbsp;>&nbsp;</span><span v-if="chooseTypeList[2]">{{ chooseTypeList[2].name }}</span></span>
                   </el-tag>
-                </p>
-                <span v-if="!is_query" class="opreate">
-                  <span class="link link-btn" @click="groupVisible=true">选择分组</span>
-                  <a href="#/goods-manage/group" target="_blank"><span class="link link-btn">新建分组</span></a>
-                  <span class="link link-btn" @click="handleRefresh">刷新</span>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- 商品信息 -->
-        <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicForm.origin===2?basicRules:{}">
-          <div class="edit-card">
-            <div class="header">
-              <span>商品信息</span>
-            </div>
-            <div class="edit-card-cnt">
-              <div class="content">
-                <el-form-item label="商品名称：" prop="name">
-                  <el-input v-model.trim="basicForm.name" maxlength="30" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
-                </el-form-item>
-                <el-form-item prop="commonName">
-                  <span slot="label">
-                    <span v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" class="tip">*</span>
-                    通用名：
+                  <span v-if="(basicForm.id!==1&&!is_query)&&basicForm.origin!==1" class="link link-btn" @click="typeVisible=true;_loadClassList()">修改分类</span></p>
+                <div class="type-list groups">商品分组：
+                  <p class="group-list">
+                    <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                      <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                    </el-tag>
+                  </p>
+                  <span v-if="!is_query" class="opreate">
+                    <span class="link link-btn" @click="groupVisible=true">选择分组</span>
+                    <a href="#/goods-manage/group" target="_blank"><span class="link link-btn">新建分组</span></a>
+                    <span class="link link-btn" @click="handleRefresh">刷新</span>
                   </span>
-                  <el-input v-model.trim="basicForm.commonName" maxlength="20" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
-                </el-form-item>
-                <el-form-item label="所属品牌：" prop="brandId">
-                  <el-select
-                    v-model="basicForm.brandId"
-                    :disabled="basicForm.origin===1||is_query"
-                    filterable
-                    remote
-                    :remote-method="remoteMethod"
-                    :loading="loading"
-                    placeholder="请选择所属品牌"
-                  >
-                    <el-option
-                      v-for="item in brandList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="重量" prop="weight">
-                  <el-input v-model="basicForm.weight" maxlength="6" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:210px">
-                    <template slot="append">克</template>
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="长宽高：" style="display:inline-block" prop="long">
-                  <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:160px">
-                    <template slot="append">m</template>
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="" label-width="0px" style="display:inline-block" prop="width">
-                  <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
-                    <template slot="append">m</template>
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="" label-width="0px" style="display:inline-block" prop="height">
-                  <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" style="width:160px">  <template slot="append">m*</template>
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="单位：" prop="unit">
-                  <el-select v-model="basicForm.unit" :disabled="basicForm.origin===1||is_query" placeholder="选择单位">
-                    <el-option
-                      v-for="item in unit"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="关键字：" prop="keyWord">
-                  <el-input v-model="basicForm.keyWord" maxlength="512" :disabled="basicForm.origin===1||is_query" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
-                </el-form-item>
+                </div>
               </div>
             </div>
           </div>
-          <!-- 详细信息 -->
-          <div class="edit-card">
-            <div class="header">
-              <span>详细信息</span>
-            </div>
-            <div class="edit-card-cnt">
-              <div class="content">
-                <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
-                  <el-form-item label="药品类型：">
-                    <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
-                      <el-option label="甲类OTC" :value="0" />
-                      <el-option label="处方药" :value="1" />
-                      <el-option label="乙类OTC" :value="2" />
+          <!-- 商品信息 -->
+          <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicForm.origin===2?basicRules:{}">
+            <div class="edit-card">
+              <div class="header">
+                <span>商品信息</span>
+              </div>
+              <div class="edit-card-cnt">
+                <div class="content">
+                  <el-form-item label="商品名称：" prop="name">
+                    <el-input v-model.trim="basicForm.name" maxlength="30" :disabled="basicForm.origin===1||is_query" placeholder="请输入商品名称" size="small" />
+                  </el-form-item>
+                  <el-form-item prop="commonName">
+                    <span slot="label">
+                      <span v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'" class="tip">*</span>
+                      通用名：
+                    </span>
+                    <el-input v-model.trim="basicForm.commonName" maxlength="20" :disabled="basicForm.origin===1||is_query" placeholder="请输入通用名" size="small" />
+                  </el-form-item>
+                  <el-form-item label="所属品牌：" prop="brandId">
+                    <el-select
+                      v-model="basicForm.brandId"
+                      :disabled="basicForm.origin===1||is_query"
+                      filterable
+                      remote
+                      :remote-method="remoteMethod"
+                      :loading="loading"
+                      placeholder="请选择所属品牌"
+                    >
+                      <el-option
+                        v-for="item in brandList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      />
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="剂型：">
-                    <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品剂型">
-                      <el-option v-for="(item,index) in drug" :key="index" :label="item.label" :value="item.value" />
+                  <el-form-item label="重量" prop="weight">
+                    <el-input v-model="basicForm.weight" maxlength="6" :disabled="basicForm.origin===1||is_query" placeholder="请输入重量" size="small" style="width:210px">
+                      <template slot="append">克</template>
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="长宽高：" style="display:inline-block" prop="long">
+                    <el-input v-model="basicForm.long" :disabled="basicForm.origin===1||is_query" placeholder="长" size="small" style="width:160px">
+                      <template slot="append">m</template>
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="" label-width="0px" style="display:inline-block" prop="width">
+                    <el-input v-model="basicForm.width" :disabled="basicForm.origin===1||is_query" placeholder="宽" size="small" style="width:160px">
+                      <template slot="append">m</template>
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="" label-width="0px" style="display:inline-block" prop="height">
+                    <el-input v-model="basicForm.height" :disabled="basicForm.origin===1||is_query" placeholder="高" size="small" style="width:160px">  <template slot="append">m*</template>
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="单位：" prop="unit">
+                    <el-select v-model="basicForm.unit" :disabled="basicForm.origin===1||is_query" placeholder="选择单位">
+                      <el-option
+                        v-for="item in unit"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
                     </el-select>
                   </el-form-item>
-                </template>
-                <el-form-item label="生产企业：" prop="manufacture">
-                  <el-input v-model.trim="basicForm.manufacture" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入生产企业" size="small" />
-                </el-form-item>
-                <el-form-item label="产地：" prop="produceOrigin">
-                  <el-input v-model.trim="basicForm.produceOrigin" maxlength="50" :disabled="basicForm.origin===1||is_query" placeholder="请输入产地" size="small" />
-                </el-form-item>
-                <el-form-item label="批准文号：" prop="approvalNumber">
-                  <el-input v-model.trim="basicForm.approvalNumber" maxlength="24" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
-                </el-form-item>
-                <el-form-item label="商品详细信息：">
-                  <p>填写商品说明书</p>
-                  <div v-show="basicForm.origin===1">
-                    <Tinymce ref="editor" v-model="basicForm.intro" :readonly="true" :height="400" />
-                  </div>
-                  <div v-show="basicForm.origin!==1">
-                    <Tinymce id="basicInfo" ref="editor" v-model="basicForm.intro" :readonly="is_query" :height="400" @onload="tinymceLoad" />
-                  </div>
-                </el-form-item>
-                <el-form-item :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'">
-                  <el-input
-                    v-model.trim="basicForm.keyFeature"
-                    type="textarea"
-                    maxlength="512"
-                    :disabled="basicForm.origin===1||is_query"
-                    :rows="3"
-                    show-word-limit
-                    placeholder="请输入功能主治/适应症"
-                    size="small"
-                  />
-                </el-form-item>
-                <el-form-item label="有效期：" prop="days">
-                  <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="-1" size="small">无</el-radio>
-                  <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="1" size="small">
-                    <el-input v-model="basicForm.days" :disabled="basicForm.origin===1||is_query" maxlength="8" style="width:80px" size="small" placeholder="" />
-                    <el-select v-model="timeTypes" :disabled="basicForm.origin===1||is_query" style="width:100px" size="small" placeholder="">
-                      <el-option value="1" label="年" />
-                      <el-option value="2" label="月" />
-                      <el-option value="3" label="天" />
-                    </el-select>
-                    <span style="color:#999">30天为一个月，365天为一年</span>
-                  </el-radio>
-                </el-form-item>
+                  <el-form-item label="关键字：" prop="keyWord">
+                    <el-input v-model="basicForm.keyWord" maxlength="512" :disabled="basicForm.origin===1||is_query" placeholder="请输入关键字" size="small" /> &nbsp;用、隔开
+                  </el-form-item>
+                </div>
               </div>
             </div>
-          </div>
-          <!-- 特殊属性 -->
-          <div class="edit-card">
-            <div class="header">
-              <span>特殊属性</span>
-            </div>
-            <div class="edit-card-cnt">
-              <div class="content">
-                <el-form-item label="运输方式：">
-                  <el-radio-group v-model="basicForm.freightType" :disabled="basicForm.origin===1||is_query">
-                    <el-radio :label="0">常温</el-radio>
-                    <el-radio :label="1">冷藏</el-radio>
-                    <el-radio :label="2">冷冻</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item label="其他属性：">
-                  <el-checkbox v-model="basicForm.isEasyBreak" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">易碎</el-checkbox>
-                  <el-checkbox v-model="basicForm.isLiquid" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">液体</el-checkbox>
-                  <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')">
-                    <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
+            <!-- 详细信息 -->
+            <div class="edit-card">
+              <div class="header">
+                <span>详细信息</span>
+              </div>
+              <div class="edit-card-cnt">
+                <div class="content">
+                  <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
+                    <el-form-item label="药品类型：">
+                      <el-select v-model="basicForm.drugType" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品类型">
+                        <el-option label="甲类OTC" :value="0" />
+                        <el-option label="处方药" :value="1" />
+                        <el-option label="乙类OTC" :value="2" />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="剂型：">
+                      <el-select v-model="basicForm.dosageForm" :disabled="basicForm.origin===1||is_query" placeholder="请选择药品剂型">
+                        <el-option v-for="(item,index) in drug" :key="index" :label="item.label" :value="item.value" />
+                      </el-select>
+                    </el-form-item>
                   </template>
-                </el-form-item>
-                <el-form-item label="" label-width="100px">
-                  <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitForm">下一步</el-button>
-                </el-form-item>
+                  <el-form-item label="生产企业：" prop="manufacture">
+                    <el-input v-model.trim="basicForm.manufacture" maxlength="127" :disabled="basicForm.origin===1||is_query" placeholder="请输入生产企业" size="small" />
+                  </el-form-item>
+                  <el-form-item label="产地：" prop="produceOrigin">
+                    <el-input v-model.trim="basicForm.produceOrigin" maxlength="50" :disabled="basicForm.origin===1||is_query" placeholder="请输入产地" size="small" />
+                  </el-form-item>
+                  <el-form-item label="批准文号：" prop="approvalNumber">
+                    <el-input v-model.trim="basicForm.approvalNumber" maxlength="24" :disabled="basicForm.origin===1||is_query" placeholder="请输入批准文号" size="small" />
+                  </el-form-item>
+                  <el-form-item label="商品详细信息：">
+                    <p>填写商品说明书</p>
+                    <div v-show="basicForm.origin===1">
+                      <Tinymce ref="editor" v-model="basicForm.intro" :readonly="true" :height="400" />
+                    </div>
+                    <div v-show="basicForm.origin!==1">
+                      <Tinymce id="basicInfo" ref="editor" v-model="basicForm.intro" :readonly="is_query" :height="400" @onload="tinymceLoad" />
+                    </div>
+                  </el-form-item>
+                  <el-form-item :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'">
+                    <el-input
+                      v-model.trim="basicForm.keyFeature"
+                      type="textarea"
+                      maxlength="512"
+                      :disabled="basicForm.origin===1||is_query"
+                      :rows="3"
+                      show-word-limit
+                      placeholder="请输入功能主治/适应症"
+                      size="small"
+                    />
+                  </el-form-item>
+                  <el-form-item label="有效期：" prop="days">
+                    <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="-1" size="small">无</el-radio>
+                    <el-radio v-model="expireDays" :disabled="basicForm.origin===1||is_query" :label="1" size="small">
+                      <el-input v-model="basicForm.days" :disabled="basicForm.origin===1||is_query" maxlength="8" style="width:80px" size="small" placeholder="" />
+                      <el-select v-model="timeTypes" :disabled="basicForm.origin===1||is_query" style="width:100px" size="small" placeholder="">
+                        <el-option value="1" label="年" />
+                        <el-option value="2" label="月" />
+                        <el-option value="3" label="天" />
+                      </el-select>
+                      <span style="color:#999">30天为一个月，365天为一年</span>
+                    </el-radio>
+                  </el-form-item>
+                </div>
               </div>
             </div>
-          </div>
-        </el-form>
+            <!-- 特殊属性 -->
+            <div class="edit-card">
+              <div class="header">
+                <span>特殊属性</span>
+              </div>
+              <div class="edit-card-cnt">
+                <div class="content">
+                  <el-form-item label="运输方式：">
+                    <el-radio-group v-model="basicForm.freightType" :disabled="basicForm.origin===1||is_query">
+                      <el-radio :label="0">常温</el-radio>
+                      <el-radio :label="1">冷藏</el-radio>
+                      <el-radio :label="2">冷冻</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                  <el-form-item label="其他属性：">
+                    <el-checkbox v-model="basicForm.isEasyBreak" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">易碎</el-checkbox>
+                    <el-checkbox v-model="basicForm.isLiquid" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">液体</el-checkbox>
+                    <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')">
+                      <el-checkbox v-model="basicForm.hasEphedrine" :disabled="basicForm.origin===1||is_query" :true-label="1" :false-label="0">含麻黄碱</el-checkbox>
+                    </template>
+                  </el-form-item>
+                  <el-form-item label="" label-width="100px">
+                    <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitForm">下一步</el-button>
+                  </el-form-item>
+                </div>
+              </div>
+            </div>
+          </el-form>
+        </section>
+
       </div>
       <!-- 规格信息 -->
       <div v-show="step===2">
@@ -276,7 +281,7 @@
                         :on-error="handleImgError"
                         :before-upload="beforeUpload"
                       >
-                        <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                        <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)" @click="handleUploadIndex(scope.$index)">
                           <div slot="placeholder" class="image-slot">
                             加载中<span class="dot">...</span>
                           </div>
@@ -343,7 +348,7 @@
                             :on-error="handleImgError"
                             :before-upload="beforeUpload"
                           >
-                            <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)">
+                            <el-image v-if="scope.row.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(scope.row.picUrl)" @click="handleUploadIndex(scope.$index)">
                               <div slot="placeholder" class="image-slot">
                                 加载中<span class="dot">...</span>
                               </div>
@@ -400,7 +405,7 @@
                           :on-error="handleImgError"
                           :before-upload="beforeUpload"
                         >
-                          <el-image v-if="item.picUrl" class="avatar" style="width:80px;height:80px" :src="showImg(item.picUrl)">
+                          <el-image v-if="item.picUrl" class="avatar" style="width:80px;height:80px" :src="showImg(item.picUrl)" @click="handleUploadIndex(index)">
                             <div slot="placeholder" class="image-slot">
                               加载中<span class="dot">...</span>
                             </div>
@@ -713,6 +718,8 @@ export default {
   },
   created() {
     if (this.$route.query.id) { // 如果是编辑
+      console.log('加载中...')
+      this.basicLoading = true
       this.getTypeListData().then(res => {
         this._loadBasicInfo()
       }).catch(_ => {
@@ -791,7 +798,7 @@ export default {
       })
     },
     _loadBasicInfo() { // 加载基本信息
-      this.basicLoading = true
+      this.subLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
         this._loadgroupGather('1', [res.data.typeId])
@@ -811,6 +818,10 @@ export default {
               }
             }
           }
+        }
+        // 药品类型处理 如果默认为3直接设置为空
+        if (data.drugType && data.drugType > 2) {
+          data.drugType = ''
         }
         // 有限期处理
         if (data.expireDays === -1) {
@@ -843,8 +854,10 @@ export default {
         this.basicForm = data
         this.$refs.editor.setContent(this.basicForm.intro)
         this.basicLoading = false
+        this.subLoading = false
       }).catch(_ => {
         this.basicLoading = false
+        this.subLoading = false
       })
     },
     _loadGoodsImgAry() { // 加载商品图片
@@ -954,6 +967,7 @@ export default {
       return true
     },
     handleUploadIndex(index) {
+      console.log('index:---', index)
       this.uploadIndex = index
     },
     handleAvatarSuccess(res, file) { // 规格图片上传成功

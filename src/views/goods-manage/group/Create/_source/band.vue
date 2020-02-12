@@ -15,7 +15,7 @@
         <p style="margin-bottom:10px">分组名称：<span v-text="info.name" /></p>
         <!-- <p>分类下面</p> -->
       </div>
-      <section @keydown.enter="getList">
+      <section @keydown.enter="handleQuery">
         <div
           class="search-form"
           style="margin-top:20px;margin-bottom:10px"
@@ -39,7 +39,7 @@
             />
           </div>
           <div class="search-item">
-            <el-button type="primary" size="mini" @click="getList">查询</el-button>
+            <el-button type="primary" size="mini" @click="handleQuery">查询</el-button>
             <el-button type="" size="mini" @click="resetQuery">重置</el-button>
           </div>
         </div>
@@ -153,6 +153,10 @@ export default {
   created() {
   },
   methods: {
+    handleQuery() {
+      this.listQuery.currentPage = 1
+      this.getList()
+    },
     getList() {
       this.loading = true
       this.listQuery.typeId = this.info.id
