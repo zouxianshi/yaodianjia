@@ -256,6 +256,14 @@
         </el-table-column>
         <el-table-column prop="createTime" label="预约时间" />
         <el-table-column prop="updateTime" label="领取时间" />
+        <el-table-column prop="updateTime" label="门店名称/地址">
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.storeName }} /
+              {{ scope.row.storeAddress }}
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
       <div style="margin-top:20px;">
         已筛选出{{ exportList.length }}条预约单，是否全部导出数据？
