@@ -63,9 +63,20 @@ module.exports = {
         // target: `http://middle.test.ydjia.cn/businesses-gateway`,
         target: `http://middle.test.ydjia.cn/businesses-gateway`,
         changeOrigin: true,
+        logLevel: 'debug',
         pathRewrite: {
           // '^/api': `http://middle.test.ydjia.cn`
           '^/api': `http://middle.test.ydjia.cn`
+        }
+      },
+      '/hss': {
+        // target: `http://middle.test.ydjia.cn/businesses-gateway`,
+        target: `https://middle.test.ydjia.cn/businesses-gateway/mask`,
+        // target: `http://10.200.25.183:8080`,
+        changeOrigin: true,
+        pathRewrite: {
+          // '^/api': `http://middle.test.ydjia.cn`
+          '^/hss': ``
         }
       }
     }
