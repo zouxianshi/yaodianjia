@@ -274,6 +274,7 @@
         <el-button
           v-loading="reportloading"
           type="primary"
+          :disabled="exportStatus"
           @click="donwloadExcel"
         >导出</el-button>
       </div>
@@ -386,7 +387,8 @@ export default {
         }
       ],
       exportList: [],
-      reportloading: true
+      reportloading: true,
+      exportStatus: false
     }
   },
   watch: {
@@ -418,12 +420,18 @@ export default {
         Object.assign(this.selectResult, { storeId })
       )
       this.exportList = data
-      this.exportReportService()
+      if (this.exportList && this.exportList.length > 0) {
+        this.exportReportService()
+      } else {
+        this.reportloading = false
+        this.exportStatus = true
+      }
     },
     async exportReportService() {
       console.log(
         'exportReportService ________________________________________'
       )
+      this.exportExcel = null
       const storeId = this.selectDayStore.id
       const res = await DistributionService.exportReport(
         Object.assign(this.selectResult, {
@@ -433,12 +441,12 @@ export default {
       )
       this.exportExcel = res
       this.reportloading = false
+      this.exportStatus = false
     },
     resetSelectReport() {
       this.selectDayModule = { label: '当天', value: '16' }
       this.selectDayStore = { storeName: '全部', id: '' }
       this.selectDayStoreID = ''
-      this
     },
     donwloadExcel() {
       const content = this.exportExcel
