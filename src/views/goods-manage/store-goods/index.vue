@@ -526,7 +526,7 @@ export default {
           message: '价格同步成功',
           type: 'success'
         })
-        this.multipleSelection = []
+        this.getList()
       }).catch(err => {
         console.log(err)
       })
