@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     ids() {
-      return this.$route.query.ids
+      return this.$route.query.id
     }
   },
   created() {
