@@ -40,7 +40,7 @@
   ],
   "dependencies": {
     "@hydee/download": "^1.0.5",
-    "@merchant/commons": "^1.0.0-beta.118",
+    "@merchant/commons": "^1.0.0-beta.119",
     "area-data": "^5.0.6",
     "axios": "0.18.1",
     "codemirror": "5.45.0",
