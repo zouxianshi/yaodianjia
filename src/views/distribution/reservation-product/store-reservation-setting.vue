@@ -64,6 +64,11 @@ export default {
       }
     }
   },
+  computed: {
+    ids() {
+      return this.$route.query.id
+    }
+  },
   created() {
     this.getStoreInventory()
   },
@@ -86,7 +91,7 @@ export default {
       var parmes = {}
       parmes = {
         'inventory': data.inventory,
-        'productId': data.product_id,
+        'productId': this.ids,
         'storeCode': data.store_code,
         'storeId': data.store_id,
         'storeName': data.store_name
@@ -108,7 +113,8 @@ export default {
         'city': this.form.city,
         'currentPage': this.pageInfo.currentPage,
         'pageSize': this.pageInfo.pageSize,
-        'storeName': this.form.storeName
+        'storeName': this.form.storeName,
+        'productId': this.ids
       }
       distributionService.getStoreInventory(parmes).then(res => {
         this.pageInfo.total = res.data.totalCount

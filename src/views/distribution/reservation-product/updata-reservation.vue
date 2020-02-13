@@ -280,7 +280,7 @@ export default {
       })
     },
     goToSetting() {
-      this.$router.push('/distribution/store-reservation-setting')
+      this.$router.push('/distribution/store-reservation-setting?id=' + this.ids)
     }
   }
 }
