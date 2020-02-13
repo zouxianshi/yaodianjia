@@ -37,11 +37,11 @@
             onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
             maxlength="10"
           />
-          <!-- <el-button
+          <el-button
             class="set-store"
             type="primary"
             @click="goToSetting()"
-          >设置门店最大可预约总量</el-button> -->
+          >设置门店最大可预约总量</el-button>
         </el-form-item>
         <el-form-item label="预计到货时长：" prop="deliveryTime">
           <el-input
