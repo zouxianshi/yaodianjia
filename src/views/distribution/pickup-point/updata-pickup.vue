@@ -100,7 +100,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <!-- <div class="product-info">
+    <div class="product-info">
       <h4>门店流量设置</h4>
       <div class="row-panel">
         <div class="txt">每日最大到店领取人数：</div>
@@ -115,7 +115,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <div class="submit-box">
       <el-button type="primary" @click="submitData()">完成添加</el-button>
     </div>
