@@ -178,6 +178,7 @@
       :visible.sync="exportDialogVisible"
       append-to-body
       width="60%"
+      @close="resetSelectReport"
     >
       <div class="line">
         <el-select
@@ -208,7 +209,7 @@
           />
         </el-select>
         <el-select
-          v-model="selectDayModule"
+          v-model="selectDayModule.label"
           placeholder="请选择时间"
           @change="selectDayChange"
         >
@@ -221,7 +222,7 @@
               v-for="(item, index) in group.options"
               :key="index"
               :label="item.label"
-              :value="item.value"
+              :value="{ label: item.label, value: item.value }"
               :disabled="item.disabled"
             />
           </el-option-group>
@@ -266,7 +267,7 @@
         </el-table-column>
       </el-table>
       <div style="margin-top:20px;">
-        已筛选出{{ exportList.length }}条预约单，是否全部导出数据？
+        筛选完成，是否导出全部数据？
       </div>
       <div style="margin-top:20px;display:flex;justify-content: flex-end;">
         <el-button @click.stop="exportDisplayHandler(false)">取消</el-button>
@@ -304,7 +305,7 @@ export default {
       totalCount: 0,
       loading: true,
       exportDialogVisible: false,
-      selectDayModule: '16',
+      selectDayModule: { label: '当天', id: 16 },
       selectResult: {},
       selectDayStoreID: '',
       exportExcel: null,
@@ -434,9 +435,10 @@ export default {
       this.reportloading = false
     },
     resetSelectReport() {
-      this.selectDayModule = '16'
+      this.selectDayModule = { label: '当天', value: '16' }
       this.selectDayStore = { storeName: '全部', id: '' }
       this.selectDayStoreID = ''
+      this
     },
     donwloadExcel() {
       const content = this.exportExcel
@@ -444,7 +446,7 @@ export default {
         type: 'application/vnd.ms-excel;charset=utf-8'
       })
 
-      const fileName = 'export.xls'
+      const fileName = `export${Date.parse(new Date())}.xls`
       if ('download' in document.createElement('a')) {
         // 非IE下载
         const elink = document.createElement('a')
@@ -463,35 +465,41 @@ export default {
     selectDayChange(e) {
       // 选择月份
       console.log(e)
-      if (Number(e) <= 12) {
+
+      const val = e.value
+      this.selectDayModule = e
+      if (Number(val) <= 12) {
         this.selectResult = this.selectMouth(e)
       } else {
-        if (Number(e) === 13) {
+        if (Number(val) === 13) {
           // 3个月
           this.selectResult = this.getMonthDay(3)
-        } else if (Number(e) === 14) {
+        } else if (Number(val) === 14) {
           // 1个月
           this.selectResult = this.getMonthDay(1)
-        } else if (Number(e) === 15) {
+        } else if (Number(val) === 15) {
           // 一周\
           this.selectResult = this.getDayWeek()
         } else {
           // 当天
-          const date = new Date()
-          // const valueOfDate = date.valueOf()
-          const nowTime = date
-            .toLocaleDateString()
-            .toString()
-            .split('/')
-            .join('-')
-
-          this.selectResult = {
-            startDate: `${nowTime} 00:00:00`,
-            endDate: `${nowTime} 23:59:59`
-          }
+          this.getNowTime()
         }
       }
       console.log('Result _________________________ : ', this.selectResult)
+    },
+    getNowTime() {
+      const date = new Date()
+      // const valueOfDate = date.valueOf()
+      const nowTime = date
+        .toLocaleDateString()
+        .toString()
+        .split('/')
+        .join('-')
+
+      this.selectResult = {
+        startDate: `${nowTime} 00:00:00`,
+        endDate: `${nowTime} 23:59:59`
+      }
     },
     /**
      * 选择几月份
@@ -728,8 +736,12 @@ export default {
     },
     exportDisplayHandler(bol) {
       this.exportDialogVisible = bol
-      if (bol) this.queryReportService()
-      else this.resetSelectReport()
+      if (bol) {
+        this.getNowTime()
+        this.queryReportService()
+      } else {
+        this.resetSelectReport()
+      }
     }
   }
 }
