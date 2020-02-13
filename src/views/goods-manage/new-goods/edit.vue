@@ -1011,7 +1011,7 @@ export default {
       this._loadBrandList(query)
     },
     _loadBrandList(query = '') { // 获取品牌
-      getBrandList({ brandName: query, pageSize: 300 }).then(res => {
+      getBrandList({ brandName: query, pageSize: 5000 }).then(res => {
         const { data } = res.data
         this.brandList = data
       })
