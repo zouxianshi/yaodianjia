@@ -35,7 +35,7 @@
           <li class="zxy">
             <div class="m">
               <div class="name">中西医药模板.xls</div> <a
-                href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BF.xls"
+                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BF.xls?times='+times"
                 download="中西医药模板.xls"
               ><button
                 type="button"
@@ -46,8 +46,9 @@
           </li>
           <li class="yxbj">
             <div class="m">
-              <div class="name">营养保健模板.xls</div> <a
-                href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E8%90%A5%E5%85%BB%E4%BF%9D%E5%81%A5%E6%A8%A1%E6%9D%BF.xls"
+              <div class="name">营养保健模板.xls</div>
+              <a
+                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E8%90%A5%E5%85%BB%E4%BF%9D%E5%81%A5%E6%A8%A1%E6%9D%BF.xls?times='+times"
                 download="营养保健模板.xls"
               ><button
                 type="button"
@@ -60,20 +61,19 @@
           <li class="yl">
             <div class="m">
               <div class="name">医疗器械模板.xls</div> <a
-                href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%8C%BB%E7%96%97%E5%99%A8%E6%A2%B0%E6%A8%A1%E6%9D%BF.xls"
+                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%8C%BB%E7%96%97%E5%99%A8%E6%A2%B0%E6%A8%A1%E6%9D%BF.xls?times='+times"
                 download="医疗器械模板.xls"
               ><button
                 type="button"
                 class="el-button el-button--default el-button--small"
               >
-
                 <span>点击下载</span></button></a>
             </div>
           </li>
           <li class="qt">
             <div class="m">
               <div class="name">其它模板.xls</div> <a
-                href="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%85%B6%E4%BB%96%E6%A8%A1%E6%9D%BF.xls"
+                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%85%B6%E4%BB%96%E6%A8%A1%E6%9D%BF.xls?times='+times"
                 download="其它模板.xls"
               ><button
                 type="button"
@@ -142,7 +142,8 @@ export default {
       listQuery: {
         currentPage: 1,
         pageSize: 20
-      }
+      },
+      times: 0
     }
   },
   beforeRouteLeave(to, from, next) { // 路由离开关闭标签
@@ -161,6 +162,9 @@ export default {
   },
   created() {
     this._loadFileResultList()
+    setInterval(() => {
+      this.times = Date.parse(new Date())
+    }, 1000)
   },
   methods: {
     beforeUpload(file) {
