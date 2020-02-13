@@ -11,7 +11,7 @@ import router from './router'
 import permission from './directive/permission' // permission control
 import * as filters from './filters' // global filters
 import './permission'
-// import { setSystem } from './utils/auth'
+import { setSystem } from './utils/auth'
 import utils from '@/utils/util'
 
 Vue.use(permission)
@@ -29,7 +29,7 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
 
-// setSystem('mc-system', 'medical')
+setSystem('mc-system', 'medical')
 
 import { MC } from '@merchant/commons'
 
