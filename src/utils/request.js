@@ -60,7 +60,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-    if (isExport) { // 如果是数据导出，直接pass
+    if (isExport) {
+      // 如果是数据导出，直接pass
       return res
     }
     // 10000为所有接口成功码
@@ -72,7 +73,7 @@ service.interceptors.response.use(
       })
       return Promise.reject(res || 'Error')
     }
-    return res
+    return Promise.resolve(res)
   },
   error => {
     let msg = ''
@@ -83,7 +84,8 @@ service.interceptors.response.use(
       case 403:
         if (error.response.data.code === 40302) {
           msg = '无权限请求该资源'
-        } else if (error.response.data.code === 40301) { // 40301
+        } else if (error.response.data.code === 40301) {
+          // 40301
           // 登录失效
           msg = '登录失效，请重新登录'
           store.dispatch('user/resetToken').then(() => {
