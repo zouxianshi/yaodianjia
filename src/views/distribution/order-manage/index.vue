@@ -275,7 +275,7 @@
           v-loading="reportloading"
           type="primary"
           :disabled="exportStatus"
-          @click="donwloadExcel"
+          @click="exportReportService"
         >导出</el-button>
       </div>
     </el-dialog>
@@ -421,11 +421,11 @@ export default {
       )
       this.exportList = data
       if (this.exportList && this.exportList.length > 0) {
-        this.exportReportService()
+        this.exportStatus = false
       } else {
-        this.reportloading = false
         this.exportStatus = true
       }
+      this.reportloading = false
     },
     async exportReportService() {
       console.log(
@@ -440,8 +440,7 @@ export default {
         })
       )
       this.exportExcel = res
-      this.reportloading = false
-      this.exportStatus = false
+      this.donwloadExcel()
     },
     resetSelectReport() {
       this.selectDayModule = { label: '当天', value: '16' }
@@ -454,7 +453,7 @@ export default {
         type: 'application/vnd.ms-excel;charset=utf-8'
       })
 
-      const fileName = `export${Date.parse(new Date())}.xls`
+      const fileName = `export${Date.parse(new Date())}.xlsx`
       if ('download' in document.createElement('a')) {
         // 非IE下载
         const elink = document.createElement('a')
