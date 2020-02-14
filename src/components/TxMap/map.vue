@@ -53,9 +53,28 @@ export default {
         this.$emit('ready', this.map, qq)
       })
     },
-    setCenter(location) {
-      console.log('setCenter : ', location)
-      this.map.setCenter(location)
+    setCenter(_location) {
+      // console.log('setCenter : ', location)
+      // this.map.setCenter(location)
+      // TMap('QVLBZ-YUULR-OUMW7-WKXFD-4SUWS-UCBIH').then(qq => {
+      //   console.log('location _____________________ : ', _location)
+      //   const center = new qq.maps.LatLng(_location.lat, _location.lng)
+      //   this.map = new qq.maps.Map(document.getElementById('map-container'), {
+      //     // 地图的中心地理坐标。
+      //     center: center,
+      //     zoom: this.zoom
+      //   })
+      // })
+      const center = new mapQQ.maps.LatLng(_location.lat, _location.lng)
+      const map = new mapQQ.maps.Map(document.getElementById('map-container'), {
+        // 地图的中心地理坐标。
+        center: center,
+        zoom: this.zoom
+      })
+      new mapQQ.maps.Marker({
+        position: center,
+        map
+      })
     },
     location() {
       // 定位当前位置

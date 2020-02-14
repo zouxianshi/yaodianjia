@@ -125,7 +125,7 @@
 import distributionService from '@/api/distributionService'
 import txMap from '@/components/TxMap/map'
 import { getAddress, getLocation } from '@/api/address'
-var mapQQ
+// var mapQQ
 export default {
   components: { txMap },
   data() {
@@ -211,12 +211,20 @@ export default {
         addressFormat: 'short',
         location: ''
       }).then(res => {
-        this.addressList = res.data.data
+        if (res.data.data.length > 0) {
+          this.addressList = res.data.data
+        } else {
+          this.$message({
+            message: '未搜索到相关位置信息',
+            type: 'error'
+          })
+        }
       })
     },
     selectLocation(obj) {
       this.form.storeAddress = `${obj.province}${obj.city}${obj.district}${obj.title}`
-      this.getLocation()
+      console.log('location _________________________________ : ', obj.location)
+      this.getLocation(obj.location)
     },
 
     submitData() {
@@ -251,31 +259,36 @@ export default {
       })
     },
     handlerLocation(map, qq) {
-      mapQQ = qq
+      // mapQQ = qq
       this.txMap = map
     },
     // 定位
-    getLocation() {
+    getLocation(_location) {
       this.oldAddress = this.form.storeAddress
-      const geocoder = new mapQQ.maps.Geocoder({
-        complete: result => {
-          const location = result.detail.location
-          this.$refs.mapRef.setCenter(location)
-          this.form.latitude = location.lat
-          this.form.longitude = location.lng
-          this.$refs.mapRef.setMarker(location)
-          this.idTrueAddress = true
-        },
-        error: () => {
-          this.idTrueAddress = false
-          this.$message({
-            message: '未匹配到地址',
-            type: 'error'
-          })
-        }
-      })
-      // 通过getLocation();方法获取位置信息值
-      geocoder.getLocation(this.form.storeAddress)
+      // console.log('mapQQ', mapQQ)
+      this.$refs.mapRef.setCenter(_location)
+      // this.$refs.mapRef.setMarker(location)
+
+      // const geocoder = new mapQQ.maps.Geocoder({
+      //   complete: result => {
+      //     console.log('res : ', result)
+      //     const location = _location
+      //     this.$refs.mapRef.setCenter(_location)
+      //     this.form.latitude = _location.lat
+      //     this.form.longitude = _location.lng
+      //     this.$refs.mapRef.setMarker(_location)
+      //     this.idTrueAddress = true
+      //   },
+      //   error: () => {
+      //     this.idTrueAddress = false
+      //     this.$message({
+      //       message: '未匹配到地址',
+      //       type: 'error'
+      //     })
+      //   }
+      // })
+      // // 通过getLocation();方法获取位置信息值
+      // geocoder.getLocation(this.form.storeAddress)
     }
   }
 }
