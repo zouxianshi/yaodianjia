@@ -221,7 +221,8 @@ const mutations = {
         objectName: msgResult.objectName,
         senderUserId: msgResult.senderUserId,
         messageUId: msgResult.messageUId,
-        targetId: msgResult.targetId
+        targetId: msgResult.targetId,
+        sentTime: new Date().getTime()
       }
     }
 
@@ -254,6 +255,7 @@ const mutations = {
               ...curLocalPush.latestMessage.content
             }
           }
+          element.sentTime = new Date().getTime()
         }
       })
       console.log('ADD_MSG_TO_ONLINE_MSG_LIST 的locaStorage设置')
