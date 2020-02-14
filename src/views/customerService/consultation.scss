@@ -352,7 +352,8 @@
 
 
 .el-dialog {
-  el-table__body-wrapper {
+
+  .el-table__body-wrapper {
     overflow-y: auto!important;
   }
 }
