@@ -267,6 +267,7 @@ export default {
       this.oldAddress = this.form.storeAddress
       // console.log('mapQQ', mapQQ)
       this.$refs.mapRef.setCenter(_location)
+      this.idTrueAddress = true
       // this.$refs.mapRef.setMarker(location)
 
       // const geocoder = new mapQQ.maps.Geocoder({
