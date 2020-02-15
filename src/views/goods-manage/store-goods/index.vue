@@ -395,7 +395,8 @@ export default {
         'name': '',
         'storeId': '',
         'status': 1,
-        'auditStatus': 1
+        'auditStatus': 1,
+        'currentPage': 1
       },
       storeList: [],
       groupId: [],
@@ -424,7 +425,8 @@ export default {
         'storeId': this.listQuery.storeId,
         'status': this.listQuery.status,
         'auditStatus': this.listQuery.auditStatus,
-        'commodityType': ''
+        'commodityType': '',
+        'currentPage': 1
       }
       this.$refs.groupRef.clearCheckedNodes
       this.groupId = ['']
@@ -457,6 +459,7 @@ export default {
         this.loading = false
         const { data, totalCount } = res.data
         if (data.length === 0 && this.listQuery.currentPage !== 1) {
+          console.log(this.listQuery)
           this.listQuery.currentPage--
           this._loadList()
         }
