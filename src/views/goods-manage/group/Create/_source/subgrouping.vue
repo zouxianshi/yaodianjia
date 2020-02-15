@@ -159,6 +159,8 @@ export default {
       this.$store.dispatch('group/createGroup', data).then(res => {
         const resData = res.data
         const updata = this.groupList.slice()
+        this.pic = ''
+        console.log('提交')
         if (this.level === '1') {
           resData.children = []
           resData.show = true
@@ -170,6 +172,7 @@ export default {
         } else if (this.level === '0') {
           resData.children = []
           resData.show = true
+          this.pic = ''
           updata.push(resData)
         }
         this.$store.dispatch('group/updateGroup', updata)
