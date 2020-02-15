@@ -114,6 +114,7 @@ export default {
         if (list.length === 1) {
           this.curLatestMessageInfo = list[0].latestMessage
         }
+        console.log('onlineConversationData.list handler', list)
       },
       deep: true,
       immediate: true
@@ -659,7 +660,7 @@ export default {
       console.log('有缓存')
       const list = [...storageList]
       if (!this.searchText.replace(/\s*/g, '')) {
-        console.log('!ssearchtext')
+        console.log('!searchtext')
         this.forceChangeConversationList(list)
         return
       }
@@ -682,7 +683,8 @@ export default {
         console.log('hass this.onlineConversationData.list')
         const firstConversation = this.onlineConversationData.list[0]
         this.setCurOnlineUserId({
-          userId: firstConversation.targetId
+          userId: firstConversation.targetId,
+          setStorage: false
         })
         this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''

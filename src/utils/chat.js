@@ -214,11 +214,14 @@ class Chat {
 
   // 文字转换emoji显示
   symbolToEmoji(text) {
+    console.error('symbolToEmoji 需要转换的文字', text)
+    text = text.replace(/©️*/g, '') // 过滤版权符号
     return window.RongIMLib.RongIMEmoji.symbolToEmoji(text)
   }
 
   // emoji转文字
   emojiToSymbol(text) {
+    text = text.replace(/©️*/g, '') // 过滤版权符号
     return window.RongIMLib.RongIMEmoji.emojiToSymbol(text)
   }
 

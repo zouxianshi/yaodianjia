@@ -349,3 +349,11 @@
     margin-left: 12px;
   }
 }
+
+
+.el-dialog {
+
+  .el-table__body-wrapper {
+    overflow-y: auto!important;
+  }
+}
