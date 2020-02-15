@@ -214,6 +214,7 @@ class Chat {
 
   // 文字转换emoji显示
   symbolToEmoji(text) {
+    console.error('symbolToEmoji 需要转换的文字', text)
     return window.RongIMLib.RongIMEmoji.symbolToEmoji(text)
   }
 

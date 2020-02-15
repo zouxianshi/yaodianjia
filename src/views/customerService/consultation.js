@@ -114,6 +114,7 @@ export default {
         if (list.length === 1) {
           this.curLatestMessageInfo = list[0].latestMessage
         }
+        console.log('onlineConversationData.list handler', list)
       },
       deep: true,
       immediate: true
