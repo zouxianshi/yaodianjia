@@ -223,6 +223,19 @@ class InnerCtor {
           //   disabled: this.get("set.merchant-set"),
           //   children: []
           // },
+
+          {
+            name: '预约商品管理',
+            path: '/distribution/reservation-product',
+            disabled: this.get('appointment.epidemic'),
+            children: []
+          },
+          {
+            name: '门店需求商品统计',
+            path: '/distribution/store-statistics',
+            disabled: this.get('appointment'),
+            children: []
+          },
           {
             name: '预约单管理',
             path: '/distribution/order-manage',
@@ -235,6 +248,7 @@ class InnerCtor {
               }
             ]
           },
+
           // {
           //   name: "核销管理",
           //   path: "/distribution/write-off",
@@ -246,12 +260,7 @@ class InnerCtor {
             disabled: this.get('appointment.mini'),
             children: []
           },
-          {
-            name: '预约商品管理',
-            path: '/distribution/reservation-product',
-            disabled: this.get('appointment.epidemic'),
-            children: []
-          },
+
           {
             name: '提货点管理',
             path: '/distribution/pickup-point',
