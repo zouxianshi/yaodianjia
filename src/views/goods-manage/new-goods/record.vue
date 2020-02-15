@@ -214,13 +214,19 @@ export default {
         'manufacture': '',
         'merCode': '',
         'name': '',
-        'origin': 0
+        'origin': 0,
+        'currentPage': 1
       },
       multipleSelection: []
     }
   },
   computed: {
     ...mapGetters(['name'])
+  },
+  watch: {
+    'listQuery.name'(v) {
+      this.listQuery.currentPage = 1
+    }
   },
   created() {
     this.getList()
