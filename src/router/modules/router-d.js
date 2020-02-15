@@ -31,7 +31,8 @@ const router = [
       },
       {
         path: 'order-details',
-        component: () => import('@/views/distribution/order-manage/details.vue'),
+        component: () =>
+          import('@/views/distribution/order-manage/details.vue'),
         name: 'order-details',
         meta: {
           title: '预约单详情'
@@ -119,6 +120,24 @@ const router = [
         name: 'updata-point',
         meta: {
           title: '编辑提货门店'
+        }
+      },
+      {
+        path: 'order-reception',
+        component: () =>
+          import('@/views/distribution/order-manage/reception.vue'),
+        name: 'order-reception',
+        meta: {
+          title: '批量发货'
+        }
+      },
+      {
+        path: 'store-statistics',
+        component: () =>
+          import('@/views/distribution/order-manage/statistics.vue'),
+        name: 'store-statistics',
+        meta: {
+          title: '门店需求商品统计'
         }
       }
     ]
