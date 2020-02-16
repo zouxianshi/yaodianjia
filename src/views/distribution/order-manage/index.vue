@@ -1,5 +1,21 @@
 <template>
   <div v-loading="loading" class="container">
+    <div class="header-panel" style="padding-top:20px;">
+      <el-select
+        v-model="selectStore.storeName"
+        filterable
+        placeholder="选择门店"
+        class="search"
+        @change="selectChange"
+      >
+        <el-option
+          v-for="item in storeListData"
+          :key="item.id"
+          :label="item.storeName"
+          :value="{ storeName: item.storeName, id: item.id }"
+        />
+      </el-select>
+    </div>
     <div class="header-panel">
       <div class="box">
         <div
@@ -34,20 +50,7 @@
           已完成
         </div>
       </div>
-      <el-select
-        v-model="selectStore.storeName"
-        filterable
-        placeholder="选择门店"
-        class="search"
-        @change="selectChange"
-      >
-        <el-option
-          v-for="item in storeListData"
-          :key="item.id"
-          :label="item.storeName"
-          :value="{ storeName: item.storeName, id: item.id }"
-        />
-      </el-select>
+
       <div class="search-container">
         <div class="search-item" @keyup.enter="forSearch()">
           <el-input
@@ -67,6 +70,11 @@
         <el-button
           style="margin-left:20px;"
           type="primary"
+          size="small"
+          @click.stop="navToReception"
+        >批量到货</el-button>
+        <el-button
+          style="margin-left:20px;"
           size="small"
           @click.stop="exportDisplayHandler(true)"
         >批量导出</el-button>
@@ -406,6 +414,10 @@ export default {
     })
   },
   methods: {
+    /**  */
+    navToReception() {
+      this.$router.push({ path: '/distribution/order-reception' })
+    },
     changeSelectDayStoreID(e) {
       console.log('selectDayStoreID _________________ : ', e)
       this.selectDayStore = e
@@ -416,9 +428,10 @@ export default {
     async queryReportService() {
       this.reportloading = true
       const storeId = this.selectDayStore.id
-      const { data } = await DistributionService.queryReport(
-        Object.assign(this.selectResult, { storeId })
-      )
+      const { data } = await DistributionService.queryReport({
+        ...this.selectResult,
+        storeId
+      })
       this.exportList = data
       if (this.exportList && this.exportList.length > 0) {
         this.exportStatus = false
@@ -433,12 +446,11 @@ export default {
       )
       this.exportExcel = null
       const storeId = this.selectDayStore.id
-      const res = await DistributionService.exportReport(
-        Object.assign(this.selectResult, {
-          storeId,
-          responsetype: 'blob'
-        })
-      )
+      const res = await DistributionService.exportReport({
+        ...this.selectResult,
+        storeId,
+        responsetype: 'blob'
+      })
       this.exportExcel = res
       this.donwloadExcel()
     },
@@ -771,7 +783,6 @@ export default {
     }
     .search {
       width: 284px;
-      margin-left: 44px;
     }
     .box {
       border-radius: 6px;
@@ -779,6 +790,7 @@ export default {
       flex-direction: row;
       border: 1px solid #d7d7d7;
       flex-shrink: 0;
+      margin-right: 44px;
       .cutoff {
         width: 1px;
         background-color: #d7d7d7;
