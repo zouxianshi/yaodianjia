@@ -292,6 +292,8 @@ export default {
     getLocation(_location) {
       this.oldAddress = this.form.storeAddress
       this.$refs.mapRef.setCenter(_location)
+      this.form.latitude = location.lat
+      this.form.longitude = location.lng
       this.idTrueAddress = true
       // const geocoder = new mapQQ.maps.Geocoder({
       //   complete: result => {
