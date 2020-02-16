@@ -82,8 +82,7 @@
                 class="items"
                 @click="selectLocation(item)"
               >
-                {{ item.province }}{{ item.city }}{{ item.district
-                }}{{ item.title }}
+                {{ item.address }}{{ item.title }}
               </div>
             </div>
           </div>
