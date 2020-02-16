@@ -728,6 +728,10 @@ export default {
       const { data, code } = await DistributionService.updateOrderStatus(params)
       if (code === '10000') {
         console.log(data)
+        this.$message({
+          message: '操作成功!',
+          type: 'success'
+        })
         this.closeDialog()
         this.getOrderListByTypeService()
       }
