@@ -72,6 +72,7 @@
       title="确认批量到货"
       append-to-body
       width="60%"
+      @close="resetDialogData"
     >
       <el-form>
         <el-form-item label="到货商品：">
@@ -175,6 +176,8 @@ export default {
     dialogHandler(bol) {
       if (bol) {
         this.dialogData = { ...this.baseInfo, ...this.classify }
+      } else {
+        this.resetDialogData()
       }
       this.showDialog = bol
     },
@@ -233,6 +236,11 @@ export default {
       }
       this.timeData = time
     },
+    resetDialogData() {
+      this.time = null
+      this.arrivalCount = 1
+      this.dialogData = {}
+    },
     async bulkArrivalService() {
       if (!this.time) {
         this.$message({
@@ -262,7 +270,8 @@ export default {
           message: '操作成功!',
           type: 'success'
         })
-        this.showDialog = false
+        this.dialogHandler(false)
+        this.$router.go(-1)
       }
     }
   }
