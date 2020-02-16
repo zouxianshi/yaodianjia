@@ -56,7 +56,7 @@
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="tableList.length"
+        :total="totalCount"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -75,7 +75,8 @@ export default {
       loading: false,
       currentPage: 1,
       pageSize: 10,
-      tableList: []
+      tableList: [],
+      totalCount: 0
     }
   },
   mounted() {
@@ -107,7 +108,8 @@ export default {
         pageSize: this.pageSize
       }
       const { data } = await DistributionService.productStatistics(param)
-      this.tableList = data
+      this.tableList = data.data
+      this.totalCount = data.totalCount
     },
     clearSearch() {
       this.storeName = ''

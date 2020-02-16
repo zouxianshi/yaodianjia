@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading" class="container">
-    <!-- <div class="header-panel" style="padding-top:20px;">
+    <div class="header-panel" style="padding-top:20px;">
       <el-select
         v-model="selectStore.storeName"
         filterable
@@ -15,7 +15,7 @@
           :value="{ storeName: item.storeName, id: item.id }"
         />
       </el-select>
-    </div> -->
+    </div>
     <div class="header-panel">
       <div class="box">
         <div
@@ -50,7 +50,7 @@
           已完成
         </div>
       </div>
-      <el-select
+      <!-- <el-select
         v-model="selectStore.storeName"
         style="margin-right:10px;"
         filterable
@@ -64,7 +64,7 @@
           :label="item.storeName"
           :value="{ storeName: item.storeName, id: item.id }"
         />
-      </el-select>
+      </el-select> -->
       <div class="search-container">
         <div class="search-item" @keyup.enter="forSearch()">
           <el-input
@@ -81,17 +81,15 @@
             @click.stop="forSearch()"
           >搜 索</el-button>
         </div>
-        <!-- <el-button
+        <el-button
           style="margin-left:20px;"
           type="primary"
           size="small"
           @click.stop="navToReception"
-          >批量到货</el-button
-        > -->
+        >批量到货</el-button>
         <el-button
           style="margin-left:20px;"
           size="small"
-          type="primary"
           @click.stop="exportDisplayHandler(true)"
         >批量导出</el-button>
       </div>
