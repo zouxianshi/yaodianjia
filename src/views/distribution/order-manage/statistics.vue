@@ -50,7 +50,7 @@
         <el-table-column prop="productAllCount" label="商品总量" />
       </el-table>
     </div>
-    <!-- <div class="pagination-container row">
+    <div class="pagination-container row">
       <el-pagination
         :current-page="currentPage"
         :page-sizes="[10, 20, 50, 100]"
@@ -60,7 +60,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -89,13 +89,22 @@ export default {
     classifyChange(e) {
       this.classify = e
     },
-    handleSizeChange(e) {},
-    handleCurrentChange(e) {},
+    handleSizeChange(e) {
+      this.pageSize = e
+      this.currentPage = 1
+      this._search()
+    },
+    handleCurrentChange(e) {
+      this.currentPage = e
+      this._search()
+    },
     async _search() {
       if (!this.classify.productId) return
       const param = {
         productId: this.classify.productId,
-        storeName: this.storeName
+        storeName: this.storeName,
+        currentPage: this.currentPage,
+        pageSize: this.pageSize
       }
       const { data } = await DistributionService.productStatistics(param)
       this.tableList = data
