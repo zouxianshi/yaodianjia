@@ -86,7 +86,7 @@
         <el-form-item label="到货数量：">
           <div style="display:flex;flex-direction: row;flex-wrap: nowrap;">
             <el-input
-              v-model="count"
+              v-model="arrivalCount"
               placeholder="请输入到货数量"
               style="width:320px;"
             />
@@ -118,7 +118,7 @@
             style="margin-left:20px;"
             type="primary"
             size="small"
-            @click.stop="clickToSubmit"
+            @click.stop="bulkArrivalService"
           >确认到货</el-button>
         </div>
       </el-form>
@@ -135,7 +135,7 @@ export default {
       classifyList: [],
       showDialog: false,
       time: null,
-      count: '',
+      arrivalCount: 1,
       dayOption: [
         { label: '全部', type: 0 },
         { label: '今天', type: 1 },
@@ -157,7 +157,6 @@ export default {
     async queryGoodsClassify() {
       const { data } = await DistributionService._getProductList()
       this.classifyList = data
-      this.classify = data[0]
     },
     timeChange(e) {
       this.selectDayOption = e
@@ -167,9 +166,9 @@ export default {
       this.classify = e
     },
     async _search() {
+      if (!this.classify.productId) return
       const param = { productId: this.classify.productId, ...this.timeData }
       const { data } = await DistributionService.getBaseInfo(param)
-
       this.baseInfo = { ...data }
       this.disable = !this.baseInfo.orderCount
     },
@@ -234,9 +233,37 @@ export default {
       }
       this.timeData = time
     },
-    async clickToSubmit() {
-      console.log(new Date())
-      console.log(this.time)
+    async bulkArrivalService() {
+      if (!this.time) {
+        this.$message({
+          message: '请选择建议领取时间`',
+          type: 'error'
+        })
+        return
+      }
+      const time = this.time
+      const _startDate = time[0].toLocaleDateString().split('/')
+      const _endDate = time[1].toLocaleDateString().split('/')
+      const startDate = `${_startDate[0]}-${
+        _startDate[1] < 10 ? '0' + _startDate[1] : _startDate[1]
+      }-${_startDate[2] < 10 ? '0' + _startDate[2] : _startDate[2]} 00:00:00`
+      const endDate = `${_endDate[0]}-${
+        _endDate[1] < 10 ? '0' + _endDate[1] : _endDate[1]
+      }-${_endDate[2] < 10 ? '0' + _endDate[2] : _endDate[2]} 00:00:00`
+      const param = {
+        arrivalCount: Number(this.arrivalCount),
+        endDate,
+        orderIds: this.dialogData.orderIds,
+        startDate
+      }
+      const { code } = await DistributionService.bulkArrival(param)
+      if (code === '10000') {
+        this.$message({
+          message: '操作成功!',
+          type: 'success'
+        })
+        this.showDialog = false
+      }
     }
   }
 }

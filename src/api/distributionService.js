@@ -318,9 +318,21 @@ class DistributionService {
       {}
     )
   }
-  /*  */
+  /* 获取订单基本信息(批量到货需求） */
   getBaseInfo(data) {
     return this.service('post', '/1.0/b/bulkArrival/getBaseInfo', data)
+  }
+  /**
+   * 提交批量到货请求
+   */
+  bulkArrival(data) {
+    return this.service('post', '/1.0/b/order/bulkArrival', data)
+  }
+  /**
+   * 统计商品订单
+   */
+  productStatistics(data) {
+    return this.service('post', '/1.0/b/bulkArrival/productStatistics', data)
   }
 }
 export default new DistributionService()

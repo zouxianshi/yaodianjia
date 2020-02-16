@@ -26,7 +26,7 @@
     </div>
     <div class="row">
       <el-input
-        v-model="storeSearch"
+        v-model="storeName"
         placeholder="请输入门店名称搜索"
         class="search"
       />
@@ -44,23 +44,23 @@
       >清空</el-button>
     </div>
     <div class="row">
-      <el-table v-loading="loading">
-        <el-table-column label="门店" />
-        <el-table-column label="订单总量" />
-        <el-table-column label="商品总量" />
+      <el-table v-loading="loading" :data="tableList">
+        <el-table-column prop="storeName" label="门店" />
+        <el-table-column prop="orderCount" label="订单总量" />
+        <el-table-column prop="productAllCount" label="商品总量" />
       </el-table>
     </div>
-    <div class="pagination-container row">
+    <!-- <div class="pagination-container row">
       <el-pagination
         :current-page="currentPage"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="totalCount"
+        :total="tableList.length"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -69,13 +69,13 @@ import DistributionService from '@/api/distributionService'
 export default {
   data() {
     return {
-      classify: '',
+      classify: { name: '', productId: null },
       classifyList: [],
-      storeSearch: '',
+      storeName: '',
       loading: false,
       currentPage: 1,
       pageSize: 10,
-      totalCount: 0
+      tableList: []
     }
   },
   mounted() {
@@ -85,13 +85,23 @@ export default {
     async queryGoodsClassify() {
       const { data } = await DistributionService._getProductList()
       this.classifyList = data
-      this.classify = data[0]
+    },
+    classifyChange(e) {
+      this.classify = e
     },
     handleSizeChange(e) {},
     handleCurrentChange(e) {},
-    _search() {},
+    async _search() {
+      if (!this.classify.productId) return
+      const param = {
+        productId: this.classify.productId,
+        storeName: this.storeName
+      }
+      const { data } = await DistributionService.productStatistics(param)
+      this.tableList = data
+    },
     clearSearch() {
-      this.storeSearch = ''
+      this.storeName = ''
     }
   }
 }
@@ -99,9 +109,6 @@ export default {
 <style lang="scss" scoped>
 .page-container {
   width: 80%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
   margin: 0 auto;
   height: calc(100vh - 160px);
   overflow-y: scroll;
