@@ -222,7 +222,9 @@ export default {
       })
     },
     selectLocation(obj) {
-      this.form.storeAddress = `${obj.province}${obj.city}${obj.district}${obj.title}`
+      this.form.storeAddress = `${obj.province}${obj.city}${
+        obj.district ? obj.district : ''
+      }${obj.address ? obj.address : ''}${obj.title ? obj.title : ''}`
       console.log('location _________________________________ : ', obj.location)
       this.getLocation(obj.location)
     },
