@@ -97,10 +97,16 @@
         <el-form-item label="建议领取时间：">
           <el-date-picker
             v-model="time"
-            type="daterange"
-            range-separator="-"
+            type="datetimerange"
+            :picker-options="pickerOptions"
+            range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            align="right"
+            :editable="dateable"
+            :clearable="dateable"
+            format="yyyy-MM-dd HH:mm"
+            @change="datePickerChange"
           />
         </el-form-item>
         <div
@@ -135,8 +141,16 @@ export default {
       classify: { name: '', productId: null },
       classifyList: [],
       showDialog: false,
-      time: null,
+      dateable: false,
+      time: {
+        minDate: null,
+        maxDate: null
+      },
+      dateParam: [],
+      todayParam: [],
+      dateClick: false,
       arrivalCount: 1,
+      datePickerSetting: false,
       dayOption: [
         { label: '全部', type: 0 },
         { label: '今天', type: 1 },
@@ -148,13 +162,98 @@ export default {
       timeData: { startDate: '', endDate: '' },
       baseInfo: { orderCount: null, productAllCount: null, orderIds: null },
       dialogData: {},
-      disable: true
+      disable: true,
+      timeOptionRange: '',
+      pickerOptions: {
+        disabledDate: time => {
+          // console.log(new Date(time).toLocaleDateString())
+          // console.log(new Date(2020, 1, 16).getTime() > time.getTime())
+          // console.log('time :', time.getTime())
+          // console.log('Date :', new Date(2020, 1, 16).getTime())
+          // console.log('Date :', new Date(2020, 1, 16).toLocaleDateString())
+          // console.log('this________time : ', this.time)
+          // if (!!!this.time) this.time = { minDate: null, maxDate: null }
+          if (!this.time.minDate) {
+            // 还未选中起始时间
+            return (
+              new Date(
+                Number(this.todayParam[0]),
+                Number(this.todayParam[1]) - 1,
+                Number(this.todayParam[2])
+              ).getTime() > time.getTime()
+            )
+          } else {
+            return (
+              new Date(
+                Number(this.dateParam[0]),
+                Number(this.dateParam[1]) - 1,
+                Number(this.dateParam[2])
+              ).getTime() !== time.getTime()
+            )
+          }
+        },
+        onPick: param => {
+          // console.log(
+          //   'onPick _________________ :',
+          //   new Date(param.minDate).toLocaleDateString()
+          // )
+
+          if (!!param.minDate && !!param.maxDate && this.dateClick) {
+            param = {
+              minDate: null,
+              maxDate: null
+            }
+          }
+          if (!this.dateClick) this.dateClick = true
+
+          this.time = param
+          this.dateParam = new Date(param.minDate)
+            .toLocaleDateString()
+            .split('/')
+        }
+      }
+    }
+  },
+  watch: {
+    time(newValue) {
+      // 解决时间选择组件清空按钮报错问题
+      if (!newValue) this.time = { minDate: null, maxDate: null }
     }
   },
   mounted() {
     this.queryGoodsClassify()
+    this.todayParam = new Date().toLocaleDateString().split('/')
+    console.log(this.todayParam)
   },
   methods: {
+    datePickerChange(e) {
+      // 点击确定按钮校验数据
+      const start = e[0]
+      const end = e[1]
+      // 如果不是同一天
+      if (
+        new Date(start).toLocaleDateString() !==
+        new Date(end).toLocaleDateString()
+      ) {
+        this.time = { minDate: null, maxDate: null }
+        this.$message({
+          message: '建议领取时间不是同一天',
+          type: 'error'
+        })
+        return
+      }
+
+      // 结束时间小于开始时间
+      if (Date.parse(new Date(start)) > Date.parse(new Date(end))) {
+        this.time = { minDate: null, maxDate: null }
+        this.$message({
+          message: '建议领取时间时间段设置错误',
+          type: 'error'
+        })
+        return
+      }
+      this.time = e
+    },
     async queryGoodsClassify() {
       const { data } = await DistributionService._getProductList()
       this.classifyList = data
@@ -179,7 +278,9 @@ export default {
       } else {
         this.resetDialogData()
       }
+
       this.showDialog = bol
+      this.dateable = false
     },
     computerDayOptions(type) {
       let time = { startDate: '', endDate: '' }
@@ -242,28 +343,49 @@ export default {
       this.dialogData = {}
     },
     async bulkArrivalService() {
-      if (!this.time) {
+      console.log('construct : ', this.time.constructor === Array)
+      if (this.time.constructor !== Array) {
         this.$message({
-          message: '请选择建议领取时间`',
+          message: '请选择建议领取时间',
           type: 'error'
         })
         return
       }
       const time = this.time
-      const _startDate = time[0].toLocaleDateString().split('/')
-      const _endDate = time[1].toLocaleDateString().split('/')
+
+      const _startDate = new Date(time[0]).toLocaleDateString().split('/')
+      const _s_h =
+        new Date(time[0]).getHours() < 10
+          ? '0' + new Date(time[0]).getHours()
+          : new Date(time[0]).getHours()
+      const _s_m =
+        new Date(time[0]).getMinutes() < 10
+          ? '0' + new Date(time[0]).getMinutes()
+          : new Date(time[0]).getMinutes()
+      console.log(_s_h, _s_m)
+      const _endDate = new Date(time[1]).toLocaleDateString().split('/')
+      const _e_h =
+        new Date(time[1]).getHours() < 10
+          ? '0' + new Date(time[1]).getHours()
+          : new Date(time[1]).getHours()
+      const _e_m =
+        new Date(time[1]).getMinutes() < 10
+          ? '0' + new Date(time[1]).getMinutes()
+          : new Date(time[1]).getMinutes()
+      console.log(_e_h, _e_m)
       const startDate = `${_startDate[0]}-${
         _startDate[1] < 10 ? '0' + _startDate[1] : _startDate[1]
-      }-${_startDate[2] < 10 ? '0' + _startDate[2] : _startDate[2]} 00:00:00`
+      }-${_startDate[2] < 10 ? '0' + _startDate[2] : _startDate[2]} ${_s_h}:${_s_m}:00`
       const endDate = `${_endDate[0]}-${
         _endDate[1] < 10 ? '0' + _endDate[1] : _endDate[1]
-      }-${_endDate[2] < 10 ? '0' + _endDate[2] : _endDate[2]} 00:00:00`
+      }-${_endDate[2] < 10 ? '0' + _endDate[2] : _endDate[2]} ${_e_h}:${_e_m}:00`
       const param = {
         arrivalCount: Number(this.arrivalCount),
         endDate,
         orderIds: this.dialogData.orderIds,
         startDate
       }
+      console.log('param ________________ : ', param)
       const { code } = await DistributionService.bulkArrival(param)
       if (code === '10000') {
         this.$message({
