@@ -18,7 +18,7 @@
             <!-- <el-checkbox class="check-box" /> -->
             <div class="gray">预约单编号：{{ item.id }}</div>
           </div>
-          <div class="blue" @click="toDetails(item.id)">订单详情</div>
+          <!-- <div class="blue" @click="toDetails(item.id)">订单详情</div> -->
         </div>
         <div class="row">
           <div class="table-column content-container flex-3">
