@@ -211,6 +211,7 @@ const mutations = {
     }
     // push消息到当前聊天框
     state.curOnlineUserData.list.push(curWindowPush)
+    console.log('msgResult', msgResult)
 
     // 组装会话item最近一条消息数据
     // 向localStorage中push一条latestMessage数据 并push到当前会话的最近消息
@@ -221,9 +222,11 @@ const mutations = {
         objectName: msgResult.objectName,
         senderUserId: msgResult.senderUserId,
         messageUId: msgResult.messageUId,
-        targetId: msgResult.targetId
+        targetId: msgResult.targetId,
+        sentTime: new Date().getTime()
       }
     }
+    console.log('组装后的curLocalPush', curLocalPush)
 
     // 更新当前窗口最近消息
     const tempOnlineConversationList = state.onlineConversationData.list
@@ -246,6 +249,8 @@ const mutations = {
       const localConversationList = storageList
       localConversationList.forEach((element) => {
         if (Chat.isUserEqual(element.latestMessage, msgResult)) {
+          console.log('找到了对应的消息', element)
+          console.log('curLocalPush', curLocalPush, new Date().getTime())
           element.latestMessage = {
             ...element.latestMessage,
             ...curLocalPush.latestMessage,
@@ -254,9 +259,11 @@ const mutations = {
               ...curLocalPush.latestMessage.content
             }
           }
+          element.sentTime = new Date().getTime()
+          console.log('更改后的element', element)
         }
       })
-      console.log('ADD_MSG_TO_ONLINE_MSG_LIST 的locaStorage设置')
+      console.log('ADD_MSG_TO_ONLINE_MSG_LIST 的locaStorage设置', localConversationList)
       Chat.setStorageRyCSList(localConversationList)
     }
   },

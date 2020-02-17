@@ -717,15 +717,7 @@ export default {
     }
   },
   created() {
-    if (this.$route.query.id) { // 如果是编辑
-      console.log('加载中...')
-      this.basicLoading = true
-      this.getTypeListData().then(res => {
-        this._loadBasicInfo()
-      }).catch(_ => {
-        this._loadBasicInfo()
-      })
-    } else {
+    if (!this.$route.query.id) { // 如果是编辑
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
     }
@@ -1011,9 +1003,15 @@ export default {
       this._loadBrandList(query)
     },
     _loadBrandList(query = '') { // 获取品牌
-      getBrandList({ brandName: query, pageSize: 300 }).then(res => {
+      getBrandList({ brandName: query, pageSize: 5000 }).then(res => {
         const { data } = res.data
         this.brandList = data
+        this.basicLoading = true
+        this.getTypeListData().then(res => {
+          this._loadBasicInfo()
+        }).catch(_ => {
+          this._loadBasicInfo()
+        })
       })
     },
     _filters(data) {

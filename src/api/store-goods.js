@@ -48,3 +48,12 @@ export function getMyStoreList(data) {
     data: data
   })
 }
+
+// 同步价格
+export function setSynchro(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-erp`,
+    method: 'post',
+    data: params
+  })
+}

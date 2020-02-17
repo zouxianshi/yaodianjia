@@ -107,7 +107,7 @@ const router = [
         component: () => import('@/views/goods-manage/group/list'),
         name: 'group',
         meta: {
-          auth: 'ommodity.commodity-group',
+          auth: 'commodity.commodity-group',
           title: '自定义分组',
           noCache: true
         }
