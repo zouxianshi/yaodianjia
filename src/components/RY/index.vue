@@ -10,7 +10,7 @@ import CustomerService from '@/api/customer-service'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 // import { getToken } from '@/utils/auth'
-import { MC } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
+import { MC } from '@merchant/commons'
 
 export default {
   data() {
