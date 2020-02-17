@@ -186,7 +186,7 @@ class DistributionService {
    * @param {*} data
    */
   setOrderBeyondTime(data) {
-    const params = Object.assign({ memberCode: store.state.user.merCode }, data)
+    const params = { memberCode: store.state.user.merCode, ...data }
     return this.service('post', '/1.0/b/wxutils/_updateBeyondTime', params)
   }
   /**
@@ -307,6 +307,32 @@ class DistributionService {
   // 商品删除
   _deleteProduct(data) {
     return this.service('post', `/1.0/b/product/_delete`, data)
+  }
+  /**
+   * 获取批量到货的商品列表
+   */
+  _getProductList() {
+    return this.service(
+      'post',
+      `/1.0/b/bulkArrival/getProductList?merCode=${store.state.user.merCode}`,
+      {}
+    )
+  }
+  /* 获取订单基本信息(批量到货需求） */
+  getBaseInfo(data) {
+    return this.service('post', '/1.0/b/bulkArrival/getBaseInfo', data)
+  }
+  /**
+   * 提交批量到货请求
+   */
+  bulkArrival(data) {
+    return this.service('post', '/1.0/b/order/bulkArrival', data)
+  }
+  /**
+   * 统计商品订单
+   */
+  productStatistics(data) {
+    return this.service('post', '/1.0/b/bulkArrival/productStatistics', data)
   }
 }
 export default new DistributionService()

@@ -128,7 +128,7 @@ const router = [
           import('@/views/distribution/order-manage/reception.vue'),
         name: 'order-reception',
         meta: {
-          title: '批量发货'
+          title: '批量到货'
         }
       },
       {

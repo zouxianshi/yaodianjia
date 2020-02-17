@@ -82,7 +82,7 @@
                 class="items"
                 @click="selectLocation(item)"
               >
-                {{ item.title }}
+                {{ item.address }}{{ item.title }}
               </div>
             </div>
           </div>
@@ -229,7 +229,14 @@ export default {
       })
     },
     selectLocation(obj) {
-      this.form.storeAddress = `${obj.province}${obj.city}${obj.district}${obj.title}`
+      console.log(obj.province)
+      console.log(obj.city)
+      console.log(obj.district)
+      console.log(obj.title)
+      console.log(obj)
+      this.form.storeAddress = `${obj.province}${obj.city}${
+        obj.district ? obj.district : ''
+      }${obj.address ? obj.address : ''}${obj.title ? obj.title : ''}`
       this.getLocation(obj.location)
     },
 
@@ -292,6 +299,8 @@ export default {
     getLocation(_location) {
       this.oldAddress = this.form.storeAddress
       this.$refs.mapRef.setCenter(_location)
+      this.form.latitude = _location.lat
+      this.form.longitude = _location.lng
       this.idTrueAddress = true
       // const geocoder = new mapQQ.maps.Geocoder({
       //   complete: result => {
