@@ -32,7 +32,7 @@
         <div class="panel">
           <div class="item">提货门店：{{ order.storeName }}</div>
           <div class="item">提货地址：{{ order.storeAddress }}</div>
-          <div class="item">联系电话：1</div>
+          <div class="item">联系电话：{{ order.storeMobilePhone }}</div>
         </div>
       </div>
     </div>
