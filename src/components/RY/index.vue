@@ -9,8 +9,7 @@
 import CustomerService from '@/api/customer-service'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
-// import { getToken } from '@/utils/auth'
-import { MC } from '@merchant/commons'
+import { getToken } from '@/utils/auth'
 
 export default {
   data() {
@@ -269,7 +268,7 @@ export default {
 
         console.warn('Websocket对象', ws)
 
-        var cToken = MC.getAuth()
+        var cToken = getToken()
 
         ws.onopen = function() {
           const data = {
