@@ -1,7 +1,9 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+// import { getToken } from '@/utils/auth'
+import { MC } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
+
 const API_BASE = process.env.VUE_APP_API_BASE || '/api'
 
 // create an axios instance
@@ -16,7 +18,7 @@ let isExport = false
 service.interceptors.request.use(
   config => {
     if (store.getters.token) {
-      config.headers['Authorization'] = getToken()
+      config.headers['Authorization'] = MC.getAuth()
     }
     isExport = config.isExport || false
     const authParams = {

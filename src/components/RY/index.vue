@@ -9,7 +9,9 @@
 import CustomerService from '@/api/customer-service'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
-import { getToken } from '@/utils/auth'
+// import { getToken } from '@/utils/auth'
+import { MC } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
+
 export default {
   data() {
     return {
@@ -267,7 +269,7 @@ export default {
 
         console.warn('Websocket对象', ws)
 
-        var cToken = getToken()
+        var cToken = MC.getAuth()
 
         ws.onopen = function() {
           const data = {
