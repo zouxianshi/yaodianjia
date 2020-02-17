@@ -116,6 +116,18 @@
         </div>
       </div>
     </div>
+    <div class="product-info">
+      <h4>门店账号设置</h4>
+      <el-form>
+        <el-form-item label="门店账号:" label-width="110px">
+          <el-input
+            v-model="form.accountNumber"
+            placeholder="请输入"
+            maxlength="100"
+          />
+        </el-form-item>
+      </el-form>
+    </div>
     <div class="submit-box">
       <el-button type="primary" @click="submitData()">完成添加</el-button>
     </div>
@@ -150,7 +162,8 @@ export default {
         storeAddress: '',
         storeCode: '',
         storeName: '',
-        limitNumber: 0
+        limitNumber: 0,
+        accountNumber: ''
       },
       dialogImageUrl: '',
       dialogVisible: false,
@@ -240,6 +253,13 @@ export default {
       } else if (this.oldAddress !== this.form.storeAddress) {
         this.$message({
           message: '请点击定位获取地址！',
+          type: 'error'
+        })
+        return
+      }
+      if (!this.form.accountNumber.replace(/\s+/g, '')) {
+        this.$message({
+          message: '请输入门店账号！',
           type: 'error'
         })
         return

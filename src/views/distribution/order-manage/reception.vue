@@ -375,10 +375,14 @@ export default {
       console.log(_e_h, _e_m)
       const startDate = `${_startDate[0]}-${
         _startDate[1] < 10 ? '0' + _startDate[1] : _startDate[1]
-      }-${_startDate[2] < 10 ? '0' + _startDate[2] : _startDate[2]} ${_s_h}:${_s_m}:00`
+      }-${
+        _startDate[2] < 10 ? '0' + _startDate[2] : _startDate[2]
+      } ${_s_h}:${_s_m}:00`
       const endDate = `${_endDate[0]}-${
         _endDate[1] < 10 ? '0' + _endDate[1] : _endDate[1]
-      }-${_endDate[2] < 10 ? '0' + _endDate[2] : _endDate[2]} ${_e_h}:${_e_m}:00`
+      }-${
+        _endDate[2] < 10 ? '0' + _endDate[2] : _endDate[2]
+      } ${_e_h}:${_e_m}:00`
       const param = {
         arrivalCount: Number(this.arrivalCount),
         endDate,
