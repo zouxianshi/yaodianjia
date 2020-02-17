@@ -224,9 +224,6 @@ export default {
     ...mapGetters(['name'])
   },
   watch: {
-    'listQuery.name'(v) {
-      this.listQuery.currentPage = 1
-    }
   },
   created() {
     this.getList()
@@ -280,6 +277,12 @@ export default {
       getNewGoodsRecord(data).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
+
+        if (data.length === 0 && this.listQuery.currentPage !== 1) {
+          this.listQuery.currentPage = 1
+          this.getList()
+        }
+
         if (data) {
           this.tableData = data
           this.total = totalCount
