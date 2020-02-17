@@ -119,8 +119,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .page-container {
-  width: 80%;
-  margin: 0 auto;
+  padding: 0 10%;
   height: calc(100vh - 160px);
   overflow-y: scroll;
   .row {
