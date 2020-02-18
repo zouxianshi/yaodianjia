@@ -10,6 +10,7 @@ import CustomerService from '@/api/customer-service'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
+
 export default {
   data() {
     return {
