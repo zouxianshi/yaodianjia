@@ -257,13 +257,13 @@ export default {
         })
         return
       }
-      if (!this.form.accountNumber.replace(/\s+/g, '')) {
-        this.$message({
-          message: '请输入门店账号！',
-          type: 'error'
-        })
-        return
-      }
+      // if (!this.form.accountNumber.replace(/\s+/g, '')) {
+      //   this.$message({
+      //     message: '请输入门店账号！',
+      //     type: 'error'
+      //   })
+      //   return
+      // }
       this.$refs['form'].validate(flag => {
         if (flag) {
           var params = {}
