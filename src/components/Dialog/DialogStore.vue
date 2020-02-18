@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { queryStores } from '@/api/common'
+import { queryMyStore } from '@/api/common'
 import { mapGetters } from 'vuex'
 export default {
   name: 'DialogGoods',
@@ -148,7 +148,7 @@ export default {
   },
   created() {},
   mounted() {
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     // 获取数据
@@ -164,6 +164,7 @@ export default {
       } else {
         this.mySelectList = []
       }
+      alert(6)
       this.fetchData()
     },
     close() {
@@ -306,7 +307,7 @@ export default {
         pageSize: this.pager.size,
         excelFlag: false
       }
-      queryStores(params).then(res => {
+      queryMyStore(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []
           this.pager.total = res.data.totalCount
@@ -325,10 +326,10 @@ export default {
         status: 1, // 状态（0停用，1启用）
         searchKey: '',
         currentPage: 1,
-        pageSize: 10000,
+        pageSize: 20000,
         excelFlag: false
       }
-      queryStores(params).then(res => {
+      queryMyStore(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.allStoreList = res.data.data || []
         } else {

@@ -18,6 +18,15 @@ export function queryStores(params) {
   })
 }
 
+// 查询门店列表-2(带权限)
+export function queryMyStore(params) {
+  return request({
+    url: `${config.merGoods}/1.0/store/queryMyStore`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 查询商品列表 1
 export function queryGoods(params) {
   return request({
