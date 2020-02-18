@@ -154,9 +154,9 @@ export default {
       dayOption: [
         { label: '全部', type: 0 },
         { label: '今天', type: 1 },
-        { label: '昨天', type: 2 },
-        { label: '前天', type: 3 },
-        { label: '本周', type: 4 }
+        { label: '最近1天', type: 2 },
+        { label: '最近2天', type: 3 },
+        { label: '最近3天', type: 4 }
       ],
       selectDayOption: { label: '全部', type: 0 },
       timeData: { startDate: '', endDate: '' },
@@ -375,10 +375,14 @@ export default {
       console.log(_e_h, _e_m)
       const startDate = `${_startDate[0]}-${
         _startDate[1] < 10 ? '0' + _startDate[1] : _startDate[1]
-      }-${_startDate[2] < 10 ? '0' + _startDate[2] : _startDate[2]} ${_s_h}:${_s_m}:00`
+      }-${
+        _startDate[2] < 10 ? '0' + _startDate[2] : _startDate[2]
+      } ${_s_h}:${_s_m}:00`
       const endDate = `${_endDate[0]}-${
         _endDate[1] < 10 ? '0' + _endDate[1] : _endDate[1]
-      }-${_endDate[2] < 10 ? '0' + _endDate[2] : _endDate[2]} ${_e_h}:${_e_m}:00`
+      }-${
+        _endDate[2] < 10 ? '0' + _endDate[2] : _endDate[2]
+      } ${_e_h}:${_e_m}:00`
       const param = {
         arrivalCount: Number(this.arrivalCount),
         endDate,

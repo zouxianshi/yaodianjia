@@ -92,6 +92,11 @@
           size="small"
           @click.stop="exportDisplayHandler(true)"
         >批量导出</el-button>
+        <el-button
+          style="margin-left:20px;"
+          size="small"
+          @click.stop="donwloadDialogHandler(true)"
+        >报表下载</el-button>
       </div>
     </div>
     <div class="table-panel">
@@ -298,8 +303,40 @@
           type="primary"
           :disabled="exportStatus"
           @click="exportReportService"
-        >导出</el-button>
+        >导出创建</el-button>
       </div>
+    </el-dialog>
+    <!-- download dialog -->
+    <el-dialog :visible.sync="donwloadDialog" title="批量导出列表" append-to-body>
+      <el-table :data="downloadlist">
+        <el-table-column prop="createTime" label="创建时间" />
+        <el-table-column prop="updateUser" label="操作人" />
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            {{
+              scope.row.status === 1
+                ? '待执行'
+                : scope.row.status === 2
+                  ? '执行中'
+                  : scope.row.status === 3
+                    ? '执行完成'
+                    : scope.row.status === 4
+                      ? '执行失败'
+                      : '已取消'
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot-scope="scope">
+            <a
+              v-if="!!scope.row.filePath && scope.row.status === 3"
+              style="padding: 9px 15px;font-size: 12px;border-radius: 3px;background-color: #147de8;color: #fff"
+              :href="configOss(scope.row.filePath)"
+              download
+            >下载</a>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-dialog>
   </div>
 </template>
@@ -410,7 +447,9 @@ export default {
       ],
       exportList: [],
       reportloading: true,
-      exportStatus: false
+      exportStatus: false,
+      donwloadDialog: false,
+      downloadlist: []
     }
   },
   watch: {
@@ -428,6 +467,13 @@ export default {
     })
   },
   methods: {
+    donwloadDialogHandler(bol) {
+      if (bol) {
+        this.queryTaskService()
+      }
+
+      this.donwloadDialog = bol
+    },
     /**  */
     navToReception() {
       this.$router.push({ path: '/distribution/order-reception' })
@@ -455,18 +501,23 @@ export default {
       this.reportloading = false
     },
     async exportReportService() {
-      console.log(
-        'exportReportService ________________________________________'
-      )
       this.exportExcel = null
       const storeId = this.selectDayStore.id
-      const res = await DistributionService.exportReport({
+      const res = await DistributionService.taskCreate({
         ...this.selectResult,
-        storeId,
-        responsetype: 'blob'
+        storeId
       })
-      this.exportExcel = res
-      this.donwloadExcel()
+      console.log(res)
+      // this.exportExcel = res
+      // this.donwloadExcel()
+      this.$message({
+        message: '创建成功!',
+        type: 'success'
+      })
+    },
+    async queryTaskService() {
+      const { data } = await DistributionService.taskQuery()
+      this.downloadlist = data
     },
     resetSelectReport() {
       this.selectDayModule = { label: '当天', value: '16' }
