@@ -61,7 +61,8 @@ const actions = {
         commit('SET_USERID', id)
         // commid('SET_MERLOGO', merLogo)
         MC.setConfig({
-          userInfo: data || {}
+          userInfo: data || {},
+          merCode
         })
         resolve(superAdmin ? { resList: ['admin'] } : { resList: resList })
       }).catch(error => {
