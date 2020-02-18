@@ -29,7 +29,7 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
 
-import { MC } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
+import { MC } from '@merchant/commons'
 
 MC.setCookie('mc-system', 'medical')
 
