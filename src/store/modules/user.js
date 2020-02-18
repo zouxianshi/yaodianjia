@@ -1,9 +1,9 @@
 import { getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { MC } from '@merchant/commons'
 const state = {
-  token: getToken(),
+  token: MC.getAuth(),
   name: '',
   avatar: '',
   userId: '',

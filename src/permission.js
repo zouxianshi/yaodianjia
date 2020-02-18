@@ -2,7 +2,7 @@ import router from './router'
 import store from './store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
+// import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 import { MC } from '@merchant/commons'
@@ -14,7 +14,7 @@ router.beforeEach(async(to, from, next) => {
 
   // set page title
   document.title = getPageTitle(to.meta.title)
-  const hasToken = getToken()
+  const hasToken = MC.getAuth()
 
   // 加入百度统计
   if (to.path) {
@@ -51,10 +51,11 @@ router.beforeEach(async(to, from, next) => {
           next({ ...to, replace: true })
           // }
         } catch (error) {
+          console.log(error)
           if (error.code && error.code === '50000') {
             setTimeout(() => {
               console.log(MC.merHomeAddr)
-              window.location.href = MC.merHomeAddr
+              // window.location.href = MC.merHomeAddr
             }, 500)
           }
           NProgress.done()
@@ -66,7 +67,7 @@ router.beforeEach(async(to, from, next) => {
       next()
     } else {
       setTimeout(() => {
-        window.location.href = MC.merHomeAddr
+        // window.location.href = MC.merHomeAddr
       }, 500)
       NProgress.done()
     }
