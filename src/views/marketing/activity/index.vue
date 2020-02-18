@@ -1,12 +1,12 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-button
+      <!-- <el-button
         class="btn btn-add"
         type="primary"
         size="small"
         @click.stop="toCreate()"
-      >新建活动</el-button>
+      >新建活动</el-button> -->
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">

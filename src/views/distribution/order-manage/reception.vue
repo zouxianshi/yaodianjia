@@ -154,9 +154,9 @@ export default {
       dayOption: [
         { label: '全部', type: 0 },
         { label: '今天', type: 1 },
-        { label: '昨天', type: 2 },
-        { label: '前天', type: 3 },
-        { label: '本周', type: 4 }
+        { label: '最近1天', type: 2 },
+        { label: '最近2天', type: 3 },
+        { label: '最近3天', type: 4 }
       ],
       selectDayOption: { label: '全部', type: 0 },
       timeData: { startDate: '', endDate: '' },

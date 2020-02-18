@@ -265,7 +265,7 @@ class DistributionService {
   queryOrderDetailsById(id) {
     return this.service(
       'get',
-      `/1.0/b/order/_get/${id}/${store.state.user.merCode}`
+      `/1.0/b/order/_get/${id}/${store.state.user.merCode}/`
     )
   }
   // 获取取货点编辑
@@ -336,6 +336,18 @@ class DistributionService {
    */
   productStatistics(data) {
     return this.service('post', '/1.0/b/bulkArrival/productStatistics', data)
+  }
+  /**
+   * task
+   */
+  taskCancel(data) {
+    return this.service('post', '/1.0/b/task/_cancel', data)
+  }
+  taskCreate(data) {
+    return this.service('post', '/1.0/b/task/_exportTask', data)
+  }
+  taskQuery() {
+    return this.service('get', `/1.0/b/task/${store.state.user.merCode}`, {})
   }
 }
 export default new DistributionService()
