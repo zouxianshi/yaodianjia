@@ -312,7 +312,7 @@
       title="批量导出列表"
       append-to-body
     >
-      <el-table :data="downloadlist">
+      <el-table :data="downloadlist" height="400">
         <el-table-column prop="createTime" label="创建时间" />
         <el-table-column prop="updateUser" label="操作人" />
         <el-table-column label="状态">
