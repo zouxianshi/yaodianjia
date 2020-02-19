@@ -146,6 +146,7 @@ export default {
       color: #4a4a4a;
     }
     .blue {
+      cursor: pointer;
       color: #1890ff;
     }
     .left {
