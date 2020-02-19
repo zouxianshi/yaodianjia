@@ -159,9 +159,11 @@ export default {
       rules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
         brandName: [{ required: true, message: '请输入品牌', trigger: 'blur' }],
-        price: [{ validator: checkPrice, trigger: 'blur' }],
+        price: [{ required: true, validator: checkPrice, trigger: 'blur' }],
         unit: [{ required: true, message: '请选择单位', trigger: 'blur' }],
-        deliveryTime: [{ validator: checkDeliveryTime, trigger: 'blur' }]
+        deliveryTime: [
+          { required: true, validator: checkDeliveryTime, trigger: 'blur' }
+        ]
       },
       dialogImageUrl: '',
       dialogVisible: false
@@ -280,7 +282,9 @@ export default {
       })
     },
     goToSetting() {
-      this.$router.push('/distribution/store-reservation-setting?id=' + this.ids)
+      this.$router.push(
+        '/distribution/store-reservation-setting?id=' + this.ids
+      )
     }
   }
 }
