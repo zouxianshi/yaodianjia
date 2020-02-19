@@ -119,6 +119,7 @@
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
 import distributionService from '@/api/distributionService'
+import { throttle } from '@/utils/throttle'
 export default {
   data() {
     var checkKucun = (rule, value, callback) => {
@@ -231,7 +232,7 @@ export default {
         })
       }
     },
-    submitData() {
+    submitData: throttle(function() {
       function isNumber(val) {
         val = '' + val
         return val.includes('.') || val.includes('-')
@@ -267,7 +268,7 @@ export default {
           })
         }
       })
-    },
+    }, 3000),
     goToSetting() {
       this.$router.push('/distribution/store-reservation-setting')
     }
