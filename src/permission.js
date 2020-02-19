@@ -55,7 +55,7 @@ router.beforeEach(async(to, from, next) => {
           if (error.code && error.code === '50000') {
             setTimeout(() => {
               console.log(MC.merHomeAddr)
-              // window.location.href = MC.merHomeAddr
+              window.location.href = MC.merHomeAddr
             }, 500)
           }
           NProgress.done()
@@ -67,7 +67,7 @@ router.beforeEach(async(to, from, next) => {
       next()
     } else {
       setTimeout(() => {
-        // window.location.href = MC.merHomeAddr
+        window.location.href = MC.merHomeAddr
       }, 500)
       NProgress.done()
     }
