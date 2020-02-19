@@ -307,7 +307,11 @@
       </div>
     </el-dialog>
     <!-- download dialog -->
-    <el-dialog :visible.sync="donwloadDialog" title="批量导出列表" append-to-body>
+    <el-dialog
+      :visible.sync="donwloadDialog"
+      title="批量导出列表"
+      append-to-body
+    >
       <el-table :data="downloadlist">
         <el-table-column prop="createTime" label="创建时间" />
         <el-table-column prop="updateUser" label="操作人" />
@@ -344,6 +348,7 @@
 <script>
 import tableCard from './table-card/index.vue'
 import DistributionService from '@/api/distributionService'
+import { throttle } from '@/utils/throttle'
 export default {
   components: { tableCard },
   data() {
@@ -500,7 +505,7 @@ export default {
       }
       this.reportloading = false
     },
-    async exportReportService() {
+    exportReportService: throttle(async function() {
       this.exportExcel = null
       const storeId = this.selectDayStore.id
       const res = await DistributionService.taskCreate({
@@ -514,7 +519,7 @@ export default {
         message: '创建成功!',
         type: 'success'
       })
-    },
+    }, 2000),
     async queryTaskService() {
       const { data } = await DistributionService.taskQuery()
       this.downloadlist = data

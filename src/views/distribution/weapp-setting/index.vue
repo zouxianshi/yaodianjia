@@ -103,6 +103,7 @@
 <script>
 import Clipboard from 'clipboard'
 import DistributionService from '@/api/distributionService'
+import { throttle } from '@/utils/throttle'
 export default {
   data() {
     return {
@@ -164,7 +165,7 @@ export default {
     hiddenUpdateDialog() {
       this.updateDialog = false
     },
-    async setOrderBeyondTimeService() {
+    setOrderBeyondTimeService: throttle(async function() {
       const { code } = await DistributionService.setOrderBeyondTime({
         beyondTime: this.ruledays === '' ? 0 : Number(this.ruledays)
       })
@@ -172,8 +173,8 @@ export default {
         this.$message({ type: 'success', message: '设置成功 !' })
         this.getQRCode()
       }
-    },
-    async updateStoreNameService() {
+    }, 3000),
+    updateStoreNameService: throttle(async function() {
       const { code } = await DistributionService.updateStoreName(
         this.changeStoreName
       )
@@ -182,7 +183,7 @@ export default {
         this.hiddenUpdateDialog()
         this.getQRCode()
       }
-    }
+    }, 3000)
   }
 }
 </script>

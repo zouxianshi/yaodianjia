@@ -135,6 +135,7 @@
 
 <script>
 import DistributionService from '@/api/distributionService'
+import { throttle } from '@/utils/throttle'
 export default {
   data() {
     return {
@@ -342,7 +343,7 @@ export default {
       this.arrivalCount = 1
       this.dialogData = {}
     },
-    async bulkArrivalService() {
+    bulkArrivalService: throttle(async function() {
       console.log('construct : ', this.time.constructor === Array)
       if (this.time.constructor !== Array) {
         this.$message({
@@ -399,7 +400,7 @@ export default {
         this.dialogHandler(false)
         this.$router.go(-1)
       }
-    }
+    }, 3000)
   }
 }
 </script>
