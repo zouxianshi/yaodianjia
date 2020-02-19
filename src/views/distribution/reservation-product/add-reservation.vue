@@ -60,7 +60,7 @@
       <h4>
         预约规则<span class="rule-tips">（如无需设置限购条件，请填写0）</span>
       </h4>
-      <el-form :model="form" label-width="100px" class="demo-form-inline">
+      <el-form label-width="100px" class="demo-form-inline">
         <el-form-item label="限购规则：">
           每人&emsp;
           <el-input
@@ -119,6 +119,7 @@
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
 import distributionService from '@/api/distributionService'
+import { throttle } from '@/utils/throttle'
 export default {
   data() {
     var checkKucun = (rule, value, callback) => {
@@ -173,10 +174,13 @@ export default {
       rules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
         brandName: [{ required: true, message: '请输入品牌', trigger: 'blur' }],
-        price: [{ validator: checkPrice, trigger: 'blur' }],
-        inventory: [{ validator: checkKucun, trigger: 'blur' }],
+        price: [{ required: true, validator: checkPrice, trigger: 'blur' }],
+        inventory: [{ required: true, validator: checkKucun, trigger: 'blur' }],
         unit: [{ required: true, message: '请选择单位', trigger: 'blur' }],
-        deliveryTime: [{ validator: checkDeliveryTime, trigger: 'blur' }]
+        deliveryTime: [
+          { required: true, validator: checkDeliveryTime, trigger: 'blur' }
+        ],
+        countPerMember: [{ required: true, trigger: 'blur' }]
       },
       dialogImageUrl: '',
       dialogVisible: false
@@ -228,7 +232,7 @@ export default {
         })
       }
     },
-    submitData() {
+    submitData: throttle(function() {
       function isNumber(val) {
         val = '' + val
         return val.includes('.') || val.includes('-')
@@ -264,7 +268,7 @@ export default {
           })
         }
       })
-    },
+    }, 3000),
     goToSetting() {
       this.$router.push('/distribution/store-reservation-setting')
     }

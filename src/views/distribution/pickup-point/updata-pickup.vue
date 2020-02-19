@@ -138,6 +138,7 @@
 import distributionService from '@/api/distributionService'
 import txMap from '@/components/TxMap/map'
 import { getAddress, getLocation } from '@/api/address'
+import { throttle } from '@/utils/throttle'
 var mapQQ
 export default {
   components: { txMap },
@@ -254,7 +255,7 @@ export default {
       this.getLocation(obj.location)
     },
 
-    submitData() {
+    submitData: throttle(function() {
       // 提交数据
       console.log('yes')
       if (!this.idTrueAddress) {
@@ -302,7 +303,7 @@ export default {
           })
         }
       })
-    },
+    }, 3000),
     handlerLocation(map, qq) {
       mapQQ = qq
 

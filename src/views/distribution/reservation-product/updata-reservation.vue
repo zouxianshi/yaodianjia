@@ -114,6 +114,7 @@
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
 import distributionService from '@/api/distributionService'
+import { throttle } from '@/utils/throttle'
 export default {
   data() {
     var checkPrice = (rule, value, callback) => {
@@ -159,9 +160,11 @@ export default {
       rules: {
         name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
         brandName: [{ required: true, message: '请输入品牌', trigger: 'blur' }],
-        price: [{ validator: checkPrice, trigger: 'blur' }],
+        price: [{ required: true, validator: checkPrice, trigger: 'blur' }],
         unit: [{ required: true, message: '请选择单位', trigger: 'blur' }],
-        deliveryTime: [{ validator: checkDeliveryTime, trigger: 'blur' }]
+        deliveryTime: [
+          { required: true, validator: checkDeliveryTime, trigger: 'blur' }
+        ]
       },
       dialogImageUrl: '',
       dialogVisible: false
@@ -234,7 +237,7 @@ export default {
         })
       }
     },
-    submitData() {
+    submitData: throttle(function() {
       if (this.oldInventory > Number(this.form.inventory)) {
         this.$message({
           message: '库存量不能小于原库存量',
@@ -278,9 +281,11 @@ export default {
           })
         }
       })
-    },
+    }, 3000),
     goToSetting() {
-      this.$router.push('/distribution/store-reservation-setting?id=' + this.ids)
+      this.$router.push(
+        '/distribution/store-reservation-setting?id=' + this.ids
+      )
     }
   }
 }
