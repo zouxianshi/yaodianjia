@@ -3,12 +3,14 @@ import Cookies from 'js-cookie'
 const TokenKey = 'Authorization'
 const doMain = document.domain.split('.').slice(-2).join('.') === 'localhost' ? 'localhost' : '.' + document.domain.split('.').slice(-2).join('.')
 
+import { MC } from '@merchant/commons'
+
 export function getToken() {
-  return Cookies.get(TokenKey, { domain: doMain })
+  return MC.getAuth()
 }
 
 export function removeToken() {
-  Cookies.remove(TokenKey, { path: '/', domain: doMain })
+  MC.cleanCookie()
 }
 
 export function setToken(token) {

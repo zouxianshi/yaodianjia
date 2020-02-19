@@ -214,13 +214,16 @@ export default {
         'manufacture': '',
         'merCode': '',
         'name': '',
-        'origin': 0
+        'origin': 0,
+        'currentPage': 1
       },
       multipleSelection: []
     }
   },
   computed: {
     ...mapGetters(['name'])
+  },
+  watch: {
   },
   created() {
     this.getList()
@@ -274,6 +277,12 @@ export default {
       getNewGoodsRecord(data).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
+
+        if (data.length === 0 && this.listQuery.currentPage !== 1) {
+          this.listQuery.currentPage = 1
+          this.getList()
+        }
+
         if (data) {
           this.tableData = data
           this.total = totalCount

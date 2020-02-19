@@ -262,7 +262,8 @@ export default {
         infoFlag: true,
         erpCode: '',
         auditStatus: 1,
-        groupId: '' // 分组id
+        groupId: '', // 分组id
+        currentPage: 1
       }
     }
   },
@@ -305,7 +306,8 @@ export default {
         infoFlag: this.listQuery.infoFlag,
         erpCode: '',
         auditStatus: 1,
-        groupId: '' // 分组id
+        groupId: '', // 分组id
+        currentPage: 1
       }
       this.getList()
     },
@@ -317,6 +319,12 @@ export default {
       this.loading = true
       getGoodsList(this.listQuery).then(res => {
         const { data, totalCount } = res.data
+
+        if (data.length === 0 && this.listQuery.currentPage !== 1) {
+          this.listQuery.currentPage = 1
+          this.getList()
+        }
+
         this.tableData = data
         this.total = totalCount
         this.loading = false
