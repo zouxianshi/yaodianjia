@@ -528,6 +528,7 @@ export default {
       this.selectDayModule = { label: '当天', value: '16' }
       this.selectDayStore = { storeName: '全部', id: '' }
       this.selectDayStoreID = ''
+      this.getNowTime()
     },
     donwloadExcel() {
       const content = this.exportExcel
