@@ -164,7 +164,6 @@ export default {
       } else {
         this.mySelectList = []
       }
-      alert(6)
       this.fetchData()
     },
     close() {
