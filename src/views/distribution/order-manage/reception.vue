@@ -245,10 +245,21 @@ export default {
       }
 
       // 结束时间小于开始时间
-      if (Date.parse(new Date(start)) > Date.parse(new Date(end))) {
+      // if (Date.parse(new Date(start)) > Date.parse(new Date(end))) {
+      //   this.time = { minDate: null, maxDate: null }
+      //   this.$message({
+      //     message: '建议领取时间时间段设置错误',
+      //     type: 'error'
+      //   })
+      //   return
+      // }
+      if (
+        Date.parse(new Date(end)) - Date.parse(new Date(start)) <
+        60 * 60 * 1000
+      ) {
         this.time = { minDate: null, maxDate: null }
         this.$message({
-          message: '建议领取时间时间段设置错误',
+          message: '建议领取时间开始时间要比结束时间至少早一小时',
           type: 'error'
         })
         return
