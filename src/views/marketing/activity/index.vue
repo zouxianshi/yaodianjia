@@ -97,9 +97,9 @@
           />
           <el-table-column label="时间状态" min-width="80" align="center">
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.status && scope.row.timeStatus === -1" size="small" type="info">未开始</el-tag>
-              <el-tag v-if="scope.row.status && scope.row.timeStatus === 1" size="small" type="success">进行中</el-tag>
-              <el-tag v-if="!scope.row.status || scope.row.timeStatus === 0" size="small" type="danger">已结束</el-tag>
+              <el-tag v-if="statusCupte(scope.row)==0" size="small" type="info">未开始</el-tag>
+              <el-tag v-if="statusCupte(scope.row)==1" size="small" type="success">进行中</el-tag>
+              <el-tag v-if="statusCupte(scope.row)==2" size="small" type="danger">已结束</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="状态" min-width="60" align="center">
@@ -186,6 +186,18 @@ export default {
     this.fetchData()
   },
   methods: {
+    statusCupte(row) {
+      const startTimestamp = Date.parse(new Date(row.startTime))
+      const endTimestamp = Date.parse(new Date(row.endTime))
+      const timestamp = Date.parse(new Date())
+      if (timestamp < startTimestamp) {
+        return 0
+      } else if (timestamp > startTimestamp && timestamp < endTimestamp) {
+        return 1
+      } else if (timestamp > endTimestamp) {
+        return 2
+      }
+    },
     fetchData() {
       this._getTableData()
     },
