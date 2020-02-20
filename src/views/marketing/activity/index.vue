@@ -111,7 +111,7 @@
           <el-table-column label="操作" width="262">
             <template slot-scope="scope">
               <el-button v-if="statusCupte(scope.row)===0" plain size="mini" @click="toEdit(scope.row)">编辑</el-button>
-              <el-button v-else-if="statusCupte(scope.row)===2" plain size="mini" @click="toEdit(scope.row, 1)">查看</el-button>
+              <el-button v-else-if="statusCupte(scope.row)===2||statusCupte(scope.row)===1" plain size="mini" @click="toEdit(scope.row, 1)">查看</el-button>
               <template v-if="statusCupte(scope.row)===1">
                 <el-button plain size="mini" @click="doCopy(scope.row)">复制链接</el-button>
                 <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
