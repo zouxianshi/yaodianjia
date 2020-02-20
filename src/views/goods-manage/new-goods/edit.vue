@@ -790,6 +790,10 @@ export default {
       })
     },
     _loadBasicInfo() { // 加载基本信息
+      if (!this.$route.query.id) {
+        return
+      }
+      this.basicLoading = true
       this.subLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
@@ -1006,7 +1010,6 @@ export default {
       getBrandList({ brandName: query, pageSize: 5000 }).then(res => {
         const { data } = res.data
         this.brandList = data
-        this.basicLoading = true
         this.getTypeListData().then(res => {
           this._loadBasicInfo()
         }).catch(_ => {
