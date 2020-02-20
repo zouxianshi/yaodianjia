@@ -114,6 +114,7 @@
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
 import distributionService from '@/api/distributionService'
+import { throttle } from '@/utils/throttle'
 export default {
   data() {
     var checkPrice = (rule, value, callback) => {
@@ -236,7 +237,7 @@ export default {
         })
       }
     },
-    submitData() {
+    submitData: throttle(function() {
       if (this.oldInventory > Number(this.form.inventory)) {
         this.$message({
           message: '库存量不能小于原库存量',
@@ -280,7 +281,7 @@ export default {
           })
         }
       })
-    },
+    }, 3000),
     goToSetting() {
       this.$router.push(
         '/distribution/store-reservation-setting?id=' + this.ids

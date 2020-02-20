@@ -100,7 +100,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="product-info">
+    <!-- <div class="product-info">
       <h4>门店流量设置</h4>
       <div class="row-panel">
         <div class="txt">每日最大到店领取人数：</div>
@@ -115,7 +115,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="product-info">
       <h4>门店账号设置</h4>
       <el-form>
@@ -137,6 +137,7 @@
 import distributionService from '@/api/distributionService'
 import txMap from '@/components/TxMap/map'
 import { getAddress, getLocation } from '@/api/address'
+import { throttle } from '@/utils/throttle'
 // var mapQQ
 export default {
   components: { txMap },
@@ -162,7 +163,7 @@ export default {
         storeAddress: '',
         storeCode: '',
         storeName: '',
-        limitNumber: 0,
+        // limitNumber: 0,
         accountNumber: ''
       },
       dialogImageUrl: '',
@@ -185,11 +186,11 @@ export default {
       addressList: []
     }
   },
-  watch: {
-    'form.limitNumber'(newValue) {
-      if (!/^[0-9]*$/.test(newValue)) this.form.limitNumber = 0
-    }
-  },
+  // watch: {
+  //   'form.limitNumber'(newValue) {
+  //     if (!/^[0-9]*$/.test(newValue)) this.form.limitNumber = 0
+  //   }
+  // },
   created() {
     this.oldAddress = this.form.storeAddress
   },
@@ -242,7 +243,7 @@ export default {
       this.getLocation(obj.location)
     },
 
-    submitData() {
+    submitData: throttle(function() {
       // 提交数据
       if (!this.idTrueAddress) {
         this.$message({
@@ -279,7 +280,7 @@ export default {
           })
         }
       })
-    },
+    }, 3000),
     handlerLocation(map, qq) {
       // mapQQ = qq
       this.txMap = map
