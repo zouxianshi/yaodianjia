@@ -1,12 +1,12 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-button
+      <!-- <el-button
         class="btn btn-add"
         type="primary"
         size="small"
         @click.stop="toCreate()"
-      >新建活动</el-button>
+      >新建活动</el-button> -->
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
@@ -17,10 +17,10 @@
               placeholder="全部"
               @change="search()"
             >
-              <el-option label="全部" :value="-1" />
-              <el-option label="电子DM单" :value="10" />
-              <el-option label="限时特惠" :value="11" />
-              <el-option label="限时秒杀" :value="12" />
+              <el-option label="全部" value="-1" />
+              <el-option label="电子DM单" value="10" />
+              <el-option label="限时特惠" value="11" />
+              <el-option label="限时秒杀" value="12" />
             </el-select>
           </div>
           <div class="search-item">
@@ -77,9 +77,9 @@
         <el-table :data="tableData" style="width: 100%" size="small">
           <el-table-column prop="startTime" label="活动类型" min-width="80">
             <template slot-scope="scope">
-              <span v-if="scope.row.type === 10">电子DM单</span>
-              <span v-if="scope.row.type === 11">限时特惠</span>
-              <span v-if="scope.row.type === 12">限时秒杀</span>
+              <span v-if="scope.row.type === '10'">电子DM单</span>
+              <span v-if="scope.row.type === '11'">限时特惠</span>
+              <span v-if="scope.row.type === '12'">限时秒杀</span>
             </template>
           </el-table-column>
           <el-table-column prop="name" label="标题" min-width="150" />
@@ -152,7 +152,7 @@ export default {
   data() {
     return {
       searchForm: {
-        type: -1, // 活动类型 (int)(10: 电子DM单, 11: 限时特惠, 12: 限时秒杀)
+        type: '-1', // 活动类型 (int)(10: 电子DM单, 11: 限时特惠, 12: 限时秒杀)
         name: '',
         startTime: '',
         endTime: '',
@@ -275,7 +275,7 @@ export default {
     // 编辑
     toEdit(row, op) {
       // 限时优惠
-      if (row.type === 11 || row.type === 12) {
+      if (row.type === '11' || row.type === '12') {
         if (op) {
           this.$router.push(
             `/marketing/activity/limit-edit?id=${row.id}&_ck=1&type=${row.type}`

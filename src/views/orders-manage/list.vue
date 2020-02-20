@@ -1370,11 +1370,15 @@ export default {
         if (res.data) {
           this.refundData = res.data
           let pics = []
+          console.log('res.data-======', res.data)
           if (this.refundData.pictureVoucher) {
             pics = this.refundData.pictureVoucher // 图片凭证
             pics = pics.split(',')
 
             this.refundPic = pics
+          } else {
+            this.refundData.pictureVoucher = null
+            this.refundPic = null
           }
         }
       })

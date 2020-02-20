@@ -1,8 +1,16 @@
 <template>
   <div class="content_pick">
     <div class="nav-btn">
-      <el-button type="primary" size="mini" @click="toAdd()">添加预约商品</el-button>
-      <el-button type="primary" size="mini" @click="removeProduct()">批量下架</el-button>
+      <el-button
+        type="primary"
+        size="mini"
+        @click="toAdd()"
+      >添加预约商品</el-button>
+      <el-button
+        type="primary"
+        size="mini"
+        @click="removeProduct()"
+      >批量下架</el-button>
     </div>
     <div class="tabel-content">
       <el-table
@@ -11,48 +19,59 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column
-          type="selection"
-          width="45"
-          align="center"
-        />
-        <el-table-column
-          label="商品图片"
-          align="center"
-          width="102"
-        >
+        <el-table-column type="selection" width="45" align="center" />
+        <el-table-column label="商品图片" align="center" width="102">
           <template slot-scope="scope" style="text-align:center">
-            <img class="goods-logo" :src="showImgHandler(scope.row.imgUrl)" alt="">
+            <img
+              class="goods-logo"
+              :src="showImgHandler(scope.row.imgUrl)"
+              alt=""
+            >
           </template>
         </el-table-column>
         <el-table-column prop="name" label="商品信息" />
         <el-table-column prop="brandName" label="品牌" />
-        <el-table-column prop="unit" label="规格" />
+        <el-table-column prop="unit" label="单位" />
         <el-table-column prop="price" width="110" sortable label="标准价格" />
         <el-table-column prop="inventory" label="可预约总量" />
         <el-table-column prop="verificationNum" label="核销数量" />
         <el-table-column prop="reserveNum" label="预约数量" />
-        <el-table-column
-          label="预约规则"
-        >
-          <template v-if="scope.row.daysPerMember != 0 || scope.row.countPerMember != 0" slot-scope="scope">
-            每人{{ scope.row.daysPerMember }}天内限购{{ scope.row.countPerMember }}{{ scope.row.unit }}。
+        <el-table-column label="预约规则">
+          <template
+            v-if="scope.row.daysPerMember != 0 || scope.row.countPerMember != 0"
+            slot-scope="scope"
+          >
+            每人{{ scope.row.daysPerMember }}天内限购{{
+              scope.row.countPerMember
+            }}{{ scope.row.unit }}。
           </template>
           <template v-else>
             暂无预约规则。
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          align="center"
-          width="160"
-        >
+        <el-table-column label="操作" align="center" width="160">
           <template slot-scope="scope">
-            <el-button class="caozuo" type="primary" size="mini" @click="updataProduct(scope.row.id)">编辑</el-button>
-            <el-button class="caozuo" type="primary" size="mini" @click="changeProductStatus(scope.row.id,scope.row.status)">
-              {{ scope.row.status ==1 ? '下架':'上架' }}
+            <el-button
+              class="caozuo"
+              type="primary"
+              size="mini"
+              @click="updataProduct(scope.row.id)"
+            >编辑</el-button>
+            <el-button
+              class="caozuo"
+              type="primary"
+              size="mini"
+              @click="changeProductStatus(scope.row.id, scope.row.status)"
+            >
+              {{ scope.row.status == 1 ? '下架' : '上架' }}
             </el-button>
-            <el-button v-if="scope.row.status===0" class="caozuo" type="primary" size="mini" @click="deleteProduct(scope.row.id)">删除</el-button>
+            <el-button
+              v-if="scope.row.status === 0"
+              class="caozuo"
+              type="primary"
+              size="mini"
+              @click="deleteProduct(scope.row.id)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -100,8 +119,7 @@ export default {
       this.getProductList()
     },
     getProductList() {
-      var params = {
-      }
+      var params = {}
       params.currentPage = this.pageInfo.currentPage
       params.pageSize = this.pageInfo.pageSize
       distributionService.getProductList(params).then(res => {
@@ -119,12 +137,11 @@ export default {
     updataProduct(id) {
       this.$router.push(`/distribution/updata-product?id=${id}`)
     },
-    changeProductStatus(ids, status) { // 上下架
+    changeProductStatus(ids, status) {
+      // 上下架
       var params = {
-        'ids': [
-          ids
-        ],
-        'status': status === 1 ? '0' : '1'
+        ids: [ids],
+        status: status === 1 ? '0' : '1'
       }
       distributionService._batchProduct(params).then(res => {
         this.$message({
@@ -140,25 +157,25 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        var params = {
-          'ids': [
-            ids
-          ]
-        }
-        distributionService._deleteProduct(params).then(res => {
-          this.$message({
-            message: res.msg,
-            type: 'success'
-          })
-          this.getProductList()
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
       })
+        .then(() => {
+          var params = {
+            ids: [ids]
+          }
+          distributionService._deleteProduct(params).then(res => {
+            this.$message({
+              message: res.msg,
+              type: 'success'
+            })
+            this.getProductList()
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 多选切换
     handleSelectionChange(val) {
@@ -175,8 +192,8 @@ export default {
         return
       }
       var params = {
-        'ids': this.batchIds,
-        'status': '0'
+        ids: this.batchIds,
+        status: '0'
       }
       distributionService._batchProduct(params).then(res => {
         this.$message({
@@ -191,19 +208,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.content_pick{
-  padding: 10px 21px;overflow: auto;height: calc(100vh - 158px);
-  .nav-btn{
-    text-align: right;height: 50px;line-height: 50px
+.content_pick {
+  padding: 10px 21px;
+  overflow: auto;
+  height: calc(100vh - 158px);
+  .nav-btn {
+    text-align: right;
+    height: 50px;
+    line-height: 50px;
   }
-  .goods-logo{
-    width: 81px;height: 81px;
+  .goods-logo {
+    width: 81px;
+    height: 81px;
   }
-  .page-box{
-    height: 40px;line-height: 40px;margin-top: 21px;text-align: right
+  .page-box {
+    height: 40px;
+    line-height: 40px;
+    margin-top: 21px;
+    text-align: right;
   }
-  .caozuo{
-    margin-top: 10px
+  .caozuo {
+    margin-top: 10px;
   }
 }
 </style>

@@ -1,5 +1,21 @@
 <template>
   <div v-loading="loading" class="container">
+    <div class="header-panel" style="padding-top:20px;">
+      <el-select
+        v-model="selectStore.storeName"
+        filterable
+        placeholder="选择门店"
+        class="search"
+        @change="selectChange"
+      >
+        <el-option
+          v-for="item in storeListData"
+          :key="item.id"
+          :label="item.storeName"
+          :value="{ storeName: item.storeName, id: item.id }"
+        />
+      </el-select>
+    </div>
     <div class="header-panel">
       <div class="box">
         <div
@@ -34,8 +50,9 @@
           已完成
         </div>
       </div>
-      <el-select
+      <!-- <el-select
         v-model="selectStore.storeName"
+        style="margin-right:10px;"
         filterable
         placeholder="选择门店"
         class="search"
@@ -47,7 +64,7 @@
           :label="item.storeName"
           :value="{ storeName: item.storeName, id: item.id }"
         />
-      </el-select>
+      </el-select> -->
       <div class="search-container">
         <div class="search-item" @keyup.enter="forSearch()">
           <el-input
@@ -68,8 +85,18 @@
           style="margin-left:20px;"
           type="primary"
           size="small"
+          @click.stop="navToReception"
+        >批量到货</el-button>
+        <el-button
+          style="margin-left:20px;"
+          size="small"
           @click.stop="exportDisplayHandler(true)"
         >批量导出</el-button>
+        <el-button
+          style="margin-left:20px;"
+          size="small"
+          @click.stop="donwloadDialogHandler(true)"
+        >报表下载</el-button>
       </div>
     </div>
     <div class="table-panel">
@@ -276,8 +303,40 @@
           type="primary"
           :disabled="exportStatus"
           @click="exportReportService"
-        >导出</el-button>
+        >导出创建</el-button>
       </div>
+    </el-dialog>
+    <!-- download dialog -->
+    <el-dialog :visible.sync="donwloadDialog" title="批量导出列表" append-to-body>
+      <el-table :data="downloadlist">
+        <el-table-column prop="createTime" label="创建时间" />
+        <el-table-column prop="updateUser" label="操作人" />
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            {{
+              scope.row.status === 1
+                ? '待执行'
+                : scope.row.status === 2
+                  ? '执行中'
+                  : scope.row.status === 3
+                    ? '执行完成'
+                    : scope.row.status === 4
+                      ? '执行失败'
+                      : '已取消'
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot-scope="scope">
+            <a
+              v-if="!!scope.row.filePath && scope.row.status === 3"
+              style="padding: 9px 15px;font-size: 12px;border-radius: 3px;background-color: #147de8;color: #fff"
+              :href="configOss(scope.row.filePath)"
+              download
+            >下载</a>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-dialog>
   </div>
 </template>
@@ -388,7 +447,9 @@ export default {
       ],
       exportList: [],
       reportloading: true,
-      exportStatus: false
+      exportStatus: false,
+      donwloadDialog: false,
+      downloadlist: []
     }
   },
   watch: {
@@ -406,6 +467,17 @@ export default {
     })
   },
   methods: {
+    donwloadDialogHandler(bol) {
+      if (bol) {
+        this.queryTaskService()
+      }
+
+      this.donwloadDialog = bol
+    },
+    /**  */
+    navToReception() {
+      this.$router.push({ path: '/distribution/order-reception' })
+    },
     changeSelectDayStoreID(e) {
       console.log('selectDayStoreID _________________ : ', e)
       this.selectDayStore = e
@@ -416,9 +488,10 @@ export default {
     async queryReportService() {
       this.reportloading = true
       const storeId = this.selectDayStore.id
-      const { data } = await DistributionService.queryReport(
-        Object.assign(this.selectResult, { storeId })
-      )
+      const { data } = await DistributionService.queryReport({
+        ...this.selectResult,
+        storeId
+      })
       this.exportList = data
       if (this.exportList && this.exportList.length > 0) {
         this.exportStatus = false
@@ -428,19 +501,23 @@ export default {
       this.reportloading = false
     },
     async exportReportService() {
-      console.log(
-        'exportReportService ________________________________________'
-      )
       this.exportExcel = null
       const storeId = this.selectDayStore.id
-      const res = await DistributionService.exportReport(
-        Object.assign(this.selectResult, {
-          storeId,
-          responsetype: 'blob'
-        })
-      )
-      this.exportExcel = res
-      this.donwloadExcel()
+      const res = await DistributionService.taskCreate({
+        ...this.selectResult,
+        storeId
+      })
+      console.log(res)
+      // this.exportExcel = res
+      // this.donwloadExcel()
+      this.$message({
+        message: '创建成功!',
+        type: 'success'
+      })
+    },
+    async queryTaskService() {
+      const { data } = await DistributionService.taskQuery()
+      this.downloadlist = data
     },
     resetSelectReport() {
       this.selectDayModule = { label: '当天', value: '16' }
@@ -716,6 +793,10 @@ export default {
       const { data, code } = await DistributionService.updateOrderStatus(params)
       if (code === '10000') {
         console.log(data)
+        this.$message({
+          message: '操作成功!',
+          type: 'success'
+        })
         this.closeDialog()
         this.getOrderListByTypeService()
       }
@@ -771,7 +852,6 @@ export default {
     }
     .search {
       width: 284px;
-      margin-left: 44px;
     }
     .box {
       border-radius: 6px;
@@ -779,6 +859,7 @@ export default {
       flex-direction: row;
       border: 1px solid #d7d7d7;
       flex-shrink: 0;
+      margin-right: 44px;
       .cutoff {
         width: 1px;
         background-color: #d7d7d7;

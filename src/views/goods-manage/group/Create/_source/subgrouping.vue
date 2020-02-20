@@ -21,7 +21,7 @@
         </el-upload>
       </div>
       <div class="oper">
-        <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubmit" />
+        <el-button type="success" icon="el-icon-check" :loading="subLoading" circle size="mini" @click="handleSubmit" />
         <el-button type="danger" icon="el-icon-close" circle size="mini" @click="visible=false" />
       </div>
     </div>
@@ -87,7 +87,8 @@ export default {
       info: {
         children: [],
         show: true
-      }
+      },
+      subLoading: false
     }
   },
   computed: {
@@ -118,6 +119,7 @@ export default {
     handleSubmit() {
       this.$refs.formInfo.validate((valid) => {
         if (valid) {
+          this.subLoading = true
           if (this.type === 'create') {
             this._Create()
           } else {
@@ -140,6 +142,7 @@ export default {
         }
         this.$store.dispatch('group/updateGroup', updata)
         this.visible = false
+        this.subLoading = false
         this.info = {}
         this.$message({
           message: '修改成功',
@@ -177,6 +180,7 @@ export default {
         }
         this.$store.dispatch('group/updateGroup', updata)
         this.visible = false
+        this.subLoading = false
         this.info = {}
         this.$message({
           message: '创建成功',

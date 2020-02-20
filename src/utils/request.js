@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+
 const API_BASE = process.env.VUE_APP_API_BASE || '/api'
 
 // create an axios instance

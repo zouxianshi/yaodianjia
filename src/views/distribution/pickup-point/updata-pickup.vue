@@ -82,7 +82,7 @@
                 class="items"
                 @click="selectLocation(item)"
               >
-                {{ item.title }}
+                {{ item.address }}{{ item.title }}
               </div>
             </div>
           </div>
@@ -115,6 +115,19 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="product-info">
+      <h4>门店账号设置</h4>
+      <el-form>
+        <el-form-item label="门店账号:" label-width="110px">
+          <el-input
+            v-model="form.accountNumber"
+            placeholder="请输入"
+            maxlength="100"
+          />
+        </el-form-item>
+      </el-form>
     </div>
     <div class="submit-box">
       <el-button type="primary" @click="submitData()">完成添加</el-button>
@@ -150,7 +163,8 @@ export default {
         storeAddress: '',
         storeCode: '',
         storeName: '',
-        limitNumber: 0
+        limitNumber: 0,
+        accountNumber: ''
       },
       dialogImageUrl: '',
       dialogVisible: false,
@@ -229,7 +243,14 @@ export default {
       })
     },
     selectLocation(obj) {
-      this.form.storeAddress = `${obj.province}${obj.city}${obj.district}${obj.title}`
+      console.log(obj.province)
+      console.log(obj.city)
+      console.log(obj.district)
+      console.log(obj.title)
+      console.log(obj)
+      this.form.storeAddress = `${obj.province}${obj.city}${
+        obj.district ? obj.district : ''
+      }${obj.address ? obj.address : ''}${obj.title ? obj.title : ''}`
       this.getLocation(obj.location)
     },
 
@@ -250,6 +271,13 @@ export default {
         })
         return
       }
+      // if (!this.form.accountNumber.replace(/\s+/g, '')) {
+      //   this.$message({
+      //     message: '请输入门店账号！',
+      //     type: 'error'
+      //   })
+      //   return
+      // }
       this.$refs.form.validate(flag => {
         console.log(flag)
         if (flag) {
@@ -292,6 +320,9 @@ export default {
     getLocation(_location) {
       this.oldAddress = this.form.storeAddress
       this.$refs.mapRef.setCenter(_location)
+      this.form.latitude = _location.lat
+      this.form.longitude = _location.lng
+      this.idTrueAddress = true
       // const geocoder = new mapQQ.maps.Geocoder({
       //   complete: result => {
       //     const location = result.detail.location
