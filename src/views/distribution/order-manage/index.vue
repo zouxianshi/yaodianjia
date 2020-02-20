@@ -734,7 +734,8 @@ export default {
     /* 查询门店列表 */
     async getStoreListServie() {
       const { data, code } = await DistributionService.queryStoreList({
-        pageSize: 10000
+        pageSize: 10000,
+        isStoreList: 0
       })
       if (code === '10000') {
         this.storeListData = [{ storeName: '全部', id: '' }].concat(data.data)
