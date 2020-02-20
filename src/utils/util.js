@@ -10,7 +10,11 @@ const API_OSS_BASE =
 export default {
   install(Vue, options) {
     Vue.prototype.showImg = function(url) {
-      return `${API_BASE}${url}`
+      if (url.indexOf('https') !== -1) {
+        return `${url}`
+      } else {
+        return `${API_BASE}${url}`
+      }
     }
     /**
      * 预发项目单独处理img url
