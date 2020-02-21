@@ -122,6 +122,7 @@
         <el-button
           type="primary"
           size="small"
+          :loading="subLoading"
           @click="handleSubmit"
         >确 定</el-button>
       </span>

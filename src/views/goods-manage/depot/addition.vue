@@ -165,6 +165,9 @@ export default {
       getProductList(this.listQuery).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
+        data.map(v => {
+          v.loading = false
+        })
         this.tableData = data
         this.total = totalCount
       }).catch(() => {

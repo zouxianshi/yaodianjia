@@ -185,7 +185,7 @@
     <div class="footer">
       <span>
         <el-button size="small" @click="$router.go(-1)">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleConstituteGoods">确 定</el-button>
+        <el-button type="primary" size="small" :loading="subLoading" @click="handleConstituteGoods">确 定</el-button>
       </span>
     </div>
 
@@ -317,6 +317,7 @@ export default {
         label: 'name',
         value: 'id'
       },
+      subLoading: false,
       loading: false, // 加载分类
       basicForm: {
         firstTypeId: '', // 一级分类
@@ -361,7 +362,6 @@ export default {
       //   content: ''
       // },
       uploadIndex: 0,
-      subLoading: false,
       chooseTableSpec: [],
       uploadLoading: false,
       leaveAction: false // 离开页面动作，true为保存离开  false异常离开
@@ -762,8 +762,8 @@ export default {
             type: 'success'
           })
           this.basicForm.id = res.data
-          this.subLoading = false
           this.$router.push('/goods-manage/constitute-goods')
+          this.subLoading = false
         })
         .catch(_ => {
           this.subLoading = false
@@ -778,8 +778,8 @@ export default {
             message: '保存成功',
             type: 'success'
           })
-          this.subLoading = false
           this.$router.push('/goods-manage/constitute-goods')
+          this.subLoading = false
         })
         .catch(_ => {
           this.subLoading = false
@@ -815,8 +815,7 @@ export default {
         })
     },
     handleConstituteGoods() {
-      // 保存商品详情
-      this.subLoading = true
+      // 保存商品详
       // this.basicForm.childCommodities = this.childCommodities
       // const data = {
       //   content: this.basicForm,
