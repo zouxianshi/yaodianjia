@@ -8,6 +8,7 @@
       <div class="table-column flex-1">数量</div>
       <div class="table-column flex-2">预约人</div>
       <div class="table-column flex-2">预约时间</div>
+      <div class="table-column flex-1">总价</div>
       <div class="table-column flex-1">订单状态</div>
       <div class="table-column flex-2">提货门店/地址</div>
     </div>
@@ -56,6 +57,17 @@
                 : ''
             }}
             <!-- 领取时间:{{ item.updateTime || '' }} -->
+          </div>
+          <div
+            class="table-column content-center flex-1"
+            style="color:#D0021B;"
+          >
+            ¥
+            {{
+              (Number(item.productPrice) * Number(item.productCount))
+                .toFixed(2)
+                .replace(/(?:\.0*|(\.\d+?)0+)$/, '$1')
+            }}
           </div>
           <div class="table-column content-column content-center flex-1">
             <span>{{
