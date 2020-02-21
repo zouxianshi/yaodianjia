@@ -8,7 +8,7 @@
       <div class="table-column flex-1">数量</div>
       <div class="table-column flex-2">预约人</div>
       <div class="table-column flex-2">预约时间</div>
-      <div class="table-column flex-1">总价</div>
+      <div class="table-column flex-1">商品总价</div>
       <div class="table-column flex-1">订单状态</div>
       <div class="table-column flex-2">提货门店/地址</div>
     </div>
