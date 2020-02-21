@@ -500,7 +500,9 @@ export default {
             duration: 5 * 1000
           })
         }
-        this.saveLoading = false
+        setTimeout(() => {
+          this.saveLoading = false
+        }, 500)
       }).catch(err => {
         console.log('err', err)
         this.saveLoading = false
@@ -540,7 +542,9 @@ export default {
             duration: 5 * 1000
           })
         }
-        this.saveLoading = false
+        setTimeout(() => {
+          this.saveLoading = false
+        }, 500)
       }).catch(err => {
         console.log('err', err)
         this.saveLoading = false
