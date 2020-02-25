@@ -108,6 +108,7 @@
           >
             <el-input
               v-model="modalForm.name"
+              maxlength="12"
               placeholder="输入分组名称"
             />
           </el-form-item>
