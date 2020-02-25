@@ -84,7 +84,7 @@
         <el-form-item label="订单商品总量：">
           <div>{{ dialogData.productAllCount }}</div>
         </el-form-item>
-        <el-form-item label="到货数量：">
+        <el-form-item label="到货数量：" style="margin-bottom:9px;">
           <div style="display:flex;flex-direction: row;flex-wrap: nowrap;">
             <el-input
               v-model="arrivalCount"
@@ -94,6 +94,11 @@
             <div style="margin-left:12px;">个</div>
           </div>
         </el-form-item>
+        <div
+          style="padding:10px 9px;background:#FFF1DA;color:#B17107;font-size:14px;margin-bottom:9px;"
+        >
+          系统将根据您想要确认到货的商品数量为您匹配订单，实际确认到货数量有可能小于您输入的确认到货商品数量
+        </div>
         <el-form-item label="建议领取时间：">
           <el-date-picker
             v-model="time"
@@ -109,11 +114,7 @@
             @change="datePickerChange"
           />
         </el-form-item>
-        <div
-          style="padding:10px 20px;background:#FFF1DA;color:#B17107;font-size:14px;"
-        >
-          请确认到货数量（您的实际商品库存）≥订单商品总量
-        </div>
+
         <div
           style="margin-top:10px;display:flex;flex-direction: row;justify-content: flex-end;"
         >
@@ -359,6 +360,20 @@ export default {
       if (this.time.constructor !== Array) {
         this.$message({
           message: '请选择建议领取时间',
+          type: 'error'
+        })
+        return
+      }
+      if (Number(this.arrivalCount) < 1) {
+        this.$message({
+          message: '请确认到货数量（您的实际商品库存）≥ 1',
+          type: 'error'
+        })
+        return
+      }
+      if (this.dialogData.productAllCount > Number(this.arrivalCount)) {
+        this.$message({
+          message: '请确认到货数量（您的实际商品库存）≥ 订单商品总量',
           type: 'error'
         })
         return
