@@ -417,10 +417,10 @@ export default {
         startDate
       }
       console.log('param ________________ : ', param)
-      const { code } = await DistributionService.bulkArrival(param)
+      const { data, code } = await DistributionService.bulkArrival(param)
       if (code === '10000') {
         this.$message({
-          message: '操作成功!',
+          message: `您已成功发送${data.orderCount}条到货信息，实际确认到货数量${data.productCount}`,
           type: 'success'
         })
         this.dialogHandler(false)
