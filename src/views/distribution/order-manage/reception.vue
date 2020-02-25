@@ -371,9 +371,9 @@ export default {
         })
         return
       }
-      if (this.dialogData.productAllCount > Number(this.arrivalCount)) {
+      if (this.dialogData.productAllCount < Number(this.arrivalCount)) {
         this.$message({
-          message: '请确认到货数量（您的实际商品库存）≥ 订单商品总量',
+          message: '实际确认到货数量只能小于等于您输入的确认到货商品数量',
           type: 'error'
         })
         return
@@ -417,10 +417,10 @@ export default {
         startDate
       }
       console.log('param ________________ : ', param)
-      const { code } = await DistributionService.bulkArrival(param)
+      const { data, code } = await DistributionService.bulkArrival(param)
       if (code === '10000') {
         this.$message({
-          message: '操作成功!',
+          message: `您已成功发送${data.orderCount}条到货信息，实际确认到货数量${data.productCount}`,
           type: 'success'
         })
         this.dialogHandler(false)
