@@ -81,7 +81,7 @@
                       ? '取消预约'
                       : '其他'
             }}</span><el-button
-              v-if="item.status === 'SUCCESS'"
+              v-if="item.status === 'SUCCESS' && is_admin === false"
               style="margin-top:10px;"
               type="primary"
               @click="emitClickHandler(item)"
@@ -108,10 +108,20 @@ export default {
     tableData: {
       type: Array,
       default: () => []
+    },
+    isAdmin: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
-    return {}
+    return { is_admin: true }
+  },
+
+  watch: {
+    isAdmin(newValue) {
+      this.is_admin = newValue
+    }
   },
   methods: {
     emitClickHandler(obj) {

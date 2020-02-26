@@ -102,6 +102,7 @@
     <div class="table-panel">
       <table-card
         :table-data="orderListData"
+        :is-admin.sync="isAdmin"
         @button-click="setDialogContent"
       />
     </div>
@@ -349,6 +350,8 @@
 import tableCard from './table-card/index.vue'
 import DistributionService from '@/api/distributionService'
 import { throttle } from '@/utils/throttle'
+import { mapState } from 'vuex'
+import { endWith } from '@/utils/string'
 export default {
   components: { tableCard },
   data() {
@@ -454,15 +457,21 @@ export default {
       reportloading: true,
       exportStatus: false,
       donwloadDialog: false,
-      downloadlist: []
+      downloadlist: [],
+      isAdmin: true
     }
+  },
+  computed: {
+    ...mapState('user', ['name'])
   },
   watch: {
     orderNum(newValue) {
       this.orderNum = newValue
     }
   },
+
   mounted() {
+    this.isAdmin = endWith(this.name, '_admin') // 判断是否是超级管理人员
     this.getStoreListServie()
     const d = new Date()
     this.dayOptions[1].options.map(item => {
