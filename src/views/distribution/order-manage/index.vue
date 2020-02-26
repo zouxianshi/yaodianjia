@@ -82,6 +82,7 @@
           >搜 索</el-button>
         </div>
         <el-button
+          v-if="!isAdmin"
           style="margin-left:20px;"
           type="primary"
           size="small"
@@ -102,7 +103,6 @@
     <div class="table-panel">
       <table-card
         :table-data="orderListData"
-        :is-admin.sync="isAdmin"
         @button-click="setDialogContent"
       />
     </div>
