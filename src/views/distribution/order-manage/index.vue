@@ -72,6 +72,7 @@
             placeholder="请输入预约单号搜索"
             prefix-icon="el-icon-search"
             class="search"
+            type="number"
           />
         </div>
         <div class="search-btns" style="margin-left:10px;">
