@@ -72,6 +72,7 @@
             placeholder="请输入预约单号搜索"
             prefix-icon="el-icon-search"
             class="search"
+            type="number"
           />
         </div>
         <div class="search-btns" style="margin-left:10px;">
@@ -82,6 +83,7 @@
           >搜 索</el-button>
         </div>
         <el-button
+          v-if="!isAdmin"
           style="margin-left:20px;"
           type="primary"
           size="small"
@@ -349,6 +351,8 @@
 import tableCard from './table-card/index.vue'
 import DistributionService from '@/api/distributionService'
 import { throttle } from '@/utils/throttle'
+import { mapState } from 'vuex'
+import { endWith } from '@/utils/string'
 export default {
   components: { tableCard },
   data() {
@@ -454,15 +458,30 @@ export default {
       reportloading: true,
       exportStatus: false,
       donwloadDialog: false,
-      downloadlist: []
+      downloadlist: [],
+      isAdmin: true
     }
+  },
+  computed: {
+    ...mapState('user', ['name'])
   },
   watch: {
     orderNum(newValue) {
-      this.orderNum = newValue
+      const reg = /^[0-9]*$/
+      if (reg.test(newValue)) {
+        this.orderNum = newValue
+      } else {
+        this.orderNum = ''
+        this.$message({
+          message: '订单号为数字组成',
+          type: 'error'
+        })
+      }
     }
   },
+
   mounted() {
+    this.isAdmin = endWith(this.name, '_admin') // 判断是否是超级管理人员
     this.getStoreListServie()
     const d = new Date()
     this.dayOptions[1].options.map(item => {

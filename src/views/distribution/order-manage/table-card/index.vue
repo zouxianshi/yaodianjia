@@ -113,6 +113,7 @@ export default {
   data() {
     return {}
   },
+
   methods: {
     emitClickHandler(obj) {
       this.$emit('button-click', obj)
