@@ -125,6 +125,9 @@
           <template v-if="detailsData.payMode===0">
             <div class="con">实付总额：￥{{ detailsData.actuallyPaid }}</div>
           </template>
+          <template v-else>
+            实付总额：以线下实收为准
+          </template>
         </div>
         <div class="info-item">
           <div class="title">操作人信息</div>

@@ -65,7 +65,7 @@ module.exports = {
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
-          // '^/api': `http://middle.test.ydjia.cn`
+          // '^/api': `http://middle.dev.ydjia.cn`
           '^/api': `http://middle.test.ydjia.cn`
         }
       },

@@ -885,7 +885,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$router.push('/chainSetting')
+        this.$router.push('/storeSetting/chainSetting')
       })
     },
     fetchData() {
