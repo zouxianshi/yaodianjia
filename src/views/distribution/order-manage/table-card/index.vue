@@ -8,6 +8,7 @@
       <div class="table-column flex-1">数量</div>
       <div class="table-column flex-2">预约人</div>
       <div class="table-column flex-2">预约时间</div>
+      <div class="table-column flex-1">商品总价</div>
       <div class="table-column flex-1">订单状态</div>
       <div class="table-column flex-2">提货门店/地址</div>
     </div>
@@ -57,6 +58,17 @@
             }}
             <!-- 领取时间:{{ item.updateTime || '' }} -->
           </div>
+          <div
+            class="table-column content-center flex-1"
+            style="color:#D0021B;"
+          >
+            ¥
+            {{
+              (Number(item.productPrice) * Number(item.productCount))
+                .toFixed(2)
+                .replace(/(?:\.0*|(\.\d+?)0+)$/, '$1')
+            }}
+          </div>
           <div class="table-column content-column content-center flex-1">
             <span>{{
               item.status === 'SUCCESS'
@@ -69,7 +81,7 @@
                       ? '取消预约'
                       : '其他'
             }}</span><el-button
-              v-if="item.status === 'SUCCESS'"
+              v-if="item.status === 'SUCCESS' && is_admin === false"
               style="margin-top:10px;"
               type="primary"
               @click="emitClickHandler(item)"
@@ -96,10 +108,20 @@ export default {
     tableData: {
       type: Array,
       default: () => []
+    },
+    isAdmin: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
-    return {}
+    return { is_admin: true }
+  },
+
+  watch: {
+    isAdmin(newValue) {
+      this.is_admin = newValue
+    }
   },
   methods: {
     emitClickHandler(obj) {
