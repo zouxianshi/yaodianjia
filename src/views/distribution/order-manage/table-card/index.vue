@@ -7,7 +7,7 @@
       <div class="table-column flex-1">单价</div>
       <div class="table-column flex-1">数量</div>
       <div class="table-column flex-2">预约人</div>
-      <div class="table-column flex-2">预约时间</div>
+      <div class="table-column flex-2">预约时间/确认到货时间/领取时间</div>
       <div class="table-column flex-1">商品总价</div>
       <div class="table-column flex-1">订单状态</div>
       <div class="table-column flex-2">提货门店/地址</div>
@@ -51,11 +51,13 @@
           </div>
           <div class="table-column content-center flex-2">
             预约时间:{{ item.createTime }}<br><br>
-            {{
+            <!-- {{
               item.status === 'COMPLETE'
-                ? `领取时间:${item.updateTime || ''}`
+                ? ``
                 : ''
-            }}
+            }} -->
+            确认到货时间：{{ item.arriveTime || '' }}<br><br>
+            领取时间:{{ item.updateTime || '' }}
             <!-- 领取时间:{{ item.updateTime || '' }} -->
           </div>
           <div
