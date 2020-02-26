@@ -44,6 +44,18 @@
                 <el-button class="btn-create" type="primary" size="mini" disabled>创建</el-button>
               </div>
             </li>
+            <li class="li-item">
+              <div class="li-left">
+                <img src="../../../assets/image/pt.png">
+              </div>
+              <div class="li-center">
+                <div class="title">拼团活动</div>
+                <div class="desc">拼团活动可以为商家做拉新引流计划提供高效的途径，同事拼团活动也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长</div>
+              </div>
+              <div class="li-right">
+                <el-button class="btn-create" type="primary" size="mini" @click="toCreate(4)">创建</el-button>
+              </div>
+            </li>
           </ul>
         </div>
       </section>
@@ -95,11 +107,13 @@ export default {
 
   },
   methods: {
-    toCreate(type) { // type 1.限时活动 2.电子DM单 3.分享红包
+    toCreate(type) { // type 1.限时活动 2.电子DM单 3.分享红包 4.拼团活动
       if (type === 1) {
         this.$router.push('/marketing/activity/limit-edit')
       } else if (type === 2) {
         this.$router.push('/marketing/activity/dm-template')
+      } else if (type === 4) {
+        this.$router.push('/marketing/activity/assemble-edit')
       }
     }
   }

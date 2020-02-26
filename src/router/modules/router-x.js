@@ -116,6 +116,16 @@ const router = [
           noCache: true,
           activeMenu: '/marketing/activity'
         }
+      },
+      {
+        path: 'activity/assemble-edit',
+        component: () => import('@/views/marketing/activity/assemble/edit'),
+        name: 'assembleEdit',
+        meta: {
+          title: '拼团活动',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
       }
     ]
   },
