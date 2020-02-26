@@ -466,7 +466,16 @@ export default {
   },
   watch: {
     orderNum(newValue) {
-      this.orderNum = newValue
+      const reg = /^[0-9]*$/
+      if (reg.test(newValue)) {
+        this.orderNum = newValue
+      } else {
+        this.orderNum = ''
+        this.$message({
+          message: '订单号为数字组成',
+          type: 'error'
+        })
+      }
     }
   },
 
