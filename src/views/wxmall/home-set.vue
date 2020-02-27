@@ -848,7 +848,7 @@ export default {
       return this.$store.state.user.merCode || ''
     },
     upLoadUrl() {
-      return `${this.uploadFileURL}${config.merGoods}/1.0/ds/baseinfo/synDeliveryStore`
+      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
     },
     headers() {
       return { 'Authorization': this.$store.getters.token }
