@@ -29,7 +29,7 @@
         <el-form :model="settingForm" size="small" label-width="100px">
           <el-form-item label="成团人数">
             <div class="custom-input">
-              <el-input v-model="settingForm.effectiveTime" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+              <el-input v-model="settingForm.activityNumber" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
               <div class="operate">
                 <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
                 <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
@@ -44,7 +44,7 @@
             <section style="margin-top:20px">
               <el-form-item label="每人限开/参团" label-width="110px">
                 <div class="custom-input">
-                  <el-input v-model="settingForm.effectiveTime" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+                  <el-input v-model="settingForm.addLimitTimes" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
                   <div class="operate">
                     <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
                     <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
@@ -54,7 +54,7 @@
               </el-form-item>
               <el-form-item label="单次限购" label-width="110px">
                 <div class="custom-input">
-                  <el-input v-model="settingForm.effectiveTime" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+                  <el-input v-model="settingForm.limitCount" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
                   <div class="operate">
                     <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
                     <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
@@ -65,14 +65,14 @@
             </section>
           </el-form-item>
           <el-form-item label="是否包邮">
-            <el-radio-group v-model="settingForm.xg">
-              <el-radio label="">否</el-radio>
-              <el-radio label="">是</el-radio>
+            <el-radio-group v-model="settingForm.isFreeshipping">
+              <el-radio :label="false">否</el-radio>
+              <el-radio :label="true">是</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="拼团库存">
             <div class="custom-input">
-              <el-input v-model="settingForm.effectiveTime" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+              <el-input v-model="settingForm.productActivityCount" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
               <div class="operate">
                 <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
                 <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
