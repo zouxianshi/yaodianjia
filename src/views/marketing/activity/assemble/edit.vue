@@ -42,7 +42,7 @@
         </el-form-item>
         <el-form-item label="成团有效时间" prop="effectiveTime">
           <div class="custom-input">
-            <el-input v-model="formData.effectiveTime" type="number" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+            <el-input v-model="formData.effectiveTime" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
             <div class="operate">
               <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
               <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
@@ -92,7 +92,7 @@
             <el-table-column label="成团人数" />
             <el-table-column label="操作" min-width="110">
               <template slot-scope="scope">
-                <el-button type="" size="mini">设置</el-button>
+                <el-button type="" size="mini" @click="handleEditSetting(scope.row)">设置</el-button>
                 <el-button type="danger" size="mini" @click="handleGoodsDel(scope.$index)">删除</el-button>
               </template>
             </el-table-column>
@@ -105,14 +105,17 @@
     <store :is-show="showStore" @close="showStore=false" @complete="handletStoreComplete" />
     <!-- 选择商品弹窗组件 -->
     <goods ref="dialogGoods" :editable="!disabled" :list="chooseGoods" @on-change="onSelectedGoods" />
+    <!-- 编辑商品 -->
+    <edit-goods-modals ref="editGoodsModals" :info="editGoods" />
   </div>
 </template>
 <script>
 import config from '@/utils/config'
 import store from './_source/store'
 import goods from './_source/goods'
+import EditGoodsModals from './_source/signle-goods-set'
 export default {
-  components: { store, goods },
+  components: { store, goods, EditGoodsModals },
   data() {
     return {
       formData: {
@@ -130,7 +133,8 @@ export default {
       chooseStore: [],
       showGoods: false,
       chooseGoods: [],
-      disabled: false
+      disabled: false,
+      editGoods: {}
     }
   },
   computed: {
@@ -161,6 +165,10 @@ export default {
           this.formData.effectiveTime--
         }
       }
+    },
+    handleEditSetting(row) {
+      this.$refs.editGoodsModals.open()
+      this.editGoods = row
     },
     handleOpenStore() {
       this.showStore = true
