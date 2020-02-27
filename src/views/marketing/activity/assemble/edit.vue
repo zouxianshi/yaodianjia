@@ -18,10 +18,12 @@
               class="avatar-uploader"
               :action="upLoadUrl"
               :show-file-list="false"
+              :headers="headers"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
+              :on-error="handleImgError"
             >
-              <img v-if="formData.formData" :src="formData.imageUrl" class="avatar">
+              <el-image v-if="formData.imgUrl" :src="showImg(formData.imgUrl)" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
           </template>
@@ -114,6 +116,7 @@ import config from '@/utils/config'
 import store from './_source/store'
 import goods from './_source/goods'
 import EditGoodsModals from './_source/signle-goods-set'
+import { mapGetters } from 'vuex'
 export default {
   components: { store, goods, EditGoodsModals },
   data() {
@@ -121,7 +124,9 @@ export default {
       formData: {
         effectiveTime: '',
         name: '',
-        activitTime: ''
+        activitTime: '',
+        img: '1',
+        imageUrl: ''
       },
       goodsList: [],
       rules: {
@@ -134,10 +139,12 @@ export default {
       showGoods: false,
       chooseGoods: [],
       disabled: false,
-      editGoods: {}
+      editGoods: {},
+      pageLoading: ''
     }
   },
   computed: {
+    ...mapGetters(['token']),
     upLoadUrl() {
       return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
     },
@@ -166,6 +173,18 @@ export default {
         }
       }
     },
+    handleImgError(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        // location.reload()
+      } else {
+        this.$message({
+          message: '图片上传失败',
+          type: 'error'
+        })
+        this.pageLoading.close()
+      }
+    },
     handleEditSetting(row) {
       this.$refs.editGoodsModals.open()
       this.editGoods = row
@@ -190,19 +209,42 @@ export default {
       this.goodsList = row
     },
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
+      if (res.code === '10000') {
+        this.formData.imgUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+      this.pageLoading.close()
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+      const size = file.size / 1024
+      const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      if (!isImg) {
+        this.$message({
+          message: '只能上传格式为 jpg、jpeg、png的图片',
+          type: 'warning'
+        })
+        this.pageLoading.close()
+        return
       }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+      if (size > 1024) {
+        this.$message({
+          message: '最大只能上传1MB的图片',
+          type: 'warning'
+        })
+        this.pageLoading.close()
+        return false
       }
-      return isJPG && isLt2M
+      this.pageLoading = this.$loading({
+        lock: true,
+        text: '图片上传中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      return true
     }
   }
 }
