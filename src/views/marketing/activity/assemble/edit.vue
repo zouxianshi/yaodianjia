@@ -30,21 +30,22 @@
         <el-form-item label="活动描述">
           <el-input v-model="formData.des" type="textarea" maxlength="200" :autosize="{ minRows: 4, maxRows: 6}" style="width:300px" :show-word-limit="true" placeholder="活动描述尽量精简，将会展示在商品副标题内" />
         </el-form-item>
-        <el-form-item label="活动时间">
+        <el-form-item label="活动时间" prop="activitTime">
           <el-date-picker
-            v-model="formData.value"
+            v-model="formData.activitTime"
             type="datetimerange"
+            value-format="yyyy-MM-dd hh:mm:ss"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
           />
         </el-form-item>
-        <el-form-item label="成团有效时间">
+        <el-form-item label="成团有效时间" prop="effectiveTime">
           <div class="custom-input">
-            <el-input v-model="formData.day" style="width:80px" class="custom-inner-input" placeholder="" />
+            <el-input v-model="formData.effectiveTime" type="number" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
             <div class="operate">
-              <span class="el-icon-arrow-up" />
-              <span class="el-icon-arrow-down" />
+              <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
+              <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
             </div>
           </div>
         </el-form-item>
@@ -73,15 +74,28 @@
           <p style="margin-bottom:10px">
             <el-button icon="el-icon-circle-plus-outline" type="primary" size="small" @click="handleOpenGoods">添加商品</el-button>
           </p>
-          <el-table :data="formData.list">
-            <el-table-column label="序号" />
-            <el-table-column label="商品名称" />
-            <el-table-column label="商品编码" />
+          <el-table
+            :data="goodsList"
+            border
+            size="small"
+          >
+            <el-table-column label="序号" width="80">
+              <template slot-scope="scope">
+                <el-input v-model="scope.$index" placeholder="" style="width:40px" />
+              </template>
+            </el-table-column>
+            <el-table-column label="商品名称" prop="name" min-width="100" />
+            <el-table-column label="商品编码" prop="erpCode" />
             <el-table-column label="原售价" />
             <el-table-column label="拼团价" />
             <el-table-column label="活动库存" />
             <el-table-column label="成团人数" />
-            <el-table-column label="操作" />
+            <el-table-column label="操作" min-width="110">
+              <template slot-scope="scope">
+                <el-button type="" size="mini">设置</el-button>
+                <el-button type="danger" size="mini" @click="handleGoodsDel(scope.$index)">删除</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </el-form-item>
         <el-form-item />
@@ -101,10 +115,16 @@ export default {
   components: { store, goods },
   data() {
     return {
-      formData: {},
+      formData: {
+        effectiveTime: '',
+        name: '',
+        activitTime: ''
+      },
+      goodsList: [],
       rules: {
-        name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }]
-
+        name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
+        activitTime: [{ required: true, message: '请选择活动开始和结束时间', trigger: 'change' }],
+        effectiveTime: [{ required: true, message: '请输入成团有效时间', trigger: 'blur' }]
       },
       showStore: false,
       chooseStore: [],
@@ -125,6 +145,23 @@ export default {
 
   },
   methods: {
+    handleInput(e) {
+      const value = e.target.value
+      e.target.value = value.replace(/[^\d]/g, '')
+      this.formData.effectiveTime = value.replace(/[^\d]/g, '')
+    },
+    handleAddTime(type) {
+      if (!this.formData.effectiveTime) {
+        return
+      }
+      if (type === 1) {
+        this.formData.effectiveTime++
+      } else {
+        if (this.formData.effectiveTime !== 0) {
+          this.formData.effectiveTime--
+        }
+      }
+    },
     handleOpenStore() {
       this.showStore = true
     },
@@ -138,8 +175,11 @@ export default {
       this.chooseStore = row
       this.showStore = false
     },
+    handleGoodsDel(index) { // 删除商品表格数据
+      this.goodsList.splice(index, 1)
+    },
     onSelectedGoods(row) { // 商品选择确定事件
-      console.log(row)
+      this.goodsList = row
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
