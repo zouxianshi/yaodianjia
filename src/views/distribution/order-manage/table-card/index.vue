@@ -57,7 +57,7 @@
                 : ''
             }} -->
             确认到货时间：{{ item.arriveTime || '' }}<br><br>
-            领取时间:{{ item.updateTime || '' }}
+            领取时间:{{ item.verificationTime || '' }}
             <!-- 领取时间:{{ item.updateTime || '' }} -->
           </div>
           <div
