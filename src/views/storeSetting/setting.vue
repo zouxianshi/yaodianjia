@@ -349,14 +349,18 @@ export default {
         status: 1
       }).then(res => {
         if (res.code === '10000') {
-          this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
-          this.offlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 0 }).length
+          try {
+            this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
+            this.offlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 0 }).length
+          } catch (error) {
+            console.log('filter错误')
+          }
         }
         console.log('res-2', this.list)
       })
       queryStore(this.searchParams).then(res => {
         if (res.code === '10000') {
-          this.list = _.cloneDeep(res.data.data)
+          this.list = res.data.data
           if (!this.list) {
             this.searchParams.currentPage = 1
           }

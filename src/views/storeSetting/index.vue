@@ -90,7 +90,7 @@ export default {
       queryStore({
         merCode: this.merCode,
         currentPage: 1,
-        pageSize: 200000,
+        pageSize: this.searchParams.pageSize,
         status: 1
       }).then(res => {
         if (res.code === '10000') {
