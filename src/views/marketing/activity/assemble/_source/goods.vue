@@ -227,12 +227,10 @@ export default {
         })
         this.typeOption3 = index2 > -1 ? this.typeOption2[index2].children : []
       }
-      console.log('searchForm', this.searchForm)
       this.forSearch()
     },
     open() {
       this.dialog.visible = true
-      console.log('1111')
       if (this.list && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
@@ -270,8 +268,8 @@ export default {
         this.$message({ type: 'warning', message: '最多只能选取' + this.limitMax + '个商品' })
         return false
       }
-      console.log('confirm', this.mySelectList)
-      this.$emit('on-change', this.mySelectList)
+      //   console.log('confirm', this.mySelectList)
+      //   this.$emit('on-change', this.mySelectList)
       this.close()
     },
     formatSkuInfo(skuList) {
@@ -354,8 +352,8 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          console.log(mItem)
-          console.log(item)
+        //   console.log(mItem)
+        //   console.log(item)
           return mItem.specId === item.specId
         })
         if (index > -1) {

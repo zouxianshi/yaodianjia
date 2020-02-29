@@ -26,38 +26,38 @@
         </div>
       </section>
       <div class="form">
-        <el-form :model="settingForm" size="small" label-width="100px">
-          <el-form-item label="成团人数">
+        <el-form ref="formdData" :model="settingForm" size="small" :rules="rules" label-width="100px">
+          <el-form-item label="成团人数" prop="activityNumber">
             <div class="custom-input">
-              <el-input v-model="settingForm.activityNumber" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+              <el-input v-model="settingForm.activityNumber" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput($event,'activityNumber')" />
               <div class="operate">
-                <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
-                <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
+                <span class="el-icon-arrow-up" @click="handleAddNum(1,'activityNumber')" />
+                <span class="el-icon-arrow-down" @click="handleAddNum(2,'activityNumber')" />
               </div>
             </div>
           </el-form-item>
           <el-form-item label="是否限购">
-            <el-radio-group v-model="settingForm.xg">
-              <el-radio label="">否</el-radio>
-              <el-radio label="">是</el-radio>
+            <el-radio-group v-model="settingForm.isXg" @change="handleXgChange">
+              <el-radio :label="0">否</el-radio>
+              <el-radio :label="1">是</el-radio>
             </el-radio-group>
-            <section style="margin-top:20px">
+            <section v-if="settingForm.isXg===1" style="margin-top:20px">
               <el-form-item label="每人限开/参团" label-width="110px">
                 <div class="custom-input">
-                  <el-input v-model="settingForm.addLimitTimes" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+                  <el-input v-model="settingForm.addLimitTimes" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput($event,'addLimitTimes')" />
                   <div class="operate">
-                    <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
-                    <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
+                    <span class="el-icon-arrow-up" @click="handleAddNum(1,'addLimitTimes')" />
+                    <span class="el-icon-arrow-down" @click="handleAddNum(2,'addLimitTimes')" />
                   </div>
                   &nbsp;次
                 </div>
               </el-form-item>
               <el-form-item label="单次限购" label-width="110px">
                 <div class="custom-input">
-                  <el-input v-model="settingForm.limitCount" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+                  <el-input v-model="settingForm.limitCount" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput($event,'limitCount')" />
                   <div class="operate">
-                    <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
-                    <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
+                    <span class="el-icon-arrow-up" @click="handleAddNum(1,'limitCount')" />
+                    <span class="el-icon-arrow-down" @click="handleAddNum(2,'limitCount')" />
                   </div>
                   &nbsp;份
                 </div>
@@ -70,23 +70,21 @@
               <el-radio :label="true">是</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="拼团库存">
+          <el-form-item label="拼团库存" prop="productActivityCount">
             <div class="custom-input">
-              <el-input v-model="settingForm.productActivityCount" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput" />
+              <el-input v-model="settingForm.productActivityCount" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput($event,'productActivityCount')" />
               <div class="operate">
-                <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
-                <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
+                <span class="el-icon-arrow-up" @click="handleAddNum(1,'productActivityCount')" />
+                <span class="el-icon-arrow-down" @click="handleAddNum(2,'productActivityCount')" />
               </div>
               <span>&nbsp;&nbsp;拼团活动库存至少要满足一个团的库存需求</span>
             </div>
-
           </el-form-item>
-          <el-form-item label="拼团价格">
-            <el-input style="width:80px" /> <span>&nbsp;&nbsp;拼团价格需低于当前价格</span>
+          <el-form-item label="拼团价格" prop="activityPrice">
+            <el-input v-model="settingForm.activityPrice" placeholder="0.00" style="width:80px" /> <span>&nbsp;&nbsp;拼团价格需低于当前价格</span>
           </el-form-item>
         </el-form>
       </div>
-
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button size="small" @click="isShow=false">取 消</el-button>
@@ -95,6 +93,7 @@
   </el-dialog>
 </template>
 <script>
+import { checkNumberdouble } from '@/utils/validate'
 export default {
   name: 'EditGoodsModals',
   props: {
@@ -106,10 +105,44 @@ export default {
     }
   },
   data() {
+    var checkPrice = (rule, value, callback) => {
+      if (!value && value !== 0) {
+        return callback(new Error('拼团价格不能为空'))
+      }
+      if (value && !checkNumberdouble(value)) {
+        return callback(new Error('只能设置最多两位小数的正数'))
+      }
+      callback()
+    }
+    var checkNum = (rule, value, callback) => {
+      let msg = '拼团库存'
+      if (rule.field.activityNumber) {
+        msg = '拼团人数'
+      }
+      if (!value) {
+        return callback(new Error(`${msg}不能为空`))
+      }
+      if (value < 2) {
+        return callback(new Error(`${msg}不能小于2`))
+      }
+      callback()
+    }
     return {
       isShow: false,
       settingForm: {
-
+        activityNumber: 2,
+        isXg: 0,
+        addLimitTimes: 0,
+        limitCount: 0,
+        isFreeshipping: false,
+        productActivityCount: 2,
+        activityPrice: 0
+      },
+      rules: {
+        activityPrice: [{ required: true, validator: checkPrice, trigger: 'blur' }],
+        activityNumber: [{ required: true, validator: checkNum, trigger: 'blur' }],
+        isXg: [{ required: true, message: '', trigger: 'change' }],
+        productActivityCount: [{ required: true, validator: checkNum, trigger: 'blur' }]
       }
     }
   },
@@ -120,24 +153,57 @@ export default {
     open() {
       this.isShow = true
     },
-    handleSubmit() {
-      this.$emit('complete', this.info)
+    close() {
+      this.isShow = false
     },
-    handleInput(e) {
+    handleSubmit() { // 提交完善数据
+      this.$refs['formdData'].validate((valid) => {
+        if (valid) {
+          const data = JSON.parse(JSON.stringify(this.settingForm))
+          if (data.isXg === 0) {
+            data.addLimitTimes = 0
+            data.limitCount = 0
+          }
+          delete data.isXg
+          const newData = Object.assign(this.info, data)
+          this.$emit('complete', newData)
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    handleInput(e, key) {
       const value = e.target.value
       e.target.value = value.replace(/[^\d]/g, '')
-      this.formData.effectiveTime = value.replace(/[^\d]/g, '')
+      this.settingForm[key] = value.replace(/[^\d]/g, '')
     },
-    handleAddTime(type) {
-      if (!this.formData.effectiveTime) {
+    handleAddNum(type, key) { // 输入框上下加减处理
+      if (!this.settingForm[key]) {
         return
       }
-      if (type === 1) {
-        this.formData.effectiveTime++
-      } else {
-        if (this.formData.effectiveTime !== 0) {
-          this.formData.effectiveTime--
+      if (key === 'productActivityCount' || key === 'activityNumber') {
+        if (type === 1) {
+          this.settingForm[key]++
+        } else {
+          if (this.settingForm[key] !== 2) {
+            this.settingForm[key]--
+          }
         }
+      } else {
+        if (type === 1) {
+          this.settingForm[key]++
+        } else {
+          if (this.settingForm[key] !== 1) {
+            this.settingForm[key]--
+          }
+        }
+      }
+    },
+    handleXgChange(row) {
+      if (row === 1) {
+        this.settingForm.limitCount = 1
+        this.settingForm.addLimitTimes = 1
       }
     }
   }

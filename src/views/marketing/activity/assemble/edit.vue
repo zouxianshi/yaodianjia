@@ -40,6 +40,7 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            @change="handleTimeChange"
           />
         </el-form-item>
         <el-form-item label="成团有效时间" prop="effectiveTime">
@@ -61,7 +62,7 @@
           </el-radio-group>
 
         </el-form-item>
-        <el-form-item label="已选店铺">
+        <el-form-item v-if="formData.isAllStore==='2'" label="已选店铺">
           <div class="choose-store-box">
             <el-tag v-for="(item,index) in chooseStore" :key="index" type="para" size="small">{{ item.stName }}</el-tag>
           </div>
@@ -88,10 +89,10 @@
             </el-table-column>
             <el-table-column label="商品名称" prop="name" min-width="100" />
             <el-table-column label="商品编码" prop="erpCode" />
-            <el-table-column label="原售价" />
-            <el-table-column label="拼团价" />
-            <el-table-column label="活动库存" />
-            <el-table-column label="成团人数" />
+            <el-table-column label="原售价" prop="mprice" />
+            <el-table-column label="拼团价" prop="activityPrice" />
+            <el-table-column label="活动库存" prop="productActivityCount" />
+            <el-table-column label="成团人数" prop="activityNumber" />
             <el-table-column label="操作" min-width="110">
               <template slot-scope="scope">
                 <el-button type="" size="mini" @click="handleEditSetting(scope.row)">设置</el-button>
@@ -104,11 +105,11 @@
       </el-form>
     </div>
     <!-- 门店模态框 -->
-    <store :is-show="showStore" @close="showStore=false" @complete="handletStoreComplete" />
+    <store :is-show="showStore" :list="chooseStore" @close="showStore=false" @complete="handletStoreComplete" />
     <!-- 选择商品弹窗组件 -->
     <goods ref="dialogGoods" :editable="!disabled" :list="chooseGoods" @on-change="onSelectedGoods" />
     <!-- 编辑商品 -->
-    <edit-goods-modals ref="editGoodsModals" :info="editGoods" />
+    <edit-goods-modals ref="editGoodsModals" :info="editGoods" @complete="handleSuccessSelectGood" />
   </div>
 </template>
 <script>
@@ -126,7 +127,10 @@ export default {
         name: '',
         activitTime: '',
         img: '1',
-        imageUrl: ''
+        imageUrl: '',
+        isAllStore: '1',
+        startTime: '',
+        endTime: ''
       },
       goodsList: [],
       rules: {
@@ -185,6 +189,12 @@ export default {
         this.pageLoading.close()
       }
     },
+    handleTimeChange(row) {
+      if (row) {
+        this.formData.starTime = row[0]
+        this.formData.endTime = row[1]
+      }
+    },
     handleEditSetting(row) {
       this.$refs.editGoodsModals.open()
       this.editGoods = row
@@ -192,13 +202,13 @@ export default {
     handleOpenStore() {
       this.showStore = true
     },
-    handleOpenGoods() {
-      console.log()
+    handleOpenGoods() { // 打开选择商品弹窗组件
+      this.chooseGoods = this.goodsList
       this.$nextTick(_ => {
         this.$refs.dialogGoods.open()
       })
     },
-    handletStoreComplete(row) {
+    handletStoreComplete(row) { // 选择门店确定
       this.chooseStore = row
       this.showStore = false
     },
@@ -218,6 +228,14 @@ export default {
         })
       }
       this.pageLoading.close()
+    },
+    handleSuccessSelectGood(row) { // 单个商品设置确定callback
+      const index = this.goodsList.findIndex(mItem => {
+        return row.id === mItem.id
+      })
+      this.goodsList[index] = row
+      this.$set(this.goodsList, index, row)
+      this.$refs.editGoodsModals.close()
     },
     beforeAvatarUpload(file) {
       const size = file.size / 1024

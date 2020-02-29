@@ -18,7 +18,7 @@
         </div>
         <el-table
           ref="multipleTable"
-          :data="list"
+          :data="tableData"
           stripe
           style="width: 100%"
           max-height="300"
@@ -77,6 +77,12 @@ export default {
     isShow: {
       type: Boolean,
       default: false
+    },
+    list: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
@@ -85,7 +91,7 @@ export default {
       total: 0, // 门店总页数
       currentPage: 1, // 门店分页
       chooseStore: [], // 选择的门店数据
-      list: [],
+      tableData: [],
       multipleSelection: [],
       isAll: false,
       subLoading: false
@@ -94,7 +100,12 @@ export default {
   watch: {
     isShow(val) {
       if (val) {
-        this.multipleSelection = []
+        if (this.list && this.list.length > 0) {
+          this.multipleSelection = this.list.slice()
+        } else {
+          this.multipleSelection = []
+        }
+        this.currentPage = 1
         this._loadStoreData()
       }
     }
@@ -109,7 +120,7 @@ export default {
     handleChooseStore() { // 选择全部
       this.$refs.multipleTable.clearSelection()
       this.multipleSelection = []
-      this.list.map(v => {
+      this.tableData.map(v => {
         this.$refs.multipleTable.toggleRowSelection(v)
       })
     },
@@ -123,18 +134,18 @@ export default {
       }
       getStoreList(query).then(res => {
         const { data, totalCount } = res.data
-        this.list = data
+        this.tableData = data
         this.total = totalCount
         if (this.isAll) { // 选择全部  选中门店
           setTimeout(() => {
-            this.list.map(v => {
+            this.tableData.map(v => {
               this.$refs.multipleTable.toggleRowSelection(v)
             })
           }, 300)
         } else {
           setTimeout(() => {
             // 翻页 如果存在之前选中的就选中
-            this.list.map(v => {
+            this.tableData.map(v => {
               const index = this.multipleSelection.findIndex(item => {
                 return item.id === v.id
               })
@@ -157,7 +168,7 @@ export default {
       this.$emit('complete', this.multipleSelection)
     },
     handleSelectionChangeStore(allList) { // 门店列表选中事件 表格全选事件
-      this.list.map(item => {
+      this.tableData.map(item => {
         const index = this.multipleSelection.findIndex(mItem => {
           return mItem.id === item.id
         })
@@ -190,7 +201,11 @@ export default {
       if (index > -1) {
         this.multipleSelection.splice(index, 1)
       }
-      this.$refs.multipleTable.toggleRowSelection(row)
+      this.tableData.map(v => {
+        if (v.id === row.id) {
+          this.$refs.multipleTable.toggleRowSelection(v)
+        }
+      })
     },
     handleCanle() {
       this.$emit('close')
