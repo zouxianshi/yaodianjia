@@ -18,7 +18,7 @@
                     <template v-if="infoData.limitType===1">
                       <el-input v-model="infoData.limitNum" size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" @input.native="handleInputNum" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span>
                     </template>
-                    <template>
+                    <template v-else>
                       <el-input size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span>
                     </template>
                   </span>
