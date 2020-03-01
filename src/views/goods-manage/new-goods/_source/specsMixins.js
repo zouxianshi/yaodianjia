@@ -492,15 +492,16 @@ const mixin = {
     handleLimitChange(row, index) { // 设置
       if (row.limitType === 0) {
         this.limit_err = false
-      } else {
+      } else if (row.limitType === 1) {
         var value = row.limitNum
-        if (value) {
+        row.limitNum = ''
+        if (value && value !== '0') {
           this.input_checkLimit(row, index)
         }
       }
     },
     input_checkLimit(row, index) {
-      var value = row.limit
+      var value = row.limitNum
       if (row.limitType === 1) {
         if (isNaN(value)) {
           this.$message({

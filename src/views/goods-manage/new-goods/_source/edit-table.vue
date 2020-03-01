@@ -12,20 +12,20 @@
           <template v-if="keys==='limitNum'">
             <el-form-item label="">
               <el-radio-group v-model="infoData.limitType">
-                <el-radio :label="0" style="margin-top:10px">不限购</el-radio>
+                <el-radio :label="0" style="margin-top:10px;display:block">不限购</el-radio>
                 <el-radio :label="1" style="margin-top:10px">
-                  <span style="color:#333">单个用户限购数量为&nbsp;
+                  <span style="color:#333">每笔订单限购&nbsp;
                     <template v-if="infoData.limitType===1">
-                      <el-input v-model="infoData.limitNum" size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" @input.native="handleInputNum" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span>
+                      <el-input v-model="infoData.limitNum" size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" @input.native="handleInputNum" />&nbsp;<span style="color:#999">件</span>
                     </template>
                     <template v-else>
-                      <el-input size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span>
+                      <el-input size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" />&nbsp;<span style="color:#999">件</span>
                     </template>
                   </span>
                 </el-radio>
                 <el-radio :label="2" style="margin-top:10px">
                   <span style="color:#333">按周期每&nbsp;
-                    <el-select v-model="infoData.type" size="mini" style="width:80px" placeholder="选择类型">
+                    <el-select v-model="infoData.type" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" placeholder="选择类型">
                       <el-option :value="2" label="天" />
                       <el-option :value="3" label="周" />
                       <el-option :value="4" label="月" />

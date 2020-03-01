@@ -12,10 +12,10 @@
       <div class="modal-body">
         <el-form :model="modalForm">
           <el-form-item label="">
-            <el-radio-group v-model="modalForm.limitType">
+            <el-radio-group v-model="modalForm.limitType" @change="handleLimitChange">
               <el-radio :label="0">不限购</el-radio>
               <el-radio :label="1" style="margin-top:10px">
-                <span style="color:#333">单个用户限购数量为&nbsp;
+                <span style="color:#333">每笔订单限购&nbsp;
                   <template v-if="modalForm.limitType===1">
                     <el-input v-model="modalForm.limit" maxlength="8" :disabled="modalForm.limitType===2||modalForm.limitType===0" size="mini" style="width:100px" />&nbsp;<span style="color:#999">用户限制的最大购买数量，可防止某些商品被恶意下单占用库存</span>
                   </template>
@@ -26,7 +26,7 @@
               </el-radio>
               <el-radio :label="2" style="margin-top:10px">
                 <span style="color:#333">按周期每&nbsp;
-                  <el-select v-model="modalForm.type" size="mini" style="width:80px" placeholder="选择类型">
+                  <el-select v-model="modalForm.type" :disabled="modalForm.limitType===1||modalForm.limitType===0" size="mini" style="width:80px" placeholder="选择类型">
                     <el-option :value="2" label="天" />
                     <el-option :value="3" label="周" />
                     <el-option :value="4" label="月" />
@@ -89,6 +89,14 @@ export default {
   methods: {
     handleColse() {
       this.$emit('close')
+    },
+    handleLimitChange(row) {
+      if (row === 1 || row === 2) {
+        this.modalForm.limitNum = ''
+      }
+    },
+    handleInputNum(val) {
+
     },
     handleSubmit() {
       const data = {
