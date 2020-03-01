@@ -2,30 +2,70 @@
   <span>
     <el-popover
       v-model="isShow"
-      placement="right"
+      :placement="keys==='limitNum'?'left':'right'"
       :title="title"
-      width="300"
+      :width="keys==='limitNum'?'500':'300'"
       trigger="click"
     >
       <div class="content">
         <el-form ref="formData" :model="infoData" :rules="rules" @submit.native.prevent>
-          <el-form-item v-if="keys!=='mprice'" label="" :prop="keys" :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]">
-            <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
-            <span>
-              <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
-              <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
-            </span>
-            <p v-if="keys==='erpCode'&&err_show" class="tip">商品编码只能为纯数字</p>
-            <p v-show="keys==='barCode'&&err_show" class="tip">只能输入数字、英文、字符</p>
-            <p v-show="keys==='limitNum'&&err_show" class="tip">只能输入不能小于0的整数</p>
-          </el-form-item>
-          <el-form-item v-else label="" :prop="keys">
-            <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
-            <span>
-              <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
-              <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
-            </span>
-          </el-form-item>
+          <template v-if="keys==='limitNum'">
+            <el-form-item label="">
+              <el-radio-group v-model="infoData.limitType">
+                <el-radio :label="0" style="margin-top:10px">不限购</el-radio>
+                <el-radio :label="1" style="margin-top:10px">
+                  <span style="color:#333">单个用户限购数量为&nbsp;
+                    <template v-if="infoData.limitType===1">
+                      <el-input v-model="infoData.limitNum" size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" @input.native="handleInputNum" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span>
+                    </template>
+                    <template>
+                      <el-input size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span>
+                    </template>
+                  </span>
+                </el-radio>
+                <el-radio :label="2" style="margin-top:10px">
+                  <span style="color:#333">按周期每&nbsp;
+                    <el-select v-model="infoData.type" size="mini" style="width:80px" placeholder="选择类型">
+                      <el-option :value="2" label="天" />
+                      <el-option :value="3" label="周" />
+                      <el-option :value="4" label="月" />
+                    </el-select>
+                    &nbsp;限购&nbsp;
+                    <template v-if="infoData.limitType===2">
+                      <el-input v-model="infoData.limitNum" maxlength="8" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" @input.native="handleInputNum" />
+                    </template>
+                    <template v-else>
+                      <el-input maxlength="8" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" />
+                    </template>
+                  </span>
+                  <span>
+                    <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
+                    <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
+                  </span>
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </template>
+          <template v-else>
+            <el-form-item v-if="keys!=='mprice'" label="" :prop="keys" :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]">
+              <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
+              <span>
+                <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
+                <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
+              </span>
+              <p v-if="keys==='erpCode'&&err_show" class="tip">商品编码只能为纯数字</p>
+              <p v-show="keys==='barCode'&&err_show" class="tip">只能输入数字、英文、字符</p>
+              <p v-show="keys==='limitNum'&&err_show" class="tip">只能输入不能小于0的整数</p>
+            </el-form-item>
+            <el-form-item v-else label="" :prop="keys">
+              <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
+              <span>
+                <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
+                <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
+              </span>
+            </el-form-item>
+          </template>
+
         </el-form>
       </div>
       <el-button slot="reference" type="text" size="mini" icon="el-icon-edit" title="修改" />
@@ -96,6 +136,11 @@ export default {
     }
   },
   methods: {
+    handleInputNum(e) {
+      const value = e.target.value
+      e.target.value = value.replace(/[^\d]/g, '')
+      this.infoData.limitNum = value.replace(/[^\d]/g, '')
+    },
     handleSubSave() {
       this.$refs['formData'].validate((valid) => {
         if (valid) {
@@ -114,6 +159,7 @@ export default {
             }
           }
           if (this.keys === 'limitNum') {
+            console.log('----', this.infoData)
             if (this.infoData.limitNum % 1 !== 0 || this.infoData.limitNum < 0) {
               this.err_show = true
               return

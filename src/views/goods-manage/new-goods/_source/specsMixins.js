@@ -181,8 +181,6 @@ const mixin = {
           // 限购数据处理
           if (v.limitType === 0) {
             v.limitNum = 0
-          } else {
-            v.limitNum = v.limit
           }
           for (const key in v) {
             if (v.hasOwnProperty(key)) {
@@ -234,7 +232,14 @@ const mixin = {
           //   })
           //   flag = false
           // }
-          if (flag && v.limitType === 1 && !v.limit) {
+          if (flag && v.limitType === 1 && !v.limitNum) {
+            this.$message({
+              message: '请输入限购值',
+              type: 'error'
+            })
+            flag = false
+          }
+          if (flag && v.limitType === 2 && !v.limitNum) {
             this.$message({
               message: '请输入限购值',
               type: 'error'
@@ -420,6 +425,7 @@ const mixin = {
                 row.isCheck = true // 数据做标识  选中
                 row.picUrl = v.picUrl
                 row.limitNum = v.limitNum
+                row.type = v.type || 2
                 this.$set(this.specsForm.specs, findIndex, row)
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
               }
@@ -433,7 +439,7 @@ const mixin = {
       return findIndex > -1
     },
     handleAddSpec() { // 增加 规格
-      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '', limitType: 0, limit: '' }
+      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '', limitType: 0, limitNum: '', type: 2 }
       this.specsList.map(v => {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
@@ -487,7 +493,7 @@ const mixin = {
       if (row.limitType === 0) {
         this.limit_err = false
       } else {
-        var value = row.limit
+        var value = row.limitNum
         if (value) {
           this.input_checkLimit(row, index)
         }
