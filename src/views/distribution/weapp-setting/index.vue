@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <div class="module" style="border:0;">
+    <div class="module">
       <div class="title">规则设置</div>
       <div class="content">
         <div class="panel column">
@@ -74,6 +74,121 @@
               @click="setOrderBeyondTimeService"
             >确认设置</el-button>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="title">推荐设置</div>
+      <div class="content">
+        <div class="panel column flex-start">
+          <div class="row">
+            <div class="tips">是否推荐 :</div>
+            <div class="radio-group">
+              <div class="group">
+                <el-radio v-model="radio" label="1">是</el-radio>
+                <el-radio v-model="radio" label="2">否</el-radio>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="tips-txt">
+              开启推荐，小程序将会推荐给您的商户旗下门店附近的用户
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module" style="border:0;">
+      <div class="title">DM单设置</div>
+      <div class="content">
+        <div class="panel column flex-start">
+          <div class="row">
+            <div class="tips" style="width:100px;">DM单：</div>
+            <el-upload
+              class="avatar-uploader"
+              :action="upLoadUrl"
+              :headers="headers"
+              :before-upload="beforeUpload"
+              :on-success="uploadSuccess"
+              :show-file-list="false"
+            >
+              <img
+                v-if="!!form.dmUrl"
+                :src="showImgHandler(form.dmUrl)"
+                class="avatar"
+              >
+              <div
+                v-else
+                style="width:80px;height:80px;text-align:center;line-height:80px"
+              >
+                <i class="el-icon-plus">点击上传</i>
+              </div>
+            </el-upload>
+            <div class="tips-group">
+              <div class="items">1、点击“下载设计模板”下载模板文件至本地</div>
+              <div class="items">2、设计好DM单后，导出图片点击上传</div>
+              <div class="items">3、图片大小不超过5M</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel column flex-start">
+          <div class="row">
+            <div class="tips" style="width:100px;">商城二维码：</div>
+            <el-upload
+              class="avatar-uploader"
+              :action="upLoadUrl"
+              :headers="headers"
+              :before-upload="beforeUpload"
+              :on-success="uploadSuccess"
+              :show-file-list="false"
+            >
+              <img
+                v-if="!!form.mallUrl"
+                :src="showImgHandler(form.mallUrl)"
+                class="avatar"
+              >
+              <div
+                v-else
+                style="width:80px;height:80px;text-align:center;line-height:80px"
+              >
+                <i class="el-icon-plus">点击上传</i>
+              </div>
+            </el-upload>
+          </div>
+        </div>
+
+        <div class="panel column flex-start">
+          <div class="row">
+            <div class="tips" style="width:100px;">公众号二维码：</div>
+            <el-upload
+              class="avatar-uploader"
+              :action="upLoadUrl"
+              :headers="headers"
+              :before-upload="beforeUpload"
+              :on-success="uploadSuccess"
+              :show-file-list="false"
+            >
+              <img
+                v-if="!!form.qrUrl"
+                :src="showImgHandler(form.qrUrl)"
+                class="avatar"
+              >
+              <div
+                v-else
+                style="width:80px;height:80px;text-align:center;line-height:80px"
+              >
+                <i class="el-icon-plus">点击上传</i>
+              </div>
+            </el-upload>
+          </div>
+        </div>
+
+        <!--  -->
+        <div class="row" style="margin-top:20px;">
+          <a class="downloadPDF" download>下载设计模板</a>
+          <el-button type="primary">确认设置</el-button>
         </div>
       </div>
     </div>
@@ -104,6 +219,8 @@
 import Clipboard from 'clipboard'
 import DistributionService from '@/api/distributionService'
 import { throttle } from '@/utils/throttle'
+import config from '@/utils/config'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -115,7 +232,22 @@ export default {
       changeStoreName: '',
       ruledays: 0,
       updateDialog: false,
-      loading: true
+      loading: true,
+      radio: '1',
+      form: {
+        dmUrl: '',
+        mallUrl: '',
+        qrUrl: ''
+      }
+    }
+  },
+  computed: {
+    ...mapGetters(['merCode', 'token']),
+    headers() {
+      return { Authorization: this.token, merCode: this.merCode }
+    },
+    upLoadUrl() {
+      return `${this.uploadFileURL}${config.mask}/1.0/file/_uploadImg?merCode=${this.merCode}`
     }
   },
   watch: {
@@ -133,7 +265,66 @@ export default {
   mounted() {
     this.getQRCode()
   },
+
   methods: {
+    beforeUpload(file) {
+      const isImg =
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/jpg'
+      const isLt2M = file.size / 1024 / 1024 < 5
+      if (!isLt2M) {
+        this.$message({
+          message: '上传图片大小不能超过 5MB!',
+          type: 'warning'
+        })
+        return false
+      }
+      if (!isImg) {
+        this.$message({
+          message: '请上传jpeg、png、jpg格式的图片',
+          type: 'warning'
+        })
+        return false
+      }
+      if (isImg) {
+        this.uploadLoading = true
+      }
+      return isImg
+    },
+    uploadSuccessDM(res, file, fileList) {
+      // 图片上传成功
+      if (res.code === '10000') {
+        this.form.dmUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+    },
+    uploadSuccessMall(res, file, fileList) {
+      // 图片上传成功
+      if (res.code === '10000') {
+        this.form.mallUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+    },
+    uploadSuccessQR(res, file, fileList) {
+      // 图片上传成功
+      if (res.code === '10000') {
+        this.form.qrUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+    },
     async getQRCode() {
       const { data, code } = await DistributionService.getWeappCode()
       this.loading = false
@@ -194,6 +385,29 @@ export default {
   overflow-y: scroll;
   margin-bottom: 30px;
 }
+.el-icon-plus {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+.downloadPDF {
+  padding: 9px 20px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 4px;
+  margin-right: 20px;
+  border: 1px solid rgba(21, 125, 232, 1);
+  color: #157de8;
+  font-size: 14px;
+}
+.tips-group {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin-left: 20px;
+  .items {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.85);
+  }
+}
 .module {
   padding: 30px 69px 50px 69px;
   display: flex;
@@ -218,6 +432,7 @@ export default {
       flex-direction: row;
       align-items: center;
       margin-top: 20px;
+      min-width: 620px;
 
       .row {
         display: flex;
@@ -230,9 +445,24 @@ export default {
         flex-direction: column;
         flex-wrap: wrap;
       }
+      &.flex-start {
+        align-items: flex-start;
+      }
       .tips {
         color: #000000;
         font-size: 14px;
+      }
+      .radio-group {
+        display: flex;
+        flex-direction: row;
+        .group {
+          margin-left: 20px;
+        }
+      }
+      .tips-txt {
+        font-size: 12px;
+        color: #f5a623;
+        padding: 10px 0 0 80px;
       }
       .rule-input {
         width: 80px;
