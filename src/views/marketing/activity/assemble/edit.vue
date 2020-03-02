@@ -102,6 +102,10 @@
           </el-table>
         </el-form-item>
         <el-form-item />
+        <el-form-item label="" class="text-center">
+          <el-button type="">取消</el-button>
+          <el-button type="primary" @click="handleSubmit">保存</el-button>
+        </el-form-item>
       </el-form>
     </div>
     <!-- 门店模态框 -->
@@ -118,6 +122,7 @@ import store from './_source/store'
 import goods from './_source/goods'
 import EditGoodsModals from './_source/signle-goods-set'
 import { mapGetters } from 'vuex'
+import { assembleActivityAdd } from '@/api/marketing'
 export default {
   components: { store, goods, EditGoodsModals },
   data() {
@@ -217,6 +222,29 @@ export default {
     },
     onSelectedGoods(row) { // 商品选择确定事件
       this.goodsList = row
+    },
+    handleSubmit() { // 数据提交
+      this.$refs.formData.validate((valid) => {
+        if (valid) {
+          const data = JSON.parse(JSON.stringify(this.formData))
+          if (data.img === '1') {
+            data.imgUrl = ''
+          }
+          delete data.img
+          delete data.activitTime
+          assembleActivityAdd(data).then(res => {
+            this.$message({
+              message: `保存成功`,
+              type: 'info'
+            })
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     handleAvatarSuccess(res, file) {
       if (res.code === '10000') {

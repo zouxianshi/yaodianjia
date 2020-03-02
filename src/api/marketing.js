@@ -57,3 +57,13 @@ export function disableActivity(params) {
     method: 'put'
   })
 }
+
+// 拼团活动 活动新建
+
+export function assembleActivityAdd(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/add`,
+    method: 'post',
+    data: params
+  })
+}
