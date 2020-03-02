@@ -72,7 +72,8 @@ export default {
       modalForm: {
         limitType: 0,
         type: 2,
-        limit: ''
+        limit: '',
+        limitNum: ''
       }
     }
   },
