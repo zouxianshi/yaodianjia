@@ -182,6 +182,9 @@ const mixin = {
           if (v.limitType === 0) {
             v.limitNum = 0
           }
+          if (v.limitType === 2) {
+            v.limitNum = v.limit
+          }
           for (const key in v) {
             if (v.hasOwnProperty(key)) {
               const val = key.split('_')
@@ -239,7 +242,7 @@ const mixin = {
             })
             flag = false
           }
-          if (flag && v.limitType === 2 && !v.limitNum) {
+          if (flag && v.limitType === 2 && !v.limit) {
             this.$message({
               message: '请输入限购值',
               type: 'error'
@@ -439,7 +442,7 @@ const mixin = {
       return findIndex > -1
     },
     handleAddSpec() { // 增加 规格
-      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '', limitType: 0, limitNum: '', type: 2 }
+      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '', limitType: 0, limitNum: '', limit: '', type: 2 }
       this.specsList.map(v => {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
@@ -494,15 +497,20 @@ const mixin = {
         this.limit_err = false
       } else if (row.limitType === 1) {
         var value = row.limitNum
-        row.limitNum = ''
         if (value && value !== '0') {
           this.input_checkLimit(row, index)
         }
       }
     },
     input_checkLimit(row, index) {
-      var value = row.limitNum
-      if (row.limitType === 1) {
+      var value
+      if (row.limitType === 2) {
+        value = row.limit
+      } else if (row.limitType === 1) {
+        value = row.limitNum
+      }
+      console.log('-----', value)
+      if (row.limitType === 1 || row.limitType === 2) {
         if (isNaN(value)) {
           this.$message({
             message: '请输入数字',

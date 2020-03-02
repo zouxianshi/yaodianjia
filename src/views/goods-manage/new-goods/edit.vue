@@ -430,7 +430,7 @@
                                 </el-select>
                                 &nbsp;限购&nbsp;
                                 <template v-if="item.limitType===2">
-                                  <el-input v-model="item.limitNum" maxlength="8" :disabled="item.limitType===1||item.limitType===0" size="mini" style="width:100px" @blur="input_checkLimit(item,index)" />
+                                  <el-input v-model="item.limit" maxlength="8" :disabled="item.limitType===1||item.limitType===0" size="mini" style="width:100px" @blur="input_checkLimit(item,index)" />
                                 </template>
                                 <template v-else>
                                   <el-input maxlength="8" :disabled="item.limitType===1||item.limitType===0" size="mini" style="width:100px" @blur="input_checkLimit(item,index)" />

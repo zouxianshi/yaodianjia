@@ -32,7 +32,7 @@
                     </el-select>
                     &nbsp;限购&nbsp;
                     <template v-if="infoData.limitType===2">
-                      <el-input v-model="infoData.limitNum" maxlength="8" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" @input.native="handleInputNum" />
+                      <el-input v-model="infoData.limit" maxlength="8" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" @focus="handleInput" />
                     </template>
                     <template v-else>
                       <el-input maxlength="8" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" />
@@ -42,6 +42,7 @@
                     <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
                     <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
                   </span>
+                  <p v-show="keys==='limitNum'&&err_show" class="tip" style="margin-top:10px;margin-left:20px">数量只能输入不能小于0的整数</p>
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -128,6 +129,8 @@ export default {
   watch: {
     isShow(val) {
       if (val) {
+        this.info.type = this.infoData.type || 2
+        this.info.limit = this.infoData.limitNum
         this.infoData = JSON.parse(JSON.stringify(this.info))
       }
     },
@@ -160,12 +163,17 @@ export default {
           }
           if (this.keys === 'limitNum') {
             console.log('----', this.infoData)
-            if (this.infoData.limitNum % 1 !== 0 || this.infoData.limitNum < 0) {
+            const num = Number(this.infoData.limitNum)
+            if (num % 1 !== 0 || num < 0 || num === 0) {
               this.err_show = true
               return
             }
           }
-          this.$emit('saveInfo', this.infoData, this.keys, this.index)
+          const data = JSON.parse(JSON.String(this.infoData))
+          if (this.keys === 'limitNum' && data.limitType === 2) {
+            data.limitNum = data.limit
+          }
+          this.$emit('saveInfo', data, this.keys, this.index)
           this.isShow = false
         } else {
           console.log('error submit!!')
