@@ -11,7 +11,7 @@
         <el-form ref="formData" :model="infoData" :rules="rules" @submit.native.prevent>
           <template v-if="keys==='limitNum'">
             <el-form-item label="">
-              <el-radio-group v-model="infoData.limitType">
+              <el-radio-group v-model="infoData.limitType" @change="handleRadioChange">
                 <el-radio :label="0" style="margin-top:10px;display:block">不限购</el-radio>
                 <el-radio :label="1" style="margin-top:10px">
                   <span style="color:#333">每笔订单限购&nbsp;
@@ -145,6 +145,9 @@ export default {
       e.target.value = value.replace(/[^\d]/g, '')
       this.infoData.limitNum = value.replace(/[^\d]/g, '')
     },
+    handleRadioChange(val) {
+      this.err_show = false
+    },
     handleSubSave() {
       this.$refs['formData'].validate((valid) => {
         if (valid) {
@@ -165,7 +168,7 @@ export default {
           if (this.keys === 'limitNum') {
             console.log('----', this.infoData)
             const num = Number(this.infoData.limitNum)
-            if (num % 1 !== 0 || num < 0 || num === 0) {
+            if (this.infoData.limitType !== 0 && (num % 1 !== 0 || num < 0 || num === 0)) {
               this.err_show = true
               return
             }
@@ -173,6 +176,9 @@ export default {
           const data = JSON.parse(JSON.stringify(this.infoData))
           if (this.keys === 'limitNum' && data.limitType === 2) {
             data.limitNum = data.limit
+          }
+          if (this.keys === 'limitNum' && data.limitType === 0) {
+            data.limitNum = 0
           }
           this.$emit('saveInfo', data, this.keys, this.index)
           this.isShow = false
