@@ -129,9 +129,10 @@ export default {
   watch: {
     isShow(val) {
       if (val) {
-        this.info.type = this.infoData.type || 2
-        this.info.limit = this.infoData.limitNum
-        this.infoData = JSON.parse(JSON.stringify(this.info))
+        const data = JSON.parse(JSON.stringify(this.info))
+        data.type = data.type || 2
+        data.limit = data.limitNum
+        this.infoData = data
       }
     },
     info() {
@@ -169,7 +170,7 @@ export default {
               return
             }
           }
-          const data = JSON.parse(JSON.String(this.infoData))
+          const data = JSON.parse(JSON.stringify(this.infoData))
           if (this.keys === 'limitNum' && data.limitType === 2) {
             data.limitNum = data.limit
           }
