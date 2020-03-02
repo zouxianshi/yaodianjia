@@ -13,14 +13,14 @@
         <el-form :model="modalForm">
           <el-form-item label="">
             <el-radio-group v-model="modalForm.limitType" @change="handleLimitChange">
-              <el-radio :label="0">不限购</el-radio>
-              <el-radio :label="1" style="margin-top:10px">
+              <el-radio :label="0" style="display:block">不限购</el-radio>
+              <el-radio :label="1" style="margin-top:10px;display:block">
                 <span style="color:#333">每笔订单限购&nbsp;
                   <template v-if="modalForm.limitType===1">
-                    <el-input v-model="modalForm.limit" maxlength="8" :disabled="modalForm.limitType===2||modalForm.limitType===0" size="mini" style="width:100px" />&nbsp;<span style="color:#999">用户限制的最大购买数量，可防止某些商品被恶意下单占用库存</span>
+                    <el-input v-model="modalForm.limitNum" maxlength="8" :disabled="modalForm.limitType===2||modalForm.limitType===0" size="mini" style="width:100px" />&nbsp;件<span style="color:#999" />
                   </template>
                   <template v-else>
-                    <el-input :disabled="modalForm.limitType===2||modalForm.limitType===0" maxlength="8" size="mini" style="width:100px" />&nbsp;<span style="color:#999">用户限制的最大购买数量，可防止某些商品被恶意下单占用库存</span>
+                    <el-input :disabled="modalForm.limitType===2||modalForm.limitType===0" maxlength="8" size="mini" style="width:100px" />&nbsp;<span style="color:#999" />
                   </template>
                 </span>
               </el-radio>
@@ -33,10 +33,10 @@
                   </el-select>
                   &nbsp;限购&nbsp;
                   <template v-if="modalForm.limitType===2">
-                    <el-input v-model="modalForm.limit" maxlength="8" :disabled="modalForm.limitType===1||modalForm.limitType===0" size="mini" style="width:100px" @input.native="handleInputNum" />
+                    <el-input v-model="modalForm.limit" maxlength="8" :disabled="modalForm.limitType===1||modalForm.limitType===0" size="mini" style="width:100px" @input.native="handleInputNum" />&nbsp;件
                   </template>
                   <template v-else>
-                    <el-input maxlength="8" :disabled="modalForm.limitType===1||modalForm.limitType===0" size="mini" style="width:100px" />
+                    <el-input maxlength="8" :disabled="modalForm.limitType===1||modalForm.limitType===0" size="mini" style="width:100px" />&nbsp;件
                   </template>
                 </span>
               </el-radio>
@@ -83,6 +83,7 @@ export default {
     isShow() {
       this.modalForm.type = 2
       this.modalForm.limitType = 0
+      this.modalForm.limitNum = ''
       this.modalForm.limit = ''
     }
   },
@@ -106,20 +107,27 @@ export default {
         limitType: this.modalForm.limitType,
         type: this.modalForm.type
       }
-      if (this.modalForm.type === 0) {
+      if (this.modalForm.limitType === 0) {
         data.limitNum = 0
       } else {
-        data.limitNum = this.modalForm.limit
+        data.limitNum = this.modalForm.limitType === 2 ? this.modalForm.limit : this.modalForm.limitNum
       }
-      if (this.modalForm.type === 1) {
-        if (this.modalForm.limit > 0 && this.modalForm.limit % 1 !== 0) {
+      if (this.modalForm.limitType === 1 || this.modalForm.limitType === 2) {
+        if (isNaN(data.limitNum)) {
+          this.$message({
+            message: '请输入数字',
+            type: 'error'
+          })
+          return
+        }
+        if (data.limitNum > 0 && data.limitNum % 1 !== 0) {
           this.$message({
             message: '请输入大于0的整数',
             type: 'error'
           })
           return
         } else {
-          if (this.modalForm.limit <= 0) {
+          if (data.limitNum <= 0) {
             this.$message({
               message: '请输入大于0的整数',
               type: 'error'

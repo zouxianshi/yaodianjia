@@ -130,6 +130,7 @@ export default {
     isShow(val) {
       if (val) {
         const data = JSON.parse(JSON.stringify(this.info))
+        data.limitType = data.limitType || 0
         data.type = data.type || 2
         data.limit = data.limitNum
         this.infoData = data
@@ -166,8 +167,14 @@ export default {
             }
           }
           if (this.keys === 'limitNum') {
-            console.log('----', this.infoData)
-            const num = Number(this.infoData.limitNum)
+            const num = this.infoData.limitType === 2 ? Number(this.infoData.limit) : Number(this.infoData.limitNum)
+            if (isNaN(num)) {
+              this.$message({
+                message: '请输入数字',
+                type: 'error'
+              })
+              return
+            }
             if (this.infoData.limitType !== 0 && (num % 1 !== 0 || num < 0 || num === 0)) {
               this.err_show = true
               return
