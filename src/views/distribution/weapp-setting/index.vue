@@ -184,6 +184,10 @@
             </el-upload>
           </div>
         </div>
+        <div class="panel">
+          <div class="tips" style="width:120px;">公众号名称：</div>
+          <el-input v-model="wechatName" placeholder="请输入公众号名" />
+        </div>
 
         <!--  -->
         <div class="row" style="margin-top:20px;">
@@ -238,7 +242,8 @@ export default {
         dmUrl: '',
         mallUrl: '',
         qrUrl: ''
-      }
+      },
+      wechatName: ''
     }
   },
   computed: {
