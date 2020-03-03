@@ -233,7 +233,7 @@ class InnerCtor {
           {
             name: '门店需求商品统计',
             path: '/distribution/store-statistics',
-            disabled: this.get('appointment'),
+            disabled: this.get('appointment.need-statistic'),
             children: []
           },
           {

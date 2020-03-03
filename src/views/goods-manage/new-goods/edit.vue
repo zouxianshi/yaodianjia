@@ -263,7 +263,19 @@
                   </el-table-column>
                   <el-table-column label="限购数量">
                     <template slot-scope="scope">
-                      <span v-text="scope.row.limitNum?scope.row.limitNum:'不限购'" />
+                      <template v-if="scope.row.limitType===1">
+                        <span>每笔订单限购{{ scope.row.limitNum }}件</span>
+                      </template>
+                      <template v-else-if="scope.row.limitType===2">
+                        <span>按周期每
+                          <span v-if="scope.row.type===2">天</span>
+                          <span v-else-if="scope.row.type===3">周</span>
+                          <span v-else>月</span>限购数量
+                          {{ scope.row.limitNum }}件</span>
+                      </template>
+                      <template v-else>
+                        <span>不限购</span>
+                      </template>
                       <template v-if="!is_query">
                         <edit-table title="限购数量" keys="limitNum" max-length="8" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                       </template>
@@ -328,9 +340,21 @@
                           </template>
                         </template>
                       </el-table-column>
-                      <el-table-column label="限购数量">
+                      <el-table-column label="限购数量" min-width="120">
                         <template slot-scope="scope">
-                          <span v-text="scope.row.limitNum?scope.row.limitNum:'不限购'" />
+                          <template v-if="scope.row.limitType===1">
+                            <span>每笔订单限购{{ scope.row.limitNum }}件</span>
+                          </template>
+                          <template v-else-if="scope.row.limitType===2">
+                            <span>按周期每
+                              <span v-if="scope.row.type===2">天</span>
+                              <span v-else-if="scope.row.type===3">周</span>
+                              <span v-else>月</span>限购数量
+                              {{ scope.row.limitNum }}件</span>
+                          </template>
+                          <template v-else>
+                            不限购
+                          </template>
                           <template v-if="!is_query">
                             <edit-table title="限购数量" keys="limitNum" max-length="8" :info="scope.row" :index="scope.$index" @saveInfo="handleEditTabSpecs" />
                           </template>
@@ -386,9 +410,32 @@
                       <el-form-item label="限购">
                         <div style="padding-top:10px;">
                           <el-radio-group v-model="item.limitType" @change="handleLimitChange(item,index)">
-                            <el-radio :label="0">不限购</el-radio>
-                            <el-radio :label="1">
-                              <span style="color:#333">单个用户限购数量为&nbsp;<el-input v-model="item.limit" maxlength="8" :disabled="item.limitType===0" style="width:100px" @blur="input_checkLimit(item,index)" />&nbsp;<span style="color:#999">用户限制的最大购买数量</span></span>
+                            <el-radio :label="0" style="display:block">不限购</el-radio>
+                            <el-radio :label="1" style="margin-top:10px">
+                              <span style="color:#333">每笔订单限购&nbsp;
+                                <template v-if="item.limitType===1">
+                                  <el-input v-model="item.limitNum" size="mini" maxlength="8" :disabled="item.limitType===2||item.limitType===0" style="width:100px" @blur="input_checkLimit(item,index)" />&nbsp;件
+                                </template>
+                                <template v-else>
+                                  <el-input maxlength="8" :disabled="item.limitType===2||item.limitType===0" size="mini" style="width:100px" @blur="input_checkLimit(item,index)" />&nbsp;件
+                                </template>
+                              </span>
+                            </el-radio>
+                            <el-radio :label="2" style="margin-top:10px">
+                              <span style="color:#333">按周期每&nbsp;
+                                <el-select v-model="item.type" :disabled="item.limitType===1||item.limitType===0" size="mini" style="width:80px" placeholder="选择类型">
+                                  <el-option :value="2" label="天" />
+                                  <el-option :value="3" label="周" />
+                                  <el-option :value="4" label="月" />
+                                </el-select>
+                                &nbsp;限购&nbsp;
+                                <template v-if="item.limitType===2">
+                                  <el-input v-model="item.limit" maxlength="8" :disabled="item.limitType===1||item.limitType===0" size="mini" style="width:100px" @blur="input_checkLimit(item,index)" />
+                                </template>
+                                <template v-else>
+                                  <el-input maxlength="8" :disabled="item.limitType===1||item.limitType===0" size="mini" style="width:100px" @blur="input_checkLimit(item,index)" />
+                                </template>
+                              </span>
                             </el-radio>
                           </el-radio-group>
                         </div>
@@ -791,9 +838,9 @@ export default {
     },
     _loadBasicInfo() { // 加载基本信息
       if (!this.$route.query.id) {
+        this.basicLoading = false
         return
       }
-      this.basicLoading = true
       this.subLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
@@ -1007,6 +1054,7 @@ export default {
       this._loadBrandList(query)
     },
     _loadBrandList(query = '') { // 获取品牌
+      this.basicLoading = true
       getBrandList({ brandName: query, pageSize: 5000 }).then(res => {
         const { data } = res.data
         this.brandList = data
