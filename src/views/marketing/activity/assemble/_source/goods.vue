@@ -76,8 +76,7 @@
           </template> -->
           </el-table-column>
           <el-table-column prop="name" label="商品名称" min-width="120" :show-overflow-tooltip="true" />
-          <el-table-column prop="brandName" label="品牌" min-width="80" :show-overflow-tooltip="true" />
-          <el-table-column label="规格信息" min-width="100" :show-overflow-tooltip="true">
+          <el-table-column label="规格" min-width="100" :show-overflow-tooltip="true">
             <template slot-scope="scope" :show-overflow-tooltip="true">
               <div v-html="formatSkuInfo(scope.row.specSkuList)" />
             </template>
@@ -119,7 +118,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <template v-if="editable">
-          <el-button type="primary" size="small" @click="confirm()">确 定</el-button>
+          <el-button type="primary" size="small" @click="confirm">确 定</el-button>
           <el-button size="small" @click="dialog.visible = false">取 消</el-button>
         </template>
         <el-button v-else @click="dialog.visible = false">关 闭</el-button>
@@ -269,7 +268,7 @@ export default {
         return false
       }
       //   console.log('confirm', this.mySelectList)
-      //   this.$emit('on-change', this.mySelectList)
+      this.$emit('on-change', this.mySelectList)
       this.close()
     },
     formatSkuInfo(skuList) {
@@ -391,7 +390,8 @@ export default {
         auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
         name: this.searchForm.keyWord.trim(),
         currentPage: this.pager.current,
-        pageSize: this.pager.size
+        pageSize: this.pager.size,
+        promoteFlag: true
       }
 
       queryGoods(params).then(res => {

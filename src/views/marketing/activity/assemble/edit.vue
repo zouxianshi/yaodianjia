@@ -1,7 +1,7 @@
 <template>
   <div class="app-container ">
     <div class="assemble-wrapper">
-      <el-form ref="ruleForm" :model="formData" :rules="rules" label-width="120px" size="small" class="demo-ruleForm">
+      <el-form ref="formData" :model="formData" :rules="rules" label-width="120px" size="small" class="demo-ruleForm">
         <div class="form-title">
           基础设置
         </div>
@@ -82,9 +82,9 @@
             border
             size="small"
           >
-            <el-table-column label="序号" width="80">
+            <el-table-column label="展示顺序" width="80">
               <template slot-scope="scope">
-                <el-input v-model="scope.$index" placeholder="" style="width:40px" />
+                <el-input v-model="scope.row.sortNumber" size="mini" placeholder="" style="width:40px" @input.native="handleGoodsInput(scope.row.sortNumber,scope.$index)" @blur="handleInputBlur(scope.$index,scope.row.sortNumber	)" />
               </template>
             </el-table-column>
             <el-table-column label="商品名称" prop="name" min-width="100" />
@@ -104,7 +104,7 @@
         <el-form-item />
         <el-form-item label="" class="text-center">
           <el-button type="">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">保存</el-button>
+          <el-button type="primary" :loading="saveLoading" @click="handleSubmit">保存</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -132,7 +132,7 @@ export default {
         name: '',
         activitTime: '',
         img: '1',
-        imageUrl: '',
+        imgUrl: '',
         isAllStore: '1',
         startTime: '',
         endTime: ''
@@ -149,7 +149,8 @@ export default {
       chooseGoods: [],
       disabled: false,
       editGoods: {},
-      pageLoading: ''
+      pageLoading: '',
+      saveLoading: false
     }
   },
   computed: {
@@ -200,11 +201,32 @@ export default {
         this.formData.endTime = row[1]
       }
     },
-    handleEditSetting(row) {
+    handleInputBlur(index, sort) { // 排序设置
+      console.log(this.goodsList.sort(this.compare, true))
+    },
+    handleGoodsInput(val, index) {
+      const data = this.goodsList[index]
+      data.sortNumber = val
+      this.$set(this.goodsList, index, data)
+    },
+    compare(property, desc) {
+      return function(a, b) {
+        var value1 = a[property]
+        var value2 = b[property]
+        if (desc === true) {
+          // 升序排列
+          return value1 - value2
+        } else {
+          // 降序排列
+          return value2 - value1
+        }
+      }
+    },
+    handleEditSetting(row) { // 打开设置单个商品modal
       this.$refs.editGoodsModals.open()
       this.editGoods = row
     },
-    handleOpenStore() {
+    handleOpenStore() { // 打开选择门店modal
       this.showStore = true
     },
     handleOpenGoods() { // 打开选择商品弹窗组件
@@ -221,6 +243,9 @@ export default {
       this.goodsList.splice(index, 1)
     },
     onSelectedGoods(row) { // 商品选择确定事件
+      row.map((v, index) => {
+        v.sortNumber = index + 1
+      })
       this.goodsList = row
     },
     handleSubmit() { // 数据提交
@@ -230,13 +255,31 @@ export default {
           if (data.img === '1') {
             data.imgUrl = ''
           }
+          data.storeIds = []
+          if (this.formData.isAllStore === '2' && this.chooseStore.length > 0) {
+            this.chooseStore.map(v => {
+              data.storeIds.push(v.id)
+            })
+          } else {
+            this.$message({
+              message: '请选择门店',
+              type: 'error'
+            })
+            return
+          }
           delete data.img
           delete data.activitTime
+          data.products = this.goodsList
+          console.log('submit-----', data)
           assembleActivityAdd(data).then(res => {
             this.$message({
               message: `保存成功`,
               type: 'info'
             })
+            setTimeout(_ => {
+              this.$router.push('/marketing/activity')
+              this.saveLoading = false
+            }, 1000)
           }).catch(err => {
             console.log(err)
           })
