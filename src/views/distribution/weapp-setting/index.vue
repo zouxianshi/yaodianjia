@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <div class="module">
+    <div class="module" style="border:0">
       <div class="title">规则设置</div>
       <div class="content">
         <div class="panel column">
