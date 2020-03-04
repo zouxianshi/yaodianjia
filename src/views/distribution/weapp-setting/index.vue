@@ -77,7 +77,7 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <!-- <div class="module">
       <div class="title">推荐设置</div>
       <div class="content">
         <div class="panel column flex-start">
@@ -189,13 +189,12 @@
           <el-input v-model="wechatName" placeholder="请输入公众号名" />
         </div>
 
-        <!--  -->
         <div class="row" style="margin-top:20px;">
           <a class="downloadPDF" download>下载设计模板</a>
           <el-button type="primary">确认设置</el-button>
         </div>
       </div>
-    </div>
+    </div> -->
     <el-dialog append-to-body title="修改商户名称" :visible.sync="updateDialog">
       <el-input
         v-model="changeStoreName"
