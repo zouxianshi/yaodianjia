@@ -1,11 +1,27 @@
 <template>
   <div class="content_pick">
-    <div class="nav-btn">
-      <el-button
-        type="primary"
-        size="mini"
-        @click="toAdd()"
-      >添加提货门店</el-button>
+    <div class="top-container">
+      <div class="input-container">
+        <el-input
+          v-model="storeName"
+          placeholder="输入门店名称、编码搜索"
+          prefix-icon="el-icon-search"
+          style="width:300px;"
+        />
+        <el-button
+          v-loading="query"
+          type="primary"
+          class="search"
+          @click="getStoreData('search')"
+        >搜索</el-button>
+      </div>
+      <div class="nav-btn">
+        <el-button
+          type="primary"
+          size="mini"
+          @click="toAdd()"
+        >添加提货门店</el-button>
+      </div>
     </div>
     <div class="tabel-content">
       <el-table :data="shopData" border style="width: 100%">
@@ -60,35 +76,40 @@ export default {
         pageSize: 10,
         total: 0
       },
-      shopData: []
+      shopData: [],
+      storeName: '',
+      query: false
     }
   },
   created() {
-    this.getStoreData()
+    this.getStoreData('init')
   },
   methods: {
     // 分页切换
     changePageSize(pageSize) {
       this.pageInfo.pageSize = pageSize
       this.pageInfo.currentPage = 1
-      this.getStoreData()
+      this.getStoreData('init')
     },
     changeIndex(index) {
       this.pageInfo.currentPage = index
-      this.getStoreData()
+      this.getStoreData('init')
     },
-    getStoreData() {
+    getStoreData(status) {
+      this.query = true
       var parmes = {
         isStoreList: 1
       }
-      parmes.currentPage = this.pageInfo.currentPage
+      parmes.currentPage = status === 'init' ? this.pageInfo.currentPage : 1
       parmes.pageSize = this.pageInfo.pageSize
+      parmes.storeName = this.storeName
       distributionService.getPointerList(parmes).then(res => {
         if (res.data) {
           var result = res.data
           this.pageInfo.total = result.totalCount
           this.shopData = result.data
         }
+        this.query = false
       })
     },
     changePointStatus(id, status) {
@@ -102,7 +123,7 @@ export default {
           message: res.msg,
           type: 'success'
         })
-        this.getStoreData()
+        this.getStoreData('init')
       })
     },
     toAdd() {
@@ -120,11 +141,26 @@ export default {
   padding: 10px 21px;
   height: calc(100vh - 158px);
   overflow-y: scroll;
-  .nav-btn {
-    text-align: right;
-    height: 40px;
-    line-height: 40px;
+  .top-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0;
+    .input-container {
+      display: flex;
+      flex-direction: row;
+      .search {
+        margin-left: 20px;
+      }
+    }
+    .nav-btn {
+      text-align: right;
+      height: 40px;
+      line-height: 40px;
+    }
   }
+
   .page-box {
     height: 40px;
     line-height: 40px;
