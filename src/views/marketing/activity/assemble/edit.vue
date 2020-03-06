@@ -30,7 +30,7 @@
 
         </el-form-item>
         <el-form-item label="活动描述">
-          <el-input v-model="formData.des" type="textarea" maxlength="200" :autosize="{ minRows: 4, maxRows: 6}" style="width:300px" :show-word-limit="true" placeholder="活动描述尽量精简，将会展示在商品副标题内" />
+          <el-input v-model="formData.description" type="textarea" maxlength="200" :autosize="{ minRows: 4, maxRows: 6}" style="width:300px" :show-word-limit="true" placeholder="活动描述尽量精简，将会展示在商品副标题内" />
         </el-form-item>
         <el-form-item label="活动时间" prop="activitTime">
           <el-date-picker
@@ -56,19 +56,24 @@
           活动店铺
         </div>
         <el-form-item label="所有店铺">
-          <el-radio-group v-model="formData.isAllStore">
+          <el-radio-group v-model="formData.isAllStore" @change="handleStoreChange">
             <el-radio label="1">是</el-radio>
             <el-radio label="2">否</el-radio>
           </el-radio-group>
 
         </el-form-item>
-        <el-form-item v-if="formData.isAllStore==='2'" label="已选店铺">
-          <div class="choose-store-box">
-            <el-tag v-for="(item,index) in chooseStore" :key="index" type="para" size="small">{{ item.stName }}</el-tag>
-          </div>
-          <p style="margin-top:5px">
-            <el-button type="primary" size="mini" @click="handleOpenStore">选择门店</el-button>
-          </p>
+        <el-form-item label="已选店铺">
+          <template v-if="formData.isAllStore==='2'">
+            <div class="choose-store-box">
+              <el-tag v-for="(item,index) in chooseStore" :key="index" type="para" size="small">{{ item.stName }}</el-tag>
+            </div>
+            <p style="margin-top:5px">
+              <el-button type="primary" size="mini" @click="handleOpenStore">选择门店</el-button>
+            </p>
+          </template>
+          <template v-else>
+            <span>已选全部门店<el-link type="primary" :underline="false">{{ allStore.length }}</el-link>个店铺</span>
+          </template>
         </el-form-item>
         <div class="form-title">
           活动商品
@@ -91,7 +96,12 @@
             <el-table-column label="商品编码" prop="erpCode" />
             <el-table-column label="原售价" prop="mprice" />
             <el-table-column label="拼团价" prop="activityPrice" />
-            <el-table-column label="活动库存" prop="productActivityCount" />
+            <el-table-column label="活动库存" prop="productActivityCount">
+              <template slot-scope="scope">
+                <span v-text="scope.row.productActivityCount" />
+                <el-tag v-show="isShowTips(scope.row)" type="danger" size="mini">活动库存偏少</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column label="成团人数" prop="activityNumber" />
             <el-table-column label="操作" min-width="110">
               <template slot-scope="scope">
@@ -123,6 +133,7 @@ import goods from './_source/goods'
 import EditGoodsModals from './_source/signle-goods-set'
 import { mapGetters } from 'vuex'
 import { assembleActivityAdd } from '@/api/marketing'
+import { getAllStore } from '@/api/common'
 export default {
   components: { store, goods, EditGoodsModals },
   data() {
@@ -135,7 +146,8 @@ export default {
         imgUrl: '',
         isAllStore: '1',
         startTime: '',
-        endTime: ''
+        endTime: '',
+        description: ''
       },
       goodsList: [],
       rules: {
@@ -150,11 +162,12 @@ export default {
       disabled: false,
       editGoods: {},
       pageLoading: '',
-      saveLoading: false
+      saveLoading: false,
+      allStore: []
     }
   },
   computed: {
-    ...mapGetters(['token']),
+    ...mapGetters(['token', 'merCode']),
     upLoadUrl() {
       return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
     },
@@ -163,7 +176,7 @@ export default {
     }
   },
   created() {
-
+    this._loadAllStoreData()
   },
   methods: {
     handleInput(e) {
@@ -183,6 +196,18 @@ export default {
         }
       }
     },
+    handleStoreChange(val) {
+      if (val === '1') {
+        this._loadAllStoreData()
+      }
+    },
+    _loadAllStoreData() { // 加载所有门店
+      getAllStore(this.merCode).then(res => {
+        this.allStore = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     handleImgError(row) {
       const data = JSON.parse(row.toString().replace('Error:', ''))
       if (data.code === 40301) {
@@ -195,14 +220,23 @@ export default {
         this.pageLoading.close()
       }
     },
+    isShowTips(row) { // 是否显示活动库存提示
+      if (row.activityNumber) {
+        const activityNumber = row.activityNumber * 5
+        if (row.productActivityCount < activityNumber) {
+          return true
+        }
+      }
+      return false
+    },
     handleTimeChange(row) {
       if (row) {
-        this.formData.starTime = row[0]
+        this.formData.startTime = row[0]
         this.formData.endTime = row[1]
       }
     },
     handleInputBlur(index, sort) { // 排序设置
-      console.log(this.goodsList.sort(this.compare, true))
+      this.goodsList.sort(function(a, b) { return a.sortNumber > b.sortNumber ? 1 : -1 })
     },
     handleGoodsInput(val, index) {
       const data = this.goodsList[index]
@@ -210,7 +244,9 @@ export default {
       this.$set(this.goodsList, index, data)
     },
     compare(property, desc) {
+      console.log(property)
       return function(a, b) {
+        console.log(a, b)
         var value1 = a[property]
         var value2 = b[property]
         if (desc === true) {
@@ -253,41 +289,74 @@ export default {
         if (valid) {
           const data = JSON.parse(JSON.stringify(this.formData))
           if (data.img === '1') {
-            data.imgUrl = ''
+            data.imgUrl = 'null'
           }
           data.storeIds = []
-          if (this.formData.isAllStore === '2' && this.chooseStore.length > 0) {
-            this.chooseStore.map(v => {
-              data.storeIds.push(v.id)
-            })
+          if (data.isAllStore === '2') {
+            if (this.chooseStore.length > 0) {
+              this.chooseStore.map(v => {
+                data.storeIds.push(v.id)
+              })
+            } else {
+              this.$message({
+                message: '请选择门店',
+                type: 'error'
+              })
+              return
+            }
           } else {
-            this.$message({
-              message: '请选择门店',
-              type: 'error'
-            })
-            return
+            data.storeIds = this.allStore
           }
           delete data.img
           delete data.activitTime
-          data.products = this.goodsList
-          console.log('submit-----', data)
-          assembleActivityAdd(data).then(res => {
-            this.$message({
-              message: `保存成功`,
-              type: 'info'
-            })
-            setTimeout(_ => {
-              this.$router.push('/marketing/activity')
-              this.saveLoading = false
-            }, 1000)
-          }).catch(err => {
-            console.log(err)
-          })
+          delete data.isAllStore
+          data.products = this.formatItems(this.goodsList)
+          this.saveLoading = true
+          if (this.$route.query.id) {
+            console.log('编辑')
+          } else {
+            this.addActivity(data)
+          }
         } else {
           console.log('error submit!!')
           return false
         }
       })
+    },
+    addActivity(data) {
+      assembleActivityAdd(data).then(res => {
+        this.$message({
+          message: `保存成功`,
+          type: 'success'
+        })
+        setTimeout(_ => {
+          this.$router.push('/marketing/activity')
+          this.saveLoading = false
+        }, 1000)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    formatItems(list) {
+      const products = []
+      list.map(v => {
+        products.push({
+          'activityId': v.activityId || '',
+          'activityNumber': v.activityNumber,
+          'activityPrice': v.activityPrice,
+          'addLimitTimes': v.addLimitTimes,
+          'id': '',
+          'isFreeshipping': v.isFreeshipping,
+          'limitCount': v.limitCount,
+          'openLimitTimes': v.openLimitTimes,
+          'price': v.mprice,
+          'productActivityCount': v.productActivityCount,
+          'productId': v.specId,
+          'productName': v.commonName,
+          'sortNumber': v.sortNumber
+        })
+      })
+      return products
     },
     handleAvatarSuccess(res, file) {
       if (res.code === '10000') {

@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
-
 /** *
  * 营销活动 -- 活动管理
  */
@@ -65,5 +64,24 @@ export function assembleActivityAdd(params) {
     url: `${config.merGoods}/1.0/admin/activityGroup/add`,
     method: 'post',
     data: params
+  })
+}
+
+// 获取拼团活动列表
+export function getAssembleList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 删除拼团活动
+export function delAssembleActivity(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/deleteByIds`,
+    method: 'post',
+    data: params,
+    noMerCode: true
   })
 }

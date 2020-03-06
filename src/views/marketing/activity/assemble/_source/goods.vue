@@ -82,7 +82,21 @@
             </template>
           </el-table-column>
           <el-table-column prop="mprice" label="参考价格" min-width="60" align="center" :show-overflow-tooltip="true" />
-          <el-table-column prop="manufacture" label="已参加活动" min-width="120" :show-overflow-tooltip="true" />
+          <el-table-column prop="manufacture" label="已参加活动" min-width="120" :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              <template v-if="scope.row.promoteList">
+                <span v-for="(item,index) in scope.row.promoteList" :key="index">
+                  <span v-if="item===10">电子DM单中</span>
+                  <span v-else-if="item===11">限时特惠中</span>
+                  <span v-if="item===12">限时秒杀中</span>
+                  <span v-else-if="item===90">拼团活动中</span>
+                </span>
+              </template>
+              <template v-else>
+                未在活动中
+              </template>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="table-footer">
           <el-pagination

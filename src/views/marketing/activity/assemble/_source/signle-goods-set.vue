@@ -66,8 +66,8 @@
           </el-form-item>
           <el-form-item label="是否包邮">
             <el-radio-group v-model="settingForm.isFreeshipping">
-              <el-radio :label="false">否</el-radio>
-              <el-radio :label="true">是</el-radio>
+              <el-radio :label="0">否</el-radio>
+              <el-radio :label="1">是</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="拼团库存" prop="productActivityCount">
@@ -152,6 +152,15 @@ export default {
   methods: {
     open() {
       this.isShow = true
+      this.settingForm = {
+        activityNumber: 2,
+        isXg: 0,
+        addLimitTimes: 0,
+        limitCount: 0,
+        isFreeshipping: 0,
+        productActivityCount: 2,
+        activityPrice: 0
+      }
     },
     close() {
       this.isShow = false
