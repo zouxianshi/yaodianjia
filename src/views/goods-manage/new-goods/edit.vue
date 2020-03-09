@@ -1141,7 +1141,7 @@ export default {
               return
             }
             this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
-            if (this.chooseTypeList && (this.chooseTypeList[0].name !== '医疗器械' || this.chooseTypeList[0].name !== '营养保健')) {
+            if (this.chooseTypeList && (this.chooseTypeList[0].name === '医疗器械' || this.chooseTypeList[0].name === '营养保健')) {
               this.basicForm.hasEphedrine = 0
             }
             const data = JSON.parse(JSON.stringify(this.basicForm))
