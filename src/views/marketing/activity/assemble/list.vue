@@ -130,7 +130,7 @@
           </el-table-column>
         </el-table>
         <div class="table-footer">
-          <el-button type="danger" size="mini">情况所有活动库存</el-button>
+          <el-button type="danger" size="mini">清空所有活动库存</el-button>
           <el-pagination
             background
             layout="prev, pager, next"
