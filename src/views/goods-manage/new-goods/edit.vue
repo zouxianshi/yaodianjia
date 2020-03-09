@@ -69,6 +69,7 @@
                       :remote-method="remoteMethod"
                       :loading="loading"
                       placeholder="请选择所属品牌"
+                      @change="handleBrandChange"
                     >
                       <el-option
                         v-for="item in brandList"
@@ -789,6 +790,14 @@ export default {
         this.step = val
       }
     },
+    handleBrandChange(val) {
+      const index = this.brandList.findIndex((item) => {
+        return item.id === val
+      })
+      if (index > -1) {
+        this.basicForm.brandName = this.brandList[index].name
+      }
+    },
     _loadUnit() { // 加载单位
       getUnit().then(res => {
         const { data } = res
@@ -1132,6 +1141,9 @@ export default {
               return
             }
             this.basicForm.typeId = this.chooseTypeList[this.chooseTypeList.length - 1].id // 分类id
+            if (this.chooseTypeList && (this.chooseTypeList[0].name === '医疗器械' || this.chooseTypeList[0].name === '营养保健')) {
+              this.basicForm.hasEphedrine = 0
+            }
             const data = JSON.parse(JSON.stringify(this.basicForm))
             data.packStandard = `${data.long || ''}*${data.width || ''}*${data.height || ''}`
             if (this.expireDays === -1) {
@@ -1172,6 +1184,7 @@ export default {
             } else {
               data.firstTypeId = this.chooseTypeList[0].id
               data.secondTypeId = this.chooseTypeList[1].id
+
               this._CreateBasicInfo(data)
             }
           }
