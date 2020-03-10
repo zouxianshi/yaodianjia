@@ -333,8 +333,8 @@ export default {
       }
     },
     async getQRCode() {
-      const { data, code } = await DistributionService.getWeappCode()
       this.loading = false
+      const { data, code } = await DistributionService.getWeappCode()
       if (code === '10000') {
         this.link = `${data.page}?${data.parameter}`
         this.appid = data.appId
@@ -427,7 +427,7 @@ export default {
         this.$message({ type: 'success', message: '设置成功' })
         this.getQRCode()
       }
-    })
+    }, 3000)
   }
 }
 </script>
