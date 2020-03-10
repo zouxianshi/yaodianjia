@@ -77,6 +77,7 @@
         </div>
       </div>
     </div>
+    <!-- 推荐设置 -->
     <!-- <div class="module">
       <div class="title">推荐设置</div>
       <div class="content">
