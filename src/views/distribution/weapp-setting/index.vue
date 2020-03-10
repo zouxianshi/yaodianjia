@@ -392,6 +392,7 @@ export default {
       console.log('recommendRadio-----', value)
     },
     setUpdateDMReqDTO: throttle(async function() {
+      const officialName = this.ruleForm.officialName && this.ruleForm.officialName.replace(/\s+/g, '')
       if (!this.ruleForm.dmPath) {
         this.$message({
           message: '请上传DM单',
@@ -410,7 +411,7 @@ export default {
           type: 'error'
         })
         return
-      } else if (!this.ruleForm.officialName && !this.ruleForm.officialName.replace(/\s+/g, '')) {
+      } else if (!officialName) {
         this.$message({
           message: '公众号名称不能为空',
           type: 'error'
@@ -420,6 +421,7 @@ export default {
       console.log('000000', this.ruleForm)
       const { code } = await DistributionService.setUpdateDMReqDTO({
         ...this.ruleForm,
+        officialName,
         merCode: this.merCode
       })
       console.log('000000', this.ruleForm, code)
