@@ -415,7 +415,9 @@ const mixin = {
               this.handleAddSpec()
             }
           } else {
-            $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置全选disabeld
+            const findInput = $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input')
+            findInput.remove() // 设置全选disabeld
+            // findInput.find('input').remove()
             specList.forEach((v, index) => {
               const findIndex = findArray(this.specsForm.specs, { barCode: v.barCode })
               if (findIndex > -1) {
@@ -431,6 +433,7 @@ const mixin = {
                 row.type = v.type || 2
                 this.$set(this.specsForm.specs, findIndex, row)
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
+                $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').find('input').attr('disabled', true)
               }
             })
           }

@@ -345,6 +345,7 @@ export default {
       }
       this.subLoading = true
       const data = JSON.parse(JSON.stringify(this.pairData))
+      data.barCode = this.currentRow.barCode
       data.platformCode = this.currentRow.id
       setMateCode(data).then(res => {
         this.$message({
