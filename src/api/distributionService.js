@@ -338,6 +338,12 @@ class DistributionService {
     return this.service('post', '/1.0/b/bulkArrival/productStatistics', data)
   }
   /**
+   * DM单设置
+   */
+  setUpdateDMReqDTO(data) {
+    return this.service('post', '/1.0/b/wxutils/updateDM', data)
+  }
+  /**
    * task
    */
   taskCancel(data) {

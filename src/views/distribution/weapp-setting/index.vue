@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <div class="module" style="border:0">
+    <div class="module">
       <div class="title">规则设置</div>
       <div class="content">
         <div class="panel column">
@@ -84,10 +84,10 @@
           <div class="row">
             <div class="tips">是否推荐 :</div>
             <div class="radio-group">
-              <div class="group">
-                <el-radio v-model="radio" label="1">是</el-radio>
-                <el-radio v-model="radio" label="2">否</el-radio>
-              </div>
+                <el-radio-group class="group" v-model="radio" @change="recommendRadio">
+                  <el-radio label="1">是</el-radio>
+                  <el-radio label="2">否</el-radio>
+                </el-radio-group>
             </div>
           </div>
           <div class="row">
@@ -97,8 +97,7 @@
           </div>
         </div>
       </div>
-    </div>
-
+    </div> -->
     <div class="module" style="border:0;">
       <div class="title">DM单设置</div>
       <div class="content">
@@ -110,12 +109,12 @@
               :action="upLoadUrl"
               :headers="headers"
               :before-upload="beforeUpload"
-              :on-success="uploadSuccess"
+              :on-success="uploadSuccessDM"
               :show-file-list="false"
             >
               <img
-                v-if="!!form.dmUrl"
-                :src="showImgHandler(form.dmUrl)"
+                v-if="!!ruleForm.dmPath"
+                :src="showImgHandler(ruleForm.dmPath)"
                 class="avatar"
               >
               <div
@@ -141,12 +140,12 @@
               :action="upLoadUrl"
               :headers="headers"
               :before-upload="beforeUpload"
-              :on-success="uploadSuccess"
+              :on-success="uploadSuccessMall"
               :show-file-list="false"
             >
               <img
-                v-if="!!form.mallUrl"
-                :src="showImgHandler(form.mallUrl)"
+                v-if="!!ruleForm.qrCodePath"
+                :src="showImgHandler(ruleForm.qrCodePath)"
                 class="avatar"
               >
               <div
@@ -167,12 +166,12 @@
               :action="upLoadUrl"
               :headers="headers"
               :before-upload="beforeUpload"
-              :on-success="uploadSuccess"
+              :on-success="uploadSuccessQR"
               :show-file-list="false"
             >
               <img
-                v-if="!!form.qrUrl"
-                :src="showImgHandler(form.qrUrl)"
+                v-if="!!ruleForm.officialCodePath"
+                :src="showImgHandler(ruleForm.officialCodePath)"
                 class="avatar"
               >
               <div
@@ -186,15 +185,15 @@
         </div>
         <div class="panel">
           <div class="tips" style="width:120px;">公众号名称：</div>
-          <el-input v-model="wechatName" placeholder="请输入公众号名" />
+          <el-input v-model="ruleForm.officialName" placeholder="请输入公众号名" />
         </div>
 
         <div class="row" style="margin-top:20px;">
           <a class="downloadPDF" download>下载设计模板</a>
-          <el-button type="primary">确认设置</el-button>
+          <el-button type="primary" @click="setUpdateDMReqDTO">确认设置</el-button>
         </div>
       </div>
-    </div> -->
+    </div>
     <el-dialog append-to-body title="修改商户名称" :visible.sync="updateDialog">
       <el-input
         v-model="changeStoreName"
@@ -237,16 +236,19 @@ export default {
       updateDialog: false,
       loading: true,
       radio: '1',
-      form: {
-        dmUrl: '',
-        mallUrl: '',
-        qrUrl: ''
-      },
-      wechatName: ''
+      ruleForm: {
+        dmPath: '',
+        qrCodePath: '',
+        officialCodePath: '',
+        officialName: ''
+      }
     }
   },
   computed: {
     ...mapGetters(['merCode', 'token']),
+    uploadFileUrl() {
+      return `${this.uploadFileURL}`
+    },
     headers() {
       return { Authorization: this.token, merCode: this.merCode }
     },
@@ -299,7 +301,7 @@ export default {
     uploadSuccessDM(res, file, fileList) {
       // 图片上传成功
       if (res.code === '10000') {
-        this.form.dmUrl = res.data
+        this.form.dmPath = res.data
       } else {
         this.$message({
           message: res.msg,
@@ -310,7 +312,7 @@ export default {
     uploadSuccessMall(res, file, fileList) {
       // 图片上传成功
       if (res.code === '10000') {
-        this.form.mallUrl = res.data
+        this.form.qrCodePath = res.data
       } else {
         this.$message({
           message: res.msg,
@@ -321,7 +323,7 @@ export default {
     uploadSuccessQR(res, file, fileList) {
       // 图片上传成功
       if (res.code === '10000') {
-        this.form.qrUrl = res.data
+        this.form.officialCodePath = res.data
       } else {
         this.$message({
           message: res.msg,
@@ -339,6 +341,12 @@ export default {
         this.storeName = data.memberName || ''
         this.getLoading = true
         this.ruledays = data.beyondTime
+        this.ruleForm = {
+          qrCodePath: data.qrCodePath,
+          dmPath: data.dmPath,
+          officialCodePath: data.officialCodePath,
+          officialName: data.officialName
+        }
       }
     },
 
@@ -378,7 +386,22 @@ export default {
         this.hiddenUpdateDialog()
         this.getQRCode()
       }
-    }, 3000)
+    }, 3000),
+    recommendRadio(value) {
+      console.log('recommendRadio-----', value)
+    },
+    setUpdateDMReqDTO: throttle(async function() {
+      console.log('000000', this.ruleForm)
+      const { code } = await DistributionService.setUpdateDMReqDTO({
+        ...this.ruleForm,
+        merCode: this.merCode
+      })
+      console.log('000000', this.ruleForm, code)
+      if (code === '10000') {
+        this.$message({ type: 'success', message: '设置成功' })
+        this.getQRCode()
+      }
+    })
   }
 }
 </script>
@@ -409,6 +432,7 @@ export default {
   margin-left: 20px;
   .items {
     font-size: 12px;
+    line-height: 24px;
     color: rgba(0, 0, 0, 0.85);
   }
 }
