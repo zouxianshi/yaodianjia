@@ -190,7 +190,7 @@
         </div>
 
         <div class="row" style="margin-top:20px;">
-          <a class="downloadPDF" download>下载设计模板</a>
+          <a class="downloadPDF" href="https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/%E5%95%86%E6%88%B7%E5%8D%A1%E7%89%87%E6%A8%A1%E6%9D%BF.zip" download>下载设计模板</a>
           <el-button type="primary" @click="setUpdateDMReqDTO">确认设置</el-button>
         </div>
       </div>
