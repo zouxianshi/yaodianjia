@@ -302,7 +302,7 @@ export default {
     uploadSuccessDM(res, file, fileList) {
       // 图片上传成功
       if (res.code === '10000') {
-        this.form.dmPath = res.data
+        this.ruleForm.dmPath = res.data
       } else {
         this.$message({
           message: res.msg,
@@ -313,7 +313,7 @@ export default {
     uploadSuccessMall(res, file, fileList) {
       // 图片上传成功
       if (res.code === '10000') {
-        this.form.qrCodePath = res.data
+        this.ruleForm.qrCodePath = res.data
       } else {
         this.$message({
           message: res.msg,
@@ -324,7 +324,7 @@ export default {
     uploadSuccessQR(res, file, fileList) {
       // 图片上传成功
       if (res.code === '10000') {
-        this.form.officialCodePath = res.data
+        this.ruleForm.officialCodePath = res.data
       } else {
         this.$message({
           message: res.msg,
@@ -392,6 +392,31 @@ export default {
       console.log('recommendRadio-----', value)
     },
     setUpdateDMReqDTO: throttle(async function() {
+      if (!this.ruleForm.dmPath) {
+        this.$message({
+          message: '请上传DM单',
+          type: 'error'
+        })
+        return
+      } else if (!this.ruleForm.qrCodePath) {
+        this.$message({
+          message: '请上传商城二维码',
+          type: 'error'
+        })
+        return
+      } else if (!this.ruleForm.officialCodePath) {
+        this.$message({
+          message: '公众号二维码不能为空',
+          type: 'error'
+        })
+        return
+      } else if (!this.ruleForm.officialName && !this.ruleForm.officialName.replace(/\s+/g, '')) {
+        this.$message({
+          message: '公众号名称不能为空',
+          type: 'error'
+        })
+        return
+      }
       console.log('000000', this.ruleForm)
       const { code } = await DistributionService.setUpdateDMReqDTO({
         ...this.ruleForm,
