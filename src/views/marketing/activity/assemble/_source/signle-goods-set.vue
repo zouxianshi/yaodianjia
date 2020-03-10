@@ -153,13 +153,13 @@ export default {
     open() {
       this.isShow = true
       this.settingForm = {
-        activityNumber: 2,
-        isXg: 0,
-        addLimitTimes: 0,
-        limitCount: 0,
-        isFreeshipping: 0,
-        productActivityCount: 2,
-        activityPrice: 0
+        activityNumber: this.info.activityNumber || 2,
+        isXg: this.info.isXg || 0,
+        addLimitTimes: this.info.addLimitTimes || 0,
+        limitCount: this.info.limitCount || 0,
+        isFreeshipping: this.info.isFreeshipping || 0,
+        productActivityCount: this.info.productActivityCount || 2,
+        activityPrice: this.info.activityPrice || 0
       }
     },
     close() {

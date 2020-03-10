@@ -57,8 +57,8 @@
         </div>
         <el-form-item label="所有店铺">
           <el-radio-group v-model="formData.isAllStore" @change="handleStoreChange">
-            <el-radio label="1">是</el-radio>
-            <el-radio label="2">否</el-radio>
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="0">否</el-radio>
           </el-radio-group>
 
         </el-form-item>
@@ -132,7 +132,7 @@ import store from './_source/store'
 import goods from './_source/goods'
 import EditGoodsModals from './_source/signle-goods-set'
 import { mapGetters } from 'vuex'
-import { assembleActivityAdd } from '@/api/marketing'
+import { assembleActivityAdd, getAssembleAcInfo, getActivityGoods } from '@/api/marketing'
 import { getAllStore } from '@/api/common'
 export default {
   components: { store, goods, EditGoodsModals },
@@ -144,7 +144,7 @@ export default {
         activitTime: '',
         img: '1',
         imgUrl: '',
-        isAllStore: '1',
+        isAllStore: 1,
         startTime: '',
         endTime: '',
         description: ''
@@ -163,7 +163,8 @@ export default {
       editGoods: {},
       pageLoading: '',
       saveLoading: false,
-      allStore: []
+      allStore: [],
+      activityId: ''
     }
   },
   computed: {
@@ -176,6 +177,10 @@ export default {
     }
   },
   created() {
+    this.activityId = this.$route.query.id
+    if (this.activityId) {
+      this._loadInfo()
+    }
     this._loadAllStoreData()
   },
   methods: {
@@ -195,6 +200,27 @@ export default {
           this.formData.effectiveTime--
         }
       }
+    },
+    _loadInfo() { // 加载基本信息
+      getAssembleAcInfo(this.$route.query.id).then(res => {
+        this._loadGoods()
+        for (const key in res.data) {
+          this.formData[key] = res.data[key]
+        }
+        this.formData.activitTime = [res.data.startTime, res.data.endTime]
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    _loadGoods() { // 通过活动id查询商品
+      getActivityGoods({ activityId: this.activityId }).then(res => {
+        res.data.map(v => {
+          v.mprice = v.price
+        })
+        this.goodsList = res.data
+      }).catch(err => {
+        console.log(err)
+      })
     },
     handleStoreChange(val) {
       if (val === '1') {
@@ -244,7 +270,6 @@ export default {
       this.$set(this.goodsList, index, data)
     },
     compare(property, desc) {
-      console.log(property)
       return function(a, b) {
         console.log(a, b)
         var value1 = a[property]
@@ -292,7 +317,7 @@ export default {
             data.imgUrl = 'null'
           }
           data.storeIds = []
-          if (data.isAllStore === '2') {
+          if (data.isAllStore === 0) {
             if (this.chooseStore.length > 0) {
               this.chooseStore.map(v => {
                 data.storeIds.push(v.id)
@@ -309,7 +334,6 @@ export default {
           }
           delete data.img
           delete data.activitTime
-          delete data.isAllStore
           data.products = this.formatItems(this.goodsList)
           this.saveLoading = true
           if (this.$route.query.id) {
@@ -330,10 +354,11 @@ export default {
           type: 'success'
         })
         setTimeout(_ => {
-          this.$router.push('/marketing/activity')
+          this.$router.push('/marketing/activity/assemble')
           this.saveLoading = false
         }, 1000)
       }).catch(err => {
+        this.saveLoading = false
         console.log(err)
       })
     },
@@ -341,7 +366,7 @@ export default {
       const products = []
       list.map(v => {
         products.push({
-          'activityId': v.activityId || '',
+          // 'activityId': v.activityId || '',
           'activityNumber': v.activityNumber,
           'activityPrice': v.activityPrice,
           'addLimitTimes': v.addLimitTimes,

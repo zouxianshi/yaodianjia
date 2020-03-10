@@ -87,7 +87,7 @@
               <template v-if="scope.row.schedule===0||scope.row.schedule===2">
                 <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
-              <el-button v-if="scope.row.schedule===1" type="danger" size="mini">编辑活动库存</el-button>
+              <el-button v-if="scope.row.schedule===1" type="danger" size="mini" @click="handleEditAcStock(scope.row)">编辑活动库存</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -148,7 +148,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getAssembleList, delAssembleActivity, disableActivity } from '@/api/marketing'
+import { getAssembleList, delAssembleActivity, getActivityGoods } from '@/api/marketing'
 import config from '@/utils/config'
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
@@ -175,7 +175,8 @@ export default {
         total: 0,
         currentPage: 1
       },
-      modalList: []
+      modalList: [],
+      editInfo: ''
     }
   },
   computed: {
@@ -191,6 +192,13 @@ export default {
     },
     upLoadUrl() {
       return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+    }
+  },
+  watch: {
+    dialogVisible(val) {
+      if (val) {
+        this._loadActivityGoods()
+      }
     }
   },
   created() {
@@ -228,6 +236,16 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    _loadActivityGoods() { // 通过活动id加载商品
+      getActivityGoods().then(res => {
+
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    handleEditAcStock(row) {
+      this.editInfo = row
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -303,8 +321,8 @@ export default {
       this._getTableData()
     },
     // 编辑
-    toEdit(row, op) {
-      this.$router.push('/marketing/activity/assemble-edit')
+    toEdit(row) {
+      this.$router.push('/marketing/activity/assemble-edit?id=' + row.id)
     },
     // 失效
     handleDisable(row) {
@@ -365,18 +383,9 @@ export default {
     },
     // 失效数据
     _disableData(id) {
-      const params = {
-        id: id
-      }
-      disableActivity(params).then(res => {
-        if (res.code === '10000') {
-          this.$message.success('已失效')
-          // 更新列表
-          this._getTableData()
-        } else {
-          this.$message.error(res.msg)
-        }
-      })
+      // const params = {
+      //   id: id
+      // }
     }
   }
 }

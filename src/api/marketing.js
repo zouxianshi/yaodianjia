@@ -85,3 +85,20 @@ export function delAssembleActivity(params) {
     noMerCode: true
   })
 }
+
+// 获取拼团活动单个信息
+export function getAssembleAcInfo(activityId) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/getActivityInfo/${activityId}`,
+    method: 'get'
+  })
+}
+
+// 通过活动ID获取商品
+export function getActivityGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/getProductsByActivityId`,
+    method: 'post',
+    data: params
+  })
+}

@@ -120,7 +120,7 @@ const router = [
       {
         path: 'activity/assemble',
         component: () => import('@/views/marketing/activity/assemble/list'),
-        name: 'assembleEdit',
+        name: 'assembleList',
         meta: {
           title: '拼团活动',
           noCache: true,
