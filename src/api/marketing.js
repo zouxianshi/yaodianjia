@@ -94,10 +94,47 @@ export function getAssembleAcInfo(activityId) {
   })
 }
 
+// 修改拼团活动基本信息
+export function updateAssembleInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/modify`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 编辑修改拼团活动产品信息
+export function updateAcAssmbleProductInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/modifyProduct`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 通过活动ID获取商品
 export function getActivityGoods(params) {
   return request({
     url: `${config.merGoods}/1.0/admin/activityGroup/getProductsByActivityId`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 根据商品活动ID删除活动下的商品
+export function deleteAcAssembleGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/deleteProductInfo`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 批量修改库存
+export function setAssembleStock(params) {
+  console.log(params)
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/updateStock`,
     method: 'post',
     data: params
   })

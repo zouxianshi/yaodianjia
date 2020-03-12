@@ -63,7 +63,7 @@
 
         </el-form-item>
         <el-form-item label="已选店铺">
-          <template v-if="formData.isAllStore==='2'">
+          <template v-if="formData.isAllStore===0">
             <div class="choose-store-box">
               <el-tag v-for="(item,index) in chooseStore" :key="index" type="para" size="small">{{ item.stName }}</el-tag>
             </div>
@@ -79,21 +79,29 @@
           活动商品
         </div>
         <el-form-item label="">
-          <p style="margin-bottom:10px">
+          <p v-if="!activityId" style="margin-bottom:10px">
             <el-button icon="el-icon-circle-plus-outline" type="primary" size="small" @click="handleOpenGoods">添加商品</el-button>
+            <el-button size="small" type="danger" @click="handleBatchDel">批量删除</el-button>
           </p>
           <el-table
             :data="goodsList"
             border
             size="small"
+            @selection-change="handleSelectionChange"
           >
+            <el-table-column
+              v-if="!activityId"
+              type="selection"
+              width="55"
+            />
             <el-table-column label="展示顺序" width="80">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.sortNumber" size="mini" placeholder="" style="width:40px" @input.native="handleGoodsInput(scope.row.sortNumber,scope.$index)" @blur="handleInputBlur(scope.$index,scope.row.sortNumber	)" />
+                <el-input v-if="!activityId" v-model="scope.row.sortNumber" size="mini" placeholder="" style="width:50px" @input.native="handleGoodsInput(scope.row.sortNumber,scope.$index)" @blur="handleInputBlur(scope.$index,scope.row.sortNumber	)" />
+                <span v-else v-text="scope.row.sortNumber" />
               </template>
             </el-table-column>
             <el-table-column label="商品名称" prop="name" min-width="100" />
-            <el-table-column label="商品编码" prop="erpCode" />
+            <el-table-column label="商品编码" prop="productId" />
             <el-table-column label="原售价" prop="mprice" />
             <el-table-column label="拼团价" prop="activityPrice" />
             <el-table-column label="活动库存" prop="productActivityCount">
@@ -106,10 +114,20 @@
             <el-table-column label="操作" min-width="110">
               <template slot-scope="scope">
                 <el-button type="" size="mini" @click="handleEditSetting(scope.row)">设置</el-button>
-                <el-button type="danger" size="mini" @click="handleGoodsDel(scope.$index)">删除</el-button>
+                <el-button v-if="!activityId" type="danger" size="mini" @click="handleGoodsDel(scope.row,scope.$index)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
+          <div v-if="activityId" class="page-box">
+            <el-pagination
+              background
+              small
+              layout="total, prev, pager, next"
+              :current-page.sync="currentPage"
+              :total="total"
+              @current-change="handleCurrentChange"
+            />
+          </div>
         </el-form-item>
         <el-form-item />
         <el-form-item label="" class="text-center">
@@ -121,7 +139,7 @@
     <!-- 门店模态框 -->
     <store :is-show="showStore" :list="chooseStore" @close="showStore=false" @complete="handletStoreComplete" />
     <!-- 选择商品弹窗组件 -->
-    <goods ref="dialogGoods" :editable="!disabled" :list="chooseGoods" @on-change="onSelectedGoods" />
+    <goods ref="dialogGoods" :limit-max="20" :editable="!disabled" :list="chooseGoods" @on-change="onSelectedGoods" />
     <!-- 编辑商品 -->
     <edit-goods-modals ref="editGoodsModals" :info="editGoods" @complete="handleSuccessSelectGood" />
   </div>
@@ -132,7 +150,7 @@ import store from './_source/store'
 import goods from './_source/goods'
 import EditGoodsModals from './_source/signle-goods-set'
 import { mapGetters } from 'vuex'
-import { assembleActivityAdd, getAssembleAcInfo, getActivityGoods } from '@/api/marketing'
+import { assembleActivityAdd, getAssembleAcInfo, getActivityGoods, updateAssembleInfo, updateAcAssmbleProductInfo } from '@/api/marketing'
 import { getAllStore } from '@/api/common'
 export default {
   components: { store, goods, EditGoodsModals },
@@ -164,7 +182,10 @@ export default {
       pageLoading: '',
       saveLoading: false,
       allStore: [],
-      activityId: ''
+      activityId: '',
+      currentPage: 1,
+      total: 0,
+      multipleSelection: []
     }
   },
   computed: {
@@ -184,6 +205,9 @@ export default {
     this._loadAllStoreData()
   },
   methods: {
+    handleSelectionChange(val) { // 选择商品
+      this.multipleSelection = val
+    },
     handleInput(e) {
       const value = e.target.value
       e.target.value = value.replace(/[^\d]/g, '')
@@ -208,16 +232,26 @@ export default {
           this.formData[key] = res.data[key]
         }
         this.formData.activitTime = [res.data.startTime, res.data.endTime]
+        if (this.formData.imgUrl) {
+          this.formData.img = '2'
+        }
+        if (this.formData.isAllStore === 0) {
+          this.chooseStore = res.data.storeIds
+        }
       }).catch(err => {
         console.log(err)
       })
     },
     _loadGoods() { // 通过活动id查询商品
-      getActivityGoods({ activityId: this.activityId }).then(res => {
-        res.data.map(v => {
+      getActivityGoods({ activityId: this.activityId, pageSize: 10, currentPage: this.currentPage }).then(res => {
+        const { data, totalCount } = res.data
+        data.map(v => {
           v.mprice = v.price
+          v.name = v.productName
+          v.mainPic = v.imgUrl
         })
-        this.goodsList = res.data
+        this.goodsList = data
+        this.total = totalCount
       }).catch(err => {
         console.log(err)
       })
@@ -269,23 +303,11 @@ export default {
       data.sortNumber = val
       this.$set(this.goodsList, index, data)
     },
-    compare(property, desc) {
-      return function(a, b) {
-        console.log(a, b)
-        var value1 = a[property]
-        var value2 = b[property]
-        if (desc === true) {
-          // 升序排列
-          return value1 - value2
-        } else {
-          // 降序排列
-          return value2 - value1
-        }
-      }
-    },
     handleEditSetting(row) { // 打开设置单个商品modal
-      this.$refs.editGoodsModals.open()
       this.editGoods = row
+      this.$nextTick(_ => {
+        this.$refs.editGoodsModals.open()
+      })
     },
     handleOpenStore() { // 打开选择门店modal
       this.showStore = true
@@ -300,12 +322,31 @@ export default {
       this.chooseStore = row
       this.showStore = false
     },
-    handleGoodsDel(index) { // 删除商品表格数据
+    handleGoodsDel(row, index) { // 删除商品表格数据
       this.goodsList.splice(index, 1)
+    },
+    handleBatchDel() { // 批量删除
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请选择你要删除的商品',
+          type: 'warning'
+        })
+        return
+      }
+      this.$confirm('是否确定删除这些商品？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.goodsList = []
+      }).catch(() => {
+        console.log('取消删除')
+      })
     },
     onSelectedGoods(row) { // 商品选择确定事件
       row.map((v, index) => {
         v.sortNumber = index + 1
+        v.productId = v.specId
       })
       this.goodsList = row
     },
@@ -314,7 +355,7 @@ export default {
         if (valid) {
           const data = JSON.parse(JSON.stringify(this.formData))
           if (data.img === '1') {
-            data.imgUrl = 'null'
+            data.imgUrl = ''
           }
           data.storeIds = []
           if (data.isAllStore === 0) {
@@ -334,11 +375,22 @@ export default {
           }
           delete data.img
           delete data.activitTime
-          data.products = this.formatItems(this.goodsList)
-          this.saveLoading = true
           if (this.$route.query.id) {
-            console.log('编辑')
+            this.saveLoading = true
+            this.editActivity(data)
           } else {
+            if (!this.goodsList) {
+              this.$message({
+                message: '请选择商品',
+                type: 'error'
+              })
+              return
+            }
+            data.products = this.formatItems(this.goodsList)
+            if (!data.products) {
+              return
+            }
+            this.saveLoading = true
             this.addActivity(data)
           }
         } else {
@@ -362,25 +414,61 @@ export default {
         console.log(err)
       })
     },
+    editActivity(data) { // 修改基本信息
+      updateAssembleInfo(data).then(res => {
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        })
+        setTimeout(_ => {
+          this.$router.push('/marketing/activity/assemble')
+        }, 1000)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     formatItems(list) {
       const products = []
-      list.map(v => {
+      for (let index = 0; index < list.length; index++) {
+        const v = list[index]
+        if (!v.activityNumber) {
+          this.$message({
+            message: `第${index + 1}个商品成团人数不能为空`,
+            type: 'warning'
+          })
+          return
+        }
+        if (!v.activityPrice) {
+          this.$message({
+            message: `第${index + 1}个商品活动价格不能为空`,
+            type: 'warning'
+          })
+          return
+        }
+        if (!v.productActivityCount) {
+          this.$message({
+            message: `第${index + 1}个商品活动库存不能为空`,
+            type: 'warning'
+          })
+          return
+        }
         products.push({
           // 'activityId': v.activityId || '',
-          'activityNumber': v.activityNumber,
-          'activityPrice': v.activityPrice,
-          'addLimitTimes': v.addLimitTimes,
+          'activityNumber': v.activityNumber, // 成团人数
+          'activityPrice': v.activityPrice, // 活动价格
+          'addLimitTimes': v.addLimitTimes, // 限购  加入次数
           'id': '',
-          'isFreeshipping': v.isFreeshipping,
-          'limitCount': v.limitCount,
-          'openLimitTimes': v.openLimitTimes,
-          'price': v.mprice,
-          'productActivityCount': v.productActivityCount,
-          'productId': v.specId,
-          'productName': v.commonName,
-          'sortNumber': v.sortNumber
+          'isFreeshipping': v.isFreeshipping, // 是否包邮
+          'limitCount': v.limitCount, // 限购次数
+          'openLimitTimes': v.openLimitTimess, // 开团次数
+          'price': v.mprice, // 原售价
+          'productActivityCount': v.productActivityCount, // 活动产品库存量
+          'productId': v.specId, //
+          'imgUrl': v.mainPic,
+          'productName': v.commonName, // 商品名
+          'sortNumber': v.sortNumber // 商品排序
         })
-      })
+      }
       return products
     },
     handleAvatarSuccess(res, file) {
@@ -394,12 +482,44 @@ export default {
       }
       this.pageLoading.close()
     },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this._loadGoods()
+    },
     handleSuccessSelectGood(row) { // 单个商品设置确定callback
-      const index = this.goodsList.findIndex(mItem => {
-        return row.id === mItem.id
-      })
-      this.goodsList[index] = row
-      this.$set(this.goodsList, index, row)
+      if (this.activityId) {
+        const data = {
+          'activityId': row.activityId,
+          'activityNumber': row.activityNumber,
+          'activityPrice': row.activityPrice,
+          'addLimitTimes': row.addLimitTimes,
+          'id': row.id,
+          'isFreeshipping': row.isFreeshipping,
+          'limitCount': row.limitCount,
+          'openLimitTimes': row.openLimitTimes,
+          'price': row.price,
+          'productActivityCount': row.productActivityCount,
+          'productId': row.productId,
+          'productName': row.productName,
+          'sortNumber': row.sortNumber
+        }
+        updateAcAssmbleProductInfo(data).then(res => {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this._loadGoods()
+        }).catch(_ => {
+
+        })
+      } else {
+        const index = this.goodsList.findIndex(mItem => {
+          return row.id === mItem.id
+        })
+        this.goodsList[index] = row
+        this.$set(this.goodsList, index, row)
+      }
       this.$refs.editGoodsModals.close()
     },
     beforeAvatarUpload(file) {
@@ -434,6 +554,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .assemble-wrapper{
+  .page-box{
+    margin-top: 12px;
+    text-align: right;
+  }
   .avatar {
     width: 100px;
     height: 100px;

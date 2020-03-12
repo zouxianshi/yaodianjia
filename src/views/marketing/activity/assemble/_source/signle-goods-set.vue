@@ -22,7 +22,7 @@
         <div class="txt-info">
           <p>商品名称：{{ info.name }}</p>
           <p>商品编号：{{ info.erpCode }}</p>
-          <p>指导价格：<span class="zd-price" v-text="'￥'+info.mprice" /><span class="zdjg">&nbsp;当前所选店铺中最低价价格为：<span>￥</span></span></p>
+          <p>指导价格：<span class="zd-price" v-text="'￥'+info.mprice" /></p>
         </div>
       </section>
       <div class="form">
@@ -109,6 +109,12 @@ export default {
       if (!value && value !== 0) {
         return callback(new Error('拼团价格不能为空'))
       }
+      if (value === 0) {
+        return callback(new Error(`拼团价格不能为0`))
+      }
+      if (value >= this.info.mprice) {
+        return callback(new Error(`拼团价格需小于商品指导售价`))
+      }
       if (value && !checkNumberdouble(value)) {
         return callback(new Error('只能设置最多两位小数的正数'))
       }
@@ -161,6 +167,11 @@ export default {
         productActivityCount: this.info.productActivityCount || 2,
         activityPrice: this.info.activityPrice || 0
       }
+      if (this.settingForm.addLimitTimes > 0 || this.settingForm.limitCount > 0) {
+        this.settingForm.isXg = 1
+      } else {
+        this.settingForm.isXg = 0
+      }
     },
     close() {
       this.isShow = false
@@ -168,7 +179,24 @@ export default {
     handleSubmit() { // 提交完善数据
       this.$refs['formdData'].validate((valid) => {
         if (valid) {
+          const limitCount = Number(this.settingForm.limitCount)
+          const addLimitTimes = Number(this.settingForm.addLimitTimes)
+          if (this.settingForm.isXg === 1 && (limitCount === 0 || !addLimitTimes)) {
+            this.$message({
+              message: '单次限购不能为空且必须大于0',
+              type: 'error'
+            })
+            return
+          }
+          if (this.settingForm.isXg === 1 && (addLimitTimes === 0 || !addLimitTimes)) {
+            this.$message({
+              message: '每人限开/参团',
+              type: 'error'
+            })
+            return
+          }
           const data = JSON.parse(JSON.stringify(this.settingForm))
+          data.openLimitTimes = data.addLimitTimes
           if (data.isXg === 0) {
             data.addLimitTimes = 0
             data.limitCount = 0
