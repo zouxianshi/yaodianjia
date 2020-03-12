@@ -23,19 +23,23 @@
         <el-table-column prop="status" label="文件导出状态">
           <!-- 任务状态(1.待执行 2.执行中 3.执行完成 4.执行失败 5.取消 -->
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 1" type="info">等待数据打包</el-tag>
-            <el-tag v-if="scope.row.status === 2">数据打包中</el-tag>
-            <el-tag v-if="scope.row.status === 3" type="success">数据打包完成</el-tag>
             <el-tooltip
-              v-if="scope.row.status === 4"
+              v-if="!!scope.row.message"
               class="item"
               effect="dark"
-              content="数据打包失败"
+              :content="scope.row.message"
               placement="top-start"
             >
-              <el-tag type="danger">数据打包失败</el-tag>
+              <el-tag
+                :type="currentStatus(scope.row.status) && currentStatus(scope.row.status).type"
+              >
+                {{ currentStatus(scope.row.status) && currentStatus(scope.row.status).value }}
+                <i
+                  class="el-icon-question"
+                />
+              </el-tag>
             </el-tooltip>
-            <el-tag v-if="scope.row.status === 5" type="info">数据打包已取消</el-tag>
+            <el-tag v-else :type="currentStatus(scope.row.status) && currentStatus(scope.row.status).type">{{ currentStatus(scope.row.status) && currentStatus(scope.row.status).value }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="action" label="操作" width="100">
@@ -77,7 +81,34 @@ export default {
       listQuery: {
         currentPage: 1
       },
-      loadingList: false
+      loadingList: false,
+      exportStatus: [
+        {
+          status: '1',
+          type: 'info',
+          value: '等待数据打包'
+        },
+        {
+          status: '2',
+          type: '',
+          value: '数据打包中'
+        },
+        {
+          status: '3',
+          type: 'success',
+          value: '数据打包完成'
+        },
+        {
+          status: '4',
+          type: 'danger',
+          value: '数据打包失败'
+        },
+        {
+          status: '5',
+          type: 'info',
+          value: '数据打包已取消'
+        }
+      ]
     }
   },
   computed: {
@@ -111,10 +142,20 @@ export default {
       if (path) {
         const nameArr = path.split('/')
         const sortnameArr = nameArr[nameArr.length - 1].split('-')
-        filePathObj.name = Array.isArray(nameArr) && nameArr.length ? nameArr[nameArr.length - 1] : ''
-        filePathObj.sortName = Array.isArray(sortnameArr) && sortnameArr.length > 1 ? `订单列表-${sortnameArr[1]}.zip` : ''
+        filePathObj.name =
+          Array.isArray(nameArr) && nameArr.length
+            ? nameArr[nameArr.length - 1]
+            : ''
+        filePathObj.sortName =
+          Array.isArray(sortnameArr) && sortnameArr.length > 1
+            ? `订单列表-${sortnameArr[1]}.zip`
+            : ''
       }
       return filePathObj
+    },
+    // 计算当前打包状态
+    currentStatus(statu) {
+      return this.exportStatus.find(item => item.status === statu.toString())
     }
   }
 }
