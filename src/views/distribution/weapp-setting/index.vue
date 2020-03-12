@@ -379,8 +379,16 @@ export default {
       }
     }, 3000),
     updateStoreNameService: throttle(async function() {
+      const changeStoreName = this.changeStoreName && this.changeStoreName.replace(/\s+/g, '')
+      if (!changeStoreName) {
+        this.$message({
+          message: '名称不能为空',
+          type: 'error'
+        })
+        return
+      }
       const { code } = await DistributionService.updateStoreName(
-        this.changeStoreName
+        changeStoreName
       )
       if (code === '10000') {
         this.$message({ type: 'success', message: '修改成功' })
