@@ -47,7 +47,7 @@
             <a
               v-if="!!scope.row.filePath && scope.row.status === 3"
               style="padding: 9px 15px;font-size: 12px;border-radius: 3px;background-color: #147de8;color: #fff"
-              :href="configOss(scope.row.filePath)"
+              :href="configOrderOss(scope.row.filePath)"
               download
             >下载</a>
           </template>
