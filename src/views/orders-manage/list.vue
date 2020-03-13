@@ -929,6 +929,8 @@ import { mapGetters } from 'vuex'
 import { getMyStoreList } from '@/api/store-goods'
 // import { getStoreList } from '@/api/depot'
 import { checkNumberdouble } from '@/utils/validate'
+import { throttle } from '@/utils/throttle'
+
 import crypto from 'crypto'
 import {
   getOrderList,
@@ -1796,7 +1798,7 @@ export default {
         this.mySelectList.push(row)
       }
     },
-    exportFunc() {
+    exportFunc: throttle(async function() {
       console.log('导出')
       exportData(this.listQuery)
         .then(res => {
@@ -1825,7 +1827,7 @@ export default {
         .catch(error => {
           console.log('导出错误-----------', error)
         })
-    }
+    }, 3000)
   }
 }
 </script>
