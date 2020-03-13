@@ -53,7 +53,7 @@
         class="table-box webkit-scroll"
         style="height: calc(100% - 180px);overflow: auto"
       >
-        <el-table :data="tableData" style="width: 100%">
+        <el-table v-loading="loading" :data="tableData" style="width: 100%">
           <el-table-column prop="name" label="标题" min-width="150" />
           <el-table-column
             prop="startTime"
@@ -74,16 +74,15 @@
               <el-tag v-else size="small" type="danger">已结束</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="状态" min-width="60" align="center">
-            <template slot-scope="scope">
-              <el-tag v-if=" scope.row.status === 0" size="small" type="info">失效</el-tag>
-              <el-tag v-else type="success" size="small">已生效</el-tag>
+          <!-- <el-table-column label="状态" min-width="60" align="center">
+            <template>
+              <el-tag type="success" size="small">已生效</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="操作" width="262">
             <template slot-scope="scope">
               <el-button v-if="scope.row.schedule===0" plain size="mini" @click="toEdit(scope.row)">编辑</el-button>
-              <el-button v-if="scope.row.schedule===0||scope.row.schedule===1" plain size="mini" @click="toEdit(scope.row, 1)">查看数据</el-button>
+              <!-- <el-button v-if="scope.row.schedule===0||scope.row.schedule===1" plain size="mini" @click="toEdit(scope.row, 1)">查看数据</el-button> -->
               <template v-if="scope.row.schedule===0||scope.row.schedule===2">
                 <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
@@ -122,7 +121,7 @@
           <el-table-column label="商品" min-width="200">
             <template slot-scope="scope">
               <div class="goods-info">
-                <el-image :src="scope.row.img" style="width:100px" />
+                <el-image :src="showImg(scope.row.imgUrl)" style="width:100px" />
                 <div class="goods-txt">
                   <p v-text="scope.row.productName" />
                   <div style="display:flex;justify-content: space-between;">
@@ -180,6 +179,7 @@ Vue.use(VueClipboard)
 export default {
   data() {
     return {
+      loading: false,
       searchForm: {
         name: '',
         storeId: '',
@@ -427,7 +427,7 @@ export default {
         storeId: this.searchForm.storeId,
         schedule: this.searchForm.timeStatus
       }
-      console.log('params', params)
+      this.loading = true
       getAssembleList(params).then(res => {
         if (res.code === '10000') {
           this.tableData = res.data.data
@@ -439,6 +439,9 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.loading = false
+      }).catch(_ => {
+        this.loading = false
       })
     },
     _delData(id) {
@@ -509,6 +512,7 @@ export default {
   display: flex;
   .goods-txt{
     margin-left: 10px;
+    flex:1
   }
   .price{
     font-size: 18px;
