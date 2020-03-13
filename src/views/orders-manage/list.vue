@@ -1,12 +1,8 @@
 <template>
   <div class="app-container">
     <div v-loading="loadingList" class="store-goods-wrapper order-list">
-
       <section @keydown.enter="_loadList">
-        <div
-          class="search-form order-form"
-          style="margin-top:20px;margin-bottom:10px"
-        >
+        <div class="search-form order-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">订单搜索</span>
             <el-select
@@ -17,14 +13,19 @@
               :loading="selectloading"
               @change="searchSelectChange"
             >
-              <el-option v-for="itemOp in options" :key="itemOp.value" :value="itemOp.value" :label="itemOp.label" />
+              <el-option
+                v-for="itemOp in options"
+                :key="itemOp.value"
+                :value="itemOp.value"
+                :label="itemOp.label"
+              />
             </el-select>
           </div>
           <div class="search-item">
             <el-input
               v-model.trim="listQuery.searchValue"
               size="small"
-              placeholder=""
+              placeholder
               @keyup.enter.native="listQuery.currentPage=1;_loadList()"
             />
           </div>
@@ -53,11 +54,7 @@
         <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品名称</span>
-            <el-input
-              v-model.trim="listQuery.proName"
-              size="small"
-              placeholder="商品名称"
-            />
+            <el-input v-model.trim="listQuery.proName" size="small" placeholder="商品名称" />
           </div>
           <div class="search-item">
             <span class="label-name">订单类型</span>
@@ -67,7 +64,7 @@
               placeholder="订单类型"
               @change="handleChangeCommodityType"
             >
-              <el-option label="全部" value="" />
+              <el-option label="全部" value />
               <el-option label="处方药订单" value="1" />
               <el-option label="普通订单" value="0" />
               <!-- <el-option label="积分订单" value="V" /> -->
@@ -83,7 +80,7 @@
             >
               <el-option label="微商城" value="1" />
             </el-select>
-          </div> -->
+          </div>-->
           <div class="search-item">
             <span class="label-name">订单状态</span>
             <el-select
@@ -92,7 +89,7 @@
               placeholder="订单状态"
               @change="handleChangeOrderStatus"
             >
-              <el-option label="全部" value="" />
+              <el-option label="全部" value />
               <el-option label="待付款" value="2" />
               <el-option label="待发货" value="4" />
               <el-option label="已发货" value="6" />
@@ -100,10 +97,10 @@
               <el-option label="已完成" value="12" />
               <el-option label="待退款" value="10" />
               <!-- <el-option label="退货中" value="10" /> -->
-              <el-option label="退货中" value="8" />  <!--待退货  == 退货中-->
+              <el-option label="退货中" value="8" />
+              <!--待退货  == 退货中-->
               <el-option label="退款完成" value="30" />
               <el-option label="已取消" value="20" />
-
             </el-select>
           </div>
           <div class="search-item">
@@ -114,7 +111,7 @@
               placeholder="收货方式"
               @change="handleChangeCommodityType"
             >
-              <el-option label="全部" value="" />
+              <el-option label="全部" value />
               <el-option label="普通快递" value="0" />
               <el-option label="配送上门" value="1" />
               <el-option label="门店自提" value="2" />
@@ -132,7 +129,7 @@
               <el-option label="快递配送" value="2" />
               <el-option label="门店员工配送" value="3" />
             </el-select>
-          </div> -->
+          </div>-->
           <div class="search-item">
             <span class="label-name">所在门店</span>
             <el-select
@@ -143,8 +140,13 @@
               :loading="selectloading"
               @change="handleChangeStore"
             >
-              <el-option label="全部" value="" />
-              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName+'('+item.stCode+')'" :value="item.id" />
+              <el-option label="全部" value />
+              <el-option
+                v-for="(item,index) in storeList"
+                :key="index"
+                :label="item.stName+'('+item.stCode+')'"
+                :value="item.id"
+              />
             </el-select>
           </div>
           <div class="search-item">
@@ -155,8 +157,13 @@
               placeholder="请输入关键词"
               @change="handleChangeEmpId"
             >
-              <el-option label="全部" value="" />
-              <el-option v-for="(item,indexEmp) in employeeData" :key="indexEmp" :label="item.empName+'('+item.empCode+')'" :value="item.id" />
+              <el-option label="全部" value />
+              <el-option
+                v-for="(item,indexEmp) in employeeData"
+                :key="indexEmp"
+                :label="item.empName+'('+item.empCode+')'"
+                :value="item.id"
+              />
             </el-select>
           </div>
           <div class="search-item">
@@ -167,7 +174,7 @@
               placeholder="支付方式"
               @change="handleChangeCommodityType"
             >
-              <el-option label="全部" value="" />
+              <el-option label="全部" value />
               <el-option label="在线支付" value="0" />
               <el-option label="货到付款" value="1" />
             </el-select>
@@ -176,7 +183,12 @@
         <div class="search-form" style="margin-bottom:20px;margin-left:80px">
           <div class="search-item">
             <el-button type="primary" size="small" @click="listQuery.currentPage=1;_loadList()">查询</el-button>
-            <el-button type="" size="small" @click="resetQuery">重置</el-button>
+            <el-button type size="small" @click="resetQuery">重置</el-button>
+            <el-button type="primary" size="small" @click="exportFunc">
+              导出
+              <i class="el-icon-download el-icon--right" />
+            </el-button>
+            <export-table />
           </div>
         </div>
       </section>
@@ -186,7 +198,7 @@
           size="small"
           @change="listQuery.currentPage = 1;_loadList()"
         >
-          <el-radio-button label="">全部</el-radio-button>
+          <el-radio-button label>全部</el-radio-button>
           <el-radio-button label="2">待付款</el-radio-button>
           <el-radio-button v-loading="loadingCountReceived" label="4">
             待发货
@@ -224,29 +236,31 @@
               <div v-for="(item,index) in tableData" :key="index" class="order-table-body">
                 <div class="order-detail-header">
                   <div class="header-left">
-                    <div class="header-cell">
-                      订单编号：
-                    </div>
-                    <div class="header-cell">
-                      {{ item.serialNumber }}（{{ item.prescriptionSheetMark | orderType }}）
-                    </div>
+                    <div class="header-cell">订单编号：</div>
+                    <div
+                      class="header-cell"
+                    >{{ item.serialNumber }}（{{ item.prescriptionSheetMark | orderType }}）</div>
                   </div>
                   <div class="header-right">
                     <div class="header-cell">
                       <!-- <div class="header-cell" @click="orderDetail(item.id,item.orderStatus)"> -->
-                      <a :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"> 订单详情</a>
+                      <a
+                        :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"
+                      >订单详情</a>
                     </div>
                   </div>
                 </div>
                 <div class="order-detail-body">
                   <div class="body-cell cell-left">
                     <div v-if="item.detailList" class="goods-list">
-                      <div v-for="(list,index2) in item.detailList" :key="index2" class="goods-item">
+                      <div
+                        v-for="(list,index2) in item.detailList"
+                        :key="index2"
+                        class="goods-item"
+                      >
                         <div class="goods-img padding10">
                           <!-- <img src="" width="100" height="100"> -->
-                          <div
-                            v-if="list.mpic && list.mpic!==''"
-                          >
+                          <div v-if="list.mpic && list.mpic!==''">
                             <div class="x-image__preview">
                               <el-image
                                 :src="showImg(list.mpic)"
@@ -257,7 +271,10 @@
                           <div v-else style="line-height: 32px">暂无上传</div>
                         </div>
                         <div class="goods-info padding10">
-                          <div class="goods-name" :title="list.commodityName">{{ list.commodityName }}</div>
+                          <div
+                            class="goods-name"
+                            :title="list.commodityName"
+                          >{{ list.commodityName }}</div>
                           <div class="goods-state">
                             <template v-if="item.prescriptionSheetMark === '0'">
                               <template v-if="list.status===6">
@@ -274,25 +291,40 @@
                           <div class="goods-num">({{ list.commodityNumber }}件)</div>
                           <!-- <template v-if="list.status===4&& item.deliveryType!==2 && item.detailList.length>1">
                             <div class="order_btn btn_normal" style="text-align:right"><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
-                          </template> -->
+                          </template>-->
                           <template v-if="list.status===8||list.status===10">
-                            <div class="goods-remark marginTop10" @click="dialogRefundReasonVisible = true;lookRefundReason(list.id)">查看退款理由</div>
+                            <div
+                              class="goods-remark marginTop10"
+                              @click="dialogRefundReasonVisible = true;lookRefundReason(list.id)"
+                            >查看退款理由</div>
                           </template>
                           <template v-if="list.status===10 && item.payMode===0">
                             <div class="order_btn" style="text-align:right">
-                              <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,list.id,list.commodityName)">拒绝</el-button>
-                              <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)">退款</el-button>
+                              <el-button
+                                type="warning"
+                                size="mini"
+                                @click="dialogPendingRefundVisible = true;rejectRefund(item.id,list.id,list.commodityName)"
+                              >拒绝</el-button>
+                              <el-button
+                                type="success"
+                                size="mini"
+                                @click="dialogPendingAgreeVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)"
+                              >退款</el-button>
                             </div>
                           </template>
                           <template v-if="list.status===8">
                             <div class="order_btn btn_normal" style="text-align:right">
-                              <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)">收到退货</el-button></div>
+                              <div>
+                                <el-button
+                                  type="primary"
+                                  size="mini"
+                                  @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)"
+                                >收到退货</el-button>
+                              </div>
                             </div>
                           </template>
-
                         </div>
                       </div>
-
                     </div>
                   </div>
                   <div class="body-cell cell-right padding10">
@@ -369,7 +401,7 @@
                                   <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
                                   <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">退款</el-button>
                                 </div>
-                              </template> -->
+                              </template>-->
                             </template>
                           </template>
                           <template v-if="item.orderStatus===8">
@@ -377,7 +409,7 @@
                             <div>（审批未通过）</div>
                             <!-- <template v-if="item.detailList.length===1">
                               <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
-                            </template> -->
+                            </template>-->
                           </template>
                           <template v-if="item.orderStatus===30">
                             <div>退款完成</div>
@@ -391,11 +423,12 @@
                             <div>已完成</div>
                             <div>（审批未通过）</div>
                           </template>
-
                         </template>
                       </template>
 
-                      <template v-if="item.prescriptionSheetMark === '0' || item.prescriptionStatus===2">
+                      <template
+                        v-if="item.prescriptionSheetMark === '0' || item.prescriptionStatus===2"
+                      >
                         <template v-if="item.orderStatus===2">
                           <div>待付款</div>
                         </template>
@@ -403,10 +436,17 @@
                           <div>待发货</div>
                           <!-- <template v-if="item.deliveryType!==2 && item.detailList.length===1">
                           <div><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
-                        </template> -->
+                          </template>-->
                           <template v-if="item.deliveryType!==2">
                             <!-- <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
-                            <div><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
+                            <div>
+                              <el-button
+                                v-if="showSendBtn"
+                                type="primary"
+                                size="mini"
+                                @click="dialogDeliveryVisible = true;immediateDelivery(item)"
+                              >立即发货</el-button>
+                            </div>
                           </template>
                         </template>
                         <template v-if="item.orderStatus===6 && item.deliveryType===2">
@@ -424,14 +464,14 @@
                                 <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
                                 <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">退款</el-button>
                               </div>
-                            </template> -->
+                            </template>-->
                           </template>
                         </template>
                         <template v-if="item.orderStatus===8">
                           <div>退货中</div>
                           <!-- <template v-if="item.detailList.length===1">
                             <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
-                          </template> -->
+                          </template>-->
                         </template>
                         <template v-if="item.orderStatus===30">
                           <div>退款完成</div>
@@ -448,15 +488,43 @@
                       </template>
                       <template v-if="item.prescriptionStatus===3 && item.prescriptionSheetMark === '1'">
                         <div>审批不通过</div>
-                      </template> -->
+                      </template>-->
                     </div>
                   </div>
-                  <div class="body-cell cell-right padding10"><div class="cell-text">微商城</div></div>
-                  <div class="body-cell cell-right padding10"><div class="cell-text">￥<template v-if="item.couponDeduction"><span>{{ item.couponDeduction }}</span></template><template v-else><span>0</span></template></div></div>
+                  <div class="body-cell cell-right padding10">
+                    <div class="cell-text">微商城</div>
+                  </div>
                   <div class="body-cell cell-right padding10">
                     <div class="cell-text">
-                      <div>￥<template v-if="item.actuallyPaid"><span>{{ item.actuallyPaid }}</span></template><template v-else><span>0</span></template></div>
-                      <div>（含运费<template v-if="item.actualFreightAmount"><span>{{ item.actualFreightAmount }}</span></template><template v-else><span>0</span></template>元）</div>
+                      ￥
+                      <template v-if="item.couponDeduction">
+                        <span>{{ item.couponDeduction }}</span>
+                      </template>
+                      <template v-else>
+                        <span>0</span>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="body-cell cell-right padding10">
+                    <div class="cell-text">
+                      <div>
+                        ￥
+                        <template v-if="item.actuallyPaid">
+                          <span>{{ item.actuallyPaid }}</span>
+                        </template>
+                        <template v-else>
+                          <span>0</span>
+                        </template>
+                      </div>
+                      <div>
+                        （含运费
+                        <template v-if="item.actualFreightAmount">
+                          <span>{{ item.actualFreightAmount }}</span>
+                        </template>
+                        <template v-else>
+                          <span>0</span>
+                        </template>元）
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -480,7 +548,14 @@
     </div>
 
     <!-- 立即发货弹出框 -->
-    <el-dialog v-loading="loadingSendNow" title="请选择发货商品" :show-close="false" width="40%" :visible.sync="dialogDeliveryVisible" append-to-body>
+    <el-dialog
+      v-loading="loadingSendNow"
+      title="请选择发货商品"
+      :show-close="false"
+      width="40%"
+      :visible.sync="dialogDeliveryVisible"
+      append-to-body
+    >
       <el-table
         ref="multipleTable"
         v-loading="loadingSend"
@@ -535,7 +610,7 @@
             <el-option label="区域二" value="beijing" />
           </el-select>
         </el-form-item>
-      </el-form> -->
+      </el-form>-->
       <el-form class="marginTop20">
         <el-form-item :model="orderId" label="订单号：" :label-width="labelWidth">
           <template>
@@ -545,12 +620,28 @@
         <!-- 普通发货 -->
         <template v-if="deliveryType===0">
           <el-form-item label="快递公司：" :label-width="labelWidth">
-            <el-select v-model="expressQuery.expComName" filterable placeholder="请输入关键词" @change="handleChangeExpress">
-              <el-option v-for="(item,index_ec) in ExpressData" :key="index_ec" :label="item.expComName" :value="[item.expComCode,item.expComName]" />
+            <el-select
+              v-model="expressQuery.expComName"
+              filterable
+              placeholder="请输入关键词"
+              @change="handleChangeExpress"
+            >
+              <el-option
+                v-for="(item,index_ec) in ExpressData"
+                :key="index_ec"
+                :label="item.expComName"
+                :value="[item.expComCode,item.expComName]"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="快递单号：" :label-width="labelWidth">
-            <el-input v-model="packageNo" autocomplete="off" style="width:200px;" placeholder="请输入快递单号" size="small" />
+            <el-input
+              v-model="packageNo"
+              autocomplete="off"
+              style="width:200px;"
+              placeholder="请输入快递单号"
+              size="small"
+            />
           </el-form-item>
         </template>
         <!-- 配送发货 -->
@@ -562,7 +653,12 @@
               placeholder="请输入关键词"
               @change="handleChangeDelivery"
             >
-              <el-option v-for="(item,indexEmp2) in employeeData" :key="indexEmp2" :label="item.empName" :value="item.id" />
+              <el-option
+                v-for="(item,indexEmp2) in employeeData"
+                :key="indexEmp2"
+                :label="item.empName"
+                :value="item.id"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="当前已选：" :label-width="labelWidth">
@@ -572,7 +668,12 @@
           </el-form-item>
           <template v-if="employeeUsual.length>0">
             <el-form-item label="常用配送员：" :label-width="labelWidth">
-              <el-button v-for="(itemEmployee,indexUsual) in employeeUsual" :key="indexUsual" type="" @click="setEmployeeData(itemEmployee)">{{ itemEmployee.deliveryUserName }}</el-button>
+              <el-button
+                v-for="(itemEmployee,indexUsual) in employeeUsual"
+                :key="indexUsual"
+                type
+                @click="setEmployeeData(itemEmployee)"
+              >{{ itemEmployee.deliveryUserName }}</el-button>
             </el-form-item>
           </template>
         </template>
@@ -594,11 +695,16 @@
       :data="orderDetailId"
     >
       <div class="dialog-title">拒绝订单{{ serialNum }}中{{ commodityName }}的退款吗？</div>
-      <div> 拒绝退款后买家将不能再次发起申请，请确保与买家协商一致后再拒绝
-        <!--<a href="">联系买家</a>--></div>
+      <div>
+        拒绝退款后买家将不能再次发起申请，请确保与买家协商一致后再拒绝
+        <!--<a href="">联系买家</a>-->
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogPendingRefundVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogPendingRefundVisible = false;rejectRefundEnter(orderDetailId)">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="dialogPendingRefundVisible = false;rejectRefundEnter(orderDetailId)"
+        >确 定</el-button>
       </span>
     </el-dialog>
 
@@ -614,7 +720,13 @@
     >
       <el-form ref="basic" :model="agreeRefundForm" class="marginTop20" :rules="basicRules">
         <el-form-item label="请输入退款金额：" prop="actualRefundAmount" :label-width="labelWidth" required>
-          <el-input v-model="agreeRefundForm.actualRefundAmount" autocomplete="off" style="width:200px;" placeholder="请输入退款金额" size="small" />
+          <el-input
+            v-model="agreeRefundForm.actualRefundAmount"
+            autocomplete="off"
+            style="width:200px;"
+            placeholder="请输入退款金额"
+            size="small"
+          />
         </el-form-item>
         <el-form-item label="最高退款金额:" :label-width="labelWidth">
           <div>
@@ -627,13 +739,23 @@
         </el-form-item>
         <template v-if="isCheckPwd===0">
           <el-form-item label="身份验证：" prop="pwd" :label-width="labelWidth" required>
-            <el-input v-model="agreeRefundForm.pwd" type="password" autocomplete="off" style="width:200px;" placeholder="请输入登录密码" size="small" />
+            <el-input
+              v-model="agreeRefundForm.pwd"
+              type="password"
+              autocomplete="off"
+              style="width:200px;"
+              placeholder="请输入登录密码"
+              size="small"
+            />
           </el-form-item>
         </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogPendingAgreeVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogPendingAgreeVisible = false;isRefundStatus='1';agreeRefundEnter()">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="dialogPendingAgreeVisible = false;isRefundStatus='1';agreeRefundEnter()"
+        >确 定</el-button>
       </span>
     </el-dialog>
 
@@ -653,7 +775,7 @@
         <el-button @click="dialogPickUpVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogPickUpVisible = false">确 定</el-button>
       </span>
-    </el-dialog> -->
+    </el-dialog>-->
 
     <!-- 确认退货 收到退货---线上支付-->
     <el-dialog
@@ -669,16 +791,27 @@
       <div class="color-gray marginTop20" style="text-align:center">同意退款后将退回该待退款订单中的货款</div>
       <el-form ref="basic" class="marginTop20" :model="agreeRefundForm">
         <el-form-item label="请输入退款金额：" :label-width="labelWidth">
-          <el-input v-model="agreeRefundForm.actualRefundAmount" autocomplete="off" style="width:200px;" value="" placeholder="请输入退款金额" size="small" />
+          <el-input
+            v-model="agreeRefundForm.actualRefundAmount"
+            autocomplete="off"
+            style="width:200px;"
+            value
+            placeholder="请输入退款金额"
+            size="small"
+          />
         </el-form-item>
         <el-form-item label="最高退款金额：" :label-width="labelWidth">
-          <div><span class="color-red">￥{{ payMoney }}</span> <span class="color-gray">(不可大于商品实付金额)</span></div>
+          <div>
+            <span class="color-red">￥{{ payMoney }}</span>
+            <span class="color-gray">(不可大于商品实付金额)</span>
+          </div>
         </el-form-item>
         <template v-if="isLastRefund">
           <el-form-item label="是否退回运费：" :label-width="labelWidth">
             <template>
               <div class="con">
-                <el-radio-group v-model="isReturnFreight">  <!--v-model="settingData.couponCost"-->
+                <el-radio-group v-model="isReturnFreight">
+                  <!--v-model="settingData.couponCost"-->
                   <el-radio name="radio_coupon" :label="0">否</el-radio>
                   <el-radio name="radio_coupon" :label="1">是</el-radio>
                 </el-radio-group>
@@ -688,13 +821,23 @@
         </template>
         <template v-if="isCheckPwd===0">
           <el-form-item label="身份验证：" :label-width="labelWidth">
-            <el-input v-model="agreeRefundForm.pwd" type="password" autocomplete="off" style="width:200px;" placeholder="请输入登录密码" size="small" />
+            <el-input
+              v-model="agreeRefundForm.pwd"
+              type="password"
+              autocomplete="off"
+              style="width:200px;"
+              placeholder="请输入登录密码"
+              size="small"
+            />
           </el-form-item>
         </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogConfirmReturnOnlVisible = false;isReturnFreight=0">取 消</el-button>
-        <el-button type="primary" @click="dialogConfirmReturnOnlVisible = false;isRefundStatus='2';agreeRefundEnter()">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="dialogConfirmReturnOnlVisible = false;isRefundStatus='2';agreeRefundEnter()"
+        >确 定</el-button>
       </span>
     </el-dialog>
 
@@ -712,12 +855,21 @@
       <div class="color-gray marginTop20" style="text-align:center">操作确认退货后，订单将显示退款完成状态</div>
       <el-form ref="basic" class="marginTop20" :model="agreeRefundForm">
         <el-form-item label="身份验证：" :label-width="labelWidth">
-          <el-input v-model="agreeRefundForm.pwd" autocomplete="off" style="width:200px;" placeholder="请输入登录密码" size="small" />
+          <el-input
+            v-model="agreeRefundForm.pwd"
+            autocomplete="off"
+            style="width:200px;"
+            placeholder="请输入登录密码"
+            size="small"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogConfirmReturnVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogConfirmReturnVisible = false;isRefundStatus='3';agreeRefundEnter()">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="dialogConfirmReturnVisible = false;isRefundStatus='3';agreeRefundEnter()"
+        >确 定</el-button>
       </span>
     </el-dialog>
 
@@ -758,31 +910,48 @@
         </el-form-item>
         <!-- <div class="float-right">
           <a href="">联系买家</a>
-        </div> -->
+        </div>-->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogRefundReasonVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogRefundReasonVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-
   </div>
 </template>
 <script>
 import ps from '@/layout/psHandler'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
+import exportTable from './export-table'
 import { mapGetters } from 'vuex'
 // import { getTypeTree } from '@/api/group'
 import { getMyStoreList } from '@/api/store-goods'
 // import { getStoreList } from '@/api/depot'
 import { checkNumberdouble } from '@/utils/validate'
+import { throttle } from '@/utils/throttle'
+
 import crypto from 'crypto'
-import { getOrderList, getRefundReturn, employeeSearch, setRejectRefund, setAgreeRefund, getCountReceived, getUnReceiveData, getExpressCompany, setOrderSend, getEmployeeUsual, getCheckPwd, getRefundFreight } from '@/api/order'
+import {
+  getOrderList,
+  getRefundReturn,
+  employeeSearch,
+  setRejectRefund,
+  setAgreeRefund,
+  getCountReceived,
+  getUnReceiveData,
+  getExpressCompany,
+  setOrderSend,
+  getEmployeeUsual,
+  getCheckPwd,
+  getRefundFreight
+} from '@/api/order'
+import { exportData } from '@/api/task'
 export default {
-  components: { Pagination },
+  components: { Pagination, exportTable },
   filters: {
-    orderType: function(value) { // 订单类型
+    orderType: function(value) {
+      // 订单类型
       if (value === '0') {
         return '普通订单'
       }
@@ -793,7 +962,8 @@ export default {
       //   return '积分订单'
       // }
     },
-    orderStatus: function(value) { // 订单状态
+    orderStatus: function(value) {
+      // 订单状态
       if (value === 2) {
         return '待付款'
       }
@@ -822,14 +992,16 @@ export default {
         return '退款完成'
       }
     },
-    receiverMobile: function(value) { // 手机号中间4位用*表示
+    receiverMobile: function(value) {
+      // 手机号中间4位用*表示
       const reg = /^(\d{3})\d{4}(\d{4})$/
       return value.replace(reg, '$1****$2')
     }
   },
   mixins: [mixins],
   data() {
-    const _checkRefundAmount = (rule, value, callback) => { // 退款金额验证
+    const _checkRefundAmount = (rule, value, callback) => {
+      // 退款金额验证
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
@@ -848,62 +1020,67 @@ export default {
     }
     return {
       showListLoading: true,
-      pickerOptions: { // 时间控件相关
-        shortcuts: [{
-          text: '今天',
-          onClick(picker) {
-            let end = new Date()
-            let start = new Date()
-            const year = new Date().getFullYear()
-            const month = new Date().getMonth() + 1
-            const day = new Date().getDate()
-            // const hours = end.getHours()
-            // const minutes = end.getMinutes()
-            // const seconds = end.getSeconds()
-            // end = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
-            start = year + '-' + month + '-' + day + ' ' + '00:00:00'
-            end = year + '-' + month + '-' + day + ' ' + '23:59:59'
+      pickerOptions: {
+        // 时间控件相关
+        shortcuts: [
+          {
+            text: '今天',
+            onClick(picker) {
+              let end = new Date()
+              let start = new Date()
+              const year = new Date().getFullYear()
+              const month = new Date().getMonth() + 1
+              const day = new Date().getDate()
+              // const hours = end.getHours()
+              // const minutes = end.getMinutes()
+              // const seconds = end.getSeconds()
+              // end = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+              start = year + '-' + month + '-' + day + ' ' + '00:00:00'
+              end = year + '-' + month + '-' + day + ' ' + '23:59:59'
 
-            picker.$emit('pick', [start, end])
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '昨天',
+            onClick(picker) {
+              let end = new Date()
+              let start = new Date()
+              const year = new Date().getFullYear()
+              const month = new Date().getMonth() + 1
+              const day = new Date().getDate() - 1
+              start = year + '-' + month + '-' + day + ' ' + '00:00:00'
+              end = year + '-' + month + '-' + day + ' ' + '23:59:59'
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近7天',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近30天',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '昨天',
-          onClick(picker) {
-            let end = new Date()
-            let start = new Date()
-            const year = new Date().getFullYear()
-            const month = new Date().getMonth() + 1
-            const day = new Date().getDate() - 1
-            start = year + '-' + month + '-' + day + ' ' + '00:00:00'
-            end = year + '-' + month + '-' + day + ' ' + '23:59:59'
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近7天',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近30天',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }
-        // }, {
-        //   text: '最近三个月',
-        //   onClick(picker) {
-        //     const end = new Date()
-        //     const start = new Date()
-        //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-        //     picker.$emit('pick', [start, end])
-        //   }
-        // }
+          // }, {
+          //   text: '最近三个月',
+          //   onClick(picker) {
+          //     const end = new Date()
+          //     const start = new Date()
+          //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+          //     picker.$emit('pick', [start, end])
+          //   }
+          // }
         ]
       },
       showSendBtn: ps.showSendGoodsBtn() || false, // 立即发货鉴权
@@ -922,39 +1099,45 @@ export default {
       loading: false,
       selectloading: false,
       listQuery: {
-        'currentPage': 1,
+        currentPage: 1,
         // 'distribution': '', // 配送方式
-        'empId': '', // 接单员工
-        'endDate': '', // 下单结束时间
-        'merCode': '',
-        'orderSearchType': 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
+        empId: '', // 接单员工
+        endDate: '', // 下单结束时间
+        merCode: '',
+        orderSearchType: 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
-        'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货7) ===已发货 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        'prescriptionSheetMark': '', // 订单类型 是不是处方单1、0
-        'payment': '', // 支付方式
-        'proName': '', // 商品名称
-        'receive': '', // 收货方式
-        'searchValue': '', // 搜索内容
-        'startDate': '', // 下单开始时间
-        'isSuper': 0, // 是否是超级管理员
-        'storeId': '' // 下单门店id
+        orderStatus: '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货7) ===已发货 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
+        prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
+        payment: '', // 支付方式
+        proName: '', // 商品名称
+        receive: '', // 收货方式
+        searchValue: '', // 搜索内容
+        startDate: '', // 下单开始时间
+        isSuper: 0, // 是否是超级管理员
+        storeId: '' // 下单门店id
       },
-      options: [{
-        value: 1,
-        label: '订单号'
-      }, {
-        value: 2,
-        label: '收货人姓名'
-      }, {
-        value: 3,
-        label: '收货人手机'
-      }, {
-        value: 4,
-        label: '会员卡号'
-      }],
-      expressQuery: { // 快递公司搜索关键字
-        'expComCode': '', // 快递公司编号
-        'expComName': '' // 快递公司名称
+      options: [
+        {
+          value: 1,
+          label: '订单号'
+        },
+        {
+          value: 2,
+          label: '收货人姓名'
+        },
+        {
+          value: 3,
+          label: '收货人手机'
+        },
+        {
+          value: 4,
+          label: '会员卡号'
+        }
+      ],
+      expressQuery: {
+        // 快递公司搜索关键字
+        expComCode: '', // 快递公司编号
+        expComName: '' // 快递公司名称
       },
       storeList: [], // 门店
       employeeData: [], // 员工
@@ -974,7 +1157,8 @@ export default {
       unReceivedData: [], // 待发货的商品列表
       mySelectList: [], // 选择的商品
       orderSendData: {}, // 立即发货的数据
-      refundData: { // 退款理由
+      refundData: {
+        // 退款理由
         refundReason: '无',
         refundReturnDesc: '无',
         pictureVoucher: ''
@@ -995,7 +1179,8 @@ export default {
       commodityName: '', // 商品名称
       refundPic: [], // 退款理由的图片凭证
       employeeUsual: [], // 常用配送员
-      agreeRefundForm: { // 同意退款的数据
+      agreeRefundForm: {
+        // 同意退款的数据
         actualRefundAmount: 0,
         pwd: ''
       },
@@ -1003,7 +1188,8 @@ export default {
       isReturnFreight: 0, // 是否退回运费
       refundOrderId: '', // 同意退款的订单id
       basicRules: {
-        actualRefundAmount: [{ required: true, message: '请输入退款金额' },
+        actualRefundAmount: [
+          { required: true, message: '请输入退款金额' },
           { validator: _checkRefundAmount, trigger: 'blur' }
         ],
         pwd: [{ required: true, message: '请输入登录密码' }]
@@ -1038,22 +1224,22 @@ export default {
         isSuper = 0
       }
       this.listQuery = {
-        'currentPage': 1,
+        currentPage: 1,
         // 'distribution': '', // 配送方式
-        'empId': '', // 接单员工
-        'endDate': '', // 下单结束时间
-        'merCode': this.merCode,
-        'orderSearchType': 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
+        empId: '', // 接单员工
+        endDate: '', // 下单结束时间
+        merCode: this.merCode,
+        orderSearchType: 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
-        'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        'prescriptionSheetMark': '', // 订单类型 是不是处方单1、0
-        'payment': '', // 支付方式
-        'proName': '', // 商品名称
-        'receive': '', // 收货方式
-        'searchValue': '', // 搜索内容
-        'startDate': '', // 下单开始时间
-        'isSuper': isSuper, // 是否是超级管理员
-        'storeId': '' // 下单门店id
+        orderStatus: '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
+        prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
+        payment: '', // 支付方式
+        proName: '', // 商品名称
+        receive: '', // 收货方式
+        searchValue: '', // 搜索内容
+        startDate: '', // 下单开始时间
+        isSuper: isSuper, // 是否是超级管理员
+        storeId: '' // 下单门店id
       }
       this.dateSelect = '' // 下单时间置空
       this.getList()
@@ -1064,7 +1250,12 @@ export default {
           this._loadList()
         }
       })
-      employeeSearch({ merCode: this.merCode, pageSize: 10000, status: 1 }).then(res => { // 获取门店员工
+      employeeSearch({
+        merCode: this.merCode,
+        pageSize: 10000,
+        status: 1
+      }).then(res => {
+        // 获取门店员工
         if (res.data) {
           this.employeeData = res.data.data
         }
@@ -1086,22 +1277,26 @@ export default {
         isSuper = 0
       }
       this.listQuery.isSuper = isSuper
-      getOrderList(this.listQuery).then(res => {
-        this.loadingList = false
-        const { data, totalCount } = res.data
-        if (data) {
-          this.tableData = data
-        } else {
-          this.tableData = []
-        }
-        this.total = totalCount
-      }).catch(() => {
-        this.loadingList = false
-      })
+      console.log('_loadList_____', this.listQuery)
+      getOrderList(this.listQuery)
+        .then(res => {
+          this.loadingList = false
+          const { data, totalCount } = res.data
+          if (data) {
+            this.tableData = data
+          } else {
+            this.tableData = []
+          }
+          this.total = totalCount
+        })
+        .catch(() => {
+          this.loadingList = false
+        })
       this.showListLoading = false
       this.getpreSendNum() // 获取待发货商品数量
     },
-    _loadStoreList(val = '') { // 加载门店数据
+    _loadStoreList(val = '') {
+      // 加载门店数据
       return new Promise((resolve, reject) => {
         const loading = this.$loading({
           lock: true,
@@ -1109,21 +1304,30 @@ export default {
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         })
-        getMyStoreList({ pageSize: 10000, currentPage: 1, storeName: val, onlineStatus: 1, status: 1 }).then(res => {
-          const { data } = res.data
-          // data.unshift({ id: '', stName: '全部' })
-          this.storeList = data
-          this.selectloading = false
-          loading.close()
-          resolve(data)
-        }).catch((err) => {
-          this.selectloading = false
-          loading.close()
-          reject(err)
+        getMyStoreList({
+          pageSize: 10000,
+          currentPage: 1,
+          storeName: val,
+          onlineStatus: 1,
+          status: 1
         })
+          .then(res => {
+            const { data } = res.data
+            // data.unshift({ id: '', stName: '全部' })
+            this.storeList = data
+            this.selectloading = false
+            loading.close()
+            resolve(data)
+          })
+          .catch(err => {
+            this.selectloading = false
+            loading.close()
+            reject(err)
+          })
       })
     },
-    getpreSendNum() { // 获取待发货商品数量
+    getpreSendNum() {
+      // 获取待发货商品数量
       // let isSuper = 0
       // if (this.roles.includes('admin')) {
       //   isSuper = 1
@@ -1162,7 +1366,8 @@ export default {
         }
       })
     },
-    chooseTimeRange(date) { // 时间选择
+    chooseTimeRange(date) {
+      // 时间选择
       if (!date) {
         this.listQuery.startDate = ''
         this.listQuery.endDate = ''
@@ -1182,7 +1387,8 @@ export default {
     remoteMethod(val) {
       this.selectloading = true
     },
-    handleChangeStore(val) { // 门店选择改变时触发
+    handleChangeStore(val) {
+      // 门店选择改变时触发
       this.storeList.map(v => {
         if (v.id === val) {
           this.chooseStore = v
@@ -1192,7 +1398,8 @@ export default {
       this._loadList()
       this.getpreSendNum() // 获取待发货商品数量
     },
-    handleChangeEmpId(val) { // 接单员工选择改变时触发
+    handleChangeEmpId(val) {
+      // 接单员工选择改变时触发
       this.storeList.map(v => {
         if (v.id === val) {
           this.chooseStore = v
@@ -1202,7 +1409,8 @@ export default {
       this._loadList()
       this.getpreSendNum() // 获取待发货商品数量
     },
-    handleChangeCommodityType(val) { // 商品类型改变时触发
+    handleChangeCommodityType(val) {
+      // 商品类型改变时触发
       this.storeList.map(v => {
         if (v.id === val) {
           this.chooseStore = v
@@ -1211,7 +1419,8 @@ export default {
       this.listQuery.currentPage = 1
       this._loadList()
     },
-    handleChangeOrderStatus(val) { // 订单状态改变时触发
+    handleChangeOrderStatus(val) {
+      // 订单状态改变时触发
       this.storeList.map(v => {
         if (v.id === val) {
           this.chooseStore = v
@@ -1220,7 +1429,8 @@ export default {
       this.listQuery.currentPage = 1
       this._loadList()
     },
-    handleChangeDelivery(val) { // 配送员改变时触发
+    handleChangeDelivery(val) {
+      // 配送员改变时触发
       this.employeeData.forEach(item => {
         if (item.id === val) {
           this.deliveryStuffData.deliveryUserId = item.id
@@ -1230,7 +1440,8 @@ export default {
       })
       this.getpreSendNum() // 获取待发货商品数量
     },
-    handleChangeExpress(val) { // 快递公司选择改变时触发
+    handleChangeExpress(val) {
+      // 快递公司选择改变时触发
       this.expressQuery.currentPage = 1
       // console.log('expressQuery-item:', val)
       this.expressQuery.expComCode = val[0]
@@ -1243,12 +1454,14 @@ export default {
       this.reset()
       this.getpreSendNum() // 获取待发货商品数量
     },
-    immediateDelivery(item) { // 立即发货弹出框
+    immediateDelivery(item) {
+      // 立即发货弹出框
       // console.log('item:', item)
       this.loadingSend = true
       this.deliveryType = item.deliveryType
       this.orderId = item.id
-      getEmployeeUsual(this.merCode).then(res => { // 获取常用配送员
+      getEmployeeUsual(this.merCode).then(res => {
+        // 获取常用配送员
         if (res.data) {
           this.employeeUsual = res.data
         }
@@ -1257,23 +1470,30 @@ export default {
 
       this.unReceivedData = [] // 打开时清空弹框缓存
       // 待发货商品数据
-      getUnReceiveData({ merCode: this.merCode, orderId: item.id, currentPage: 1, pageSize: 20 }).then(res => {
+      getUnReceiveData({
+        merCode: this.merCode,
+        orderId: item.id,
+        currentPage: 1,
+        pageSize: 20
+      }).then(res => {
         this.loadingSend = false
         this.unReceivedData = res.data.data
       })
       this.mySelectList = [] // 打开时清空已选择的商品信息
-      this.expressQuery.expComCode = ''// 弹出时清空已选快递公司
-      this.packageNo = ''// 弹出时清空快递单号
+      this.expressQuery.expComCode = '' // 弹出时清空已选快递公司
+      this.packageNo = '' // 弹出时清空快递单号
       this.ExpressCompany() // 快递公司
     },
-    setEmployeeData(item) { // 选择常用配送员
+    setEmployeeData(item) {
+      // 选择常用配送员
       if (item) {
         this.deliveryStuffData.deliveryUserId = item.deliveryUserId
         this.deliveryStuffData.deliveryName = item.deliveryUserName
         this.deliveryStuffData.deliveryMobile = item.deliveryUserPhone
       }
     },
-    orderSend() { // 立即发货
+    orderSend() {
+      // 立即发货
       this.loadingSendNow = true
       let detailsId = []
 
@@ -1287,7 +1507,9 @@ export default {
         return
       } else {
         const mySelectList = this.mySelectList
-        detailsId = mySelectList.map(item => { return item.id })// 订单明细id集合
+        detailsId = mySelectList.map(item => {
+          return item.id
+        }) // 订单明细id集合
       }
       if (this.deliveryType === 0) {
         if (!this.expressQuery.expComName) {
@@ -1311,14 +1533,14 @@ export default {
         }
 
         this.orderSendData = {
-          'companyName': this.expressQuery.expComName,
-          'companyNo': this.expressQuery.expComCode,
-          'merCode': this.merCode,
-          'modifyName': this.name,
-          'orderId': this.orderId,
-          'packageNo': this.packageNo,
-          'deliveryType': this.deliveryType,
-          'detailsList': detailsId
+          companyName: this.expressQuery.expComName,
+          companyNo: this.expressQuery.expComCode,
+          merCode: this.merCode,
+          modifyName: this.name,
+          orderId: this.orderId,
+          packageNo: this.packageNo,
+          deliveryType: this.deliveryType,
+          detailsList: detailsId
         }
       } else if (this.deliveryType === 1) {
         if (!this.deliveryStuffData.deliveryName) {
@@ -1331,41 +1553,46 @@ export default {
           return
         }
         this.orderSendData = {
-          'companyName': this.expressQuery.expComName,
-          'companyNo': this.expressQuery.expComCode,
-          'merCode': this.merCode,
-          'modifyName': this.name,
-          'orderId': this.orderId,
-          'deliveryType': this.deliveryType,
-          'detailsList': detailsId,
-          'deliveryUserId': this.deliveryStuffData.deliveryUserId,
-          'deliveryUserName': this.deliveryStuffData.deliveryName,
-          'deliveryUserPhone': this.deliveryStuffData.deliveryMobile
+          companyName: this.expressQuery.expComName,
+          companyNo: this.expressQuery.expComCode,
+          merCode: this.merCode,
+          modifyName: this.name,
+          orderId: this.orderId,
+          deliveryType: this.deliveryType,
+          detailsList: detailsId,
+          deliveryUserId: this.deliveryStuffData.deliveryUserId,
+          deliveryUserName: this.deliveryStuffData.deliveryName,
+          deliveryUserPhone: this.deliveryStuffData.deliveryMobile
         }
       }
       // debugger
 
-      setOrderSend(this.orderSendData).then(res => { //
-        this.loadingSendNow = false
-        this.dialogDeliveryVisible = false
-        this.$message({
-          message: '发货成功',
-          type: 'success'
+      setOrderSend(this.orderSendData)
+        .then(res => {
+          //
+          this.loadingSendNow = false
+          this.dialogDeliveryVisible = false
+          this.$message({
+            message: '发货成功',
+            type: 'success'
+          })
+          this.expressQuery.expComName = ''
+          this.getList()
+          this.getpreSendNum() // 获取待发货商品数量
         })
-        this.expressQuery.expComName = ''
-        this.getList()
-        this.getpreSendNum() // 获取待发货商品数量
-      }).catch(res => {
-        this.loadingSendNow = false
-        this.dialogDeliveryVisible = true
-      })
+        .catch(res => {
+          this.loadingSendNow = false
+          this.dialogDeliveryVisible = true
+        })
     },
-    ExpressCompany() { // 获取快递公司
+    ExpressCompany() {
+      // 获取快递公司
       getExpressCompany({ pageSize: 2000 }).then(res => {
         this.ExpressData = res.data.data
       })
     },
-    lookRefundReason(orderId) { // 查看退款理由
+    lookRefundReason(orderId) {
+      // 查看退款理由
       getRefundReturn(orderId).then(res => {
         if (res.data) {
           this.refundData = res.data
@@ -1383,12 +1610,14 @@ export default {
         }
       })
     },
-    rejectRefund(serialNum, detailId, comName) { // 拒绝退款弹框
+    rejectRefund(serialNum, detailId, comName) {
+      // 拒绝退款弹框
       this.serialNum = serialNum
       this.orderDetailId = detailId
       this.commodityName = comName
     },
-    rejectRefundEnter() { // 拒绝退款确定
+    rejectRefundEnter() {
+      // 拒绝退款确定
       const dataParam = {
         merCode: this.merCode,
         orderDetailId: this.orderDetailId,
@@ -1412,7 +1641,8 @@ export default {
         }
       })
     },
-    agreeRefund(orderId, detailId, money, freight, orderStatus) { // 同意退款弹框
+    agreeRefund(orderId, detailId, money, freight, orderStatus) {
+      // 同意退款弹框
       // console.log('paymode:', paymode)
       this.orderDetailId = detailId
       this.payMoney = money
@@ -1425,7 +1655,8 @@ export default {
         merCode: this.merCode,
         orderId: orderId
       }
-      getRefundFreight(params).then(res => { // 验证明细退款是否是最后一笔退款明细
+      getRefundFreight(params).then(res => {
+        // 验证明细退款是否是最后一笔退款明细
         if (res.data === 1) {
           this.isLastRefund = 1
           // this.payMoney = money + freight
@@ -1441,7 +1672,8 @@ export default {
         }
       })
     },
-    agreeRefundEnter() { // 同意退款确定
+    agreeRefundEnter() {
+      // 同意退款确定
       if (this.agreeRefundForm.pwd !== '') {
         const md5 = crypto.createHash('md5')
         md5.update(this.agreeRefundForm.pwd)
@@ -1556,7 +1788,8 @@ export default {
     },
     // 选取商品 表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
-      const index = this.mySelectList.findIndex(mItem => { // 没有符合条件的返回-1
+      const index = this.mySelectList.findIndex(mItem => {
+        // 没有符合条件的返回-1
         return mItem.id === row.id
       })
       if (index > -1) {
@@ -1564,23 +1797,53 @@ export default {
       } else {
         this.mySelectList.push(row)
       }
-    }
+    },
+    exportFunc: throttle(async function() {
+      console.log('导出')
+      exportData(this.listQuery)
+        .then(res => {
+          // if (res.type === 'application/json') {
+          //   this.$message({
+          //     message: '导出的记录为空',
+          //     type: 'error'
+          //   })
+          // } else {
+          //   download.blob(res, '所有订单')
+          //   this.$message({
+          //     message: '数据导出成功',
+          //     type: 'success'
+          //   })
+          // }
+          console.log('导出--------', res)
+          if (res.code === '10000') {
+            this.$alert('订单列表正在导出中，稍后请点击【查看并导出记录】下载导出文件', '订单导出', {
+              confirmButtonText: '好的',
+              center: true,
+              roundButton: true,
+              confirmButtonClass: 'hydee_alert_btn'
+            })
+          }
+        })
+        .catch(error => {
+          console.log('导出错误-----------', error)
+        })
+    }, 3000)
   }
 }
 </script>
 <style lang="scss">
 //订单详情
 .order-table-body-box {
-    height: calc(100vh - 324px);
-    overflow: auto;
-  }
-.order-table{
+  height: calc(100vh - 324px);
+  overflow: auto;
+}
+.order-table {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   // height: 100vh;
 
-  .order-table-header{
+  .order-table-header {
     height: 40px;
     background: #ebebeb;
     display: flex;
@@ -1588,17 +1851,17 @@ export default {
     align-items: center;
     border: solid 1px #dfe6ec;
 
-    .header-left{
+    .header-left {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       width: 30vw;
-      .header-cell{
+      .header-cell {
         flex: 1;
         text-align: center;
       }
     }
-    .header-cell{
+    .header-cell {
       color: #606266;
       font-size: 14px;
       flex: 1;
@@ -1609,70 +1872,69 @@ export default {
     height: calc(100vh - 324px);
     overflow: auto;
   }
-  .order-table-body{
+  .order-table-body {
     margin: 10px 0 0 0;
     border: solid 1px #dfe6ec;
-    .order-detail-header{
+    .order-detail-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: solid 1px #dfe6ec;
-      padding:10px;
-      background:#f8f8f9;
-      .header-left{
+      padding: 10px;
+      background: #f8f8f9;
+      .header-left {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        .header-cell{
+        .header-cell {
           color: #606266;
           font-size: 14px;
-
         }
       }
-      .header-right{
-        .header-cell{
+      .header-right {
+        .header-cell {
           color: #147de8;
           font-size: 14px;
           cursor: pointer;
         }
       }
     }
-    .order-detail-body{
+    .order-detail-body {
       display: flex;
       justify-content: center;
       align-items: stretch;
-      .body-cell{
+      .body-cell {
         flex: 1;
         font-size: 14px;
         color: #606266;
         line-height: 22px;
-        &:nth-last-child(1){
+        &:nth-last-child(1) {
           border-right: none;
         }
-        &.cell-left{
-          border-right: 1px solid #dfe6ec
+        &.cell-left {
+          border-right: 1px solid #dfe6ec;
         }
-        &.cell-right{
+        &.cell-right {
           display: flex;
           justify-content: center;
           align-items: center;
           flex: 1;
           border-right: 1px solid #dfe6ec;
-          .cell-text{
+          .cell-text {
             text-align: center;
           }
         }
-        .goods-list{
+        .goods-list {
           width: 30vw;
-          .goods-item{
+          .goods-item {
             display: flex;
             // justify-content: flex-start;
             // align-items: center;
             border-bottom: solid 1px #dfe6ec;
-            &:nth-last-child(1){
+            &:nth-last-child(1) {
               border-bottom: none;
             }
-            .goods-img{
+            .goods-img {
               width: 100px;
               height: 100px;
               overflow: hidden;
@@ -1681,37 +1943,37 @@ export default {
               //   height: 100%;
               // }
             }
-            .goods-info{
+            .goods-info {
               flex: 1;
               justify-content: space-around;
-              .goods-name{
+              .goods-name {
                 text-align: left;
                 overflow: hidden;
-                text-overflow:ellipsis;
-                white-space:nowrap;
+                text-overflow: ellipsis;
+                white-space: nowrap;
                 width: 200px;
               }
-              .goods-state{
-                color:red;
+              .goods-state {
+                color: red;
                 text-align: left;
               }
-              .goods-number{
+              .goods-number {
                 text-align: left;
               }
             }
-            .goods-info{
+            .goods-info {
               flex: 1;
-              .goods-price{
+              .goods-price {
                 text-align: right;
               }
-              .goods-num{
+              .goods-num {
                 text-align: right;
               }
-              .goods-remark{
+              .goods-remark {
                 text-align: right;
                 color: green;
                 align-items: flex-end;
-                align-content:space-between;
+                align-content: space-between;
                 cursor: pointer;
               }
             }
@@ -1732,28 +1994,28 @@ export default {
       }
     }
   }
-  .cascader{
-      .el-input{
-          width: 300px!important
-      }
+  .cascader {
+    .el-input {
+      width: 300px !important;
+    }
   }
-  .choose-num{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+  .choose-num {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  .edit-tip{
-    i{
+  .edit-tip {
+    i {
       cursor: pointer;
-      &:hover{
-        color: #409eff
+      &:hover {
+        color: #409eff;
       }
     }
   }
 }
-.badge{
+.badge {
   background: red;
-  color:#fff;
+  color: #fff;
   position: absolute;
   top: 3px;
   border-radius: 50%;
@@ -1761,42 +2023,66 @@ export default {
   right: 10px;
 }
 
-.padding10{padding:10px;}
-.marginTop10{ margin-top: 10px;}
-.marginTop20{ margin-top: 20px;}
+.padding10 {
+  padding: 10px;
+}
+.marginTop10 {
+  margin-top: 10px;
+}
+.marginTop20 {
+  margin-top: 20px;
+}
 
-.order_dataTimepicker.el-date-range-picker{left:270px!important} //时间控件弹出框
-.order_tab .el-radio-button--small .el-radio-button__inner{padding:12px 30px}
+.order_dataTimepicker.el-date-range-picker {
+  left: 270px !important;
+} //时间控件弹出框
+.order_tab .el-radio-button--small .el-radio-button__inner {
+  padding: 12px 30px;
+}
 
-.order_btn button{
+.order_btn button {
   width: 40px;
   text-align: center;
-  padding-left:0;
-  padding-right:0;
+  padding-left: 0;
+  padding-right: 0;
 }
-.btn_normal button{
+.btn_normal button {
   width: inherit;
   font-size: 12px;
-  padding-left:8px;
-  padding-right:8px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
-.color-red{color:red;}
-.color-gray{color:#aaa;}
-.float-right{float:right}
-.el-dialog__body{line-height: 22px;}
-.dialog-title{font-size: 16px; font-weight: bold;margin-bottom: 10px;}
-.noneData{
-  border:1px solid #dfe6ec;
+.color-red {
+  color: red;
+}
+.color-gray {
+  color: #aaa;
+}
+.float-right {
+  float: right;
+}
+.el-dialog__body {
+  line-height: 22px;
+}
+.dialog-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.noneData {
+  border: 1px solid #dfe6ec;
   border-top: none;
-  padding:30px;
+  padding: 30px;
   text-align: center;
-  color: #606266
+  color: #606266;
 }
 .order-list .el-input--small .el-input__inner {
-    height: 36px;
-    line-height: 36px;
+  height: 36px;
+  line-height: 36px;
 }
-.marginRight10{margin-right: 10px}
+.marginRight10 {
+  margin-right: 10px;
+}
 .refund-box {
   .el-image {
     width: 100px;
@@ -1805,8 +2091,14 @@ export default {
 }
 </style>
 <style scoped>
-.el-date-range-picker{left:270px!important} /*时间控件弹出框*/
-.el-radio-button--small .el-radio-button__inner{padding:12px 30px}
+.el-date-range-picker {
+  left: 270px !important;
+} /*时间控件弹出框*/
+.el-radio-button--small .el-radio-button__inner {
+  padding: 12px 30px;
+}
+.el-button--small.is-round{
+  padding: 9px 30px;
+}
 /* .order-list .order-form .search-item .label-name{ width: 80px!important;} */
-
 </style>
