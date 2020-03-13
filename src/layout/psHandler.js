@@ -201,6 +201,12 @@ class InnerCtor {
             path: '/storeSetting/internalLink',
             disabled: this.get('set.inner-link'),
             children: []
+          },
+          {
+            name: '微信小程序',
+            path: '/storeSetting/weapp',
+            disabled: this.get('set.wx-mini'),
+            children: []
           }
         ]
       },

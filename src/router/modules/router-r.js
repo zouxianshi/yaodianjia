@@ -15,7 +15,11 @@ const router = [
         component: () => import('@/views/chainSetting/index'),
         name: 'chainSetting',
         hidden: true,
-        meta: { title: '连锁设置', icon: 'chainSetting', auth: 'set.merchant-set' }
+        meta: {
+          title: '连锁设置',
+          icon: 'chainSetting',
+          auth: 'set.merchant-set'
+        }
       },
       {
         path: 'setting',
@@ -29,14 +33,33 @@ const router = [
         component: () => import('@/views/storeSetting/deliverySetting'),
         name: 'deliverySetting',
         hidden: true,
-        meta: { title: '门店配送', icon: 'storeSetting', auth: 'set.store-deliver' }
+        meta: {
+          title: '门店配送',
+          icon: 'storeSetting',
+          auth: 'set.store-deliver'
+        }
       },
       {
         path: 'internalLink',
         component: () => import('@/views/internalLink/index'),
         name: 'internalLink',
         hidden: true,
-        meta: { title: '内部链接', icon: 'internalLink', auth: 'set.inner-link' }
+        meta: {
+          title: '内部链接',
+          icon: 'internalLink',
+          auth: 'set.inner-link'
+        }
+      },
+      {
+        path: 'weapp',
+        component: () => import('@/views/storeSetting/weapp'),
+        name: 'weapp',
+        hidden: true,
+        meta: {
+          title: '微信小程序',
+          icon: 'internalLink',
+          auth: 'set.inner-link'
+        }
       }
     ]
   },
