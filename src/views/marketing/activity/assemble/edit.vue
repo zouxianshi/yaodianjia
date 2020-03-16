@@ -157,7 +157,7 @@ export default {
   data() {
     return {
       formData: {
-        effectiveTime: '',
+        effectiveTime: 12,
         name: '',
         activitTime: '',
         img: '1',

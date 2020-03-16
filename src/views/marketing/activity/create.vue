@@ -8,52 +8,16 @@
         </div>
         <div class="content">
           <ul class="ul-list">
-            <li class="li-item">
+            <li v-for="(item, index) in marketing" :key="index" class="li-item">
               <div class="li-left">
-                <img src="../../../assets/image/icon_limit.png">
+                <img :src="item.icon">
               </div>
               <div class="li-center">
-                <div class="title">限时优惠</div>
-                <div class="desc">包含限时秒杀和限时特惠两种活动方式，秒杀更强调高时效性的低价刺激，可设置独立库存，限时折扣则更侧重于优惠折扣。设置固定周期的限时活动，可提高顾客粘性。</div>
+                <div class="title">{{ item.title }}</div>
+                <div class="desc">{{ item.desc }}</div>
               </div>
               <div class="li-right">
-                <el-button class="btn-create" type="primary" size="mini" @click="toCreate(1)">创建</el-button>
-              </div>
-            </li>
-            <li class="li-item">
-              <div class="li-left">
-                <img src="../../../assets/image/icon_DM.png">
-              </div>
-              <div class="li-center">
-                <div class="title">电子DM单</div>
-                <div class="desc">药店加为商家提供不同节日氛围的DM单模板；丰富的DM单组件，支持商家自己编辑设计专属单页，打破服务号每周四次的图文推送限制，实现不限次数的定向精准推送给顾客，并可以通过好友和朋友圈裂变传播。</div>
-              </div>
-              <div class="li-right">
-                <el-button class="btn-create" type="primary" size="mini" @click="toCreate(2)">创建</el-button>
-              </div>
-            </li>
-            <li class="li-item">
-              <div class="li-left">
-                <img src="../../../assets/image/icon_share_hb.png">
-              </div>
-              <div class="li-center">
-                <div class="title">分享红包</div>
-                <div class="desc">分享红包能够通过优惠券裂变，从而达到社群营销，通过用户主动行为触发分享红包活动，发送到群，用户通过打开链接，领取红包。</div>
-              </div>
-              <div class="li-right">
-                <el-button class="btn-create" type="primary" size="mini" disabled>创建</el-button>
-              </div>
-            </li>
-            <li class="li-item">
-              <div class="li-left">
-                <img src="../../../assets/image/pt.png">
-              </div>
-              <div class="li-center">
-                <div class="title">拼团活动</div>
-                <div class="desc">拼团活动可以为商家做拉新引流计划提供高效的途径，同事拼团活动也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长</div>
-              </div>
-              <div class="li-right">
-                <el-button class="btn-create" type="primary" size="mini" @click="toCreate(4)">创建</el-button>
+                <el-button class="btn-create" type="primary" size="mini" :disabled="item.disabled" @click="toCreate(item.type)">创建</el-button>
               </div>
             </li>
           </ul>
@@ -103,6 +67,37 @@
 <script>
 export default {
   name: 'ActivityCreate',
+  data() {
+    return {
+      marketing: [
+        {
+          icon: require('../../../assets/image/icon_limit.png'),
+          title: '限时优惠',
+          desc: '包含限时秒杀和限时特惠两种活动方式，秒杀更强调高时效性的低价刺激，可设置独立库存，限时折扣则更侧重于优惠折扣。设置固定周期的限时活动，可提高顾客粘性。',
+          type: 1,
+          disabled: false
+        }, {
+          icon: require('../../../assets/image/icon_DM.png'),
+          title: '电子DM单',
+          desc: '药店加为商家提供不同节日氛围的DM单模板；丰富的DM单组件，支持商家自己编辑设计专属单页，打破服务号每周四次的图文推送限制，实现不限次数的定向精准推送给顾客，并可以通过好友和朋友圈裂变传播。',
+          type: 2,
+          disabled: false
+        }, {
+          icon: require('../../../assets/image/icon_share_hb.png'),
+          title: '分享红包',
+          desc: '分享红包能够通过优惠券裂变，从而达到社群营销，通过用户主动行为触发分享红包活动，发送到群，用户通过打开链接，领取红包。',
+          type: 3,
+          disabled: true
+        }, {
+          icon: require('../../../assets/image/pt.png'),
+          title: '拼团活动',
+          desc: '拼团活动可以为商家做拉新引流计划提供高效的途径，同事拼团活动也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长',
+          type: 4,
+          disabled: false
+        }
+      ]
+    }
+  },
   created() {
 
   },

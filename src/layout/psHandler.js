@@ -110,6 +110,11 @@ class InnerCtor {
             path: '/orders-manage/list',
             disabled: this.get('order.order-all')
           },
+          {
+            name: `拼团订单`,
+            path: '/orders-manage/spell-group',
+            // disabled: this.get('order.order-all')
+          },
           // {
           //   name: `订单详情`,
           //   path: '/orders-manage/all-orders/details',
