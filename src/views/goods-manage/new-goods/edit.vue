@@ -1157,13 +1157,13 @@ export default {
                 data.expireDays = parseInt(this.basicForm.days)
               }
             }
-            if (this.chooseGroup.length === 0) {
-              this.$message({
-                message: '请设置商品分组',
-                type: 'error'
-              })
-              return
-            }
+            // if (this.chooseGroup.length === 0) {
+            //   this.$message({
+            //     message: '请设置商品分组',
+            //     type: 'error'
+            //   })
+            //   return
+            // }
             data.groupIds = []
             this.chooseGroup.map(v => {
               data.groupIds.push(v[2].id)
