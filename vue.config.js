@@ -66,12 +66,12 @@ module.exports = {
         logLevel: 'debug',
         pathRewrite: {
           // '^/api': `http://middle.dev.ydjia.cn`
-          '^/api': `http://middle.dev.ydjia.cn`
+          '^/api': `http://middle.uat.ydjia.cn`
         }
       },
       '/hss': {
         // target: `http://middle.test.ydjia.cn/businesses-gateway`,
-        target: `https://middle.dev.ydjia.cn/businesses-gateway/mask`,
+        target: `https://middle.uat.ydjia.cn/businesses-gateway/mask`,
         // target: `http://10.200.25.183:8080`,
         changeOrigin: true,
         pathRewrite: {

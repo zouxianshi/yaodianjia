@@ -251,6 +251,7 @@
                   </div>
                 </div>
                 <div class="order-detail-body">
+                  <!-- 商品展示列 -->
                   <div class="body-cell cell-left">
                     <div v-if="item.detailList" class="goods-list">
                       <div
@@ -289,9 +290,6 @@
                         <div class="goods-info padding10">
                           <div class="goods-price">￥{{ list.commodityPrice }}</div>
                           <div class="goods-num">({{ list.commodityNumber }}件)</div>
-                          <!-- <template v-if="list.status===4&& item.deliveryType!==2 && item.detailList.length>1">
-                            <div class="order_btn btn_normal" style="text-align:right"><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
-                          </template>-->
                           <template v-if="list.status===8||list.status===10">
                             <div
                               class="goods-remark marginTop10"
@@ -327,6 +325,7 @@
                       </div>
                     </div>
                   </div>
+                  <!-- 收货人 -->
                   <div class="body-cell cell-right padding10">
                     <div v-if="item.orderDeliveryAddress" class="cell-text">
                       <div>{{ item.orderDeliveryAddress.receiver }}</div>
@@ -335,153 +334,46 @@
                       </template>
                     </div>
                   </div>
+                  <!-- 下单时间 -->
                   <div class="body-cell cell-right padding10">
                     <div class="cell-text">
                       <div>{{ item.orderTime }}</div>
                     </div>
                   </div>
+                  <!-- 订单状态 -->
                   <div class="body-cell cell-right padding10">
                     <div class="cell-text">
-                      <template v-if="item.prescriptionSheetMark === '1'">
-                        <template v-if="item.prescriptionStatus===0||item.prescriptionStatus===1">
-                          <template v-if="item.orderStatus===2">
-                            <div>待付款</div>
-                          </template>
-                          <template v-if="item.orderStatus===4">
-                            <div>待发货</div>
-                          </template>
-                          <template v-if="item.orderStatus===6 && item.deliveryType===2">
-                            <div>待提货</div>
-                          </template>
-                          <template v-if="item.orderStatus===6 && item.deliveryType!==2">
-                            <div>已发货</div>
-                          </template>
-                          <template v-if="item.detailList">
-                            <template v-if="item.orderStatus===10">
-                              <div>待退款</div>
-                            </template>
-                          </template>
-                          <template v-if="item.orderStatus===8 && item.detailList.length===1">
-                            <div>退货中</div>
-                          </template>
-                          <template v-if="item.orderStatus===30">
-                            <div>退款完成</div>
-                          </template>
-                          <template v-if="item.orderStatus===20">
-                            <div>已取消</div>
-                          </template>
-                          <template v-if="item.orderStatus===12">
-                            <div>已完成</div>
-                          </template>
-                          <div>(处方待审批)</div>
-                        </template>
-                        <template v-if="item.prescriptionStatus===3">
-                          <template v-if="item.orderStatus===2">
-                            <div>待付款</div>
-                            <div>（审批未通过）</div>
-                          </template>
-                          <template v-if="item.orderStatus===4">
-                            <div>待发货</div>
-                            <div>（审批未通过）</div>
-                          </template>
-                          <template v-if="item.orderStatus===6 && item.deliveryType===2">
-                            <div>待提货</div>
-                            <div>（审批未通过）</div>
-                          </template>
-                          <template v-if="item.orderStatus===6 && item.deliveryType!==2">
-                            <div>已发货</div>
-                            <div>（审批未通过）</div>
-                          </template>
-                          <template v-if="item.detailList">
-                            <template v-if="item.orderStatus===10">
-                              <div>待退款</div>
-                              <div>（审批未通过）</div>
-                              <!-- <template v-if="item.detailList.length===1 && item.payMode===0">
-                                <div class="order_btn">
-                                  <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
-                                  <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">退款</el-button>
-                                </div>
-                              </template>-->
-                            </template>
-                          </template>
-                          <template v-if="item.orderStatus===8">
-                            <div>退货中</div>
-                            <div>（审批未通过）</div>
-                            <!-- <template v-if="item.detailList.length===1">
-                              <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
-                            </template>-->
-                          </template>
-                          <template v-if="item.orderStatus===30">
-                            <div>退款完成</div>
-                            <div>（审批未通过）</div>
-                          </template>
-                          <template v-if="item.orderStatus===20">
-                            <div>已取消</div>
-                            <div>（审批未通过）</div>
-                          </template>
-                          <template v-if="item.orderStatus===12">
-                            <div>已完成</div>
-                            <div>（审批未通过）</div>
-                          </template>
-                        </template>
-                      </template>
-
+                      <!-- 当前状态为处方单且部位待付款，待收货等状态且需求单审核状态没通过 -->
                       <template
-                        v-if="item.prescriptionSheetMark === '0' || item.prescriptionStatus===2"
+                        v-if="item.prescriptionSheetMark==='1' && perStatusShow(item.orderStatus) && item.prescriptionStatus !== 2"
                       >
-                        <template v-if="item.orderStatus===2">
-                          <div>待付款</div>
-                        </template>
-                        <template v-if="item.orderStatus===4">
-                          <div>待发货</div>
-                          <!-- <template v-if="item.deliveryType!==2 && item.detailList.length===1">
-                          <div><el-button v-if="showSendBtn" type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div>
-                          </template>-->
-                          <template v-if="item.deliveryType!==2">
-                            <!-- <div><el-button type="primary" size="mini" @click="dialogDeliveryVisible = true;immediateDelivery(item)">立即发货</el-button></div> -->
-                            <div>
-                              <el-button
-                                v-if="showSendBtn"
-                                type="primary"
-                                size="mini"
-                                @click="dialogDeliveryVisible = true;immediateDelivery(item)"
-                              >立即发货</el-button>
-                            </div>
-                          </template>
-                        </template>
-                        <template v-if="item.orderStatus===6 && item.deliveryType===2">
-                          <div>待提货</div>
-                          <!-- <div><el-button type="primary" size="mini" @click="dialogPickUpVisible = true">确认提货</el-button></div> -->
-                        </template>
-                        <template v-if="item.orderStatus===6 && item.deliveryType!==2">
-                          <div>已发货</div>
-                        </template>
-                        <template v-if="item.detailList">
-                          <template v-if="item.orderStatus===10">
-                            <div>待退款</div>
-                            <!-- <template v-if="item.detailList.length===1 && item.payMode===0">
-                              <div class="order_btn">
-                                <el-button type="warning" size="mini" @click="dialogPendingRefundVisible = true;rejectRefund(item.id,item.detailList[0].id,item.detailList[0].commodityName)">拒绝</el-button>
-                                <el-button type="success" size="mini" @click="dialogPendingAgreeVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">退款</el-button>
-                              </div>
-                            </template>-->
-                          </template>
-                        </template>
-                        <template v-if="item.orderStatus===8">
-                          <div>退货中</div>
-                          <!-- <template v-if="item.detailList.length===1">
-                            <div><el-button type="primary" size="mini" @click="item.payMode===0?dialogConfirmReturnOnlVisible = true:dialogConfirmReturnVisible = true;agreeRefund(item.serialNumber,item.detailList[0].id,item.detailList[0].totalActualAmount,item.actualFreightAmount,item.orderStatus)">收到退货</el-button></div>
-                          </template>-->
-                        </template>
-                        <template v-if="item.orderStatus===30">
-                          <div>退款完成</div>
-                        </template>
-                        <template v-if="item.orderStatus===20">
-                          <div>已取消</div>
-                        </template>
-                        <template v-if="item.orderStatus===12">
-                          <div>已完成</div>
-                        </template>
+                        <span v-text="orderStatusText(item)" />
+                        <span v-if="item.prescriptionStatus!==1" v-text="lianouStatus(item)" />
+                        <span v-if="item.prescriptionStatus===1">(待审批)</span>
+                        <!-- <span
+                          v-if="item.prescriptionStatus===1&&item.medicalPrescriptionApplyDTO&&item.medicalPrescriptionApplyDTO.prescriptionApprovalDTO&&item.medicalPrescriptionApplyDTO.prescriptionApprovalDTO.prescriptionType === 1"
+                          class="f16"
+                        >(医生已完成开方，待药师审核)</span>
+                        <span
+                          v-if="item.prescriptionStatus===1&&item.medicalPrescriptionApplyDTO&&item.medicalPrescriptionApplyDTO.prescriptionApprovalDTO&&item.medicalPrescriptionApplyDTO.prescriptionApprovalDTO.prescriptionType === 2"
+                          class="f16"
+                        >(待审核)</span> -->
+                      </template>
+                      <template v-else>
+                        <span v-text="orderStatusText(item)" />
+                      </template>
+                      <!-- 立即发货出现时机，当前订单状态为代发货且配送方式不为自提；当为处方单时，必须要保证需求单审核状态为通过 -->
+                      <template
+                        v-if="item.orderStatus===4 && item.deliveryType!==2 && (item.prescriptionSheetMark === '0'|| (item.prescriptionSheetMark === '1'&& item.prescriptionStatus === 2 ))"
+                      >
+                        <div class="order_btn btn_normal" style="text-align:right">
+                          <el-button
+                            v-if="showSendBtn"
+                            type="primary"
+                            size="mini"
+                            @click="dialogDeliveryVisible = true;immediateDelivery(item)"
+                          >立即发货</el-button>
+                        </div>
                       </template>
                       <!-- <template v-if="(item.prescriptionStatus===0||item.prescriptionStatus===1) && item.prescriptionSheetMark === '1'">
                         <div>待审批</div>
@@ -491,9 +383,11 @@
                       </template>-->
                     </div>
                   </div>
+                  <!-- 订单来源 -->
                   <div class="body-cell cell-right padding10">
                     <div class="cell-text">微商城</div>
                   </div>
+                  <!-- 优惠金额 -->
                   <div class="body-cell cell-right padding10">
                     <div class="cell-text">
                       ￥
@@ -505,6 +399,7 @@
                       </template>
                     </div>
                   </div>
+                  <!-- 实付金额 -->
                   <div class="body-cell cell-right padding10">
                     <div class="cell-text">
                       <div>
@@ -1215,6 +1110,72 @@ export default {
     this.getpreSendNum()
   },
   methods: {
+    orderStatusText(row) {
+      let msg = ''
+      switch (row.orderStatus) {
+        case 4:
+          msg = '待发货'
+          break
+        case 2:
+          msg = '待付款'
+          break
+        case 6:
+          msg = '待收货'
+          break
+        case 8:
+          msg = '待退货'
+          break
+        case 10:
+          msg = '待退款'
+          break
+        case 12:
+          msg = '已完成'
+          break
+        case 20:
+          msg = '已取消'
+          break
+        default:
+          msg = '退款完成'
+          break
+      }
+      return msg
+    },
+    lianouStatus(row) {
+      let msg = ''
+      switch (row.prescriptionStatus) {
+        case 10:
+          msg = '医生拒绝开方'
+          break
+        case 0:
+          msg = '待审批'
+          break
+        case 1:
+          msg = '待审批'
+          break
+        case 2:
+          msg = '审批通过'
+          break
+        case 3:
+          msg = '审批拒绝'
+          break
+        case 6:
+          msg = '等待医生接诊'
+          break
+        case 7:
+          msg = '等待医生接诊'
+          break
+        case 8:
+          msg = '莲藕已开方'
+          break
+        default:
+          break
+      }
+      return msg ? `(${msg})` : ''
+    },
+    perStatusShow(value) {
+      // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
+      return [2, 6, 8, 10, 12, 20, 30].indexOf(value) === -1
+    },
     resetQuery() {
       sessionStorage.removeItem('listQ')
       let isSuper = 0
@@ -1816,12 +1777,16 @@ export default {
           // }
           console.log('导出--------', res)
           if (res.code === '10000') {
-            this.$alert('订单列表正在导出中，稍后请点击【查看并导出记录】下载导出文件', '订单导出', {
-              confirmButtonText: '好的',
-              center: true,
-              roundButton: true,
-              confirmButtonClass: 'hydee_alert_btn'
-            })
+            this.$alert(
+              '订单列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
+              '订单导出',
+              {
+                confirmButtonText: '好的',
+                center: true,
+                roundButton: true,
+                confirmButtonClass: 'hydee_alert_btn'
+              }
+            )
           }
         })
         .catch(error => {
@@ -2097,7 +2062,7 @@ export default {
 .el-radio-button--small .el-radio-button__inner {
   padding: 12px 30px;
 }
-.el-button--small.is-round{
+.el-button--small.is-round {
   padding: 9px 30px;
 }
 /* .order-list .order-form .search-item .label-name{ width: 80px!important;} */

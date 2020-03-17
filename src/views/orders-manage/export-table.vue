@@ -4,7 +4,7 @@
       type="text"
       @click="dialogExportVisible = true;listQuery.currentPage=1;_loadList()"
     >查看导出记录</el-button>
-    <el-dialog title="导出记录" :visible.sync="dialogExportVisible" append-to-body width="80%">
+    <el-dialog title="导出记录" :visible.sync="dialogExportVisible" append-to-body>
       <el-table v-loading="loadingList" :data="tableData" style="width: 100%" height="400">
         <el-table-column prop="createTime" label="申请时间" width="180" />
         <el-table-column prop="name" label="文件名称" width="180">
