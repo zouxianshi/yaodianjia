@@ -63,7 +63,7 @@
           <el-input v-model.trim="form.certificateName" style="width: 260px" :disabled="form.sortNumber <= 6" maxlength="30" />
         </el-form-item>
         <el-form-item label="证书编号：" prop="certificateCode">
-          <el-input v-model.trim="form.certificateCode" style="width: 260px" maxlength="30" />
+          <el-input v-model.trim="form.certificateCode" style="width: 260px" show-word-limit maxlength="30" />
         </el-form-item>
         <div v-loading="uploadLoading">
           <el-form-item label="证书图片：" prop="certificatePicture">
@@ -104,14 +104,14 @@ import {
 export default {
   name: 'MerchantQualification',
   data() {
-    const _checkName = (rule, value, callback) => {
-      const reg = /^[A-Za-z0-9]+$/
-      if (!reg.test(value)) {
-        callback(new Error('只能输入中英文或数字'))
-      } else {
-        callback()
-      }
-    }
+    // const _checkName = (rule, value, callback) => {
+    //   const reg = /^[A-Za-z0-9]+$/
+    //   if (!reg.test(value)) {
+    //     callback(new Error('只能输入中英文或数字'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
       uploadLoading: false,
       loading: false,
@@ -140,8 +140,8 @@ export default {
           { required: true, message: '请输入证书名称', trgger: 'blur' }
         ],
         certificateCode: [
-          { required: true, message: '请输入证书编号', trgger: 'blur' },
-          { validator: _checkName, message: '只能输入数字和英文字母', trigger: 'blur' }
+          { required: true, message: '请输入证书编号', trgger: 'blur' }
+          // { validator: _checkName, message: '只能输入数字和英文字母', trigger: 'blur' }
         ],
         certificatePicture: [
           { required: true, message: '请上传证书图片', trgger: 'blur' }
