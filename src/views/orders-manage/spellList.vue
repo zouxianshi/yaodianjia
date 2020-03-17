@@ -1,5 +1,7 @@
 <template>
-  <div>拼团订单</div>
+  <div class="app-container">\
+
+  </div>
 </template>
 
 <script>

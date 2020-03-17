@@ -103,7 +103,8 @@ class InnerCtor {
         name: '订单中心',
         icon: 'icongoods',
         path: '/orders-manage',
-        disabled: this.get('order'),
+        // disabled: this.get('order'),
+        disabled: true,
         children: [
           {
             name: `所有订单`,
@@ -113,6 +114,7 @@ class InnerCtor {
           {
             name: `拼团订单`,
             path: '/orders-manage/spell-group',
+            disabled: true,
             // disabled: this.get('order.order-all')
           },
           // {
