@@ -35,9 +35,20 @@
             </el-select>
           </el-form-item>
           <el-form-item label="所在门店:">
-            <el-select v-model="form.merCode" class="mr20" placeholder="请选择所在门店">
-              <el-option label="区域一" value="shanghai" />
-              <el-option label="区域二" value="beijing" />
+            <el-select
+              v-model="form.merCode"
+              filterable
+              class="mr20"
+              :loading="storeLoading"
+              placeholder="请选择所在门店"
+              @focus="_loadAllStoreData()"
+            >
+              <el-option
+                v-for="item in allStore"
+                :key="item.id"
+                :label="item.stName+'('+item.stCode+')'"
+                :value="item.id"
+              />
             </el-select>
           </el-form-item>
         </el-row>
@@ -126,7 +137,12 @@
                   </div>
                   <!-- 成团情况 -->
                   <div class="body-cell cell-right padding10">
-                    <div class="cell-text">{{ item.quantity }}</div>
+                    <div class="cell-text">
+                      <!-- fullNum团满人数 -->
+                      <div>{{ item.fullNum }}人团</div>
+                      <!-- addNum参团人数 -->
+                      <div v-if="item.fullNum !== item.addNum">还差{{ item.fullNum - item.addNum }}人团</div>
+                    </div>
                   </div>
                   <!-- 实付总金额 -->
                   <div class="body-cell cell-right padding10">
@@ -170,7 +186,8 @@ import dayjs from 'dayjs'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { tablist } from '@/api/spell-goods'
-import { getAllStore } from '@/api/common'
+// import { getAllStore } from '@/api/common'
+import { getMyStoreList } from '@/api/store-goods'
 
 export default {
   components: { Pagination },
@@ -236,7 +253,8 @@ export default {
       tableData: [],
       orderTabStatus: 0,
       allStore: [],
-      total: 0
+      total: 0,
+      storeLoading: false
     }
   },
   computed: {
@@ -244,7 +262,7 @@ export default {
   },
   created() {
     this.getList()
-    this._loadAllStoreData()
+    // this._loadAllStoreData()
   },
   methods: {
     submitForm(formName) {
@@ -266,27 +284,36 @@ export default {
       tablist({
         merCode: this.merCode,
         status: 1
-      }).then(res => {
-        // 获取门店员工
-        const { data, totalCount } = res.data
-        if (data) {
-          this.tableData = data
-        } else {
-          this.tableData = []
-        }
-        this.total = totalCount
-      }).catch(() => {
-
       })
+        .then(res => {
+          // 获取门店员工
+          const { data, totalCount } = res.data
+          if (data) {
+            this.tableData = data
+          } else {
+            this.tableData = []
+          }
+          this.total = totalCount
+        })
+        .catch(() => {})
     },
-    _loadAllStoreData() {
+    _loadAllStoreData(val) {
       // 加载所有门店
-      getAllStore(this.merCode)
+      this.storeLoading = true
+      getMyStoreList({
+        pageSize: 10000,
+        currentPage: 1,
+        storeName: val,
+        onlineStatus: 1,
+        status: 1
+      })
         .then(res => {
           this.allStore = res.data
+          this.storeLoading = false
         })
         .catch(err => {
           console.log(err)
+          this.storeLoading = false
         })
     },
     formatTime(time, format) {
