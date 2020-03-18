@@ -9,6 +9,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import permission from './directive/permission' // permission control
+import loadmore from './directive/loadmore' // permission control
 import * as filters from './filters' // global filters
 import './permission'
 // import { setSystem } from './utils/auth'
@@ -16,6 +17,7 @@ import utils from '@/utils/util'
 
 Vue.use(permission)
 Vue.use(utils)
+Vue.use(loadmore)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
