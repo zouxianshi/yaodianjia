@@ -32,8 +32,8 @@
                 </p>
                 <div class="type-list groups">
                   商品分组：
-                  <p class="group-list">
-                    <el-tag
+                  <p v-if="Array.isArray(chooseGroup) && chooseGroup.length" class="group-list">
+                    <!-- <el-tag
                       v-for="(item,index) in chooseGroup"
                       :key="index"
                       style="margin-right:10px"
@@ -43,6 +43,12 @@
                       <span
                         class="tag"
                       >{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                    </el-tag> -->
+                    <el-tag v-for="(choose_group, index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                      <span v-for="(item, groupIndex) in choose_group" :key="groupIndex">
+                        {{ item && item.name }}&nbsp;
+                        <span v-if="groupIndex !== choose_group.length-1 ">>&nbsp;</span>
+                      </span>
                     </el-tag>
                   </p>
                   <span v-if="!is_query" class="opreate">
@@ -1259,6 +1265,7 @@ export default {
             }
           })
         }
+        console.log('chooseGroup', this.chooseGroup)
       })
     },
     _loadBasicInfo() {
@@ -1477,6 +1484,7 @@ export default {
       // 获取分组
       getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
+        console.log('获取分组----', res.data)
         if (isRefresh) {
           this.$message({
             message: '刷新成功',
@@ -1489,6 +1497,7 @@ export default {
       })
     },
     handleSaveGroup(row) {
+      console.log('传递过来的数据-----', row)
       // 保存数据
       this.chooseArray = row
       this.chooseGroup = []
@@ -1537,7 +1546,10 @@ export default {
     _filters(data) {
       data.forEach((val, index1) => {
         const findIndex = findArray(this.groupData, { id: val[0] })
+        console.log('0------', findIndex)
         if (findIndex > -1) {
+          console.table(this.groupData)
+          console.log('0------data', this.groupData[findIndex])
           // 找一级
           if (!this.chooseGroup[index1]) {
             this.chooseGroup.push([])
