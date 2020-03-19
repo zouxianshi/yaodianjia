@@ -80,6 +80,7 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type="" size="small" @click="resetQuery">重置</el-button>
             <el-button v-if="listQuery.status===0" type="danger" size="small" @click="handleBatchDel">批量删除</el-button>
+            <el-button v-if="listQuery.status===0" type="primary" size="small" @click="handleBatchExport">导出</el-button>
           </div>
         </div>
       </section>
@@ -286,6 +287,10 @@ export default {
         })
         this._requestDel(data)
       }).catch(() => {})
+    },
+    // 导出
+    handleBatchExport() {
+      console.log('handleBatchExport--', this.listQuery)
     },
     handleDel(row) { // 删除数据
       this.$confirm('是否确认删除', '提示', {
