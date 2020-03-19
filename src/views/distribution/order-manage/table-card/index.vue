@@ -89,7 +89,7 @@
               @click="emitClickHandler(item)"
             >确认收货</el-button>
             <el-button
-              v-if="item.status === 'ARRIVED'"
+              v-if="item.status === 'ARRIVED' && isAdmin"
               style="margin-top:10px;"
               type="primary"
               @click="emitClickHandler(item)"
@@ -110,6 +110,10 @@ export default {
     tableData: {
       type: Array,
       default: () => []
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
