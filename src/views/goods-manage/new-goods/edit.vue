@@ -32,8 +32,8 @@
                 </p>
                 <div class="type-list groups">
                   商品分组：
-                  <p class="group-list">
-                    <el-tag
+                  <p v-if="Array.isArray(chooseGroup) && chooseGroup.length" class="group-list">
+                    <!-- <el-tag
                       v-for="(item,index) in chooseGroup"
                       :key="index"
                       style="margin-right:10px"
@@ -43,6 +43,12 @@
                       <span
                         class="tag"
                       >{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                    </el-tag> -->
+                    <el-tag v-for="(choose_group, index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                      <span v-for="(item, groupIndex) in choose_group" :key="groupIndex">
+                        {{ item && item.name }}&nbsp;
+                        <span v-if="groupIndex !== choose_group.length-1 ">>&nbsp;</span>
+                      </span>
                     </el-tag>
                   </p>
                   <span v-if="!is_query" class="opreate">
@@ -71,10 +77,10 @@
               <div class="edit-card-cnt">
                 <div class="content">
                   <el-form-item label="商品名称：" prop="name">
+                    <!-- :disabled="basicForm.origin===1||is_query" -->
                     <el-input
                       v-model.trim="basicForm.name"
                       maxlength="30"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="请输入商品名称"
                       size="small"
                     />
@@ -90,16 +96,14 @@
                     <el-input
                       v-model.trim="basicForm.commonName"
                       maxlength="20"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="请输入通用名"
                       size="small"
                     />
                   </el-form-item>
                   <el-form-item label="所属品牌：" prop="brandId">
                     <el-select
-                      v-model="basicForm.brandId"
+                      v-model="basicForm.brandName"
                       v-loadmore="loadMore"
-                      :disabled="basicForm.origin===1||is_query"
                       filterable
                       remote
                       :remote-method="remoteMethod"
@@ -119,7 +123,6 @@
                     <el-input
                       v-model="basicForm.weight"
                       maxlength="6"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="请输入重量"
                       size="small"
                       style="width:210px"
@@ -130,7 +133,6 @@
                   <el-form-item label="长宽高：" style="display:inline-block" prop="long">
                     <el-input
                       v-model="basicForm.long"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="长"
                       size="small"
                       style="width:160px"
@@ -141,7 +143,6 @@
                   <el-form-item label label-width="0px" style="display:inline-block" prop="width">
                     <el-input
                       v-model="basicForm.width"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="宽"
                       size="small"
                       style="width:160px"
@@ -152,7 +153,6 @@
                   <el-form-item label label-width="0px" style="display:inline-block" prop="height">
                     <el-input
                       v-model="basicForm.height"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="高"
                       size="small"
                       style="width:160px"
@@ -161,11 +161,7 @@
                     </el-input>
                   </el-form-item>
                   <el-form-item label="单位：" prop="unit">
-                    <el-select
-                      v-model="basicForm.unit"
-                      :disabled="basicForm.origin===1||is_query"
-                      placeholder="选择单位"
-                    >
+                    <el-select v-model="basicForm.unit" placeholder="选择单位">
                       <el-option
                         v-for="item in unit"
                         :key="item.value"
@@ -178,7 +174,6 @@
                     <el-input
                       v-model="basicForm.keyWord"
                       maxlength="512"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="请输入关键字"
                       size="small"
                     />&nbsp;用、隔开
@@ -195,22 +190,14 @@
                 <div class="content">
                   <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
                     <el-form-item label="药品类型：">
-                      <el-select
-                        v-model="basicForm.drugType"
-                        :disabled="basicForm.origin===1||is_query"
-                        placeholder="请选择药品类型"
-                      >
+                      <el-select v-model="basicForm.drugType" placeholder="请选择药品类型">
                         <el-option label="甲类OTC" :value="0" />
                         <el-option label="处方药" :value="1" />
                         <el-option label="乙类OTC" :value="2" />
                       </el-select>
                     </el-form-item>
                     <el-form-item label="剂型：">
-                      <el-select
-                        v-model="basicForm.dosageForm"
-                        :disabled="basicForm.origin===1||is_query"
-                        placeholder="请选择药品剂型"
-                      >
+                      <el-select v-model="basicForm.dosageForm" placeholder="请选择药品剂型">
                         <el-option
                           v-for="(item,index) in drug"
                           :key="index"
@@ -224,7 +211,6 @@
                     <el-input
                       v-model.trim="basicForm.manufacture"
                       maxlength="127"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="请输入生产企业"
                       size="small"
                     />
@@ -233,7 +219,6 @@
                     <el-input
                       v-model.trim="basicForm.produceOrigin"
                       maxlength="50"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="请输入产地"
                       size="small"
                     />
@@ -242,14 +227,23 @@
                     <el-input
                       v-model.trim="basicForm.approvalNumber"
                       maxlength="24"
-                      :disabled="basicForm.origin===1||is_query"
                       placeholder="请输入批准文号"
                       size="small"
                     />
                   </el-form-item>
                   <el-form-item label="商品详细信息：">
                     <p>填写商品说明书</p>
-                    <div v-show="basicForm.origin===1">
+                    <div>
+                      <Tinymce
+                        id="basicInfo"
+                        ref="editor"
+                        v-model="basicForm.intro"
+                        :readonly="is_query"
+                        :height="400"
+                        @onload="tinymceLoad"
+                      />
+                    </div>
+                    <!-- <div v-show="basicForm.origin===1">
                       <Tinymce
                         ref="editor"
                         v-model="basicForm.intro"
@@ -266,7 +260,7 @@
                         :height="400"
                         @onload="tinymceLoad"
                       />
-                    </div>
+                    </div>-->
                   </el-form-item>
                   <el-form-item
                     :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'"
@@ -275,7 +269,6 @@
                       v-model.trim="basicForm.keyFeature"
                       type="textarea"
                       maxlength="512"
-                      :disabled="basicForm.origin===1||is_query"
                       :rows="3"
                       show-word-limit
                       placeholder="请输入功能主治/适应症"
@@ -283,33 +276,16 @@
                     />
                   </el-form-item>
                   <el-form-item label="有效期：" prop="days">
-                    <el-radio
-                      v-model="expireDays"
-                      :disabled="basicForm.origin===1||is_query"
-                      :label="-1"
-                      size="small"
-                    >无</el-radio>
-                    <el-radio
-                      v-model="expireDays"
-                      :disabled="basicForm.origin===1||is_query"
-                      :label="1"
-                      size="small"
-                    >
+                    <el-radio v-model="expireDays" :label="-1" size="small">无</el-radio>
+                    <el-radio v-model="expireDays" :label="1" size="small">
                       <el-input
                         v-model="basicForm.days"
-                        :disabled="basicForm.origin===1||is_query"
                         maxlength="8"
                         style="width:80px"
                         size="small"
                         placeholder
                       />
-                      <el-select
-                        v-model="timeTypes"
-                        :disabled="basicForm.origin===1||is_query"
-                        style="width:100px"
-                        size="small"
-                        placeholder
-                      >
+                      <el-select v-model="timeTypes" style="width:100px" size="small" placeholder>
                         <el-option value="1" label="年" />
                         <el-option value="2" label="月" />
                         <el-option value="3" label="天" />
@@ -328,34 +304,20 @@
               <div class="edit-card-cnt">
                 <div class="content">
                   <el-form-item label="运输方式：">
-                    <el-radio-group
-                      v-model="basicForm.freightType"
-                      :disabled="basicForm.origin===1||is_query"
-                    >
+                    <el-radio-group v-model="basicForm.freightType">
                       <el-radio :label="0">常温</el-radio>
                       <el-radio :label="1">冷藏</el-radio>
                       <el-radio :label="2">冷冻</el-radio>
                     </el-radio-group>
                   </el-form-item>
                   <el-form-item label="其他属性：">
-                    <el-checkbox
-                      v-model="basicForm.isEasyBreak"
-                      :disabled="basicForm.origin===1||is_query"
-                      :true-label="1"
-                      :false-label="0"
-                    >易碎</el-checkbox>
-                    <el-checkbox
-                      v-model="basicForm.isLiquid"
-                      :disabled="basicForm.origin===1||is_query"
-                      :true-label="1"
-                      :false-label="0"
-                    >液体</el-checkbox>
+                    <el-checkbox v-model="basicForm.isEasyBreak" :true-label="1" :false-label="0">易碎</el-checkbox>
+                    <el-checkbox v-model="basicForm.isLiquid" :true-label="1" :false-label="0">液体</el-checkbox>
                     <template
                       v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')"
                     >
                       <el-checkbox
                         v-model="basicForm.hasEphedrine"
-                        :disabled="basicForm.origin===1||is_query"
                         :true-label="1"
                         :false-label="0"
                       >含麻黄碱</el-checkbox>
@@ -1080,6 +1042,7 @@ export default {
       basicForm: {
         approvalNumber: '', // 批准文号
         brandId: '', // 商品品牌id
+        brandName: '', // 品牌名称
         commonName: '', // 药品通用名，国际非专有名称
         drugType: '', // drugType 药品类型
         freightType: 0, // 运输属性运输属性（0常温，1冷藏，2冰冻）
@@ -1234,6 +1197,7 @@ export default {
       }
     },
     handleBrandChange(val) {
+      console.log('handleBrandChange-------', val)
       const index = this.brandList.findIndex(item => {
         return item.id === val
       })
@@ -1292,13 +1256,16 @@ export default {
           const datas = res.data
           ids.map(v => {
             const dat = datas[v]
-            this.chooseGroup.push([
-              { name: dat.name, id: dat.id },
-              { name: dat.child.name, id: dat.child.id },
-              { name: dat.child.child.name, id: dat.child.child.id }
-            ])
+            if (dat) {
+              this.chooseGroup.push([
+                { name: dat.name, id: dat.id },
+                { name: dat.child.name, id: dat.child.id },
+                { name: dat.child.child.name, id: dat.child.child.id }
+              ])
+            }
           })
         }
+        console.log('chooseGroup', this.chooseGroup)
       })
     },
     _loadBasicInfo() {
@@ -1517,6 +1484,7 @@ export default {
       // 获取分组
       getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
+        console.log('获取分组----', res.data)
         if (isRefresh) {
           this.$message({
             message: '刷新成功',
@@ -1529,6 +1497,7 @@ export default {
       })
     },
     handleSaveGroup(row) {
+      console.log('传递过来的数据-----', row)
       // 保存数据
       this.chooseArray = row
       this.chooseGroup = []
@@ -1577,7 +1546,10 @@ export default {
     _filters(data) {
       data.forEach((val, index1) => {
         const findIndex = findArray(this.groupData, { id: val[0] })
+        console.log('0------', findIndex)
         if (findIndex > -1) {
+          console.table(this.groupData)
+          console.log('0------data', this.groupData[findIndex])
           // 找一级
           if (!this.chooseGroup[index1]) {
             this.chooseGroup.push([])
@@ -1856,7 +1828,7 @@ export default {
         }
         .group-list {
           display: inline-block;
-          max-width: 600px;
+          // max-width: 600px;
           margin-right: 5px;
           .tag {
             margin-right: 10px;

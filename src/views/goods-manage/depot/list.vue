@@ -1,12 +1,10 @@
 <template>
   <div class="app-container">
     <div class="depot-wrappe clearfix">
-      <el-alert
-        type="warning"
-        :closable="false"
-      >
+      <el-alert type="warning" :closable="false">
         <p slot="title" class="alret-title">
-          海典药品库包含50万商品，为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您<router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
+          海典药品库包含50万商品，为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您
+          <router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
         </p>
       </el-alert>
       <div style="margin-top:20px">
@@ -22,46 +20,79 @@
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品名称</span>
-            <el-input v-model.trim="listQuery.name" size="small" style="width:200px" placeholder="商品名称" />
+            <el-input
+              v-model.trim="listQuery.name"
+              size="small"
+              style="width:200px"
+              placeholder="商品名称"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
-            <el-input v-model.trim="listQuery.manufacture" size="small" style="width:200px" placeholder="生产企业" />
+            <el-input
+              v-model.trim="listQuery.manufacture"
+              size="small"
+              style="width:200px"
+              placeholder="生产企业"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">商品编码</span>
-            <el-input v-model.trim="listQuery.erpCode" size="small" style="width:200px" placeholder="商品编码" />
+            <el-input
+              v-model.trim="listQuery.erpCode"
+              size="small"
+              style="width:200px"
+              placeholder="商品编码"
+            />
+          </div>
+          <div class="search-item">
+            <span class="label-name">商品分类</span>
+            <el-cascader v-model="listQuery.typeId" size="small" :options="goodsTypeList" :props="defaultProps" clearable placeholder="选择商品来源" :show-all-levels="false" @focus="_loadGoodTypeList()" />
           </div>
         </div>
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="listQuery.barCode" size="small" style="width:200px" placeholder="条形码" />
+            <el-input
+              v-model.trim="listQuery.barCode"
+              size="small"
+              style="width:200px"
+              placeholder="条形码"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">批准文号</span>
-            <el-input v-model.trim="listQuery.approvalNumber" size="small" style="width:200px" placeholder="批准文号" />
+            <el-input
+              v-model.trim="listQuery.approvalNumber"
+              size="small"
+              style="width:200px"
+              placeholder="批准文号"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">商品来源</span>
-            <el-select v-model="listQuery.origin" placeholder="选择商品来源" size="small" @change="handleQuery">
-              <el-option label="全部" value="" />
+            <el-select
+              v-model="listQuery.origin"
+              placeholder="选择商品来源"
+              size="small"
+              @change="handleQuery"
+            >
+              <el-option label="全部" value />
               <el-option label="海典商品库" value="1" />
               <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
+
           <div class="search-item">
             <el-button type="primary" size="small" @click="handleQuery">查询</el-button>
-            <el-button type="" size="small" @click="resetQuery">重置</el-button>
+            <el-button type size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </section>
       <section class="depot-list">
         <el-card class="tree-card">
           <div class="tree-box">
-            <div
-              class="search text-center"
-            >
+            <div class="search text-center">
               <a href="#/goods-manage/group">
                 <el-button type="text" size="small">新建自定义分组</el-button>
               </a>
@@ -80,10 +111,7 @@
                   class="custom-tree-node"
                   :class="{'active':data.id===listQuery.groupId}"
                 >
-                  <span
-                    class="ellipsis"
-                    :title="node.label"
-                  >{{ node.label }}</span>
+                  <span class="ellipsis" :title="node.label">{{ node.label }}</span>
                 </span>
               </el-tree>
             </div>
@@ -91,19 +119,22 @@
         </el-card>
       </section>
       <section class="depot-table">
-        <div class="text-right" style="margin-bottom:10px;display:flex;justify-content:space-between">
+        <div
+          class="text-right"
+          style="margin-bottom:10px;display:flex;justify-content:space-between"
+        >
           <!-- <div>
             <el-radio-group v-model="listQuery.infoFlag" size="small" @change="getList">
               <el-radio-button :label="true">全部</el-radio-button>
               <el-radio-button :label="false">待完善资料</el-radio-button>
             </el-radio-group>
-          </div> -->
+          </div>-->
           <div>
             <template v-if="listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
               <el-button type="danger" size="mini" @click="handleChangeUpdown(0)">批量下架</el-button>
             </template>
-            <el-button type="" size="mini" @click="handleUpGroup">批量修改分组</el-button>
+            <el-button type size="mini" @click="handleUpGroup">批量修改分组</el-button>
             <el-button type="info" size="mini" @click="handleSettingLimitBuy">批量设置限购</el-button>
           </div>
         </div>
@@ -115,10 +146,7 @@
             style="width: 100%"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column
-              type="selection"
-              width="55"
-            />
+            <el-table-column type="selection" width="55" />
             <el-table-column
               prop="orCode"
               align="left"
@@ -137,7 +165,7 @@
                   />
                 </template>
                 <template v-else>
-                  <p class="">暂未上传</p>
+                  <p class>暂未上传</p>
                 </template>
               </template>
             </el-table-column>
@@ -152,9 +180,10 @@
                 <div style="overflow: hidden;text-overflow: ellipsis;">
                   <p class="ellipsis" v-text="scope.row.name" />
                   <p class="ellipsis">
-                    <span v-for="(item,index) in scope.row.specSkuList" :key="index">
-                      {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
-                    </span>
+                    <span
+                      v-for="(item,index) in scope.row.specSkuList"
+                      :key="index"
+                    >{{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}</span>
                   </p>
                   <p v-if="scope.row.barCode" class="ellipsis" v-text="'条码：'+scope.row.barCode" />
                   <p class="ellipsis" v-text="scope.row.approvalNumber" />
@@ -182,12 +211,7 @@
               :show-overflow-tooltip="true"
               min-width="120"
             />
-            <el-table-column
-              prop="modifyTime"
-              align="left"
-              min-width="155"
-              label="修改时间"
-            />
+            <el-table-column prop="modifyTime" align="left" min-width="155" label="修改时间" />
             <el-table-column
               prop="address"
               align="left"
@@ -200,8 +224,11 @@
                   <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-button type="info" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template>
-                <a v-if="scope.row.commodityType!==2" :href="`#/goods-manage/edit?id=${scope.row.id}`">
-                  <el-button type="" size="mini">编辑</el-button>
+                <a
+                  v-if="scope.row.commodityType!==2"
+                  :href="`#/goods-manage/edit?id=${scope.row.id}`"
+                >
+                  <el-button type size="mini">编辑</el-button>
                 </a>
               </template>
             </el-table-column>
@@ -215,9 +242,27 @@
         />
       </section>
     </div>
-    <store :status="status" :choose-num="specData.length" :spec-data="specData" :is-show="dialogVisible" @close="dialogVisible=false" @complete="dialogVisible=false;getList()" />
-    <group :is-show="groupVisible" :group-data="groupData" :goods-data="goodsData" @complete="groupVisible=false;getList()" @close="groupVisible=false" />
-    <limit-buy :is-show="limitVisible" :spec-data="specData" @complete="limitVisible=false;getList()" @close="limitVisible=false" />
+    <store
+      :status="status"
+      :choose-num="specData.length"
+      :spec-data="specData"
+      :is-show="dialogVisible"
+      @close="dialogVisible=false"
+      @complete="dialogVisible=false;getList()"
+    />
+    <group
+      :is-show="groupVisible"
+      :group-data="groupData"
+      :goods-data="goodsData"
+      @complete="groupVisible=false;getList()"
+      @close="groupVisible=false"
+    />
+    <limit-buy
+      :is-show="limitVisible"
+      :spec-data="specData"
+      @complete="limitVisible=false;getList()"
+      @close="limitVisible=false"
+    />
   </div>
 </template>
 <script>
@@ -243,7 +288,8 @@ export default {
       groupData: [],
       defaultProps: {
         children: 'children',
-        label: 'name'
+        label: 'name',
+        value: 'id'
       },
       goodsData: [],
       specData: [],
@@ -263,16 +309,20 @@ export default {
         erpCode: '',
         auditStatus: 1,
         groupId: '', // 分组id
-        currentPage: 1
-      }
+        currentPage: 1,
+        typeId: '' // 分类id
+      },
+      goodsTypeList: []
     }
   },
   created() {
     this.getList()
     this._loadTypeList()
+    // this._loadGoodTypeList()
   },
   methods: {
-    handleSettingLimitBuy() { // 设置限购
+    handleSettingLimitBuy() {
+      // 设置限购
       this.specData = []
       if (this.multiselect.length === 0) {
         this.$message({
@@ -297,7 +347,8 @@ export default {
       }
       this.limitVisible = true
     },
-    resetQuery() { // 重置
+    resetQuery() {
+      // 重置
       this.listQuery = {
         approvalNumber: '',
         barCode: '',
@@ -307,52 +358,80 @@ export default {
         erpCode: '',
         auditStatus: 1,
         groupId: '', // 分组id
-        currentPage: 1
+        currentPage: 1,
+        typeId: ''
       }
       this.getList()
     },
     handleQuery() {
       this.listQuery.currentPage = 1
+      if (this.listQuery.typeId && Array.isArray(this.listQuery.typeId) && this.listQuery.typeId.length) {
+        this.listQuery.typeId = this.listQuery.typeId[this.listQuery.typeId.length - 1]
+      }
+      console.log(this.listQuery)
       this.getList()
     },
     getList() {
       this.loading = true
-      getGoodsList(this.listQuery).then(res => {
-        const { data, totalCount } = res.data
+      getGoodsList(this.listQuery)
+        .then(res => {
+          const { data, totalCount } = res.data
 
-        if (data.length === 0 && this.listQuery.currentPage !== 1) {
-          this.listQuery.currentPage = 1
-          this.getList()
-        }
+          if (data.length === 0 && this.listQuery.currentPage !== 1) {
+            this.listQuery.currentPage = 1
+            this.getList()
+          }
 
-        this.tableData = data
-        this.total = totalCount
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
+          this.tableData = data
+          this.total = totalCount
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     _loadTypeList() {
-      getTypeTree({ merCode: this.$store.state.user.merCode, type: 2, use: true }).then(res => {
+      getTypeTree({
+        merCode: this.$store.state.user.merCode,
+        type: 2,
+        use: true
+      }).then(res => {
         this.treeData = res.data
         this.treeData = JSON.parse(JSON.stringify(this.treeData))
         this.treeData.unshift({ name: '全部', id: '' })
         this.$nextTick(_ => {
-          $('.el-tree').find('.el-tree-node').each(function(i) {
-            $(this).find('.el-tree-node__content .el-tree-node__expand-icon').click()
-          })
+          $('.el-tree')
+            .find('.el-tree-node')
+            .each(function(i) {
+              $(this)
+                .find('.el-tree-node__content .el-tree-node__expand-icon')
+                .click()
+            })
         })
       })
       getTypeDimensionList(this.$store.state.user.merCode).then(res => {
         this.groupData = res.data
       })
     },
-    handleTreeClick(row, node) { // 节点被点击时
+    // 分类
+    _loadGoodTypeList() {
+      if (Array.isArray(this.goodsTypeList) && this.goodsTypeList.length) {
+        return
+      }
+      getTypeTree({ merCode: 'hydee', type: 1, issTree: true }).then((res) => {
+        console.log('_loadGoodTypeList-------', res)
+        this.goodsTypeList = res.data
+      }).catch(() => {
+      })
+    },
+    handleTreeClick(row, node) {
+      // 节点被点击时
       this.listQuery.groupId = row.id
       this.listQuery.level = row.level
       this.getList()
     },
-    handleChangeUpdown(status) { // 批量上下架
+    handleChangeUpdown(status) {
+      // 批量上下架
       this.specData = []
       if (this.multiselect.length === 0) {
         this.$message({
@@ -378,7 +457,8 @@ export default {
       this.status = status
       this.dialogVisible = true
     },
-    handleUpDown(status, row) { // 单个上下架
+    handleUpDown(status, row) {
+      // 单个上下架
       this.specData = [`${row.specId}`]
       this.status = status
       this.dialogVisible = true
@@ -386,7 +466,8 @@ export default {
     handleSelectionChange(rows) {
       this.multiselect = rows
     },
-    handleUpGroup() { // 修改分组
+    handleUpGroup() {
+      // 修改分组
       this.goodsData = []
       if (this.multiselect.length === 0) {
         this.$message({
@@ -411,7 +492,8 @@ export default {
       }
       this.groupVisible = true
     },
-    handleExport() { // 商品导出
+    handleExport() {
+      // 商品导出
       exportData(this.listQuery)
         .then(res => {
           if (res.type === 'application/json') {
@@ -427,9 +509,7 @@ export default {
             })
           }
         })
-        .catch(() => {
-
-        })
+        .catch(() => {})
     }
   }
 }
@@ -471,17 +551,17 @@ export default {
 <style lang="scss" scoped>
 .depot-wrappe {
   margin-bottom: 30px;
-  .search-item{
-    .label-name{
+  .search-item {
+    .label-name {
       text-align: left;
-      width: 60px
+      width: 60px;
     }
   }
 }
-.table-footer{
+.table-footer {
   display: flex;
   justify-content: space-between;
-  align-items: center
+  align-items: center;
 }
 .depot-list {
   float: left;

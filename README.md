@@ -19,3 +19,28 @@ npm install
 # develop
 npm  run serve
 ```
+
+## 公共包说明
+
+#### 导出下载
+
+``vue
+<script>
+  import download from '@hydee/download'
+  export default {
+    methods: {
+      handleBatchExport() {
+        exportNotMatch(this.merCode)
+          .then(res => {
+            download.blob(res, '未对码列表')
+            this.$message({
+              message: '数据导出成功',
+              type: 'success'
+            })
+          })
+          .catch(() => {})
+      },
+    }
+  }
+</script>
+```
