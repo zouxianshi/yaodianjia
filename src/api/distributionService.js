@@ -352,8 +352,8 @@ class DistributionService {
   taskCreate(data) {
     return this.service('post', '/1.0/b/task/_exportTask', data)
   }
-  taskQuery() {
-    return this.service('get', `/1.0/b/task/${store.state.user.merCode}`, {})
+  taskQuery(data) {
+    return this.service('post', `/1.0/b/task/_query`, data)
   }
 }
 export default new DistributionService()
