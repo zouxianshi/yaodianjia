@@ -12,7 +12,7 @@
       </div>
       <div style="margin-top: 5px">
         <span class="label-name">自提订单：</span>
-        <el-checkbox v-model="storesOrder" :true-label="1" :false-label="0" @change="changeOrderPayset">到店支付</el-checkbox>
+        <el-checkbox v-model="selfOrder" :true-label="1" :false-label="0" @change="changeOrderPayset">到店支付</el-checkbox>
       </div>
       <el-alert
         type="warning"
@@ -241,7 +241,7 @@ export default {
       // configuration: 'ydjia.hydee.cn/wx/wxpay/',
       orderPaysetId: null,
       deliveryOrder: 0,
-      storesOrder: 1,
+      selfOrder: 0,
       distributionOrder: 0,
       data: null,
       form: {
@@ -312,6 +312,7 @@ export default {
           this.orderPaysetId = res.data[0].id
           this.distributionOrder = res.data[0].distributionOrder
           this.deliveryOrder = res.data[0].deliveryOrder
+          this.selfOrder = res.data[0].selfOrder
         } else {
           this.loading = false
           this.$message({
@@ -329,7 +330,7 @@ export default {
         merCode: this.merCode,
         deliveryOrder: this.deliveryOrder,
         distributionOrder: this.distributionOrder,
-        storesOrder: this.storesOrder
+        selfOrder: this.selfOrder
       }).then(res => {
         if (res.code === '10000') {
           this.loading = false
