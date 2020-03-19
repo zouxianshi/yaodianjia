@@ -230,6 +230,7 @@
                 >
                   <el-button type size="mini">编辑</el-button>
                 </a>
+                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -462,6 +463,10 @@ export default {
       this.specData = [`${row.specId}`]
       this.status = status
       this.dialogVisible = true
+    },
+    //
+    handleDel(row) {
+      console.log('当前删除的id', row)
     },
     handleSelectionChange(rows) {
       this.multiselect = rows
