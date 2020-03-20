@@ -101,7 +101,7 @@
               </template>
             </el-table-column>
             <el-table-column label="商品名称" prop="name" min-width="100" />
-            <el-table-column label="商品编码" prop="productId" />
+            <el-table-column label="商品编码" prop="specId" />
             <el-table-column label="原售价" prop="mprice" />
             <el-table-column label="拼团价" prop="activityPrice" />
             <el-table-column label="活动库存" prop="productActivityCount">
@@ -346,7 +346,6 @@ export default {
     onSelectedGoods(row) { // 商品选择确定事件
       row.map((v, index) => {
         v.sortNumber = index + 1
-        v.productId = v.specId
       })
       this.goodsList = row
     },
@@ -463,10 +462,11 @@ export default {
           'openLimitTimes': v.openLimitTimess, // 开团次数
           'price': v.mprice, // 原售价
           'productActivityCount': v.productActivityCount, // 活动产品库存量
-          'productId': v.specId, //
+          'specId': v.specId, //
           'imgUrl': v.mainPic,
           'productName': v.commonName, // 商品名
-          'sortNumber': v.sortNumber // 商品排序
+          'sortNumber': v.sortNumber, // 商品排序
+          'commodityType': v.commodityType
         })
       }
       return products
@@ -500,7 +500,7 @@ export default {
           'openLimitTimes': row.openLimitTimes,
           'price': row.price,
           'productActivityCount': row.productActivityCount,
-          'productId': row.productId,
+          'specId': row.specId,
           'productName': row.productName,
           'sortNumber': row.sortNumber
         }
