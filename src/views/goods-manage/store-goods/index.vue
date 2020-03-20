@@ -84,6 +84,7 @@
               全部导出
               <i class="el-icon-download el-icon--right" />
             </el-button>
+            <export-table />
           </div>
         </div>
       </section>
@@ -282,9 +283,10 @@
   </div>
 </template>
 <script>
-import download from '@hydee/download'
+// import download from '@hydee/download'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
+import exportTable from './export-table'
 import { mapGetters } from 'vuex'
 import { getTypeTree, exportData } from '@/api/group'
 import {
@@ -296,7 +298,7 @@ import {
   setSynchro
 } from '@/api/store-goods'
 export default {
-  components: { Pagination },
+  components: { Pagination, exportTable },
   mixins: [mixins],
   data() {
     const _checkTime = (rule, value, callback) => {
@@ -614,11 +616,23 @@ export default {
       exportData(this.listQuery)
         .then(res => {
           console.log('111111', res)
-          download.blob(res, '商品列表')
-          this.$message({
-            message: '数据导出成功',
-            type: 'success'
-          })
+          // if (res.code === '10000') {
+          this.$alert(
+            '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
+            '门店商品导出',
+            {
+              confirmButtonText: '好的',
+              center: true,
+              roundButton: true,
+              confirmButtonClass: 'hydee_alert_btn'
+            }
+          )
+          // }
+          // download.blob(res, '商品列表')
+          // this.$message({
+          //   message: '数据导出成功',
+          //   type: 'success'
+          // })
         })
         .catch(() => {
           this.$message({
