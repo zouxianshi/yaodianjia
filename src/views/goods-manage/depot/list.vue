@@ -467,7 +467,11 @@ export default {
     //
     handleDel(row) {
       console.log('当前删除的id', row)
-      delGoods().then((res) => {
+      delGoods({
+        merCode: this.merCode, // 商品编码不可为空
+        id: row.id, // 商品id不可为空
+        specId: row.specId // 商品规格ID,没有时可不传
+      }).then((res) => {
         console.log('res----delGoods', res)
       })
     },

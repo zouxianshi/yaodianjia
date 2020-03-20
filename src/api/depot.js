@@ -149,7 +149,7 @@ export function exportNotMatch(merCode) {
 // 删除商品
 export function delGoods(params) {
   return request({
-    url: `${config.merGoods}/1.0/commodity`,
+    url: `${config.merGoods}/1.0/comm-spec/_delete`,
     method: 'delete',
     data: params
   })
