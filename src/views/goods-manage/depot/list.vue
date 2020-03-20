@@ -267,7 +267,7 @@
   </div>
 </template>
 <script>
-import { getGoodsList, exportData } from '@/api/depot'
+import { getGoodsList, exportData, delGoods } from '@/api/depot'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
@@ -467,6 +467,9 @@ export default {
     //
     handleDel(row) {
       console.log('当前删除的id', row)
+      delGoods().then((res) => {
+        console.log('res----delGoods', res)
+      })
     },
     handleSelectionChange(rows) {
       this.multiselect = rows

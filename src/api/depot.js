@@ -145,3 +145,12 @@ export function exportNotMatch(merCode) {
     responseType: 'blob'
   })
 }
+
+// 删除商品
+export function delGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity`,
+    method: 'delete',
+    data: params
+  })
+}
