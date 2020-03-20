@@ -104,12 +104,18 @@
               @click="handleBatchUpDown(0)"
             >批量下架</el-button>
             <el-button type size="small" @click="handleLock">批量锁定库存价格</el-button>
-            <el-button
+            <!-- <el-button
               v-if="listQuery.status !== 3"
               type
               size="small"
               @click="handleSynchro"
-            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
+            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>-->
+            <el-button
+              v-if="listQuery.status !== 3"
+              type
+              size="small"
+              @click="handleSynchroBefore"
+            >批量同步库存价格</el-button>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -513,6 +519,43 @@ export default {
             reject(err)
           })
       })
+    },
+    handleSynchroBefore() {
+      // 同步价格
+      const ary = []
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请选择商品',
+          type: 'warning'
+        })
+        return
+      }
+      this.multipleSelection.map(v => {
+        ary.push({
+          erpCode: v.erpCode,
+          storeSpecId: v.storeSpecId
+        })
+      })
+      const findIndex = this.storeList.findIndex(mItem => {
+        return mItem.id === this.listQuery.storeId
+      })
+      const data = {
+        merCode: this.merCode,
+        storeCode: this.storeList[findIndex].stCode,
+        storeId: this.listQuery.storeId,
+        specs: ary
+      }
+      setSynchro(data)
+        .then(res => {
+          this.$message({
+            message: '价格同步成功',
+            type: 'success'
+          })
+          this.getList()
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     handleSynchro() {
       const ary = []
