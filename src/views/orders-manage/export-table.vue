@@ -120,6 +120,7 @@ export default {
       this.loadingList = true
       getExportRecord({
         merCode: this.merCode,
+        exportType: 'ORDER_EXPORT',
         ...this.listQuery
       })
         .then(res => {

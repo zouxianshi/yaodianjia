@@ -81,7 +81,7 @@
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
             <el-button type="primary" size="small" @click="handleExport">
-              全部导出
+              导出
               <i class="el-icon-download el-icon--right" />
             </el-button>
             <export-table />
@@ -616,23 +616,18 @@ export default {
       exportData(this.listQuery)
         .then(res => {
           console.log('111111', res)
-          // if (res.code === '10000') {
-          this.$alert(
-            '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
-            '门店商品导出',
-            {
-              confirmButtonText: '好的',
-              center: true,
-              roundButton: true,
-              confirmButtonClass: 'hydee_alert_btn'
-            }
-          )
-          // }
-          // download.blob(res, '商品列表')
-          // this.$message({
-          //   message: '数据导出成功',
-          //   type: 'success'
-          // })
+          if (res.code === '10000') {
+            this.$alert(
+              '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
+              '门店商品导出',
+              {
+                confirmButtonText: '好的',
+                center: true,
+                roundButton: true,
+                confirmButtonClass: 'hydee_alert_btn'
+              }
+            )
+          }
         })
         .catch(() => {
           this.$message({

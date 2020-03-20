@@ -473,6 +473,13 @@ export default {
         specId: row.specId // 商品规格ID,没有时可不传
       }).then((res) => {
         console.log('res----delGoods', res)
+        if (res.code === '10000') {
+          this.$message({
+            message: '商品删除成功',
+            type: 'success'
+          })
+          this.getList()
+        }
       })
     },
     handleSelectionChange(rows) {
