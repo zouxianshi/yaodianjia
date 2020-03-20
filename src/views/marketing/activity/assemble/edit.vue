@@ -466,7 +466,7 @@ export default {
           'imgUrl': v.mainPic,
           'productName': v.commonName, // 商品名
           'sortNumber': v.sortNumber, // 商品排序
-          'commodityType': v.commodityType
+          'commodityId': v.id
         })
       }
       return products
