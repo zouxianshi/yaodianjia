@@ -106,10 +106,12 @@
                       v-loadmore="loadMore"
                       filterable
                       remote
+                      clearable
                       :remote-method="remoteMethod"
                       :loading="loading"
                       placeholder="请选择所属品牌"
                       @change="handleBrandChange"
+                      @clear="handleBrandClear"
                     >
                       <el-option
                         v-for="item in brandList"
@@ -1203,7 +1205,17 @@ export default {
       })
       if (index > -1) {
         this.basicForm.brandName = this.brandList[index].name
+        this.basicForm.brandId = val
       }
+    },
+    handleBrandClear(val) {
+      console.log('handleBrandChange-------handleBrandClear', val)
+      this.basicForm.brandName = ''
+      this.basicForm.brandId = ''
+      this._loadBrandList({
+        pageSize: 30,
+        currentPage: 1
+      })
     },
     _loadUnit() {
       // 加载单位
@@ -1529,6 +1541,7 @@ export default {
       })
     },
     _loadBrandList(params) {
+      console.log('触发了-------')
       // 获取品牌
       // this.brandLoading = true
       getBrandList(params).then(res => {

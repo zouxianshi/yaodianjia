@@ -89,7 +89,7 @@
               @click="emitClickHandler(item)"
             >确认收货</el-button>
             <el-button
-              v-if="item.status === 'ARRIVED' && isAdmin"
+              v-if="item.status === 'ARRIVED'"
               style="margin-top:10px;"
               type="primary"
               @click="emitClickHandler(item)"
