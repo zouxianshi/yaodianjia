@@ -559,8 +559,12 @@ export default {
 .el-tree-node__content {
   margin-top: 5px;
 }
+
 </style>
 <style lang="scss" scoped>
+.el-button+.el-button {
+  margin-left: 0;
+}
 .depot-wrappe {
   margin-bottom: 30px;
   .search-item {

@@ -150,7 +150,7 @@ export function exportNotMatch(merCode) {
 export function delGoods(params) {
   return request({
     url: `${config.merGoods}/1.0/comm-spec/_delete`,
-    method: 'delete',
+    method: 'post',
     data: params
   })
 }

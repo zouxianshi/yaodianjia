@@ -80,6 +80,10 @@
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
+            <el-button type="primary" size="small" @click="handleExport">
+              全部导出
+              <i class="el-icon-download el-icon--right" />
+            </el-button>
           </div>
         </div>
       </section>
@@ -104,7 +108,7 @@
               type
               size="small"
               @click="handleSynchro"
-            >批量同步库存价格</el-button>
+            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -209,6 +213,7 @@
             :total="total"
             :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize"
+            :page-sizes="[10,20,30,50,100,200]"
             @pagination="_loadList"
           />
         </div>
@@ -277,10 +282,11 @@
   </div>
 </template>
 <script>
+import download from '@hydee/download'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import { mapGetters } from 'vuex'
-import { getTypeTree } from '@/api/group'
+import { getTypeTree, exportData } from '@/api/group'
 import {
   getStoreGoodsList,
   setLockPrice,
@@ -507,40 +513,74 @@ export default {
       })
     },
     handleSynchro() {
-      // 同步价格
       const ary = []
-      if (this.multipleSelection.length === 0) {
+      // 同步价格
+      /**
+       * 分为两种
+       * 1.同步查询出来的数据
+       * 2.同步勾选的数据
+       */
+      if (this.multipleSelection.length === 0 && this.total === 0) {
         this.$message({
           message: '请选择商品',
           type: 'warning'
         })
         return
       }
-      this.multipleSelection.map(v => {
-        ary.push({
-          erpCode: v.erpCode,
-          storeSpecId: v.storeSpecId
-        })
-      })
-      const findIndex = this.storeList.findIndex(mItem => {
-        return mItem.id === this.listQuery.storeId
-      })
-      const data = {
-        merCode: this.merCode,
-        storeCode: this.storeList[findIndex].stCode,
-        storeId: this.listQuery.storeId,
-        specs: ary
-      }
-      setSynchro(data)
-        .then(res => {
-          this.$message({
-            message: '价格同步成功',
-            type: 'success'
+      // 弹窗确认
+      this.$confirm(
+        `确认要将当前所选${this.multipleSelection.length ||
+          this.total}条商品的价格库存数据从erp同步到线上吗？`,
+        '',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          let data = {}
+          // 店铺code
+          const findIndex = this.storeList.findIndex(mItem => {
+            return mItem.id === this.listQuery.storeId
           })
-          this.getList()
+          if (this.multipleSelection.length) {
+            this.multipleSelection.map(v => {
+              ary.push({
+                erpCode: v.erpCode,
+                storeSpecId: v.storeSpecId
+              })
+            })
+            data = {
+              merCode: this.merCode,
+              storeCode: this.storeList[findIndex].stCode,
+              storeId: this.listQuery.storeId,
+              specs: ary
+            }
+          } else {
+            // 当前同步所有查询出来的数据；
+            data = {
+              merCode: this.merCode,
+              storeCode: this.storeList[findIndex].stCode,
+              storeId: this.listQuery.storeId,
+              specs: ary
+            }
+          }
+          // 调用接口同步
+          setSynchro(data)
+            .then(res => {
+              this.$message({
+                message: '价格同步成功',
+                type: 'success'
+              })
+              this.getList()
+            })
+            .catch(err => {
+              console.log(err)
+            })
         })
-        .catch(err => {
-          console.log(err)
+        .catch(() => {
+          return
         })
     },
     handleChangeGroup(val) {
@@ -568,6 +608,24 @@ export default {
         }
       })
       this._loadList()
+    },
+    // 处理商品数据导出
+    handleExport() {
+      exportData(this.listQuery)
+        .then(res => {
+          console.log('111111', res)
+          download.blob(res, '商品列表')
+          this.$message({
+            message: '数据导出成功',
+            type: 'success'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            message: '数据导出失败',
+            type: 'error'
+          })
+        })
     },
     handleLock() {
       if (this.multipleSelection.length === 0) {
