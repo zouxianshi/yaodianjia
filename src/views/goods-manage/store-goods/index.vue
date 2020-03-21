@@ -656,7 +656,11 @@ export default {
     },
     // 处理商品数据导出
     handleExport() {
-      exportData(this.listQuery)
+      console.log()
+      exportData({
+        ...this.listQuery,
+        storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
+      })
         .then(res => {
           console.log('111111', res)
           if (res.code === '10000') {
