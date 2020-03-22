@@ -252,7 +252,7 @@
                         :height="400"
                         @onload="tinymceLoad"
                       />
-                      <div class="wordcount">统计:{{ getContentLength }}字</div>
+                      <div class="wordcount">统计: {{ getContentLength }}字</div>
                     </div>
                     <!-- <div v-show="basicForm.origin===1">
                       <Tinymce
@@ -1873,10 +1873,18 @@ export default {
       position: relative;
       .wordcount {
         position: absolute;
-        bottom: -5px;
-        right: 10px;
-        font-size: 8px;
-        color: #797979;
+        // bottom: -5px;
+        height: 18px;
+        line-height: 18px;
+        // right: 10px;
+        text-align: right;
+        font-size: 12px;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-top: 0 none;
+        padding-right: 10px;
+        color: rgba(34,47,62,.7);
       }
     }
   }
