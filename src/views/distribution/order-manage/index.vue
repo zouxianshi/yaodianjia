@@ -166,6 +166,13 @@
         <div style="color:#000;font-size:14px">收货门店：</div>
         <div style="color:#000;font-size:14px;margin-left:20px;">{{ dialogContent[0].address }}</div>
       </div>
+      <div
+        v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
+        style="display:flex;flex-direction:row;margin-top:40px;"
+      >
+        <div style="color:#000;font-size:14px">核销码：</div>
+        <el-input v-model="code" placeholder="请输入顾客提供的核销码" />
+      </div>
       <div style="display:flex;flex-direction:row;margin-top:40px;justify-content: center;">
         <el-button @click="closeDialog">取消</el-button>
         <el-button type="primary" @click="updateOrderStatusService">确认</el-button>
@@ -416,7 +423,8 @@ export default {
         currentPage: 1
       },
       total: 0,
-      taskLoading: false
+      taskLoading: false,
+      code: '' // 核销码
     }
   },
   computed: {
@@ -780,6 +788,18 @@ export default {
         id: this.dialogContent[0].id,
         status:
           this.dialogContent[0].status === 'SUCCESS' ? 'ARRIVED' : 'COMPLETE'
+      }
+      //  核销码
+      if (this.dialogContent[0].status === 'ARRIVED') {
+        if (this.code) {
+          params.code = this.code
+        } else {
+          this.$message({
+            message: '请输入顾客提供的核销码',
+            type: 'warning'
+          })
+          return
+        }
       }
       console.log('updateOrderStatusService ________________ ')
       const { data, code } = await DistributionService.updateOrderStatus(params)
