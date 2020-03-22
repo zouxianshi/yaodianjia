@@ -43,11 +43,19 @@
                       <span
                         class="tag"
                       >{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
-                    </el-tag> -->
-                    <el-tag v-for="(choose_group, index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                    </el-tag>-->
+                    <el-tag
+                      v-for="(choose_group, index) in chooseGroup"
+                      :key="index"
+                      style="margin-right:10px"
+                      closable
+                      @close="handleRemoveGroup(index)"
+                    >
                       <span v-for="(item, groupIndex) in choose_group" :key="groupIndex">
                         {{ item && item.name }}&nbsp;
-                        <span v-if="groupIndex !== choose_group.length-1 ">>&nbsp;</span>
+                        <span
+                          v-if="groupIndex !== choose_group.length-1 "
+                        >>&nbsp;</span>
                       </span>
                     </el-tag>
                   </p>
@@ -235,7 +243,7 @@
                   </el-form-item>
                   <el-form-item label="商品详细信息：">
                     <p>填写商品说明书</p>
-                    <div>
+                    <div class="editorWrap">
                       <Tinymce
                         id="basicInfo"
                         ref="editor"
@@ -244,6 +252,7 @@
                         :height="400"
                         @onload="tinymceLoad"
                       />
+                      <div class="wordcount">统计:{{ getContentLength }}字</div>
                     </div>
                     <!-- <div v-show="basicForm.origin===1">
                       <Tinymce
@@ -1124,6 +1133,11 @@ export default {
     },
     headers() {
       return { Authorization: this.token }
+    },
+    getContentLength: function() {
+      const text = this.basicForm.intro.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, '')
+      const count = text.trim().length
+      return count
     }
   },
   watch: {
@@ -1789,6 +1803,9 @@ export default {
     height: 60px;
   }
 }
+.tox .tox-statusbar {
+  display: none !important;
+}
 </style>
 <style lang="scss" scoped>
 .edit-wrapper {
@@ -1850,6 +1867,16 @@ export default {
         .link {
           cursor: pointer;
         }
+      }
+    }
+    .editorWrap {
+      position: relative;
+      .wordcount {
+        position: absolute;
+        bottom: -5px;
+        right: 10px;
+        font-size: 8px;
+        color: #797979;
       }
     }
   }
