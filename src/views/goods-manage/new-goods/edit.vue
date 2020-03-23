@@ -43,11 +43,19 @@
                       <span
                         class="tag"
                       >{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
-                    </el-tag> -->
-                    <el-tag v-for="(choose_group, index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                    </el-tag>-->
+                    <el-tag
+                      v-for="(choose_group, index) in chooseGroup"
+                      :key="index"
+                      style="margin-right:10px"
+                      closable
+                      @close="handleRemoveGroup(index)"
+                    >
                       <span v-for="(item, groupIndex) in choose_group" :key="groupIndex">
                         {{ item && item.name }}&nbsp;
-                        <span v-if="groupIndex !== choose_group.length-1 ">>&nbsp;</span>
+                        <span
+                          v-if="groupIndex !== choose_group.length-1 "
+                        >>&nbsp;</span>
                       </span>
                     </el-tag>
                   </p>
@@ -235,7 +243,7 @@
                   </el-form-item>
                   <el-form-item label="商品详细信息：">
                     <p>填写商品说明书</p>
-                    <div>
+                    <div class="editorWrap">
                       <Tinymce
                         id="basicInfo"
                         ref="editor"
@@ -244,6 +252,7 @@
                         :height="400"
                         @onload="tinymceLoad"
                       />
+                      <div class="wordcount">统计: {{ getContentLength }}字</div>
                     </div>
                     <!-- <div v-show="basicForm.origin===1">
                       <Tinymce
@@ -419,12 +428,12 @@
                     </template>
                   </el-table-column>
                   <el-table-column label="商品条码" prop="barCode" />
-                  <el-table-column label="商品价格">
+                  <el-table-column label="参考价格">
                     <template slot-scope="scope">
                       <span v-text="scope.row.mprice" />
                       <template v-if="!is_query">
                         <edit-table
-                          title="商品价格"
+                          title="参考价格"
                           keys="mprice"
                           :info="scope.row"
                           :index="scope.$index"
@@ -550,12 +559,12 @@
                           </template>
                         </template>
                       </el-table-column>
-                      <el-table-column label="商品价格" prop="mprice">
+                      <el-table-column label="参考价格" prop="mprice">
                         <template slot-scope="scope">
                           <span v-text="scope.row.mprice" />
                           <template v-if="!is_query">
                             <edit-table
-                              title="商品价格"
+                              title="参考价格"
                               keys="mprice"
                               :info="scope.row"
                               :index="scope.$index"
@@ -1124,6 +1133,11 @@ export default {
     },
     headers() {
       return { Authorization: this.token }
+    },
+    getContentLength: function() {
+      const text = this.basicForm.intro.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, '')
+      const count = text.trim().length
+      return count
     }
   },
   watch: {
@@ -1789,6 +1803,9 @@ export default {
     height: 60px;
   }
 }
+.tox .tox-statusbar {
+  display: none !important;
+}
 </style>
 <style lang="scss" scoped>
 .edit-wrapper {
@@ -1850,6 +1867,24 @@ export default {
         .link {
           cursor: pointer;
         }
+      }
+    }
+    .editorWrap {
+      position: relative;
+      .wordcount {
+        position: absolute;
+        // bottom: -5px;
+        height: 18px;
+        line-height: 18px;
+        // right: 10px;
+        text-align: right;
+        font-size: 12px;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-top: 0 none;
+        padding-right: 10px;
+        color: rgba(34,47,62,.7);
       }
     }
   }

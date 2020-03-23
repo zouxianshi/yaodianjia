@@ -80,6 +80,13 @@
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
+            <span style="margin-left:20px">
+              <el-button type="primary" size="small" @click="handleExport">
+                导出
+                <i class="el-icon-download el-icon--right" />
+              </el-button>
+              <export-table />
+            </span>
           </div>
         </div>
       </section>
@@ -99,12 +106,19 @@
               @click="handleBatchUpDown(0)"
             >批量下架</el-button>
             <el-button type size="small" @click="handleLock">批量锁定库存价格</el-button>
+            <!-- listQuery.storeId -->
             <el-button
               v-if="listQuery.status !== 3"
               type
               size="small"
               @click="handleSynchro"
-            >批量同步库存价格</el-button>
+            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
+            <!-- <el-button
+              v-if="listQuery.status !== 3"
+              type
+              size="small"
+              @click="handleSynchroBefore"
+            >批量同步库存价格</el-button>-->
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -209,6 +223,7 @@
             :total="total"
             :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize"
+            :page-sizes="[10,20,30,50,100,200]"
             @pagination="_loadList"
           />
         </div>
@@ -277,10 +292,12 @@
   </div>
 </template>
 <script>
+// import download from '@hydee/download'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
+import exportTable from './export-table'
 import { mapGetters } from 'vuex'
-import { getTypeTree } from '@/api/group'
+import { getTypeTree, exportData } from '@/api/group'
 import {
   getStoreGoodsList,
   setLockPrice,
@@ -290,7 +307,7 @@ import {
   setSynchro
 } from '@/api/store-goods'
 export default {
-  components: { Pagination },
+  components: { Pagination, exportTable },
   mixins: [mixins],
   data() {
     const _checkTime = (rule, value, callback) => {
@@ -426,10 +443,12 @@ export default {
       // 定时解锁 chang
       this.formData.unlockTime = ''
     },
-    getList() {
+    getList(status) {
       this._loadStoreList().then(res => {
         if (res) {
-          this.listQuery.storeId = res[1] ? res[1].id : ''
+          if (!status) {
+            this.listQuery.storeId = res[1] ? res[1].id : ''
+          }
           // this.chooseStore = res[
           this._loadList()
         }
@@ -506,7 +525,7 @@ export default {
           })
       })
     },
-    handleSynchro() {
+    handleSynchroBefore() {
       // 同步价格
       const ary = []
       if (this.multipleSelection.length === 0) {
@@ -543,6 +562,86 @@ export default {
           console.log(err)
         })
     },
+    handleSynchro() {
+      if (!this.listQuery.storeId) {
+        this.$message({
+          message: '无法同步全部门店商品，请选择指定门店',
+          type: 'warning'
+        })
+        return
+      }
+      const ary = []
+      // 同步价格
+      /**
+       * 分为两种
+       * 1.同步查询出来的数据
+       * 2.同步勾选的数据
+       */
+      if (this.multipleSelection.length === 0 && this.total === 0) {
+        this.$message({
+          message: '请选择商品',
+          type: 'warning'
+        })
+        return
+      }
+      // 弹窗确认
+      this.$confirm(
+        `确认要将当前所选${this.multipleSelection.length ||
+          this.total}条商品的价格库存数据从erp同步到线上吗？`,
+        '',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          let data = {}
+          // 店铺code
+          const findIndex = this.storeList.findIndex(mItem => {
+            return mItem.id === this.listQuery.storeId
+          })
+          if (this.multipleSelection.length) {
+            this.multipleSelection.map(v => {
+              ary.push({
+                erpCode: v.erpCode,
+                storeSpecId: v.storeSpecId
+              })
+            })
+            data = {
+              merCode: this.merCode,
+              storeCode: this.storeList[findIndex].stCode,
+              storeId: this.listQuery.storeId,
+              specs: ary,
+              syncType: 1 // 单个门店部分商品
+            }
+          } else {
+            // 当前同步所有查询出来的数据；
+            data = {
+              merCode: this.merCode,
+              storeCode: this.storeList[findIndex].stCode,
+              storeId: this.listQuery.storeId,
+              specs: ary,
+              syncType: 2 // 单个门店所有商品
+            }
+          }
+          // 调用接口同步
+          setSynchro(data)
+            .then(res => {
+              this.$message({
+                message: '价格同步成功',
+                type: 'success'
+              })
+              this.getList('noReset')
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        })
+        .catch(() => {
+          return
+        })
+    },
     handleChangeGroup(val) {
       console.log(val)
       this.listQuery.groupId = val[val.length - 1]
@@ -568,6 +667,40 @@ export default {
         }
       })
       this._loadList()
+    },
+    // 处理商品数据导出
+    handleExport() {
+      if (this.listQuery.storeId === '') {
+        if (
+          this.listQuery.name === '' &&
+          this.listQuery.erpCode === '' &&
+          this.listQuery.barCode === ''
+        ) {
+          this.$message({
+            message: '选择全部门店时，请输入商品名称或ERP编码、条形码',
+            type: 'warning'
+          })
+          return
+        }
+      }
+      exportData({
+        ...this.listQuery,
+        storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
+      }).then(res => {
+        console.log('111111', res)
+        if (res.code === '10000') {
+          this.$alert(
+            '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
+            '门店商品导出',
+            {
+              confirmButtonText: '好的',
+              center: true,
+              roundButton: true,
+              confirmButtonClass: 'hydee_alert_btn'
+            }
+          )
+        }
+      })
     },
     handleLock() {
       if (this.multipleSelection.length === 0) {

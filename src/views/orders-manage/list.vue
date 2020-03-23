@@ -233,7 +233,7 @@
           </div>
           <div class="order-table-body-box">
             <template v-if="tableData && tableData.length>0">
-              <div v-for="(item,index) in tableData" :key="index" class="order-table-body">
+              <div v-for="item in tableData" :key="item.serialNumber" class="order-table-body">
                 <div class="order-detail-header">
                   <div class="header-left">
                     <div class="header-cell">订单编号：</div>
@@ -357,10 +357,14 @@
                         <span
                           v-if="item.prescriptionStatus===1&&item.medicalPrescriptionApplyDTO&&item.medicalPrescriptionApplyDTO.prescriptionApprovalDTO&&item.medicalPrescriptionApplyDTO.prescriptionApprovalDTO.prescriptionType === 2"
                           class="f16"
-                        >(待审核)</span> -->
+                        >(待审核)</span>-->
                       </template>
                       <template v-else>
-                        <span v-text="orderStatusText(item)" />
+                        <template v-if="item.orderStatus===6">
+                          <template v-if="item.deliveryType===2">待提货</template>
+                          <template v-else>已发货</template>
+                        </template>
+                        <span v-else v-text="orderStatusText(item)" />
                       </template>
                       <!-- 立即发货出现时机，当前订单状态为代发货且配送方式不为自提；当为处方单时，必须要保证需求单审核状态为通过 -->
                       <template

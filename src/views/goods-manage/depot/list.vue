@@ -47,7 +47,16 @@
           </div>
           <div class="search-item">
             <span class="label-name">商品分类</span>
-            <el-cascader v-model="listQuery.typeId" size="small" :options="goodsTypeList" :props="defaultProps" clearable placeholder="选择商品来源" :show-all-levels="false" @focus="_loadGoodTypeList()" />
+            <el-cascader
+              v-model="listQuery.typeId"
+              size="small"
+              :options="goodsTypeList"
+              :props="defaultProps"
+              clearable
+              placeholder="选择商品来源"
+              :show-all-levels="false"
+              @focus="_loadGoodTypeList()"
+            />
           </div>
         </div>
         <div class="search-form">
@@ -217,19 +226,24 @@
               align="left"
               fixed="right"
               label="操作"
-              :min-width="!listQuery.infoFlag?'100':'220'"
+              :min-width="!listQuery.infoFlag?'100':'180'"
             >
               <template slot-scope="scope">
                 <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
-                  <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
-                  <el-button type="info" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
+                  <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
+                  <el-divider direction="vertical" />
+                  <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template>
-                <a
-                  v-if="scope.row.commodityType!==2"
-                  :href="`#/goods-manage/edit?id=${scope.row.id}`"
-                >
-                  <el-button type size="mini">编辑</el-button>
-                </a>
+                <template v-if="scope.row.commodityType!==2">
+                  <el-divider direction="vertical" />
+                  <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                    <el-button type="text" size="mini">编辑</el-button>
+                  </a>
+                </template>
+                <template v-if="!scope.row.specId">
+                  <el-divider direction="vertical" />
+                  <el-button type="text" size="mini" @click="handleDel(scope.row)">删除</el-button>
+                </template>
               </template>
             </el-table-column>
           </el-table>
@@ -263,10 +277,11 @@
       @complete="limitVisible=false;getList()"
       @close="limitVisible=false"
     />
+    <el-backtop target=".app-container" :bottom="100" />
   </div>
 </template>
 <script>
-import { getGoodsList, exportData } from '@/api/depot'
+import { getGoodsList, exportData, delGoods } from '@/api/depot'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
@@ -365,8 +380,14 @@ export default {
     },
     handleQuery() {
       this.listQuery.currentPage = 1
-      if (this.listQuery.typeId && Array.isArray(this.listQuery.typeId) && this.listQuery.typeId.length) {
-        this.listQuery.typeId = this.listQuery.typeId[this.listQuery.typeId.length - 1]
+      if (
+        this.listQuery.typeId &&
+        Array.isArray(this.listQuery.typeId) &&
+        this.listQuery.typeId.length
+      ) {
+        this.listQuery.typeId = this.listQuery.typeId[
+          this.listQuery.typeId.length - 1
+        ]
       }
       console.log(this.listQuery)
       this.getList()
@@ -418,11 +439,12 @@ export default {
       if (Array.isArray(this.goodsTypeList) && this.goodsTypeList.length) {
         return
       }
-      getTypeTree({ merCode: 'hydee', type: 1, issTree: true }).then((res) => {
-        console.log('_loadGoodTypeList-------', res)
-        this.goodsTypeList = res.data
-      }).catch(() => {
-      })
+      getTypeTree({ merCode: 'hydee', type: 1, issTree: true })
+        .then(res => {
+          console.log('_loadGoodTypeList-------', res)
+          this.goodsTypeList = res.data
+        })
+        .catch(() => {})
     },
     handleTreeClick(row, node) {
       // 节点被点击时
@@ -462,6 +484,30 @@ export default {
       this.specData = [`${row.specId}`]
       this.status = status
       this.dialogVisible = true
+    },
+    //
+    handleDel(row) {
+      console.log('当前删除的id', row)
+      this.$confirm('确定要删除当前商品嘛？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        delGoods({
+          merCode: this.merCode, // 商品编码不可为空
+          id: row.id, // 商品id不可为空
+          specId: row.specId // 商品规格ID,没有时可不传
+        }).then(res => {
+          console.log('res----delGoods', res)
+          if (res.code === '10000') {
+            this.$message({
+              message: '商品删除成功',
+              type: 'success'
+            })
+            this.getList()
+          }
+        })
+      })
     },
     handleSelectionChange(rows) {
       this.multiselect = rows
@@ -549,6 +595,12 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+.el-divider--vertical {
+  margin: 0 4px;
+}
+.el-button + .el-button {
+  margin-left: 0;
+}
 .depot-wrappe {
   margin-bottom: 30px;
   .search-item {

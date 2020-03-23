@@ -2,6 +2,7 @@
   <span>
     <el-button
       type="text"
+      style="font-size:10px"
       @click="dialogExportVisible = true;listQuery.currentPage=1;_loadList()"
     >查看导出记录</el-button>
     <el-dialog title="导出记录" :visible.sync="dialogExportVisible" append-to-body>
@@ -65,7 +66,6 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { getExportRecord } from '@/api/task'
-// import { getOrderList } from '@/api/order'
 import mixins from '@/utils/mixin'
 import { mapGetters } from 'vuex'
 
@@ -120,7 +120,7 @@ export default {
       this.loadingList = true
       getExportRecord({
         merCode: this.merCode,
-        exportType: 'ORDER_EXPORT',
+        exportType: 'STORESPEC_EXPORT',
         ...this.listQuery
       })
         .then(res => {
