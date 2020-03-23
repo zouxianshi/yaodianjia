@@ -80,11 +80,6 @@
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
-            <el-button type="primary" size="small" @click="handleExport">
-              导出
-              <i class="el-icon-download el-icon--right" />
-            </el-button>
-            <export-table />
           </div>
         </div>
       </section>
@@ -104,18 +99,26 @@
               @click="handleBatchUpDown(0)"
             >批量下架</el-button>
             <el-button type size="small" @click="handleLock">批量锁定库存价格</el-button>
-            <!-- <el-button
-              v-if="listQuery.status !== 3"
-              type
-              size="small"
-              @click="handleSynchro"
-            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>-->
+            <!-- listQuery.storeId -->
             <el-button
               v-if="listQuery.status !== 3"
               type
               size="small"
+              @click="handleSynchro"
+            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
+            <!-- <el-button
+              v-if="listQuery.status !== 3"
+              type
+              size="small"
               @click="handleSynchroBefore"
-            >批量同步库存价格</el-button>
+            >批量同步库存价格</el-button>-->
+            <span style="margin-left:20px">
+              <el-button type="primary" size="small" @click="handleExport">
+                导出
+                <i class="el-icon-download el-icon--right" />
+              </el-button>
+              <export-table />
+            </span>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -558,6 +561,13 @@ export default {
         })
     },
     handleSynchro() {
+      if (!this.listQuery.storeId) {
+        this.$message({
+          message: '无法同步全部门店商品，请选择指定门店',
+          type: 'warning'
+        })
+        return
+      }
       const ary = []
       // 同步价格
       /**
@@ -600,7 +610,8 @@ export default {
               merCode: this.merCode,
               storeCode: this.storeList[findIndex].stCode,
               storeId: this.listQuery.storeId,
-              specs: ary
+              specs: ary,
+              syncType: 1 // 单个门店部分商品
             }
           } else {
             // 当前同步所有查询出来的数据；
@@ -608,7 +619,8 @@ export default {
               merCode: this.merCode,
               storeCode: this.storeList[findIndex].stCode,
               storeId: this.listQuery.storeId,
-              specs: ary
+              specs: ary,
+              syncType: 2 // 单个门店所有商品
             }
           }
           // 调用接口同步
@@ -656,32 +668,37 @@ export default {
     },
     // 处理商品数据导出
     handleExport() {
-      console.log()
+      if (this.listQuery.storeId === '') {
+        if (
+          this.listQuery.name === '' &&
+          this.listQuery.erpCode === '' &&
+          this.listQuery.barCode === ''
+        ) {
+          this.$message({
+            message: '选择全部门店时，请输入商品名称或ERP编码、条形码',
+            type: 'warning'
+          })
+          return
+        }
+      }
       exportData({
         ...this.listQuery,
         storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
+      }).then(res => {
+        console.log('111111', res)
+        if (res.code === '10000') {
+          this.$alert(
+            '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
+            '门店商品导出',
+            {
+              confirmButtonText: '好的',
+              center: true,
+              roundButton: true,
+              confirmButtonClass: 'hydee_alert_btn'
+            }
+          )
+        }
       })
-        .then(res => {
-          console.log('111111', res)
-          if (res.code === '10000') {
-            this.$alert(
-              '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
-              '门店商品导出',
-              {
-                confirmButtonText: '好的',
-                center: true,
-                roundButton: true,
-                confirmButtonClass: 'hydee_alert_btn'
-              }
-            )
-          }
-        })
-        .catch(() => {
-          this.$message({
-            message: '数据导出失败',
-            type: 'error'
-          })
-        })
     },
     handleLock() {
       if (this.multipleSelection.length === 0) {

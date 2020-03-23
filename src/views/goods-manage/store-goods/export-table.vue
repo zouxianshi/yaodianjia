@@ -2,6 +2,7 @@
   <span>
     <el-button
       type="text"
+      style="font-size:10px"
       @click="dialogExportVisible = true;listQuery.currentPage=1;_loadList()"
     >查看导出记录</el-button>
     <el-dialog title="导出记录" :visible.sync="dialogExportVisible" append-to-body>
