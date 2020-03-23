@@ -80,6 +80,13 @@
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
+            <span style="margin-left:20px">
+              <el-button type="primary" size="small" @click="handleExport">
+                导出
+                <i class="el-icon-download el-icon--right" />
+              </el-button>
+              <export-table />
+            </span>
           </div>
         </div>
       </section>
@@ -112,13 +119,6 @@
               size="small"
               @click="handleSynchroBefore"
             >批量同步库存价格</el-button>-->
-            <span style="margin-left:20px">
-              <el-button type="primary" size="small" @click="handleExport">
-                导出
-                <i class="el-icon-download el-icon--right" />
-              </el-button>
-              <export-table />
-            </span>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -443,10 +443,12 @@ export default {
       // 定时解锁 chang
       this.formData.unlockTime = ''
     },
-    getList() {
+    getList(status) {
       this._loadStoreList().then(res => {
         if (res) {
-          this.listQuery.storeId = res[1] ? res[1].id : ''
+          if (!status) {
+            this.listQuery.storeId = res[1] ? res[1].id : ''
+          }
           // this.chooseStore = res[
           this._loadList()
         }
@@ -630,7 +632,7 @@ export default {
                 message: '价格同步成功',
                 type: 'success'
               })
-              this.getList()
+              this.getList('noReset')
             })
             .catch(err => {
               console.log(err)
