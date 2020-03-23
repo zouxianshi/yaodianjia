@@ -428,12 +428,12 @@
                     </template>
                   </el-table-column>
                   <el-table-column label="商品条码" prop="barCode" />
-                  <el-table-column label="商品价格">
+                  <el-table-column label="参考价格">
                     <template slot-scope="scope">
                       <span v-text="scope.row.mprice" />
                       <template v-if="!is_query">
                         <edit-table
-                          title="商品价格"
+                          title="参考价格"
                           keys="mprice"
                           :info="scope.row"
                           :index="scope.$index"
@@ -559,12 +559,12 @@
                           </template>
                         </template>
                       </el-table-column>
-                      <el-table-column label="商品价格" prop="mprice">
+                      <el-table-column label="参考价格" prop="mprice">
                         <template slot-scope="scope">
                           <span v-text="scope.row.mprice" />
                           <template v-if="!is_query">
                             <edit-table
-                              title="商品价格"
+                              title="参考价格"
                               keys="mprice"
                               :info="scope.row"
                               :index="scope.$index"
