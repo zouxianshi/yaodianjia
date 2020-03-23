@@ -233,15 +233,17 @@
                   <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-divider direction="vertical" />
                   <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
-                  <el-divider direction="vertical" />
                 </template>
                 <template v-if="scope.row.commodityType!==2">
+                  <el-divider direction="vertical" />
                   <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
                     <el-button type="text" size="mini">编辑</el-button>
                   </a>
-                  <el-divider direction="vertical" />
                 </template>
-                <el-button type="text" size="mini" @click="handleDel(scope.row)">删除</el-button>
+                <template v-if="!scope.row.specId">
+                  <el-divider direction="vertical" />
+                  <el-button type="text" size="mini" @click="handleDel(scope.row)">删除</el-button>
+                </template>
               </template>
             </el-table-column>
           </el-table>
