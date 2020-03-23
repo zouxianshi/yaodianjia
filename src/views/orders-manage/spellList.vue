@@ -4,13 +4,13 @@
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="订单搜索:">
           <el-row type="flex">
-            <el-select v-model="form.name" class="mr20">
+            <el-select v-model="form.searchKey" class="mr20">
               <el-option label="拼团单号" value="groupCode" />
               <el-option label="团长姓名" value="userName" />
               <el-option label="团长手机号" value="userTel" />
               <el-option label="团长会员卡号" value="userId" />
             </el-select>
-            <el-input v-model="form.value" style="width:180px" />
+            <el-input v-model="form.searchValue" style="width:180px" />
           </el-row>
         </el-form-item>
         <el-form-item label="开团时间:">
@@ -36,17 +36,18 @@
           </el-form-item>
           <el-form-item label="所在门店:">
             <el-select
-              v-model="form.merCode"
+              v-model="form.storeId"
               filterable
               class="mr20"
               :loading="storeLoading"
+              :remote-method="remoteMethod"
               placeholder="请选择所在门店"
-              @focus="_loadAllStoreData()"
+              @change="handleChangeStore"
             >
               <el-option
                 v-for="item in allStore"
                 :key="item.id"
-                :label="item.stName+'('+item.stCode+')'"
+                :label="item.stName"
                 :value="item.id"
               />
             </el-select>
@@ -55,12 +56,13 @@
 
         <el-form-item>
           <el-button type="primary" @click="submitForm('form')">查询</el-button>
-          <el-button>重置查询条件</el-button>
+          <el-button @click="resetForm('form')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div style="marginTop: 50px">
-      <el-radio-group v-model="orderTabStatus">
+      <!-- // 拼团状态(0全部，1.待成团，2已成团，3拼团失败) -->
+      <el-radio-group v-model="groupStatus" @change="tabchange">
         <el-radio-button :label="0">全部</el-radio-button>
         <el-radio-button :label="1">待成团</el-radio-button>
         <el-radio-button :label="2">已成团</el-radio-button>
@@ -109,8 +111,8 @@
                         </div>
                       </div>
                       <div class="goods-info padding10">
-                        <div class="goods-name">蚌壳贴</div>
-                        <div class="goods-number marginTop20">025555555</div>
+                        <div class="goods-name">{{ item.productName }}</div>
+                        <div class="goods-number marginTop20">{{ item.specId }}</div>
                       </div>
                       <div class="goods-price padding10">￥{{ item.activityPrice }}</div>
                     </div>
@@ -142,6 +144,7 @@
                       <div>{{ item.fullNum }}人团</div>
                       <!-- addNum参团人数 -->
                       <div v-if="item.fullNum !== item.addNum">还差{{ item.fullNum - item.addNum }}人团</div>
+                      <div>已虚拟用户填充成团</div>
                     </div>
                   </div>
                   <!-- 实付总金额 -->
@@ -157,6 +160,10 @@
                   <div class="body-cell cell-right padding10">
                     <!-- 拼团状态(0待付款，1.待成团，2已成团，3拼团失败,4.手动成团,5拼团失败后已回收库存，6已发货) -->
                     <div class="cell-text">{{ item.groupStatus | orderType }}</div>
+                    <div v-if="item.groupStatus === 2">成团时间:{{ item.endTime }}</div>
+                    <div v-if="item.groupStatus === 3">失败时间:{{ item.endTime }}</div>
+                    <button v-if="item.groupStatus === 1" type="text" @click="oneTimeGroup(item.groupCode)">一键成团</button>
+                    <div v-if="item.groupStatus === 4">手动成团</div>
                   </div>
                 </div>
               </div>
@@ -185,7 +192,7 @@ import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
-import { tablist } from '@/api/spell-goods'
+import { tablist, oneTimeGroupAction } from '@/api/spell-goods'
 // import { getAllStore } from '@/api/common'
 import { getMyStoreList } from '@/api/store-goods'
 
@@ -243,15 +250,22 @@ export default {
           label: '会员卡号'
         }
       ],
-      listQuery: {},
+      listQuery: {
+        currentPage: 1
+      },
       form: {
-        name: '',
-        value: '',
-        groupStatus: 0,
-        goodName: ''
+        startTime: '',
+        endTime: '',
+        groupCode: '',
+        groupStatus: 0, // 拼团状态(0全部，1.待成团，2已成团，3拼团失败)
+        storeId: '',
+        userId: '',
+        userName: '',
+        userTel: '',
+        time: null
       },
       tableData: [],
-      orderTabStatus: 0,
+      groupStatus: 0,
       allStore: [],
       total: 0,
       storeLoading: false
@@ -262,28 +276,48 @@ export default {
   },
   created() {
     this.getList()
-    // this._loadAllStoreData()
+    this._loadAllStoreData()
   },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
-        console.log('error submit!!', valid, this.form)
-        if (valid) {
-          alert('submit!')
-        } else {
-          console.log('error submit!!', this.form)
-          return false
-        }
+        this.getList()
       })
     },
     resetForm(formName) {
+      console.log('重置了嘛----', formName)
       this.$refs[formName].resetFields()
+      this.form = {
+        startTime: '',
+        endTime: '',
+        groupCode: '',
+        groupStatus: 0, // 拼团状态(0全部，1.待成团，2已成团，3拼团失败)
+        storeId: '',
+        userId: '',
+        userName: '',
+        userTel: '',
+        time: null
+      }
+      this.getList()
     },
     // 获取列表
-    getList() {
+    getList(reset) {
+      const { time } = this.form
+      let data = {}
+      if (Array.isArray(time) && time.length) {
+        data.startTime = dayjs(time[0]).format('YYYY-MM-DD')
+        data.endTime = dayjs(time[1]).format('YYYY-MM-DD')
+      }
+      data = {
+        ...this.listQuery,
+        ...this.form,
+        [this.form.searchKey]: this.form.searchValue,
+        ...data,
+        merCode: this.merCode
+      }
       tablist({
-        merCode: this.merCode,
-        status: 1
+        ...data,
+        currentPage: reset ? 1 : data.currentPage
       })
         .then(res => {
           // 获取门店员工
@@ -297,6 +331,29 @@ export default {
         })
         .catch(() => {})
     },
+    remoteMethod(val) {
+      this.selectloading = true
+    },
+    tabchange(val) {
+      console.log(val)
+      this.groupStatus = val
+      this.form.groupStatus = val
+      this.getList()
+    },
+    handleChangeStore(val) {
+      // 门店选择改变时触发
+      this.allStore.map(v => {
+        if (v.id === val) {
+          this.form.storeId = val
+        }
+      })
+      this.listQuery.currentPage = 1
+      this.getList()
+    },
+    // 查询待成团数量
+    loadPromiseGroup() {
+      this.getList()
+    },
     _loadAllStoreData(val) {
       // 加载所有门店
       this.storeLoading = true
@@ -308,7 +365,9 @@ export default {
         status: 1
       })
         .then(res => {
-          this.allStore = res.data
+          const { data } = res.data
+          data.unshift({ id: '', stName: '全部' })
+          this.allStore = data
           this.storeLoading = false
         })
         .catch(err => {
@@ -318,6 +377,19 @@ export default {
     },
     formatTime(time, format) {
       return dayjs(time).format(format)
+    },
+    // 一键成团
+    oneTimeGroup(groupCode) {
+      oneTimeGroupAction({ groupCode }).then((res) => {
+        const { code } = res
+        if (code === '10000') {
+          this.$message({
+            type: 'success',
+            message: '设置成功'
+          })
+          this.getList()
+        }
+      })
     },
     // 计算实付总金额
     computerPrice(activityPrice, addNum) {

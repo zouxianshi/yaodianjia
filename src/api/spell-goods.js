@@ -8,3 +8,15 @@ export function tablist(params) {
     data: params
   })
 }
+
+/**
+ * 一键成团
+ * groupCode
+ */
+export function oneTimeGroupAction(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/oneTimeGroup`,
+    method: 'post',
+    data: params
+  })
+}
