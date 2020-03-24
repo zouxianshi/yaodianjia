@@ -4,7 +4,7 @@ import { findArray } from '@/utils/index'
 const mixin = {
   data() {
     return {
-      editSpecsData: [],
+      editSpecsData: [], //  编辑时，用户储存规格回显的数据
       specSkuList: [],
       specsForm: { // 商家自建商品的规格表单
         specsData: [],
@@ -38,8 +38,8 @@ const mixin = {
     handleEditTabSpecs(row, keys, index) { // 编辑已有的规格 编码 价格
       if (this.basicForm.origin === 1) {
         if (keys === 'erpCode') {
-          const findIndex = findArray(this.specsForm.specs, { erpCode: row[keys] })
-          if (findIndex > -1 && this.specsForm.specs[findIndex].id !== row.id) {
+          const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
+          if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
               type: 'error'
@@ -47,7 +47,7 @@ const mixin = {
             return
           }
         }
-        this.$set(this.specsForm.specs, index, row)
+        this.$set(this.editSpecsData, index, row)
         const findIndex = findArray(this.chooseTableSpec, { id: row.id })
         if (findIndex) {
           this.chooseTableSpec.splice(findIndex, 1)
@@ -357,7 +357,7 @@ const mixin = {
               })
             }
           })
-          this.specsForm.specs = res.data
+          this.editSpecsData = res.data
           if (this.$route.query.type === 'query') {
             $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input').addClass('is-disabled') // 设置全选disabeld
             res.data.forEach((value, index) => {
@@ -375,6 +375,9 @@ const mixin = {
       getSelfSpecsInfo(this.basicForm.id).then(res => {
         if (res.data) {
           const { specList } = res.data
+          /**
+           * 自建商品
+           */
           if (this.basicForm.origin === 2) {
             if (res.data && specList.length > 0) {
               if (specList) {
@@ -411,14 +414,18 @@ const mixin = {
               this.handleAddSpec()
             }
           } else {
+            /** *
+             * 标库商品
+             */
+            console.log('-----标库商品------',)
+            this.specsForm.specs = []
             const findInput = $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input')
             findInput.remove() // 设置全选disabeld
-            // findInput.find('input').remove()
             specList.forEach((v, index) => {
-              const findIndex = findArray(this.specsForm.specs, { barCode: v.barCode })
+              const findIndex = findArray(this.editSpecsData, { barCode: v.barCode })
               if (findIndex > -1) {
                 this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
-                const row = this.specsForm.specs[findIndex]
+                const row = this.editSpecsData[findIndex]
                 row.disabled = true
                 row.id = v.id
                 row.mprice = v.mprice
@@ -427,7 +434,7 @@ const mixin = {
                 row.picUrl = v.picUrl
                 row.limitNum = v.limitNum
                 row.type = v.type || 2
-                this.$set(this.specsForm.specs, findIndex, row)
+                this.$set(this.editSpecsData, findIndex, row)
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
                 $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').find('input').attr('disabled', true)
               }
@@ -446,6 +453,7 @@ const mixin = {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
+      console.log('---标库----', data)
       this.specsForm.specs.push(data)
       /** **
        *
@@ -454,9 +462,23 @@ const mixin = {
       if (this.basicForm.id && this.editSpecsData.length > 0) {
         if (this.specsForm.specsData.length === 0) {
           this.specsList.map(v => {
-            if (this.chooseSpec.includes(v.id)) {
-              v.isCheck = true
-              this.specsForm.specsData.push(v)
+            /** *
+             * 标库商品，sku设置的规格存在dynamicProp字段中，添加的是可以直接在这里判断有哪些SKU
+             *
+             */
+            if (this.basicForm.origin === 1) { // 标库
+              const findIndex = this.dynamicProp.findIndex(item => {
+                return item.id === v.id
+              })
+              if (findIndex > -1) {
+                v.isCheck = true
+                this.specsForm.specsData.push(v)
+              }
+            } else {
+              if (this.chooseSpec.includes(v.id)) {
+                v.isCheck = true
+                this.specsForm.specsData.push(v)
+              }
             }
           })
         }
