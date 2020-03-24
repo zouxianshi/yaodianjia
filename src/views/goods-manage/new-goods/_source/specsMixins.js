@@ -84,10 +84,6 @@ const mixin = {
     },
     handleSubmitSpec() { // 规格保存操作
       let data = []
-      if (this.is_query) { // 如果是查看
-        this.step = 3
-        return
-      }
       if (this.basicForm.origin === 1) { // 标库商品
         //  获取一种选中的值
         this.specsForm.specs.map(v => {

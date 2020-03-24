@@ -33,17 +33,6 @@
                 <div class="type-list groups">
                   商品分组：
                   <p v-if="Array.isArray(chooseGroup) && chooseGroup.length" class="group-list">
-                    <!-- <el-tag
-                      v-for="(item,index) in chooseGroup"
-                      :key="index"
-                      style="margin-right:10px"
-                      closable
-                      @close="handleRemoveGroup(index)"
-                    >
-                      <span
-                        class="tag"
-                      >{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
-                    </el-tag>-->
                     <el-tag
                       v-for="(choose_group, index) in chooseGroup"
                       :key="index"
@@ -333,14 +322,6 @@
                         :false-label="0"
                       >含麻黄碱</el-checkbox>
                     </template>
-                  </el-form-item>
-                  <el-form-item label label-width="100px">
-                    <el-button
-                      type="primary"
-                      size="small"
-                      :loading="subLoading"
-                      @click="handleSubmitForm"
-                    >下一步</el-button>
                   </el-form-item>
                 </div>
               </div>
@@ -811,15 +792,6 @@
                 </p>
               </template>
             </el-form-item>
-            <el-form-item label label-width="100px">
-              <el-button type size="small" @click="step=1">上一步</el-button>
-              <el-button
-                type="primary"
-                size="small"
-                :loading="subLoading"
-                @click="handleSubmitSpec"
-              >下一步</el-button>
-            </el-form-item>
           </el-form>
         </div>
       </div>
@@ -925,6 +897,10 @@
       @back="handleSaveGroup"
       @close="groupVisible=false"
     />
+    <div class="action-wapper">
+      <el-button v-if="step !== 1" type size="small" @click="backStep">上一步</el-button>
+      <el-button v-if="setp3show" :loading="subLoading" size="small" type="primary" @click="next">{{ step===3?'保存':"下一步" }}</el-button>
+    </div>
   </div>
 </template>
 <script>
@@ -1135,9 +1111,18 @@ export default {
       return { Authorization: this.token }
     },
     getContentLength: function() {
-      const text = this.basicForm.intro.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, '')
+      const text = this.basicForm.intro
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/g, '')
       const count = text.trim().length
       return count
+    },
+    // 计算是否需要下一步
+    setp3show() {
+      if (this.is_query && this.step === 3) {
+        return false
+      }
+      return true
     }
   },
   watch: {
@@ -1208,6 +1193,7 @@ export default {
       this.pageLoading.close()
     },
     handleGoStep(val) {
+      console.log('val', val)
       if (this.is_query) {
         this.step = val
       }
@@ -1638,12 +1624,26 @@ export default {
           this.subLoading = false
         })
     },
-    handleSubmitForm() {
-      // 保存基本信息操作
+    next() {
+      // 如果是查看
       if (this.is_query) {
-        this.step = 2
+        this.step += 1
         return
       }
+      // 否则执行相关逻辑
+      if (this.step === 1) {
+        this.handleSubmitForm()
+      } else if (this.step === 2) {
+        this.handleSubmitSpec()
+      } else if (this.step === 3) {
+        this.handleSubIntro()
+      }
+    },
+    backStep() {
+      this.step = this.step - 1
+    },
+    handleSubmitForm() {
+      // 保存基本信息操作
       this.$refs['basic'].validate(valid => {
         if (valid) {
           if (valid) {
@@ -1884,7 +1884,7 @@ export default {
         border: 1px solid #ccc;
         border-top: 0 none;
         padding-right: 10px;
-        color: rgba(34,47,62,.7);
+        color: rgba(34, 47, 62, 0.7);
       }
     }
   }
@@ -1970,6 +1970,16 @@ export default {
   .add-spec {
     margin-left: 80px;
   }
+}
+.action-wapper {
+  position: absolute;
+  padding: 12px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  text-align: right;
 }
 .link-btn {
   font-size: 14px;
