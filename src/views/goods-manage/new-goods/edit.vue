@@ -77,6 +77,7 @@
             status-icon
             label-width="130px"
             :rules="basicForm.origin===2?basicRules:{}"
+            :disabled="is_query"
           >
             <div class="edit-card">
               <div class="header">
@@ -85,7 +86,6 @@
               <div class="edit-card-cnt">
                 <div class="content">
                   <el-form-item label="商品名称：" prop="name">
-                    <!-- :disabled="basicForm.origin===1||is_query" -->
                     <el-input
                       v-model.trim="basicForm.name"
                       maxlength="30"
