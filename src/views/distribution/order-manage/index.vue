@@ -135,40 +135,47 @@
         <el-table-column property="productPrice" label="单价" />
         <el-table-column property="productCount" label="数量" />
       </el-table>
-      <div style="display:flex;flex-direction:row;margin-top:40px;">
-        <div style="color:#000;font-size:14px">预约单号：</div>
+      <div style="display:flex;flex-direction:row;margin-top:40px;align-items: center">
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">预约单号：</div>
         <div
           style="color:#000;font-size:14px;margin-left:20px;"
         >{{ dialogContent[0] && dialogContent[0].id }}</div>
       </div>
       <div
         v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
-        style="display:flex;flex-direction:row;margin-top:40px;"
+        style="display:flex;flex-direction:row;margin-top:40px;align-items: center"
       >
-        <div style="color:#000;font-size:14px">预约人：</div>
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">预约人：</div>
         <div
           style="color:#000;font-size:14px;margin-left:20px;"
         >{{ dialogContent[0] && dialogContent[0].personName }}</div>
       </div>
       <div
         v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
-        style="display:flex;flex-direction:row;margin-top:40px;"
+        style="display:flex;flex-direction:row;margin-top:40px;align-items: center"
       >
-        <div style="color:#000;font-size:14px">身份证号：</div>
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">身份证号：</div>
         <div
           style="color:#000;font-size:14px;margin-left:20px;"
         >{{ dialogContent[0] && dialogContent[0].personId }}</div>
       </div>
       <div
         v-if="dialogContent[0] && dialogContent[0].status === 'SUCCESS'"
-        style="display:flex;flex-direction:row;margin-top:40px;"
+        style="display:flex;flex-direction:row;margin-top:40px;align-items: center"
       >
-        <div style="color:#000;font-size:14px">收货门店：</div>
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">收货门店：</div>
         <div style="color:#000;font-size:14px;margin-left:20px;">{{ dialogContent[0].address }}</div>
       </div>
-      <div style="display:flex;flex-direction:row;margin-top:40px;justify-content: center;">
+      <div
+        v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
+        style="display:flex;flex-direction:row;margin-top:40px;align-items: center"
+      >
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">核销码：</div>
+        <el-input v-model="verifyCode" size="small" placeholder="请输入顾客提供的核销码" />
+      </div>
+      <div style="display:flex;flex-direction:row;margin-top:40px;justify-content: center;align-items: center">
         <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="updateOrderStatusService">确认</el-button>
+        <el-button type="primary" @click.stop="updateOrderStatusService">确认</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -416,7 +423,8 @@ export default {
         currentPage: 1
       },
       total: 0,
-      taskLoading: false
+      taskLoading: false,
+      verifyCode: '' // 核销码
     }
   },
   computed: {
@@ -781,8 +789,20 @@ export default {
         status:
           this.dialogContent[0].status === 'SUCCESS' ? 'ARRIVED' : 'COMPLETE'
       }
+      //  核销码
+      if (this.dialogContent[0].status === 'ARRIVED') {
+        if (this.verifyCode) {
+          params.verifyCode = this.verifyCode
+        } else {
+          this.$message({
+            message: '请输入顾客提供的核销码',
+            type: 'warning'
+          })
+          return
+        }
+      }
       console.log('updateOrderStatusService ________________ ')
-      const { data, code } = await DistributionService.updateOrderStatus(params)
+      const { code, data } = await DistributionService.updateOrderStatus(params)
       if (code === '10000') {
         console.log(data)
         this.$message({
@@ -793,7 +813,6 @@ export default {
         this.getOrderListByTypeService()
       }
     },
-
     /* 切换展示数据类型 */
     changeTableItem(type) {
       if (this.orderStatus === type) return
