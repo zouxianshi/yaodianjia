@@ -899,7 +899,7 @@
     />
     <div class="action-wapper">
       <el-button v-if="step !== 1" type size="small" @click="backStep">上一步</el-button>
-      <el-button v-if="setp3show" :loading="subLoading" size="small" type="primary" @click="next">{{ step===3?'保存':"下一步" }}</el-button>
+      <el-button v-if="setp3show" :loading="subLoading" size="small" type="primary" @click="nextStep">{{ step===3?'保存':"下一步" }}</el-button>
     </div>
   </div>
 </template>
@@ -1624,7 +1624,7 @@ export default {
           this.subLoading = false
         })
     },
-    next() {
+    nextStep() {
       // 如果是查看
       if (this.is_query) {
         this.step += 1
@@ -1810,6 +1810,7 @@ export default {
 <style lang="scss" scoped>
 .edit-wrapper {
   color: #333;
+  padding-bottom: 50px;
   .img-tips {
     font-size: 12px;
     margin-bottom: 10px;
