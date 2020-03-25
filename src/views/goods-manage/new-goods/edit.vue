@@ -378,10 +378,10 @@
               <template v-if="basicForm.origin===1">
                 <el-table
                   ref="multipleTable"
-                  :data="specsForm.specs"
+                  :data="editSpecsData"
                   @selection-change="handleSelectionChange"
                 >
-                  <el-table-column type="selection" width="55" />
+                  <el-table-column type="selection" :selectable="selectable" width="55" />
                   <el-table-column
                     v-for="(items,index1) in dynamicProp"
                     :key="index1"
@@ -408,7 +408,21 @@
                       </template>
                     </template>
                   </el-table-column>
-                  <el-table-column label="商品条码" prop="barCode" />
+                  <el-table-column label="商品条码" prop="barCode">
+                    <template slot-scope="scope">
+                      <span v-text="scope.row.barCode" />
+                      <template v-if="!is_query">
+                        <edit-table
+                          title="商品条码"
+                          keys="barCode"
+                          :info="scope.row"
+                          max-length="30"
+                          :index="scope.$index"
+                          @saveInfo="handleEditTabSpecs"
+                        />
+                      </template>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="参考价格">
                     <template slot-scope="scope">
                       <span v-text="scope.row.mprice" />
@@ -617,180 +631,180 @@
                     </el-table>
                   </div>
                 </template>
-                <div
-                  v-for="(item,index) in specsForm.specs"
-                  :key="index"
-                  class="spec-list"
-                  style="margin-top:10px;"
-                >
-                  <div class="header">
-                    <span>规格{{ index+1 }}</span>
-                    <i class="el-icon-delete" @click="handleDeleteSpec(index)" />
-                  </div>
-                  <div class="spec-content">
-                    <el-form
-                      :ref="'specsForm'+index"
-                      :model="item"
-                      size="small"
-                      label-width="80px"
-                      :status-icon="true"
-                    >
-                      <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1">
-                        <span slot="label">
-                          <span class="tip">*</span>
-                          {{ items.attributeName }}
-                        </span>
-                        <el-input
-                          v-model.trim="item['index_'+items.id+'_'+items.attributeName]"
-                          maxlength="50"
-                          :disabled="is_query"
-                          :placeholder="'输入'+items.attributeName"
-                        />
-                      </el-form-item>
-                      <el-form-item label>
-                        <span slot="label">
-                          <span class="tip">*</span> 条码
-                        </span>
-                        <el-input
-                          v-model.trim="item.barCode"
-                          maxlength="30"
-                          placeholder="输入条码"
-                          @blur="input_checkBarCode(item.barCode)"
-                        />
-                      </el-form-item>
-                      <el-form-item>
-                        <span slot="label">
-                          <span class="tip">*</span> 商品编码
-                        </span>
-                        <el-input
-                          v-model.trim="item.erpCode"
-                          placeholder="输入条码"
-                          maxlength="16"
-                          @blur="input_checkErpcode(item.erpCode)"
-                        />
-                      </el-form-item>
-                      <el-form-item>
-                        <span slot="label">
-                          <span class="tip">*</span> 价格
-                        </span>
-                        <el-input
-                          v-model.trim="item.mprice"
-                          placeholder="输入价格"
-                          @blur="input_checkMprice(item,index)"
-                        />
-                      </el-form-item>
-                      <el-form-item label="限购">
-                        <div style="padding-top:10px;">
-                          <el-radio-group
-                            v-model="item.limitType"
-                            @change="handleLimitChange(item,index)"
-                          >
-                            <el-radio :label="0" style="display:block">不限购</el-radio>
-                            <el-radio :label="1" style="margin-top:10px">
-                              <span style="color:#333">
-                                每笔订单限购&nbsp;
-                                <template v-if="item.limitType===1">
-                                  <el-input
-                                    v-model="item.limitNum"
-                                    size="mini"
-                                    maxlength="8"
-                                    :disabled="item.limitType===2||item.limitType===0"
-                                    style="width:100px"
-                                    @blur="input_checkLimit(item,index)"
-                                  />&nbsp;件
-                                </template>
-                                <template v-else>
-                                  <el-input
-                                    maxlength="8"
-                                    :disabled="item.limitType===2||item.limitType===0"
-                                    size="mini"
-                                    style="width:100px"
-                                    @blur="input_checkLimit(item,index)"
-                                  />&nbsp;件
-                                </template>
-                              </span>
-                            </el-radio>
-                            <el-radio :label="2" style="margin-top:10px">
-                              <span style="color:#333">
-                                按周期每&nbsp;
-                                <el-select
-                                  v-model="item.type"
+              </template>
+              <div
+                v-for="(item,index) in specsForm.specs"
+                :key="index"
+                class="spec-list"
+                style="margin-top:10px;"
+              >
+                <div class="header">
+                  <span>规格{{ index+1 }}</span>
+                  <i class="el-icon-delete" @click="handleDeleteSpec(index)" />
+                </div>
+                <div class="spec-content">
+                  <el-form
+                    :ref="'specsForm'+index"
+                    :model="item"
+                    size="small"
+                    label-width="80px"
+                    :status-icon="true"
+                  >
+                    <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1">
+                      <span slot="label">
+                        <span class="tip">*</span>
+                        {{ items.attributeName }}
+                      </span>
+                      <el-input
+                        v-model.trim="item['index_'+items.id+'_'+items.attributeName]"
+                        maxlength="50"
+                        :disabled="is_query"
+                        :placeholder="'输入'+items.attributeName"
+                      />
+                    </el-form-item>
+                    <el-form-item label>
+                      <span slot="label">
+                        <span class="tip">*</span> 条码
+                      </span>
+                      <el-input
+                        v-model.trim="item.barCode"
+                        maxlength="30"
+                        placeholder="输入条码"
+                        @blur="input_checkBarCode(item.barCode)"
+                      />
+                    </el-form-item>
+                    <el-form-item>
+                      <span slot="label">
+                        <span class="tip">*</span> 商品编码
+                      </span>
+                      <el-input
+                        v-model.trim="item.erpCode"
+                        placeholder="输入条码"
+                        maxlength="16"
+                        @blur="input_checkErpcode(item.erpCode)"
+                      />
+                    </el-form-item>
+                    <el-form-item>
+                      <span slot="label">
+                        <span class="tip">*</span> 价格
+                      </span>
+                      <el-input
+                        v-model.trim="item.mprice"
+                        placeholder="输入价格"
+                        @blur="input_checkMprice(item,index)"
+                      />
+                    </el-form-item>
+                    <el-form-item label="限购">
+                      <div style="padding-top:10px;">
+                        <el-radio-group
+                          v-model="item.limitType"
+                          @change="handleLimitChange(item,index)"
+                        >
+                          <el-radio :label="0" style="display:block">不限购</el-radio>
+                          <el-radio :label="1" style="margin-top:10px">
+                            <span style="color:#333">
+                              每笔订单限购&nbsp;
+                              <template v-if="item.limitType===1">
+                                <el-input
+                                  v-model="item.limitNum"
+                                  size="mini"
+                                  maxlength="8"
+                                  :disabled="item.limitType===2||item.limitType===0"
+                                  style="width:100px"
+                                  @blur="input_checkLimit(item,index)"
+                                />&nbsp;件
+                              </template>
+                              <template v-else>
+                                <el-input
+                                  maxlength="8"
+                                  :disabled="item.limitType===2||item.limitType===0"
+                                  size="mini"
+                                  style="width:100px"
+                                  @blur="input_checkLimit(item,index)"
+                                />&nbsp;件
+                              </template>
+                            </span>
+                          </el-radio>
+                          <el-radio :label="2" style="margin-top:10px">
+                            <span style="color:#333">
+                              按周期每&nbsp;
+                              <el-select
+                                v-model="item.type"
+                                :disabled="item.limitType===1||item.limitType===0"
+                                size="mini"
+                                style="width:80px"
+                                placeholder="选择类型"
+                              >
+                                <el-option :value="2" label="天" />
+                                <el-option :value="3" label="周" />
+                                <el-option :value="4" label="月" />
+                              </el-select>&nbsp;限购&nbsp;
+                              <template v-if="item.limitType===2">
+                                <el-input
+                                  v-model="item.limit"
+                                  maxlength="8"
                                   :disabled="item.limitType===1||item.limitType===0"
                                   size="mini"
-                                  style="width:80px"
-                                  placeholder="选择类型"
-                                >
-                                  <el-option :value="2" label="天" />
-                                  <el-option :value="3" label="周" />
-                                  <el-option :value="4" label="月" />
-                                </el-select>&nbsp;限购&nbsp;
-                                <template v-if="item.limitType===2">
-                                  <el-input
-                                    v-model="item.limit"
-                                    maxlength="8"
-                                    :disabled="item.limitType===1||item.limitType===0"
-                                    size="mini"
-                                    style="width:100px"
-                                    @blur="input_checkLimit(item,index)"
-                                  />
-                                </template>
-                                <template v-else>
-                                  <el-input
-                                    maxlength="8"
-                                    :disabled="item.limitType===1||item.limitType===0"
-                                    size="mini"
-                                    style="width:100px"
-                                    @blur="input_checkLimit(item,index)"
-                                  />
-                                </template>
-                              </span>
-                            </el-radio>
-                          </el-radio-group>
-                        </div>
-                      </el-form-item>
-                      <el-form-item label="商品图片">
-                        <el-upload
-                          class="avatar-uploader specs-img-table"
-                          :action="upLoadUrl"
-                          :headers="headers"
-                          :disabled="is_query"
-                          :show-file-list="false"
-                          :upload-index="index"
-                          :on-success="handleAvatarSuccess"
-                          :on-error="handleImgError"
-                          :before-upload="beforeUpload"
+                                  style="width:100px"
+                                  @blur="input_checkLimit(item,index)"
+                                />
+                              </template>
+                              <template v-else>
+                                <el-input
+                                  maxlength="8"
+                                  :disabled="item.limitType===1||item.limitType===0"
+                                  size="mini"
+                                  style="width:100px"
+                                  @blur="input_checkLimit(item,index)"
+                                />
+                              </template>
+                            </span>
+                          </el-radio>
+                        </el-radio-group>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="商品图片">
+                      <el-upload
+                        class="avatar-uploader specs-img-table"
+                        :action="upLoadUrl"
+                        :headers="headers"
+                        :disabled="is_query"
+                        :show-file-list="false"
+                        :upload-index="index"
+                        :on-success="handleAvatarSuccess"
+                        :on-error="handleImgError"
+                        :before-upload="beforeUpload"
+                      >
+                        <el-image
+                          v-if="item.picUrl"
+                          class="avatar"
+                          style="width:80px;height:80px"
+                          :src="showImg(item.picUrl)"
+                          @click="handleUploadIndex(index)"
                         >
-                          <el-image
-                            v-if="item.picUrl"
-                            class="avatar"
-                            style="width:80px;height:80px"
-                            :src="showImg(item.picUrl)"
-                            @click="handleUploadIndex(index)"
-                          >
-                            <div slot="placeholder" class="image-slot">
-                              加载中
-                              <span class="dot">...</span>
-                            </div>
-                          </el-image>
-                          <i
-                            v-else
-                            class="el-icon-plus avatar-uploader-icon"
-                            @click="handleUploadIndex(index)"
-                          />
-                        </el-upload>
-                      </el-form-item>
-                    </el-form>
-                  </div>
+                          <div slot="placeholder" class="image-slot">
+                            加载中
+                            <span class="dot">...</span>
+                          </div>
+                        </el-image>
+                        <i
+                          v-else
+                          class="el-icon-plus avatar-uploader-icon"
+                          @click="handleUploadIndex(index)"
+                        />
+                      </el-upload>
+                    </el-form-item>
+                  </el-form>
                 </div>
-                <p v-if="!is_query" class="add-spec">
-                  <el-button
-                    type="text"
-                    icon="el-icon-plus"
-                    size="small"
-                    @click="handleAddSpec"
-                  >添加规格</el-button>
-                </p>
-              </template>
+              </div>
+              <p v-if="!is_query" class="add-spec">
+                <el-button
+                  type="text"
+                  icon="el-icon-plus"
+                  size="small"
+                  @click="handleAddSpec"
+                >添加规格</el-button>
+              </p>
             </el-form-item>
           </el-form>
         </div>
