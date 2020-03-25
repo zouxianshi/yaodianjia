@@ -161,7 +161,7 @@ export default {
         font-size: 12px;
         color: #aaa;
         padding-right: 2px;
-        cursor: pointer;
+        /*cursor: pointer;*/
       }
       .level-1-box {
         >.title {
@@ -179,7 +179,7 @@ export default {
         }
       }
       .level-2-group {
-        cursor: pointer;
+        /*cursor: pointer;*/
         transition: all 0.2s ease-out;
         &:hover {
           .level-2-box {
@@ -199,14 +199,19 @@ export default {
           transition: all 0.2s ease-out;
           background: #ebeff8;
         }
+        .photo,.creater,.create-time,.operation {
+          height: 42px !important;
+        }
       }
       .el-button--mini.is-circle {
         padding: 4px;
       }
+      .title {
+        cursor: move;
+      }
       .title,.title-box {
         height: 36px;
         line-height: 36px;
-        cursor: pointer;
         padding-left: 20px;
       }
       .title-box {
