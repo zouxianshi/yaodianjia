@@ -173,7 +173,9 @@
         <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">核销码：</div>
         <el-input v-model="verifyCode" size="small" placeholder="请输入顾客提供的核销码" />
       </div>
-      <div style="display:flex;flex-direction:row;margin-top:40px;justify-content: center;align-items: center">
+      <div
+        style="display:flex;flex-direction:row;margin-top:40px;justify-content: center;align-items: center"
+      >
         <el-button @click="closeDialog">取消</el-button>
         <el-button type="primary" @click.stop="updateOrderStatusService">确认</el-button>
       </div>
@@ -789,8 +791,8 @@ export default {
         status:
           this.dialogContent[0].status === 'SUCCESS' ? 'ARRIVED' : 'COMPLETE'
       }
-      //  核销码
-      if (this.dialogContent[0].status === 'ARRIVED') {
+      //  核销码  管理员不需要输入核销码
+      if (this.dialogContent[0].status === 'ARRIVED' && !this.isAdmin) {
         if (this.verifyCode) {
           params.verifyCode = this.verifyCode
         } else {
@@ -821,14 +823,22 @@ export default {
       this.getOrderListByTypeService()
     },
     /* table-card 组件按钮点击 */
-    setDialogContent(obj) {
-      this.dialogVisible = true
+    /**
+     * noDialog：是否调取弹窗
+     */
+    setDialogContent(obj, noDialog) {
       if (obj.status === 'ARRIVED') {
         this.dialogTitle = '确认核销'
       } else if (obj.status === 'SUCCESS') {
         this.dialogTitle = '确认到货 (签收后预约单进入核销状态，请提醒用户上门)'
       }
       this.dialogContent = [obj]
+      // 如果不弹窗那么则直接调取接口
+      if (noDialog) {
+        this.updateOrderStatusService()
+      } else {
+        this.dialogVisible = true
+      }
     },
     closeDialog() {
       this.dialogVisible = false

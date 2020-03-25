@@ -28,42 +28,40 @@
               <div class="box">暂无图片</div>
             </div>
             <div class="content-box">
-              <div class="desc">
-                {{ item.productName }}
-              </div>
+              <div class="desc">{{ item.productName }}</div>
               <!-- <div class="order">
                 {{ item.productId }}
-              </div> -->
+              </div>-->
             </div>
           </div>
-          <div class="table-column content-center flex-1">
-            ¥ {{ item.productPrice }}
-          </div>
-          <div class="table-column content-center flex-1">
-            {{ item.productCount }}
-          </div>
-          <div
-            class="table-column content-center flex-2 content-column flex-start"
-          >
-            姓名:{{ item.personName }}<br><br>
-            手机号:{{ item.mobilePhone }}<br><br>
-            身份证:<br>{{ item.personId }}
+          <div class="table-column content-center flex-1">¥ {{ item.productPrice }}</div>
+          <div class="table-column content-center flex-1">{{ item.productCount }}</div>
+          <div class="table-column content-center flex-2 content-column flex-start">
+            姓名:{{ item.personName }}
+            <br>
+            <br>
+            手机号:{{ item.mobilePhone }}
+            <br>
+            <br>身份证:
+            <br>
+            {{ item.personId }}
           </div>
           <div class="table-column content-center flex-2">
-            预约时间:{{ item.createTime }}<br><br>
+            预约时间:{{ item.createTime }}
+            <br>
+            <br>
             <!-- {{
               item.status === 'COMPLETE'
                 ? ``
                 : ''
-            }} -->
-            确认到货时间：{{ item.arriveTime || '' }}<br><br>
+            }}-->
+            确认到货时间：{{ item.arriveTime || '' }}
+            <br>
+            <br>
             领取时间:{{ item.verificationTime || '' }}
             <!-- 领取时间:{{ item.updateTime || '' }} -->
           </div>
-          <div
-            class="table-column content-center flex-1"
-            style="color:#D0021B;"
-          >
+          <div class="table-column content-center flex-1" style="color:#D0021B;">
             ¥
             {{
               (Number(item.productPrice) * Number(item.productCount))
@@ -72,32 +70,47 @@
             }}
           </div>
           <div class="table-column content-column content-center flex-1">
-            <span>{{
-              item.status === 'SUCCESS'
-                ? '待到货'
-                : item.status === 'ARRIVED'
-                  ? '待核销'
-                  : item.status === 'COMPLETE'
-                    ? '已完成'
-                    : item.status === 'CANCEL'
-                      ? '取消预约'
-                      : '其他'
-            }}</span><el-button
+            <span>
+              {{
+                item.status === 'SUCCESS'
+                  ? '待到货'
+                  : item.status === 'ARRIVED'
+                    ? '待核销'
+                    : item.status === 'COMPLETE'
+                      ? '已完成'
+                      : item.status === 'CANCEL'
+                        ? '取消预约'
+                        : '其他'
+              }}
+            </span>
+            <el-button
               v-if="item.status === 'SUCCESS'"
               style="margin-top:10px;"
               type="primary"
               @click="emitClickHandler(item)"
             >确认收货</el-button>
             <el-button
-              v-if="item.status === 'ARRIVED'"
+              v-if="item.status === 'ARRIVED' && !isAdmin"
               style="margin-top:10px;"
               type="primary"
               @click="emitClickHandler(item)"
             >确认核销</el-button>
+            <!-- 管理员二次弹窗提示 -->
+            <el-popover
+              v-if="item.status === 'ARRIVED' && isAdmin"
+              v-model="visible"
+              placement="top"
+              style="margin-top:10px;"
+            >
+              <p style="margin-bottom: 10px">确认核销此单吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="visible = false;emitClickHandler(item, 'noDialog')">确定</el-button>
+              </div>
+              <el-button slot="reference" type="primary">确认核销</el-button>
+            </el-popover>
           </div>
-          <div class="table-column content-center flex-2">
-            {{ item.storeName }} / {{ item.address }}
-          </div>
+          <div class="table-column content-center flex-2">{{ item.storeName }} / {{ item.address }}</div>
         </div>
       </div>
     </div>
@@ -117,12 +130,14 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      visible: false
+    }
   },
 
   methods: {
-    emitClickHandler(obj) {
-      this.$emit('button-click', obj)
+    emitClickHandler(obj, noDialog) {
+      this.$emit('button-click', obj, noDialog)
     },
     toDetails(id) {
       this.$router.push(`/distribution/order-details?id=${id}`)
