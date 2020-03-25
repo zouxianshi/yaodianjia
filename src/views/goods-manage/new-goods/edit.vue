@@ -639,7 +639,7 @@
                 style="margin-top:10px;"
               >
                 <div class="header">
-                  <span>规格{{ index+1 }}</span>
+                  <span>规格{{ editSpecsData.length+1 }}</span>
                   <i class="el-icon-delete" @click="handleDeleteSpec(index)" />
                 </div>
                 <div class="spec-content">
@@ -1436,6 +1436,9 @@ export default {
     handleAvatarSuccessEdit(res, fileList, index) {
       if (res.code === '10000') {
         this.editSpecsData[this.uploadIndex].picUrl = res.data
+
+        console.log(this.editSpecsData)
+        console.log('+++this.editSpecsData')
       } else {
         this.$message({
           message: res.msg,
