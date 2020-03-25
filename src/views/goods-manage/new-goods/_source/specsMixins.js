@@ -91,7 +91,7 @@ const mixin = {
             data.push(v)
           }
         })
-        data = [...this.chooseTableSpec, ...data]
+        data = [...this.standardSpecs, ...data]
         if (data.length === 0) {
           this.$message({
             message: '请选择规格信息',
@@ -128,176 +128,165 @@ const mixin = {
         if (is_err) {
           return
         }
-        this.subSpecs(data)
+        this.subSpecs(this.format())
       } else {
-        let checkNum = 0
-        if (this.specsForm.specs.length === 0 && this.editSpecsData.length === 0) {
-          if (data.length === 0) {
-            this.$message({
-              message: '请设置规格',
-              type: 'warning'
-            })
-            return
-          }
-        }
-
-        this.specsForm.specsData.map(v => {
-          if (v.isCheck) {
-            checkNum = +1
-          }
-        })
-
-        if (checkNum === 0 && this.dynamicProp.length === 0) {
+        this.format()
+      }
+    },
+    format() { // 格式数据处理
+      let data = []
+      let checkNum = 0
+      if (this.specsForm.specs.length === 0 && this.editSpecsData.length === 0) {
+        if (data.length === 0) {
           this.$message({
-            message: '请勾选规格参数',
+            message: '请设置规格',
             type: 'warning'
           })
           return
         }
-        data = this.specsForm.specs
-        let index = 0
-        let flag = true
-        if (this.editSpecsData.length !== 0) {
-          // for (let index = 0; index < this.editSpecsData.length; index++) {
-          //   const element = this.editSpecsData[index]
-          //   if (!element.picUrl) {
-          //     this.$message({
-          //       message: '已存在的规格中存在图片未上传，请上传图片',
-          //       type: 'error'
-          //     })
-          //     return
-          //   }
-          // }
+      }
+
+      this.specsForm.specsData.map(v => {
+        if (v.isCheck) {
+          checkNum = +1
         }
-        this.specsForm.specs.map(v => {
-          index++
-          v.valueList = []
-          v.commodityId = this.basicForm.id
-          v.merCode = this.merCode
-          // 限购数据处理
-          if (v.limitType === 0) {
-            v.limitNum = 0
-          }
-          if (v.limitType === 2) {
-            v.limitNum = v.limit
-          }
-          for (const key in v) {
-            if (v.hasOwnProperty(key)) {
-              const val = key.split('_')
-              if (val.includes('index') && this.chooseSpec.includes(val[1])) {
-                if (v[key]) {
-                  v.valueList.push({
-                    skuKeyId: val[1],
-                    skuValue: v[key],
-                    skuKeyName: val[2]
+      })
+
+      if (checkNum === 0 && this.dynamicProp.length === 0) {
+        this.$message({
+          message: '请勾选规格参数',
+          type: 'warning'
+        })
+        return
+      }
+      data = this.specsForm.specs
+      let index = 0
+      let flag = true
+      this.specsForm.specs.map(v => {
+        index++
+        v.valueList = []
+        v.commodityId = this.basicForm.id
+        v.merCode = this.merCode
+        // 限购数据处理
+        if (v.limitType === 0) {
+          v.limitNum = 0
+        }
+        if (v.limitType === 2) {
+          v.limitNum = v.limit
+        }
+        for (const key in v) {
+          if (v.hasOwnProperty(key)) {
+            const val = key.split('_')
+            if (val.includes('index') && this.chooseSpec.includes(val[1])) {
+              if (v[key]) {
+                v.valueList.push({
+                  skuKeyId: val[1],
+                  skuValue: v[key],
+                  skuKeyName: val[2]
+                })
+              } else {
+                if (flag) {
+                  this.$message({
+                    message: `请输入规格${index}中的${val[2]}`,
+                    type: 'error'
                   })
-                } else {
-                  if (flag) {
-                    this.$message({
-                      message: `请输入规格${index}中的${val[2]}`,
-                      type: 'error'
-                    })
-                    flag = false
-                  }
+                  flag = false
                 }
               }
             }
           }
-          if (flag && !v.barCode) {
-            this.$message({
-              message: `请输入规格${index}中的条码`,
-              type: 'error'
-            })
-            flag = false
-          }
-          if (flag && !v.erpCode) {
-            this.$message({
-              message: `请输入规格${index}中的商品编码`,
-              type: 'error'
-            })
-            flag = false
-          }
-          if (flag && !v.mprice) {
-            this.$message({
-              message: `请输入规格${index}中的价格`,
-              type: 'error'
-            })
-            flag = false
-          }
-          // if (flag && !v.picUrl) {
-          //   this.$message({
-          //     message: `请上传规格${index}中的图片`,
-          //     type: 'error'
-          //   })
-          //   flag = false
-          // }
-          if (flag && v.limitType === 1 && !v.limitNum) {
-            this.$message({
-              message: '请输入限购值',
-              type: 'error'
-            })
-            flag = false
-          }
-          if (flag && v.limitType === 2 && !v.limit) {
-            this.$message({
-              message: '请输入限购值',
-              type: 'error'
-            })
-            flag = false
-          }
-        })
-        if (flag) {
-          // return
-          if (this.basicForm.id) {
-            this.editSpecsData.map(v => {
-              v.valueList = []
-              v.commodityId = this.basicForm.id
-              v.merCode = this.merCode
-              for (const key in v) {
-                if (v.hasOwnProperty(key)) {
-                  const val = key.split('_')
-                  if (val.includes('index')) {
-                    if (v[key]) {
-                      v.valueList.push({
-                        skuKeyId: val[1],
-                        skuValue: v[key],
-                        skuKeyName: val[2]
-                      })
-                    }
+        }
+        if (flag && !v.barCode) {
+          this.$message({
+            message: `请输入规格${index}中的条码`,
+            type: 'error'
+          })
+          flag = false
+        }
+        if (flag && !v.erpCode) {
+          this.$message({
+            message: `请输入规格${index}中的商品编码`,
+            type: 'error'
+          })
+          flag = false
+        }
+        if (flag && !v.mprice) {
+          this.$message({
+            message: `请输入规格${index}中的价格`,
+            type: 'error'
+          })
+          flag = false
+        }
+        if (flag && v.limitType === 1 && !v.limitNum) {
+          this.$message({
+            message: '请输入限购值',
+            type: 'error'
+          })
+          flag = false
+        }
+        if (flag && v.limitType === 2 && !v.limit) {
+          this.$message({
+            message: '请输入限购值',
+            type: 'error'
+          })
+          flag = false
+        }
+      })
+      if (flag) {
+        // return
+        if (this.basicForm.id) {
+          this.editSpecsData.map(v => {
+            v.valueList = []
+            v.commodityId = this.basicForm.id
+            v.merCode = this.merCode
+            for (const key in v) {
+              if (v.hasOwnProperty(key)) {
+                const val = key.split('_')
+                if (val.includes('index')) {
+                  if (v[key]) {
+                    v.valueList.push({
+                      skuKeyId: val[1],
+                      skuValue: v[key],
+                      skuKeyName: val[2]
+                    })
                   }
                 }
               }
-            })
-            data = [...data, ...this.editSpecsData]
-          }
-          if (this.mprice_err) {
-            this.$message({
-              message: '规格中存在价格输入非法值，请输入正确的值',
-              type: 'error'
-            })
-            return
-          }
-          if (this.erpCode_err) {
-            this.$message({
-              message: '规格中存在商品编码输入非法值，请输入正确的值',
-              type: 'error'
-            })
-            return
-          }
-          if (this.barCode_err) {
-            this.$message({
-              message: '规格中存在条码输入非法值，请输入正确的值',
-              type: 'error'
-            })
-            return
-          }
-          if (this.limit_err) {
-            this.$message({
-              message: '规格中存在限购输入非法制，请输入正确的值',
-              type: 'error'
-            })
-            return
-          }
+            }
+          })
+          data = [...data, ...this.editSpecsData]
+        }
+        if (this.mprice_err) {
+          this.$message({
+            message: '规格中存在价格输入非法值，请输入正确的值',
+            type: 'error'
+          })
+          return
+        }
+        if (this.erpCode_err) {
+          this.$message({
+            message: '规格中存在商品编码输入非法值，请输入正确的值',
+            type: 'error'
+          })
+          return
+        }
+        if (this.barCode_err) {
+          this.$message({
+            message: '规格中存在条码输入非法值，请输入正确的值',
+            type: 'error'
+          })
+          return
+        }
+        if (this.limit_err) {
+          this.$message({
+            message: '规格中存在限购输入非法制，请输入正确的值',
+            type: 'error'
+          })
+          return
+        }
+        if (this.basicForm.origin === 1) {
+          return data
+        } else {
           this.subSpecs(data)
         }
       }
@@ -350,6 +339,7 @@ const mixin = {
                     keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
                     checked: true
                   })
+                  this.chooseSpec.push(vs.skuKeyId) // 标库选中的规格存入chooseSpec  修改日期2020-03-25  标库需要添加规格使用
                 })
               }
               v.productSpecSkuDTOs.map(vs => {
@@ -421,7 +411,7 @@ const mixin = {
             this.specsForm.specs = []
             const findInput = $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input')
             findInput.remove() // 设置全选disabeld
-            specList.forEach((v, index) => {
+            specList.map((v, index) => {
               const findIndex = findArray(this.editSpecsData, { barCode: v.barCode })
               if (findIndex > -1) {
                 this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
@@ -435,13 +425,31 @@ const mixin = {
                 row.limitNum = v.limitNum
                 row.type = v.type || 2
                 this.$set(this.editSpecsData, findIndex, row)
-                $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
-                $('.el-table__body').find('tbody tr').eq(findIndex).find('td').eq(0).find('.el-checkbox__input').find('input').attr('disabled', true)
+              } else {
+                v.disabled = true
+                if (v.specSkuList) {
+                  v.specSkuList.map(vs => {
+                    v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
+                  })
+                  v.productSpecSkuDTOs = v.specSkuList
+                }
+                this.editSpecsData.push(v)
               }
             })
+            setTimeout(res => {
+              this.editSpecsData.map((v, index) => {
+                $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
+              })
+            }, 500)
           }
         }
       })
+    },
+    selectable(row) { // 是否可以选择
+      if (row.disabled) {
+        return false
+      }
+      return true
     },
     shows(row) {
       const findIndex = findArray(this.dynamicProp, { id: row.id })

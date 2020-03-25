@@ -381,7 +381,7 @@
                   :data="editSpecsData"
                   @selection-change="handleSelectionChange"
                 >
-                  <el-table-column type="selection" width="55" />
+                  <el-table-column type="selection" :selectable="selectable" width="55" />
                   <el-table-column
                     v-for="(items,index1) in dynamicProp"
                     :key="index1"
@@ -408,7 +408,21 @@
                       </template>
                     </template>
                   </el-table-column>
-                  <el-table-column label="商品条码" prop="barCode" />
+                  <el-table-column label="商品条码" prop="barCode">
+                    <template slot-scope="scope">
+                      <span v-text="scope.row.barCode" />
+                      <template v-if="!is_query">
+                        <edit-table
+                          title="商品条码"
+                          keys="barCode"
+                          :info="scope.row"
+                          max-length="30"
+                          :index="scope.$index"
+                          @saveInfo="handleEditTabSpecs"
+                        />
+                      </template>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="参考价格">
                     <template slot-scope="scope">
                       <span v-text="scope.row.mprice" />
