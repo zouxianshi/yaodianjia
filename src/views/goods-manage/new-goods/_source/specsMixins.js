@@ -91,7 +91,7 @@ const mixin = {
             data.push(v)
           }
         })
-        data = [...this.standardSpecs, ...data]
+        data = [...this.chooseTableSpec, ...data]
         if (data.length === 0) {
           this.$message({
             message: '请选择规格信息',
@@ -317,6 +317,7 @@ const mixin = {
           })
           this.specsList = res.data
           this.specsForm.specsData = []
+          console.log('--根据一级分类查找规格----')
           this.handleAddSpec()
         }
         if (this.basicForm.id) {
@@ -438,10 +439,15 @@ const mixin = {
             })
             setTimeout(res => {
               this.editSpecsData.map((v, index) => {
-                $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
+                if (v.disabled) {
+                  this.chooseTableSpec.push(v)
+                  $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
+                }
               })
             }, 500)
           }
+        } else {
+          this.specsForm.specs = []
         }
       })
     },
@@ -461,7 +467,6 @@ const mixin = {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
       })
-      console.log('---标库----', data)
       this.specsForm.specs.push(data)
       /** **
        *
