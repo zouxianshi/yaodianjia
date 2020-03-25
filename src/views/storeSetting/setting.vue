@@ -277,6 +277,7 @@ import { mapGetters } from 'vuex'
 import {
   queryStore,
   onOffStore,
+  queryStoreNum,
   exportData
 } from '../../api/chainSetting'
 export default {
@@ -348,9 +349,16 @@ export default {
         pageSize: 200000,
         status: 1
       }).then(res => {
+        const params = {
+          merCode: this.merCode
+        }
         if (res.code === '10000') {
-          this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
-          this.offlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 0 }).length
+          queryStoreNum(params).then(res => {
+            this.onlineStore = res.data.pkgOnlineStore
+            this.offlineStore = res.data.onlineStore
+          })
+          // this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
+          // this.offlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 0 }).length
         }
         console.log('res-2', this.list)
       })
@@ -424,7 +432,8 @@ export default {
       const params = {
         list: selectStore,
         merCode: this.merCode,
-        onlineStatus: 1
+        onlineStatus: 1,
+        sys: 'medical'
       }
       onOffStore(params).then(res => {
         if (res.code === '10000') {
