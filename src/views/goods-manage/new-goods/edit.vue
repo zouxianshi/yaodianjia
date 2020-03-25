@@ -389,7 +389,10 @@
                   >
                     <template slot-scope="scope">
                       <template v-if="scope.row[items.keys]">
-                        <span v-text="scope.row[items.keys]" />
+                        <span v-text="scope.row[items.keys] || scope.row.specSkuList[0].skuValue" />
+                      </template>
+                      <template v-else>
+                        <span v-text="scope.row.specSkuList[0].skuValue" />
                       </template>
                     </template>
                   </el-table-column>
