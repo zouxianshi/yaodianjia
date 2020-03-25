@@ -90,25 +90,11 @@
               @click="emitClickHandler(item)"
             >确认收货</el-button>
             <el-button
-              v-if="item.status === 'ARRIVED' && !isAdmin"
+              v-if="item.status === 'ARRIVED'"
               style="margin-top:10px;"
               type="primary"
-              @click="emitClickHandler(item)"
+              @click="emitClickHandler(item, isAdmin?true:false)"
             >确认核销</el-button>
-            <!-- 管理员二次弹窗提示 -->
-            <el-popover
-              v-if="item.status === 'ARRIVED' && isAdmin"
-              v-model="visible"
-              placement="top"
-              style="margin-top:10px;"
-            >
-              <p style="margin-bottom: 10px">确认核销此单吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-                <el-button type="primary" size="mini" @click="visible = false;emitClickHandler(item, 'noDialog')">确定</el-button>
-              </div>
-              <el-button slot="reference" type="primary">确认核销</el-button>
-            </el-popover>
           </div>
           <div class="table-column content-center flex-2">{{ item.storeName }} / {{ item.address }}</div>
         </div>
@@ -130,14 +116,26 @@ export default {
     }
   },
   data() {
-    return {
-      visible: false
-    }
+    return {}
   },
 
   methods: {
     emitClickHandler(obj, noDialog) {
-      this.$emit('button-click', obj, noDialog)
+      if (noDialog) {
+        this.$confirm('是否确认核销此单', '', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$emit('button-click', obj, noDialog)
+          })
+          .catch(() => {
+            console.log('错误')
+          })
+      } else {
+        this.$emit('button-click', obj)
+      }
     },
     toDetails(id) {
       this.$router.push(`/distribution/order-details?id=${id}`)
