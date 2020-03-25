@@ -1,5 +1,5 @@
 <template>
-  <div class="weapp-container">
+  <div v-loading="isLoading" class="weapp-container">
     <div class="panel">
       <div class="left">
         <div class="title">小程序码物料 :</div>
@@ -47,7 +47,8 @@ export default {
     return {
       APP_ID: '',
       PAGE_LINK: '',
-      QR_CODE: ''
+      QR_CODE: '',
+      isLoading: false
     }
   },
   mounted() {
@@ -57,6 +58,7 @@ export default {
         this.APP_ID = res.data.appId
         this.PAGE_LINK = res.data.page
         this.QR_CODE = res.data.qrBase64
+        this.isLoading = true
       })
       .catch(err => {
         console.error(err)
