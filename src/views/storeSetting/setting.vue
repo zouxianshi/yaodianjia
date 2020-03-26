@@ -19,15 +19,6 @@
       </template>
     </el-alert>
     <el-alert
-      v-if="offlineStore-onlineStore < 0"
-      type="warning"
-      :closable="false"
-    >
-      <template slot="title">
-        需尽快下线 {{ onlineStore - offlineStore }} 数量门店
-      </template>
-    </el-alert>
-    <el-alert
       v-if="offlineStore == null"
       type="warning"
       :closable="false"
@@ -36,9 +27,17 @@
         不限制门店上线数量
       </template>
     </el-alert>
+    <el-alert
+      v-else-if="offlineStore-onlineStore < 0"
+      type="warning"
+      :closable="false"
+    >
+      <template slot="title">
+        需尽快下线 {{ onlineStore - offlineStore }} 数量门店
+      </template>
+    </el-alert>
     <div>
       <el-button type="primary" size="small" style="margin-top: 20px" @click="showDialog">添加上线门店</el-button>
-
       <div style="float: right">
         <el-input v-model="searchParams.searchKey" size="small" style="width: 200px;margin-top: 20px;margin-left: 80px;" placeholder="门店编码/门店名称" />
         <el-button type="primary" size="small" style="margin-left: 10px" @click="onSearch">查询</el-button>
