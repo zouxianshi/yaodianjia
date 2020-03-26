@@ -618,14 +618,14 @@ export default {
 }
 .depot-list {
   float: left;
-  width: 300px;
+  width: 210px;
   .search-form {
     margin: 10px 0;
   }
 }
 
 .depot-table {
-  margin-left: 320px;
+  margin-left: 230px;
 }
 </style>
 
