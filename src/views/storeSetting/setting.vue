@@ -6,7 +6,34 @@
       :closable="false"
     >
       <template slot="title">
-        当前上线{{ onlineStore }}家门店，还能上线{{ offlineStore }}家门店
+        当前上线{{ onlineStore }}家门店，还能上线{{ offlineStore-onlineStore }}家门店
+      </template>
+    </el-alert>
+    <el-alert
+      v-if="offlineStore === 0"
+      type="warning"
+      :closable="false"
+    >
+      <template slot="title">
+        没有订购任何门店
+      </template>
+    </el-alert>
+    <el-alert
+      v-if="offlineStore-onlineStore < 0"
+      type="warning"
+      :closable="false"
+    >
+      <template slot="title">
+        需尽快下线 {{ onlineStore - offlineStore }} 数量门店
+      </template>
+    </el-alert>
+    <el-alert
+      v-if="offlineStore == null"
+      type="warning"
+      :closable="false"
+    >
+      <template slot="title">
+        不限制门店上线数量
       </template>
     </el-alert>
     <div>
@@ -355,7 +382,7 @@ export default {
         if (res.code === '10000') {
           queryStoreNum(params).then(res => {
             this.onlineStore = res.data.onlineStore
-            this.offlineStore = res.data.pkgOnlineStore - res.data.onlineStore
+            this.offlineStore = res.data.pkgOnlineStore
           })
           // this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
           // this.offlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 0 }).length
