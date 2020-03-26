@@ -21,10 +21,10 @@
       <span>{{ itemInfo.is ? '创建时间' : itemInfo.createTime }}</span>
     </div>
     <div class="modifier">
-      <span>{{ itemInfo.is ? '修改人' : itemInfo.modifyName }}</span>
+      <!--<span>{{ itemInfo.is ? '修改人' : itemInfo.modifyName }}</span>-->
     </div>
     <div class="edit-time">
-      <span>{{ itemInfo.is ? '更新时间' : itemInfo.modifyTime }}</span>
+      <!--<span>{{ itemInfo.is ? '更新时间' : itemInfo.modifyTime }}</span>-->
     </div>
     <slot name="operation" />
   </div>
@@ -88,7 +88,7 @@ export default {
     {
       text-align: center;
       position: absolute;
-      top: 0;
+      top: -1px;
       font-size: 12px;
       border-left: 1px solid #e8eaec;
       border-bottom: 1px solid #e8eaec;
@@ -107,6 +107,7 @@ export default {
     > .create-time {
       width: 180px;
       right: 355px;
+      border-right: 1px solid #e8eaec;
     }
 
     > .modifier {

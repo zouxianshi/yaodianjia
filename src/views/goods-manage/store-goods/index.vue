@@ -462,7 +462,7 @@ export default {
           this.listQuery.barCode === ''
         ) {
           this.$message({
-            message: '选择全部门店时，请输入商品名称或ERP编码、条形码',
+            message: '选择全部门店时，请输入商品名称或商品编码、条形码',
             type: 'warning'
           })
           return
@@ -677,7 +677,7 @@ export default {
           this.listQuery.barCode === ''
         ) {
           this.$message({
-            message: '选择全部门店时，请输入商品名称或ERP编码、条形码',
+            message: '选择全部门店时，请输入商品名称或商品编码、条形码',
             type: 'warning'
           })
           return
@@ -687,7 +687,6 @@ export default {
         ...this.listQuery,
         storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
       }).then(res => {
-        console.log('111111', res)
         if (res.code === '10000') {
           this.$alert(
             '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',

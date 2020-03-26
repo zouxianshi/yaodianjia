@@ -61,7 +61,7 @@ module.exports = {
     proxy: {
       '/api': {
         // target: `http://middle.test.ydjia.cn/businesses-gateway`,
-        target: `http://middle.test.ydjia.cn/businesses-gateway`,
+        target: `http://middle.uat.ydjia.cn/businesses-gateway`,
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
