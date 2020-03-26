@@ -354,8 +354,8 @@ export default {
         }
         if (res.code === '10000') {
           queryStoreNum(params).then(res => {
-            this.onlineStore = res.data.pkgOnlineStore
-            this.offlineStore = res.data.onlineStore
+            this.onlineStore = res.data.onlineStore
+            this.offlineStore = res.data.pkgOnlineStore - res.data.onlineStore
           })
           // this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
           // this.offlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 0 }).length

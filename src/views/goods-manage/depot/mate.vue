@@ -9,7 +9,7 @@
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-text="pairData.name" /></p>
-              <!-- <p>规格：<span v-text="pairData.packStandard" /></p> -->
+              <p>规格：<span v-text="pairData.packStandard" /></p>
               <p>企业：<span v-text="pairData.manufacture" /></p>
               <p>条码：<span v-text="pairData.barCode" /></p>
               <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
@@ -242,6 +242,8 @@ export default {
   },
   created() {
     const data = sessionStorage.getItem('mate')
+    console.log('里1111111')
+    console.log(data)
     this.pairData = JSON.parse(data)
     this._loadMatchList()
   },
