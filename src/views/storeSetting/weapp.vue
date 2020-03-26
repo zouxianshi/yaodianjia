@@ -48,7 +48,7 @@ export default {
       APP_ID: '',
       PAGE_LINK: '',
       QR_CODE: '',
-      isLoading: false
+      isLoading: true
     }
   },
   mounted() {
@@ -58,7 +58,7 @@ export default {
         this.APP_ID = res.data.appId
         this.PAGE_LINK = res.data.page
         this.QR_CODE = res.data.qrBase64
-        this.isLoading = true
+        this.isLoading = false
       })
       .catch(err => {
         console.error(err)
