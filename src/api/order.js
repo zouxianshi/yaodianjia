@@ -1,7 +1,22 @@
 import request from '@/utils/request'
+// import orderRequest from '@/utils/request_order'
 import config from '@/utils/config'
 // import qs from 'qs'
 // 获取订单列表数据
+// export function getOrderList(params) {
+//   return orderRequest({
+//     url: '/1.0/order-info',
+//     method: 'post',
+//     data: params,
+//   })
+// }
+// // 根据售后申请单id获取退货退款申请单
+// export function getRefundInfo(returnRequestId) {
+//   return orderRequest({
+//     url: `/1.0/order-return/_get/${returnRequestId}`,
+//     method: 'get',
+//   })
+// }
 export function getOrderList(params) {
   return request({
     url: `${config.merGoods}/1.0/order-info`,
@@ -10,6 +25,13 @@ export function getOrderList(params) {
   })
 }
 
+// 根据售后申请单id获取退货退款申请单
+export function getRefundInfo(returnRequestId) {
+  return request({
+    url: `${config.merGoods}/1.0/order-return/_get/${returnRequestId}`,
+    method: 'get'
+  })
+}
 // 根据订单明细id获取退货退款申请单
 export function getRefundReturn(detailId) {
   return request({

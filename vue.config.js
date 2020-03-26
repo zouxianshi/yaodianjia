@@ -78,6 +78,16 @@ module.exports = {
           // '^/api': `http://middle.test.ydjia.cn`
           '^/hss': ``
         }
+      },
+      // 订单退款联调
+      '/order': {
+        // target: `http://middle.test.ydjia.cn/businesses-gateway`,
+        target: `http://192.168.2.61:10016`,
+        // target: `http://10.200.25.183:8080`,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/order': ``
+        }
       }
     }
   },
