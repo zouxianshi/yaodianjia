@@ -382,7 +382,7 @@
                   @selection-change="handleSelectionChange"
                 >
                   <el-table-column type="selection" :selectable="selectable" width="55" />
-                  <el-table-column
+                  <!-- <el-table-column
                     v-for="(items,index1) in dynamicProp"
                     :key="index1"
                     :label="items.name"
@@ -393,6 +393,35 @@
                       </template>
                       <template v-else>
                         <span v-text="scope.row.specSkuList[0].skuValue" />
+                      </template>
+                      <template v-if="!is_query">
+                        <edit-table
+                          :title="items.name"
+                          :keys="items.keys"
+                          :info="items.row"
+                          max-length="50"
+                          :index="scope.$index"
+                          @saveInfo="handleEditTabSpecs"
+                        />
+                      </template>
+                    </template>
+                  </el-table-column> -->
+                  <el-table-column
+                    v-for="(propsf,indexs) in dynamicProp"
+                    :key="indexs"
+                    :label="propsf.name"
+                  >
+                    <template slot-scope="scope">
+                      <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
+                      <template v-if="!is_query">
+                        <edit-table
+                          :title="propsf.name"
+                          :keys="propsf.keys"
+                          :info="scope.row"
+                          max-length="50"
+                          :index="scope.$index"
+                          @saveInfo="handleEditTabSpecs"
+                        />
                       </template>
                     </template>
                   </el-table-column>
@@ -507,7 +536,7 @@
               <template v-else>
                 <template v-if="basicForm.id&&editSpecsData.length>0">
                   <div class="spec-content">
-                    <el-table :data="editSpecsData">
+                    <el-table :data="editSpecsData" @selection-change="handleSelectionChange">
                       <el-table-column
                         v-for="(propsf,indexs) in dynamicProp"
                         :key="indexs"
