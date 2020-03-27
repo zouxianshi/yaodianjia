@@ -28,9 +28,9 @@
                   <p v-for="(item,index) in currentRow.specSkuList" :key="index"> {{ item.skuKeyName }}：{{ item.skuValue }}</p>
                 </div>
               </div>
-              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
+              <p>企业：<span v-if="currentRow" class="word-txt" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" class="word-txt" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" class="word-txt" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
@@ -524,6 +524,10 @@ export default {
         p {
           margin-bottom: 5px;
         }
+        .word-txt{
+          white-space: normal;
+          word-break: break-all;
+        }
       }
     }
   }
@@ -576,9 +580,6 @@ export default {
       }
     }
   }
-  .word-txt{
-    white-space: normal;
-    word-break: break-all;
-  }
+
 }
 </style>
