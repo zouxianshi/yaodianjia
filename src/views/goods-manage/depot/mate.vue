@@ -18,7 +18,7 @@
           <li class="product-list">
             <p class="title">
               当前所选药店加平台库产品</p>
-            <!-- <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p> -->
+            <p class="title">&nbsp;</p>
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name&&currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
