@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-alert
-      v-if="offlineStore > 0"
+      v-if="offlineStore - onlineStore > 0"
       type="warning"
       :closable="false"
     >

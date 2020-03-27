@@ -50,9 +50,12 @@ const mixin = {
         this.$set(this.editSpecsData, index, row)
         const findIndex = findArray(this.chooseTableSpec, { id: row.id })
         if (findIndex) {
-          this.chooseTableSpec.splice(findIndex, 1)
+          if (this.chooseTableSpec[findIndex].isCheck) {
+            this.chooseTableSpec[findIndex] = row
+          }
           if (!row.disabled) {
             this.$refs.multipleTable.toggleRowSelection(row)
+            console.log('选择哈哈')
           }
         }
       } else {
@@ -428,6 +431,7 @@ const mixin = {
                 this.$set(this.editSpecsData, findIndex, row)
               } else {
                 v.disabled = true
+                v.isCheck = true // 数据做标识  选中
                 if (v.specSkuList) {
                   v.specSkuList.map(vs => {
                     v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
