@@ -8,11 +8,11 @@
             <p v-if="pairData.erpCode" class="title">ERP编码：{{ pairData.erpCode }}</p>
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-text="pairData.name" /></p>
-              <p>规格：<span v-text="pairData.packStandard" /></p>
-              <p>企业：<span v-text="pairData.manufacture" /></p>
-              <p>条码：<span v-text="pairData.barCode" /></p>
-              <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
+              <p>名称：<span class="word-txt" v-text="pairData.name" /></p>
+              <p>规格：<span class="word-txt" v-text="pairData.packStandard" /></p>
+              <p>企业：<span class="word-txt" v-text="pairData.manufacture" /></p>
+              <p>条码：<span class="word-txt" v-text="pairData.barCode" /></p>
+              <p>批准文号：<span class="word-txt" v-text="pairData.approvalNumber" /></p>
             </div>
           </li>
           <li class="product-list">
@@ -575,6 +575,10 @@ export default {
         margin-right: 2px;
       }
     }
+  }
+  .word-txt{
+    white-space: normal;
+    word-break: break-all;
   }
 }
 </style>
