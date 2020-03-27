@@ -26,6 +26,25 @@ class InnerCtor {
         disabled: true,
         children: []
       },
+
+      {
+        name: '会员管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: true,
+        children: [
+          {
+            name: '会员中心',
+            path: '/member/member-center',
+            disabled: true
+          },
+          {
+            name: '会员注册设置',
+            path: '/member/register-setting',
+            disabled: true
+          },
+        ]
+      },
       {
         name: '商品中心',
         icon: 'icongoods',
