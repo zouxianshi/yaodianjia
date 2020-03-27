@@ -507,7 +507,7 @@
                         :headers="headers"
                         :disabled="is_query"
                         :show-file-list="false"
-                        :on-success="handleAvatarSuccess"
+                        :on-success="handleAvatarSuccessEdit"
                         :on-error="handleImgError"
                         :before-upload="beforeUpload"
                       >
