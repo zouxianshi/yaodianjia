@@ -8,17 +8,17 @@
             <p v-if="pairData.erpCode" class="title">ERP编码：{{ pairData.erpCode }}</p>
             <span class="line-status" />
             <div class="info">
-              <p>名称：<span v-text="pairData.name" /></p>
-              <p>规格：<span v-text="pairData.packStandard" /></p>
-              <p>企业：<span v-text="pairData.manufacture" /></p>
-              <p>条码：<span v-text="pairData.barCode" /></p>
-              <p>批准文号：<span v-text="pairData.approvalNumber" /></p>
+              <p>名称：<span class="word-txt" v-text="pairData.name" /></p>
+              <p>规格：<span class="word-txt" v-text="pairData.packStandard" /></p>
+              <p>企业：<span class="word-txt" v-text="pairData.manufacture" /></p>
+              <p>条码：<span class="word-txt" v-text="pairData.barCode" /></p>
+              <p>批准文号：<span class="word-txt" v-text="pairData.approvalNumber" /></p>
             </div>
           </li>
           <li class="product-list">
             <p class="title">
               当前所选药店加平台库产品</p>
-            <!-- <p class="title">ERP编码：<span v-if="currentRow">{{ currentRow.platformCode }}</span></p> -->
+            <p class="title">&nbsp;</p>
             <span class="line-status" />
             <div class="info">
               <p>名称：<span v-if="currentRow" :class="{'yellow-bg':currentRow.name&&currentRow.name!==pairData.name}" v-text="currentRow.name" /></p>
@@ -28,9 +28,9 @@
                   <p v-for="(item,index) in currentRow.specSkuList" :key="index"> {{ item.skuKeyName }}：{{ item.skuValue }}</p>
                 </div>
               </div>
-              <p>企业：<span v-if="currentRow" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
-              <p>条码：<span v-if="currentRow" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
-              <p>批准文号：<span v-if="currentRow" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
+              <p>企业：<span v-if="currentRow" class="word-txt" :class="{'yellow-bg':currentRow.manufacture&&currentRow.manufacture!==pairData.manufacture}" v-text="currentRow.manufacture" /></p>
+              <p>条码：<span v-if="currentRow" class="word-txt" :class="{'yellow-bg':currentRow.barCode&&currentRow.barCode!==pairData.barCode}" v-text="currentRow.barCode" /></p>
+              <p>批准文号：<span v-if="currentRow" class="word-txt" :class="{'yellow-bg':currentRow.approvalNumber&&currentRow.approvalNumber!==pairData.approvalNumber}" v-text="currentRow.approvalNumber" /></p>
             </div>
           </li>
         </ul>
@@ -524,6 +524,10 @@ export default {
         p {
           margin-bottom: 5px;
         }
+        .word-txt{
+          white-space: normal;
+          word-break: break-all;
+        }
       }
     }
   }
@@ -576,5 +580,6 @@ export default {
       }
     }
   }
+
 }
 </style>
