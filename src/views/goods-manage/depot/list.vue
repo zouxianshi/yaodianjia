@@ -51,10 +51,10 @@
               size="small"
               placeholder="请选择"
             >
+              <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
-              <el-option label="非处方药" value="3" />
             </el-select>
           </div>
           <div class="search-item">

@@ -42,17 +42,17 @@
           </div>
           <div class="search-item">
             <span class="label-name">商品信息</span>
-            <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="请输入商品名称/编码" />
+            <el-input v-model.trim="listQuery.erpOrName" style="width:200px" size="small" placeholder="请输入商品名称/编码" />
           </div>
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="listQuery.barCode" size="small" placeholder="条形码" />
+            <el-input v-model.trim="listQuery.barCode" style="width:200px" size="small" placeholder="条形码" />
           </div>
         </div>
         <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">批准文号</span>
-            <el-input v-model.trim="listQuery.approvalNumber" style="width：200px" size="small" placeholder="批准文号" />
+            <el-input v-model.trim="listQuery.approvalNumber" style="width:200px" size="small" placeholder="批准文号" />
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
@@ -62,10 +62,10 @@
               size="small"
               placeholder="请选择"
             >
+              <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
-              <el-option label="非处方药" value="3" />
             </el-select>
           </div>
           <div class="search-item">
