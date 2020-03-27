@@ -4,19 +4,27 @@
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="订单搜索:">
           <el-row type="flex">
-            <el-select v-model="form.searchKey" class="mr20">
-              <el-option label="拼团单号" value="groupCode" />
-              <el-option label="团长姓名" value="userName" />
-              <el-option label="团长手机号" value="userTel" />
-              <el-option label="团长会员卡号" value="userId" />
+            <el-select
+              v-model="form.searchKey"
+              class="mr20"
+              placeholder="请输入关键词"
+              @change="searchSelectChange"
+            >
+              <el-option
+                v-for="itemOp in options"
+                :key="itemOp.value"
+                :value="itemOp.value"
+                :label="itemOp.label"
+              />
             </el-select>
-            <el-input v-model="form.searchValue" style="width:180px" />
+            <el-input v-model="form.searchValue" :disabled="!form.searchKey" style="width:180px" />
           </el-row>
         </el-form-item>
         <el-form-item label="开团时间:">
           <el-date-picker
-            v-model="form.time"
-            type="daterange"
+            v-model="form.activitTime"
+            type="datetimerange"
+            value-format="yyyy-MM-dd hh:mm:ss"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -162,7 +170,11 @@
                     <div class="cell-text">{{ item.groupStatus | orderType }}</div>
                     <div v-if="item.groupStatus === 2">成团时间:{{ item.endTime }}</div>
                     <div v-if="item.groupStatus === 3">失败时间:{{ item.endTime }}</div>
-                    <button v-if="item.groupStatus === 1" type="text" @click="oneTimeGroup(item.groupCode)">一键成团</button>
+                    <button
+                      v-if="item.groupStatus === 1"
+                      type="text"
+                      @click="oneTimeGroup(item.groupCode)"
+                    >一键成团</button>
                     <div v-if="item.groupStatus === 4">手动成团</div>
                   </div>
                 </div>
@@ -234,35 +246,31 @@ export default {
     return {
       options: [
         {
-          value: 1,
-          label: '订单号'
+          value: 'groupCode',
+          label: '拼团单号'
         },
         {
-          value: 2,
-          label: '收货人姓名'
+          value: 'userName',
+          label: '团长姓名'
         },
         {
-          value: 3,
-          label: '收货人手机'
+          value: 'userTel',
+          label: '团长手机号'
         },
         {
-          value: 4,
-          label: '会员卡号'
+          value: 'userId',
+          label: '团长会员卡号'
         }
       ],
       listQuery: {
         currentPage: 1
       },
       form: {
-        startTime: '',
-        endTime: '',
-        groupCode: '',
+        searchKey: '',
         groupStatus: 0, // 拼团状态(0全部，1.待成团，2已成团，3拼团失败)
         storeId: '',
-        userId: '',
-        userName: '',
-        userTel: '',
-        time: null
+        activitTime: null,
+        searchValue: ''
       },
       tableData: [],
       groupStatus: 0,
@@ -284,29 +292,27 @@ export default {
         this.getList()
       })
     },
+    searchSelectChange(data) {
+      this.form.searchValue = ''
+    },
     resetForm(formName) {
       console.log('重置了嘛----', formName)
       this.$refs[formName].resetFields()
       this.form = {
-        startTime: '',
-        endTime: '',
-        groupCode: '',
+        searchKey: '',
         groupStatus: 0, // 拼团状态(0全部，1.待成团，2已成团，3拼团失败)
         storeId: '',
-        userId: '',
-        userName: '',
-        userTel: '',
-        time: null
+        activitTime: null
       }
       this.getList()
     },
     // 获取列表
     getList(reset) {
-      const { time } = this.form
+      const { activitTime } = this.form
       let data = {}
-      if (Array.isArray(time) && time.length) {
-        data.startTime = dayjs(time[0]).format('YYYY-MM-DD')
-        data.endTime = dayjs(time[1]).format('YYYY-MM-DD')
+      if (Array.isArray(activitTime) && activitTime.length) {
+        data.startTime = activitTime[0]
+        data.endTime = activitTime[1]
       }
       data = {
         ...this.listQuery,
@@ -315,6 +321,10 @@ export default {
         ...data,
         merCode: this.merCode
       }
+      delete data.activitTime
+      delete data.searchKey
+      delete data.searchValue
+      delete data['']
       tablist({
         ...data,
         currentPage: reset ? 1 : data.currentPage
@@ -329,7 +339,7 @@ export default {
           }
           this.total = totalCount
         })
-        .catch(() => {})
+      //   .catch(() => {})
     },
     remoteMethod(val) {
       this.selectloading = true
@@ -380,7 +390,7 @@ export default {
     },
     // 一键成团
     oneTimeGroup(groupCode) {
-      oneTimeGroupAction({ groupCode }).then((res) => {
+      oneTimeGroupAction({ groupCode }).then(res => {
         const { code } = res
         if (code === '10000') {
           this.$message({
