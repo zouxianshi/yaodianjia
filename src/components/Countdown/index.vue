@@ -6,14 +6,14 @@
 export default {
   props: {
     time: {
-      type: String,
-      default: '2020-03-30 20:05'
+      type: String, // 传入的结束时间
+      default: ''
     }
   },
   data() {
     return {
-      timer: null,
-      resId: ''
+      timer: null, // 差值
+      resId: '' // 回收id
     }
   },
   created() {
