@@ -1,40 +1,168 @@
 <template>
   <div class="basic-info-model">
-    basic-info
+    <div class="content-items">
+      <div class="content-header">
+        <mItemTitle title="基础信息" />
+      </div>
+      <div class="content-body">
+        <div class="content-body-items">
+          <el-form label-position="right" label-width="100px" :model="basicInfo">
+            <el-form-item label="微信头像：">
+              <img :src="basicInfo.imgUrl">
+            </el-form-item>
+            <el-form-item label="会员名称：">
+              <span>{{ basicInfo.name }}</span>
+            </el-form-item>
+            <el-form-item label="昵称：">
+              <span>{{ basicInfo.nickname }}</span>
+            </el-form-item>
+            <el-form-item label="性别：">
+              <span>{{ basicInfo.sex }}</span>
+            </el-form-item>
+            <el-form-item label="生日：">
+              <span>{{ basicInfo.birth }}</span>
+            </el-form-item>
+            <el-form-item label="身份证号：">
+              <span>{{ basicInfo.crad }}</span>
+            </el-form-item>
+            <el-form-item label="手机号：">
+              <span>{{ basicInfo.phone }}</span>
+            </el-form-item>
+            <el-form-item label="收货地址：">
+              <span>{{ basicInfo.address }}</span>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div class="content-body-items">
+          <el-form label-position="right" label-width="120px" :model="basicInfo">
+            <el-form-item label="">
+              <div style="height:60px" />
+            </el-form-item>
+            <el-form-item label="会员卡号：">
+              <span>{{ basicInfo.numberId }}</span>
+            </el-form-item>
+            <el-form-item label="健康豆：">
+              <span>{{ basicInfo.healthNum }}</span><span class="more-info">查看明细</span>
+            </el-form-item>
+            <el-form-item label="会员等级：">
+              <span>{{ basicInfo.leavel }}</span>
+            </el-form-item>
+            <el-form-item label="所属门店：">
+              <span>{{ basicInfo.shop }}</span>
+            </el-form-item>
+            <el-form-item label="注册来源：">
+              <span>{{ basicInfo.registFrom }}</span>
+            </el-form-item>
+            <el-form-item label="注册时间：">
+              <span>{{ basicInfo.registTime }}</span>
+            </el-form-item>
+            <el-form-item label="默认发卡机构：">
+              <span>{{ basicInfo.cardIssuer }}</span>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+    </div>
+    <div class="content-items">
+      <div class="content-header">
+        <mItemTitle title="健康顾问" />
+      </div>
+      <div class="content-body">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="date"
+            label="日期"
+            width="180"
+          />
+          <el-table-column
+            prop="name"
+            label="姓名"
+            width="180"
+          />
+          <el-table-column
+            prop="address"
+            label="地址"
+          />
+        </el-table>
+      </div>
+    </div>
   </div>
 </template>
 <script>
+import mItemTitle from './itemTitle.vue'
 export default {
   name: 'BasicInfo',
-  components: {},
+  components: { mItemTitle },
   props: {},
   data() {
-    return {}
+    return {
+      basicInfo: {
+        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585564613111&di=10d06d27ad82314c1ed74a6c2270cc25&imgtype=0&src=http%3A%2F%2Fpic3.16pic.com%2F00%2F01%2F11%2F16pic_111395_b.jpg',
+        name: '张三',
+        nickname: '三三三',
+        sex: '女',
+        birth: '1990-01-01',
+        crad: '433130199501250411',
+        phone: '17827603484',
+        address: '-',
+        numberId: '1234567',
+        healthNum: '0',
+        leavel: '普通会员',
+        shop: 'xxxx',
+        registFrom: '员工推荐',
+        registTime: '2020-02-28',
+        cardIssuer: ''
+      },
+      tableData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
+      }]
+    }
   },
   computed: {},
-  watch: {},
-  beforeCreate() {
-  },
-  created() {
-  },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  methods: {},
-  beforeDestroy() {
-  },
   destroyed() {
-  }
+  },
+  methods: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .basic-info-model {
-
+.basic-info-model{
+  .content-items{
+    border: 1px solid #eee;border-radius: 2px;background-color: #fff;
+    width: 96%;margin: 20px auto 0;
+    img{
+      width: 60px;height: 60px;margin: 0;vertical-align: middle;
+    }
+    .content-body{
+      display: flex;padding: 10px 8%;justify-content: space-between;min-height: 200px;
+      .content-body-items{
+        flex: 0 0 45%;
+        .more-info{
+          color: #1890FF;margin-left: 30px;cursor: pointer;font-size: 12px;
+        }
+      }
+    }
   }
+  .el-form-item{
+    margin-bottom: 5px;
+  }
+}
 </style>
