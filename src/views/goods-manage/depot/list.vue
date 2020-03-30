@@ -19,33 +19,6 @@
       <section @keydown.enter="handleQuery">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
-            <span class="label-name">商品名称</span>
-            <el-input
-              v-model.trim="listQuery.name"
-              size="small"
-              style="width:200px"
-              placeholder="商品名称"
-            />
-          </div>
-          <div class="search-item">
-            <span class="label-name">生产企业</span>
-            <el-input
-              v-model.trim="listQuery.manufacture"
-              size="small"
-              style="width:200px"
-              placeholder="生产企业"
-            />
-          </div>
-          <div class="search-item">
-            <span class="label-name">商品编码</span>
-            <el-input
-              v-model.trim="listQuery.erpCode"
-              size="small"
-              style="width:200px"
-              placeholder="商品编码"
-            />
-          </div>
-          <div class="search-item">
             <span class="label-name">商品分类</span>
             <el-cascader
               v-model="listQuery.typeId"
@@ -53,9 +26,44 @@
               :options="goodsTypeList"
               :props="defaultProps"
               clearable
-              placeholder="选择商品来源"
+              placeholder="选择商品分类"
               :show-all-levels="false"
               @focus="_loadGoodTypeList()"
+            />
+          </div>
+          <div class="search-item">
+            <span class="label-name">商品类型</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              size="small"
+              placeholder="普通商品/组合商品"
+            >
+              <el-option label="普通商品" value="1" />
+              <el-option label="组合商品" value="2" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">药品类型</span>
+            <el-select
+              v-model="listQuery.drugType"
+              filterable
+              size="small"
+              placeholder="请选择"
+            >
+              <el-option label="全部" value />
+              <el-option label="甲类OTC" value="0" />
+              <el-option label="处方药" value="1" />
+              <el-option label="乙类OTC" value="2" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">商品信息</span>
+            <el-input
+              v-model.trim="listQuery.erpOrName"
+              size="small"
+              style="width:200px"
+              placeholder="商品名称"
             />
           </div>
         </div>
@@ -76,6 +84,15 @@
               size="small"
               style="width:200px"
               placeholder="批准文号"
+            />
+          </div>
+          <div class="search-item">
+            <span class="label-name">生产企业</span>
+            <el-input
+              v-model.trim="listQuery.manufacture"
+              size="small"
+              style="width:200px"
+              placeholder="生产企业"
             />
           </div>
           <div class="search-item">
@@ -316,16 +333,18 @@ export default {
       subLoading: false,
       groupVisible: false,
       listQuery: {
-        approvalNumber: '',
-        barCode: '',
-        manufacture: '',
-        name: '',
+        drugType: '', // 药品类型
+        erpOrName: '', // 商品信息
+        commodityType: '', // 商品分类
+        approvalNumber: '', // 批准文号
+        barCode: '', // 条形码
+        manufacture: '', // 生产企业
         infoFlag: true,
-        erpCode: '',
+        origin: '', // 商品来源
         auditStatus: 1,
         groupId: '', // 分组id
         currentPage: 1,
-        typeId: '' // 分类id
+        typeId: '' // 商品分类id
       },
       goodsTypeList: []
     }

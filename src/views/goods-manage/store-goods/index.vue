@@ -13,6 +13,7 @@
             <span class="label-name">选择门店</span>
             <el-select
               v-model="listQuery.storeId"
+              size="small"
               filterable
               placeholder="请输入关键词"
               :remote-method="remoteMethod"
@@ -28,20 +29,6 @@
             </el-select>
           </div>
           <div class="search-item">
-            <span class="label-name">商品名称</span>
-            <el-input v-model.trim="listQuery.name" size="small" placeholder="商品名称" />
-          </div>
-          <div class="search-item">
-            <span class="label-name">商品编码</span>
-            <el-input v-model.trim="listQuery.erpCode" size="small" placeholder="商品编码" />
-          </div>
-          <div class="search-item">
-            <span class="label-name">批准文号</span>
-            <el-input v-model.trim="listQuery.approvalNumber" size="small" placeholder="批准文号" />
-          </div>
-        </div>
-        <div class="search-form" style="margin-bottom:10px">
-          <div class="search-item">
             <span class="label-name">商品分组</span>
             <el-cascader
               ref="groupRef"
@@ -54,14 +41,33 @@
             />
           </div>
           <div class="search-item">
-            <span class="label-name">条形码</span>
-            <el-input v-model.trim="listQuery.barCode" size="small" placeholder="条形码" />
+            <span class="label-name">商品信息</span>
+            <el-input v-model.trim="listQuery.erpOrName" style="width:200px" size="small" placeholder="请输入商品名称/编码" />
           </div>
           <div class="search-item">
-            <span class="label-name">生产企业</span>
-            <el-input v-model.trim="listQuery.manufacture" size="small" placeholder="生产企业" />
+            <span class="label-name">条形码</span>
+            <el-input v-model.trim="listQuery.barCode" style="width:200px" size="small" placeholder="条形码" />
           </div>
-
+        </div>
+        <div class="search-form" style="margin-bottom:10px">
+          <div class="search-item">
+            <span class="label-name">批准文号</span>
+            <el-input v-model.trim="listQuery.approvalNumber" style="width:200px" size="small" placeholder="批准文号" />
+          </div>
+          <div class="search-item">
+            <span class="label-name">药品类型</span>
+            <el-select
+              v-model="listQuery.drugType"
+              filterable
+              size="small"
+              placeholder="请选择"
+            >
+              <el-option label="全部" value />
+              <el-option label="甲类OTC" value="0" />
+              <el-option label="处方药" value="1" />
+              <el-option label="乙类OTC" value="2" />
+            </el-select>
+          </div>
           <div class="search-item">
             <span class="label-name">商品类型</span>
             <el-select
@@ -80,7 +86,7 @@
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
-            <span style="margin-left:20px">
+            <span style="margin-left:10px">
               <el-button type="primary" size="small" @click="handleExport">
                 导出
                 <i class="el-icon-download el-icon--right" />
@@ -393,13 +399,12 @@ export default {
       loading: false,
       selectloading: false,
       listQuery: {
+        drugType: '',
         commodityType: '',
         approvalNumber: '',
         barCode: '',
-        erpCode: '',
         groupId: '',
         manufacture: '',
-        name: '',
         storeId: '',
         status: 1,
         auditStatus: 1,
@@ -425,6 +430,7 @@ export default {
       this.listQuery = {
         approvalNumber: '',
         barCode: '',
+        erpOrName: '',
         erpCode: '',
         groupId: '',
         manufacture: '',
