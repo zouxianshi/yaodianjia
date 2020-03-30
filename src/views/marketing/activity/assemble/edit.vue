@@ -155,8 +155,8 @@
             </el-tooltip>
           </span>
           <el-radio-group v-model="formData.crossStore">
-            <el-radio label="1">添加</el-radio>
-            <el-radio label="2">不添加</el-radio>
+            <el-radio label="1">跨店活动</el-radio>
+            <el-radio label="2">不跨店活动</el-radio>
           </el-radio-group>
         </el-form-item>
         <div class="form-title">活动商品</div>
@@ -273,6 +273,7 @@ export default {
         img: '1',
         imgUrl: '',
         isAllStore: 1,
+        crossStore: '1',
         startTime: '',
         endTime: '',
         description: ''

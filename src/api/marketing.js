@@ -22,6 +22,13 @@ export function getActivityDetail(params) {
   })
 }
 
+export function getActivityDetailPromote(params) {
+  return request({
+    url: `${config.merGoods}/1.0/promote/${params.id}`,
+    method: 'get'
+  })
+}
+
 // 添加活动信息（限时优惠）
 export function addActivity(params) {
   return request({
