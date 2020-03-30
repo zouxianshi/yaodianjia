@@ -7,8 +7,9 @@
       width="750px"
       append-to-body
       :close-on-click-modal="false"
+      @close="modalQuery.currentPage = 1; modalQuery.total = 1"
     >
-      <div class="modal-body">
+      <div v-loading="listLoading" class="modal-body">
         <p
           style="color: rgb(144, 147, 153); margin-bottom: 10px; line-height: 22px"
         >(拼团活动商品的活动库存被设置为0时，用户无法再开团，已经开的团正常进行，参团人员最多仅可购买一份拼团商品，直到活动结束)</p>
@@ -48,7 +49,7 @@
                 <div class="custom-input">
                   <el-input
                     v-model="scope.row.num"
-                    :disabled="scope.row.isClearn||scope.row.isAdd"
+                    :disabled="scope.row.isClearn"
                     size="small"
                     style="width:80px"
                     class="custom-inner-input"
@@ -60,7 +61,7 @@
                     <span class="el-icon-arrow-down" @click="handleAddTime(2,scope.row)" />
                   </div>
                   <el-link
-                    v-show="!scope.row.isAdd"
+                    v-if="!scope.row.isClearn"
                     type="primary"
                     :underline="false"
                     style="font-size:13px"
@@ -81,7 +82,13 @@
         </el-table>
         <div class="table-footer">
           <el-button type="danger" size="mini" @click="handleClean">清空所有活动库存</el-button>
-          <el-pagination background layout="prev, pager, next" :total="modalQuery.total" />
+          <el-pagination
+            background
+            layout="total, prev, pager, next"
+            :total="modalQuery.total"
+            :page-size="5"
+            @current-change="handleCurrentChange"
+          />
         </div>
       </div>
       <span slot="footer">
@@ -114,7 +121,8 @@ export default {
         total: 0,
         currentPage: 1
       },
-      saveLoading: false
+      saveLoading: false,
+      listLoading: false
     }
   },
   watch: {
@@ -131,10 +139,11 @@ export default {
       this.dialogVisibleTitle = row.name || ''
     },
     _loadActivityGoods() {
+      this.listLoading = true
       // 通过活动id加载商品
       getActivityGoods({
         activityId: this.editInfo.id,
-        pageSize: 10,
+        pageSize: 5,
         currentPage: this.modalQuery.currentPage
       })
         .then(res => {
@@ -146,9 +155,11 @@ export default {
           })
           this.modalGoodList = data
           this.modalQuery.total = res.data.totalCount
+          this.listLoading = false
         })
         .catch(err => {
           console.log(err)
+          this.listLoading = false
         })
     },
     handleClean() {},
@@ -180,7 +191,7 @@ export default {
       }
       row.productActivityCount =
         Number(row.productActivityCount) + Number(row.num)
-      row.isAdd = true
+      // row.isAdd = true
       row.num = ''
     },
     handleInput(e, row) {
@@ -212,6 +223,11 @@ export default {
           row.num--
         }
       }
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.modalQuery.currentPage = val
+      this._loadActivityGoods()
     }
   }
 }

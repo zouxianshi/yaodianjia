@@ -152,7 +152,7 @@
                       <div>{{ item.fullNum }}人团</div>
                       <!-- addNum参团人数 -->
                       <div v-if="item.fullNum !== item.addNum">还差{{ item.fullNum - item.addNum }}人团</div>
-                      <div>已虚拟用户填充成团</div>
+                      <div v-if="item.groupStatus === 4" class="tips">已虚拟用户填充成团</div>
                     </div>
                   </div>
                   <!-- 实付总金额 -->
@@ -167,15 +167,18 @@
                   <!-- 拼团状态 -->
                   <div class="body-cell cell-right padding10">
                     <!-- 拼团状态(0待付款，1.待成团，2已成团，3拼团失败,4.手动成团,5拼团失败后已回收库存，6已发货) -->
-                    <div class="cell-text">{{ item.groupStatus | orderType }}</div>
-                    <div v-if="item.groupStatus === 2">成团时间:{{ item.endTime }}</div>
-                    <div v-if="item.groupStatus === 3">失败时间:{{ item.endTime }}</div>
-                    <button
-                      v-if="item.groupStatus === 1"
-                      type="text"
-                      @click="oneTimeGroup(item.groupCode)"
-                    >一键成团</button>
-                    <div v-if="item.groupStatus === 4">手动成团</div>
+                    <div class="cell-text">
+                      <div>{{ item.groupStatus | orderType }}</div>
+                      <Countdown v-if="item.groupStatus === 1 && item.endTime" :time="item.endTime" />
+                      <div v-if="item.groupStatus === 2">成团时间:{{ item.endTime }}</div>
+                      <div v-if="item.groupStatus === 3">失败时间:{{ item.endTime }}</div>
+                      <el-button
+                        v-if="item.groupStatus === 1"
+                        type="text"
+                        @click="oneTimeGroup(item.groupCode)"
+                      >一键成团</el-button>
+                      <div v-if="item.groupStatus === 4">手动成团</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -204,12 +207,13 @@ import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
+import Countdown from '@/components/Countdown'
 import { tablist, oneTimeGroupAction } from '@/api/spell-goods'
 // import { getAllStore } from '@/api/common'
 import { getMyStoreList } from '@/api/store-goods'
 
 export default {
-  components: { Pagination },
+  components: { Pagination, Countdown },
   filters: {
     orderType: function(type) {
       let str = ''
@@ -328,17 +332,16 @@ export default {
       tablist({
         ...data,
         currentPage: reset ? 1 : data.currentPage
+      }).then(res => {
+        // 获取门店员工
+        const { data, totalCount } = res.data
+        if (data) {
+          this.tableData = data
+        } else {
+          this.tableData = []
+        }
+        this.total = totalCount
       })
-        .then(res => {
-          // 获取门店员工
-          const { data, totalCount } = res.data
-          if (data) {
-            this.tableData = data
-          } else {
-            this.tableData = []
-          }
-          this.total = totalCount
-        })
       //   .catch(() => {})
     },
     remoteMethod(val) {
@@ -584,5 +587,8 @@ export default {
   padding: 30px;
   text-align: center;
   color: #606266;
+}
+.tips {
+  color: #c3c3c3;
 }
 </style>
