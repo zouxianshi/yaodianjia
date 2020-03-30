@@ -303,7 +303,7 @@
                         <div class="goods-info padding10">
                           <div class="goods-price">￥{{ list.commodityPrice }}</div>
                           <div class="goods-num">({{ list.commodityNumber }}件)</div>
-                          <template v-if="!(refundStatus.includes(listQuery.orderStatus))">
+                          <!-- <template v-if="!(refundStatus.includes(listQuery.orderStatus))">
                             <template v-if="list.status===8||list.status===10">
                               <div
                                 class="goods-remark marginTop10"
@@ -335,7 +335,7 @@
                                 </div>
                               </div>
                             </template>
-                          </template>
+                          </template> -->
                         </div>
                       </div>
                     </div>
