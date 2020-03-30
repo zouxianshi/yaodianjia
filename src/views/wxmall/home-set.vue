@@ -346,7 +346,7 @@
             </div>
             <div class="h5-card h5-guess-like">
               <div class="card-header">
-                <div class="title">猜你喜欢</div>
+                <div class="title">为你推荐</div>
               </div>
               <ul class="goods-list3">
                 <li v-for="(item, index) in 3" :key="index" class="goods-item">
