@@ -361,7 +361,7 @@
                     <!-- 退款退货状态 -->
                     <div class="body-cell cell-right padding10">
                       <div class="cell-text">
-                        <div v-text="orderStatusText(item)" />
+                        <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.status | returnType }}</div>
                         <!-- <div class="order_btn">
                           <el-button
                             type="warning"
@@ -382,24 +382,16 @@
                     </div>
                     <!-- 退款金额 -->
                     <div class="body-cell cell-right padding10">
-                      <div class="cell-text">
+                      <div v-if="item.returnQuestRespDTO" class="cell-text">
+                        <!-- refundAmount退款金额 -->
                         <div>
                           ￥
-                          <template v-if="item.refundAmount">
-                            <span>{{ item.refundAmount }}</span>
-                          </template>
-                          <template v-else>
-                            <span>0</span>
-                          </template>
+                          <span v-if="item.returnQuestRespDTO.isReturnFreight === 1">{{ ((item.returnQuestRespDTO.refundAmount || 0)*100 + (item.returnQuestRespDTO.freightAmount ||0)*100) / 100 }}</span>
+                          <span v-else>{{ item.returnQuestRespDTO.refundAmount || 0 }}</span>
                         </div>
-                        <div>
-                          （含运费
-                          <template v-if="item.actualFreightAmount">
-                            <span>{{ item.actualFreightAmount }}</span>
-                          </template>
-                          <template v-else>
-                            <span>0</span>
-                          </template>元）
+                        <!-- actualRefundAmount退款金额 isReturnFreight是否退还运费 0.否 1.是 -->
+                        <div v-if="item.returnQuestRespDTO.isReturnFreight === 1">
+                          （含运费{{ item.returnQuestRespDTO.freightAmount || 0 }}元）
                         </div>
                       </div>
                     </div>
@@ -810,6 +802,27 @@ export default {
       // 手机号中间4位用*表示
       const reg = /^(\d{3})\d{4}(\d{4})$/
       return value.replace(reg, '$1****$2')
+    },
+    returnType: function(value) {
+      // 状态0待退货,1待退款，2退款完成 3驳回
+      let text = '-'
+      switch (value) {
+        case 0:
+          text = '待退货'
+          break
+        case 1:
+          text = '待退款'
+          break
+        case 2:
+          text = '退款完成'
+          break
+        case 3:
+          text = '驳回'
+          break
+        default:
+          break
+      }
+      return text
     }
   },
   mixins: [mixins],
@@ -1664,6 +1677,7 @@ export default {
             .goods-info {
               flex: 1;
               justify-content: space-around;
+              flex-direction: column;
               .goods-name {
                 text-align: left;
                 overflow: hidden;

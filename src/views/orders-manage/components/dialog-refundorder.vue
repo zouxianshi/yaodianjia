@@ -20,11 +20,21 @@
         </li>
         <li>
           <span class="item-lable">退款金额：</span>
-          <span class="item-value">￥{{ (returnrespDto && returnrespDto.refundAmount )|| '-' }}</span>
+          <span class="item-value">
+            <span
+              v-if="returnrespDto && returnrespDto.refundAmount"
+            >￥{{ returnrespDto.refundAmount }}</span>
+            <span v-else>-</span>
+          </span>
         </li>
         <li>
           <span class="item-lable">实退金额：</span>
-          <span class="item-value">￥{{ returnrespDto && returnrespDto.actualRefundAmount }}</span>
+          <span class="item-value">
+            <span
+              v-if="returnrespDto && returnrespDto.actualRefundAmount"
+            >￥{{ returnrespDto.actualRefundAmount }}</span>
+            <span v-else>-</span>
+          </span>
         </li>
         <li>
           <span class="item-lable">退款原因：</span>
@@ -109,7 +119,6 @@ export default {
       }
       return text
     }
-
   },
   // 查看退款单
   props: {
