@@ -15,8 +15,8 @@ export function tablist(params) {
  */
 export function oneTimeGroupAction(params) {
   return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup/oneTimeGroup`,
-    method: 'post',
-    data: params
+    url: `${config.merGoods}/1.0/admin/activityGroup/oneTimeGroup?groupCode=${params.groupCode}`,
+    method: 'post'
+    // data: params
   })
 }

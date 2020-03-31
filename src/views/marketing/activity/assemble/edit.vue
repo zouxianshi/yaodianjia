@@ -33,7 +33,7 @@
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
               <div class="select-btn">
-                <el-popover
+                <!-- <el-popover
                   placement="bottom-end"
                   width="400"
                   popper-class="hydee-popver"
@@ -41,7 +41,6 @@
                 >
                   <div class="popver-wapper">
                     <div class="pic-poster">
-                      <!-- 效果展示 -->
                       <h3>效果展示</h3>
                       <div>
                         <el-image
@@ -76,7 +75,7 @@
                     </div>
                   </div>
                   <el-button slot="reference" @click="selectPic">选择历史图片</el-button>
-                </el-popover>
+                </el-popover> -->
                 <div>上传图片尺寸建议：100px*100px</div>
               </div>
             </div>
@@ -147,7 +146,8 @@
             </span>
           </template>
         </el-form-item>
-        <el-form-item label="跨店拼团">
+        <!-- 二期需求 -->
+        <!-- <el-form-item label="跨店拼团">
           <span slot="label">
             跨店拼团
             <el-tooltip class="item" effect="dark" content="选不跨店活动会生成多个以单个门店发起活动" placement="top-start">
@@ -158,7 +158,7 @@
             <el-radio label="1">跨店活动</el-radio>
             <el-radio label="2">不跨店活动</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <div class="form-title">活动商品</div>
         <el-form-item label>
           <p v-if="!activityId" style="margin-bottom:10px">
@@ -251,7 +251,7 @@
 import config from '@/utils/config'
 import store from './_source/store'
 import goods from './_source/goods'
-import imgEdit from './components/image-wapper'
+// import imgEdit from './components/image-wapper'
 import EditGoodsModals from './_source/signle-goods-set'
 import { mapGetters } from 'vuex'
 import {
@@ -263,7 +263,7 @@ import {
 } from '@/api/marketing'
 import { getAllStore } from '@/api/common'
 export default {
-  components: { store, goods, EditGoodsModals, imgEdit },
+  components: { store, goods, EditGoodsModals },
   data() {
     return {
       formData: {
@@ -311,7 +311,7 @@ export default {
   computed: {
     ...mapGetters(['token', 'merCode']),
     upLoadUrl() {
-      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
     },
     headers() {
       return { Authorization: this.token }
@@ -494,6 +494,7 @@ export default {
       row.map((v, index) => {
         v.sortNumber = index + 1
       })
+      console.log('onSelectedGoods', row)
       this.goodsList = row
     },
     handleSubmit() {
@@ -501,10 +502,12 @@ export default {
       this.$refs.formData.validate(valid => {
         if (valid) {
           const data = JSON.parse(JSON.stringify(this.formData))
+          console.log('this.formData', this.formData)
           if (data.img === '1') {
             data.imgUrl = ''
           }
           data.storeIds = []
+          // 部分店铺
           if (data.isAllStore === 0) {
             if (this.chooseStore.length > 0) {
               this.chooseStore.map(v => {
@@ -554,8 +557,8 @@ export default {
             type: 'success'
           })
           setTimeout(_ => {
-            this.$router.push('/marketing/activity/assemble')
             this.saveLoading = false
+            this.$router.push('/marketing/activity/assemble')
           }, 1000)
         })
         .catch(err => {

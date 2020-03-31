@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="danger" size="mini" @click="handleEditAcStock(rowItem)">编辑活动库存</el-button>
+    <el-button type="primary" size="mini" @click="handleEditAcStock(rowItem)">编辑活动库存</el-button>
     <el-dialog
       :title="`“${dialogVisibleTitle}”商品活动库存管理:`"
       :visible.sync="dialogVisible"

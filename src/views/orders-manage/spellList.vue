@@ -161,6 +161,7 @@
                       <!-- quantity购买份数(在待付款情况下是没有份数的) -->
                       <template>
                         <span v-text="`￥${computerPrice(item.activityPrice, item.quantity)}`" />
+                        <div v-text="`（含运费${computerPrice(item.activityPrice, item.quantity)}元）`" />
                       </template>
                     </div>
                   </div>
@@ -168,16 +169,46 @@
                   <div class="body-cell cell-right padding10">
                     <!-- 拼团状态(0待付款，1.待成团，2已成团，3拼团失败,4.手动成团,5拼团失败后已回收库存，6已发货) -->
                     <div class="cell-text">
-                      <div>{{ item.groupStatus | orderType }}</div>
-                      <Countdown v-if="item.groupStatus === 1 && item.endTime" :time="item.endTime" />
-                      <div v-if="item.groupStatus === 2">成团时间:{{ item.endTime }}</div>
-                      <div v-if="item.groupStatus === 3">失败时间:{{ item.endTime }}</div>
-                      <el-button
-                        v-if="item.groupStatus === 1"
-                        type="text"
-                        @click="oneTimeGroup(item.groupCode)"
-                      >一键成团</el-button>
-                      <div v-if="item.groupStatus === 4">手动成团</div>
+                      <!-- 退款记录二期需求 -->
+                      <!-- <div class="tr">
+                         <el-button type="text">退款记录</el-button>
+                       </div> -->
+                      <div>
+                        {{ item.groupStatus | orderType }}
+                        <el-tooltip
+                          v-if="[2, 3, 4, 5 ].includes(item.groupStatus)"
+                          class="item"
+                          effect="dark"
+                          placement="right"
+                        >
+                          <div slot="content">
+                            <div v-if="item.groupStatus === 2">
+                              成团时间:
+                              <br>
+                              {{ item.endTime }}
+                            </div>
+                            <div v-if="item.groupStatus === 3">
+                              失败时间:
+                              <br>
+                              {{ item.endTime }}
+                            </div>
+                          </div>
+                          <i class="el-icon-warning" />
+                        </el-tooltip>
+                      </div>
+                      <Countdown
+                        v-if="item.groupStatus === 1 && item.endTime"
+                        :time="item.endTime"
+                      />
+                      <div class="tr">
+                        <el-button
+                          v-if="item.groupStatus === 1"
+                          type="text"
+                          @click="oneTimeGroup(item.groupCode)"
+                        >一键成团</el-button>
+                      </div>
+
+                      <div v-if="item.groupStatus === 4">(手动成团)</div>
                     </div>
                   </div>
                 </div>
@@ -517,6 +548,7 @@ export default {
           border-right: 1px solid #dfe6ec;
           .cell-text {
             text-align: center;
+            width: 100%;
           }
         }
         .goods-list {
@@ -590,5 +622,8 @@ export default {
 }
 .tips {
   color: #c3c3c3;
+}
+.tr {
+  text-align: right;
 }
 </style>
