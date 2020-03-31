@@ -31,7 +31,7 @@
         width="100"
       >
         <template>
-          <el-button type="text" size="small">详情</el-button>
+          <el-button type="text" size="small" @click="tail()">详情</el-button>
           <span>|</span>
           <el-button type="text" size="small">更多</el-button>
         </template>
@@ -69,7 +69,11 @@ export default {
       ]
     }
   },
-  methods: {}
+  methods: {
+    tail() {
+      this.$router.push('/member/member-center/details')
+    }
+  }
 }
 </script>
 
