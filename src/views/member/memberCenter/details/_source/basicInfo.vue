@@ -74,20 +74,26 @@
           style="width: 100%"
         >
           <el-table-column
-            prop="date"
-            label="日期"
-            width="180"
-          />
-          <el-table-column
             prop="name"
             label="姓名"
             width="180"
           />
           <el-table-column
-            prop="address"
-            label="地址"
+            prop="shop"
+            label="所属门店"
+          />
+          <el-table-column
+            prop="data"
+            label="添加时间"
           />
         </el-table>
+      </div>
+      <div class="pagination">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="1000"
+        />
       </div>
     </div>
   </div>
@@ -118,32 +124,31 @@ export default {
         cardIssuer: ''
       },
       tableData: [{
-        date: '2016-05-02',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        shop: 'NO.1234 益丰大药房5店',
+        data: '2019.12.31'
       }, {
-        date: '2016-05-04',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
+        shop: 'NO.1234 益丰大药房5店',
+        data: '2019.12.31'
       }, {
-        date: '2016-05-01',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
+        shop: 'NO.1234 益丰大药房5店',
+        data: '2019.12.31'
       }, {
-        date: '2016-05-03',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
+        shop: 'NO.1234 益丰大药房5店',
+        data: '2019.12.31'
       }]
     }
   },
-  computed: {},
-  destroyed() {
-  },
-  methods: {}
+  methods: {
+
+  }
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss" scoped>
 .basic-info-model{
   .content-items{
     border: 1px solid #eee;border-radius: 2px;background-color: #fff;
@@ -152,7 +157,7 @@ export default {
       width: 60px;height: 60px;margin: 0;vertical-align: middle;
     }
     .content-body{
-      display: flex;padding: 10px 8%;justify-content: space-between;min-height: 200px;
+      display: flex;padding: 20px 8% 10px;justify-content: space-between;min-height: 200px;
       .content-body-items{
         flex: 0 0 45%;
         .more-info{
@@ -160,9 +165,17 @@ export default {
         }
       }
     }
+    .pagination{
+      text-align: right;padding: 10px 7%;
+    }
   }
   .el-form-item{
     margin-bottom: 5px;
+  }
+  .el-table__header tr,
+  .el-table__header th {
+    padding: 0;
+    height: 40px;
   }
 }
 </style>

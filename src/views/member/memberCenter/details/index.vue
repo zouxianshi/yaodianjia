@@ -38,11 +38,19 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .mc-details-model{
-    height: calc(100vh - 160px);overflow: auto;background-color: #F7F7F7;
+    background-color: #F7F7F7;
     .el-tabs__header{
       background-color: #fff;padding-top:10px;
       .el-tabs__nav-scroll{
         padding: 0 32px;
+      }
+    }
+    .mc-details-content{
+      .mc-details-content-itmes{
+        height: calc(100vh - 220px);overflow: auto;padding-bottom: 10px;
+        &::-webkit-scrollbar{
+          width: 2px;
+        }
       }
     }
   }
