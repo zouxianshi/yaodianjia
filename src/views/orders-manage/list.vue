@@ -1684,6 +1684,8 @@ export default {
             .goods-info{
               flex: 1;
               justify-content: space-around;
+              display: flex;
+              flex-direction: column;
               .goods-name{
                 text-align: left;
                 overflow: hidden;

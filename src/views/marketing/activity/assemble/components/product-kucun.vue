@@ -7,7 +7,7 @@
       width="750px"
       append-to-body
       :close-on-click-modal="false"
-      @close="modalQuery.currentPage = 1; modalQuery.total = 1"
+      @close="modalQuery.currentPage = 1; modalQuery.total = 1; cleanAllCount = false"
     >
       <div v-loading="listLoading" class="modal-body">
         <p
@@ -81,7 +81,7 @@
           </el-table-column>
         </el-table>
         <div class="table-footer">
-          <el-button type="danger" size="mini" @click="handleClean">清空所有活动库存</el-button>
+          <el-button type="danger" size="mini" @click="handleClean(true)">清空所有活动库存</el-button>
           <el-pagination
             background
             layout="total, prev, pager, next"
@@ -122,7 +122,8 @@ export default {
         currentPage: 1
       },
       saveLoading: false,
-      listLoading: false
+      listLoading: false,
+      cleanAllCount: false // 是否清空所有库存
     }
   },
   watch: {
@@ -149,9 +150,12 @@ export default {
         .then(res => {
           const { data } = res.data
           data.map(v => {
-            v.isClearn = false
-            v.isAdd = false
+            v.isClearn = !!this.cleanAllCount
+            v.isAdd = !!this.cleanAllCount
             v.num = ''
+            v.productActivityCount = this.cleanAllCount
+              ? 0
+              : v.productActivityCount
           })
           this.modalGoodList = data
           this.modalQuery.total = res.data.totalCount
@@ -162,22 +166,34 @@ export default {
           this.listLoading = false
         })
     },
-    handleClean() {},
+    handleClean(val) {
+      console.log('handleClean', val)
+      this.cleanAllCount = !!val
+      this.modalGoodList.map(row => {
+        row.productActivityCount = 0
+        row.isClearn = true
+      })
+    },
     handleSubmitStock() {
       // 修改库存
       this.saveLoading = true
-      setAssembleStock(this.modalGoodList)
-        .then(res => {
-          this.$message({
-            message: '修改成功',
-            type: 'success'
+      console.log('handleSubmitStock', this.cleanAllCount)
+      if (this.cleanAllCount) {
+        // 执行清空当前活动id下所有商品库存
+      } else {
+        setAssembleStock(this.modalGoodList)
+          .then(res => {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.saveLoading = false
+            this.dialogVisible = false
           })
-          this.saveLoading = false
-          this.dialogVisible = false
-        })
-        .catch(_ => {
-          this.saveLoading = false
-        })
+          .catch(_ => {
+            this.saveLoading = false
+          })
+      }
     },
     handleSettingcount(row) {
       // 设置该条记录0库存
