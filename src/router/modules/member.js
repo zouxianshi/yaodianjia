@@ -55,6 +55,16 @@ export default [
           noCache: true
         },
         children: []
+      },
+      {
+        path: '/member/register-setting/editcard',
+        component: () => import('@/views/member/registerSetting/list/editCard'),
+        name: 'EditCard',
+        meta: {
+          title: '编辑会员卡',
+          noCache: true,
+          activeMenu: '/member/register-setting'
+        }
       }
     ]
   }

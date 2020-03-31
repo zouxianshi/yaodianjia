@@ -1,7 +1,7 @@
 <template>
   <div class="rs-index-model">
     <!-- <div class="rs-header-model">
-      ä¼šå‘˜æ³¨å†Œè®¾ç½®
+      »áÔ±×¢²áÉèÖÃ
     </div> -->
     <div class="app-container">
       <AppleRs />
@@ -10,9 +10,9 @@
   </div>
 </template>
 <script>
-// å¾®ä¿¡å°ç¨‹åºæ³¨å†Œç»„ä»¶å¯¼å…¥
+// Î¢ĞÅĞ¡³ÌĞò×¢²á×é¼şµ¼Èë
 import AppleRs from './list/appletRegister'
-// å¾®ä¿¡ä¼šå‘˜å¡
+// Î¢ĞÅ»áÔ±¿¨
 import AemberCard from './list/memberCard'
 export default {
   name: 'RsIndex',
@@ -37,6 +37,10 @@ export default {
   beforeUpdate() {
   },
   updated() {
+  },
+  beforeDestroy() {
+  },
+  destroyed() {
   },
   methods: {}
 }

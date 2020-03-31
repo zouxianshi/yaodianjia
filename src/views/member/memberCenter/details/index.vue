@@ -1,40 +1,49 @@
 <template>
   <div class="mc-details-model">
-    会员中心 - 会员详情
+    <el-tabs class="mc-details-content" value="first">
+      <el-tab-pane label="基本信息" name="first">
+        <div class="mc-details-content-itmes">
+          <m-base-info />
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="健康档案" name="second">
+        <div class="mc-details-content-itmes">
+          <m-health-file />
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="消费记录" name="third">
+        <div class="mc-details-content-itmes">
+          <m-expensesRecord />
+        </div>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
+import mBaseInfo from './_source/basicInfo'
+import mHealthFile from './_source/healthFile'
+import mExpensesRecord from './_source/expensesRecord'
 export default {
   name: 'Details',
-  components: {},
+  components: {
+    mBaseInfo, mHealthFile, mExpensesRecord
+  },
   props: {},
   data() {
     return {}
   },
-  computed: {},
-  watch: {},
-  beforeCreate() {
-  },
-  created() {
-  },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  methods: {},
-  beforeDestroy() {
-  },
-  destroyed() {
-  }
+  methods: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .index-model {
-
+  .mc-details-model{
+    height: calc(100vh - 160px);overflow: auto;background-color: #F7F7F7;
+    .el-tabs__header{
+      background-color: #fff;padding-top:10px;
+      .el-tabs__nav-scroll{
+        padding: 0 32px;
+      }
+    }
   }
 </style>
