@@ -380,6 +380,7 @@
                   ref="multipleTable"
                   :data="editSpecsData"
                   @selection-change="handleSelectionChange"
+                  @select="handleSelectChange"
                 >
                   <el-table-column type="selection" :selectable="selectable" width="55" />
                   <!-- <el-table-column

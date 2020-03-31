@@ -82,20 +82,32 @@ const mixin = {
         this.$set(this.editSpecsData, index, row)
       }
     },
-    handleSelectionChange(row) {
+    handleSelectionChange(row) { // 当用户手动勾选全选 Checkbox 时触发的事件
       this.chooseTableSpec = row
+    },
+    handleSelectChange(selection, row) { // 当用户手动勾选数据行的 Checkbox 时触发的事件
+      const findIndex = selection.findIndex((item) => {
+        return item.id === row.id
+      })
+      if (findIndex > -1) {
+        row.isCheck = true
+      } else {
+        row.isCheck = false
+      }
     },
     handleSubmitSpec() { // 规格保存操作
       let data = []
       if (this.basicForm.origin === 1) { // 标库商品
-        //  获取一种选中的值
-        this.specsForm.specs.map(v => {
-          if (v.isCheck) {
-            data.push(v)
-          }
-        })
+        // //  获取一种选中的值
+        // this.specsForm.specs.map(v => {
+        //   if (v.isCheck) {
+        //     data.push(v)
+        //   }
+        // })
         data = [...this.chooseTableSpec, ...data]
+        console.log('保存获取的数据,-----', data)
         if (data.length === 0) {
+          console.log('1231231312')
           this.$message({
             message: '请选择规格信息',
             type: 'error'
@@ -131,7 +143,11 @@ const mixin = {
         if (is_err) {
           return
         }
-        this.subSpecs(this.format())
+        console.log('this.format()', this.format())
+        // return
+        if (this.format()) {
+          this.subSpecs(this.format())
+        }
       } else {
         this.format()
       }
@@ -234,6 +250,14 @@ const mixin = {
           })
           flag = false
         }
+        if (this.basicForm.origin === 1 && flag && !v.picUrl) {
+          this.$message.close()
+          this.$message({
+            message: `请上传表单规格${index}中的图片`,
+            type: 'error'
+          })
+          flag = false
+        }
       })
       if (flag) {
         // return
@@ -257,7 +281,17 @@ const mixin = {
               }
             }
           })
-          data = [...data, ...this.editSpecsData]
+          if (this.basicForm.origin === 1) {
+            data = [...data]
+            this.editSpecsData.map(v => {
+              console.log('标库处理', v)
+              if (v.disabled || v.isCheck) {
+                data.push(v)
+              }
+            })
+          } else {
+            data = [...data, ...this.editSpecsData]
+          }
         }
         if (this.mprice_err) {
           this.$message({
@@ -444,7 +478,8 @@ const mixin = {
             setTimeout(res => {
               this.editSpecsData.map((v, index) => {
                 if (v.disabled) {
-                  this.chooseTableSpec.push(v)
+                  // this.chooseTableSpec.push(v)
+                  this.$refs.multipleTable.toggleRowSelection(v)
                   $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
                 }
               })
