@@ -21,10 +21,16 @@
         <li>
           <span class="item-lable">退款金额：</span>
           <span class="item-value">
+            <span>
+              ￥<span
+                v-if="returnrespDto.isReturnFreight === 1"
+              >{{ ((returnrespDto.refundAmount || 0)*100 + (returnrespDto.freightAmount ||0)*100) / 100 }}</span>
+              <span v-else>{{ returnrespDto.refundAmount || 0 }}</span>
+            </span>
+            <!-- actualRefundAmount退款金额 isReturnFreight是否退还运费 0.否 1.是 -->
             <span
-              v-if="returnrespDto && returnrespDto.refundAmount"
-            >￥{{ returnrespDto.refundAmount }}</span>
-            <span v-else>-</span>
+              v-if="returnrespDto.isReturnFreight === 1"
+            >（含运费{{ returnrespDto.freightAmount || 0 }}元）</span>
           </span>
         </li>
         <li>
