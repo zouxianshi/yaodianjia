@@ -75,7 +75,7 @@
                     </div>
                   </div>
                   <el-button slot="reference" @click="selectPic">选择历史图片</el-button>
-                </el-popover> -->
+                </el-popover>-->
                 <div>上传图片尺寸建议：100px*100px</div>
               </div>
             </div>
@@ -96,10 +96,11 @@
           <el-date-picker
             v-model="formData.activitTime"
             type="datetimerange"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            :disabled="!!activityId"
             @change="handleTimeChange"
           />
         </el-form-item>
@@ -120,7 +121,11 @@
         </el-form-item>
         <div class="form-title">活动店铺</div>
         <el-form-item label="所有店铺">
-          <el-radio-group v-model="formData.isAllStore" @change="handleStoreChange">
+          <el-radio-group
+            v-model="formData.isAllStore"
+            :disabled="!!activityId"
+            @change="handleStoreChange"
+          >
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
           </el-radio-group>
@@ -158,7 +163,7 @@
             <el-radio label="1">跨店活动</el-radio>
             <el-radio label="2">不跨店活动</el-radio>
           </el-radio-group>
-        </el-form-item> -->
+        </el-form-item>-->
         <div class="form-title">活动商品</div>
         <el-form-item label>
           <p v-if="!activityId" style="margin-bottom:10px">
@@ -169,7 +174,12 @@
               :disabled="!formData.activitTime"
               @click="handleOpenGoods"
             >添加商品</el-button>
-            <el-button size="small" :disabled="!goodsList.length" type="danger" @click="handleBatchDel">批量删除</el-button>
+            <el-button
+              size="small"
+              :disabled="!goodsList.length"
+              type="danger"
+              @click="handleBatchDel"
+            >批量删除</el-button>
           </p>
           <el-table :data="goodsList" border size="small" @selection-change="handleSelectionChange">
             <el-table-column v-if="!activityId" type="selection" width="55" />
@@ -502,7 +512,11 @@ export default {
       this.$refs.formData.validate(valid => {
         if (valid) {
           const data = JSON.parse(JSON.stringify(this.formData))
-          console.log('this.formData', this.formData)
+          console.log('this.formData', this.formData, this.goodsList)
+          if (new Date(this.formData.startTime).getTime() < new Date().getTime()) {
+            this.$message.warning('活动开始时间不能小于当前时间')
+            return
+          }
           if (data.img === '1') {
             data.imgUrl = ''
           }
@@ -529,14 +543,16 @@ export default {
             this.saveLoading = true
             this.editActivity(data)
           } else {
-            if (!this.goodsList) {
+            console.log('this.formData------', this.goodsList)
+            if (Array.isArray(this.goodsList) && !this.goodsList.length) {
               this.$message({
                 message: '请选择商品',
                 type: 'error'
               })
-              return
+              return false
             }
             data.products = this.formatItems(this.goodsList)
+            console.log('this.formData------data.products', data.products)
             if (!data.products) {
               return
             }
