@@ -161,7 +161,6 @@ export default {
       // 1.拼团库存不小于当前设置的成团人数
       // 1.所有拼团商品成团人数最低限定为2，最高200
       let msg = '拼团库存'
-      console.log('11111', rule.field, value)
       if (rule.field === 'activityNumber') {
         msg = '拼团人数'
         console.log('22222,', value > 200)
@@ -174,7 +173,6 @@ export default {
         }
       }
       if (rule.field === 'productActivityCount') {
-        console.log('productActivityCount----', rule.field, value, this.settingForm.activityNumber)
         if (value * 1 < this.settingForm.activityNumber * 1) {
           return callback(new Error('拼团库存不小于当前设置的成团人数'))
         } else {
