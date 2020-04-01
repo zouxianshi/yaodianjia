@@ -57,7 +57,7 @@ export default {
       if (h < 10) {
         h = '0' + h
       }
-      return `${d ? `${d}天` : ''} ${h}:${m}:${s}:${hm}s`
+      return `${d ? `${d}天` : ''} ${h}:${m}:${s}:${hm}`
     }
   }
 }

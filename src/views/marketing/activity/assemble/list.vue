@@ -16,12 +16,14 @@
               v-model.trim="searchForm.name"
               size="small"
               style="width: 200px"
+              placeholder="请输入活动名称"
             />
           </div>
           <div class="search-item">
             <span class="label-name" style="width: 80px">活动店铺</span>
             <el-select
               v-model="searchForm.storeId"
+              multiple
               size="small"
               filterable
               placeholder="全部"
@@ -45,7 +47,7 @@
             </el-select>
           </div>
           <div class="search-item">
-            <el-button size="small" @click="search()">查 询</el-button>
+            <el-button size="small" type="primary" @click="search()">查 询</el-button>
           </div>
         </div>
       </section>
@@ -54,6 +56,7 @@
         style="height: calc(100% - 180px);overflow: auto"
       >
         <el-table v-loading="loading" :data="tableData" style="width: 100%">
+          <el-table-column prop="id" label="活动编号" min-width="150" />
           <el-table-column prop="name" label="标题" min-width="150" />
           <el-table-column
             prop="startTime"
@@ -200,59 +203,6 @@ export default {
       this.pager.current = val
       this._getTableData()
     },
-    // handleTimeChange(val, type) {
-    //   if (type === 1 || type === 2) {
-    //     // 搜索栏 1.开始时间 2.结束时间
-    //     if (!val) {
-    //       type === 1
-    //         ? (this.searchForm.startTime = '')
-    //         : (this.searchForm.endTime = '')
-    //     } else {
-    //       console.log('this.searchForm', this.searchForm)
-    //       if (
-    //         this.searchForm.startTime &&
-    //         this.searchForm.endTime &&
-    //         this.searchForm.startTime !== '' &&
-    //         this.searchForm.endTime !== ''
-    //       ) {
-    //         // 比较时间
-    //         const start = this.searchForm.startTime.replace(/[- :]/g, '')
-    //         const end = this.searchForm.endTime.replace(/[- :]/g, '')
-    //         if (parseInt(start) > parseInt(end)) {
-    //           this.$message('结束时间必须大于开始时间')
-    //           type === 1
-    //             ? (this.searchForm.startTime = '')
-    //             : (this.searchForm.endTime = '')
-    //           return
-    //         }
-    //       }
-    //     }
-    //     this.search()
-    //   } else if (type === 3) {
-    //     // dialog
-    //     if (val && val.length === 2) {
-    //       this.xForm.startTime = val[0]
-    //       this.xForm.endTime = val[1]
-    //     } else {
-    //       this.xForm.startTime = ''
-    //       this.xForm.endTime = ''
-    //     }
-    //   }
-    // },
-    // 复制
-    doCopy(row) {
-      const herfUrl = window.location.href
-      this.$copyText(herfUrl).then(
-        e => {
-          console.log(e)
-          this.$message.info('活动功能C端暂未开放，敬请期待')
-        },
-        e => {
-          console.log(e)
-          this.$message.warning('复制失败')
-        }
-      )
-    },
     // 查询
     search() {
       this.pager = {
@@ -283,7 +233,7 @@ export default {
         name: this.searchForm.name,
         currentPage: this.pager.current,
         pageSize: this.pager.size,
-        storeId: this.searchForm.storeId,
+        storeId: Array.isArray(this.searchForm.storeId) ? this.searchForm.storeId.join(',') : '',
         schedule: this.searchForm.timeStatus
       }
       this.loading = true

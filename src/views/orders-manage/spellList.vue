@@ -35,7 +35,7 @@
         </el-form-item>
         <el-row type="flex">
           <el-form-item label="拼团状态:">
-            <el-select v-model="form.groupStatus" class="mr20" placeholder="请选择拼团状态">
+            <el-select v-model="form.groupStatus" class="mr20" placeholder="请选择拼团状态" @change="tabchange">
               <el-option label="全部" :value="0" />
               <el-option label="待成团" :value="1" />
               <el-option label="已成团" :value="2" />
@@ -70,7 +70,7 @@
     </div>
     <div style="marginTop: 50px">
       <!-- // 拼团状态(0全部，1.待成团，2已成团，3拼团失败) -->
-      <el-radio-group v-model="groupStatus" @change="tabchange">
+      <el-radio-group v-model="form.groupStatus" @change="tabchange">
         <el-radio-button :label="0">全部</el-radio-button>
         <el-radio-button :label="1">待成团</el-radio-button>
         <el-radio-button :label="2">已成团</el-radio-button>
@@ -91,7 +91,7 @@
             <div class="header-cell">实付总金额</div>
             <div class="header-cell">拼团状态</div>
           </div>
-          <div class="order-table-body-box">
+          <div v-loading="tableLoading" class="order-table-body-box">
             <template v-if="tableData && tableData.length>0">
               <div v-for="(item,index) in tableData" :key="index" class="order-table-body">
                 <div class="order-detail-header">
@@ -311,7 +311,8 @@ export default {
       groupStatus: 0,
       allStore: [],
       total: 0,
-      storeLoading: false
+      storeLoading: false,
+      tableLoading: false
     }
   },
   computed: {
@@ -360,6 +361,7 @@ export default {
       delete data.searchKey
       delete data.searchValue
       delete data['']
+      this.tableLoading = true
       tablist({
         ...data,
         currentPage: reset ? 1 : data.currentPage
@@ -372,15 +374,17 @@ export default {
           this.tableData = []
         }
         this.total = totalCount
+        this.tableLoading = false
+      }).catch(() => {
+        this.tableLoading = false
       })
-      //   .catch(() => {})
     },
     remoteMethod(val) {
       this.selectloading = true
     },
     tabchange(val) {
       console.log(val)
-      this.groupStatus = val
+      // this.groupStatus = val
       this.form.groupStatus = val
       this.getList()
     },
@@ -437,7 +441,6 @@ export default {
     },
     // 计算实付总金额
     computerPrice(activityPrice, addNum) {
-      console.log('11111111-------------', activityPrice, addNum)
       return activityPrice * addNum
     },
     showDate(curTime) {

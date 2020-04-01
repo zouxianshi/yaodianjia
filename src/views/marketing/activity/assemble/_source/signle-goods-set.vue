@@ -6,6 +6,7 @@
     append-to-body
     :show-close="false"
     custom-class="custom-dialog-class"
+    destroy-on-close
   >
     <div slot="title" class="custom-title">
       <span>活动商品设置</span>
@@ -15,21 +16,38 @@
         <div class="image">
           <el-image :src="showImg(info.mainPic)" style="width:100px">
             <div slot="placeholder" class="image-slot">
-              加载中<span class="dot">...</span>
+              加载中
+              <span class="dot">...</span>
             </div>
           </el-image>
         </div>
         <div class="txt-info">
           <p>商品名称：{{ info.name }}</p>
-          <p>商品编号：{{ info.erpCode }}</p>
-          <p>指导价格：<span class="zd-price" v-text="'￥'+info.mprice" /></p>
+          <p>商品编号：{{ info.specId }}</p>
+          <p>
+            指导价格：
+            <span class="zd-price" v-text="'￥'+info.mprice" />
+          </p>
         </div>
       </section>
       <div class="form">
-        <el-form ref="formdData" :model="settingForm" size="small" :rules="rules" label-width="100px">
+        <el-form
+          ref="formdData"
+          :model="settingForm"
+          size="small"
+          :rules="rules"
+          label-width="100px"
+        >
           <el-form-item label="成团人数" prop="activityNumber">
             <div class="custom-input">
-              <el-input v-model="settingForm.activityNumber" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput($event,'activityNumber')" />
+              <el-input
+                v-model.number="settingForm.activityNumber"
+                style="width:80px"
+                :max="200"
+                class="custom-inner-input"
+                placeholder
+                @input.native="handleInput($event,'activityNumber')"
+              />
               <div class="operate">
                 <span class="el-icon-arrow-up" @click="handleAddNum(1,'activityNumber')" />
                 <span class="el-icon-arrow-down" @click="handleAddNum(2,'activityNumber')" />
@@ -44,22 +62,32 @@
             <section v-if="settingForm.isXg===1" style="margin-top:20px">
               <el-form-item label="每人限开/参团" label-width="110px">
                 <div class="custom-input">
-                  <el-input v-model="settingForm.addLimitTimes" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput($event,'addLimitTimes')" />
+                  <el-input
+                    v-model="settingForm.addLimitTimes"
+                    style="width:80px"
+                    class="custom-inner-input"
+                    placeholder
+                    @input.native="handleInput($event,'addLimitTimes')"
+                  />
                   <div class="operate">
                     <span class="el-icon-arrow-up" @click="handleAddNum(1,'addLimitTimes')" />
                     <span class="el-icon-arrow-down" @click="handleAddNum(2,'addLimitTimes')" />
-                  </div>
-                  &nbsp;次
+                  </div>&nbsp;次
                 </div>
               </el-form-item>
               <el-form-item label="单次限购" label-width="110px">
                 <div class="custom-input">
-                  <el-input v-model="settingForm.limitCount" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput($event,'limitCount')" />
+                  <el-input
+                    v-model="settingForm.limitCount"
+                    style="width:80px"
+                    class="custom-inner-input"
+                    placeholder
+                    @input.native="handleInput($event,'limitCount')"
+                  />
                   <div class="operate">
                     <span class="el-icon-arrow-up" @click="handleAddNum(1,'limitCount')" />
                     <span class="el-icon-arrow-down" @click="handleAddNum(2,'limitCount')" />
-                  </div>
-                  &nbsp;份
+                  </div>&nbsp;份
                 </div>
               </el-form-item>
             </section>
@@ -72,7 +100,13 @@
           </el-form-item>
           <el-form-item label="拼团库存" prop="productActivityCount">
             <div class="custom-input">
-              <el-input v-model="settingForm.productActivityCount" style="width:80px" class="custom-inner-input" placeholder="" @input.native="handleInput($event,'productActivityCount')" />
+              <el-input
+                v-model.number="settingForm.productActivityCount"
+                style="width:80px"
+                class="custom-inner-input"
+                placeholder
+                @input.native="handleInput($event,'productActivityCount')"
+              />
               <div class="operate">
                 <span class="el-icon-arrow-up" @click="handleAddNum(1,'productActivityCount')" />
                 <span class="el-icon-arrow-down" @click="handleAddNum(2,'productActivityCount')" />
@@ -81,7 +115,8 @@
             </div>
           </el-form-item>
           <el-form-item label="拼团价格" prop="activityPrice">
-            <el-input v-model="settingForm.activityPrice" placeholder="0.00" style="width:80px" /> <span>&nbsp;&nbsp;拼团价格需低于当前价格</span>
+            <el-input v-model="settingForm.activityPrice" placeholder="0.00" style="width:80px" />
+            <span>&nbsp;&nbsp;拼团价格需低于当前价格</span>
           </el-form-item>
         </el-form>
       </div>
@@ -121,14 +156,35 @@ export default {
       callback()
     }
     var checkNum = (rule, value, callback) => {
+      // productActivityCount 拼团库存
+      // activityNumber 拼团人数
+      // 1.拼团库存不小于当前设置的成团人数
+      // 1.所有拼团商品成团人数最低限定为2，最高200
       let msg = '拼团库存'
-      if (rule.field.activityNumber) {
+      console.log('11111', rule.field, value)
+      if (rule.field === 'activityNumber') {
         msg = '拼团人数'
+        console.log('22222,', value > 200)
+        if (value * 1 > 200) {
+          return callback(new Error('拼团商品成团人数最高200人'))
+        } else if (value * 1 > this.settingForm.productActivityCount * 1) {
+          return callback(new Error('成团人数不大于当前设置的拼团库存'))
+        } else {
+          this.$refs['formdData'].clearValidate(['productActivityCount'])
+        }
       }
-      if (!value) {
+      if (rule.field === 'productActivityCount') {
+        console.log('productActivityCount----', rule.field, value, this.settingForm.activityNumber)
+        if (value * 1 < this.settingForm.activityNumber * 1) {
+          return callback(new Error('拼团库存不小于当前设置的成团人数'))
+        } else {
+          this.$refs['formdData'].clearValidate(['activityNumber'])
+        }
+      }
+      if (!value * 1) {
         return callback(new Error(`${msg}不能为空`))
       }
-      if (value < 2) {
+      if (value * 1 < 2) {
         return callback(new Error(`${msg}不能小于2`))
       }
       callback()
@@ -145,16 +201,20 @@ export default {
         activityPrice: 0
       },
       rules: {
-        activityPrice: [{ required: true, validator: checkPrice, trigger: 'blur' }],
-        activityNumber: [{ required: true, validator: checkNum, trigger: 'blur' }],
+        activityPrice: [
+          { required: true, validator: checkPrice, trigger: 'blur' }
+        ],
+        activityNumber: [
+          { required: true, validator: checkNum, trigger: 'blur' }
+        ], // 成团人数
         isXg: [{ required: true, message: '', trigger: 'change' }],
-        productActivityCount: [{ required: true, validator: checkNum, trigger: 'blur' }]
+        productActivityCount: [
+          { required: true, validator: checkNum, trigger: 'blur' }
+        ]
       }
     }
   },
-  created() {
-
-  },
+  created() {},
   methods: {
     open() {
       this.isShow = true
@@ -167,7 +227,10 @@ export default {
         productActivityCount: this.info.productActivityCount || 2,
         activityPrice: this.info.activityPrice || 0
       }
-      if (this.settingForm.addLimitTimes > 0 || this.settingForm.limitCount > 0) {
+      if (
+        this.settingForm.addLimitTimes > 0 ||
+        this.settingForm.limitCount > 0
+      ) {
         this.settingForm.isXg = 1
       } else {
         this.settingForm.isXg = 0
@@ -176,19 +239,26 @@ export default {
     close() {
       this.isShow = false
     },
-    handleSubmit() { // 提交完善数据
-      this.$refs['formdData'].validate((valid) => {
+    handleSubmit() {
+      // 提交完善数据
+      this.$refs['formdData'].validate(valid => {
         if (valid) {
           const limitCount = Number(this.settingForm.limitCount)
           const addLimitTimes = Number(this.settingForm.addLimitTimes)
-          if (this.settingForm.isXg === 1 && (limitCount === 0 || !addLimitTimes)) {
+          if (
+            this.settingForm.isXg === 1 &&
+            (limitCount === 0 || !addLimitTimes)
+          ) {
             this.$message({
               message: '单次限购不能为空且必须大于0',
               type: 'error'
             })
             return
           }
-          if (this.settingForm.isXg === 1 && (addLimitTimes === 0 || !addLimitTimes)) {
+          if (
+            this.settingForm.isXg === 1 &&
+            (addLimitTimes === 0 || !addLimitTimes)
+          ) {
             this.$message({
               message: '每人限开/参团',
               type: 'error'
@@ -215,7 +285,8 @@ export default {
       e.target.value = value.replace(/[^\d]/g, '')
       this.settingForm[key] = value.replace(/[^\d]/g, '')
     },
-    handleAddNum(type, key) { // 输入框上下加减处理
+    handleAddNum(type, key) {
+      // 输入框上下加减处理
       if (!this.settingForm[key]) {
         return
       }
@@ -247,74 +318,74 @@ export default {
 }
 </script>
 <style lang="scss">
-.custom-dialog-class{
-    .el-dialog__header{
-        padding: 0;
-        background: #e5e5e5;
-        line-height: 45px;
-        padding-left: 20px;
-    }
-    .el-dialog__body{
-        padding: 10px 10px;
-    }
-    .goods-basib-info{
-        display: flex;
-        padding: 10px 0;
-        border-bottom: 1px solid #e5e5e5;
-        .txt-info{
-            margin-left: 10px;
-            p{
-                line-height: 35px;
-            }
-            .zd-price{
-                font-size: 20px;
-                color: red;
-            }
-            .zdjg{
-                 font-size: 12px;
-                 color: #c9c9c9;
-                span{
-                    color: red;
-                }
-            }
+.custom-dialog-class {
+  .el-dialog__header {
+    padding: 0;
+    background: #e5e5e5;
+    line-height: 45px;
+    padding-left: 20px;
+  }
+  .el-dialog__body {
+    padding: 10px 10px;
+  }
+  .goods-basib-info {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e5e5;
+    .txt-info {
+      margin-left: 10px;
+      p {
+        line-height: 35px;
+      }
+      .zd-price {
+        font-size: 20px;
+        color: red;
+      }
+      .zdjg {
+        font-size: 12px;
+        color: #c9c9c9;
+        span {
+          color: red;
         }
+      }
     }
-    .form{
-        margin-top: 20px;
+  }
+  .form {
+    margin-top: 20px;
+  }
+  .custom-input {
+    display: flex;
+    .custom-input-box {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+      border-right: none !important;
+      &:focus {
+        outline: none;
+        border-color: #147de8;
+      }
     }
-    .custom-input{
+    .operate {
       display: flex;
-      .custom-input-box{
-         border-top-right-radius: 0!important;
-        border-bottom-right-radius: 0!important;
-        border-right: none!important;
-        &:focus{
-          outline: none;
-          border-color: #147de8;
-        }
-      }
-      .operate{
-        display: flex;
-        flex-direction: column;
-        margin-left: -12px;
-        z-index: 3;
-        width: 30px;
-        align-items: center;
-        background: #f5f7fa;
-        border: 1px solid #dcdfe6;
-        height: 32px;
-         border-radius: 4px;
-         border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        color: #909399;
-        span{
-          width: 100%;
-          text-align: center;
-          &:last-child{
-            border-top:1px solid #dcdfe6;
-          }
+      flex-direction: column;
+      margin-left: -12px;
+      z-index: 3;
+      width: 30px;
+      align-items: center;
+      background: #f5f7fa;
+      border: 1px solid #dcdfe6;
+      height: 32px;
+      border-radius: 4px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      color: #909399;
+      span {
+        width: 100%;
+        text-align: center;
+        &:last-child {
+          border-top: 1px solid #dcdfe6;
         }
       }
     }
+  }
 }
 </style>

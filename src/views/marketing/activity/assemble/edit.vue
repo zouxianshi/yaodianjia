@@ -233,7 +233,7 @@
         </el-form-item>
         <el-form-item />
         <el-form-item label class="text-center">
-          <el-button type>取消</el-button>
+          <el-button type @click="$router.go(-1)">取消</el-button>
           <el-button type="primary" :loading="saveLoading" @click="handleSubmit">保存</el-button>
         </el-form-item>
       </el-form>
