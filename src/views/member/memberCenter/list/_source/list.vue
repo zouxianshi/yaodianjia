@@ -65,6 +65,24 @@ export default {
           numberName: '张三',
           sex: '男',
           age: '25'
+        }, {
+          imgUrl: '',
+          nickName: '张三',
+          numberName: '张三',
+          sex: '男',
+          age: '25'
+        }, {
+          imgUrl: '',
+          nickName: '张三',
+          numberName: '张三',
+          sex: '男',
+          age: '25'
+        }, {
+          imgUrl: '',
+          nickName: '张三',
+          numberName: '张三',
+          sex: '男',
+          age: '25'
         }
       ]
     }
@@ -84,6 +102,9 @@ export default {
       padding: 0;
       height: 40px;
       font-weight: bold;
+    }
+    .el-table__body td{
+      padding: 5px;
     }
   }
 
