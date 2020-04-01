@@ -1,7 +1,7 @@
 <template>
   <div class="rs-index-model">
     <!-- <div class="rs-header-model">
-      »áÔ±×¢²áÉèÖÃ
+      ï¿½ï¿½Ô±×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     </div> -->
     <div class="app-container">
       <AppleRs />
@@ -10,10 +10,12 @@
   </div>
 </template>
 <script>
-// Î¢ÐÅÐ¡³ÌÐò×¢²á×é¼þµ¼Èë
-import AppleRs from './list/appletRegister'
-// Î¢ÐÅ»áÔ±¿¨
-import AemberCard from './list/memberCard'
+// å¾®ä¿¡å°ç¨‹åºæ³¨å†Œ
+import AppleRs from './_source/appletRegister'
+// å¾®ä¿¡ä¼šå‘˜å¡
+import AemberCard from './_source/memberCard'
+import { mapGetters } from 'vuex'
+import { getMemberInfo } from '@/api/member'
 export default {
   name: 'RsIndex',
   components: {
@@ -24,7 +26,9 @@ export default {
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   watch: {},
   beforeCreate() {
   },
@@ -33,6 +37,13 @@ export default {
   beforeMount() {
   },
   mounted() {
+    getMemberInfo(this.merCode)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(() => {
+
+      })
   },
   beforeUpdate() {
   },

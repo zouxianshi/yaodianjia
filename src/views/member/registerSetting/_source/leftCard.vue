@@ -24,7 +24,11 @@
         </el-row>
         <el-row class="AemberCard-image-bottom">
           <el-col :span="18" class="AemberCard-image-number">
-            <div>888 888 88</div>
+            <div>
+              <span class="AemberCard-number-bottom">888</span>
+              <span class="AemberCard-number-bottom">888</span>
+              <span class="AemberCard-number-bottom">888</span>
+            </div>
           </el-col>
         </el-row>
       </div>
@@ -103,6 +107,10 @@ export default {
       }
       .AemberCard-image-bottom {
         transform: translateY(40px);
+        .AemberCard-number-bottom{
+          display: inline-block;
+          margin-right: 5px;
+        }
       }
     }
   }
@@ -121,6 +129,7 @@ export default {
       height: 50px;
       line-height: 50px;
       border-top:2px solid #eee;
+      font-size: 14px;
     }
   }
 }

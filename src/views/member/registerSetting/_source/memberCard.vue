@@ -1,8 +1,8 @@
 <template>
   <div class="AemberCard-index-model">
     <div class="AemberCard-header-model">
-      微信会员卡
-      <el-button size="mini" @click="handleEdit">编辑会员卡</el-button>
+      <span class="AemberCard-title-model">微信会员卡</span>
+      <el-button size="mini" type="primary" plain @click="handleEdit">编辑会员卡</el-button>
     </div>
     <div class="AemberCard-contain-model">
       <el-row>
@@ -19,10 +19,14 @@
             </el-row>
             <el-row class="AemberCard-image-bottom">
               <el-col :span="18" class="AemberCard-image-number">
-                <div>888 888 88</div>
+                <div>
+                  <span class="AemberCard-number-bottom">8888</span>
+                  <span class="AemberCard-number-bottom">8888</span>
+                  <span class="AemberCard-number-bottom">8888</span>
+                </div>
               </el-col>
               <el-col :span="6">
-                <div class="AemberCard-image-icon">1</div>
+                <div class="AemberCard-image-icon" />
               </el-col>
             </el-row>
           </div>
@@ -44,18 +48,21 @@
       </el-row>
     </div>
     <div class="AemberCard-contain-model">
+      <el-row>
+        <el-col :span="24" class="AemberCard-contain-adress"> 会员卡领卡地址：</el-col>
+      </el-row>
       <el-row class="AemberCard-url-model">
-        <el-col :span="12">
-          <div>1</div>
+        <el-col :span="18">
+          <div>https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home</div>
         </el-col>
-        <el-col :span="12">
-          <el-button size="mini">复制连接</el-button>
+        <el-col :span="6">
+          <el-button size="mini" type="primary" plain>复制连接</el-button>
         </el-col>
       </el-row>
     </div>
     <div class="AemberCard-contain-model">
       <el-row>
-        <el-col :span="24">微信会员卡开卡说明:</el-col>
+        <el-col :span="24" class="AemberCard-contain-adress">微信会员卡开卡说明:</el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
@@ -111,16 +118,24 @@ export default {
   margin-top: 10px;
   background: #ffffff;
   padding: 10px;
+  .AemberCard-title-model{
+    margin-right: 10px;
+  }
   .AemberCard-header-model {
     font-size: 16px;
     border-bottom: 2px solid #eeeeee;
     padding-bottom: 10px;
+    padding-left: 20px;
   }
   .AemberCard-contain-model {
-    padding: 10px 10px;
+    padding: 20px 10px;
     font-size: 14px;
+    .AemberCard-contain-adress{
+      margin-bottom:10px;
+      font-weight: 600;
+    }
     ul li:nth-child(1) {
-      font-size: 18px;
+      //font-size: 18px;
       line-height: 25px;
     }
     ul li:not(:first-child) {
@@ -129,21 +144,28 @@ export default {
     }
     .AemberCard-image-model {
       width: 400px;
-      height: 260px;
+      height: 240px;
       padding: 40px;
       background: #497ffe;
       border-radius: 10px;
       color: #ffffff;
       font-size: 16px;
+      padding-left:20px;
       .AemberCard-image-url {
         width: 60px;
         height: 60px;
+        border-radius: 50%;
       }
       .AemberCard-image-detail div {
         line-height: 26px;
       }
       .AemberCard-image-bottom {
-        transform: translateY(100px);
+        transform: translate(10px,100px);
+        .AemberCard-number-bottom{
+          display: inline-block;
+          margin-right: 10px;
+          font-size: 18px;
+        }
       }
     }
     .AemberCard-button-model {
@@ -164,10 +186,11 @@ export default {
         padding: 1px 0;
         color: #fff;
         width: 14px;
+        font-size: 12px;
         line-height: 100%;
         font-size: 12px;
         text-align: center;
-        background-color: #8eb9f5;
+        background-color: #497FFE;
       }
       li {
         line-height: 24px;
