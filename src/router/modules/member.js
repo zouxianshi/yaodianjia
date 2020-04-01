@@ -40,7 +40,8 @@ export default [
             meta: {
               title: '会员详情',
               auth: false,
-              noCache: true
+              noCache: true,
+              activeMenu: '/member/member-center'
             }
           }
         ]
