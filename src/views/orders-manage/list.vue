@@ -228,7 +228,7 @@
           </div>
           <div class="order-table-body-box">
             <template v-if="tableData && tableData.length>0">
-              <div v-for="item in tableData" :key="item.serialNumber" class="order-table-body">
+              <div v-for="item in tableData" :key="item.returnQuestId || item.serialNumber " class="order-table-body">
                 <div class="order-detail-header">
                   <div class="header-left">
                     <div class="header-cell">订单编号：</div>

@@ -23,13 +23,13 @@
           <span class="item-value">
             <span>
               ￥<span
-                v-if="returnrespDto.isReturnFreight === 1"
+                v-if="returnrespDto && returnrespDto.isReturnFreight === 1"
               >{{ ((returnrespDto.refundAmount || 0)*100 + (returnrespDto.freightAmount ||0)*100) / 100 }}</span>
-              <span v-else>{{ returnrespDto.refundAmount || 0 }}</span>
+              <span v-else>{{ returnrespDto && returnrespDto.refundAmount || 0 }}</span>
             </span>
             <!-- actualRefundAmount退款金额 isReturnFreight是否退还运费 0.否 1.是 -->
             <span
-              v-if="returnrespDto.isReturnFreight === 1"
+              v-if="returnrespDto && returnrespDto.isReturnFreight === 1"
             >（含运费{{ returnrespDto.freightAmount || 0 }}元）</span>
           </span>
         </li>
