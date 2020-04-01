@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { getActivityGoods, setAssembleStock } from '@/api/marketing'
+import { getActivityGoods, setAssembleStock, clearProductStock } from '@/api/marketing'
 
 export default {
   props: {
@@ -180,6 +180,18 @@ export default {
       console.log('handleSubmitStock', this.cleanAllCount)
       if (this.cleanAllCount) {
         // 执行清空当前活动id下所有商品库存
+        clearProductStock({ activityId: this.rowItem.id }).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.saveLoading = false
+            this.dialogVisible = false
+          }
+        }).catch(() => {
+          this.saveLoading = false
+        })
       } else {
         setAssembleStock(this.modalGoodList)
           .then(res => {

@@ -146,3 +146,11 @@ export function setAssembleStock(params) {
     data: params
   })
 }
+
+// 清空活动下的商品库存
+export function clearProductStock(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/clearProductStock?activityId=${params.activityId}`,
+    method: 'post'
+  })
+}
