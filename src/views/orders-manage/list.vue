@@ -346,7 +346,7 @@
                       class="body-cell cell-right padding10"
                     >
                       <div class="cell-text">
-                        <div>{{ item.orderTime }}</div>
+                        <div>{{ item.returnQuestRespDTO.createTime }}</div>
                       </div>
                     </div>
                     <!-- 退款完成时间 -->
@@ -355,7 +355,7 @@
                       class="body-cell cell-right padding10"
                     >
                       <div class="cell-text">
-                        <div>{{ item.orderTime }}</div>
+                        <div>{{ item.returnQuestRespDTO.modifyTime }}</div>
                       </div>
                     </div>
                     <!-- 退款退货状态 -->
