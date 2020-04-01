@@ -26,7 +26,6 @@ class InnerCtor {
         disabled: true,
         children: []
       },
-
       {
         name: '会员管理',
         icon: 'icongoods',
@@ -41,6 +40,19 @@ class InnerCtor {
           {
             name: '会员注册设置',
             path: '/member/register-setting',
+            disabled: true
+          },
+        ]
+      },
+      {
+        name: '渠道管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: true,
+        children: [
+          {
+            name: '微信公众号',
+            path: '/channel/wx-official-account',
             disabled: true
           },
         ]
