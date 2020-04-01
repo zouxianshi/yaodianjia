@@ -1,7 +1,7 @@
 <template>
   <div class="rs-index-model">
     <!-- <div class="rs-header-model">
-      »áÔ±×¢²áÉèÖÃ
+      ï¿½ï¿½Ô±×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     </div> -->
     <div class="app-container">
       <AppleRs />
@@ -10,10 +10,13 @@
   </div>
 </template>
 <script>
-// Î¢ÐÅÐ¡³ÌÐò×¢²á×é¼þµ¼Èë
+// Î¢ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 import AppleRs from './list/appletRegister'
-// Î¢ÐÅ»áÔ±¿¨
+// Î¢ï¿½Å»ï¿½Ô±ï¿½ï¿½
 import AemberCard from './list/memberCard'
+
+import { checkMemberCard } from '@/api/memberService'
+
 export default {
   name: 'RsIndex',
   components: {
@@ -29,6 +32,10 @@ export default {
   beforeCreate() {
   },
   created() {
+    // TODO test api
+    checkMemberCard({ merCode: 666666 }).then(res => {
+      console.log(res)
+    })
   },
   beforeMount() {
   },
