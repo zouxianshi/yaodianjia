@@ -10,7 +10,7 @@
 <script>
 export default {
   props: {
-    itemsArr: {
+    itemsArr: { // 门店数据
       type: Array,
       default() {
         return []

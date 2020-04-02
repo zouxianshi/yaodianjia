@@ -42,7 +42,7 @@
               <span>{{ basicInfo.numberId }}</span>
             </el-form-item>
             <el-form-item label="健康豆：">
-              <span>{{ basicInfo.healthNum }}</span><span class="more-info">查看明细</span>
+              <span>{{ basicInfo.healthNum }}</span><span class="more-info" @click="tailsBeans">查看明细</span>
             </el-form-item>
             <el-form-item label="会员等级：">
               <span>{{ basicInfo.leavel }}</span>
@@ -96,13 +96,15 @@
         />
       </div>
     </div>
+    <m-popBeans-details ref="A" />
   </div>
 </template>
 <script>
 import mItemTitle from './itemTitle.vue'
+import mPopBeansDetails from '../../../_source/popBeansDetails'
 export default {
   name: 'BasicInfo',
-  components: { mItemTitle },
+  components: { mItemTitle, mPopBeansDetails },
   props: {},
   data() {
     return {
@@ -143,12 +145,14 @@ export default {
     }
   },
   methods: {
-
+    tailsBeans() {
+      this.$refs.A.changeDia()
+    }
   }
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" rel="stylesheet/scss">
 .basic-info-model{
   .content-items{
     border: 1px solid #eee;border-radius: 2px;background-color: #fff;

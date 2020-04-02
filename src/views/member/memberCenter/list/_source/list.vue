@@ -33,16 +33,28 @@
         <template>
           <el-button type="text" size="small" @click="tail()">详情</el-button>
           <span>|</span>
-          <el-button type="text" size="small">更多</el-button>
+          <el-dropdown>
+            <span class="el-dropdown-link" split-button>
+              <el-button type="text" size="small">更多</el-button>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>健康豆明细</el-dropdown-item>
+              <el-dropdown-item>健康豆管理</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
+    <m-pop-beans-details />
   </div>
 </template>
 <script>
+import mPopBeansDetails from '../../../_source/popBeansDetails'
 export default {
   name: 'List',
-  components: {},
+  components: {
+    mPopBeansDetails
+  },
   props: {},
   data() {
     return {
