@@ -165,8 +165,8 @@
                     <div class="cell-text">
                       <!-- quantity购买份数(在待付款情况下是没有份数的) -->
                       <template>
-                        <span v-text="`￥${computerPrice(item.activityPrice, item.quantity)}`" />
-                        <div v-text="`（含运费${computerPrice(item.activityPrice, item.quantity)}元）`" />
+                        <span v-text="`￥${item.sumActualOrderAmount}`" />
+                        <div v-if="item.sumFreightAmount" v-text="`（含运费${item.sumFreightAmount}元）`" />
                       </template>
                     </div>
                   </div>
