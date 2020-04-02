@@ -10,6 +10,13 @@ export function getOrderList(params) {
   })
 }
 
+// 根据售后申请单id获取退货退款申请单
+export function getRefundInfo(returnRequestId) {
+  return request({
+    url: `${config.merGoods}/1.0/order-return/_get/${returnRequestId}`,
+    method: 'get'
+  })
+}
 // 根据订单明细id获取退货退款申请单
 export function getRefundReturn(detailId) {
   return request({
