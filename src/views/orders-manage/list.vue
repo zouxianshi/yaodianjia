@@ -346,7 +346,7 @@
                       class="body-cell cell-right padding10"
                     >
                       <div class="cell-text">
-                        <div>{{ item.returnQuestRespDTO.createTime }}</div>
+                        <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.createTime }}</div>
                       </div>
                     </div>
                     <!-- 退款完成时间 -->
@@ -355,7 +355,7 @@
                       class="body-cell cell-right padding10"
                     >
                       <div class="cell-text">
-                        <div>{{ item.returnQuestRespDTO.modifyTime }}</div>
+                        <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.modifyTime }}</div>
                       </div>
                     </div>
                     <!-- 退款退货状态 -->
@@ -1162,8 +1162,26 @@ export default {
         isSuper = 0
       }
       this.listQuery.isSuper = isSuper
+      // 特殊处理退款单的状态需要传递returnStatus  售后状态 0:带退款 1 退货中 2 退款完成
       console.log('_loadList_____', this.listQuery)
-      getOrderList(this.listQuery)
+      const dataParam = Object.assign({}, this.listQuery)
+      switch (this.listQuery.orderStatus) {
+        case '10':
+          dataParam.returnStatus = 0
+          // delete dataParam.orderStatus
+          break
+        case '8':
+          dataParam.returnStatus = 1
+          // delete dataParam.orderStatus
+          break
+        case '30':
+          dataParam.returnStatus = 2
+          // delete dataParam.orderStatus
+          break
+        default:
+          break
+      }
+      getOrderList(dataParam)
         .then(res => {
           this.loadingList = false
           const { data, totalCount } = res.data
