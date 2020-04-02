@@ -96,9 +96,9 @@
               <el-option label="待提货" value="7" />
               <el-option label="已完成" value="12" />
               <el-option label="待退款" value="10" />
-              <!-- <el-option label="退货中" value="10" /> -->
-              <el-option label="退货中" value="8" />
-              <!--待退货  == 退货中-->
+              <!-- <el-option label="待退货" value="10" /> -->
+              <el-option label="待退货" value="8" />
+              <!--待退货  == 待退货-->
               <el-option label="退款完成" value="30" />
               <el-option label="已取消" value="20" />
             </el-select>
@@ -194,7 +194,7 @@
           <el-radio-button label="12">已完成</el-radio-button>
           <!-- <el-radio-button label="8">待退货</el-radio-button> -->
           <el-radio-button label="10">待退款</el-radio-button>
-          <el-radio-button label="8">退货中</el-radio-button>
+          <el-radio-button label="8">待退货</el-radio-button>
           <el-radio-button label="30">退款完成</el-radio-button>
           <el-radio-button label="20">已取消</el-radio-button>
         </el-radio-group>
@@ -209,11 +209,11 @@
             </div>
             <div class="header-cell">收货人</div>
             <template v-if="refundStatus.includes(listQuery.orderStatus)">
-              <!-- 带退款/退货中 显示 -->
+              <!-- 带退款/待退货 显示 -->
               <div v-if="['10', '8'].includes(listQuery.orderStatus)" class="header-cell">退款申请时间</div>
               <!-- 退款完成 显示-->
               <div v-if="['30'].includes(listQuery.orderStatus)" class="header-cell">退款完成时间</div>
-              <!-- 带退款/退货中/退款完成 显示 -->
+              <!-- 带退款/待退货/退款完成 显示 -->
               <div class="header-cell">退款退货状态</div>
               <div class="header-cell">订单来源</div>
               <div class="header-cell">退款金额</div>
@@ -783,7 +783,7 @@ export default {
         return '已发货'
       }
       if (value === 8) {
-        return '退货中'
+        return '待退货'
       }
       if (value === 10) {
         return '待退款'
@@ -1162,21 +1162,18 @@ export default {
         isSuper = 0
       }
       this.listQuery.isSuper = isSuper
-      // 特殊处理退款单的状态需要传递returnStatus  售后状态 0:带退款 1 退货中 2 退款完成
+      // 特殊处理退款单的状态需要改为传递returnStatus  售后状态 0:待退货 1 待退款 2 退款完成
       console.log('_loadList_____', this.listQuery)
       const dataParam = Object.assign({}, this.listQuery)
       switch (this.listQuery.orderStatus) {
         case '10':
-          dataParam.returnStatus = 0
-          // delete dataParam.orderStatus
+          dataParam.returnStatus = 1
           break
         case '8':
-          dataParam.returnStatus = 1
-          // delete dataParam.orderStatus
+          dataParam.returnStatus = 0
           break
         case '30':
           dataParam.returnStatus = 2
-          // delete dataParam.orderStatus
           break
         default:
           break
