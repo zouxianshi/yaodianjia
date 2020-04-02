@@ -35,7 +35,12 @@
         </el-form-item>
         <el-row type="flex">
           <el-form-item label="拼团状态:">
-            <el-select v-model="form.groupStatus" class="mr20" placeholder="请选择拼团状态" @change="tabchange">
+            <el-select
+              v-model="form.groupStatus"
+              class="mr20"
+              placeholder="请选择拼团状态"
+              @change="tabchange"
+            >
               <el-option label="全部" :value="0" />
               <el-option label="待成团" :value="1" />
               <el-option label="已成团" :value="2" />
@@ -172,7 +177,7 @@
                       <!-- 退款记录二期需求 -->
                       <!-- <div class="tr">
                          <el-button type="text">退款记录</el-button>
-                       </div> -->
+                      </div>-->
                       <div>
                         {{ item.groupStatus | orderType }}
                         <el-tooltip
@@ -196,10 +201,10 @@
                           <i class="el-icon-warning" />
                         </el-tooltip>
                       </div>
-                      <Countdown
-                        v-if="item.groupStatus === 1 && item.endTime"
-                        :time="item.endTime"
-                      />
+                      <span v-if="item.groupStatus === 1 && item.endTime">
+                        (<Countdown :time="item.endTime" />后失败)
+                      </span>
+
                       <div class="tr">
                         <el-button
                           v-if="item.groupStatus === 1"
@@ -365,19 +370,21 @@ export default {
       tablist({
         ...data,
         currentPage: reset ? 1 : data.currentPage
-      }).then(res => {
-        // 获取门店员工
-        const { data, totalCount } = res.data
-        if (data) {
-          this.tableData = data
-        } else {
-          this.tableData = []
-        }
-        this.total = totalCount
-        this.tableLoading = false
-      }).catch(() => {
-        this.tableLoading = false
       })
+        .then(res => {
+          // 获取门店员工
+          const { data, totalCount } = res.data
+          if (data) {
+            this.tableData = data
+          } else {
+            this.tableData = []
+          }
+          this.total = totalCount
+          this.tableLoading = false
+        })
+        .catch(() => {
+          this.tableLoading = false
+        })
     },
     remoteMethod(val) {
       this.selectloading = true
