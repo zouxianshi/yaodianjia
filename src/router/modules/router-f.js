@@ -27,8 +27,8 @@ const router = [
         name: 'orders-manage-spell_group',
         meta: {
           title: '拼团订单',
-          noCache: true
-          // auth: 'order.order-all'
+          noCache: true,
+          auth: 'order.order-group'
         }
       }, {
         path: `details`,

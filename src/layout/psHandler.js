@@ -114,8 +114,7 @@ class InnerCtor {
           {
             name: `拼团订单`,
             path: '/orders-manage/spell-group',
-            disabled: true,
-            // disabled: this.get('order.order-all')
+            disabled: this.get('order.order-group')
           },
           // {
           //   name: `订单详情`,
