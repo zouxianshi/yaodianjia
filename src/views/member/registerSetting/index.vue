@@ -10,12 +10,12 @@
   </div>
 </template>
 <script>
-// ΢��С����ע���������
-import AppleRs from './list/appletRegister'
+// 微信小程序注册
+import AppleRs from './_source/appletRegister'
 // ΢�Ż�Ա��
-import AemberCard from './list/memberCard'
-
-import { checkMemberCard } from '@/api/memberService'
+import AemberCard from './_source/memberCard'
+import { mapGetters } from 'vuex'
+import { checkMemberCard, getMemberInfo } from '@/api/memberService'
 
 export default {
   name: 'RsIndex',
@@ -27,7 +27,9 @@ export default {
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   watch: {},
   beforeCreate() {
   },
@@ -40,6 +42,13 @@ export default {
   beforeMount() {
   },
   mounted() {
+    getMemberInfo(this.merCode)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(() => {
+
+      })
   },
   beforeUpdate() {
   },

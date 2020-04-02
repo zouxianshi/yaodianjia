@@ -3,33 +3,33 @@
     <div class="applers-header-model">微信小程序注册</div>
     <div class="applers-contain-model">
       <el-row>
-        <el-col :span="24">小程序二维码:</el-col>
+        <el-col :span="24" class="AemberCard-contain-adress">小程序二维码:</el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <img src="./../../../../assets/image/template_bg.png" class="applers-image-model">
+          <img src="@/assets/image/template_bg.png" class="applers-image-model">
           <div class="applers-button-model">
-            <el-button size="mini">下载二维码</el-button>
+            <el-button type="primary" plain size="mini">下载二维码</el-button>
           </div>
         </el-col>
       </el-row>
     </div>
     <div class="applers-contain-model">
       <el-row>
-        <el-col :span="24">小程序地址:</el-col>
+        <el-col :span="24" class="AemberCard-contain-adress">小程序地址:</el-col>
       </el-row>
       <el-row class="applers-url-model">
-        <el-col :span="12">
-          <div>1</div>
+        <el-col :span="18">
+          <div>https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home</div>
         </el-col>
-        <el-col :span="12">
-          <el-button size="mini">复制连接</el-button>
+        <el-col :span="6">
+          <el-button type="primary" plain size="mini">复制连接</el-button>
         </el-col>
       </el-row>
     </div>
     <div class="applers-contain-model">
       <el-row>
-        <el-col :span="24">小程序注册说明:</el-col>
+        <el-col :span="24" class="AemberCard-contain-adress">小程序注册说明:</el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
@@ -82,10 +82,15 @@ export default {
     font-size: 16px;
     border-bottom: 2px solid #eeeeee;
     padding-bottom: 10px;
+    padding-left: 20px;
   }
   .applers-contain-model {
     padding: 10px 10px;
     font-size: 14px;
+     .AemberCard-contain-adress{
+      margin:10px 0;
+      font-weight: 600;
+    }
     .applers-image-model {
       width: 200px;
       height: 200px;
@@ -93,11 +98,14 @@ export default {
     }
     .applers-button-model {
       padding-left: 60px;
+      padding-top:10px;
     }
     .applers-url-model {
       margin-top: 5px;
       padding: 10px;
       background: #f5f7fa;
+      display: flex;
+      align-items: center;
     }
     .applers-Explain-model {
       margin-top: 5px;
@@ -108,10 +116,11 @@ export default {
         border-radius: 100%;
         padding: 1px 0;
         color: #fff;
+        font-size: 12px;
         width: 14px;
         line-height: 100%;
         text-align: center;
-        background-color: #8eb9f5;
+        background-color: #497FFE;
       }
       li{
         line-height: 24px;

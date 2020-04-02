@@ -59,7 +59,7 @@ export default [
       },
       {
         path: '/member/register-setting/editcard',
-        component: () => import('@/views/member/registerSetting/list/editCard'),
+        component: () => import('@/views/member/registerSetting/_source/editCard'),
         name: 'EditCard',
         meta: {
           title: '编辑会员卡',
