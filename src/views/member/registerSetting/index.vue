@@ -15,9 +15,7 @@ import AppleRs from './_source/appletRegister'
 // ΢�Ż�Ա��
 import AemberCard from './_source/memberCard'
 import { mapGetters } from 'vuex'
-import { getMemberInfo } from '@/api/member'
-
-import { checkMemberCard } from '@/api/memberService'
+import { checkMemberCard, getMemberInfo } from '@/api/memberService'
 
 export default {
   name: 'RsIndex',

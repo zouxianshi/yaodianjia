@@ -84,7 +84,7 @@
   </div>
 </template>
 <script>
-import { editMemberInfo } from '@/api/member'
+import { editMemberInfo } from '@/api/memberService'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 export default {

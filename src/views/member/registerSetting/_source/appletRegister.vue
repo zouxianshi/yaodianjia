@@ -7,7 +7,7 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <img src="./../../../../assets/image/template_bg.png" class="applers-image-model">
+          <img src="@/assets/image/template_bg.png" class="applers-image-model">
           <div class="applers-button-model">
             <el-button type="primary" plain size="mini">下载二维码</el-button>
           </div>
@@ -104,6 +104,8 @@ export default {
       margin-top: 5px;
       padding: 10px;
       background: #f5f7fa;
+      display: flex;
+      align-items: center;
     }
     .applers-Explain-model {
       margin-top: 5px;

@@ -15,7 +15,7 @@
       <div class="AemberCard-image-model">
         <el-row>
           <el-col :span="8">
-            <img src="./../../../../assets/image/template_bg.png" alt class="AemberCard-image-url">
+            <img src="@/assets/image/template_bg.png" alt class="AemberCard-image-url">
           </el-col>
           <el-col :span="16" class="AemberCard-image-detail">
             <div>海典智慧药店</div>

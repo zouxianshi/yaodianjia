@@ -10,7 +10,7 @@
           <div class="AemberCard-image-model">
             <el-row>
               <el-col :span="6">
-                <img src="./../../../../assets/image/template_bg.png" alt="" class="AemberCard-image-url">
+                <img src="@/assets/image/template_bg.png" alt="" class="AemberCard-image-url">
               </el-col>
               <el-col :span="18" class="AemberCard-image-detail">
                 <div>海典智慧药店-直营店</div>
@@ -160,7 +160,7 @@ export default {
         line-height: 26px;
       }
       .AemberCard-image-bottom {
-        transform: translate(10px,100px);
+        transform: translate(1f0px,100px);
         .AemberCard-number-bottom{
           display: inline-block;
           margin-right: 10px;
@@ -175,6 +175,8 @@ export default {
       margin-top: 5px;
       padding: 10px;
       background: #f5f7fa;
+      display: flex;
+      align-items: center;
     }
     .AemberCard-Explain-model {
       margin-top: 5px;
