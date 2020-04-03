@@ -56,7 +56,7 @@ export default {
       top: 0;
     }
     .cmm-menu-settings {
-      width: calc(100% - 20px);
+      width: calc(100% - 40px);
       margin-left: 20px;
     }
   }
