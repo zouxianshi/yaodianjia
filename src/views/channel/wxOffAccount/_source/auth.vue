@@ -44,6 +44,7 @@ export default {
         name: ''
       },
       dialogComplete: false,
+      // toPath: 'http://localhost:7002/#/auth/auth-call-back'
       toPath: ''
     }
   },
@@ -52,10 +53,17 @@ export default {
   beforeCreate() {
   },
   created() {
+
   },
   beforeMount() {
   },
   mounted() {
+    window.addEventListener('message', (eve) => {
+      setTimeout(() => {
+        this.dialogComplete = false
+        console.log('刷新公众号授权接口 回调状态')
+      }, 5000)
+    })
   },
   beforeUpdate() {
   },
@@ -70,6 +78,7 @@ export default {
       return _.sample(['success', 'warning', ''])
     },
     onAuth() {
+      // this.dialogComplete = true
       jumpAuthUrl().then(res => {
         this.toPath = res.data
         setTimeout(() => {

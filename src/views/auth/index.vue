@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'Channel',
+  name: 'Auth',
   render() {
     return (<router-view />)
   }
