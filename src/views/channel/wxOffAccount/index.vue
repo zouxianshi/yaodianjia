@@ -1,15 +1,26 @@
 <template>
-  <div class="index-model">
-    index
+  <div class="wx-off-account-model">
+    <el-tabs v-model="activeName" type="card">
+      <el-tab-pane label="公众号授权" name="1">
+        <m-auth v-if="activeName === '1'" />
+      </el-tab-pane>
+      <el-tab-pane label="自定义菜单" name="2">
+        <m-custom-menu v-if="activeName === '2'" />
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
+import mAuth from './_source/auth'
+import mCustomMenu from './_source/customMenu'
 export default {
   name: 'Index',
-  components: {},
+  components: { mAuth, mCustomMenu },
   props: {},
   data() {
-    return {}
+    return {
+      activeName: '1'
+    }
   },
   computed: {},
   watch: {},
@@ -34,7 +45,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .index-model {
-
+  .wx-off-account-model {
+    padding: 20px 20px 10px 20px;
   }
 </style>
