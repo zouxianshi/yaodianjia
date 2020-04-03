@@ -22,8 +22,12 @@
       <el-tag :type="color()">消息中心权限</el-tag>
       <el-tag :type="color()">消息中心权限</el-tag>
       <el-tag :type="color()">消息中心权限</el-tag>
-
     </div>
+    <el-dialog id="completeDialog"	append-to-body title="微信授权" :visible.sync="dialogComplete" width="85%">
+      <div id="completeDiv">
+        <iframe :src="toPath" height="500" width="100%" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -38,7 +42,9 @@ export default {
     return {
       form: {
         name: ''
-      }
+      },
+      dialogComplete: false,
+      toPath: ''
     }
   },
   computed: {},
@@ -65,7 +71,10 @@ export default {
     },
     onAuth() {
       jumpAuthUrl().then(res => {
-        console.log(res)
+        this.toPath = res.data
+        setTimeout(() => {
+          this.dialogComplete = true
+        }, 100)
       })
     }
   }
