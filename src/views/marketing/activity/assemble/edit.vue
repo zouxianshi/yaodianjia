@@ -11,7 +11,7 @@
       >
         <div class="form-title">基础设置</div>
         <el-form-item label="活动名称" prop="name">
-          <el-input v-model="formData.name" placeholder="活动名称不超过12字" />
+          <el-input v-model="formData.name" maxlength="12" placeholder="活动名称不超过12字" />
         </el-form-item>
         <el-form-item label="活动底图">
           <el-radio-group v-model="formData.img">
@@ -76,7 +76,7 @@
                   </div>
                   <el-button slot="reference" @click="selectPic">选择历史图片</el-button>
                 </el-popover>-->
-                <div>上传图片尺寸建议：100px*100px</div>
+                <div>上传图片尺寸比例建议：3:1</div>
               </div>
             </div>
           </template>
