@@ -11,7 +11,7 @@
         服务号
       </el-form-item>
       <el-form-item label=" ">
-        <el-button type="primary">重新授权</el-button>
+        <el-button type="primary" @click="onAuth">授权</el-button>
       </el-form-item>
     </el-form>
     <br>
@@ -28,6 +28,8 @@
 </template>
 <script>
 import _ from 'lodash'
+import { jumpAuthUrl } from '@/api/channelService'
+
 export default {
   name: 'Auth',
   components: {},
@@ -60,6 +62,11 @@ export default {
   methods: {
     color() {
       return _.sample(['success', 'warning', ''])
+    },
+    onAuth() {
+      jumpAuthUrl().then(res => {
+        console.log(res)
+      })
     }
   }
 }

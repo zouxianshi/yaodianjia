@@ -19,7 +19,7 @@ export default {
   props: {},
   data() {
     return {
-      activeName: '2'
+      activeName: '1'
     }
   },
   computed: {},
@@ -46,6 +46,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .wx-off-account-model {
-    padding: 20px;
+    padding: 20px 20px 10px 20px;
   }
 </style>
