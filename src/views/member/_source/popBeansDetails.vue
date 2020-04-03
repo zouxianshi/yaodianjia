@@ -4,7 +4,7 @@
       <div slot="title" class="dialog-title">健康豆明细</div>
       <div class="contents-body">
         <div class="nav-bar">
-          <span>健康豆： 99</span>
+          <span>健康豆： 0</span>
           <el-select v-model="value" placeholder="请选择">
             <el-option
               v-for="item in options"
@@ -86,20 +86,18 @@ export default {
 }
 </script>
 <style lang="scss" >
-.pop-beans-model{
-  .dialog-title {
-    font-size: 16px; font-weight:600;
+.dialog-title {
+  font-size: 16px; font-weight:600;
+}
+.contents-body{
+  margin: 10px auto;
+  .el-table__header tr,
+  .el-table__header th {
+    padding: 0;
+    height: 40px;
   }
-  .contents-body{
-    margin: 10px auto;
-    .el-table__header tr,
-    .el-table__header th {
-      padding: 0;
-      height: 40px;
-    }
-    .nav-bar{
-      margin-bottom: 10px;display: flex;justify-content: space-between;align-items: center;
-    }
+  .nav-bar{
+    margin-bottom: 10px;display: flex;justify-content: space-between;align-items: center;
   }
 }
 </style>
