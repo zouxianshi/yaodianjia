@@ -152,7 +152,7 @@
               <template v-if="scope.row.infoStatus===15&&scope.row.auditStatus!==2&&scope.row.auditStatus!==1&&scope.row.auditStatus!==0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
               </template>
-              <template v-else-if="scope.row.infoStatus===15&&scope.row.auditStatus==0">
+              <template v-else-if="scope.row.infoStatus===15&&scope.row.auditStatus===0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
               </template>
               <template v-else>
@@ -263,26 +263,25 @@ export default {
     },
     getList() {
       this.loading = true
-      const data = JSON.parse(JSON.stringify(this.listQuery))
+      const params = JSON.parse(JSON.stringify(this.listQuery))
       if (this.listQuery.auditStatus === '-1') { // 待完善
-        data.auditStatus = ''
-        data.infoFlag = false
-        data.origin = 1
+        params.auditStatus = ''
+        params.infoFlag = false
+        params.origin = 1
       } else if (this.listQuery.auditStatus === '3') { // 待提交审核
-        data.infoFlag = true
-        data.origin = 0
+        params.infoFlag = true
+        params.origin = 0
       } else {
-        data.origin = 0
+        params.origin = 0
       }
-      getNewGoodsRecord(data).then(res => {
+      params.times = Date.parse(new Date())
+      getNewGoodsRecord(params).then(res => {
         this.loading = false
         const { data, totalCount } = res.data
-
         if (data.length === 0 && this.listQuery.currentPage !== 1) {
           this.listQuery.currentPage = 1
           this.getList()
         }
-
         if (data) {
           this.tableData = data
           this.total = totalCount

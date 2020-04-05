@@ -1,17 +1,43 @@
 <template>
   <div class="app-container">
     <el-alert
-      v-if="offlineStore > 0"
+      v-if="offlineStore - onlineStore > 0"
       type="warning"
       :closable="false"
     >
       <template slot="title">
-        当前上线{{ onlineStore }}家门店，还能上线{{ offlineStore }}家门店
+        当前上线{{ onlineStore }}家门店，还能上线{{ offlineStore-onlineStore }}家门店
+      </template>
+    </el-alert>
+    <el-alert
+      v-if="offlineStore === 0"
+      type="warning"
+      :closable="false"
+    >
+      <template slot="title">
+        没有订购任何门店
+      </template>
+    </el-alert>
+    <el-alert
+      v-if="offlineStore == null"
+      type="warning"
+      :closable="false"
+    >
+      <template slot="title">
+        不限制门店上线数量
+      </template>
+    </el-alert>
+    <el-alert
+      v-else-if="offlineStore-onlineStore < 0"
+      type="warning"
+      :closable="false"
+    >
+      <template slot="title">
+        需尽快下线 {{ onlineStore - offlineStore }} 数量门店
       </template>
     </el-alert>
     <div>
       <el-button type="primary" size="small" style="margin-top: 20px" @click="showDialog">添加上线门店</el-button>
-
       <div style="float: right">
         <el-input v-model="searchParams.searchKey" size="small" style="width: 200px;margin-top: 20px;margin-left: 80px;" placeholder="门店编码/门店名称" />
         <el-button type="primary" size="small" style="margin-left: 10px" @click="onSearch">查询</el-button>
@@ -277,6 +303,7 @@ import { mapGetters } from 'vuex'
 import {
   queryStore,
   onOffStore,
+  queryStoreNum,
   exportData
 } from '../../api/chainSetting'
 export default {
@@ -348,9 +375,16 @@ export default {
         pageSize: 200000,
         status: 1
       }).then(res => {
+        const params = {
+          merCode: this.merCode
+        }
         if (res.code === '10000') {
-          this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
-          this.offlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 0 }).length
+          queryStoreNum(params).then(res => {
+            this.onlineStore = res.data.onlineStore
+            this.offlineStore = res.data.pkgOnlineStore
+          })
+          // this.onlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 1 }).length
+          // this.offlineStore = _.filter(_.cloneDeep(res.data.data), { 'onlineStatus': 0 }).length
         }
         console.log('res-2', this.list)
       })
@@ -424,7 +458,8 @@ export default {
       const params = {
         list: selectStore,
         merCode: this.merCode,
-        onlineStatus: 1
+        onlineStatus: 1,
+        sys: 'medical'
       }
       onOffStore(params).then(res => {
         if (res.code === '10000') {

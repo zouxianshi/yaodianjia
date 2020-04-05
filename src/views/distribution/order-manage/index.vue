@@ -22,33 +22,25 @@
           class="item frist"
           :class="orderStatus === '' && 'active'"
           @click="changeTableItem('')"
-        >
-          全部
-        </div>
+        >全部</div>
         <div class="cutoff" />
         <div
           class="item"
           :class="orderStatus === 'SUCCESS' && 'active'"
           @click="changeTableItem('SUCCESS')"
-        >
-          待到货
-        </div>
+        >待到货</div>
         <div class="cutoff" />
         <div
           class="item"
           :class="orderStatus === 'ARRIVED' && 'active'"
           @click="changeTableItem('ARRIVED')"
-        >
-          待核销
-        </div>
+        >待核销</div>
         <div class="cutoff" />
         <div
           class="item last"
           :class="orderStatus === 'COMPLETE' && 'active'"
           @click="changeTableItem('COMPLETE')"
-        >
-          已完成
-        </div>
+        >已完成</div>
       </div>
       <!-- <el-select
         v-model="selectStore.storeName"
@@ -64,7 +56,7 @@
           :label="item.storeName"
           :value="{ storeName: item.storeName, id: item.id }"
         />
-      </el-select> -->
+      </el-select>-->
       <div class="search-container">
         <div class="search-item" @keyup.enter="forSearch()">
           <el-input
@@ -76,11 +68,7 @@
           />
         </div>
         <div class="search-btns" style="margin-left:10px;">
-          <el-button
-            type="primary"
-            size="small"
-            @click.stop="forSearch()"
-          >搜 索</el-button>
+          <el-button type="primary" size="small" @click.stop="forSearch()">搜 索</el-button>
         </div>
         <el-button
           v-if="!isAdmin"
@@ -102,10 +90,7 @@
       </div>
     </div>
     <div class="table-panel">
-      <table-card
-        :table-data="orderListData"
-        @button-click="setDialogContent"
-      />
+      <table-card :table-data="orderListData" :is-admin="isAdmin" @button-click="setDialogContent" />
     </div>
     <div class="pagination-panel">
       <el-pagination
@@ -118,11 +103,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <el-dialog
-      :title="dialogTitle"
-      :visible.sync="dialogVisible"
-      append-to-body
-    >
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" append-to-body>
       <el-table :data="dialogContent">
         <el-table-column property="pic" label="商品图片" width="150">
           <div
@@ -147,59 +128,56 @@
     font-size: 14px;
     color: #9b9b9b;
     background-color: #ebebeb;z-index:1;position: absolute;"
-            >
-              暂无图片
-            </div>
-          </div></el-table-column>
-        <el-table-column
-          property="productName"
-          label="商品名称/编号"
-          width="200"
-        />
+            >暂无图片</div>
+          </div>
+        </el-table-column>
+        <el-table-column property="productName" label="商品名称/编号" width="200" />
         <el-table-column property="productPrice" label="单价" />
         <el-table-column property="productCount" label="数量" />
       </el-table>
-      <div style="display:flex;flex-direction:row;margin-top:40px;">
-        <div style="color:#000;font-size:14px">预约单号：</div>
-        <div style="color:#000;font-size:14px;margin-left:20px;">
-          {{ dialogContent[0] && dialogContent[0].id }}
-        </div>
+      <div style="display:flex;flex-direction:row;margin-top:40px;align-items: center">
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">预约单号：</div>
+        <div
+          style="color:#000;font-size:14px;margin-left:20px;"
+        >{{ dialogContent[0] && dialogContent[0].id }}</div>
       </div>
       <div
         v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
-        style="display:flex;flex-direction:row;margin-top:40px;"
+        style="display:flex;flex-direction:row;margin-top:40px;align-items: center"
       >
-        <div style="color:#000;font-size:14px">预约人：</div>
-        <div style="color:#000;font-size:14px;margin-left:20px;">
-          {{ dialogContent[0] && dialogContent[0].personName }}
-        </div>
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">预约人：</div>
+        <div
+          style="color:#000;font-size:14px;margin-left:20px;"
+        >{{ dialogContent[0] && dialogContent[0].personName }}</div>
       </div>
       <div
         v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
-        style="display:flex;flex-direction:row;margin-top:40px;"
+        style="display:flex;flex-direction:row;margin-top:40px;align-items: center"
       >
-        <div style="color:#000;font-size:14px">身份证号：</div>
-        <div style="color:#000;font-size:14px;margin-left:20px;">
-          {{ dialogContent[0] && dialogContent[0].personId }}
-        </div>
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">身份证号：</div>
+        <div
+          style="color:#000;font-size:14px;margin-left:20px;"
+        >{{ dialogContent[0] && dialogContent[0].personId }}</div>
       </div>
       <div
         v-if="dialogContent[0] && dialogContent[0].status === 'SUCCESS'"
-        style="display:flex;flex-direction:row;margin-top:40px;"
+        style="display:flex;flex-direction:row;margin-top:40px;align-items: center"
       >
-        <div style="color:#000;font-size:14px">收货门店：</div>
-        <div style="color:#000;font-size:14px;margin-left:20px;">
-          {{ dialogContent[0].address }}
-        </div>
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">收货门店：</div>
+        <div style="color:#000;font-size:14px;margin-left:20px;">{{ dialogContent[0].address }}</div>
       </div>
       <div
-        style="display:flex;flex-direction:row;margin-top:40px;justify-content: center;"
+        v-if="dialogContent[0] && dialogContent[0].status === 'ARRIVED'"
+        style="display:flex;flex-direction:row;margin-top:40px;align-items: center"
+      >
+        <div style="color:#000;font-size:14px;flex:0 0 5em;text-align:right">核销码：</div>
+        <el-input v-model="verifyCode" size="small" placeholder="请输入顾客提供的核销码" />
+      </div>
+      <div
+        style="display:flex;flex-direction:row;margin-top:40px;justify-content: center;align-items: center"
       >
         <el-button @click="closeDialog">取消</el-button>
-        <el-button
-          type="primary"
-          @click="updateOrderStatusService"
-        >确认</el-button>
+        <el-button type="primary" @click.stop="updateOrderStatusService">确认</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -224,12 +202,7 @@
             :value="{ storeName: item.storeName, id: item.id }"
           />
         </el-select>
-        <el-select
-          v-model="selectDayGoods.label"
-          filterable
-          placeholder="选择商品类型"
-          class="search"
-        >
+        <el-select v-model="selectDayGoods.label" filterable placeholder="选择商品类型" class="search">
           <el-option
             v-for="item in selectDayGoodsList"
             :key="item.id"
@@ -237,16 +210,8 @@
             :value="{ label: item.label, id: item.id }"
           />
         </el-select>
-        <el-select
-          v-model="selectDayModule.label"
-          placeholder="请选择时间"
-          @change="selectDayChange"
-        >
-          <el-option-group
-            v-for="(group, idx) in dayOptions"
-            :key="idx"
-            label=""
-          >
+        <el-select v-model="selectDayModule.label" placeholder="请选择时间" @change="selectDayChange">
+          <el-option-group v-for="(group, idx) in dayOptions" :key="idx" label>
             <el-option
               v-for="(item, index) in group.options"
               :key="index"
@@ -256,15 +221,8 @@
             />
           </el-option-group>
         </el-select>
-        <el-button
-          style="margin-left:20px;"
-          type="primary"
-          @click="searchDayReport"
-        >搜索</el-button>
-        <el-button
-          style="margin-left:20px;"
-          @click="resetSelectReport"
-        >重置</el-button>
+        <el-button style="margin-left:20px;" type="primary" @click="searchDayReport">搜索</el-button>
+        <el-button style="margin-left:20px;" @click="resetSelectReport">重置</el-button>
       </div>
       <el-table
         v-loading="reportloading"
@@ -295,9 +253,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div style="margin-top:20px;">
-        筛选完成，是否导出全部数据？
-      </div>
+      <div style="margin-top:20px;">筛选完成，是否导出全部数据？</div>
       <div style="margin-top:20px;display:flex;justify-content: flex-end;">
         <el-button @click.stop="exportDisplayHandler(false)">取消</el-button>
         <el-button
@@ -309,14 +265,10 @@
       </div>
     </el-dialog>
     <!-- download dialog -->
-    <el-dialog
-      :visible.sync="donwloadDialog"
-      title="批量导出列表"
-      append-to-body
-    >
-      <el-table :data="downloadlist" height="400">
+    <el-dialog :visible.sync="donwloadDialog" title="批量导出列表" append-to-body>
+      <el-table v-loading="taskLoading" :data="downloadlist" height="400">
         <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column prop="updateUser" label="操作人" />
+        <el-table-column prop="createUser" label="操作人" />
         <el-table-column label="状态">
           <template slot-scope="scope">
             {{
@@ -343,6 +295,12 @@
           </template>
         </el-table-column>
       </el-table>
+      <pagination
+        :total="total"
+        :page.sync="listQuery.currentPage"
+        :limit.sync="listQuery.pageSize"
+        @pagination="queryTaskService"
+      />
     </el-dialog>
   </div>
 </template>
@@ -351,10 +309,13 @@
 import tableCard from './table-card/index.vue'
 import DistributionService from '@/api/distributionService'
 import { throttle } from '@/utils/throttle'
-import { mapState } from 'vuex'
+import mixins from '@/utils/mixin'
+import { mapState, mapGetters } from 'vuex'
 import { endWith } from '@/utils/string'
+import Pagination from '@/components/Pagination'
 export default {
-  components: { tableCard },
+  components: { tableCard, Pagination },
+  mixins: [mixins],
   data() {
     return {
       storeListData: [],
@@ -459,11 +420,18 @@ export default {
       exportStatus: false,
       donwloadDialog: false,
       downloadlist: [],
-      isAdmin: true
+      isAdmin: true,
+      listQuery: {
+        currentPage: 1
+      },
+      total: 0,
+      taskLoading: false,
+      verifyCode: '' // 核销码
     }
   },
   computed: {
-    ...mapState('user', ['name'])
+    ...mapState('user', ['name']),
+    ...mapGetters(['merCode'])
   },
   watch: {
     orderNum(newValue) {
@@ -540,8 +508,16 @@ export default {
       })
     }, 2000),
     async queryTaskService() {
-      const { data } = await DistributionService.taskQuery()
-      this.downloadlist = data
+      this.taskLoading = true
+      const { data } = await DistributionService.taskQuery({
+        merCode: this.merCode,
+        ...this.listQuery
+      })
+      this.taskLoading = false
+      if (data) {
+        this.downloadlist = data.data
+        this.total = data.totalCount
+      }
     },
     resetSelectReport() {
       this.selectDayModule = { label: '当天', value: '16' }
@@ -815,8 +791,20 @@ export default {
         status:
           this.dialogContent[0].status === 'SUCCESS' ? 'ARRIVED' : 'COMPLETE'
       }
+      //  核销码  管理员不需要输入核销码
+      if (this.dialogContent[0].status === 'ARRIVED' && !this.isAdmin) {
+        if (this.verifyCode) {
+          params.verifyCode = this.verifyCode
+        } else {
+          this.$message({
+            message: '请输入顾客提供的核销码',
+            type: 'warning'
+          })
+          return
+        }
+      }
       console.log('updateOrderStatusService ________________ ')
-      const { data, code } = await DistributionService.updateOrderStatus(params)
+      const { code, data } = await DistributionService.updateOrderStatus(params)
       if (code === '10000') {
         console.log(data)
         this.$message({
@@ -827,7 +815,6 @@ export default {
         this.getOrderListByTypeService()
       }
     },
-
     /* 切换展示数据类型 */
     changeTableItem(type) {
       if (this.orderStatus === type) return
@@ -836,14 +823,22 @@ export default {
       this.getOrderListByTypeService()
     },
     /* table-card 组件按钮点击 */
-    setDialogContent(obj) {
-      this.dialogVisible = true
+    /**
+     * noDialog：是否调取弹窗
+     */
+    setDialogContent(obj, noDialog) {
       if (obj.status === 'ARRIVED') {
         this.dialogTitle = '确认核销'
       } else if (obj.status === 'SUCCESS') {
         this.dialogTitle = '确认到货 (签收后预约单进入核销状态，请提醒用户上门)'
       }
       this.dialogContent = [obj]
+      // 如果不弹窗那么则直接调取接口
+      if (noDialog) {
+        this.updateOrderStatusService()
+      } else {
+        this.dialogVisible = true
+      }
     },
     closeDialog() {
       this.dialogVisible = false

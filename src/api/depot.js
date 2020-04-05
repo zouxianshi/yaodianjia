@@ -135,3 +135,22 @@ export function removeMateCode(params) {
     data: params
   })
 }
+
+// 对码失败商品信息全量导出
+export function exportNotMatch(merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-match/exportNotMatch/${merCode}`,
+    method: 'post',
+    isExport: true,
+    responseType: 'blob'
+  })
+}
+
+// 删除商品
+export function delGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-spec/_delete`,
+    method: 'post',
+    data: params
+  })
+}

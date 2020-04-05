@@ -221,9 +221,15 @@ class DistributionService {
    * @param {*} data
    */
   updateOrderStatus(data) {
+    let url = ''
+    if (data.verifyCode) {
+      url = `/1.0/b/order/updateStatusById?id=${data.id}&status=${data.status}&verifyCode=${data.verifyCode}`
+    } else {
+      url = `/1.0/b/order/updateStatusById?id=${data.id}&status=${data.status}`
+    }
     return this.service(
       'post',
-      `/1.0/b/order/updateStatusById?id=${data.id}&status=${data.status}`
+      url
     )
   }
   /**
@@ -338,6 +344,12 @@ class DistributionService {
     return this.service('post', '/1.0/b/bulkArrival/productStatistics', data)
   }
   /**
+   * DM单设置
+   */
+  setUpdateDMReqDTO(data) {
+    return this.service('post', '/1.0/b/wxutils/updateDM', data)
+  }
+  /**
    * task
    */
   taskCancel(data) {
@@ -346,8 +358,8 @@ class DistributionService {
   taskCreate(data) {
     return this.service('post', '/1.0/b/task/_exportTask', data)
   }
-  taskQuery() {
-    return this.service('get', `/1.0/b/task/${store.state.user.merCode}`, {})
+  taskQuery(data) {
+    return this.service('post', `/1.0/b/task/_query`, data)
   }
 }
 export default new DistributionService()

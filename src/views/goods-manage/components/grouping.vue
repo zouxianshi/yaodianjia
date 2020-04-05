@@ -195,6 +195,7 @@ export default {
       this.chooseGroup.splice(index, 1)
     },
     handleSubmit() {
+      console.log('1111111')
       if (this.type === '0') { // 商品库批量修改商品
         const params = {
           userName: this.name,
@@ -221,9 +222,11 @@ export default {
           })
           return
         }
+        console.log('chooseGroup===========', this.chooseGroup)
         this.chooseGroup.map(v => {
           data.push([v[0].id, v[1].id, v[2].id])
         })
+        console.log('chooseGroup===========data', data)
         this.$emit('back', data)
       }
     }

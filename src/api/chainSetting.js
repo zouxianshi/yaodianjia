@@ -143,6 +143,15 @@ export function onOffStore(params) {
     data: params
   })
 }
+// 上线或下线门店数量
+export function queryStoreNum(params) {
+  console.log('params', params)
+  return request({
+    url: `${api_wxmall}/1.0/store/queryStoreNum/${params.merCode}/medical`,
+    method: 'get',
+    data: null
+  })
+}
 // 获取配送规则
 export function getDeliverySettings(params) {
   return request({

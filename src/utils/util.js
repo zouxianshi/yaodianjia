@@ -7,6 +7,10 @@ const API_IMG_BASE =
 const API_OSS_BASE =
   process.env.VUE_APP_OSS_BASE ||
   'https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/'
+// 订单导出------
+const VUE_APP_OSS_ORDER_BASE =
+  process.env.VUE_APP_OSS_ORDER_BASE ||
+  'https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/'
 export default {
   install(Vue, options) {
     Vue.prototype.showImg = function(url) {
@@ -24,6 +28,9 @@ export default {
     }
     Vue.prototype.configOss = function(url) {
       return `${API_OSS_BASE}${url}`
+    }
+    Vue.prototype.configOrderOss = function(url) {
+      return `${VUE_APP_OSS_ORDER_BASE}${url}`
     }
   }
 }

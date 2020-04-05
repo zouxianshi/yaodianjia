@@ -123,3 +123,13 @@ export function getGoodsList(params) {
     data: params
   })
 }
+
+// 导出商品
+export function exportData(params) {
+  console.log('exportData_params', params)
+  return request({
+    url: `${config.merGoods}/1.0/task/_exportStoreSpecTask`,
+    method: 'post',
+    data: params
+  })
+}
