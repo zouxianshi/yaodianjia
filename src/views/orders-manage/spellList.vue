@@ -348,7 +348,7 @@ export default {
       this.getList()
     },
     // 获取列表
-    getList(reset) {
+    getList() {
       const { activitTime } = this.form
       let data = {}
       if (Array.isArray(activitTime) && activitTime.length) {
@@ -368,8 +368,8 @@ export default {
       delete data['']
       this.tableLoading = true
       tablist({
-        ...data,
-        currentPage: reset ? 1 : data.currentPage
+        ...data
+        // currentPage: reset ? 1 : data.currentPage
       })
         .then(res => {
           // 获取门店员工
