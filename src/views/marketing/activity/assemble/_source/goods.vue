@@ -405,7 +405,8 @@ export default {
         name: this.searchForm.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size,
-        promoteFlag: true
+        promoteFlag: true,
+        drugType: 3 // 0，1，2是处方药。3非处方药
       }
 
       queryGoods(params).then(res => {
