@@ -165,8 +165,8 @@
                     <div class="cell-text">
                       <!-- quantity购买份数(在待付款情况下是没有份数的) -->
                       <template>
-                        <span v-text="`￥${item.sumActualOrderAmount}`" />
-                        <div v-if="item.sumFreightAmount" v-text="`（含运费${item.sumFreightAmount}元）`" />
+                        <span v-text="`￥${item.sumActualOrderAmount || 0 }`" />
+                        <div v-if="item.sumFreightAmount" v-text="`（含运费${item.sumFreightAmount || 0}元）`" />
                       </template>
                     </div>
                   </div>
@@ -181,18 +181,18 @@
                       <div>
                         {{ item.groupStatus | orderType }}
                         <el-tooltip
-                          v-if="[2, 3, 4, 5 ].includes(item.groupStatus)"
+                          v-if="[2, 3, 4, 5 ].includes(item.groupStatus) && item.endTime"
                           class="item"
                           effect="dark"
                           placement="right"
                         >
                           <div slot="content">
-                            <div v-if="item.groupStatus === 2">
+                            <div v-if="item.groupStatus === 2 || item.groupStatus === 4">
                               成团时间:
                               <br>
                               {{ item.endTime }}
                             </div>
-                            <div v-if="item.groupStatus === 3">
+                            <div v-if="item.groupStatus === 3 || item.groupStatus === 5 ">
                               失败时间:
                               <br>
                               {{ item.endTime }}
@@ -270,7 +270,7 @@ export default {
           str = '手动成团'
           break
         case 5:
-          str = '拼团失败后已回收库存'
+          str = '拼团失败已回收库存'
           break
         case 6:
           str = '已发货'
