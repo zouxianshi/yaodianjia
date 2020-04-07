@@ -149,7 +149,6 @@ export default {
     tailsBeans() {
       var params = {
         'currentPage': 1,
-        'merCode': '666666',
         'pageSize': 10,
         'userId': 1
       }

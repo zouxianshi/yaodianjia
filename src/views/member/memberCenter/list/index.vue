@@ -16,7 +16,7 @@
       <div class="_search">
         <el-form label-position="right" label-width="90px">
           <el-form-item label="会员搜索：">
-            <el-input v-model="menmberInfo" size="mini" style="width: 50%" placeholder="请输入会员姓名、手机号、卡号、身份证" />
+            <el-input v-model="content" size="mini" style="width: 50%" placeholder="请输入会员姓名、手机号、卡号、身份证" />
           </el-form-item>
           <el-form-item label="">
             <el-button size="mini" @click="getData()">查询</el-button>
@@ -26,7 +26,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <m-tabel-list />
+      <m-tabel-list ref="listA" />
       <div class="pagination">
         <el-pagination
           background
@@ -40,6 +40,8 @@
 <script>
 import mTabelList from './_source/list' // 列表
 import mConditions from './_source/conditions' // 条件
+import { queryMembers } from '@/api/memberService'
+import _ from 'lodash'
 export default {
   name: 'McList',
   components: {
@@ -49,15 +51,22 @@ export default {
   data() {
     return {
       conditions: true,
-      menmberInfo: ''
+      content: ''
     }
   },
   methods: {
     toggelCoditions() { // 切换选项隐藏/显示
       this.conditions = !this.conditions
     },
-    getData() { // 获取列表数据
-      console.log(this.$refs.conditionsA.conditions)
+    // 获取列表数据
+    getData() {
+      var params = _.cloneDeep(this.$refs.conditionsA.conditions)
+      params.content = this.content
+      console.log(params)
+      queryMembers(params).then(res => {
+        console.log(res)
+        this.$refs.listA.dataFromIndex(res.data.data)
+      })
     }
   }
 }

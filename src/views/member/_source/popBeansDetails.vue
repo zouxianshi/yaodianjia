@@ -1,11 +1,11 @@
 <template>
   <div class="pop-beans-model">
-    <el-dialog :visible.sync="dialogVisible" width="50%" :append-to-body="true" :before-close="closeDia">
+    <el-dialog :visible.sync="dialogVisible" width="50%" :append-to-body="true" :close-on-click-modal="false" :before-close="closeDia">
       <div slot="title" class="dialog-title">健康豆明细</div>
       <div class="contents-body">
         <div class="nav-bar">
           <span>健康豆： 0</span>
-          <el-select v-model="value" placeholder="请选择">
+          <el-select v-model="value" placeholder="请选择" @change="changeDate">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -42,33 +42,81 @@
         </el-table>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogVisible = false">关闭</el-button>
+        <el-button size="mini" @click="closeDia(null)">关闭</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
+import { queryOnlineIntegra } from '@/api/memberService'
 export default {
   data() {
+    var nowS = new Date()
+    var nowMon = nowS.getFullYear() + '-' + ('' + (nowS.getMonth() + 1)).padStart(2, '0')
     return {
       dialogVisible: false,
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }],
-      value: '',
+      options: [],
+      value: nowMon,
       tableData: []
     }
   },
+  created() {
+    var year = []
+    var month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    var nowYear = new Date().getFullYear()
+    var nowMonth = new Date().getMonth() + 1
+    for (let i = 0; i <= nowYear - 2019; i++) {
+      year.push(2019 + i)
+    }
+    for (let i = 0; i <= year.length - 1; i++) {
+      var obj = {}
+      if (i === year.length - 1) {
+        for (let j = 0; j < nowMonth; j++) {
+          obj = {
+            value: `${year[i]}-${('' + month[j]).padStart(2, '0')}`,
+            label: `${year[i]}年${month[j]}月`
+          }
+          this.options.push(obj)
+        }
+      } else {
+        for (let j = 0; j < 12; j++) {
+          obj = {
+            value: `${year[i]}-${('' + month[j]).padStart(2, '0')}`,
+            label: `${year[i]}年${month[j]}月`
+          }
+          this.options.push(obj)
+        }
+      }
+    }
+    this.options.reverse()
+  },
   methods: {
     closeDia(done) {
-      done()
+      if (done) {
+        done()
+      } else {
+        this.dialogVisible = false
+      }
+      var nowS = new Date()
+      this.value = nowS.getFullYear() + '-' + ('' + (nowS.getMonth() + 1)).padStart(2, '0')
     },
     changeDia(data) {
       if (data) {
         this.tableData = data.data
       }
       this.dialogVisible = true
+    },
+    // 改变查询日期
+    changeDate(value) {
+      var params = {
+        'userId': 1,
+        'date': value,
+        'currentPage': 1,
+        'pageSize': 10
+      }
+      queryOnlineIntegra(params).then(res => {
+        this.tableData = res.data.data
+      })
     }
   }
 }

@@ -59,14 +59,12 @@ export default {
       }
       this.dialogVisible = false
     },
-    // 提交数据
+    // 提交数据(修改健康豆数据)
     _submitData() {
-      console.log(this.addOrD)
       var params = JSON.parse(JSON.stringify(this.beansForm))
       if (this.addOrD === '2') {
         params.integral = -params.integral
       }
-      console.log(params)
       beanManagement(params).then(res => {
         if (res.code && res.code === '10000') {
           this.$message({

@@ -34,11 +34,11 @@
           style="width: 100%"
         >
           <el-table-column
-            prop="thingName"
+            prop="emName"
             label="事件名称"
           />
           <el-table-column
-            prop="date"
+            prop="createDate"
             label="创建时间"
           />
           <el-table-column
@@ -60,6 +60,9 @@
           background
           layout="prev, pager, next"
           :total="1000"
+          :page-size="pageInfo.pageSize"
+          :current-page="pageInfo.currentPage"
+          @current-change="pageChange"
         />
       </div>
     </div>
@@ -68,6 +71,7 @@
 <script>
 import mItemTitle from './itemTitle' // 标题
 import mBorderItems from './borderItems' // tag标签
+import { queryHealthConsultants } from '@/api/memberService'
 export default {
   name: 'BasicInfo',
   components: { mItemTitle, mBorderItems },
@@ -80,23 +84,36 @@ export default {
         allergyHistory: ['花生', '青霉素'],
         ygbz: ['过敏性鼻炎']
       },
-      tableData: [{
-        thingName: '普通流感',
-        date: '2016-05-02',
-        desc: '咳嗽、发烧37.5℃、乏力'
-      }, {
-        date: '2016-05-04',
-        thingName: '高血压',
-        desc: '建档血压：120/98mmHg'
-      }, {
-        date: '2016-05-01',
-        thingName: '跌倒摔伤',
-        desc: '左腿膝盖皮肤擦伤'
-      }]
+      totalCont: '0',
+      pageInfo: {
+        'currentPage': 1,
+        'pageSize': 10,
+        'userId': '1'
+      },
+      tableData: []
     }
   },
+  created() {
+    this.queryHealthData(this.pageInfo.currentPage, this.pageInfo.pageSize, this.pageInfo.userId)
+  },
   methods: {
-
+    queryHealthData(currentPage, pageSize, userId) {
+      var params = {
+        currentPage: currentPage,
+        pageSize: pageSize,
+        userId: userId
+      }
+      queryHealthConsultants(params).then(res => {
+        console.log(res)
+        if (res.data) {
+          this.tableData = res.data.data
+          this.totalCont = this.tableData.length | 0
+        }
+      })
+    },
+    pageChange(e) {
+      console.log(e)
+    }
   }
 }
 </script>

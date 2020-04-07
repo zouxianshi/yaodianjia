@@ -25,6 +25,14 @@ export function getMemberInfo(merCode) {
   })
 }
 
+// 查询会员列表
+export function queryMembers(merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/member/queryMembers`,
+    method: 'post'
+  })
+}
+
 // 查询会员健康豆明细
 export function queryOnlineIntegra(data) {
   return request({
@@ -43,3 +51,11 @@ export function beanManagement(data) {
   })
 }
 
+// 会员详情查询健康顾问
+export function queryHealthConsultants(data) {
+  return request({
+    url: `${config.merGoods}/1.0/member/queryHealthConsultants`,
+    method: 'post',
+    data
+  })
+}

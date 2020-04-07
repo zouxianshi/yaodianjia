@@ -1,16 +1,16 @@
 <template>
   <div class="list-model">
     <el-table :data="tabelData" border style="width: 100%">
-      <el-table-column prop="name" label="微信头像" width="80" />
+      <el-table-column prop="headUrl" label="微信头像" width="80" />
       <el-table-column prop="nickName" label="昵称" />
-      <el-table-column prop="numberName" label="会员姓名" />
-      <el-table-column prop="sex" label="性别" />
-      <el-table-column prop="age" label="年龄" />
-      <el-table-column prop="age" label="手机号码" />
+      <el-table-column prop="memberName" label="会员姓名" />
+      <el-table-column prop="memberSex" label="性别" />
+      <el-table-column prop="memberAge" label="年龄" />
+      <el-table-column prop="memberPhone" label="手机号码" />
       <el-table-column label="健康顾问">
         <template slot-scope="scope">
-          {{ scope.row.numberName }}
-          <el-popover placement="bottom" title="最近添加" width="250" trigger="click">
+          {{ scope.row.healthConsultants.length?scope.row.healthConsultants[0].name: '' }}
+          <el-popover v-if="scope.row.healthConsultants.length" placement="bottom" title="最近添加" width="250" trigger="click">
             <mPopConsultantList />
             <el-button slot="reference" size="mini" type="text">
               <i class="el-icon-arrow-down" />
@@ -18,7 +18,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="age" label="会员分类" />
+      <el-table-column prop="memberActive" label="会员分类" />
       <el-table-column prop="age" label="注册来源" />
       <el-table-column label="操作" width="120" align="center">
         <template slot-scope="scope">
@@ -49,52 +49,18 @@ export default {
   props: {},
   data() {
     return {
-      tabelData: [
-        {
-          imgUrl: '',
-          nickName: '张三',
-          numberName: '张三',
-          sex: '男',
-          age: '25'
-        }, {
-          imgUrl: '',
-          nickName: '张三',
-          numberName: '张三',
-          sex: '男',
-          age: '25'
-        }, {
-          imgUrl: '',
-          nickName: '张三',
-          numberName: '张三',
-          sex: '男',
-          age: '25'
-        }, {
-          imgUrl: '',
-          nickName: '张三',
-          numberName: '张三',
-          sex: '男',
-          age: '25'
-        }, {
-          imgUrl: '',
-          nickName: '张三',
-          numberName: '张三',
-          sex: '男',
-          age: '25'
-        }, {
-          imgUrl: '',
-          nickName: '张三',
-          numberName: '张三',
-          sex: '男',
-          age: '25'
-        }
-      ]
+      tabelData: []
     }
   },
   methods: {
+    // 数据改变
+    dataFromIndex(data) {
+      this.tabelData = data
+    },
     tail() {
       this.$router.push('/member/member-center/details')
     },
-    // 产看健康豆详情
+    // 查看健康豆详情
     tailfDetail() {
       var params = {
         'currentPage': 1,
@@ -103,7 +69,6 @@ export default {
         'userId': 1
       }
       queryOnlineIntegra(params).then(res => {
-        console.log(res)
         this.$refs.A.changeDia(res.data)
       })
     },
