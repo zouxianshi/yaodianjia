@@ -4,25 +4,25 @@
       <div class="lmm-nav-box">
         <ul>
           <li class="nb-title"><b>一级菜单</b></li>
-          <li class="nb-item">
-            <span class="sp-name">会员中心</span>
+          <li class="nb-item" :class="{'active':activeElIndex === -1}" @click="onSelected(-1)">
+            <span class="sp-name">{{ item.name }}</span>
             <span class="sp-op">
-              <m-edit />
-              <m-delete />
+              <m-edit :name="item.name" :level2-index="activeElIndex" :level1-index="level1Index" />
+              <m-delete :level2-index="activeElIndex" :level1-index="level1Index" />
             </span>
           </li>
           <li class="nb-title"><b>二级菜单</b></li>
-          <li v-for="(item,$index) in 5" :key="$index" class="nb-item" :class="{'active' : $index === 2}">
-            <span class="sp-name">会员中心</span>
+          <li v-for="(el,$index) in item.sub_button" :key="$index" :class="{'active':activeElIndex === $index}" class="nb-item" @click="onSelected($index)">
+            <span class="sp-name">{{ el.name }}</span>
             <span class="sp-op">
-              <m-edit />
-              <m-delete />
+              <m-edit :name="el.name" :level2index="activeElIndex" :level1-index="level1Index" />
+              <m-delete :level2-index="activeElIndex" :level1-index="level1Index" />
             </span>
           </li>
         </ul>
       </div>
       <div class="lmm-textarea">
-        <p>http://localhost:7002/#/channel/wx-official-account</p>
+        <p>{{ cpdUrl }}</p>
       </div>
       <div class="clearfix" />
       <div class="operation">
@@ -43,13 +43,27 @@ import mToMp from './toMp'
 export default {
   name: 'Level1Menu',
   components: { mDelete, mEdit, mToUrl, mToMp },
-  props: {},
-  data() {
-    return {
-      a: ''
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    },
+    level1Index: {
+      type: Number,
+      default: null
     }
   },
-  computed: {},
+  data() {
+    return {
+      activeElIndex: -1
+    }
+  },
+  computed: {
+    cpdUrl() {
+      const { activeElIndex, item: { url, sub_button }} = this
+      return activeElIndex === -1 ? url : sub_button[activeElIndex].url
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -63,10 +77,14 @@ export default {
   },
   updated() {
   },
-  methods: {},
   beforeDestroy() {
   },
   destroyed() {
+  },
+  methods: {
+    onSelected(i) {
+      this.activeElIndex = i
+    }
   }
 }
 </script>

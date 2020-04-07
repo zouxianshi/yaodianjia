@@ -14,6 +14,7 @@ import routeF from './modules/router-f'
 import routeD from './modules/router-d'
 import member from './modules/member'
 import channel from './modules/channel'
+import auth from './modules/auth'
 import { mUsersModule } from '@merchant/commons'
 
 // merge component layout module
@@ -85,7 +86,8 @@ export const asyncRoutes = [
   ...routeF,
   ...routeD,
   ...member,
-  ...channel
+  ...channel,
+  ...auth
 ]
 
 const createRouter = () => new Router({

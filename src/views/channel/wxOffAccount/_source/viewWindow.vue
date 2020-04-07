@@ -7,37 +7,11 @@
         <img src="../img/keyboard.svg" alt="">
       </div>
       <div class="vwm-menu-box">
-        <div class="level-1">
-          <div class="name">会员中心</div>
-          <div class="level-2" style="display: block">
-            <i class="el-icon-caret-bottom" />
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-          </div>
-        </div>
-        <div class="level-1">
-          <div class="name">今日福利</div>
+        <div v-for="(item,$index) in menuData" :key="$index" class="level-1" :class="{active:item.active}">
+          <div class="name">{{ item.name }}</div>
           <div class="level-2">
             <i class="el-icon-caret-bottom" />
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-          </div>
-        </div>
-        <div class="level-1">
-          <div class="name"><i class="el-icon-plus" /></div>
-          <div class="level-2">
-            <i class="el-icon-caret-bottom" />
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
-            <a href="#">菜单名称1</a>
+            <a v-for="(el,i) in item.sub_button" :key="i" href="#">{{ el.name }}</a>
           </div>
         </div>
         <div class="clearfix" />
@@ -47,6 +21,7 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'ViewWindow',
   components: {},
@@ -54,7 +29,9 @@ export default {
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    ...mapState('channel', ['menuData'])
+  },
   watch: {},
   beforeCreate() {
   },
@@ -68,24 +45,24 @@ export default {
   },
   updated() {
   },
-  methods: {},
   beforeDestroy() {
   },
   destroyed() {
-  }
+  },
+  methods: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .view-window-model {
-    height: 560px;
+    height: 457px;
     .vwm-title {
       line-height: 46px;
       text-align: center;
       color: #333;
     }
     .vwm-content {
-      height: 475px;
+      height: 367px;
       background: #F5F5F5;
     }
     .vwm-menu {
@@ -114,9 +91,14 @@ export default {
           text-align: center;
           position: relative;
           cursor: pointer;
-          &:hover {
+          &:hover,&.active {
             >.level-2 {
               display: block;
+            }
+          }
+          &:hover {
+            >.level-2 {
+              z-index: 1;
             }
           }
           >.level-2 {
@@ -136,7 +118,7 @@ export default {
               color: #fff;
             }
             >a {
-              line-height: 28px;
+              line-height: 34px;
               font-size: 14px;
               color: #333;
               display: block;
@@ -152,9 +134,9 @@ export default {
               color: #ccc;
             }
           }
-          &:nth-child(2) {
+
+          &:nth-child(1),&:nth-child(2) {
             border-right: 1px solid #F3F3F3;
-            border-left: 1px solid #F3F3F3;
           }
         }
       }

@@ -1,25 +1,41 @@
 <template>
   <el-popover v-model="visible" placement="top" popper-class="plx-edit-model">
     <p class="p-input">
-      <el-input v-model="input" size="mini" placeholder="请输入内容" style="width: 180px" />
+      <el-input v-model="nName" size="mini" placeholder="请输入内容" style="width: 180px" />
     </p>
-    <p class="p-error">请填写正确的内容</p>
+    <p v-if="errorText" class="p-error">{{ errorText }}</p>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+      <el-button type="primary" size="mini" @click="onSave">确定</el-button>
     </div>
     <el-button slot="reference" type="primary" icon="el-icon-edit-outline" size="mini" circle />
   </el-popover>
 </template>
 <script>
+import _ from 'lodash'
+import { mapMutations } from 'vuex'
 export default {
   name: 'Edit',
   components: {},
-  props: {},
+  props: {
+    name: {
+      type: String,
+      default: ''
+    },
+    level1Index: {
+      type: Number,
+      default: 0
+    },
+    level2Index: {
+      type: Number,
+      default: -1
+    }
+  },
   data() {
     return {
       visible: false,
-      input: ''
+      nName: '',
+      errorText: ''
     }
   },
   computed: {},
@@ -27,6 +43,7 @@ export default {
   beforeCreate() {
   },
   created() {
+    this.nName = _.cloneDeep(this.name)
   },
   beforeMount() {
   },
@@ -36,18 +53,48 @@ export default {
   },
   updated() {
   },
-  methods: {},
   beforeDestroy() {
   },
   destroyed() {
+  },
+  methods: {
+    ...mapMutations('channel', ['editMenu']),
+    verification() {
+      const { nName, level2Index } = this
+
+      this.errorText = ''
+      if (!nName) {
+        this.errorText = '菜单名称不能为空！'
+        return false
+      }
+      if (level2Index === -1 && _.size(nName) > 4) {
+        this.errorText = '一级菜单名称不能大于4位！'
+        return false
+      }
+      if (level2Index !== -1 && _.size(nName) > 8) {
+        this.errorText = '一级菜单名称不能大于4位！'
+        return false
+      }
+
+      return true
+    },
+    async onSave() {
+      if (this.verification()) {
+        const { nName, level1Index, level2Index } = this
+        await this.editMenu({ name: nName, level1Index, level2Index })
+        this.visible = false
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .plx-edit-model {
+    .p-input,.p-error {
+      margin-bottom: 10px;
+    }
     .p-error {
-      padding: 6px 0 8px 0;
       font-size: 12px;
       color: #ff0000;
     }

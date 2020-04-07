@@ -37,11 +37,11 @@ export default {
   },
   updated() {
   },
-  methods: {},
   beforeDestroy() {
   },
   destroyed() {
-  }
+  },
+  methods: {}
 }
 </script>
 
