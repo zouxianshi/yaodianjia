@@ -19,23 +19,24 @@
           :data="tableData"
           :border="false"
           style="width: 100%"
+          max-height="350"
         >
           <el-table-column
-            prop="date"
+            prop="integral"
             label="健康豆数量"
             width="100"
           />
           <el-table-column
-            prop="name"
+            prop="source"
             label="来源"
-            width="100"
+            width="140"
           />
           <el-table-column
-            prop="address"
+            prop="createTime"
             label="发生时间"
           />
           <el-table-column
-            prop="address"
+            prop="notes"
             label="备注"
           />
         </el-table>
@@ -56,30 +57,17 @@ export default {
         label: '黄金糕'
       }],
       value: '',
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      tableData: []
     }
   },
   methods: {
     closeDia(done) {
       done()
     },
-    changeDia() {
+    changeDia(data) {
+      if (data) {
+        this.tableData = data.data
+      }
       this.dialogVisible = true
     }
   }

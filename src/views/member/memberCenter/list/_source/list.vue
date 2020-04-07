@@ -40,6 +40,7 @@
 import mPopBeansDetails from '../../../_source/popBeansDetails' // 健康豆详情
 import mPopEditBeans from './popEditBeans' // 健康豆编辑
 import mPopConsultantList from './popConsultantList' // 健康顾问悬浮显示
+import { queryOnlineIntegra } from '@/api/memberService'
 export default {
   name: 'List',
   components: {
@@ -95,7 +96,16 @@ export default {
     },
     // 产看健康豆详情
     tailfDetail() {
-      this.$refs.A.changeDia()
+      var params = {
+        'currentPage': 1,
+        'merCode': '666666',
+        'pageSize': 10,
+        'userId': 1
+      }
+      queryOnlineIntegra(params).then(res => {
+        console.log(res)
+        this.$refs.A.changeDia(res.data)
+      })
     },
     // 编辑健康豆
     editBeans() {

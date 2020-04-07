@@ -102,6 +102,7 @@
 <script>
 import mItemTitle from './itemTitle.vue'
 import mPopBeansDetails from '../../../_source/popBeansDetails'
+import { queryOnlineIntegra } from '@/api/memberService'
 export default {
   name: 'BasicInfo',
   components: { mItemTitle, mPopBeansDetails },
@@ -146,7 +147,15 @@ export default {
   },
   methods: {
     tailsBeans() {
-      this.$refs.A.changeDia()
+      var params = {
+        'currentPage': 1,
+        'merCode': '666666',
+        'pageSize': 10,
+        'userId': 1
+      }
+      queryOnlineIntegra(params).then(res => {
+        this.$refs.A.changeDia(res.data)
+      })
     }
   }
 }

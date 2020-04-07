@@ -6,14 +6,14 @@
         <div class="beans-num">健康豆<span>99</span></div>
         <el-form label-position="right" label-width="120px" :model="beansForm">
           <el-form-item label="增减健康豆：">
-            <el-radio v-model="beansForm.addOrD" label="1">增加</el-radio>
-            <el-radio v-model="beansForm.addOrD" label="2">删减</el-radio>
+            <el-radio v-model="addOrD" label="1">增加</el-radio>
+            <el-radio v-model="addOrD" label="2">删减</el-radio>
           </el-form-item>
           <el-form-item label="">
-            <el-input v-model="beansForm.num" style="width: 200px" size="mini" placeholder="请输入数量" />
+            <el-input v-model="beansForm.integral" style="width: 200px" size="mini" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="请输入数量" />
           </el-form-item>
           <el-form-item label="操作备注">
-            <el-input v-model="beansForm.des" style="width: 300px;" type="textarea" autosize />
+            <el-input v-model="beansForm.notes" style="width: 300px;" type="textarea" autosize />
           </el-form-item>
         </el-form>
       </div>
@@ -25,23 +25,25 @@
   </div>
 </template>
 <script>
+import { beanManagement } from '@/api/memberService'
 export default {
   data() {
     return {
       dialogVisible: false,
+      addOrD: '1',
       beansForm: {
-        addOrD: '',
-        num: '',
-        des: ''
+        'integral': '',
+        'notes': '',
+        'userId': 1
       }
     }
   },
   methods: {
     closeDia(done) {
       this.beansForm = {
-        addOrD: '',
-        num: '',
-        des: ''
+        'integral': '',
+        'notes': '',
+        'userId': 1
       }
       done()
     },
@@ -51,15 +53,29 @@ export default {
     // 关闭前清空
     close() {
       this.beansForm = {
-        addOrD: '',
-        num: '',
-        des: ''
+        'integral': '',
+        'notes': '',
+        'userId': 1
       }
       this.dialogVisible = false
     },
     // 提交数据
     _submitData() {
-      console.log(this.beansForm)
+      console.log(this.addOrD)
+      var params = JSON.parse(JSON.stringify(this.beansForm))
+      if (this.addOrD === '2') {
+        params.integral = -params.integral
+      }
+      console.log(params)
+      beanManagement(params).then(res => {
+        if (res.code && res.code === '10000') {
+          this.$message({
+            message: res.msg,
+            type: 'success'
+          })
+          this.close()
+        }
+      })
     }
   }
 }
