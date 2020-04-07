@@ -2,9 +2,9 @@
   <div class="wx-off-account-model">
     <el-tabs v-model="activeName" type="card">
       <el-tab-pane label="公众号授权" name="1">
-        <m-auth v-if="activeName === '1'" />
+        <m-auth v-if="activeName === '1'" @on-auth="_onAuth" />
       </el-tab-pane>
-      <el-tab-pane label="自定义菜单" name="2">
+      <el-tab-pane label="自定义菜单" name="2" :disabled="isCustomDis">
         <m-custom-menu v-if="activeName === '2'" />
       </el-tab-pane>
     </el-tabs>
@@ -19,7 +19,8 @@ export default {
   props: {},
   data() {
     return {
-      activeName: '1'
+      activeName: '1',
+      isCustomDis: true
     }
   },
   computed: {},
@@ -40,7 +41,11 @@ export default {
   },
   destroyed() {
   },
-  methods: {}
+  methods: {
+    _onAuth(is) {
+      this.isCustomDis = !is
+    }
+  }
 }
 </script>
 

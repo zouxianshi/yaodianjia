@@ -2,26 +2,23 @@
   <div class="auth-model">
     <el-form ref="form" :model="form" label-width="160px">
       <el-form-item label="公众微信号 ">
-        millionfor
+        {{ authInfo.nickName || '-' }}
       </el-form-item>
       <el-form-item label="公众号昵称">
-        quanquansy@gmail.com
+        {{ authInfo.principalName || '-' }}
       </el-form-item>
       <el-form-item label="微信转账类型">
-        服务号
+        {{ authInfo.serviceTypeInfo || '-' }}
       </el-form-item>
-      <el-form-item label=" ">
-        <el-button type="primary" @click="onAuth">授权</el-button>
+      <el-form-item v-if="isAuthInfo">
+        <el-button v-if="authInfo.isAuth === 1" disabled>已授权</el-button>
+        <el-button v-else type="primary" @click="onAuth">重新授权</el-button>
       </el-form-item>
     </el-form>
     <br>
     <el-divider content-position="left">药店加商户中心已获得该公众号以下接口权限</el-divider>
     <div>
-      <el-tag :type="color()">消息中心权限</el-tag>
-      <el-tag :type="color()">消息中心权限</el-tag>
-      <el-tag :type="color()">消息中心权限</el-tag>
-      <el-tag :type="color()">消息中心权限</el-tag>
-      <el-tag :type="color()">消息中心权限</el-tag>
+      <el-tag v-for="(item,$index) in authInfo.funcInfo" :key="$index" style="margin-right: 8px" :type="color()">{{ item }}</el-tag>
     </div>
     <el-dialog id="completeDialog"	append-to-body title="微信授权" :visible.sync="dialogComplete" width="85%">
       <div id="completeDiv">
@@ -32,7 +29,7 @@
 </template>
 <script>
 import _ from 'lodash'
-import { jumpAuthUrl } from '@/api/channelService'
+import { jumpAuthUrl, checkAuthInfo } from '@/api/channelService'
 
 export default {
   name: 'Auth',
@@ -44,16 +41,23 @@ export default {
         name: ''
       },
       dialogComplete: false,
-      // toPath: 'http://localhost:7002/#/auth/auth-call-back'
-      toPath: ''
+      toPath: '',
+      authInfo: {}
     }
   },
-  computed: {},
+  computed: {
+    isAuthInfo() {
+      return !_.isEmpty(this.authInfo)
+    }
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
-
+    checkAuthInfo().then(res => {
+      this.authInfo = res.data
+      this.$emit('on-auth', this.authInfo.isAuth)
+    })
   },
   beforeMount() {
   },
@@ -92,5 +96,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .auth-model {
+    height: calc(100vh - 250px);
   }
 </style>
