@@ -10,7 +10,7 @@ const name = defaultSettings.title || '海典商户平台' // page title
 const port = 7002 // dev port
 
 // 引用uglifyjs，代码压缩、去除console
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 // 引用gzip
 // const CompressionWebpackPlugin = require('compression-webpack-plugin')
 // gizp文件后缀
@@ -99,18 +99,18 @@ module.exports = {
     },
     optimization: {
       // // 压缩
-      // minimizer: [
-      //   new UglifyJsPlugin({
-      //     uglifyOptions: {
-      //       warnings: !process.env.VUE_APP_ENV || process.env.VUE_APP_ENV === 'dev', // 开发环境或review环境开启警告
-      //       compress: {
-      //         drop_console: process.env.VUE_APP_ENV && process.env.VUE_APP_ENV !== 'dev', // 非开发环境或review环境去除console
-      //         drop_debugger: process.env.VUE_APP_ENV && process.env.VUE_APP_ENV !== 'dev', // 非开发环境或review环境去除debugger
-      //         pure_funcs: ['console.log']// 移除console
-      //       }
-      //     }
-      //   })
-      // ]
+      minimizer: [
+        new UglifyJsPlugin({
+          uglifyOptions: {
+            warnings: !process.env.VUE_APP_ENV || process.env.VUE_APP_ENV === 'dev', // 开发环境环境开启警告
+            compress: {
+              drop_console: process.env.VUE_APP_ENV && process.env.VUE_APP_ENV === 'production', // 非开发环境console
+              drop_debugger: process.env.VUE_APP_ENV && process.env.VUE_APP_ENV === 'production', // 非开发环境去除debugger
+              pure_funcs: ['console.log']// 移除console
+            }
+          }
+        })
+      ]
     },
     plugins: [
       new webpack.ProvidePlugin({
