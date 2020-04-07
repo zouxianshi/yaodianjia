@@ -3,16 +3,26 @@
     <p class="p-text">这是一段内容这是一段内容确定删除吗？</p>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+      <el-button type="primary" size="mini" @click="onDelete">确定</el-button>
     </div>
     <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" circle />
   </el-popover>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 export default {
   name: 'Delete',
   components: {},
-  props: {},
+  props: {
+    level1Index: {
+      type: Number,
+      default: 0
+    },
+    level2Index: {
+      type: Number,
+      default: -1
+    }
+  },
   data() {
     return {
       visible: false
@@ -36,7 +46,15 @@ export default {
   },
   destroyed() {
   },
-  methods: {}
+  methods: {
+    ...mapMutations('channel', ['delMenu']),
+    onDelete() {
+      const { level1Index, level2Index } = this
+      this.delMenu({
+        level1Index, level2Index
+      })
+    }
+  }
 }
 </script>
 
