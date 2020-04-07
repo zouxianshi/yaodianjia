@@ -235,12 +235,16 @@
                     <div class="header-cell">订单编号：</div>
                     <div
                       class="header-cell"
-                    >{{ item.serialNumber }}（{{ item.prescriptionSheetMark | orderType }}）</div>
-                    <template>
-                      <div class="header-cell">拼团订单：</div>
+                      style="margin-right: 8px"
+                    >
+                      {{ item.serialNumber }}
+                      <span v-if="item.orderType !== 'G'">{{ item.prescriptionSheetMark | orderType }}</span>
+                    </div>
+                    <template v-if="item.orderType === 'G'">
+                      <div class="header-cell"> 拼团订单：</div>
                       <div
                         class="header-cell"
-                      >{{ item.serialNumber }}</div>
+                      >{{ item.groupCode }}</div>
                     </template>
                   </div>
                   <div class="header-right">
@@ -253,9 +257,10 @@
                     </div>
                     <div v-else class="header-cell">
                       <el-link
+                        v-if="item.orderType === 'G'"
                         :underline="false"
                         type="primary"
-                        @click="listQuery.prescriptionSheetMark = '2'; listQuery.orderSearchType = 5;listQuery.currentPage=1;listQuery.searchValue='11111';_loadList()"
+                        @click="listQuery.prescriptionSheetMark = '2'; listQuery.orderSearchType = 5;listQuery.currentPage=1;listQuery.searchValue=item.groupCode;_loadList()"
                       >查看同团订单</el-link>
                       <a
                         :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"
@@ -771,14 +776,12 @@ export default {
     orderType: function(value) {
       // 订单类型
       if (value === '0') {
-        return '普通订单'
+        return '(普通订单)'
       }
       if (value === '1') {
-        return '处方药订单'
+        return '(处方药订单)'
       }
-      // if (value === 'V') {
-      //   return '积分订单'
-      // }
+      return ''
     },
     orderStatus: function(value) {
       // 订单状态

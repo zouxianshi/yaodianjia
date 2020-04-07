@@ -117,6 +117,7 @@
               <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
               <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
             </div>
+            <span style="color: rgb(193, 193, 193); margin-left: 4px">小时</span>
           </div>
         </el-form-item>
         <div class="form-title">活动店铺</div>
@@ -636,7 +637,7 @@ export default {
           productActivityCount: v.productActivityCount, // 活动产品库存量
           specId: v.specId, //
           imgUrl: v.mainPic,
-          productName: v.commonName, // 商品名
+          productName: v.name, // 商品名
           sortNumber: v.sortNumber, // 商品排序
           commodityId: v.id
         })
