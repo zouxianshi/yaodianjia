@@ -101,7 +101,7 @@ export default {
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" rel="stylesheet/scss">
 .health-info-model{
   .content-items{
     border: 1px solid #eee;border-radius: 2px;background-color: #fff;

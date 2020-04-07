@@ -39,3 +39,22 @@ export function getColor(params) {
     method: 'get'
   })
 }
+
+// 查询会员健康豆明细
+export function queryOnlineIntegra(data) {
+  return request({
+    url: `${config.merGoods}/1.0/integral/query`,
+    method: 'post',
+    data
+  })
+}
+
+// 编辑会员健康豆
+export function beanManagement(data) {
+  return request({
+    url: `${config.merGoods}/1.0/integral/manage`,
+    method: 'post',
+    data
+  })
+}
+

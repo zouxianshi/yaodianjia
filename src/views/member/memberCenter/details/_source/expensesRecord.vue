@@ -89,7 +89,7 @@ export default {
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" rel="stylesheet/scss" >
   .expenses-record-model {
     background-color: #fff;height: calc(100vh - 300px);border-radius: 6px;
     position: relative;padding-bottom: 42px;

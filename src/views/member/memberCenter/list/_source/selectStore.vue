@@ -48,7 +48,17 @@ export default {
   }
 }
 </script>
-<style scoped lang="scss">
+<style lang="scss">
+.el-dialog__header{
+  padding-bottom: 0;
+}
+.el-dialog__body{
+  padding: 0 20px;border-bottom: 1px solid #E6E6E6;
+}
+.el-dialog__footer{
+  padding: 10px 20px ;
+}
+
 .dialog-title{
   font-size: 16px;font-weight: 600;border-bottom: 1px solid #eee;position: relative;
   height: 30px;
@@ -56,10 +66,16 @@ export default {
 .content-body{
   display: flex;justify-content: space-between;
   .choose-left{
-    flex: 0 0 35%;border-right: 1px solid #979797;
+    flex: 0 0 40%;border-right: 1px solid #E6E6E6;padding: 20px 0;
   }
   .choose-right{
-    flex: 0 0 55%;
+    flex: 0 0 55%;padding: 20px 0;
+    .tips{
+      line-height: 29px;
+    }
+    .has-choosed{
+      margin-top: 8px;
+    }
   }
 }
 </style>
