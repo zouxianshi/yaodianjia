@@ -1,31 +1,39 @@
 <template>
   <div class="rs-index-model">
-    <!-- <div class="rs-header-model">
-      ��Աע������
-    </div> -->
     <div class="app-container">
       <AppleRs />
-      <AemberCard />
+      <NoactiveCard v-if="showCode==='1'" />
+      <nobindingCard v-if="showCode==='0'" />
+      <AemberCard v-if="showCode==='2'" />
     </div>
   </div>
 </template>
 <script>
 // 微信小程序注册
 import AppleRs from './_source/appletRegister'
-// ΢�Ż�Ա��
+// 微信会员卡
 import AemberCard from './_source/memberCard'
+// 未激活微信会员卡
+import NoactiveCard from './_source/noActiveCard'
+// 未绑定
+import NobindingCard from './_source/nobindingCard'
 import { mapGetters } from 'vuex'
-import { checkMemberCard, getMemberInfo } from '@/api/memberService'
+import { checkMemberCard } from '@/api/memberService'
 
 export default {
   name: 'RsIndex',
   components: {
     AppleRs,
-    AemberCard
+    AemberCard,
+    NoactiveCard,
+    NobindingCard
   },
   props: {},
   data() {
-    return {}
+    return {
+      checkMemberList: '',
+      showCode: 1
+    }
   },
   computed: {
     ...mapGetters(['merCode'])
@@ -35,20 +43,15 @@ export default {
   },
   created() {
     // TODO test api
-    checkMemberCard({ merCode: 666666 }).then(res => {
-      console.log(res)
+    checkMemberCard({ merCode: this.merCode }).then(res => {
+      // this.checkMemberList = res.data
+      this.showCode = res.data[0]
+      this.showCode = '2'
     })
   },
   beforeMount() {
   },
   mounted() {
-    getMemberInfo(this.merCode)
-      .then(res => {
-        console.log(res)
-      })
-      .catch(() => {
-
-      })
   },
   beforeUpdate() {
   },

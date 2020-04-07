@@ -3,11 +3,11 @@
     <div class="app-container">
       <el-row>
         <el-col :span="9" class="Ed-content-model">
-          <LeftCard />
+          <LeftCard :member="memberList" />
         </el-col>
         <!-- 右栏 -->
         <el-col :span="15">
-          <RightCard />
+          <RightCard :member="memberList" :colorlist="colorList" />
         </el-col>
       </el-row>
     </div>
@@ -18,6 +18,8 @@
 import RightCard from './rightCard'
 // 会员卡
 import LeftCard from './leftCard'
+import { getMemberInfo, getColor } from '@/api/memberService'
+import { mapGetters } from 'vuex'
 export default {
   name: 'EditCard',
   components: {
@@ -27,29 +29,35 @@ export default {
   props: {},
   data() {
     return {
-      form: {
-        name: '海典智慧医药店',
-        img: '',
-        radio: 3,
-        title: '',
-        mechanism: '',
-        privilege: '',
-        use: '',
-        num: ''
-      },
-      edform: {
-        meun: '',
-        lang: '',
-        link: ''
-      }
+      memberList: {},
+      colorList: {},
+      colorNum: 0
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   watch: {},
   beforeCreate() {},
-  created() {},
+  created() {
+    getMemberInfo(this.merCode)
+      .then(res => {
+        this.memberList = res.data
+        getColor().then(res => {
+          this.colorList = res.data
+          if (this.memberList.cardBgType === 1) {
+            for (const i in this.colorList) {
+              if (i.toLowerCase() === this.memberList.cardBgContent.toLowerCase()) {
+                this.memberList.cardBgContent = this.colorList[i]
+              }
+            }
+          }
+        })
+      })
+  },
   beforeMount() {},
-  mounted() {},
+  mounted() {
+  },
   beforeUpdate() {},
   updated() {},
   methods: {
