@@ -10,6 +10,7 @@ export function checkMemberCard(params) {
     method: 'get'
   })
 }
+// 编辑会员卡
 export function editMemberInfo(data) {
   return request({
     url: `${config.merGoods}/1.0/memberCard/edit`,
@@ -21,6 +22,20 @@ export function editMemberInfo(data) {
 export function getMemberInfo(merCode) {
   return request({
     url: `${config.merGoods}/1.0/memberCard/query/${merCode}`,
+    method: 'get'
+  })
+}
+// 小程序二维码
+export function getQrcode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/weeChatMa/queryUrl/${params.merCode}`,
+    method: 'get'
+  })
+}
+// 获取颜色
+export function getColor(params) {
+  return request({
+    url: `${config.merGoods}/1.0/weeChatMp/cardColor`,
     method: 'get'
   })
 }

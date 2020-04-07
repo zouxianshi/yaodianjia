@@ -12,14 +12,14 @@
       </ul>
     </div>
     <div class="AemberCard-imagec-model">
-      <div class="AemberCard-image-model">
+      <div class="AemberCard-image-model" :style="{background:(member.cardBgType==1?member.cardBgContent:'')}">
         <el-row>
           <el-col :span="8">
             <img src="@/assets/image/template_bg.png" alt class="AemberCard-image-url">
           </el-col>
           <el-col :span="16" class="AemberCard-image-detail">
-            <div>海典智慧药店</div>
-            <div>会员卡</div>
+            <div>{{ member.cardTitle }}</div>
+            <div>{{ member.cardType }}</div>
           </el-col>
         </el-row>
         <el-row class="AemberCard-image-bottom">
@@ -55,20 +55,30 @@
 export default {
   name: 'LeftCard',
   components: {},
-  props: {},
+  props: {
+    member: {
+      type: Object,
+      default: function() {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       count: 0
     }
   },
-  computed: {},
+  computed: {
+  },
   watch: {},
   beforeCreate() {},
   created() {},
   beforeMount() {},
-  mounted() {},
+  mounted() {
+  },
   beforeUpdate() {},
-  updated() {},
+  updated() {
+  },
   methods: {}
 }
 </script>
@@ -92,7 +102,6 @@ export default {
       width: 220px;
       height: 130px;
       padding: 20px;
-      background: #497ffe;
       border-radius: 10px;
       color: #ffffff;
       font-size: 10px;

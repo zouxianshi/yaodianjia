@@ -9,6 +9,12 @@
         <el-form-item label="商户LOGO">
           <img :src="form.img" alt>
         </el-form-item>
+        <el-form-item label="卡片背景">
+          <el-radio-group v-model="form.radio">
+            <el-radio :label="1">图片</el-radio>
+            <el-radio :label="0">颜色</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="上传图片">
           <div class="right-input-line">
             <el-upload
@@ -25,11 +31,10 @@
             <div class="right-input-rule">图片尺寸要求：1000像素*600像素，支持.jpg .png .jpeg格式，大小不超过1M 详细规范请参考</div>
           </div>
         </el-form-item>
-        <el-form-item label="卡片背景">
-          <el-radio-group v-model="form.radio">
-            <el-radio :label="1">图片</el-radio>
-            <el-radio :label="0">颜色</el-radio>
-          </el-radio-group>
+        <el-form-item label="卡片颜色">
+          <ul class="right-color-check">
+            <li v-for="(item,index) in colorlist" :key="index" :style="{background:item}">{{ item }}</li>
+          </ul>
         </el-form-item>
         <el-form-item label="会员卡标题" label-width="100px">
           <div class="right-input-line">
@@ -38,43 +43,78 @@
           </div>
         </el-form-item>
         <el-form-item label="默认发卡机构" label-width="100px">
-          <el-input v-model="form.mechanism" class="right-input-model" />
+          <el-input v-model="member.organization" class="right-input-model" />
         </el-form-item>
         <el-form-item label="特权说明" label-width="100px">
-          <el-input v-model="form.privilege" type="textarea" />
+          <el-input v-model="member.prerogative" type="textarea" />
         </el-form-item>
         <el-form-item label="使用说明" label-width="100px">
-          <el-input v-model="form.use" type="textarea" />
+          <el-input v-model="member.useNotice" type="textarea" />
         </el-form-item>
         <el-form-item label="商户电话" label-width="100px">
-          <el-input v-model="form.num" class="right-input-model" />
+          <el-input v-model="member.serviceTel" class="right-input-model" />
         </el-form-item>
       </el-form>
     </div>
     <div class="right-content-model">
       <div class="right-right-model">会员卡设置</div>
       <h2 class="right-title-model">引导菜单设置</h2>
-      <el-form ref="rightform" :model="rightform" label-width="80px">
-        <el-form-item label="引导菜单">
-          <el-input v-model="rightform.meun" class="right-input-model" />
-        </el-form-item>
-        <el-form-item label="引导语">
-          <el-input v-model="rightform.lang" class="right-input-model" />
-        </el-form-item>
-        <el-form-item label="连接跳转">
-          <el-select v-model="form.links" placeholder>
-            <el-option label="区域一" value="shanghai" />
-            <el-option label="区域二" value="beijing" />
-          </el-select>
-        </el-form-item>
-      </el-form>
+      <div v-for="(item,index) in rightform" :key="index">
+        <div style="display:flex;justify-content:space-between;padding:0 40px 0 0px">
+          <div>{{ index+1 }}.</div>
+          <i v-if="rightform.length>1" class="el-icon-close" @click="deletmenu(index)" />
+        </div>
+        <el-form :ref="rightform[index]" :model="rightform[index]" label-width="80px">
+          <el-form-item label="引导菜单">
+            <el-input v-model="item.meun" class="right-input-model" />
+          </el-form-item>
+          <el-form-item label="引导语">
+            <el-input v-model="item.lang" class="right-input-model" />
+          </el-form-item>
+          <el-form-item label="连接跳转">
+            <div class="right-line-model">
+              <div class="right-link-model">{{ item.link }}</div>
+              <el-button size="mini" @click="modifyAdress(index)">修改地址</el-button>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div style="display:flex;justify-content: center;margin-bottom:20px">
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          icon="el-icon-circle-plus-outline"
+          @click="addmeun"
+        >增加新引索菜单</el-button>
+      </div>
+      <!-- 连接修改弹框 -->
+      <el-dialog append-to-body title="跳转连接地址" :visible.sync="dialog.dialogVisible" width="70%">
+        <template>
+          <div style="display:flex;margin-bottom:20px">
+            <el-radio v-model="dialog.dialogRadio" label="1">小程序地址：</el-radio>
+            <div>{{ dialog.dialogUrl }}</div>
+          </div>
+          <div style="display:flex;margin-bottom:20px;align-items: center;">
+            <el-radio v-model="dialog.dialogRadio" label="2">备选项</el-radio>
+            <div>自定义地址：</div>
+            <div>
+              <el-input v-model="dialog.dialogInput" placeholder="请输入内容" style="width:200%" />
+            </div>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialog.dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogSure">确 定</el-button>
+          </span>
+        </template>
+      </el-dialog>
       <div class="right-play-model">
         <h2 class="right-title-model">微信支付注册设置</h2>
-        <el-form ref="rightform" :model="rightform" label-width="80px">
+        <el-form :ref="form.radio" :model="form.radio" label-width="80px">
           <el-form-item label="微信支付注册">
             <el-radio-group v-model="form.radio">
-              <el-radio :label="3">开启</el-radio>
-              <el-radio :label="6">关闭</el-radio>
+              <el-radio :label="1">开启</el-radio>
+              <el-radio :label="0">关闭</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
@@ -90,24 +130,53 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'RightCard',
   components: {},
-  props: {},
+  props: {
+    member: {
+      type: Object,
+      default: function() {
+        return {}
+      }
+    },
+    colorlist: {
+      type: Object,
+      default: function() {
+        return {}
+      }
+    }
+  },
   data() {
     return {
+      dialog: {
+        dialogVisible: false,
+        dialogRadio: '1',
+        dialogInput: '',
+        dialogUrl:
+          'https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home'
+      },
+      radio: 0,
       form: {
         name: '海典智慧医药店',
         imgUrl: '',
-        radio: 1,
         title: '',
         mechanism: '',
         privilege: '',
         use: '',
         num: ''
       },
-      rightform: {
-        meun: '',
-        lang: '',
-        link: ''
-      }
+      rightform: [
+        {
+          meun: '',
+          lang: '',
+          link: 'https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home'
+        },
+        {
+          meun: '',
+          lang: '',
+          link: 'https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home'
+        }
+      ],
+      // 修改第几个菜单
+      modifyAdressnum: 0
     }
   },
   computed: {
@@ -121,7 +190,14 @@ export default {
   },
   watch: {},
   beforeCreate() {},
-  created() {},
+  created() {
+    // getQrcode({ merCode: 654321 }).then(res => {
+    //   this.programData.programUrl = res.data[0]
+    //   this.programData.programImg = `data:image/jpeg;base64,${res.data[1]}`
+    //   this.programData.showImg = true
+    // }).catch(() => {
+    // })
+  },
   beforeMount() {},
   mounted() {},
   beforeUpdate() {},
@@ -238,6 +314,50 @@ export default {
           }
         })
       }
+    },
+    // 确认对话框
+    dialogSure() {
+      if (this.dialog.dialogRadio === '1') {
+        this.rightform[this.modifyAdressnum].link = this.dialog.dialogUrl
+      } else {
+        this.rightform[this.modifyAdressnum].link = this.dialog.dialogInput
+      }
+      if (this.dialog.dialogInput === '' && this.dialog.dialogRadio === '2') {
+        this.$message({
+          message: '自定不能为空',
+          type: 'warning'
+        })
+      } else {
+        this.dialog.dialogUrl = ''
+        this.dialog.dialogInput = ''
+        this.dialog.dialogVisible = false
+      }
+    },
+    // 删除菜单
+    deletmenu(index) {
+      console.log(index)
+      this.rightform.splice(index, 1)
+    },
+    // 显示修改地址弹框
+    modifyAdress(index) {
+      this.modifyAdressnum = index
+      this.dialog.dialogVisible = true
+    },
+    // 新增菜单
+    addmeun() {
+      if (this.rightform.length < 3) {
+        const dataele = {
+          meun: '',
+          lang: '',
+          link: 'https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home'
+        }
+        this.rightform.push(dataele)
+      } else {
+        this.$message({
+          message: '引导菜单不能超过3个',
+          type: 'warning'
+        })
+      }
     }
   }
 }
@@ -247,10 +367,36 @@ export default {
 .right-index-model {
   padding: 5px;
   background: #f5f7fa;
+  .right-color-check{
+    width: 220px;
+    li{
+      float: left;
+      width: 50px;
+      height:25px;
+      font-size: 12px;
+      line-height: 25px;
+    }
+    li:hover{
+      cursor:pointer;
+      border:2px solid #409eff
+    }
+  }
   .right-content-model {
     padding: 10px;
     background: #ffffff;
     margin-bottom: 10px;
+    .right-dialog-model {
+      display: flex;
+    }
+    .right-line-model {
+      display: flex;
+      .right-link-model {
+        width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
     .right-input-line {
       display: flex;
       .right-input-rule {
