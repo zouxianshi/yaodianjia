@@ -7,17 +7,22 @@
           <li class="nb-item" :class="{'active':activeElIndex === -1}" @click="onSelected(-1)">
             <span class="sp-name">{{ item.name }}</span>
             <span class="sp-op">
-              <m-edit :name="item.name" :level2-index="activeElIndex" :level1-index="level1Index" />
+              <m-edit-name :name="item.name" :level2-index="activeElIndex" :level1-index="level1Index" />
               <m-delete :level2-index="activeElIndex" :level1-index="level1Index" />
             </span>
           </li>
-          <li class="nb-title"><b>二级菜单</b></li>
+          <li v-if="item.sub_button.length" class="nb-title"><b>二级菜单</b></li>
           <li v-for="(el,$index) in item.sub_button" :key="$index" :class="{'active':activeElIndex === $index}" class="nb-item" @click="onSelected($index)">
             <span class="sp-name">{{ el.name }}</span>
             <span class="sp-op">
-              <m-edit :name="el.name" :level2index="activeElIndex" :level1-index="level1Index" />
+              <m-edit-name :name="el.name" :level2-index="activeElIndex" :level1-index="level1Index" />
               <m-delete :level2-index="activeElIndex" :level1-index="level1Index" />
             </span>
+          </li>
+          <li class="nb-add">
+            <m-edit-name :name="''" :level2-index="item.sub_button.length + 1" :level1-index="level1Index">
+              <span class="sp-name">新增二级菜单</span>
+            </m-edit-name>
           </li>
         </ul>
       </div>
@@ -27,22 +32,23 @@
       <div class="clearfix" />
       <div class="operation">
         <!--跳转url-->
-        <m-to-url />
+        <m-to-url :level2-index="activeElIndex" :level1-index="level1Index" />
         <!--跳转小程序-->
-        <m-to-mp />
+        <m-to-mp :level2-index="activeElIndex" :level1-index="level1Index" />
       </div>
     </div>
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import mDelete from './delete'
-import mEdit from './edit'
+import mEditName from './editName'
 import mToUrl from './toUrl'
 import mToMp from './toMp'
 
 export default {
   name: 'Level1Menu',
-  components: { mDelete, mEdit, mToUrl, mToMp },
+  components: { mDelete, mEditName, mToUrl, mToMp },
   props: {
     item: {
       type: Object,
@@ -61,7 +67,7 @@ export default {
   computed: {
     cpdUrl() {
       const { activeElIndex, item: { url, sub_button }} = this
-      return activeElIndex === -1 ? url : sub_button[activeElIndex].url
+      return activeElIndex === -1 ? url : !_.isEmpty(sub_button[activeElIndex]) ? sub_button[activeElIndex].url : ''
     }
   },
   watch: {},
@@ -84,6 +90,9 @@ export default {
   methods: {
     onSelected(i) {
       this.activeElIndex = i
+    },
+    setActiveReset() {
+      this.activeElIndex = -1
     }
   }
 }
@@ -148,6 +157,14 @@ export default {
                   padding: 2px;
                   margin-left: 3px;
                 }
+              }
+            }
+            &.nb-add {
+              padding: 6px 0;
+              .sp-name {
+                font-size: 12px;
+                color: #147de8;
+                cursor: pointer;
               }
             }
           }

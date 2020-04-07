@@ -7,7 +7,7 @@
 import _ from 'lodash'
 
 const state = {
-  VUE_APP_MEMBER_CENTER: `https://www.baidu.com`,
+  VUE_APP_MEMBER_CENTER: `https://www.google.com`,
   menuData: [
     {
       name: '菜单一',
@@ -109,15 +109,18 @@ const state = {
       active: false
     }
   ]
+  // menuData:[]
 }
 const mutations = {
+  addMenuLevel1(state, payload) {
+    state.menuData.push(payload)
+  },
   editMenu(state, payload) {
-    const { name, level1Index, level2Index } = payload
+    const { item, level1Index, level2Index } = payload
     if (level2Index === -1) {
-      state.menuData[level1Index].name = name
+      state.menuData[level1Index] = _.assign(state.menuData[level1Index], item)
     } else {
-      console.log(state.menuData[level1Index])
-      state.menuData[level1Index].sub_button[level2Index].name = name
+      state.menuData[level1Index].sub_button[level2Index] = _.assign(state.menuData[level1Index].sub_button[level2Index], item)
     }
     state.menuData = _.map(state.menuData, (v, i) => {
       v.active = i === level1Index
@@ -126,12 +129,15 @@ const mutations = {
   },
   delMenu(state, payload) {
     const { level1Index, level2Index } = payload
+    const menuData = state.menuData
     if (level2Index === -1) {
-      _.drop(state.menuData, level1Index)
+      menuData.splice(level1Index, 1)
+      state.menuData = menuData
     } else {
-      _.drop(state.menuData[level1Index].sub_button, level2Index)
+      const subButton = menuData[level1Index].sub_button
+      subButton.splice(level2Index, 1)
+      state.menuData[level1Index].sub_button = subButton
     }
-    console.log(state.menuData)
   }
 }
 const actions = {}

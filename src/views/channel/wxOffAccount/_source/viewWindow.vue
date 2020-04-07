@@ -14,6 +14,11 @@
             <a v-for="(el,i) in item.sub_button" :key="i" href="#">{{ el.name }}</a>
           </div>
         </div>
+        <div v-if="menuData.length < 2" class="level-1">
+          <div class="name">
+            <i class="el-icon-plus" />
+          </div>
+        </div>
         <div class="clearfix" />
       </div>
       <div class="clearfix" />

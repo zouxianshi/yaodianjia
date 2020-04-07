@@ -1,32 +1,57 @@
 <template>
   <el-popover v-model="visible" placement="top-end" popper-class="plx-to-url-model">
     <div class="to-url-box">
-      <el-radio-group v-model="radio">
-        <el-radio class="radio-item" :label="3">会员领卡链接</el-radio>
-        <el-radio class="radio-item" :label="6">自定义链接 <el-input style="width: 260px;margin-left: 10px" placeholder="请输入内容" size="mini" />
+      <el-radio-group v-model="type">
+        <el-radio class="radio-item" :label="'memberCard'">会员领卡链接</el-radio>
+        <el-radio class="radio-item" :label="'view'">
+          <span>
+            自定义链接 <el-input v-model="url" style="width: 260px;margin-left: 10px" placeholder="请输入内容" size="mini" />
+          </span>
+          <p v-if="errorText" class="p-error">{{ errorText }}</p>
         </el-radio>
       </el-radio-group>
     </div>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+      <el-button type="primary" size="mini" @click="onSubmit">确定</el-button>
     </div>
     <el-button slot="reference" size="mini" plain>跳转网页</el-button>
   </el-popover>
 </template>
 <script>
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'ToUrl',
   components: {},
-  props: {},
-  data() {
-    return {
-      radio: 3,
-      visible: false
+  props: {
+    level1Index: {
+      type: Number,
+      default: 0
+    },
+    level2Index: {
+      type: Number,
+      default: -1
     }
   },
-  computed: {},
-  watch: {},
+  data() {
+    return {
+      type: '',
+      url: '',
+      visible: false,
+      errorText: ''
+    }
+  },
+  computed: {
+    ...mapState('channel', ['VUE_APP_MEMBER_CENTER'])
+  },
+  watch: {
+    type(v) {
+      if (v === 'memberCard') {
+        this.errorText = ''
+        this.url = ''
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
@@ -43,7 +68,28 @@ export default {
   },
   destroyed() {
   },
-  methods: {}
+  methods: {
+    ...mapMutations('channel', ['editMenu']),
+    async onSubmit() {
+      const { type, url, level1Index, level2Index } = this
+      this.errorText = ''
+      if (type === 'view' && !url) {
+        this.errorText = '自定义链接地址不能为空'
+        return
+      }
+
+      await this.editMenu({
+        item: {
+          type,
+          url: this.url || this.VUE_APP_MEMBER_CENTER
+        },
+        level1Index,
+        level2Index
+      })
+
+      this.visible = false
+    }
+  }
 }
 </script>
 
@@ -54,6 +100,11 @@ export default {
       .radio-item {
         display: block;
         margin-bottom: 10px;
+        .p-error {
+          font-size: 12px;
+          padding:10px 0 0 111px;
+          color: #ff0000;
+        }
       }
     }
   }

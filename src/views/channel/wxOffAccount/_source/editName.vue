@@ -8,12 +8,13 @@
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
       <el-button type="primary" size="mini" @click="onSave">确定</el-button>
     </div>
-    <el-button slot="reference" type="primary" icon="el-icon-edit-outline" size="mini" circle />
+    <slot v-if="isSlots" slot="reference" />
+    <el-button v-else slot="reference" type="primary" icon="el-icon-edit-outline" size="mini" circle />
   </el-popover>
 </template>
 <script>
 import _ from 'lodash'
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'Edit',
   components: {},
@@ -38,7 +39,12 @@ export default {
       errorText: ''
     }
   },
-  computed: {},
+  computed: {
+    ...mapState('channel', ['menuData', 'VUE_APP_MEMBER_CENTER']),
+    isSlots() {
+      return !_.isEmpty(this.$slots.default)
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -58,10 +64,9 @@ export default {
   destroyed() {
   },
   methods: {
-    ...mapMutations('channel', ['editMenu']),
+    ...mapMutations('channel', ['editMenu', 'addMenuLevel1']),
     verification() {
       const { nName, level2Index } = this
-
       this.errorText = ''
       if (!nName) {
         this.errorText = '菜单名称不能为空！'
@@ -71,8 +76,8 @@ export default {
         this.errorText = '一级菜单名称不能大于4位！'
         return false
       }
-      if (level2Index !== -1 && _.size(nName) > 8) {
-        this.errorText = '一级菜单名称不能大于4位！'
+      if (level2Index > -1 && _.size(nName) > 8) {
+        this.errorText = '二级菜单名称不能大于8位！'
         return false
       }
 
@@ -80,8 +85,18 @@ export default {
     },
     async onSave() {
       if (this.verification()) {
-        const { nName, level1Index, level2Index } = this
-        await this.editMenu({ name: nName, level1Index, level2Index })
+        const { nName, level1Index, level2Index, menuData, VUE_APP_MEMBER_CENTER } = this
+        if (level2Index > menuData.length || !menuData.length || _.isNull(level1Index)) {
+          await this.addMenuLevel1({
+            name: nName,
+            sub_button: [],
+            type: 'view',
+            url: VUE_APP_MEMBER_CENTER
+          })
+        } else {
+          await this.editMenu({ item: { name: nName }, level1Index, level2Index })
+        }
+        this.$emit('on-update')
         this.visible = false
       }
     }

@@ -48,11 +48,11 @@ export default {
   },
   methods: {
     ...mapMutations('channel', ['delMenu']),
-    onDelete() {
+    async onDelete() {
       const { level1Index, level2Index } = this
-      this.delMenu({
-        level1Index, level2Index
-      })
+      await this.delMenu({ level1Index, level2Index })
+      this.$options.parent.setActiveReset()
+      this.visible = false
     }
   }
 }
