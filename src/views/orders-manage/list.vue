@@ -260,7 +260,7 @@
                         v-if="item.orderType === 'G'"
                         :underline="false"
                         type="primary"
-                        @click="listQuery.prescriptionSheetMark = '2'; listQuery.orderSearchType = 5;listQuery.currentPage=1;listQuery.searchValue=item.groupCode;_loadList()"
+                        @click="listQuery.prescriptionSheetMark = ''; listQuery.orderSearchType = 5;listQuery.currentPage=1;listQuery.searchValue=item.groupCode;_loadList()"
                       >查看同团订单</el-link>
                       <a
                         :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"
