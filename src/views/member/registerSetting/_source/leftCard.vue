@@ -12,22 +12,27 @@
       </ul>
     </div>
     <div class="AemberCard-imagec-model">
-      <div class="AemberCard-image-model" :style="{background:(member.cardBgType==1?member.cardBgContent:'')}">
+      <div class="AemberCard-image-model" :style="{backgroundImage: member.cardBgType==2?'url('+ member.cardBgContent +')':'',background:(member.cardBgType==1?member.cardBgContent:'')}">
         <el-row>
-          <el-col :span="8">
-            <img src="@/assets/image/template_bg.png" alt class="AemberCard-image-url">
+          <el-col :span="6">
+            <img :src="member.merLogoUrl" alt class="AemberCard-image-url">
           </el-col>
-          <el-col :span="16" class="AemberCard-image-detail">
+          <el-col :span="14" class="AemberCard-image-detail">
             <div>{{ member.cardTitle }}</div>
             <div>{{ member.cardType }}</div>
+          </el-col>
+          <el-col :span="4">
+            <div class="AemberCard-qrcode-url" style="margin-top:10px">
+              <img src="@/assets/icon/icon.png" alt="" class="AemberCard-qrcode-url">
+            </div>
           </el-col>
         </el-row>
         <el-row class="AemberCard-image-bottom">
           <el-col :span="18" class="AemberCard-image-number">
             <div>
-              <span class="AemberCard-number-bottom">888</span>
-              <span class="AemberCard-number-bottom">888</span>
-              <span class="AemberCard-number-bottom">888</span>
+              <span class="AemberCard-number-bottom">8888</span>
+              <span class="AemberCard-number-bottom">8888</span>
+              <span class="AemberCard-number-bottom">8888</span>
             </div>
           </el-col>
         </el-row>
@@ -45,9 +50,7 @@
       <el-button type="primary" size="mini" disabled>微信支付</el-button>
     </div>
     <ul class="AemberCard-list-model">
-      <li>个人中心</li>
-      <li>会员卡详情</li>
-      <li>公众号</li>
+      <li v-for="(item,index) in member.customCells" :key="index">{{ item.name }}</li>
     </ul>
   </div>
 </template>
@@ -56,6 +59,7 @@ export default {
   name: 'LeftCard',
   components: {},
   props: {
+    // 会员卡信息
     member: {
       type: Object,
       default: function() {
@@ -98,13 +102,20 @@ export default {
   .AemberCard-imagec-model{
     display: flex;
     justify-content: center;
+    margin-top: 10px;
     .AemberCard-image-model {
+      background-size: cover;
       width: 220px;
       height: 130px;
       padding: 20px;
       border-radius: 10px;
       color: #ffffff;
       font-size: 10px;
+      .AemberCard-qrcode-url{
+        width: 25px;
+        height: 25px;
+        background: #ffffff;
+      }
       .AemberCard-image-url {
         width: 40px;
         height: 40px;

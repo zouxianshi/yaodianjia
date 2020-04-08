@@ -4,7 +4,7 @@
       <AppleRs />
       <NoactiveCard v-if="showCode==='1'" />
       <nobindingCard v-if="showCode==='0'" />
-      <AemberCard v-if="showCode==='2'" />
+      <AemberCard v-if="showCode==='2'" :geturl="geturl" />
     </div>
   </div>
 </template>
@@ -32,7 +32,8 @@ export default {
   data() {
     return {
       checkMemberList: '',
-      showCode: 1
+      showCode: 1,
+      geturl: ''
     }
   },
   computed: {
@@ -46,7 +47,7 @@ export default {
     checkMemberCard({ merCode: this.merCode }).then(res => {
       // this.checkMemberList = res.data
       this.showCode = res.data[0]
-      this.showCode = '2'
+      this.geturl = res.data[1]
     })
   },
   beforeMount() {

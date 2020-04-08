@@ -2,20 +2,20 @@
   <div class="right-index-model">
     <div class="right-content-model">
       <div class="right-right-model">会员卡信息</div>
-      <el-form ref="form" :model="form" label-width="100px">
+      <el-form ref="form" :model="member" label-width="100px">
         <el-form-item label="商户名称">
-          <span v-text="form.name">}</span>
+          <span v-text="member.merBrandName">}</span>
         </el-form-item>
         <el-form-item label="商户LOGO">
-          <img :src="form.img" alt>
+          <img :src="member.merLogoUrl" alt>
         </el-form-item>
         <el-form-item label="卡片背景">
-          <el-radio-group v-model="form.radio">
-            <el-radio :label="1">图片</el-radio>
-            <el-radio :label="0">颜色</el-radio>
+          <el-radio-group v-model="member.cardBgType" @change="changeback">
+            <el-radio :label="1">颜色</el-radio>
+            <el-radio :label="2">图片</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="上传图片">
+        <el-form-item v-if="member.cardBgType==2" label="上传图片">
           <div class="right-input-line">
             <el-upload
               class="avatar-uploader"
@@ -25,55 +25,55 @@
               :on-success="uploadSuccess"
               :show-file-list="false"
             >
-              <img v-if="form.imgUrl" :src="showImgHandler(form.imgUrl)" class="avatar">
+              <img v-if="member.cardBgContent" :src="member.cardBgContent" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
             <div class="right-input-rule">图片尺寸要求：1000像素*600像素，支持.jpg .png .jpeg格式，大小不超过1M 详细规范请参考</div>
           </div>
         </el-form-item>
-        <el-form-item label="卡片颜色">
+        <el-form-item v-if="member.cardBgType==1" label="卡片颜色">
           <ul class="right-color-check">
-            <li v-for="(item,index) in colorlist" :key="index" :style="{background:item}">{{ item }}</li>
+            <li v-for="(item,index) in colorlist" :key="index" :style="{background:item,border:member.cardBgContent==item?'2px solid #409eff':''}" @click="checkColor(item)">{{ item }}</li>
           </ul>
         </el-form-item>
         <el-form-item label="会员卡标题" label-width="100px">
           <div class="right-input-line">
-            <el-input v-model="form.title" class="right-input-model" />
+            <el-input v-model="member.cardTitle" class="right-input-model" />
             <div class="right-input-rule">不能为空且长度不能超过9个汉字或18个英文字符</div>
           </div>
         </el-form-item>
         <el-form-item label="默认发卡机构" label-width="100px">
-          <el-input v-model="member.organization" class="right-input-model" />
+          <el-input v-model="member.organization" class="right-input-model" placeholder="商户旗舰店" />
         </el-form-item>
         <el-form-item label="特权说明" label-width="100px">
-          <el-input v-model="member.prerogative" type="textarea" />
+          <el-input v-model="member.prerogative" type="textarea" placeholder="会员卡可享受会员特权" />
         </el-form-item>
         <el-form-item label="使用说明" label-width="100px">
-          <el-input v-model="member.useNotice" type="textarea" />
+          <el-input v-model="member.useNotice" type="textarea" placeholder="每人限领1张" />
         </el-form-item>
         <el-form-item label="商户电话" label-width="100px">
-          <el-input v-model="member.serviceTel" class="right-input-model" />
+          <el-input v-model="member.serviceTel" class="right-input-model" placeholder="请输入" />
         </el-form-item>
       </el-form>
     </div>
     <div class="right-content-model">
       <div class="right-right-model">会员卡设置</div>
       <h2 class="right-title-model">引导菜单设置</h2>
-      <div v-for="(item,index) in rightform" :key="index">
+      <div v-for="(item,index) in member.customCells" :key="index">
         <div style="display:flex;justify-content:space-between;padding:0 40px 0 0px">
           <div>{{ index+1 }}.</div>
-          <i v-if="rightform.length>1" class="el-icon-close" @click="deletmenu(index)" />
+          <i v-if="member.customCells.length>1" class="el-icon-close" @click="deletmenu(index)" />
         </div>
-        <el-form :ref="rightform[index]" :model="rightform[index]" label-width="80px">
+        <el-form :ref="member.customCells[index]" :model="member.customCells[index]" label-width="80px">
           <el-form-item label="引导菜单">
-            <el-input v-model="item.meun" class="right-input-model" />
+            <el-input v-model="item.name" class="right-input-model" />
           </el-form-item>
           <el-form-item label="引导语">
-            <el-input v-model="item.lang" class="right-input-model" />
+            <el-input v-model="item.tips" class="right-input-model" />
           </el-form-item>
           <el-form-item label="连接跳转">
             <div class="right-line-model">
-              <div class="right-link-model">{{ item.link }}</div>
+              <div class="right-link-model">{{ item.url }}</div>
               <el-button size="mini" @click="modifyAdress(index)">修改地址</el-button>
             </div>
           </el-form-item>
@@ -93,11 +93,10 @@
         <template>
           <div style="display:flex;margin-bottom:20px">
             <el-radio v-model="dialog.dialogRadio" label="1">小程序地址：</el-radio>
-            <div>{{ dialog.dialogUrl }}</div>
+            <div>{{ geturl }}</div>
           </div>
           <div style="display:flex;margin-bottom:20px;align-items: center;">
-            <el-radio v-model="dialog.dialogRadio" label="2">备选项</el-radio>
-            <div>自定义地址：</div>
+            <el-radio v-model="dialog.dialogRadio" label="2">自定义地址：</el-radio>
             <div>
               <el-input v-model="dialog.dialogInput" placeholder="请输入内容" style="width:200%" />
             </div>
@@ -110,15 +109,17 @@
       </el-dialog>
       <div class="right-play-model">
         <h2 class="right-title-model">微信支付注册设置</h2>
-        <el-form :ref="form.radio" :model="form.radio" label-width="80px">
+        <el-form :ref="member" :model="member" label-width="80px">
           <el-form-item label="微信支付注册">
-            <el-radio-group v-model="form.radio">
+            <el-radio-group v-model="member.isPay">
               <el-radio :label="1">开启</el-radio>
               <el-radio :label="0">关闭</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
-        <el-button type="primary" size="small" @click="submit">提交</el-button>
+        <div style="margin-left:100px">
+          <el-button type="primary" size="small" @click="submit">提交</el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -131,16 +132,25 @@ export default {
   name: 'RightCard',
   components: {},
   props: {
+    // 会员卡信息
     member: {
       type: Object,
       default: function() {
         return {}
       }
     },
+    // 颜色板
     colorlist: {
       type: Object,
       default: function() {
         return {}
+      }
+    },
+    // 小程序地址
+    geturl: {
+      type: String,
+      default: function() {
+        return ''
       }
     }
   },
@@ -150,31 +160,11 @@ export default {
         dialogVisible: false,
         dialogRadio: '1',
         dialogInput: '',
-        dialogUrl:
-          'https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home'
+        dialogUrl: ''
       },
-      radio: 0,
       form: {
-        name: '海典智慧医药店',
-        imgUrl: '',
-        title: '',
-        mechanism: '',
-        privilege: '',
-        use: '',
-        num: ''
+        imgUrl: ''
       },
-      rightform: [
-        {
-          meun: '',
-          lang: '',
-          link: 'https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home'
-        },
-        {
-          meun: '',
-          lang: '',
-          link: 'https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home'
-        }
-      ],
       // 修改第几个菜单
       modifyAdressnum: 0
     }
@@ -191,17 +181,14 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
-    // getQrcode({ merCode: 654321 }).then(res => {
-    //   this.programData.programUrl = res.data[0]
-    //   this.programData.programImg = `data:image/jpeg;base64,${res.data[1]}`
-    //   this.programData.showImg = true
-    // }).catch(() => {
-    // })
   },
   beforeMount() {},
-  mounted() {},
-  beforeUpdate() {},
-  updated() {},
+  mounted() {
+  },
+  beforeUpdate() {
+  },
+  updated() {
+  },
   methods: {
     beforeUpload(file) {
       const isImg =
@@ -232,7 +219,7 @@ export default {
     uploadSuccess(res, file, fileList) {
       // 图片上传成功
       if (res.code === '10000') {
-        this.form.imgUrl = res.data
+        this.member.cardBgContent = this.showImgHandler(res.data)
       } else {
         this.$message({
           message: res.msg,
@@ -258,7 +245,6 @@ export default {
             len++
           }
         }
-        alert(len)
         if (len < 18) {
           return true
         } else {
@@ -282,45 +268,31 @@ export default {
       }
     },
     submit() {
-      const regtitle = this.titleReg(this.form.title)
-      const regphone = this.iphoneReg(this.form.num)
-      if (regtitle && regphone) {
-        editMemberInfo({
-          cardBgContent: '', // 会员卡背景,图片地址或者颜色型号
-          cardBgType: this.form.radio, // 会员卡背景类型,0:颜色,1:图片
-          cardStatus: '', // 审核状态
-          cardTitle: '', // 会员卡标题
-          cardType: '', // 会员卡类型
-          color: '', // 颜色
-          createId: '', // 创建人
-          'guideMemu[0].memu': '', // 微信公众号引导菜单
-          'guideMemu[0].note': '', // 微信公众号引导语
-          'guideMemu[0].url': '', // 微信公众号菜单跳转地址
-          id: '', // 数据主键
-          integral: '', // 开卡送积分
-          isCard: '', // 微信开卡设置
-          isPay: '', // 支付注册设置
-          isValid: '', // 是否有效
-          merCode: '', // 商户ID
-          organization: '', // 默认发卡机构
-          prerogative: '', // 特权说明
-          serviceTel: '', // 联系电话
-          updateId: '', // 修改人ID
-          useNotice: '' // 使用须知
-        }).then(res => {
-          // 获取门店员工
-          if (res.data) {
-            this.employeeData = res.data.data
+      const regtitle = this.titleReg(this.member.cardTitle)
+      const regphone = this.iphoneReg(this.member.serviceTel)
+      if (this.member.cardBgType === 1) {
+        for (const i in this.colorlist) {
+          if (this.colorlist[i] === this.member.cardBgContent) {
+            this.member.cardBgContent = i
           }
+        }
+      }
+      if (regtitle && regphone) {
+        editMemberInfo(this.member).then(res => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.$emit('getlist')
         })
       }
     },
     // 确认对话框
     dialogSure() {
       if (this.dialog.dialogRadio === '1') {
-        this.rightform[this.modifyAdressnum].link = this.dialog.dialogUrl
+        this.member.customCells[this.modifyAdressnum].url = this.geturl
       } else {
-        this.rightform[this.modifyAdressnum].link = this.dialog.dialogInput
+        this.member.customCells[this.modifyAdressnum].url = this.dialog.dialogInput
       }
       if (this.dialog.dialogInput === '' && this.dialog.dialogRadio === '2') {
         this.$message({
@@ -328,36 +300,52 @@ export default {
           type: 'warning'
         })
       } else {
-        this.dialog.dialogUrl = ''
+        // this.dialog.dialogUrl = ''
         this.dialog.dialogInput = ''
         this.dialog.dialogVisible = false
       }
+      console.log(this.member.customCells)
     },
     // 删除菜单
     deletmenu(index) {
       console.log(index)
-      this.rightform.splice(index, 1)
+      this.member.customCells.splice(index, 1)
     },
     // 显示修改地址弹框
     modifyAdress(index) {
       this.modifyAdressnum = index
       this.dialog.dialogVisible = true
+      if (this.geturl !== this.member.customCells[index].url) {
+        this.dialog.dialogRadio = '2'
+        this.dialog.dialogInput = this.member.customCells[index].url
+      } else {
+        this.dialog.dialogRadio = '1'
+      }
     },
     // 新增菜单
     addmeun() {
-      if (this.rightform.length < 3) {
+      if (this.member.customCells == null || this.member.customCells.length < 3) {
         const dataele = {
-          meun: '',
-          lang: '',
-          link: 'https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home'
+          name: '',
+          tips: '',
+          url: this.geturl
         }
-        this.rightform.push(dataele)
+        if (this.member.customCells == null) {
+          this.member.customCells = []
+        }
+        this.member.customCells.push(dataele)
       } else {
         this.$message({
           message: '引导菜单不能超过3个',
           type: 'warning'
         })
       }
+    },
+    checkColor(index) {
+      this.member.cardBgContent = index
+    },
+    changeback() {
+      this.member.cardBgContent = ''
     }
   }
 }
@@ -378,7 +366,6 @@ export default {
     }
     li:hover{
       cursor:pointer;
-      border:2px solid #409eff
     }
   }
   .right-content-model {

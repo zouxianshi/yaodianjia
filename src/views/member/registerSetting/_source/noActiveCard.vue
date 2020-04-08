@@ -8,17 +8,22 @@
         <el-col :span="19">
           <div class="noActiveCard-image-model noActiveCard-stop-mode">
             <div>
-              还未绑定公众号
+              还未激活会员卡
             </div>
           </div>
           <div class="noActiveCard-image-model">
             <el-row>
-              <el-col :span="7">
+              <el-col :span="6">
                 <div class="noActiveCard-image-url" />
               </el-col>
-              <el-col :span="17" class="noActiveCard-image-detail">
+              <el-col :span="15" class="noActiveCard-image-detail">
                 <div>海典智慧药店-直营店</div>
                 <div>演示会员</div>
+              </el-col>
+              <el-col :span="3">
+                <div class="AemberCard-qrcode-url" style="margin-top:10px">
+                  <img src="@/assets/icon/icon.png" alt="" class="AemberCard-qrcode-url">
+                </div>
               </el-col>
             </el-row>
             <el-row class="noActiveCard-image-bottom">
@@ -36,59 +41,10 @@
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="noActiveCard-button-model">激活会员卡</div>
-        </el-col>
-        <!-- <el-col :span="8">
-          <ul>
-            <li>
-              海典智慧药店-直营店
-              <el-button size="mini">编辑</el-button>
-            </li>
-            <li>会员卡标题：演示会员</li>
-            <li>默认发卡机构：海典智慧药店总店</li>
-            <li>使用须知：</li>
-            <li>1、这里是使用须知内容文字，文字内容自定义</li>
-            <li>2、这里是使用须知内容文字，文字内容自定义 </li>
-            <li>3、这里是使用须知内容文字，文字内容自定义</li>
-          </ul>
-        </el-col>-->
-      </el-row>
-    </div>
-    <!-- <div class="noActiveCard-contain-model">
-      <ul style="padding-left:50px">
-        <li>绑定公众号后解锁功能:</li>
-        <li>1、开通微信会员卡功能（会员在微信卡包内，查看电子会员卡）；</li>
-        <li>2、开通支付即会员功能（顾客微信支付后，可直接注册领取微信会员卡）；</li>
-      </ul>
-    </div>
-    <div class="noActiveCard-contain-model">
-      <el-row>
-        <el-col :span="24" class="noActiveCard-contain-adress">公众号绑定说明：</el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="20">
-          <div class="noActiveCard-Explain-model">
-            <div>
-              <ul>
-                <li>
-                  <span class="c-index">1</span>
-                  成功绑定公众号后，您将解锁以下功能:
-                </li>
-                <li>
-                  <span class="c-index">2</span>
-                  1、微信会员卡功能——会员在个人微信卡包内查看电子会员卡.
-                </li>
-                <li>
-                  <span class="c-index">3</span>
-                  2、支付即会员功能——顾客微信支付后，直接注册领取微信会员卡.
-                </li>
-              </ul>
-            </div>
-            <div class="applers-button-model " style="margin:40px 0px 0px 20px">马上去绑定</div>
-          </div>
+          <div class="noActiveCard-button-model" @click="goActive">激活会员卡</div>
         </el-col>
       </el-row>
-    </div> -->
+    </div>
     <div class="noActiveCard-contain-model">
       <el-row>
         <el-col :span="24" class="noActiveCard-contain-adress">会员卡激活说明:</el-col>
@@ -126,6 +82,11 @@ export default {
   updated() {},
   methods: {
     handleEdit() {
+      this.$router.push({
+        path: '/member/register-setting/editcard'
+      })
+    },
+    goActive() {
       this.$router.push({
         path: '/member/register-setting/editcard'
       })
@@ -206,6 +167,11 @@ export default {
       padding-left:20px;
       background: #000;
       // text-shadow: 1px 5px 5px rgba(26, 23, 23, 0.7);
+      .AemberCard-qrcode-url{
+        width: 45px;
+        height: 45px;
+        background: #ffffff;
+      }
       .noActiveCard-image-url {
         width: 60px;
         height: 60px;
