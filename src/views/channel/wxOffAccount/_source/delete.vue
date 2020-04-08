@@ -1,15 +1,15 @@
 <template>
   <el-popover v-model="visible" placement="top" width="160" popper-class="plx-delete-model">
-    <p class="p-text">这是一段内容这是一段内容确定删除吗？</p>
+    <p class="p-text">确定删除当前菜单吗？</p>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" @click="onDelete">确定</el-button>
+      <el-button type="primary" size="mini" :loading="loading" @click="onDelete">确定</el-button>
     </div>
     <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" circle />
   </el-popover>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 export default {
   name: 'Delete',
   components: {},
@@ -25,7 +25,8 @@ export default {
   },
   data() {
     return {
-      visible: false
+      visible: false,
+      loading: false
     }
   },
   computed: {},
@@ -47,12 +48,17 @@ export default {
   destroyed() {
   },
   methods: {
+    ...mapActions('channel', ['saveCustomMenu']),
     ...mapMutations('channel', ['delMenu']),
     async onDelete() {
       const { level1Index, level2Index } = this
+      this.loading = true
       await this.delMenu({ level1Index, level2Index })
-      this.$options.parent.setActiveReset()
-      this.visible = false
+      await this.saveCustomMenu().then(() => {
+        this.$options.parent.setActiveReset()
+        this.visible = false
+        this.loading = false
+      })
     }
   }
 }
@@ -62,7 +68,7 @@ export default {
   .plx-delete-model {
     .p-text {
       font-size: 12px;
-      padding: 4px;
+      padding: 2px 0 10px 0;
     }
   }
 </style>

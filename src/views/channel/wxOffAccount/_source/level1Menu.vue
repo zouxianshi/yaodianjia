@@ -11,7 +11,7 @@
               <m-delete :level2-index="activeElIndex" :level1-index="level1Index" />
             </span>
           </li>
-          <li v-if="item.sub_button.length" class="nb-title"><b>二级菜单</b></li>
+          <li v-if="item.sub_button && item.sub_button.length" class="nb-title"><b>二级菜单</b></li>
           <li v-for="(el,$index) in item.sub_button" :key="$index" :class="{'active':activeElIndex === $index}" class="nb-item" @click="onSelected($index)">
             <span class="sp-name">{{ el.name }}</span>
             <span class="sp-op">
@@ -19,16 +19,21 @@
               <m-delete :level2-index="activeElIndex" :level1-index="level1Index" />
             </span>
           </li>
-          <li class="nb-add">
-            <m-edit-name :name="''" :level2-index="item.sub_button.length + 1" :level1-index="level1Index">
+          <li v-if="menuData[level1Index] && menuData[level1Index].sub_button.length < 5" class="nb-add">
+            <m-edit-name :level1-index="level1Index" :level2-index="null">
               <span class="sp-name">新增二级菜单</span>
             </m-edit-name>
           </li>
         </ul>
       </div>
       <div class="lmm-textarea">
-        <p v-if="isMp">跳转：商户小程序</p>
-        <p v-else>跳转：{{ cpdUrl }}</p>
+        <template v-if="isDisabled">
+          <p><el-tag type="danger" size="small">一级菜单下存在二级菜单无法设置跳转地址</el-tag></p>
+        </template>
+        <template v-else>
+          <p v-if="isMp"><el-tag type="success" size="small">跳转：商户小程序</el-tag></p>
+          <p v-else><el-tag size="small">跳转：{{ cpdUrl }}</el-tag></p>
+        </template>
       </div>
       <div class="clearfix" />
       <div class="operation">
@@ -46,6 +51,7 @@ import mDelete from './delete'
 import mEditName from './editName'
 import mToUrl from './toUrl'
 import mToMp from './toMp'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Level1Menu',
@@ -66,10 +72,13 @@ export default {
     }
   },
   computed: {
+    ...mapState('channel', ['menuData', 'VUE_APP_MEMBER_CENTER']),
     cpdUrl() {
-      const { activeElIndex, item: { url, sub_button }} = this
+      const { activeElIndex, item: { url, sub_button, type }, VUE_APP_MEMBER_CENTER } = this
       return activeElIndex === -1
-        ? url
+        ? type === 'memberCard'
+          ? VUE_APP_MEMBER_CENTER
+          : url
         : !_.isEmpty(sub_button[activeElIndex])
           ? sub_button[activeElIndex].url
           : ''
@@ -81,6 +90,10 @@ export default {
         : !_.isEmpty(sub_button[activeElIndex])
           ? sub_button[activeElIndex].type === 'miniprogram'
           : ''
+    },
+    isDisabled() {
+      const { activeElIndex, level1Index, menuData } = this
+      return activeElIndex === -1 && !!menuData[level1Index].sub_button.length
     }
   },
   watch: {},

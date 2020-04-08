@@ -6,24 +6,43 @@
 
 import _ from 'lodash'
 
+import { setMenuData } from '@/api/channelService'
+
 const state = {
   VUE_APP_MEMBER_CENTER: `https://www.google.com`,
-  menuData: [
+  loading: false,
+  menuData: []
+  /* menuData: [
     {
       name: '菜单一',
       sub_button: [
+        {
+          name: '二级菜单',
+          type: 'view',
+          url: 'http://www.baidu.com',
+          active: true
+        }
       ],
       type: 'view',
       url: 'http://www.baidu.com',
       active: true
     }
-
-  ]
-  // menuData:[]
+  ]*/
 }
 const mutations = {
+  setMenuData(state, payload) {
+    state.menuData = payload
+  },
+  setLoading(state, payload) {
+    state.loading = payload
+  },
   addMenuLevel1(state, payload) {
-    state.menuData.push(payload)
+    const { item } = payload
+    state.menuData.push(item)
+  },
+  addMenuLevel2(state, payload) {
+    const { item, level1Index } = payload
+    state.menuData[level1Index].sub_button.push(item)
   },
   editMenu(state, payload) {
     const { item, level1Index, level2Index } = payload
@@ -50,7 +69,43 @@ const mutations = {
     }
   }
 }
-const actions = {}
+const actions = {
+  saveCustomMenu({ commit, state }) {
+    commit('setLoading', true)
+    // handler available back-end data structures
+    const { VUE_APP_MEMBER_CENTER, menuData } = state
+    const button = _.cloneDeep(menuData)
+    _.map(button, v => {
+      delete v.active
+      if (v.type === 'memberCard') {
+        v.url = VUE_APP_MEMBER_CENTER
+        v.type = 'view'
+      }
+      if (v.sub_button.length) {
+        v.url = ''
+        v.type = ''
+        _.map(v.sub_button, v1 => {
+          if (v1.type === 'memberCard') {
+            v1.url = VUE_APP_MEMBER_CENTER
+            v1.type = 'view'
+          }
+        })
+      }
+    })
+
+    return new Promise((resolve, reject) => {
+      setMenuData({ button }).then(() => {
+        setTimeout(() => {
+          commit('setLoading', false)
+          resolve()
+        }, 800)
+      }).catch(() => {
+        reject()
+        commit('setLoading', false)
+      })
+    })
+  }
+}
 
 export default {
   namespaced: true,

@@ -1,5 +1,5 @@
 <template>
-  <div class="menu-settings-model">
+  <div v-loading="loading" class="menu-settings-model">
     <div v-if="menuData.length" class="msm-list">
       <m-level1-menu v-for="(item,$index) in menuData" :key="$index" :level1-index="$index" :item="item" />
     </div>
@@ -27,7 +27,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('channel', ['menuData'])
+    ...mapState('channel', ['menuData', 'loading'])
   },
   watch: {},
   beforeCreate() {

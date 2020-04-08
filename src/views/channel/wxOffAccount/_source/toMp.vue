@@ -4,17 +4,16 @@
       <el-radio-group v-model="type">
         <el-radio class="radio-item" label="miniprogram">商户小程序</el-radio>
       </el-radio-group>
-
     </div>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" @click="onSubmit">确定</el-button>
+      <el-button type="primary" size="mini" :loading="loading" @click="onSave">确定</el-button>
     </div>
-    <el-button slot="reference" size="mini" plain>跳转小程序</el-button>
+    <el-button slot="reference" size="mini" plain :disabled="isDisabled">跳转小程序</el-button>
   </el-popover>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
   name: 'ToMp',
   components: {},
@@ -32,11 +31,16 @@ export default {
     return {
       type: '',
       url: '',
-      visible: false
+      visible: false,
+      loading: false
     }
   },
   computed: {
-    ...mapState('channel', ['menuData'])
+    ...mapState('channel', ['menuData']),
+    isDisabled() {
+      const { level1Index, level2Index } = this
+      return level2Index === -1 && !!this.menuData[level1Index].sub_button.length
+    }
   },
   watch: {
     level2Index() {
@@ -64,6 +68,7 @@ export default {
   destroyed() {
   },
   methods: {
+    ...mapActions('channel', ['saveCustomMenu']),
     ...mapMutations('channel', ['editMenu']),
     /**
      * handler params
@@ -71,24 +76,32 @@ export default {
     handlerParams() {
       const { level1Index, level2Index } = this
       const { type, sub_button, url } = this.menuData[level1Index]
-      this.type = level2Index === -1 ? type : sub_button[level2Index].type
-      this.url = level2Index === -1 ? url : sub_button[level2Index].url
+      this.type = level2Index === -1
+        ? type
+        : sub_button[level2Index].type
+      this.url = level2Index === -1
+        ? url
+        : sub_button[level2Index].url
     },
     /**
      * save async params
      */
-    async onSubmit() {
-      const { level1Index, level2Index, type, url } = this
+    async onSave() {
+      const { level1Index, level2Index, type } = this
+      this.loading = true
       await this.editMenu({
         item: {
-          type,
-          url: type === 'miniprogram' ? '' : url
+          type
         },
         level1Index,
         level2Index
       })
 
       this.visible = false
+      this.saveCustomMenu().then(() => {
+        this.loading = false
+        this.nName = ''
+      })
     }
   }
 }

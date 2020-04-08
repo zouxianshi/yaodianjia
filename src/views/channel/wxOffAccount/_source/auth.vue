@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-model">
+  <div v-loading="loading" class="auth-model">
     <el-form ref="form" :model="form" label-width="160px">
       <el-form-item label="公众微信号 ">
         {{ authInfo.nickName || '-' }}
@@ -42,7 +42,8 @@ export default {
       },
       dialogComplete: false,
       toPath: '',
-      authInfo: {}
+      authInfo: {},
+      loading: false
     }
   },
   computed: {
@@ -54,9 +55,13 @@ export default {
   beforeCreate() {
   },
   created() {
+    this.loading = true
     checkAuthInfo().then(res => {
       this.authInfo = res.data
+      this.loading = false
       this.$emit('on-auth', this.authInfo.isAuth)
+    }).catch(() => {
+      this.loading = false
     })
   },
   beforeMount() {

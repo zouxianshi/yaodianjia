@@ -1,12 +1,12 @@
 <template>
   <el-popover v-model="visible" placement="top" popper-class="plx-edit-model">
     <p class="p-input">
-      <el-input v-model="nName" size="mini" placeholder="请输入内容" style="width: 180px" />
+      <el-input v-model="nName" size="mini" placeholder="请输入菜单名称" style="width: 180px" />
     </p>
     <p v-if="errorText" class="p-error">{{ errorText }}</p>
     <div style="text-align: right; margin: 0">
-      <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" @click="onSave">确定</el-button>
+      <el-button size="mini" type="text" @click="onClose">取消</el-button>
+      <el-button type="primary" size="mini" :loading="loading" @click="onSave">保存</el-button>
     </div>
     <slot v-if="isSlots" slot="reference" />
     <el-button v-else slot="reference" type="primary" icon="el-icon-edit-outline" size="mini" circle />
@@ -14,7 +14,8 @@
 </template>
 <script>
 import _ from 'lodash'
-import { mapState, mapMutations } from 'vuex'
+import { findComponentsUpward } from '@/utils/findCompt'
+import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
   name: 'Edit',
   components: {},
@@ -36,7 +37,8 @@ export default {
     return {
       visible: false,
       nName: '',
-      errorText: ''
+      errorText: '',
+      loading: false
     }
   },
   computed: {
@@ -45,11 +47,19 @@ export default {
       return !_.isEmpty(this.$slots.default)
     }
   },
-  watch: {},
+  watch: {
+    'name': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.nName = _.cloneDeep(v)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
-    this.nName = _.cloneDeep(this.name)
+
   },
   beforeMount() {
   },
@@ -64,7 +74,8 @@ export default {
   destroyed() {
   },
   methods: {
-    ...mapMutations('channel', ['editMenu', 'addMenuLevel1']),
+    ...mapActions('channel', ['saveCustomMenu']),
+    ...mapMutations('channel', ['editMenu', 'addMenuLevel1', 'addMenuLevel2']),
     verification() {
       const { nName, level2Index } = this
       this.errorText = ''
@@ -85,20 +96,51 @@ export default {
     },
     async onSave() {
       if (this.verification()) {
-        const { nName, level1Index, level2Index, menuData, VUE_APP_MEMBER_CENTER } = this
-        if (level2Index > menuData.length || !menuData.length || _.isNull(level1Index)) {
+        this.loading = true
+        const { nName, level1Index, level2Index, VUE_APP_MEMBER_CENTER } = this
+        const item = {
+          name: nName,
+          sub_button: [],
+          type: 'memberCard',
+          url: VUE_APP_MEMBER_CENTER
+        }
+
+        if (_.isNull(level1Index) && _.isNull(level2Index)) {
           await this.addMenuLevel1({
-            name: nName,
-            sub_button: [],
-            type: 'view',
-            url: VUE_APP_MEMBER_CENTER
+            item
+          })
+        } else if (!_.isNull(level1Index) && _.isNull(level2Index)) {
+          await this.addMenuLevel2({
+            item,
+            level1Index
           })
         } else {
-          await this.editMenu({ item: { name: nName }, level1Index, level2Index })
+          await this.editMenu({
+            item: {
+              name: nName
+            },
+            level1Index,
+            level2Index
+          })
         }
-        this.$emit('on-update')
         this.visible = false
+        // save all params
+        this.saveCustomMenu().then(() => {
+          this.loading = false
+          this.$emit('on-update')
+          this.nName = ''
+        }).catch(() => {
+          this.loading = false
+          this.$emit('on-update')
+          this.nName = ''
+          const instance = findComponentsUpward(this.$parent, 'custom-menu')[0]
+          instance.getData()
+        })
       }
+    },
+    onClose() {
+      this.visible = false
+      this.nName = ''
     }
   }
 }

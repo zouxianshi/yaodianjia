@@ -13,6 +13,9 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
+import { mapMutations, mapState } from 'vuex'
+import { getMenuData } from '@/api/channelService'
 import mViewWindow from './viewWindow'
 import mMenuSettings from './menuSettings'
 export default {
@@ -20,13 +23,17 @@ export default {
   components: { mViewWindow, mMenuSettings },
   props: {},
   data() {
-    return {}
+    return {
+    }
   },
-  computed: {},
+  computed: {
+    ...mapState('channel', ['VUE_APP_MEMBER_CENTER'])
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
+    this.getData()
   },
   beforeMount() {
   },
@@ -40,7 +47,35 @@ export default {
   },
   destroyed() {
   },
-  methods: {}
+  methods: {
+    ...mapMutations('channel', ['setMenuData', 'setLoading']),
+    getData() {
+      this.setLoading(true)
+      getMenuData().then(async res => {
+        const { button } = res.data || { button: [] }
+        const { VUE_APP_MEMBER_CENTER } = this
+        if (button.length) {
+          const newMenuData = button
+          _.map(newMenuData, v => {
+            if (v.url === VUE_APP_MEMBER_CENTER) {
+              v.type = 'memberCard'
+              v.url = ''
+            }
+            if (v.sub_button.length) {
+              _.map(v.sub_button, v1 => {
+                if (v1.url === VUE_APP_MEMBER_CENTER) {
+                  v1.type = 'memberCard'
+                  v1.url = ''
+                }
+              })
+            }
+          })
+          await this.setMenuData(newMenuData)
+        }
+        this.setLoading(false)
+      })
+    }
+  }
 }
 </script>
 
