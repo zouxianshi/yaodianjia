@@ -160,30 +160,35 @@ export default {
       // activityNumber 拼团人数
       // 1.拼团库存不小于当前设置的成团人数
       // 1.所有拼团商品成团人数最低限定为2，最高200
-      let msg = '拼团库存'
-      if (rule.field === 'activityNumber') {
-        msg = '拼团人数'
-        console.log('22222,', value > 200)
-        if (value * 1 > 200) {
-          return callback(new Error('拼团商品成团人数最高200人'))
-        } else if (value * 1 > this.settingForm.productActivityCount * 1) {
-          return callback(new Error('成团人数不大于当前设置的拼团库存'))
-        } else {
-          this.$refs['formdData'].clearValidate(['productActivityCount'])
-        }
-      }
-      if (rule.field === 'productActivityCount') {
-        if (value * 1 < this.settingForm.activityNumber * 1) {
-          return callback(new Error('拼团库存不小于当前设置的成团人数'))
-        } else {
-          this.$refs['formdData'].clearValidate(['activityNumber'])
-        }
-      }
       if (!value * 1) {
-        return callback(new Error(`${msg}不能为空`))
+        return callback(new Error(`拼团库存不能为空`))
       }
       if (value * 1 < 2) {
-        return callback(new Error(`${msg}不能小于2`))
+        return callback(new Error(`拼团库存不能小于2`))
+      }
+      if (value * 1 > 200) {
+        return callback(new Error('拼团商品成团人数最高200人'))
+      }
+      if (value * 1 > this.settingForm.productActivityCount * 1) {
+        return callback(new Error('成团人数不大于当前设置的拼团库存'))
+      }
+      if (value * 1 <= 200 && value * 1 < this.settingForm.productActivityCount * 1) {
+        this.$refs['formdData'].clearValidate(['productActivityCount'])
+      }
+      callback()
+    }
+    var produccheckNum = (rule, value, callback) => {
+      if (!value * 1) {
+        return callback(new Error('拼团人数不能为空'))
+      }
+      if (value * 1 < 2) {
+        return callback(new Error('拼团人数不能小于2'))
+      }
+      if (value * 1 < this.settingForm.activityNumber * 1) {
+        return callback(new Error('拼团库存不小于当前设置的成团人数'))
+      }
+      if (this.settingForm.activityNumber * 1 <= 200 && value * 1 > this.settingForm.activityNumber * 1) {
+        this.$refs['formdData'].clearValidate(['activityNumber'])
       }
       callback()
     }
@@ -207,7 +212,7 @@ export default {
         ], // 成团人数
         isXg: [{ required: true, message: '', trigger: 'change' }],
         productActivityCount: [
-          { required: true, validator: checkNum, trigger: 'blur' }
+          { required: true, validator: produccheckNum, trigger: 'blur' }
         ]
       }
     }
@@ -274,7 +279,7 @@ export default {
           this.$emit('complete', newData)
         } else {
           console.log('error submit!!')
-          return false
+          // return false
         }
       })
     },
