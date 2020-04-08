@@ -7,7 +7,7 @@
         </el-col>
         <!-- 右栏 -->
         <el-col :span="15">
-          <RightCard :member="memberList" :colorlist="colorList" />
+          <RightCard :member="memberList" :colorlist="colorList" :geturl="geturl" @getlist="getlist" />
         </el-col>
       </el-row>
     </div>
@@ -18,7 +18,7 @@
 import RightCard from './rightCard'
 // 会员卡
 import LeftCard from './leftCard'
-import { getMemberInfo, getColor } from '@/api/memberService'
+import { getMemberInfo, getColor, checkMemberCard } from '@/api/memberService'
 import { mapGetters } from 'vuex'
 export default {
   name: 'EditCard',
@@ -31,7 +31,8 @@ export default {
     return {
       memberList: {},
       colorList: {},
-      colorNum: 0
+      colorNum: 0,
+      geturl: ''
     }
   },
   computed: {
@@ -40,20 +41,7 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
-    getMemberInfo(this.merCode)
-      .then(res => {
-        this.memberList = res.data
-        getColor().then(res => {
-          this.colorList = res.data
-          if (this.memberList.cardBgType === 1) {
-            for (const i in this.colorList) {
-              if (i.toLowerCase() === this.memberList.cardBgContent.toLowerCase()) {
-                this.memberList.cardBgContent = this.colorList[i]
-              }
-            }
-          }
-        })
-      })
+    this.getlist()
   },
   beforeMount() {},
   mounted() {
@@ -61,6 +49,25 @@ export default {
   beforeUpdate() {},
   updated() {},
   methods: {
+    getlist() {
+      checkMemberCard({ merCode: this.merCode }).then(res => {
+        this.geturl = res.data[1]
+      })
+      getMemberInfo(this.merCode)
+        .then(res => {
+          this.memberList = res.data
+          getColor().then(res => {
+            this.colorList = res.data
+            if (this.memberList.cardBgType === 1) {
+              for (const i in this.colorList) {
+                if (i.toLowerCase() === this.memberList.cardBgContent.toLowerCase()) {
+                  this.memberList.cardBgContent = this.colorList[i]
+                }
+              }
+            }
+          })
+        })
+    }
   }
 }
 </script>

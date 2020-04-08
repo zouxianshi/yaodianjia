@@ -17,3 +17,18 @@ export function checkAuthInfo() {
     method: 'get'
   })
 }
+
+export function getMenuData() {
+  return request({
+    url: `${config.merGoods}/1.0/weeChatMp/menu/get/${merCode}`,
+    method: 'get'
+  })
+}
+
+export function setMenuData(params) {
+  return request({
+    url: `${config.merGoods}/1.0/weeChatMp/menu/create/${merCode}`,
+    method: 'post',
+    data: params
+  })
+}

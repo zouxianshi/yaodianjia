@@ -6,118 +6,50 @@
 
 import _ from 'lodash'
 
+import { setMenuData } from '@/api/channelService'
+
 const state = {
-  VUE_APP_MEMBER_CENTER: `https://www.baidu.com`,
-  menuData: [
+  VUE_APP_MEMBER_CENTER: `https://www.google.com`,
+  loading: false,
+  menuData: []
+  /* menuData: [
     {
       name: '菜单一',
       sub_button: [
         {
-          'name': '二级菜单1',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单2',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单3',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单4',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单5',
-          'type': 'string',
-          'url': 'string'
+          name: '二级菜单',
+          type: 'view',
+          url: 'http://www.baidu.com',
+          active: true
         }
       ],
       type: 'view',
       url: 'http://www.baidu.com',
       active: true
-    },
-    {
-      name: '菜单二',
-      'sub_button': [
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        }
-      ],
-      type: 'view',
-      url: 'http://www.baidu.com',
-      active: false
-    },
-    {
-      name: '菜单三',
-      'sub_button': [
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        }
-      ],
-      type: 'view',
-      url: 'http://www.baidu.com',
-      active: false
     }
-  ]
+  ]*/
 }
 const mutations = {
+  setMenuData(state, payload) {
+    state.menuData = payload
+  },
+  setLoading(state, payload) {
+    state.loading = payload
+  },
+  addMenuLevel1(state, payload) {
+    const { item } = payload
+    state.menuData.push(item)
+  },
+  addMenuLevel2(state, payload) {
+    const { item, level1Index } = payload
+    state.menuData[level1Index].sub_button.push(item)
+  },
   editMenu(state, payload) {
-    const { name, level1Index, level2Index } = payload
+    const { item, level1Index, level2Index } = payload
     if (level2Index === -1) {
-      state.menuData[level1Index].name = name
+      state.menuData[level1Index] = _.assign(state.menuData[level1Index], item)
     } else {
-      console.log(state.menuData[level1Index])
-      state.menuData[level1Index].sub_button[level2Index].name = name
+      state.menuData[level1Index].sub_button[level2Index] = _.assign(state.menuData[level1Index].sub_button[level2Index], item)
     }
     state.menuData = _.map(state.menuData, (v, i) => {
       v.active = i === level1Index
@@ -126,15 +58,54 @@ const mutations = {
   },
   delMenu(state, payload) {
     const { level1Index, level2Index } = payload
+    const menuData = state.menuData
     if (level2Index === -1) {
-      _.drop(state.menuData, level1Index)
+      menuData.splice(level1Index, 1)
+      state.menuData = menuData
     } else {
-      _.drop(state.menuData[level1Index].sub_button, level2Index)
+      const subButton = menuData[level1Index].sub_button
+      subButton.splice(level2Index, 1)
+      state.menuData[level1Index].sub_button = subButton
     }
-    console.log(state.menuData)
   }
 }
-const actions = {}
+const actions = {
+  saveCustomMenu({ commit, state }) {
+    commit('setLoading', true)
+    // handler available back-end data structures
+    const { VUE_APP_MEMBER_CENTER, menuData } = state
+    const button = _.cloneDeep(menuData)
+    _.map(button, v => {
+      delete v.active
+      if (v.type === 'memberCard') {
+        v.url = VUE_APP_MEMBER_CENTER
+        v.type = 'view'
+      }
+      if (v.sub_button.length) {
+        v.url = ''
+        v.type = ''
+        _.map(v.sub_button, v1 => {
+          if (v1.type === 'memberCard') {
+            v1.url = VUE_APP_MEMBER_CENTER
+            v1.type = 'view'
+          }
+        })
+      }
+    })
+
+    return new Promise((resolve, reject) => {
+      setMenuData({ button }).then(() => {
+        setTimeout(() => {
+          commit('setLoading', false)
+          resolve()
+        }, 800)
+      }).catch(() => {
+        reject()
+        commit('setLoading', false)
+      })
+    })
+  }
+}
 
 export default {
   namespaced: true,

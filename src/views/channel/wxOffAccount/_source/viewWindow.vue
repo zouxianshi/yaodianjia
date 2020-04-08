@@ -1,5 +1,5 @@
 <template>
-  <div class="view-window-model">
+  <div v-loading="loading" class="view-window-model">
     <div class="vwm-title">海典智慧药房</div>
     <div class="vwm-content" />
     <div class="vwm-menu">
@@ -9,10 +9,17 @@
       <div class="vwm-menu-box">
         <div v-for="(item,$index) in menuData" :key="$index" class="level-1" :class="{active:item.active}">
           <div class="name">{{ item.name }}</div>
-          <div class="level-2">
+          <div v-if="item.sub_button.length" class="level-2">
             <i class="el-icon-caret-bottom" />
             <a v-for="(el,i) in item.sub_button" :key="i" href="#">{{ el.name }}</a>
           </div>
+        </div>
+        <div v-if="menuData.length < 3" class="level-1">
+          <m-edit-name v-if="isNew" :level1-index="null" :level2-index="null" @on-update="_onUpdate">
+            <div class="add">
+              <i class="el-icon-plus" />
+            </div>
+          </m-edit-name>
         </div>
         <div class="clearfix" />
       </div>
@@ -22,15 +29,18 @@
 </template>
 <script>
 import { mapState } from 'vuex'
+import mEditName from './editName'
 export default {
   name: 'ViewWindow',
-  components: {},
+  components: { mEditName },
   props: {},
   data() {
-    return {}
+    return {
+      isNew: true
+    }
   },
   computed: {
-    ...mapState('channel', ['menuData'])
+    ...mapState('channel', ['menuData', 'loading'])
   },
   watch: {},
   beforeCreate() {
@@ -49,7 +59,14 @@ export default {
   },
   destroyed() {
   },
-  methods: {}
+  methods: {
+    _onUpdate() {
+      this.isNew = false
+      setTimeout(() => {
+        this.isNew = true
+      }, 1)
+    }
+  }
 }
 </script>
 
@@ -138,6 +155,13 @@ export default {
           &:nth-child(1),&:nth-child(2) {
             border-right: 1px solid #F3F3F3;
           }
+        }
+
+        .add {
+          padding: 16px 0 10px 0;
+          display: block;
+          font-size: 14px;
+          color: #888;
         }
       }
     }

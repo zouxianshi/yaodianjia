@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-model">
+  <div v-loading="loading" class="auth-model">
     <el-form ref="form" :model="form" label-width="160px">
       <el-form-item label="公众微信号 ">
         {{ authInfo.nickName || '-' }}
@@ -20,7 +20,7 @@
     <div>
       <el-tag v-for="(item,$index) in authInfo.funcInfo" :key="$index" style="margin-right: 8px" :type="color()">{{ item }}</el-tag>
     </div>
-    <el-dialog id="completeDialog"	append-to-body title="微信授权" :visible.sync="dialogComplete" width="85%">
+    <el-dialog id="completeDialog" append-to-body title="微信授权" :visible.sync="dialogComplete" width="85%">
       <div id="completeDiv">
         <iframe :src="toPath" height="500" width="100%" />
       </div>
@@ -42,7 +42,8 @@ export default {
       },
       dialogComplete: false,
       toPath: '',
-      authInfo: {}
+      authInfo: {},
+      loading: false
     }
   },
   computed: {
@@ -54,19 +55,20 @@ export default {
   beforeCreate() {
   },
   created() {
+    this.loading = true
     checkAuthInfo().then(res => {
       this.authInfo = res.data
+      this.loading = false
       this.$emit('on-auth', this.authInfo.isAuth)
+    }).catch(() => {
+      this.loading = false
     })
   },
   beforeMount() {
   },
   mounted() {
-    window.addEventListener('message', (eve) => {
-      setTimeout(() => {
-        this.dialogComplete = false
-        console.log('刷新公众号授权接口 回调状态')
-      }, 5000)
+    window.addEventListener('message', () => {
+      this.dialogComplete = false
     })
   },
   beforeUpdate() {
@@ -74,6 +76,7 @@ export default {
   updated() {
   },
   beforeDestroy() {
+    window.removeEventListener('message', () => {}, false)
   },
   destroyed() {
   },

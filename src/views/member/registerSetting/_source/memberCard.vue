@@ -6,15 +6,19 @@
     <div class="AemberCard-contain-model AemberCard-card-model">
       <el-row>
         <el-col :span="19">
-          <!-- :style="{backgroundImage:url(memberList.cardBgType==2?memberList.cardBgContent:''),background:(memberList.cardBgType==1?memberList.cardBgContent:'')}" -->
-          <div class="AemberCard-image-model" :style="{background:(memberList.cardBgType==1?memberList.cardBgContent:'')}">
+          <div class="AemberCard-image-model" :style="{backgroundImage: memberList.cardBgType==2?'url('+ member.cardBgContent +')':'',background:(memberList.cardBgType==1?memberList.cardBgContent:'')}">
             <el-row>
               <el-col :span="6">
-                <img src="@/assets/image/template_bg.png" alt="" class="AemberCard-image-url">
+                <img :src="memberList.merLogoUrl" alt="" class="AemberCard-image-url">
               </el-col>
-              <el-col :span="18" class="AemberCard-image-detail">
+              <el-col :span="14" class="AemberCard-image-detail">
                 <div>{{ memberList.cardTitle }}</div>
                 <div>{{ memberList.cardType }}</div>
+              </el-col>
+              <el-col :span="4">
+                <div class="AemberCard-qrcode-url" style="margin-top:10px">
+                  <img src="@/assets/icon/icon.png" alt="" class="AemberCard-qrcode-url">
+                </div>
               </el-col>
             </el-row>
             <el-row class="AemberCard-image-bottom">
@@ -54,9 +58,9 @@
       <el-row class="AemberCard-url-model">
         <el-col :span="5" class="AemberCard-contain-adress"> 会员卡领卡地址：</el-col>
         <el-col :span="16">
-          <div>https://middle.test.ydjia.cn/merchant/?t=1584597160000#/home</div>
+          <div>{{ geturl }}</div>
         </el-col>
-        <el-col :span="3" class="applers-button-model">
+        <el-col v-clipboard:error="onError" v-clipboard:copy="geturl" v-clipboard:success="onCopy" :span="3" class="applers-button-model">
           复制连接
         </el-col>
       </el-row>
@@ -94,7 +98,15 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'AemberCard',
   components: {},
-  props: {},
+  props: {
+    // 领取会员卡地址
+    geturl: {
+      type: String,
+      default: function() {
+        return ''
+      }
+    }
+  },
   data() {
     return {
       memberList: '',
@@ -130,6 +142,19 @@ export default {
     handleEdit() {
       this.$router.push({
         path: '/member/register-setting/editcard'
+      })
+    },
+    onCopy(e) {
+      this.$message({
+        message: '复制成功！',
+        type: 'success'
+      })
+    },
+    // 复制失败
+    onError(e) {
+      this.$message({
+        message: '复制失败！',
+        type: 'error'
       })
     }
   }
@@ -176,6 +201,7 @@ export default {
       line-height: 25px;
     }
     .AemberCard-image-model {
+      background-size: cover;
       width: 314px;
       height: 184px;
       padding: 26px;
@@ -183,6 +209,11 @@ export default {
       color: #ffffff;
       font-size: 16px;
       padding-left:20px;
+      .AemberCard-qrcode-url{
+        width: 45px;
+        height: 45px;
+        background: #ffffff;
+      }
       .AemberCard-image-url {
         width: 60px;
         height: 60px;
