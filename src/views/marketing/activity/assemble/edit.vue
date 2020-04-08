@@ -111,6 +111,8 @@
               style="width:80px"
               class="custom-inner-input"
               placeholder
+              :min="2"
+              :max="48"
               @input.native="handleInput"
             />
             <div class="operate">
@@ -276,6 +278,18 @@ import { getAllStore } from '@/api/common'
 export default {
   components: { store, goods, EditGoodsModals },
   data() {
+    const checkEffectiveTime = (rule, value, callback) => {
+      if (!value && value !== 0) {
+        return callback(new Error('请输入成团有效时间'))
+      }
+      if (value < 2) {
+        return callback(new Error('成团有效时间不得低于2小时'))
+      }
+      if (value > 48) {
+        return callback(new Error('成团有效时间不得高于48小时'))
+      }
+      callback()
+    }
     return {
       formData: {
         effectiveTime: 12,
@@ -300,7 +314,7 @@ export default {
           }
         ],
         effectiveTime: [
-          { required: true, message: '请输入成团有效时间', trigger: 'blur' }
+          { required: true, validator: checkEffectiveTime, trigger: 'blur' }
         ]
       },
       showStore: false,
