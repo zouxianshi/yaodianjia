@@ -12,102 +12,12 @@ const state = {
     {
       name: '菜单一',
       sub_button: [
-        {
-          'name': '二级菜单1',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单2',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单3',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单4',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单5',
-          'type': 'string',
-          'url': 'string'
-        }
       ],
       type: 'view',
       url: 'http://www.baidu.com',
       active: true
-    },
-    {
-      name: '菜单二',
-      'sub_button': [
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        }
-      ],
-      type: 'view',
-      url: 'http://www.baidu.com',
-      active: false
-    },
-    {
-      name: '菜单三',
-      'sub_button': [
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        },
-        {
-          'name': '二级菜单',
-          'type': 'string',
-          'url': 'string'
-        }
-      ],
-      type: 'view',
-      url: 'http://www.baidu.com',
-      active: false
     }
+
   ]
   // menuData:[]
 }

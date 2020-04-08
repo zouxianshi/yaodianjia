@@ -27,7 +27,8 @@
         </ul>
       </div>
       <div class="lmm-textarea">
-        <p>{{ cpdUrl }}</p>
+        <p v-if="isMp">跳转：商户小程序</p>
+        <p v-else>跳转：{{ cpdUrl }}</p>
       </div>
       <div class="clearfix" />
       <div class="operation">
@@ -67,7 +68,19 @@ export default {
   computed: {
     cpdUrl() {
       const { activeElIndex, item: { url, sub_button }} = this
-      return activeElIndex === -1 ? url : !_.isEmpty(sub_button[activeElIndex]) ? sub_button[activeElIndex].url : ''
+      return activeElIndex === -1
+        ? url
+        : !_.isEmpty(sub_button[activeElIndex])
+          ? sub_button[activeElIndex].url
+          : ''
+    },
+    isMp() {
+      const { activeElIndex, item: { type, sub_button }} = this
+      return activeElIndex === -1
+        ? type === 'miniprogram'
+        : !_.isEmpty(sub_button[activeElIndex])
+          ? sub_button[activeElIndex].type === 'miniprogram'
+          : ''
     }
   },
   watch: {},

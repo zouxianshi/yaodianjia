@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('channel', ['VUE_APP_MEMBER_CENTER'])
+    ...mapState('channel', ['menuData', 'VUE_APP_MEMBER_CENTER'])
   },
   watch: {
     type(v) {
@@ -50,11 +50,18 @@ export default {
         this.errorText = ''
         this.url = ''
       }
+    },
+    level2Index() {
+      this.handlerParams()
+    },
+    visible() {
+      this.handlerParams()
     }
   },
   beforeCreate() {
   },
   created() {
+
   },
   beforeMount() {
   },
@@ -70,6 +77,12 @@ export default {
   },
   methods: {
     ...mapMutations('channel', ['editMenu']),
+    handlerParams() {
+      const { level1Index, level2Index } = this
+      const { type, sub_button, url } = this.menuData[level1Index]
+      this.type = level2Index === -1 ? type : sub_button[level2Index].type
+      this.url = level2Index === -1 ? url : sub_button[level2Index].url
+    },
     async onSubmit() {
       const { type, url, level1Index, level2Index } = this
       this.errorText = ''

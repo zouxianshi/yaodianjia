@@ -20,7 +20,7 @@
     <div>
       <el-tag v-for="(item,$index) in authInfo.funcInfo" :key="$index" style="margin-right: 8px" :type="color()">{{ item }}</el-tag>
     </div>
-    <el-dialog id="completeDialog"	append-to-body title="微信授权" :visible.sync="dialogComplete" width="85%">
+    <el-dialog id="completeDialog" append-to-body title="微信授权" :visible.sync="dialogComplete" width="85%">
       <div id="completeDiv">
         <iframe :src="toPath" height="500" width="100%" />
       </div>
@@ -62,11 +62,8 @@ export default {
   beforeMount() {
   },
   mounted() {
-    window.addEventListener('message', (eve) => {
-      setTimeout(() => {
-        this.dialogComplete = false
-        console.log('刷新公众号授权接口 回调状态')
-      }, 5000)
+    window.addEventListener('message', () => {
+      this.dialogComplete = false
     })
   },
   beforeUpdate() {
@@ -74,6 +71,7 @@ export default {
   updated() {
   },
   beforeDestroy() {
+    window.removeEventListener('message', () => {}, false)
   },
   destroyed() {
   },

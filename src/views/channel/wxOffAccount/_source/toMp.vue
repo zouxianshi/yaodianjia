@@ -38,14 +38,18 @@ export default {
   computed: {
     ...mapState('channel', ['menuData'])
   },
-  watch: {},
+  watch: {
+    level2Index() {
+      this.handlerParams()
+    },
+    visible() {
+      this.handlerParams()
+    }
+  },
   beforeCreate() {
   },
   created() {
-    const { level1Index, level2Index } = this
-    const { type, sub_button, url } = this.menuData[level1Index]
-    this.type = level2Index === -1 ? type : sub_button[level2Index].type
-    this.url = level2Index === -1 ? url : sub_button[level2Index].url
+
   },
   beforeMount() {
   },
@@ -61,6 +65,18 @@ export default {
   },
   methods: {
     ...mapMutations('channel', ['editMenu']),
+    /**
+     * handler params
+     */
+    handlerParams() {
+      const { level1Index, level2Index } = this
+      const { type, sub_button, url } = this.menuData[level1Index]
+      this.type = level2Index === -1 ? type : sub_button[level2Index].type
+      this.url = level2Index === -1 ? url : sub_button[level2Index].url
+    },
+    /**
+     * save async params
+     */
     async onSubmit() {
       const { level1Index, level2Index, type, url } = this
       await this.editMenu({
