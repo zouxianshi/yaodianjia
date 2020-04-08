@@ -41,13 +41,21 @@ export function getColor(params) {
 }
 
 // 查询会员列表
-export function queryMembers(merCode) {
+export function queryMembers(data) {
   return request({
     url: `${config.merGoods}/1.0/member/queryMembers`,
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 
+// 查询会员基本信息
+export function menberBaseInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/member-details/queryBasicInfo/${params.merCode}/${params.userId}`,
+    method: 'get'
+  })
+}
 // 查询会员健康豆明细
 export function queryOnlineIntegra(data) {
   return request({
@@ -70,6 +78,24 @@ export function beanManagement(data) {
 export function queryHealthConsultants(data) {
   return request({
     url: `${config.merGoods}/1.0/member/queryHealthConsultants`,
+    method: 'post',
+    data
+  })
+}
+
+// 查询会员消费记录
+export function queryOrderInfo(data) {
+  return request({
+    url: `${config.merGoods}/1.0/order-info/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 选择顾问前查询门店店员
+export function queryEmployee(data) {
+  return request({
+    url: `${config.merGoods}/1.0/employee/_searchCondition`,
     method: 'post',
     data
   })

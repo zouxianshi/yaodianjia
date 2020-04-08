@@ -20,7 +20,7 @@
           </el-form-item>
           <el-form-item label="">
             <el-button size="mini" @click="getData()">查询</el-button>
-            <el-button size="mini">重置</el-button>
+            <el-button size="mini" @click="reSet()">重置</el-button>
             <el-button size="mini">批量导出</el-button>
             <span class="tips">提示：批量导出功能最多一次导出5000条数据</span>
           </el-form-item>
@@ -61,12 +61,39 @@ export default {
     // 获取列表数据
     getData() {
       var params = _.cloneDeep(this.$refs.conditionsA.conditions)
-      params.content = this.content
+      var choosedEmpCodesArr = this.$refs.conditionsA.choosedEmpCodesArr // 已选择顾问
+      var choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
       console.log(params)
+      params.content = this.content
+      // 如果顾问为选择顾问
+      if (params.empCodes === '1') {
+        var arr = []
+        choosedEmpCodesArr.map(items => {
+          arr.push(items.empCode)
+        })
+        params.empCodes = arr
+      }
+      // 如果门店参数为选择门店
+      if (params.organizations === '1') {
+        var arr2 = []
+        choosedOrganizationsArr.map(items => {
+          arr2.push(items.storeId)
+        })
+        params.organizations = arr2
+      }
+      this.$refs.listA.loading = true
       queryMembers(params).then(res => {
-        console.log(res)
-        this.$refs.listA.dataFromIndex(res.data.data)
+        if (res.data && res.data.data) {
+          this.$refs.listA.dataFromIndex(res.data.data)
+        } else {
+          this.$refs.listA.dataFromIndex([])
+        }
       })
+    },
+    // 重置查询条件
+    reSet() {
+      this.$refs.conditionsA.resetParams() // 重置条件
+      this.getData() // 查询数据
     }
   }
 }
@@ -93,7 +120,7 @@ export default {
       }
       // 分页
       .pagination{
-        text-align: right;padding: 10px 0;
+        text-align: right;padding: 10px 0;margin-top: 10px;
       }
     }
   }

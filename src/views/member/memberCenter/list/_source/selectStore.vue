@@ -9,13 +9,17 @@
             <el-button size="mini" type="text" style="width:28%">查询</el-button>
           </div>
           <div class="selects-content">
-            <mSelectRadio :items-arr="shopArr" />
+            <mSelectRadio :items-arr="storeData" />
           </div>
         </div>
         <div class="choose-right">
           <div class="tips">已选择名单</div>
           <div class="has-choosed">
-            <el-tag type="info" closable size="mini">门店111</el-tag>
+            <div v-for="(items, index) in storeData" :key="index" style="display:inline-block">
+              <el-tag v-if="items.selectFlag" type="info" closable size="mini" @close="items.selectFlag=false">
+                {{ items.storeName }}
+              </el-tag>
+            </div>
           </div>
         </div>
       </div>
@@ -32,10 +36,17 @@ export default {
   components: {
     mSelectRadio
   },
+  props: {
+    storeData: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
   data() {
     return {
-      dialogVisible: false,
-      shopArr: ['门店1', '门店2', '门店3']
+      dialogVisible: false
     }
   },
   methods: {
@@ -43,6 +54,7 @@ export default {
       done()
     },
     showDialogVisible() {
+      console.log(this.storeData)
       this.dialogVisible = true
     }
   }

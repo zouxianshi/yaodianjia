@@ -8,28 +8,28 @@
         <div class="content-body-items">
           <el-form label-position="right" label-width="100px" :model="basicInfo">
             <el-form-item label="微信头像：">
-              <img :src="basicInfo.imgUrl">
+              <img :src="basicInfo.headUrl">
             </el-form-item>
             <el-form-item label="会员名称：">
-              <span>{{ basicInfo.name }}</span>
+              <span>{{ basicInfo.memberName }}</span>
             </el-form-item>
             <el-form-item label="昵称：">
-              <span>{{ basicInfo.nickname }}</span>
+              <span>{{ basicInfo.nickName }}</span>
             </el-form-item>
             <el-form-item label="性别：">
-              <span>{{ basicInfo.sex }}</span>
+              <span>{{ basicInfo.memberSex }}</span>
             </el-form-item>
             <el-form-item label="生日：">
-              <span>{{ basicInfo.birth }}</span>
+              <span>{{ basicInfo.memberBirthday }}</span>
             </el-form-item>
             <el-form-item label="身份证号：">
-              <span>{{ basicInfo.crad }}</span>
+              <span>{{ basicInfo.memberIdcard }}</span>
             </el-form-item>
             <el-form-item label="手机号：">
-              <span>{{ basicInfo.phone }}</span>
+              <span>{{ basicInfo.memberPhone }}</span>
             </el-form-item>
             <el-form-item label="收货地址：">
-              <span>{{ basicInfo.address }}</span>
+              <span>{{ basicInfo.memberAddress }}</span>
             </el-form-item>
           </el-form>
         </div>
@@ -39,25 +39,25 @@
               <div style="height:60px" />
             </el-form-item>
             <el-form-item label="会员卡号：">
-              <span>{{ basicInfo.numberId }}</span>
+              <span>{{ basicInfo.memberCard }}</span>
             </el-form-item>
             <el-form-item label="健康豆：">
-              <span>{{ basicInfo.healthNum }}</span><span class="more-info" @click="tailsBeans">查看明细</span>
+              <span>{{ basicInfo.memberIntegral }}</span><span class="more-info" @click="tailsBeans">查看明细</span>
             </el-form-item>
             <el-form-item label="会员等级：">
-              <span>{{ basicInfo.leavel }}</span>
+              <span>{{ basicInfo.memberActive }}</span>
             </el-form-item>
             <el-form-item label="所属门店：">
-              <span>{{ basicInfo.shop }}</span>
+              <span>{{ basicInfo.organization }}</span>
             </el-form-item>
             <el-form-item label="注册来源：">
-              <span>{{ basicInfo.registFrom }}</span>
+              <span>{{ basicInfo.regChannel }}</span>
             </el-form-item>
             <el-form-item label="注册时间：">
-              <span>{{ basicInfo.registTime }}</span>
+              <span>{{ basicInfo.createTime }}</span>
             </el-form-item>
             <el-form-item label="默认发卡机构：">
-              <span>{{ basicInfo.cardIssuer }}</span>
+              <span>{{ basicInfo.organization }}</span>
             </el-form-item>
           </el-form>
         </div>
@@ -68,31 +68,19 @@
         <mItemTitle title="健康顾问" />
       </div>
       <div class="content-body">
-        <el-table
-          :data="tableData"
-          border
-          style="width: 100%"
-        >
-          <el-table-column
-            prop="name"
-            label="姓名"
-            width="180"
-          />
-          <el-table-column
-            prop="shop"
-            label="所属门店"
-          />
-          <el-table-column
-            prop="data"
-            label="添加时间"
-          />
+        <el-table :data="tableData" border style="width: 100%">
+          <el-table-column prop="emName" label="姓名" width="180" />
+          <el-table-column prop="storeName" label="所属门店" />
+          <el-table-column prop="createDate" label="添加时间" />
         </el-table>
       </div>
       <div class="pagination">
         <el-pagination
           background
           layout="prev, pager, next"
-          :total="1000"
+          :page-size="searchParams.pageSize"
+          :current-page="searchParams.currentPage"
+          :total="totalCount"
         />
       </div>
     </div>
@@ -102,48 +90,27 @@
 <script>
 import mItemTitle from './itemTitle.vue'
 import mPopBeansDetails from '../../../_source/popBeansDetails'
-import { queryOnlineIntegra } from '@/api/memberService'
+import { queryOnlineIntegra, queryHealthConsultants, menberBaseInfo } from '@/api/memberService'
 export default {
   name: 'BasicInfo',
   components: { mItemTitle, mPopBeansDetails },
   props: {},
   data() {
     return {
-      basicInfo: {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585564613111&di=10d06d27ad82314c1ed74a6c2270cc25&imgtype=0&src=http%3A%2F%2Fpic3.16pic.com%2F00%2F01%2F11%2F16pic_111395_b.jpg',
-        name: '张三',
-        nickname: '三三三',
-        sex: '女',
-        birth: '1990-01-01',
-        crad: '433130199501250411',
-        phone: '17827603484',
-        address: '-',
-        numberId: '1234567',
-        healthNum: '0',
-        leavel: '普通会员',
-        shop: 'xxxx',
-        registFrom: '员工推荐',
-        registTime: '2020-02-28',
-        cardIssuer: ''
+      searchParams: {
+        currentPage: 1,
+        pageSize: 10,
+        userId: 1
       },
-      tableData: [{
-        name: '王小虎',
-        shop: 'NO.1234 益丰大药房5店',
-        data: '2019.12.31'
-      }, {
-        name: '王小虎',
-        shop: 'NO.1234 益丰大药房5店',
-        data: '2019.12.31'
-      }, {
-        name: '王小虎',
-        shop: 'NO.1234 益丰大药房5店',
-        data: '2019.12.31'
-      }, {
-        name: '王小虎',
-        shop: 'NO.1234 益丰大药房5店',
-        data: '2019.12.31'
-      }]
+      totalCount: 0,
+      basicInfo: {
+      },
+      tableData: []
     }
+  },
+  created() {
+    this.queryBaseInfo()
+    this.queryHealthData()
   },
   methods: {
     tailsBeans() {
@@ -154,6 +121,30 @@ export default {
       }
       queryOnlineIntegra(params).then(res => {
         this.$refs.A.changeDia(res.data)
+      })
+    },
+    // 查询会员基本信息
+    queryBaseInfo() {
+      var params = {
+        userId: 1,
+        merCode: this.$store.state.user.merCode
+      }
+      menberBaseInfo(params).then(res => {
+        console.log(res)
+        this.basicInfo = res.data
+      })
+    },
+    // 查询会员的健康顾问
+    queryHealthData() {
+      var params = {
+        currentPage: this.searchParams.currentPage,
+        pageSize: this.searchParams.pageSize,
+        userId: this.searchParams.userId
+      }
+      queryHealthConsultants(params).then(res => {
+        console.log(res)
+        this.tableData = res.data.data
+        this.totalCount = res.data.totalCount
       })
     }
   }

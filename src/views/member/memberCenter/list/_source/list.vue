@@ -1,6 +1,6 @@
 <template>
   <div class="list-model">
-    <el-table :data="tabelData" border style="width: 100%">
+    <el-table v-loading="loading" :data="tabelData" border style="width: 100%">
       <el-table-column prop="headUrl" label="微信头像" width="80" />
       <el-table-column prop="nickName" label="昵称" />
       <el-table-column prop="memberName" label="会员姓名" />
@@ -49,13 +49,20 @@ export default {
   props: {},
   data() {
     return {
-      tabelData: []
+      tabelDatas: [],
+      loading: false
+    }
+  },
+  computed: {
+    tabelData() {
+      return this.tabelDatas
     }
   },
   methods: {
     // 数据改变
     dataFromIndex(data) {
-      this.tabelData = data
+      this.tabelDatas = [...data]
+      this.loading = false
     },
     tail() {
       this.$router.push('/member/member-center/details')

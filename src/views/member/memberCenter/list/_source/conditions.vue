@@ -2,17 +2,31 @@
   <div class="conditions-model">
     <el-form ref="form" :model="conditions" label-width="80px">
       <el-form-item label="选择门店">
-        <el-radio-group v-model="conditions.storeId">
-          <el-radio label="">不限</el-radio>
-          <el-radio label="1">选择门店<i class="el-icon-arrow-down" @click="chooseCon('A')" /></el-radio>
-          <el-tag v-for="(items, index) in storeIdArr" :key="index" type="info" class="tags" closable size="small" @close="handleClose(index)">{{ items }}</el-tag>
+        <el-radio-group v-model="conditions.organizations">
+          <el-radio :label="null">不限</el-radio>
+          <el-radio label="1">
+            <span @click="chooseCon('A')">选择门店<i class="el-icon-arrow-down" /></span>
+          </el-radio>
+          <span v-for="(items, index) in empCodesArr" :key="index">
+            <el-tag v-if="items.selectFlag" type="info" class="tags" closable size="small" @close="items.selectFlag=false">
+              {{ items.storeName }}
+            </el-tag>
+          </span>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="健康顾问">
         <el-radio-group v-model="conditions.empCodes">
-          <el-radio label="">不限</el-radio>
-          <el-radio label="1">选择顾问<i class="el-icon-arrow-down" @click="chooseCon('B')" /></el-radio>
-          <el-tag v-for="(items, index) in storeIdArr" :key="index" type="info" class="tags" closable size="small" @close="handleClose(index)">{{ items }}</el-tag>
+          <el-radio :label="null">不限</el-radio>
+          <el-radio label="1">
+            <span @click="chooseCon('B')">选择顾问<i class="el-icon-arrow-down" /></span>
+          </el-radio>
+          <span v-for="(items, index) in organizationsArr" :key="index">
+            <span v-for="(items2, index2) in items.employees" :key="index2">
+              <el-tag v-if="items2.selectFlag" type="info" class="tags" closable size="small" @close="items2.selectFlag=false">
+                {{ items2.empName }}
+              </el-tag>
+            </span>
+          </span>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="会员分类">
@@ -43,13 +57,14 @@
         </el-radio-group>
       </el-form-item>
     </el-form>
-    <m-select-store ref="A" />
-    <m-select-consultant ref="B" />
+    <m-select-store ref="A" :store-data="organizationsArr" />
+    <m-select-consultant ref="B" :con-data="empCodesArr" />
   </div>
 </template>
 <script>
 import mSelectStore from './selectStore' // 选择门店
 import mSelectConsultant from './selectConsultant' // 选择顾问
+import { queryEmployee } from '@/api/memberService' // 选择门店和顾问接口
 export default {
   name: 'Conditions',
   components: {
@@ -57,26 +72,77 @@ export default {
   },
   data() {
     return {
-      storeIdArr: ['门店1', '门店2', '门店3', '门店4'],
+      // 提交门店和顾问参数
+      empCodesArr: [],
+      organizationsArr: [],
       conditions: {
-        storeId: '',
-        empCodes: '', // 健康顾问
+        regChannel: '', // 注册来源
+        empCodes: null, // 健康顾问
         memberActive: '', // 会员分类
         gender: '', // 性别
-        regChannel: '' // 注册来源
+        organizations: null // 门店
       }
     }
+  },
+  computed: {
+    // 已选择的门店和顾问
+    choosedEmpCodesArr() {
+      var arr = []
+      this.organizationsArr.map(items => {
+        items.employees.map(items2 => {
+          if (items2.selectFlag) {
+            arr.push(items2)
+          }
+        })
+      })
+      return arr
+    },
+    choosedOrganizationsArr() {
+      var arr = []
+      this.organizationsArr.map(items => {
+        if (items.selectFlag) {
+          arr.push(items)
+        }
+      })
+      return arr
+    }
+  },
+  created() {
+    this.getEmployeeData()
   },
   methods: {
     getData(data) {
       return this.conditions
     },
-    handleClose(tag) {
-      this.storeIdArr.splice(tag, 1)
-    },
-    chooseCon(type) {
+    chooseCon(type) { // 选择门店或顾问
       this.$refs[type].showDialogVisible()
-      console.log(this.$refs[type])
+    },
+    // 获取门店和顾问数据
+    getEmployeeData() {
+      var params = {
+        'pageFlag': false
+      }
+      queryEmployee(params).then(res => {
+        var data = res.data
+        data.map(items => {
+          items.foldFlag = true
+          items.selectFlag = false
+          items.employees.map(items2 => {
+            items2.selectFlag = false
+          })
+        })
+        this.empCodesArr = res.data
+        this.organizationsArr = res.data
+      })
+    },
+    resetParams() {
+      this.conditions = {
+        regChannel: '', // 注册来源
+        empCodes: null, // 健康顾问
+        memberActive: '', // 会员分类
+        gender: '', // 性别
+        organizations: null // 门店
+      }
     }
   }
 }
@@ -86,7 +152,7 @@ export default {
 .el-form-item{
   margin-bottom: 0;
   .tags{
-    margin-right: 10px;
+    margin-right: 5px;
   }
 }
 </style>

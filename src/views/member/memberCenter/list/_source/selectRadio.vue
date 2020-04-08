@@ -1,9 +1,9 @@
 <template>
   <div class="select-radio-model">
-    <div v-for="(items, index) in itemsArr" v-show="showing" :key="index" class="items">
-      <span class="items-name">{{ items }}</span>
-      <i v-if="choosedItems['key'+index]" class="el-icon-circle-check" @click="unchoosed(index)" />
-      <span v-else class="before-choose" @click="choosed(index)" />
+    <div v-for="(items, index) in itemsArr" :key="index" class="items">
+      <span class="items-name">{{ items.empName?items.empName:items.storeName }}</span>
+      <i v-if="items.selectFlag" class="el-icon-circle-check" @click="choosed(items)" />
+      <span v-else class="before-choose" @click="unchoosed(items)" />
     </div>
   </div>
 </template>
@@ -19,22 +19,15 @@ export default {
   },
   data() {
     return {
-      showing: true,
-      choosedItems: {
-        key0: true
-      }
     }
   },
   methods: {
-    choosed(index) {
-      this.showing = false
-      this.choosedItems['key' + index] = true
-      this.showing = true
+    choosed(data) {
+      data.selectFlag = false
     },
-    unchoosed(index) {
-      this.showing = false
-      this.choosedItems['key' + index] = undefined
-      this.showing = true
+    unchoosed(data) {
+      console.log(data)
+      data.selectFlag = true
     }
   }
 }

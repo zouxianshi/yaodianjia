@@ -11,7 +11,7 @@
           style="width: 100%"
         >
           <el-table-column
-            prop="conDate"
+            prop="payTime"
             label="消费时间"
           />
           <el-table-column
@@ -23,19 +23,19 @@
             label="单价"
           />
           <el-table-column
-            prop="num"
+            prop="totalOrderAmount"
             label="数量"
           />
           <el-table-column
-            prop="conType"
+            prop="payMode"
             label="消费类型"
           />
           <el-table-column
-            prop="conChannel"
+            prop="storeName"
             label="消费渠道/门店"
           />
           <el-table-column
-            prop="total"
+            prop="actuallyPaid"
             label="消费金额"
           />
         </el-table>
@@ -52,40 +52,30 @@
   </div>
 </template>
 <script>
+import { queryOrderInfo } from '@/api/memberService'
 export default {
   name: 'ExpensesRecord',
-  components: {},
-  props: {},
   data() {
     return {
-      tableData: [{
-        conDate: '2016-05-02',
-        conList: `鸿洋神牌维生素C咀嚼片(菠萝味)/艾褓佳 \n 复方金银花颗粒/德菲尔10g*10袋`,
-        price: `￥20.00 \n ￥19.00`,
-        num: `1 \n 1`,
-        conType: '线下消费',
-        conChannel: '五矿点',
-        total: '￥39.00'
-      }, {
-        conDate: '2016-05-02',
-        conList: `鸿洋神牌维生素C咀嚼片(菠萝味)/艾褓佳 \n 复方金银花颗粒/德菲尔10g*10袋`,
-        price: `￥20.00 \n ￥19.00`,
-        num: `1 \n 1`,
-        conType: '线下消费',
-        conChannel: '五矿点',
-        total: '￥39.00'
-      }, {
-        conDate: '2016-05-02',
-        conList: `鸿洋神牌维生素C咀嚼片(菠萝味)/艾褓佳 \n 复方金银花颗粒/德菲尔10g*10袋`,
-        price: `￥20.00 \n ￥19.00`,
-        num: `1 \n 1`,
-        conType: '线下消费',
-        conChannel: '五矿点',
-        total: '￥39.00'
-      }]
+      tableData: []
     }
   },
-  methods: {}
+  created() {
+    this.queryOrder()
+  },
+  methods: {
+    queryOrder() {
+      var params = {
+        'currentPage': 1,
+        'memberId': '123123',
+        'pageSize': 10
+      }
+      queryOrderInfo(params).then(res => {
+        console.log(res)
+        this.tableData = res.data.data
+      })
+    }
+  }
 }
 </script>
 
