@@ -1,5 +1,5 @@
 <template>
-  <div style="color: red">{{ timer ? formatTime(timer): '' }}</div>
+  <span style="color: red">{{ timer ? formatTime(timer): '' }}</span>
 </template>
 
 <script>
