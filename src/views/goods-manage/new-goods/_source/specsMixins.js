@@ -50,12 +50,9 @@ const mixin = {
         this.$set(this.editSpecsData, index, row)
         const findIndex = findArray(this.chooseTableSpec, { id: row.id })
         if (findIndex) {
-          if (this.chooseTableSpec[findIndex].isCheck) {
-            this.chooseTableSpec[findIndex] = row
-          }
-          if (!row.disabled) {
+          if (row.isCheck || row.disabled) {
+            console.log('选择选择')
             this.$refs.multipleTable.toggleRowSelection(row)
-            console.log('选择哈哈')
           }
         }
       } else {
