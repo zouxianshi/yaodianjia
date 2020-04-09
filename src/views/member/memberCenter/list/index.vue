@@ -54,6 +54,9 @@ export default {
       content: ''
     }
   },
+  mounted() {
+    this.getData()
+  },
   methods: {
     toggelCoditions() { // 切换选项隐藏/显示
       this.conditions = !this.conditions

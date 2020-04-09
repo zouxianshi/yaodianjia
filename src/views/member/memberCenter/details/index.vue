@@ -1,6 +1,6 @@
 <template>
   <div class="mc-details-model">
-    <el-tabs class="mc-details-content" value="first">
+    <el-tabs class="mc-details-content" value="first" type="card">
       <el-tab-pane label="基本信息" name="first">
         <div class="mc-details-content-itmes">
           <m-base-info />
@@ -38,15 +38,16 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .mc-details-model{
-    background-color: #F7F7F7;
     .el-tabs__header{
-      background-color: #fff;padding-top:10px;
+      background-color: #fff;
+      padding-top:20px;
       .el-tabs__nav-scroll{
         padding: 0 32px;
       }
     }
     .mc-details-content{
       .mc-details-content-itmes{
+        margin-top: -20px;
         height: calc(100vh - 220px);overflow: auto;padding-bottom: 10px;
         &::-webkit-scrollbar{
           width: 2px;

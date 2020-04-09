@@ -22,7 +22,7 @@
       <el-table-column prop="age" label="注册来源" />
       <el-table-column label="操作" width="120" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="tail(scope.row)">详情</el-button>
+          <el-button type="text" size="small" @click="tail(scope.row.userId)">详情</el-button>
           <span>|</span>
           <el-popover placement="bottom" trigger="click">
             <div class="more-items"><el-button type="text" size="mini" @click="tailfDetail()">健康豆明细</el-button></div>
@@ -64,8 +64,8 @@ export default {
       this.tabelDatas = [...data]
       this.loading = false
     },
-    tail() {
-      this.$router.push('/member/member-center/details')
+    tail(userId) {
+      this.$router.push(`/member/member-center/details?userId=${userId}`)
     },
     // 查看健康豆详情
     tailfDetail() {
