@@ -171,10 +171,10 @@ export default {
       // 1.拼团库存不小于当前设置的成团人数
       // 1.所有拼团商品成团人数最低限定为2，最高200
       if (!value * 1) {
-        return callback(new Error(`拼团库存不能为空`))
+        return callback(new Error(`成团人数不能为空`))
       }
       if (value * 1 < 2) {
-        return callback(new Error(`拼团库存不能小于2`))
+        return callback(new Error(`成团人数不能小于2`))
       }
       if (value * 1 > 200) {
         return callback(new Error('拼团商品成团人数最高200人'))
@@ -189,10 +189,10 @@ export default {
     }
     var produccheckNum = (rule, value, callback) => {
       if (!value * 1) {
-        return callback(new Error('拼团人数不能为空'))
+        return callback(new Error('拼团库存不能为空'))
       }
       if (value * 1 < 2) {
-        return callback(new Error('拼团人数不能小于2'))
+        return callback(new Error('拼团库存不能小于2'))
       }
       if (value * 1 < this.settingForm.activityNumber * 1) {
         return callback(new Error('拼团库存不小于当前设置的成团人数'))
