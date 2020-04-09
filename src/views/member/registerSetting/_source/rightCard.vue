@@ -2,7 +2,7 @@
   <div class="right-index-model">
     <div class="right-content-model">
       <div class="right-right-model">会员卡信息</div>
-      <el-form ref="form" :model="member" label-width="100px">
+      <el-form ref="member" :model="member" :rules="rules" label-width="100px">
         <el-form-item label="商户名称">
           <span v-text="member.merBrandName">}</span>
         </el-form-item>
@@ -36,23 +36,25 @@
             <li v-for="(item,index) in colorlist" :key="index" :style="{background:item,border:member.cardBgContent==item?'2px solid #409eff':''}" @click="checkColor(item)">{{ item }}</li>
           </ul>
         </el-form-item>
-        <el-form-item label="会员卡标题">
+        <el-form-item label="会员卡标题" prop="cardTitle">
           <div class="right-input-line">
             <el-input v-model="member.cardTitle" class="right-input-model" />
             <div class="right-input-rule">不能为空且长度不能超过9个汉字或18个英文字符</div>
           </div>
         </el-form-item>
-        <el-form-item label="默认发卡机构">
-          <el-input v-model="member.organization" class="right-input-model" placeholder="商户旗舰店" />
+        <el-form-item label="默认发卡机构" prop="organization">
+          <el-select v-model="member.organization" placeholder="默认发卡机构" class="right-input-model">
+            <el-option v-for="(item,index) in storelist" :key="index" :label="item.stName" :value="item.stName" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="特权说明">
+        <el-form-item label="特权说明" prop="prerogative">
           <el-input v-model="member.prerogative" type="textarea" class="right-textarea-model" placeholder="会员卡可享受会员特权" />
         </el-form-item>
-        <el-form-item label="使用说明">
+        <el-form-item label="使用说明" prop="useNotice">
           <el-input v-model="member.useNotice" type="textarea" class="right-textarea-model" placeholder="每人限领1张" />
         </el-form-item>
-        <el-form-item label="商户电话">
-          <el-input v-model="member.serviceTel" class="right-input-model" placeholder="请输入" />
+        <el-form-item label="商户电话" prop="serviceTel">
+          <el-input v-model="member.serviceTel" class="right-input-model" placeholder="请输入商户电话" />
         </el-form-item>
       </el-form>
     </div>
@@ -62,7 +64,7 @@
       <div v-for="(item,index) in member.customCells" :key="index">
         <div class="right-muen-model">
           <div style="color:#fff;font-size:14px">菜单{{ index+1 }}</div>
-          <i v-if="member.customCells.length>1" class="el-icon-delete" @click="deletmenu(index)" />
+          <i class="el-icon-delete" @click="deletmenu(index)" />
         </div>
         <el-form :ref="member.customCells[index]" :model="member.customCells[index]" label-width="80px">
           <el-form-item label="引导菜单">
@@ -118,7 +120,7 @@
           </el-form-item>
         </el-form>
         <div style="margin-left:100px">
-          <el-button type="primary" size="small" @click="submit">提交</el-button>
+          <el-button type="primary" size="small" @click="submit('member')">提交</el-button>
         </div>
       </div>
     </div>
@@ -152,6 +154,13 @@ export default {
       default: function() {
         return ''
       }
+    },
+    // 商店列表
+    storelist: {
+      type: Array,
+      default: function() {
+        return []
+      }
     }
   },
   data() {
@@ -164,6 +173,29 @@ export default {
       },
       form: {
         imgUrl: ''
+      },
+      rules: {
+        cardTitle:
+        [
+          { required: true, message: '请输会员卡标题', trigger: 'blur' },
+          { min: 1, max: 18, message: '不能为空且长度不能超过9个汉字或18个英文字符', trigger: 'blur' }
+        ],
+        organization:
+        [
+          { required: true, message: '请选择默认发卡机构', trigger: 'change' }
+        ],
+        prerogative:
+        [
+          { required: true, message: '请输特权说明', trigger: 'blur' }
+        ],
+        useNotice:
+        [
+          { required: true, message: '请输使用说明', trigger: 'blur' }
+        ],
+        serviceTel:
+        [
+          { required: true, message: '请输商家电话', trigger: 'blur' }
+        ]
       },
       // 修改第几个菜单
       modifyAdressnum: 0
@@ -227,34 +259,6 @@ export default {
         })
       }
     },
-    // 验证标题格式
-    titleReg(title) {
-      var reg = /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/
-      if (!reg.test(title)) {
-        this.$message({
-          message: '标题中不能包含特殊符号',
-          type: 'error'
-        })
-      }
-      if (reg.test(title)) {
-        let len = 0
-        for (var i in title) {
-          if (title.charCodeAt(i) > 127 || title.charCodeAt(i) === 94) {
-            len += 2
-          } else {
-            len++
-          }
-        }
-        if (len < 18) {
-          return true
-        } else {
-          this.$message({
-            message: '标题长度不能超过9个汉字或18个英文字符',
-            type: 'error'
-          })
-        }
-      }
-    },
     // 验证商家电话
     iphoneReg(num) {
       const numReg = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/
@@ -267,25 +271,64 @@ export default {
         return true
       }
     },
-    submit() {
-      const regtitle = this.titleReg(this.member.cardTitle)
-      const regphone = this.iphoneReg(this.member.serviceTel)
-      if (this.member.cardBgType === 1) {
-        for (const i in this.colorlist) {
-          if (this.colorlist[i] === this.member.cardBgContent) {
-            this.member.cardBgContent = i
-          }
-        }
-      }
-      if (regtitle && regphone) {
-        editMemberInfo(this.member).then(res => {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.$emit('getlist')
+    // 验证背景内容必填
+    cardBgReg(val) {
+      if (val === null) {
+        this.$message({
+          message: '请选择背景图片或者颜色',
+          type: 'error'
         })
+      } else {
+        return true
       }
+    },
+    // 微信支付必填
+    isplayReg(val) {
+      if (val === null) {
+        this.$message({
+          message: '请选择是否启用微信支付注册',
+          type: 'error'
+        })
+      } else {
+        return true
+      }
+    },
+    menulistReg(val) {
+      return true
+    },
+    submit(formName) {
+      this.member.color = 'Color040'
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          const regphone = this.iphoneReg(this.member.serviceTel)
+          const regcardBgContent = this.cardBgReg(this.member.cardBgContent)
+          const regcardType = this.cardBgReg(this.member.cardBgType)
+          const ispay = this.isplayReg(this.member.isPay)
+          const menuList = this.menulistReg(this.member.customCells)
+          if (this.member.cardBgType === 1) {
+            for (const i in this.colorlist) {
+              if (this.colorlist[i] === this.member.cardBgContent) {
+                this.member.cardBgContent = i
+              }
+            }
+          }
+          if (regphone && regcardBgContent && regcardType && ispay && menuList) {
+            editMemberInfo(this.member).then(res => {
+              this.$message({
+                message: '操作成功',
+                type: 'success'
+              })
+              this.$emit('getlist')
+            })
+          }
+        } else {
+          this.$message({
+            message: '填写错误',
+            type: 'warning'
+          })
+          return false
+        }
+      })
     },
     // 确认对话框
     dialogSure() {
@@ -324,13 +367,13 @@ export default {
     },
     // 新增菜单
     addmeun() {
-      if (this.member.customCells == null || this.member.customCells.length < 3) {
+      if (this.member.customCells === null || this.member.customCells.length < 3) {
         const dataele = {
           name: '',
           tips: '',
           url: this.geturl
         }
-        if (this.member.customCells == null) {
+        if (this.member.customCells === null) {
           this.member.customCells = []
         }
         this.member.customCells.push(dataele)
@@ -371,6 +414,9 @@ export default {
     padding: 10px;
     background: #ffffff;
     margin-bottom: 10px;
+    .el-icon-delete:hover{
+      cursor:pointer;
+    }
     .right-muen-model{
       display:flex;
       justify-content:space-between;

@@ -19,7 +19,7 @@
           </el-col>
           <el-col :span="14" class="AemberCard-image-detail">
             <div>{{ member.cardTitle }}</div>
-            <div>{{ member.cardType }}</div>
+            <div>会员卡</div>
           </el-col>
           <el-col :span="4">
             <div class="AemberCard-qrcode-url" style="margin-top:10px">
