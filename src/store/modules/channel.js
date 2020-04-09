@@ -5,8 +5,18 @@
  */
 
 import _ from 'lodash'
+import store from '@/store'
 
 import { setMenuData } from '@/api/channelService'
+
+const handlerActive = (data, index) => {
+  const d = data
+  _.map(d, (v, i) => {
+    v.active = false
+    if (i === index) v.active = true
+  })
+  return d
+}
 
 const state = {
   VUE_APP_MEMBER_CENTER: `https://www.google.com`,
@@ -42,6 +52,7 @@ const mutations = {
   },
   addMenuLevel2(state, payload) {
     const { item, level1Index } = payload
+    state.menuData = handlerActive(state.menuData, level1Index)
     state.menuData[level1Index].sub_button.push(item)
   },
   editMenu(state, payload) {
@@ -96,7 +107,7 @@ const actions = {
     })
 
     return new Promise((resolve, reject) => {
-      setMenuData({ button }).then(() => {
+      setMenuData({ button }, store.state.user.merCode).then(() => {
         setTimeout(() => {
           commit('setLoading', false)
           resolve()

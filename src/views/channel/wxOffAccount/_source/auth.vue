@@ -56,7 +56,7 @@ export default {
   },
   created() {
     this.loading = true
-    checkAuthInfo().then(res => {
+    checkAuthInfo(this.$store.state.user.merCode).then(res => {
       this.authInfo = res.data
       this.loading = false
       this.$emit('on-auth', this.authInfo.isAuth)
@@ -86,7 +86,7 @@ export default {
     },
     onAuth() {
       // this.dialogComplete = true
-      jumpAuthUrl().then(res => {
+      jumpAuthUrl(this.$store.state.user.merCode).then(res => {
         this.toPath = res.data
         setTimeout(() => {
           this.dialogComplete = true
