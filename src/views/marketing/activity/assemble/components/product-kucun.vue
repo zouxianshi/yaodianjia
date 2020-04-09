@@ -33,7 +33,7 @@
                   <div style="display:flex;justify-content: space-between;">
                     <span>
                       拼团价：
-                      <span class="price">￥{{ scope.row.price }}</span>
+                      <span class="price">￥{{ scope.row.activityPrice }}</span>
                     </span>
                     <span style="color:#909399">活动库存：{{ scope.row.productActivityCount }}</span>
                   </div>
