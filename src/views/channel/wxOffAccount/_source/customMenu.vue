@@ -51,7 +51,7 @@ export default {
     ...mapMutations('channel', ['setMenuData', 'setLoading']),
     getData() {
       this.setLoading(true)
-      getMenuData().then(async res => {
+      getMenuData(this.$store.state.user.merCode).then(async res => {
         const { button } = res.data || { button: [] }
         const { VUE_APP_MEMBER_CENTER } = this
         if (button.length) {

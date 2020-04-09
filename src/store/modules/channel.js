@@ -5,6 +5,7 @@
  */
 
 import _ from 'lodash'
+import store from '@/store'
 
 import { setMenuData } from '@/api/channelService'
 
@@ -106,7 +107,7 @@ const actions = {
     })
 
     return new Promise((resolve, reject) => {
-      setMenuData({ button }).then(() => {
+      setMenuData({ button }, store.state.user.merCode).then(() => {
         setTimeout(() => {
           commit('setLoading', false)
           resolve()

@@ -129,7 +129,8 @@ export default {
           this.loading = false
           this.$emit('on-update')
           this.nName = ''
-        }).catch(() => {
+        }).catch((e) => {
+          console.log(e)
           this.loading = false
           this.$emit('on-update')
           this.nName = ''
