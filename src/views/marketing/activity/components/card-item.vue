@@ -3,7 +3,7 @@
     <el-image
       class="image"
       fit="fill"
-      src="https://gw.alipayobjects.com/zos/rmsportal/iZBVOIhGJiAnhplqjvZW.png"
+      :src="item.img"
     />
     <div class="activity-bottom">
       <div class="activity-header">

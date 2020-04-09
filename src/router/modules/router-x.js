@@ -116,6 +116,16 @@ const router = [
           noCache: true,
           activeMenu: '/marketing/activity'
         }
+      },
+      {
+        path: 'activity/reduce-gift',
+        component: () => import('@/views/marketing/activity/reduce-gift'),
+        name: 'reduceGift',
+        meta: {
+          title: '创建满减满赠',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
       }
     ]
   },
