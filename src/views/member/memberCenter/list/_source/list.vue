@@ -28,7 +28,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="会员分类">
+      <el-table-column label="会员分类" width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.memberActive === 1">活跃会员</span>
           <span v-if="scope.row.memberActive === 2">新增会员</span>

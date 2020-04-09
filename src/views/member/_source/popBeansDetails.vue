@@ -62,8 +62,8 @@ export default {
       beanTotalNum: 1,
       searchParams: {
         'userId': '',
-        'currentPage': 0,
-        'pageSize': 10000
+        'currentPage': 1,
+        'pageSize': 10
       }
     }
   },
@@ -120,6 +120,7 @@ export default {
       var params = _.cloneDeep(this.searchParams)
       params.data = value
       queryOnlineIntegra(params).then(res => {
+        console.log(res)
         this.tableData = res.data.data
       })
     }
