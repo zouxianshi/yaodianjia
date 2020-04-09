@@ -117,7 +117,7 @@
             <!-- <div class="operate">
               <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
               <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
-            </div> -->
+            </div>-->
             <span style="color: rgb(193, 193, 193); margin-left: 4px">小时</span>
           </div>
         </el-form-item>
@@ -260,6 +260,7 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import config from '@/utils/config'
 import store from './_source/store'
 import goods from './_source/goods'
@@ -507,10 +508,11 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.goodsList = []
+          _.pullAllBy(this.goodsList, this.multipleSelection, 'id')
+          this.$set(this.goodsList)
         })
-        .catch(() => {
-          console.log('取消删除')
+        .catch((err) => {
+          console.log('取消删除', err)
         })
     },
     onSelectedGoods(row) {
@@ -527,7 +529,9 @@ export default {
         if (valid) {
           const data = JSON.parse(JSON.stringify(this.formData))
           console.log('this.formData', this.formData, this.goodsList)
-          if (new Date(this.formData.startTime).getTime() < new Date().getTime()) {
+          if (
+            new Date(this.formData.startTime).getTime() < new Date().getTime()
+          ) {
             this.$message.warning('活动开始时间不能小于当前时间')
             return
           }
