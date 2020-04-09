@@ -7,7 +7,7 @@
     </div>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" :loading="loading" @click="onSave">确定</el-button>
+      <el-button type="primary" size="mini" :loading="loading" @click="onSave">保存</el-button>
     </div>
     <el-button slot="reference" size="mini" plain :disabled="isDisabled">跳转小程序</el-button>
   </el-popover>

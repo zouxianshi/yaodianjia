@@ -75,9 +75,11 @@ const actions = {
     // handler available back-end data structures
     const { VUE_APP_MEMBER_CENTER, menuData } = state
     const button = _.cloneDeep(menuData)
+
+    // handler request data
     _.map(button, v => {
       delete v.active
-      if (v.type === 'memberCard') {
+      if (v.type === 'memberCard' || !v.sub_button.length) {
         v.url = VUE_APP_MEMBER_CENTER
         v.type = 'view'
       }

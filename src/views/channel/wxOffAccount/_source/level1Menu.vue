@@ -80,7 +80,9 @@ export default {
           ? VUE_APP_MEMBER_CENTER
           : url
         : !_.isEmpty(sub_button[activeElIndex])
-          ? sub_button[activeElIndex].url
+          ? sub_button[activeElIndex].type === 'memberCard'
+            ? VUE_APP_MEMBER_CENTER
+            : sub_button[activeElIndex].url
           : ''
     },
     isMp() {
