@@ -46,7 +46,7 @@
       </el-row>
     </div>
     <div class="nobindingCard-contain-model">
-      <ul style="padding-left:50px">
+      <ul>
         <li>绑定公众号后解锁功能:</li>
         <li>1、开通微信会员卡功能（会员在微信卡包内，查看电子会员卡）；</li>
         <li>2、开通支付即会员功能（顾客微信支付后，可直接注册领取微信会员卡）；</li>
@@ -59,20 +59,23 @@
       <el-row>
         <el-col :span="20">
           <div class="nobindingCard-Explain-model">
-            <div>
-              <ul>
+            <div style="display:inline-block">
+              <ul style="margin-right:20px">
                 <li>
-                  1.成功绑定公众号后，您将解锁以下功能:
+                  <span class="c-index">1</span>
+                  成功绑定公众号后，您将解锁以下功能:
                 </li>
                 <li>
-                  2.微信会员卡功能——会员在个人微信卡包内查看电子会员卡.
+                  <span class="c-index">2</span>
+                  微信会员卡功能——会员在个人微信卡包内查看电子会员卡.
                 </li>
                 <li>
-                  3.支付即会员功能——顾客微信支付后，直接注册领取微信会员卡.
+                  <span class="c-index">3</span>
+                  支付即会员功能——顾客微信支付后，直接注册领取微信会员卡.
                 </li>
               </ul>
             </div>
-            <div class="nobindingCard-button-model" style="margin:40px 0px 0px 20px" @click="gobang">马上去绑定</div>
+            <el-button type="primary" plain size="mini" @click="gobang">马上去绑定</el-button>
           </div>
         </el-col>
       </el-row>
@@ -219,7 +222,6 @@ export default {
       padding: 10px;
       font-size: 14px;
       background: #F1F1F1;
-      display: flex;
       .c-index {
         display: inline-block;
         border-radius: 100%;
@@ -237,10 +239,10 @@ export default {
       }
     }
   }
-  .nobindingCard-card-model{
-      margin-right: 56px;
-      display: flex;
-      justify-content: center;
-    }
+  // .nobindingCard-card-model{
+  //     margin-right: 56px;
+  //     display: flex;
+  //     justify-content: center;
+  //   }
 }
 </style>

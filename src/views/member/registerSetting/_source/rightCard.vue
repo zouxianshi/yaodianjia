@@ -36,22 +36,22 @@
             <li v-for="(item,index) in colorlist" :key="index" :style="{background:item,border:member.cardBgContent==item?'2px solid #409eff':''}" @click="checkColor(item)">{{ item }}</li>
           </ul>
         </el-form-item>
-        <el-form-item label="会员卡标题" label-width="100px">
+        <el-form-item label="会员卡标题">
           <div class="right-input-line">
             <el-input v-model="member.cardTitle" class="right-input-model" />
             <div class="right-input-rule">不能为空且长度不能超过9个汉字或18个英文字符</div>
           </div>
         </el-form-item>
-        <el-form-item label="默认发卡机构" label-width="100px">
+        <el-form-item label="默认发卡机构">
           <el-input v-model="member.organization" class="right-input-model" placeholder="商户旗舰店" />
         </el-form-item>
-        <el-form-item label="特权说明" label-width="100px">
-          <el-input v-model="member.prerogative" type="textarea" placeholder="会员卡可享受会员特权" />
+        <el-form-item label="特权说明">
+          <el-input v-model="member.prerogative" type="textarea" class="right-textarea-model" placeholder="会员卡可享受会员特权" />
         </el-form-item>
-        <el-form-item label="使用说明" label-width="100px">
-          <el-input v-model="member.useNotice" type="textarea" placeholder="每人限领1张" />
+        <el-form-item label="使用说明">
+          <el-input v-model="member.useNotice" type="textarea" class="right-textarea-model" placeholder="每人限领1张" />
         </el-form-item>
-        <el-form-item label="商户电话" label-width="100px">
+        <el-form-item label="商户电话">
           <el-input v-model="member.serviceTel" class="right-input-model" placeholder="请输入" />
         </el-form-item>
       </el-form>
@@ -60,9 +60,9 @@
       <div class="right-right-model">会员卡设置</div>
       <h2 class="right-title-model">引导菜单设置</h2>
       <div v-for="(item,index) in member.customCells" :key="index">
-        <div style="display:flex;justify-content:space-between;padding:0 40px 0 0px">
-          <div>{{ index+1 }}.</div>
-          <i v-if="member.customCells.length>1" class="el-icon-close" @click="deletmenu(index)" />
+        <div class="right-muen-model">
+          <div style="color:#fff;font-size:14px">菜单{{ index+1 }}</div>
+          <i v-if="member.customCells.length>1" class="el-icon-delete" @click="deletmenu(index)" />
         </div>
         <el-form :ref="member.customCells[index]" :model="member.customCells[index]" label-width="80px">
           <el-form-item label="引导菜单">
@@ -353,7 +353,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .right-index-model {
-  padding: 5px;
   background: #f5f7fa;
   .right-color-check{
     width: 220px;
@@ -372,6 +371,15 @@ export default {
     padding: 10px;
     background: #ffffff;
     margin-bottom: 10px;
+    .right-muen-model{
+      display:flex;
+      justify-content:space-between;
+      padding:2px 10px;
+      margin:10px 0;
+      background:#2d8cf0;
+      border-radius:4px;
+      color:#fff;
+    }
     .right-dialog-model {
       display: flex;
     }
@@ -393,6 +401,9 @@ export default {
     }
     .right-input-model {
       width: 40%;
+    }
+    .right-textarea-model{
+      width:80%
     }
   }
   .right-right-model {

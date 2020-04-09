@@ -1,10 +1,18 @@
 <template>
   <div class="rs-index-model">
     <div class="app-container">
-      <AppleRs />
-      <NoactiveCard v-if="showCode==='1'" />
-      <nobindingCard v-if="showCode==='0'" />
-      <AemberCard v-if="showCode==='2'" :geturl="geturl" />
+      <el-card class="box-card">
+        <AppleRs />
+      </el-card>
+      <el-card v-if="showCode==='1'" class="box-card">
+        <NoactiveCard />
+      </el-card>
+      <el-card v-if="showCode==='0'" class="box-card">
+        <nobindingCard />
+      </el-card>
+      <el-card v-if="showCode==='2'" class="box-card">
+        <AemberCard :geturl="geturl" />
+      </el-card>
     </div>
   </div>
 </template>

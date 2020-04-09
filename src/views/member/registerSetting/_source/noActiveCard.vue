@@ -6,42 +6,42 @@
     <div class="noActiveCard-contain-model noActiveCard-card-model">
       <el-row>
         <el-col :span="19">
-          <div class="noActiveCard-image-model noActiveCard-stop-mode">
-            <div>
-              还未激活会员卡
+          <div style="display:inline-block;margin-right:30px">
+            <div class="noActiveCard-image-model noActiveCard-stop-mode">
+              <div>
+                还未激活会员卡
+              </div>
+            </div>
+            <div class="noActiveCard-image-model">
+              <el-row>
+                <el-col :span="6">
+                  <div class="noActiveCard-image-url" />
+                </el-col>
+                <el-col :span="15" class="noActiveCard-image-detail">
+                  <div>海典智慧药店-直营店</div>
+                  <div>演示会员</div>
+                </el-col>
+                <el-col :span="3">
+                  <div class="AemberCard-qrcode-url" style="margin-top:10px">
+                    <img src="@/assets/icon/icon.png" alt="" class="AemberCard-qrcode-url">
+                  </div>
+                </el-col>
+              </el-row>
+              <el-row class="noActiveCard-image-bottom">
+                <el-col :span="18" class="noActiveCard-image-number">
+                  <div>
+                    <span class="noActiveCard-number-bottom">8888</span>
+                    <span class="noActiveCard-number-bottom">8888</span>
+                    <span class="noActiveCard-number-bottom">8888</span>
+                  </div>
+                </el-col>
+                <el-col :span="6">
+                  <div class="noActiveCard-image-icon" />
+                </el-col>
+              </el-row>
             </div>
           </div>
-          <div class="noActiveCard-image-model">
-            <el-row>
-              <el-col :span="6">
-                <div class="noActiveCard-image-url" />
-              </el-col>
-              <el-col :span="15" class="noActiveCard-image-detail">
-                <div>海典智慧药店-直营店</div>
-                <div>演示会员</div>
-              </el-col>
-              <el-col :span="3">
-                <div class="AemberCard-qrcode-url" style="margin-top:10px">
-                  <img src="@/assets/icon/icon.png" alt="" class="AemberCard-qrcode-url">
-                </div>
-              </el-col>
-            </el-row>
-            <el-row class="noActiveCard-image-bottom">
-              <el-col :span="18" class="noActiveCard-image-number">
-                <div>
-                  <span class="noActiveCard-number-bottom">8888</span>
-                  <span class="noActiveCard-number-bottom">8888</span>
-                  <span class="noActiveCard-number-bottom">8888</span>
-                </div>
-              </el-col>
-              <el-col :span="6">
-                <div class="noActiveCard-image-icon" />
-              </el-col>
-            </el-row>
-          </div>
-        </el-col>
-        <el-col :span="5">
-          <div class="noActiveCard-button-model" @click="goActive">激活会员卡</div>
+          <el-button type="primary" plain size="mini" @click="goActive">激活会员卡</el-button>
         </el-col>
       </el-row>
     </div>
@@ -54,7 +54,7 @@
           <div class="noActiveCard-Explain-model">
             <ul>
               <li>
-                <span>1.</span>
+                <span class="c-index">1</span>
                 您需要在【渠道管理-微信公众号】授权给我们，授权后方可激活会员卡信息
               </li>
             </ul>
@@ -222,10 +222,8 @@ export default {
       }
     }
   }
-  .noActiveCard-card-model{
-      margin-right: 56px;
-      display: flex;
-      justify-content: center;
-    }
+  // .noActiveCard-card-model{
+  //     margin-right: 56px;
+  //   }
 }
 </style>

@@ -6,7 +6,7 @@
     <div class="AemberCard-contain-model AemberCard-card-model">
       <el-row>
         <el-col :span="19">
-          <div class="AemberCard-image-model" :style="{backgroundImage: memberList.cardBgType==2?'url('+ member.cardBgContent +')':'',background:(memberList.cardBgType==1?memberList.cardBgContent:'')}">
+          <div class="AemberCard-image-model" :style="{backgroundImage: memberList.cardBgType==2?'url('+ memberList.cardBgContent +')':'',background:(memberList.cardBgType==1?memberList.cardBgContent:'')}">
             <el-row>
               <el-col :span="6">
                 <img :src="memberList.merLogoUrl" alt="" class="AemberCard-image-url">
@@ -34,9 +34,7 @@
               </el-col>
             </el-row>
           </div>
-        </el-col>
-        <el-col :span="5" class="applers-button-model applers-load-model">
-          <span @click="handleEdit">编辑会员卡</span>
+          <el-button type="primary" plain size="mini" @click="handleEdit">编辑会员卡</el-button>
         </el-col>
         <!-- <el-col :span="8">
           <ul>
@@ -55,15 +53,13 @@
       </el-row>
     </div>
     <div class="AemberCard-contain-model">
-      <el-row class="AemberCard-url-model">
-        <el-col :span="5" class="AemberCard-contain-adress"> 会员卡领卡地址：</el-col>
-        <el-col :span="16">
-          <div>{{ geturl }}</div>
-        </el-col>
-        <el-col v-clipboard:error="onError" v-clipboard:copy="geturl" v-clipboard:success="onCopy" :span="3" class="applers-button-model">
-          复制连接
-        </el-col>
-      </el-row>
+      <div class="AemberCard-url-model">
+        <div class="AemberCard-contain-adress">会员卡领卡地址:</div>
+        <div class="AemberCard-link-model">{{ geturl }}</div>
+        <div>
+          <el-button v-clipboard:error="onError" v-clipboard:copy="geturl" v-clipboard:success="onCopy" type="primary" plain size="mini">复制连接</el-button>
+        </div>
+      </div>
     </div>
     <div class="AemberCard-contain-model">
       <el-row>
@@ -74,15 +70,15 @@
           <div class="AemberCard-Explain-model">
             <ul>
               <li>
-                <span>1.</span>
+                <span class="c-index">1</span>
                 您需要在【渠道管理-微信公众号】授权给我们，授权后可编辑会员卡信息。
               </li>
               <li>
-                <span>2.</span>
+                <span class="c-index">2</span>
                 顾客通过微信公众号注册为会员，既可领取会员卡信息。
               </li>
               <li>
-                <span>3.</span>
+                <span class="c-index">3</span>
                 您可将会员领卡地址内链至微信公众号菜单，会员可通过菜单领取会员卡至微信卡包.
               </li>
             </ul>
@@ -181,6 +177,12 @@ export default {
     .applers-button-model {
       color: #1890FF;
     }
+    .AemberCard-link-model{
+        width:400px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     .applers-button-model:hover{
       cursor:pointer
     }
@@ -209,6 +211,8 @@ export default {
       color: #ffffff;
       font-size: 16px;
       padding-left:20px;
+      display: inline-block;
+      margin-right:30px;
       .AemberCard-qrcode-url{
         width: 45px;
         height: 45px;
@@ -262,10 +266,10 @@ export default {
       }
     }
   }
-  .AemberCard-card-model{
-      padding-right: 96px;
-      display: flex;
-      justify-content: center;
-    }
+  // .AemberCard-card-model{
+  //     padding-right: 96px;
+  //     display: flex;
+  //     justify-content: center;
+  //   }
 }
 </style>

@@ -3,11 +3,15 @@
     <div class="app-container">
       <el-row>
         <el-col :span="9" class="Ed-content-model">
-          <LeftCard :member="memberList" />
+          <el-card class="box-card">
+            <LeftCard :member="memberList" />
+          </el-card>
         </el-col>
         <!-- 右栏 -->
         <el-col :span="15">
-          <RightCard :member="memberList" :colorlist="colorList" :geturl="geturl" @getlist="getlist" />
+          <el-card class="box-card">
+            <RightCard :member="memberList" :colorlist="colorList" :geturl="geturl" @getlist="getlist" />
+          </el-card>
         </el-col>
       </el-row>
     </div>
@@ -18,7 +22,7 @@
 import RightCard from './rightCard'
 // 会员卡
 import LeftCard from './leftCard'
-import { getMemberInfo, getColor, checkMemberCard } from '@/api/memberService'
+import { getMemberInfo, getColor, getQrcode } from '@/api/memberService'
 import { mapGetters } from 'vuex'
 export default {
   name: 'EditCard',
@@ -50,8 +54,8 @@ export default {
   updated() {},
   methods: {
     getlist() {
-      checkMemberCard({ merCode: this.merCode }).then(res => {
-        this.geturl = res.data[1]
+      getQrcode({ merCode: this.merCode }).then(res => {
+        this.geturl = res.data[0]
       })
       getMemberInfo(this.merCode)
         .then(res => {

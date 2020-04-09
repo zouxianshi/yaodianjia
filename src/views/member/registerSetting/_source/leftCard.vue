@@ -90,7 +90,6 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
 .left-index-model {
   padding: 5px;
-  margin: 5px;
   background: #ffffff;
   .left-header-model ul {
     display: flex;
