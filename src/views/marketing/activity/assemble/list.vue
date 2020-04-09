@@ -187,7 +187,7 @@ export default {
       }
       getStoreList(data).then(res => {
         const { data } = res.data
-        data.unshift({ id: '', stName: '全部' })
+        // data.unshift({ id: '', stName: '全部' })
         this.storeList = data
       }).catch(err => {
         console.log(err)
@@ -212,6 +212,9 @@ export default {
       }
       this._getTableData()
     },
+    // storeIdchange(val) {
+    //   console.log('storeIdchange', val)
+    // },
     // 编辑
     toEdit(row) {
       this.$router.push('/marketing/activity/assemble-edit?id=' + row.id)
