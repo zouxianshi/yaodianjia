@@ -106,19 +106,18 @@
         </el-form-item>
         <el-form-item label="成团有效时间" prop="effectiveTime">
           <div class="custom-input">
-            <el-input
+            <el-input-number
               v-model="formData.effectiveTime"
-              style="width:80px"
-              class="custom-inner-input"
-              placeholder
+              style="width:120px"
+              controls-position="right"
               :min="2"
               :max="48"
               @input.native="handleInput"
             />
-            <div class="operate">
+            <!-- <div class="operate">
               <span class="el-icon-arrow-up" @click="handleAddTime(1)" />
               <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
-            </div>
+            </div> -->
             <span style="color: rgb(193, 193, 193); margin-left: 4px">小时</span>
           </div>
         </el-form-item>
