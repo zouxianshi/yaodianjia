@@ -125,10 +125,12 @@ export default {
       queryEmployee(params).then(res => {
         var data = res.data
         data.map(items => {
-          items.foldFlag = true
-          items.selectFlag = false
+          items.foldFlag = true // 是否折叠门店
+          items.selectFlag = false // 门店是否选中
+          items.show = true // 门店是否显示
           items.employees.map(items2 => {
-            items2.selectFlag = false
+            items2.selectFlag = false // 顾问是否选择
+            items2.show = true // 顾问是否显示
           })
         })
         this.empCodesArr = res.data

@@ -1,12 +1,12 @@
 <template>
   <div class="select-store-model">
-    <el-dialog title="" :visible.sync="dialogVisible" width="50%" :modal-append-to-body="true" :append-to-body="true" :before-close="closeDia">
+    <el-dialog title="" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false" :modal-append-to-body="true" :append-to-body="true" :before-close="closeDia">
       <div slot="title" class="dialog-title">选择门店</div>
       <div class="content-body">
         <div class="choose-left">
           <div class="search">
-            <el-input size="mini" style="width:70%" placeholder="请输入" />
-            <el-button size="mini" type="text" style="width:28%">查询</el-button>
+            <el-input v-model="serachWord" size="mini" style="width:70%" placeholder="请输入" />
+            <el-button size="mini" type="text" style="width:28%" @click="filterStore">查询</el-button>
           </div>
           <div class="selects-content">
             <mSelectRadio :items-arr="storeData" />
@@ -32,6 +32,7 @@
 </template>
 <script>
 import mSelectRadio from './selectRadio' // 选择组件
+import _ from 'lodash'
 export default {
   components: {
     mSelectRadio
@@ -46,6 +47,7 @@ export default {
   },
   data() {
     return {
+      serachWord: '',
       dialogVisible: false
     }
   },
@@ -56,6 +58,17 @@ export default {
     showDialogVisible() {
       console.log(this.storeData)
       this.dialogVisible = true
+      this.filterStore()
+    },
+    // 筛选门店
+    filterStore() {
+      _.forEach(this.storeData, item => {
+        if (item.storeName.indexOf(this.serachWord) < 0) {
+          item.show = false
+        } else {
+          item.show = true
+        }
+      })
     }
   }
 }

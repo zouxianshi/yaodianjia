@@ -1,6 +1,6 @@
 <template>
   <div class="select-con-model">
-    <el-dialog title="" :visible.sync="dialogVisible" width="50%" :modal-append-to-body="true" :append-to-body="true" :before-close="closeDia">
+    <el-dialog title="" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false" :modal-append-to-body="true" :append-to-body="true" :before-close="closeDia">
       <div slot="title" class="dialog-title">选择顾问</div>
       <div class="content-body">
         <div class="choose-left">

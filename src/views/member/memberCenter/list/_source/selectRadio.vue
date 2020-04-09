@@ -1,9 +1,11 @@
 <template>
   <div class="select-radio-model">
-    <div v-for="(items, index) in itemsArr" :key="index" class="items">
-      <span class="items-name">{{ items.empName?items.empName:items.storeName }}</span>
-      <i v-if="items.selectFlag" class="el-icon-circle-check" @click="choosed(items)" />
-      <span v-else class="before-choose" @click="unchoosed(items)" />
+    <div v-for="(items, index) in itemsArr" :key="index">
+      <div v-if="items.show" class="items">
+        <span class="items-name">{{ items.empName?items.empName:items.storeName }}</span>
+        <i v-if="items.selectFlag" class="el-icon-circle-check" @click="choosed(items)" />
+        <span v-else class="before-choose" @click="unchoosed(items)" />
+      </div>
     </div>
   </div>
 </template>

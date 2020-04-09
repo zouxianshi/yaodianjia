@@ -19,9 +19,9 @@
             <el-input v-model="content" size="mini" style="width: 50%" placeholder="请输入会员姓名、手机号、卡号、身份证" />
           </el-form-item>
           <el-form-item label="">
-            <el-button size="mini" @click="getData()">查询</el-button>
+            <el-button size="mini" type="primary" @click="getData()">查询</el-button>
             <el-button size="mini" @click="reSet()">重置</el-button>
-            <el-button size="mini">批量导出</el-button>
+            <el-button size="mini" type="primary">批量导出</el-button>
             <span class="tips">提示：批量导出功能最多一次导出5000条数据</span>
           </el-form-item>
         </el-form>
@@ -31,7 +31,10 @@
         <el-pagination
           background
           layout="prev, pager, next"
-          :total="1000"
+          :total="pageInfo.totalCont"
+          :page-size="pageInfo.pageSize"
+          :current-page="pageInfo.currentPage"
+          @current-change="pageChage"
         />
       </div>
     </div>
@@ -51,8 +54,16 @@ export default {
   data() {
     return {
       conditions: true,
-      content: ''
+      content: '',
+      pageInfo: {
+        pageSize: 10,
+        currentPage: 1,
+        totalCont: 0
+      }
     }
+  },
+  mounted() {
+    this.getData()
   },
   methods: {
     toggelCoditions() { // 切换选项隐藏/显示
@@ -63,7 +74,8 @@ export default {
       var params = _.cloneDeep(this.$refs.conditionsA.conditions)
       var choosedEmpCodesArr = this.$refs.conditionsA.choosedEmpCodesArr // 已选择顾问
       var choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
-      console.log(params)
+      params.currentPage = this.pageInfo.currentPage
+      params.pageSize = this.pageInfo.pageSize
       params.content = this.content
       // 如果顾问为选择顾问
       if (params.empCodes === '1') {
@@ -84,15 +96,28 @@ export default {
       this.$refs.listA.loading = true
       queryMembers(params).then(res => {
         if (res.data && res.data.data) {
+          this.pageInfo.totalCont = res.data.totalCount
           this.$refs.listA.dataFromIndex(res.data.data)
         } else {
+          this.pageInfo.totalCont = 0
           this.$refs.listA.dataFromIndex([])
         }
       })
     },
+    // 页面切换
+    pageChage(e) {
+      this.pageInfo.currentPage = e
+      console.log(e)
+    },
     // 重置查询条件
     reSet() {
       this.$refs.conditionsA.resetParams() // 重置条件
+      this.content = ''
+      this.pageInfo = {
+        pageSize: 10,
+        currentPage: 1,
+        totalCont: 0
+      }
       this.getData() // 查询数据
     }
   }
