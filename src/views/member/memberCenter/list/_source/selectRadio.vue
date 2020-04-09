@@ -28,7 +28,6 @@ export default {
       data.selectFlag = false
     },
     unchoosed(data) {
-      console.log(data)
       data.selectFlag = true
     }
   }

@@ -7,4 +7,7 @@ export default {
 }
 </script>
 <style lang="scss">
+.el-table thead th{
+  text-align: center;
+}
 </style>

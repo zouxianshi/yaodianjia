@@ -58,7 +58,7 @@ export default {
       pageInfo: {
         pageSize: 10,
         currentPage: 1,
-        totalCont: 0
+        totalCont: 100
       }
     }
   },
@@ -107,7 +107,7 @@ export default {
     // 页面切换
     pageChage(e) {
       this.pageInfo.currentPage = e
-      console.log(e)
+      this.getData()
     },
     // 重置查询条件
     reSet() {

@@ -5,12 +5,12 @@
       <div class="content-body">
         <div class="choose-left">
           <div class="search">
-            <el-input size="mini" style="width:70%" placeholder="请输入" />
-            <el-button size="mini" type="text" style="width:28%">查询</el-button>
+            <el-input v-model="searchWord" size="mini" style="width:70%" placeholder="请输入" />
+            <el-button size="mini" type="text" style="width:28%" @click="filterCon">查询</el-button>
           </div>
           <div class="selects-content">
             <div v-for="(items, index) in conData" :key="index" class="store-list">
-              <div class="store-name" @click="items.foldFlag =! items.foldFlag">
+              <div v-if="hasChild(items)" class="store-name" @click="items.foldFlag =! items.foldFlag">
                 {{ items.storeName }} <i class="el-icon-arrow-down" />
               </div>
               <div v-if="items.foldFlag" class="con-list">
@@ -41,6 +41,7 @@
 </template>
 <script>
 import mSelectRadio from './selectRadio' // 选择组件
+import _ from 'lodash'
 export default {
   components: {
     mSelectRadio
@@ -55,7 +56,8 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      searchWord: ''
     }
   },
   methods: {
@@ -64,6 +66,28 @@ export default {
     },
     showDialogVisible() {
       this.dialogVisible = true
+    },
+    // 判断顾问父节点是否需显示
+    hasChild(data) {
+      var flag = false
+      _.forEach(data.employees, item => {
+        if (item.show === true) {
+          flag = true
+        }
+      })
+      return flag
+    },
+    // 筛选顾问
+    filterCon() {
+      _.forEach(this.conData, item => {
+        _.forEach(item.employees, item2 => {
+          if (item2.empName.indexOf(this.searchWord) < 0) {
+            item2.show = false
+          } else {
+            item2.show = true
+          }
+        })
+      })
     }
   }
 }

@@ -6,11 +6,11 @@
           <m-base-info />
         </div>
       </el-tab-pane>
-      <el-tab-pane label="健康档案" name="second">
+      <!-- <el-tab-pane label="健康档案" name="second">
         <div class="mc-details-content-itmes">
           <m-health-file />
         </div>
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane label="消费记录" name="third">
         <div class="mc-details-content-itmes">
           <m-expensesRecord />
@@ -21,12 +21,12 @@
 </template>
 <script>
 import mBaseInfo from './_source/basicInfo'
-import mHealthFile from './_source/healthFile'
+// import mHealthFile from './_source/healthFile'
 import mExpensesRecord from './_source/expensesRecord'
 export default {
   name: 'Details',
   components: {
-    mBaseInfo, mHealthFile, mExpensesRecord
+    mBaseInfo, mExpensesRecord
   },
   props: {},
   data() {

@@ -8,30 +8,31 @@
         <div class="content-body">
           <div class="content-body-items">
             <el-form label-position="right" label-width="100px" :model="basicInfo">
-              <el-form-item label="微信头像">
-                <img :src="basicInfo.headUrl">
+              <el-form-item label="微信头像：">
+                <img v-if="basicInfo.headUrl" :src="basicInfo.headUrl">
+                <span v-else>未上传</span>
               </el-form-item>
-              <el-form-item label="会员名称">
+              <el-form-item label="会员名称：">
                 <span>{{ basicInfo.memberName || '-' }}</span>
               </el-form-item>
-              <el-form-item label="昵称">
+              <el-form-item label="昵称：">
                 <span>{{ basicInfo.nickName || '-' }}</span>
               </el-form-item>
-              <el-form-item label="性别">
+              <el-form-item label="性别：">
                 <span v-if="basicInfo.memberSex === 0">其他</span>
                 <span v-if="basicInfo.memberSex === 1">男</span>
                 <span v-if="basicInfo.memberSex === 2">女</span>
               </el-form-item>
-              <el-form-item label="生日">
+              <el-form-item label="生日：">
                 <span>{{ basicInfo.memberBirthday || '-' }}</span>
               </el-form-item>
-              <el-form-item label="身份证号">
+              <el-form-item label="身份证号：">
                 <span>{{ basicInfo.memberIdcard || '-' }}</span>
               </el-form-item>
-              <el-form-item label="手机号">
+              <el-form-item label="手机号：">
                 <span>{{ basicInfo.memberPhone || '-' }}</span>
               </el-form-item>
-              <el-form-item label="收货地址">
+              <el-form-item label="收货地址：">
                 <span>{{ basicInfo.memberAddress || '-' }}</span>
               </el-form-item>
             </el-form>
@@ -39,38 +40,39 @@
           <div class="content-body-items">
             <el-form label-position="right" label-width="120px" :model="basicInfo">
               <el-form-item label="">
-                <div style="height:60px" />
+                <div v-if="basicInfo.headUrl" style="height:60px" />
+                <div v-else style="height:36px" />
               </el-form-item>
-              <el-form-item label="会员卡号">
+              <el-form-item label="会员卡号：">
                 <span>{{ basicInfo.memberCard || '-' }}</span>
               </el-form-item>
-              <el-form-item label="健康豆">
-                <span>{{ basicInfo.memberIntegral }}</span>
+              <el-form-item label="健康豆：">
+                <span>{{ basicInfo.onlineIntegral }}</span>
                 <span class="more-info">
                   <el-button type="primary" plain size="mini" @click="tailsBeans">查看明细</el-button>
                 </span>
               </el-form-item>
-              <el-form-item label="会员等级">
+              <el-form-item label="会员等级：">
                 <span v-if="basicInfo.memberActive === 1">活跃会员</span>
                 <span v-if="basicInfo.memberActive === 2">新增会员</span>
                 <span v-if="basicInfo.memberActive === 3">沉寂会员</span>
                 <span v-if="basicInfo.memberActive === 4">普通会员</span>
                 <span v-if="basicInfo.memberActive === 5">优质会员</span>
               </el-form-item>
-              <el-form-item label="所属门店">
+              <el-form-item label="所属门店：">
                 <span>{{ basicInfo.organization || '-' }}</span>
               </el-form-item>
-              <el-form-item label="注册来源">
+              <el-form-item label="注册来源：">
                 <span v-if="basicInfo.regChannel === 1">门店推荐注册</span>
                 <span v-if="basicInfo.regChannel === 2">员工推荐注册</span>
                 <span v-if="basicInfo.regChannel === 3">商户渠道注册</span>
                 <span v-if="basicInfo.regChannel === 4">平台渠道注册</span>
                 <span v-if="basicInfo.regChannel === 5">支付即会员</span>
               </el-form-item>
-              <el-form-item label="注册时间">
+              <el-form-item label="注册时间：">
                 <span>{{ basicInfo.createTime }}</span>
               </el-form-item>
-              <el-form-item label="默认发卡机构">
+              <el-form-item label="默认发卡机构：">
                 <span>{{ basicInfo.organization || '-' }}</span>
               </el-form-item>
             </el-form>
@@ -126,8 +128,9 @@ export default {
       searchParams: {
         currentPage: 1,
         pageSize: 8,
-        userId: 1
+        userId: this.$route.query.userId
       },
+      beanTotalNum: 0,
       totalCount: 0,
       basicInfo: {
       },
@@ -144,14 +147,15 @@ export default {
       this.searchParams.currentPage = v
       this.queryHealthData()
     },
+    // 查看健康豆详情
     tailsBeans() {
       var params = {
         'currentPage': 1,
         'pageSize': 10,
-        'userId': 1
+        'userId': this.$route.query.userId
       }
       queryOnlineIntegra(params).then(res => {
-        this.$refs.A.changeDia(res.data)
+        this.$refs.A.changeDia(res.data, this.$route.query.userId, this.beanTotalNum)
       })
     },
     // 查询会员基本信息
@@ -162,6 +166,8 @@ export default {
       }
       menberBaseInfo(params).then(res => {
         this.basicInfo = res.data
+        this.beanTotalNum = res.data.onlineIntegral || 10
+        sessionStorage.setItem('mem_username', res.data.memberName)
       })
     },
     // 查询会员的健康顾问
@@ -172,7 +178,6 @@ export default {
         userId: this.searchParams.userId
       }
       queryHealthConsultants(params).then(res => {
-        console.log(res)
         this.tableData = res.data.data
         this.totalCount = res.data.totalCount
       })

@@ -4,7 +4,7 @@
       <div slot="title" class="dialog-title">健康豆明细</div>
       <div class="contents-body">
         <div class="nav-bar">
-          <span>健康豆： 0</span>
+          <span>健康豆： {{ beanTotalNum }}</span>
           <el-select v-model="value" placeholder="请选择" @change="changeDate">
             <el-option
               v-for="item in options"
@@ -49,6 +49,7 @@
 </template>
 <script>
 import { queryOnlineIntegra } from '@/api/memberService'
+import _ from 'lodash'
 export default {
   data() {
     var nowS = new Date()
@@ -57,7 +58,13 @@ export default {
       dialogVisible: false,
       options: [],
       value: nowMon,
-      tableData: []
+      tableData: [],
+      beanTotalNum: 1,
+      searchParams: {
+        'userId': '',
+        'currentPage': 0,
+        'pageSize': 10000
+      }
     }
   },
   created() {
@@ -100,7 +107,9 @@ export default {
       var nowS = new Date()
       this.value = nowS.getFullYear() + '-' + ('' + (nowS.getMonth() + 1)).padStart(2, '0')
     },
-    changeDia(data) {
+    changeDia(data, userId, beanTotalNum) {
+      this.searchParams.userId = userId
+      this.beanTotalNum = beanTotalNum || '-'
       if (data) {
         this.tableData = data.data
       }
@@ -108,12 +117,8 @@ export default {
     },
     // 改变查询日期
     changeDate(value) {
-      var params = {
-        'userId': 1,
-        'date': value,
-        'currentPage': 1,
-        'pageSize': 10
-      }
+      var params = _.cloneDeep(this.searchParams)
+      params.data = value
       queryOnlineIntegra(params).then(res => {
         this.tableData = res.data.data
       })

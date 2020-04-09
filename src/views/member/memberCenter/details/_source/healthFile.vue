@@ -1,80 +1,87 @@
 <template>
   <div class="health-info-model">
-    <div class="content-items">
-      <div class="content-header">
-        <mItemTitle title="基础档案" />
-      </div>
-      <div class="content-body">
-        <div class="content-body-items">
-          <el-form label-position="top" label-width="100px" :model="basicInfo">
-            <el-form-item label="会员名称：">
-              <span>{{ basicInfo.name }}</span>
-            </el-form-item>
-            <el-form-item label="用药禁忌：">
-              <span>{{ basicInfo.contrainDications }}</span>
-            </el-form-item>
-            <el-form-item label="过敏史：">
-              <m-border-items v-for="(items, index) in basicInfo.allergyHistory" :key="index" :value="items" />
-            </el-form-item>
-            <el-form-item label="易感病症：">
-              <m-border-items v-for="(items, index) in basicInfo.ygbz" :key="index" :value="items" />
-            </el-form-item>
-          </el-form>
+    <el-card class="box-card" :body-style="{padding:'0px'}">
+      <div class="content-items">
+        <div class="content-header">
+          <mItemTitle title="基础档案" />
+        </div>
+        <div class="content-body">
+          <div class="content-body-items">
+            <el-form label-position="top" label-width="100px" :model="basicInfo">
+              <el-form-item label="会员名称：">
+                <span>{{ basicInfo.name }}</span>
+              </el-form-item>
+              <el-form-item label="用药禁忌：">
+                <span>{{ basicInfo.contrainDications }}</span>
+              </el-form-item>
+              <el-form-item label="过敏史：">
+                <m-border-items v-for="(items, index) in basicInfo.allergyHistory" :key="index" :value="items" />
+              </el-form-item>
+              <el-form-item label="易感病症：">
+                <m-border-items v-for="(items, index) in basicInfo.ygbz" :key="index" :value="items" />
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="content-items">
-      <div class="content-header">
-        <mItemTitle title="健康状态" />
-      </div>
-      <div class="content-body">
-        <el-table
-          :data="tableData"
-          border
-          style="width: 100%"
-        >
-          <el-table-column
-            prop="emName"
-            label="事件名称"
-          />
-          <el-table-column
-            prop="createDate"
-            label="创建时间"
-          />
-          <el-table-column
-            prop="desc"
-            label="病症描述"
-          />
-          <el-table-column
-            label="操作"
-            width="100"
+    </el-card>
+    <el-card class="box-card" :body-style="{padding:'0px'}">
+      <div class="content-items">
+        <div class="content-header">
+          <mItemTitle title="健康状态" />
+        </div>
+        <div class="content-body">
+          <el-table
+            :data="tableData"
+            border
+            style="width: 100%"
           >
-            <template>
-              <el-button type="text" size="small">查看</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+            <el-table-column
+              prop="emName"
+              label="事件名称"
+            />
+            <el-table-column
+              prop="createDate"
+              label="创建时间"
+            />
+            <el-table-column
+              prop="desc"
+              label="病症描述"
+            />
+            <el-table-column
+              label="操作"
+              align="center"
+              width="100"
+            >
+              <template slot-scope="scope">
+                <el-button type="text" size="small" @click="popHealth(scope.row)">查看</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div class="pagination">
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="1000"
+            :page-size="pageInfo.pageSize"
+            :current-page="pageInfo.currentPage"
+            @current-change="pageChange"
+          />
+        </div>
       </div>
-      <div class="pagination">
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="1000"
-          :page-size="pageInfo.pageSize"
-          :current-page="pageInfo.currentPage"
-          @current-change="pageChange"
-        />
-      </div>
-    </div>
+    </el-card>
+    <m-pop-health-detail ref="popHealth" />
   </div>
 </template>
 <script>
 import mItemTitle from './itemTitle' // 标题
 import mBorderItems from './borderItems' // tag标签
 import { queryHealthConsultants } from '@/api/memberService'
+import mPopHealthDetail from './popHealthDetail' // 健康状态详情
 export default {
   name: 'BasicInfo',
-  components: { mItemTitle, mBorderItems },
+  components: { mItemTitle, mBorderItems, mPopHealthDetail },
   props: {},
   data() {
     return {
@@ -88,7 +95,7 @@ export default {
       pageInfo: {
         'currentPage': 1,
         'pageSize': 10,
-        'userId': '1'
+        'userId': this.$route.query.userId
       },
       tableData: []
     }
@@ -104,7 +111,6 @@ export default {
         userId: userId
       }
       queryHealthConsultants(params).then(res => {
-        console.log(res)
         if (res.data) {
           this.tableData = res.data.data
           this.totalCont = this.tableData.length | 0
@@ -113,6 +119,11 @@ export default {
     },
     pageChange(e) {
       console.log(e)
+    },
+    // 查看健康豆详情
+    popHealth(ids) {
+      console.log(ids)
+      this.$refs.popHealth.openDetail(ids)
     }
   }
 }
@@ -120,9 +131,12 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .health-info-model{
+  width: 96%;margin: 20px auto;
+  .box-card {
+    margin-bottom: 20px;
+  }
   .content-items{
-    border: 1px solid #eee;border-radius: 2px;background-color: #fff;
-    width: 96%;margin: 20px auto 0;
+    border-radius: 2px;background-color: #fff;
     img{
       width: 60px;height: 60px;margin: 0;vertical-align: middle;
     }

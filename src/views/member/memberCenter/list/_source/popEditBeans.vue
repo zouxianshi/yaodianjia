@@ -10,7 +10,7 @@
             <el-radio v-model="addOrD" label="2">删减</el-radio>
           </el-form-item>
           <el-form-item label="">
-            <el-input v-model="beansForm.integral" style="width: 200px" size="mini" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="请输入数量" />
+            <el-input v-model="beansForm.integral" maxlength="8" style="width: 200px" size="mini" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="请输入数量" />
           </el-form-item>
           <el-form-item label="操作备注">
             <el-input v-model="beansForm.notes" style="width: 300px;" type="textarea" autosize />
@@ -34,7 +34,7 @@ export default {
       beansForm: {
         'integral': '',
         'notes': '',
-        'userId': 1
+        'userId': ''
       }
     }
   },
@@ -43,11 +43,12 @@ export default {
       this.beansForm = {
         'integral': '',
         'notes': '',
-        'userId': 1
+        'userId': ''
       }
       done()
     },
-    changeDia() {
+    changeDia(userId) {
+      this.beansForm.userId = userId
       this.dialogVisible = true
     },
     // 关闭前清空
@@ -55,7 +56,7 @@ export default {
       this.beansForm = {
         'integral': '',
         'notes': '',
-        'userId': 1
+        'userId': ''
       }
       this.dialogVisible = false
     },

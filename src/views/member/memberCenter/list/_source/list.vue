@@ -1,12 +1,22 @@
 <template>
   <div class="list-model">
     <el-table v-loading="loading" :data="tabelData" border style="width: 100%">
-      <el-table-column prop="headUrl" label="微信头像" width="80" />
+      <el-table-column label="微信头像" width="100" align="center">
+        <template slot-scope="scope">
+          <img v-if="scope.row.headUrl" class="headerImg" :src="scope.row.headUrl">
+          <span v-else>未上传</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="nickName" label="昵称" />
       <el-table-column prop="memberName" label="会员姓名" />
-      <el-table-column prop="memberSex" label="性别" />
+      <el-table-column label="性别">
+        <template slot-scope="scope">
+          <span v-if="scope.row.memberSex === 1">男</span>
+          <span v-if="scope.row.memberSex === 2">女</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="memberAge" label="年龄" />
-      <el-table-column prop="memberPhone" label="手机号码" />
+      <el-table-column prop="memberPhone" width="150" label="手机号码" />
       <el-table-column label="健康顾问">
         <template slot-scope="scope">
           {{ scope.row.healthConsultants.length?scope.row.healthConsultants[0].name: '' }}
@@ -18,15 +28,31 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="memberActive" label="会员分类" />
-      <el-table-column prop="age" label="注册来源" />
+      <el-table-column label="会员分类">
+        <template slot-scope="scope">
+          <span v-if="scope.row.memberActive === 1">活跃会员</span>
+          <span v-if="scope.row.memberActive === 2">新增会员</span>
+          <span v-if="scope.row.memberActive === 3">沉寂会员</span>
+          <span v-if="scope.row.memberActive === 4">普通会员</span>
+          <span v-if="scope.row.memberActive === 5">优质会员</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="age" label="注册来源" width="120">
+        <template slot-scope="scope">
+          <span v-if="scope.row.regChannel === 1">门店推荐注册</span>
+          <span v-if="scope.row.regChannel === 2">员工推荐注册</span>
+          <span v-if="scope.row.regChannel === 3">商户渠道注册</span>
+          <span v-if="scope.row.regChannel === 4">平台渠道注册</span>
+          <span v-if="scope.row.regChannel === 5">支付即会员</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="120" align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="tail(scope.row.userId)">详情</el-button>
           <span>|</span>
           <el-popover placement="bottom" trigger="click">
-            <div class="more-items"><el-button type="text" size="mini" @click="tailfDetail()">健康豆明细</el-button></div>
-            <div class="more-items"><el-button type="text" size="mini" @click="editBeans()">健康豆管理</el-button></div>
+            <div class="more-items"><el-button type="text" size="mini" @click="tailfDetail(scope.row.userId)">健康豆明细</el-button></div>
+            <div class="more-items"><el-button type="text" size="mini" @click="editBeans(scope.row.userId)">健康豆管理</el-button></div>
             <el-button slot="reference" size="mini" type="text">更多</el-button>
           </el-popover>
         </template>
@@ -40,7 +66,7 @@
 import mPopBeansDetails from '../../../_source/popBeansDetails' // 健康豆详情
 import mPopEditBeans from './popEditBeans' // 健康豆编辑
 import mPopConsultantList from './popConsultantList' // 健康顾问悬浮显示
-import { queryOnlineIntegra } from '@/api/memberService'
+import { queryOnlineIntegra, menberBaseInfo } from '@/api/memberService'
 export default {
   name: 'List',
   components: {
@@ -50,7 +76,8 @@ export default {
   data() {
     return {
       tabelDatas: [],
-      loading: false
+      loading: false,
+      beanTotalNum: 0 // 健康豆总数量
     }
   },
   computed: {
@@ -68,20 +95,27 @@ export default {
       this.$router.push(`/member/member-center/details?userId=${userId}`)
     },
     // 查看健康豆详情
-    tailfDetail() {
-      var params = {
-        'currentPage': 1,
-        'merCode': '666666',
-        'pageSize': 10,
-        'userId': 1
+    tailfDetail(userId) {
+      // 先获取健康豆总数（健康豆详细接口没有返回）
+      var params2 = {
+        userId: userId,
+        merCode: this.$store.state.user.merCode
       }
-      queryOnlineIntegra(params).then(res => {
-        this.$refs.A.changeDia(res.data)
+      menberBaseInfo(params2).then(res => {
+        this.beanTotalNum = res.data.onlineIntegral || 0
+        var params = {
+          'currentPage': 1,
+          'pageSize': 10,
+          'userId': userId
+        }
+        queryOnlineIntegra(params).then(res => {
+          this.$refs.A.changeDia(res.data, userId, this.beanTotalNum)
+        })
       })
     },
     // 编辑健康豆
-    editBeans() {
-      this.$refs.B.changeDia()
+    editBeans(userId) {
+      this.$refs.B.changeDia(userId)
     }
   }
 }
@@ -98,7 +132,9 @@ export default {
     .el-table__body td{
       padding: 5px;
     }
-
+    .headerImg{
+      width: 60px;height: 60px;
+    }
   }
   .more-items{
     text-align: center;

@@ -56,7 +56,6 @@ export default {
       done()
     },
     showDialogVisible() {
-      console.log(this.storeData)
       this.dialogVisible = true
       this.filterStore()
     },
