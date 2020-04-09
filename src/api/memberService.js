@@ -100,3 +100,11 @@ export function queryEmployee(data) {
     data
   })
 }
+// 门店条件查询
+export function queryStore(data) {
+  return request({
+    url: `${config.merGoods}/1.0/store/queryStore`,
+    method: 'post',
+    data
+  })
+}

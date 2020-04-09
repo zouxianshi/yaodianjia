@@ -20,14 +20,23 @@ export default {
   name: 'Edit',
   components: {},
   props: {
+    /**
+     *  名称
+     */
     name: {
       type: String,
       default: ''
     },
+    /**
+     * 层级1
+     */
     level1Index: {
       type: Number,
       default: 0
     },
+    /**
+     * 层级2
+     */
     level2Index: {
       type: Number,
       default: -1
@@ -129,8 +138,7 @@ export default {
           this.loading = false
           this.$emit('on-update')
           this.nName = ''
-        }).catch((e) => {
-          console.log(e)
+        }).catch(() => {
           this.loading = false
           this.$emit('on-update')
           this.nName = ''

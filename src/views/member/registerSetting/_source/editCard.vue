@@ -10,7 +10,7 @@
         <!-- 右栏 -->
         <el-col :span="15">
           <el-card class="box-card">
-            <RightCard :member="memberList" :colorlist="colorList" :geturl="geturl" @getlist="getlist" />
+            <RightCard :storelist="storeList" :member="memberList" :colorlist="colorList" :geturl="geturl" @getlist="getlist" />
           </el-card>
         </el-col>
       </el-row>
@@ -22,7 +22,7 @@
 import RightCard from './rightCard'
 // 会员卡
 import LeftCard from './leftCard'
-import { getMemberInfo, getColor, getQrcode } from '@/api/memberService'
+import { getMemberInfo, getColor, getQrcode, queryStore } from '@/api/memberService'
 import { mapGetters } from 'vuex'
 export default {
   name: 'EditCard',
@@ -36,7 +36,8 @@ export default {
       memberList: {},
       colorList: {},
       colorNum: 0,
-      geturl: ''
+      geturl: '',
+      storeList: []
     }
   },
   computed: {
@@ -54,6 +55,9 @@ export default {
   updated() {},
   methods: {
     getlist() {
+      queryStore({ excelFlag: true, merCode: this.merCode }).then(res => {
+        this.storeList = res.data.data
+      })
       getQrcode({ merCode: this.merCode }).then(res => {
         this.geturl = res.data[0]
       })
