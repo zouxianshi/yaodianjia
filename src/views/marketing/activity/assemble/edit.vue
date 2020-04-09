@@ -200,7 +200,7 @@
               </template>
             </el-table-column>
             <el-table-column label="商品名称" prop="name" min-width="100" />
-            <el-table-column label="商品编码" prop="specId" />
+            <el-table-column label="商品条码" prop="barCode" />
             <el-table-column label="原售价" prop="mprice" />
             <el-table-column label="拼团价" prop="activityPrice" />
             <el-table-column label="活动库存" prop="productActivityCount">

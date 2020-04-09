@@ -40,18 +40,20 @@
         >
           <el-form-item label="成团人数" prop="activityNumber">
             <div class="custom-input">
-              <el-input
+              <el-input-number
                 v-model.number="settingForm.activityNumber"
-                style="width:80px"
+                controls-position="right"
+                style="width:120px"
+                :min="2"
                 :max="200"
                 class="custom-inner-input"
                 placeholder
                 @input.native="handleInput($event,'activityNumber')"
               />
-              <div class="operate">
+              <!-- <div class="operate">
                 <span class="el-icon-arrow-up" @click="handleAddNum(1,'activityNumber')" />
                 <span class="el-icon-arrow-down" @click="handleAddNum(2,'activityNumber')" />
-              </div>
+              </div> -->
             </div>
           </el-form-item>
           <el-form-item label="是否限购">
@@ -62,32 +64,38 @@
             <section v-if="settingForm.isXg===1" style="margin-top:20px">
               <el-form-item label="每人限开/参团" label-width="110px">
                 <div class="custom-input">
-                  <el-input
+                  <el-input-number
                     v-model="settingForm.addLimitTimes"
-                    style="width:80px"
+                    controls-position="right"
+                    style="width:120px"
                     class="custom-inner-input"
                     placeholder
+                    :min="1"
                     @input.native="handleInput($event,'addLimitTimes')"
                   />
-                  <div class="operate">
+                  <!-- <div class="operate">
                     <span class="el-icon-arrow-up" @click="handleAddNum(1,'addLimitTimes')" />
                     <span class="el-icon-arrow-down" @click="handleAddNum(2,'addLimitTimes')" />
-                  </div>&nbsp;次
+                  </div> -->
+                  &nbsp;次
                 </div>
               </el-form-item>
               <el-form-item label="单次限购" label-width="110px">
                 <div class="custom-input">
-                  <el-input
+                  <el-input-number
                     v-model="settingForm.limitCount"
-                    style="width:80px"
+                    controls-position="right"
+                    style="width:120px"
                     class="custom-inner-input"
+                    :min="1"
                     placeholder
                     @input.native="handleInput($event,'limitCount')"
                   />
-                  <div class="operate">
+                  <!-- <div class="operate">
                     <span class="el-icon-arrow-up" @click="handleAddNum(1,'limitCount')" />
                     <span class="el-icon-arrow-down" @click="handleAddNum(2,'limitCount')" />
-                  </div>&nbsp;份
+                  </div> -->
+                  &nbsp;份
                 </div>
               </el-form-item>
             </section>
@@ -100,22 +108,24 @@
           </el-form-item>
           <el-form-item label="拼团库存" prop="productActivityCount">
             <div class="custom-input">
-              <el-input
+              <el-input-number
                 v-model.number="settingForm.productActivityCount"
-                style="width:80px"
+                style="width:120px"
                 class="custom-inner-input"
+                controls-position="right"
+                :min="2"
                 placeholder
                 @input.native="handleInput($event,'productActivityCount')"
               />
-              <div class="operate">
+              <!-- <div class="operate">
                 <span class="el-icon-arrow-up" @click="handleAddNum(1,'productActivityCount')" />
                 <span class="el-icon-arrow-down" @click="handleAddNum(2,'productActivityCount')" />
-              </div>
+              </div> -->
               <span>&nbsp;&nbsp;拼团活动库存至少要满足一个团的库存需求</span>
             </div>
           </el-form-item>
           <el-form-item label="拼团价格" prop="activityPrice">
-            <el-input v-model="settingForm.activityPrice" placeholder="0.00" style="width:80px" />
+            <el-input-number v-model="settingForm.activityPrice" :step="0.01" :min="0" controls-position="right" placeholder="0.00" style="width:120px" />
             <span>&nbsp;&nbsp;拼团价格需低于当前价格</span>
           </el-form-item>
         </el-form>
@@ -288,29 +298,29 @@ export default {
       e.target.value = value.replace(/[^\d]/g, '')
       this.settingForm[key] = value.replace(/[^\d]/g, '')
     },
-    handleAddNum(type, key) {
-      // 输入框上下加减处理
-      if (!this.settingForm[key]) {
-        return
-      }
-      if (key === 'productActivityCount' || key === 'activityNumber') {
-        if (type === 1) {
-          this.settingForm[key]++
-        } else {
-          if (this.settingForm[key] !== 2) {
-            this.settingForm[key]--
-          }
-        }
-      } else {
-        if (type === 1) {
-          this.settingForm[key]++
-        } else {
-          if (this.settingForm[key] !== 1) {
-            this.settingForm[key]--
-          }
-        }
-      }
-    },
+    // handleAddNum(type, key) {
+    //   // 输入框上下加减处理
+    //   if (!this.settingForm[key]) {
+    //     return
+    //   }
+    //   if (key === 'productActivityCount' || key === 'activityNumber') {
+    //     if (type === 1) {
+    //       this.settingForm[key]++
+    //     } else {
+    //       if (this.settingForm[key] !== 2) {
+    //         this.settingForm[key]--
+    //       }
+    //     }
+    //   } else {
+    //     if (type === 1) {
+    //       this.settingForm[key]++
+    //     } else {
+    //       if (this.settingForm[key] !== 1) {
+    //         this.settingForm[key]--
+    //       }
+    //     }
+    //   }
+    // },
     handleXgChange(row) {
       if (row === 1) {
         this.settingForm.limitCount = 1
