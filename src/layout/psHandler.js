@@ -135,6 +135,11 @@ class InnerCtor {
             disabled: true
           },
           {
+            name: '活动管理（新）',
+            path: '/marketings/activity-manage',
+            disabled: true
+          },
+          {
             name: '新建活动',
             path: '/marketing/activity/create',
             disabled: this.get('marketing.marketing-create')

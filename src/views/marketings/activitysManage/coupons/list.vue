@@ -1,11 +1,11 @@
 <template>
-  <div class="gift-index-model">
-    创建礼品券
+  <div class="coupons-index-model">
+    领券中心列表
   </div>
 </template>
 <script>
 export default {
-  name: 'GiftIndex',
+  name: 'CouponsIndex',
   components: {},
   props: {},
   data() {
@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .gift-index-model {
+  .coupons-index-model {
 
   }
 </style>

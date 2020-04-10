@@ -1,6 +1,7 @@
 <template>
   <div class="list-index-model">
-    index
+    <el-button type="primary" @click="() => $router.push({ path: '/marketings/activity-manage/coupons/list' })">领劵中心列表</el-button>
+    <el-button type="primary" @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add' })">添加优惠券</el-button>
   </div>
 </template>
 <script>
@@ -25,11 +26,11 @@ export default {
   },
   updated() {
   },
-  methods: {},
   beforeDestroy() {
   },
   destroyed() {
-  }
+  },
+  methods: {}
 }
 </script>
 

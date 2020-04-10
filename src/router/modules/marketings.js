@@ -15,7 +15,7 @@ export default [
         path: '/marketings/gift-manage',
         component: () => import('@/views/marketings/giftManage'),
         redirect: '/marketings/gift-manage/list',
-        name: 'giftManage',
+        name: 'gift-manage',
         meta: {
           title: '礼品管理',
           auth: false,
@@ -64,6 +64,52 @@ export default [
               auth: false,
               noCache: true,
               activeMenu: '/marketings/gift-manage'
+            }
+          }
+        ]
+      },
+      {
+        path: '/marketings/activity-manage',
+        component: () => import('@/views/marketings/activitysManage'),
+        redirect: '/marketings/activity-manage/list',
+        name: 'activitys-manage',
+        meta: {
+          title: '活动管理',
+          auth: false,
+          noCache: true
+        },
+        children: [
+          {
+            path: '/marketings/activity-manage/list',
+            component: () => import('@/views/marketings/activitysManage/list'),
+            name: 'activitys-manage-list',
+            meta: {
+              title: '活动管理列表',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/activity-manage'
+            }
+          },
+          {
+            path: '/marketings/activity-manage/coupons/list',
+            component: () => import('@/views/marketings/activitysManage/coupons/list'),
+            name: 'activitys-manage-coupons-list',
+            meta: {
+              title: '领劵中心',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/activity-manage'
+            }
+          },
+          {
+            path: '/marketings/activity-manage/coupons/add',
+            component: () => import('@/views/marketings/activitysManage/coupons/add'),
+            name: 'activitys-manage-coupons-add',
+            meta: {
+              title: '领劵中心',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/activity-manage'
             }
           }
         ]

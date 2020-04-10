@@ -1,11 +1,11 @@
 <template>
-  <div class="coupons-index-model">
-    领券中心
+  <div class="add-model">
+    添加优惠券
   </div>
 </template>
 <script>
 export default {
-  name: 'CouponsIndex',
+  name: 'Add',
   components: {},
   props: {},
   data() {
@@ -25,16 +25,16 @@ export default {
   },
   updated() {
   },
-  methods: {},
   beforeDestroy() {
   },
   destroyed() {
-  }
+  },
+  methods: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .coupons-index-model {
+  .add-model {
 
   }
 </style>
