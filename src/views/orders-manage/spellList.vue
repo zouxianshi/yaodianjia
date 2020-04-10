@@ -166,7 +166,10 @@
                       <!-- quantity购买份数(在待付款情况下是没有份数的) -->
                       <template>
                         <span v-text="`￥${item.sumActualOrderAmount || 0 }`" />
-                        <div v-if="item.sumFreightAmount" v-text="`（含运费${item.sumFreightAmount || 0}元）`" />
+                        <div
+                          v-if="item.sumFreightAmount"
+                          v-text="`（含运费${item.sumFreightAmount || 0}元）`"
+                        />
                       </template>
                     </div>
                   </div>
@@ -202,7 +205,8 @@
                         </el-tooltip>
                       </div>
                       <span v-if="item.groupStatus === 1 && item.endTime">
-                        (<Countdown :time="item.endTime" />后失败)
+                        (
+                        <Countdown :time="item.endTime" />后失败)
                       </span>
 
                       <div class="tr">
@@ -435,16 +439,27 @@ export default {
     },
     // 一键成团
     oneTimeGroup(groupCode) {
-      oneTimeGroupAction({ groupCode }).then(res => {
-        const { code } = res
-        if (code === '10000') {
-          this.$message({
-            type: 'success',
-            message: '设置成功'
-          })
-          this.getList()
+      this.$confirm(
+        '此操作将为此团默认填团虚拟用户，即拼团成功, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         }
-      })
+      )
+        .then(() => {
+          oneTimeGroupAction({ groupCode }).then(res => {
+            const { code } = res
+            if (code === '10000') {
+              this.$message({
+                type: 'success',
+                message: '设置成功'
+              })
+              this.getList()
+            }
+          })
+        })
     },
     // 计算实付总金额
     computerPrice(activityPrice, addNum) {
