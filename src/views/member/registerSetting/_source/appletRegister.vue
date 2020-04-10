@@ -55,7 +55,15 @@ import { getQrcode } from '@/api/memberService'
 export default {
   name: 'AppleRs',
   components: {},
-  props: {},
+  props: {
+    // 会员卡状态
+    showcode: {
+      type: String,
+      default: function() {
+        return '0'
+      }
+    }
+  },
   data() {
     return {
       programData: {
@@ -71,14 +79,14 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
-    this.$emit('changeloading', true)
+    this.$emit('changeloading', true, 2)
     getQrcode({ merCode: this.merCode }).then(res => {
-      this.$emit('changeloading', false)
+      this.$emit('changeloading', false, 2)
       this.programData.programUrl = res.data[0]
       this.programData.programImg = res.data[1]
       this.programData.showImg = true
     }).catch(() => {
-      this.$emit('changeloading', false)
+      this.$emit('changeloading', false, 2)
     })
   },
   beforeMount() {},

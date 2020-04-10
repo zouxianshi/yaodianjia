@@ -139,11 +139,12 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
+    this.$emit('changeloading', true, 1)
     getMemberInfo(this.merCode).then(res => {
       this.memberList = res.data
       getColor().then(res => {
         this.colorList = res.data
-        this.uploadloading = false
+        this.$emit('changeloading', false, 1)
         if (this.memberList.cardBgType === 1) {
           for (const i in this.colorList) {
             if (

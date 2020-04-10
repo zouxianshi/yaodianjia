@@ -362,6 +362,7 @@ export default {
             }).catch(error => {
               console.log(error, '111111')
               this.$emit('changeloading', false)
+              this.$emit('getlist')
             })
           }
         } else {
