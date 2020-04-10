@@ -24,7 +24,7 @@
           <el-date-picker
             v-model="form.activitTime"
             type="datetimerange"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -133,7 +133,7 @@
                   <!-- 团长信息 -->
                   <div class="body-cell cell-right padding10">
                     <div class="cell-text">
-                      <div>{{ item.userName }}</div>
+                      <div>{{ item.userNickname }}</div>
                       <div>{{ item.userTel }}</div>
                       <!-- <template v-if="item.orderDeliveryAddress.receiverMobile">
                         <div>{{ item.orderDeliveryAddress.receiverMobile | receiverMobile }}</div>
