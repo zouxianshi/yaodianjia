@@ -104,6 +104,12 @@ export default {
     .pagination{
       text-align: right;position: absolute;bottom: 10px;right: 1%;
     }
+    .el-table__header tr,
+    .el-table__header th {
+      padding: 0;
+      height: 40px;
+      font-weight: bold;
+    }
   }
   .return-btn{
     position: fixed;z-index: 2000;bottom: 35px;transform: translateX(50px);
