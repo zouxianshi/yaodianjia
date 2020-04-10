@@ -21,7 +21,7 @@ const handlerActive = (data, index) => {
 const merCode = MC.getCookie('mc-mercode')
 
 const state = {
-  VUE_APP_MEMBER_CENTER: process.env.VUE_APP_ENV ? `${process.env.VUE_APP_MEMBER_CENTER}?mercode=${merCode}` : `http://wxpt.test.ydjia.cn/wshop/user-center?mercode=${merCode}`,
+  VUE_APP_MEMBER_CENTER: process.env.VUE_APP_ENV ? `${process.env.VUE_APP_MEMBER_CENTER}?mercode=${merCode}` : `http://wxpt.dev.ydjia.cn/wshop/user-center?mercode=${merCode}`,
   loading: false,
   menuData: []
   /* menuData: [
