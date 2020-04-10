@@ -8,24 +8,17 @@
       <list-form @form-search="search" />
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
         <el-table v-loading="this.activity.tabloading" :data="tableData" style="width: 100%">
-          <el-table-column
-            v-for="col in cols"
-            :key="col.prop"
-            :label="col.label"
-            :prop="col.prop"
-          />
-          <!-- <el-table-column prop="id" label="活动编号" min-width="150" />
-          <el-table-column prop="name" label="标题" min-width="150" />
-          <el-table-column prop="startTime" label="活动开始时间" min-width="120" align="center" />
-          <el-table-column prop="endTime" label="活动结束时间" min-width="120" align="center" /> -->
-          <el-table-column label="时间状态" min-width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.schedule===0" size="small" type="info">未开始</el-tag>
-              <el-tag v-else-if="scope.row.schedule===1" size="small" type="success">进行中</el-tag>
-              <el-tag v-else size="small" type="danger">已结束</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="262">
+          <template v-for="col in cols">
+            <el-table-column v-if="!col.render" :key="col.prop" :formatter="formatter" :label="col.label" :show-overflow-tooltip="true" :prop="col.prop" :min-width="col.width" />
+            <el-table-column v-else :key="col.prop" :label="col.label" :prop="col.prop">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.schedule===0" size="small" type="info">未开始</el-tag>
+                <el-tag v-else-if="scope.row.schedule===1" size="small" type="success">进行中</el-tag>
+                <el-tag v-else size="small" type="danger">已结束</el-tag>
+              </template>
+            </el-table-column>
+          </template>
+          <el-table-column label="操作" width="202">
             <template slot-scope="scope">
               <el-button
                 v-if="scope.row.schedule===0"
@@ -77,6 +70,11 @@ export default {
           width: '150'
         },
         {
+          prop: 'activityType',
+          label: '活动类型',
+          width: '80'
+        },
+        {
           prop: 'name',
           label: '标题',
           width: '150'
@@ -98,14 +96,7 @@ export default {
           label: '时间状态',
           width: '80',
           align: 'center',
-          render: () => {
-            <div>1111111</div>
-          }
-        },
-        {
-          prop: 'action',
-          label: '操作',
-          width: '262'
+          render: true
         }
       ]
     }
@@ -199,6 +190,13 @@ export default {
           this.$message.error(res.msg)
         }
       })
+    },
+    formatter(row, column, cellValue) {
+      if (column.property === 'activityType') {
+        return '满减满赠'
+      } else {
+        return cellValue
+      }
     }
   }
 }
