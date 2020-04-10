@@ -55,20 +55,14 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.loading = true
-    checkAuthInfo(this.$store.state.user.merCode).then(res => {
-      this.authInfo = res.data
-      this.loading = false
-      this.$emit('on-auth', this.authInfo.isAuth)
-    }).catch(() => {
-      this.loading = false
-    })
+    this.getAuthData()
   },
   beforeMount() {
   },
   mounted() {
     window.addEventListener('message', () => {
       this.dialogComplete = false
+      this.getAuthData()
     })
   },
   beforeUpdate() {
@@ -81,6 +75,16 @@ export default {
   destroyed() {
   },
   methods: {
+    getAuthData() {
+      this.loading = true
+      checkAuthInfo(this.$store.state.user.merCode).then(res => {
+        this.authInfo = res.data
+        this.loading = false
+        this.$emit('on-auth', this.authInfo.isAuth)
+      }).catch(() => {
+        this.loading = false
+      })
+    },
     color() {
       return _.sample(['success', 'warning', ''])
     },
