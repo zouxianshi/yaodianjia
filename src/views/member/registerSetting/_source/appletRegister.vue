@@ -1,5 +1,5 @@
 <template>
-  <div class="applers-index-model">
+  <div v-loading="uploadLoading" class="applers-index-model">
     <div class="applers-header-model">微信小程序注册</div>
     <div class="applers-contain-model">
       <div class="applers-qr-adress">
@@ -56,16 +56,10 @@ export default {
   name: 'AppleRs',
   components: {},
   props: {
-    // 会员卡状态
-    showcode: {
-      type: String,
-      default: function() {
-        return '0'
-      }
-    }
   },
   data() {
     return {
+      uploadLoading: false,
       programData: {
         programUrl: '',
         programImg: '',
@@ -79,14 +73,13 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
-    this.$emit('changeloading', true, 2)
+    this.uploadLoading = true
     getQrcode({ merCode: this.merCode }).then(res => {
-      this.$emit('changeloading', false, 2)
       this.programData.programUrl = res.data[0]
       this.programData.programImg = res.data[1]
       this.programData.showImg = true
+      this.uploadLoading = false
     }).catch(() => {
-      this.$emit('changeloading', false, 2)
     })
   },
   beforeMount() {},
