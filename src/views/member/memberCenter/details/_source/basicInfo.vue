@@ -86,7 +86,7 @@
           <mItemTitle title="健康顾问" />
         </div>
         <div class="content-body">
-          <el-table :data="tableData" border style="width: 100%">
+          <el-table v-loading="loading" :data="tableData" border style="width: 100%">
             <el-table-column label="姓名" width="180">
               <template slot-scope="scope">
                 {{ scope.row.emName || '-' }}
@@ -125,6 +125,7 @@ export default {
   props: {},
   data() {
     return {
+      loading: false, // 表格加载中
       searchParams: {
         currentPage: 1,
         pageSize: 8,
@@ -177,7 +178,9 @@ export default {
         pageSize: this.searchParams.pageSize,
         userId: this.searchParams.userId
       }
+      this.loading = true
       queryHealthConsultants(params).then(res => {
+        this.loading = false
         this.tableData = res.data.data
         this.totalCount = res.data.totalCount
       })

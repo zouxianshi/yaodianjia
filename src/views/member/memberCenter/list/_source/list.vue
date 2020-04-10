@@ -19,9 +19,9 @@
       <el-table-column prop="memberPhone" width="150" label="手机号码" />
       <el-table-column label="健康顾问">
         <template slot-scope="scope">
-          {{ scope.row.healthConsultants.length?scope.row.healthConsultants[0].name: '' }}
-          <el-popover v-if="scope.row.healthConsultants.length" placement="bottom" title="最近添加" width="250" trigger="click">
-            <mPopConsultantList />
+          {{ scope.row.healthConsultants?scope.row.healthConsultants[0].name: '' }}
+          <el-popover placement="bottom" title="最近添加" width="250" trigger="click">
+            <mPopConsultantList :datas="scope.row.healthConsultants|| []" :user-id="scope.row.userId" />
             <el-button slot="reference" size="mini" type="text">
               <i class="el-icon-arrow-down" />
             </el-button>

@@ -2,23 +2,44 @@
   <div class="pop-consultant">
     <!-- <div class="header">最近添加</div> -->
     <div class="body-content">
-      <div v-for="items in 2" :key="items" class="content-items">
+      <div v-for="(items, index) in datas" :key="index" class="content-items">
         <div class="left">
-          张三
+          {{ items.emName }}
         </div>
         <div class="right">
-          李四11111111
+          {{ items.storeName }}
         </div>
       </div>
     </div>
     <div class="footer">
-      <el-button type="text" size="small">查看全部</el-button>
+      <el-button type="text" size="small" @click="toTails(userId)">查看全部</el-button>
     </div>
   </div>
 </template>
 <script>
 export default {
+  props: {
+    datas: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    userId: {
+      type: Number,
+      default: null
+    }
+  },
+  data() {
+    return {
 
+    }
+  },
+  methods: {
+    toTails(ids) {
+      this.$router.push(`/member/member-center/details?userId=${ids}`)
+    }
+  }
 }
 </script>
 <style lang="scss">
@@ -29,6 +50,7 @@ export default {
     height: 20px;line-height: 10px;
   }
   .body-content{
+    height: 100px;overflow: auto;
     .content-items{
       display: flex;justify-content: space-between;font-size:12px;line-height:24px;
       .left{
