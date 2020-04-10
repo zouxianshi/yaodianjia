@@ -3,19 +3,19 @@
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="会员营销" name="members">
         <el-row :gutter="20">
-          <el-col v-for="o in members" :key="o.value" :xs="12" :sm="8" :md="6">
+          <el-col v-for="o in members" :key="o.value" :xs="12" :sm="12" :md="8" :lg="6" :xl="4">
             <card-item :item="o" />
           </el-col>
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="商品促销" name="goodsActivity">
         <el-row :gutter="20">
-          <el-col v-for="o in goodsActivity" :key="o.value" :xs="12" :sm="8" :md="6">
+          <el-col v-for="o in goodsActivity" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
             <card-item :item="o" />
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane label="精彩活动" name="activity">精彩活动</el-tab-pane>
+      <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -25,6 +25,10 @@ import cardItem from './components/card-item'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
+import addPrice from '@/assets/image/acvity/add-price.png'
+import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
+import spellGroup from '@/assets/image/acvity/spell-group.png'
+
 export default {
   components: { cardItem },
   data() {
@@ -47,17 +51,24 @@ export default {
         }, {
           value: 'addPrice',
           lable: '加价购',
-          img: counpCenter,
+          img: addPrice,
           desc: '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
         }, {
           value: 'limitPreferential',
           lable: '限时特惠',
-          img: limitSecKill,
-          desc: '限时折扣则更侧重于优惠折扣。设置固定周期的限时活动，可提高顾客粘性。'
+          img: limitPreferential,
+          desc: '限时折扣则更侧重于优惠折扣。设置固定周期的限时活动，可提高顾客粘性。',
+          linkUrl: '/marketing/activity/limt-list'
+        }, {
+          value: 'spellGroup',
+          lable: '拼团',
+          img: spellGroup,
+          desc: '拼团活动可以为商家做拉新引流计划提供高效的途径，同事拼团活动也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长'
         }, {
           value: 'limitSecKill',
           lable: '限时秒杀',
           img: limitSecKill,
+          linkUrl: '/marketing/activity/limt-list',
           desc: '限时秒杀更强调高时效性的低价刺激，可设置独立库存，限时折扣则更侧重于优惠折扣。'
         }
       ], // 商品促销

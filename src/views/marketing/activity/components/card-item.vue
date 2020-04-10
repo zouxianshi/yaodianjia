@@ -1,21 +1,19 @@
 <template>
   <el-card class="activity-card">
-    <el-image
-      class="image"
-      fit="fill"
-      :src="item.img"
-    />
-    <div class="activity-bottom">
-      <div class="activity-header">
-        <div class="title">{{ item.lable }}</div>
-        <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
-          <div class="sub-title">{{ item.desc || '' }}</div>
-        </el-tooltip>
-      </div>
-      <div class="action">
-        <el-button type="text" class="button">活动列表</el-button>
-        <el-divider direction="vertical" />
-        <el-button type="text" class="button">新建活动</el-button>
+    <div @click="handleJump(item.linkUrl)">
+      <el-image class="image" fit="fill" :src="item.img" />
+      <div class="activity-bottom">
+        <div class="activity-header">
+          <div class="title">{{ item.lable }}</div>
+          <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
+            <div class="sub-title">{{ item.desc || '' }}</div>
+          </el-tooltip>
+        </div>
+        <div class="action">
+          <el-button type="text" class="button">活动列表</el-button>
+          <el-divider direction="vertical" />
+          <el-button type="text" class="button">新建活动</el-button>
+        </div>
       </div>
     </div>
   </el-card>
@@ -25,12 +23,20 @@
 export default {
   props: {
     item: Object
+  },
+  methods: {
+    handleJump(url) {
+      console.log('1111111---handleJump', url)
+      this.$router.push(url)
+    }
   }
 }
 </script>
 
 <style lang="scss">
 .activity-card {
+  margin-bottom: 10px;
+  cursor: pointer;
   .el-card__body {
     padding: 0;
   }

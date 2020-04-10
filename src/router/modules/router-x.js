@@ -78,6 +78,16 @@ const router = [
         }
       },
       {
+        path: 'activity/limt-list',
+        component: () => import('@/views/marketing/activity/limit/list'),
+        name: 'limitList',
+        meta: {
+          title: '限时活动',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
         path: 'activity/create',
         component: () => import('@/views/marketing/activity/create'),
         name: 'create',
