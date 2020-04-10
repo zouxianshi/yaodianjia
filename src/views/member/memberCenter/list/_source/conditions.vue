@@ -2,7 +2,7 @@
   <div class="conditions-model">
     <el-form ref="form" :model="conditions" label-width="80px">
       <el-form-item label="选择门店">
-        <el-radio-group v-model="conditions.organizations">
+        <el-radio-group v-model="conditions.organizations" @change="storeTypeChange">
           <el-radio :label="null">不限</el-radio>
           <el-radio label="1">
             <span @click="chooseCon('A')">选择门店<i class="el-icon-arrow-down" /></span>
@@ -15,7 +15,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="健康顾问">
-        <el-radio-group v-model="conditions.empCodes">
+        <el-radio-group v-model="conditions.empCodes" @change="conTypeChange">
           <el-radio :label="null">不限</el-radio>
           <el-radio label="1">
             <span @click="chooseCon('B')">选择顾问<i class="el-icon-arrow-down" /></span>
@@ -111,6 +111,24 @@ export default {
     this.getEmployeeData()
   },
   methods: {
+    // 门店类型切换（不限 \ 选择门店）
+    storeTypeChange(e) {
+      if (!e) {
+        this.organizationsArr.map(items => {
+          items.selectFlag = false
+        })
+      }
+    },
+    // 顾问类型切换（不限 \ 选择顾问）
+    conTypeChange(e) {
+      if (!e) {
+        this.organizationsArr.map(items => {
+          items.employees.map(items2 => {
+            items2.selectFlag = false
+          })
+        })
+      }
+    },
     getData(data) {
       return this.conditions
     },
