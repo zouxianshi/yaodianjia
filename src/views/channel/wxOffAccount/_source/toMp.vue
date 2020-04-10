@@ -7,13 +7,13 @@
     </div>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" :loading="loading" @click="onSave">保存</el-button>
+      <el-button type="primary" size="mini" :loading="!visible" @click="onSave">保存</el-button>
     </div>
     <el-button slot="reference" size="mini" plain :disabled="isDisabled">跳转小程序</el-button>
   </el-popover>
 </template>
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'ToMp',
   components: {},
@@ -31,8 +31,7 @@ export default {
     return {
       type: '',
       url: '',
-      visible: false,
-      loading: false
+      visible: false
     }
   },
   computed: {
@@ -68,7 +67,6 @@ export default {
   destroyed() {
   },
   methods: {
-    ...mapActions('channel', ['saveCustomMenu']),
     ...mapMutations('channel', ['editMenu']),
     /**
      * handler params
@@ -98,10 +96,6 @@ export default {
       })
 
       this.visible = false
-      this.saveCustomMenu().then(() => {
-        this.loading = false
-        this.nName = ''
-      })
     }
   }
 }

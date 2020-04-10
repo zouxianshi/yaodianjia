@@ -11,8 +11,8 @@
         {{ authInfo.serviceTypeInfo || '-' }}
       </el-form-item>
       <el-form-item v-if="isAuthInfo">
-        <el-button v-if="authInfo.isAuth === 1" disabled>已授权</el-button>
-        <el-button v-else type="primary" @click="onAuth">重新授权</el-button>
+        <!--<el-button v-if="authInfo.isAuth === 1" disabled>已授权</el-button>-->
+        <el-button type="primary" @click="onAuth">{{ authInfo.isAuth === 0 ? '去授权' : '重新授权' }}</el-button>
       </el-form-item>
     </el-form>
     <br>
@@ -20,9 +20,9 @@
     <div>
       <el-tag v-for="(item,$index) in authInfo.funcInfo" :key="$index" style="margin-right: 8px" :type="color()">{{ item }}</el-tag>
     </div>
-    <el-dialog id="completeDialog" append-to-body title="微信授权" :visible.sync="dialogComplete" width="85%">
-      <div id="completeDiv">
-        <iframe :src="toPath" height="500" width="100%" />
+    <el-dialog id="completeDialog" :close-on-click-modal="false" append-to-body title="微信授权" :visible.sync="dialogComplete" width="800">
+      <div id="completeDiv" style="margin: -30px -20px -34px -20px;">
+        <iframe :src="toPath" height="660" width="100%" />
       </div>
     </el-dialog>
   </div>

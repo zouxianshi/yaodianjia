@@ -6,7 +6,7 @@
 
 import _ from 'lodash'
 import store from '@/store'
-
+import { MC } from '@merchant/commons'
 import { setMenuData } from '@/api/channelService'
 
 const handlerActive = (data, index) => {
@@ -18,8 +18,10 @@ const handlerActive = (data, index) => {
   return d
 }
 
+const merCode = MC.getCookie('mc-mercode')
+
 const state = {
-  VUE_APP_MEMBER_CENTER: `https://www.google.com`,
+  VUE_APP_MEMBER_CENTER: process.env.VUE_APP_ENV ? `${process.env.VUE_APP_MEMBER_CENTER}?mercode=${merCode}` : `http://wxpt.dev.ydjia.cn/wshop/user-center?mercode=${merCode}`,
   loading: false,
   menuData: []
   /* menuData: [
