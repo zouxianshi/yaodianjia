@@ -8,10 +8,16 @@
       <list-form @form-search="search" />
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
         <el-table v-loading="this.activity.tabloading" :data="tableData" style="width: 100%">
-          <el-table-column prop="id" label="活动编号" min-width="150" />
+          <el-table-column
+            v-for="col in cols"
+            :key="col.prop"
+            :label="col.label"
+            :prop="col.prop"
+          />
+          <!-- <el-table-column prop="id" label="活动编号" min-width="150" />
           <el-table-column prop="name" label="标题" min-width="150" />
           <el-table-column prop="startTime" label="活动开始时间" min-width="120" align="center" />
-          <el-table-column prop="endTime" label="活动结束时间" min-width="120" align="center" />
+          <el-table-column prop="endTime" label="活动结束时间" min-width="120" align="center" /> -->
           <el-table-column label="时间状态" min-width="80" align="center">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.schedule===0" size="small" type="info">未开始</el-tag>
@@ -64,15 +70,48 @@ export default {
   data() {
     return {
       searchForm: {},
-      dialogFormVisible: false,
-      storeList: []
+      cols: [
+        {
+          prop: 'id',
+          label: '活动编号',
+          width: '150'
+        },
+        {
+          prop: 'name',
+          label: '标题',
+          width: '150'
+        },
+        {
+          prop: 'startTime',
+          label: '活动开始时间',
+          width: '120',
+          align: 'center'
+        },
+        {
+          prop: 'endTime',
+          label: '活动结束时间',
+          width: '120',
+          align: 'center'
+        },
+        {
+          prop: 'schedule',
+          label: '时间状态',
+          width: '80',
+          align: 'center',
+          render: () => {
+            <div>1111111</div>
+          }
+        },
+        {
+          prop: 'action',
+          label: '操作',
+          width: '262'
+        }
+      ]
     }
   },
   computed: {
     ...mapGetters(['roles', 'merCode', 'activity']),
-    uploadFileUrl() {
-      return `${this.uploadFileURL}`
-    },
     merCode() {
       return this.$store.state.user.merCode || ''
     },
@@ -84,7 +123,7 @@ export default {
     }
   },
   created() {
-    this._loadStoreList() // 加载活动店铺
+    // this._loadStoreList() // 加载活动店铺
     this.fetchData()
   },
   methods: {
@@ -93,25 +132,6 @@ export default {
     }),
     fetchData() {
       this._getTableData()
-    },
-    _loadStoreList() {
-      // 加载门店列表
-      // const data = {
-      //   searchKey: '',
-      //   currentPage: 1,
-      //   onlineStatus: 1,
-      //   status: 1,
-      //   pageSize: 9000
-      // }
-      // getStoreList(data)
-      //   .then(res => {
-      //     const { data } = res.data
-      //     // data.unshift({ id: '', stName: '全部' })
-      //     this.storeList = data
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //   })
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)

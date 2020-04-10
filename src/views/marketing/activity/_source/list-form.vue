@@ -54,7 +54,7 @@ export default {
         storeId: '',
         timeStatus: '' // 活动.时间状态 int (-1: 未开始, 1: 进行中, 0: 已结束)
       },
-      storeList: []
+      storeList: [] // 门店列表
     }
   },
   created() {
