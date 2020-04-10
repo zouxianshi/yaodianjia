@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'Member',
+  name: 'ActivitysManage',
   render() {
     return (<router-view />)
   }

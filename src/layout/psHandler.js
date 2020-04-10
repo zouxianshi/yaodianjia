@@ -130,6 +130,11 @@ class InnerCtor {
         disabled: this.get('marketing'),
         children: [
           {
+            name: '礼品管理',
+            path: '/marketings/gift-manage',
+            disabled: true
+          },
+          {
             name: '新建活动',
             path: '/marketing/activity/create',
             disabled: this.get('marketing.marketing-create')

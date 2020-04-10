@@ -4,7 +4,7 @@ export default [
   {
     path: '/marketings',
     component: Layout,
-    redirect: '/marketings/wx-official-account',
+    redirect: '/marketings/gift-manage',
     name: 'marketings',
     meta: {
       title: '营销中心',
@@ -14,6 +14,7 @@ export default [
       {
         path: '/marketings/gift-manage',
         component: () => import('@/views/marketings/giftManage'),
+        redirect: '/marketings/gift-manage/list',
         name: 'giftManage',
         meta: {
           title: '礼品管理',
@@ -22,13 +23,25 @@ export default [
         },
         children: [
           {
+            path: '/marketings/gift-manage/list',
+            component: () => import('@/views/marketings/giftManage/list'),
+            name: 'gift-manage-list',
+            meta: {
+              title: '礼品管理列表',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/gift-manage'
+            }
+          },
+          {
             path: '/marketings/gift-manage/discount',
             component: () => import('@/views/marketings/giftManage/discount'),
             name: 'discount',
             meta: {
               title: '折扣券',
               auth: false,
-              noCache: true
+              noCache: true,
+              activeMenu: '/marketings/gift-manage'
             }
           },
           {
@@ -38,7 +51,8 @@ export default [
             meta: {
               title: '满减券',
               auth: false,
-              noCache: true
+              noCache: true,
+              activeMenu: '/marketings/gift-manage'
             }
           },
           {
@@ -48,7 +62,8 @@ export default [
             meta: {
               title: '礼品券',
               auth: false,
-              noCache: true
+              noCache: true,
+              activeMenu: '/marketings/gift-manage'
             }
           }
         ]
