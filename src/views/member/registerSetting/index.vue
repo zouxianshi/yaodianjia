@@ -2,7 +2,7 @@
   <div v-loading="uploadLoading" class="rs-index-model">
     <div class="app-container">
       <el-card class="box-card">
-        <AppleRs @changeloading="changeloading" />
+        <AppleRs :showcode="showCode" @changeloading="changeloading(arguments)" />
       </el-card>
       <el-card v-if="showCode==='1'" class="box-card">
         <NoactiveCard />
@@ -11,7 +11,7 @@
         <nobindingCard />
       </el-card>
       <el-card v-if="showCode==='2' || showCode==='3'" class="box-card" :showcode="showCode">
-        <AemberCard :geturl="geturl" />
+        <AemberCard :geturl="geturl" @changeloading="changeloading(arguments)" />
       </el-card>
     </div>
   </div>
@@ -41,7 +41,7 @@ export default {
     return {
       uploadLoading: false,
       checkMemberList: '',
-      showCode: '1',
+      showCode: '',
       geturl: ''
     }
   },
@@ -73,7 +73,13 @@ export default {
   },
   methods: {
     changeloading(val) {
-      this.uploadLoading = val
+      if (this.showCode === '2' || this.showCode === '3') {
+        if (val[1] === 1) {
+          this.uploadLoading = val[0]
+        }
+      } else if (val[1] === 2) {
+        this.uploadLoading = val[0]
+      }
     }
   }
 }
