@@ -1,8 +1,8 @@
 <template>
-  <div class="rs-index-model">
+  <div v-loading="uploadLoading" class="rs-index-model">
     <div class="app-container">
       <el-card class="box-card">
-        <AppleRs />
+        <AppleRs @changeloading="changeloading" />
       </el-card>
       <el-card v-if="showCode==='1'" class="box-card">
         <NoactiveCard />
@@ -10,7 +10,7 @@
       <el-card v-if="showCode==='0'" class="box-card">
         <nobindingCard />
       </el-card>
-      <el-card v-if="showCode==='2'" class="box-card">
+      <el-card v-if="showCode==='2' || showCode==='3'" class="box-card" :showcode="showCode">
         <AemberCard :geturl="geturl" />
       </el-card>
     </div>
@@ -39,8 +39,9 @@ export default {
   props: {},
   data() {
     return {
+      uploadLoading: false,
       checkMemberList: '',
-      showCode: 1,
+      showCode: '1',
       geturl: ''
     }
   },
@@ -70,7 +71,11 @@ export default {
   },
   destroyed() {
   },
-  methods: {}
+  methods: {
+    changeloading(val) {
+      this.uploadLoading = val
+    }
+  }
 }
 </script>
 

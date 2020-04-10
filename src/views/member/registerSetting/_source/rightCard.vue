@@ -33,7 +33,12 @@
         </el-form-item>
         <el-form-item v-if="member.cardBgType==1" label="卡片颜色">
           <ul class="right-color-check">
-            <li v-for="(item,index) in colorlist" :key="index" :style="{background:item,border:member.cardBgContent==item?'2px solid #409eff':''}" @click="checkColor(item)">{{ item }}</li>
+            <li
+              v-for="(item,index) in colorlist"
+              :key="index"
+              :style="{background:item,border:member.cardBgContent==item?'2px solid #303133':''}"
+              @click="checkColor(item)"
+            >{{ item }}</li>
           </ul>
         </el-form-item>
         <el-form-item label="会员卡标题" prop="cardTitle">
@@ -44,14 +49,29 @@
         </el-form-item>
         <el-form-item label="默认发卡机构" prop="organization">
           <el-select v-model="member.organization" placeholder="默认发卡机构" class="right-input-model">
-            <el-option v-for="(item,index) in storelist" :key="index" :label="item.stName" :value="item.stName" />
+            <el-option
+              v-for="(item,index) in storelist"
+              :key="index"
+              :label="item.stName"
+              :value="item.stName"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="特权说明" prop="prerogative">
-          <el-input v-model="member.prerogative" type="textarea" class="right-textarea-model" placeholder="会员卡可享受会员特权" />
+          <el-input
+            v-model="member.prerogative"
+            type="textarea"
+            class="right-textarea-model"
+            placeholder="会员卡可享受会员特权"
+          />
         </el-form-item>
         <el-form-item label="使用说明" prop="useNotice">
-          <el-input v-model="member.useNotice" type="textarea" class="right-textarea-model" placeholder="每人限领1张" />
+          <el-input
+            v-model="member.useNotice"
+            type="textarea"
+            class="right-textarea-model"
+            placeholder="每人限领1张"
+          />
         </el-form-item>
         <el-form-item label="商户电话" prop="serviceTel">
           <el-input v-model="member.serviceTel" class="right-input-model" placeholder="请输入商户电话" />
@@ -66,7 +86,11 @@
           <div style="color:#fff;font-size:14px">菜单{{ index+1 }}</div>
           <i class="el-icon-delete" @click="deletmenu(index)" />
         </div>
-        <el-form :ref="member.customCells[index]" :model="member.customCells[index]" label-width="80px">
+        <el-form
+          :ref="member.customCells[index]"
+          :model="member.customCells[index]"
+          label-width="80px"
+        >
           <el-form-item label="引导菜单">
             <el-input v-model="item.name" class="right-input-model" />
           </el-form-item>
@@ -175,25 +199,25 @@ export default {
         imgUrl: ''
       },
       rules: {
-        cardTitle:
-        [
+        cardTitle: [
           { required: true, message: '请输会员卡标题', trigger: 'blur' },
-          { min: 1, max: 18, message: '不能为空且长度不能超过9个汉字或18个英文字符', trigger: 'blur' }
+          {
+            min: 1,
+            max: 18,
+            message: '不能为空且长度不能超过9个汉字或18个英文字符',
+            trigger: 'blur'
+          }
         ],
-        organization:
-        [
+        organization: [
           { required: true, message: '请选择默认发卡机构', trigger: 'change' }
         ],
-        prerogative:
-        [
+        prerogative: [
           { required: true, message: '请输特权说明', trigger: 'blur' }
         ],
-        useNotice:
-        [
+        useNotice: [
           { required: true, message: '请输使用说明', trigger: 'blur' }
         ],
-        serviceTel:
-        [
+        serviceTel: [
           { required: true, message: '请输商家电话', trigger: 'blur' }
         ]
       },
@@ -212,15 +236,11 @@ export default {
   },
   watch: {},
   beforeCreate() {},
-  created() {
-  },
+  created() {},
   beforeMount() {},
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
+  mounted() {},
+  beforeUpdate() {},
+  updated() {},
   methods: {
     beforeUpload(file) {
       const isImg =
@@ -273,7 +293,7 @@ export default {
     },
     // 验证背景内容必填
     cardBgReg(val) {
-      if (val === null) {
+      if (val === null || val === '') {
         this.$message({
           message: '请选择背景图片或者颜色',
           type: 'error'
@@ -284,7 +304,7 @@ export default {
     },
     // 微信支付必填
     isplayReg(val) {
-      if (val === null) {
+      if (val === null || val === '') {
         this.$message({
           message: '请选择是否启用微信支付注册',
           type: 'error'
@@ -294,11 +314,23 @@ export default {
       }
     },
     menulistReg(val) {
+      for (const i in val) {
+        if (val[i].name === '' || val[i].tips === '' || val[i].url === '') {
+          const j = parseInt(i) + 1
+          this.$message({
+            message: `引导菜单${j}有未填写值`,
+            type: 'warning'
+          })
+          return false
+        } else {
+          return true
+        }
+      }
       return true
     },
     submit(formName) {
       this.member.color = 'Color040'
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         if (valid) {
           const regphone = this.iphoneReg(this.member.serviceTel)
           const regcardBgContent = this.cardBgReg(this.member.cardBgContent)
@@ -312,13 +344,24 @@ export default {
               }
             }
           }
-          if (regphone && regcardBgContent && regcardType && ispay && menuList) {
+          if (
+            regphone &&
+            regcardBgContent &&
+            regcardType &&
+            ispay &&
+            menuList
+          ) {
+            this.$emit('changeloading', true)
             editMemberInfo(this.member).then(res => {
+              this.$emit('changeloading', false)
               this.$message({
                 message: '操作成功',
                 type: 'success'
               })
               this.$emit('getlist')
+            }).catch(error => {
+              console.log(error, '111111')
+              this.$emit('changeloading', false)
             })
           }
         } else {
@@ -335,7 +378,9 @@ export default {
       if (this.dialog.dialogRadio === '1') {
         this.member.customCells[this.modifyAdressnum].url = this.geturl
       } else {
-        this.member.customCells[this.modifyAdressnum].url = this.dialog.dialogInput
+        this.member.customCells[
+          this.modifyAdressnum
+        ].url = this.dialog.dialogInput
       }
       if (this.dialog.dialogInput === '' && this.dialog.dialogRadio === '2') {
         this.$message({
@@ -367,7 +412,10 @@ export default {
     },
     // 新增菜单
     addmeun() {
-      if (this.member.customCells === null || this.member.customCells.length < 3) {
+      if (
+        this.member.customCells === null ||
+        this.member.customCells.length < 3
+      ) {
         const dataele = {
           name: '',
           tips: '',
@@ -397,34 +445,39 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
 .right-index-model {
   background: #f5f7fa;
-  .right-color-check{
+  .right-color-check {
     width: 220px;
-    li{
+    display: inline-block;
+    li {
       float: left;
-      width: 50px;
-      height:25px;
+      width: 55px;
+      height: 25px;
       font-size: 12px;
       line-height: 25px;
+      border: 2px solid #ffffff;
     }
-    li:hover{
-      cursor:pointer;
+    li:hover {
+      cursor: pointer;
     }
   }
   .right-content-model {
     padding: 10px;
     background: #ffffff;
     margin-bottom: 10px;
-    .el-icon-delete:hover{
-      cursor:pointer;
+    .el-form-item__label {
+      width: 120px !important;
     }
-    .right-muen-model{
-      display:flex;
-      justify-content:space-between;
-      padding:2px 10px;
-      margin:10px 0;
-      background:#2d8cf0;
-      border-radius:4px;
-      color:#fff;
+    .el-icon-delete:hover {
+      cursor: pointer;
+    }
+    .right-muen-model {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 10px;
+      margin: 10px 0;
+      background: #2d8cf0;
+      border-radius: 4px;
+      color: #fff;
     }
     .right-dialog-model {
       display: flex;
@@ -448,8 +501,8 @@ export default {
     .right-input-model {
       width: 40%;
     }
-    .right-textarea-model{
-      width:80%
+    .right-textarea-model {
+      width: 80%;
     }
   }
   .right-right-model {

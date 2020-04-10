@@ -41,7 +41,7 @@
               </el-row>
             </div>
           </div>
-          <el-button type="primary" plain size="mini" @click="goActive">激活会员卡</el-button>
+          <el-button style="vertical-align: bottom" type="primary" plain size="mini" @click="goActive">激活会员卡</el-button>
         </el-col>
       </el-row>
     </div>

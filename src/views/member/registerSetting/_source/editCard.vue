@@ -1,5 +1,5 @@
 <template>
-  <div class="Ed-index-model">
+  <div v-loading="uploadLoading" class="Ed-index-model">
     <div class="app-container">
       <el-row>
         <el-col :span="9" class="Ed-content-model">
@@ -10,7 +10,7 @@
         <!-- 右栏 -->
         <el-col :span="15">
           <el-card class="box-card">
-            <RightCard :storelist="storeList" :member="memberList" :colorlist="colorList" :geturl="geturl" @getlist="getlist" />
+            <RightCard :storelist="storeList" :member="memberList" :colorlist="colorList" :geturl="geturl" @changeloading="changeloading($event)" @getlist="getlist" />
           </el-card>
         </el-col>
       </el-row>
@@ -33,6 +33,7 @@ export default {
   props: {},
   data() {
     return {
+      uploadLoading: false,
       memberList: {},
       colorList: {},
       colorNum: 0,
@@ -55,6 +56,7 @@ export default {
   updated() {},
   methods: {
     getlist() {
+      this.uploadLoading = true
       queryStore({ excelFlag: true, merCode: this.merCode }).then(res => {
         this.storeList = res.data.data
       })
@@ -66,6 +68,7 @@ export default {
           this.memberList = res.data
           getColor().then(res => {
             this.colorList = res.data
+            this.uploadLoading = false
             if (this.memberList.cardBgType === 1) {
               for (const i in this.colorList) {
                 if (i.toLowerCase() === this.memberList.cardBgContent.toLowerCase()) {
@@ -73,8 +76,13 @@ export default {
                 }
               }
             }
+          }).catch(() => {
+            this.uploadLoading = false
           })
         })
+    },
+    changeloading(val) {
+      this.uploadLoading = val
     }
   }
 }
@@ -84,5 +92,8 @@ export default {
 .Ed-index-model {
   padding: 5px;
   background: #f5f7fa;
+  .Ed-content-model{
+    padding-right: 5px;
+  }
 }
 </style>

@@ -2,14 +2,18 @@
   <div class="AemberCard-index-model">
     <div class="AemberCard-header-model">
       <span class="AemberCard-title-model">微信会员卡</span>
+      <el-alert v-if="showcode==='2'" style="display: inline" title="审核中" type="warning" :closable="false" />
     </div>
     <div class="AemberCard-contain-model AemberCard-card-model">
       <el-row>
         <el-col :span="19">
-          <div class="AemberCard-image-model" :style="{backgroundImage: memberList.cardBgType==2?'url('+ memberList.cardBgContent +')':'',background:(memberList.cardBgType==1?memberList.cardBgContent:'')}">
+          <div
+            class="AemberCard-image-model"
+            :style="{backgroundImage: memberList.cardBgType==2?'url('+ memberList.cardBgContent +')':'',background:(memberList.cardBgType==1?memberList.cardBgContent:'')}"
+          >
             <el-row>
               <el-col :span="6">
-                <img :src="memberList.merLogoUrl" alt="" class="AemberCard-image-url">
+                <img :src="memberList.merLogoUrl" alt class="AemberCard-image-url">
               </el-col>
               <el-col :span="14" class="AemberCard-image-detail">
                 <div>{{ memberList.cardTitle }}</div>
@@ -17,7 +21,7 @@
               </el-col>
               <el-col :span="4">
                 <div class="AemberCard-qrcode-url" style="margin-top:10px">
-                  <img src="@/assets/icon/icon.png" alt="" class="AemberCard-qrcode-url">
+                  <img src="@/assets/icon/icon.png" alt class="AemberCard-qrcode-url">
                 </div>
               </el-col>
             </el-row>
@@ -34,7 +38,13 @@
               </el-col>
             </el-row>
           </div>
-          <el-button type="primary" plain size="mini" @click="handleEdit">编辑会员卡</el-button>
+          <el-button
+            style="vertical-align: bottom"
+            type="primary"
+            plain
+            size="mini"
+            @click="handleEdit"
+          >编辑会员卡</el-button>
         </el-col>
         <!-- <el-col :span="8">
           <ul>
@@ -57,7 +67,14 @@
         <div class="AemberCard-contain-adress">会员卡领卡地址:</div>
         <div class="AemberCard-link-model">{{ geturl }}</div>
         <div>
-          <el-button v-clipboard:error="onError" v-clipboard:copy="geturl" v-clipboard:success="onCopy" type="primary" plain size="mini">复制连接</el-button>
+          <el-button
+            v-clipboard:error="onError"
+            v-clipboard:copy="geturl"
+            v-clipboard:success="onCopy"
+            type="primary"
+            plain
+            size="mini"
+          >复制连接</el-button>
         </div>
       </div>
     </div>
@@ -101,6 +118,13 @@ export default {
       default: function() {
         return ''
       }
+    },
+    // 会员卡状态
+    showcode: {
+      type: String,
+      default: function() {
+        return '0'
+      }
     }
   },
   data() {
@@ -115,20 +139,22 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
-    getMemberInfo(this.merCode)
-      .then(res => {
-        this.memberList = res.data
-        getColor().then(res => {
-          this.colorList = res.data
-          if (this.memberList.cardBgType === 1) {
-            for (const i in this.colorList) {
-              if (i.toLowerCase() === this.memberList.cardBgContent.toLowerCase()) {
-                this.memberList.cardBgContent = this.colorList[i]
-              }
+    getMemberInfo(this.merCode).then(res => {
+      this.memberList = res.data
+      getColor().then(res => {
+        this.colorList = res.data
+        this.uploadloading = false
+        if (this.memberList.cardBgType === 1) {
+          for (const i in this.colorList) {
+            if (
+              i.toLowerCase() === this.memberList.cardBgContent.toLowerCase()
+            ) {
+              this.memberList.cardBgContent = this.colorList[i]
             }
           }
-        })
+        }
       })
+    })
   },
   beforeMount() {},
   mounted() {},
@@ -162,7 +188,7 @@ export default {
   margin-top: 10px;
   background: #ffffff;
   padding: 10px;
-  .AemberCard-title-model{
+  .AemberCard-title-model {
     margin-right: 10px;
   }
   .AemberCard-header-model {
@@ -175,22 +201,22 @@ export default {
     padding: 20px 0px 0px 96px;
     font-size: 14px;
     .applers-button-model {
-      color: #1890FF;
+      color: #1890ff;
     }
-    .AemberCard-link-model{
-        width:400px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    .applers-button-model:hover{
-      cursor:pointer
+    .AemberCard-link-model {
+      width: 400px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .applers-load-model{
-      padding-top:170px;
-      padding-left:10px;
+    .applers-button-model:hover {
+      cursor: pointer;
     }
-    .AemberCard-contain-adress{
+    .applers-load-model {
+      padding-top: 170px;
+      padding-left: 10px;
+    }
+    .AemberCard-contain-adress {
       font-weight: 600;
       margin: 10px 0;
     }
@@ -210,10 +236,10 @@ export default {
       border-radius: 10px;
       color: #ffffff;
       font-size: 16px;
-      padding-left:20px;
+      padding-left: 20px;
       display: inline-block;
-      margin-right:30px;
-      .AemberCard-qrcode-url{
+      margin-right: 30px;
+      .AemberCard-qrcode-url {
         width: 45px;
         height: 45px;
         background: #ffffff;
@@ -227,8 +253,8 @@ export default {
         line-height: 26px;
       }
       .AemberCard-image-bottom {
-        transform: translate(20px,60px);
-        .AemberCard-number-bottom{
+        transform: translate(20px, 60px);
+        .AemberCard-number-bottom {
           display: inline-block;
           margin-right: 10px;
           font-size: 18px;
@@ -248,7 +274,7 @@ export default {
       margin-top: 5px;
       padding: 10px;
       font-size: 14px;
-      background: #F1F1F1;
+      background: #f1f1f1;
       .c-index {
         display: inline-block;
         border-radius: 100%;
@@ -259,7 +285,7 @@ export default {
         line-height: 100%;
         font-size: 12px;
         text-align: center;
-        background-color: #497FFE;
+        background-color: #497ffe;
       }
       li {
         line-height: 24px;

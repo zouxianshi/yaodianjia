@@ -71,11 +71,14 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
+    this.$emit('changeloading', true)
     getQrcode({ merCode: this.merCode }).then(res => {
+      this.$emit('changeloading', false)
       this.programData.programUrl = res.data[0]
       this.programData.programImg = res.data[1]
       this.programData.showImg = true
     }).catch(() => {
+      this.$emit('changeloading', false)
     })
   },
   beforeMount() {},
