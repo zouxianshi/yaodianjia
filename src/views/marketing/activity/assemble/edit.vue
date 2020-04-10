@@ -617,6 +617,7 @@ export default {
         })
     },
     formatItems(list) {
+      console.log('11111111111111111111111111-', list)
       const products = []
       for (let index = 0; index < list.length; index++) {
         const v = list[index]
@@ -656,7 +657,8 @@ export default {
           imgUrl: v.mainPic,
           productName: v.name, // 商品名
           sortNumber: v.sortNumber, // 商品排序
-          commodityId: v.id
+          commodityId: v.id,
+          barCode: v.barCode
         })
       }
       return products

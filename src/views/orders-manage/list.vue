@@ -59,17 +59,18 @@
           <div class="search-item">
             <span class="label-name">订单类型</span>
             <el-select
-              v-model="listQuery.prescriptionSheetMark"
+              v-model="listQuery.orderType"
               filterable
               placeholder="订单类型"
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value />
-              <el-option label="处方药订单" value="1" />
-              <el-option label="普通订单" value="0" />
-              <el-option label="拼团订单" value="2" />
+              <el-option label="处方药订单" value="R" />
+              <el-option label="普通订单" value="N" />
+              <el-option label="拼团订单" value="G" />
               <!-- <el-option label="积分订单" value="V" /> -->
             </el-select>
+            <!-- R处方药/N正常订单/V虚拟商品订单/G拼团订单 -->
           </div>
           <!-- <div class="search-item">
             <span class="label-name">订单来源</span>
@@ -1074,7 +1075,7 @@ export default {
         orderSearchType: 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
         orderStatus: '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货7) ===已发货 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
+        // prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
         payment: '', // 支付方式
         proName: '', // 商品名称
         receive: '', // 收货方式
@@ -1262,7 +1263,7 @@ export default {
         orderSearchType: 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
         orderStatus: '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
+        // prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
         payment: '', // 支付方式
         proName: '', // 商品名称
         receive: '', // 收货方式

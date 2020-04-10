@@ -47,19 +47,22 @@
               <div class="table-opeater">
                 <span>增加活动库存：</span>
                 <div class="custom-input">
-                  <el-input
+                  <el-input-number
                     v-model="scope.row.num"
                     :disabled="scope.row.isClearn"
                     size="small"
-                    style="width:80px"
+                    style="width:100px"
                     class="custom-inner-input"
+                    controls-position="right"
+                    :min="0"
+                    :max="100000000000"
                     placeholder
                     @input.native="handleInput($event,scope.row)"
                   />
-                  <div class="operate">
+                  <!-- <div class="operate">
                     <span class="el-icon-arrow-up" @click="handleAddTime(1,scope.row)" />
                     <span class="el-icon-arrow-down" @click="handleAddTime(2,scope.row)" />
-                  </div>
+                  </div> -->
                   <el-link
                     v-if="!scope.row.isClearn"
                     type="primary"
@@ -240,18 +243,18 @@ export default {
       data.sortNumber = e.target.value
       this.$set(this.modalGoodList, index, data)
     },
-    handleAddTime(type, row) {
-      if (!row.num) {
-        return
-      }
-      if (type === 1) {
-        row.num++
-      } else {
-        if (row.num !== 0) {
-          row.num--
-        }
-      }
-    },
+    // handleAddTime(type, row) {
+    //   if (!row.num) {
+    //     return
+    //   }
+    //   if (type === 1) {
+    //     row.num++
+    //   } else {
+    //     if (row.num !== 0) {
+    //       row.num--
+    //     }
+    //   }
+    // },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.modalQuery.currentPage = val
