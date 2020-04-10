@@ -63,11 +63,11 @@
                 <span>{{ basicInfo.organization || '-' }}</span>
               </el-form-item>
               <el-form-item label="注册来源：">
-                <span v-if="basicInfo.regChannel === 1">门店推荐注册</span>
-                <span v-if="basicInfo.regChannel === 2">员工推荐注册</span>
-                <span v-if="basicInfo.regChannel === 3">商户渠道注册</span>
-                <span v-if="basicInfo.regChannel === 4">平台渠道注册</span>
-                <span v-if="basicInfo.regChannel === 5">支付即会员</span>
+                <span v-if="basicInfo.registerSource === 1">门店推荐注册</span>
+                <span v-if="basicInfo.registerSource === 2">员工推荐注册</span>
+                <span v-if="basicInfo.registerSource === 3">商户渠道注册</span>
+                <span v-if="basicInfo.registerSource === 4">平台渠道注册</span>
+                <span v-if="basicInfo.registerSource === 5">支付即会员</span>
               </el-form-item>
               <el-form-item label="注册时间：">
                 <span>{{ basicInfo.createTime }}</span>

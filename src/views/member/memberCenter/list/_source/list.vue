@@ -39,11 +39,11 @@
       </el-table-column>
       <el-table-column prop="age" label="注册来源" width="120">
         <template slot-scope="scope">
-          <span v-if="scope.row.regChannel === 1">门店推荐注册</span>
-          <span v-if="scope.row.regChannel === 2">员工推荐注册</span>
-          <span v-if="scope.row.regChannel === 3">商户渠道注册</span>
-          <span v-if="scope.row.regChannel === 4">平台渠道注册</span>
-          <span v-if="scope.row.regChannel === 5">支付即会员</span>
+          <span v-if="scope.row.registerSource === 1">门店推荐注册</span>
+          <span v-if="scope.row.registerSource === 2">员工推荐注册</span>
+          <span v-if="scope.row.registerSource === 3">商户渠道注册</span>
+          <span v-if="scope.row.registerSource === 4">平台渠道注册</span>
+          <span v-if="scope.row.registerSource === 5">支付即会员</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="120" align="center">

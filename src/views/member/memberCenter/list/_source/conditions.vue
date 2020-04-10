@@ -40,13 +40,13 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="注册来源">
-        <el-radio-group v-model="conditions.regChannel">
-          <el-radio label="">不限</el-radio>
-          <el-radio label="1">门店推荐</el-radio>
-          <el-radio label="2">员工推荐</el-radio>
-          <el-radio label="3">商户渠道</el-radio>
-          <el-radio label="4">平台渠道</el-radio>
-          <el-radio label="5">支付既会员</el-radio>
+        <el-radio-group v-model="conditions.registerSource">
+          <el-radio :label="null">不限</el-radio>
+          <el-radio :label="1">门店推荐</el-radio>
+          <el-radio :label="2">员工推荐</el-radio>
+          <el-radio :label="3">商户渠道</el-radio>
+          <el-radio :label="4">平台渠道</el-radio>
+          <el-radio :label="5">支付既会员</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="会员性别">
@@ -76,7 +76,7 @@ export default {
       empCodesArr: [],
       organizationsArr: [],
       conditions: {
-        regChannel: '', // 注册来源
+        registerSource: null, // 注册来源
         empCodes: null, // 健康顾问
         memberActive: '', // 会员分类
         gender: '', // 性别
@@ -157,7 +157,7 @@ export default {
     },
     resetParams() {
       this.conditions = {
-        regChannel: '', // 注册来源
+        registerSource: null, // 注册来源
         empCodes: null, // 健康顾问
         memberActive: '', // 会员分类
         gender: '', // 性别
