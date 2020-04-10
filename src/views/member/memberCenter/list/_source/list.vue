@@ -20,7 +20,7 @@
       <el-table-column label="健康顾问">
         <template slot-scope="scope">
           {{ scope.row.healthConsultants?scope.row.healthConsultants[0].name: '' }}
-          <el-popover placement="bottom" title="最近添加" width="250" trigger="click">
+          <el-popover v-if="scope.row.healthConsultants" placement="bottom" title="最近添加" width="250" trigger="click">
             <mPopConsultantList :datas="scope.row.healthConsultants|| []" :user-id="scope.row.userId" />
             <el-button slot="reference" size="mini" type="text">
               <i class="el-icon-arrow-down" />
