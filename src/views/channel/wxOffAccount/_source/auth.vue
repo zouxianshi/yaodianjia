@@ -4,7 +4,7 @@
       <el-form-item label="公众微信号 ">
         {{ authInfo.nickName || '-' }}
       </el-form-item>
-      <el-form-item label="公众号昵称">
+      <el-form-item label="第三方平台">
         {{ authInfo.principalName || '-' }}
       </el-form-item>
       <el-form-item label="微信转账类型">
