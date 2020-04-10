@@ -125,7 +125,7 @@
                       </div>
                       <div class="goods-info padding10">
                         <div class="goods-name">{{ item.productName }}</div>
-                        <div class="goods-number marginTop20">{{ item.barCode }}</div>
+                        <div class="goods-number marginTop20">{{ item.commodityId }}</div>
                       </div>
                       <div class="goods-price padding10">￥{{ item.activityPrice }}</div>
                     </div>
