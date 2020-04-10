@@ -5,8 +5,8 @@
     </p>
     <p v-if="errorText" class="p-error">{{ errorText }}</p>
     <div style="text-align: right; margin: 0">
-      <el-button size="mini" type="text" @click="onClose">取消</el-button>
-      <el-button type="primary" size="mini" :loading="loading" @click="onSave">保存</el-button>
+      <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+      <el-button type="primary" size="mini" :loading="!visible" @click="onSave">保存</el-button>
     </div>
     <slot v-if="isSlots" slot="reference" />
     <el-button v-else slot="reference" type="primary" icon="el-icon-edit-outline" size="mini" circle />
@@ -14,8 +14,7 @@
 </template>
 <script>
 import _ from 'lodash'
-import { findComponentsUpward } from '@/utils/findCompt'
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'Edit',
   components: {},
@@ -46,8 +45,7 @@ export default {
     return {
       visible: false,
       nName: '',
-      errorText: '',
-      loading: false
+      errorText: ''
     }
   },
   computed: {
@@ -57,12 +55,8 @@ export default {
     }
   },
   watch: {
-    'name': {
-      deep: true,
-      immediate: true,
-      handler(v) {
-        this.nName = _.cloneDeep(v)
-      }
+    visible() {
+      this.nName = _.cloneDeep(this.name)
     }
   },
   beforeCreate() {
@@ -83,7 +77,6 @@ export default {
   destroyed() {
   },
   methods: {
-    ...mapActions('channel', ['saveCustomMenu']),
     ...mapMutations('channel', ['editMenu', 'addMenuLevel1', 'addMenuLevel2']),
     verification() {
       const { nName, level2Index } = this
@@ -105,7 +98,6 @@ export default {
     },
     async onSave() {
       if (this.verification()) {
-        this.loading = true
         const { nName, level1Index, level2Index, VUE_APP_MEMBER_CENTER } = this
         const item = {
           name: nName,
@@ -133,23 +125,8 @@ export default {
           })
         }
         this.visible = false
-        // save all params
-        this.saveCustomMenu().then(() => {
-          this.loading = false
-          this.$emit('on-update')
-          this.nName = ''
-        }).catch(() => {
-          this.loading = false
-          this.$emit('on-update')
-          this.nName = ''
-          const instance = findComponentsUpward(this.$parent, 'custom-menu')[0]
-          instance.getData()
-        })
+        this.$emit('on-update')
       }
-    },
-    onClose() {
-      this.visible = false
-      this.nName = ''
     }
   }
 }

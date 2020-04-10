@@ -3,7 +3,7 @@
     <p class="p-text">确定删除当前菜单吗？</p>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" :loading="loading" @click="onDelete">确定</el-button>
+      <el-button type="primary" size="mini" :loading="!visible" @click="onDelete">确定</el-button>
     </div>
     <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" circle />
   </el-popover>
@@ -25,8 +25,7 @@ export default {
   },
   data() {
     return {
-      visible: false,
-      loading: false
+      visible: false
     }
   },
   computed: {},
@@ -52,13 +51,9 @@ export default {
     ...mapMutations('channel', ['delMenu']),
     async onDelete() {
       const { level1Index, level2Index } = this
-      this.loading = true
       await this.delMenu({ level1Index, level2Index })
-      await this.saveCustomMenu().then(() => {
-        this.$options.parent.setActiveReset()
-        this.visible = false
-        this.loading = false
-      })
+      this.$options.parent.setActiveReset()
+      this.visible = false
     }
   }
 }

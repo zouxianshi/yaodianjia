@@ -52,5 +52,8 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .wx-off-account-model {
     padding: 20px 0px 10px 20px;
+    .el-tabs__content {
+      overflow: inherit;
+    }
   }
 </style>

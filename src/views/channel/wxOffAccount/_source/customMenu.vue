@@ -1,5 +1,9 @@
 <template>
   <div class="custom-menu-model">
+    <div class="cmm-operation">
+      <el-button size="small" @click="onCancel">取消</el-button>
+      <el-button type="primary" size="small" icon="el-icon-position" :loading="loading" @click="onSave">保存</el-button>
+    </div>
     <div class="cmm-view-window">
       <el-card :body-style="{ padding: '0px' }">
         <m-view-window />
@@ -14,7 +18,7 @@
 </template>
 <script>
 import _ from 'lodash'
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState, mapActions } from 'vuex'
 import { getMenuData } from '@/api/channelService'
 import mViewWindow from './viewWindow'
 import mMenuSettings from './menuSettings'
@@ -24,6 +28,7 @@ export default {
   props: {},
   data() {
     return {
+      loading: false
     }
   },
   computed: {
@@ -48,7 +53,22 @@ export default {
   destroyed() {
   },
   methods: {
+    ...mapActions('channel', ['saveCustomMenu']),
     ...mapMutations('channel', ['setMenuData', 'setLoading']),
+    onCancel() {
+      this.getData()
+    },
+    onSave() {
+      this.loading = true
+      // save all params
+      this.saveCustomMenu().then(() => {
+        this.$message({ message: '保存成功', type: 'success' })
+        this.loading = false
+      }).catch(async() => {
+        await this.getData()
+        this.loading = false
+      })
+    },
     getData() {
       this.setLoading(true)
       getMenuData(this.$store.state.user.merCode).then(async res => {
@@ -84,6 +104,12 @@ export default {
     height: calc(100vh - 250px);
     overflow-y: scroll;
     padding-left: 320px;
+    .cmm-operation {
+      position: absolute;
+      right: 20px;
+      top: -58px;
+      z-index: 1;
+    }
     .cmm-view-window {
       width: 320px;
       position: absolute;
