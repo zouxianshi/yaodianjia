@@ -62,7 +62,7 @@
                   <!-- <div class="operate">
                     <span class="el-icon-arrow-up" @click="handleAddTime(1,scope.row)" />
                     <span class="el-icon-arrow-down" @click="handleAddTime(2,scope.row)" />
-                  </div> -->
+                  </div>-->
                   <el-link
                     v-if="!scope.row.isClearn"
                     type="primary"
@@ -103,7 +103,11 @@
 </template>
 
 <script>
-import { getActivityGoods, setAssembleStock, clearProductStock } from '@/api/marketing'
+import {
+  getActivityGoods,
+  setAssembleStock,
+  clearProductStock
+} from '@/api/marketing'
 
 export default {
   props: {
@@ -177,26 +181,13 @@ export default {
         row.isClearn = true
       })
     },
-    handleSubmitStock() {
+    async handleSubmitStock() {
       // 修改库存
       this.saveLoading = true
-      console.log('handleSubmitStock', this.cleanAllCount)
+      console.log('handleSubmitStock', this.cleanAllCount, this.modalGoodList)
       if (this.cleanAllCount) {
         // 执行清空当前活动id下所有商品库存
-        clearProductStock({ activityId: this.rowItem.id }).then(res => {
-          if (res.code === '10000') {
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            this.saveLoading = false
-            this.dialogVisible = false
-          }
-        }).catch(() => {
-          this.saveLoading = false
-        })
-      } else {
-        setAssembleStock(this.modalGoodList)
+        Promise.all([this.clearStock(), this.updateAssembleStock()])
           .then(res => {
             this.$message({
               message: '修改成功',
@@ -205,10 +196,51 @@ export default {
             this.saveLoading = false
             this.dialogVisible = false
           })
-          .catch(_ => {
+          .catch(e => {
             this.saveLoading = false
+            this.dialogVisible = false
+          })
+      } else {
+        this.updateAssembleStock()
+          .then(res => {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.saveLoading = false
+            this.dialogVisible = false
+          })
+          .catch(e => {
+            this.saveLoading = false
+            this.dialogVisible = false
           })
       }
+    },
+    // 清空库存
+    clearStock() {
+      return new Promise((resolve, reject) => {
+        clearProductStock({ activityId: this.rowItem.id })
+          .then(res => {
+            if (res.code === '10000') {
+              resolve()
+            }
+            reject()
+          })
+          .catch(e => reject(e))
+      })
+    },
+    // 增加库存或排序功能
+    updateAssembleStock() {
+      return new Promise((resolve, reject) => {
+        setAssembleStock(this.modalGoodList)
+          .then(res => {
+            if (res.code === '10000') {
+              resolve()
+            }
+            reject()
+          })
+          .catch(e => reject(e))
+      })
     },
     handleSettingcount(row) {
       // 设置该条记录0库存
