@@ -12,7 +12,7 @@
       </el-form-item>
       <el-form-item v-if="isAuthInfo">
         <!--<el-button v-if="authInfo.isAuth === 1" disabled>已授权</el-button>-->
-        <el-button type="primary" @click="onAuth">重新授权</el-button>
+        <el-button type="primary" @click="onAuth">{{ authInfo.isAuth === 0 ? '去授权' : '重新授权' }}</el-button>
       </el-form-item>
     </el-form>
     <br>
