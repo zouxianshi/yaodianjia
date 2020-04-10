@@ -9,7 +9,7 @@
         <el-form-item label="商户LOGO">
           <img :src="member.merLogoUrl" alt>
         </el-form-item>
-        <el-form-item label="卡片背景">
+        <el-form-item label="卡片背景" prop="cardBgType">
           <el-radio-group v-model="member.cardBgType" @change="changeback">
             <el-radio :label="1">颜色</el-radio>
             <el-radio :label="2">图片</el-radio>
@@ -136,7 +136,7 @@
       <div class="right-play-model">
         <h2 class="right-title-model">微信支付注册设置</h2>
         <el-form :ref="member" :model="member" label-width="80px">
-          <el-form-item label="微信支付注册">
+          <el-form-item label="微信支付注册" prop="isPay">
             <el-radio-group v-model="member.isPay">
               <el-radio :label="1">开启</el-radio>
               <el-radio :label="0">关闭</el-radio>
@@ -188,6 +188,14 @@ export default {
     }
   },
   data() {
+    var validatePass = (rule, value, callback) => {
+      const numReg = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/
+      if (numReg.test(value) === false) {
+        callback(new Error('请输入正确的电话格式'))
+      } else {
+        callback()
+      }
+    }
     return {
       dialog: {
         dialogVisible: false,
@@ -218,7 +226,14 @@ export default {
           { required: true, message: '请输使用说明', trigger: 'blur' }
         ],
         serviceTel: [
-          { required: true, message: '请输商家电话', trigger: 'blur' }
+          { required: true, message: '请输商家电话', trigger: 'blur' },
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        isPay: [
+          { required: true, message: '请选择微信支付注册', trigger: 'change' }
+        ],
+        cardBgType: [
+          { required: true, message: '请选择卡片背景', trigger: 'change' }
         ]
       },
       // 修改第几个菜单
@@ -279,41 +294,8 @@ export default {
         })
       }
     },
-    // 验证商家电话
-    iphoneReg(num) {
-      const numReg = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/
-      if (numReg.test(num) === false) {
-        this.$message({
-          message: '电话格式错误',
-          type: 'error'
-        })
-      } else {
-        return true
-      }
-    },
-    // 验证背景内容必填
-    cardBgReg(val) {
-      if (val === null || val === '') {
-        this.$message({
-          message: '请选择背景图片或者颜色',
-          type: 'error'
-        })
-      } else {
-        return true
-      }
-    },
-    // 微信支付必填
-    isplayReg(val) {
-      if (val === null || val === '') {
-        this.$message({
-          message: '请选择是否启用微信支付注册',
-          type: 'error'
-        })
-      } else {
-        return true
-      }
-    },
     menulistReg(val) {
+      let reg = true
       for (const i in val) {
         if (val[i].name === '' || val[i].tips === '' || val[i].url === '') {
           const j = parseInt(i) + 1
@@ -321,22 +303,26 @@ export default {
             message: `引导菜单${j}有未填写值`,
             type: 'warning'
           })
-          return false
-        } else {
-          return true
+          reg = false
         }
       }
-      return true
+      return reg
+    },
+    cardBgReg(val) {
+      if (val === null || val === '') {
+        this.$message({
+          message: `背景颜色或者图片选择`,
+          type: 'warning'
+        })
+        return false
+      } else {
+        return true
+      }
     },
     submit(formName) {
       this.member.color = 'Color040'
       this.$refs[formName].validate(valid => {
         if (valid) {
-          const regphone = this.iphoneReg(this.member.serviceTel)
-          const regcardBgContent = this.cardBgReg(this.member.cardBgContent)
-          const regcardType = this.cardBgReg(this.member.cardBgType)
-          const ispay = this.isplayReg(this.member.isPay)
-          const menuList = this.menulistReg(this.member.customCells)
           if (this.member.cardBgType === 1) {
             for (const i in this.colorlist) {
               if (this.colorlist[i] === this.member.cardBgContent) {
@@ -344,11 +330,13 @@ export default {
               }
             }
           }
+          const regcardBgContent = this.cardBgReg(this.member.cardBgContent)
+          let menuList = ''
+          if (regcardBgContent) {
+            menuList = this.menulistReg(this.member.customCells)
+          }
           if (
-            regphone &&
             regcardBgContent &&
-            regcardType &&
-            ispay &&
             menuList
           ) {
             this.$emit('changeloading', true)
@@ -361,7 +349,6 @@ export default {
               this.$emit('getlist')
             }).catch(error => {
               console.log(error, '111111')
-              this.$emit('changeloading', false)
               this.$emit('getlist')
             })
           }

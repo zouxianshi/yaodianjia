@@ -1,5 +1,5 @@
 <template>
-  <div class="AemberCard-index-model">
+  <div v-loading="uploadLoading" class="AemberCard-index-model">
     <div class="AemberCard-header-model">
       <span class="AemberCard-title-model">微信会员卡</span>
       <el-alert v-if="showcode==='2'" style="display: inline" title="审核中" type="warning" :closable="false" />
@@ -129,6 +129,7 @@ export default {
   },
   data() {
     return {
+      uploadLoading: false,
       memberList: '',
       colorList: ''
     }
@@ -139,12 +140,12 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
-    this.$emit('changeloading', true, 1)
+    this.uploadLoading = true
     getMemberInfo(this.merCode).then(res => {
       this.memberList = res.data
       getColor().then(res => {
         this.colorList = res.data
-        this.$emit('changeloading', false, 1)
+        this.uploadLoading = false
         if (this.memberList.cardBgType === 1) {
           for (const i in this.colorList) {
             if (
