@@ -20,9 +20,9 @@
     <div>
       <el-tag v-for="(item,$index) in authInfo.funcInfo" :key="$index" style="margin-right: 8px" :type="color()">{{ item }}</el-tag>
     </div>
-    <el-dialog id="completeDialog" :close-on-click-modal="false" append-to-body title="微信授权" :visible.sync="dialogComplete" width="85%">
-      <div id="completeDiv">
-        <iframe :src="toPath" height="500" width="100%" />
+    <el-dialog id="completeDialog" :close-on-click-modal="false" append-to-body title="微信授权" :visible.sync="dialogComplete" width="800">
+      <div id="completeDiv" style="margin: -30px -20px -34px -20px;">
+        <iframe :src="toPath" height="660" width="100%" />
       </div>
     </el-dialog>
   </div>
