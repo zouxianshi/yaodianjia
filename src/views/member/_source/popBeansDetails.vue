@@ -62,8 +62,8 @@ export default {
       beanTotalNum: 1,
       searchParams: {
         'userId': '',
-        'currentPage': 1,
-        'pageSize': 10
+        'currentPage': '1',
+        'pageSize': '1000'
       }
     }
   },
@@ -118,9 +118,8 @@ export default {
     // 改变查询日期
     changeDate(value) {
       var params = _.cloneDeep(this.searchParams)
-      params.data = value
+      params.date = value
       queryOnlineIntegra(params).then(res => {
-        console.log(res)
         this.tableData = res.data.data
       })
     }

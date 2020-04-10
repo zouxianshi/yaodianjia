@@ -38,7 +38,7 @@
             layout="prev, pager, next"
             :current-page="pageInfo.currentPage"
             :page-size="pageInfo.pageSize"
-            :total="1000"
+            :total="pageInfo.totalCon"
             @current-change="pageChange"
           />
         </div>

@@ -119,7 +119,7 @@ export default {
       this.loadingList = true
       getExportRecord({
         merCode: this.merCode,
-        exportType: 'ORDER_EXPORT',
+        exportType: 'MEMBER_EXPORT',
         ...this.listQuery
       })
         .then(res => {
@@ -148,7 +148,7 @@ export default {
             : ''
         filePathObj.sortName =
           Array.isArray(sortnameArr) && sortnameArr.length > 1
-            ? `订单列表-${sortnameArr[1]}.zip`
+            ? `会员列表-${sortnameArr[1]}.zip`
             : ''
       }
       return filePathObj

@@ -19,10 +19,15 @@
             <el-input v-model="content" size="mini" style="width: 50%" placeholder="请输入会员姓名、手机号、卡号、身份证" />
           </el-form-item>
           <el-form-item label="">
-            <el-button size="mini" type="primary" @click="getData()">查询</el-button>
+            <el-button size="mini" type="primary" :loading="loading" @click="getData()">
+              查询
+            </el-button>
             <el-button size="mini" @click="reSet()">重置</el-button>
-            <el-button size="mini" type="primary">批量导出</el-button>
-            <span class="tips">提示：批量导出功能最多一次导出5000条数据</span>
+            <el-button size="mini" type="primary" style="margin-right:10px" @click="exportTabel()">
+              批量导出<i class="el-icon-download el-icon--right" />
+            </el-button>
+            <exportTable />
+            <!-- <span class="tips">提示：批量导出功能最多一次导出5000条数据</span> -->
           </el-form-item>
         </el-form>
       </div>
@@ -43,18 +48,20 @@
 <script>
 import mTabelList from './_source/list' // 列表
 import mConditions from './_source/conditions' // 条件
-import { queryMembers } from '@/api/memberService'
+import { queryMembers, exportMembers } from '@/api/memberService'
+import exportTable from './_source/export-table' // 导出
 import _ from 'lodash'
 export default {
   name: 'McList',
   components: {
-    mTabelList, mConditions
+    mTabelList, mConditions, exportTable
   },
   props: {},
   data() {
     return {
       conditions: true,
       content: '',
+      loading: false,
       pageInfo: {
         pageSize: 10,
         currentPage: 1,
@@ -93,8 +100,10 @@ export default {
         })
         params.organizations = arr2
       }
-      this.$refs.listA.loading = true
+      this.$refs.listA.loading = true // 列表加载中
+      this.loading = true // 按钮加载
       queryMembers(params).then(res => {
+        this.loading = false
         if (res.data && res.data.data) {
           this.pageInfo.totalCont = res.data.totalCount
           this.$refs.listA.dataFromIndex(res.data.data)
@@ -108,6 +117,46 @@ export default {
     pageChage(e) {
       this.pageInfo.currentPage = e
       this.getData()
+    },
+    // 导出会员
+    exportTabel() {
+      var params = _.cloneDeep(this.$refs.conditionsA.conditions)
+      var choosedEmpCodesArr = this.$refs.conditionsA.choosedEmpCodesArr // 已选择顾问
+      var choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
+      params.currentPage = this.pageInfo.currentPage
+      params.pageSize = 100000
+      params.content = this.content
+      // 如果顾问为选择顾问
+      if (params.empCodes === '1') {
+        var arr = []
+        choosedEmpCodesArr.map(items => {
+          arr.push(items.empCode)
+        })
+        params.empCodes = arr
+      }
+      // 如果门店参数为选择门店
+      if (params.organizations === '1') {
+        var arr2 = []
+        choosedOrganizationsArr.map(items => {
+          arr2.push(items.storeId)
+        })
+        params.organizations = arr2
+      }
+      exportMembers(params).then(res => {
+        console.log(res)
+        if (res.code === '10000') {
+          this.$alert(
+            '会员列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
+            '会员导出',
+            {
+              confirmButtonText: '好的',
+              center: true,
+              roundButton: true,
+              confirmButtonClass: 'hydee_alert_btn'
+            }
+          )
+        }
+      })
     },
     // 重置查询条件
     reSet() {

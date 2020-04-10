@@ -48,6 +48,14 @@ export function queryMembers(data) {
     data
   })
 }
+// 导出会员列表
+export function exportMembers(data) {
+  return request({
+    url: `${config.merGoods}/1.0/member/export`,
+    method: 'post',
+    data
+  })
+}
 
 // 查询会员基本信息
 export function menberBaseInfo(params) {
