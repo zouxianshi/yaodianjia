@@ -47,7 +47,8 @@ export default {
           value: 'reduceGift',
           lable: '满减满赠',
           desc: '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。',
-          img: reduceGift
+          img: reduceGift,
+          linkUrl: '/marketing/activity/reduce-gift-list'
         }, {
           value: 'addPrice',
           lable: '加价购',
