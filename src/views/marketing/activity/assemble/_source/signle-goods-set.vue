@@ -294,9 +294,8 @@ export default {
       })
     },
     handleInput(e, key) {
-      // const value = e.target.value
-      // e.target.value = value.replace(/[^\d]/g, '')
-      // this.settingForm[key] = value.replace(/[^\d]/g, '')
+      const value = e.target.value
+      e.target.value = value.replace(/[^\d]/g, '')
       // this.settingForm[key] = value
     },
     // handleAddNum(type, key) {

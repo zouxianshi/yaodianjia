@@ -193,8 +193,8 @@
                   size="mini"
                   placeholder
                   style="width:50px"
-                  @input.native="handleGoodsInput(scope.row.sortNumber,scope.$index)"
-                  @blur="handleInputBlur(scope.$index,scope.row.sortNumber	)"
+                  @input.native="handleGoodsInput($event, scope.row.sortNumber,scope.$index)"
+                  @blur="handleInputBlur(scope.$index,scope.row.sortNumber)"
                 />
                 <span v-else v-text="scope.row.sortNumber" />
               </template>
@@ -290,6 +290,15 @@ export default {
       }
       callback()
     }
+    const checkActivitTime = (rule, value, callback) => {
+      if (!value && !value.length) {
+        return callback(new Error('请选择活动开始和结束时间'))
+      }
+      if (value[0] >= value[1]) {
+        return callback(new Error('活动结束时间要大于开始时间'))
+      }
+      callback()
+    }
     return {
       formData: {
         effectiveTime: 12,
@@ -309,7 +318,7 @@ export default {
         activitTime: [
           {
             required: true,
-            message: '请选择活动开始和结束时间',
+            validator: checkActivitTime,
             trigger: 'change'
           }
         ],
@@ -461,9 +470,10 @@ export default {
         return a.sortNumber > b.sortNumber ? 1 : -1
       })
     },
-    handleGoodsInput(val, index) {
+    handleGoodsInput(e, val, index) {
       const data = this.goodsList[index]
-      data.sortNumber = val
+      data.sortNumber = val.replace(/[^\d]/g, '')
+      e.target.value = val.replace(/[^\d]/g, '')
       this.$set(this.goodsList, index, data)
     },
     handleEditSetting(row) {
@@ -511,7 +521,7 @@ export default {
           _.pullAllBy(this.goodsList, this.multipleSelection, 'id')
           this.$set(this.goodsList)
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('取消删除', err)
         })
     },
