@@ -708,7 +708,7 @@ export default {
           .catch(_ => {})
       } else {
         const index = this.goodsList.findIndex(mItem => {
-          return row.id === mItem.id
+          return row.specId === mItem.specId
         })
         this.goodsList[index] = row
         this.$set(this.goodsList, index, row)
