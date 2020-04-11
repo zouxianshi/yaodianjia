@@ -9,28 +9,63 @@
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
         <el-table v-loading="this.activity.tabloading" :data="tableData" style="width: 100%">
           <template v-for="col in cols">
-            <el-table-column v-if="!col.render" :key="col.prop" :formatter="formatter" :label="col.label" :show-overflow-tooltip="true" :prop="col.prop" :min-width="col.width" />
-            <el-table-column v-else :key="col.prop" :label="col.label" :prop="col.prop">
+            <el-table-column
+              v-if="!col.render"
+              :key="col.prop"
+              :formatter="formatter"
+              :label="col.label"
+              :show-overflow-tooltip="true"
+              :prop="col.prop"
+              :min-width="col.width"
+            />
+            <el-table-column
+              v-else-if="col.prop==='schedule'"
+              :key="col.prop"
+              :label="col.label"
+              :prop="col.prop"
+            >
               <template slot-scope="scope">
                 <el-tag v-if="scope.row.schedule===0" size="small" type="info">未开始</el-tag>
                 <el-tag v-else-if="scope.row.schedule===1" size="small" type="success">进行中</el-tag>
                 <el-tag v-else size="small" type="danger">已结束</el-tag>
               </template>
             </el-table-column>
+            <el-table-column
+              v-else-if="col.prop==='status'"
+              :key="col.prop"
+              :label="col.label"
+              :prop="col.prop"
+            >
+              <template slot="header" slot-scope="scope">
+                <el-tooltip placement="top">
+                  <div slot="content">
+                    时间状态为进行中或未开始的，状态为生效的活动;
+                    <br>时间状态为已结束的，状态为已失效的活动;
+                  </div>
+                  <span>
+                    {{ scope.column.label }}
+                    <i class="el-icon-question" />
+                  </span>
+                </el-tooltip>
+              </template>
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.schedule===0" size="small" type="info">生效</el-tag>
+                <el-tag v-else-if="scope.row.schedule===1" size="small" type="success">生效</el-tag>
+                <el-tag v-else size="small" type="danger">已失效</el-tag>
+              </template>
+            </el-table-column>
           </template>
           <el-table-column label="操作" width="202">
             <template slot-scope="scope">
-              <el-button
-                v-if="scope.row.schedule===0"
-                plain
-                size="mini"
-                @click="toEdit(scope.row)"
-              >编辑</el-button>
-              <!-- <el-button v-if="scope.row.schedule===0||scope.row.schedule===1" plain size="mini" @click="toEdit(scope.row, 1)">查看数据</el-button> -->
-              <template v-if="scope.row.schedule===0||scope.row.schedule===2">
-                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
-              </template>
-              <!-- <product-kucun v-if="scope.row.schedule===1" :row-item="scope.row" /> -->
+              <el-button type="text">查看</el-button>
+              <el-divider direction="vertical" />
+              <el-button type="text" @click="endActivity(scope.row)">失效</el-button>
+              <el-divider direction="vertical" />
+              <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
+              <el-divider direction="vertical" />
+              <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
+              <el-divider direction="vertical" />
+              <preview-dialog />
             </template>
           </el-table-column>
         </el-table>
@@ -55,10 +90,12 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { delAssembleActivity } from '@/api/marketing'
 import listForm from '../_source/list-form'
+import previewDialog from './_source/preview-dialog'
 
 export default {
   components: {
-    listForm
+    listForm,
+    previewDialog
   },
   data() {
     return {
@@ -76,8 +113,12 @@ export default {
         },
         {
           prop: 'name',
-          label: '标题',
+          label: '活动名称',
           width: '150'
+        },
+        {
+          prop: 'storeNum',
+          label: '参与门店'
         },
         {
           prop: 'startTime',
@@ -94,6 +135,13 @@ export default {
         {
           prop: 'schedule',
           label: '时间状态',
+          width: '80',
+          align: 'center',
+          render: true
+        },
+        {
+          prop: 'status',
+          label: '状态',
           width: '80',
           align: 'center',
           render: true
@@ -165,6 +213,19 @@ export default {
         this._delData(row.id)
       })
     },
+    // 失效操作
+    endActivity() {
+      this.$confirm('确认将此活动设置为失效状态吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // this._delData(row.id)
+        console.log('此活动已失效')
+        this._getTableData()
+      })
+    },
+
     // 获取列表数据
     _getTableData() {
       const params = {

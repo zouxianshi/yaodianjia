@@ -39,14 +39,15 @@
     "management-system"
   ],
   "dependencies": {
-    "@merchant/commons": "1.0.0-beta.133",
     "@hydee/download": "^1.0.5",
+    "@merchant/commons": "1.0.0-beta.133",
     "area-data": "^5.0.6",
     "axios": "0.18.1",
     "codemirror": "5.45.0",
     "crypto": "^1.0.1",
     "dayjs": "^1.8.18",
     "element-ui": "2.11.0",
+    "html2canvas": "^1.0.0-rc.5",
     "jquery": "^3.4.1",
     "js-cookie": "2.2.0",
     "js-md5": "^0.7.3",
