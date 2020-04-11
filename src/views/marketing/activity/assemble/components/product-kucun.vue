@@ -4,7 +4,7 @@
     <el-dialog
       :title="`“${dialogVisibleTitle}”商品活动库存管理:`"
       :visible.sync="dialogVisible"
-      width="750px"
+      width="800px"
       append-to-body
       :close-on-click-modal="false"
       @close="modalQuery.currentPage = 1; modalQuery.total = 1; cleanAllCount = false"
