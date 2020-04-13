@@ -11,13 +11,50 @@
             <el-option label="已删除" value="4" />
           </el-select>
         </el-form-item>
-        <el-form-item label="优惠券名称">
+        <el-form-item label="优惠券名称" style="margin-left:10px">
           <el-input v-model="searchParams.name" placeholder="请输入关键词" size="mini" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="searchData()">查询</el-button>
+          <el-button type="primary" size="mini" @click="searchData()">查询</el-button>
         </el-form-item>
       </el-form>
+      <el-radio-group v-model="searchParams.type" size="mini" @change="changeType">
+        <el-radio-button label="0">全部</el-radio-button>
+        <el-radio-button label="1">折扣券</el-radio-button>
+        <el-radio-button label="2">满减券</el-radio-button>
+        <el-radio-button label="3">礼品券</el-radio-button>
+      </el-radio-group>
+    </div>
+    <div class="list-tabel">
+      <el-table
+        :data="tableData"
+        height="100%"
+        style="width: 100%;"
+      >
+        <el-table-column
+          prop="date"
+          label="日期"
+          width="180"
+        />
+        <el-table-column
+          prop="name"
+          label="姓名"
+          width="180"
+        />
+        <el-table-column
+          prop="address"
+          label="地址"
+        />
+      </el-table>
+      <el-pagination
+        :current-page="pageInfo.currentPage"
+        :page-sizes="[100, 200, 300, 400]"
+        :page-size="pageInfo.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="400"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
     </div>
   </div>
 </template>
@@ -26,18 +63,53 @@ export default {
   data() {
     return {
       searchParams: {
-        status: '',
-        name: ''
-      }
+        status: '0',
+        name: '',
+        type: '0'
+      },
+      pageInfo: {
+        currentPage: 0,
+        pageSize: 100
+      },
+      tableData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }]
     }
   },
   methods: {
     searchData() {
       console.log(this.searchParams)
+    },
+    // 切换类型
+    changeType(e) {
+      this.searchData()
+    },
+    handleSizeChange(e) {
+      console.log(e)
+    },
+    handleCurrentChange(e) {
+      console.log(e)
     }
   }
 }
 </script>
-<style scoped>
-
+<style lang="scss">
+.list{
+  height: calc(100vh - 375px);
+  .el-table thead th{
+    height: 40px;
+  }
+}
+.list-tabel{
+  margin-top: 24px;height: calc(100vh - 500px);position:relative;padding-bottom:42px;
+  .el-pagination{
+    position: absolute;bottom: 0;right: 0;width: 100%;text-align: right;
+  }
+}
 </style>
