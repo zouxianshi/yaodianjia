@@ -200,7 +200,7 @@
               </template>
             </el-table-column>
             <el-table-column label="商品名称" prop="name" min-width="100" />
-            <el-table-column label="商品条码" prop="barCode" />
+            <el-table-column label="商品编码" prop="commodityId" />
             <el-table-column label="原售价" prop="mprice" />
             <el-table-column label="拼团价" prop="activityPrice" />
             <el-table-column label="活动库存" prop="productActivityCount">
@@ -529,6 +529,7 @@ export default {
       // 商品选择确定事件
       row.map((v, index) => {
         v.sortNumber = index + 1
+        v.commodityId = v.erpCode
       })
       console.log('onSelectedGoods', row)
       this.goodsList = row
@@ -667,7 +668,7 @@ export default {
           imgUrl: v.mainPic,
           productName: v.name, // 商品名
           sortNumber: v.sortNumber, // 商品排序
-          commodityId: v.id,
+          commodityId: v.commodityId,
           barCode: v.barCode
         })
       }
@@ -691,6 +692,7 @@ export default {
     },
     handleSuccessSelectGood(row) {
       // 单个商品设置确定callback
+      console.log('11111', row)
       if (this.activityId) {
         const data = {
           activityId: row.activityId,
@@ -705,7 +707,8 @@ export default {
           productActivityCount: row.productActivityCount,
           specId: row.specId,
           productName: row.productName,
-          sortNumber: row.sortNumber
+          sortNumber: row.sortNumber,
+          commodityId: row.commodityId
         }
         updateAcAssmbleProductInfo(data)
           .then(res => {
