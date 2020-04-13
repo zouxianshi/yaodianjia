@@ -5,17 +5,16 @@
     </div>
     <div class="cbm-draggable">
       <v-draggable v-model="dragComponent" draggable=".item" v-bind="dragOptions">
-        <transition-group type="transition" :name="'flip-list'">
-          <span v-for="(el,i) in dragComponent" :key="i" class="item">
-            <el-button size="small">{{ el.name }}</el-button>
-          </span>
-        </transition-group>
+        <span v-for="(el,i) in dragComponent" :key="i" class="item">
+          <el-button size="small">{{ el.name }}</el-button>
+        </span>
       </v-draggable>
     </div>
     <div class="clearfix" />
   </div>
 </template>
 <script>
+import { uuid } from '@/utils'
 import vDraggable from 'vuedraggable'
 const dragComponent = [
   {
@@ -52,11 +51,18 @@ export default {
   computed: {
     dragOptions() {
       return {
-        animation: 0,
-        group: 'description',
+        animation: 150,
         disabled: false,
-        ghostClass: 'ghost'
+        ghostClass: 'ghost',
+        group: {
+          put: false,
+          name: 'shared',
+          pull: 'clone'
+        }
       }
+    },
+    cpdKey() {
+      return `${uuid('va-')}${uuid()}`
     }
   },
   watch: {},
