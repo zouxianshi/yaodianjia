@@ -660,7 +660,7 @@ export default {
           id: '',
           isFreeshipping: v.isFreeshipping, // 是否包邮
           limitCount: v.limitCount, // 限购次数
-          openLimitTimes: v.openLimitTimess, // 开团次数
+          openLimitTimes: v.openLimitTimes, // 开团次数
           price: v.mprice, // 原售价
           productActivityCount: v.productActivityCount, // 活动产品库存量
           specId: v.specId, //

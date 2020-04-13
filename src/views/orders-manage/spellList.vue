@@ -193,7 +193,7 @@
                             <div v-if="item.groupStatus === 2 || item.groupStatus === 4">
                               成团时间:
                               <br>
-                              {{ item.endTime }}
+                              {{ item.completeTime }}
                             </div>
                             <div v-if="item.groupStatus === 3 || item.groupStatus === 5 ">
                               失败时间:
