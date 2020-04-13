@@ -1,12 +1,25 @@
 <template>
   <div class="home-settings-model">
-    index
+    <div class="hsm-cb">
+      <el-card class="box-card" :body-style="{padding:'0px'}">
+        <m-component-bar />
+      </el-card>
+    </div>
+    <div class="scrollbar hsm-hm">
+      <m-home-main />
+    </div>
+    <div class="hsm-op">
+      <m-operation />
+    </div>
   </div>
 </template>
 <script>
+import mComponentBar from './_source/componentBar'
+import mHomeMain from './_source/homeMain'
+import mOperation from './_source/operation'
 export default {
   name: 'HomeSettings',
-  components: {},
+  components: { mComponentBar, mHomeMain, mOperation },
   props: {},
   data() {
     return {}
@@ -25,16 +38,27 @@ export default {
   },
   updated() {
   },
-  methods: {},
   beforeDestroy() {
   },
   destroyed() {
-  }
+  },
+  methods: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .home-settings-model {
-
+    .hsm-cb {
+      width: calc(100% + 2px);
+      margin-left: -1px;
+    }
+    .hsm-hm {
+      height: calc(100vh - 278px);
+      overflow-y:scroll;
+      margin-top: 12px;
+    }
+    .hsm-op {
+      padding-bottom: 4px;
+    }
   }
 </style>

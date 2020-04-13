@@ -1,0 +1,27 @@
+
+.scrollbar {
+  overflow-y: auto;
+}
+.scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #409EFF;
+  min-width: 200px;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 5px;
+  margin: 4px 0;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #409EFF;
+  border-radius: 5px;
+}
+.scrollbar.scrollbar-show::-webkit-scrollbar-thumb {
+  background: #409EFF;
+}

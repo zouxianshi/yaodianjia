@@ -23,6 +23,7 @@ module.exports = {
       }
     }],
     "vue/singleline-html-element-content-newline": "off",
+    "vue/order-in-components": "off",
     "vue/multiline-html-element-content-newline":"off",
     "vue/name-property-casing": ["error", "PascalCase"],
     "vue/no-v-html": "off",

@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
-const webpack = require('webpack')
+// const webpack = require('webpack')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -61,17 +61,17 @@ module.exports = {
     proxy: {
       '/api': {
         // target: `http://middle.test.ydjia.cn/businesses-gateway`,
-        target: `http://middle.uat.ydjia.cn/businesses-gateway`,
+        target: `http://middle.dev.ydjia.cn/businesses-gateway`,
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
           // '^/api': `http://middle.dev.ydjia.cn`
-          '^/api': `http://middle.uat.ydjia.cn`
+          '^/api': `http://middle.dev.ydjia.cn`
         }
       },
       '/hss': {
         // target: `http://middle.test.ydjia.cn/businesses-gateway`,
-        target: `https://middle.uat.ydjia.cn/businesses-gateway/mask`,
+        target: `https://middle.dev.ydjia.cn/businesses-gateway/mask`,
         // target: `http://10.200.25.183:8080`,
         changeOrigin: true,
         pathRewrite: {
@@ -112,14 +112,17 @@ module.exports = {
         })
       ]
     },
+    externals: {
+      vue: 'Vue',
+      vuex: 'Vuex',
+      'vue-router': 'VueRouter',
+      jquery: '$',
+      lodash: '_',
+      'element': 'ELEMENT',
+      'vuedraggable': 'vuedraggable',
+      'tinymce': 'tinymce'
+    },
     plugins: [
-      new webpack.ProvidePlugin({
-        $: 'jquery',
-
-        jQuery: 'jquery',
-
-        'windows.jQuery': 'jquery'
-      })
       //   // GZIP配置
       //   new CompressionWebpackPlugin({
       //     filename: '[path].gz[query]',
