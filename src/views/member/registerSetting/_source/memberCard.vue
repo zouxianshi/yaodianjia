@@ -65,7 +65,7 @@
     <div class="AemberCard-contain-model">
       <div class="AemberCard-url-model">
         <div class="AemberCard-contain-adress">会员卡领卡地址:</div>
-        <div class="AemberCard-link-model">{{ geturl }}</div>
+        <div class="AemberCard-link-model">{{ VUE_APP_MEMBER_CENTER }}</div>
         <div>
           <el-button
             v-clipboard:error="onError"
@@ -107,7 +107,7 @@
 </template>
 <script>
 import { getMemberInfo, getColor } from '@/api/memberService'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'AemberCard',
   components: {},
@@ -135,7 +135,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode'])
+    ...mapGetters(['merCode']),
+    ...mapState('channel', ['VUE_APP_MEMBER_CENTER'])
   },
   watch: {},
   beforeCreate() {},

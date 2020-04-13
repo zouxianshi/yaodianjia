@@ -88,7 +88,8 @@ export default {
     },
     goActive() {
       this.$router.push({
-        path: '/member/register-setting/editcard'
+        path: '/member/register-setting/editcard',
+        query: { edit: '1' }
       })
     }
   }
