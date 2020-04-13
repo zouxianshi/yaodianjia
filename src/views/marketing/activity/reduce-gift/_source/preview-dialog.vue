@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="text" @click="dialogVisible=true">预览</el-button>
+    <el-button type="text" @click="dialogVisible=true">活动连接</el-button>
     <el-dialog
       title="预览"
       custom-class="preview-diaglog"

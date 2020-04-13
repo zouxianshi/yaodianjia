@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <a href="#/marketing/activity/assemble-edit">
+      <a href="#/marketing/activity/reduce-gift">
         <el-button class="btn btn-add" type="primary" size="small">新建活动</el-button>
       </a>
       <!-- 列表表单控件 -->
@@ -56,6 +56,11 @@
             </el-table-column>
           </template>
           <el-table-column label="操作" width="202">
+            <!--
+              进行中（复制链接、失效），时间状态
+              未开始（编辑、删除）
+              已结束（查看、删除
+             -->
             <template slot-scope="scope">
               <el-button type="text">查看</el-button>
               <el-divider direction="vertical" />
