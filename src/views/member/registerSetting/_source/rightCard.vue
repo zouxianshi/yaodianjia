@@ -38,7 +38,7 @@
               :key="index"
               :style="{background:item,border:member.cardBgContent==item?'2px solid #303133':''}"
               @click="checkColor(item)"
-            >{{ item }}</li>
+            />
           </ul>
         </el-form-item>
         <el-form-item label="会员卡标题" prop="cardTitle">
@@ -204,7 +204,8 @@ export default {
         dialogUrl: ''
       },
       form: {
-        imgUrl: ''
+        imgUrl: '',
+        color: ''
       },
       rules: {
         cardTitle: [
@@ -250,11 +251,16 @@ export default {
     }
   },
   watch: {},
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
-  mounted() {},
-  beforeUpdate() {},
+  beforeCreate() {
+  },
+  created() {
+  },
+  beforeMount() {
+  },
+  mounted() {
+  },
+  beforeUpdate() {
+  },
   updated() {},
   methods: {
     beforeUpload(file) {
@@ -287,6 +293,7 @@ export default {
       // 图片上传成功
       if (res.code === '10000') {
         this.member.cardBgContent = this.showImgHandler(res.data)
+        this.form.imgUrl = this.showImgHandler(res.data)
       } else {
         this.$message({
           message: res.msg,
@@ -325,7 +332,7 @@ export default {
         if (valid) {
           if (this.member.cardBgType === 1) {
             for (const i in this.colorlist) {
-              if (this.colorlist[i] === this.member.cardBgContent) {
+              if (this.colorlist[i] === this.form.color) {
                 this.member.cardBgContent = i
               }
             }
@@ -340,6 +347,7 @@ export default {
             menuList
           ) {
             this.$emit('changeloading', true)
+            console.log(this.member)
             editMemberInfo(this.member).then(res => {
               this.$emit('changeloading', false)
               this.$message({
@@ -421,10 +429,19 @@ export default {
       }
     },
     checkColor(index) {
-      this.member.cardBgContent = index
+      if (this.member.cardBgType.toString() === '1') {
+        this.member.cardBgContent = index
+        this.form.color = index
+      }
     },
     changeback() {
-      this.member.cardBgContent = ''
+      if (this.member.cardBgType.toString() === '1') {
+        this.form.imgUrl = this.member.cardBgContent
+        this.member.cardBgContent = this.form.color
+      } else {
+        this.form.color = this.member.cardBgContent
+        this.member.cardBgContent = this.form.imgUrl
+      }
     }
   }
 }
@@ -438,7 +455,7 @@ export default {
     display: inline-block;
     li {
       float: left;
-      width: 55px;
+      width: 25px;
       height: 25px;
       font-size: 12px;
       line-height: 25px;

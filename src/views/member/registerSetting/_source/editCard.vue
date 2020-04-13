@@ -66,6 +66,11 @@ export default {
       getMemberInfo(this.merCode)
         .then(res => {
           this.memberList = res.data
+          if (this.$route.query.edit === '1') {
+            this.memberList.cardBgType = 1
+            this.memberList.cardBgContent = 'Color102'
+            this.memberList.isPay = 0
+          }
           getColor().then(res => {
             this.colorList = res.data
             this.uploadLoading = false
