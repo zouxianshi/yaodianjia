@@ -23,7 +23,7 @@
               查询
             </el-button>
             <el-button size="mini" @click="reSet()">重置</el-button>
-            <el-button size="mini" type="primary" style="margin-right:10px" @click="exportTabel()">
+            <el-button size="mini" type="primary" style="margin-right:10px" :disabled="isNodatas" @click="exportTabel()">
               批量导出<i class="el-icon-download el-icon--right" />
             </el-button>
             <exportTable />
@@ -62,11 +62,18 @@ export default {
       conditions: true,
       content: '',
       loading: false,
+      isNoData: false,
+      paramsBac: {},
       pageInfo: {
         pageSize: 10,
         currentPage: 1,
         totalCont: 100
       }
+    }
+  },
+  computed: {
+    isNodatas() {
+      return this.isNoData
     }
   },
   mounted() {
@@ -103,8 +110,13 @@ export default {
       this.$refs.listA.loading = true // 列表加载中
       this.loading = true // 按钮加载
       queryMembers(params).then(res => {
+        this.isNoData = true
         this.loading = false
+        this.paramsBac = params
         if (res.data && res.data.data) {
+          if (res.data.data.length > 0) {
+            this.isNoData = false
+          }
           this.pageInfo.totalCont = res.data.totalCount
           this.$refs.listA.dataFromIndex(res.data.data)
         } else {
@@ -120,30 +132,7 @@ export default {
     },
     // 导出会员
     exportTabel() {
-      var params = _.cloneDeep(this.$refs.conditionsA.conditions)
-      var choosedEmpCodesArr = this.$refs.conditionsA.choosedEmpCodesArr // 已选择顾问
-      var choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
-      params.currentPage = this.pageInfo.currentPage
-      params.pageSize = 100000
-      params.content = this.content
-      // 如果顾问为选择顾问
-      if (params.empCodes === '1') {
-        var arr = []
-        choosedEmpCodesArr.map(items => {
-          arr.push(items.empCode)
-        })
-        params.empCodes = arr
-      }
-      // 如果门店参数为选择门店
-      if (params.organizations === '1') {
-        var arr2 = []
-        choosedOrganizationsArr.map(items => {
-          arr2.push(items.storeId)
-        })
-        params.organizations = arr2
-      }
-      exportMembers(params).then(res => {
-        console.log(res)
+      exportMembers(this.paramsBac).then(res => {
         if (res.code === '10000') {
           this.$alert(
             '会员列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
