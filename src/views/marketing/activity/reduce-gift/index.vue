@@ -102,8 +102,8 @@
               </el-tooltip>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="活动规则" prop="rule">
-            <el-radio-group v-model="form.rule">
+          <el-form-item label="活动规则" prop="rule_type">
+            <el-radio-group v-model="form.rule_type">
               <el-radio :label="1">阶梯满减</el-radio>
               <el-radio :label="0">
                 循环满减
@@ -111,7 +111,30 @@
               </el-radio>
             </el-radio-group>
           </el-form-item>
-          <!-- 优惠规则 -->
+          <!-- 优惠设置 -->
+          <!-- <el-form-item label="优惠设置"></el-form-item> -->
+          <div>优惠设置</div>
+          <el-form-item label="满减门槛">
+            <el-input
+              v-model="form.pmt_rule_full[0].threshold"
+              style="width: 200px"
+              class="input-with-select"
+            >
+              <el-select slot="append" v-model="form.pmt_rule_full[0].uint" placeholder="请选择">
+                <el-option label="元" value="0" />
+                <el-option label="件" value="1" />
+              </el-select>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="优惠内容">
+            <el-checkbox-group v-model="form.pmt_rule_full[0].rule_content" size="small">
+              <el-checkbox label="1" border>
+                订单金额优惠
+              </el-checkbox>
+              <br>
+              <el-checkbox label="2" border>送赠品</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
           <el-form-item>
             <el-button plain @click="onSave">保存</el-button>
             <el-button type="primary" @click="onSubmit">保存并提交</el-button>
@@ -124,6 +147,7 @@
 </template>
 
 <script>
+// import _ from 'lodash'
 import storeGoods from '../components/store-gods'
 import storeDialog from '../components/store'
 export default {
@@ -161,7 +185,14 @@ export default {
         type: ['1'],
         isAllStore: 1,
         isAllProduct: 1,
-        rule: 1
+        rule_type: 1,
+        pmt_rule_full: [
+          {
+            uint: '0',
+            threshold: 100,
+            rule_content: ['1']
+          }
+        ]
       },
       chooseStore: [],
       allStore: [],
@@ -183,8 +214,12 @@ export default {
     }
   },
   methods: {
-    handleTimeChange(val) {
-      console.log('活动时间', val)
+    handleTimeChange(row) {
+      console.log('活动时间', row)
+      if (row) {
+        this.form.startTime = row[0]
+        this.form.endTime = row[1]
+      }
       // 此时需要需查询店铺和商品信息；
     },
     handleClick() {},
@@ -193,6 +228,11 @@ export default {
     },
     handleProductChange() {
       console.log('活动范围活动商品变更')
+    },
+    ruleDtoChange(e, val) {
+      console.log('ruleDtoChange', e, val)
+      this.form.ruleDto[0].type = val
+      this.form.ruleDto[0].num = 800
     },
     handleSelectStore(val) {
       console.log('门店结果页出来了-------', val)
@@ -204,11 +244,12 @@ export default {
     // 格式话表单提交数据
     formateFormData() {
       console.log('我是格式话表单提交数据----------------', this.form)
-      return { ... this.form }
+      return { ...this.form }
     },
     async onSave() {
       console.log('我是保存----------------')
       const data = this.formateFormData()
+      // _.pick(data, [''])
       console.log('我是保存----------------最终的数据', data)
     },
     onSubmit() {
@@ -252,6 +293,12 @@ export default {
     border-left: #409eff 2px solid;
     padding-left: 10px;
     margin-bottom: 20px;
+  }
+  .el-select .el-input {
+    width: 80px;
+  }
+  .input-with-select .el-input-group__append {
+    background-color: #fff;
   }
   .choose-store-box {
     width: 500px;
