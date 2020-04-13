@@ -1,13 +1,13 @@
 <template>
   <span>
-    <el-button type="primary" size="mini" @click="dialog.visible = true">选择商品</el-button>
+    <el-button type="text" @click="dialog.visible = true">选择赠品</el-button>
     <el-dialog
-      title="选取商品"
+      title="选取赠品"
       append-to-body
       class="m-dialog m-dialog-goods"
       :visible.sync="dialog.visible"
       :close-on-click-modal="false"
-      width="1100px"
+      width="800px"
       @close="handlerClose"
     >
       <div class="modal-body">
@@ -18,20 +18,7 @@
           class="demo-form-inline"
           @keydown.enter="_loadStoreData"
         >
-          <el-form-item label="商品分组">
-            <el-cascader
-              v-model="searchForm.merchant"
-              v-loading="typeTreeLoading"
-              :options="typeTree"
-              :props="merchantOption"
-              clearable
-              @change="onTypeChange"
-            />
-          </el-form-item>
-          <el-form-item label="商品品牌">
-            <el-input v-model="searchForm.brand" clearable placeholder="请输入商品品牌" />
-          </el-form-item>
-          <el-form-item label="商品信息">
+          <el-form-item label="赠品信息">
             <el-input v-model="searchForm.storeCode" clearable placeholder="商品编码/商品名称" />
           </el-form-item>
           <el-form-item v-show="false" label="活动开始时间">
@@ -82,7 +69,7 @@
             </div>
             </template>-->
           </el-table-column>
-          <el-table-column prop="name" label="商品名称" min-width="120" :show-overflow-tooltip="true" />
+          <el-table-column prop="name" label="赠品名称" min-width="120" :show-overflow-tooltip="true" />
           <el-table-column
             prop="brandName"
             label="品牌"
@@ -103,15 +90,10 @@
           />
           <el-table-column
             prop="manufacture"
-            label="生产厂家"
+            label="已参加活动"
             min-width="120"
             :show-overflow-tooltip="true"
           />
-          <!-- <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
-          </template>
-          </el-table-column>-->
         </el-table>
         <div class="table-footer">
           <el-pagination
@@ -154,7 +136,7 @@
 </template>
 
 <script>
-import { queryGoods, getTypeTree } from '@/api/common'
+import { queryGoods } from '@/api/common'
 export default {
   name: 'DialogGoods',
   props: {
@@ -195,12 +177,6 @@ export default {
         typeid: '',
         typeLevel: ''
       },
-      type1: '',
-      type2: '',
-      type3: '',
-      typeOption1: [],
-      typeOption2: [],
-      typeOption3: [],
       tableData: [],
       multipleSelection: [],
       mySelectList: [],
@@ -227,7 +203,7 @@ export default {
     // 获取数据
     fetchData() {
       this._getTableData() // 统计列表
-      this._getTypeTree() // 分类类表
+      // this._getTypeTree() // 分类类表
     },
     onTypeChange(typeid) {
       // 分类切换
@@ -276,7 +252,7 @@ export default {
         return false
       }
       console.log('confirm', this.mySelectList)
-      this.$emit('on-change', this.mySelectList)
+      this.$emit('commit', this.mySelectList)
       this.close()
     },
     formatSkuInfo(skuList) {
@@ -414,28 +390,6 @@ export default {
         })
         .catch(e => {
           this.loading = false
-        })
-    },
-    _getTypeTree() {
-      const params = {
-        dimensionId: '',
-        merCode: 'hydee',
-        type: 1, //	integer($int32)类型，1-分类，2-分组
-        use: false
-      }
-      this.typeTreeLoading = true
-      getTypeTree(params)
-        .then(res => {
-          if (res.code === '10000' && res.data) {
-            this.typeTree = res.data
-            this.initClass()
-          } else {
-            this.typeTree = []
-          }
-          this.typeTreeLoading = false
-        })
-        .catch(res => {
-          this.typeTreeLoading = false
         })
     },
     handleOpenStore() {}

@@ -4,7 +4,7 @@
       <el-tab-pane label="基础设置" name="first">
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
           <div class="form-title">基本信息</div>
-          <el-form-item label="活动名称" prop="name">
+          <el-form-item label="活动名称：" prop="name">
             <el-input
               v-model="form.name"
               placeholder="不超过30字"
@@ -13,7 +13,7 @@
               show-word-limit
             />
           </el-form-item>
-          <el-form-item label="活动时间" prop="activitTime">
+          <el-form-item label="活动时间：" prop="activitTime">
             <el-date-picker
               v-model="form.activitTime"
               style="width: 380px"
@@ -28,13 +28,13 @@
             />
           </el-form-item>
           <div class="form-title">活动规则</div>
-          <el-form-item label="活动范围" prop="isAllStore">
+          <el-form-item label="活动范围：" prop="isAllStore">
             <el-radio-group v-model="form.isAllStore" @change="handleStoreChange">
               <el-radio :label="1">全部门店</el-radio>
               <el-radio :label="0">部分门店</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="已选门店">
+          <el-form-item label="已选门店：">
             <template v-if="form.isAllStore===0">
               <span>
                 已选门店
@@ -60,14 +60,14 @@
             </template>
           </el-form-item>
 
-          <el-form-item label="活动商品" prop="isAllProduct">
+          <el-form-item label="活动商品：" prop="isAllProduct">
             <el-radio-group v-model="form.isAllProduct" @change="handleProductChange">
               <!-- @change="handleStoreChange" -->
               <el-radio :label="1">全部商品</el-radio>
               <el-radio :label="0">部分商品</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="已选商品">
+          <el-form-item label="已选商品：">
             <template v-if="form.isAllProduct===0">
               <span>
                 已选商品
@@ -92,7 +92,7 @@
               </span>
             </template>
           </el-form-item>
-          <el-form-item label="下单规则" prop="type">
+          <el-form-item label="下单规则：" prop="type">
             <el-checkbox-group v-model="form.type">
               <el-tooltip class="item" effect="dark" content="参加满减是否使用优惠" placement="top-end">
                 <el-checkbox label="1" name="type">
@@ -102,8 +102,8 @@
               </el-tooltip>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="活动规则" prop="rule_type">
-            <el-radio-group v-model="form.rule_type">
+          <el-form-item label="活动规则：" prop="rule_type">
+            <el-radio-group v-model="form.rule_type" @change="ruleTypeChange">
               <el-radio :label="1">阶梯满减</el-radio>
               <el-radio :label="0">
                 循环满减
@@ -112,32 +112,95 @@
             </el-radio-group>
           </el-form-item>
           <!-- 优惠设置 -->
-          <!-- <el-form-item label="优惠设置"></el-form-item> -->
-          <div>优惠设置</div>
-          <el-form-item label="满减门槛">
-            <el-input
-              v-model="form.pmt_rule_full[0].threshold"
-              style="width: 200px"
-              class="input-with-select"
+          <div class="form-title">优惠设置</div>
+          <div v-for="(item, $Index) in form.pmt_rule_full" :key="$Index">
+            <el-divider v-if="form.rule_type === 1" content-position="left">{{ $Index+1 }}级优惠</el-divider>
+            <el-form-item label="满减门槛：" prop="threshold">
+              <el-input
+                v-model="item.threshold"
+                :min="0"
+                :max="99999999"
+                style="width: 200px"
+                class="input-with-select"
+                @input.native="thresholdChange($event, item.uint)"
+              >
+                <el-select slot="append" v-model="item.uint" placeholder="请选择">
+                  <el-option label="元" value="0" />
+                  <el-option label="件" value="1" />
+                </el-select>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="优惠内容：">
+              <div>
+                <el-checkbox v-model="item.rule_content.order_full" border>订单金额优惠</el-checkbox>
+                <section v-if="item.rule_content.order_full" style="margin-left: 50px">
+                  <div class="section-group-item">
+                    <el-radio
+                      v-model="item.rule_content.discount_type"
+                      label="0"
+                      @input.native="discountType($event, $Index)"
+                    >减</el-radio>
+                    <el-input
+                      v-model="item.rule_content.amount"
+                      style="width: 200px"
+                      class="input-with-select"
+                    >
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                  <div v-if="form.rule_type === 1" class="section-group-item">
+                    <el-radio
+                      v-model="item.rule_content.discount_type"
+                      label="1"
+                      @input.native="discountType($event, $Index)"
+                    >打</el-radio>
+                    <el-input
+                      v-model="item.rule_content.discountNum"
+                      style="width: 200px"
+                      class="input-with-select"
+                      :min="0"
+                      :max="10"
+                    >
+                      <template slot="append">折</template>
+                    </el-input>
+                  </div>
+                </section>
+              </div>
+              <div>
+                <el-checkbox v-model="item.rule_content.gift_or_not" border>送赠品</el-checkbox>
+                <store-goods-gifts v-if="!!item.rule_content.gift_or_not" @commit="handleGiftList" />
+                <div
+                  v-if="!!item.rule_content.gift_or_not && giftList.length"
+                  class="section-group-item"
+                >
+                  已选赠品：
+                  <el-tag
+                    v-for="item in giftList"
+                    :key="item.specId"
+                    type="para"
+                    size="small"
+                  >{{ item.name }}</el-tag>
+                </div>
+              </div>
+            </el-form-item>
+          </div>
+          <!-- <el-form-item>
+
+          </el-form-item>-->
+          <el-divider v-if="form.rule_type === 1" content-position="left">
+            <el-tooltip
+              effect="dark"
+              content="最多支持五级优惠，每级优惠不叠加，如：满足二级优惠条件后则不再享有一级优惠。"
+              placement="top-start"
             >
-              <el-select slot="append" v-model="form.pmt_rule_full[0].uint" placeholder="请选择">
-                <el-option label="元" value="0" />
-                <el-option label="件" value="1" />
-              </el-select>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="优惠内容">
-            <el-checkbox-group v-model="form.pmt_rule_full[0].rule_content" size="small">
-              <el-checkbox label="1" border>
-                订单金额优惠
-              </el-checkbox>
-              <br>
-              <el-checkbox label="2" border>送赠品</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
+              <el-button plain type="warning" size="mini" @click="handleAdd">
+                添加层级
+                <i class="el-icon-question" />
+              </el-button>
+            </el-tooltip>
+          </el-divider>
           <el-form-item>
-            <el-button plain @click="onSave">保存</el-button>
-            <el-button type="primary" @click="onSubmit">保存并提交</el-button>
+            <el-button type="primary" style="width: 120px" @click="onSubmit">提交</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -149,28 +212,18 @@
 <script>
 // import _ from 'lodash'
 import storeGoods from '../components/store-gods'
+import storeGoodsGifts from '../components/store-gods-gifts'
 import storeDialog from '../components/store'
 export default {
   components: {
     storeGoods,
-    storeDialog
+    storeDialog,
+    storeGoodsGifts
   },
   data() {
-    const checkEffectiveTime = (rule, value, callback) => {
-      if (!value && value !== 0) {
-        return callback(new Error('请输入成团有效时间'))
-      }
-      if (value < 2) {
-        return callback(new Error('成团有效时间不得低于2小时'))
-      }
-      if (value > 48) {
-        return callback(new Error('成团有效时间不得高于48小时'))
-      }
-      callback()
-    }
     const checkActivitTime = (rule, value, callback) => {
       console.log('我是时间检测-----------------------')
-      if (!value && !value.length) {
+      if (!value) {
         return callback(new Error('请选择活动开始和结束时间'))
       }
       if (value[0] >= value[1]) {
@@ -188,16 +241,34 @@ export default {
         rule_type: 1,
         pmt_rule_full: [
           {
-            uint: '0',
-            threshold: 100,
-            rule_content: ['1']
+            uint: '0', // 满减门槛元/件
+            threshold: '', // 满减门槛金额
+            rule_content: {
+              gift_or_not: false,
+              order_full: true,
+              discount_type: '0', // 折1/减价0
+              amount: '',
+              discountNum: ''
+            }
           }
         ]
+      },
+      initRuleFull: {
+        uint: '0', // 满减门槛元/件
+        threshold: '', // 满减门槛金额
+        rule_content: {
+          gift_or_not: false,
+          order_full: true,
+          discount_type: '0', // 折1/减价0
+          amount: '',
+          discountNum: ''
+        }
       },
       chooseStore: [],
       allStore: [],
       storeGoods: [],
       allStoreGoods: [],
+      giftList: [], // 赠品列表
       rules: {
         name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
         activitTime: [
@@ -206,10 +277,10 @@ export default {
             validator: checkActivitTime,
             trigger: 'change'
           }
-        ],
-        effectiveTime: [
-          { required: true, validator: checkEffectiveTime, trigger: 'blur' }
         ]
+        // threshold: [
+        //   { required: true, trigger: 'blur', message: '请输入满减门槛' }
+        // ]
       }
     }
   },
@@ -229,6 +300,15 @@ export default {
     handleProductChange() {
       console.log('活动范围活动商品变更')
     },
+    thresholdChange(e, unit) {
+      console.log('111111', e)
+      const value = e.target.value
+      const regx =
+        unit === '1' ? /^[1-9]\d*$/ : /^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/
+      if (!regx.test(value)) {
+        e.target.value = ''
+      }
+    },
     ruleDtoChange(e, val) {
       console.log('ruleDtoChange', e, val)
       this.form.ruleDto[0].type = val
@@ -241,9 +321,126 @@ export default {
     handleSelectGoods(val) {
       this.storeGoods = val
     },
-    // 格式话表单提交数据
+    handleGiftList(list) {
+      console.log('提交的数据-----赠品列表', list)
+      this.giftList = list
+    },
+    // 追加优惠层级
+    handleAdd() {
+      // 追加优惠层级需要先设置一级优惠通过后再设置第二项
+      this.validPmtRule()
+      this.form.pmt_rule_full = this.form.pmt_rule_full.concat({
+        ...this.initRuleFull
+      })
+    },
+    ruleTypeChange(val) {
+      console.log('ruleTypeChange----', val)
+      if (val === 0) {
+        this.form.pmt_rule_full = [{ ...this.initRuleFull }]
+      }
+    },
+    discountType(e, index) {
+      console.log('discountType----', e)
+      if (e.target.value === '0') {
+        this.form.pmt_rule_full[index].rule_content.discountNum = ''
+      } else {
+        this.form.pmt_rule_full[index].rule_content.amount = ''
+      }
+      //  e.target.value = e.target.value
+    },
+    // 验证优惠设置内容
+    validPmtRule() {
+      // 是否配置了内容
+      if (this.form.pmt_rule_full) {
+        this.form.pmt_rule_full.map((item, index) => {
+          if (item.uint === '0') {
+            if (
+              !/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(item.threshold) ||
+              item.threshold <= 0
+            ) {
+              this.$message.warning(
+                `请检查第${index + 1}项满减门槛设置，必须为大于0.01的正数`
+              )
+              return
+            }
+          } else {
+            if (!/^[1-9]\d*$/.test(item.threshold)) {
+              this.$message.warning(
+                `请检查第${index + 1}项满减门槛设置，必须为大于0的正整数`
+              )
+              return
+            }
+          }
+          if (
+            item.rule_content &&
+            (item.rule_content.order_full || item.rule_content.gift_or_not)
+          ) {
+            // 优惠内容选择了订单金额优惠
+            if (item.rule_content.order_full) {
+              // 订单金额-满减减金额
+              if (item.rule_content.discount_type === '0') {
+                if (
+                  !/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(
+                    item.rule_content.amount
+                  ) ||
+                  item.rule_content.amount <= 0
+                ) {
+                  this.$message.warning(
+                    `请检查第${index + 1}项优惠内容设置，必须为大于0.01的正数`
+                  )
+                  return
+                }
+              }
+              // 订单金额-满减打折
+              if (item.rule_content.discount_type === '1') {
+                if (
+                  item.rule_content.discountNum <= 0 ||
+                  item.rule_content.discountNum >= 10
+                ) {
+                  this.$message.warning(
+                    `请检查第${index + 1}项优惠内容设置，折扣值大于0且小于10.0`
+                  )
+                  return
+                }
+              }
+            }
+            // 赠品处判断不能为空，
+            if (item.rule_content.gift_or_not) {
+              if (
+                !this.giftList ||
+                (Array.isArray(this.giftList) && this.giftList.length)
+              ) {
+                this.$message.warning('赠品内容不能为空')
+                return
+              }
+            }
+          } else {
+            this.$message.warning('优惠内容设置不能为空')
+            return
+          }
+        })
+      } else {
+        this.$message.warning('活动优惠设置不能为空')
+        return
+      }
+    },
+    // 格式化表单验证提交数据
     formateFormData() {
       console.log('我是格式话表单提交数据----------------', this.form)
+      //
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          if (new Date(this.form.startTime).getTime() < new Date().getTime()) {
+            this.$message.warning('活动开始时间不能小于当前时间')
+            return
+          }
+          // 优惠规则设置校验
+          this.validPmtRule()
+        } else {
+          console.log('error submit!!', valid)
+          return false
+        }
+      })
       return { ...this.form }
     },
     async onSave() {
@@ -253,7 +450,8 @@ export default {
       console.log('我是保存----------------最终的数据', data)
     },
     onSubmit() {
-      console.log('我是提交----------------')
+      // console.log('我是提交----------------', this.form)
+      this.formateFormData()
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -287,6 +485,7 @@ export default {
   white-space: nowrap;
 }
 .app-container {
+  position: relative;
   .form-title {
     line-height: 14px;
     font-size: 14px;
@@ -295,11 +494,11 @@ export default {
     margin-bottom: 20px;
   }
   .el-select .el-input {
-    width: 80px;
+    width: 60px;
   }
-  .input-with-select .el-input-group__append {
-    background-color: #fff;
-  }
+  // .input-with-select .el-input-group__append {
+  //   background-color: #fff;
+  // }
   .choose-store-box {
     width: 500px;
     height: 100px;
@@ -312,6 +511,19 @@ export default {
       max-width: 150px;
       @extend .text-overflow-1;
     }
+  }
+  .section-group-item {
+    margin: 10px 0;
+  }
+  .action-wapper {
+    position: absolute;
+    padding: 12px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    text-align: right;
   }
 }
 </style>

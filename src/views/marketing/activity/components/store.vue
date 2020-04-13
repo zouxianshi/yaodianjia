@@ -7,7 +7,6 @@
       append-to-body
       width="800px"
       :close-on-press-escape="false"
-      :show-close="false"
       :close-on-click-modal="false"
     >
       <div class="modal-body">
