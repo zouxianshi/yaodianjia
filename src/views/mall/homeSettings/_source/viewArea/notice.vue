@@ -51,7 +51,7 @@ export default {
       background: url('./img/va_notice_bg.png') no-repeat;
 
       .swiper-box {
-        height: 40px;
+        height: 24px;
         width: 240px;
         overflow: hidden;
         position: relative;

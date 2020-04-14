@@ -46,11 +46,9 @@ export default {
     padding: 0 20px 20px 20px;
     .hmm-view-area {
       width: 420px;
-      background: red;
       float: left;
     }
     .hmm-settings {
-      background: blue;
       float: left;
       margin-left: 20px;
       width: calc(100% - 440px);

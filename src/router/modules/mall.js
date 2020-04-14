@@ -12,6 +12,17 @@ export default [
     },
     children: [
       {
+        path: '/mall/home',
+        component: () => import('@/views/mall/list'),
+        name: 'home-list',
+        meta: {
+          title: '首页设置列表',
+          auth: false,
+          noCache: true
+        },
+        children: []
+      },
+      {
         path: '/mall/home-settings',
         component: () => import('@/views/mall/homeSettings'),
         name: 'home-settings',

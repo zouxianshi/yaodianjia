@@ -1,21 +1,44 @@
 <template>
   <div class="second-navigation-model">
-    <m-second-item />
+    <v-draggable v-model="dragList" draggable=".snm-item" v-bind="dragOptions" @end="onEnd">
+      <div v-for="(el,i) in dragList" :key="i" class="snm-item">
+        <m-second-item :item="el" />
+      </div>
+    </v-draggable>
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
+import vDraggable from 'vuedraggable'
 import mSecondItem from './secondItem'
 export default {
-  name: 'SecondNavigation',
+  name: 'VaSecondNavigation',
   data() {
-    return {}
+    return {
+      dragList: []
+    }
   },
-  props: {},
-  methods: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    ...mapMutations('mall', ['setItemDragData']),
+    onEnd() {
+      const { item: { $index }, dragList } = this
+      this.setItemDragData({
+        $index,
+        data: dragList
+      })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
+    this.dragList = this.item.data
   },
   beforeMount() {
   },
@@ -29,13 +52,33 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
-  components: { mSecondItem }
+  computed: {
+    dragOptions() {
+      return {
+        sort: true,
+        animation: 150,
+        disabled: false,
+        group: {
+          put: false,
+          name: 'group-second',
+          pull: 'clone'
+        }
+      }
+    }
+  },
+  components: { mSecondItem, vDraggable }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .second-navigation-model {
-
+    overflow: hidden;
+    .snm-item {
+      float: left;
+      cursor: move;
+      &:nth-child(1),&:nth-child(6) {
+        padding-left: 3px;
+      }
+    }
   }
 </style>

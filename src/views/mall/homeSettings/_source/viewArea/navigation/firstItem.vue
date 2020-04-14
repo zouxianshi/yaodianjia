@@ -1,19 +1,19 @@
 <template>
-  <div class="first-item-model">
+  <div class="n-first-item-model">
     <img class="icon" src="./../img/va_nav_1.png" alt="">
-    <p class="text">感冒发烧-{{ i }}</p>
+    <p class="text">感冒发烧-{{ item.a }}</p>
   </div>
 </template>
 <script>
 export default {
-  name: 'FirstItem',
+  name: 'VaFirstItem',
   data() {
     return {}
   },
   props: {
-    i: {
-      type: Number,
-      default: 0
+    item: {
+      type: Object,
+      default: () => {}
     }
 
   },
@@ -41,7 +41,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .first-item-model {
+  .n-first-item-model {
     text-align: center;
     width: 73px;
     margin: 0 15px 18px 15px;

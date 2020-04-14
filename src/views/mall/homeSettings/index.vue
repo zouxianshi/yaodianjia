@@ -8,18 +8,14 @@
     <div class="scrollbar hsm-hm">
       <m-home-main />
     </div>
-    <div class="hsm-op">
-      <m-operation />
-    </div>
   </div>
 </template>
 <script>
 import mComponentBar from './_source/componentBar'
 import mHomeMain from './_source/homeMain'
-import mOperation from './_source/operation'
 export default {
   name: 'HomeSettings',
-  components: { mComponentBar, mHomeMain, mOperation },
+  components: { mComponentBar, mHomeMain },
   props: {},
   data() {
     return {}
@@ -53,12 +49,9 @@ export default {
       margin-left: -1px;
     }
     .hsm-hm {
-      height: calc(100vh - 278px);
+      height: calc(100vh - 290px);
       overflow-y:scroll;
       margin-top: 12px;
-    }
-    .hsm-op {
-      padding-bottom: 4px;
     }
   }
 </style>

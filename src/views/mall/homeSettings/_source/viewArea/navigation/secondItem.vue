@@ -1,16 +1,21 @@
 <template>
-  <div class="second-item-model">
+  <div class="n-second-item-model">
     <img class="icon" src="./../img/va_nav_2.png" alt="">
-    <p class="text">感冒发烧</p>
+    <p class="text">感冒-{{ item.a }}</p>
   </div>
 </template>
 <script>
 export default {
-  name: 'SecondItem',
+  name: 'VaSecondItem',
   data() {
     return {}
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -35,15 +40,19 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .second-item-model {
+  .n-second-item-model {
+    text-align: center;
+    width: 55px;
+    margin: 0 14px 16px 14px;
     .icon {
       width: 55px;
       height: 55px;
       display: block;
     }
     .text {
-      font-size: 14px;
+      font-size: 13px;
       color: #333;
+      padding-top: 8px;
     }
   }
 </style>

@@ -1,13 +1,6 @@
 <template>
   <div class="va-banner-model">
-    <swiper
-      :options="{
-        loop: true,
-        autoplay: {
-          delay: 3000
-        }
-      }"
-    >
+    <swiper :options="{loop: true,autoplay: {delay: 3000}}">
       <swiper-slide v-for="(el,i) in 3" :key="i" class="slider-item">
         <div class="img-wrap">
           <img src="./img/va_banner_1.png">

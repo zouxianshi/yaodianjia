@@ -1,60 +1,50 @@
 <template>
   <div class="first-navigation-model">
-
-    <v-draggable v-model="firstItems" draggable=".fnm-item" v-bind="dragOptions" @onEnd="onEnd">
-      <div v-for="(el,i) in firstItems" :key="i" class="fnm-item">
-        <m-first-item :i="i" />
+    <v-draggable v-model="dragList" draggable=".fnm-item" v-bind="dragOptions" @end="onEnd">
+      <div v-for="(el,i) in dragList" :key="i" class="fnm-item" @click="onEvent">
+        <m-first-item :item="el" />
       </div>
     </v-draggable>
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 import vDraggable from 'vuedraggable'
 import mFirstItem from './firstItem'
 
-const firstItems = [
-  {
-    a: 1
-  },
-  {
-    a: 2
-  },
-  {
-    a: 3
-  },
-  {
-    a: 4
-  },
-  {
-    a: 5
-  },
-  {
-    a: 6
-  },
-  {
-    a: 7
-  },
-  {
-    a: 8
-  }
-]
 export default {
-  name: 'FirstNavigation',
+  name: 'VaFirstNavigation',
   data() {
     return {
-      firstItems
+      dragList: []
     }
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {
-    onEnd(v) {
-      console.log(v)
+    ...mapMutations('mall', ['setItemDragData']),
+    onEnd() {
+      const { item: { $index }, dragList } = this
+      this.setItemDragData({
+        $index,
+        data: dragList
+      })
+    },
+    onEvent() {
+      console.log(1)
     }
   },
-  watch: {},
+  watch: {
+
+  },
   beforeCreate() {
   },
   created() {
+    this.dragList = this.item.data
   },
   beforeMount() {
   },
@@ -74,10 +64,9 @@ export default {
         sort: true,
         animation: 150,
         disabled: false,
-        ghostClass: 'ghost',
         group: {
           put: false,
-          name: 'shared',
+          name: 'group-first',
           pull: 'clone'
         }
       }
@@ -92,11 +81,7 @@ export default {
     overflow: hidden;
     .fnm-item {
       float: left;
-      &:nth-child(n+5){
-        .first-item-model {
-          margin-bottom: 0;
-        }
-      }
+      cursor: move;
       &:nth-child(1),&:nth-child(5) {
         padding-left: 5px;
       }

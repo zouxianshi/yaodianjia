@@ -1,24 +1,27 @@
 <template>
-  <component :is="mod" :data="data" />
+  <div class="va-navigation-entry">
+    <component :is="mod" :item="item" />
+  </div>
 </template>
 <script>
 import mFirstNavigation from './firstNavigation'
 import mSecondNavigation from './secondNavigation'
 export default {
-  name: 'Index',
+  name: 'VaNavigation',
   data() {
     return {
-      data: []
     }
   },
   props: {
-    type: {
-      type: String,
-      default: 'first'
+    item: {
+      type: Object,
+      default: () => {}
     }
   },
-  methods: {},
-  watch: {},
+  methods: {
+  },
+  watch: {
+  },
   beforeCreate() {
   },
   created() {
@@ -37,9 +40,13 @@ export default {
   },
   computed: {
     mod() {
-      return this.type === 'first' ? mFirstNavigation : mSecondNavigation
+      return this.item.type === 'first' ? mFirstNavigation : mSecondNavigation
     }
   },
   components: {}
 }
 </script>
+<style>
+  .va-navigation-entry {
+  }
+</style>
