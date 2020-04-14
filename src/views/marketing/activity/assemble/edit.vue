@@ -668,7 +668,8 @@ export default {
           imgUrl: v.mainPic,
           productName: v.name, // 商品名
           sortNumber: v.sortNumber, // 商品排序
-          commodityId: v.commodityId,
+          commodityId: v.id,
+          erpCode: v.erpCode,
           barCode: v.barCode
         })
       }
@@ -708,7 +709,8 @@ export default {
           specId: row.specId,
           productName: row.productName,
           sortNumber: row.sortNumber,
-          commodityId: row.commodityId
+          commodityId: row.commodityId,
+          erpCode: row.erpCode
         }
         updateAcAssmbleProductInfo(data)
           .then(res => {
