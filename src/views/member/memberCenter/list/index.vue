@@ -27,7 +27,7 @@
               批量导出<i class="el-icon-download el-icon--right" />
             </el-button>
             <exportTable />
-            <!-- <span class="tips">提示：批量导出功能最多一次导出5000条数据</span> -->
+            <span class="tips">提示：批量导出功能最多一次导出100000条数据</span>
           </el-form-item>
         </el-form>
       </div>

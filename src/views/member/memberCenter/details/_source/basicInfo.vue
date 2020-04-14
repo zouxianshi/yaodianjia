@@ -53,11 +53,11 @@
                 </span>
               </el-form-item>
               <el-form-item label="会员等级：">
-                <span v-if="basicInfo.memberActive === 1">活跃会员</span>
+                <span v-if="basicInfo.memberActive === 1">普通会员</span>
                 <span v-if="basicInfo.memberActive === 2">新增会员</span>
-                <span v-if="basicInfo.memberActive === 3">沉寂会员</span>
-                <span v-if="basicInfo.memberActive === 4">普通会员</span>
-                <span v-if="basicInfo.memberActive === 5">优质会员</span>
+                <span v-if="basicInfo.memberActive === 3">优质会员</span>
+                <span v-if="basicInfo.memberActive === 4">活跃会员</span>
+                <span v-if="basicInfo.memberActive === 9">沉寂会员</span>
               </el-form-item>
               <el-form-item label="所属门店：">
                 <span>{{ basicInfo.organization || '-' }}</span>

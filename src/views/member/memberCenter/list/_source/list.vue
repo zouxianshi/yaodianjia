@@ -30,11 +30,11 @@
       </el-table-column>
       <el-table-column label="会员分类" width="100">
         <template slot-scope="scope">
-          <span v-if="scope.row.memberActive === 1">活跃会员</span>
+          <span v-if="scope.row.memberActive === 1">普通会员</span>
           <span v-if="scope.row.memberActive === 2">新增会员</span>
-          <span v-if="scope.row.memberActive === 3">沉寂会员</span>
-          <span v-if="scope.row.memberActive === 4">普通会员</span>
-          <span v-if="scope.row.memberActive === 5">优质会员</span>
+          <span v-if="scope.row.memberActive === 3">优质会员</span>
+          <span v-if="scope.row.memberActive === 4">活跃会员</span>
+          <span v-if="scope.row.memberActive === 9">沉寂会员</span>
         </template>
       </el-table-column>
       <el-table-column prop="age" label="注册来源" width="120">
@@ -102,7 +102,11 @@ export default {
         merCode: this.$store.state.user.merCode
       }
       menberBaseInfo(params2).then(res => {
-        this.beanTotalNum = res.data.onlineIntegral || 0
+        if (res.data && res.data.onlineIntegral) {
+          this.beanTotalNum = res.data.onlineIntegral
+        } else {
+          this.beanTotalNum = 0
+        }
         var params = {
           'currentPage': 1,
           'pageSize': 10,

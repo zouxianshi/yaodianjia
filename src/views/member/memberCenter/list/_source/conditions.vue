@@ -32,11 +32,11 @@
       <el-form-item label="会员分类">
         <el-radio-group v-model="conditions.memberActive">
           <el-radio label="">不限</el-radio>
-          <el-radio label="1">活跃会员</el-radio>
+          <el-radio label="1">普通会员</el-radio>
           <el-radio label="2">新增会员</el-radio>
-          <el-radio label="3">沉寂会员</el-radio>
-          <el-radio label="4">普通会员</el-radio>
-          <el-radio label="5">优质会员</el-radio>
+          <el-radio label="3">优质会员</el-radio>
+          <el-radio label="4">活跃会员</el-radio>
+          <el-radio label="9">沉寂会员</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="注册来源">
@@ -46,7 +46,7 @@
           <el-radio :label="2">员工推荐</el-radio>
           <el-radio :label="3">商户渠道</el-radio>
           <el-radio :label="4">平台渠道</el-radio>
-          <el-radio :label="5">支付既会员</el-radio>
+          <el-radio :label="5">支付即会员</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="会员性别">
