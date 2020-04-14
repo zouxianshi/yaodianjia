@@ -101,12 +101,7 @@
       </div>
       <span slot="footer">
         <el-button type size="small" @click="dialogVisible=false">取消</el-button>
-        <el-button
-          type="primary"
-          size="small"
-          :loading="saveLoading"
-          @click="handleSubmitStock"
-        >确定</el-button>
+        <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmitStock">确定</el-button>
       </span>
     </el-dialog>
   </span>
@@ -187,38 +182,47 @@ export default {
     },
     handleClean(val) {
       console.log('handleClean', val)
-      // this.cleanAllCount = !!val
-      this.clearStock()
-        .then(res => {
-          this.$message({
-            message: '库存已清空',
-            type: 'success'
-          })
-          this.saveLoading = false
-          this.modalQuery.currentPage = 1
-          this._loadActivityGoods()
-        })
-        .catch(() => {
-          this.saveLoading = false
-        })
+      this.cleanAllCount = !!val
+      this.modalGoodList.map(row => {
+        row.productActivityCount = 0
+        row.isClearn = true
+      })
     },
     async handleSubmitStock() {
-      // 修改库存
       this.saveLoading = true
-      console.log('handleSubmitStock', this.cleanAllCount, this.modalGoodList)
-      this.updateAssembleStock()
-        .then(res => {
-          this.$message({
-            message: '修改成功',
-            type: 'success'
+      if (this.cleanAllCount) {
+        this.clearStock()
+          .then(res => {
+            this.$message({
+              message: '当前活动商品库存已清空',
+              type: 'success'
+            })
+            this.saveLoading = false
+            this.modalQuery.currentPage = 1
+            this._loadActivityGoods()
+            this.dialogVisible = false
           })
-          this.saveLoading = false
-          this.dialogVisible = false
-        })
-        .catch(e => {
-          this.saveLoading = false
-          this.dialogVisible = false
-        })
+          .catch(() => {
+            this.saveLoading = false
+            this.dialogVisible = false
+          })
+      } else {
+        console.log('handleSubmitStock', this.cleanAllCount, this.modalGoodList)
+        this.updateAssembleStock()
+          .then(res => {
+            this.$message({
+              message: '活动商品库存修改成功',
+              type: 'success'
+            })
+            this.saveLoading = false
+            this.dialogVisible = false
+          })
+          .catch(e => {
+            this.saveLoading = false
+            this.dialogVisible = false
+          })
+      }
+      // 修改库存
     },
     // 清空库存
     clearStock() {
