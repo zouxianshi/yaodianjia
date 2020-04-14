@@ -3,7 +3,7 @@
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="会员营销" name="members">
         <el-row :gutter="20">
-          <el-col v-for="o in members" :key="o.value" :xs="12" :sm="12" :md="8" :lg="6" :xl="4">
+          <el-col v-for="o in members" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
             <card-item :item="o" />
           </el-col>
         </el-row>

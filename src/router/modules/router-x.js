@@ -58,7 +58,7 @@ const router = [
   {
     path: '/marketing',
     component: Layout,
-    redirect: '/marketing/activity/create',
+    redirect: '/marketing/activity',
     name: 'marketing',
     meta: {
       title: '营销活动',
@@ -73,7 +73,17 @@ const router = [
         name: 'activity',
         meta: {
           title: '活动管理',
-          auth: 'marketing.marketing-create',
+          auth: 'marketing.marketing-manager',
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+        }
+      },
+      {
+        path: 'gifts',
+        component: () => import('@/views/marketing/gift-manage/index'),
+        name: 'activity',
+        meta: {
+          title: '礼品管理',
+          auth: 'marketing.marketing-manager',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
@@ -143,6 +153,16 @@ const router = [
         name: 'reduceGiftList',
         meta: {
           title: '满减满赠列表',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/conflict/:id',
+        component: () => import('@/views/marketing/activity/errorlist'),
+        name: 'conflictList',
+        meta: {
+          title: '冲突列表',
           noCache: true,
           activeMenu: '/marketing/activity'
         }

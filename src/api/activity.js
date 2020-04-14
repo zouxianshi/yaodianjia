@@ -9,3 +9,12 @@ export function getAssembleList(params) {
   })
 }
 
+// 获取冲突列表
+export function getConflict(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup`,
+    method: 'post',
+    data: params
+  })
+}
+

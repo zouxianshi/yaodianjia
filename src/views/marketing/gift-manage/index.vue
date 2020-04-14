@@ -1,0 +1,90 @@
+<template>
+  <div class="app-container activity">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="优惠券" name="coupons">
+        <el-row :gutter="20">
+          <el-col v-for="o in coupons" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="赠品" name="complimentary">
+        <el-row :gutter="20">
+          <el-col v-for="o in complimentary" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
+</template>
+<script>
+import discountCoupons from '@/assets/image/acvity/discount-coupons.png'
+import fullCutCoupons from '@/assets/image/acvity/full-cut-coupons.png'
+import giftCertificate from '@/assets/image/acvity/gift-certificate.png'
+import complimentary from '@/assets/image/acvity/complimentary.png'
+import cardItem from '../activity/components/card-item'
+
+export default {
+  components: { cardItem },
+  data() {
+    return {
+      activeName: 'coupons',
+      coupons: [
+        {
+          value: 'discount-coupons',
+          lable: '折扣券',
+          img: discountCoupons,
+          desc:
+            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+        },
+        {
+          value: 'full-cut-coupons',
+          lable: '满减券',
+          img: fullCutCoupons,
+          desc:
+            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+        },
+        {
+          value: 'gift-certificate',
+          lable: '礼品券',
+          img: giftCertificate,
+          desc:
+            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+        }
+      ],
+      complimentary: [
+        {
+          value: 'complimentary',
+          lable: '赠品',
+          img: complimentary,
+          desc:
+            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+        }
+      ]
+    }
+  },
+  methods: {
+    handleClick(val) {
+      console.log('点击tab切换', val)
+    }
+  }
+}
+</script>
+<style lang="scss">
+.app-container.activity {
+  background: #f7f7f7;
+  padding: 0;
+  .el-tabs__header {
+    background: #fff;
+    padding: 0 20px;
+    padding-top: 40px;
+  }
+  .el-tabs__nav-wrap::after {
+    height: 0;
+  }
+  .el-tabs__content {
+    padding: 0 20px;
+  }
+}
+</style>
