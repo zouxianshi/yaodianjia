@@ -143,7 +143,7 @@
 </template>
 
 <script>
-import { queryGoods, getTypeTree } from '@/api/common'
+import { queryActivityCommGoods, getTypeTree } from '@/api/common'
 export default {
   name: 'DialogGoods',
   props: {
@@ -396,20 +396,45 @@ export default {
     _getTableData() {
       this.loading = true
       const params = {
-        commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
-        level: this.searchForm.typeLevel,
-        typeId: this.searchForm.typeid,
-        hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
-        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
-        auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
-        name: this.searchForm.keyWord.trim(),
+        // commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
+        // level: this.searchForm.typeLevel,
+        // typeId: this.searchForm.typeid,
+        // hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
+        // infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
+        // auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
+        // name: this.searchForm.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size,
-        promoteFlag: true,
-        drugType: 3 // 0，1，2是处方药。3非处方药
+        // promoteFlag: true,
+        // drugType: 3 // 0，1，2是处方药。3非处方药
+        firstTypeId: this.type1,
+        secondTypeId: this.type2,
+        threeTypeId: this.type3,
+        merCode: this.merCode
       }
 
-      queryGoods(params).then(res => {
+      // currentPage	integer($int32)
+      // 当前页，从第1页开始，不传默认为1
+
+      // firstTypeId	string
+      // 一级分组ID
+
+      // merCode	string
+      // 商家编码
+
+      // pageSize	integer($int32)
+      // 每页显示条数，不传默认20
+
+      // searchKeyWord	string
+      // 搜索关键词，商品名称/商品编码
+
+      // secondTypeId	string
+      // 二级分组ID
+
+      // storeIds	[...]
+      // threeTypeId	string
+      // 三级分组ID
+      queryActivityCommGoods(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.data || []
           this.pager.total = res.data.totalCount
