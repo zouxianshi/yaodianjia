@@ -7,7 +7,7 @@
       <!-- 列表表单控件 -->
       <list-form @form-search="search" />
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
-        <el-table v-loading="this.activity.tabloading" :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%">
           <template v-for="col in cols">
             <el-table-column
               v-if="!col.render"

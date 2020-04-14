@@ -269,7 +269,7 @@
           <div class="form-title">活动宣传设置</div>
           <el-form-item label="活动图片：">
             <el-upload
-              class="avatar-uploader"
+              class="avatar-uploader-poster"
               :action="upLoadUrl"
               :show-file-list="false"
               :headers="headers"
@@ -278,16 +278,16 @@
               :on-error="handleImgError"
             >
               <el-image
-                v-if="dymacPromote.imgUrl"
-                :src="showImg(dymacPromote.imgUrl)"
+                v-if="dymacPromote.postImagUrl"
+                :src="showImg(dymacPromote.postImagUrl)"
                 class="avatar"
               />
-              <i v-else class="el-icon-plus avatar-uploader-icon" />
+              <i v-else class="el-icon-plus avatar-uploader-icon-poster" />
             </el-upload>
             <p style="color: rgb(171,171,171)">活动图片首页设置, 建议尺寸：750px*268px支持.jpg.png.jpeg格式，大小不超过1M</p>
           </el-form-item>
           <div class="form-title">朋友圈推广</div>
-          <img :src="shareImg">
+          <img style="margin-left: 120px" :src="shareImg">
           <el-form-item label="标题：">
             <el-input
               v-model="dymacPromote.name"
@@ -299,15 +299,36 @@
           </el-form-item>
           <el-form-item label="摘要：">
             <el-input
-              v-model="dymacPromote.name"
+              v-model="dymacPromote.desc"
               style="width: 380px;"
               maxlength="30"
               show-word-limit
               type="textarea"
+              placeholder="请输入摘要信息"
               :autosize="{ minRows: 2, maxRows: 4}"
             />
           </el-form-item>
-          <el-form-item label="图片：" />
+          <el-form-item label="图片：">
+            <el-upload
+              class="avatar-uploader"
+              :action="upLoadUrl"
+              :show-file-list="false"
+              :headers="headers"
+              :on-success="handleImgAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+              :on-error="handleImgError"
+            >
+              <el-image
+                v-if="dymacPromote.imgUrl"
+                :src="showImg(dymacPromote.imgUrl)"
+                class="avatar"
+              />
+              <i v-else class="el-icon-plus avatar-uploader-icon" />
+            </el-upload>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" style="width: 120px" @click="submit">提交</el-button>
+          </el-form-item>
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -398,7 +419,8 @@ export default {
         ]
       },
       dymacPromote: {
-        imgUrl: ''
+        imgUrl: '',
+        postImagUrl: ''
       },
       pageLoading: '',
       shareImg
@@ -515,6 +537,20 @@ export default {
       }
     },
     handleAvatarSuccess(res, file) {
+      console.log('图片地址-----', this.dymacPromote, file)
+      if (res.code === '10000') {
+        this.dymacPromote.postImagUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+
+      this.pageLoading.close()
+    },
+    handleImgAvatarSuccess(res, file) {
+      console.log('图片地址-----', this.dymacPromote, file)
       if (res.code === '10000') {
         this.dymacPromote.imgUrl = res.data
       } else {
@@ -523,7 +559,7 @@ export default {
           type: 'error'
         })
       }
-      console.log('图片地址-----', this.dymacPromote)
+
       this.pageLoading.close()
     },
 
@@ -633,16 +669,21 @@ export default {
         }
       })
     },
-    async onSave() {
-      console.log('我是保存----------------')
-      const data = this.formateFormData()
-      // _.pick(data, [''])
-      console.log('我是保存----------------最终的数据', data)
-    },
     onSubmit() {
       //
       const formdata = this.formateFormData()
       console.log('我是提交----------------', formdata)
+    },
+    submit() {
+      console.log('活动设置我要提交了')
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          console.log('我准备通过了----------------------')
+        } else {
+          console.log('error submit!!', valid)
+          return false
+        }
+      })
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -719,16 +760,31 @@ export default {
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
+    width: 100px;
+    height: 100px;
+    line-height: 100px !important;
+    text-align: center;
+  }
+  .avatar-uploader-icon-poster {
+    font-size: 28px;
+    color: #8c939d;
     width: 300px;
     height: 100px;
     line-height: 100px !important;
     text-align: center;
   }
-  .avatar-uploader {
+  .avatar-uploader-poster {
     .avatar {
       width: 300px !important;
       height: 100px !important;
     }
+  }
+  .avatar-uploader-poster .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
   }
 }
 </style>
