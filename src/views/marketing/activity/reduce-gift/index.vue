@@ -116,7 +116,15 @@
           <div v-for="(domain, $Index) in form.pmt_rule_full" :key="$Index">
             <el-divider v-if="form.rule_type === 1" content-position="left">
               {{ $Index+1 }}级优惠
-              <el-button v-if="$Index !== 0" style="margin-left: 20px" type="danger" size="mini" icon="el-icon-delete" circle @click="handleDelete($Index)" />
+              <el-button
+                v-if="$Index !== 0"
+                style="margin-left: 20px"
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                circle
+                @click="handleDelete($Index)"
+              />
             </el-divider>
             <el-form-item
               label="满减门槛："
@@ -256,7 +264,27 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="推广设置" name="second">推广设置</el-tab-pane>
+      <el-tab-pane label="推广设置" name="second">
+        <el-form ref="form" :model="dymacPromote" size="small" label-width="120px">
+          <div class="form-title">活动宣传设置</div>
+          <el-form-item>
+            <el-upload
+              class="avatar-uploader"
+              :action="upLoadUrl"
+              :show-file-list="false"
+              :headers="headers"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+              :on-error="handleImgError"
+            >
+              <el-image v-if="dymacPromote.imgUrl" :src="showImg(dymacPromote.imgUrl)" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon" />
+            </el-upload>
+            <p>活动图片首页设置, 建议尺寸：750px*268px支持.jpg.png.jpeg格式，大小不超过1M</p>
+          </el-form-item>
+          <div class="form-title">朋友圈推广</div>
+        </el-form>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -266,11 +294,22 @@
 import storeGoods from '../components/store-gods'
 import storeGoodsGifts from '../components/store-gods-gifts'
 import storeDialog from '../components/store'
+import { mapGetters } from 'vuex'
+import config from '@/utils/config'
 export default {
   components: {
     storeGoods,
     storeDialog,
     storeGoodsGifts
+  },
+  computed: {
+    ...mapGetters(['token', 'merCode']),
+    upLoadUrl() {
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+    },
+    headers() {
+      return { Authorization: this.token }
+    }
   },
   data() {
     const checkActivitTime = (rule, value, callback) => {
@@ -330,10 +369,8 @@ export default {
             trigger: 'change'
           }
         ]
-        // threshold: [
-        //   { required: true, trigger: 'blur', message: '请输入满减门槛' }
-        // ]
-      }
+      },
+      dymacPromote: {}
     }
   },
   methods: {
@@ -447,7 +484,10 @@ export default {
           }
           // const valid_pmt_rule_full = false
           // 优惠规则设置校验
-          if (this.form.pmt_rule_full && Array.isArray(this.form.pmt_rule_full)) {
+          if (
+            this.form.pmt_rule_full &&
+            Array.isArray(this.form.pmt_rule_full)
+          ) {
             for (let i = 0; i < this.form.pmt_rule_full.length; i++) {
               const item = this.form.pmt_rule_full[i]
               if (
@@ -465,8 +505,7 @@ export default {
                       item.rule_content.amount <= 0
                     ) {
                       this.$message.warning(
-                        `请检查第${i +
-                          1}项优惠内容设置，必须为大于0.01的正数`
+                        `请检查第${i + 1}项优惠内容设置，必须为大于0.01的正数`
                       )
                       break
                     }
@@ -478,8 +517,7 @@ export default {
                       item.rule_content.discountNum >= 10
                     ) {
                       this.$message.warning(
-                        `请检查第${i +
-                          1}项优惠内容设置，折扣值大于0且小于10.0`
+                        `请检查第${i + 1}项优惠内容设置，折扣值大于0且小于10.0`
                       )
                       break
                     }
@@ -592,5 +630,14 @@ export default {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     text-align: right;
   }
+   .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 300px;
+    height: 100px;
+    line-height: 100px !important;
+    text-align: center;
+  }
+
 }
 </style>
