@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <el-tab-pane label="基础设置" name="first">
-        <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
+        <el-form ref="form" :model="form" size="small" label-width="120px">
           <div class="form-title">基本信息</div>
           <el-form-item label="活动名称：" prop="name">
             <el-input
@@ -113,18 +113,21 @@
           </el-form-item>
           <!-- 优惠设置 -->
           <div class="form-title">优惠设置</div>
-          <div v-for="(item, $Index) in form.pmt_rule_full" :key="$Index">
+          <div v-for="(domain, $Index) in form.pmt_rule_full" :key="$Index">
             <el-divider v-if="form.rule_type === 1" content-position="left">{{ $Index+1 }}级优惠</el-divider>
-            <el-form-item label="满减门槛：" prop="threshold">
+            <el-form-item
+              label="满减门槛："
+              :prop="'pmt_rule_full.'+ $Index + '.threshold'"
+              :rules="{
+                required: true, message: '满减门槛不能为空', trigger: 'blur'
+              }"
+            >
               <el-input
-                v-model="item.threshold"
-                :min="0"
-                :max="99999999"
+                v-model="domain.threshold"
                 style="width: 200px"
                 class="input-with-select"
-                @input.native="thresholdChange($event, item.uint)"
               >
-                <el-select slot="append" v-model="item.uint" placeholder="请选择">
+                <el-select slot="append" v-model="domain.uint" placeholder="请选择">
                   <el-option label="元" value="0" />
                   <el-option label="件" value="1" />
                 </el-select>
@@ -132,16 +135,16 @@
             </el-form-item>
             <el-form-item label="优惠内容：">
               <div>
-                <el-checkbox v-model="item.rule_content.order_full" border>订单金额优惠</el-checkbox>
-                <section v-if="item.rule_content.order_full" style="margin-left: 50px">
+                <el-checkbox v-model="domain.rule_content.order_full" border>订单金额优惠</el-checkbox>
+                <section v-if="domain.rule_content.order_full" style="margin-left: 50px">
                   <div class="section-group-item">
                     <el-radio
-                      v-model="item.rule_content.discount_type"
+                      v-model="domain.rule_content.discount_type"
                       label="0"
                       @input.native="discountType($event, $Index)"
                     >减</el-radio>
                     <el-input
-                      v-model="item.rule_content.amount"
+                      v-model="domain.rule_content.amount"
                       style="width: 200px"
                       class="input-with-select"
                     >
@@ -150,12 +153,12 @@
                   </div>
                   <div v-if="form.rule_type === 1" class="section-group-item">
                     <el-radio
-                      v-model="item.rule_content.discount_type"
+                      v-model="domain.rule_content.discount_type"
                       label="1"
                       @input.native="discountType($event, $Index)"
                     >打</el-radio>
                     <el-input
-                      v-model="item.rule_content.discountNum"
+                      v-model="domain.rule_content.discountNum"
                       style="width: 200px"
                       class="input-with-select"
                       :min="0"
@@ -167,10 +170,10 @@
                 </section>
               </div>
               <div>
-                <el-checkbox v-model="item.rule_content.gift_or_not" border>送赠品</el-checkbox>
-                <store-goods-gifts v-if="!!item.rule_content.gift_or_not" @commit="handleGiftList" />
+                <el-checkbox v-model="domain.rule_content.gift_or_not" border>送赠品</el-checkbox>
+                <store-goods-gifts v-if="!!domain.rule_content.gift_or_not" @commit="handleGiftList" />
                 <div
-                  v-if="!!item.rule_content.gift_or_not && giftList.length"
+                  v-if="!!domain.rule_content.gift_or_not && giftList.length"
                   class="section-group-item"
                 >
                   已选赠品：
