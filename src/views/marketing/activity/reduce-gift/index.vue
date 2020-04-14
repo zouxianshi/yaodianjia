@@ -267,7 +267,7 @@
       <el-tab-pane label="推广设置" name="second">
         <el-form ref="form" :model="dymacPromote" size="small" label-width="120px">
           <div class="form-title">活动宣传设置</div>
-          <el-form-item>
+          <el-form-item label="活动图片：">
             <el-upload
               class="avatar-uploader"
               :action="upLoadUrl"
@@ -277,12 +277,37 @@
               :before-upload="beforeAvatarUpload"
               :on-error="handleImgError"
             >
-              <el-image v-if="dymacPromote.imgUrl" :src="showImg(dymacPromote.imgUrl)" class="avatar" />
+              <el-image
+                v-if="dymacPromote.imgUrl"
+                :src="showImg(dymacPromote.imgUrl)"
+                class="avatar"
+              />
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
-            <p>活动图片首页设置, 建议尺寸：750px*268px支持.jpg.png.jpeg格式，大小不超过1M</p>
+            <p style="color: rgb(171,171,171)">活动图片首页设置, 建议尺寸：750px*268px支持.jpg.png.jpeg格式，大小不超过1M</p>
           </el-form-item>
           <div class="form-title">朋友圈推广</div>
+          <img :src="shareImg">
+          <el-form-item label="标题：">
+            <el-input
+              v-model="dymacPromote.name"
+              placeholder="不超过15字"
+              style="width: 380px;"
+              maxlength="15"
+              show-word-limit
+            />
+          </el-form-item>
+          <el-form-item label="摘要：">
+            <el-input
+              v-model="dymacPromote.name"
+              style="width: 380px;"
+              maxlength="30"
+              show-word-limit
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+            />
+          </el-form-item>
+          <el-form-item label="图片：" />
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -296,6 +321,8 @@ import storeGoodsGifts from '../components/store-gods-gifts'
 import storeDialog from '../components/store'
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
+import shareImg from '@/assets/image/acvity/share-img.png'
+
 export default {
   components: {
     storeGoods,
@@ -370,7 +397,11 @@ export default {
           }
         ]
       },
-      dymacPromote: {}
+      dymacPromote: {
+        imgUrl: ''
+      },
+      pageLoading: '',
+      shareImg
     }
   },
   methods: {
@@ -470,6 +501,61 @@ export default {
         this.form.pmt_rule_full[index].rule_content.amount = ''
       }
       //  e.target.value = e.target.value
+    },
+    handleImgError(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        // location.reload()
+      } else {
+        this.$message({
+          message: '图片上传失败',
+          type: 'error'
+        })
+        this.pageLoading.close()
+      }
+    },
+    handleAvatarSuccess(res, file) {
+      if (res.code === '10000') {
+        this.dymacPromote.imgUrl = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+      console.log('图片地址-----', this.dymacPromote)
+      this.pageLoading.close()
+    },
+
+    beforeAvatarUpload(file) {
+      const size = file.size / 1024
+      const isImg =
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/jpg'
+      if (!isImg) {
+        this.$message({
+          message: '只能上传格式为 jpg、jpeg、png的图片',
+          type: 'warning'
+        })
+        this.pageLoading.close()
+        return
+      }
+      if (size > 1024) {
+        this.$message({
+          message: '最大只能上传1MB的图片',
+          type: 'warning'
+        })
+        this.pageLoading.close()
+        return false
+      }
+      this.pageLoading = this.$loading({
+        lock: true,
+        text: '图片上传中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      return true
     },
 
     // 格式化表单验证提交数据
@@ -630,7 +716,7 @@ export default {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     text-align: right;
   }
-   .avatar-uploader-icon {
+  .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
     width: 300px;
@@ -638,6 +724,11 @@ export default {
     line-height: 100px !important;
     text-align: center;
   }
-
+  .avatar-uploader {
+    .avatar {
+      width: 300px !important;
+      height: 100px !important;
+    }
+  }
 }
 </style>
