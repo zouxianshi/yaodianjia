@@ -114,25 +114,71 @@
           <!-- 优惠设置 -->
           <div class="form-title">优惠设置</div>
           <div v-for="(domain, $Index) in form.pmt_rule_full" :key="$Index">
-            <el-divider v-if="form.rule_type === 1" content-position="left">{{ $Index+1 }}级优惠</el-divider>
+            <el-divider v-if="form.rule_type === 1" content-position="left">
+              {{ $Index+1 }}级优惠
+              <el-button v-if="$Index !== 0" style="margin-left: 20px" type="danger" size="mini" icon="el-icon-delete" circle @click="handleDelete($Index)" />
+            </el-divider>
             <el-form-item
               label="满减门槛："
               :prop="'pmt_rule_full.'+ $Index + '.threshold'"
               :rules="{
-                required: true, message: '满减门槛不能为空', trigger: 'blur'
+                required: true, validator:validThreshold, trigger: 'change'
               }"
             >
-              <el-input
-                v-model="domain.threshold"
-                style="width: 200px"
-                class="input-with-select"
-              >
+              <el-input v-model="domain.threshold" style="width: 200px" class="input-with-select">
                 <el-select slot="append" v-model="domain.uint" placeholder="请选择">
                   <el-option label="元" value="0" />
                   <el-option label="件" value="1" />
                 </el-select>
               </el-input>
             </el-form-item>
+            <!-- <el-form-item label="优惠内容" required>
+              <el-col :span="24">
+                <el-form-item
+                  :prop="'pmt_rule_full.'+ $Index + '.rule_content.order_full'"
+                  :rules="{}"
+                >
+                  <el-checkbox v-model="domain.rule_content.order_full" border>订单金额优惠</el-checkbox>
+                </el-form-item>
+                <el-col :span="24">
+                  <el-form-item :prop="'pmt_rule_full.'+ $Index + '.rule_content.discount_type'">
+                    <el-radio
+                      v-model="domain.rule_content.discount_type"
+                      label="0"
+                      @input.native="discountType($event, $Index)"
+                    >
+                      减
+                      <el-input
+                        v-model="domain.rule_content.amount"
+                        style="width: 200px"
+                        class="input-with-select"
+                      >
+                        <template slot="append">元</template>
+                      </el-input>
+                    </el-radio>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-radio
+                    v-model="domain.rule_content.discount_type"
+                    label="1"
+                    @input.native="discountType($event, $Index)"
+                  >
+                    打
+                    <el-input
+                      v-model="domain.rule_content.amount"
+                      style="width: 200px"
+                      class="input-with-select"
+                    >
+                      <template slot="append">折</template>
+                    </el-input>
+                  </el-radio>
+                </el-col>
+              </el-col>
+              <el-col :span="24">
+                <el-checkbox v-model="domain.rule_content.order_full" border>送赠品</el-checkbox>
+              </el-col>
+            </el-form-item>-->
             <el-form-item label="优惠内容：">
               <div>
                 <el-checkbox v-model="domain.rule_content.order_full" border>订单金额优惠</el-checkbox>
@@ -171,7 +217,10 @@
               </div>
               <div>
                 <el-checkbox v-model="domain.rule_content.gift_or_not" border>送赠品</el-checkbox>
-                <store-goods-gifts v-if="!!domain.rule_content.gift_or_not" @commit="handleGiftList" />
+                <store-goods-gifts
+                  v-if="!!domain.rule_content.gift_or_not"
+                  @commit="handleGiftList"
+                />
                 <div
                   v-if="!!domain.rule_content.gift_or_not && giftList.length"
                   class="section-group-item"
@@ -303,6 +352,31 @@ export default {
     handleProductChange() {
       console.log('活动范围活动商品变更')
     },
+    // 校验满减门槛金额设置
+    validThreshold(rule, value, callback) {
+      const index = rule.field.split('.')[1]
+      if (!value) {
+        return callback(new Error('满减门槛不能为空'))
+      }
+      console.log(this.form.pmt_rule_full[index].uint)
+      if (!value || value <= 0) {
+        return callback(new Error('满减门槛必须大于0'))
+      }
+      // 元
+      if (this.form.pmt_rule_full[index].uint === '0') {
+        if (!/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(value)) {
+          return callback(new Error('必须为大于0.01的正数'))
+        }
+      }
+      // 件
+      if (this.form.pmt_rule_full[index].uint === '1') {
+        if (!/^[1-9]\d*$/.test(value)) {
+          return callback(new Error('必须为大于0的正整数'))
+        }
+      }
+
+      callback()
+    },
     thresholdChange(e, unit) {
       console.log('111111', e)
       const value = e.target.value
@@ -331,10 +405,19 @@ export default {
     // 追加优惠层级
     handleAdd() {
       // 追加优惠层级需要先设置一级优惠通过后再设置第二项
-      this.validPmtRule()
       this.form.pmt_rule_full = this.form.pmt_rule_full.concat({
         ...this.initRuleFull
       })
+    },
+    // 删除层级
+    handleDelete(index) {
+      // const data = this.form.pmt_rule_full.slice(index, 1)
+      const data = JSON.parse(JSON.stringify(this.form.pmt_rule_full))
+      console.log('data', index, this.form.pmt_rule_full)
+      data.splice(index, 1)
+      console.log('data-------------', data)
+      this.form.pmt_rule_full = data
+      // this.$set( this.form.pmt_rule_full);
     },
     ruleTypeChange(val) {
       console.log('ruleTypeChange----', val)
@@ -351,82 +434,7 @@ export default {
       }
       //  e.target.value = e.target.value
     },
-    // 验证优惠设置内容
-    validPmtRule() {
-      // 是否配置了内容
-      if (this.form.pmt_rule_full) {
-        this.form.pmt_rule_full.map((item, index) => {
-          if (item.uint === '0') {
-            if (
-              !/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(item.threshold) ||
-              item.threshold <= 0
-            ) {
-              this.$message.warning(
-                `请检查第${index + 1}项满减门槛设置，必须为大于0.01的正数`
-              )
-              return
-            }
-          } else {
-            if (!/^[1-9]\d*$/.test(item.threshold)) {
-              this.$message.warning(
-                `请检查第${index + 1}项满减门槛设置，必须为大于0的正整数`
-              )
-              return
-            }
-          }
-          if (
-            item.rule_content &&
-            (item.rule_content.order_full || item.rule_content.gift_or_not)
-          ) {
-            // 优惠内容选择了订单金额优惠
-            if (item.rule_content.order_full) {
-              // 订单金额-满减减金额
-              if (item.rule_content.discount_type === '0') {
-                if (
-                  !/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(
-                    item.rule_content.amount
-                  ) ||
-                  item.rule_content.amount <= 0
-                ) {
-                  this.$message.warning(
-                    `请检查第${index + 1}项优惠内容设置，必须为大于0.01的正数`
-                  )
-                  return
-                }
-              }
-              // 订单金额-满减打折
-              if (item.rule_content.discount_type === '1') {
-                if (
-                  item.rule_content.discountNum <= 0 ||
-                  item.rule_content.discountNum >= 10
-                ) {
-                  this.$message.warning(
-                    `请检查第${index + 1}项优惠内容设置，折扣值大于0且小于10.0`
-                  )
-                  return
-                }
-              }
-            }
-            // 赠品处判断不能为空，
-            if (item.rule_content.gift_or_not) {
-              if (
-                !this.giftList ||
-                (Array.isArray(this.giftList) && this.giftList.length)
-              ) {
-                this.$message.warning('赠品内容不能为空')
-                return
-              }
-            }
-          } else {
-            this.$message.warning('优惠内容设置不能为空')
-            return
-          }
-        })
-      } else {
-        this.$message.warning('活动优惠设置不能为空')
-        return
-      }
-    },
+
     // 格式化表单验证提交数据
     formateFormData() {
       console.log('我是格式话表单提交数据----------------', this.form)
@@ -437,14 +445,69 @@ export default {
             this.$message.warning('活动开始时间不能小于当前时间')
             return
           }
+          // const valid_pmt_rule_full = false
           // 优惠规则设置校验
-          this.validPmtRule()
+          if (this.form.pmt_rule_full && Array.isArray(this.form.pmt_rule_full)) {
+            for (let i = 0; i < this.form.pmt_rule_full.length; i++) {
+              const item = this.form.pmt_rule_full[i]
+              if (
+                item.rule_content &&
+                (item.rule_content.order_full || item.rule_content.gift_or_not)
+              ) {
+                // 优惠内容选择了订单金额优惠
+                if (item.rule_content.order_full) {
+                  // 订单金额-满减减金额
+                  if (item.rule_content.discount_type === '0') {
+                    if (
+                      !/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(
+                        item.rule_content.amount
+                      ) ||
+                      item.rule_content.amount <= 0
+                    ) {
+                      this.$message.warning(
+                        `请检查第${i +
+                          1}项优惠内容设置，必须为大于0.01的正数`
+                      )
+                      break
+                    }
+                  }
+                  // 订单金额-满减打折
+                  if (item.rule_content.discount_type === '1') {
+                    if (
+                      item.rule_content.discountNum <= 0 ||
+                      item.rule_content.discountNum >= 10
+                    ) {
+                      this.$message.warning(
+                        `请检查第${i +
+                          1}项优惠内容设置，折扣值大于0且小于10.0`
+                      )
+                      break
+                    }
+                  }
+                }
+                // 赠品处判断不能为空，
+                if (item.rule_content.gift_or_not) {
+                  if (
+                    !this.giftList ||
+                    (Array.isArray(this.giftList) && this.giftList.length)
+                  ) {
+                    this.$message.warning('赠品内容不能为空')
+                    break
+                  }
+                }
+              }
+            }
+          } else {
+            this.$message.warning('活动优惠设置不能为空')
+            return
+          }
+          // if(!valid_pmt_rule_full) return
+          return { ...this.form }
         } else {
           console.log('error submit!!', valid)
           return false
         }
       })
-      return { ...this.form }
     },
     async onSave() {
       console.log('我是保存----------------')
@@ -453,8 +516,9 @@ export default {
       console.log('我是保存----------------最终的数据', data)
     },
     onSubmit() {
-      // console.log('我是提交----------------', this.form)
-      this.formateFormData()
+      //
+      const formdata = this.formateFormData()
+      console.log('我是提交----------------', formdata)
     }
   },
   beforeRouteLeave(to, from, next) {
