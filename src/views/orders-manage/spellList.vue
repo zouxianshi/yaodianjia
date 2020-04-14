@@ -277,7 +277,7 @@ export default {
           str = '拼团失败已回收库存'
           break
         case 6:
-          str = '已发货'
+          str = '已成团'
           break
         default:
           str = ''

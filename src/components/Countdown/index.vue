@@ -30,7 +30,6 @@ export default {
      */
     _CountDownLoop() {
       const timer_offset = new Date(this.time) - new Date()
-      console.log('---------', timer_offset)
       // 如果结束时间戳减去当前时间时间戳小于等于0则设置倒计时结束标识为true
       if (timer_offset <= 0) {
         cancelAnimationFrame(this.resId)
@@ -41,7 +40,6 @@ export default {
     },
     // 格式ihua
     formatTime(leftTime) {
-      console.log('formatTime', leftTime)
       if (leftTime <= 0) {
         return '00:00:00'
       } else {
@@ -71,7 +69,6 @@ export default {
         if (h < 10) {
           h = '0' + h
         }
-        console.log('formatTime----------', d, h, m, s, hm)
         return `${d ? `${d}天` : ''} ${h}:${m}:${s}:${hm}`
       }
     }
