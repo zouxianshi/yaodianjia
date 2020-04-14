@@ -3,7 +3,7 @@
     <el-dialog :visible.sync="dialogVisible" width="550px" :modal-append-to-body="true" :append-to-body="true" :before-close="closeDia">
       <div slot="title" class="dialog-title">健康豆管理</div>
       <div class="beans-content-body">
-        <div class="beans-num">健康豆<span>99</span></div>
+        <div class="beans-num">健康豆<span>{{ beanTotalNum }}</span></div>
         <el-form label-position="right" label-width="120px" :model="beansForm">
           <el-form-item label="增减健康豆：">
             <el-radio v-model="addOrD" label="1">增加</el-radio>
@@ -25,12 +25,13 @@
   </div>
 </template>
 <script>
-import { beanManagement } from '@/api/memberService'
+import { beanManagement, menberBaseInfo } from '@/api/memberService'
 export default {
   data() {
     return {
       dialogVisible: false,
       addOrD: '1',
+      beanTotalNum: '0',
       beansForm: {
         'integral': '',
         'notes': '',
@@ -50,6 +51,18 @@ export default {
     changeDia(userId) {
       this.beansForm.userId = userId
       this.dialogVisible = true
+      // 先获取健康豆总数（健康豆详细接口没有返回）
+      var params2 = {
+        userId: userId,
+        merCode: this.$store.state.user.merCode
+      }
+      menberBaseInfo(params2).then(res => {
+        if (res.data && res.data.onlineIntegral) {
+          this.beanTotalNum = res.data.onlineIntegral
+        } else {
+          this.beanTotalNum = 0
+        }
+      })
     },
     // 关闭前清空
     close() {
