@@ -1,5 +1,5 @@
 <template>
-  <div class="list-index-model app-container">
+  <div class="list-ListIndex-model app-container">
     <div style="position: absolute;right:20px;top:25px;z-index:300">
       <el-input v-model="input1" style="width:200px" placeholder="请输入内容" prefix-icon="el-icon-search" />
     </div>
@@ -111,7 +111,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-.list-index-model {
+.list-ListIndex-model {
   position: relative;
   padding: 20 0px;
   .header-nav {

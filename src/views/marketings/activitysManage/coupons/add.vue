@@ -86,7 +86,7 @@
       append-to-body
       :before-close="handleClose"
     >
-      <checkCoupon ref="checkCoupons" />
+      <!-- <checkCoupon ref="checkCoupons" /> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="checkSure">确 定</el-button>
@@ -95,11 +95,11 @@
   </div>
 </template>
 <script>
-import checkCoupon from './_source/checkCoupon'
+// import checkCoupon from './_source/checkCoupon'
 export default {
   name: 'Add',
   components: {
-    checkCoupon: checkCoupon
+    // checkCoupon: checkCoupon
   },
   props: {},
   data() {
@@ -135,7 +135,7 @@ export default {
       this.dialogVisible = false
     },
     checkSure() {
-      this.selectList = this.$refs.checkCoupons.selectlist
+      // this.selectList = this.$refs.checkCoupons.selectlist
       this.dialogVisible = false
     },
     deleteRow(index, rows) {
@@ -159,6 +159,9 @@ export default {
     }
     .add-addRight-model {
       display: inline-block;
+      .el-icon-edit{
+        color: #147de8;
+      }
     }
   }
 }
