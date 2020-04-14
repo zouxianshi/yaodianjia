@@ -4,7 +4,7 @@
     <el-dialog
       :title="`“${dialogVisibleTitle}”商品活动库存管理:`"
       :visible.sync="dialogVisible"
-      width="800px"
+      width="900px"
       append-to-body
       :close-on-click-modal="false"
       @close="modalQuery.currentPage = 1; modalQuery.total = 1; cleanAllCount = false"
@@ -50,9 +50,8 @@
                   <el-input-number
                     v-model="scope.row.num"
                     :disabled="scope.row.isClearn"
-                    size="small"
-                    style="width:100px"
-                    class="custom-inner-input"
+                    size="medium"
+                    style="width:120px"
                     controls-position="right"
                     :min="0"
                     :max="100000000000"
@@ -63,13 +62,14 @@
                     <span class="el-icon-arrow-up" @click="handleAddTime(1,scope.row)" />
                     <span class="el-icon-arrow-down" @click="handleAddTime(2,scope.row)" />
                   </div>-->
-                  <el-link
+                  <el-button
                     v-if="!scope.row.isClearn"
-                    type="primary"
+                    type="text"
                     :underline="false"
                     style="font-size:13px"
+                    :loading="setStockLoading"
                     @click="handleSetAddNumber(scope.row)"
-                  >&nbsp;立即增加</el-link>
+                  >&nbsp;立即增加</el-button>
                 </div>
               </div>
               <el-link
@@ -84,7 +84,12 @@
           </el-table-column>
         </el-table>
         <div class="table-footer">
-          <el-button type="danger" size="mini" @click="handleClean(true)">清空所有活动库存</el-button>
+          <el-button
+            type="danger"
+            size="mini"
+            :loading="saveLoading"
+            @click="handleClean(true)"
+          >清空所有活动库存</el-button>
           <el-pagination
             background
             layout="total, prev, pager, next"
@@ -96,7 +101,12 @@
       </div>
       <span slot="footer">
         <el-button type size="small" @click="dialogVisible=false">取消</el-button>
-        <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmitStock">确定</el-button>
+        <el-button
+          type="primary"
+          size="small"
+          :loading="saveLoading"
+          @click="handleSubmitStock"
+        >确定</el-button>
       </span>
     </el-dialog>
   </span>
@@ -106,7 +116,8 @@
 import {
   getActivityGoods,
   setAssembleStock,
-  clearProductStock
+  clearProductStock,
+  setSingleAssembleStock
 } from '@/api/marketing'
 
 export default {
@@ -130,6 +141,7 @@ export default {
       },
       saveLoading: false,
       listLoading: false,
+      setStockLoading: false,
       cleanAllCount: false // 是否清空所有库存
     }
   },
@@ -175,46 +187,38 @@ export default {
     },
     handleClean(val) {
       console.log('handleClean', val)
-      this.cleanAllCount = !!val
-      this.modalGoodList.map(row => {
-        row.productActivityCount = 0
-        row.isClearn = true
-      })
+      // this.cleanAllCount = !!val
+      this.clearStock()
+        .then(res => {
+          this.$message({
+            message: '库存已清空',
+            type: 'success'
+          })
+          this.saveLoading = false
+          this.modalQuery.currentPage = 1
+          this._loadActivityGoods()
+        })
+        .catch(() => {
+          this.saveLoading = false
+        })
     },
     async handleSubmitStock() {
       // 修改库存
       this.saveLoading = true
       console.log('handleSubmitStock', this.cleanAllCount, this.modalGoodList)
-      if (this.cleanAllCount) {
-        // 执行清空当前活动id下所有商品库存
-        Promise.all([this.clearStock(), this.updateAssembleStock()])
-          .then(res => {
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            this.saveLoading = false
-            this.dialogVisible = false
+      this.updateAssembleStock()
+        .then(res => {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
           })
-          .catch(e => {
-            this.saveLoading = false
-            this.dialogVisible = false
-          })
-      } else {
-        this.updateAssembleStock()
-          .then(res => {
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            this.saveLoading = false
-            this.dialogVisible = false
-          })
-          .catch(e => {
-            this.saveLoading = false
-            this.dialogVisible = false
-          })
-      }
+          this.saveLoading = false
+          this.dialogVisible = false
+        })
+        .catch(e => {
+          this.saveLoading = false
+          this.dialogVisible = false
+        })
     },
     // 清空库存
     clearStock() {
@@ -253,9 +257,27 @@ export default {
         return
       }
       row.productActivityCount =
-        Number(row.productActivityCount) + Number(row.num)
+        Number(row.productActivityCount || 0) + Number(row.num)
+      row.addCount = Number(row.num)
       // row.isAdd = true
       row.num = ''
+      console.log('1111111111111111111-handleSetAddNumber', row)
+      this.setStockLoading = true
+      setSingleAssembleStock(row)
+        .then(res => {
+          this.setStockLoading = false
+          if (res.code === '10000') {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.modalQuery.currentPage = 1
+            this._loadActivityGoods()
+          }
+        })
+        .catch(e => {
+          this.setStockLoading = false
+        })
     },
     handleInput(e, row) {
       const value = e.target.value

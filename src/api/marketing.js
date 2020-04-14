@@ -146,6 +146,15 @@ export function setAssembleStock(params) {
     data: params
   })
 }
+// 单独修改活动商品库存
+export function setSingleAssembleStock(params) {
+  console.log(params)
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/addStock`,
+    method: 'put',
+    data: params
+  })
+}
 
 // 清空活动下的商品库存
 export function clearProductStock(params) {
