@@ -58,43 +58,41 @@
           <el-form-item label="使用门槛：">
             <el-radio-group v-model="discountForm.threshold">
               <el-radio label="0">无门槛</el-radio>
-              <el-radio label="1">订单满 <el-input v-model="discountForm.thresholdPrice" style="width:50px" /> 元</el-radio>
+              <el-radio label="1">订单满 <el-input v-model="discountForm.thresholdPrice" style="width:100px" /> 元</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="使用时间：">
             自领取起 <el-input style="width:40px" /> 天有效
-            <span class="zkTips">例：若折扣为8折，填8即可</span>
-            <p style="margin-top:15px">
-              <el-checkbox v-model="discountForm.isSelectMax" />
-              最多优惠
-              <el-input v-model="discountForm.maxDis" style="width:80px" /> 元
-            </p>
           </el-form-item>
           <el-form-item label="适用门店：">
             <el-radio-group v-model="discountForm.store">
               <el-radio label="0">全部门店</el-radio>
-              <el-radio label="1">指定门店 <span v-if="discountForm.store==='1'">选择门店</span></el-radio>
+              <el-radio label="1">指定门店 <span v-if="discountForm.store==='1'" @click="selectStore">选择门店</span></el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="适用商品：">
             <el-radio-group v-model="discountForm.commodity">
               <el-radio label="0">全部商品</el-radio>
-              <el-radio label="1">指定商品可用 <span v-if="discountForm.store==='1'">选择商品</span></el-radio>
-              <el-radio label="2">指定商品不可用 <span v-if="discountForm.store==='2'">选择商品</span></el-radio>
+              <el-radio label="1">指定商品可用 <span v-if="discountForm.commodity==='1'" @click="selectCommodity">选择商品</span></el-radio>
+              <el-radio label="2">指定商品不可用 <span v-if="discountForm.commodity==='2'" @click="selectCommodity">选择商品</span></el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
         <el-button size="mini" type="primary" @click="next">下一步</el-button>
       </div>
     </div>
+    <mPopSelectStore ref="selectStore" />
+    <mPopSelectProduct ref="selectCommodity" />
   </div>
 </template>
 <script>
 import mPhoneView from '../_source/phoneView'
+import mPopSelectStore from '../_source/popSelectStore'
+import mPopSelectProduct from '../_source/popSelectProduct'
 export default {
   name: 'DiscountIndex',
   components: {
-    mPhoneView
+    mPhoneView, mPopSelectStore, mPopSelectProduct
   },
   data() {
     return {
@@ -123,6 +121,14 @@ export default {
     },
     onSubmit() {
       console.log('submit!')
+    },
+    // 选择商品
+    selectStore() {
+      this.$refs.selectStore.show()
+    },
+    // 选择商品
+    selectCommodity() {
+      this.$refs.selectCommodity.show()
     }
   }
 }
