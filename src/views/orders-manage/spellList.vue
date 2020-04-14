@@ -294,7 +294,7 @@ export default {
           label: '拼团单号'
         },
         {
-          value: 'userName',
+          value: 'userNickname',
           label: '团长姓名'
         },
         {
