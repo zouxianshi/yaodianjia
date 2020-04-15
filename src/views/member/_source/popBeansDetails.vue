@@ -25,19 +25,23 @@
             prop="integral"
             label="健康豆数量"
             width="100"
+            align="center"
           />
           <el-table-column
             prop="source"
             label="来源"
             width="140"
+            align="center"
           />
           <el-table-column
             prop="createTime"
             label="发生时间"
+            align="center"
           />
           <el-table-column
             prop="notes"
             label="备注"
+            align="center"
           />
         </el-table>
       </div>
