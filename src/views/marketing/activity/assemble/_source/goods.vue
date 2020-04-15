@@ -57,13 +57,13 @@
           <el-table-column type="selection" align="center" width="50" />
           <el-table-column align="center" label="商品图片" min-width="60">
             <template slot-scope="scope">
-              <div v-if="scope.row.mainPic && scope.row.mainPic!==''" class="x-img-mini" style="width: 60px; height: 60px">
+              <div v-if="scope.row.picUrl && scope.row.picUrl!==''" class="x-img-mini" style="width: 60px; height: 60px">
                 <div class="x-image__preview">
                   <el-image
                     style="width: 60px; height: 60px"
                     fit="contain"
-                    :src="showImg(scope.row.mainPic)"
-                    :preview-src-list="[showImg(scope.row.mainPic)]"
+                    :src="showImg(scope.row.picUrl)"
+                    :preview-src-list="[showImg(scope.row.picUrl)]"
                   />
                 </div>
               </div>
@@ -78,11 +78,11 @@
           <el-table-column prop="name" label="商品名称" min-width="120" :show-overflow-tooltip="true" />
           <el-table-column label="规格" min-width="100" :show-overflow-tooltip="true">
             <template slot-scope="scope" :show-overflow-tooltip="true">
-              <div v-html="formatSkuInfo(scope.row.specSkuList)" />
+              <div v-html="formatSkuInfo(scope.row.specSkus)" />
             </template>
           </el-table-column>
-          <el-table-column prop="mprice" label="参考价格" min-width="60" align="center" :show-overflow-tooltip="true" />
-          <el-table-column prop="manufacture" label="已参加活动" min-width="120" :show-overflow-tooltip="true">
+          <el-table-column prop="price" label="参考价格" min-width="60" align="center" :show-overflow-tooltip="true" />
+          <!-- <el-table-column prop="manufacture" label="已参加活动" min-width="120" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <template v-if="scope.row.promoteList">
                 <span v-for="(item,index) in scope.row.promoteList" :key="index">
@@ -96,7 +96,7 @@
                 未在活动中
               </template>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <div class="table-footer">
           <el-pagination
