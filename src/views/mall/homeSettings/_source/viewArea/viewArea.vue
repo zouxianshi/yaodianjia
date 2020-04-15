@@ -11,33 +11,34 @@
 
     <div class="vam-draggable">
       <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
-        <div v-for="(item,$index) in dragList" :key="$index">
+        <div v-for="(item,$index) in dragList" :key="$index" class="item-component">
           <m-no-data v-if="item.code === 'no-data'" />
-          <div v-else class="item-component">
-            <template>
-              <div class="drag-area">
-                <span class="sp1">{{ item.name }}组件</span>
-                <span class="sp2">请在此区域拖拽</span>
-                <div class="oper">
-                  <m-edit :item="item" />
-                  <m-delete :index="$index" />
-                </div>
+          <template v-else>
+            <div class="drag-area">
+              <span class="sp1">{{ item.name }}组件</span>
+              <span class="sp2">请在此区域拖拽</span>
+              <div class="oper">
+                <m-edit :item="item" />
+                <m-delete :index="$index" />
               </div>
-              <!--导航栏-->
-              <m-navigation v-if="item.code === 'navigation'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-              <!--标题-->
-              <m-title v-if="item.code === 'title'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-              <!--广告图-->
-              <m-advertise v-if="item.code === 'advertise'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-              <!--商品-->
-              <m-commodity v-if="item.code === 'commodity'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-              <!--为你推荐-->
-              <m-recommend v-if="item.code === 'recommend'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-            </template>
-          </div>
+            </div>
+            <!--导航栏-->
+            <m-navigation v-if="item.code === 'navigation'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <!--标题-->
+            <m-title v-if="item.code === 'title'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <!--广告图-->
+            <m-advertise v-if="item.code === 'advertise'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <!--商品-->
+            <m-commodity v-if="item.code === 'commodity'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <!--为你推荐-->
+            <m-recommend v-if="item.code === 'recommend'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+          </template>
         </div>
       </v-draggable>
     </div>
+
+    <!--底部导航-->
+    <m-bottom-nav />
   </div>
 </template>
 <script>
@@ -54,11 +55,12 @@ import mCommodity from './commodity'
 import mRecommend from './recommend'
 import mEdit from './edit'
 import mDelete from './delete'
+import mBottomNav from './bottomNav'
 import mNoData from './noData'
 
 export default {
   name: 'ViewArea',
-  components: { mHeader, mBanner, mNotice, vDraggable, mNavigation, mTitle, mDelete, mEdit, mAdvertise, mCommodity, mRecommend, mNoData },
+  components: { mHeader, mBanner, mNotice, vDraggable, mNavigation, mTitle, mDelete, mEdit, mAdvertise, mCommodity, mRecommend, mNoData, mBottomNav },
   props: {},
   data() {
     return {

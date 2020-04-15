@@ -40,9 +40,7 @@ export default {
   .va-no-data-model {
     height: 180px;
     margin-left: -2px;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #ffffff;
-    margin-bottom: -16px;
+    margin-bottom: -20px;
     .vndm-box {
       width: 400px;
       background: #fff;

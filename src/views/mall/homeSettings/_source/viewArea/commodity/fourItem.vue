@@ -1,5 +1,6 @@
 <template>
   <div class="c-four-item-model">
+    <m-icon-activity />
     <img class="cfim-photo" src="../img/va_nav_1.png" alt="" width="100" height="100">
     <div class="cfim-content">
       <div class="cfim-name">拜耳力度神维c泡疼片30片橙味增强抵抗力补充维生素c感冒vc</div>
@@ -12,6 +13,7 @@
   </div>
 </template>
 <script>
+import mIconActivity from '../iconActivity'
 export default {
   name: 'CFourItem',
   data() {
@@ -37,7 +39,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { mIconActivity }
 }
 </script>
 

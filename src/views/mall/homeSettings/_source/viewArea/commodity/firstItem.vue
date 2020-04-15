@@ -1,5 +1,6 @@
 <template>
   <div class="c-first-item-model">
+    <m-icon-activity />
     <img class="cfim-photo" src="../img/va_nav_1.png" alt="" width="140" height="140">
     <p class="cfim-name">拜耳力度伸维c泡腾片</p>
     <p class="cfim-price">
@@ -10,8 +11,9 @@
   </div>
 </template>
 <script>
+import mIconActivity from '../iconActivity'
 export default {
-  name: 'CVfimFirstItem',
+  name: 'CFirstItem',
   data() {
     return {}
   },
@@ -35,7 +37,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { mIconActivity }
 }
 </script>
 

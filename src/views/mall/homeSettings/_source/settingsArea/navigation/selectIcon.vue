@@ -1,8 +1,8 @@
 <template>
   <el-popover v-model="visible" placement="bottom-start" trigger="click" :popper-class="'nav-select-icon'">
     <div class="scrollbar select-icon-box">
-      <div v-for="(el,i) in 40" :key="i" class="sim-item " :class="{active:i === 3}">
-        <el-image src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" />
+      <div v-for="(el,i) in defaultIcons" :key="i" class="sim-item" :class="{active:i === 3}">
+        <div :class="'sa-default-icons-' + i" />
         <i class="el-icon-caret-top" />
       </div>
     </div>
@@ -15,11 +15,18 @@
 
 </template>
 <script>
+import _ from 'lodash'
 export default {
   name: 'SelectIcon',
   data() {
     return {
-      visible: false
+      visible: false,
+      url: './sa_default_icons_0.png',
+      defaultIcons: _.times(17, v => {
+        return {
+          icon: `../img/sa_default_icons_${v}.png`
+        }
+      })
     }
   },
   props: {},
@@ -50,13 +57,13 @@ export default {
   .nav-select-icon {
     .select-icon-box {
       overflow: hidden;
-      width: 268px;
-      height: 280px;
+      width: 310px;
+      height: 380px;
       margin-right: -8px;
       overflow-y: scroll;
       .sim-item {
-        width: 44px;
-        height: 44px;
+        width: 68px;
+        height: 68px;
         border: 2px solid #fff;
         display: inline-block;
         position: relative;
@@ -74,11 +81,6 @@ export default {
           font-size: 18px;
           display: none;
         }
-        .el-image {
-          display: block;
-          width: 40px;
-          height: 40px;
-        }
         &.active {
           border-color:#09d26d;
           .el-icon-caret-top {
@@ -93,6 +95,13 @@ export default {
     .select-icon-ope {
       padding-top: 10px;
       text-align: right;
+    }
+  }
+  @for $i from 0 through 17 {
+    .sa-default-icons-#{$i} {
+      width: 64px;
+      height: 64px;
+      background: url('./../img/sa_default_icons_#{$i}.png');
     }
   }
 </style>

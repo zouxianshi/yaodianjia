@@ -9,13 +9,13 @@
       </el-radio-group>
     </div>
     <div class="slm-page-content">
-      <el-table :data="tableData" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 208px)">
+      <el-table :data="tableData" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 208px)" @row-click="onRowClick">
         <el-table-column label="" width="50">
-          <!--<template scope="scope">
-            <el-radio v-model="selectId" :label="scope.row.id" @change.native="getTemplateRow(scope.row)">&nbsp</el-radio>
-          </template>-->
+          <template slot-scope="scope">
+            <el-radio v-model="selectId" :label="scope.row.id" />
+          </template>
         </el-table-column>
-        <el-table-column prop="date" label="日期" />
+        <el-table-column prop="date" label="日期" width="100" />
         <el-table-column prop="name" label="姓名" />
         <el-table-column prop="address" label="地址" />
       </el-table>
@@ -51,8 +51,8 @@ export default {
   },
   props: {},
   methods: {
-    getTemplateRow(row) {
-      this.selectId = row
+    onRowClick({ id }) {
+      this.selectId = id
     }
   },
   watch: {},

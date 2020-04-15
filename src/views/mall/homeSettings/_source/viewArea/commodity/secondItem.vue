@@ -1,5 +1,6 @@
 <template>
   <div class="c-second-item-model">
+    <m-icon-activity />
     <img class="csim-photo" src="../img/va_nav_1.png" alt="" width="100" height="100">
     <p class="csim-name">拜耳力度伸维</p>
     <p class="csim-price">
@@ -8,6 +9,7 @@
   </div>
 </template>
 <script>
+import mIconActivity from '../iconActivity'
 export default {
   name: 'CSecondItem',
   data() {
@@ -33,7 +35,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { mIconActivity }
 }
 </script>
 
