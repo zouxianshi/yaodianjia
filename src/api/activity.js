@@ -18,3 +18,11 @@ export function getConflict(params) {
   })
 }
 
+// 创建赠品
+export function createGift(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup`,
+    method: 'post',
+    data: params
+  })
+}

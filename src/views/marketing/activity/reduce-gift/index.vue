@@ -337,9 +337,9 @@
 
 <script>
 // import _ from 'lodash'
-import storeGoods from '../components/store-gods'
-import storeGoodsGifts from '../components/store-gods-gifts'
-import storeDialog from '../components/store'
+import storeGoods from '../../components/store-gods'
+import storeGoodsGifts from '../../components/store-gods-gifts'
+import storeDialog from '../../components/store'
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
 import shareImg from '@/assets/image/acvity/share-img.png'

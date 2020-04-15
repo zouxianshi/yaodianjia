@@ -78,16 +78,6 @@ const router = [
         }
       },
       {
-        path: 'gifts',
-        component: () => import('@/views/marketing/gift-manage/index'),
-        name: 'activity',
-        meta: {
-          title: '礼品管理',
-          auth: 'marketing.marketing-manager',
-          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-        }
-      },
-      {
         path: 'activity/limt-list',
         component: () => import('@/views/marketing/activity/limit/list'),
         name: 'limitList',
@@ -165,6 +155,37 @@ const router = [
           title: '冲突列表',
           noCache: true,
           activeMenu: '/marketing/activity'
+        }
+      },
+      // 礼品管理模块
+      {
+        path: 'gifts',
+        component: () => import('@/views/marketing/gift-manage/index'),
+        name: 'giftsManage',
+        meta: {
+          title: '礼品管理',
+          auth: 'marketing.marketing-manager',
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+        }
+      },
+      {
+        path: 'gifts/complimentary',
+        component: () => import('@/views/marketing/gift-manage/gifts/complimentary'),
+        name: 'giftsComplimentary',
+        meta: {
+          title: '赠品管理',
+          auth: 'marketing.marketing-manager',
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+        }
+      },
+      {
+        path: 'gifts/complimentary-create',
+        component: () => import('@/views/marketing/gift-manage/gifts/complimentary-create'),
+        name: 'giftsComplimentaryCreate',
+        meta: {
+          title: '创建赠品',
+          auth: 'marketing.marketing-manager',
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       }
     ]
