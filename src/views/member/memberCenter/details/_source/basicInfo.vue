@@ -139,7 +139,7 @@ export default {
     }
   },
   created() {
-    this.searchParams.userId = Number(this.$route.query.userId) || 1
+    this.searchParams.userId = this.$route.query.userId || '1'
     this.queryBaseInfo()
     this.queryHealthData()
   },
@@ -181,8 +181,10 @@ export default {
       this.loading = true
       queryHealthConsultants(params).then(res => {
         this.loading = false
-        this.tableData = res.data.data
-        this.totalCount = res.data.totalCount
+        if (res.data && res.data.data) {
+          this.totalCount = res.data.totalCount
+          this.tableData = res.data.data
+        }
       })
     }
   }
