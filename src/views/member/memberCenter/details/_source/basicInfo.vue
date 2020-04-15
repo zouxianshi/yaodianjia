@@ -167,7 +167,7 @@ export default {
       }
       menberBaseInfo(params).then(res => {
         this.basicInfo = res.data
-        this.beanTotalNum = res.data.onlineIntegral || 10
+        this.beanTotalNum = res.data.onlineIntegral || 0
         sessionStorage.setItem('mem_username', res.data.memberName)
       })
     },

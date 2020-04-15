@@ -59,7 +59,7 @@ export default {
       options: [],
       value: nowMon,
       tableData: [],
-      beanTotalNum: 1,
+      beanTotalNum: '',
       searchParams: {
         'userId': '',
         'currentPage': '1',
@@ -109,7 +109,7 @@ export default {
     },
     changeDia(data, userId, beanTotalNum) {
       this.searchParams.userId = userId
-      this.beanTotalNum = beanTotalNum || '-'
+      this.beanTotalNum = beanTotalNum
       if (data) {
         this.tableData = data.data
       }
