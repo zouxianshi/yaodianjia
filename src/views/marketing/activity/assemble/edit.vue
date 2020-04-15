@@ -173,7 +173,7 @@
               icon="el-icon-circle-plus-outline"
               type="primary"
               size="small"
-              :disabled="!formData.activitTime"
+              :disabled="!formData.activitTime || (formData.isAllStore === 0 && !chooseStore.length)"
               @click="handleOpenGoods"
             >添加商品</el-button>
             <el-button
@@ -490,8 +490,15 @@ export default {
     handleOpenGoods() {
       // 打开选择商品弹窗组件
       this.chooseGoods = this.goodsList
+      let storeIds = ''
+      if (this.formData.isAllStore === 1) {
+        storeIds = null
+      } else {
+        storeIds = this.chooseStore
+      }
+      console.log('我是准备打开商品弹窗组件', storeIds)
       this.$nextTick(_ => {
-        this.$refs.dialogGoods.open()
+        this.$refs.dialogGoods.open(storeIds)
       })
     },
     handletStoreComplete(row) {

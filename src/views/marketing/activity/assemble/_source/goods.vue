@@ -39,7 +39,9 @@
         </div>
         <p class="note-text">
           <span v-if="type1 && type1!=''">当前类目下</span>
-          <span v-else>当前所有分类</span><span v-if="pager.total>0">包括 <span v-text="pager.total" /> 个商品</span>
+          <span v-else>当前所有分类</span>
+          <span>当前{{ storeIds?storeIds.length: '所有' }}门店</span>
+          <span v-if="pager.total>0">包括 <span v-text="pager.total" /> 个商品</span>
           <span v-else>暂无商品</span>
         </p>
         <el-table
@@ -193,7 +195,8 @@ export default {
       multipleSelection: [],
       mySelectList: [],
       typeList: [],
-      checkAll: false
+      checkAll: false,
+      storeIds: null
     }
   },
   computed: {
@@ -242,12 +245,15 @@ export default {
       }
       this.forSearch()
     },
-    open() {
+    open(storeIds) {
       this.dialog.visible = true
       if (this.list && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
         this.mySelectList = []
+      }
+      if (storeIds) {
+        this.storeIds = storeIds
       }
       this.fetchData()
     },
@@ -395,6 +401,10 @@ export default {
     },
     _getTableData() {
       this.loading = true
+      const ids = []
+      if (this.storeIds) {
+        this.storeIds.forEach(item => ids.push(item.id))
+      }
       const params = {
         // commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
         // level: this.searchForm.typeLevel,
@@ -410,7 +420,8 @@ export default {
         firstTypeId: this.type1,
         secondTypeId: this.type2,
         threeTypeId: this.type3,
-        merCode: this.merCode
+        merCode: this.merCode,
+        storeIds: this.storeIds ? ids : null
       }
 
       // currentPage	integer($int32)
