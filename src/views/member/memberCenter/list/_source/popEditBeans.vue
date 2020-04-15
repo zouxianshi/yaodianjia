@@ -4,12 +4,12 @@
       <div slot="title" class="dialog-title">健康豆管理</div>
       <div class="beans-content-body">
         <div class="beans-num">健康豆<span>{{ beanTotalNum }}</span></div>
-        <el-form label-position="right" label-width="120px" :model="beansForm">
+        <el-form ref="beansForm" label-position="right" label-width="120px" :rules="rules" :model="beansForm">
           <el-form-item label="增减健康豆：">
             <el-radio v-model="addOrD" label="1">增加</el-radio>
             <el-radio v-model="addOrD" label="2">删减</el-radio>
           </el-form-item>
-          <el-form-item label="">
+          <el-form-item label="" prop="integral">
             <el-input v-model="beansForm.integral" maxlength="8" style="width: 200px" size="mini" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="请输入数量" />
           </el-form-item>
           <el-form-item label="操作备注">
@@ -36,6 +36,11 @@ export default {
         'integral': '',
         'notes': '',
         'userId': ''
+      },
+      rules: {
+        integral: [
+          { required: true, message: '请输入健康豆数量', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -79,13 +84,19 @@ export default {
       if (this.addOrD === '2') {
         params.integral = -params.integral
       }
-      beanManagement(params).then(res => {
-        if (res.code && res.code === '10000') {
-          this.$message({
-            message: res.msg,
-            type: 'success'
+      this.$refs['beansForm'].validate((valid) => {
+        if (valid) {
+          beanManagement(params).then(res => {
+            if (res.code && res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.close()
+            }
           })
-          this.close()
+        } else {
+          return false
         }
       })
     }
