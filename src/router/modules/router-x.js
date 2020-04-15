@@ -128,7 +128,17 @@ const router = [
         }
       },
       {
-        path: 'activity/reduce-gift',
+        path: 'activity/reduce-gift-list',
+        component: () => import('@/views/marketing/activity/reduce-gift/list'),
+        name: 'reduceGiftList',
+        meta: {
+          title: '满减满赠列表',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/reduce-gift-list-create',
         component: () => import('@/views/marketing/activity/reduce-gift'),
         name: 'reduceGift',
         meta: {
@@ -138,11 +148,21 @@ const router = [
         }
       },
       {
-        path: 'activity/reduce-gift-list',
-        component: () => import('@/views/marketing/activity/reduce-gift/list'),
-        name: 'reduceGiftList',
+        path: 'activity/aprice',
+        component: () => import('@/views/marketing/activity/addPrice/list'),
+        name: 'addPriceList',
         meta: {
-          title: '满减满赠列表',
+          title: '加价购列表',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/aprice-create',
+        component: () => import('@/views/marketing/activity/addPrice'),
+        name: 'addPriceCreate',
+        meta: {
+          title: '创建加价购',
           noCache: true,
           activeMenu: '/marketing/activity'
         }
@@ -164,7 +184,7 @@ const router = [
         name: 'giftsManage',
         meta: {
           title: '礼品管理',
-          auth: 'marketing.marketing-manager',
+          auth: 'marketing.gift',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
@@ -174,7 +194,7 @@ const router = [
         name: 'giftsComplimentary',
         meta: {
           title: '赠品管理',
-          auth: 'marketing.marketing-manager',
+          auth: 'marketing.gift',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
@@ -184,7 +204,7 @@ const router = [
         name: 'giftsComplimentaryCreate',
         meta: {
           title: '创建赠品',
-          auth: 'marketing.marketing-manager',
+          auth: 'marketing.gift',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       }

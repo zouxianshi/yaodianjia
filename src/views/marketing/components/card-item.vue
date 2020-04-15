@@ -1,7 +1,7 @@
 <template>
-  <el-card class="activity-card">
-    <div @click="handleJump(item.linkUrl)">
-      <el-image class="image" fit="fill" :src="item.img" />
+  <el-card class="activity-card" shadow="hover">
+    <div>
+      <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item.linkUrl)" />
       <div class="activity-bottom">
         <div class="activity-header">
           <div class="title">{{ item.lable }}</div>
@@ -10,9 +10,9 @@
           </el-tooltip>
         </div>
         <div class="action">
-          <el-button type="text" class="button">活动列表</el-button>
+          <el-button type="text" icon="el-icon-takeaway-box" class="button" @click="handleJump(item.linkUrl)">{{ item.lable }}列表</el-button>
           <el-divider direction="vertical" />
-          <el-button type="text" class="button">新建活动</el-button>
+          <el-button type="text" icon="el-icon-document-add" class="button" @click="handleJump(`${item.linkUrl}-create`)">新建数据</el-button>
         </div>
       </div>
     </div>

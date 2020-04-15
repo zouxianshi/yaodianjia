@@ -23,13 +23,18 @@ import discountCoupons from '@/assets/image/acvity/discount-coupons.png'
 import fullCutCoupons from '@/assets/image/acvity/full-cut-coupons.png'
 import giftCertificate from '@/assets/image/acvity/gift-certificate.png'
 import complimentary from '@/assets/image/acvity/complimentary.png'
-import cardItem from '../activity/components/card-item'
+import cardItem from '../components/card-item'
 
 export default {
   components: { cardItem },
   data() {
     return {
       activeName: 'coupons',
+      // 结构解释
+      // 约定大于配置
+      // linkUrl: '/marketing/gifts/complimentary',
+      // 在cardItem列表实际使用列表路径为/marketing/gifts/complimentary
+      // 创建为/marketing/gifts/complimentary-create
       coupons: [
         {
           value: 'discount-coupons',

@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <a href="#/marketing/activity/reduce-gift">
+      <a href="#/marketing/activity/reduce-gift-list-create">
         <el-button class="btn btn-add" type="primary" size="small">新建活动</el-button>
       </a>
       <!-- 列表表单控件 -->

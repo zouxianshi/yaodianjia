@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import cardItem from './components/card-item'
+import cardItem from '../components/card-item'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
@@ -53,6 +53,7 @@ export default {
           value: 'addPrice',
           lable: '加价购',
           img: addPrice,
+          linkUrl: '/marketing/activity/aprice',
           desc: '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
         }, {
           value: 'limitPreferential',

@@ -138,6 +138,11 @@ class InnerCtor {
             name: '活动管理',
             path: '/marketing/activity',
             disabled: this.get('marketing.marketing-manager')
+          },
+          {
+            name: '礼品管理',
+            path: '/marketing/gifts',
+            disabled: this.get('marketing.gift')
           }
         ]
       },

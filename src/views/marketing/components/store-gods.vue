@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button type="primary" size="mini" @click="dialog.visible = true">选择商品</el-button>
+    <el-button :type="type" size="mini" @click="dialog.visible = true">选择商品</el-button>
     <el-dialog
       title="选取商品"
       append-to-body
@@ -171,13 +171,11 @@ export default {
       // 是否可编辑
       type: Boolean,
       default: true
+    },
+    type: {
+      type: String,
+      default: 'primary'
     }
-    // typeList: {
-    //   type: Array,
-    //   default: _ => {
-    //     return []
-    //   }
-    // }
   },
   data() {
     return {
