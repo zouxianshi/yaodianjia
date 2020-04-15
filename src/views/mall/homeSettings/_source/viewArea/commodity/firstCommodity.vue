@@ -1,6 +1,6 @@
 <template>
   <div class="va-first-commodity-model">
-    <m-first-item v-for="(el,i) in 4" :key="i" />
+    <m-first-item v-for="(el,i) in 2" :key="i" />
   </div>
 </template>
 <script>

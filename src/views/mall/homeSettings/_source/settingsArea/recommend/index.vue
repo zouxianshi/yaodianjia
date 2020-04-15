@@ -1,14 +1,16 @@
 <template>
-  <div class="va-second-commodity-model">
-    <m-second-item v-for="(el,i) in 3" :key="i" />
+  <div class="sa-recommend-model">
+    <el-tabs value="为你推荐" type="card">
+      <el-tab-pane label="为你推荐" name="为你推荐">为你推荐</el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
-import mSecondItem from './secondItem'
 export default {
-  name: 'VaSecondCommodity',
+  name: 'SaRecommend',
   data() {
-    return {}
+    return {
+    }
   },
   props: {},
   methods: {},
@@ -30,17 +32,12 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mSecondItem }
+  components: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .va-second-commodity-model {
-    overflow: hidden;
-    .c-second-item-model {
-      &:nth-child(3n + 1) {
-        margin-left: 11px;
-      }
-    }
+  .sa-recommend-model {
+
   }
 </style>

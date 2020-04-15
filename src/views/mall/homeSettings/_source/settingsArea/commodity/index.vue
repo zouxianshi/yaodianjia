@@ -1,12 +1,13 @@
 <template>
-  <div class="va-second-commodity-model">
-    <m-second-item v-for="(el,i) in 3" :key="i" />
+  <div class="sa-commodity-model">
+    <el-tabs value="商品设置" type="card">
+      <el-tab-pane label="商品设置" name="商品设置">商品设置</el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
-import mSecondItem from './secondItem'
 export default {
-  name: 'VaSecondCommodity',
+  name: 'SaCommodity',
   data() {
     return {}
   },
@@ -30,17 +31,12 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mSecondItem }
+  components: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .va-second-commodity-model {
-    overflow: hidden;
-    .c-second-item-model {
-      &:nth-child(3n + 1) {
-        margin-left: 11px;
-      }
-    }
+  .sa-commodity-model {
+
   }
 </style>

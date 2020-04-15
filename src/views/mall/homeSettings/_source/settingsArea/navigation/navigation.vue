@@ -1,20 +1,17 @@
 <template>
-  <div class="sa-navigation-model">
-    <el-tabs value="导航栏设置" type="card">
-      <el-tab-pane label="导航栏设置" name="导航栏设置">
-        <m-navigation :item="item" />
-      </el-tab-pane>
-    </el-tabs>
+  <div class="sa-navigation-box">
+    <m-item v-for="(el,i) in 8" :key="i" />
+    <div class="snb-submit">
+      <el-button type="primary" style="width: 100%" size="mini">保存</el-button>
+    </div>
   </div>
 </template>
 <script>
-import mNavigation from './navigation'
+import mItem from './item'
 export default {
-  name: 'SaNavigation',
+  name: 'SaNavigationBox',
   data() {
-    return {
-      activeName: '导航栏设置'
-    }
+    return {}
   },
   props: {
     item: {
@@ -41,12 +38,12 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mNavigation }
+  components: { mItem }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .sa-navigation-model {
+  .sa-navigation-box {
 
   }
 </style>

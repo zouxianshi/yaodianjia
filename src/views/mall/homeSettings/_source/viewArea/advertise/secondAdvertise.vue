@@ -54,7 +54,7 @@ export default {
     }
     .vsam-left {
       width: 181px;
-      margin-right: 9px;
+      margin-right: 8px;
       margin-left: 8px;
     }
     .vsam-right {

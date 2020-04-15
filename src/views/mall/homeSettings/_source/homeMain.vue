@@ -45,13 +45,15 @@ export default {
   .home-main-model {
     padding: 0 20px 20px 20px;
     .hmm-view-area {
-      width: 420px;
+      width: 422px;
       float: left;
+      position: relative;
+      z-index: 1;
     }
     .hmm-settings {
       float: left;
       margin-left: 20px;
-      width: calc(100% - 440px);
+      width: calc(100% - 442px);
     }
   }
 </style>

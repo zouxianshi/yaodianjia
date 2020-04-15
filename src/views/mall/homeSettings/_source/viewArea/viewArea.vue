@@ -11,27 +11,30 @@
 
     <div class="vam-draggable">
       <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
-        <div v-for="(item,$index) in dragList" :key="$index" class="item-component" @click.stop="onSettings(item)">
-          <template v-if="item.code === 'no-data'">
-            {{ item.code }}
-          </template>
-          <template v-else>
-            <div class="drag-area">
-              <span class="sp1">{{ item.name }}组件</span>
-              <span class="sp2">请在此区域拖拽</span>
-              <div class="oper">
-                <m-delete :index="$index" />
+        <div v-for="(item,$index) in dragList" :key="$index">
+          <m-no-data v-if="item.code === 'no-data'" />
+          <div v-else class="item-component">
+            <template>
+              <div class="drag-area">
+                <span class="sp1">{{ item.name }}组件</span>
+                <span class="sp2">请在此区域拖拽</span>
+                <div class="oper">
+                  <m-edit :item="item" />
+                  <m-delete :index="$index" />
+                </div>
               </div>
-            </div>
-            <!--导航栏-->
-            <m-navigation v-if="item.code === 'navigation'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-            <!--标题-->
-            <m-title v-if="item.code === 'title'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-            <!--广告图-->
-            <m-advertise v-if="item.code === 'advertise'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-            <!--商品-->
-            <m-commodity v-if="item.code === 'commodity'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
-          </template>
+              <!--导航栏-->
+              <m-navigation v-if="item.code === 'navigation'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+              <!--标题-->
+              <m-title v-if="item.code === 'title'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+              <!--广告图-->
+              <m-advertise v-if="item.code === 'advertise'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+              <!--商品-->
+              <m-commodity v-if="item.code === 'commodity'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+              <!--为你推荐-->
+              <m-recommend v-if="item.code === 'recommend'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            </template>
+          </div>
         </div>
       </v-draggable>
     </div>
@@ -40,7 +43,6 @@
 <script>
 import _ from 'lodash'
 import { mapState, mapMutations } from 'vuex'
-import { findComponentsDownward } from '@/utils'
 import vDraggable from 'vuedraggable'
 import mHeader from './header'
 import mBanner from './banner'
@@ -49,11 +51,14 @@ import mNavigation from './navigation'
 import mTitle from './title'
 import mAdvertise from './advertise'
 import mCommodity from './commodity'
+import mRecommend from './recommend'
+import mEdit from './edit'
 import mDelete from './delete'
+import mNoData from './noData'
 
 export default {
   name: 'ViewArea',
-  components: { mHeader, mBanner, mNotice, vDraggable, mNavigation, mTitle, mDelete, mAdvertise, mCommodity },
+  components: { mHeader, mBanner, mNotice, vDraggable, mNavigation, mTitle, mDelete, mEdit, mAdvertise, mCommodity, mRecommend, mNoData },
   props: {},
   data() {
     return {
@@ -89,10 +94,6 @@ export default {
   },
   methods: {
     ...mapMutations('mall', ['setDragData']),
-    onSettings(item) {
-      const instance = findComponentsDownward(this.$root, 'SettingsArea')[0]
-      instance.setSelected(item.code)
-    },
     /**
        * 拖拽结束
        */
@@ -126,18 +127,27 @@ export default {
       .item-component {
         position: relative;
         z-index: 21;
-        &:hover {
+        margin-left: -2px;
+        border-top: 2px solid #f5f5f8;
+        border-left: 2px solid #ffffff;
+        border-right: 2px solid #ffffff;
+        border-bottom: 2px solid #f5f5f8;
+        padding: 8px 0;
+        &:hover{
+          border-color: #409EFF;
+          box-shadow: 0px 2px 18px 0 rgba(0,0,0,0.2);
+          // border-style: dashed;
           .drag-area {
             display: block;
           }
         }
         .drag-area {
-          width: 420px;
+          width: 422px;
           height: 30px;
           line-height: 28px;
           background: #409EFF;
           position: absolute;
-          left: 0;
+          left: -2px;
           top: -30px;
           display: none;
           text-align: center;

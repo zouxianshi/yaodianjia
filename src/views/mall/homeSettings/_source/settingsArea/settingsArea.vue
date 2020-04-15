@@ -1,10 +1,13 @@
 <template>
   <div class="settings-area-model">
-    <component :is="mod" />
+    <component :is="mod" :item="item" />
   </div>
 </template>
 <script>
 import mNavigation from './navigation'
+import mAdvertise from './advertise'
+import mRecommend from './recommend'
+import mCommodity from './commodity'
 import mTitle from './title'
 export default {
   name: 'SettingsArea',
@@ -12,14 +15,26 @@ export default {
   props: {},
   data() {
     return {
-      selected: 'navigation'
+      item: {
+        // code:'mall-title',
+        code: 'navigation'
+      }
     }
   },
+
   computed: {
     mod() {
-      switch (this.selected) {
+      switch (this.item.code) {
         case 'title':
           return mTitle
+        case 'mall-title':
+          return mTitle
+        case 'advertise':
+          return mAdvertise
+        case 'recommend':
+          return mRecommend
+        case 'commodity':
+          return mCommodity
         default:
           return mNavigation
       }
@@ -39,9 +54,9 @@ export default {
   updated() {
   },
   methods: {
-    setSelected(v) {
-      console.log(`------ 点击了区域设置 - ${v}`)
-      this.selected = v
+    setSelected(item) {
+      this.item = item
+      this.selected = item.code
     }
   },
   beforeDestroy() {
@@ -54,7 +69,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .settings-area-model {
     .el-tabs__nav-scroll {
-      padding-left: 20px;
+      padding-left: 100px;
       .el-tabs__item {
         height: 36px;
         line-height: 36px;

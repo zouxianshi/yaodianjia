@@ -9,7 +9,7 @@
 </template>
 <script>
 export default {
-  name: 'SecondItem',
+  name: 'CSecondItem',
   data() {
     return {}
   },

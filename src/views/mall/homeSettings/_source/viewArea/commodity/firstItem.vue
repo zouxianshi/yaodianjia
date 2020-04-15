@@ -11,7 +11,7 @@
 </template>
 <script>
 export default {
-  name: 'VfimFirstItem',
+  name: 'CVfimFirstItem',
   data() {
     return {}
   },

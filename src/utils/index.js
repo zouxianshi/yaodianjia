@@ -2,6 +2,8 @@
  * Created by PanJiaChen on 16/11/18.
  */
 
+export * from '@vue/utils'
+
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
@@ -417,4 +419,3 @@ export function uuid(prefix) {
     : id
 }
 
-export * from './findCompt'

@@ -1,19 +1,15 @@
 <template>
-  <div class="sa-navigation-model">
-    <el-tabs value="导航栏设置" type="card">
-      <el-tab-pane label="导航栏设置" name="导航栏设置">
-        <m-navigation :item="item" />
-      </el-tab-pane>
-    </el-tabs>
+  <div class="second-recommend-model">
+    <m-four-commodity />
   </div>
 </template>
 <script>
-import mNavigation from './navigation'
+import mFourCommodity from '../commodity/fourCommodity'
 export default {
-  name: 'SaNavigation',
+  name: 'VaSecondRecommend',
   data() {
     return {
-      activeName: '导航栏设置'
+      dragList: []
     }
   },
   props: {
@@ -22,7 +18,8 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+  },
   watch: {},
   beforeCreate() {
   },
@@ -40,13 +37,15 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
-  components: { mNavigation }
+  computed: {
+
+  },
+  components: { mFourCommodity }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .sa-navigation-model {
+  .second-recommend-model {
 
   }
 </style>

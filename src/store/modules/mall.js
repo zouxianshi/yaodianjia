@@ -13,6 +13,34 @@ import navigation from '@/views/mall/homeSettings/_source/viewArea/navigation/de
  */
 const noData = [
   {
+    uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
+    name: '导航栏',
+    type: 'second',
+    code: 'navigation',
+    data: navigation.second
+  },
+  {
+    uuid: `${uuid('no-data-')}${uuid()}${uuid()}${uuid()}`,
+    name: 'no-data',
+    type: 'no-data',
+    code: 'no-data',
+    data: []
+  },
+  {
+    uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
+    name: '为你推荐',
+    type: 'second',
+    code: 'recommend',
+    data: []
+  },
+  {
+    uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
+    name: '为你推荐',
+    type: 'first',
+    code: 'recommend',
+    data: []
+  },
+  {
     uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
     name: '商品',
     type: 'four',
@@ -80,20 +108,6 @@ const noData = [
     name: '广告图',
     type: 'second',
     code: 'advertise',
-    data: []
-  },
-  {
-    uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
-    name: '导航栏',
-    type: 'second',
-    code: 'navigation',
-    data: navigation.second
-  },
-  {
-    uuid: `${uuid('no-data-')}${uuid()}${uuid()}${uuid()}`,
-    name: 'no-data',
-    type: 'no-data',
-    code: 'no-data',
     data: []
   }
 ]

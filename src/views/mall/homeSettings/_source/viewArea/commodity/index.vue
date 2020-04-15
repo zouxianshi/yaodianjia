@@ -58,6 +58,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .va-commodity-model {
-    margin-bottom: 2px;
+    margin-bottom: -8px;
   }
+
 </style>

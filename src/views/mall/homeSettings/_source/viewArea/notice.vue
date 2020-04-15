@@ -44,10 +44,15 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .va-notice-model {
+    width: 422px;
     background: #f5f5f8;
+    border-top: 2px solid #f5f5f8;
+    border-left: 2px solid #f5f5f8;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #f5f5f8;
     .vnm-box {
       width: 420px;
-      height: 80px;
+      height: 76px;
       background: url('./img/va_notice_bg.png') no-repeat;
 
       .swiper-box {

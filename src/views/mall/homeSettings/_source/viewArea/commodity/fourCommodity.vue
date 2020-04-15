@@ -1,9 +1,10 @@
 <template>
   <div class="va-four-commodity-model">
-    four-commodity
+    <m-four-item v-for="(el,i) in 1" :key="i" />
   </div>
 </template>
 <script>
+import mFourItem from './fourItem'
 export default {
   name: 'VaFourCommodity',
   data() {
@@ -29,12 +30,12 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { mFourItem }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .va-four-commodity-model {
-
+    padding: 0 10px;
   }
 </style>

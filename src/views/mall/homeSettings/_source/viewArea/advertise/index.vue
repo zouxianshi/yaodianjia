@@ -61,6 +61,5 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .va-advertise-model {
-    margin-bottom: 16px;
   }
 </style>

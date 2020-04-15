@@ -1,5 +1,7 @@
 <template>
-  <m-banner />
+  <div class="va-first-advertise-model">
+    <m-banner />
+  </div>
 </template>
 <script>
 import mBanner from '../banner'
@@ -34,6 +36,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .va-first-advertise-model {
-
+    padding: 0 10px;
   }
 </style>

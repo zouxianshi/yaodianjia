@@ -1,15 +1,21 @@
 <template>
-  <div class="sa-advertise-model">
-    <el-tabs value="广告图设置" type="card">
-      <el-tab-pane label="广告图设置" name="广告图设置">广告图设置</el-tab-pane>
-    </el-tabs>
+  <div class="sa-title-box">
+    <el-form label-width="80px" size="mini">
+      <el-form-item label="标题">
+        <el-input v-model="title" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary">保存</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 <script>
 export default {
-  name: 'SaAdvertise',
+  name: 'SaTitleBox',
   data() {
     return {
+      title: ''
     }
   },
   props: {},
@@ -37,7 +43,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .sa-advertise-model {
-
+  .sa-title-box {
+    padding: 20px;
   }
 </style>
