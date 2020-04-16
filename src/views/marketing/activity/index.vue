@@ -65,6 +65,7 @@ export default {
           value: 'spellGroup',
           lable: '拼团',
           img: spellGroup,
+          linkUrl: '/marketing/activity/assemble',
           desc: '拼团活动可以为商家做拉新引流计划提供高效的途径，同事拼团活动也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长'
         }, {
           value: 'limitSecKill',

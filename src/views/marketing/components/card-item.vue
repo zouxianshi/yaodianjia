@@ -12,7 +12,7 @@
         <div class="action">
           <el-button type="text" icon="el-icon-takeaway-box" class="button" @click="handleJump(item.linkUrl)">{{ item.lable }}列表</el-button>
           <el-divider direction="vertical" />
-          <el-button type="text" icon="el-icon-document-add" class="button" @click="handleJump(`${item.linkUrl}-create`)">新建数据</el-button>
+          <el-button type="text" icon="el-icon-document-add" class="button" @click="handleJump(`${item.linkUrl}-edit`)">新建数据</el-button>
         </div>
       </div>
     </div>

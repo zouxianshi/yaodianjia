@@ -138,7 +138,7 @@ const router = [
         }
       },
       {
-        path: 'activity/reduce-gift-list-create',
+        path: 'activity/reduce-gift-list-edit',
         component: () => import('@/views/marketing/activity/reduce-gift'),
         name: 'reduceGift',
         meta: {
@@ -158,7 +158,7 @@ const router = [
         }
       },
       {
-        path: 'activity/aprice-create',
+        path: 'activity/aprice-edit',
         component: () => import('@/views/marketing/activity/addPrice'),
         name: 'addPriceCreate',
         meta: {
@@ -199,7 +199,7 @@ const router = [
         }
       },
       {
-        path: 'gifts/complimentary-create',
+        path: 'gifts/complimentary-edit',
         component: () => import('@/views/marketing/gift-manage/gifts/complimentary-create'),
         name: 'giftsComplimentaryCreate',
         meta: {
