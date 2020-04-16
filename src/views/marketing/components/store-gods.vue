@@ -1,6 +1,5 @@
 <template>
   <span>
-    <!-- <el-button :type="type" size="mini" @click="dialog.visible = true">选择商品</el-button> -->
     <el-dialog
       title="选取商品"
       append-to-body
@@ -21,7 +20,7 @@
           <el-form-item label="商品分组">
             <el-cascader
               v-model="searchForm.typeid"
-              :loading="typeTreeLoading"
+              v-loading="typeTreeLoading"
               :options="typeTree"
               :props="merchantOption"
               clearable
@@ -29,10 +28,10 @@
             />
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-input v-model="searchForm.brandName" clearable placeholder="请输入商品品牌" />
+            <el-input v-model.trim="searchForm.brandName" clearable placeholder="请输入商品品牌" />
           </el-form-item>
           <el-form-item label="商品信息">
-            <el-input v-model="searchForm.searchKeyWord" clearable placeholder="商品编码/商品名称" />
+            <el-input v-model.trim="searchForm.searchKeyWord" clearable placeholder="商品编码/商品名称" />
           </el-form-item>
           <el-form-item v-show="false" label="活动开始时间">
             <el-input v-model="searchForm.startTime" clearable />
@@ -61,7 +60,7 @@
           <el-table-column align="center" label="商品图片" min-width="60">
             <template slot-scope="scope">
               <div
-                v-if="scope.row.mainPic && scope.row.mainPic!==''"
+                v-if="scope.row.picUrl && scope.row.picUrl!==''"
                 class="x-img-mini"
                 style="width: 60px; height: 60px"
               >
@@ -69,8 +68,8 @@
                   <el-image
                     style="width: 60px; height: 60px"
                     fit="contain"
-                    :src="showImg(scope.row.mainPic)"
-                    :preview-src-list="[showImg(scope.row.mainPic)]"
+                    :src="showImg(scope.row.picUrl)"
+                    :preview-src-list="[showImg(scope.row.picUrl)]"
                   />
                 </div>
               </div>
@@ -82,7 +81,8 @@
             </div>
             </template>-->
           </el-table-column>
-          <el-table-column prop="name" label="商品名称" min-width="120" :show-overflow-tooltip="true" />
+          <el-table-column prop="name" label="商品名称" :show-overflow-tooltip="true" />
+          <el-table-column prop="erpCode" label="商品编码" :show-overflow-tooltip="true" />
           <el-table-column
             prop="brandName"
             label="品牌"
@@ -91,20 +91,14 @@
           />
           <el-table-column label="规格信息" min-width="100" :show-overflow-tooltip="true">
             <template slot-scope="scope" :show-overflow-tooltip="true">
-              <div v-html="formatSkuInfo(scope.row.specSkuList)" />
+              <div v-html="formatSkuInfo(scope.row.specSkus)" />
             </template>
           </el-table-column>
           <el-table-column
             prop="mprice"
-            label="参考价格"
+            label="参考价格(元)"
             min-width="60"
             align="center"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            prop="manufacture"
-            label="生产厂家"
-            min-width="120"
             :show-overflow-tooltip="true"
           />
           <!-- <el-table-column label="操作">
@@ -130,12 +124,17 @@
         <div class="result-section">
           <!-- <div class="blank-line" /> -->
           <el-divider content-position="left">
-            已选商品（当前
-            <span style="color: #409eff;padding: 0 4px">{{ mySelectList.length }}</span>商品）
+            已选商品（去重后当前
+            <span style="color: #409eff;padding: 0 4px">{{ mySelectList.length }}</span>个商品）
           </el-divider>
           <div class="label-line">
             <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-              <el-tag type="success" size="small" closable @close="removeMyselectItem(mItem, index2)">
+              <el-tag
+                type="success"
+                size="small"
+                closable
+                @close="removeMyselectItem(mItem, index2)"
+              >
                 <span :title="mItem.name">{{ mItem.name }}</span>
               </el-tag>
             </div>
@@ -194,12 +193,12 @@ export default {
         brandName: '',
         searchKeyWord: ''
       },
-      tableData: [],
-      multipleSelection: [],
+      tableData: [], // table数据
+      // multipleSelection: [], //
       mySelectList: [],
-      typeList: [],
       checkAll: false,
-      typeTree: [],
+      typeTree: [], // 分组数据
+      // 商品分组设置
       merchantOption: {
         label: 'name',
         value: 'id',
@@ -213,9 +212,6 @@ export default {
       return this.$store.state.user.merCode || ''
     }
   },
-  created() {
-    this.fetchData()
-  },
   methods: {
     // 获取数据
     fetchData() {
@@ -227,6 +223,7 @@ export default {
       console.log('searchForm------', typeid)
       this.forSearch()
     },
+    // 调用打开方法；
     open() {
       this.dialog.visible = true
       console.log('this.list-----', this.list)
@@ -241,16 +238,15 @@ export default {
       this.dialog.visible = false
     },
     reset() {
-      this.typeid = ''
       this.pager = {
         current: 1,
         size: 20,
         total: 0
       }
       this.searchForm = {
-        keyWord: '',
-        typeid: '',
-        typeLevel: ''
+        typeid: [],
+        brandName: '',
+        searchKeyWord: ''
       }
     },
     confirm() {
@@ -269,6 +265,7 @@ export default {
       this.$emit('on-change', this.mySelectList)
       this.close()
     },
+    // 格式化规格信息
     formatSkuInfo(skuList) {
       let skuStr = ''
       if (skuList && skuList.length > 0) {
@@ -291,9 +288,6 @@ export default {
       this.pager.current = val
       this._getTableData()
     },
-    handleCheckAllChange(val) {
-      this.$refs.multipleTable.toggleAllSelection()
-    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -305,9 +299,10 @@ export default {
     },
     // 选取store-1.表格选取（全选/反选），更新 mySelectList
     handleSelectAllChange(allList) {
+      console.log('勾选列表------', allList, this.mySelectList)
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.specId === item.specId
+          return mItem.id === item.id
         })
         if (index > -1) {
           if (allList.length > 0) {
@@ -323,8 +318,10 @@ export default {
     },
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
+      console.log('单独勾选了------', val, row)
+      console.log('单独勾选了------this.mySelectList', this.mySelectList)
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.specId === row.specId
+        return mItem.id === row.id
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
@@ -335,7 +332,7 @@ export default {
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
       const index = this.tableData.findIndex(item => {
-        return item.specId === myItem.specId
+        return item.id === myItem.id
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
@@ -344,6 +341,7 @@ export default {
     },
     // 选取store-4. table数据更新时(初次,切页面等), 根据 mySelectList 更新table的列表选中
     updateChecked() {
+      console.log('我准备回显数据------')
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
@@ -355,16 +353,8 @@ export default {
           currentCheckedList.push(item)
         }
       })
+      console.log('我准备回显数据------++++++++', currentCheckedList)
       this.toggleSelection(currentCheckedList)
-    },
-    initClass() {
-      this.typeOption1 = this.typeTree.map(v => {
-        return {
-          id: v.id,
-          name: v.name,
-          children: v.children
-        }
-      })
     },
     forSearch() {
       this.pager.current = 1
@@ -379,18 +369,15 @@ export default {
       this.loading = true
       const [firstTypeId, secondTypeId, threeTypeId] = this.searchForm.typeid
       const params = {
-        commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
-        // level: this.searchForm.typeLevel,
-        typeId: this.searchForm.typeid,
-        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
-        auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
-        brandName: this.searchForm.brandName.trim(),
-        searchKeyWord: this.searchForm.searchKeyWord.trim(),
+        brandName: this.searchForm.brandName,
+        searchKeyWord: this.searchForm.searchKeyWord,
         currentPage: this.pager.current,
+        groupType: false,
         pageSize: this.pager.size,
         firstTypeId,
         secondTypeId,
-        threeTypeId
+        threeTypeId,
+        merCode: this.merCode
       }
 
       queryActivityCommGoods(params)
@@ -398,6 +385,7 @@ export default {
           if (res.code === '10000' && res.data) {
             this.tableData = res.data.data || []
             this.pager.total = res.data.totalCount
+            console.log('我获取玩列表了--------')
             this.$nextTick(() => {
               this.updateChecked()
             })
@@ -422,7 +410,6 @@ export default {
         .then(res => {
           if (res.code === '10000' && res.data) {
             this.typeTree = res.data
-            this.initClass()
           } else {
             this.typeTree = []
           }

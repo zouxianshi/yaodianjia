@@ -1,96 +1,95 @@
 <template>
-  <span>
-    <el-dialog
-      title="选择门店"
-      :visible.sync="isShow"
-      append-to-body
-      width="800px"
-      :close-on-press-escape="false"
-      :close-on-click-modal="false"
-    >
-      <div class="modal-body">
-        <el-form
-          :inline="true"
-          :model="formInline"
-          size="small"
-          class="demo-form-inline"
-          @keydown.enter="_loadStoreData"
-        >
-          <el-form-item label="所属企业">
-            <el-cascader
-              v-model="formInline.merchant"
-              :props="merchantOption"
-              :options="options"
-              clearable
-            />
-          </el-form-item>
-          <el-form-item label="门店信息">
-            <el-input v-model="formInline.storeCode" clearable placeholder="门店编码/门店名称" />
-          </el-form-item>
-          <el-form-item v-show="false" label="活动开始时间">
-            <el-input v-model="formInline.startTime" clearable placeholder="门店编码/门店名称" />
-          </el-form-item>
-          <el-form-item v-show="false" label="活动结束时间">
-            <el-input v-model="formInline.endTime" clearable placeholder="门店编码/门店名称" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="_loadStoreData">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          ref="multipleTable"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-          max-height="300"
-          @select-all="handleSelectionChangeStore"
-          @select="handleSelect"
-        >
-          <el-table-column type="selection" :selectable="checkSelectable" width="55" />
-          <el-table-column label="门店编号" prop="stCode" width="100" />
-          <el-table-column label="门店名称" prop="stName" show-overflow-tooltip />
-          <el-table-column label="门店地址" show-overflow-tooltip>
-            <template
-              slot-scope="scope"
-            >{{ scope.row.province }}{{ scope.row.city }}{{ scope.row.area }}{{ scope.row.address }}</template>
-          </el-table-column>
-          <el-table-column label="门店电话" prop="mobile" />
-        </el-table>
-        <div class="text-right pagination">
-          <el-pagination
-            :current-page="pageInfo.currentPage"
-            background
-            :page-sizes="[10,20,50]"
-            :page-size="pageInfo.pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="pageInfo.total"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
+  <!-- 我是活动选择门店公用组件 -->
+  <el-dialog
+    title="选择门店"
+    :visible.sync="isShow"
+    append-to-body
+    width="800px"
+    :close-on-press-escape="false"
+    :close-on-click-modal="false"
+  >
+    <div class="modal-body">
+      <el-form
+        :inline="true"
+        :model="formInline"
+        size="small"
+        class="demo-form-inline"
+        @keydown.enter="_loadStoreData"
+      >
+        <el-form-item label="所属企业">
+          <el-cascader
+            v-model="formInline.merchant"
+            :props="merchantOption"
+            :options="options"
+            clearable
           />
-        </div>
-        <el-divider content-position="left">
-          选择的门店（当前
-          <span style="color: #409eff;padding: 0 4px">{{ multipleSelection.length }}</span>家店）
-        </el-divider>
-        <ul class="choose-box">
-          <template v-if="multipleSelection.length!==0">
-            <li v-for="(item,index) in multipleSelection" :key="index">
-              <el-tag type="success" size="small" closable @close="handleTagClose(item)">
-                <span :title="item.stName">{{ item.stName }}</span>
-              </el-tag>
-            </li>
-          </template>
-          <!-- <template v-else>
-            <p class="text-center">请选择门店</p>
-          </template>-->
-        </ul>
+        </el-form-item>
+        <el-form-item label="门店信息">
+          <el-input v-model="formInline.storeCode" clearable placeholder="门店编码/门店名称" />
+        </el-form-item>
+        <el-form-item v-show="false" label="活动开始时间">
+          <el-input v-model="formInline.startTime" clearable placeholder="门店编码/门店名称" />
+        </el-form-item>
+        <el-form-item v-show="false" label="活动结束时间">
+          <el-input v-model="formInline.endTime" clearable placeholder="门店编码/门店名称" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="_loadStoreData">查询</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table
+        ref="multipleTable"
+        :data="tableData"
+        stripe
+        style="width: 100%"
+        max-height="300"
+        @select-all="handleSelectionChangeStore"
+        @select="handleSelect"
+      >
+        <el-table-column type="selection" :selectable="checkSelectable" width="55" />
+        <el-table-column label="门店编号" prop="stCode" width="100" />
+        <el-table-column label="门店名称" prop="stName" show-overflow-tooltip />
+        <el-table-column label="门店地址" show-overflow-tooltip>
+          <template
+            slot-scope="scope"
+          >{{ scope.row.province }}{{ scope.row.city }}{{ scope.row.area }}{{ scope.row.address }}</template>
+        </el-table-column>
+        <el-table-column label="门店电话" prop="mobile" />
+      </el-table>
+      <div class="text-right pagination">
+        <el-pagination
+          :current-page="pageInfo.currentPage"
+          background
+          :page-sizes="[10,20,50]"
+          :page-size="pageInfo.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageInfo.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type size="small" @click="isShow = false">取消</el-button>
-        <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmit">确定</el-button>
-      </span>
-    </el-dialog>
-  </span>
+      <el-divider content-position="left">
+        选择的门店（当前
+        <span style="color: #409eff;padding: 0 4px">{{ multipleSelection.length }}</span>家店）
+      </el-divider>
+      <ul class="choose-box">
+        <template v-if="multipleSelection.length!==0">
+          <li v-for="(item,index) in multipleSelection" :key="index">
+            <el-tag type="success" size="small" closable @close="handleTagClose(item)">
+              <span :title="item.stName">{{ item.stName }}</span>
+            </el-tag>
+          </li>
+        </template>
+        <!-- <template v-else>
+            <p class="text-center">请选择门店</p>
+        </template>-->
+      </ul>
+    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button type size="small" @click="isShow = false">取消</el-button>
+      <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmit">确定</el-button>
+    </span>
+  </el-dialog>
 </template>
 <script>
 import { getStoreList } from '@/api/depot'
@@ -195,27 +194,33 @@ export default {
         const { data, totalCount } = res.data
         this.tableData = data
         this.pageInfo.total = totalCount
-        if (this.isAll) {
-          // 选择全部  选中门店
-          setTimeout(() => {
-            this.tableData.map(v => {
-              this.$refs.multipleTable.toggleRowSelection(v)
-            })
-          }, 300)
-        } else {
-          setTimeout(() => {
-            // 翻页 如果存在之前选中的就选中
-            this.tableData.map(v => {
-              const index = this.multipleSelection.findIndex(item => {
-                return item.id === v.id
-              })
-              if (index > -1) {
-                this.$refs.multipleTable.toggleRowSelection(v)
-              }
-            })
-          }, 300)
+        this.$nextTick(() => {
+          this.updateChecked()
+        })
+      })
+    },
+    updateChecked() {
+      console.log('我准备回显数据------multipleSelection', this.multipleSelection)
+      console.log('我准备回显数据------tableData', this.tableData)
+      const currentCheckedList = []
+      this.tableData.forEach(item => {
+        const index = this.multipleSelection.findIndex(mItem => {
+          return mItem.id === item.id
+        })
+        if (index > -1) {
+          currentCheckedList.push(item)
         }
       })
+      this.toggleSelection(currentCheckedList)
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
     },
     handleSubmit() {
       if (this.multipleSelection.length === 0) {

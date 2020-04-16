@@ -17,17 +17,13 @@
           :prop="col.prop"
         >
           <template slot-scope="scope">
-            <div
-              v-if="scope.row.mainPic && scope.row.mainPic!==''"
-              class="x-img-mini"
-              style="width: 60px; height: 60px"
-            >
+            <div v-if="scope.row.picUrl && scope.row.picUrl!==''" style="width: 60px; height: 60px">
               <div class="x-image__preview">
                 <el-image
                   style="width: 60px; height: 60px"
                   fit="contain"
-                  :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[showImg(scope.row.mainPic)]"
+                  :src="showImg(scope.row.picUrl)"
+                  :preview-src-list="[showImg(scope.row.picUrl)]"
                 />
               </div>
             </div>
@@ -35,6 +31,11 @@
           </template>
         </el-table-column>
       </template>
+      <el-table-column label="操作" width="60">
+        <template slot-scope="scope">
+          <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -47,26 +48,27 @@ export default {
       tableData: [],
       cols: [
         {
-          prop: 'mainPic',
+          prop: 'picUrl',
           label: '商品图片',
           type: 'img',
           render: true // 交给后续逻辑渲染
-        },
-        {
-          prop: 'name',
-          label: '商品名称'
         },
         {
           prop: 'erpCode',
           label: '商品编码'
         },
         {
-          prop: 'specId',
-          label: 'sku编码'
+          prop: 'name',
+          label: '商品名称'
         },
+
         {
           prop: 'mprice',
-          label: '参考价'
+          label: '参考价(元)'
+        },
+        {
+          prop: 'productName',
+          label: '商品规格'
         }
       ]
     }
@@ -74,7 +76,27 @@ export default {
   methods: {
     dataFrom(data) {
       console.log('111111111111111111111', data)
-      this.tableData = data
+      this.tableData = data.map(item => {
+        return {
+          ...item,
+          productName: this.formatSkuInfo(item.specSkus || '')
+        }
+      })
+    },
+    // 格式化规格信息
+    formatSkuInfo(skuList) {
+      console.log('skuList----', skuList)
+      let skuStr = ''
+      if (skuList && skuList.length > 0) {
+        skuList.forEach(v => {
+          skuStr += `${v.skuKeyName}:${v.skuValue}，`
+        })
+        skuStr = skuStr.substr(0, skuStr.length - 1)
+      }
+      return skuStr
+    },
+    handleDel(item, index) {
+      this.$emit('del-item', item, index)
     }
   }
 }

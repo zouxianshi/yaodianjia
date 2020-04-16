@@ -32,15 +32,19 @@
           <el-radio :label="0">部分门店</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item v-if="form.isAllStore === 1">已选当前上线的全部门店</el-form-item>
-      <el-form-item v-if="form.isAllStore === 0">
+      <!-- <el-form-item v-if="form.isAllStore === 1">已选当前上线的全部门店</el-form-item> -->
+      <el-form-item v-show="form.isAllStore === 0">
         <!-- storeComponent -->
-        <el-button type="primary" @click="$refs.storeComponent.open()">选择门店</el-button>
-        <store-dialog @complete="handleSelectStore">选择门店</store-dialog>
+        <el-button
+          type="primary"
+          plain
+          @click="$refs.storeComponent.open()"
+        >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
+        <!-- <store-dialog @complete="handleSelectStore">选择门店</store-dialog> -->
       </el-form-item>
       <!-- 门店列表 -->
-      <el-form-item v-if="form.isAllStore === 0">
-        <select-store :data="[]" />
+      <el-form-item v-show="form.isAllStore === 0">
+        <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
       </el-form-item>
       <el-form-item label="商品范围：" prop="isAllStore" required>
         <el-radio-group v-model="form.isAllProduct">
@@ -48,14 +52,17 @@
           <el-radio :label="0">部分商品</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item v-if="form.isAllProduct === 1">已选当前上线的全部商品</el-form-item>
-      <el-form-item v-if="form.isAllProduct === 0">
-        <!-- <store-goods @on-change="handleSelectGoods">选择商品</store-goods> -->
-        <el-button type="primary" @click="$refs.GoodsComponent.open()">选择商品</el-button>
-      </el-form-item>
-      <el-form-item v-if="form.isAllProduct === 0">
-        <div>已选（{{ storeSelectGoods.length }}）</div>
-        <select-goods ref="storeGods" />
+      <!-- <el-form-item v-if="form.isAllProduct === 1">已选当前上线的全部商品</el-form-item> -->
+      <el-form-item v-show="form.isAllProduct === 0">
+        <div style="margin-bottom: 8px">
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            @click="$refs.GoodsComponent.open()"
+          >选择商品 | 已选（{{ storeSelectGoods.length }}）</el-button>
+        </div>
+        <select-goods ref="storeGods" @del-item="delSelectGoods" />
       </el-form-item>
       <div class="form-title">换购规则</div>
       <el-form-item label="活动门槛：" prop="threshold">
@@ -65,15 +72,18 @@
         </template>
       </el-form-item>
       <el-form-item label="换购商品：" required>
-        <template>
-          <!-- <el-button type="text">选择换购商品</el-button> -->
-          <el-button type="text" @click="$refs.storeGoodsComponent.open()">选择换购商品</el-button>
-          <!-- <store-goods type="text" :limitMax="15" @on-change="handleSelectActivityGoods">选择换购商品</store-goods> -->
-          <span class="info">最多可选15个商品</span>
-        </template>
+        <span class="info">最多可选15个商品</span>
       </el-form-item>
       <el-form-item>
-        <select-activity-goods ref="activityGod" @del-item="handleActivityGoods" />
+        <template>
+          <el-button
+            type="primary"
+            plain
+            style="margin-bottom: 8px"
+            @click="$refs.storeGoodsComponent.open()"
+          >选择换购商品 | 已选（{{ storeActivityGoods.length }}）</el-button>
+        </template>
+        <select-activity-goods ref="activityGod" @del-item="delActivityGoods" />
       </el-form-item>
       <el-form-item label="换购数量：" prop="activityNum">
         <template>
@@ -105,17 +115,9 @@
       @on-change="handleSelectActivityGoods"
     />
     <!-- 选择主商品组件 -->
-    <store-goods
-      ref="GoodsComponent"
-      :list="storeSelectGoods"
-      @on-change="handleSelectGoods"
-    />
+    <store-goods ref="GoodsComponent" :list="storeSelectGoods" @on-change="handleSelectGoods" />
     <!-- 门店列表 -->
-    <store-dialog
-      ref="storeComponent"
-      :list="storeSelectGoods"
-      @complete="handleSelectStore"
-    />
+    <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
   </div>
 </template>
 
@@ -124,7 +126,7 @@
 import storeGoods from '../../components/store-gods'
 import storeDialog from '../../components/store'
 import selectStore from '../../components/select-store'
-import selectGoods from './_source/select-goods'
+import selectGoods from '../../components/select-goods'
 import selectActivityGoods from './_source/select-activity-goods'
 export default {
   components: {
@@ -189,9 +191,9 @@ export default {
           { required: true, validator: checkActivityNum, trigger: 'blur' }
         ]
       },
+      chooseStore: [],
       storeSelectGoods: [], // 选取的主商品
       storeActivityGoods: [] // 选区的换购商品
-
     }
   },
   methods: {
@@ -206,6 +208,7 @@ export default {
     handleSelectStore(val) {
       console.log('门店结果页出来了-------', val)
       this.chooseStore = val
+      this.$refs.selectStoreComponent.dataFrom(val)
     },
     handleSelectGoods(val) {
       this.storeSelectGoods = val
@@ -215,11 +218,24 @@ export default {
       this.storeActivityGoods = val
       this.$refs.activityGod.dataFrom(val)
     },
-    handleActivityGoods(item, index) {
+    // selectStore
+    delActivityGoods(item, index) {
       console.log('item, index', item, index)
       this.storeActivityGoods.splice(index, 1)
-      this.storeActivityGoods = this.storeActivityGoods
-      // this.$set(this.storeActivityGoods)
+      this.$refs.activityGod.dataFrom(this.storeActivityGoods)
+      // this.storeActivityGoods = this.storeActivityGoods
+    },
+    delSelectGoods(item, index) {
+      console.log('item, index', item, index)
+      this.storeSelectGoods.splice(index, 1)
+      this.$refs.storeGods.dataFrom(this.storeSelectGoods)
+      // this.storeSelectGoods = this.storeSelectGoods
+    },
+    delSelectStore(item, index) {
+      console.log('item, index', item, index, this.chooseStore)
+      this.chooseStore.splice(index, 1)
+      this.$refs.selectStoreComponent.dataFrom(this.chooseStore)
+      // this.chooseStore = this.chooseStore
     },
     onSubmit() {
       this.$refs.form.validate(valid => {

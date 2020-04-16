@@ -1,10 +1,7 @@
 <template>
   <div>
-    <div>已选（{{ tableForm.tableData.length }}）</div>
     <el-form ref="tableForm" class="table-form" :model="tableForm" size="small">
       <el-table ref="activityTable" :data="tableForm.tableData" size="small" style="width: 100%">
-        <!-- @selection-change="handleSelectionChange" -->
-        <!-- <el-table-column type="selection" width="55"></el-table-column> -->
         <template v-for="col in cols">
           <el-table-column
             v-if="!col.render"
@@ -22,16 +19,15 @@
           >
             <template slot-scope="scope">
               <div
-                v-if="scope.row.mainPic && scope.row.mainPic!==''"
-                class="x-img-mini"
+                v-if="scope.row.picUrl && scope.row.picUrl!==''"
                 style="width: 60px; height: 60px"
               >
                 <div class="x-image__preview">
                   <el-image
                     style="width: 60px; height: 60px"
                     fit="contain"
-                    :src="showImg(scope.row.mainPic)"
-                    :preview-src-list="[showImg(scope.row.mainPic)]"
+                    :src="showImg(scope.row.picUrl)"
+                    :preview-src-list="[showImg(scope.row.picUrl)]"
                   />
                 </div>
               </div>
@@ -39,7 +35,7 @@
             </template>
           </el-table-column>
         </template>
-        <el-table-column label="换购价" min-width="160px">
+        <el-table-column label="换购价" min-width="120px">
           <template slot-scope="scope">
             <el-form-item
               :prop="'tableData.' + scope.$index + '.limitAmount'"
@@ -58,7 +54,7 @@
             </el-form-item>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="60">
           <template slot-scope="scope">
             <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
           </template>
@@ -98,24 +94,20 @@ export default {
           render: true // 交给后续逻辑渲染
         },
         {
-          prop: 'name',
-          label: '商品名称'
-        },
-        {
           prop: 'erpCode',
           label: '商品编码'
         },
         {
-          prop: 'specId',
-          label: 'sku编码'
-        },
-        {
-          prop: 'productSpecName',
-          label: '商品规格'
+          prop: 'name',
+          label: '商品名称'
         },
         {
           prop: 'mprice',
-          label: '参考价'
+          label: '参考价(元)'
+        },
+        {
+          prop: 'productName',
+          label: '商品规格'
         }
       ],
       check_limit: check_limit,
@@ -125,14 +117,12 @@ export default {
   methods: {
     dataFrom(data) {
       console.log('111111111111111111111', data)
-      const dataArray = []
-      data.forEach(item => {
-        dataArray.push({
+      this.tableForm.tableData = data.map(item => {
+        return {
           ...item,
-          productSpecName: this.formatSkuInfo(item.specSkuList || '')
-        })
+          productName: this.formatSkuInfo(item.specSkus || '')
+        }
       })
-      this.tableForm.tableData = dataArray
       // this.tableForm.multipleSelection = data
       // this.$refs.activityTable.toggleAllSelection()
     },
@@ -141,8 +131,7 @@ export default {
     //   this.tableForm.multipleSelection = val
     // },
     handleDel(item, index) {
-      this.tableForm.tableData.splice(index, 1)
-      console.log(this.$parent)
+      // this.tableForm.tableData.splice(index, 1)
       this.$emit('del-item', item, index)
       // this.$set(this.tableForm.tableData)
     },

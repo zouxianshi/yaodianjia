@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="data" size="small" style="width: 100%">
+    <el-table :data="tableData" size="small" show-overflow-tooltip style="width: 100%">
       <template v-for="col in cols">
         <el-table-column
           v-if="!col.render"
@@ -10,31 +10,17 @@
           :prop="col.prop"
           :min-width="col.width"
         />
-        <el-table-column
-          v-else-if="col.type==='img'"
-          :key="col.prop"
-          :label="col.label"
-          :prop="col.prop"
-        >
-          <template slot-scope="scope">
-            <div
-              v-if="scope.row.mainPic && scope.row.mainPic!==''"
-              class="x-img-mini"
-              style="width: 60px; height: 60px"
-            >
-              <div class="x-image__preview">
-                <el-image
-                  style="width: 60px; height: 60px"
-                  fit="contain"
-                  :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[showImg(scope.row.mainPic)]"
-                />
-              </div>
-            </div>
-            <div v-else style="line-height: 32px">暂无上传</div>
-          </template>
-        </el-table-column>
       </template>
+      <el-table-column label="门店地址" :show-overflow-tooltip="true">
+        <template
+          slot-scope="scope"
+        >{{ scope.row.province }}{{ scope.row.city }}{{ scope.row.area }}{{ scope.row.address }}</template>
+      </el-table-column>
+      <el-table-column label="操作" width="60">
+        <template slot-scope="scope">
+          <el-button type="text" @click="handleDel(scope.row, scope.$index)">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -47,29 +33,23 @@ export default {
       tableData: [],
       cols: [
         {
-          prop: 'mainPic',
-          label: '商品图片',
-          type: 'img',
-          render: true // 交给后续逻辑渲染
+          prop: 'stCode',
+          label: '门店编码'
         },
         {
-          prop: 'name',
-          label: '商品名称'
-        },
-        {
-          prop: 'erpCode',
-          label: '商品编码'
-        },
-        {
-          prop: 'specId',
-          label: 'sku编码'
-        },
-        {
-          prop: 'mprice',
-          label: '参考价'
+          prop: 'stName',
+          label: '门店名称'
         }
-      ],
-      data: []
+      ]
+    }
+  },
+  methods: {
+    dataFrom(data) {
+      this.tableData = data
+    },
+    handleDel(item, index) {
+      // this.tableData.splice(index, 1)
+      this.$emit('del-item', item, index)
     }
   }
 }
