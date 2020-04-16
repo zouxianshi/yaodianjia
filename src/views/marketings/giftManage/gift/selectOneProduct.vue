@@ -100,8 +100,5 @@ export default {
   .has-selected{
     margin-top: 10px;border-top: 2px solid #eee;padding: 20px 0 10px;
   }
-  .el-table thead th{
-    height: 40px;
-  }
 }
 </style>

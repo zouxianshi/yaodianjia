@@ -21,7 +21,14 @@
           </el-form-item>
         </el-form>
       </div>
-      <el-table :data="gridData" height="calc(100vh - 700px)">
+      <el-table
+        ref="dataTable"
+        :data="gridData"
+        height="calc(100vh - 700px)"
+        @select="select"
+        @select-all="selectAll"
+        @selection-change="selectAuto"
+      >
         <el-table-column type="selection" width="55" />
         <el-table-column property="num" label="门店编码" width="150" />
         <el-table-column property="name" label="门店名称" />
@@ -37,11 +44,14 @@
         @current-change="handleCurrentChange"
       />
       <div class="has-selected">
-        已选门店：123中国，234店
+        已选门店：
+        <span v-for="(item ,index) in selectedArr" :key="index">
+          {{ item.name }}
+        </span>
       </div>
       <span slot="footer">
-        <el-button type="primary" size="mini">确定</el-button>
-        <el-button size="mini">取消</el-button>
+        <el-button type="primary" size="mini" @click="_submit">确定</el-button>
+        <el-button size="mini" @click="dialogTableVisible=false">取消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -51,14 +61,16 @@ export default {
   data() {
     return {
       gridData: [{
-        num: '20001',
-        name: '上海一店',
-        address: '上海市普陀区金沙江路 1518 弄'
+        num: '20000',
+        name: '上海2店',
+        address: '上海黄浦江'
       }, {
         num: '20001',
         name: '上海一店',
         address: '上海市普陀区金沙江路 1518 弄'
       }],
+      selectedArr: [], //  已选择
+      hasSelectList: [],
       searchParams: {
         info: '',
         company: ''
@@ -71,8 +83,25 @@ export default {
     }
   },
   methods: {
-    show() {
+    show(store) {
+      this.hasSelectList = []
+      store.forEach(item => {
+        this.hasSelectList.push(item.name)
+      })
       this.dialogTableVisible = true
+      this.$nextTick(() => {
+        this.$refs.dataTable.clearSelection()
+        this.gridData.forEach(row => {
+          if (this.hasSelectList.indexOf(row.name) >= 0) {
+            this.$refs.dataTable.toggleRowSelection(row, true)
+          }
+        })
+      })
+    },
+    // 提交选中
+    _submit() {
+      this.dialogTableVisible = false
+      this.$emit('onSelect', this.selectedArr)
     },
     searchData() {
       console.log(this.searchParams)
@@ -83,6 +112,26 @@ export default {
     },
     handleCurrentChange(e) {
       console.log(e)
+    },
+    // 单选
+    select(e, rows) {
+      this.selectedArr = e
+      this.hasSelectList = []
+      e.forEach(item => {
+        this.hasSelectList.push(item.name)
+      })
+    },
+    // 全选
+    selectAll(e) {
+      this.selectedArr = e
+      this.hasSelectList = []
+      e.forEach(item => {
+        this.hasSelectList.push(item.name)
+      })
+    },
+    // 预设选中
+    selectAuto(e) {
+      this.selectedArr = e
     }
   }
 }
@@ -95,6 +144,9 @@ export default {
   }
   .has-selected{
     margin-top: 10px;border-top: 2px solid #eee;padding: 20px 0 10px;
+  }
+  .el-table thead th{
+    height: 40px;
   }
 }
 </style>

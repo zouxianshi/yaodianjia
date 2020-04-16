@@ -57,6 +57,12 @@ export default {
         {
           imgUrl:
             'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
+          name: ' 支付有礼',
+          url: '/marketings/activity-manage/payment-gift/list'
+        },
+        {
+          imgUrl:
+            'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
           name: '折扣券',
           url: '/marketings/activity-manage/coupons/list'
         },

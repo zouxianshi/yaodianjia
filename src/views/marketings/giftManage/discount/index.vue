@@ -2,14 +2,14 @@
   <div class="discount-index-model">
     <div class="content">
       <div class="discount-content-l">
-        <mPhoneView />
+        <mPhoneView :data="discountForm" :other-data="otherData" />
       </div>
       <div class="discount-content-r">
         <el-steps :active="active" simple>
           <el-step title="基本信息" />
           <el-step title="使用规则" />
         </el-steps>
-        <el-form v-show="active===1" ref="form" :model="discountForm" label-width="100px" size="mini" label-position="left">
+        <el-form v-show="active===1" ref="form" :inline="false" :model="discountForm" label-width="100px" size="mini" label-position="left">
           <el-form-item label="优惠券类型：">
             <span>折扣券</span>
           </el-form-item>
@@ -19,7 +19,7 @@
           <el-form-item label="优惠内容：">
             <el-input v-model="discountForm.detail" style="width:80px" /> 折
             <span class="zkTips">例：若折扣为8折，填8即可</span>
-            <p style="margin-top:15px">
+            <p style="margin-top:10px">
               <el-checkbox v-model="discountForm.isSelectMax" />
               最多优惠
               <el-input v-model="discountForm.maxDis" style="width:80px" /> 元
@@ -27,8 +27,8 @@
           </el-form-item>
           <el-form-item label="退货规则：">
             <el-radio-group v-model="discountForm.returnRules">
-              <el-radio label="1">退货退回</el-radio>
-              <el-radio label="2">退货后失效</el-radio>
+              <el-radio label="0">退货退回</el-radio>
+              <el-radio label="1">退货后失效</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="到期提醒：">
@@ -62,13 +62,30 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="使用时间：">
-            自领取起 <el-input style="width:40px" /> 天有效
+            <el-radio-group v-model="discountForm.expiration" style="width:200px">
+              <el-radio label="0">
+                自领取起 <el-input v-model="otherData.expirationDay" style="width:40px" /> 天内有效
+              </el-radio>
+              <el-radio label="1">
+                自领取起 <el-input v-model="otherData.notActive" style="width:40px" /> 天后生效，生效后 <el-input v-model="otherData.effective" style="width:40px" /> 天失效
+              </el-radio>
+              <el-radio label="2">
+                <el-date-picker
+                  v-model="otherData.expirationDate"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="生效日期"
+                  end-placeholder="失效日期"
+                />
+              </el-radio>
+            </el-radio-group>
           </el-form-item>
           <el-form-item label="适用门店：">
             <el-radio-group v-model="discountForm.store">
               <el-radio label="0">全部门店</el-radio>
-              <el-radio label="1">指定门店 <span v-if="discountForm.store==='1'" @click="selectStore">选择门店</span></el-radio>
+              <el-radio label="1">指定门店&emsp; <span v-if="discountForm.store==='1'" @click="selectStore">选择门店</span></el-radio>
             </el-radio-group>
+            <mSelectedTabel v-show="selectedStore.length>0" :data="selectedStore" @_deleteItem="_deleteItem" />
           </el-form-item>
           <el-form-item label="适用商品：">
             <el-radio-group v-model="discountForm.commodity">
@@ -78,10 +95,12 @@
             </el-radio-group>
           </el-form-item>
         </el-form>
-        <el-button size="mini" type="primary" @click="next">下一步</el-button>
+        <el-button v-if="active===1" size="mini" type="primary" @click="next">下一步</el-button>
+        <el-button v-if="active===2" size="mini" type="primary" @click="active = 1">上一步</el-button>
+        <el-button v-if="active===2" size="mini" type="primary" @click="_submit">确认</el-button>
       </div>
     </div>
-    <mPopSelectStore ref="selectStore" />
+    <mPopSelectStore ref="selectStore" @onSelect="getSelectedStore" />
     <mPopSelectProduct ref="selectCommodity" />
   </div>
 </template>
@@ -89,14 +108,24 @@
 import mPhoneView from '../_source/phoneView'
 import mPopSelectStore from '../_source/popSelectStore'
 import mPopSelectProduct from '../_source/popSelectProduct'
+import mSelectedTabel from '../_source/selectedTabel' // 已选择显示列表
 export default {
   name: 'DiscountIndex',
   components: {
-    mPhoneView, mPopSelectStore, mPopSelectProduct
+    mPhoneView, mPopSelectStore, mPopSelectProduct, mSelectedTabel
   },
   data() {
     return {
       active: 1,
+      selectedStore: [],
+      otherData: {
+        expirationDay: '0', // 直接开始有效天数
+        expirationDate: [
+          new Date(), new Date()
+        ], // 有效期(当选择开始、结束日期是)
+        notActive: '0', // 等待生效天数
+        effective: '0' // 有效天数
+      },
       discountForm: {
         name: '', // 折扣名称
         detail: '', // 优惠内容
@@ -106,12 +135,12 @@ export default {
         isRemember: '', // 是否提醒
         rememberDay: '',
         notice: '', // 使用须知
-        scenes: '', // 使用场景
-        threshold: '', // 使用门槛
-        thresholdPrice: '', // 门槛金额
-        expiration: '', // 使用时间
-        store: '', // 适用门店
-        commodity: '' // 使用商品
+        scenes: '0', // 使用场景
+        threshold: '0', // 使用门槛
+        thresholdPrice: '0', // 门槛金额
+        expiration: '0', // 使用时间
+        store: '0', // 适用门店
+        commodity: '0' // 使用商品
       }
     }
   },
@@ -119,16 +148,30 @@ export default {
     next() {
       if (this.active++ > 1) this.active = 1
     },
-    onSubmit() {
-      console.log('submit!')
+    _submit() {
+      console.log(this.discountForm)
     },
-    // 选择商品
+    // 选择门店
     selectStore() {
-      this.$refs.selectStore.show()
+      this.$refs.selectStore.show(this.selectedStore)
     },
     // 选择商品
     selectCommodity() {
       this.$refs.selectCommodity.show()
+    },
+    // 获取选择门店数据
+    getSelectedStore(data) {
+      this.selectedStore = data
+    },
+    // 删除已选择门店数据
+    _deleteItem(data) {
+      var name = data.name
+      for (let i = 0, len = this.selectedStore.length; i < len; i++) {
+        if (this.selectedStore[i].name === name) {
+          this.selectedStore.splice(i, 1)
+          return
+        }
+      }
     }
   }
 }
@@ -148,6 +191,15 @@ export default {
     .discount-content-r {
       flex: 0 0 60%;
       padding-left: 5%;
+      .el-form{
+        .el-radio-group{
+          display: inline-block;
+          line-height: inherit;
+          vertical-align: text-top;
+          font-size: 0;
+          width: 100px;
+        }
+      }
       .el-steps--simple{
         margin-bottom: 24px;
       }
