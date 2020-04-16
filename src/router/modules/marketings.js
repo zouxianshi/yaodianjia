@@ -111,6 +111,28 @@ export default [
               noCache: true,
               activeMenu: '/marketings/activity-manage'
             }
+          },
+          {
+            path: '/marketings/activity-manage/payment-gift/list',
+            component: () => import('@/views/marketings/activitysManage/paymentGift/list'),
+            name: 'activitys-manage-payment-gift-list',
+            meta: {
+              title: '支付有礼',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/activity-manage'
+            }
+          },
+          {
+            path: '/marketings/activity-manage/payment-gift/add',
+            component: () => import('@/views/marketings/activitysManage/paymentGift/add'),
+            name: 'activitys-manage-payment-gift-add',
+            meta: {
+              title: '新增-支付有礼',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/activity-manage'
+            }
           }
         ]
       }
