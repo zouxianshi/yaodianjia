@@ -15,6 +15,13 @@ const noData = [
   {
     uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
     name: '广告图',
+    type: 'third',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
     type: 'second',
     code: 'advertise',
     data: []

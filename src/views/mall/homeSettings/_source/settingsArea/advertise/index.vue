@@ -2,7 +2,7 @@
   <div class="sa-advertise-model">
     <el-tabs :value="assemblyName" type="card">
       <el-tab-pane :label="assemblyName" :name="assemblyName">
-        <m-advertise :item="{...item,type:'second'}" />
+        <m-advertise :item="{...item,type:'third'}" />
       </el-tab-pane>
     </el-tabs>
   </div>

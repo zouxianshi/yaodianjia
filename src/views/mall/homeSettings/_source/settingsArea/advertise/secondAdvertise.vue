@@ -14,8 +14,9 @@
   </div>
 </template>
 <script>
-import mSecondAdvertise from '../../viewArea/advertise/secondAdvertise'
+
 import mEditItem from './editItem'
+import mSecondAdvertise from '../../viewArea/advertise/secondAdvertise'
 export default {
   name: 'SaSecondAdvertise',
   data() {
