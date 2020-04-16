@@ -22,32 +22,9 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
-  watch: {},
-  beforeCreate() {
-  },
   created() {
     this.assemblyName = this.item.code === 'mall-title' ? '微商城名称设置' : '标题设置'
   },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
-  },
-  computed: {},
   components: { mTitle }
 }
 </script>
-
-<style lang="scss" rel="stylesheet/scss">
-  .sa-title-model {
-
-  }
-</style>

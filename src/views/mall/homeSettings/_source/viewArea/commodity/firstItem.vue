@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import mIconActivity from '../iconActivity'
+import mIconActivity from '../_source/iconActivity'
 export default {
   name: 'CFirstItem',
   data() {

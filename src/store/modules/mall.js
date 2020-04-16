@@ -13,6 +13,20 @@ import navigation from '@/views/mall/homeSettings/_source/viewArea/navigation/de
  */
 const noData = [
   {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'second',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'first',
+    code: 'advertise',
+    data: []
+  },
+  {
     uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
     name: '导航栏',
     type: 'second',
@@ -93,13 +107,6 @@ const noData = [
     uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
     name: '广告图',
     type: 'four',
-    code: 'advertise',
-    data: []
-  },
-  {
-    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
-    name: '广告图',
-    type: 'first',
     code: 'advertise',
     data: []
   },

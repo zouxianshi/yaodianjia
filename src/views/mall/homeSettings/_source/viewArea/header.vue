@@ -15,7 +15,7 @@
 </template>
 <script>
 
-import mEdit from './edit'
+import mEdit from './_source/edit'
 export default {
   name: 'VaHeader',
   components: { mEdit },

@@ -1,7 +1,7 @@
 <template>
   <div class="sa-navigation-model">
-    <el-tabs value="导航栏设置" type="card">
-      <el-tab-pane label="导航栏设置" name="导航栏设置">
+    <el-tabs :value="assemblyName" type="card">
+      <el-tab-pane :label="assemblyName" :name="assemblyName">
         <m-navigation :item="item" />
       </el-tab-pane>
     </el-tabs>
@@ -13,7 +13,7 @@ export default {
   name: 'SaNavigation',
   data() {
     return {
-      activeName: '导航栏设置'
+      assemblyName: '导航栏设置'
     }
   },
   props: {
@@ -22,31 +22,6 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
-  watch: {},
-  beforeCreate() {
-  },
-  created() {
-  },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
-  },
-  computed: {},
   components: { mNavigation }
 }
 </script>
-
-<style lang="scss" rel="stylesheet/scss">
-  .sa-navigation-model {
-
-  }
-</style>

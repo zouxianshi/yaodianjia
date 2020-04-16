@@ -1,17 +1,15 @@
 <template>
-  <div class="va-first-advertise-model">
-    <m-banner />
+  <div class="sa-third-advertise">
+    third-advertise
   </div>
 </template>
 <script>
-import mBanner from './../../_source/banner'
 export default {
-  name: 'VaFirstAdvertise',
+  name: 'SaThirdAdvertise',
   data() {
     return {}
   },
-  props: {
-  },
+  props: {},
   methods: {},
   watch: {},
   beforeCreate() {
@@ -31,12 +29,12 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mBanner }
+  components: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .va-first-advertise-model {
-    padding: 0 10px;
+  .sa-third-advertise {
+
   }
 </style>

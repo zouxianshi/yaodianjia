@@ -58,7 +58,7 @@ export default {
     .select-icon-box {
       overflow: hidden;
       width: 310px;
-      height: 380px;
+      height: 304px;
       margin-right: -8px;
       overflow-y: scroll;
       .sim-item {

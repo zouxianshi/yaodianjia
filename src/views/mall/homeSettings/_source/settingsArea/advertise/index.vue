@@ -1,43 +1,27 @@
 <template>
   <div class="sa-advertise-model">
-    <el-tabs value="广告图设置" type="card">
-      <el-tab-pane label="广告图设置" name="广告图设置">广告图设置</el-tab-pane>
+    <el-tabs :value="assemblyName" type="card">
+      <el-tab-pane :label="assemblyName" :name="assemblyName">
+        <m-advertise :item="{...item,type:'second'}" />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
+import mAdvertise from './advertise'
 export default {
   name: 'SaAdvertise',
   data() {
     return {
+      assemblyName: '广告图设置'
     }
   },
-  props: {},
-  methods: {},
-  watch: {},
-  beforeCreate() {
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
   },
-  created() {
-  },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
-  },
-  computed: {},
-  components: {}
+  components: { mAdvertise }
 }
 </script>
-
-<style lang="scss" rel="stylesheet/scss">
-  .sa-advertise-model {
-
-  }
-</style>

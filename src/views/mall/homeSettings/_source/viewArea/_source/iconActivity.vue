@@ -6,7 +6,7 @@
   .icon-activity-model {
     width: 40px;
     height: 28px;
-    background: url('./img/va_icos_activity.png') no-repeat;
+    background: url('./../img/va_icos_activity.png') no-repeat;
     display: inline-block;
     position: absolute;
     left: 0;

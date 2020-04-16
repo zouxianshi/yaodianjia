@@ -17,7 +17,7 @@ export default {
     return {
       item: {
         // code:'mall-title',
-        code: 'navigation'
+        code: 'advertise'
       }
     }
   },
