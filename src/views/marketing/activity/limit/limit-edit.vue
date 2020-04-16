@@ -158,9 +158,10 @@ import dialogStore from '@/components/Dialog/DialogStore'
 import { checkNumberdouble } from '@/utils/validate'
 
 import {
-  getActivityDetail,
+  // getActivityDetail,
   addActivity,
-  updateActivity
+  updateActivity,
+  getActivityDetailPromote
 } from '@/api/marketing'
 import config from '@/utils/config'
 
@@ -554,7 +555,7 @@ export default {
         id: this.dataid
       }
       console.log('params detail', params)
-      getActivityDetail(params).then(res => {
+      getActivityDetailPromote(params).then(res => {
         if (res.code === '10000') {
           // / this.xForm = ''
           const data = res.data

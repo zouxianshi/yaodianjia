@@ -36,6 +36,14 @@ export function queryGoods(params) {
   })
 }
 
+export function queryActivityCommGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-spec/activityComm`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 获取商品分类树(	integer(类型，1-分类，2-分组)
 export function getTypeTree(params) {
   return request({
@@ -46,3 +54,10 @@ export function getTypeTree(params) {
   })
 }
 
+// 获取所有门店
+export function getAllStore(merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/getAllStores/${merCode}`,
+    method: 'get'
+  })
+}

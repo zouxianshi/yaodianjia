@@ -207,6 +207,26 @@ const router = [
           auth: 'marketing.gift',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
+      },
+      {
+        path: 'activity/assemble',
+        component: () => import('@/views/marketing/activity/assemble/list'),
+        name: 'assembleList',
+        meta: {
+          title: '拼团活动',
+          noCache: true,
+          activeMenu: '/marketing/activity/assemble'
+        }
+      },
+      {
+        path: 'activity/assemble-edit',
+        component: () => import('@/views/marketing/activity/assemble/edit'),
+        name: 'assembleEdit',
+        meta: {
+          title: '拼团活动',
+          noCache: true,
+          activeMenu: '/marketing/activity/assemble'
+        }
       }
     ]
   },

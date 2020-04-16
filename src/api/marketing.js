@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
-
 /** *
  * 营销活动 -- 活动管理
  */
@@ -19,6 +18,13 @@ export function getActivityList(params) {
 export function getActivityDetail(params) {
   return request({
     url: `${config.merPromote}/1.0/activities/${params.id}`,
+    method: 'get'
+  })
+}
+
+export function getActivityDetailPromote(params) {
+  return request({
+    url: `${config.merGoods}/1.0/promote/${params.id}`,
     method: 'get'
   })
 }
@@ -55,5 +61,105 @@ export function disableActivity(params) {
   return request({
     url: `${config.merPromote}/1.0/admin/activities/_invalid/${params.id}`,
     method: 'put'
+  })
+}
+
+// 拼团活动 活动新建
+
+export function assembleActivityAdd(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/add`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 获取拼团活动列表
+export function getAssembleList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 删除拼团活动
+export function delAssembleActivity(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/deleteByIds`,
+    method: 'post',
+    data: params,
+    noMerCode: true
+  })
+}
+
+// 获取拼团活动单个信息
+export function getAssembleAcInfo(activityId) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/getActivityInfo/${activityId}`,
+    method: 'get'
+  })
+}
+
+// 修改拼团活动基本信息
+export function updateAssembleInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/modify`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 编辑修改拼团活动产品信息
+export function updateAcAssmbleProductInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/modifyProduct`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 通过活动ID获取商品
+export function getActivityGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/getProductsByActivityId`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 根据商品活动ID删除活动下的商品
+export function deleteAcAssembleGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/deleteProductInfo`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 批量修改库存
+export function setAssembleStock(params) {
+  console.log(params)
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/updateStock`,
+    method: 'post',
+    data: params
+  })
+}
+// 单独修改活动商品库存
+export function setSingleAssembleStock(params) {
+  console.log(params)
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/addStock`,
+    method: 'put',
+    data: params
+  })
+}
+
+// 清空活动下的商品库存
+export function clearProductStock(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/clearProductStock?activityId=${params.activityId}`,
+    method: 'post'
   })
 }

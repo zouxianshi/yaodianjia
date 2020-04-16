@@ -103,12 +103,18 @@ class InnerCtor {
         name: '订单中心',
         icon: 'icongoods',
         path: '/orders-manage',
-        disabled: this.get('order'),
+        // disabled: this.get('order'),
+        disabled: true,
         children: [
           {
             name: `所有订单`,
             path: '/orders-manage/list',
             disabled: this.get('order.order-all')
+          },
+          {
+            name: `拼团订单`,
+            path: '/orders-manage/spell-group',
+            disabled: this.get('order.order-group')
           },
           // {
           //   name: `订单详情`,
@@ -143,7 +149,12 @@ class InnerCtor {
             name: '礼品管理',
             path: '/marketing/gifts',
             disabled: this.get('marketing.gift')
-          }
+          },
+          // {
+          //   name: '拼团活动',
+          //   path: '/marketing/activity/assemble',
+          //   disabled: this.get('marketing.marketing-manager')
+          // }
         ]
       },
       {
