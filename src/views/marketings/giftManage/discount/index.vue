@@ -83,8 +83,9 @@
           <el-form-item label="适用门店：">
             <el-radio-group v-model="discountForm.store">
               <el-radio label="0">全部门店</el-radio>
-              <el-radio label="1">指定门店 <span v-if="discountForm.store==='1'" @click="selectStore">选择门店</span></el-radio>
+              <el-radio label="1">指定门店&emsp; <span v-if="discountForm.store==='1'" @click="selectStore">选择门店</span></el-radio>
             </el-radio-group>
+            <mSelectedTabel v-show="selectedStore.length>0" :data="selectedStore" @_deleteItem="_deleteItem" />
           </el-form-item>
           <el-form-item label="适用商品：">
             <el-radio-group v-model="discountForm.commodity">
@@ -99,7 +100,7 @@
         <el-button v-if="active===2" size="mini" type="primary" @click="_submit">确认</el-button>
       </div>
     </div>
-    <mPopSelectStore ref="selectStore" />
+    <mPopSelectStore ref="selectStore" @onSelect="getSelectedStore" />
     <mPopSelectProduct ref="selectCommodity" />
   </div>
 </template>
@@ -107,14 +108,16 @@
 import mPhoneView from '../_source/phoneView'
 import mPopSelectStore from '../_source/popSelectStore'
 import mPopSelectProduct from '../_source/popSelectProduct'
+import mSelectedTabel from '../_source/selectedTabel' // 已选择显示列表
 export default {
   name: 'DiscountIndex',
   components: {
-    mPhoneView, mPopSelectStore, mPopSelectProduct
+    mPhoneView, mPopSelectStore, mPopSelectProduct, mSelectedTabel
   },
   data() {
     return {
       active: 1,
+      selectedStore: [],
       otherData: {
         expirationDay: '0', // 直接开始有效天数
         expirationDate: [
@@ -146,16 +149,29 @@ export default {
       if (this.active++ > 1) this.active = 1
     },
     _submit() {
-      console.log(this.expirationDate)
       console.log(this.discountForm)
     },
-    // 选择商品
+    // 选择门店
     selectStore() {
-      this.$refs.selectStore.show()
+      this.$refs.selectStore.show(this.selectedStore)
     },
     // 选择商品
     selectCommodity() {
       this.$refs.selectCommodity.show()
+    },
+    // 获取选择门店数据
+    getSelectedStore(data) {
+      this.selectedStore = data
+    },
+    // 删除已选择门店数据
+    _deleteItem(data) {
+      var name = data.name
+      for (let i = 0, len = this.selectedStore.length; i < len; i++) {
+        if (this.selectedStore[i].name === name) {
+          this.selectedStore.splice(i, 1)
+          return
+        }
+      }
     }
   }
 }
