@@ -206,7 +206,7 @@
                       </div>
                       <span v-if="item.groupStatus === 1 && item.endTime">
                         (
-                        <Countdown time="2020-04-16 9:44:00" />后失败)
+                        <Countdown :time="item.endTime" />后失败)
                       </span>
 
                       <div class="tr">
