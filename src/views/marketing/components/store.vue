@@ -1,6 +1,5 @@
 <template>
   <span>
-    <el-button type="primary" size="mini" @click="isShow = true">选择门店</el-button>
     <el-dialog
       title="选择门店"
       :visible.sync="isShow"
@@ -41,7 +40,6 @@
         <el-table
           ref="multipleTable"
           :data="tableData"
-
           stripe
           style="width: 100%"
           max-height="300"
@@ -70,7 +68,10 @@
             @current-change="handleCurrentChange"
           />
         </div>
-        <el-divider content-position="left">选择的门店（当前<span style="color: #409eff;padding: 0 4px">{{ multipleSelection.length }}</span>家店）</el-divider>
+        <el-divider content-position="left">
+          选择的门店（当前
+          <span style="color: #409eff;padding: 0 4px">{{ multipleSelection.length }}</span>家店）
+        </el-divider>
         <ul class="choose-box">
           <template v-if="multipleSelection.length!==0">
             <li v-for="(item,index) in multipleSelection" :key="index">
@@ -81,7 +82,7 @@
           </template>
           <!-- <template v-else>
             <p class="text-center">请选择门店</p>
-          </template> -->
+          </template>-->
         </ul>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -159,21 +160,18 @@ export default {
       }
     }
   },
-  watch: {
-    isShow(val) {
-      if (val) {
-        if (this.list && this.list.length > 0) {
-          this.multipleSelection = this.list.slice()
-        } else {
-          this.multipleSelection = []
-        }
-        this.pageInfo.currentPage = 1
-        this._loadStoreData()
-      }
-    }
-  },
   created() {},
   methods: {
+    open() {
+      this.isShow = true
+      console.log('this.list-----', this.list)
+      if (this.list && this.list.length > 0) {
+        this.multipleSelection = this.list.slice()
+      } else {
+        this.multipleSelection = []
+      }
+      this._loadStoreData()
+    },
     checkSelectable() {
       return !this.isAll
     },

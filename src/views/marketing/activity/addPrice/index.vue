@@ -34,6 +34,8 @@
       </el-form-item>
       <el-form-item v-if="form.isAllStore === 1">已选当前上线的全部门店</el-form-item>
       <el-form-item v-if="form.isAllStore === 0">
+        <!-- storeComponent -->
+        <el-button type="primary" @click="$refs.storeComponent.open()">选择门店</el-button>
         <store-dialog @complete="handleSelectStore">选择门店</store-dialog>
       </el-form-item>
       <!-- 门店列表 -->
@@ -48,9 +50,11 @@
       </el-form-item>
       <el-form-item v-if="form.isAllProduct === 1">已选当前上线的全部商品</el-form-item>
       <el-form-item v-if="form.isAllProduct === 0">
-        <store-goods @on-change="handleSelectGoods">选择商品</store-goods>
+        <!-- <store-goods @on-change="handleSelectGoods">选择商品</store-goods> -->
+        <el-button type="primary" @click="$refs.GoodsComponent.open()">选择商品</el-button>
       </el-form-item>
       <el-form-item v-if="form.isAllProduct === 0">
+        <div>已选（{{ storeSelectGoods.length }}）</div>
         <select-goods ref="storeGods" />
       </el-form-item>
       <div class="form-title">换购规则</div>
@@ -60,20 +64,21 @@
           <span class="info">以最终下单支付的金额计算</span>
         </template>
       </el-form-item>
-      <el-form-item label="换购商品：">
+      <el-form-item label="换购商品：" required>
         <template>
           <!-- <el-button type="text">选择换购商品</el-button> -->
-          <store-goods type="text" @on-change="handleSelectActivityGoods">选择换购商品</store-goods>
+          <el-button type="text" @click="$refs.storeGoodsComponent.open()">选择换购商品</el-button>
+          <!-- <store-goods type="text" :limitMax="15" @on-change="handleSelectActivityGoods">选择换购商品</store-goods> -->
           <span class="info">最多可选15个商品</span>
         </template>
       </el-form-item>
       <el-form-item>
-        <select-activity-goods ref="activityGod" />
+        <select-activity-goods ref="activityGod" @del-item="handleActivityGoods" />
       </el-form-item>
-      <el-form-item label="换购数量：">
+      <el-form-item label="换购数量：" prop="activityNum">
         <template>
           <span>最多可换购</span>
-          <el-input style="width: 100px; margin-right: 8px" />
+          <el-input v-model="form.activityNum" style="width: 100px; margin-right: 8px" />
           <span>件</span>
           <span class="info">换购商品允许顾客下单时在商品的总换购数量</span>
         </template>
@@ -92,10 +97,30 @@
         <el-button type="primary" style="width: 120px" @click="onSubmit">提交</el-button>
       </el-form-item>
     </el-form>
+    <!-- 选取换购商品组件 -->
+    <store-goods
+      ref="storeGoodsComponent"
+      :limit-max="15"
+      :list="storeActivityGoods"
+      @on-change="handleSelectActivityGoods"
+    />
+    <!-- 选择主商品组件 -->
+    <store-goods
+      ref="GoodsComponent"
+      :list="storeSelectGoods"
+      @on-change="handleSelectGoods"
+    />
+    <!-- 门店列表 -->
+    <store-dialog
+      ref="storeComponent"
+      :list="storeSelectGoods"
+      @complete="handleSelectStore"
+    />
   </div>
 </template>
 
 <script>
+// import { createAddPriceAct } from '@/api/activity'
 import storeGoods from '../../components/store-gods'
 import storeDialog from '../../components/store'
 import selectStore from '../../components/select-store'
@@ -129,6 +154,18 @@ export default {
       }
       callback()
     }
+    const checkActivityNum = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请输入换购数量'))
+      }
+      if (!/^[1-9]\d*$/.test(value) || value <= 0) {
+        return callback(new Error('必须为大于0的正整数'))
+      }
+      if (value > 1000) {
+        return callback(new Error('换购数量不可大于1000'))
+      }
+      callback()
+    }
     return {
       form: {
         type: ['1'],
@@ -136,8 +173,6 @@ export default {
         isAllProduct: 1,
         threshold: ''
       },
-      goodsList: [],
-      storeActivityGoods: [],
       rules: {
         name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
         activitTime: [
@@ -149,8 +184,14 @@ export default {
         ],
         threshold: [
           { required: true, validator: checkThreshold, trigger: 'blur' }
+        ],
+        activityNum: [
+          { required: true, validator: checkActivityNum, trigger: 'blur' }
         ]
-      }
+      },
+      storeSelectGoods: [], // 选取的主商品
+      storeActivityGoods: [] // 选区的换购商品
+
     }
   },
   methods: {
@@ -167,17 +208,43 @@ export default {
       this.chooseStore = val
     },
     handleSelectGoods(val) {
-      this.storeGoods = val
+      this.storeSelectGoods = val
       this.$refs.storeGods.dataFrom(val)
     },
     handleSelectActivityGoods(val) {
       this.storeActivityGoods = val
       this.$refs.activityGod.dataFrom(val)
     },
+    handleActivityGoods(item, index) {
+      console.log('item, index', item, index)
+      this.storeActivityGoods.splice(index, 1)
+      this.storeActivityGoods = this.storeActivityGoods
+      // this.$set(this.storeActivityGoods)
+    },
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log('我准备通过了----------------------')
+          this.$refs.activityGod
+            .onsubmit()
+            .then(res => {
+              console.log('二次验证也通过了----------------------', res)
+              // const dataParma = {}
+              console.log(this.form)
+              console.log(res)
+              // 这里需要处理下数据-----
+              // createAddPriceAct().then(res => {
+              //   if(res.code === '10000') {
+              //     this.$message({
+              //       message: '创建成功',
+              //       type: 'success'
+              //     })
+              //   }
+              // })
+            })
+            .catch(res => {
+              console.log('二次验证失败----------------------')
+            })
         } else {
           console.log('error submit!!', valid)
           return false

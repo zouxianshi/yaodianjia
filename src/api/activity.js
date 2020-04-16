@@ -26,3 +26,12 @@ export function createGift(params) {
     data: params
   })
 }
+
+// 创建加价购
+export function createAddPriceAct(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup`,
+    method: 'post',
+    data: params
+  })
+}

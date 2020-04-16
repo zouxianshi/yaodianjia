@@ -1,6 +1,6 @@
 <template>
   <span>
-    <el-button :type="type" size="mini" @click="dialog.visible = true">选择商品</el-button>
+    <!-- <el-button :type="type" size="mini" @click="dialog.visible = true">选择商品</el-button> -->
     <el-dialog
       title="选取商品"
       append-to-body
@@ -21,7 +21,7 @@
           <el-form-item label="商品分组">
             <el-cascader
               v-model="searchForm.merchant"
-              v-loading="typeTreeLoading"
+              :loading="typeTreeLoading"
               :options="typeTree"
               :props="merchantOption"
               clearable
@@ -238,6 +238,7 @@ export default {
     },
     open() {
       this.dialog.visible = true
+      console.log('this.list-----', this.list)
       if (this.list && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
@@ -495,6 +496,9 @@ export default {
   .note-text {
     margin-top: 24px;
     color: #888888;
+  }
+  .table-footer {
+    justify-content: flex-end;
   }
 }
 </style>
