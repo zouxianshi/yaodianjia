@@ -1,4 +1,9 @@
-import { getSelfSpecsInfo, setSpecsData, getSpecsProductSKU, getSpecs } from '@/api/new-goods'
+import {
+  getSelfSpecsInfo,
+  setSpecsData,
+  getSpecsProductSKU,
+  getSpecs
+} from '@/api/new-goods'
 import { checkNumberdouble, checkZmSZ } from '@/utils/validate'
 import { findArray } from '@/utils/index'
 const mixin = {
@@ -6,10 +11,12 @@ const mixin = {
     return {
       editSpecsData: [], //  编辑时，用户储存规格回显的数据
       specSkuList: [],
-      specsForm: { // 商家自建商品的规格表单
+      specsForm: {
+        // 商家自建商品的规格表单
         specsData: [],
         specs: []
       },
+      standardNoData: false, // 标库数据是否存在
       chooseTableSpec: [], // 标库选择数据事件
       standardSpecs: [], // 标库选中的历史数据
       dynamicProp: [], // 表格的动态字段
@@ -35,10 +42,13 @@ const mixin = {
     }
   },
   methods: {
-    handleEditTabSpecs(row, keys, index) { // 编辑已有的规格 编码 价格
+    handleEditTabSpecs(row, keys, index) {
+      // 编辑已有的规格 编码 价格
       if (this.basicForm.origin === 1) {
         if (keys === 'erpCode') {
-          const findIndex = findArray(this.editSpecsData, { erpCode: row[keys] })
+          const findIndex = findArray(this.editSpecsData, {
+            erpCode: row[keys]
+          })
           if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
             this.$message({
               message: '已存在相同的商品编码,请重新编辑输入',
@@ -65,7 +75,7 @@ const mixin = {
             })
             return
           }
-        // eslint-disable-next-line no-undef
+          // eslint-disable-next-line no-undef
         } else if (keys === 'barCode') {
           // const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
           if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
@@ -79,11 +89,13 @@ const mixin = {
         this.$set(this.editSpecsData, index, row)
       }
     },
-    handleSelectionChange(row) { // 当用户手动勾选全选 Checkbox 时触发的事件
+    handleSelectionChange(row) {
+      // 当用户手动勾选全选 Checkbox 时触发的事件
       this.chooseTableSpec = row
     },
-    handleSelectChange(selection, row) { // 当用户手动勾选数据行的 Checkbox 时触发的事件
-      const findIndex = selection.findIndex((item) => {
+    handleSelectChange(selection, row) {
+      // 当用户手动勾选数据行的 Checkbox 时触发的事件
+      const findIndex = selection.findIndex(item => {
         return item.id === row.id
       })
       if (findIndex > -1) {
@@ -92,9 +104,11 @@ const mixin = {
         row.isCheck = false
       }
     },
-    handleSubmitSpec() { // 规格保存操作
+    handleSubmitSpec() {
+      // 规格保存操作
       let data = []
-      if (this.basicForm.origin === 1) { // 标库商品
+      if (this.basicForm.origin === 1) {
+        // 标库商品
         // //  获取一种选中的值
         // this.specsForm.specs.map(v => {
         //   if (v.isCheck) {
@@ -149,10 +163,14 @@ const mixin = {
         this.format()
       }
     },
-    format() { // 格式数据处理
+    format() {
+      // 格式数据处理
       let data = []
       let checkNum = 0
-      if (this.specsForm.specs.length === 0 && this.editSpecsData.length === 0) {
+      if (
+        this.specsForm.specs.length === 0 &&
+        this.editSpecsData.length === 0
+      ) {
         if (data.length === 0) {
           this.$message({
             message: '请设置规格',
@@ -327,21 +345,24 @@ const mixin = {
     },
     subSpecs(data) {
       this.subLoading = true
-      setSpecsData({ list: data }).then(res => {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
+      setSpecsData({ list: data })
+        .then(res => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.subLoading = false
+          this.step = 3
         })
-        this.subLoading = false
-        this.step = 3
-      }).catch(_ => {
-        this.subLoading = false
-      })
+        .catch(_ => {
+          this.subLoading = false
+        })
     },
-    _loadSpces() { // 根据一级分类加载规格
+    _loadSpces() {
+      // 根据一级分类加载规格
       getSpecs(this.chooseTypeList[0].id).then(res => {
         if (res.data) {
-          res.data.map((v) => {
+          res.data.map(v => {
             v['index_' + v.id + '_' + v.attributeName] = ''
             if (this.basicForm.origin === 1) {
               v.isCheck = true
@@ -359,44 +380,62 @@ const mixin = {
         }
       })
     },
-    _loadSpecsInfo() { // 加载规格信息
-      if (this.basicForm.origin === 1) { // 标库
+    _loadSpecsInfo() {
+      // 加载规格信息
+      if (this.basicForm.origin === 1) {
+        // 标库
         getSpecsProductSKU(this.basicForm.platformCode).then(res => {
-          res.data.map(v => {
-            v.disabled = false
-            // 标库数据回显 规格处理
-            if (v.productSpecSkuDTOs) {
-              if (this.dynamicProp.length === 0) {
-                v.productSpecSkuDTOs.map(vs => {
-                  this.dynamicProp.push({
-                    name: vs.skuKeyName,
-                    id: vs.skuKeyId,
-                    keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
-                    checked: true
+          if (res.data) {
+            res.data.map(v => {
+              v.disabled = false
+              // 标库数据回显 规格处理
+              if (v.productSpecSkuDTOs) {
+                if (this.dynamicProp.length === 0) {
+                  v.productSpecSkuDTOs.map(vs => {
+                    this.dynamicProp.push({
+                      name: vs.skuKeyName,
+                      id: vs.skuKeyId,
+                      keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
+                      checked: true
+                    })
+                    this.chooseSpec.push(vs.skuKeyId) // 标库选中的规格存入chooseSpec  修改日期2020-03-25  标库需要添加规格使用
                   })
-                  this.chooseSpec.push(vs.skuKeyId) // 标库选中的规格存入chooseSpec  修改日期2020-03-25  标库需要添加规格使用
+                }
+                v.productSpecSkuDTOs.map(vs => {
+                  v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
                 })
               }
-              v.productSpecSkuDTOs.map(vs => {
-                v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
-              })
-            }
-          })
-          this.editSpecsData = res.data
-          if (this.$route.query.type === 'query') {
-            $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input').addClass('is-disabled') // 设置全选disabeld
-            res.data.forEach((value, index) => {
-              $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled') // 设置该条数据不可选择
             })
           }
-
+          console.log('------请求规格数据')
+          this.editSpecsData = res.data || []
+          this.standardNoData = !res.data
+          if (this.$route.query.type === 'query') {
+            $('.el-table__header')
+              .find('thead tr')
+              .eq(0)
+              .find('th')
+              .eq(0)
+              .find('.el-checkbox__input')
+              .addClass('is-disabled') // 设置全选disabeld
+            res.data.forEach((value, index) => {
+              $('.el-table__body')
+                .find('tbody tr')
+                .eq(index)
+                .find('td')
+                .eq(0)
+                .find('.el-checkbox__input')
+                .addClass('is-disabled') // 设置该条数据不可选择
+            })
+          }
           this._loadSpecs()
         })
       } else {
         this._loadSpecs()
       }
     },
-    _loadSpecs() { // 请求回显数据
+    _loadSpecs() {
+      // 请求回显数据
       getSelfSpecsInfo(this.basicForm.id).then(res => {
         if (res.data) {
           const { specList } = res.data
@@ -442,12 +481,19 @@ const mixin = {
             /** *
              * 标库商品
              */
-            console.log('-----标库商品------',)
+            console.log('-----标库商品------')
             this.specsForm.specs = []
-            const findInput = $('.el-table__header').find('thead tr').eq(0).find('th').eq(0).find('.el-checkbox__input')
+            const findInput = $('.el-table__header')
+              .find('thead tr')
+              .eq(0)
+              .find('th')
+              .eq(0)
+              .find('.el-checkbox__input')
             findInput.remove() // 设置全选disabeld
             specList.map((v, index) => {
-              const findIndex = findArray(this.editSpecsData, { barCode: v.barCode })
+              const findIndex = findArray(this.editSpecsData, {
+                barCode: v.barCode
+              })
               if (findIndex > -1) {
                 this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
                 const row = this.editSpecsData[findIndex]
@@ -469,6 +515,20 @@ const mixin = {
                   })
                   v.productSpecSkuDTOs = v.specSkuList
                 }
+                if (this.dynamicProp.length === 0 && this.standardNoData) {
+                  const data = []
+                  v.specSkuList.map(v => {
+                    this.dynamicProp.push({
+                      name: v.skuKeyName,
+                      id: v.skuKeyId,
+                      keys: `index_${v.skuKeyId}_${v.skuKeyName}`,
+                      checked: true
+                    })
+                    data.push(v.skuKeyId)
+                    // 设置默认选择
+                    this.chooseSpec.push(v.skuKeyId)
+                  })
+                }
                 this.editSpecsData.push(v)
               }
             })
@@ -477,7 +537,13 @@ const mixin = {
                 if (v.disabled) {
                   // this.chooseTableSpec.push(v)
                   this.$refs.multipleTable.toggleRowSelection(v)
-                  $('.el-table__body').find('tbody tr').eq(index).find('td').eq(0).find('.el-checkbox__input').addClass('is-disabled is-checked') // 设置该条数据不可选择
+                  $('.el-table__body')
+                    .find('tbody tr')
+                    .eq(index)
+                    .find('td')
+                    .eq(0)
+                    .find('.el-checkbox__input')
+                    .addClass('is-disabled is-checked') // 设置该条数据不可选择
                 }
               })
             }, 500)
@@ -487,7 +553,8 @@ const mixin = {
         }
       })
     },
-    selectable(row) { // 是否可以选择
+    selectable(row) {
+      // 是否可以选择
       if (row.disabled) {
         return false
       }
@@ -497,8 +564,18 @@ const mixin = {
       const findIndex = findArray(this.dynamicProp, { id: row.id })
       return findIndex > -1
     },
-    handleAddSpec() { // 增加 规格
-      const data = { picUrl: '', mprice: '', erpCode: '', barCode: '', limitType: 0, limitNum: '', limit: '', type: 2 }
+    handleAddSpec() {
+      // 增加 规格
+      const data = {
+        picUrl: '',
+        mprice: '',
+        erpCode: '',
+        barCode: '',
+        limitType: 0,
+        limitNum: '',
+        limit: '',
+        type: 2
+      }
       this.specsList.map(v => {
         const keys = 'index_' + v.id + '_' + v.attributeName
         data[keys] = ''
@@ -515,7 +592,8 @@ const mixin = {
              * 标库商品，sku设置的规格存在dynamicProp字段中，添加的是可以直接在这里判断有哪些SKU
              *
              */
-            if (this.basicForm.origin === 1) { // 标库
+            if (this.basicForm.origin === 1) {
+              // 标库
               const findIndex = this.dynamicProp.findIndex(item => {
                 return item.id === v.id
               })
@@ -533,20 +611,24 @@ const mixin = {
         }
       }
     },
-    handleDeleteSpec(index) { // 删除规格
+    handleDeleteSpec(index) {
+      // 删除规格
       this.specsForm.specs.splice(index, 1)
     },
-    handleSpecsChange(row) { // 规格勾选
+    handleSpecsChange(row) {
+      // 规格勾选
       const findIndex = findArray(this.specsForm.specsData, { id: row.id })
       if (row.isCheck) {
         if (findIndex < 0) {
           this.specsForm.specsData.push(row)
         }
-        if (!this.chooseSpec.includes(row.id)) { // 是否在勾选的规格参数中是否存在
+        if (!this.chooseSpec.includes(row.id)) {
+          // 是否在勾选的规格参数中是否存在
           this.chooseSpec.push(row.id)
         }
       } else {
-        if (this.chooseSpec.includes(row.id)) { // 取消 就删除
+        if (this.chooseSpec.includes(row.id)) {
+          // 取消 就删除
           const index = this.chooseSpec.indexOf(row.id)
           this.chooseSpec.splice(index, 1)
         }
@@ -562,7 +644,8 @@ const mixin = {
         }
       }
     },
-    handleLimitChange(row, index) { // 设置
+    handleLimitChange(row, index) {
+      // 设置
       if (row.limitType === 0) {
         this.limit_err = false
       } else if (row.limitType === 1) {
@@ -609,7 +692,8 @@ const mixin = {
       }
       this.limit_err = false
     },
-    input_checkMprice(row, index) { // 校验价格
+    input_checkMprice(row, index) {
+      // 校验价格
       var value = row.mprice
       if (value > 99999999) {
         this.$message({
