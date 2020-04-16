@@ -77,7 +77,7 @@ class InnerCtor {
         children: [
           {
             name: '主页设置（新）',
-            path: '/mall/home-settings',
+            path: '/mall/home',
             disabled: true
           },
           {

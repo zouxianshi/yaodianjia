@@ -1,23 +1,22 @@
 <template>
-  <m-sa-layout>
-    <m-va-banner slot="exhibition" source="sa" />
+  <m-sa-layout class="sa-second-navigation">
+    <div slot="exhibition">
+      <m-second-item v-for="(el,i) in 10" :key="i" />
+    </div>
     <div slot="item">
       <m-edit-item />
     </div>
-    <el-button slot="submit" type="primary" style="width: 100%" size="mini">保存广告设置</el-button>
+    <el-button slot="submit" type="primary" style="width: 100%" size="mini">保存导航设置1</el-button>
   </m-sa-layout>
 </template>
 <script>
-import mVaBanner from '../../_source/banner'
 import mEditItem from './editItem'
 import mSaLayout from '../_source/saLayout'
-
+import mSecondItem from '../../viewArea/navigation/secondItem'
 export default {
-  name: 'SaFirstAdvertise',
+  name: 'SecondNavigation',
   data() {
-    return {
-
-    }
+    return {}
   },
   props: {},
   methods: {},
@@ -39,12 +38,15 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mVaBanner, mEditItem, mSaLayout }
+  components: { mSaLayout, mEditItem, mSecondItem }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .sa-first-advertise {
-
+  .sa-second-navigation {
+    overflow: hidden;
+    .n-second-item-model {
+      float: left;
+    }
   }
 </style>

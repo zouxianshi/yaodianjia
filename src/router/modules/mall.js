@@ -4,7 +4,7 @@ export default [
   {
     path: '/mall',
     component: Layout,
-    redirect: '/mall/home-settings',
+    redirect: '/mall/home',
     name: 'mall',
     meta: {
       title: '商城',
@@ -29,7 +29,8 @@ export default [
         meta: {
           title: '首页设置',
           auth: false,
-          noCache: true
+          noCache: true,
+          activeMenu: '/mall/home'
         },
         children: []
       }

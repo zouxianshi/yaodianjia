@@ -1,17 +1,30 @@
 <template>
   <div class="sa-commodity-model">
-    <el-tabs value="商品设置" type="card">
-      <el-tab-pane label="商品设置" name="商品设置">商品设置</el-tab-pane>
+    <el-tabs :value="assemblyName" type="card">
+      <el-tab-pane :label="assemblyName" :name="assemblyName">
+        <component :is="mod" :item="item" />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
+import mFirstCommodity from './firstCommodity'
+import mSecondCommodity from './secondCommodity'
+import mThirdCommodity from './thirdCommodity'
+import mFourCommodity from './fourCommodity'
 export default {
   name: 'SaCommodity',
   data() {
-    return {}
+    return {
+      assemblyName: '商品设置'
+    }
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -30,7 +43,20 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    mod() {
+      switch (this.item.type) {
+        case 'second':
+          return mSecondCommodity
+        case 'third':
+          return mThirdCommodity
+        case 'four':
+          return mFourCommodity
+        default:
+          return mFirstCommodity
+      }
+    }
+  },
   components: {}
 }
 </script>

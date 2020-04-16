@@ -2,13 +2,14 @@
   <div class="sa-navigation-model">
     <el-tabs :value="assemblyName" type="card">
       <el-tab-pane :label="assemblyName" :name="assemblyName">
-        <m-navigation :item="item" />
+        <component :is="mod" :item="item" />
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
-import mNavigation from './navigation'
+import mFirstNavigation from './firstNavigation'
+import mSecondNavigation from './secondNavigation'
 export default {
   name: 'SaNavigation',
   data() {
@@ -22,6 +23,16 @@ export default {
       default: () => {}
     }
   },
-  components: { mNavigation }
+  computed: {
+    mod() {
+      switch (this.item.type) {
+        case 'second':
+          return mSecondNavigation
+        default:
+          return mFirstNavigation
+      }
+    }
+  },
+  components: { }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="n-first-item-model">
     <img class="icon" src="./../img/va_nav_1.png" alt="">
-    <p class="text">感冒发烧-{{ item.a }}</p>
+    <p class="text">感冒发烧</p>
   </div>
 </template>
 <script>

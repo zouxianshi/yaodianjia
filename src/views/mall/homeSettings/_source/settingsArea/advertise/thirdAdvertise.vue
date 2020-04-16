@@ -1,20 +1,15 @@
 <template>
-  <div class="sa-third-advertise">
-    <el-card class="box-card" shadow="always">
-      <div class="sta-exhibition">
-        <m-third-advertise source="sa" />
-      </div>
-    </el-card>
-    <div class="sta-list-box">
+  <m-sa-layout>
+    <m-third-advertise slot="exhibition" source="sa" />
+    <div slot="item">
       <m-edit-item />
     </div>
-    <div class="sta-submit">
-      <el-button type="primary" style="width: 100%" size="mini">保存广告设置2</el-button>
-    </div>
-  </div>
+    <el-button slot="submit" type="primary" style="width: 100%" size="mini">保存广告设置2</el-button>
+  </m-sa-layout>
 </template>
 <script>
 import mEditItem from './editItem'
+import mSaLayout from '../_source/saLayout'
 import mThirdAdvertise from '../../viewArea/advertise/thirdAdvertise'
 export default {
   name: 'SaThirdAdvertise',
@@ -41,18 +36,11 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mThirdAdvertise, mEditItem }
+  components: { mThirdAdvertise, mEditItem, mSaLayout }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .sa-third-advertise {
-    .sta-exhibition {
-      width: 420px;
-      margin: 0 auto;
-    }
-    .sta-list-box {
-      margin-top: 10px;
-    }
   }
 </style>

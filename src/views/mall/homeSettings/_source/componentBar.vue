@@ -148,7 +148,7 @@ export default {
   data() {
     return {
       dragComponent,
-      activeName: '为你推荐'
+      activeName: '商品'
     }
   },
   computed: {

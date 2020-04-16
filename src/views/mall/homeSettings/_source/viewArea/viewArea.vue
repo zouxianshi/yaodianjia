@@ -9,6 +9,7 @@
     <!--公告-->
     <m-notice />
 
+    <!--拖拽操作-->
     <div class="vam-draggable">
       <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
         <div v-for="(item,$index) in dragList" :key="$index" class="item-component">
@@ -18,7 +19,7 @@
               <span class="sp1">{{ item.name }}组件</span>
               <span class="sp2">请在此区域拖拽</span>
               <div class="oper">
-                <m-edit :item="item" />
+                <m-edit v-if="item.code !== 'recommend'" :item="item" />
                 <m-delete :index="$index" />
               </div>
             </div>
