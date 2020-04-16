@@ -1,29 +1,40 @@
 <template>
   <div class="list-ListIndex-model app-container">
-    <div style="position: absolute;right:20px;top:25px;z-index:300">
-      <el-input v-model="input1" style="width:200px" placeholder="请输入内容" prefix-icon="el-icon-search" />
-    </div>
+    <!-- <div style="position: absolute;right:20px;top:25px;z-index:300">
+      <el-input
+        v-model="input1"
+        style="width:200px"
+        placeholder="请输入内容"
+        prefix-icon="el-icon-search"
+      />
+    </div> -->
     <!-- <el-button type="primary" @click="() => $router.push({ path: '/marketings/activity-manage/coupons/list' })">领劵中心列表</el-button>
     <el-button type="primary" @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add' })">添加优惠券</el-button>-->
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <el-tab-pane label="会员营销" name="first">
         <div class="header-nav">
           <div class="item-box">
-            <m-gift-card v-for="(item, index) in cardInfo" :key="index" :info="item" />
+            <div v-for="(item, index) in cardInfo" :key="index" class="item-border">
+              <m-gift-card :info="item" />
+            </div>
           </div>
         </div>
       </el-tab-pane>
       <el-tab-pane label="商品促销" name="second">
         <div class="header-nav">
           <div class="item-box">
-            <m-gift-card v-for="(item, index) in cardInfo" :key="index" :info="item" />
+            <div v-for="(item, index) in cardInfo" :key="index" class="item-border">
+              <m-gift-card :info="item" />
+            </div>
           </div>
         </div>
       </el-tab-pane>
       <el-tab-pane label="精彩活动" name="third">
         <div class="header-nav">
           <div class="item-box">
-            <m-gift-card v-for="(item, index) in cardInfo" :key="index" :info="item" />
+            <div v-for="(item, index) in cardInfo" :key="index" class="item-border">
+              <m-gift-card :info="item" />
+            </div>
           </div>
         </div>
       </el-tab-pane>
@@ -121,6 +132,15 @@ export default {
       // justify-content: space-between;
       padding: 20px 0;
       flex-wrap: wrap;
+      .item-border {
+        width: 150px;
+        border: 2x solid #ffffff;
+        margin: 0px 5px 5px 0;
+      }
+      .item-border:hover {
+        cursor: pointer;
+        border: 2px solid #4397ed;
+      }
       .gift-card-modal {
         flex: 0 0 150px;
         text-align: center;

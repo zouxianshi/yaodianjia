@@ -8,14 +8,14 @@
     <div class="add-addItem-model">
       <span class="add-addLeft-model">选优惠券:</span>
       <div class="add-addRight-model">
-        <el-button type="primary" size="mini" plain @click="dialogVisible = true">选择会员券</el-button>
+        <el-button type="primary" size="mini" plain @click="handlecheck">选择会员券</el-button>
         <div style="margin-top:10px">已选择6张优惠券</div>
       </div>
     </div>
-    <div v-if="checkedit" class="add-addItem-model">
+    <div v-show="checkedit" class="add-addItem-model">
       <span class="add-addLeft-model">选择优惠券:</span>
       <div class="add-addRight-model">
-        <el-table :data="selectList" height="250" style="width: 100%">
+        <el-table :data="selectlist" height="250" style="width: 100%">
           <el-table-column prop="date" label="优惠券名称" />
           <el-table-column prop="name" label="优惠内容" />
           <el-table-column prop="date" label="使用时间" />
@@ -58,7 +58,7 @@
               <el-button
                 type="text"
                 size="small"
-                @click.native.prevent="deleteRow(scope.$index, selectList)"
+                @click.native.prevent="deleteRow(scope.$index, selectlist)"
               >移除</el-button>
             </template>
           </el-table-column>
@@ -79,46 +79,44 @@
     </div>
     <el-button size="mini">取 消</el-button>
     <el-button type="primary" size="mini">确 定</el-button>
-    <el-dialog
-      title="选择优惠券"
-      :visible.sync="dialogVisible"
-      width="70%"
-      append-to-body
-      :before-close="handleClose"
-    >
-      <!-- <checkCoupon ref="checkCoupons" /> -->
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="checkSure">确 定</el-button>
-      </span>
-    </el-dialog>
+    <checkCoupon ref="checkCoupons" @confincheck="confincheck" />
   </div>
 </template>
 <script>
-// import checkCoupon from './_source/checkCoupon'
+import checkCoupon from './_source/checkCoupon'
 export default {
   name: 'Add',
   components: {
-    // checkCoupon: checkCoupon
+    checkCoupon: checkCoupon
   },
   props: {},
   data() {
     return {
       checkedit: false,
       radio: '免费领取',
-      dialogVisible: false,
-      selectList: [],
+      selectlist: [
+        {
+          date: '2016-05-02',
+          name: '王小虎1',
+          address: '上海市普陀区金沙江路 1518 弄1'
+        }
+      ],
       value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
       value2: ''
     }
   },
   computed: {},
   watch: {
-    selectList() {
-      if (this.selectList.length === 0) {
-        this.checkedit = false
-      } else {
-        this.checkedit = true
+    selectlist() {
+      if (this.selectlist) {
+        this.$nextTick(() => {
+          console.log(this.selectlist)
+          if (this.selectlist.length === 0) {
+            this.checkedit = false
+          } else {
+            this.checkedit = true
+          }
+        })
       }
     }
   },
@@ -131,17 +129,37 @@ export default {
   beforeDestroy() {},
   destroyed() {},
   methods: {
-    handleClose() {
-      this.dialogVisible = false
+    handlecheck() {
+      this.$refs.checkCoupons.defaultcheck(this.selectlist)
     },
-    checkSure() {
-      // this.selectList = this.$refs.checkCoupons.selectlist
-      this.dialogVisible = false
+    confincheck(val) {
+      this.selectlist = val
     },
     deleteRow(index, rows) {
-      rows.splice(index, 1)
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          rows.splice(index, 1)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     change() {}
+    // handlechange(val) {
+    //   console.log(val)
+    //   this.selectlist = val
+    // }
   }
 }
 </script>
@@ -159,7 +177,7 @@ export default {
     }
     .add-addRight-model {
       display: inline-block;
-      .el-icon-edit{
+      .el-icon-edit {
         color: #147de8;
       }
     }

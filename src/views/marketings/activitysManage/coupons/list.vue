@@ -1,6 +1,10 @@
 <template>
   <div class="app-container coupons-index-model">
-    <el-button type="primary" size="mini" @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add' })">添加优惠券</el-button>
+    <el-button
+      type="primary"
+      size="mini"
+      @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add' })"
+    >添加优惠券</el-button>
     <div class="search-form">
       <div class="search-item">
         <div class="search-item">
@@ -18,6 +22,12 @@
       </div>
       <div class="search-item">
         <el-button type="primary" size="small" @click="getList">查询</el-button>
+      </div>
+      <div class="search-item">
+        <el-button type="primary" size="small" @click="exportFun">
+          导出
+          <i class="el-icon-download el-icon--right" />
+        </el-button>
       </div>
     </div>
     <div style="margin-bottom:20px">
@@ -118,14 +128,32 @@ export default {
       console.log('查')
     },
     deleteRow(index, rows) {
-      rows.splice(index, 1)
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          rows.splice(index, 1)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
-    }
+    },
+    exportFun() {}
   }
 }
 </script>
@@ -140,10 +168,10 @@ export default {
       }
     }
   }
-  .block{
+  .block {
     margin-top: 30px;
   }
-  .el-pagination{
+  .el-pagination {
     text-align: right;
   }
 }

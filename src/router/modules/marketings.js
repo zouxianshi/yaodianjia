@@ -106,7 +106,7 @@ export default [
             component: () => import('@/views/marketings/activitysManage/coupons/add'),
             name: 'activitys-manage-coupons-add',
             meta: {
-              title: '领劵中心',
+              title: '添加优惠券',
               auth: false,
               noCache: true,
               activeMenu: '/marketings/activity-manage'
