@@ -20,7 +20,7 @@
         >
           <el-form-item label="商品分组">
             <el-cascader
-              v-model="searchForm.merchant"
+              v-model="searchForm.typeid"
               :loading="typeTreeLoading"
               :options="typeTree"
               :props="merchantOption"
@@ -29,10 +29,10 @@
             />
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-input v-model="searchForm.brand" clearable placeholder="请输入商品品牌" />
+            <el-input v-model="searchForm.brandName" clearable placeholder="请输入商品品牌" />
           </el-form-item>
           <el-form-item label="商品信息">
-            <el-input v-model="searchForm.storeCode" clearable placeholder="商品编码/商品名称" />
+            <el-input v-model="searchForm.searchKeyWord" clearable placeholder="商品编码/商品名称" />
           </el-form-item>
           <el-form-item v-show="false" label="活动开始时间">
             <el-input v-model="searchForm.startTime" clearable />
@@ -154,7 +154,8 @@
 </template>
 
 <script>
-import { queryGoods, getTypeTree } from '@/api/common'
+import { getTypeTree } from '@/api/common'
+import { queryActivityCommGoods } from '@/api/activity'
 export default {
   name: 'DialogGoods',
   props: {
@@ -189,16 +190,10 @@ export default {
         total: 0
       },
       searchForm: {
-        keyWord: '',
-        typeid: '',
-        typeLevel: ''
+        typeid: [],
+        brandName: '',
+        searchKeyWord: ''
       },
-      type1: '',
-      type2: '',
-      type3: '',
-      typeOption1: [],
-      typeOption2: [],
-      typeOption3: [],
       tableData: [],
       multipleSelection: [],
       mySelectList: [],
@@ -229,11 +224,7 @@ export default {
     },
     onTypeChange(typeid) {
       // 分类切换
-      console.log('searchForm------', Array)
-      this.searchForm.typeid =
-        Array.isArray(typeid) && typeid.length ? typeid[typeid.length - 1] : ''
-      this.searchForm.typeLevel =
-        Array.isArray(typeid) && typeid.length ? typeid.length : ''
+      console.log('searchForm------', typeid)
       this.forSearch()
     },
     open() {
@@ -386,19 +377,23 @@ export default {
     },
     _getTableData() {
       this.loading = true
+      const [firstTypeId, secondTypeId, threeTypeId] = this.searchForm.typeid
       const params = {
         commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
-        level: this.searchForm.typeLevel,
+        // level: this.searchForm.typeLevel,
         typeId: this.searchForm.typeid,
-        hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
         infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
         auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
-        name: this.searchForm.keyWord.trim(),
+        brandName: this.searchForm.brandName.trim(),
+        searchKeyWord: this.searchForm.searchKeyWord.trim(),
         currentPage: this.pager.current,
-        pageSize: this.pager.size
+        pageSize: this.pager.size,
+        firstTypeId,
+        secondTypeId,
+        threeTypeId
       }
 
-      queryGoods(params)
+      queryActivityCommGoods(params)
         .then(res => {
           if (res.code === '10000' && res.data) {
             this.tableData = res.data.data || []
