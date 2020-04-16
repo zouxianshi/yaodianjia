@@ -1,5 +1,5 @@
 <template>
-  <span style="color: red">{{ timer ? formatTime(timer): '00:00:00' }}</span>
+  <span style="color: red">{{ formatTime(timer) }}</span>
 </template>
 
 <script>
@@ -49,17 +49,17 @@ export default {
         let s = Math.floor(
           leftTime / 1000 - 24 * 60 * 60 * d - 60 * 60 * h - 60 * m
         ) // 得到最后剩下的毫秒数除以1000 就是秒数，再剩下的毫秒自动忽略即可
-        let hm = Math.floor(
-          (leftTime -
-            24 * 60 * 60 * 1000 * d -
-            60 * 60 * 1000 * h -
-            60 * 1000 * m -
-            s * 1000) /
-            10
-        )
-        if (hm < 10) {
-          hm = '0' + hm
-        }
+        // let hm = Math.floor(
+        //   (leftTime -
+        //     24 * 60 * 60 * 1000 * d -
+        //     60 * 60 * 1000 * h -
+        //     60 * 1000 * m -
+        //     s * 1000) /
+        //     10
+        // )
+        // if (hm < 10) {
+        //   hm = '0' + hm
+        // }
         if (s < 10) {
           s = '0' + s
         }
@@ -69,7 +69,7 @@ export default {
         if (h < 10) {
           h = '0' + h
         }
-        return `${d ? `${d}天` : ''} ${h}:${m}:${s}:${hm}`
+        return `${d ? `${d}天` : ''} ${h}:${m}:${s}`
       }
     }
   }

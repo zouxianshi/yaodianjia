@@ -1709,6 +1709,13 @@ export default {
     },
     handleClick(val) {
       console.log('tab切换了-------', val)
+      if (val.name === 'first') {
+        this.listQuery.orderStatus = ''
+      } else {
+        this.listQuery.orderStatus = '10'
+      }
+      this.listQuery.currentPage = 1
+      this._loadList()
     }
   }
 }
