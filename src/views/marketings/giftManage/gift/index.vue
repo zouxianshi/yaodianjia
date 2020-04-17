@@ -31,7 +31,7 @@
           <el-form-item label="到期提醒：">
             <el-checkbox v-model="discountForm.isRemember" />
             到期前
-            <el-input v-model="discountForm.rememberDay" size="mini" style="width:50px" />
+            <el-input v-model="discountForm.rememberDay" size="mini" maxlength="4" style="width:80px" />
             天微信提醒
           </el-form-item>
           <el-form-item label="使用须知：">
@@ -57,10 +57,14 @@
           <el-form-item label="使用时间：">
             <el-radio-group v-model="discountForm.expiration" style="width:200px">
               <el-radio label="0">
-                自领取起 <el-input v-model="otherData.expirationDay" style="width:40px" /> 天内有效
+                自领取起 <el-input v-model="otherData.expirationDay" maxlength="4" style="width:80px" /> 天内有效
               </el-radio>
               <el-radio label="1">
-                自领取起 <el-input v-model="otherData.notActive" style="width:40px" /> 天后生效，生效后 <el-input v-model="otherData.effective" style="width:40px" /> 天失效
+                自领取起
+                <el-input v-model="otherData.notActive" maxlength="4" style="width:80px" />
+                天后生效，生效后
+                <el-input v-model="otherData.effective" maxlength="4" style="width:80px" />
+                天失效
               </el-radio>
               <el-radio label="2">
                 <el-date-picker
@@ -92,7 +96,7 @@
 </template>
 <script>
 import mPhoneView from '../_source/phoneView' // 手机预览区域
-import mPopSelectStore from '../_source/popSelectStore' // 选择门店弹窗
+import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择门店弹窗
 import mSelectOneProduct from './selectOneProduct' // 选择商品弹窗
 import mSelectedTabel from '../_source/selectedTabel' // 已选择显示列表
 export default {
@@ -167,7 +171,6 @@ export default {
   overflow: auto;
   .content {
     display: flex;
-    height: calc(100vh - 200px);
     .discount-content-l {
       flex: 0 0 24%;
     }

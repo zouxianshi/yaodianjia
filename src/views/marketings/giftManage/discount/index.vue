@@ -184,7 +184,6 @@ export default {
   overflow: auto;
   .content {
     display: flex;
-    height: calc(100vh - 200px);
     .discount-content-l {
       flex: 0 0 24%;
     }

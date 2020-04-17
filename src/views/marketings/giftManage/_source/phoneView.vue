@@ -17,7 +17,7 @@
           <div>使用条件：{{ useRules }}</div>
           <div>可用时间：{{ userTime }}</div>
           <div>可用门店：{{ data.store === '0' ? '全部门店':'部分门店' }}</div>
-          <div>使用须知：{{ data.notice }}</div>
+          <div style="white-space:normal;word-break:break-all;word-wrap:break-word">使用须知：{{ data.notice }}</div>
         </div>
         <div class="p-bottom">
           <div class="codeImg">二维码</div>
@@ -80,7 +80,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .phone-view-modal {
-  border: 1px solid #aaa;height:80%;box-sizing:border-box;
+  border: 1px solid #aaa;box-sizing:border-box;
   .header {
     background-color: #333;
     color: #fff;
@@ -92,9 +92,9 @@ export default {
     }
   }
   .body{
-    height: calc(100% - 40px);padding: 20px;box-sizing:border-box;
+    padding: 20px;box-sizing:border-box;
     .content{
-      border: 1px solid #aaa;height: 100%;position:relative;
+      border: 1px solid #aaa;position:relative;
       .algin-center{
         text-align: center;width: 100%;padding-top:5%;margin-bottom: 20px;
         img{
@@ -112,7 +112,7 @@ export default {
         line-height: 24px;
       }
       .p-bottom{
-        position: absolute;bottom: 0;text-align: center;height: 130px;width: 100%;
+        text-align: center;height: 130px;width: 100%;margin-top: 20px;
         padding-top: 10px;border-top: 2px dotted #999;
         .codeImg{
           height: 80px;border: 1px solid #eee;width: 80%;margin: 0 auto 15px;
