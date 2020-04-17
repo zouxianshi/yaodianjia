@@ -45,6 +45,7 @@
               <span v-if="form.store==='1'" @click="selectStore">选择门店</span>
             </el-radio>
           </el-radio-group>
+          <mSelectedStore v-show="form.store==='1'&&selectedStores.length>0" ref="selectedStoreView" @onDel="onGetSelectStore" />
         </el-form-item>
         <el-form-item label="适用商品：" prop="commodity">
           <el-radio-group v-model="form.commodity">
@@ -58,7 +59,7 @@
         <el-form-item v-if="form.commodity=='0'" label="消费金额：" prop="amount">
           <span class="amTips">
             购满金额
-            <el-input v-model="form.amount" size="mini" style="width:50px" type="number" />元，可参与活动
+            <el-input v-model.number="form.amount" size="mini" style="width:50px" />元，可参与活动
           </span>
         </el-form-item>
       </el-form>
@@ -90,24 +91,22 @@
     <div class="submit-box">
       <el-button type="primary" @click="submitData()">提交</el-button>
     </div>
-    <mPopSelectStore ref="selectStore" />
+    <mPopSelectStore ref="selectStore" @onSelect="onGetSelectStore" />
   </div>
 </template>
 <script>
 // import { mapGetters } from 'vuex'
 import mPopSelectStore from '@/components/Marketings/popSelectStore'
+import mSelectedStore from '@/components/Marketings/SelectedStore'
 export default {
   name: 'PaymentGiftAdd',
   components: {
-    mPopSelectStore
+    mPopSelectStore, mSelectedStore
   },
   data() {
     return {
       form: {
-        huodongshijian: [
-          // new Date(2000, 10, 10, 10, 10),
-          // new Date(2000, 10, 11, 10, 10)
-        ], // 活动时间
+        huodongshijian: [], // 活动时间
         name: '', // 活动名称
         desc: '', // 活动说明
         range: '0', // 活动范围
@@ -129,8 +128,9 @@ export default {
           {
             type: 'number',
             min: 0,
-            message: '消费金额不能小于0',
-            trigger: 'blur', required: true
+            message: '消费金额必须为数字且不能小于0',
+            trigger: 'blur',
+            required: true
           }
         ],
         youhuiquan: [
@@ -146,8 +146,7 @@ export default {
           { required: true, message: '请选择发放时间', trigger: 'blur' }
         ]
       },
-      dialogImageUrl: '',
-      dialogVisible: false
+      selectedStores: [] // 已选的门店集合
     }
   },
   computed: {
@@ -157,10 +156,11 @@ export default {
     // }
   },
   methods: {
-    // 选择商品
+    // 选择门店
     selectStore() {
-      this.$refs.selectStore.show([])
+      this.$refs.selectStore.show(this.selectedStores)
     },
+
     // 选择商品
     selectCommodity() {
       // this.$refs.selectCommodity.show()
@@ -170,6 +170,12 @@ export default {
     },
     submitData() {
       console.log(this.form)
+      console.log(this.selectedStores)
+    },
+    onGetSelectStore(selectedStores) {
+      this.selectedStores = selectedStores
+      this.$refs.selectedStoreView.show(selectedStores)
+      console.log('选择的门店：' + JSON.stringify(selectedStores))
     }
   }
 }
