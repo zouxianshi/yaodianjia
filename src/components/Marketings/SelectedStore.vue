@@ -33,7 +33,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.selectedStores = this.selectedStores.filter(item => item !== row)
-        this.$emit('onSelect', this.selectedStores)
+        this.$emit('onDel', this.selectedStores)
       })
     }
   }
