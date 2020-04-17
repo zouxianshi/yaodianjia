@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <a href="#/marketing/gifts/complimentary-create">
+    <a href="#/marketing/gifts/complimentary-edit">
       <el-button class="btn btn-add" type="primary" size="small">新建赠品</el-button>
     </a>
     <section style="margin-top: 10px">

@@ -5,7 +5,7 @@
         <el-form ref="xForm" :model="xForm" :rules="xRules" size="small" label-width="80px" :disabled="disabled">
           <el-form-item label="活动类型">
             <el-radio-group v-model="xForm.type">
-              <el-radio :label="11">限时特惠</el-radio>
+              <el-radio :label="12">限时秒杀</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="活动名称" prop="name">
@@ -78,6 +78,7 @@
                   <el-option v-if="xForm.mode === 1" class="x-option" label="批量设置折扣" value="1" />
                   <el-option v-if="xForm.mode === 2" label="批量设置减价" value="2" />
                   <el-option label="批量设置限购" value="3" />
+                  <el-option v-if="xForm.type === 12" label="批量设置库存" value="4" />
                 </el-select>
               </el-form-item>
             </el-form>
@@ -109,6 +110,16 @@
                   >
                     <el-input v-model="scope.row.limitAmount" style="width:92px;text-align:center" :disabled="disabled" maxlength="8" />
                     <span v-show="scope.row.limitAmount ==='0'" style="margin-left: 5px;color: #e6a23c;">不限购</span>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column v-if="xForm.type === 12" label="库存" prop="name" min-width="160px">
+                <template slot-scope="scope">
+                  <el-form-item
+                    :prop="'selectedGoods.' + scope.$index + '.stockAmount'"
+                    :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
+                  >
+                    <el-input v-model="scope.row.stockAmount" style="width: 92px" :disabled="disabled" maxlength="8" />
                   </el-form-item>
                 </template>
               </el-table-column>
@@ -226,7 +237,7 @@ export default {
       type: '',
       xForm: {
         id: '',
-        type: 11, // 11.限时优惠 12.限时秒杀
+        type: 12, // 11.限时优惠 12.限时秒杀
         name: '',
         description: '',
         dateRange: [],
@@ -476,6 +487,16 @@ export default {
               //   storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
               //     : ''
               // }
+              if (this.xForm.type === 12) { // 限时秒杀
+                const resultIndex = this.tableForm.selectedGoods.findIndex(item => {
+                  console.log('goods item', item)
+                  return parseFloat(item.limitAmount) > parseFloat(item.stockAmount)
+                })
+                if (resultIndex > -1) {
+                  this.$message.warning('秒杀的限购数不能大于当前设置的库存数')
+                  return false
+                }
+              }
               const data = {
                 allStore: this.allStore,
                 stores: this.selectedStore.map((item) => {

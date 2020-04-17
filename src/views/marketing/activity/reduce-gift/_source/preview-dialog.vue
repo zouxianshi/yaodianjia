@@ -1,40 +1,60 @@
 <template>
-  <span>
-    <el-button type="text" @click="dialogVisible=true">活动连接</el-button>
-    <el-dialog
-      title="预览"
-      custom-class="preview-diaglog"
-      center
-      :append-to-body="true"
-      :visible.sync="dialogVisible"
-      width="30%"
-    >
-      <el-input v-model="item.input3" placeholder="请输入内容" disabled class="input-with-select">
-        <el-button slot="append" type="primary" @click="doCopy('www.baidu.com')">复制连接</el-button>
-      </el-input>
-      <div class="post-img-wrap">
-        <div ref="img_wrapper">
-          <img :src="require('@/assets/image/acvity/limit-preferential.png')">
-          <div class="qcodeimg">
-            <img :src="item.qcode">
-            <div class="title">扫码参加活动</div>
-          </div>
+  <el-dialog
+    title="预览"
+    custom-class="preview-diaglog"
+    center
+    :append-to-body="true"
+    :visible.sync="dialogVisible"
+    width="500px"
+  >
+    <!-- <el-input v-model="item.input3" placeholder="请输入内容" disabled class="input-with-select">
+      <el-button slot="append" type="primary" @click="doCopy('www.baidu.com')">复制连接</el-button>
+    </el-input>-->
+    <div class="post-img-wrap">
+      <div ref="img_wrapper" class="img_wrapper">
+        <img :src="poster">
+        <div class="activity-store">益丰大药房</div>
+        <div class="activity-title">满1元享受优惠</div>
+        <div class="activity-desc">全场满1元立减0.1元</div>
+        <div class="activity-time">活动时间：2020.02.11至2020.04.18</div>
+        <div class="qcodeimg">
+          <img :src="item.qcode">
         </div>
+        <div class="activity-info">扫码参加活动</div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <div class="action">
+        <el-button
+          style="margin-bottom: 10px"
+          plain
+          :loading="downLoding"
+          type="primary"
+          @click="downPoster"
+        >下载海报</el-button>
         <a :href="item.qcode" download="二维码.png">
           <el-button plain type="primary">下载二维码</el-button>
         </a>
-        <el-button plain :loading="downLoding" type="primary" @click="downPoster">下载海报</el-button>
-      </span>
-    </el-dialog>
-  </span>
+        <el-button
+          slot="append"
+          style="margin-top: 10px"
+          type="success"
+          @click="doCopy('www.baidu.com')"
+        >复制活动连接</el-button>
+      </div>
+    </div>
+    <!-- <span slot="footer" class="dialog-footer">
+      <a :href="item.qcode" download="二维码.png">
+        <el-button plain type="primary">下载二维码</el-button>
+      </a>
+      <el-button plain :loading="downLoding" type="primary" @click="downPoster">下载海报</el-button>
+    </span>-->
+  </el-dialog>
 </template>
 
 <script>
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
 import html2canvas from 'html2canvas'
+import poster from '@/assets/image/acvity/poster.png'
 Vue.use(VueClipboard)
 export default {
   props: {
@@ -52,10 +72,15 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      downLoding: false
+      downLoding: false,
+      poster
     }
   },
   methods: {
+    open() {
+      console.log('1111111111111')
+      this.dialogVisible = true
+    },
     // 复制
     doCopy(row) {
       this.$copyText(row).then(
@@ -99,29 +124,81 @@ export default {
     color: #fff;
   }
   .post-img-wrap {
-    margin: 20px 0;
-    padding: 10px;
-    border: 1px solid #ddd;
-    position: relative;
-    img {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    .qcodeimg {
-      position: absolute;
-      left: 50%;
-      bottom: 20px;
-      transform: translate(-50%, 0);
+    // margin: 20px 0;
+    // padding: 10px;
+    // border: 1px solid #ddd;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    .img_wrapper {
+      position: relative;
       img {
-        width: 100px;
-        height: 100px;
+        width: 100%;
+        height: 100%;
+        display: block;
       }
-      .title {
+      .qcodeimg {
+        position: absolute;
+        left: 50%;
+        bottom: 60px;
+        transform: translate(-50%, 0);
+        img {
+          width: 160px;
+          height: 160px;
+        }
+      }
+      .activity-store {
+        font-size: 18px;
+        font-weight: 500;
+        position: absolute;
+        top: 19px;
+        left: 50%;
+        transform: translate(-24%, 0);
         color: #fff;
-        line-height: 30px;
-        text-align: center;
       }
+      .activity-title {
+        position: absolute;
+        top: 84px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        font-size: 24px;
+        color: #FC6963;
+        white-space: nowrap;
+      }
+      .activity-desc {
+        position: absolute;
+        top: 120px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        font-size: 14px;
+        color: #DD9B7E;
+        white-space: nowrap;
+      }
+      .activity-time {
+        position: absolute;
+        top: 170px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        line-height: 24px;
+        padding: 0 10px;
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
+        border:1px solid rgba(255,239,232,1);
+      }
+      .activity-info {
+        color: #ffd0d0;
+        line-height: 30px;
+        font-size: 14px;
+        text-align: center;
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
+    }
+    .action {
+      margin-left: 10px;
     }
   }
 }

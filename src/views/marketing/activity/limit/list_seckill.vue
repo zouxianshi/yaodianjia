@@ -7,7 +7,7 @@
         size="small"
         @click.stop="toCreate()"
       >新建活动</el-button>-->
-      <a href="#/marketing/activity/limit-edit">
+      <a href="#/marketing/activity/limit-sec-edit">
         <el-button class="btn btn-add" type="primary" size="small">新建活动</el-button>
       </a>
       <section @keydown.enter="search()">

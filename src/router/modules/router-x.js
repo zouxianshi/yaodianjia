@@ -78,16 +78,6 @@ const router = [
         }
       },
       {
-        path: 'activity/limt-list',
-        component: () => import('@/views/marketing/activity/limit/list'),
-        name: 'limitList',
-        meta: {
-          title: '限时活动',
-          noCache: true,
-          activeMenu: '/marketing/activity'
-        }
-      },
-      {
         path: 'activity/create',
         component: () => import('@/views/marketing/activity/create'),
         name: 'create',
@@ -97,16 +87,7 @@ const router = [
           noCache: true
         }
       },
-      {
-        path: 'activity/limit-edit',
-        component: () => import('@/views/marketing/activity/limit/limit-edit'),
-        name: 'limitEdit',
-        meta: {
-          title: '限时优惠',
-          noCache: true,
-          activeMenu: '/marketing/activity'
-        }
-      },
+
       {
         path: 'activity/dm-template',
         component: () => import('@/views/marketing/activity/DM/template'),
@@ -176,6 +157,65 @@ const router = [
           noCache: true,
           activeMenu: '/marketing/activity'
         }
+      }, {
+        path: 'activity/assemble',
+        component: () => import('@/views/marketing/activity/assemble/list'),
+        name: 'assembleList',
+        meta: {
+          title: '拼团活动',
+          noCache: true,
+          activeMenu: '/marketing/activity/assemble'
+        }
+      },
+      {
+        path: 'activity/assemble-edit',
+        component: () => import('@/views/marketing/activity/assemble/edit'),
+        name: 'assembleEdit',
+        meta: {
+          title: '拼团活动',
+          noCache: true,
+          activeMenu: '/marketing/activity/assemble'
+        }
+      },
+      {
+        path: 'activity/limit',
+        component: () => import('@/views/marketing/activity/limit/list'),
+        name: 'limitList',
+        meta: {
+          title: '限时特惠',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/limit-edit',
+        component: () => import('@/views/marketing/activity/limit/limit-edit'),
+        name: 'limitEdit',
+        meta: {
+          title: '创建限时特惠',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/limit-sec',
+        component: () => import('@/views/marketing/activity/limit/list_seckill'),
+        name: 'limitList',
+        meta: {
+          title: '限时秒杀',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/limit-sec-edit',
+        component: () => import('@/views/marketing/activity/limit/limit_seckill_edit'),
+        name: 'limitEdit',
+        meta: {
+          title: '创建限时秒杀',
+          noCache: true,
+          activeMenu: '/marketing/activity'
+        }
       },
       // 礼品管理模块
       {
@@ -206,26 +246,6 @@ const router = [
           title: '创建赠品',
           auth: 'marketing.gift',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-        }
-      },
-      {
-        path: 'activity/assemble',
-        component: () => import('@/views/marketing/activity/assemble/list'),
-        name: 'assembleList',
-        meta: {
-          title: '拼团活动',
-          noCache: true,
-          activeMenu: '/marketing/activity/assemble'
-        }
-      },
-      {
-        path: 'activity/assemble-edit',
-        component: () => import('@/views/marketing/activity/assemble/edit'),
-        name: 'assembleEdit',
-        meta: {
-          title: '拼团活动',
-          noCache: true,
-          activeMenu: '/marketing/activity/assemble'
         }
       }
     ]

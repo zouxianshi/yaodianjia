@@ -12,10 +12,14 @@
       </el-form-item>
       <el-form-item label="选择商品：" required>
         <template>
-          <store-goods-view :limit-max="1" @on-change="handleSelectGoods">选择商品</store-goods-view>
+          <el-button type="primary" plain size="small" @click="$refs.GoodsComponent.open()">选择商品</el-button>
+          <!-- <store-goods-view :limit-max="1" @on-change="handleSelectGoods">选择商品</store-goods-view> -->
           <div class="info">一个赠品对应一个商品</div>
-          <gift-list :cols="cols" :data="storeGoods" />
         </template>
+      </el-form-item>
+      <el-form-item>
+        <!-- <gift-list :cols="cols" :data="storeSelectGoods" /> -->
+        <select-goods ref="storeGods" @del-item="delSelectGoods" />
       </el-form-item>
       <el-form-item label="赠品库存：" prop="stock">
         <template>
@@ -43,15 +47,18 @@
         <el-button type="primary" style="width: 120px" @click="submit">提交</el-button>
       </el-form-item>
     </el-form>
+    <!-- 选择主商品组件 -->
+    <store-goods ref="GoodsComponent" :limit-max="1" :list="storeSelectGoods" @on-change="handleSelectGoods" />
   </div>
 </template>
 
 <script>
-import storeGoodsView from '../../components/store-gods'
-import giftList from './list'
+import storeGoods from '../../components/store-gods'
+// import giftList from './list'
+import selectGoods from '../../components/select-goods'
 import { createGift } from '@/api/activity'
 export default {
-  components: { storeGoodsView, giftList },
+  components: { storeGoods, selectGoods },
   data() {
     const checkLimitStock = (rule, value, callback) => {
       if (this.form.limit === 1) {
@@ -79,7 +86,7 @@ export default {
         limitStock: '',
         stock: ''
       },
-      storeGoods: [], // 选择的商品信息
+      storeSelectGoods: [], // 选择的商品信息
       cols: [
         {
           prop: 'mainPic',
@@ -115,13 +122,17 @@ export default {
   methods: {
     handleSelectGoods(val) {
       console.log('handleSelectGoods----我是传递过来的', val)
-      this.storeGoods = val
+      this.storeSelectGoods = val
+      this.$refs.storeGods.dataFrom(val)
     },
     submit() {
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log('submit ok', valid)
-          if (Array.isArray(this.storeGoods) && this.storeGoods.length) {
+          if (
+            Array.isArray(this.storeSelectGoods) &&
+            this.storeSelectGoods.length
+          ) {
             createGift()
               .then(res => {
                 console.log(res)
@@ -150,6 +161,12 @@ export default {
           return false
         }
       })
+    },
+    delSelectGoods(item, index) {
+      console.log('item, index', item, index)
+      this.storeSelectGoods.splice(index, 1)
+      this.$refs.storeGods.dataFrom(this.storeSelectGoods)
+      // this.storeSelectGoods = this.storeSelectGoods
     }
   }
 }

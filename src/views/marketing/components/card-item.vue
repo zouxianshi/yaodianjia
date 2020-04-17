@@ -1,26 +1,41 @@
 <template>
   <el-card class="activity-card" shadow="hover">
-    <div>
-      <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item.linkUrl)" />
-      <div class="activity-bottom">
-        <div class="activity-header">
-          <div class="title">{{ item.lable }}</div>
-          <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
-            <div class="sub-title">{{ item.desc || '' }}</div>
-          </el-tooltip>
-        </div>
-        <div class="action">
-          <el-button type="text" icon="el-icon-takeaway-box" class="button" @click="handleJump(item.linkUrl)">{{ item.lable }}列表</el-button>
-          <el-divider direction="vertical" />
-          <el-button type="text" icon="el-icon-document-add" class="button" @click="handleJump(`${item.linkUrl}-edit`)">新建数据</el-button>
-        </div>
+    <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item.linkUrl)" />
+    <div class="activity-bottom">
+      <div class="activity-header">
+        <div class="title">{{ item.lable }}</div>
+        <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
+          <div class="sub-title">{{ item.desc || '' }}</div>
+        </el-tooltip>
+      </div>
+      <div class="action">
+        <el-button
+          type="text"
+          icon="el-icon-takeaway-box"
+          class="button"
+          @click="handleJump(item.linkUrl)"
+        >{{ item.lable }}列表</el-button>
+        <el-divider direction="vertical" />
+        <el-button
+          type="text"
+          icon="el-icon-document-add"
+          class="button"
+          @click="handleJump(`${item.linkUrl}-edit`)"
+        >新建数据</el-button>
       </div>
     </div>
+    <!-- 右上角的事件 -->
+    <el-image v-if="item.extra" class="share" :src="item.extra" alt @click="onShare" />
+    <preview-dialog ref="previewDialog" />
   </el-card>
 </template>
 
 <script>
+import previewDialog from '../activity/reduce-gift/_source/preview-dialog'
 export default {
+  components: {
+    previewDialog
+  },
   props: {
     item: Object
   },
@@ -28,14 +43,24 @@ export default {
     handleJump(url) {
       console.log('1111111---handleJump', url)
       this.$router.push(url)
+    },
+    onShare() {
+      console.log('我是分享页面---------')
+      this.$refs.previewDialog.open()
     }
   }
 }
 </script>
 
 <style lang="scss">
+.text-overflow-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .activity-card {
   margin-bottom: 10px;
+  position: relative;
   cursor: pointer;
   .el-card__body {
     padding: 0;
@@ -64,9 +89,18 @@ export default {
         -webkit-box-orient: vertical;
       }
     }
-    // .action {
-    //   text-align: right;
-    // }
+    .action {
+      // @extend .text-overflow-1;
+    }
+  }
+  .share {
+    position: absolute;
+    padding: 5px;
+    box-sizing: content-box;
+    right: 0;
+    top: 0;
+    width: 35px;
+    height: 35px;
   }
 }
 </style>

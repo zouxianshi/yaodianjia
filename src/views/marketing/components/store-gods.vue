@@ -345,8 +345,6 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          console.log(mItem)
-          console.log(item)
           return mItem.specId === item.specId
         })
         if (index > -1) {
