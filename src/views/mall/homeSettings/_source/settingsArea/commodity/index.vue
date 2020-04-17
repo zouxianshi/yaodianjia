@@ -8,6 +8,7 @@
   </div>
 </template>
 <script>
+// comm-spec/_search
 import mFirstCommodity from './firstCommodity'
 import mSecondCommodity from './secondCommodity'
 import mThirdCommodity from './thirdCommodity'

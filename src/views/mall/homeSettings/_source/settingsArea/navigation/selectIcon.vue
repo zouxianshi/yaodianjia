@@ -1,37 +1,58 @@
 <template>
   <el-popover v-model="visible" placement="bottom-start" trigger="click" :popper-class="'nav-select-icon'">
     <div class="scrollbar select-icon-box">
-      <div v-for="(el,i) in defaultIcons" :key="i" class="sim-item" :class="{active:i === 3}">
-        <div :class="'sa-default-icons-' + i" />
+      <div v-for="(el,i) in defaultIcons" :key="i" class="sim-item" :class="{active:el.icon === activeIcon}" @click="onSelect(el.icon)">
+        <m-icons :icon-clx="el.icon" />
         <i class="el-icon-caret-top" />
       </div>
     </div>
     <div class="select-icon-ope">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-      <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+      <el-button type="primary" size="mini" @click="onSubmit">确定</el-button>
     </div>
     <el-button slot="reference" icon="el-icon-caret-bottom">选择图标</el-button>
   </el-popover>
-
 </template>
 <script>
 import _ from 'lodash'
+import mIcons from './../../_source/icons'
 export default {
   name: 'SelectIcon',
   data() {
     return {
       visible: false,
-      url: './sa_default_icons_0.png',
+      activeIcon: '',
       defaultIcons: _.times(17, v => {
         return {
-          icon: `../img/sa_default_icons_${v}.png`
+          icon: `sa_default_icons_${v}`
         }
       })
     }
   },
-  props: {},
-  methods: {},
-  watch: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    async onSubmit() {
+      await this.$emit('on-upload', { img: this.activeIcon })
+      this.visible = false
+    },
+    onSelect(icon) {
+      this.activeIcon = icon
+    }
+  },
+  watch: {
+    'item.img': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.activeIcon = v
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
@@ -49,7 +70,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { mIcons }
 }
 </script>
 
@@ -95,13 +116,6 @@ export default {
     .select-icon-ope {
       padding-top: 10px;
       text-align: right;
-    }
-  }
-  @for $i from 0 through 17 {
-    .sa-default-icons-#{$i} {
-      width: 64px;
-      height: 64px;
-      background: url('./../img/sa_default_icons_#{$i}.png');
     }
   }
 </style>

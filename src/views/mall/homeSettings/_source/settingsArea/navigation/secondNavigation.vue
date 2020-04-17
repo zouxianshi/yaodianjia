@@ -1,29 +1,76 @@
 <template>
   <m-sa-layout class="sa-second-navigation">
     <div slot="exhibition">
-      <m-second-item v-for="(el,i) in 10" :key="i" />
+      <m-second-item v-for="(el,i) in searchParams.itemList" :key="i" source="sa" :item="el" :index="i" />
     </div>
     <div slot="item">
-      <m-edit-item />
+      <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :item="el" :index="i" :is-add="isAdd(i)" :is-disabled="isDisabled(i)" @on-item="_onItem" />
     </div>
-    <el-button slot="submit" type="primary" style="width: 100%" size="mini">保存导航设置1</el-button>
+    <el-button slot="submit" type="primary" style="width: 100%" size="mini" @click="onSubmit">保存导航设置2</el-button>
   </m-sa-layout>
 </template>
 <script>
 import mEditItem from './editItem'
 import mSaLayout from '../_source/saLayout'
 import mSecondItem from '../../viewArea/navigation/secondItem'
+import { itemParams } from '../../viewArea/navigation/default'
 export default {
   name: 'SecondNavigation',
   data() {
-    return {}
+    return {
+      searchParams: {
+        dimensionId: '',
+        id: '',
+        itemList: '',
+        subType: 'second',
+        title: '',
+        type: 'navigation'
+      }
+    }
   },
-  props: {},
-  methods: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    onSubmit() {
+      const { itemList } = this.searchParams
+      const list = []
+      _.map(itemList, (v, i) => {
+        const refs = this.$refs[`editItem_${i}`][0].$verification()
+        if (typeof refs === 'object') {
+          list.push(refs)
+        }
+      })
+
+      if (itemList.length === list.length) {
+        this.searchParams.itemList = list
+        this.$emit('on-update', list)
+      }
+    },
+    isAdd(i) {
+      return (this.searchParams.itemList.length - 1) === i && i < 9
+    },
+    isDisabled() {
+      return !(this.searchParams.itemList.length > 5)
+    },
+    _onAdd() {
+      this.searchParams.itemList.push(itemParams)
+    },
+    _onDel(i) {
+      this.searchParams.itemList.splice(i, 1)
+    },
+    _onItem(item, i) {
+      this.$set(this.searchParams.itemList, i, item)
+    }
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
+    this.searchParams.itemList = _.cloneDeep(this.item.data)
   },
   beforeMount() {
   },

@@ -2,12 +2,13 @@
   <div class="sa-navigation-model">
     <el-tabs :value="assemblyName" type="card">
       <el-tab-pane :label="assemblyName" :name="assemblyName">
-        <component :is="mod" :item="item" />
+        <component :is="mod" :item="item" @on-update="_onUpdate" />
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 import mFirstNavigation from './firstNavigation'
 import mSecondNavigation from './secondNavigation'
 export default {
@@ -23,7 +24,14 @@ export default {
       default: () => {}
     }
   },
+  methods: {
+    _onUpdate(v) {
+      // const i = _.findIndex(this.dragData,)
+      // console.log(v)
+    }
+  },
   computed: {
+    ...mapState('mall', ['dragData']),
     mod() {
       switch (this.item.type) {
         case 'second':

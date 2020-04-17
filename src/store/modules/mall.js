@@ -6,12 +6,128 @@
 
 // import _ from 'lodash'
 import { uuid } from '@/utils'
-import navigation from '@/views/mall/homeSettings/_source/viewArea/navigation/default'
+// import navigation from '@/views/mall/homeSettings/_source/viewArea/navigation/default'
 
-/**
- * 默认无数据状态
- */
-const noData = [
+/* const testData = [
+  {
+    uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
+    name: '商品',
+    type: 'first',
+    code: 'commodity',
+    data: []
+  },
+  {
+    uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
+    name: '导航栏',
+    type: 'second',
+    code: 'navigation',
+    data: navigation.second
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'four',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'third',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'second',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'first',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
+    name: '导航栏',
+    type: 'second',
+    code: 'navigation',
+    data: navigation.second
+  },
+  {
+    uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
+    name: '为你推荐',
+    type: 'second',
+    code: 'recommend',
+    data: []
+  },
+  {
+    uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
+    name: '为你推荐',
+    type: 'first',
+    code: 'recommend',
+    data: []
+  },
+  {
+    uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
+    name: '商品',
+    type: 'four',
+    code: 'commodity',
+    data: []
+  },
+  {
+    uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
+    name: '商品',
+    type: 'third',
+    code: 'commodity',
+    data: []
+  },
+  {
+    uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
+    name: '商品',
+    type: 'second',
+    code: 'commodity',
+    data: []
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'five',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
+    name: '标题',
+    type: 'first',
+    code: 'title',
+    data: ''
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'third',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'four',
+    code: 'advertise',
+    data: []
+  },
+  {
+    uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
+    name: '广告图',
+    type: 'second',
+    code: 'advertise',
+    data: []
+  },
   {
     uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
     name: '商品',
@@ -136,6 +252,19 @@ const noData = [
     name: '广告图',
     type: 'second',
     code: 'advertise',
+    data: []
+  }
+]*/
+
+/**
+ * 默认无数据状态
+ */
+const noData = [
+  {
+    uuid: `${uuid('no-data-')}${uuid()}${uuid()}${uuid()}`,
+    name: 'no-data',
+    type: 'no-data',
+    code: 'no-data',
     data: []
   }
 ]

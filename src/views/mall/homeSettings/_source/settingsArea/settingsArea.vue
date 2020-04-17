@@ -1,6 +1,6 @@
 <template>
   <div class="settings-area-model">
-    <component :is="mod" :item="{...item,type:'four'}" />
+    <component :is="mod" :item="item" />
   </div>
 </template>
 <script>
@@ -16,8 +16,8 @@ export default {
   data() {
     return {
       item: {
-        // code:'mall-title',
-        code: 'commodity'
+        code: 'mall-title'
+        // code: 'commodity'
       }
     }
   },
@@ -55,9 +55,7 @@ export default {
   },
   methods: {
     setSelected(item) {
-      $('.hsm-hm').animate({
-        scrollTop: 0
-      }, 400)
+      $('.hsm-hm').animate({ scrollTop: 0 }, 400)
       this.item = item
       this.selected = item.code
     }
@@ -77,6 +75,10 @@ export default {
         height: 36px;
         line-height: 36px;
       }
+    }
+    .sa-error {
+      font-size: 12px;
+      color: #ff0000;
     }
   }
 </style>

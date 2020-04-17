@@ -23,9 +23,10 @@ export default {
     position: absolute;
     left: 0;
     top: 0;
-    width: 70px;
-    height: 30px;
-    line-height: 30px;
+    display: inline-block;
+    padding: 0 8px;
+    height: 24px;
+    line-height: 24px;
     text-align: center;
     color: #fff;
     font-size: 13px;

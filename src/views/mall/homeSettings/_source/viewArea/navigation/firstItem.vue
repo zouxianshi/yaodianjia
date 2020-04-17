@@ -1,10 +1,19 @@
 <template>
   <div class="n-first-item-model">
-    <img class="icon" src="./../img/va_nav_1.png" alt="">
-    <p class="text">感冒发烧</p>
+    <m-tag-ads v-if="source === 'sa'" :text="`导航${index + 1}`" />
+    <template v-if="item.img">
+      <img v-if="item.img.startsWith('http')" class="icon" :src="item.img" :alt="item.name">
+      <div v-else>
+        <m-icons :icon-clx="item.img" :size="73" />
+      </div>
+    </template>
+    <m-Icons v-else icon-clx="no-data" :size="73" />
+    <p class="text">{{ item.name }}</p>
   </div>
 </template>
 <script>
+import mTagAds from './../_source/tagAds'
+import mIcons from './../../_source/icons'
 export default {
   name: 'VaFirstItem',
   data() {
@@ -14,8 +23,15 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    index: {
+      type: Number,
+      default: null
+    },
+    source: {
+      type: String,
+      default: 'va'
     }
-
   },
   methods: {},
   watch: {},
@@ -35,8 +51,10 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
-  components: {}
+  computed: {
+
+  },
+  components: { mIcons, mTagAds }
 }
 </script>
 
@@ -45,6 +63,7 @@ export default {
     text-align: center;
     width: 73px;
     margin: 0 15px 18px 15px;
+    position: relative;
     .icon {
       width: 73px;
       height: 73px;
@@ -55,5 +74,6 @@ export default {
       color: #333;
       padding-top: 8px;
     }
+
   }
 </style>
