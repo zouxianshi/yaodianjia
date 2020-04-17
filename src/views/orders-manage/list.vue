@@ -1207,9 +1207,9 @@ export default {
         getMyStoreList({
           pageSize: 10000,
           currentPage: 1,
-          storeName: val,
-          onlineStatus: 1,
-          status: 1
+          storeName: val
+          // onlineStatus: 1,
+          // status: 1
         })
           .then(res => {
             const { data } = res.data
