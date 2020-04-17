@@ -14,9 +14,9 @@
       <div ref="img_wrapper" class="img_wrapper">
         <img :src="poster">
         <div class="activity-store">益丰大药房</div>
-        <div class="activity-title">满1元享受优惠</div>
-        <div class="activity-desc">全场满1元立减0.1元</div>
-        <div class="activity-time">活动时间：2020.02.11至2020.04.18</div>
+        <div class="activity-title">满减专场</div>
+        <div class="activity-desc">爆款商品限时限量优惠</div>
+        <!-- <div class="activity-time">活动时间：2020.02.11至2020.04.18</div> -->
         <div class="qcodeimg">
           <img :src="item.qcode">
         </div>

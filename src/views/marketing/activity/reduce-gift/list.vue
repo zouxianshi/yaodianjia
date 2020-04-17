@@ -55,22 +55,30 @@
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="202">
-            <!--
-              进行中（复制链接、失效），时间状态
-              未开始（编辑、删除）
-              已结束（查看、删除
-             -->
+          <el-table-column label="操作" width="130">
             <template slot-scope="scope">
               <el-button type="text">查看</el-button>
               <el-divider direction="vertical" />
-              <el-button type="text" @click="endActivity(scope.row)">失效</el-button>
-              <el-divider direction="vertical" />
-              <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
-              <el-divider direction="vertical" />
-              <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
-              <el-divider direction="vertical" />
-              <preview-dialog />
+              <el-dropdown trigger="hover">
+                <span class="el-dropdown-link">
+                  更多
+                  <i class="el-icon-arrow-down el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>
+                    <el-button type="text" @click="$refs.setActFrom.open(scope.row.activityId)">推广设置</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text" @click="endActivity(scope.row)">失效</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -88,6 +96,8 @@
         />
       </section>
     </div>
+    <!-- 推广设置 -->
+    <actform ref="setActFrom" />
   </div>
 </template>
 
@@ -95,12 +105,12 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { delAssembleActivity } from '@/api/marketing'
 import listForm from '../_source/list-form'
-import previewDialog from './_source/preview-dialog'
+import actform from './_source/actform'
 
 export default {
   components: {
     listForm,
-    previewDialog
+    actform
   },
   data() {
     return {

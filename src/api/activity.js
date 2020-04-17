@@ -60,3 +60,45 @@ export function queryActivityCommGoods(params) {
     data: params
   })
 }
+
+/**
+ * 创建活动推广配置
+ * @param { activityId } 活动ID
+ * @param { bannerUrl } 活动Banner图片地址
+ * @param { id } 推广配置ID
+ * @param { picUrl } 活动图片
+ * @param { setDesc } 活动描述
+ * @param { setName } 活动名称
+ */
+export function createActExtend(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-extend`,
+    method: 'post',
+    data: params
+  })
+}
+/**
+ * 更新活动推广配置
+ * @param { activityId } 活动ID
+ * @param { bannerUrl } 活动Banner图片地址
+ * @param { id } 推广配置ID
+ * @param { picUrl } 活动图片
+ * @param { setDesc } 活动描述
+ * @param { setName } 活动名称
+ */
+export function updateActExtend(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-extend`,
+    method: 'put',
+    data: params
+  })
+}
+/**
+ * 查询活动对应的推广配置，入参活动ID
+ */
+export function getActExtend(activityId) {
+  return request({
+    url: `${config.merGoods}/1.0/act-extend/${activityId}`,
+    method: 'get'
+  })
+}

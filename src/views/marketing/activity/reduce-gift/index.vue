@@ -1,146 +1,144 @@
 <template>
   <div class="app-container">
-    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane label="基础设置" name="first">
-        <el-form ref="form" :model="form" size="small" label-width="120px">
-          <div class="form-title">基本信息</div>
-          <el-form-item label="活动名称：" prop="name">
-            <el-input
-              v-model="form.name"
-              placeholder="不超过30字"
-              style="width: 380px;"
-              maxlength="30"
-              show-word-limit
-            />
-          </el-form-item>
-          <el-form-item label="活动时间：" prop="activitTime">
-            <el-date-picker
-              v-model="form.activitTime"
-              style="width: 380px"
+    <el-form ref="form" :model="form" size="small" label-width="120px">
+      <div class="form-title">基本信息</div>
+      <el-form-item label="活动名称：" prop="name">
+        <el-input
+          v-model="form.name"
+          placeholder="不超过30字"
+          style="width: 380px;"
+          maxlength="30"
+          show-word-limit
+        />
+      </el-form-item>
+      <el-form-item label="活动时间：" prop="activitTime">
+        <el-date-picker
+          v-model="form.activitTime"
+          style="width: 380px"
+          size="small"
+          type="datetimerange"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          range-separator="至"
+          :default-time="['00:00:00', '23:59:59']"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          @change="handleTimeChange"
+        />
+      </el-form-item>
+      <div class="form-title">活动规则</div>
+      <el-form-item label="活动范围：" prop="isAllStore">
+        <el-radio-group v-model="form.isAllStore" @change="handleStoreChange">
+          <el-radio :label="1">全部门店</el-radio>
+          <el-radio :label="0">部分门店</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="已选门店：">
+        <template v-if="form.isAllStore===0">
+          <span>
+            已选门店
+            <el-link type="primary" :underline="false">{{ chooseStore.length }}</el-link>个店铺
+          </span>
+          <div class="choose-store-box">
+            <el-tag
+              v-for="(item,index) in chooseStore"
+              :key="index"
+              type="para"
               size="small"
-              type="datetimerange"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              range-separator="至"
-              :default-time="['00:00:00', '23:59:59']"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              @change="handleTimeChange"
-            />
-          </el-form-item>
-          <div class="form-title">活动规则</div>
-          <el-form-item label="活动范围：" prop="isAllStore">
-            <el-radio-group v-model="form.isAllStore" @change="handleStoreChange">
-              <el-radio :label="1">全部门店</el-radio>
-              <el-radio :label="0">部分门店</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="已选门店：">
-            <template v-if="form.isAllStore===0">
-              <span>
-                已选门店
-                <el-link type="primary" :underline="false">{{ chooseStore.length }}</el-link>个店铺
-              </span>
-              <div class="choose-store-box">
-                <el-tag
-                  v-for="(item,index) in chooseStore"
-                  :key="index"
-                  type="para"
-                  size="small"
-                >{{ item.stName }}</el-tag>
-              </div>
-              <p style="margin-top:5px">
-                <store-dialog @complete="handleSelectStore">选择门店</store-dialog>
-              </p>
-            </template>
-            <template v-else>
-              <span>
-                已选全部门店
-                <el-link type="primary" :underline="false">{{ allStore.length }}</el-link>个店铺
-              </span>
-            </template>
-          </el-form-item>
+            >{{ item.stName }}</el-tag>
+          </div>
+          <p style="margin-top:5px">
+            <store-dialog @complete="handleSelectStore">选择门店</store-dialog>
+          </p>
+        </template>
+        <template v-else>
+          <span>
+            已选全部门店
+            <el-link type="primary" :underline="false">{{ allStore.length }}</el-link>个店铺
+          </span>
+        </template>
+      </el-form-item>
 
-          <el-form-item label="活动商品：" prop="isAllProduct">
-            <el-radio-group v-model="form.isAllProduct" @change="handleProductChange">
-              <!-- @change="handleStoreChange" -->
-              <el-radio :label="1">全部商品</el-radio>
-              <el-radio :label="0">部分商品</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="已选商品：">
-            <template v-if="form.isAllProduct===0">
-              <span>
-                已选商品
-                <el-link type="primary" :underline="false">{{ storeGoods.length }}</el-link>个商品
-              </span>
-              <div class="choose-store-box">
-                <el-tag
-                  v-for="item in storeGoods"
-                  :key="item.specId"
-                  type="para"
-                  size="small"
-                >{{ item.name }}</el-tag>
-              </div>
-              <p style="margin-top:5px">
-                <store-goods @on-change="handleSelectGoods">选择商品</store-goods>
-              </p>
-            </template>
-            <template v-else>
-              <span>
-                已选全部商品
-                <el-link type="primary" :underline="false">{{ allStoreGoods.length }}</el-link>个商品
-              </span>
-            </template>
-          </el-form-item>
-          <el-form-item label="下单规则：" prop="type">
-            <el-checkbox-group v-model="form.type">
-              <el-tooltip class="item" effect="dark" content="参加满减是否使用优惠" placement="top-end">
-                <el-checkbox label="1" name="type">
-                  优惠券
-                  <i class="el-icon-question" />
-                </el-checkbox>
-              </el-tooltip>
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="活动规则：" prop="rule_type">
-            <el-radio-group v-model="form.rule_type" @change="ruleTypeChange">
-              <el-radio :label="1">阶梯满减</el-radio>
-              <el-radio :label="0">
-                循环满减
-                <i class="el-icon-question" />
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <!-- 优惠设置 -->
-          <div class="form-title">优惠设置</div>
-          <div v-for="(domain, $Index) in form.pmt_rule_full" :key="$Index">
-            <el-divider v-if="form.rule_type === 1" content-position="left">
-              {{ $Index+1 }}级优惠
-              <el-button
-                v-if="$Index !== 0"
-                style="margin-left: 20px"
-                type="danger"
-                size="mini"
-                icon="el-icon-delete"
-                circle
-                @click="handleDelete($Index)"
-              />
-            </el-divider>
-            <el-form-item
-              label="满减门槛："
-              :prop="'pmt_rule_full.'+ $Index + '.threshold'"
-              :rules="{
-                required: true, validator:validThreshold, trigger: 'change'
-              }"
-            >
-              <el-input v-model="domain.threshold" style="width: 200px" class="input-with-select">
-                <el-select slot="append" v-model="domain.uint" placeholder="请选择">
-                  <el-option label="元" value="0" />
-                  <el-option label="件" value="1" />
-                </el-select>
-              </el-input>
-            </el-form-item>
-            <!-- <el-form-item label="优惠内容" required>
+      <el-form-item label="活动商品：" prop="isAllProduct">
+        <el-radio-group v-model="form.isAllProduct" @change="handleProductChange">
+          <!-- @change="handleStoreChange" -->
+          <el-radio :label="1">全部商品</el-radio>
+          <el-radio :label="0">部分商品</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="已选商品：">
+        <template v-if="form.isAllProduct===0">
+          <span>
+            已选商品
+            <el-link type="primary" :underline="false">{{ storeGoods.length }}</el-link>个商品
+          </span>
+          <div class="choose-store-box">
+            <el-tag
+              v-for="item in storeGoods"
+              :key="item.specId"
+              type="para"
+              size="small"
+            >{{ item.name }}</el-tag>
+          </div>
+          <p style="margin-top:5px">
+            <store-goods @on-change="handleSelectGoods">选择商品</store-goods>
+          </p>
+        </template>
+        <template v-else>
+          <span>
+            已选全部商品
+            <el-link type="primary" :underline="false">{{ allStoreGoods.length }}</el-link>个商品
+          </span>
+        </template>
+      </el-form-item>
+      <el-form-item label="下单规则：" prop="type">
+        <el-checkbox-group v-model="form.type">
+          <el-tooltip class="item" effect="dark" content="参加满减是否使用优惠" placement="top-end">
+            <el-checkbox label="1" name="type">
+              优惠券
+              <i class="el-icon-question" />
+            </el-checkbox>
+          </el-tooltip>
+        </el-checkbox-group>
+      </el-form-item>
+      <el-form-item label="活动规则：" prop="rule_type">
+        <el-radio-group v-model="form.rule_type" @change="ruleTypeChange">
+          <el-radio :label="1">阶梯满减</el-radio>
+          <el-radio :label="0">
+            循环满减
+            <i class="el-icon-question" />
+          </el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <!-- 优惠设置 -->
+      <div class="form-title">优惠设置</div>
+      <div v-for="(domain, $Index) in form.pmt_rule_full" :key="$Index">
+        <el-divider v-if="form.rule_type === 1" content-position="left">
+          {{ $Index+1 }}级优惠
+          <el-button
+            v-if="$Index !== 0"
+            style="margin-left: 20px"
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            circle
+            @click="handleDelete($Index)"
+          />
+        </el-divider>
+        <el-form-item
+          label="满减门槛："
+          :prop="'pmt_rule_full.'+ $Index + '.threshold'"
+          :rules="{
+            required: true, validator:validThreshold, trigger: 'change'
+          }"
+        >
+          <el-input v-model="domain.threshold" style="width: 200px" class="input-with-select">
+            <el-select slot="append" v-model="domain.uint" placeholder="请选择">
+              <el-option label="元" value="0" />
+              <el-option label="件" value="1" />
+            </el-select>
+          </el-input>
+        </el-form-item>
+        <!-- <el-form-item label="优惠内容" required>
               <el-col :span="24">
                 <el-form-item
                   :prop="'pmt_rule_full.'+ $Index + '.rule_content.order_full'"
@@ -186,152 +184,80 @@
               <el-col :span="24">
                 <el-checkbox v-model="domain.rule_content.order_full" border>送赠品</el-checkbox>
               </el-col>
-            </el-form-item>-->
-            <el-form-item label="优惠内容：">
-              <div>
-                <el-checkbox v-model="domain.rule_content.order_full" border>订单金额优惠</el-checkbox>
-                <section v-if="domain.rule_content.order_full" style="margin-left: 50px">
-                  <div class="section-group-item">
-                    <el-radio
-                      v-model="domain.rule_content.discount_type"
-                      label="0"
-                      @input.native="discountType($event, $Index)"
-                    >减</el-radio>
-                    <el-input
-                      v-model="domain.rule_content.amount"
-                      style="width: 200px"
-                      class="input-with-select"
-                    >
-                      <template slot="append">元</template>
-                    </el-input>
-                  </div>
-                  <div v-if="form.rule_type === 1" class="section-group-item">
-                    <el-radio
-                      v-model="domain.rule_content.discount_type"
-                      label="1"
-                      @input.native="discountType($event, $Index)"
-                    >打</el-radio>
-                    <el-input
-                      v-model="domain.rule_content.discountNum"
-                      style="width: 200px"
-                      class="input-with-select"
-                      :min="0"
-                      :max="10"
-                    >
-                      <template slot="append">折</template>
-                    </el-input>
-                  </div>
-                </section>
-              </div>
-              <div>
-                <el-checkbox v-model="domain.rule_content.gift_or_not" border>送赠品</el-checkbox>
-                <store-goods-gifts
-                  v-if="!!domain.rule_content.gift_or_not"
-                  @commit="handleGiftList"
-                />
-                <div
-                  v-if="!!domain.rule_content.gift_or_not && giftList.length"
-                  class="section-group-item"
+        </el-form-item>-->
+        <el-form-item label="优惠内容：">
+          <div>
+            <el-checkbox v-model="domain.rule_content.order_full" border>订单金额优惠</el-checkbox>
+            <section v-if="domain.rule_content.order_full" style="margin-left: 50px">
+              <div class="section-group-item">
+                <el-radio
+                  v-model="domain.rule_content.discount_type"
+                  label="0"
+                  @input.native="discountType($event, $Index)"
+                >减</el-radio>
+                <el-input
+                  v-model="domain.rule_content.amount"
+                  style="width: 200px"
+                  class="input-with-select"
                 >
-                  已选赠品：
-                  <el-tag
-                    v-for="item in giftList"
-                    :key="item.specId"
-                    type="para"
-                    size="small"
-                  >{{ item.name }}</el-tag>
-                </div>
+                  <template slot="append">元</template>
+                </el-input>
               </div>
-            </el-form-item>
+              <div v-if="form.rule_type === 1" class="section-group-item">
+                <el-radio
+                  v-model="domain.rule_content.discount_type"
+                  label="1"
+                  @input.native="discountType($event, $Index)"
+                >打</el-radio>
+                <el-input
+                  v-model="domain.rule_content.discountNum"
+                  style="width: 200px"
+                  class="input-with-select"
+                  :min="0"
+                  :max="10"
+                >
+                  <template slot="append">折</template>
+                </el-input>
+              </div>
+            </section>
           </div>
-          <!-- <el-form-item>
+          <div>
+            <el-checkbox v-model="domain.rule_content.gift_or_not" border>送赠品</el-checkbox>
+            <store-goods-gifts v-if="!!domain.rule_content.gift_or_not" @commit="handleGiftList" />
+            <div
+              v-if="!!domain.rule_content.gift_or_not && giftList.length"
+              class="section-group-item"
+            >
+              已选赠品：
+              <el-tag
+                v-for="item in giftList"
+                :key="item.specId"
+                type="para"
+                size="small"
+              >{{ item.name }}</el-tag>
+            </div>
+          </div>
+        </el-form-item>
+      </div>
+      <!-- <el-form-item>
 
-          </el-form-item>-->
-          <el-divider v-if="form.rule_type === 1" content-position="left">
-            <el-tooltip
-              effect="dark"
-              content="最多支持五级优惠，每级优惠不叠加，如：满足二级优惠条件后则不再享有一级优惠。"
-              placement="top-start"
-            >
-              <el-button plain type="warning" size="mini" @click="handleAdd">
-                添加层级
-                <i class="el-icon-question" />
-              </el-button>
-            </el-tooltip>
-          </el-divider>
-          <el-form-item>
-            <el-button type="primary" style="width: 120px" @click="onSubmit">提交</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="推广设置" name="second">
-        <el-form ref="form" :model="dymacPromote" size="small" label-width="120px">
-          <div class="form-title">活动宣传设置</div>
-          <el-form-item label="活动图片：">
-            <el-upload
-              class="avatar-uploader-poster"
-              :action="upLoadUrl"
-              :show-file-list="false"
-              :headers="headers"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-              :on-error="handleImgError"
-            >
-              <el-image
-                v-if="dymacPromote.postImagUrl"
-                :src="showImg(dymacPromote.postImagUrl)"
-                class="avatar"
-              />
-              <i v-else class="el-icon-plus avatar-uploader-icon-poster" />
-            </el-upload>
-            <p style="color: rgb(171,171,171)">活动图片首页设置, 建议尺寸：750px*268px支持.jpg.png.jpeg格式，大小不超过1M</p>
-          </el-form-item>
-          <div class="form-title">朋友圈推广</div>
-          <img style="margin-left: 120px" :src="shareImg">
-          <el-form-item label="标题：">
-            <el-input
-              v-model="dymacPromote.name"
-              placeholder="不超过15字"
-              style="width: 380px;"
-              maxlength="15"
-              show-word-limit
-            />
-          </el-form-item>
-          <el-form-item label="摘要：">
-            <el-input
-              v-model="dymacPromote.desc"
-              style="width: 380px;"
-              maxlength="30"
-              show-word-limit
-              type="textarea"
-              placeholder="请输入摘要信息"
-              :autosize="{ minRows: 2, maxRows: 4}"
-            />
-          </el-form-item>
-          <el-form-item label="图片：">
-            <el-upload
-              class="avatar-uploader"
-              :action="upLoadUrl"
-              :show-file-list="false"
-              :headers="headers"
-              :on-success="handleImgAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-              :on-error="handleImgError"
-            >
-              <el-image
-                v-if="dymacPromote.imgUrl"
-                :src="showImg(dymacPromote.imgUrl)"
-                class="avatar"
-              />
-              <i v-else class="el-icon-plus avatar-uploader-icon" />
-            </el-upload>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" style="width: 120px" @click="submit">提交</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-    </el-tabs>
+      </el-form-item>-->
+      <el-divider v-if="form.rule_type === 1" content-position="left">
+        <el-tooltip
+          effect="dark"
+          content="最多支持五级优惠，每级优惠不叠加，如：满足二级优惠条件后则不再享有一级优惠。"
+          placement="top-start"
+        >
+          <el-button plain type="warning" size="mini" @click="handleAdd">
+            添加层级
+            <i class="el-icon-question" />
+          </el-button>
+        </el-tooltip>
+      </el-divider>
+      <el-form-item>
+        <el-button type="primary" style="width: 120px" @click="onSubmit">提交</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
@@ -340,24 +266,12 @@
 import storeGoods from '../../components/store-gods'
 import storeGoodsGifts from '../../components/store-gods-gifts'
 import storeDialog from '../../components/store'
-import { mapGetters } from 'vuex'
-import config from '@/utils/config'
-import shareImg from '@/assets/image/acvity/share-img.png'
 
 export default {
   components: {
     storeGoods,
     storeDialog,
     storeGoodsGifts
-  },
-  computed: {
-    ...mapGetters(['token', 'merCode']),
-    upLoadUrl() {
-      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
-    },
-    headers() {
-      return { Authorization: this.token }
-    }
   },
   data() {
     const checkActivitTime = (rule, value, callback) => {
@@ -372,7 +286,7 @@ export default {
     }
 
     return {
-      activeName: 'first',
+      activeName: 'basic',
       form: {
         type: ['1'],
         isAllStore: 1,
@@ -418,13 +332,11 @@ export default {
           }
         ]
       },
-      dymacPromote: {
-        imgUrl: '',
-        postImagUrl: ''
-      },
-      pageLoading: '',
-      shareImg
+      pageLoading: ''
     }
+  },
+  created() {
+    this.activeName = this.$route.query.type || 'basic'
   },
   methods: {
     handleTimeChange(row) {
@@ -435,7 +347,6 @@ export default {
       }
       // 此时需要需查询店铺和商品信息；
     },
-    handleClick() {},
     handleStoreChange() {
       console.log('活动范围门店变更')
     },
@@ -524,75 +435,6 @@ export default {
       }
       //  e.target.value = e.target.value
     },
-    handleImgError(row) {
-      const data = JSON.parse(row.toString().replace('Error:', ''))
-      if (data.code === 40301) {
-        // location.reload()
-      } else {
-        this.$message({
-          message: '图片上传失败',
-          type: 'error'
-        })
-        this.pageLoading.close()
-      }
-    },
-    handleAvatarSuccess(res, file) {
-      console.log('图片地址-----', this.dymacPromote, file)
-      if (res.code === '10000') {
-        this.dymacPromote.postImagUrl = res.data
-      } else {
-        this.$message({
-          message: res.msg,
-          type: 'error'
-        })
-      }
-
-      this.pageLoading.close()
-    },
-    handleImgAvatarSuccess(res, file) {
-      console.log('图片地址-----', this.dymacPromote, file)
-      if (res.code === '10000') {
-        this.dymacPromote.imgUrl = res.data
-      } else {
-        this.$message({
-          message: res.msg,
-          type: 'error'
-        })
-      }
-
-      this.pageLoading.close()
-    },
-
-    beforeAvatarUpload(file) {
-      const size = file.size / 1024
-      const isImg =
-        file.type === 'image/jpeg' ||
-        file.type === 'image/png' ||
-        file.type === 'image/jpg'
-      if (!isImg) {
-        this.$message({
-          message: '只能上传格式为 jpg、jpeg、png的图片',
-          type: 'warning'
-        })
-        this.pageLoading.close()
-        return
-      }
-      if (size > 1024) {
-        this.$message({
-          message: '最大只能上传1MB的图片',
-          type: 'warning'
-        })
-        this.pageLoading.close()
-        return false
-      }
-      this.pageLoading = this.$loading({
-        lock: true,
-        text: '图片上传中...',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
-      return true
-    },
 
     // 格式化表单验证提交数据
     formateFormData() {
@@ -673,17 +515,6 @@ export default {
       //
       const formdata = this.formateFormData()
       console.log('我是提交----------------', formdata)
-    },
-    submit() {
-      console.log('活动设置我要提交了')
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          console.log('我准备通过了----------------------')
-        } else {
-          console.log('error submit!!', valid)
-          return false
-        }
-      })
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -756,35 +587,6 @@ export default {
     background: #fff;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     text-align: right;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 100px;
-    height: 100px;
-    line-height: 100px !important;
-    text-align: center;
-  }
-  .avatar-uploader-icon-poster {
-    font-size: 28px;
-    color: #8c939d;
-    width: 300px;
-    height: 100px;
-    line-height: 100px !important;
-    text-align: center;
-  }
-  .avatar-uploader-poster {
-    .avatar {
-      width: 300px !important;
-      height: 100px !important;
-    }
-  }
-  .avatar-uploader-poster .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
   }
 }
 </style>
