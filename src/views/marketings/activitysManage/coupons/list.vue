@@ -5,6 +5,9 @@
       size="mini"
       @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add' })"
     >添加优惠券</el-button>
+    <div class="explain">
+      <el-alert title="领券中心可自由上架及下架优惠券，领券中心的优惠上架后用户可手工领取，您可根据活动营销方案定期上架以保持用户活跃" type="warning" :closable="false" />
+    </div>
     <div class="search-form">
       <div class="search-item">
         <div class="search-item">
@@ -31,14 +34,14 @@
       </div>
     </div>
     <div style="margin-bottom:20px">
-      <el-radio-group v-model="radio4" size="mini">
+      <el-radio-group v-model="radio" size="mini" @change="changeOption">
         <el-radio-button label="全部" />
         <el-radio-button label="免费领取" />
         <el-radio-button label="积分兑换" />
         <el-radio-button label="现金购买" />
       </el-radio-group>
     </div>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%" empty-text="领券中心暂未上架任何优惠券">
       <el-table-column prop="date" label="优惠券信息" width="120">
         <template slot-scope="scope">
           <div>
@@ -48,13 +51,15 @@
           <div>{{ scope.row.name }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="领取方式" />
-      <el-table-column prop="name" label="券总量" />
-      <el-table-column prop="name" label="使用场景" />
+      <el-table-column v-if="radio === '全部'" prop="name" label="领取方式" />
+      <el-table-column prop="name" label="券总数" />
+      <el-table-column prop="name" label="使用时间" />
       <el-table-column prop="name" label="优惠内容" />
       <el-table-column prop="name" label="限额" />
-      <el-table-column prop="name" label="已领取量" />
-      <el-table-column prop="name" label="状态" />
+      <el-table-column v-if="radio === '积分兑换'" prop="name" label="所需积分" />
+      <el-table-column v-if="radio === '现金购买'" prop="name" label="所需现金" />
+      <el-table-column prop="name" label="领券时间" />
+      <el-table-column prop="name" label="活动状态" />
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
           <el-button
@@ -87,7 +92,7 @@ export default {
     return {
       currentPage: 4,
       region: '1',
-      radio4: '全部',
+      radio: '全部',
       keyword: '',
       tableData: [
         {
@@ -147,6 +152,9 @@ export default {
           })
         })
     },
+    changeOption(val) {
+      console.log(val)
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
     },
@@ -160,6 +168,10 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .coupons-index-model {
+  .explain {
+    margin: 20px 0;
+    font-size: 13px;
+  }
   .search-form {
     margin-top: 10px;
     .search-item {

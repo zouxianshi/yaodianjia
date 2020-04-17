@@ -6,6 +6,18 @@
       <el-radio-button label="积分兑换" />
     </el-radio-group>
     <div class="add-addItem-model">
+      <span class="add-addLeft-model">领取时间:</span>
+      <div class="add-addRight-model">
+        <el-date-picker
+          v-model="value1"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        />
+      </div>
+    </div>
+    <div class="add-addItem-model">
       <span class="add-addLeft-model">选优惠券:</span>
       <div class="add-addRight-model">
         <el-button type="primary" size="mini" plain @click="handlecheck">选择会员券</el-button>
@@ -37,15 +49,15 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column v-if="radio==='所需积分'" label="所需积分" width="100">
+          <el-table-column v-if="radio==='积分兑换'" label="所需积分" width="130">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                <el-input v-model="scope.row.date" placeholder />
+                <el-input v-model.number="scope.row.date" type="number" placeholder />
                 <i class="el-icon-edit" />
               </div>
             </template>
           </el-table-column>
-          <el-table-column v-if="radio==='所需现金'" label="所需现金" width="100">
+          <el-table-column v-if="radio==='现金购买'" label="所需现金" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
                 <el-input v-model="scope.row.date" placeholder />
@@ -63,18 +75,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </div>
-    </div>
-    <div class="add-addItem-model">
-      <span class="add-addLeft-model">领取时间:</span>
-      <div class="add-addRight-model">
-        <el-date-picker
-          v-model="value1"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
       </div>
     </div>
     <el-button size="mini">取 消</el-button>
