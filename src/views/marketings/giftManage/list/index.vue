@@ -39,7 +39,7 @@ export default {
         {
           imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
           name: '优惠码',
-          url: '/marketings/gift-manage/gift'
+          url: ''
         }
       ]
     }
@@ -53,7 +53,7 @@ export default {
     padding: 0 20px;
     .header-nav{
       .item-box{
-        display: flex;width: 650px; justify-content: space-between;padding: 20px 0;
+        display: flex;width: 650px; justify-content: space-between;padding: 20px 0;cursor:pointer;
         .gift-card-modal{
           flex: 0 0 150px;text-align:center;
           .el-card__body{

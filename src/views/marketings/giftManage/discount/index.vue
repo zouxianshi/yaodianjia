@@ -85,7 +85,7 @@
               <el-radio label="0">全部门店</el-radio>
               <el-radio label="1">指定门店&emsp; <span v-if="discountForm.store==='1'" @click="selectStore">选择门店</span></el-radio>
             </el-radio-group>
-            <mSelectedTabel v-show="selectedStore.length>0" :data="selectedStore" @_deleteItem="_deleteItem" />
+            <mSelectedStore v-show="selectedStore.length>0" ref="selectedStore" @onDel="_deleteItem" />
           </el-form-item>
           <el-form-item label="适用商品：">
             <el-radio-group v-model="discountForm.commodity">
@@ -108,11 +108,11 @@
 import mPhoneView from '../_source/phoneView'
 import mPopSelectStore from '../_source/popSelectStore'
 import mPopSelectProduct from '../_source/popSelectProduct'
-import mSelectedTabel from '../_source/selectedTabel' // 已选择显示列表
+import mSelectedStore from '@/components/Marketings/SelectedStore' // 已选择门店列表
 export default {
   name: 'DiscountIndex',
   components: {
-    mPhoneView, mPopSelectStore, mPopSelectProduct, mSelectedTabel
+    mPhoneView, mPopSelectStore, mPopSelectProduct, mSelectedStore
   },
   data() {
     return {
@@ -162,16 +162,11 @@ export default {
     // 获取选择门店数据
     getSelectedStore(data) {
       this.selectedStore = data
+      this.$refs.selectedStore.show(data)
     },
     // 删除已选择门店数据
     _deleteItem(data) {
-      var name = data.name
-      for (let i = 0, len = this.selectedStore.length; i < len; i++) {
-        if (this.selectedStore[i].name === name) {
-          this.selectedStore.splice(i, 1)
-          return
-        }
-      }
+      this.selectedStore = data
     }
   }
 }

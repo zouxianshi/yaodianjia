@@ -27,7 +27,7 @@
       <el-table :data="gridData" height="calc(100vh - 700px)">
         <el-table-column label="选择" width="65">
           <template scope="scope">
-            <el-radio v-model="radio" @change.native="getCurrentRow(scope.row)" />
+            <el-radio v-model="radio" :label="scope.$index" @change.native="getCurrentRow(scope.row)" />
           </template>
         </el-table-column>
         <el-table-column property="num" label="门店编码" width="150" />
@@ -47,7 +47,7 @@
         已选商品：123中国，234店
       </div>
       <span slot="footer">
-        <el-button type="primary" size="mini">确定</el-button>
+        <el-button type="primary" size="mini" @click="_submitSelected">确定</el-button>
         <el-button size="mini" @click="dialogTableVisible=false">取消</el-button>
       </span>
     </el-dialog>
@@ -57,6 +57,7 @@
 export default {
   data() {
     return {
+      radio: '',
       gridData: [{
         num: '20001',
         name: '上海一店',
@@ -75,11 +76,15 @@ export default {
         currentPage: 0,
         pageSize: 100
       },
+      selectedProduct: {},
       dialogTableVisible: false
     }
   },
   methods: {
-    show() {
+    show(data) {
+      if (data.length === 0) {
+        this.radio = ''
+      }
       this.dialogTableVisible = true
     },
     searchData() {
@@ -87,7 +92,12 @@ export default {
     },
     // 选择商品
     getCurrentRow(row) {
-      console.log(row)
+      this.selectedProduct = row
+    },
+    // 提交已选择商品到父组件
+    _submitSelected() {
+      this.$emit('onSelect', this.selectedProduct)
+      this.dialogTableVisible = false
     },
     // 分页
     handleSizeChange(e) {

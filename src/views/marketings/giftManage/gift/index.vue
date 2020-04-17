@@ -18,9 +18,7 @@
           </el-form-item>
           <el-form-item label="兑换商品：">
             <el-button type="text" @click="selectProduct">选择商品</el-button>
-            <el-table>
-              <!-- 选择的商品 -->
-            </el-table>
+            <mSelectedProduct v-show="selectedProduct.length>0" ref="selectedProduct" @onDel="_deleteProduct" />
           </el-form-item>
           <el-form-item label="退货规则：">
             <el-radio-group v-model="discountForm.returnRules">
@@ -82,7 +80,7 @@
               <el-radio label="0">全部门店</el-radio>
               <el-radio label="1">指定门店&emsp; <span v-if="discountForm.store==='1'" @click="selectStore">选择门店</span></el-radio>
             </el-radio-group>
-            <mSelectedTabel v-show="selectedStore.length>0" :data="selectedStore" @_deleteItem="_deleteItem" />
+            <mSelectedStore v-show="selectedStore.length>0" ref="selectedStore" @onDel="_deleteStore" />
           </el-form-item>
         </el-form>
         <el-button v-if="active===1" size="mini" type="primary" @click="next">下一步</el-button>
@@ -91,23 +89,25 @@
       </div>
     </div>
     <mPopSelectStore ref="selectStore" @onSelect="getSelectedStore" />
-    <mSelectOneProduct ref="selectOneProduct" />
+    <mSelectOneProduct ref="selectOneProduct" @onSelect="_selectedProduct" />
   </div>
 </template>
 <script>
 import mPhoneView from '../_source/phoneView' // 手机预览区域
 import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择门店弹窗
+import mSelectedStore from '@/components/Marketings/SelectedStore' // 已选择门店列表
+import mSelectedProduct from '@/components/Marketings/SelectedProduct' // 已选择商品列表
 import mSelectOneProduct from './selectOneProduct' // 选择商品弹窗
-import mSelectedTabel from '../_source/selectedTabel' // 已选择显示列表
 export default {
   name: 'DiscountIndex',
   components: {
-    mPhoneView, mPopSelectStore, mSelectOneProduct, mSelectedTabel
+    mPhoneView, mPopSelectStore, mSelectOneProduct, mSelectedStore, mSelectedProduct
   },
   data() {
     return {
       active: 1,
       selectedStore: [],
+      selectedProduct: [],
       otherData: {
         expirationDay: '0', // 直接开始有效天数
         expirationDate: [
@@ -118,7 +118,7 @@ export default {
       },
       discountForm: {
         name: '', // 折扣名称
-        selectedProduct: [], // 选择商品
+        selectProduct: {}, // 选择商品
         returnRules: '0', // 退货规则
         isRemember: '', // 是否提醒
         rememberDay: '',
@@ -144,21 +144,26 @@ export default {
     },
     // 选择商品
     selectProduct() {
-      this.$refs.selectOneProduct.show()
+      this.$refs.selectOneProduct.show(this.selectedProduct)
+    },
+    // 获取选择商品数据
+    _selectedProduct(data) {
+      this.selectedProduct = [data]
+      this.$refs.selectedProduct.show([data])
     },
     // 获取选择门店数据
     getSelectedStore(data) {
       this.selectedStore = data
+      this.$refs.selectedStore.show(data)
     },
     // 删除已选择门店数据
-    _deleteItem(data) {
-      var name = data.name
-      for (let i = 0, len = this.selectedStore.length; i < len; i++) {
-        if (this.selectedStore[i].name === name) {
-          this.selectedStore.splice(i, 1)
-          return
-        }
-      }
+    _deleteStore(data) {
+      this.selectedStore = data
+    },
+    // 删除已选择商品数据
+    _deleteProduct(data) {
+      this.selectedProduct = data
+      this.$refs.selectedProduct.show(data)
     }
   }
 }
