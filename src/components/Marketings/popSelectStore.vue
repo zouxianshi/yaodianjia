@@ -24,7 +24,7 @@
       <el-table
         ref="dataTable"
         :data="gridData"
-        height="calc(100vh - 700px)"
+        height="200px"
         @select="select"
         @select-all="selectAll"
         @selection-change="selectAuto"

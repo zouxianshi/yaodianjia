@@ -25,7 +25,11 @@
         </el-form>
       </div>
       <el-table :data="gridData" height="calc(100vh - 700px)">
-        <el-table-column type="selection" width="55" />
+        <el-table-column label="选择" width="65">
+          <template scope="scope">
+            <el-radio v-model="radio" @change.native="getCurrentRow(scope.row)" />
+          </template>
+        </el-table-column>
         <el-table-column property="num" label="门店编码" width="150" />
         <el-table-column property="name" label="门店名称" />
         <el-table-column property="address" label="门店地址" />
@@ -80,6 +84,10 @@ export default {
     },
     searchData() {
       console.log(this.searchParams)
+    },
+    // 选择商品
+    getCurrentRow(row) {
+      console.log(row)
     },
     // 分页
     handleSizeChange(e) {
