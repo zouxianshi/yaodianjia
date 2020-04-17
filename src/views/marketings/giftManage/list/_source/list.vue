@@ -31,20 +31,15 @@
         height="100%"
         style="width: 100%;"
       >
-        <el-table-column
-          prop="date"
-          label="日期"
-          width="180"
-        />
-        <el-table-column
-          prop="name"
-          label="姓名"
-          width="180"
-        />
-        <el-table-column
-          prop="address"
-          label="地址"
-        />
+        <el-table-column prop="name" label="优惠券信息" />
+        <el-table-column prop="name" label="使用场景" />
+        <el-table-column prop="name" label="优惠内容" />
+        <el-table-column prop="date" label="使用时间" />
+        <el-table-column prop="name" label="适用门店" />
+        <el-table-column prop="address" label="适用商品" />
+        <el-table-column prop="name" label="已领取量" />
+        <el-table-column prop="name" label="线下核销" />
+        <el-table-column prop="name" label="操作" />
       </el-table>
       <el-pagination
         :current-page="pageInfo.currentPage"

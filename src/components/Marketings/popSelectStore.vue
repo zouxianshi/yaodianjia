@@ -69,8 +69,8 @@ export default {
         name: '上海一店',
         address: '上海市普陀区金沙江路 1518 弄'
       }],
-      selectedArr: [], //  已选择
-      hasSelectList: [],
+      selectedArr: [], //  已选择门店所有信息
+      hasSelectList: [], // 已选择门店name集合（以后会修改为主键）
       searchParams: {
         info: '',
         company: ''
