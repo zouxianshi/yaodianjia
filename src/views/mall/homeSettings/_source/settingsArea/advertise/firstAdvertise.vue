@@ -50,7 +50,7 @@ export default {
       if (itemList.length === list.length) {
         this.searchParams.itemList = list
         this.loading = true
-        this.$emit('on-update', this.searchParams, () => {
+        this.$emit('on-update', _.cloneDeep(this.searchParams), () => {
           this.loading = false
         })
       }

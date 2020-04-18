@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <div v-if="iconClx !== 'no-data'" :class="iconClx" :style="{width:`${size}px`,height:`${size}px`,}" />
+    <div v-if="iconClx !== 'no-data'" :class="iconClx" :style="{width:`${size}px`,height:`${size}px`,backgroundSize:'cover'}" />
     <div v-else class="vhi-default" :class="{'no-text':!text}">
       <img class="default-img" src="./img/va_default_icons_no_data.png" :width="size" :height="size">
       <p v-if="text" class="p-test">{{ text }}</p>
@@ -72,7 +72,6 @@ export default {
       .sa_default_icons_#{$i} {
         background: url('./img/sa_default_icons_#{$i}.png') no-repeat;
         display: block;
-        background-size: cover;
       }
     }
     &-center {

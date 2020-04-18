@@ -8,7 +8,7 @@
       </div>
     </template>
     <m-Icons v-else icon-clx="no-data" :size="73" />
-    <p class="text">{{ item.name }}</p>
+    <p class="text">{{ item.name || '请填写' }}</p>
   </div>
 </template>
 <script>
@@ -34,7 +34,8 @@ export default {
     }
   },
   methods: {},
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {

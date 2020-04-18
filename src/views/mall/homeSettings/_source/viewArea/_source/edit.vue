@@ -20,15 +20,15 @@ export default {
   },
   methods: {
     onSettings() {
-      const { item, item: { code }} = this
+      const { item, item: { type }} = this
       const instance = findComponentsDownward(this.$root, 'SettingsArea')[0]
       const setItem = item
-      if (setItem.code === 'mall-title') {
+      if (setItem.type === 'mall-title') {
         setItem.itemList = [itemParams]
       }
       // No caching update uuid.
       instance.setSelected(_.assign(setItem, {
-        uuid: `${uuid(`${code}-`)}${uuid()}${uuid()}${uuid()}`
+        uuid: `${uuid(`${type}-`)}${uuid()}${uuid()}${uuid()}`
       }))
     }
   },

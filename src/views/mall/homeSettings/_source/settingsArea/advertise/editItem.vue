@@ -69,7 +69,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    code: {
+    type: {
       type: String,
       default: () => {}
     }
@@ -132,12 +132,12 @@ export default {
   computed: {
     prefixClsNoImg() {
       const prefixCls = 'no-img'
-      const { code, index } = this
+      const { type, index } = this
       return [
         `${prefixCls}`,
         {
-          [`${prefixCls}-second`]: (code === 'second' && index === 0),
-          [`${prefixCls}-third`]: code === 'third'
+          [`${prefixCls}-second`]: (type === 'second' && index === 0),
+          [`${prefixCls}-third`]: type === 'third'
         }
       ]
     }

@@ -8,11 +8,11 @@
       </div>
       <i slot="reference" class="el-icon-delete" />
     </el-popover>
-
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
+import { findComponentsDownward } from '@/utils'
 export default {
   name: 'VaDelete',
   data() {
@@ -33,6 +33,12 @@ export default {
         $index: this.index
       })
       this.visible = false
+      const { name, title } = this.dragGlobal
+      const instance = findComponentsDownward(this.$root, 'SettingsArea')[0]
+      instance.setSelected({
+        type: 'mall-title',
+        itemList: [{ name, title }]
+      })
     }
   },
   watch: {},
@@ -52,7 +58,9 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('mall', ['dragGlobal'])
+  },
   components: {}
 }
 </script>

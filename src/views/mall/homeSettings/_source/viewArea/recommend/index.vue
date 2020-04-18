@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     mod() {
-      return this.item.type === 'first' ? mFirstRecommend : mSecondRecommend
+      return this.item.subType === 'first' ? mFirstRecommend : mSecondRecommend
     }
   },
   components: { mTitle }

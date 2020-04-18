@@ -11,7 +11,7 @@
       <el-tabs v-model="activeName" type="card" size="small">
         <el-tab-pane v-for="(item,$index) in dragComponent" :key="$index" :name="item.name" :label="item.name">
           <div class="cbm-draggable">
-            <v-draggable v-model="item.component" draggable=".item" v-bind="dragOptions">
+            <v-draggable v-model="item.component" draggable=".item" v-bind="dragOptions" @start="onStart">
               <span v-for="(el,i) in item.component" :key="i" class="item">
                 <el-button size="small">{{ el.name }}</el-button>
               </span>
@@ -23,136 +23,9 @@
   </div>
 </template>
 <script>
-import { uuid } from '@/utils'
 import vDraggable from 'vuedraggable'
 import { mapActions } from 'vuex'
-import { navigation, title, advertise } from './_source/default'
-
-const dragComponent = [
-  {
-    name: '导航栏',
-    component: [
-      {
-        uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'navigation',
-        type: 'first',
-        name: '一排四个',
-        itemList: navigation.first
-      },
-      {
-        uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'navigation',
-        type: 'second',
-        name: '一排五个',
-        itemList: navigation.second
-      }
-    ]
-  },
-  {
-    name: '商品',
-    component: [
-      {
-        uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'commodity',
-        type: 'first',
-        name: '2个一排',
-        itemList: []
-      },
-      {
-        uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'commodity',
-        type: 'second',
-        name: '3个一排',
-        itemList: []
-      },
-      {
-        uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'commodity',
-        type: 'third',
-        name: '多个滚动一排',
-        itemList: []
-      },
-      {
-        uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'commodity',
-        type: 'four',
-        name: '单个一排',
-        itemList: []
-      }
-    ]
-  },
-  {
-    name: '标题',
-    component: [
-      {
-        uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'title',
-        type: 'first',
-        name: '单个标题',
-        itemList: title
-      }
-    ]
-  },
-  {
-    name: '广告图',
-    component: [
-      {
-        uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'advertise',
-        type: 'first',
-        name: '轮播图',
-        itemList: advertise.first
-      },
-      {
-        uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'advertise',
-        type: 'second',
-        name: '左一右二图',
-        itemList: advertise.second
-      },
-      {
-        uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'advertise',
-        type: 'third',
-        name: '三个一排',
-        itemList: advertise.third
-      },
-      {
-        uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'advertise',
-        type: 'four',
-        name: '四个两排',
-        itemList: advertise.four
-      },
-      {
-        uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'advertise',
-        type: 'five',
-        name: '不限高广告图',
-        itemList: advertise.five
-      }
-    ]
-  },
-  {
-    name: '为你推荐',
-    component: [
-      {
-        uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'recommend',
-        type: 'first',
-        name: '两个一排',
-        itemList: []
-      },
-      {
-        uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
-        code: 'recommend',
-        type: 'second',
-        name: '单个一排',
-        itemList: []
-      }
-    ]
-  }
-]
+import { handlerDragComp } from './_source/default'
 
 export default {
   name: 'ComponentBar',
@@ -160,7 +33,7 @@ export default {
   props: {},
   data() {
     return {
-      dragComponent,
+      dragComponent: handlerDragComp(),
       activeName: '商品',
       loading: false
     }
@@ -205,6 +78,9 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    onStart() {
+      this.dragComponent = handlerDragComp()
     }
   },
   beforeDestroy() {

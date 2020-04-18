@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+import { mapMutations, mapState } from 'vuex'
 import mNavigation from './navigation'
 import mAdvertise from './advertise'
 import mRecommend from './recommend'
@@ -18,17 +19,17 @@ export default {
   data() {
     return {
       item: {
-        code: 'mall-title',
-        data: [itemParams]
-        // code: 'commodity'
+        type: 'mall-title',
+        itemList: [itemParams]
       },
       isComponent: true
     }
   },
 
   computed: {
+    ...mapState('mall', ['saLoading']),
     mod() {
-      switch (this.item.code) {
+      switch (this.item.type) {
         case 'title':
           return mTitle
         case 'mall-title':
@@ -60,12 +61,17 @@ export default {
   updated() {
   },
   methods: {
+    ...mapMutations('mall', ['setLoading']),
     setSelected(item) {
       this.isComponent = false
+      this.setLoading({ type: 'sa', is: true })
       $('.hsm-hm').animate({ scrollTop: 0 }, 400)
       setTimeout(() => {
         this.item = item
         this.isComponent = true
+        setTimeout(() => {
+          this.setLoading({ type: 'sa', is: false })
+        }, 800)
       })
     }
   },
@@ -78,6 +84,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .settings-area-model {
+    min-height: 500px;
     .el-tabs__nav-scroll {
       padding-left: 100px;
       .el-tabs__item {

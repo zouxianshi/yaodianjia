@@ -4,17 +4,17 @@
       <div class="drag-area">
         <span class="sp1">标题栏</span>
         <div class="oper">
-          <m-edit :item="{code:'mall-title'}" />
+          <m-edit :item="{type:'mall-title'}" />
         </div>
       </div>
       <div class="title">
-        <b>海典健康商城</b>
+        <b>{{ dragGlobal.name || '' }}</b>
       </div>
     </div>
   </div>
 </template>
 <script>
-
+import { mapState } from 'vuex'
 import mEdit from './_source/edit'
 export default {
   name: 'VaHeader',
@@ -23,7 +23,9 @@ export default {
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    ...mapState('mall', ['dragGlobal'])
+  },
   watch: {},
   beforeCreate() {
   },

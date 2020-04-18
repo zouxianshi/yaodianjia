@@ -4,7 +4,7 @@
       <m-second-advertise :item="searchParams" source="sa" />
     </div>
     <div slot="item">
-      <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :code="searchParams.subType" :item="el" :index="i" @on-item="_onItem" />
+      <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :type="searchParams.type" :item="el" :index="i" @on-item="_onItem" />
     </div>
     <el-button slot="submit" type="primary" style="width: 100%" size="mini" :loading="loading" @click="onSubmit">保存广告设置</el-button>
   </m-sa-layout>
@@ -48,7 +48,7 @@ export default {
       if (itemList.length === list.length) {
         this.searchParams.itemList = list
         this.loading = true
-        this.$emit('on-update', this.searchParams, () => {
+        this.$emit('on-update', _.cloneDeep(this.searchParams), () => {
           this.loading = false
         })
       }

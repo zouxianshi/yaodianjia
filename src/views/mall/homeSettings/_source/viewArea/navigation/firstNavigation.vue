@@ -1,6 +1,6 @@
 <template>
   <div class="first-navigation-model">
-    <v-draggable v-model="dragList" draggable=".fnm-item" v-bind="dragOptions" @end="onEnd">
+    <v-draggable v-if="dragList.length" v-model="dragList" draggable=".fnm-item" v-bind="dragOptions" @end="onEnd">
       <div v-for="(el,i) in dragList" :key="i" class="fnm-item" @click="onEvent">
         <m-first-item :item="el" />
       </div>
@@ -31,11 +31,10 @@ export default {
       const { item: { $index }, dragList } = this
       this.setItemDragData({
         $index,
-        dragList
+        itemList: dragList
       })
     },
     onEvent() {
-      console.log(1)
     }
   },
   watch: {
@@ -44,7 +43,7 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.dragList = this.item.itemList
+    this.dragList = _.cloneDeep(this.item.itemList)
   },
   beforeMount() {
   },

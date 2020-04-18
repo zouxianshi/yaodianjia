@@ -264,8 +264,8 @@ const noData = [
   {
     uuid: `${uuid('no-data-')}${uuid()}${uuid()}${uuid()}`,
     name: 'no-data',
+    subType: 'no-data',
     type: 'no-data',
-    code: 'no-data',
     itemList: []
   }
 ]
@@ -273,13 +273,14 @@ const noData = [
 const state = {
   dragGlobal: {
     id: '',
-    name: '海典微商城',
+    name: '',
     setIds: [],
-    title: '海典微商城',
+    title: '',
     userName: ''
   },
-  dragData: [...noData]
-
+  dragData: [...noData],
+  vaLoading: false,
+  saLoading: false
 }
 
 const mutations = {
@@ -298,6 +299,18 @@ const mutations = {
   delDragData: (state, payload) => {
     const { $index } = payload
     state.dragData.splice($index, 1)
+  },
+  setHomeName: (state, payload) => {
+    state.dragGlobal.name = payload
+    state.dragGlobal.title = payload
+  },
+  setLoading: (state, payload) => {
+    const { is, type } = payload
+    if (type === 'sa') {
+      state.saLoading = is
+    } else {
+      state.vaLoading = is
+    }
   }
 }
 
@@ -307,6 +320,8 @@ const actions = {
       const p = { ...state.dragGlobal, id: state.dragData[0].dimensionId, setIds: _.map(state.dragData, v => v.id) }
       saveStructure(p).then(() => {
         resolve()
+      }).catch(() => {
+        reject()
       })
     })
   }

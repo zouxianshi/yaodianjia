@@ -35,7 +35,7 @@ export default {
           this.$message.success('保存成功')
           fn()
         }, 1200)
-      }).catch((e) => {
+      }).catch(() => {
         fn()
       })
     }
@@ -43,7 +43,7 @@ export default {
   computed: {
     ...mapState('mall', ['dragData']),
     mod() {
-      switch (this.item.type) {
+      switch (this.item.subType) {
         case 'second':
           return mSecondNavigation
         default:

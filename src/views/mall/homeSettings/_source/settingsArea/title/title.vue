@@ -4,17 +4,19 @@
       <el-form-item label="标题">
         <el-input v-model="name" placeholder="请输入标题" @change="() => isName = !name" />
         <div v-if="isName" class="sa-error">
-          {{ code === 'mall-title' ? '请填写微商城标题' : '请填写标题' }}
+          {{ type === 'mall-title' ? '请填写微商城标题' : '请填写标题' }}
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" style="width: 100%" @click="onSubmit">保存</el-button>
+        <el-button type="primary" style="width: 100%" :loading="loading" @click="onSubmit">保存</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import { mapMutations } from 'vuex'
+import { itemParams } from './../../_source/default'
+
 export default {
   name: 'SaTitleBox',
   data() {
@@ -24,10 +26,10 @@ export default {
       searchParams: {
         dimensionId: '',
         id: '',
-        itemList: '',
+        itemList: [],
         subType: 'first',
         title: '',
-        type: 'navigation'
+        type: 'title'
       },
       loading: false
     }
@@ -37,35 +39,26 @@ export default {
       type: Object,
       default: () => {}
     },
-    code: {
+    type: {
       type: String,
       default: ''
     }
   },
   methods: {
-    ...mapActions('mall', ['saveStructure']),
+    ...mapMutations('mall', ['setHomeName']),
     onSubmit() {
-      const { name } = this
+      const { name, searchParams } = this
       this.isName = false
       if (!name) {
         this.isName = true
         return false
       }
       // handler title two operation
-      if (this.code === 'mall-title') {
+      if (this.type === 'mall-title') {
         // 保存全局接口
-        this.saveStructure({
-          'id': 'string',
-          'merCode': 'string',
-          'name': 'string',
-          'setIds': [],
-          'title': 'string',
-          'userName': 'string'
-        }).then(() => {
-
-        })
+        this.setHomeName(name)
       } else {
-        this.$emit('on-update', this.searchParams, () => {
+        this.$emit('on-update', { ...searchParams, itemList: [{ ...itemParams, name }] }, () => {
           this.loading = false
         })
       }
@@ -76,6 +69,7 @@ export default {
   beforeCreate() {
   },
   created() {
+    this.name = _.cloneDeep(this.item.name)
   },
   beforeMount() {
   },

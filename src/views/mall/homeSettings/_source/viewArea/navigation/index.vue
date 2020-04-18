@@ -1,6 +1,6 @@
 <template>
   <div class="va-navigation-entry">
-    <component :is="mod" :item="item" />
+    <component :is="mod" v-if="isComponent" :item="item" />
   </div>
 </template>
 <script>
@@ -10,6 +10,7 @@ export default {
   name: 'VaNavigation',
   data() {
     return {
+      isComponent: false
     }
   },
   props: {
@@ -21,6 +22,16 @@ export default {
   methods: {
   },
   watch: {
+    'item': {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.isComponent = false
+        setTimeout(() => {
+          this.isComponent = true
+        })
+      }
+    }
   },
   beforeCreate() {
   },
@@ -40,7 +51,7 @@ export default {
   },
   computed: {
     mod() {
-      return this.item.type === 'first' ? mFirstNavigation : mSecondNavigation
+      return this.item.subType === 'first' ? mFirstNavigation : mSecondNavigation
     }
   },
   components: {}
@@ -48,5 +59,7 @@ export default {
 </script>
 <style>
   .va-navigation-entry {
+    min-height: 100px;
+    margin-bottom: -10px;
   }
 </style>

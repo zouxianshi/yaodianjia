@@ -1,11 +1,11 @@
 <template>
   <div class="sa-layout-model">
     <el-card class="box-card" shadow="always">
-      <div class="slm-exhibition">
+      <div v-loading="saLoading" class="slm-exhibition">
         <slot name="exhibition" />
       </div>
     </el-card>
-    <div class="slm-list-box">
+    <div v-loading="saLoading" class="slm-list-box">
       <slot name="item" />
     </div>
     <div class="slm-submit">
@@ -13,11 +13,26 @@
     </div>
   </div>
 </template>
+<script>
+
+import { mapState } from 'vuex'
+export default {
+  computed: {
+    ...mapState('mall', ['saLoading'])
+  }
+}
+</script>
 <style lang="scss" rel="stylesheet/scss">
+  @import './../../../../../../assets/scss/helpers/mixins';
+
   .sa-layout-model {
+    .box-card,.slm-list-box,.slm-submit {
+      @include mixinFadeInUp()
+    }
     .slm-exhibition {
       width: 420px;
       margin: 0 auto;
+
     }
     .slm-list-box {
       margin-top: 10px;

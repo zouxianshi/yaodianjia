@@ -41,7 +41,7 @@ export default {
   },
   computed: {
     mod() {
-      switch (this.item.type) {
+      switch (this.item.subType) {
         case 'second':
           return mSecondAdvertise
         case 'third':

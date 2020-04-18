@@ -2,7 +2,7 @@
   <div class="sa-title-model">
     <el-tabs :value="assemblyName" type="card">
       <el-tab-pane :label="assemblyName" :name="assemblyName">
-        <m-title v-for="(el,i) in item.itemList" :key="i" :item="el" :code="item.code" @on-update="_onUpdate" />
+        <m-title v-for="(el,i) in item.itemList" :key="i" :item="el" :type="item.type" @on-update="_onUpdate" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -27,10 +27,10 @@ export default {
 
   methods: {
     ...mapMutations('mall', ['setUUidDragData']),
-    _onUpdate(searchParams, fn) {
-      saveAssembly(searchParams).then(res => {
+    _onUpdate(p, fn) {
+      saveAssembly(p).then(res => {
         const { uuid } = this.item
-        this.setUUidDragData({ uuid, ...searchParams, ...res.data })
+        this.setUUidDragData({ uuid, ...p, ...res.data })
         setTimeout(() => {
           this.$message.success('保存成功')
           fn()
@@ -45,7 +45,7 @@ export default {
   },
   ...mapState('mall', ['dragData']),
   watch: {
-    'item.code': {
+    'item.type': {
       deep: true,
       immediate: true,
       handler(v) {
@@ -53,10 +53,7 @@ export default {
       }
     }
   },
-
   created() {
-    console.log(this.item)
-    console.log('[[[[[')
   },
   components: { mTitle }
 }

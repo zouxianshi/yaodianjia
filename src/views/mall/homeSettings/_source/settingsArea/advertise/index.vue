@@ -48,7 +48,7 @@ export default {
   computed: {
     ...mapState('mall', ['dragData']),
     mod() {
-      switch (this.item.type) {
+      switch (this.item.subType) {
         case 'second':
           return mSecondAdvertise
         case 'third':

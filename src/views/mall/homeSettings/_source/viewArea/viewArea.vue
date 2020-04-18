@@ -12,27 +12,27 @@
     <!--拖拽操作-->
     <div class="vam-draggable">
       <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
-        <div v-for="(item,$index) in dragList" :key="$index" class="item-component">
-          <m-no-data v-if="item.code === 'no-data'" />
+        <div v-for="(item,$index) in dragList" :key="item.uuid" class="item-component">
+          <m-no-data v-if="item.type === 'no-data'" />
           <template v-else>
             <div class="drag-area">
               <span class="sp1">{{ item.name }}组件</span>
               <span class="sp2">请在此区域拖拽</span>
               <div class="oper">
-                <m-edit v-if="item.code !== 'recommend'" :item="item" />
+                <m-edit v-if="item.type !== 'recommend'" :item="item" />
                 <m-delete :index="$index" />
               </div>
             </div>
             <!--导航栏-->
-            <m-navigation v-if="item.code === 'navigation'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
+            <m-navigation v-if="item.type === 'navigation'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
             <!--标题-->
-            <m-title v-if="item.code === 'title'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
+            <m-title v-if="item.type === 'title'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
             <!--广告图-->
-            <m-advertise v-if="item.code === 'advertise'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
+            <m-advertise v-if="item.type === 'advertise'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
             <!--商品-->
-            <m-commodity v-if="item.code === 'commodity'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
+            <m-commodity v-if="item.type === 'commodity'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
             <!--为你推荐-->
-            <m-recommend v-if="item.code === 'recommend'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
+            <m-recommend v-if="item.type === 'recommend'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
           </template>
         </div>
       </v-draggable>
@@ -129,7 +129,7 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.dragList = this.dragData
+    this.dragList = _.cloneDeep(this.dragData)
   },
   beforeMount() {
   },
@@ -151,7 +151,7 @@ export default {
        * 拖入新增
        */
     onAdd() {
-      this.dragList = _.reject(this.dragList, ['code', 'no-data'])
+      this.dragList = _.reject(this.dragList, ['type', 'no-data'])
       this.setDragData(this.dragList)
     }
   },

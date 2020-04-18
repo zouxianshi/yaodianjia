@@ -1,6 +1,6 @@
 <template>
   <div class="va-title-model">
-    <span v-for="(el,i) in item.itemList" :key="i" class="sp1">{{ el.name }}</span>
+    <span v-for="(el,i) in item.itemList" :key="i" class="sp1">{{ el.name || '请填写' }}</span>
   </div>
 </template>
 <script>

@@ -20,7 +20,7 @@
         </div>
       </el-form-item>
       <el-form-item label="导航名称">
-        <el-input v-model="searchParams.name" style="width: calc(100% - 200px)" max-length="4" @change="() => errorGather.isName = !searchParams.name" />
+        <el-input v-model="searchParams.name" style="width: calc(100% - 200px)" maxlength="4" @change="() => errorGather.isName = !searchParams.name" />
         <div v-if="errorGather.isName" class="sa-error">
           导航名称不允许为空！
         </div>
