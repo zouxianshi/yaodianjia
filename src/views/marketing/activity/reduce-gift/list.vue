@@ -19,14 +19,14 @@
               :min-width="col.width"
             />
             <el-table-column
-              v-else-if="col.prop==='schedule'"
+              v-else-if="col.prop==='validStatus'"
               :key="col.prop"
               :label="col.label"
               :prop="col.prop"
             >
               <template slot-scope="scope">
-                <el-tag v-if="scope.row.schedule===0" size="small" type="info">未开始</el-tag>
-                <el-tag v-else-if="scope.row.schedule===1" size="small" type="success">进行中</el-tag>
+                <el-tag v-if="scope.row.validStatus===0" size="small" type="info">未开始</el-tag>
+                <el-tag v-else-if="scope.row.validStatus===1" size="small" type="success">进行中</el-tag>
                 <el-tag v-else size="small" type="danger">已结束</el-tag>
               </template>
             </el-table-column>
@@ -49,15 +49,15 @@
                 </el-tooltip>
               </template>
               <template slot-scope="scope">
-                <el-tag v-if="scope.row.schedule===0" size="small" type="info">生效</el-tag>
-                <el-tag v-else-if="scope.row.schedule===1" size="small" type="success">生效</el-tag>
+                <el-tag v-if="scope.row.validStatus===0" size="small" type="primary">生效</el-tag>
+                <el-tag v-else-if="scope.row.validStatus===1" size="small" type="success">已生效</el-tag>
                 <el-tag v-else size="small" type="danger">已失效</el-tag>
               </template>
             </el-table-column>
           </template>
           <el-table-column label="操作" width="130">
             <template slot-scope="scope">
-              <el-button type="text">查看</el-button>
+              <el-button type="text" @click="toLook(scope.row)">查看</el-button>
               <el-divider direction="vertical" />
               <el-dropdown trigger="hover">
                 <span class="el-dropdown-link">
@@ -68,9 +68,9 @@
                   <el-dropdown-item>
                     <el-button type="text" @click="$refs.setActFrom.open(scope.row.activityId)">推广设置</el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <!-- <el-dropdown-item>
                     <el-button type="text" @click="endActivity(scope.row)">失效</el-button>
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-dropdown-item>
                     <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
                   </el-dropdown-item>
@@ -103,7 +103,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { delAssembleActivity } from '@/api/marketing'
+import { delActInfo } from '@/api/activity'
 import listForm from '../_source/list-form'
 import actform from './_source/actform'
 
@@ -127,12 +127,12 @@ export default {
           width: '80'
         },
         {
-          prop: 'name',
+          prop: 'pmtName',
           label: '活动名称',
           width: '150'
         },
         {
-          prop: 'storeNum',
+          prop: 'countStore',
           label: '参与门店'
         },
         {
@@ -148,7 +148,7 @@ export default {
           align: 'center'
         },
         {
-          prop: 'schedule',
+          prop: 'validStatus',
           label: '时间状态',
           width: '80',
           align: 'center',
@@ -214,9 +214,13 @@ export default {
       this.searchForm = { ...params }
       this._getTableData()
     },
+    // 查看
+    toLook(row) {
+      this.$router.push(`/marketing/activity/reduce-gift-list-edit?id=${row.id}`)
+    },
     // 编辑
     toEdit(row) {
-      this.$router.push('/marketing/activity/assemble-edit?id=' + row.id)
+      this.$router.push(`/marketing/activity/reduce-gift-list-edit?id=${row.id}&edit=1`)
     },
     // 删除
     handleDel(row) {
@@ -244,20 +248,21 @@ export default {
     // 获取列表数据
     _getTableData() {
       const params = {
-        type: this.searchForm.type,
-        name: this.searchForm.name,
+        promotionType: 14,
+        pmtName: this.searchForm.pmtName,
         currentPage: this.pager.current,
         pageSize: this.pager.size,
         storeId: Array.isArray(this.searchForm.storeId)
           ? this.searchForm.storeId.join(',')
           : '',
-        schedule: this.searchForm.timeStatus
+        validStatus: this.searchForm.timeStatus,
+        isStoreCount: true // 是否需要统计门店数量，true-需要，false或不传-不需要
       }
       this.$store.dispatch('activity/getTablist', params)
     },
     _delData(id) {
       const params = [`${id}`]
-      delAssembleActivity(params).then(res => {
+      delActInfo(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('已删除')
           // 更新列表

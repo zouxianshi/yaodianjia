@@ -4,7 +4,7 @@
       <div class="search-item">
         <span class="label-name" style="width: 80px">活动名称</span>
         <el-input
-          v-model.trim="searchForm.name"
+          v-model.trim="searchForm.pmtName"
           size="small"
           style="width: 200px"
           placeholder="请输入活动名称"
@@ -15,6 +15,7 @@
         <el-select
           v-model="searchForm.storeId"
           multiple
+          style="width: 200px"
           size="small"
           filterable
           placeholder="全部"
@@ -30,7 +31,7 @@
       </div>
       <div class="search-item">
         <span class="label-name" style="width: 80px">活动状态</span>
-        <el-select v-model="searchForm.timeStatus" size="small" placeholder="全部" @change="search()">
+        <el-select v-model="searchForm.validStatus" style="width: 200px" size="small" placeholder="全部" @change="search()">
           <el-option label="全部" value />
           <el-option label="进行中" :value="1" />
           <el-option label="未开始" :value="0" />
@@ -52,7 +53,8 @@ export default {
       searchForm: {
         name: '',
         storeId: '',
-        timeStatus: '' // 活动.时间状态 int (-1: 未开始, 1: 进行中, 0: 已结束)
+        validStatus: '' // 活动.时间状态 int (-1: 未开始, 1: 进行中, 0: 已结束)
+        // 活动状态 0 未开始、1 正在进行、2已结束，根据时间判定
       },
       storeList: [] // 门店列表
     }

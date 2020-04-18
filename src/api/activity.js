@@ -1,14 +1,6 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
 
-export function getAssembleList(params) {
-  return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup`,
-    method: 'post',
-    data: params
-  })
-}
-
 // 获取冲突列表
 export function getConflict(params) {
   return request({
@@ -20,15 +12,6 @@ export function getConflict(params) {
 
 // 创建赠品
 export function createGift(params) {
-  return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup`,
-    method: 'post',
-    data: params
-  })
-}
-
-// 创建加价购
-export function createAddPriceAct(params) {
   return request({
     url: `${config.merGoods}/1.0/admin/activityGroup`,
     method: 'post',
@@ -100,5 +83,110 @@ export function getActExtend(activityId) {
   return request({
     url: `${config.merGoods}/1.0/act-extend/${activityId}`,
     method: 'get'
+  })
+}
+
+/**
+ * 创建满减满赠
+ */
+export function createActFull(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-full`,
+    method: 'post',
+    data: params
+  })
+}
+/**
+ * 更新满减满赠
+ */
+export function updateActFull(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-full`,
+    method: 'put',
+    data: params
+  })
+}
+
+/**
+ * 查询满减满赠
+ */
+export function getActFull(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-full/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 创建加价购活动
+ */
+export function createActAdd(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-add`,
+    method: 'post',
+    data: params
+  })
+}
+/**
+ * 更新加价购活动
+ */
+export function updateActAdd(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-add`,
+    method: 'put',
+    data: params
+  })
+}
+
+/**
+ * 查询加价购活动
+ */
+export function getActAdd(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-add/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 查询活动列表
+ * @param {*activityType} activityType
+ * @param {*currentPage} currentPage
+ * @param {*merCode} merCode
+ * @param {*pageSize} pageSize
+ * @param {*pmtName} pmtName  活动名称
+ * @param {*promotionType} promotionType
+ * @param {*status} integer  启用状态(1-启用,0-禁用)
+ * @param {*string} storeId  活动门店ID
+ * @param {*integer} validStatus  活动状态 0 未开始、1 正在进行、2已结束，根据时间判定
+ *
+ */
+export function getActList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-info/_search`,
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 创建限时活动
+ */
+export function createActLimit(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-limit`,
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 失效活动
+ * @param {*} id
+ */
+export function delActInfo(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-info/${id}`,
+    method: 'delete'
   })
 }

@@ -26,14 +26,14 @@
         />
       </el-form-item>
       <div class="form-title">活动范围</div>
-      <el-form-item label="门店范围：" prop="isAllStore" required>
-        <el-radio-group v-model="form.isAllStore">
-          <el-radio :label="1">全部门店</el-radio>
-          <el-radio :label="0">部分门店</el-radio>
+      <el-form-item label="门店范围：" prop="allStores" required>
+        <el-radio-group v-model="form.allStores">
+          <el-radio :label="true">全部门店</el-radio>
+          <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
       </el-form-item>
-      <!-- <el-form-item v-if="form.isAllStore === 1">已选当前上线的全部门店</el-form-item> -->
-      <el-form-item v-show="form.isAllStore === 0">
+      <!-- <el-form-item v-if="form.allStores === 1">已选当前上线的全部门店</el-form-item> -->
+      <el-form-item v-show="form.allStores === 0">
         <!-- storeComponent -->
         <el-button
           type="primary"
@@ -43,17 +43,17 @@
         <!-- <store-dialog @complete="handleSelectStore">选择门店</store-dialog> -->
       </el-form-item>
       <!-- 门店列表 -->
-      <el-form-item v-show="form.isAllStore === 0">
+      <el-form-item v-show="form.allStores === 0">
         <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
       </el-form-item>
-      <el-form-item label="商品范围：" prop="isAllStore" required>
-        <el-radio-group v-model="form.isAllProduct">
-          <el-radio :label="1">全部商品</el-radio>
-          <el-radio :label="0">部分商品</el-radio>
+      <el-form-item label="商品范围：" prop="allStores" required>
+        <el-radio-group v-model="form.allSpecs">
+          <el-radio :label="true">全部商品</el-radio>
+          <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
       </el-form-item>
-      <!-- <el-form-item v-if="form.isAllProduct === 1">已选当前上线的全部商品</el-form-item> -->
-      <el-form-item v-show="form.isAllProduct === 0">
+      <!-- <el-form-item v-if="form.allSpecs === 1">已选当前上线的全部商品</el-form-item> -->
+      <el-form-item v-show="form.allSpecs === 0">
         <div style="margin-bottom: 8px">
           <el-button
             type="primary"
@@ -85,10 +85,10 @@
         </template>
         <select-activity-goods ref="activityGod" @del-item="delActivityGoods" />
       </el-form-item>
-      <el-form-item label="换购数量：" prop="activityNum">
+      <el-form-item label="换购数量：" prop="confineNum">
         <template>
           <span>最多可换购</span>
-          <el-input v-model="form.activityNum" style="width: 100px; margin-right: 8px" />
+          <el-input v-model="form.confineNum" style="width: 100px; margin-right: 8px" />
           <span>件</span>
           <span class="info">换购商品允许顾客下单时在商品的总换购数量</span>
         </template>
@@ -122,12 +122,15 @@
 </template>
 
 <script>
-// import { createAddPriceAct } from '@/api/activity'
+import _ from 'lodash'
 import storeGoods from '../../components/store-gods'
 import storeDialog from '../../components/store'
 import selectStore from '../../components/select-store'
 import selectGoods from '../../components/select-goods'
 import selectActivityGoods from './_source/select-activity-goods'
+import { createActAdd } from '@/api/activity'
+import { mapGetters } from 'vuex'
+
 export default {
   components: {
     storeGoods,
@@ -135,6 +138,9 @@ export default {
     selectGoods,
     selectStore,
     selectActivityGoods
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   data() {
     const checkActivitTime = (rule, value, callback) => {
@@ -171,8 +177,8 @@ export default {
     return {
       form: {
         type: ['1'],
-        isAllStore: 1,
-        isAllProduct: 1,
+        allStores: true,
+        allSpecs: true,
         threshold: ''
       },
       rules: {
@@ -187,7 +193,7 @@ export default {
         threshold: [
           { required: true, validator: checkThreshold, trigger: 'blur' }
         ],
-        activityNum: [
+        confineNum: [
           { required: true, validator: checkActivityNum, trigger: 'blur' }
         ]
       },
@@ -248,15 +254,43 @@ export default {
               // const dataParma = {}
               console.log(this.form)
               console.log(res)
+              let dataParam = {}
+              dataParam = _.pick(this.form, [
+                'allSpecs',
+                'allStores',
+                'endTime',
+                'startTime',
+                'name'
+              ])
+              let userCoupons = ''
+              // 需要增加组装的参数    userCoupons  pmtRule:{ruleList, confineNum, threshold, userCoupons} activitySpecList storeIds merCode: this.merCode,
+              if (Array.isArray(this.form.type) && this.form.type.length) {
+                const index = this.form.type.findIndex(item => item === '1')
+                if (index >= 0) {
+                  userCoupons = 3
+                } else {
+                  userCoupons = 0
+                }
+              }
+              dataParam = {
+                ...dataParam,
+                merCode: this.merCode,
+                pmtRule: {
+                  confineNum: this.form.confineNum,
+                  threshold: this.form.threshold,
+                  ruleList: res,
+                  userCoupons
+                }
+              }
               // 这里需要处理下数据-----
-              // createAddPriceAct().then(res => {
-              //   if(res.code === '10000') {
-              //     this.$message({
-              //       message: '创建成功',
-              //       type: 'success'
-              //     })
-              //   }
-              // })
+              createActAdd(dataParam).then(res => {
+                if (res.code === '10000') {
+                  this.$message({
+                    message: '创建成功',
+                    type: 'success'
+                  })
+                }
+              })
             })
             .catch(res => {
               console.log('二次验证失败----------------------')

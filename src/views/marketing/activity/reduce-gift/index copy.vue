@@ -1,13 +1,6 @@
 <template>
-  <div v-loading="pageInfoloading" class="app-container">
-    <el-form
-      ref="form"
-      :model="form"
-      :rules="rules"
-      size="small"
-      :disabled="disabled"
-      label-width="120px"
-    >
+  <div class="app-container">
+    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
       <div class="form-title">基本信息</div>
       <el-form-item label="活动名称：" prop="name">
         <el-input
@@ -33,13 +26,13 @@
         />
       </el-form-item>
       <div class="form-title">活动规则</div>
-      <el-form-item label="活动范围：" prop="allStore" required>
-        <el-radio-group v-model="form.allStore" @change="handleStoreChange">
+      <el-form-item label="活动范围：" prop="allStores" required>
+        <el-radio-group v-model="form.allStores" @change="handleStoreChange">
           <el-radio :label="true">全部门店</el-radio>
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item v-show="!form.allStore">
+      <el-form-item v-show="!form.allStores">
         <!-- storeComponent -->
         <el-button
           type="primary"
@@ -48,17 +41,17 @@
         >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
       </el-form-item>
       <!-- 门店列表 -->
-      <el-form-item v-show="!form.allStore">
+      <el-form-item v-show="!form.allStores">
         <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
       </el-form-item>
-      <el-form-item label="活动商品：" prop="allSpec" required>
-        <el-radio-group v-model="form.allSpec" @change="handleProductChange">
+      <el-form-item label="活动商品：" prop="allSpecs" required>
+        <el-radio-group v-model="form.allSpecs" @change="handleProductChange">
           <el-radio :label="true">全部商品</el-radio>
           <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
       </el-form-item>
       <!-- 选择的商品列表 -->
-      <el-form-item v-show="!form.allSpec">
+      <el-form-item v-show="!form.allSpecs">
         <div style="margin-bottom: 8px">
           <el-button
             type="primary"
@@ -82,30 +75,18 @@
       <el-form-item label="活动规则：" prop="ruleType" required>
         <el-radio-group v-model="form.ruleType" @change="ruleTypeChange">
           <el-radio :label="1">阶梯满减</el-radio>
-          <el-tooltip class="item" effect="dark" placement="top-start">
-            <div slot="content">
-              循环次数说明
-              <br>循环满减最多循环1000次，比如每满100件10元，最多减10000元
-            </div>
-            <el-radio :label="0">
-              循环满减
-              <i class="el-icon-question" />
-            </el-radio>
-          </el-tooltip>
+          <el-radio :label="0">
+            循环满减
+            <i class="el-icon-question" />
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <!-- 优惠设置 -->
       <div class="form-title">优惠设置</div>
       <el-form-item label="满减规则：" required>
-        <el-radio-group v-model="form.uint" @change="unitChange">
+        <el-radio-group v-model="form.uint">
           <el-radio :label="0">金额（元）</el-radio>
-          <el-radio :label="1" :disabled="form.ruleType === 0">商品数量（件）</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="优惠方式：" required>
-        <el-radio-group v-model="form.discountType" @change="discountTypeChange">
-          <el-radio :label="0" :disabled="form.uint === 1">直减（元）</el-radio>
-          <el-radio :label="1">折扣</el-radio>
+          <el-radio :label="1">商品数量（件）</el-radio>
         </el-radio-group>
       </el-form-item>
       <div v-for="(domain, $Index) in form.ruleList" :key="$Index">
@@ -129,35 +110,58 @@
           }"
         >
           <el-input v-model="domain.threshold" style="width: 200px" class="input-with-select">
-            <template slot="append">{{ form.uint === 0 ? '元':'件' }}</template>
+            <el-select slot="append" v-model="domain.uint" placeholder="请选择">
+              <el-option
+                v-for="item in unitList"
+                :key="item.value"
+                :label="item.label"
+                :disabled="item.value === 0 && form.ruleList[0].uint === 1 && $Index !==0"
+                :value="item.value"
+              />
+            </el-select>
           </el-input>
-        </el-form-item>
-        <el-form-item v-show="false" :prop="'ruleList.'+ $Index + '.uint'">
-          <el-input v-model="domain.uint" />
         </el-form-item>
         <el-form-item label="优惠内容：">
           <el-checkbox
-            v-model="domain.checkOrNot"
+            v-model="domain.order_full"
             border
             @input.native="orderFullChange($event, $Index)"
           >订单金额优惠</el-checkbox>
         </el-form-item>
-        <el-form-item
-          v-show="domain.checkOrNot && form.discountType === 1"
-          style="margin-left: 30px; margin-bottom: 0px"
-        >
+        <el-form-item v-show="domain.order_full && form.ruleList[0].uint === 0" style="margin-left: 30px; margin-bottom: 0px">
           <div style="display: flex; flex-direction: row">
             <el-form-item>
-              <el-radio v-model="form.discountType" :label="1">打</el-radio>
+              <el-radio v-model="domain.discountType" :label="0">减</el-radio>
             </el-form-item>
             <el-form-item
-              :prop="'ruleList.'+ $Index + '.discount'"
+              :prop="'ruleList.'+ $Index + '.discount0'"
+              :rules="{
+                validator:validAmountPrice, trigger: 'change'
+              }"
+            >
+              <el-input
+                v-model="domain.discount0"
+                style="width: 200px; margin-left: 10px"
+                class="input-with-select"
+              >
+                <template slot="append">元</template>
+              </el-input>
+            </el-form-item>
+          </div>
+        </el-form-item>
+        <el-form-item v-show="domain.order_full && form.ruleType === 1" style="margin-left: 30px">
+          <div style="display: flex; flex-direction: row">
+            <el-form-item>
+              <el-radio v-model="domain.discountType" :label="1">打</el-radio>
+            </el-form-item>
+            <el-form-item
+              :prop="'ruleList.'+ $Index + '.discount1'"
               :rules="{
                 validator:validDiscountPrice, trigger: 'change'
               }"
             >
               <el-input
-                v-model="domain.discount"
+                v-model="domain.discount1"
                 style="width: 200px; margin-left: 10px"
                 class="input-with-select"
                 :min="0"
@@ -168,39 +172,10 @@
             </el-form-item>
           </div>
         </el-form-item>
-        <el-form-item
-          v-show="domain.checkOrNot && form.discountType === 0"
-          style="margin-left: 30px; margin-bottom: 0px"
-        >
-          <div style="display: flex; flex-direction: row">
-            <el-form-item>
-              <el-radio v-model="form.discountType" :label="0">减</el-radio>
-            </el-form-item>
-            <el-form-item
-              :prop="'ruleList.'+ $Index + '.discount'"
-              :rules="{
-                validator:validAmountPrice, trigger: 'change'
-              }"
-            >
-              <el-input
-                v-model="domain.discount"
-                style="width: 200px; margin-left: 10px"
-                class="input-with-select"
-              >
-                <template slot="append">元</template>
-              </el-input>
-            </el-form-item>
-          </div>
-        </el-form-item>
-
         <el-form-item>
           <template>
             <el-checkbox v-model="domain.giftOrNot" border>送赠品</el-checkbox>
-            <el-button
-              v-if="!!domain.giftOrNot"
-              type="text"
-              @click="$refs.storeGiftsComponent.open()"
-            >选择赠品</el-button>
+            <el-button v-if="!!domain.giftOrNot" type="text" @click="$refs.storeGiftsComponent.open()">选择赠品</el-button>
           </template>
         </el-form-item>
         <el-form-item>这里是表格</el-form-item>
@@ -218,12 +193,7 @@
         </el-tooltip>
       </el-divider>
       <el-form-item>
-        <el-button
-          v-if="!disabled"
-          type="primary"
-          style="width: 120px; margin-top: 20px"
-          @click="onSubmit"
-        >{{ edit?'更新':'提交' }}</el-button>
+        <el-button type="primary" style="width: 120px" @click="onSubmit">提交</el-button>
       </el-form-item>
     </el-form>
     <!-- 选择主商品组件 -->
@@ -231,7 +201,7 @@
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!-- 选择赠品组件 -->
-    <store-goods-gifts ref="storeGiftsComponent" :list="giftList" @complete="handleGiftList" />
+    <store-goods-gifts ref="storeGiftsComponent" :list="giftList" @commit="handleGiftList" />
   </div>
 </template>
 
@@ -242,7 +212,7 @@ import storeGoodsGifts from '../../components/store-gods-gifts'
 import storeDialog from '../../components/store'
 import selectStore from '../../components/select-store'
 import selectGoods from '../../components/select-goods'
-import { createActFull, getActFull, updateActFull } from '@/api/activity'
+import { createActFull } from '@/api/activity'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -268,36 +238,39 @@ export default {
       callback()
     }
     return {
-      disabled: false, // 当前页面是否可编辑
-      activityId: '', // 活动id
-      edit: false,
+      activeName: 'basic',
       form: {
         type: ['1'], // 下单规则
-        allStore: true,
-        allSpec: true,
+        allStores: true,
+        allSpecs: true,
         ruleType: 1, // 循环0/阶梯1
-        uint: 0, // 满减门槛元/件 0元1件
-        discountType: 0, // 减价类型0减价1打折
+        uint: 0,
         ruleList: [
           {
-            uint: 0,
-            discountType: 0,
+            uint: 0, // 满减门槛元/件 0元1件
             threshold: '', // 满减门槛金额
-            giftOrNot: false, // 是否赠送赠品默认0否，1是
-            checkOrNot: true, // 0/false 否 1/true是
-            discount: '' // 金额；
+            giftOrNot: 0, // 是否赠送赠品默认0否，1是
+            order_full: true,
+            discountType: 0, //  减价类型0减价1打折
+            discount0: '', // 金额；
+            discount1: '' // 折扣
           }
         ]
       },
       initRuleFull: {
+        uint: 0, // 满减门槛元/件
         threshold: '', // 满减门槛金额
-        giftOrNot: false,
-        checkOrNot: true,
-        discount: ''
+        giftOrNot: 0,
+        order_full: true,
+        discountType: 0, // 折1/减价0
+        discount0: '',
+        discount1: ''
       },
-      chooseStore: [], // 选择的门店
-      storeSelectGoods: [], // 选择的门店商品数据---去重的
-      giftList: [], // 选择的赠品列表
+      chooseStore: [],
+      allStore: [],
+      storeSelectGoods: [],
+      allStoreGoods: [],
+      giftList: [], // 赠品列表
       rules: {
         name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
         activitTime: [
@@ -309,73 +282,16 @@ export default {
         ]
       },
       pageLoading: '',
-      pageInfoloading: false,
-      leaveAction: false
+      unitList: [
+        { label: '元', value: 0 },
+        { label: '件', value: 1 }
+      ]
     }
   },
   created() {
-    console.log(this.$route)
-    if (this.$route.query.id) {
-      this.activityId = this.$route.query.id
-      this.disabled = this.$route.query.id && !this.$route.query.edit // 当前页面为查看
-      this.edit = this.$route.query.id && this.$route.query.edit // 当前页面为编辑
-      this.getActFullInfo(this.$route.query.id)
-    }
+    this.activeName = this.$route.query.type || 'basic'
   },
   methods: {
-    // 查询活动详情
-    getActFullInfo(id) {
-      this.pageInfoloading = true
-      getActFull(id)
-        .then(res => {
-          console.log('查询活动详情0', res)
-          this.pageInfoloading = false
-          if (res.code === '10000') {
-            const { data } = res
-            // 转换activityDetail 去除数据
-            // ruleType, uint discountType
-            let ruleType, uint, discountType, ruleList_af
-            if (
-              data.activityDetail &&
-              data.activityDetail.ruleList &&
-              Array.isArray(data.activityDetail.ruleList)
-            ) {
-              ruleType = data.activityDetail.ruleList[0].ruleType
-              uint = data.activityDetail.ruleList[0].uint
-              discountType = data.activityDetail.ruleList[0].discountType
-              // 转换giftOrNot checkOrNot
-              ruleList_af = data.activityDetail.ruleList.map(item => {
-                return {
-                  ...item,
-                  checkOrNot: !!item.checkOrNot,
-                  giftOrNot: !!item.giftOrNot
-                }
-              })
-            }
-            this.form = {
-              name: data.pmtName,
-              activitTime: [data.startTime, data.endTime],
-              allStore: !!data.isAllStore,
-              allSpec: false,
-              type: data.userCoupons === 3 ? ['1'] : [],
-              ruleType,
-              uint,
-              discountType,
-              ruleList: ruleList_af,
-              startTime: data.startTime,
-              endTime: data.endTime
-            }
-            this.chooseStore = data.storeResDTOList
-            this.$refs.selectStoreComponent.dataFrom(data.storeResDTOList)
-            this.storeSelectGoods = data.commList
-            this.$refs.storeGods.dataFrom(data.commList)
-          }
-        })
-        .catch(e => {
-          console.log('查询活动详情0---err', e)
-          this.pageInfoloading = false
-        })
-    },
     handleTimeChange(row) {
       console.log('活动时间', row)
       if (row) {
@@ -394,7 +310,10 @@ export default {
     validThreshold(rule, value, callback) {
       console.log('校验满减门槛金额设置', rule, value)
       const index = rule.field.split('.')[1]
-      // console.log('---------', this.form.ruleList[index].uint)
+      console.log('---------', this.form.ruleList[index].uint)
+      // 这里说明细下，如果第一项更改，切替换为件数，那么之前保留的数据全都清空
+      // if (index === 0) {
+      // }
       if (!value) {
         return callback(new Error('满减门槛不能为空'))
       }
@@ -402,32 +321,15 @@ export default {
         return callback(new Error('满减门槛必须大于0'))
       }
       // 元
-      if (this.form.uint === 0) {
+      if (this.form.ruleList[index].uint === 0) {
         if (!/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(value)) {
           return callback(new Error('必须为大于0.01的正数'))
         }
       }
       // 件
-      if (this.form.uint === 1) {
+      if (this.form.ruleList[index].uint === 1) {
         if (!/^[1-9]\d*$/.test(value)) {
           return callback(new Error('必须为大于0的正整数'))
-        }
-      }
-      // 后续的数值必须大于前面的金额
-      if (this.form.ruleList.length > 1) {
-        console.log('后续的数值必须大于前面的金额', this.form.ruleList, index)
-        if (index >= 1) {
-          console.log(
-            '我是金额',
-            this.form.ruleList[index].threshold,
-            this.form.ruleList[index - 1].threshold
-          )
-          if (
-            Number(this.form.ruleList[index].threshold || 0) <=
-            Number(this.form.ruleList[index - 1].threshold || 0)
-          ) {
-            return callback(new Error('此项金额必须大于前一项金额'))
-          }
         }
       }
 
@@ -439,9 +341,9 @@ export default {
       // 如果选择是元那么打折的范围为0-99999999
       console.log('111111', rule, value)
       const index = rule.field.split('.')[1]
-      if (this.form.discountType === 0) {
+      if (this.form.ruleList[index].discountType === 0) {
         if (!value) {
-          return callback(new Error('请输入满减金额'))
+          return callback(new Error('请输入折扣金额'))
         }
         if (
           !/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(value) ||
@@ -450,19 +352,9 @@ export default {
           return callback(new Error('必须为大于0.01的正数'))
         }
         if (value > 99999999) {
-          return callback(new Error('满减金额不可大于99999999'))
+          return callback(new Error('不可大于99999999'))
         }
-        // 后续的数值必须大于前面的金额
-        if (this.form.ruleList.length > 1) {
-          if (index >= 1) {
-            if (
-              Number(this.form.ruleList[index].discount || 0) <=
-              Number(this.form.ruleList[index - 1].discount || 0)
-            ) {
-              return callback(new Error('此项满减金额必须大于前一项满减金额'))
-            }
-          }
-        }
+        this.form.ruleList[index].discount = value
       }
       callback()
     },
@@ -472,7 +364,7 @@ export default {
       // 如果选择是元那么打折的范围为0-99999999
       console.log('2222-validDiscountPrice', rule, value)
       const index = rule.field.split('.')[1]
-      if (this.form.discountType === 1) {
+      if (this.form.ruleList[index].discountType === 1) {
         if (!value) {
           return callback(new Error('请输入折扣力度'))
         }
@@ -480,18 +372,9 @@ export default {
           return callback(new Error('必须为大于0.1的正数'))
         }
         if (value >= 10) {
-          return callback(new Error('折扣力度必须小于10'))
+          return callback(new Error('必须小于10'))
         }
-        if (this.form.ruleList.length > 1) {
-          if (index >= 1) {
-            if (
-              Number(this.form.ruleList[index].discount || 0) <=
-              Number(this.form.ruleList[index - 1].discount || 0)
-            ) {
-              return callback(new Error('此项折扣力度必须大于前一项折扣力度'))
-            }
-          }
-        }
+        this.form.ruleList[index].discount = value
       }
       callback()
     },
@@ -507,6 +390,7 @@ export default {
     handleGiftList(list) {
       console.log('提交的数据-----赠品列表', list)
       this.giftList = list
+      this.$refs.storeGiftsComponent.dataFrom(list)
     },
     // 追加优惠层级
     handleAdd() {
@@ -514,8 +398,7 @@ export default {
       // 如果第一层设置为件数，那么后续只能设置为件数，并且只能打折
       this.form.ruleList = this.form.ruleList.concat({
         ...this.initRuleFull,
-        discountType: this.form.discountType,
-        uint: this.form.uint
+        uint: this.form.ruleList[0].uint
       })
     },
     // 删除层级
@@ -526,36 +409,18 @@ export default {
       data.splice(index, 1)
       console.log('data-------------', data)
       this.form.ruleList = data
-    },
-    // 满减规格设置
-    unitChange(val) {
-      console.log('unitChange----', val)
-      // 满减门槛元/件 0元1件
-      // 单位切换，优惠内容层级设置全部更新为与上级单位一致；
-      this.form.ruleList.map(item => {
-        return {
-          ...item,
-          uint: val
-        }
-      })
-      if (val === 1) {
-        this.form.discountType = 1
-      }
-    },
-    discountTypeChange(val) {
-      const data = this.form.ruleList.map(item => {
-        return {
-          ...item,
-          discountType: val
-        }
-      })
-      this.form.ruleList = data
+      // this.$set( this.form.ruleList);
     },
     ruleTypeChange(val) {
       console.log('ruleTypeChange----', val)
       if (val === 0) {
         this.form.ruleList = [{ ...this.initRuleFull }]
-        this.form.uint = 0
+        this.unitList = [{ label: '元', value: 0 }]
+      } else {
+        this.unitList = [
+          { label: '元', value: 0 },
+          { label: '件', value: 1 }
+        ]
       }
     },
 
@@ -570,8 +435,8 @@ export default {
           }
           let dataParam = {}
           dataParam = _.pick(this.form, [
-            'allSpec',
-            'allStore',
+            'allSpecs',
+            'allStores',
             'endTime',
             'startTime',
             'name'
@@ -585,67 +450,20 @@ export default {
               dataParam.userCoupons = 0
             }
           }
-          const ruleList_af = this.form.ruleList.map(item => {
-            return {
-              ...item,
-              giftOrNot: item.giftOrNot ? 1 : 0,
-              checkOrNot: item.checkOrNot ? 1 : 0,
-              ruleType: this.form.ruleType
-            }
-          })
-          // 解析门店
-          const storeIdData = []
-          const specIdData = []
-          if (!this.form.allStore) {
-            this.chooseStore.forEach(element => {
-              storeIdData.push(element.id)
-            })
-          }
-          if (!this.form.allSpec) {
-            this.storeSelectGoods.forEach(element => {
-              specIdData.push({
-                specId: element.specId,
-                name: element.name
-              })
-            })
-          }
           dataParam = {
             ...dataParam,
             merCode: this.merCode,
-            id: this.activityId,
-            activitySpecList: specIdData, //
-            storeIds: storeIdData,
             pmtRule: {
               ruleType: this.form.ruleType,
-              ruleList: ruleList_af
+              ruleList: this.form.ruleList
             }
           }
-          this.leaveAction = true
-          const loading = this.$loading({
-            lock: true,
-            text: '努力创建中，请稍后',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
+          createActFull(dataParam).then(res => {
+            this.$message({
+              message: '创建成功',
+              type: 'success'
+            })
           })
-          if (this.edit) {
-            updateActFull(dataParam).then(res => {
-              this.$message({
-                message: '创建成功',
-                type: 'success'
-              })
-              loading.close()
-              this.$router.replace('/marketing/activity/reduce-gift-list')
-            })
-          } else {
-            createActFull(dataParam).then(res => {
-              this.$message({
-                message: '更新成功',
-                type: 'success'
-              })
-              loading.close()
-              this.$router.replace('/marketing/activity/reduce-gift-list')
-            })
-          }
         } else {
           console.log('error submit!!', valid)
           return false
@@ -668,26 +486,30 @@ export default {
       console.log('orderFullChange', e, i)
       this.form.ruleList[i].discountType === 0
       console.log(this.form)
+      // this.$set(this.form)
     }
   },
 
   beforeRouteLeave(to, from, next) {
-    if (this.disabled || this.leaveAction) {
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
+    next(false)
+    this.$confirm(
+      '检测到未保存的内容，是否在离开页面前保存修改？',
+      '确认信息',
+      {
+        distinguishCancelAndClose: true,
+        confirmButtonText: '保存',
+        cancelButtonText: '放弃修改'
       }
-    } else {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        if (this.pageLoading) {
-          this.pageLoading.close()
-        }
+    )
+      .then(() => {
+        this.$message({
+          type: 'info',
+          message: '保存修改'
+        })
+      })
+      .catch(action => {
         next()
-      } else {
-        next(false)
-      }
-    }
+      })
   }
 }
 </script>

@@ -1,138 +1,127 @@
 <template>
-  <span>
-    <el-button type="text" @click="dialog.visible = true">选择赠品</el-button>
-    <el-dialog
-      title="选取赠品"
-      append-to-body
-      class="m-dialog m-dialog-goods"
-      :visible.sync="dialog.visible"
-      :close-on-click-modal="false"
-      width="800px"
-      @close="handlerClose"
-    >
-      <div class="modal-body">
-        <el-form
-          :inline="true"
-          :model="searchForm"
-          size="small"
-          class="demo-form-inline"
-          @keydown.enter="_loadStoreData"
-        >
-          <el-form-item label="赠品信息">
-            <el-input v-model="searchForm.storeCode" clearable placeholder="商品编码/商品名称" />
-          </el-form-item>
-          <el-form-item v-show="false" label="活动开始时间">
-            <el-input v-model="searchForm.startTime" clearable />
-          </el-form-item>
-          <el-form-item v-show="false" label="活动结束时间">
-            <el-input v-model="searchForm.endTime" clearable />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="forSearch">查询</el-button>
-            <el-button size="small" @click.stop="forReset()">重 置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          ref="multipleTable"
-          v-loading="loading"
-          element-loading-text="加载中"
-          border
-          size="small"
-          :data="tableData"
-          style="width: 100%;margin-top: 20px"
-          max-height="256"
-          @select-all="handleSelectAllChange"
-          @select="handleSelect"
-        >
-          <el-table-column type="selection" align="center" width="50" />
-          <el-table-column align="center" label="商品图片" min-width="60">
-            <template slot-scope="scope">
-              <div
-                v-if="scope.row.mainPic && scope.row.mainPic!==''"
-                class="x-img-mini"
-                style="width: 60px; height: 60px"
-              >
-                <div class="x-image__preview">
-                  <el-image
-                    style="width: 60px; height: 60px"
-                    fit="contain"
-                    :src="showImg(scope.row.mainPic)"
-                    :preview-src-list="[showImg(scope.row.mainPic)]"
-                  />
-                </div>
+  <el-dialog
+    title="选取赠品"
+    append-to-body
+    class="m-dialog m-dialog-goods"
+    :visible.sync="dialog.visible"
+    :close-on-click-modal="false"
+    width="800px"
+    @close="handlerClose"
+  >
+    <div class="modal-body">
+      <el-form
+        :inline="true"
+        :model="searchForm"
+        size="small"
+        class="demo-form-inline"
+        @keydown.enter="_loadStoreData"
+      >
+        <el-form-item label="赠品信息">
+          <el-input v-model="searchForm.keyWord" clearable placeholder="商品编码/商品名称" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="forSearch">查询</el-button>
+          <el-button size="small" @click.stop="forReset()">重 置</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table
+        ref="multipleTable"
+        v-loading="loading"
+        element-loading-text="加载中"
+        border
+        size="small"
+        :data="tableData"
+        style="width: 100%;margin-top: 20px"
+        max-height="256"
+        @select-all="handleSelectAllChange"
+        @select="handleSelect"
+      >
+        <el-table-column type="selection" align="center" width="50" />
+        <el-table-column align="center" label="商品图片" min-width="60">
+          <template slot-scope="scope">
+            <div
+              v-if="scope.row.mainPic && scope.row.mainPic!==''"
+              class="x-img-mini"
+              style="width: 60px; height: 60px"
+            >
+              <div class="x-image__preview">
+                <el-image
+                  style="width: 60px; height: 60px"
+                  fit="contain"
+                  :src="showImg(scope.row.mainPic)"
+                  :preview-src-list="[showImg(scope.row.mainPic)]"
+                />
               </div>
-              <div v-else style="line-height: 32px">暂无上传</div>
-            </template>
-            <!-- <template slot-scope="scope">
-            <div class="img-wrap">
-              <img :src="showImg(scope.row.mainPic)">
             </div>
-            </template>-->
-          </el-table-column>
-          <el-table-column prop="name" label="赠品名称" min-width="120" :show-overflow-tooltip="true" />
-          <el-table-column
-            prop="brandName"
-            label="品牌"
-            min-width="80"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column label="规格信息" min-width="100" :show-overflow-tooltip="true">
-            <template slot-scope="scope" :show-overflow-tooltip="true">
-              <div v-html="formatSkuInfo(scope.row.specSkuList)" />
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="mprice"
-            label="参考价格"
-            min-width="60"
-            align="center"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            prop="manufacture"
-            label="已参加活动"
-            min-width="120"
-            :show-overflow-tooltip="true"
-          />
-        </el-table>
-        <div class="table-footer">
-          <el-pagination
-            background
-            style="text-align: right;margin-top: 20px"
-            :current-page="pager.current"
-            :page-sizes="[10, 15, 20, 50]"
-            :page-size="pager.size"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="pager.total"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
-        </div>
+            <div v-else style="line-height: 32px">暂无上传</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="赠品名称" min-width="120" :show-overflow-tooltip="true" />
+        <el-table-column prop="brandName" label="品牌" min-width="80" :show-overflow-tooltip="true" />
+        <el-table-column label="规格信息" min-width="100" :show-overflow-tooltip="true">
+          <template slot-scope="scope" :show-overflow-tooltip="true">
+            <div v-html="formatSkuInfo(scope.row.specSkuList)" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="mprice"
+          label="参考价格"
+          min-width="60"
+          align="center"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column
+          prop="mprice"
+          label="剩余库存"
+          min-width="60"
+          align="center"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column
+          prop="mprice"
+          label="每人限领"
+          min-width="60"
+          align="center"
+          :show-overflow-tooltip="true"
+        />
+      </el-table>
+      <div class="table-footer">
+        <el-pagination
+          background
+          style="text-align: right;margin-top: 20px"
+          :current-page="pager.current"
+          :page-sizes="[10, 15, 20, 50]"
+          :page-size="pager.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pager.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
 
-        <div class="result-section">
-          <!-- <div class="blank-line" /> -->
-          <el-divider content-position="left">
-            已选商品（当前
-            <span style="color: #409eff;padding: 0 4px">{{ mySelectList.length }}</span>商品）
-          </el-divider>
-          <div class="label-line">
-            <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
-              <el-tag type="success" size="small" closable @close="removeMyselectItem(mItem, index2)">
-                <span :title="mItem.name">{{ mItem.name }}</span>
-              </el-tag>
-            </div>
+      <div class="result-section">
+        <!-- <div class="blank-line" /> -->
+        <el-divider content-position="left">
+          已选赠品（当前
+          <span style="color: #409eff;padding: 0 4px">{{ mySelectList.length }}</span>赠品）
+        </el-divider>
+        <div class="label-line">
+          <div v-for="(mItem, index2) in mySelectList" :key="index2" class="label">
+            <el-tag type="success" size="small" closable @close="removeMyselectItem(mItem, index2)">
+              <span :title="mItem.name">{{ mItem.name }}</span>
+            </el-tag>
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <template v-if="editable">
-          <el-button size="small" @click="dialog.visible = false">取 消</el-button>
-          <el-button type="primary" size="small" @click="confirm()">确 定</el-button>
-        </template>
-        <el-button v-else @click="dialog.visible = false">关 闭</el-button>
-      </span>
-    </el-dialog>
-  </span>
+    </div>
+    <span slot="footer" class="dialog-footer">
+      <template v-if="editable">
+        <el-button size="small" @click="dialog.visible = false">取 消</el-button>
+        <el-button type="primary" size="small" @click="confirm()">确 定</el-button>
+      </template>
+      <el-button v-else @click="dialog.visible = false">关 闭</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>
@@ -154,12 +143,6 @@ export default {
       type: Boolean,
       default: true
     }
-    // typeList: {
-    //   type: Array,
-    //   default: _ => {
-    //     return []
-    //   }
-    // }
   },
   data() {
     return {
@@ -173,22 +156,13 @@ export default {
         total: 0
       },
       searchForm: {
-        keyWord: '',
-        typeid: '',
-        typeLevel: ''
+        keyWord: ''
       },
       tableData: [],
       multipleSelection: [],
       mySelectList: [],
       typeList: [],
-      checkAll: false,
-      typeTree: [],
-      merchantOption: {
-        label: 'name',
-        value: 'id',
-        checkStrictly: true // 是否可以选择任一级
-      },
-      typeTreeLoading: false
+      checkAll: false
     }
   },
   computed: {
@@ -200,19 +174,12 @@ export default {
     this.fetchData()
   },
   methods: {
+    dataFrom(data) {
+      this.tableData = data
+    },
     // 获取数据
     fetchData() {
       this._getTableData() // 统计列表
-      // this._getTypeTree() // 分类类表
-    },
-    onTypeChange(typeid) {
-      // 分类切换
-      console.log('searchForm------', Array)
-      this.searchForm.typeid =
-        Array.isArray(typeid) && typeid.length ? typeid[typeid.length - 1] : ''
-      this.searchForm.typeLevel =
-        Array.isArray(typeid) && typeid.length ? typeid.length : ''
-      this.forSearch()
     },
     open() {
       this.dialog.visible = true
@@ -227,16 +194,13 @@ export default {
       this.dialog.visible = false
     },
     reset() {
-      this.typeid = ''
       this.pager = {
         current: 1,
         size: 20,
         total: 0
       }
       this.searchForm = {
-        keyWord: '',
-        typeid: '',
-        typeLevel: ''
+        keyWord: ''
       }
     },
     confirm() {
@@ -343,15 +307,6 @@ export default {
       })
       this.toggleSelection(currentCheckedList)
     },
-    initClass() {
-      this.typeOption1 = this.typeTree.map(v => {
-        return {
-          id: v.id,
-          name: v.name,
-          children: v.children
-        }
-      })
-    },
     forSearch() {
       this.pager.current = 1
       this.pager.total = 0
@@ -364,12 +319,6 @@ export default {
     _getTableData() {
       this.loading = true
       const params = {
-        commodityType: 1, // 商品类型（1：普通商品， 2：组合商品）
-        level: this.searchForm.typeLevel,
-        typeId: this.searchForm.typeid,
-        hasSpec: true, // 是否包含SPEC键值，true-包含，false-不包含
-        infoFlag: true, // 消息完善标志,true-已完善商品，false-未完善商品，不传未所有商品
-        auditStatus: 1, // 审核状态，0-审核不通过，1-审核通过，2-待审,3-未提交审核
         name: this.searchForm.keyWord.trim(),
         currentPage: this.pager.current,
         pageSize: this.pager.size
@@ -391,8 +340,7 @@ export default {
         .catch(e => {
           this.loading = false
         })
-    },
-    handleOpenStore() {}
+    }
   }
 }
 </script>

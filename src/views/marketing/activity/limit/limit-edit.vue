@@ -151,6 +151,7 @@ import {
   updateActivity,
   getActivityDetailPromote
 } from '@/api/marketing'
+// import { createActLimit } from '@/api/activity'
 import config from '@/utils/config'
 
 export default {
@@ -588,6 +589,7 @@ export default {
         items: this.formatItems(this.tableForm.selectedGoods)
       }
       const params = Object.assign(data, formData)
+      console.log('createActLimit-----', params)
       addActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('创建成功')

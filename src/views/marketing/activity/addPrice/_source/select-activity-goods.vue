@@ -38,17 +38,17 @@
         <el-table-column label="换购价" min-width="120px">
           <template slot-scope="scope">
             <el-form-item
-              :prop="'tableData.' + scope.$index + '.limitAmount'"
+              :prop="'tableData.' + scope.$index + '.addPrice'"
               :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
             >
               <el-input
-                v-model="scope.row.limitAmount"
+                v-model="scope.row.addPrice"
                 style="width:92px;text-align:center"
                 :disabled="disabled"
                 maxlength="8"
               />
               <span
-                v-show="scope.row.limitAmount ==='0'"
+                v-show="scope.row.addPrice ==='0'"
                 style="margin-left: 5px;color: #e6a23c;"
               >不限购</span>
             </el-form-item>
@@ -69,12 +69,12 @@ export default {
   // components: { noData },
   data() {
     const check_limit = (rule, value, callback) => {
-      const reg = /[^0-9]/
+      const reg = /^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
-      if (value !== '' && reg.test(value)) {
-        callback(new Error('请输入正整数'))
+      if (!reg.test(value)) {
+        callback(new Error('必须为大于0.01的正数'))
       }
       if (value > 99999999) {
         callback(new Error('最大值不能超过99999999'))

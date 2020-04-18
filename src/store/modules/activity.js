@@ -1,4 +1,4 @@
-import { getAssembleList } from '@/api/activity'
+import { getActList } from '@/api/activity'
 
 const state = {
   tablist: [],
@@ -33,7 +33,7 @@ const actions = {
   // 获取数据列表
   getTablist({ commit, state }, params) {
     commit('SET_TABLE_LOADING', true)
-    getAssembleList(params).then(res => {
+    getActList(params).then(res => {
       const { code, data } = res
       if (code === '10000') {
         const { currentPage, totalCount, pageSize } = data
