@@ -161,7 +161,7 @@ export default {
   data() {
     return {
       dragComponent,
-      activeName: '广告图',
+      activeName: '商品',
       loading: false
     }
   },
