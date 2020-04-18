@@ -1,10 +1,16 @@
 <template>
   <div class="va-five-advertise-model">
-    <m-tag-ads v-if="source === 'sa'" text="广告1" />
-    <img src="http://meisudci.oss-cn-beijing.aliyuncs.com/bn_thumb/MSBQ13715300462216.jpg?x-oss-process=style/bn_info_thumb" alt="" width="100%">
+    <div v-for="(el,i) in item.itemList" :key="i">
+      <m-tag-ads v-if="source === 'sa'" :text="`广告${i + 1}`" />
+      <img v-if="el.img" :src="el.img" alt="" width="100%">
+      <div v-else class="no-img">
+        <m-icons :is-center="true" :size="50" text="请上传广告图" />
+      </div>
+    </div>
   </div>
 </template>
 <script>
+import mIcons from './../../_source/icons'
 import mTagAds from './../_source/tagAds'
 export default {
   name: 'VaFiveAdvertise',
@@ -15,6 +21,10 @@ export default {
     source: {
       type: String,
       default: 'va'
+    },
+    item: {
+      type: Object,
+      default: () => {}
     }
   },
   methods: {},
@@ -36,12 +46,17 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mTagAds }
+  components: { mTagAds, mIcons }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .va-five-advertise-model {
     position: relative;
+    .no-img {
+      width: 100%;
+      height: 300px;
+      background: #F0F2F5;
+    }
   }
 </style>

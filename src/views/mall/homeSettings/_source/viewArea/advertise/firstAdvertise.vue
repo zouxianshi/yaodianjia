@@ -1,6 +1,6 @@
 <template>
   <div class="va-first-advertise-model">
-    <m-banner />
+    <m-banner :item-list="item.itemList" />
   </div>
 </template>
 <script>
@@ -11,6 +11,10 @@ export default {
     return {}
   },
   props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
   },
   methods: {},
   watch: {},

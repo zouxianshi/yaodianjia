@@ -51,6 +51,10 @@ export default {
     delText: {
       type: String,
       default: '删除'
+    },
+    index: {
+      type: Number,
+      default: 0
     }
   },
   methods: {

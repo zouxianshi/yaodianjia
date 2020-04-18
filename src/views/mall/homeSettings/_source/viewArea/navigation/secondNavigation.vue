@@ -30,7 +30,7 @@ export default {
       const { item: { $index }, dragList } = this
       this.setItemDragData({
         $index,
-        data: dragList
+        itemList: dragList
       })
     }
   },
@@ -38,7 +38,7 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.dragList = this.item.data
+    this.dragList = this.item.itemList
   },
   beforeMount() {
   },

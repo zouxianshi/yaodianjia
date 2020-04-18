@@ -4,7 +4,7 @@
     <m-header />
 
     <!--banner轮播图-->
-    <m-banner />
+    <m-banner :item-list="bannerTestData" />
 
     <!--公告-->
     <m-notice />
@@ -24,15 +24,15 @@
               </div>
             </div>
             <!--导航栏-->
-            <m-navigation v-if="item.code === 'navigation'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <m-navigation v-if="item.code === 'navigation'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
             <!--标题-->
-            <m-title v-if="item.code === 'title'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <m-title v-if="item.code === 'title'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
             <!--广告图-->
-            <m-advertise v-if="item.code === 'advertise'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <m-advertise v-if="item.code === 'advertise'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
             <!--商品-->
-            <m-commodity v-if="item.code === 'commodity'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <m-commodity v-if="item.code === 'commodity'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
             <!--为你推荐-->
-            <m-recommend v-if="item.code === 'recommend'" :key="item.uuid" :item="{data:item.data,$index:$index,type:item.type}" />
+            <m-recommend v-if="item.code === 'recommend'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,type:item.type}" />
           </template>
         </div>
       </v-draggable>
@@ -65,7 +65,51 @@ export default {
   props: {},
   data() {
     return {
-      dragList: []
+      dragList: [],
+      bannerTestData: [
+        {
+          className: '',
+          id: '',
+          img: 'https://www.baidu.com/img/bd_logo1.png',
+          mprice: 0,
+          name: '请填写',
+          price: 0,
+          productName: '',
+          setId: '',
+          sort: 0,
+          specId: 0,
+          typeId: '',
+          url: ''
+        },
+        {
+          className: '',
+          id: '',
+          img: 'https://www.baidu.com/img/bd_logo1.png',
+          mprice: 0,
+          name: '请填写',
+          price: 0,
+          productName: '',
+          setId: '',
+          sort: 0,
+          specId: 0,
+          typeId: '',
+          url: ''
+        },
+        {
+          className: '',
+          id: '',
+          img: 'https://www.baidu.com/img/bd_logo1.png',
+          mprice: 0,
+          name: '请填写',
+          price: 0,
+          productName: '',
+          setId: '',
+          sort: 0,
+          specId: 0,
+          typeId: '',
+          url: ''
+        }
+      ]
     }
   },
   computed: {
@@ -120,7 +164,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .view-area-model {
-    height: 1200px;
     .flip-list-move {
       transition: transform 0.5s;
     }

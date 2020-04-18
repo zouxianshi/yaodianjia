@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+import { getRecommended } from '@/api/mallService'
 import mFirstCommodity from '../commodity/firstCommodity.vue'
 export default {
   name: 'VaFirstRecommend',
@@ -27,6 +28,9 @@ export default {
   beforeCreate() {
   },
   created() {
+    getRecommended().then(res => {
+      console.log(res)
+    })
   },
   beforeMount() {
   },

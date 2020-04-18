@@ -1,6 +1,6 @@
 <template>
   <div class="settings-area-model">
-    <component :is="mod" :item="item" />
+    <component :is="mod" v-if="isComponent" :item="item" />
   </div>
 </template>
 <script>
@@ -9,6 +9,8 @@ import mAdvertise from './advertise'
 import mRecommend from './recommend'
 import mCommodity from './commodity'
 import mTitle from './title'
+import { itemParams } from './../_source/default'
+
 export default {
   name: 'SettingsArea',
   components: {},
@@ -16,9 +18,11 @@ export default {
   data() {
     return {
       item: {
-        code: 'mall-title'
+        code: 'mall-title',
+        data: [itemParams]
         // code: 'commodity'
-      }
+      },
+      isComponent: true
     }
   },
 
@@ -35,8 +39,10 @@ export default {
           return mRecommend
         case 'commodity':
           return mCommodity
-        default:
+        case 'navigation':
           return mNavigation
+        default:
+          return mTitle
       }
     }
   },
@@ -55,9 +61,12 @@ export default {
   },
   methods: {
     setSelected(item) {
+      this.isComponent = false
       $('.hsm-hm').animate({ scrollTop: 0 }, 400)
-      this.item = item
-      this.selected = item.code
+      setTimeout(() => {
+        this.item = item
+        this.isComponent = true
+      })
     }
   },
   beforeDestroy() {

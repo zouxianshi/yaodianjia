@@ -31,7 +31,7 @@ export default {
       const { item: { $index }, dragList } = this
       this.setItemDragData({
         $index,
-        data: dragList
+        dragList
       })
     },
     onEvent() {
@@ -44,7 +44,7 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.dragList = this.item.data
+    this.dragList = this.item.itemList
   },
   beforeMount() {
   },

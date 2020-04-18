@@ -1,6 +1,6 @@
 <template>
   <div class="va-title-model">
-    <span class="sp1">{{ name }}</span>
+    <span v-for="(el,i) in item.itemList" :key="i" class="sp1">{{ el.name }}</span>
   </div>
 </template>
 <script>
@@ -10,9 +10,9 @@ export default {
     return {}
   },
   props: {
-    name: {
-      type: String,
-      default: '为你推荐'
+    item: {
+      type: Object,
+      default: () => {}
     }
   },
   methods: {},

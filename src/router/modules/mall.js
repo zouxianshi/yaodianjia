@@ -29,7 +29,7 @@ export default [
         meta: {
           title: '首页设置',
           auth: false,
-          noCache: true,
+          noCache: false,
           activeMenu: '/mall/home'
         },
         children: []

@@ -6,6 +6,7 @@
 
 // import _ from 'lodash'
 import { uuid } from '@/utils'
+import { saveStructure } from '@/api/mallService'
 // import navigation from '@/views/mall/homeSettings/_source/viewArea/navigation/default'
 
 /* const testData = [
@@ -265,21 +266,34 @@ const noData = [
     name: 'no-data',
     type: 'no-data',
     code: 'no-data',
-    data: []
+    itemList: []
   }
 ]
 
 const state = {
+  dragGlobal: {
+    id: '',
+    name: '海典微商城',
+    setIds: [],
+    title: '海典微商城',
+    userName: ''
+  },
   dragData: [...noData]
+
 }
 
 const mutations = {
+  setUUidDragData: (state, payload) => {
+    const { uuid } = payload
+    const i = _.findIndex(state.dragData, ['uuid', uuid])
+    state.dragData[i] = _.assign(state.dragData[i], payload)
+  },
   setDragData: (state, payload) => {
     state.dragData = payload
   },
   setItemDragData: (state, payload) => {
-    const { data, $index } = payload
-    state.dragData[$index].data = data
+    const { itemList, $index } = payload
+    state.dragData[$index].itemList = itemList
   },
   delDragData: (state, payload) => {
     const { $index } = payload
@@ -288,6 +302,14 @@ const mutations = {
 }
 
 const actions = {
+  saveStructure({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const p = { ...state.dragGlobal, id: state.dragData[0].dimensionId, setIds: _.map(state.dragData, v => v.id) }
+      saveStructure(p).then(() => {
+        resolve()
+      })
+    })
+  }
 }
 
 export default {

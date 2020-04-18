@@ -1,7 +1,7 @@
 <template>
   <div class="va-recommend-entry">
     <div class="vre-title">
-      <m-title name="为你推荐数据" />
+      <m-title :item="{itemList:[{name:'为你推荐'}]}" />
     </div>
     <component :is="mod" :item="item" />
   </div>

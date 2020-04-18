@@ -6,14 +6,14 @@
     <div slot="item">
       <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :item="el" :index="i" :is-add="isAdd(i)" :is-disabled="isDisabled(i)" @on-item="_onItem" />
     </div>
-    <el-button slot="submit" type="primary" style="width: 100%" size="mini" @click="onSubmit">保存导航设置2</el-button>
+    <el-button slot="submit" type="primary" style="width: 100%" size="mini" :loading="loading" @click="onSubmit">保存导航设置2</el-button>
   </m-sa-layout>
 </template>
 <script>
 import mEditItem from './editItem'
 import mSaLayout from '../_source/saLayout'
 import mSecondItem from '../../viewArea/navigation/secondItem'
-import { itemParams } from '../../viewArea/navigation/default'
+import { itemParams } from '../../_source/default'
 export default {
   name: 'SecondNavigation',
   data() {
@@ -25,7 +25,8 @@ export default {
         subType: 'second',
         title: '',
         type: 'navigation'
-      }
+      },
+      loading: false
     }
   },
   props: {
@@ -47,7 +48,9 @@ export default {
 
       if (itemList.length === list.length) {
         this.searchParams.itemList = list
-        this.$emit('on-update', list)
+        this.$emit('on-update', this.searchParams, () => {
+          this.loading = false
+        })
       }
     },
     isAdd(i) {
@@ -70,7 +73,7 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.searchParams.itemList = _.cloneDeep(this.item.data)
+    this.searchParams.itemList = _.cloneDeep(this.item.itemList)
   },
   beforeMount() {
   },

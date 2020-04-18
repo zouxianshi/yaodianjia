@@ -2,7 +2,7 @@
   <el-popover v-model="visible" placement="bottom-start" trigger="click" :popper-class="'nav-select-icon'">
     <div class="scrollbar select-icon-box">
       <div v-for="(el,i) in defaultIcons" :key="i" class="sim-item" :class="{active:el.icon === activeIcon}" @click="onSelect(el.icon)">
-        <m-icons :icon-clx="el.icon" />
+        <m-icons :icon-clx="el.icon" :size="64" />
         <i class="el-icon-caret-top" />
       </div>
     </div>

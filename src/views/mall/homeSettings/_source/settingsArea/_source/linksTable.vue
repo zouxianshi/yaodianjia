@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       pageTypeList,
-      pageType: '商城页面',
+      pageType: '活动页面',
       list: [],
       linkUrl: ''
     }
@@ -55,7 +55,7 @@ export default {
     onRowClick({ linkAddress }) {
       this.linkUrl = linkAddress
     },
-    getData(pageType = 1) {
+    getData(pageType = 2) {
       this.linkUrl = ''
       getInternalLink({ pageType }).then((res) => {
         this.list = res.data

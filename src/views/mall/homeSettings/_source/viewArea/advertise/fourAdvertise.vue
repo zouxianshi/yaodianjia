@@ -1,24 +1,16 @@
 <template>
   <div class="va-four-advertise-model">
-    <div class="vfam-item">
-      <m-tag-ads v-if="source === 'sa'" text="广告1" />
-      <img src="../img/va_advertise_four_1.png" alt="" width="199" height="91">
-    </div>
-    <div class="vfam-item">
-      <m-tag-ads v-if="source === 'sa'" text="广告2" />
-      <img src="../img/va_advertise_four_2.png" alt="" width="199" height="91">
-    </div>
-    <div class="vfam-item">
-      <m-tag-ads v-if="source === 'sa'" text="广告3" />
-      <img src="../img/va_advertise_four_3.png" alt="" width="199" height="91">
-    </div>
-    <div class="vfam-item">
-      <m-tag-ads v-if="source === 'sa'" text="广告4" />
-      <img src="../img/va_advertise_four_4.png" alt="" width="199" height="91">
+    <div v-for="(el,i) in item.itemList" :key="i" class="vfam-item">
+      <m-tag-ads v-if="source === 'sa'" :text="`广告${i + 1}`" />
+      <img v-if="el.img" :src="el.img" alt="" width="199" height="91">
+      <div v-else class="no-img">
+        <m-icons :is-center="true" text="请上传广告图" />
+      </div>
     </div>
   </div>
 </template>
 <script>
+import mIcons from './../../_source/icons'
 import mTagAds from './../_source/tagAds'
 export default {
   name: 'VaFourAdvertise',
@@ -29,6 +21,10 @@ export default {
     source: {
       type: String,
       default: 'va'
+    },
+    item: {
+      type: Object,
+      default: () => []
     }
   },
   methods: {},
@@ -50,7 +46,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mTagAds }
+  components: { mTagAds, mIcons }
 }
 </script>
 
@@ -59,10 +55,16 @@ export default {
     overflow: hidden;
     .vfam-item {
       width: 199px;
+      height: 91px;
       float: left;
       margin: 0 3px;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       position: relative;
+      .no-img {
+        width: 199px;
+        height: 91px;
+        background: #F0F2F5;
+      }
       &:nth-child(1),&:nth-child(3) {
         margin-left: 8px;
       }

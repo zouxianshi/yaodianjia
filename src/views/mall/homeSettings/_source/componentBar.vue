@@ -5,7 +5,7 @@
     </div>
     <div class="cbm-operation">
       <el-button size="mini">预览</el-button>
-      <el-button type="primary" size="mini">保存</el-button>
+      <el-button type="primary" size="mini" :loading="loading" @click="onSubmit">保存</el-button>
     </div>
     <div class="cbm-nav-box">
       <el-tabs v-model="activeName" type="card" size="small">
@@ -25,7 +25,8 @@
 <script>
 import { uuid } from '@/utils'
 import vDraggable from 'vuedraggable'
-import navigation from './viewArea/navigation/default'
+import { mapActions } from 'vuex'
+import { navigation, title, advertise } from './_source/default'
 
 const dragComponent = [
   {
@@ -36,14 +37,14 @@ const dragComponent = [
         code: 'navigation',
         type: 'first',
         name: '一排四个',
-        data: navigation.first
+        itemList: navigation.first
       },
       {
         uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
         code: 'navigation',
         type: 'second',
         name: '一排五个',
-        data: navigation.second
+        itemList: navigation.second
       }
     ]
   },
@@ -54,25 +55,29 @@ const dragComponent = [
         uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
         code: 'commodity',
         type: 'first',
-        name: '2个一排'
+        name: '2个一排',
+        itemList: []
       },
       {
         uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
         code: 'commodity',
         type: 'second',
-        name: '3个一排'
+        name: '3个一排',
+        itemList: []
       },
       {
         uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
         code: 'commodity',
         type: 'third',
-        name: '多个滚动一排'
+        name: '多个滚动一排',
+        itemList: []
       },
       {
         uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
         code: 'commodity',
         type: 'four',
-        name: '单个一排'
+        name: '单个一排',
+        itemList: []
       }
     ]
   },
@@ -83,7 +88,8 @@ const dragComponent = [
         uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
         code: 'title',
         type: 'first',
-        name: '单个标题'
+        name: '单个标题',
+        itemList: title
       }
     ]
   },
@@ -94,31 +100,36 @@ const dragComponent = [
         uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
         code: 'advertise',
         type: 'first',
-        name: '轮播图'
+        name: '轮播图',
+        itemList: advertise.first
       },
       {
         uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
         code: 'advertise',
         type: 'second',
-        name: '左一右二图'
+        name: '左一右二图',
+        itemList: advertise.second
       },
       {
         uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
         code: 'advertise',
         type: 'third',
-        name: '三个一排'
+        name: '三个一排',
+        itemList: advertise.third
       },
       {
         uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
         code: 'advertise',
         type: 'four',
-        name: '四个两排'
+        name: '四个两排',
+        itemList: advertise.four
       },
       {
         uuid: `${uuid('advertise-')}${uuid()}${uuid()}${uuid()}`,
         code: 'advertise',
         type: 'five',
-        name: '不限高广告图'
+        name: '不限高广告图',
+        itemList: advertise.five
       }
     ]
   },
@@ -129,13 +140,15 @@ const dragComponent = [
         uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
         code: 'recommend',
         type: 'first',
-        name: '两个一排'
+        name: '两个一排',
+        itemList: []
       },
       {
         uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
         code: 'recommend',
         type: 'second',
-        name: '单个一排'
+        name: '单个一排',
+        itemList: []
       }
     ]
   }
@@ -148,7 +161,8 @@ export default {
   data() {
     return {
       dragComponent,
-      activeName: '导航栏'
+      activeName: '广告图',
+      loading: false
     }
   },
   computed: {
@@ -178,7 +192,21 @@ export default {
   },
   updated() {
   },
-  methods: {},
+  methods: {
+    ...mapActions('mall', ['saveStructure']),
+    onSubmit() {
+      this.loading = true
+      this.saveStructure().then(() => {
+        this.$message.success('保存成功！')
+        setTimeout(() => {
+          this.loading = false
+          this.$router.push(`/mall/home`)
+        }, 1200)
+      }).catch(() => {
+        this.loading = false
+      })
+    }
+  },
   beforeDestroy() {
   },
   destroyed() {
