@@ -1,5 +1,6 @@
 <template>
   <div class="va-advertise-model">
+
     <component :is="mod" :item="item" />
   </div>
 </template>
@@ -26,6 +27,7 @@ export default {
   beforeCreate() {
   },
   created() {
+    console.log(this.item)
   },
   beforeMount() {
   },
@@ -61,5 +63,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .va-advertise-model {
+    position: relative;
   }
 </style>

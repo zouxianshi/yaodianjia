@@ -47,6 +47,7 @@ export const handlerDragComp = () => {
           type: 'navigation',
           subType: 'first',
           name: '一排四个',
+          error: false,
           itemList: navigation.first
         },
         {
@@ -54,6 +55,7 @@ export const handlerDragComp = () => {
           type: 'navigation',
           subType: 'second',
           name: '一排五个',
+          error: false,
           itemList: navigation.second
         }
       ]
@@ -66,6 +68,7 @@ export const handlerDragComp = () => {
           type: 'commodity',
           subType: 'first',
           name: '2个一排',
+          error: false,
           itemList: []
         },
         {
@@ -73,6 +76,7 @@ export const handlerDragComp = () => {
           type: 'commodity',
           subType: 'second',
           name: '3个一排',
+          error: false,
           itemList: []
         },
         {
@@ -80,6 +84,7 @@ export const handlerDragComp = () => {
           type: 'commodity',
           subType: 'third',
           name: '多个滚动一排',
+          error: false,
           itemList: []
         },
         {
@@ -87,6 +92,7 @@ export const handlerDragComp = () => {
           type: 'commodity',
           subType: 'four',
           name: '单个一排',
+          error: false,
           itemList: []
         }
       ]
@@ -99,6 +105,7 @@ export const handlerDragComp = () => {
           type: 'title',
           subType: 'first',
           name: '单个标题',
+          error: false,
           itemList: title
         }
       ]
@@ -111,6 +118,7 @@ export const handlerDragComp = () => {
           type: 'advertise',
           subType: 'first',
           name: '轮播图',
+          error: false,
           itemList: advertise.first
         },
         {
@@ -118,6 +126,7 @@ export const handlerDragComp = () => {
           type: 'advertise',
           subType: 'second',
           name: '左一右二图',
+          error: false,
           itemList: advertise.second
         },
         {
@@ -125,6 +134,7 @@ export const handlerDragComp = () => {
           type: 'advertise',
           subType: 'third',
           name: '三个一排',
+          error: false,
           itemList: advertise.third
         },
         {
@@ -132,6 +142,7 @@ export const handlerDragComp = () => {
           type: 'advertise',
           subType: 'four',
           name: '四个两排',
+          error: false,
           itemList: advertise.four
         },
         {
@@ -139,6 +150,7 @@ export const handlerDragComp = () => {
           type: 'advertise',
           subType: 'five',
           name: '不限高广告图',
+          error: false,
           itemList: advertise.five
         }
       ]
@@ -151,6 +163,7 @@ export const handlerDragComp = () => {
           type: 'recommend',
           subType: 'first',
           name: '两个一排',
+          error: false,
           itemList: []
         },
         {
@@ -158,6 +171,7 @@ export const handlerDragComp = () => {
           type: 'recommend',
           subType: 'second',
           name: '单个一排',
+          error: false,
           itemList: []
         }
       ]

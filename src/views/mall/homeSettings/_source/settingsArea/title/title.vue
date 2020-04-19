@@ -1,5 +1,5 @@
 <template>
-  <div class="sa-title-box">
+  <div v-loading="saLoading" class="sa-title-box">
     <el-form label-width="80px" size="mini">
       <el-form-item label="标题">
         <el-input v-model="name" placeholder="请输入标题" @change="() => isName = !name" />
@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import { itemParams } from './../../_source/default'
 
 export default {
@@ -83,13 +83,17 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('mall', ['saLoading'])
+  },
   components: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
+  @import './../../../../../../assets/scss/helpers/mixins';
   .sa-title-box {
     padding: 20px;
+    @include mixinFadeInUp()
   }
 </style>

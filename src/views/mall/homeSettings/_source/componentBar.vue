@@ -23,6 +23,7 @@
   </div>
 </template>
 <script>
+import { findComponentsDownward } from '@/utils'
 import vDraggable from 'vuedraggable'
 import { mapActions } from 'vuex'
 import { handlerDragComp } from './_source/default'
@@ -68,16 +69,19 @@ export default {
   methods: {
     ...mapActions('mall', ['saveStructure']),
     onSubmit() {
-      this.loading = true
-      this.saveStructure().then(() => {
-        this.$message.success('保存成功！')
-        setTimeout(() => {
-          this.loading = false
-          this.$router.push(`/mall/home`)
-        }, 1200)
-      }).catch(() => {
-        this.loading = false
-      })
+      const instance = findComponentsDownward(this.$root, 'ViewArea')[0]
+      instance.handlerVerifDragData()
+      // return
+      // this.loading = true
+      // this.saveStructure().then(() => {
+      //   this.$message.success('保存成功！')
+      //   setTimeout(() => {
+      //     this.loading = false
+      //     this.$router.push(`/mall/home`)
+      //   }, 1200)
+      // }).catch(() => {
+      //   this.loading = false
+      // })
     },
     onStart() {
       this.dragComponent = handlerDragComp()

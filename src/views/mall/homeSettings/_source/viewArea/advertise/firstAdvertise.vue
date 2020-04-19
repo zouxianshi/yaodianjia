@@ -1,6 +1,6 @@
 <template>
   <div class="va-first-advertise-model">
-    <m-banner :item-list="item.itemList" />
+    <m-banner width="400px" :item-list="item.itemList" />
   </div>
 </template>
 <script>
@@ -42,5 +42,9 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .va-first-advertise-model {
     padding: 0 10px;
+    position: relative;
+    .va-error-drag {
+
+    }
   }
 </style>

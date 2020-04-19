@@ -12,7 +12,8 @@
     <!--拖拽操作-->
     <div class="vam-draggable">
       <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
-        <div v-for="(item,$index) in dragList" :key="item.uuid" class="item-component">
+        <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" class="item-component">
+          <m-va-error-drag v-if="item.type !== 'no-data' && item.error" :type="item.type" />
           <m-no-data v-if="item.type === 'no-data'" />
           <template v-else>
             <div class="drag-area">
@@ -24,15 +25,15 @@
               </div>
             </div>
             <!--导航栏-->
-            <m-navigation v-if="item.type === 'navigation'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
+            <m-navigation v-if="item.type === 'navigation'" :key="item.uuid" :item="{...item,$index:$index}" />
             <!--标题-->
-            <m-title v-if="item.type === 'title'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
+            <m-title v-if="item.type === 'title'" :key="item.uuid" :item="{...item,$index:$index}" />
             <!--广告图-->
-            <m-advertise v-if="item.type === 'advertise'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
+            <m-advertise v-if="item.type === 'advertise'" :key="item.uuid" :item="{...item,$index:$index}" />
             <!--商品-->
-            <m-commodity v-if="item.type === 'commodity'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
+            <m-commodity v-if="item.type === 'commodity'" :key="item.uuid" :item="{...item,$index:$index}" />
             <!--为你推荐-->
-            <m-recommend v-if="item.type === 'recommend'" :key="item.uuid" :item="{itemList:item.itemList,$index:$index,subType:item.subType}" />
+            <m-recommend v-if="item.type === 'recommend'" :key="item.uuid" :item="{...item,$index:$index}" />
           </template>
         </div>
       </v-draggable>
@@ -58,10 +59,11 @@ import mEdit from './_source/edit'
 import mDelete from './_source/delete'
 import mBottomNav from './bottomNav'
 import mNoData from './noData'
+import mVaErrorDrag from './_source/vaErrorDrag'
 
 export default {
   name: 'ViewArea',
-  components: { mHeader, mBanner, mNotice, vDraggable, mNavigation, mTitle, mDelete, mEdit, mAdvertise, mCommodity, mRecommend, mNoData, mBottomNav },
+  components: { mHeader, mBanner, mVaErrorDrag, mNotice, vDraggable, mNavigation, mTitle, mDelete, mEdit, mAdvertise, mCommodity, mRecommend, mNoData, mBottomNav },
   props: {},
   data() {
     return {
@@ -142,17 +144,32 @@ export default {
   methods: {
     ...mapMutations('mall', ['setDragData']),
     /**
-       * 拖拽结束
-       */
+     * drag end
+     */
     onEnd(v) {
       // this.setDragData()
     },
     /**
-       * 拖入新增
-       */
+     * drag add
+     */
     onAdd() {
       this.dragList = _.reject(this.dragList, ['type', 'no-data'])
       this.setDragData(this.dragList)
+    },
+    /**
+     * Process saved data and do error verification
+     */
+    handlerVerifDragData() {
+      const required = {
+        title: (itemList) => _.some(itemList, { name: '' }),
+        navigation: (itemList) => _.some(itemList, { img: '', url: '', name: '' }),
+        advertise: (itemList) => _.some(itemList, { img: '', url: '' })
+      }
+      this.dragList = _.map(this.dragList, v => { return { ...v, error: required[v.type](v.itemList) } })
+      const is = _.some(this.dragList, { error: false })
+      if (!is) {
+        alert('请全部填写完毕')
+      }
     }
   },
   beforeDestroy() {
