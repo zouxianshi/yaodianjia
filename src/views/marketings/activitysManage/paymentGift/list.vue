@@ -1,12 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-button
-        class="btn btn-add"
-        type="primary"
-        size="small"
-        @click.stop="toCreate()"
-      >新建活动</el-button>
+      <el-button class="btn btn-add" type="primary" size="small" @click.stop="toCreate()">新建活动</el-button>
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
@@ -25,21 +20,14 @@
           </div>
           <div class="search-item">
             <span class="label-name" style="width: 80px">活动名称</span>
-            <el-input
-              v-model.trim="searchForm.name"
-              size="small"
-              style="width: 200px"
-            />
+            <el-input v-model.trim="searchForm.name" size="small" style="width: 200px" />
           </div>
           <div class="search-item">
             <el-button size="small" @click="search()">查 询</el-button>
           </div>
         </div>
       </section>
-      <section
-        class="table-box webkit-scroll"
-        style="height: calc(100% - 180px);overflow: auto"
-      >
+      <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
         <el-table :data="tableData" style="width: 100%" size="small">
           <el-table-column prop="startTime" label="活动类型" min-width="80">
             <template slot-scope="scope">
@@ -50,18 +38,8 @@
           </el-table-column>
           <el-table-column prop="name" label="活动名称" min-width="120" />
           <el-table-column prop="name" label="参与门店" min-width="120" />
-          <el-table-column
-            prop="startTime"
-            label="活动开始时间"
-            min-width="150"
-            align="center"
-          />
-          <el-table-column
-            prop="endTime"
-            label="活动结束时间"
-            min-width="150"
-            align="center"
-          />
+          <el-table-column prop="startTime" label="活动开始时间" min-width="150" align="center" />
+          <el-table-column prop="endTime" label="活动结束时间" min-width="150" align="center" />
           <el-table-column label="时间状态" min-width="80" align="center">
             <template slot-scope="scope">
               <el-tag v-if="statusCupte(scope.row)==0" size="small" type="info">未开始</el-tag>
@@ -77,8 +55,18 @@
           </el-table-column>
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
-              <el-button v-if="statusCupte(scope.row)===0" plain size="mini" @click="toEdit(scope.row)">编辑</el-button>
-              <el-button v-else-if="statusCupte(scope.row)===2||statusCupte(scope.row)===1" plain size="mini" @click="toEdit(scope.row, 1)">查看</el-button>
+              <el-button
+                v-if="statusCupte(scope.row)===0"
+                plain
+                size="mini"
+                @click="toCreate(scope.row)"
+              >编辑</el-button>
+              <el-button
+                v-else-if="statusCupte(scope.row)===2||statusCupte(scope.row)===1"
+                plain
+                size="mini"
+                @click="toCreate(scope.row, 1)"
+              >查看</el-button>
               <template v-if="statusCupte(scope.row)===1">
                 <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
               </template>
@@ -107,7 +95,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getActivityList, delActivity, disableActivity } from '@/api/marketing'
+import { delActivity, disableActivity } from '@/api/marketing'
 import config from '@/utils/config'
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
@@ -223,20 +211,6 @@ export default {
         }
       }
     },
-    // 复制
-    doCopy(row) {
-      const herfUrl = window.location.href
-      this.$copyText(herfUrl).then(
-        e => {
-          console.log(e)
-          this.$message.info('活动功能C端暂未开放，敬请期待')
-        },
-        e => {
-          console.log(e)
-          this.$message.warning('复制失败')
-        }
-      )
-    },
     // 查询
     search() {
       this.pager = {
@@ -246,25 +220,12 @@ export default {
       }
       this._getTableData()
     },
-    // 创建
-    toCreate() {
-      this.$router.push('/marketings/activity-manage/payment-gift/add')
-    },
-    // 编辑
-    toEdit(row, op) {
-      // 限时优惠
-      if (row.type === '11' || row.type === '12') {
-        if (op) {
-          this.$router.push(
-            `/marketing/activity/limit-edit?id=${row.id}&_ck=1&type=${row.type}`
-          )
-        } else {
-          this.$router.push(
-            `/marketing/activity/limit-edit?id=${row.id}&type=${row.type}`
-          )
-        }
+    // 创建/op=1:查看/row不为空：编辑
+    toCreate(row, op) {
+      if (row) {
+        this.$router.push('/marketings/activity-manage/payment-gift/add?id=' + row.id + '&op=' + op)
       } else {
-        console.log('row', row)
+        this.$router.push('/marketings/activity-manage/payment-gift/add')
       }
     },
     // 失效
@@ -291,28 +252,29 @@ export default {
     },
     // 获取列表数据
     _getTableData() {
-      const params = {
-        type: this.searchForm.type,
-        name: this.searchForm.name,
-        minStartTime: this.searchForm.startTime,
-        maxStartTime: this.searchForm.endTime,
-        timeStatus: this.searchForm.timeStatus,
-        currentPage: this.pager.current,
-        pageSize: this.pager.size
-      }
-      console.log('params', params)
-      getActivityList(params).then(res => {
-        if (res.code === '10000') {
-          this.tableData = res.data.data || []
-          this.pager.total = res.data.totalCount || 0
-        } else {
-          this.$message({
-            message: res.msg,
-            type: 'error',
-            duration: 5 * 1000
-          })
-        }
-      })
+      this.tableData = [{ name: 'eee', startTime: '2019-10-21 22:22:22', endTime: '2019-10-28 22:22:22', id: '@@@' }]
+      // const params = {
+      //   type: this.searchForm.type,
+      //   name: this.searchForm.name,
+      //   minStartTime: this.searchForm.startTime,
+      //   maxStartTime: this.searchForm.endTime,
+      //   timeStatus: this.searchForm.timeStatus,
+      //   currentPage: this.pager.current,
+      //   pageSize: this.pager.size
+      // }
+      // console.log('params', params)
+      // getActivityList(params).then(res => {
+      //   if (res.code === '10000') {
+      // this.tableData = res.data.data || []
+      // this.pager.total = res.data.totalCount || 0
+      //   } else {
+      //     this.$message({
+      //       message: res.msg,
+      //       type: 'error',
+      //       duration: 5 * 1000
+      //     })
+      //   }
+      // })
     },
     _delData(id) {
       const params = {
