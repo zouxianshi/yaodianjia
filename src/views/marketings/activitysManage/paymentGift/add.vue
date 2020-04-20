@@ -1,8 +1,8 @@
 <template>
   <div class="add">
-    <div class="payment-gift-info">
+    <div v-loading="pageLoading" class="payment-gift-info" element-loading-text="加载中">
       <h4>活动信息</h4>
-      <el-form ref="form" :rules="rules" :model="form" label-width="120px">
+      <el-form ref="form" :rules="rules" :model="form" label-width="120px" :disabled="disabled">
         <el-form-item label="活动名称：" prop="name">
           <el-input v-model="form.name" maxlength="30" placeholder="请输入活动名称" clearable />
         </el-form-item>
@@ -29,7 +29,7 @@
     </div>
     <div class="payment-gift-rules">
       <h4>活动规则</h4>
-      <el-form ref="form" label-width="100px" class="demo-form-inline" :rules="rules" :model="form">
+      <el-form ref="form" label-width="100px" class="demo-form-inline" :rules="rules" :model="form" :disabled="disabled">
         <el-form-item label="活动范围：">
           <el-radio-group v-model="form.range">
             <el-radio label="0">线上商城</el-radio>
@@ -40,33 +40,32 @@
         <el-form-item label="活动门店：" prop="store">
           <el-radio-group v-model="form.store">
             <el-radio label="0">全部门店</el-radio>
-            <el-radio label="1">
-              指定门店
+            <el-radio label="1">指定门店
               <span v-if="form.store==='1'" @click="selectStore">选择门店</span>
             </el-radio>
           </el-radio-group>
           <mSelectedStore v-show="form.store==='1'&&selectedStores.length>0" ref="selectedStoreView" @onDel="onGetSelectStore" />
         </el-form-item>
-        <el-form-item label="适用商品：" prop="commodity">
-          <el-radio-group v-model="form.commodity">
+        <el-form-item label="适用商品：" prop="product">
+          <el-radio-group v-model="form.product">
             <el-radio label="0">全部商品</el-radio>
-            <el-radio label="1">
-              指定商品
-              <span v-if="form.commodity==='1'" @click="selectCommodity">选择商品</span>
+            <el-radio label="1">指定商品
+              <span v-if="form.product==='1'" @click="selectProduct">选择商品</span>
             </el-radio>
           </el-radio-group>
+          <mSelectedProduct v-show="form.product==='1'&&selectedProducts.length>0" ref="selectedProductView" @onDel="onGetSelectProduct" />
         </el-form-item>
-        <el-form-item v-if="form.commodity=='0'" label="消费金额：" prop="amount">
+        <el-form-item v-if="form.product=='0'" label="消费金额：" prop="amount">
           <span class="amTips">
             购满金额
-            <el-input v-model.number="form.amount" size="mini" style="width:50px" />元，可参与活动
+            <el-input v-model.number="form.amount" size="mini" style="width:80px" /> 元，可参与活动
           </span>
         </el-form-item>
       </el-form>
     </div>
     <div class="payment-gift-rules">
       <h4>权益设置</h4>
-      <el-form ref="form" label-width="100px" class="demo-form-inline" :rules="rules" :model="form">
+      <el-form ref="form" label-width="100px" class="demo-form-inline" :rules="rules" :model="form" :disabled="disabled">
         <el-form-item label="选择权益：" prop="youhuiquan">
           <el-checkbox v-model="form.youhuiquan" />送优惠券
           <span class="zkTips">最多可选二十张</span>
@@ -89,22 +88,44 @@
       </el-form>
     </div>
     <div class="submit-box">
-      <el-button type="primary" @click="submitData()">提交</el-button>
+      <template v-if="!disabled">
+        <el-button size="small" @click="$router.go(-1)">取 消</el-button>
+        <el-button type="primary" size="small" :loading="saveLoading" @click="submitData()">提 交</el-button>
+      </template>
+      <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
+
     </div>
     <mPopSelectStore ref="selectStore" @onSelect="onGetSelectStore" />
+    <mPopSelectProduct ref="selectProduct" @onSelect="onGetSelectProduct" />
   </div>
 </template>
 <script>
 // import { mapGetters } from 'vuex'
 import mPopSelectStore from '@/components/Marketings/popSelectStore'
+import mPopSelectProduct from '@/components/Marketings/popSelectProduct'
 import mSelectedStore from '@/components/Marketings/SelectedStore'
+import mSelectedProduct from '@/components/Marketings/SelectedProduct'
 export default {
   name: 'PaymentGiftAdd',
   components: {
-    mPopSelectStore, mSelectedStore
+    mPopSelectStore, mSelectedStore, mPopSelectProduct, mSelectedProduct
   },
   data() {
+    const amount_limit = (rule, value, callback) => {
+      const reg = /[^0-9]/
+      if (value !== '' && reg.test(value)) {
+        callback(new Error('购满金额必须是数字且不得小于0'))
+      }
+      if (value > 99999999) {
+        callback(new Error('最大值不能超过99999999'))
+      }
+      callback()
+    }
     return {
+      disabled: false,
+      saveLoading: false, // 保存loading
+      pageLoading: false, // 页面加载loading
+      pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
       form: {
         huodongshijian: [], // 活动时间
         name: '', // 活动名称
@@ -112,7 +133,7 @@ export default {
         range: '0', // 活动范围
         amount: 0, // 金额
         store: '0', // 门店
-        commodity: '0', // 指定商品
+        product: '0', // 指定商品
         fafangshijian: '0', // 发放时间
         tuihuiquanyi: '0', // 退回权益
         youhuiquan: true // 优惠券
@@ -125,18 +146,12 @@ export default {
         desc: [{ required: true, message: '请输入活动说明', trigger: 'blur' }],
         store: [{ required: true, message: '请选择活动门店', trigger: 'blur' }],
         amount: [
-          {
-            type: 'number',
-            min: 0,
-            message: '消费金额必须为数字且不能小于0',
-            trigger: 'blur',
-            required: true
-          }
+          { required: true, validator: amount_limit, trigger: 'blur' }
         ],
         youhuiquan: [
           { required: true, message: '请选择优惠券', trigger: 'blur' }
         ],
-        commodity: [
+        product: [
           { required: true, message: '请选择指定商品', trigger: 'blur' }
         ],
         tuihuiquanyi: [
@@ -146,7 +161,8 @@ export default {
           { required: true, message: '请选择发放时间', trigger: 'blur' }
         ]
       },
-      selectedStores: [] // 已选的门店集合
+      selectedStores: [], // 已选的门店集合
+      selectedProducts: []
     }
   },
   computed: {
@@ -155,6 +171,30 @@ export default {
     //   return { Authorization: this.token, merCode: this.merCode }
     // }
   },
+  created() {
+    const id = this.$route.query.id
+    const op = this.$route.query.op
+    if (id) {
+      if (op === '1') {
+        this.pageStatus = 3
+      } else {
+        this.pageStatus = 2
+      }
+      this._getDetailData()
+    }
+    let pageTitle = '支付有礼'
+    if (this.pageStatus === 2) { // pageStatus 1.新增 2.编辑 3.查看
+      pageTitle = pageTitle + '编辑'
+    } else if (this.pageStatus === 3) {
+      pageTitle = pageTitle + '详情'
+      this.disabled = true
+    } else {
+      pageTitle = pageTitle + '新建'
+    }
+    this.$route.meta.title = pageTitle
+    document.title = pageTitle
+    console.log('页名:' + pageTitle)
+  },
   methods: {
     // 选择门店
     selectStore() {
@@ -162,8 +202,8 @@ export default {
     },
 
     // 选择商品
-    selectCommodity() {
-      // this.$refs.selectCommodity.show()
+    selectProduct() {
+      this.$refs.selectProduct.show(this.selectedProducts)
     },
     goToSetting() {
       this.$router.push('/distribution/store-reservation-setting')
@@ -176,6 +216,83 @@ export default {
       this.selectedStores = selectedStores
       this.$refs.selectedStoreView.show(selectedStores)
       console.log('选择的门店：' + JSON.stringify(selectedStores))
+    },
+    onGetSelectProduct(selectedProducts) {
+      this.selectedProducts = selectedProducts
+      this.$refs.selectedProductView.show(selectedProducts)
+      console.log('选择的商品：' + JSON.stringify(selectedProducts))
+    },
+    updateActivityStatus(activity) {
+      console.log('activity', activity)
+      if (activity.status && activity.timeStatus === -1) { // 未开始
+        console.log('活动未开始！')
+      } else if (activity.status && activity.timeStatus === 1) { // 进行中
+        this.pageStatus = 3
+        this.disabled = true
+        this.$message.warning('活动已开始！')
+      } else if (activity.status || activity.timeStatus === 0) { // 已结束
+        this.pageStatus = 3
+        this.disabled = true
+        this.$message('活动已结束！')
+      }
+    },
+    _getDetailData() {
+      this.form = {
+        huodongshijian: ['2011-11-11 22:22:22', '2011-11-15 22:22:22'], // 活动时间
+        name: 'ddd', // 活动名称
+        desc: 'dd', // 活动说明
+        range: '0', // 活动范围
+        amount: 100, // 金额
+        store: '1', // 门店
+        product: '1', // 指定商品
+        fafangshijian: '1', // 发放时间
+        tuihuiquanyi: '1', // 退回权益
+        youhuiquan: true // 优惠券
+      }
+      // this.pageLoading = true
+      // const params = {
+      //   id: this.dataid
+      // }
+      // console.log('params detail', params)
+      // getActivityDetail(params).then(res => {
+      //   if (res.code === '10000') {
+      //     // / this.xForm = ''
+      //     const data = res.data
+      //     this.tableForm.selectedGoods = data.items.map((item) => {
+      //       return {
+      //         activityId: item.activityId,
+      //         discount: '' + item.discount,
+      //         id: item.id,
+      //         limitAmount: '' + item.limitAmount,
+      //         productManufacture: item.productManufacture,
+      //         productName: item.productName,
+      //         productSpecId: item.productSpecId,
+      //         productSpecName: item.productSpecName,
+      //         stockAmount: (item.stockAmount || '') + ''
+      //       }
+      //     })
+      //     console.log('this.xForm', this.xForm)
+      //     this.xForm = Object.assign(data, {
+      //       'dateRange': [res.data.startTime, res.data.endTime]
+      //     })
+      //     this.selectedStore = data.stores.map(v => {
+      //       const store = {
+      //         id: v.storeId,
+      //         stName: v.storeName
+      //       }
+      //       return store
+      //     })
+      //     console.log('this.selectedStore', this.selectedStore)
+      //     // 编辑状态时，更新页面当前状态
+      // if (this.pageStatus === 2) {
+      //   this.updateActivityStatus(data)
+      // }
+      // }
+      //   this.pageLoading = false
+      // }).catch(err => {
+      //   this.pageLoading = false
+      //   console.log('err', err)
+      // })
     }
   }
 }
