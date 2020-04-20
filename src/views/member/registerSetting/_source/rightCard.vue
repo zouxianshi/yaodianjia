@@ -7,7 +7,7 @@
           <span v-text="member.merBrandName">}</span>
         </el-form-item>
         <el-form-item label="商户LOGO">
-          <img :src="member.merLogoUrl" alt>
+          <img style="width:80px;height:80px" :src="member.merLogoUrl" alt>
         </el-form-item>
         <el-form-item label="卡片背景" prop="cardBgType">
           <el-radio-group v-model="member.cardBgType" @change="changeback">
