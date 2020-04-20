@@ -106,8 +106,8 @@
 </template>
 <script>
 import mPhoneView from '../_source/phoneView'
-import mPopSelectStore from '../_source/popSelectStore'
-import mPopSelectProduct from '../_source/popSelectProduct'
+import mPopSelectStore from '@/components/Marketings/popSelectStore'
+import mPopSelectProduct from '@/components/Marketings/popSelectProduct'
 import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
 export default {
   name: 'DiscountIndex',
@@ -157,7 +157,7 @@ export default {
     },
     // 选择商品
     selectCommodity() {
-      this.$refs.selectCommodity.show()
+      this.$refs.selectCommodity.show([])
     },
     // 获取选择门店数据
     getSelectedStore(data) {

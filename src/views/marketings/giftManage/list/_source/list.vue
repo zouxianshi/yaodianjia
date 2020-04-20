@@ -3,7 +3,7 @@
     <div class="nav-condition">
       <el-form :inline="true" :model="searchParams" class="demo-form-inline">
         <el-form-item label="优惠券状态">
-          <el-select v-model="searchParams.status" placeholder="请选择" size="mini">
+          <el-select v-model="searchParams.status" style="width:100px" placeholder="请选择" size="mini">
             <el-option label="全部" value="0" />
             <el-option label="未开始" value="1" />
             <el-option label="进行中" value="2" />
@@ -12,23 +12,25 @@
           </el-select>
         </el-form-item>
         <el-form-item label="优惠券名称" style="margin-left:10px">
-          <el-input v-model="searchParams.name" placeholder="请输入关键词" size="mini" />
+          <el-input v-model="searchParams.name" style="width:150px" placeholder="请输入关键词" size="mini" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" size="mini" @click="searchData()">查询</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-radio-group v-model="searchParams.type" style="vertical-algin:middle;height:29px" size="mini" @change="changeType">
+            <el-radio-button label="0">全部</el-radio-button>
+            <el-radio-button label="1">折扣券</el-radio-button>
+            <el-radio-button label="2">满减券</el-radio-button>
+            <el-radio-button label="3">礼品券</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
-      <el-radio-group v-model="searchParams.type" size="mini" @change="changeType">
-        <el-radio-button label="0">全部</el-radio-button>
-        <el-radio-button label="1">折扣券</el-radio-button>
-        <el-radio-button label="2">满减券</el-radio-button>
-        <el-radio-button label="3">礼品券</el-radio-button>
-      </el-radio-group>
     </div>
     <div class="list-tabel">
       <el-table
         :data="tableData"
-        height="100%"
+        height="calc(100vh - 390px)"
         style="width: 100%;"
       >
         <el-table-column prop="name" label="优惠券信息" />
@@ -96,13 +98,13 @@ export default {
 </script>
 <style lang="scss">
 .list{
-  height: calc(100vh - 375px);
+  height: calc(100vh - 325px);overflow: auto;
   .el-table thead th{
     height: 40px;
   }
 }
 .list-tabel{
-  margin-top: 24px;height: calc(100vh - 500px);position:relative;padding-bottom:42px;
+  height: calc(100vh - 390px);position:relative;padding-bottom:42px;
   .el-pagination{
     position: absolute;bottom: 0;right: 0;width: 100%;text-align: right;
   }

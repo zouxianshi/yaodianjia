@@ -53,9 +53,9 @@ export default {
     padding: 0 20px;
     .header-nav{
       .item-box{
-        display: flex;width: 650px; justify-content: space-between;padding: 20px 0;cursor:pointer;
+        display: flex;width: 500px; justify-content: space-between;padding: 10px 0;cursor:pointer;
         .gift-card-modal{
-          flex: 0 0 150px;text-align:center;
+          flex: 0 0 120px;text-align:center;
           .el-card__body{
             img{
               width: 100%;
