@@ -33,7 +33,7 @@
         height="calc(100vh - 390px)"
         style="width: 100%;"
       >
-        <el-table-column prop="name" label="优惠券信息" />
+        <el-table-column prop="cname" label="优惠券信息" />
         <el-table-column prop="name" label="使用场景" />
         <el-table-column prop="name" label="优惠内容" />
         <el-table-column prop="date" label="使用时间" />
@@ -41,14 +41,18 @@
         <el-table-column prop="address" label="适用商品" />
         <el-table-column prop="name" label="已领取量" />
         <el-table-column prop="name" label="线下核销" />
-        <el-table-column prop="name" label="操作" />
+        <el-table-column label="操作" width="80" align="center">
+          <template slot-scope="scope">
+            <el-button type="text" size="mini" @click="_edit(scope.row)">编辑</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination
         :current-page="pageInfo.currentPage"
-        :page-sizes="[100, 200, 300, 400]"
+        :page-sizes="[10, 50, 100, 500]"
         :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :total="1000"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -56,6 +60,7 @@
   </div>
 </template>
 <script>
+import { getCouponList } from '@/api/coupon'
 export default {
   data() {
     return {
@@ -66,22 +71,21 @@ export default {
       },
       pageInfo: {
         currentPage: 0,
-        pageSize: 100
+        pageSize: 10
       },
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }]
+      tableData: []
     }
   },
   methods: {
     searchData() {
-      console.log(this.searchParams)
+      var searchParams = Object.assign({}, this.searchParams, this.pageInfo)
+      console.log(searchParams)
+      getCouponList(searchParams).then(res => {
+        console.log(res)
+        if (res.data && res.data.records) {
+          this.tableData = res.data.records
+        }
+      })
     },
     // 切换类型
     changeType(e) {
@@ -92,6 +96,17 @@ export default {
     },
     handleCurrentChange(e) {
       console.log(e)
+    },
+    // 编辑优惠券
+    _edit(data) {
+      if (data.ctype === 1) { // 折扣券
+        this.$router.push('/marketings/gift-manage/discount?id=' + data.id)
+      } else if (data.ctype === 2) { // 满减券
+        this.$router.push('/marketings/gift-manage/full-reduction?id=' + data.id)
+      } else {
+        this.$router.push('/marketings/gift-manage/gift?id=' + data.id)
+      }
+      console.log(data)
     }
   }
 }

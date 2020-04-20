@@ -98,6 +98,7 @@ import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择�
 import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
 import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
 import mSelectOneProduct from './selectOneProduct' // 选择商品弹窗（单选）
+import { getCouponDetail, addCoupon } from '@/api/coupon'
 export default {
   name: 'DiscountIndex',
   components: {
@@ -131,12 +132,28 @@ export default {
       }
     }
   },
+  created() {
+    if (this.$route.query.id) { // 编辑
+      var params = {
+        id: this.$route.query.id
+      }
+      getCouponDetail(params).then(res => {
+        console.log(res)
+        if (res.data) {
+          this.discountForm = res.data
+          this.isRember = !!this.discountForm.expireInfo // 是否需要到期提醒
+          this.useRuleLimit = res.data.useRule === 0 ? 0 : 1 // 是否有使用门槛
+        }
+      })
+    }
+  },
   methods: {
     next() {
       if (this.active++ > 1) this.active = 1
     },
     _submit() {
       console.log(this.discountForm)
+      addCoupon()
     },
     // 选择门店
     selectStore() {

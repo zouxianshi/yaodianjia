@@ -103,6 +103,7 @@ import mPhoneView from '../_source/phoneView'
 import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择门店
 import mPopSelectProduct from '@/components/Marketings/popSelectProduct' // 选择商品
 import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
+import { getCouponDetail, addCoupon } from '@/api/coupon'
 export default {
   name: 'DiscountIndex',
   components: {
@@ -136,12 +137,28 @@ export default {
       }
     }
   },
+  created() {
+    if (this.$route.query.id) { // 编辑
+      var params = {
+        id: this.$route.query.id
+      }
+      getCouponDetail(params).then(res => {
+        console.log(res)
+        if (res.data) {
+          this.discountForm = res.data
+          this.isRember = !!this.discountForm.expireInfo // 是否需要到期提醒
+          this.useRuleLimit = res.data.useRule === 0 ? 0 : 1 // 是否有使用门槛
+        }
+      })
+    }
+  },
   methods: {
     next() {
       if (this.active++ > 1) this.active = 1
     },
     _submit() {
       console.log(this.discountForm)
+      addCoupon()
     },
     // 选择门店
     selectStore() {
