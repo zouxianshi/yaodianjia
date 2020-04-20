@@ -68,7 +68,7 @@ export function disableActivity(params) {
 
 export function assembleActivityAdd(params) {
   return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup/add`,
+    url: `${config.merGoods}/1.0/admin/activityGroup/create`,
     method: 'post',
     data: params
   })
@@ -96,7 +96,7 @@ export function delAssembleActivity(params) {
 // 获取拼团活动单个信息
 export function getAssembleAcInfo(activityId) {
   return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup/getActivityInfo/${activityId}`,
+    url: `${config.merGoods}/1.0/admin/activityGroup/${activityId}`,
     method: 'get'
   })
 }

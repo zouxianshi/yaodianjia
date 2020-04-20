@@ -10,15 +10,6 @@ export function getConflict(params) {
   })
 }
 
-// 创建赠品
-export function createGift(params) {
-  return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup`,
-    method: 'post',
-    data: params
-  })
-}
-
 /**
  * 方法说明 活动商品查询
  * @method POST
@@ -140,6 +131,17 @@ export function updateActAdd(params) {
 
 /**
  * 查询加价购活动
+ * @param {cha} id
+ */
+export function getActAddInfo(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-add/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 查询加价购活动
  */
 export function getActAdd(id) {
   return request({
@@ -181,12 +183,64 @@ export function createActLimit(params) {
 }
 
 /**
- * 失效活动
+ * 获取限时活动
+ */
+export function getActLimit(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-limit/${id}`,
+    method: 'get'
+  })
+}
+/**
+ * 更新限时活动
+ */
+export function updateActLimit(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-limit`,
+    method: 'put',
+    data: params
+  })
+}
+/**
+ * 删除活动
  * @param {*} id
  */
 export function delActInfo(id) {
   return request({
     url: `${config.merGoods}/1.0/act-info/${id}`,
     method: 'delete'
+  })
+}
+
+/**
+ * 失效活动
+ * @param {*} id
+ */
+export function endActInfo(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-info/${id}`,
+    method: 'post'
+  })
+}
+/**
+ * 保存赠品
+ */
+export function createActGift(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-gift`,
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 赠品列表查询
+ * @param {*} params
+ */
+export function getActGiftList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-gift/_search`,
+    method: 'post',
+    data: params
   })
 }

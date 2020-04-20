@@ -87,7 +87,6 @@ const router = [
           noCache: true
         }
       },
-
       {
         path: 'activity/dm-template',
         component: () => import('@/views/marketing/activity/DM/template'),
@@ -106,6 +105,16 @@ const router = [
           title: 'DM单模板',
           noCache: true,
           activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/list',
+        component: () => import('@/views/marketing/activity/list'),
+        name: 'activityList',
+        meta: {
+          title: '活动管理列表',
+          activeMenu: '/marketing/activity',
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
       {

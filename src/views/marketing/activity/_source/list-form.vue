@@ -14,9 +14,9 @@
         <span class="label-name" style="width: 80px">活动店铺</span>
         <el-select
           v-model="searchForm.storeId"
-          multiple
           style="width: 200px"
           size="small"
+          clearable
           filterable
           placeholder="全部"
           @change="search()"
@@ -88,3 +88,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .app-container .search-form .search-item .el-input {
+    width: 200px;
+  }
+</style>

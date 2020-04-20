@@ -199,11 +199,18 @@
             <el-button
               v-if="!!domain.giftOrNot"
               type="text"
-              @click="$refs.storeGiftsComponent.open()"
+              @click="handleOpenGiftDialog($Index)"
             >选择赠品</el-button>
           </template>
         </el-form-item>
-        <el-form-item>这里是表格</el-form-item>
+        <el-form-item v-show="!!domain.giftOrNot">
+          <select-gift-list
+            ref="selectGiftComponent"
+            :table-data="domain.giftList"
+            :gift-index="$Index"
+            @del-item="delSelectGifts"
+          />
+        </el-form-item>
       </div>
       <el-divider v-if="form.ruleType === 1" content-position="left">
         <el-tooltip
@@ -231,7 +238,7 @@
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!-- 选择赠品组件 -->
-    <store-goods-gifts ref="storeGiftsComponent" :list="giftList" @complete="handleGiftList" />
+    <store-goods-gifts ref="storeGiftsComponent" :limit-max="1" @commit="handleGiftList" />
   </div>
 </template>
 
@@ -239,6 +246,7 @@
 import _ from 'lodash'
 import storeGoods from '../../components/store-gods'
 import storeGoodsGifts from '../../components/store-gods-gifts'
+import selectGiftList from '../../components/select-gift-list'
 import storeDialog from '../../components/store'
 import selectStore from '../../components/select-store'
 import selectGoods from '../../components/select-goods'
@@ -251,7 +259,8 @@ export default {
     storeDialog,
     storeGoodsGifts,
     selectStore,
-    selectGoods
+    selectGoods,
+    selectGiftList
   },
   computed: {
     ...mapGetters(['merCode'])
@@ -285,7 +294,8 @@ export default {
             threshold: '', // 满减门槛金额
             giftOrNot: false, // 是否赠送赠品默认0否，1是
             checkOrNot: true, // 0/false 否 1/true是
-            discount: '' // 金额；
+            discount: '', // 金额；
+            giftList: [] // 选择的赠品列表
           }
         ]
       },
@@ -293,11 +303,11 @@ export default {
         threshold: '', // 满减门槛金额
         giftOrNot: false,
         checkOrNot: true,
-        discount: ''
+        discount: '',
+        giftList: [] // 选择的赠品列表
       },
       chooseStore: [], // 选择的门店
       storeSelectGoods: [], // 选择的门店商品数据---去重的
-      giftList: [], // 选择的赠品列表
       rules: {
         name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
         activitTime: [
@@ -348,7 +358,8 @@ export default {
                 return {
                   ...item,
                   checkOrNot: !!item.checkOrNot,
-                  giftOrNot: !!item.giftOrNot
+                  giftOrNot: !!item.giftOrNot,
+                  giftList: item.giftSpecDTO
                 }
               })
             }
@@ -369,6 +380,7 @@ export default {
             this.$refs.selectStoreComponent.dataFrom(data.storeResDTOList)
             this.storeSelectGoods = data.commList
             this.$refs.storeGods.dataFrom(data.commList)
+            // this.$refs.selectGiftComponent.dataFrom(item.giftSpecDTO)
           }
         })
         .catch(e => {
@@ -485,7 +497,7 @@ export default {
         if (this.form.ruleList.length > 1) {
           if (index >= 1) {
             if (
-              Number(this.form.ruleList[index].discount || 0) <=
+              Number(this.form.ruleList[index].discount || 0) >
               Number(this.form.ruleList[index - 1].discount || 0)
             ) {
               return callback(new Error('此项折扣力度必须大于前一项折扣力度'))
@@ -496,7 +508,11 @@ export default {
       callback()
     },
     handleSelectStore(val) {
-      console.log('门店结果页出来了-------', val)
+      console.log(
+        '门店结果页出来了-------',
+        val,
+        this.$refs.selectStoreComponent
+      )
       this.chooseStore = val
       this.$refs.selectStoreComponent.dataFrom(val)
     },
@@ -504,9 +520,21 @@ export default {
       this.storeSelectGoods = val
       this.$refs.storeGods.dataFrom(val)
     },
-    handleGiftList(list) {
-      console.log('提交的数据-----赠品列表', list)
-      this.giftList = list
+    handleOpenGiftDialog($Index) {
+      this.$refs.storeGiftsComponent.open($Index)
+      this.$refs.storeGiftsComponent.dialogSelect(
+        this.form.ruleList[$Index].giftList
+      )
+    },
+    handleGiftList(list, index) {
+      console.log('提交的数据-----赠品列表', list, this.$refs)
+      this.form.ruleList[index].giftList = list
+      console.log(
+        '提交的数据-----赠品列表',
+        list,
+        this.$refs.selectGiftComponent
+      )
+      this.$refs.selectGiftComponent[index].dataFrom(list)
     },
     // 追加优惠层级
     handleAdd() {
@@ -527,6 +555,7 @@ export default {
       console.log('data-------------', data)
       this.form.ruleList = data
     },
+
     // 满减规格设置
     unitChange(val) {
       console.log('unitChange----', val)
@@ -577,7 +606,7 @@ export default {
             'name'
           ])
           // 需要增加组装的参数    userCoupons  pmtRule:{ruleList, ruleType} activitySpecList storeIds merCode: this.merCode,
-          if (Array.isArray(this.form.type) && this.form.type.length) {
+          if (Array.isArray(this.form.type)) {
             const index = this.form.type.findIndex(item => item === '1')
             if (index >= 0) {
               dataParam.userCoupons = 3
@@ -586,11 +615,20 @@ export default {
             }
           }
           const ruleList_af = this.form.ruleList.map(item => {
+            let giftSpecIds = []
+            if (Array.isArray(item.giftList)) {
+              giftSpecIds = item.giftList.map(giftItem => giftItem.id)
+            }
             return {
               ...item,
               giftOrNot: item.giftOrNot ? 1 : 0,
               checkOrNot: item.checkOrNot ? 1 : 0,
-              ruleType: this.form.ruleType
+              uint: this.form.uint,
+              discountType: this.form.discountType,
+              ruleType: this.form.ruleType,
+              giftSpecId: Array.isArray(giftSpecIds) && item.giftOrNot
+                ? giftSpecIds.join(',')
+                : ''
             }
           })
           // 解析门店
@@ -620,6 +658,7 @@ export default {
               ruleList: ruleList_af
             }
           }
+          console.log('待提交数据-----', dataParam)
           this.leaveAction = true
           const loading = this.$loading({
             lock: true,
@@ -628,26 +667,33 @@ export default {
             background: 'rgba(0, 0, 0, 0.7)'
           })
           if (this.edit) {
-            updateActFull(dataParam).then(res => {
-              this.$message({
-                message: '创建成功',
-                type: 'success'
+            updateActFull(dataParam)
+              .then(res => {
+                this.$message({
+                  message: '更新成功',
+                  type: 'success'
+                })
+                loading.close()
+                this.$router.replace('/marketing/activity/reduce-gift-list')
               })
-              loading.close()
-              this.$router.replace('/marketing/activity/reduce-gift-list')
-            })
+              .catch(() => {
+                loading.close()
+              })
           } else {
-            createActFull(dataParam).then(res => {
-              this.$message({
-                message: '更新成功',
-                type: 'success'
+            createActFull(dataParam)
+              .then(res => {
+                this.$message({
+                  message: '创建成功',
+                  type: 'success'
+                })
+                loading.close()
+                this.$router.replace('/marketing/activity/reduce-gift-list')
               })
-              loading.close()
-              this.$router.replace('/marketing/activity/reduce-gift-list')
-            })
+              .catch(() => {
+                loading.close()
+              })
           }
         } else {
-          console.log('error submit!!', valid)
           return false
         }
       })
@@ -662,6 +708,12 @@ export default {
       this.storeSelectGoods.splice(index, 1)
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
       // this.storeSelectGoods = this.storeSelectGoods
+    },
+    delSelectGifts(item, index, giftIndex) {
+      console.log(item, index)
+      this.form.ruleList[giftIndex].giftList.splice(index, 1)
+
+      this.$refs.selectGiftComponent[index].dataFrom(this.form.ruleList[giftIndex].giftList)
     },
     // 订单金额优惠复选款选择
     orderFullChange(e, i) {

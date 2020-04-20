@@ -26,14 +26,14 @@
         />
       </el-form-item>
       <div class="form-title">活动范围</div>
-      <el-form-item label="门店范围：" prop="allStores" required>
-        <el-radio-group v-model="form.allStores">
+      <el-form-item label="门店范围：" prop="allStore" required>
+        <el-radio-group v-model="form.allStore">
           <el-radio :label="true">全部门店</el-radio>
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
       </el-form-item>
       <!-- <el-form-item v-if="form.allStores === 1">已选当前上线的全部门店</el-form-item> -->
-      <el-form-item v-show="form.allStores === 0">
+      <el-form-item v-show="!form.allStore">
         <!-- storeComponent -->
         <el-button
           type="primary"
@@ -43,17 +43,17 @@
         <!-- <store-dialog @complete="handleSelectStore">选择门店</store-dialog> -->
       </el-form-item>
       <!-- 门店列表 -->
-      <el-form-item v-show="form.allStores === 0">
+      <el-form-item v-show="!form.allStore">
         <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
       </el-form-item>
-      <el-form-item label="商品范围：" prop="allStores" required>
-        <el-radio-group v-model="form.allSpecs">
+      <el-form-item label="商品范围：" prop="allStore" required>
+        <el-radio-group v-model="form.allSpec">
           <el-radio :label="true">全部商品</el-radio>
           <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
       </el-form-item>
       <!-- <el-form-item v-if="form.allSpecs === 1">已选当前上线的全部商品</el-form-item> -->
-      <el-form-item v-show="form.allSpecs === 0">
+      <el-form-item v-show="!form.allSpec">
         <div style="margin-bottom: 8px">
           <el-button
             type="primary"
@@ -128,7 +128,7 @@ import storeDialog from '../../components/store'
 import selectStore from '../../components/select-store'
 import selectGoods from '../../components/select-goods'
 import selectActivityGoods from './_source/select-activity-goods'
-import { createActAdd } from '@/api/activity'
+import { createActAdd, getActAddInfo } from '@/api/activity'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -177,8 +177,8 @@ export default {
     return {
       form: {
         type: ['1'],
-        allStores: true,
-        allSpecs: true,
+        allStore: true,
+        allSpec: true,
         threshold: ''
       },
       rules: {
@@ -202,7 +202,48 @@ export default {
       storeActivityGoods: [] // 选区的换购商品
     }
   },
+  created() {
+    if (this.$route.query.id) {
+      this.activityId = this.$route.query.id
+      this.disabled = this.$route.query.id && !this.$route.query.edit // 当前页面为查看
+      this.edit = this.$route.query.id && this.$route.query.edit // 当前页面为编辑
+      this.getInfo(this.$route.query.id)
+    }
+  },
   methods: {
+    getInfo(id) {
+      this.pageInfoloading = true
+      getActAddInfo(id)
+        .then(res => {
+          console.log('查询活动详情0', res)
+          this.pageInfoloading = false
+          if (res.code === '10000') {
+            const { data } = res
+            // 转换activityDetail 去除数据
+            this.form = {
+              name: data.pmtName,
+              activitTime: [data.startTime, data.endTime],
+              allStore: !!data.isAllStore,
+              allSpec: false,
+              type: data.userCoupons === 3 ? ['1'] : [],
+              // ruleType,
+              // uint,
+              // discountType,
+              // ruleList: ruleList_af,
+              startTime: data.startTime,
+              endTime: data.endTime
+            }
+            this.chooseStore = data.storeResDTOList
+            this.$refs.selectStoreComponent.dataFrom(data.storeResDTOList)
+            this.storeSelectGoods = data.commList
+            this.$refs.storeGods.dataFrom(data.commList)
+          }
+        })
+        .catch(e => {
+          console.log('查询活动详情0---err', e)
+          this.pageInfoloading = false
+        })
+    },
     handleTimeChange(row) {
       console.log('活动时间', row)
       if (row) {
@@ -256,15 +297,15 @@ export default {
               console.log(res)
               let dataParam = {}
               dataParam = _.pick(this.form, [
-                'allSpecs',
-                'allStores',
+                'allSpec',
+                'allStore',
                 'endTime',
                 'startTime',
                 'name'
               ])
               let userCoupons = ''
               // 需要增加组装的参数    userCoupons  pmtRule:{ruleList, confineNum, threshold, userCoupons} activitySpecList storeIds merCode: this.merCode,
-              if (Array.isArray(this.form.type) && this.form.type.length) {
+              if (Array.isArray(this.form.type)) {
                 const index = this.form.type.findIndex(item => item === '1')
                 if (index >= 0) {
                   userCoupons = 3
@@ -272,16 +313,40 @@ export default {
                   userCoupons = 0
                 }
               }
+              // 解析门店
+              const storeIdData = []
+              const specIdData = []
+              if (!this.form.allStore) {
+                this.chooseStore.forEach(element => {
+                  storeIdData.push(element.id)
+                })
+              }
+              if (!this.form.allSpec) {
+                this.storeSelectGoods.forEach(element => {
+                  specIdData.push({
+                    specId: element.specId,
+                    name: element.name
+                  })
+                })
+              }
               dataParam = {
                 ...dataParam,
                 merCode: this.merCode,
+                userCoupons,
+                activitySpecList: specIdData, //
+                storeIds: storeIdData,
                 pmtRule: {
                   confineNum: this.form.confineNum,
                   threshold: this.form.threshold,
-                  ruleList: res,
-                  userCoupons
+                  ruleList: res
                 }
               }
+              const loading = this.$loading({
+                lock: true,
+                text: '努力创建中，请稍后',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+              })
               // 这里需要处理下数据-----
               createActAdd(dataParam).then(res => {
                 if (res.code === '10000') {
@@ -289,7 +354,11 @@ export default {
                     message: '创建成功',
                     type: 'success'
                   })
+                  loading.close()
+                  this.$router.replace('/marketing/activity/aprice')
                 }
+              }).catch(() => {
+                loading.close()
               })
             })
             .catch(res => {

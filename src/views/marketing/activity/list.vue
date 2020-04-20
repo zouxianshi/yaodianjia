@@ -105,7 +105,7 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import { delActInfo, endActInfo } from '@/api/activity'
-import listForm from '../_source/list-form'
+import listForm from './_source/list-form'
 import noData from '@/components/NoData'
 
 export default {
@@ -179,6 +179,7 @@ export default {
   },
   created() {
     // this._loadStoreList() // 加载活动店铺
+    console.log('this.$router--------', this.$route)
     this.fetchData()
   },
   methods: {
@@ -261,7 +262,7 @@ export default {
     // 获取列表数据
     _getTableData() {
       const params = {
-        promotionType: 15,
+        promotionType: this.type,
         pmtName: this.searchForm.pmtName,
         currentPage: this.pager.current,
         pageSize: this.pager.size,

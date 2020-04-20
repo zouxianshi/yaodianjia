@@ -1,6 +1,6 @@
 <template>
   <el-card class="activity-card" shadow="hover">
-    <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item.linkUrl)" />
+    <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item.listUrl)" />
     <div class="activity-bottom">
       <div class="activity-header">
         <div class="title">{{ item.lable }}</div>
@@ -13,14 +13,14 @@
           type="text"
           icon="el-icon-takeaway-box"
           class="button"
-          @click="handleJump(item.linkUrl)"
+          @click="handleJump(item.listUrl)"
         >{{ item.lable }}列表</el-button>
         <el-divider direction="vertical" />
         <el-button
           type="text"
           icon="el-icon-document-add"
           class="button"
-          @click="handleJump(`${item.linkUrl}-edit`)"
+          @click="handleJump(item.linkUrl)"
         >新建数据</el-button>
       </div>
     </div>

@@ -4,6 +4,7 @@
     :append-to-body="true"
     :visible.sync="dialogVisible"
     class="actform-dialog"
+    :loading="loading"
   >
     <el-form ref="actForm" :model="actForm" :rules="rules" size="small" label-width="120px">
       <div class="form-title">活动宣传设置</div>
@@ -61,7 +62,12 @@
         </el-upload>
       </el-form-item>
       <el-form-item>
-        <el-button :loading="creatLoading" type="primary" style="width: 120px" @click="actFormSubmit">提交</el-button>
+        <el-button
+          :loading="creatLoading"
+          type="primary"
+          style="width: 120px"
+          @click="actFormSubmit"
+        >提交</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -71,8 +77,7 @@
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
 import shareImg from '@/assets/image/acvity/share-img.png'
-// import { createActExtend, updateActExtend, getActExtend } from '@/api/activity'
-import { createActExtend, getActExtend } from '@/api/activity'
+import { createActExtend, getActExtend, updateActExtend } from '@/api/activity'
 
 export default {
   data() {
@@ -85,12 +90,15 @@ export default {
       shareImg,
       dialogVisible: false,
       rules: {
-        setName: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
+        setName: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' }
+        ],
         picUrl: [{ required: true, message: '请上传活动图片', trigger: 'blur' }]
       },
       activityId: '',
       loading: false,
-      creatLoading: false
+      creatLoading: false,
+      peizhiId: '' // 配置ID
     }
   },
   computed: {
@@ -107,14 +115,19 @@ export default {
       this.activityId = activityId
       this.dialogVisible = true
       this.loading = true
-      getActExtend(activityId).then(res => {
-        const { data } = res
-        this.actForm = data
-        this.loading = false
-      }).catch(error => {
-        console.log(error)
-        this.loading = false
-      })
+      getActExtend(activityId)
+        .then(res => {
+          const { data } = res
+          if (data) {
+            this.actForm = data
+            this.peizhiId = data.id
+          }
+          this.loading = false
+        })
+        .catch(error => {
+          console.log(error)
+          this.loading = false
+        })
     },
     handleImgError(row) {
       const data = JSON.parse(row.toString().replace('Error:', ''))
@@ -196,24 +209,52 @@ export default {
               type: 'warning'
             })
           }
-          // 此处需要根据当前活动是否设置了推广
+          // 此处需要根据当前活动是否设置了推广  peizhiId
           // 如果没有需要调取createActExtend
           // 如果需要更新则需要调取updateActExtend
           this.creatLoading = true
-          createActExtend()
-            .then(res => {
-              this.creatLoading = false
-              if (res.code === '10000') {
-                this.$message({
-                  message: '配置创建成功',
-                  type: 'success'
-                })
-              }
+          if (this.peizhiId) {
+            updateActExtend({
+              ...this.actForm,
+              activityId: this.activityId,
+              id: this.peizhiId
             })
-            .catch(error => {
-              console.log(error)
-              this.creatLoading = false
+              .then(res => {
+                this.creatLoading = false
+                if (res.code === '10000') {
+                  this.$message({
+                    message: '配置更新成功',
+                    type: 'success'
+                  })
+                  this.dialogVisible = false
+                  this.$emit('complete')
+                }
+              })
+              .catch(error => {
+                console.log(error)
+                this.creatLoading = false
+              })
+          } else {
+            createActExtend({
+              ...this.actForm,
+              activityId: this.activityId
             })
+              .then(res => {
+                this.creatLoading = false
+                if (res.code === '10000') {
+                  this.$message({
+                    message: '配置创建成功',
+                    type: 'success'
+                  })
+                  this.dialogVisible = false
+                  this.$emit('complete')
+                }
+              })
+              .catch(error => {
+                console.log(error)
+                this.creatLoading = false
+              })
+          }
         } else {
           console.log('error submit!!', valid)
           return false

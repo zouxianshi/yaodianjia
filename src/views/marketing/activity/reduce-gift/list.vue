@@ -49,38 +49,42 @@
                 </el-tooltip>
               </template>
               <template slot-scope="scope">
-                <el-tag v-if="scope.row.validStatus===0" size="small" type="primary">生效</el-tag>
-                <el-tag v-else-if="scope.row.validStatus===1" size="small" type="success">已生效</el-tag>
+                <el-tag v-if="!!scope.row.status" size="small" type="primary">已生效</el-tag>
                 <el-tag v-else size="small" type="danger">已失效</el-tag>
               </template>
             </el-table-column>
           </template>
           <el-table-column label="操作" width="130">
             <template slot-scope="scope">
-              <el-button type="text" @click="toLook(scope.row)">查看</el-button>
-              <el-divider direction="vertical" />
-              <el-dropdown trigger="hover">
-                <span class="el-dropdown-link">
-                  更多
-                  <i class="el-icon-arrow-down el-icon--right" />
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    <el-button type="text" @click="$refs.setActFrom.open(scope.row.activityId)">推广设置</el-button>
-                  </el-dropdown-item>
-                  <!-- <el-dropdown-item>
-                    <el-button type="text" @click="endActivity(scope.row)">失效</el-button>
-                  </el-dropdown-item> -->
-                  <el-dropdown-item>
-                    <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
+              <template v-if="scope.row.status">
+                <el-button type="text" @click="toLook(scope.row)">查看</el-button>
+                <el-divider direction="vertical" />
+                <el-dropdown trigger="hover">
+                  <span class="el-dropdown-link">
+                    更多
+                    <i class="el-icon-arrow-down el-icon--right" />
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>
+                      <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button type="text">失败列表</el-button>
+                    </el-dropdown-item>
+                    <!-- <el-dropdown-item>
                     <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+                    </el-dropdown-item>-->
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
             </template>
           </el-table-column>
+          <div slot="empty">
+            <no-data />
+          </div>
         </el-table>
       </section>
       <section class="c-footer">
@@ -97,30 +101,27 @@
       </section>
     </div>
     <!-- 推广设置 -->
-    <actform ref="setActFrom" />
+    <actform ref="setActFrom" @complete="_getTableData()" />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { delActInfo } from '@/api/activity'
+import { delActInfo, endActInfo } from '@/api/activity'
 import listForm from '../_source/list-form'
 import actform from './_source/actform'
+import noData from '@/components/NoData'
 
 export default {
   components: {
     listForm,
-    actform
+    actform,
+    noData
   },
   data() {
     return {
       searchForm: {},
       cols: [
-        {
-          prop: 'id',
-          label: '活动编号',
-          width: '150'
-        },
         {
           prop: 'activityType',
           label: '活动类型',
@@ -216,11 +217,15 @@ export default {
     },
     // 查看
     toLook(row) {
-      this.$router.push(`/marketing/activity/reduce-gift-list-edit?id=${row.id}`)
+      this.$router.push(
+        `/marketing/activity/reduce-gift-list-edit?id=${row.id}`
+      )
     },
     // 编辑
     toEdit(row) {
-      this.$router.push(`/marketing/activity/reduce-gift-list-edit?id=${row.id}&edit=1`)
+      this.$router.push(
+        `/marketing/activity/reduce-gift-list-edit?id=${row.id}&edit=1`
+      )
     },
     // 删除
     handleDel(row) {
@@ -233,13 +238,21 @@ export default {
       })
     },
     // 失效操作
-    endActivity() {
+    endActivity(id) {
       this.$confirm('确认将此活动设置为失效状态吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // this._delData(row.id)
+        endActInfo(id).then(res => {
+          if (res.code === '10000') {
+            this.$message.success('设置成功')
+            // 更新列表
+            this._getTableData()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
         console.log('此活动已失效')
         this._getTableData()
       })
@@ -252,10 +265,8 @@ export default {
         pmtName: this.searchForm.pmtName,
         currentPage: this.pager.current,
         pageSize: this.pager.size,
-        storeId: Array.isArray(this.searchForm.storeId)
-          ? this.searchForm.storeId.join(',')
-          : '',
-        validStatus: this.searchForm.timeStatus,
+        storeId: this.searchForm.storeId,
+        validStatus: this.searchForm.validStatus,
         isStoreCount: true // 是否需要统计门店数量，true-需要，false或不传-不需要
       }
       this.$store.dispatch('activity/getTablist', params)

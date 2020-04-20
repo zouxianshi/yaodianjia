@@ -37,48 +37,23 @@
         @select="handleSelect"
       >
         <el-table-column type="selection" align="center" width="50" />
-        <el-table-column align="center" label="商品图片" min-width="60">
-          <template slot-scope="scope">
-            <div
-              v-if="scope.row.mainPic && scope.row.mainPic!==''"
-              class="x-img-mini"
-              style="width: 60px; height: 60px"
-            >
-              <div class="x-image__preview">
-                <el-image
-                  style="width: 60px; height: 60px"
-                  fit="contain"
-                  :src="showImg(scope.row.mainPic)"
-                  :preview-src-list="[showImg(scope.row.mainPic)]"
-                />
-              </div>
-            </div>
-            <div v-else style="line-height: 32px">暂无上传</div>
-          </template>
-        </el-table-column>
         <el-table-column prop="name" label="赠品名称" min-width="120" :show-overflow-tooltip="true" />
-        <el-table-column prop="brandName" label="品牌" min-width="80" :show-overflow-tooltip="true" />
-        <el-table-column label="规格信息" min-width="100" :show-overflow-tooltip="true">
-          <template slot-scope="scope" :show-overflow-tooltip="true">
-            <div v-html="formatSkuInfo(scope.row.specSkuList)" />
-          </template>
-        </el-table-column>
         <el-table-column
-          prop="mprice"
-          label="参考价格"
+          prop="provideNum"
+          label="已发放"
           min-width="60"
           align="center"
           :show-overflow-tooltip="true"
         />
         <el-table-column
-          prop="mprice"
+          prop="leaveStock"
           label="剩余库存"
           min-width="60"
           align="center"
           :show-overflow-tooltip="true"
         />
         <el-table-column
-          prop="mprice"
+          prop="limitCount"
           label="每人限领"
           min-width="60"
           align="center"
@@ -125,7 +100,7 @@
 </template>
 
 <script>
-import { queryGoods } from '@/api/common'
+import { getActGiftList } from '@/api/activity'
 export default {
   name: 'DialogGoods',
   props: {
@@ -162,7 +137,8 @@ export default {
       multipleSelection: [],
       mySelectList: [],
       typeList: [],
-      checkAll: false
+      checkAll: false,
+      index: ''
     }
   },
   computed: {
@@ -181,14 +157,19 @@ export default {
     fetchData() {
       this._getTableData() // 统计列表
     },
-    open() {
+    open(index) {
       this.dialog.visible = true
+      this.index = index
       if (this.list && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
         this.mySelectList = []
       }
       this.fetchData()
+    },
+    dialogSelect(val) {
+      console.log('dialogSelect----', val)
+      this.mySelectList = val || []
     },
     close() {
       this.dialog.visible = false
@@ -216,7 +197,7 @@ export default {
         return false
       }
       console.log('confirm', this.mySelectList)
-      this.$emit('commit', this.mySelectList)
+      this.$emit('commit', this.mySelectList, this.index)
       this.close()
     },
     formatSkuInfo(skuList) {
@@ -257,11 +238,11 @@ export default {
     handleSelectAllChange(allList) {
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.specId === item.specId
+          return mItem.id === item.id
         })
         if (index > -1) {
           if (allList.length > 0) {
-            console.log('已存在' + item.specId + ':' + item.name)
+            console.log('已存在' + item.id + ':' + item.name)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
@@ -274,7 +255,7 @@ export default {
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.specId === row.specId
+        return mItem.id === row.id
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
@@ -285,7 +266,7 @@ export default {
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
       const index = this.tableData.findIndex(item => {
-        return item.specId === myItem.specId
+        return item.id === myItem.id
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
@@ -299,7 +280,7 @@ export default {
         const index = this.mySelectList.findIndex(mItem => {
           console.log(mItem)
           console.log(item)
-          return mItem.specId === item.specId
+          return mItem.id === item.id
         })
         if (index > -1) {
           currentCheckedList.push(item)
@@ -324,7 +305,7 @@ export default {
         pageSize: this.pager.size
       }
 
-      queryGoods(params)
+      getActGiftList(params)
         .then(res => {
           if (res.code === '10000' && res.data) {
             this.tableData = res.data.data || []

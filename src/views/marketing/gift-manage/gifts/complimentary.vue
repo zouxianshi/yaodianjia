@@ -6,14 +6,14 @@
     <section style="margin-top: 10px">
       <el-form :inline="true" size="small" :model="form" class="demo-form-inline">
         <el-form-item label="赠品名称">
-          <el-input v-model="form.user" placeholder="赠品名称" />
+          <el-input v-model="form.name" clearable placeholder="赠品名称" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="_getTableData">查询</el-button>
         </el-form-item>
       </el-form>
     </section>
-    <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
+    <section class="table-box webkit-scroll" style="overflow: auto">
       <el-table :data="tableData" style="width: 100%; height: 100%">
         <template v-for="col in cols">
           <el-table-column
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { getConflict } from '@/api/activity'
+import { getActGiftList } from '@/api/activity'
 import noData from '@/components/NoData'
 export default {
   components: {
@@ -58,21 +58,21 @@ export default {
       tableData: [],
       cols: [
         {
-          prop: 'id',
+          prop: 'name',
           label: '赠品名称',
           width: '150'
         },
         {
-          prop: 'activityType',
+          prop: 'provideNum',
           label: '已发放',
           width: '80'
         },
         {
-          prop: 'storeNum',
+          prop: 'leaveStock',
           label: '剩余库存'
         },
         {
-          prop: 'name',
+          prop: 'limitCount',
           label: '每人限领'
         }
       ],
@@ -118,13 +118,18 @@ export default {
     // 获取列表数据
     _getTableData() {
       this.listLoading = true
-      // const params = {
-      //   currentPage: this.pager.current,
-      //   pageSize: this.pager.size
-      // }
-      getConflict()
+      const params = {
+        currentPage: this.pager.current,
+        pageSize: this.pager.size,
+        name: this.form.name
+      }
+      getActGiftList(params)
         .then(res => {
-          this.tableData = []
+          const { data } = res
+          this.tableData = Array.isArray(data.data) ? data.data : []
+          this.pager.current = data.currentPage
+          this.pager.size = data.pageSize
+          this.pager.total = data.totalCount
           this.listLoading = false
         })
         .catch(e => {

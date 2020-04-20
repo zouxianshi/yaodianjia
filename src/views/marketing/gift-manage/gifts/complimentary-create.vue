@@ -38,7 +38,7 @@
             <el-radio v-model="form.limit" :label="1">每人限领</el-radio>
           </el-form-item>
           <el-form-item prop="limitStock">
-            <el-input-number v-model="form.limitStock" />
+            <el-input-number v-model="form.limitStock" :disabled="form.limit!==1" />
             <span style="margin-left: 5px" class="info">件</span>
           </el-form-item>
         </el-col>
@@ -48,7 +48,12 @@
       </el-form-item>
     </el-form>
     <!-- 选择主商品组件 -->
-    <store-goods ref="GoodsComponent" :limit-max="1" :list="storeSelectGoods" @on-change="handleSelectGoods" />
+    <store-goods
+      ref="GoodsComponent"
+      :limit-max="1"
+      :list="storeSelectGoods"
+      @on-change="handleSelectGoods"
+    />
   </div>
 </template>
 
@@ -56,9 +61,13 @@
 import storeGoods from '../../components/store-gods'
 // import giftList from './list'
 import selectGoods from '../../components/select-goods'
-import { createGift } from '@/api/activity'
+import { createActGift } from '@/api/activity'
+import { mapGetters } from 'vuex'
 export default {
   components: { storeGoods, selectGoods },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   data() {
     const checkLimitStock = (rule, value, callback) => {
       if (this.form.limit === 1) {
@@ -82,9 +91,9 @@ export default {
     }
     return {
       form: {
-        limit: 0,
-        limitStock: '',
-        stock: ''
+        limit: 0, // 是否限购 0 不限 1 限购
+        limitStock: '', // 限购数量
+        stock: '' // 总库存
       },
       storeSelectGoods: [], // 选择的商品信息
       cols: [
@@ -116,7 +125,8 @@ export default {
         name: [{ required: true, message: '请输入赠品名称', trigger: 'blur' }],
         stock: [{ required: true, validator: checkStock, trigger: 'change' }],
         limitStock: [{ validator: checkLimitStock, trigger: 'change' }]
-      }
+      },
+      loading: false
     }
   },
   methods: {
@@ -128,14 +138,25 @@ export default {
     submit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          console.log('submit ok', valid)
+          console.log('submit ok', valid, this.form, this.storeSelectGoods)
           if (
             Array.isArray(this.storeSelectGoods) &&
             this.storeSelectGoods.length
           ) {
-            createGift()
+            // 重整数据
+            let data = {}
+            data = {
+              limitCount: this.form.limit === 0 ? 0 : this.form.limitStock,
+              name: this.form.name,
+              stock: this.form.stock,
+              specId: this.storeSelectGoods[0].specId,
+              merCode: this.merCode
+            }
+            this.loading = true
+            createActGift(data)
               .then(res => {
                 console.log(res)
+                this.loading = false
                 if (res.code === '10000') {
                   this.$message({
                     message: '创建成功',
@@ -148,6 +169,7 @@ export default {
               })
               .catch(error => {
                 console.log(error)
+                this.loading = false
               })
           } else {
             this.$message({

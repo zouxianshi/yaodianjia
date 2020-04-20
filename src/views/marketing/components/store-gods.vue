@@ -375,7 +375,8 @@ export default {
         firstTypeId,
         secondTypeId,
         threeTypeId,
-        merCode: this.merCode
+        merCode: this.merCode,
+        distinct: true
       }
 
       queryActivityCommGoods(params)

@@ -122,37 +122,28 @@
           </div>
         </el-form-item>
         <div class="form-title">活动店铺</div>
-        <el-form-item label="所有店铺">
+        <el-form-item label="所有店铺" prop="allStore" required>
           <el-radio-group
-            v-model="formData.isAllStore"
+            v-model="formData.allStore"
             :disabled="!!activityId"
-            @change="handleStoreChange"
           >
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
+            <el-radio :label="true">全部门店</el-radio>
+            <el-radio :label="false">部分门店</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="已选店铺">
-          <template v-if="formData.isAllStore===0">
-            <div class="choose-store-box">
-              <el-tag
-                v-for="(item,index) in chooseStore"
-                :key="index"
-                type="para"
-                size="small"
-              >{{ item.stName }}</el-tag>
-            </div>
-            <p style="margin-top:5px">
-              <el-button type="primary" size="mini" @click="handleOpenStore">选择门店</el-button>
-            </p>
-          </template>
-          <template v-else>
-            <span>
-              已选全部门店
-              <el-link type="primary" :underline="false">{{ allStore.length }}</el-link>个店铺
-            </span>
-          </template>
+        <el-form-item v-show="!formData.allStore">
+          <!-- storeComponent -->
+          <el-button
+            type="primary"
+            plain
+            @click="$refs.storeComponent.open()"
+          >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
         </el-form-item>
+        <!-- 门店列表 -->
+        <el-form-item v-show="!formData.allStore">
+          <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
+        </el-form-item>
+
         <!-- 二期需求 -->
         <!-- <el-form-item label="跨店拼团">
           <span slot="label">
@@ -173,7 +164,7 @@
               icon="el-icon-circle-plus-outline"
               type="primary"
               size="small"
-              :disabled="!formData.activitTime || (formData.isAllStore === 0 && !chooseStore.length)"
+              :disabled="!formData.activitTime || (!formData.allStore && !chooseStore.length)"
               @click="handleOpenGoods"
             >添加商品</el-button>
             <el-button
@@ -240,21 +231,10 @@
         </el-form-item>
       </el-form>
     </div>
-    <!-- 门店模态框 -->
-    <store
-      :is-show="showStore"
-      :list="chooseStore"
-      @close="showStore=false"
-      @complete="handletStoreComplete"
-    />
-    <!-- 选择商品弹窗组件 -->
-    <goods
-      ref="dialogGoods"
-      :limit-max="20"
-      :editable="!disabled"
-      :list="chooseGoods"
-      @on-change="onSelectedGoods"
-    />
+    <!-- 门店列表 -->
+    <store-dialog ref="storeComponent" :list="chooseStore" @complete="handletStoreComplete" />
+    <!-- 选择主商品组件 -->
+    <store-goods ref="dialogGoods" :list="goodsList" @on-change="onSelectedGoods" />
     <!-- 编辑商品 -->
     <edit-goods-modals ref="editGoodsModals" :info="editGoods" @complete="handleSuccessSelectGood" />
   </div>
@@ -262,10 +242,11 @@
 <script>
 import _ from 'lodash'
 import config from '@/utils/config'
-import store from './_source/store'
-import goods from './_source/goods'
-// import imgEdit from './components/image-wapper'
 import EditGoodsModals from './_source/signle-goods-set'
+
+import storeDialog from '../../components/store'
+import storeGoods from '../../components/store-gods'
+import selectStore from '../../components/select-store'
 import { mapGetters } from 'vuex'
 import {
   assembleActivityAdd,
@@ -274,9 +255,8 @@ import {
   updateAssembleInfo,
   updateAcAssmbleProductInfo
 } from '@/api/marketing'
-import { getAllStore } from '@/api/common'
 export default {
-  components: { store, goods, EditGoodsModals },
+  components: { selectStore, storeGoods, EditGoodsModals, storeDialog },
   data() {
     const checkEffectiveTime = (rule, value, callback) => {
       if (!value && value !== 0) {
@@ -306,8 +286,7 @@ export default {
         activitTime: '',
         img: '1',
         imgUrl: '',
-        isAllStore: 1,
-        crossStore: '1',
+        allStore: true,
         startTime: '',
         endTime: '',
         description: ''
@@ -326,20 +305,15 @@ export default {
           { required: true, validator: checkEffectiveTime, trigger: 'blur' }
         ]
       },
-      showStore: false,
-      chooseStore: [],
-      showGoods: false,
-      chooseGoods: [],
+      chooseStore: [], // 选择的店铺
       disabled: false,
       editGoods: {},
       pageLoading: '',
       saveLoading: false,
-      allStore: [],
       activityId: '',
       currentPage: 1,
       total: 0,
-      multipleSelection: [],
-      crossStore: '1'
+      multipleSelection: []
     }
   },
   computed: {
@@ -356,9 +330,13 @@ export default {
     if (this.activityId) {
       this._loadInfo()
     }
-    this._loadAllStoreData()
   },
   methods: {
+    delSelectStore(item, index) {
+      console.log('item, index', item, index, this.chooseStore)
+      this.chooseStore.splice(index, 1)
+      this.$refs.selectStoreComponent.dataFrom(this.chooseStore)
+    },
     handleSelectionChange(val) {
       // 选择商品
       this.multipleSelection = val
@@ -384,17 +362,21 @@ export default {
       // 加载基本信息
       getAssembleAcInfo(this.$route.query.id)
         .then(res => {
-          this._loadGoods()
-          for (const key in res.data) {
-            this.formData[key] = res.data[key]
+          // this._loadGoods()
+          // for (const key in res.data) {
+          //   this.formData[key] = res.data[key]
+          // }
+          this.formData = {
+            activitTime: [res.data.startTime, res.data.endTime],
+            name: res.data && res.data.pmtName,
+            description: res.data && res.data.description,
+            allStore: false,
+            effectiveTime: res.data && res.data.effectiveTime,
+            img: res.data && res.data.imgUrl ? '2' : '1'
           }
-          this.formData.activitTime = [res.data.startTime, res.data.endTime]
-          if (this.formData.imgUrl) {
-            this.formData.img = '2'
-          }
-          if (this.formData.isAllStore === 0) {
-            this.chooseStore = res.data.storeIds
-          }
+          this.chooseStore = res.data && Array.isArray(res.data.storeResDTOList) ? res.data.storeResDTOList : []
+          this.$refs.selectStoreComponent.dataFrom(res.data.storeResDTOList)
+          this.goodsList = res.data && Array.isArray(res.data.activityDetail.ruleList) ? res.data.activityDetail.ruleList : []
         })
         .catch(err => {
           console.log(err)
@@ -416,21 +398,6 @@ export default {
           })
           this.goodsList = data
           this.total = totalCount
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-    handleStoreChange(val) {
-      if (val === '1') {
-        this._loadAllStoreData()
-      }
-    },
-    _loadAllStoreData() {
-      // 加载所有门店
-      getAllStore(this.merCode)
-        .then(res => {
-          this.allStore = res.data
         })
         .catch(err => {
           console.log(err)
@@ -483,28 +450,15 @@ export default {
         this.$refs.editGoodsModals.open()
       })
     },
-    handleOpenStore() {
-      // 打开选择门店modal
-      this.showStore = true
-    },
     handleOpenGoods() {
       // 打开选择商品弹窗组件
-      this.chooseGoods = this.goodsList
-      let storeIds = ''
-      if (this.formData.isAllStore === 1) {
-        storeIds = null
-      } else {
-        storeIds = this.chooseStore
-      }
-      console.log('我是准备打开商品弹窗组件', storeIds)
-      this.$nextTick(_ => {
-        this.$refs.dialogGoods.open(storeIds)
-      })
+      this.$refs.dialogGoods.open()
     },
-    handletStoreComplete(row) {
+    handletStoreComplete(val) {
       // 选择门店确定
-      this.chooseStore = row
-      this.showStore = false
+      this.chooseStore = val
+      console.log('11111111111111', val, this.$refs)
+      this.$refs.selectStoreComponent.dataFrom(val)
     },
     handleGoodsDel(row, index) {
       // 删除商品表格数据
@@ -558,7 +512,7 @@ export default {
           }
           data.storeIds = []
           // 部分店铺
-          if (data.isAllStore === 0) {
+          if (!data.allStore) {
             if (this.chooseStore.length > 0) {
               this.chooseStore.map(v => {
                 data.storeIds.push(v.id)
@@ -570,8 +524,6 @@ export default {
               })
               return
             }
-          } else {
-            data.storeIds = this.allStore
           }
           delete data.img
           delete data.activitTime
@@ -587,12 +539,15 @@ export default {
               })
               return false
             }
-            data.products = this.formatItems(this.goodsList)
+            data.pmtRule = {
+              ruleList: this.formatItems(this.goodsList)
+            }
             console.log('this.formData------data.products', data.products)
-            if (!data.products) {
+            if (!data.pmtRule.ruleList) {
               return
             }
             this.saveLoading = true
+            console.log('待提交数据---', data)
             this.addActivity(data)
           }
         } else {

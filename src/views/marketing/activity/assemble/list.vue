@@ -2,96 +2,89 @@
   <div class="dashboard-container">
     <div class="app-container">
       <a href="#/marketing/activity/assemble-edit">
-        <el-button
-          class="btn btn-add"
-          type="primary"
-          size="small"
-        >新建活动</el-button>
+        <el-button class="btn btn-add" type="primary" size="small">新建活动</el-button>
       </a>
-      <section @keydown.enter="search()">
-        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动名称</span>
-            <el-input
-              v-model.trim="searchForm.name"
-              size="small"
-              style="width: 200px"
-              placeholder="请输入活动名称"
+      <!-- 列表表单控件 -->
+      <list-form @form-search="search" />
+      <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
+        <el-table :data="tableData" style="width: 100%">
+          <template v-for="col in cols">
+            <el-table-column
+              v-if="!col.render"
+              :key="col.prop"
+              :formatter="formatter"
+              :label="col.label"
+              :show-overflow-tooltip="true"
+              :prop="col.prop"
+              :min-width="col.width"
             />
-          </div>
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动店铺</span>
-            <el-select
-              v-model="searchForm.storeId"
-              multiple
-              size="small"
-              filterable
-              placeholder="全部"
-              @change="search()"
+            <el-table-column
+              v-else-if="col.prop==='validStatus'"
+              :key="col.prop"
+              :label="col.label"
+              :prop="col.prop"
             >
-              <el-option v-for="(item,index) in storeList" :key="index" :label="item.stName" :value="item.id" />
-            </el-select>
-          </div>
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动状态</span>
-            <el-select
-              v-model="searchForm.timeStatus"
-              size="small"
-              placeholder="全部"
-              @change="search()"
-            >
-              <el-option label="全部" value="" />
-              <el-option label="进行中" :value="1" />
-              <el-option label="未开始" :value="0" />
-              <el-option label="已结束" :value="2" />
-            </el-select>
-          </div>
-          <div class="search-item">
-            <el-button size="small" type="primary" @click="search()">查 询</el-button>
-          </div>
-        </div>
-      </section>
-      <section
-        class="table-box webkit-scroll"
-        style="height: calc(100% - 180px);overflow: auto"
-      >
-        <el-table v-loading="loading" :data="tableData" style="width: 100%">
-          <el-table-column prop="id" label="活动编号" min-width="150" />
-          <el-table-column prop="name" label="标题" min-width="150" />
-          <el-table-column
-            prop="startTime"
-            label="活动开始时间"
-            min-width="120"
-            align="center"
-          />
-          <el-table-column
-            prop="endTime"
-            label="活动结束时间"
-            min-width="120"
-            align="center"
-          />
-          <el-table-column label="时间状态" min-width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.schedule===0" size="small" type="info">未开始</el-tag>
-              <el-tag v-else-if="scope.row.schedule===1" size="small" type="success">进行中</el-tag>
-              <el-tag v-else size="small" type="danger">已结束</el-tag>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column label="状态" min-width="60" align="center">
-            <template>
-              <el-tag type="success" size="small">已生效</el-tag>
-            </template>
-          </el-table-column> -->
-          <el-table-column label="操作" width="262">
-            <template slot-scope="scope">
-              <el-button v-if="scope.row.schedule===0" plain size="mini" @click="toEdit(scope.row)">编辑</el-button>
-              <!-- <el-button v-if="scope.row.schedule===0||scope.row.schedule===1" plain size="mini" @click="toEdit(scope.row, 1)">查看数据</el-button> -->
-              <template v-if="scope.row.schedule===0||scope.row.schedule===2">
-                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.validStatus===0" size="small" type="info">未开始</el-tag>
+                <el-tag v-else-if="scope.row.validStatus===1" size="small" type="success">进行中</el-tag>
+                <el-tag v-else size="small" type="danger">已结束</el-tag>
               </template>
-              <product-kucun v-if="scope.row.schedule===1" :row-item="scope.row" />
+            </el-table-column>
+            <el-table-column
+              v-else-if="col.prop==='status'"
+              :key="col.prop"
+              :label="col.label"
+              :prop="col.prop"
+            >
+              <template slot="header" slot-scope="scope">
+                <el-tooltip placement="top">
+                  <div slot="content">
+                    时间状态为进行中或未开始的，状态为生效的活动;
+                    <br>时间状态为已结束的，状态为已失效的活动;
+                  </div>
+                  <span>
+                    {{ scope.column.label }}
+                    <i class="el-icon-question" />
+                  </span>
+                </el-tooltip>
+              </template>
+              <template slot-scope="scope">
+                <el-tag v-if="!!scope.row.status" size="small" type="primary">已生效</el-tag>
+                <el-tag v-else size="small" type="danger">已失效</el-tag>
+              </template>
+            </el-table-column>
+          </template>
+          <el-table-column label="操作" width="130">
+            <template slot-scope="scope">
+              <template v-if="scope.row.status">
+                <el-button type="text" @click="toLook(scope.row)">查看</el-button>
+                <el-divider direction="vertical" />
+                <el-dropdown trigger="hover">
+                  <span class="el-dropdown-link">
+                    更多
+                    <i class="el-icon-arrow-down el-icon--right" />
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>
+                      <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button type="text">失败列表</el-button>
+                    </el-dropdown-item>
+                    <!-- <el-dropdown-item>
+                    <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
+                    </el-dropdown-item>-->
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
             </template>
           </el-table-column>
+          <div slot="empty">
+            <no-data />
+          </div>
         </el-table>
       </section>
       <section class="c-footer">
@@ -107,117 +100,130 @@
         />
       </section>
     </div>
-
+    <!-- 推广设置 -->
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { getAssembleList, delAssembleActivity } from '@/api/marketing'
-import productKucun from './components/product-kucun'
-import config from '@/utils/config'
-import Vue from 'vue'
-import VueClipboard from 'vue-clipboard2'
-import { getStoreList } from '@/api/depot'
-Vue.use(VueClipboard)
+import { mapGetters, mapMutations } from 'vuex'
+import { delActInfo, endActInfo } from '@/api/activity'
+import listForm from '../_source/list-form'
+import noData from '@/components/NoData'
+
 export default {
   components: {
-    productKucun
+    listForm,
+    noData
   },
   data() {
     return {
-      loading: false,
-      searchForm: {
-        name: '',
-        storeId: '',
-        timeStatus: '' // 活动.时间状态 int (-1: 未开始, 1: 进行中, 0: 已结束)
-      },
-      tableData: [],
-      pager: {
-        current: 1,
-        size: 10,
-        total: 0
-      },
-      dialogFormVisible: false,
-      storeList: []
+      searchForm: {},
+      cols: [
+        {
+          prop: 'id',
+          label: '活动编号',
+          width: '150'
+        },
+        {
+          prop: 'activityType',
+          label: '活动类型',
+          width: '80'
+        },
+        {
+          prop: 'pmtName',
+          label: '活动名称',
+          width: '150'
+        },
+        {
+          prop: 'countStore',
+          label: '参与门店'
+        },
+        {
+          prop: 'startTime',
+          label: '活动开始时间',
+          width: '120',
+          align: 'center'
+        },
+        {
+          prop: 'endTime',
+          label: '活动结束时间',
+          width: '120',
+          align: 'center'
+        },
+        {
+          prop: 'validStatus',
+          label: '时间状态',
+          width: '80',
+          align: 'center',
+          render: true
+        },
+        {
+          prop: 'status',
+          label: '状态',
+          width: '80',
+          align: 'center',
+          render: true
+        }
+      ]
     }
   },
   computed: {
-    ...mapGetters(['roles', 'merCode']),
-    uploadFileUrl() {
-      return `${this.uploadFileURL}`
-    },
-    headers() {
-      return { Authorization: this.$store.getters.token }
-    },
+    ...mapGetters(['roles', 'merCode', 'activity']),
     merCode() {
       return this.$store.state.user.merCode || ''
     },
-    upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_uploadImg?merCode=${this.merCode}`
+    tableData() {
+      return this.activity.tablist
+    },
+    pager() {
+      return this.activity.pager
     }
   },
   created() {
-    this._loadStoreList() // 加载活动店铺
+    // this._loadStoreList() // 加载活动店铺
     this.fetchData()
   },
   methods: {
-    // statusCupte(row) {
-    //   const startTimestamp = Date.parse(new Date(row.startTime))
-    //   const endTimestamp = Date.parse(new Date(row.endTime))
-    //   const timestamp = Date.parse(new Date())
-    //   if (timestamp < startTimestamp) {
-    //     return 0
-    //   } else if (timestamp > startTimestamp && timestamp < endTimestamp) {
-    //     return 1
-    //   } else if (timestamp > endTimestamp) {
-    //     return 2
-    //   }
-    // },
+    ...mapMutations({
+      updatePager: 'activity/SET_TABLE_PAGATION'
+    }),
     fetchData() {
       this._getTableData()
     },
-    _loadStoreList() { // 加载门店列表
-      const data = {
-        searchKey: '',
-        currentPage: 1,
-        onlineStatus: 1,
-        status: 1,
-        pageSize: 9000
-      }
-      getStoreList(data).then(res => {
-        const { data } = res.data
-        // data.unshift({ id: '', stName: '全部' })
-        this.storeList = data
-      }).catch(err => {
-        console.log(err)
-      })
-    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
-      this.pager.size = val
+      this.updatePager({
+        size: val || 20
+      })
       this._getTableData()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.pager.current = val
+      this.updatePager({
+        current: val
+      })
       this._getTableData()
     },
     // 查询
-    search() {
-      this.pager = {
+    search(params) {
+      console.log('search------', params)
+      // 更新pager数据
+      this.updatePager({
         current: 1,
         size: 10,
         total: 0
-      }
+      })
+      this.searchForm = { ...params }
       this._getTableData()
     },
-    // storeIdchange(val) {
-    //   console.log('storeIdchange', val)
-    // },
+    // 查看
+    toLook(row) {
+      this.$router.push(`/marketing/activity/assemble-edit?id=${row.id}`)
+    },
     // 编辑
     toEdit(row) {
-      this.$router.push('/marketing/activity/assemble-edit?id=' + row.id)
+      this.$router.push(`/marketing/activity/assemble-edit?id=${row.id}&edit=1`)
     },
     // 删除
     handleDel(row) {
@@ -229,36 +235,43 @@ export default {
         this._delData(row.id)
       })
     },
+    // 失效操作
+    endActivity(id) {
+      this.$confirm('确认将此活动设置为失效状态吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        endActInfo(id).then(res => {
+          if (res.code === '10000') {
+            this.$message.success('设置成功')
+            // 更新列表
+            this._getTableData()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+        console.log('此活动已失效')
+        this._getTableData()
+      })
+    },
+
     // 获取列表数据
     _getTableData() {
       const params = {
-        type: this.searchForm.type,
-        name: this.searchForm.name,
+        promotionType: 13,
+        pmtName: this.searchForm.pmtName,
         currentPage: this.pager.current,
         pageSize: this.pager.size,
-        storeId: Array.isArray(this.searchForm.storeId) ? this.searchForm.storeId.join(',') : '',
-        schedule: this.searchForm.timeStatus
+        storeId: this.searchForm.storeId,
+        validStatus: this.searchForm.validStatus,
+        isStoreCount: true // 是否需要统计门店数量，true-需要，false或不传-不需要
       }
-      this.loading = true
-      getAssembleList(params).then(res => {
-        if (res.code === '10000') {
-          this.tableData = res.data.data
-          this.pager.total = res.data.totalCount || 0
-        } else {
-          this.$message({
-            message: res.msg,
-            type: 'error',
-            duration: 5 * 1000
-          })
-        }
-        this.loading = false
-      }).catch(_ => {
-        this.loading = false
-      })
+      this.$store.dispatch('activity/getTablist', params)
     },
     _delData(id) {
       const params = [`${id}`]
-      delAssembleActivity(params).then(res => {
+      delActInfo(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('已删除')
           // 更新列表
@@ -268,14 +281,12 @@ export default {
         }
       })
     },
-    // 失效数据
-    _disableData(id) {
-      // const params = {
-      //   id: id
-      // }
-    },
-    handleClean() {
-      // 清空活动库存
+    formatter(row, column, cellValue) {
+      if (column.property === 'activityType') {
+        return '加价购'
+      } else {
+        return cellValue
+      }
     }
   }
 }
@@ -318,60 +329,60 @@ export default {
   line-height: 1.1;
   color: #999999;
 }
-.table-footer{
-    margin-top: 10px;
-    display: flex;
-    // justify-content: center
-    justify-content: space-between;
-}
-.goods-info{
+.table-footer {
+  margin-top: 10px;
   display: flex;
-  .goods-txt{
+  // justify-content: center
+  justify-content: space-between;
+}
+.goods-info {
+  display: flex;
+  .goods-txt {
     margin-left: 10px;
-    flex:1
+    flex: 1;
   }
-  .price{
+  .price {
     font-size: 18px;
-    color: red
+    color: red;
   }
 }
- .custom-input{
-      display: flex;
-      .custom-input-box{
-         border-top-right-radius: 0!important;
-        border-bottom-right-radius: 0!important;
-        border-right: none!important;
-        &:focus{
-          outline: none;
-          border-color: #147de8;
-        }
-      }
-      .operate{
-        display: flex;
-        flex-direction: column;
-        margin-left: -12px;
-        z-index: 3;
-        width: 30px;
-        align-items: center;
-        background: #f5f7fa;
-        border: 1px solid #dcdfe6;
-        height: 32px;
-         border-radius: 4px;
-         border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        color: #909399;
-        span{
-          width: 100%;
-          height: 50%;;
-          text-align: center;
-          &:last-child{
-            border-top:1px solid #dcdfe6;
-          }
-        }
+.custom-input {
+  display: flex;
+  .custom-input-box {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+    &:focus {
+      outline: none;
+      border-color: #147de8;
+    }
+  }
+  .operate {
+    display: flex;
+    flex-direction: column;
+    margin-left: -12px;
+    z-index: 3;
+    width: 30px;
+    align-items: center;
+    background: #f5f7fa;
+    border: 1px solid #dcdfe6;
+    height: 32px;
+    border-radius: 4px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    color: #909399;
+    span {
+      width: 100%;
+      height: 50%;
+      text-align: center;
+      &:last-child {
+        border-top: 1px solid #dcdfe6;
       }
     }
-    .table-opeater{
-      display: flex;
-      align-items: center;
-    }
+  }
+}
+.table-opeater {
+  display: flex;
+  align-items: center;
+}
 </style>

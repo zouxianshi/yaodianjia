@@ -1,117 +1,88 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <!-- <el-button
-        class="btn btn-add"
-        type="primary"
-        size="small"
-        @click.stop="toCreate()"
-      >新建活动</el-button>-->
       <a href="#/marketing/activity/limit-edit">
         <el-button class="btn btn-add" type="primary" size="small">新建活动</el-button>
       </a>
-      <section @keydown.enter="search()">
-        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动类型</span>
-            <el-select v-model="searchForm.type" size="small" placeholder="全部" @change="search()">
-              <el-option label="全部" value="-1" />
-              <el-option label="电子DM单" value="10" />
-              <el-option label="限时特惠" value="11" />
-              <el-option label="限时秒杀" value="12" />
-            </el-select>
-          </div>
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动名称</span>
-            <el-input v-model.trim="searchForm.name" size="small" style="width: 200px" />
-          </div>
-          <div class="search-item">
-            <span class="label-name" style="width: 80px">活动状态</span>
-            <el-select
-              v-model="searchForm.timeStatus"
-              size="small"
-              placeholder="全部"
-              @change="search()"
-            >
-              <el-option label="全部" :value="-2" />
-              <el-option label="进行中" :value="1" />
-              <el-option label="未开始" :value="-1" />
-              <el-option label="已结束" :value="0" />
-            </el-select>
-          </div>
-          <!-- <div class="search-item">
-            <span class="label-name">有效时间</span>
-            <el-date-picker
-              v-model="searchForm.startTime"
-              size="small"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              placeholder="开始时间"
-              @change="handleTimeChange($event, 1)"
-            />
-            -
-            <el-date-picker
-              v-model="searchForm.endTime"
-              size="small"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              placeholder="结束时间"
-              @change="handleTimeChange($event, 2)"
-            />
-          </div>-->
-          <div class="search-item">
-            <el-button size="small" type="primary" @click="search()">查 询</el-button>
-          </div>
-        </div>
-      </section>
+      <!-- 列表表单控件 -->
+      <list-form @form-search="search" />
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
-        <el-table :data="tableData" style="width: 100%" size="small">
-          <el-table-column prop="startTime" label="活动类型" min-width="80">
-            <template slot-scope="scope">
-              <span v-if="scope.row.type === '10'">电子DM单</span>
-              <span v-if="scope.row.type === '11'">限时特惠</span>
-              <span v-if="scope.row.type === '12'">限时秒杀</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="name" label="标题" min-width="150" />
-          <el-table-column prop="startTime" label="活动开始时间" min-width="120" align="center" />
-          <el-table-column prop="endTime" label="活动结束时间" min-width="120" align="center" />
-          <el-table-column label="时间状态" min-width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag v-if="statusCupte(scope.row)==0" size="small" type="info">未开始</el-tag>
-              <el-tag v-if="statusCupte(scope.row)==1" size="small" type="success">进行中</el-tag>
-              <el-tag v-if="statusCupte(scope.row)==2" size="small" type="danger">已结束</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="状态" min-width="60" align="center">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.status && scope.row.timeStatus !== 0" size="small">生效</el-tag>
-              <el-tag v-else size="small" type="info">已失效</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="262">
-            <template slot-scope="scope">
-              <el-button
-                v-if="statusCupte(scope.row)===0"
-                plain
-                size="mini"
-                @click="toEdit(scope.row)"
-              >编辑</el-button>
-              <el-button
-                v-else-if="statusCupte(scope.row)===2||statusCupte(scope.row)===1"
-                plain
-                size="mini"
-                @click="toEdit(scope.row, 1)"
-              >查看</el-button>
-              <template v-if="statusCupte(scope.row)===1">
-                <el-button plain size="mini" @click="doCopy(scope.row)">复制链接</el-button>
-                <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
+        <el-table :data="tableData" style="width: 100%">
+          <template v-for="col in cols">
+            <el-table-column
+              v-if="!col.render"
+              :key="col.prop"
+              :formatter="formatter"
+              :label="col.label"
+              :show-overflow-tooltip="true"
+              :prop="col.prop"
+              :min-width="col.width"
+            />
+            <el-table-column
+              v-else-if="col.prop==='validStatus'"
+              :key="col.prop"
+              :label="col.label"
+              :prop="col.prop"
+            >
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.validStatus===0" size="small" type="info">未开始</el-tag>
+                <el-tag v-else-if="scope.row.validStatus===1" size="small" type="success">进行中</el-tag>
+                <el-tag v-else size="small" type="danger">已结束</el-tag>
               </template>
-              <template v-if="statusCupte(scope.row)===0||statusCupte(scope.row)===2">
-                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
+            </el-table-column>
+            <el-table-column
+              v-else-if="col.prop==='status'"
+              :key="col.prop"
+              :label="col.label"
+              :prop="col.prop"
+            >
+              <template slot="header" slot-scope="scope">
+                <el-tooltip placement="top">
+                  <div slot="content">
+                    时间状态为进行中或未开始的，状态为生效的活动;
+                    <br>时间状态为已结束的，状态为已失效的活动;
+                  </div>
+                  <span>
+                    {{ scope.column.label }}
+                    <i class="el-icon-question" />
+                  </span>
+                </el-tooltip>
               </template>
+              <template slot-scope="scope">
+                <el-tag v-if="!!scope.row.status" size="small" type="primary">已生效</el-tag>
+                <el-tag v-else size="small" type="danger">已失效</el-tag>
+              </template>
+            </el-table-column>
+          </template>
+          <el-table-column label="操作" width="130">
+            <template slot-scope="scope">
+              <el-button type="text" @click="toLook(scope.row)">查看</el-button>
+              <el-divider direction="vertical" />
+              <el-dropdown trigger="hover">
+                <span class="el-dropdown-link">
+                  更多
+                  <i class="el-icon-arrow-down el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>
+                    <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text">失败列表</el-button>
+                  </el-dropdown-item>
+                  <!-- <el-dropdown-item>
+                    <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
+                  </el-dropdown-item>-->
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
+          <div slot="empty">
+            <no-data />
+          </div>
         </el-table>
       </section>
       <section class="c-footer">
@@ -127,185 +98,137 @@
         />
       </section>
     </div>
+    <!-- 推广设置 -->
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { getActivityList, delActivity, disableActivity } from '@/api/marketing'
-import config from '@/utils/config'
-import Vue from 'vue'
-import VueClipboard from 'vue-clipboard2'
+import { mapGetters, mapMutations } from 'vuex'
+import { delActInfo, endActInfo } from '@/api/activity'
+import listForm from '../_source/list-form'
+import noData from '@/components/NoData'
 
-Vue.use(VueClipboard)
 export default {
-  name: 'Banner',
+  components: {
+    listForm,
+    noData
+  },
   data() {
     return {
-      searchForm: {
-        type: '-1', // 活动类型 (int)(10: 电子DM单, 11: 限时特惠, 12: 限时秒杀)
-        name: '',
-        startTime: '',
-        endTime: '',
-        timeStatus: -2 // 活动.时间状态 int (-1: 未开始, 1: 进行中, 0: 已结束)
-      },
-      tableData: [],
-      pager: {
-        current: 1,
-        size: 10,
-        total: 0
-      },
-      dialogFormVisible: false
+      searchForm: {},
+      cols: [
+        // {
+        //   prop: 'id',
+        //   label: '活动编号',
+        //   width: '150'
+        // },
+        {
+          prop: 'activityType',
+          label: '活动类型',
+          width: '80'
+        },
+        {
+          prop: 'pmtName',
+          label: '活动名称',
+          width: '150'
+        },
+        {
+          prop: 'countStore',
+          label: '参与门店'
+        },
+        {
+          prop: 'startTime',
+          label: '活动开始时间',
+          width: '120',
+          align: 'center'
+        },
+        {
+          prop: 'endTime',
+          label: '活动结束时间',
+          width: '120',
+          align: 'center'
+        },
+        {
+          prop: 'validStatus',
+          label: '时间状态',
+          width: '80',
+          align: 'center',
+          render: true
+        },
+        {
+          prop: 'status',
+          label: '状态',
+          width: '80',
+          align: 'center',
+          render: true
+        }
+      ]
     }
   },
   computed: {
-    ...mapGetters(['roles', 'merCode']),
-    uploadFileUrl() {
-      return `${this.uploadFileURL}`
-    },
-    headers() {
-      return { Authorization: this.$store.getters.token }
-    },
+    ...mapGetters(['roles', 'merCode', 'activity']),
     merCode() {
       return this.$store.state.user.merCode || ''
     },
-    upLoadUrl() {
-      return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+    tableData() {
+      return this.activity.tablist
+    },
+    pager() {
+      return this.activity.pager
     }
   },
   created() {
+    // this._loadStoreList() // 加载活动店铺
     this.fetchData()
   },
   methods: {
-    statusCupte(row) {
-      const startTimestamp = Date.parse(new Date(row.startTime))
-      const endTimestamp = Date.parse(new Date(row.endTime))
-      const timestamp = Date.parse(new Date())
-      if (timestamp < startTimestamp) {
-        return 0
-      } else if (timestamp > startTimestamp && timestamp < endTimestamp) {
-        return 1
-      } else if (timestamp > endTimestamp) {
-        return 2
-      }
-    },
+    ...mapMutations({
+      updatePager: 'activity/SET_TABLE_PAGATION'
+    }),
     fetchData() {
       this._getTableData()
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
-      this.pager.size = val
+      this.updatePager({
+        size: val || 20
+      })
       this._getTableData()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.pager.current = val
+      this.updatePager({
+        current: val
+      })
       this._getTableData()
     },
-    handleTimeChange(val, type) {
-      console.log(val, type)
-      if (type === 1 || type === 2) {
-        // 搜索栏 1.开始时间 2.结束时间
-        if (!val) {
-          type === 1
-            ? (this.searchForm.startTime = '')
-            : (this.searchForm.endTime = '')
-        } else {
-          console.log('this.searchForm', this.searchForm)
-          if (
-            this.searchForm.startTime &&
-            this.searchForm.endTime &&
-            this.searchForm.startTime !== '' &&
-            this.searchForm.endTime !== ''
-          ) {
-            // 比较时间
-            const start = this.searchForm.startTime.replace(/[- :]/g, '')
-            const end = this.searchForm.endTime.replace(/[- :]/g, '')
-            if (parseInt(start) > parseInt(end)) {
-              this.$message('结束时间必须大于开始时间')
-              type === 1
-                ? (this.searchForm.startTime = '')
-                : (this.searchForm.endTime = '')
-              return
-            }
-          }
-        }
-        this.search()
-        // if (this.searchForm.startTime !== '' && this.searchForm.endTime !== '') {
-        //   this.search()
-        // } else {
-        //   this.searchForm.startTime = ''
-        //   this.searchForm.endTime = ''
-        // }
-      } else if (type === 3) {
-        // dialog
-        if (val && val.length === 2) {
-          this.xForm.startTime = val[0]
-          this.xForm.endTime = val[1]
-        } else {
-          this.xForm.startTime = ''
-          this.xForm.endTime = ''
-        }
-      }
-    },
-    // 复制
-    doCopy(row) {
-      const herfUrl = window.location.href
-      this.$copyText(herfUrl).then(
-        e => {
-          console.log(e)
-          this.$message.info('活动功能C端暂未开放，敬请期待')
-        },
-        e => {
-          console.log(e)
-          this.$message.warning('复制失败')
-        }
-      )
-    },
     // 查询
-    search() {
-      this.pager = {
+    search(params) {
+      console.log('search------', params)
+      // 更新pager数据
+      this.updatePager({
         current: 1,
         size: 10,
         total: 0
-      }
+      })
+      this.searchForm = { ...params }
       this._getTableData()
     },
-    // 创建
-    toCreate() {
-      this.$router.push('/marketing/activity/create')
+    // 查看
+    toLook(row) {
+      this.$router.push(
+        `/marketing/activity/limit-edit?id=${row.id}`
+      )
     },
     // 编辑
-    toEdit(row, op) {
-      // 限时优惠
-      if (row.type === '11' || row.type === '12') {
-        if (op) {
-          this.$router.push(
-            `/marketing/activity/limit-edit?id=${row.id}&_ck=1&type=${row.type}`
-          )
-        } else {
-          this.$router.push(
-            `/marketing/activity/limit-edit?id=${row.id}&type=${row.type}`
-          )
-        }
-      } else {
-        console.log('row', row)
-      }
-    },
-    // 失效
-    handleDisable(row) {
-      console.log('delete row', row)
-      this.$confirm('失效后该活动会立即结束，确定使该活动失效吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this._disableData(row.id)
-      })
+    toEdit(row) {
+      this.$router.push(
+        `/marketing/activity/limit-edit?id=${row.id}&edit=1`
+      )
     },
     // 删除
     handleDel(row) {
-      console.log('delete row', row)
       this.$confirm('确认删除吗, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -314,36 +237,43 @@ export default {
         this._delData(row.id)
       })
     },
+    // 失效操作
+    endActivity(id) {
+      this.$confirm('确认将此活动设置为失效状态吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        endActInfo(id).then(res => {
+          if (res.code === '10000') {
+            this.$message.success('设置成功')
+            // 更新列表
+            this._getTableData()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+        console.log('此活动已失效')
+        this._getTableData()
+      })
+    },
+
     // 获取列表数据
     _getTableData() {
       const params = {
-        type: this.searchForm.type,
-        name: this.searchForm.name,
-        minStartTime: this.searchForm.startTime,
-        maxStartTime: this.searchForm.endTime,
-        timeStatus: this.searchForm.timeStatus,
+        promotionType: 11,
+        pmtName: this.searchForm.pmtName,
         currentPage: this.pager.current,
-        pageSize: this.pager.size
+        pageSize: this.pager.size,
+        storeId: this.searchForm.storeId,
+        validStatus: this.searchForm.validStatus,
+        isStoreCount: true // 是否需要统计门店数量，true-需要，false或不传-不需要
       }
-      console.log('params', params)
-      getActivityList(params).then(res => {
-        if (res.code === '10000') {
-          this.tableData = res.data.data || []
-          this.pager.total = res.data.totalCount || 0
-        } else {
-          this.$message({
-            message: res.msg,
-            type: 'error',
-            duration: 5 * 1000
-          })
-        }
-      })
+      this.$store.dispatch('activity/getTablist', params)
     },
     _delData(id) {
-      const params = {
-        id: id
-      }
-      delActivity(params).then(res => {
+      const params = [`${id}`]
+      delActInfo(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('已删除')
           // 更新列表
@@ -353,20 +283,12 @@ export default {
         }
       })
     },
-    // 失效数据
-    _disableData(id) {
-      const params = {
-        id: id
+    formatter(row, column, cellValue) {
+      if (column.property === 'activityType') {
+        return '加价购'
+      } else {
+        return cellValue
       }
-      disableActivity(params).then(res => {
-        if (res.code === '10000') {
-          this.$message.success('已失效')
-          // 更新列表
-          this._getTableData()
-        } else {
-          this.$message.error(res.msg)
-        }
-      })
     }
   }
 }
@@ -408,5 +330,61 @@ export default {
   font-size: 14px;
   line-height: 1.1;
   color: #999999;
+}
+.table-footer {
+  margin-top: 10px;
+  display: flex;
+  // justify-content: center
+  justify-content: space-between;
+}
+.goods-info {
+  display: flex;
+  .goods-txt {
+    margin-left: 10px;
+    flex: 1;
+  }
+  .price {
+    font-size: 18px;
+    color: red;
+  }
+}
+.custom-input {
+  display: flex;
+  .custom-input-box {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+    &:focus {
+      outline: none;
+      border-color: #147de8;
+    }
+  }
+  .operate {
+    display: flex;
+    flex-direction: column;
+    margin-left: -12px;
+    z-index: 3;
+    width: 30px;
+    align-items: center;
+    background: #f5f7fa;
+    border: 1px solid #dcdfe6;
+    height: 32px;
+    border-radius: 4px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    color: #909399;
+    span {
+      width: 100%;
+      height: 50%;
+      text-align: center;
+      &:last-child {
+        border-top: 1px solid #dcdfe6;
+      }
+    }
+  }
+}
+.table-opeater {
+  display: flex;
+  align-items: center;
 }
 </style>
