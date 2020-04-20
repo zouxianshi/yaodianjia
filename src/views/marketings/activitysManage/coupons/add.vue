@@ -177,6 +177,9 @@ export default {
     }
     .add-addRight-model {
       display: inline-block;
+      .el-table--medium th, .el-table--medium td {
+        padding: 0px
+      }
       .el-icon-edit {
         color: #147de8;
       }
