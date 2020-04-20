@@ -268,7 +268,6 @@ export default {
         file.type === 'image/jpeg' ||
         file.type === 'image/png' ||
         file.type === 'image/jpg'
-      console.log(file)
       const isLt2M = file.size / 1024 / 1024 < 1
       if (!isLt2M) {
         this.$message({
@@ -347,7 +346,6 @@ export default {
             menuList
           ) {
             this.$emit('changeloading', true)
-            console.log(this.member)
             editMemberInfo(this.member).then(res => {
               this.$emit('changeloading', false)
               this.$message({
@@ -355,6 +353,7 @@ export default {
                 type: 'success'
               })
               this.$emit('getlist')
+              this.$router.push({ path: '/member/register-setting' })
             }).catch(error => {
               console.log(error, '111111')
               this.$emit('getlist')
@@ -388,11 +387,9 @@ export default {
         this.dialog.dialogInput = ''
         this.dialog.dialogVisible = false
       }
-      console.log(this.member.customCells)
     },
     // 删除菜单
     deletmenu(index) {
-      console.log(index)
       this.member.customCells.splice(index, 1)
     },
     // 显示修改地址弹框

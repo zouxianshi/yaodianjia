@@ -69,7 +69,7 @@
         <div>
           <el-button
             v-clipboard:error="onError"
-            v-clipboard:copy="geturl"
+            v-clipboard:copy="VUE_APP_MEMBER_CENTER"
             v-clipboard:success="onCopy"
             type="primary"
             plain
