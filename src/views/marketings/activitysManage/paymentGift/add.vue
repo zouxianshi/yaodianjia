@@ -1,8 +1,8 @@
 <template>
   <div class="add">
-    <div v-loading="pageLoading" class="payment-gift-info" element-loading-text="加载中">
+    <div v-loading="pageLoading" class="payment-gift-rules" element-loading-text="加载中">
       <h4>活动信息</h4>
-      <el-form ref="form" :rules="rules" :model="form" label-width="120px" :disabled="disabled">
+      <el-form ref="form" :rules="rules" :model="form" label-width="100px" :disabled="disabled">
         <el-form-item label="活动名称：" prop="name">
           <el-input v-model="form.name" maxlength="30" placeholder="请输入活动名称" clearable />
         </el-form-item>
@@ -103,8 +103,8 @@
 // import { mapGetters } from 'vuex'
 import mPopSelectStore from '@/components/Marketings/popSelectStore'
 import mPopSelectProduct from '@/components/Marketings/popSelectProduct'
-import mSelectedStore from '@/components/Marketings/SelectedStore'
-import mSelectedProduct from '@/components/Marketings/SelectedProduct'
+import mSelectedStore from '../../_source/SelectedStore'
+import mSelectedProduct from '../../_source/SelectedProduct'
 export default {
   name: 'PaymentGiftAdd',
   components: {
@@ -304,10 +304,10 @@ export default {
   overflow-y: scroll;
   .payment-gift-info,
   .payment-gift-rules {
-    padding: 20px 0;
+    // padding: 20px 0;
     form {
       padding-left: 15%;
-      width: 80%;
+      width: 90%;
       .inline-input {
         width: 80px;
       }
@@ -333,6 +333,7 @@ export default {
       font-weight: 600;
       font-size: 16px;
       margin-bottom: 21px;
+      border-bottom: 1px solid #eee;
       .rule-tips {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.45);
@@ -346,10 +347,10 @@ export default {
       line-height: 14px;
     }
   }
-  .payment-gift-rules {
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-  }
+  // .payment-gift-rules {
+  //   border-top: 1px solid #eee;
+  //   border-bottom: 1px solid #eee;
+  // }
   .submit-box {
     text-align: center;
     margin-top: 20px;

@@ -108,7 +108,7 @@
 import mPhoneView from '../_source/phoneView'
 import mPopSelectStore from '../_source/popSelectStore'
 import mPopSelectProduct from '../_source/popSelectProduct'
-import mSelectedStore from '@/components/Marketings/SelectedStore' // 已选择门店列表
+import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
 export default {
   name: 'DiscountIndex',
   components: {

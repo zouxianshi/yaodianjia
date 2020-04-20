@@ -95,8 +95,8 @@
 <script>
 import mPhoneView from '../_source/phoneView' // 手机预览区域
 import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择门店弹窗
-import mSelectedStore from '@/components/Marketings/SelectedStore' // 已选择门店列表
-import mSelectedProduct from '@/components/Marketings/SelectedProduct' // 已选择商品列表
+import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
+import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
 import mSelectOneProduct from './selectOneProduct' // 选择商品弹窗
 export default {
   name: 'DiscountIndex',
