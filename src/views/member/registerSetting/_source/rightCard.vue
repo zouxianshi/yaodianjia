@@ -53,7 +53,7 @@
               v-for="(item,index) in storelist"
               :key="index"
               :label="item.stName"
-              :value="item.stName"
+              :value="item.stCode"
             />
           </el-select>
         </el-form-item>
@@ -190,7 +190,8 @@ export default {
   data() {
     var validatePass = (rule, value, callback) => {
       const numReg = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/
-      if (numReg.test(value) === false) {
+      const ipone = /0\d{2,3}-\d{7,8}|\(?0\d{2,3}[)-]?\d{7,8}|\(?0\d{2,3}[)-]*\d{7,8}/
+      if (numReg.test(value) === false && ipone.test(value) === false) {
         callback(new Error('请输入正确的电话格式'))
       } else {
         callback()
