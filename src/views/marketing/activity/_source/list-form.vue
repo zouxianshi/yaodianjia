@@ -5,6 +5,7 @@
         <span class="label-name" style="width: 80px">活动名称</span>
         <el-input
           v-model.trim="searchForm.pmtName"
+          clearable
           size="small"
           style="width: 200px"
           placeholder="请输入活动名称"

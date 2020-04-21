@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
+    <el-form ref="form" v-loading="pageInfoloading" :model="form" :rules="rules" size="small" label-width="120px">
       <div class="form-title">基本信息</div>
       <el-form-item label="活动名称：" prop="name">
         <el-input
@@ -199,6 +199,7 @@ export default {
         ]
       },
       chooseStore: [],
+      pageInfoloading: false,
       storeSelectGoods: [], // 选取的主商品
       storeActivityGoods: [] // 选区的换购商品
     }
@@ -224,7 +225,7 @@ export default {
             this.form = {
               name: data.pmtName,
               activitTime: [data.startTime, data.endTime],
-              allStore: !!data.isAllStore,
+              allStore: !!data.allStore,
               allSpec: false,
               type: data.userCoupons === 3 ? ['1'] : [],
               threshold: data.activityDetail.threshold,
