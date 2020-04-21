@@ -2,7 +2,9 @@
   <div v-loading="uploadLoading" class="AemberCard-index-model">
     <div class="AemberCard-header-model">
       <span class="AemberCard-title-model">微信会员卡</span>
-      <el-alert v-if="showcode==='2'" style="display: inline" title="审核中" type="warning" :closable="false" />
+      <el-alert v-if="showcode===2" style="display: inline" title="审核中" type="warning" :closable="false" />
+      <el-alert v-if="showcode==3" style="display: inline" title="审核成功" type="success" :closable="false" />
+      <el-alert v-if="showcode==4" style="display: inline" title="审核失败" type="error" :closable="false" />
     </div>
     <div class="AemberCard-contain-model AemberCard-card-model">
       <el-row>
@@ -106,24 +108,24 @@
   </div>
 </template>
 <script>
-import { getMemberInfo, getColor } from '@/api/memberService'
+import { getColor } from '@/api/memberService'
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'AemberCard',
   components: {},
   props: {
-    // 领取会员卡地址
-    geturl: {
-      type: String,
+    // 会员卡信息
+    checkmemberlist: {
+      type: Object,
       default: function() {
-        return ''
+        return {}
       }
     },
     // 会员卡状态
     showcode: {
-      type: String,
+      type: Number,
       default: function() {
-        return '0'
+        return 0
       }
     }
   },
@@ -141,26 +143,25 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
-    this.uploadLoading = true
-    getMemberInfo(this.merCode).then(res => {
-      this.memberList = res.data
-      getColor().then(res => {
-        this.colorList = res.data
-        this.uploadLoading = false
-        if (this.memberList.cardBgType === 1) {
-          for (const i in this.colorList) {
-            if (
-              i.toLowerCase() === this.memberList.cardBgContent.toLowerCase()
-            ) {
-              this.memberList.cardBgContent = this.colorList[i]
-            }
-          }
-        }
-      })
-    })
   },
   beforeMount() {},
-  mounted() {},
+  mounted() {
+    this.uploadLoading = true
+    this.memberList = this.checkmemberlist
+    getColor().then(res => {
+      this.colorList = res.data
+      this.uploadLoading = false
+      if (this.memberList.cardBgType === 1) {
+        for (const i in this.colorList) {
+          if (
+            i.toLowerCase() === this.memberList.cardBgContent.toLowerCase()
+          ) {
+            this.memberList.cardBgContent = this.colorList[i]
+          }
+        }
+      }
+    })
+  },
   beforeUpdate() {},
   updated() {},
   methods: {
