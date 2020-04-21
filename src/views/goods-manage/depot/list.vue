@@ -352,8 +352,8 @@ export default {
   created() {
     this.getList()
     this._loadTypeList()
-    const thisRoute = this.$route.name ? this.$route : null
-    if (thisRoute) this.$store.dispatch('tagsView/addCachedView', { route: thisRoute, token: this.token })
+    // const thisRoute = this.$route.name ? this.$route : null
+    // if (thisRoute) this.$store.dispatch('tagsView/addCachedView', { route: thisRoute, token: this.token })
 
     // this.$store.dispatch('tagsView/addCachedView', this.$route).then(res => {
     //   console.log('success: ', res);

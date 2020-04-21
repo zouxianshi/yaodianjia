@@ -1838,7 +1838,7 @@ export default {
                 //   1
                 // )
                 // this.$router.push(this.$store.state.tagsView.visitedViews[this.$store.state.tagsView.visitedViews.length-1].path)
-
+                console.log('dddd:' + url)
                 this.$store
                   .dispatch('tagsView/delVisitedView', this.$route)
                   .then(res => {})
