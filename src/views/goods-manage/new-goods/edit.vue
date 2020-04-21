@@ -406,7 +406,7 @@
                         />
                       </template>
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>-->
                   <el-table-column
                     v-for="(propsf,indexs) in dynamicProp"
                     :key="indexs"
@@ -831,12 +831,7 @@
                 </div>
               </div>
               <p v-if="!is_query" class="add-spec">
-                <el-button
-                  type="text"
-                  icon="el-icon-plus"
-                  size="small"
-                  @click="handleAddSpec"
-                >添加规格</el-button>
+                <el-button type="text" icon="el-icon-plus" size="small" @click="handleAddSpec">添加规格</el-button>
               </p>
             </el-form-item>
           </el-form>
@@ -946,7 +941,13 @@
     />
     <div class="action-wapper">
       <el-button v-if="step !== 1" type size="small" @click="backStep">上一步</el-button>
-      <el-button v-if="setp3show" :loading="subLoading" size="small" type="primary" @click="nextStep">{{ step===3?'保存':"下一步" }}</el-button>
+      <el-button
+        v-if="setp3show"
+        :loading="subLoading"
+        size="small"
+        type="primary"
+        @click="nextStep"
+      >{{ step===3?'保存':"下一步" }}</el-button>
     </div>
   </div>
 </template>
@@ -1158,11 +1159,14 @@ export default {
       return { Authorization: this.token }
     },
     getContentLength: function() {
-      const text = this.basicForm.intro
-        .replace(/<[^>]+>/g, '')
-        .replace(/&nbsp;/g, '')
-      const count = text.trim().length
-      return count
+      if (this.basicForm.intro) {
+        const text = this.basicForm.intro
+          .replace(/<[^>]+>/g, '')
+          .replace(/&nbsp;/g, '')
+        const count = text.trim().length
+        return count
+      }
+      return ''
     },
     // 计算是否需要下一步
     setp3show() {
@@ -1182,27 +1186,27 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     // 路由离开关闭标签
-    if (this.is_query) {
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
-      }
-    } else {
-      if (!this.leaveAction) {
-        const answer = window.confirm('你还有数据没有保存，是否确认退出')
-        if (answer) {
-          if (this.pageLoading) {
-            this.pageLoading.close()
-          }
-          this.$store.dispatch('tagsView/delView', from)
-          next()
-        } else {
-          next(false)
-        }
-      } else {
-        next()
-      }
+    // if (this.is_query) {
+    next()
+    if (this.pageLoading) {
+      this.pageLoading.close()
     }
+    // } else {
+    // if (!this.leaveAction) {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // } else {
+    //   next()
+    // }
+    // }
   },
   created() {
     if (!this.$route.query.id) {
@@ -1827,7 +1831,19 @@ export default {
               type: 'warning'
             })
               .then(() => {
+                // this.$store.state.tagsView.visitedViews.splice(
+                //   this.$store.state.tagsView.visitedViews.findIndex(
+                //     item => item.path === this.$route.path
+                //   ),
+                //   1
+                // )
+                // this.$router.push(this.$store.state.tagsView.visitedViews[this.$store.state.tagsView.visitedViews.length-1].path)
+
+                this.$store
+                  .dispatch('tagsView/delVisitedView', this.$route)
+                  .then(res => {})
                 this.$router.replace(url)
+                // this.$router.go(-1) // 返回上一个路由
               })
               .catch(() => {
                 console.log('已取消')
