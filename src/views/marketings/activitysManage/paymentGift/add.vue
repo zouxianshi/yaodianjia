@@ -41,7 +41,7 @@
           <el-radio-group v-model="form.store">
             <el-radio label="0">全部门店</el-radio>
             <el-radio label="1">指定门店
-              <span v-if="form.store==='1'" @click="selectStore">选择门店</span>
+              <span v-if="form.store==='1'&&!disabled" @click="selectStore">选择门店</span>
             </el-radio>
           </el-radio-group>
           <mSelectedStore v-show="form.store==='1'&&selectedStores.length>0" ref="selectedStoreView" @onDel="onGetSelectStore" />
@@ -50,7 +50,7 @@
           <el-radio-group v-model="form.product">
             <el-radio label="0">全部商品</el-radio>
             <el-radio label="1">指定商品
-              <span v-if="form.product==='1'" @click="selectProduct">选择商品</span>
+              <span v-if="form.product==='1'&&!disabled" @click="selectProduct">选择商品</span>
             </el-radio>
           </el-radio-group>
           <mSelectedProduct v-show="form.product==='1'&&selectedProducts.length>0" ref="selectedProductView" @onDel="onGetSelectProduct" />
@@ -70,19 +70,13 @@
           <el-checkbox v-model="form.youhuiquan" />送优惠券
           <span class="zkTips">最多可选二十张</span>
           <div>
-            <el-link type="primary" :underline="false" @click="selectStore">选择优惠券</el-link>
+            <el-link v-if="!disabled" type="primary" :underline="false" @click="selectStore">选择优惠券</el-link>
           </div>
         </el-form-item>
         <el-form-item label="发放时间：" prop="fafangshijian">
           <el-radio-group v-model="form.fafangshijian">
             <el-radio label="0">支付后发放</el-radio>
             <el-radio label="1">订单完成时发放</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="退回权益：" prop="tuihuiquanyi">
-          <el-radio-group v-model="form.tuihuiquanyi">
-            <el-radio label="0">退款时退回</el-radio>
-            <el-radio label="1">退款不退回</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -135,7 +129,6 @@ export default {
         store: '0', // 门店
         product: '0', // 指定商品
         fafangshijian: '0', // 发放时间
-        tuihuiquanyi: '0', // 退回权益
         youhuiquan: true // 优惠券
       },
       rules: {
@@ -154,9 +147,6 @@ export default {
         product: [
           { required: true, message: '请选择指定商品', trigger: 'blur' }
         ],
-        tuihuiquanyi: [
-          { required: true, message: '请选择退回权益', trigger: 'blur' }
-        ],
         fafangshijian: [
           { required: true, message: '请选择发放时间', trigger: 'blur' }
         ]
@@ -174,26 +164,23 @@ export default {
   created() {
     const id = this.$route.query.id
     const op = this.$route.query.op
+    let pageTitle = '支付有礼'
     if (id) {
       if (op === '1') {
         this.pageStatus = 3
+        pageTitle = pageTitle + '详情'
+        this.disabled = true
       } else {
         this.pageStatus = 2
+        pageTitle = pageTitle + '编辑'
       }
+
       this._getDetailData()
-    }
-    let pageTitle = '支付有礼'
-    if (this.pageStatus === 2) { // pageStatus 1.新增 2.编辑 3.查看
-      pageTitle = pageTitle + '编辑'
-    } else if (this.pageStatus === 3) {
-      pageTitle = pageTitle + '详情'
-      this.disabled = true
     } else {
-      pageTitle = pageTitle + '新建'
+      pageTitle = pageTitle + '新增'
     }
     this.$route.meta.title = pageTitle
     document.title = pageTitle
-    console.log('页名:' + pageTitle)
   },
   methods: {
     // 选择门店
