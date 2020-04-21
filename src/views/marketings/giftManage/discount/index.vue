@@ -2,7 +2,7 @@
   <div class="discount-index-model">
     <div class="content">
       <div class="discount-content-l">
-        <mPhoneView :data="discountForm" :other-data="otherData" />
+        <mPhoneView :data="discountForm" />
       </div>
       <div class="discount-content-r">
         <el-steps :active="active" simple>
@@ -62,14 +62,14 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="使用时间：">
-            <el-radio-group v-model="discountForm.expiration" style="width:200px">
-              <el-radio label="0">
+            <el-radio-group v-model="discountForm.timeRule" style="width:200px">
+              <el-radio :label="1">
                 自领取起 <el-input v-model="otherData.expirationDay" style="width:40px" /> 天内有效
               </el-radio>
-              <el-radio label="1">
+              <el-radio :label="2">
                 自领取起 <el-input v-model="otherData.notActive" style="width:40px" /> 天后生效，生效后 <el-input v-model="otherData.effective" style="width:40px" /> 天失效
               </el-radio>
-              <el-radio label="2">
+              <el-radio :label="3">
                 <el-date-picker
                   v-model="otherData.expirationDate"
                   type="daterange"
@@ -81,17 +81,17 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="适用门店：">
-            <el-radio-group v-model="discountForm.store">
-              <el-radio label="0">全部门店</el-radio>
-              <el-radio label="1">指定门店&emsp; <span v-if="discountForm.store==='1'" @click="selectStore">选择门店</span></el-radio>
+            <el-radio-group v-model="discountForm.shopRule">
+              <el-radio :label="1">全部门店</el-radio>
+              <el-radio :label="2">指定门店&emsp; <span v-if="discountForm.shopRule===2" @click="selectStore">选择门店</span></el-radio>
             </el-radio-group>
             <mSelectedStore v-show="selectedStore.length>0" ref="selectedStore" @onDel="_deleteItem" />
           </el-form-item>
           <el-form-item label="适用商品：">
-            <el-radio-group v-model="discountForm.commodity">
-              <el-radio label="0">全部商品</el-radio>
-              <el-radio label="1">指定商品可用 <span v-if="discountForm.commodity==='1'" @click="selectCommodity">选择商品</span></el-radio>
-              <el-radio label="2">指定商品不可用 <span v-if="discountForm.commodity==='2'" @click="selectCommodity">选择商品</span></el-radio>
+            <el-radio-group v-model="discountForm.productRule">
+              <el-radio :label="1">全部商品</el-radio>
+              <el-radio :label="2">指定商品可用 <span v-if="discountForm.productRule===2" @click="selectCommodity">选择商品</span></el-radio>
+              <el-radio :label="3">指定商品不可用 <span v-if="discountForm.productRule===3" @click="selectCommodity">选择商品</span></el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
@@ -138,10 +138,10 @@ export default {
         expireInfo: '', // 到期提醒
         note: '', // 使用须知
         sceneRule: 3, // 使用场景
-        useRule: 0, // 门槛金额
+        useRule: 1, // 门槛金额
         expiration: '0', // 使用时间
-        store: '0', // 适用门店
-        commodity: '0' // 使用商品
+        shopRule: 0, // 适用门店
+        productRule: 0 // 使用商品
       }
     }
   },
@@ -151,11 +151,28 @@ export default {
         id: this.$route.query.id
       }
       getCouponDetail(params).then(res => {
-        console.log(res)
         if (res.data) {
-          this.discountForm = res.data
-          this.isRember = !!this.discountForm.expireInfo // 是否需要到期提醒
-          this.useRuleLimit = res.data.useRule === 0 ? 0 : 1 // 是否有使用门槛
+          var datas = res.data
+          this.discountForm = datas
+          this.isRember = !!datas.expireInfo // 是否需要到期提醒
+          this.useRuleLimit = datas.useRule === 0 ? 0 : 1 // 是否有使用门槛
+          this.otherData = {
+            expirationDay: '0', // 直接开始有效天数
+            expirationDate: [
+              new Date(), new Date()
+            ], // 有效期(当选择开始、结束日期是)
+            notActive: '0', // 等待生效天数
+            effective: '0' // 有效天数
+          }
+          if (datas.timeRule === 1) {
+            this.otherData.expirationDay = datas.effectTime
+          } else if (datas.timeRule === 2) {
+            var effectTimes = datas.effectTime.split(',')
+            this.otherData.notActive = effectTimes[0]
+            this.otherData.effective = effectTimes[1]
+          } else {
+            this.otherData.expirationDate = [...(datas.effectTime.split(','))]
+          }
         }
       })
     }
@@ -165,7 +182,6 @@ export default {
       if (this.active++ > 1) this.active = 1
     },
     _submit() {
-      console.log(this.discountForm)
       addCoupon()
     },
     // 选择门店

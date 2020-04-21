@@ -8,10 +8,10 @@
       <div class="nav-bar">
         <el-form :inline="true" :model="searchParams" class="demo-form-inline">
           <el-form-item label="门店信息" style="margin-left:10px">
-            <el-input v-model="searchParams.company" placeholder="门店编码/门店名称" size="mini" />
+            <el-input v-model="searchParams.searchKey" placeholder="门店编码/门店名称" size="mini" />
           </el-form-item>
           <el-form-item label="所属企业">
-            <el-select v-model="searchParams.info" placeholder="请选择" size="mini">
+            <el-select v-model="searchParams.storeName" placeholder="请选择" size="mini">
               <el-option label="全部" value="0" />
               <el-option label="未开始" value="1" />
             </el-select>
@@ -30,23 +30,24 @@
         @selection-change="selectAuto"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column property="num" label="门店编码" width="150" />
-        <el-table-column property="name" label="门店名称" />
+        <el-table-column property="stCode" label="门店编码" width="150" />
+        <el-table-column property="stName" label="门店名称" />
         <el-table-column property="address" label="门店地址" />
+        <el-table-column property="mobile" label="门店电话" />
       </el-table>
       <el-pagination
         :current-page="pageInfo.currentPage"
-        :page-sizes="[100, 200, 300, 400]"
+        :page-sizes="[10, 50, 100, 500]"
         :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :total="totalCount"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
       <div class="has-selected">
         已选门店：
         <span v-for="(item ,index) in selectedArr" :key="index">
-          {{ item.name }}
+          <el-tag style="margin-right:10px" type="success">{{ item.stName }}</el-tag>
         </span>
       </div>
       <span slot="footer">
@@ -57,46 +58,51 @@
   </div>
 </template>
 <script>
+import { queryStores } from '@/api/common'
 export default {
   data() {
     return {
-      gridData: [{
-        num: '20000',
-        name: '上海2店',
-        address: '上海黄浦江'
-      }, {
-        num: '20001',
-        name: '上海一店',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
+      gridData: [],
       selectedArr: [], //  已选择门店所有信息
       hasSelectList: [], // 已选择门店name集合（以后会修改为主键）
       searchParams: {
-        info: '',
-        company: ''
+        storeName: '',
+        searchKey: ''
       },
       pageInfo: {
-        currentPage: 0,
-        pageSize: 100
+        currentPage: 1,
+        pageSize: 10
       },
+      totalCount: 0,
       dialogTableVisible: false
     }
   },
   methods: {
+    // 查询列表数据
+    queryStoreDate() {
+      var params = Object.assign({}, this.searchParams, this.pageInfo)
+      queryStores(params).then(res => {
+        if (res.data && res.data.data) {
+          this.gridData = res.data.data
+          this.dialogTableVisible = true
+          this.totalCount = res.data.totalCount
+          this.$nextTick(() => {
+            this.$refs.dataTable.clearSelection()
+            this.gridData.forEach(row => {
+              if (this.hasSelectList.indexOf(row.stCode) >= 0) {
+                this.$refs.dataTable.toggleRowSelection(row, true)
+              }
+            })
+          })
+        }
+      })
+    },
     show(store) {
       this.hasSelectList = []
       store.forEach(item => {
-        this.hasSelectList.push(item.name)
+        this.hasSelectList.push(item.stCode)
       })
-      this.dialogTableVisible = true
-      this.$nextTick(() => {
-        this.$refs.dataTable.clearSelection()
-        this.gridData.forEach(row => {
-          if (this.hasSelectList.indexOf(row.name) >= 0) {
-            this.$refs.dataTable.toggleRowSelection(row, true)
-          }
-        })
-      })
+      this.queryStoreDate()
     },
     // 提交选中
     _submit() {
@@ -104,14 +110,16 @@ export default {
       this.$emit('onSelect', this.selectedArr)
     },
     searchData() {
-      console.log(this.searchParams)
+      this.queryStoreDate()
     },
     // 分页
     handleSizeChange(e) {
-      console.log(e)
+      this.pageInfo.pageSize = e
+      this.queryStoreDate()
     },
     handleCurrentChange(e) {
-      console.log(e)
+      this.pageInfo.currentPage = e
+      this.queryStoreDate()
     },
     // 单选
     select(e, rows) {
