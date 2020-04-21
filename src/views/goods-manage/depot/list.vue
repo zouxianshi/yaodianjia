@@ -307,6 +307,7 @@ import store from '../components/store'
 import group from '../components/grouping'
 import limitBuy from './_source/limit-buy'
 export default {
+  name: 'Depot',
   components: { Pagination, store, group, limitBuy },
   mixins: [mixins],
   data() {
