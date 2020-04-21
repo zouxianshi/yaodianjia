@@ -64,14 +64,14 @@ export default {
     return {
       gridData: [],
       selectedArr: [], //  已选择门店所有信息
-      hasSelectList: [], // 已选择门店name集合（以后会修改为主键）
+      hasSelectList: [], // 已选择门店st_code集合
       searchParams: {
         storeName: '',
         searchKey: ''
       },
       pageInfo: {
         currentPage: 1,
-        pageSize: 10
+        pageSize: 2
       },
       totalCount: 0,
       dialogTableVisible: false
