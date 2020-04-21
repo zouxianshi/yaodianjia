@@ -65,9 +65,9 @@
                     <i class="el-icon-arrow-down el-icon--right" />
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>
+                    <!-- <el-dropdown-item>
                       <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                     <el-dropdown-item>
                       <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
                     </el-dropdown-item>

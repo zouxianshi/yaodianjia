@@ -112,6 +112,7 @@
       ref="storeGoodsComponent"
       :limit-max="15"
       :list="storeActivityGoods"
+      :group-type="true"
       @on-change="handleSelectActivityGoods"
     />
     <!-- 选择主商品组件 -->
@@ -128,7 +129,7 @@ import storeDialog from '../../components/store'
 import selectStore from '../../components/select-store'
 import selectGoods from '../../components/select-goods'
 import selectActivityGoods from './_source/select-activity-goods'
-import { createActAdd, getActAddInfo } from '@/api/activity'
+import { createActAdd, getActAddInfo, updateActAdd } from '@/api/activity'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -226,10 +227,9 @@ export default {
               allStore: !!data.isAllStore,
               allSpec: false,
               type: data.userCoupons === 3 ? ['1'] : [],
-              // ruleType,
-              // uint,
-              // discountType,
-              // ruleList: ruleList_af,
+              threshold: data.activityDetail.threshold,
+              confineNum: data.activityDetail.confineNum,
+              ruleList: data.activityDetail.ruleList,
               startTime: data.startTime,
               endTime: data.endTime
             }
@@ -237,6 +237,12 @@ export default {
             this.$refs.selectStoreComponent.dataFrom(data.storeResDTOList)
             this.storeSelectGoods = data.commList
             this.$refs.storeGods.dataFrom(data.commList)
+            this.storeActivityGoods = data.activityDetail.ruleList
+            this.$refs.activityGod.dataFrom(
+              data.activityDetail && Array.isArray(data.activityDetail.ruleList)
+                ? data.activityDetail.ruleList
+                : []
+            )
           }
         })
         .catch(e => {
@@ -341,25 +347,48 @@ export default {
                   ruleList: res
                 }
               }
+              console.log('11111111', dataParam)
               const loading = this.$loading({
                 lock: true,
                 text: '努力创建中，请稍后',
                 spinner: 'el-icon-loading',
                 background: 'rgba(0, 0, 0, 0.7)'
               })
-              // 这里需要处理下数据-----
-              createActAdd(dataParam).then(res => {
-                if (res.code === '10000') {
-                  this.$message({
-                    message: '创建成功',
-                    type: 'success'
+              if (this.activityId) {
+                updateActAdd({
+                  ...dataParam,
+                  id: this.activityId
+                })
+                  .then(res => {
+                    if (res.code === '10000') {
+                      this.$message({
+                        message: '更新成功',
+                        type: 'success'
+                      })
+                      loading.close()
+                      this.$router.replace('/marketing/activity/aprice')
+                    }
                   })
-                  loading.close()
-                  this.$router.replace('/marketing/activity/aprice')
-                }
-              }).catch(() => {
-                loading.close()
-              })
+                  .catch(() => {
+                    loading.close()
+                  })
+              } else {
+                createActAdd(dataParam)
+                  .then(res => {
+                    if (res.code === '10000') {
+                      this.$message({
+                        message: '创建成功',
+                        type: 'success'
+                      })
+                      loading.close()
+                      this.$router.replace('/marketing/activity/aprice')
+                    }
+                  })
+                  .catch(() => {
+                    loading.close()
+                  })
+              }
+              // 这里需要处理下数据-----
             })
             .catch(res => {
               console.log('二次验证失败----------------------')

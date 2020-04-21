@@ -55,7 +55,7 @@
             </el-table-column>
           </template>
           <el-table-column label="操作" width="130">
-            <template slot-scope="scope">
+            <template v-if="!!scope.row.status" slot-scope="scope">
               <el-button type="text" @click="toLook(scope.row)">查看</el-button>
               <el-divider direction="vertical" />
               <el-dropdown trigger="hover">

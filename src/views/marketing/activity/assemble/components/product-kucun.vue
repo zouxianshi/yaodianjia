@@ -162,7 +162,7 @@ export default {
         currentPage: this.modalQuery.currentPage
       })
         .then(res => {
-          const { data } = res.data
+          const { data } = res
           data.map(v => {
             v.isClearn = !!this.cleanAllCount
             v.isAdd = !!this.cleanAllCount
@@ -190,44 +190,35 @@ export default {
     },
     async handleSubmitStock() {
       this.saveLoading = true
-      if (this.cleanAllCount) {
-        this.clearStock()
-          .then(res => {
-            this.$message({
-              message: '当前活动商品库存已清空',
-              type: 'success'
-            })
-            this.saveLoading = false
-            this.modalQuery.currentPage = 1
-            this._loadActivityGoods()
-            this.dialogVisible = false
+      const specIds = []
+      this.modalGoodList.forEach(item => {
+        specIds.push(item.specId)
+      })
+      this.clearStock({
+        activityId: this.rowItem.id,
+        specIds: this.cleanAllCount ? [] : specIds
+      })
+        .then(res => {
+          this.$message({
+            message: '活动商品库存修改成功',
+            type: 'success'
           })
-          .catch(() => {
-            this.saveLoading = false
-            this.dialogVisible = false
-          })
-      } else {
-        console.log('handleSubmitStock', this.cleanAllCount, this.modalGoodList)
-        this.updateAssembleStock()
-          .then(res => {
-            this.$message({
-              message: '活动商品库存修改成功',
-              type: 'success'
-            })
-            this.saveLoading = false
-            this.dialogVisible = false
-          })
-          .catch(e => {
-            this.saveLoading = false
-            this.dialogVisible = false
-          })
-      }
+          this.saveLoading = false
+          this.modalQuery.currentPage = 1
+          this._loadActivityGoods()
+          this.dialogVisible = false
+        })
+        .catch(() => {
+          this.saveLoading = false
+          this.dialogVisible = false
+        })
       // 修改库存
     },
     // 清空库存
-    clearStock() {
+    clearStock(params) {
+      console.log('1111111111111111', params)
       return new Promise((resolve, reject) => {
-        clearProductStock({ activityId: this.rowItem.id })
+        clearProductStock(params)
           .then(res => {
             if (res.code === '10000') {
               resolve()

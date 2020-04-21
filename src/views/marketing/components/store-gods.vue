@@ -175,6 +175,11 @@ export default {
     type: {
       type: String,
       default: 'primary'
+    },
+    groupType: {
+      // 是否排除组合商品，true排除
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -345,7 +350,7 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.specId === item.specId
+          return mItem.id === item.id
         })
         if (index > -1) {
           currentCheckedList.push(item)
@@ -370,7 +375,7 @@ export default {
         brandName: this.searchForm.brandName,
         searchKeyWord: this.searchForm.searchKeyWord,
         currentPage: this.pager.current,
-        groupType: false,
+        groupType: this.groupType,
         pageSize: this.pager.size,
         firstTypeId,
         secondTypeId,

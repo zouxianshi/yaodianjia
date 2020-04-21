@@ -33,7 +33,7 @@
       </template>
       <el-table-column label="操作" width="60">
         <template slot-scope="scope">
-          <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
+          <el-button type="text" :disabled="disabled" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -43,6 +43,12 @@
 // import noData from '@/components/NoData'
 export default {
   // components: { noData },
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       tableData: [],
@@ -76,12 +82,12 @@ export default {
   methods: {
     dataFrom(data) {
       console.log('111111111111111111111', data)
-      this.tableData = data.map(item => {
+      this.tableData = Array.isArray(data) ? data.map(item => {
         return {
           ...item,
           productName: this.formatSkuInfo(item.specSkus || '')
         }
-      })
+      }) : []
     },
     // 格式化规格信息
     formatSkuInfo(skuList) {

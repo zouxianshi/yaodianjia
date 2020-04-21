@@ -244,3 +244,49 @@ export function getActGiftList(params) {
     data: params
   })
 }
+
+/**
+ * 清空活动下的商品库存
+ * @param {*String} activityId
+ * @param {*Array} specIds
+ */
+export function clearProductStock(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/clearProductStock`,
+    method: 'post',
+    data: params
+  })
+}
+// 单独修改活动商品库存
+export function setSingleAssembleStock(params) {
+  console.log(params)
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/addStock`,
+    method: 'put',
+    data: params
+  })
+}
+// 通过活动ID获取商品
+export function getActivityGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/${params.activityId}`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 修改拼团活动基本信息
+export function updateAssembleInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/updateInfo`,
+    method: 'put',
+    data: params
+  })
+}
+// 获取拼团活动单个信息
+export function getAssembleAcInfo(activityId) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/${activityId}`,
+    method: 'get'
+  })
+}

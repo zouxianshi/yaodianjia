@@ -104,8 +104,8 @@ export function getAssembleAcInfo(activityId) {
 // 修改拼团活动基本信息
 export function updateAssembleInfo(params) {
   return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup/modify`,
-    method: 'post',
+    url: `${config.merGoods}/1.0/admin/activityGroup/updateInfo`,
+    method: 'put',
     data: params
   })
 }
@@ -122,7 +122,7 @@ export function updateAcAssmbleProductInfo(params) {
 // 通过活动ID获取商品
 export function getActivityGoods(params) {
   return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup/getProductsByActivityId`,
+    url: `${config.merGoods}/1.0/admin/activityGroup/${params.activityId}`,
     method: 'post',
     data: params
   })
@@ -157,9 +157,15 @@ export function setSingleAssembleStock(params) {
 }
 
 // 清空活动下的商品库存
+/**
+ *
+ * @param {*String} activityId
+ * @param {*Array} specIds
+ */
 export function clearProductStock(params) {
   return request({
-    url: `${config.merGoods}/1.0/admin/activityGroup/clearProductStock?activityId=${params.activityId}`,
-    method: 'post'
+    url: `${config.merGoods}/1.0/admin/activityGroup/clearProductStock`,
+    method: 'post',
+    data: params
   })
 }

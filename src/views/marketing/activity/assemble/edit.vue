@@ -123,10 +123,7 @@
         </el-form-item>
         <div class="form-title">活动店铺</div>
         <el-form-item label="所有店铺" prop="allStore" required>
-          <el-radio-group
-            v-model="formData.allStore"
-            :disabled="!!activityId"
-          >
+          <el-radio-group v-model="formData.allStore" :disabled="!!activityId">
             <el-radio :label="true">全部门店</el-radio>
             <el-radio :label="false">部分门店</el-radio>
           </el-radio-group>
@@ -136,12 +133,13 @@
           <el-button
             type="primary"
             plain
+            :disabled="!!activityId"
             @click="$refs.storeComponent.open()"
           >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
         </el-form-item>
         <!-- 门店列表 -->
         <el-form-item v-show="!formData.allStore">
-          <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
+          <select-store ref="selectStoreComponent" :disabled="!!activityId" @del-item="delSelectStore" />
         </el-form-item>
 
         <!-- 二期需求 -->
@@ -234,7 +232,7 @@
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handletStoreComplete" />
     <!-- 选择主商品组件 -->
-    <store-goods ref="dialogGoods" :list="goodsList" @on-change="onSelectedGoods" />
+    <store-goods ref="dialogGoods" :limit-max="20" :list="goodsList" @on-change="onSelectedGoods" />
     <!-- 编辑商品 -->
     <edit-goods-modals ref="editGoodsModals" :info="editGoods" @complete="handleSuccessSelectGood" />
   </div>
@@ -366,8 +364,11 @@ export default {
           // for (const key in res.data) {
           //   this.formData[key] = res.data[key]
           // }
+          console.log('res-----getAssembleAcInfo', res)
           this.formData = {
             activitTime: [res.data.startTime, res.data.endTime],
+            startTime: res.data.startTime,
+            endTime: res.data.endTime,
             name: res.data && res.data.pmtName,
             description: res.data && res.data.description,
             allStore: false,
@@ -375,9 +376,19 @@ export default {
             img: res.data && res.data.imgUrl ? '2' : '1',
             imgUrl: res.data && res.data.imgUrl
           }
-          this.chooseStore = res.data && Array.isArray(res.data.storeResDTOList) ? res.data.storeResDTOList : []
-          this.$refs.selectStoreComponent.dataFrom(res.data.storeResDTOList)
-          this.goodsList = res.data && Array.isArray(res.data.activityDetail.ruleList) ? res.data.activityDetail.ruleList : []
+          this.chooseStore =
+            res.data && Array.isArray(res.data.storeResDTOList)
+              ? res.data.storeResDTOList
+              : []
+          this.$refs.selectStoreComponent.dataFrom(
+            Array.isArray(res.data.storeResDTOList)
+              ? res.data.storeResDTOList
+              : []
+          )
+          this.goodsList =
+            res.data && Array.isArray(res.data.activityDetail.ruleList)
+              ? res.data.activityDetail.ruleList
+              : []
         })
         .catch(err => {
           console.log(err)
@@ -528,25 +539,28 @@ export default {
           }
           delete data.img
           delete data.activitTime
+          if (Array.isArray(this.goodsList) && !this.goodsList.length) {
+            this.$message({
+              message: '请选择商品',
+              type: 'error'
+            })
+            return false
+          }
+          data.pmtRule = {
+            ruleList: this.formatItems(this.goodsList)
+          }
+          console.log('this.formData------data.products', data.products)
+          if (!data.pmtRule.ruleList) {
+            return
+          }
           if (this.$route.query.id) {
             this.saveLoading = true
-            this.editActivity(data)
+            this.editActivity({
+              ...data,
+              id: this.$route.query.id
+            })
           } else {
             console.log('this.formData------', this.goodsList)
-            if (Array.isArray(this.goodsList) && !this.goodsList.length) {
-              this.$message({
-                message: '请选择商品',
-                type: 'error'
-              })
-              return false
-            }
-            data.pmtRule = {
-              ruleList: this.formatItems(this.goodsList)
-            }
-            console.log('this.formData------data.products', data.products)
-            if (!data.pmtRule.ruleList) {
-              return
-            }
             this.saveLoading = true
             console.log('待提交数据---', data)
             this.addActivity(data)
@@ -659,21 +673,7 @@ export default {
       console.log('11111', row)
       if (this.activityId) {
         const data = {
-          activityId: row.activityId,
-          activityNumber: row.activityNumber,
-          activityPrice: row.activityPrice,
-          addLimitTimes: row.addLimitTimes,
-          id: row.id,
-          isFreeshipping: row.isFreeshipping,
-          limitCount: row.limitCount,
-          openLimitTimes: row.openLimitTimes,
-          price: row.price,
-          productActivityCount: row.productActivityCount,
-          specId: row.specId,
-          productName: row.productName,
-          sortNumber: row.sortNumber,
-          commodityId: row.commodityId,
-          erpCode: row.erpCode
+          ...row
         }
         updateAcAssmbleProductInfo(data)
           .then(res => {
