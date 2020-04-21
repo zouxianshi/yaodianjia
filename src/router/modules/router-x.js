@@ -209,7 +209,7 @@ const router = [
       {
         path: 'activity/limit-sec',
         component: () => import('@/views/marketing/activity/limit/list_seckill'),
-        name: 'limitList',
+        name: 'limitSecList',
         meta: {
           title: '限时秒杀',
           noCache: true,
@@ -219,7 +219,7 @@ const router = [
       {
         path: 'activity/limit-sec-edit',
         component: () => import('@/views/marketing/activity/limit/limit_seckill_edit'),
-        name: 'limitEdit',
+        name: 'limitSecEdit',
         meta: {
           title: '创建限时秒杀',
           noCache: true,

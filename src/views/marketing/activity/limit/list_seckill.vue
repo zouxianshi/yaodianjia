@@ -55,7 +55,7 @@
             </el-table-column>
           </template>
           <el-table-column label="操作" width="130">
-            <template slot-scope="scope">
+            <template v-if="!!scope.row.status" slot-scope="scope">
               <el-button type="text" @click="toLook(scope.row)">查看</el-button>
               <el-divider direction="vertical" />
               <el-dropdown trigger="hover">
@@ -218,13 +218,13 @@ export default {
     // 查看
     toLook(row) {
       this.$router.push(
-        `/marketing/activity/limit-sec-edit?id=${row.id}`
+        `/marketing/activity/limit-sec-edit?id=${row.id}&_ck=1`
       )
     },
     // 编辑
     toEdit(row) {
       this.$router.push(
-        `/marketing/activity/limit-sec-edit?id=${row.id}&edit=1`
+        `/marketing/activity/limit-sec-edit?id=${row.id}`
       )
     },
     // 删除
@@ -285,7 +285,7 @@ export default {
     },
     formatter(row, column, cellValue) {
       if (column.property === 'activityType') {
-        return '加价购'
+        return '限时秒杀'
       } else {
         return cellValue
       }

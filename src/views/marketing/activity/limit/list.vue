@@ -218,13 +218,13 @@ export default {
     // 查看
     toLook(row) {
       this.$router.push(
-        `/marketing/activity/limit-edit?id=${row.id}`
+        `/marketing/activity/limit-edit?id=${row.id}&_ck=1`
       )
     },
     // 编辑
     toEdit(row) {
       this.$router.push(
-        `/marketing/activity/limit-edit?id=${row.id}&edit=1`
+        `/marketing/activity/limit-edit?id=${row.id}`
       )
     },
     // 删除

@@ -20,9 +20,9 @@
               <el-radio :label="12">限时秒杀</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="活动名称" prop="name">
+          <el-form-item label="活动名称" prop="pmtName">
             <el-input
-              v-model="xForm.name"
+              v-model="xForm.pmtName"
               :placeholder="disabled ? '':'不超过20字'"
               maxlength="20"
               style="width: 380px;"
@@ -113,7 +113,6 @@
                   <el-option v-if="xForm.mode === 1" class="x-option" label="批量设置折扣" value="1" />
                   <el-option v-if="xForm.mode === 2" label="批量设置减价" value="2" />
                   <el-option label="批量设置限购" value="3" />
-                  <el-option v-if="xForm.type === 12" label="批量设置库存" value="4" />
                 </el-select>
               </el-form-item>
             </el-form>
@@ -121,6 +120,30 @@
           <el-form ref="tableForm" :model="tableForm" class="table-form" size="small">
             <el-table :data="tableForm.selectedGoods" size="small" style="margin: 20px 0">
               <el-table-column label="序号" type="index" min-width="50px" align="center" />
+              <el-table-column label="商品图片" prop="picUrl">
+                <template slot-scope="scope">
+                  <div
+                    v-if="scope.row.picUrl && scope.row.picUrl!==''"
+                    style="width: 60px; height: 60px"
+                  >
+                    <div class="x-image__preview">
+                      <el-image
+                        style="width: 60px; height: 60px"
+                        fit="contain"
+                        :src="showImg(scope.row.picUrl)"
+                        :preview-src-list="[showImg(scope.row.picUrl)]"
+                      />
+                    </div>
+                  </div>
+                  <div v-else style="line-height: 32px">暂无上传</div>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="商品编码"
+                prop="erpCode"
+                min-width="120px"
+                :show-overflow-tooltip="true"
+              />
               <el-table-column
                 label="商品名称"
                 prop="productName"
@@ -128,14 +151,14 @@
                 :show-overflow-tooltip="true"
               />
               <el-table-column
-                label="规格"
-                prop="productSpecName"
+                label="参考价(元)"
+                prop="mprice"
                 min-width="120px"
                 :show-overflow-tooltip="true"
               />
               <el-table-column
-                label="生产厂家"
-                prop="productManufacture"
+                label="商品规格"
+                prop="productNameSpec"
                 min-width="120px"
                 :show-overflow-tooltip="true"
               />
@@ -191,6 +214,7 @@
                   </el-form-item>
                 </template>
               </el-table-column>
+
               <el-table-column v-if="!disabled" label="操作" prop="name" width="90px" align="center">
                 <template slot-scope="scope">
                   <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
@@ -198,7 +222,12 @@
               </el-table-column>
             </el-table>
           </el-form>
-          <el-button v-if="!disabled" type="primary" size="small" @click="$refs.GoodsComponent.open()">选择商品</el-button>
+          <el-button
+            v-if="!disabled"
+            type="primary"
+            size="small"
+            @click="$refs.GoodsComponent.open()"
+          >选择商品</el-button>
         </div>
       </section>
       <section class="form-footer">
@@ -216,20 +245,7 @@
       @on-change="onSetChange"
       @on-reset="onSetReset"
     />
-    <!-- <dialog-goods
-      ref="dialogGoods"
-      :editable="!disabled"
-      :list="propGoodsList"
-      @on-change="onSelectedGoods"
-    />
-    <dialog-store
-      ref="dialogStore"
-      :all-store="allStore"
-      :editable="!disabled"
-      :list="selectedStore"
-      @on-change="onSelectedStore"
-    />-->
-
+    <!-- 选择主商品组件 -->
     <store-goods ref="GoodsComponent" :list="selectedGoods" @on-change="handleSelectGoods" />
     <store-dialog ref="storeComponent" :list="selectedStore" @complete="handleSelectStore" />
   </div>
@@ -238,14 +254,12 @@
 <script>
 import { mapGetters } from 'vuex'
 import dialogSet from '../_source/dialog-set'
-// import dialogGoods from '../_source/dialog-goods'
-// import dialogStore from '@/components/Dialog/DialogStore'
 
 import storeDialog from '../../components/store'
 import selectStore from '../../components/select-store'
 import storeGoods from '../../components/store-gods'
-import { checkNumberdouble } from '@/utils/validate'
 
+import { checkNumberdouble } from '@/utils/validate'
 import { createActLimit, updateActLimit, getActLimit } from '@/api/activity'
 import config from '@/utils/config'
 
@@ -326,7 +340,7 @@ export default {
       xForm: {
         id: '',
         type: 12, // 11.限时优惠 12.限时秒杀
-        name: '',
+        pmtName: '',
         description: '',
         dateRange: [],
         startTime: '',
@@ -337,7 +351,9 @@ export default {
         limitAmount: ''
       },
       xRules: {
-        name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
+        pmtName: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' }
+        ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
         ],
@@ -349,7 +365,7 @@ export default {
       editDetail: null, // 编辑详情
       mutiSetType: '', // 设置类型 1.折扣 2.减价 3限购 4.库存
       propGoodsList: [],
-      selectedGoods: [],
+      selectedGoods: [], // 用户回显弹窗
       selectedStore: [],
       // allStore: false,
       storeIds: [],
@@ -394,12 +410,11 @@ export default {
     }
   },
   created() {
+    console.log(this.$route)
     const dataid = this.$route.query.id || ''
-    const type = this.$route.query.type || ''
     const _ck = this.$route.query._ck
-    if (dataid && dataid !== '' && type !== '') {
+    if (dataid && dataid !== '') {
       this.dataid = dataid
-      this.type = type
       if (_ck === '1') {
         this.pageStatus = 3
       } else {
@@ -407,15 +422,15 @@ export default {
       }
       this._getDetailData()
     }
-    let pageTitle = '限时优惠'
+    let pageTitle = '限时秒杀'
     if (this.pageStatus === 2) {
       // pageStatus 1.新增 2.编辑 3.查看
-      pageTitle = '限时优惠编辑'
+      pageTitle = '限时秒杀编辑'
     } else if (this.pageStatus === 3) {
-      pageTitle = '限时优惠详情'
+      pageTitle = '限时秒杀惠详情'
       this.disabled = true
     } else {
-      pageTitle = '限时优惠新建'
+      pageTitle = '限时秒杀新建'
     }
     this.$route.meta.title = pageTitle
     document.title = pageTitle
@@ -432,11 +447,13 @@ export default {
       this.$refs.selectStoreComponent.dataFrom(this.selectedStore)
     },
     handleSelectGoods(val) {
-      // this.sel = val
+      console.log('商品结果页出来了-------', val)
+      this.selectedGoods = val
       this.tableForm.selectedGoods = val.map(item => {
         return {
           ...item,
-          productName: this.formatSkuInfo(item.specSkus || '')
+          productName: item.name,
+          productNameSpec: this.formatSkuInfo(item.specSkus || '')
         }
       })
     },
@@ -477,9 +494,9 @@ export default {
         this.mutiSetType = ''
       }
     },
-    toSelectStore() {
-      this.$refs.dialogStore.open()
-    },
+    // toSelectStore() {
+    //   this.$refs.dialogStore.open()
+    // },
     onSetReset() {
       this.mutiSetType = ''
     },
@@ -604,26 +621,7 @@ export default {
           }
           this.$refs.tableForm.validate(valid => {
             if (valid) {
-              // const data = {
-              //   storeIds: this.xForm.storeRange === 1 && this.storeIds.length > 0 ? this.storeIds.join(',') : '',
-              //   storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
-              //     : ''
-              // }
-              if (this.xForm.type === 12) {
-                // 限时秒杀
-                const resultIndex = this.tableForm.selectedGoods.findIndex(
-                  item => {
-                    console.log('goods item', item)
-                    return parseFloat(item.confineNum) > parseFloat(item.stock)
-                  }
-                )
-                if (resultIndex > -1) {
-                  this.$message.warning('秒杀的限购数不能大于当前设置的库存数')
-                  return false
-                }
-              }
               const data = {
-                // allStore: this.allStore,
                 storeIds: this.selectedStore.map(item => item.id)
               }
               console.log('data', data)
@@ -673,39 +671,49 @@ export default {
     },
     _getDetailData() {
       this.pageLoading = true
-      const params = {
-        id: this.dataid
-      }
-      console.log('params detail', params)
-      getActLimit(params)
+      console.log('params detail', this.dataid)
+      getActLimit(this.dataid)
         .then(res => {
           if (res.code === '10000') {
             // / this.xForm = ''
             const data = res.data
-            this.tableForm.selectedGoods = data.items.map(item => {
-              return {
-                activityId: item.activityId,
-                discount: '' + item.discount,
-                id: item.id,
-                confineNum: '' + item.confineNum,
-                productManufacture: item.productManufacture,
-                productName: item.productName,
-                productSpecId: item.productSpecId,
-                productSpecName: item.productSpecName,
-                stock: (item.stock || '') + ''
-              }
-            })
-            console.log('this.xForm', this.xForm)
+            this.selectedGoods =
+              data.activityDetail && Array.isArray(data.activityDetail.ruleList)
+                ? data.activityDetail.ruleList
+                : []
+            this.tableForm.selectedGoods = Array.isArray(
+              data.activityDetail.ruleList
+            )
+              ? data.activityDetail.ruleList.map(item => {
+                return {
+                  ...item,
+                  activityId: item.activityId,
+                  discount: '' + item.discount,
+                  id: item.id,
+                  erpCode: item.erpCode,
+                  mprice: item.mprice,
+                  productName: item.name,
+                  confineNum: '' + item.confineNum,
+                  productNameSpec: this.formatSkuInfo(item.specSkus || ''),
+                  picUrl: item.picUrl,
+                  stock: (item.stock || '') + ''
+                }
+              })
+              : []
+
             this.xForm = Object.assign(data, {
-              dateRange: [res.data.startTime, res.data.endTime]
+              dateRange: [res.data.startTime, res.data.endTime],
+              type: data.pmtType,
+              allStore: false,
+              mode: data.activityDetail && data.activityDetail.pmtMode,
+              freePostFee:
+                data.activityDetail && data.activityDetail.freePostFee
             })
-            this.selectedStore = data.stores.map(v => {
-              const store = {
-                id: v.storeId,
-                stName: v.storeName
-              }
-              return store
-            })
+            console.log('this.xForm----', this.xForm)
+            this.selectedStore = Array.isArray(data.storeResDTOList)
+              ? data.storeResDTOList
+              : []
+            this.$refs.selectStoreComponent.dataFrom(data.storeResDTOList)
             console.log('this.selectedStore', this.selectedStore)
             // 编辑状态时，更新页面当前状态
             if (this.pageStatus === 2) {
@@ -725,11 +733,12 @@ export default {
         allStore: this.xForm.allStore,
         id: this.xForm.id,
         type: this.xForm.type,
-        name: this.xForm.name,
+        name: this.xForm.pmtName,
         description: this.xForm.description,
         startTime: this.xForm.startTime,
         endTime: this.xForm.endTime,
         limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
+        // mode: this.xForm.mode,
         pmtRule: {
           freePostFee: this.xForm.freePostFee,
           pmtMode: this.xForm.mode,
@@ -738,6 +747,7 @@ export default {
         }
       }
       const params = Object.assign(data, formData)
+      console.log('createActLimit-----', params)
       createActLimit(params)
         .then(res => {
           if (res.code === '10000') {
@@ -759,12 +769,12 @@ export default {
         allStore: this.xForm.allStore,
         id: this.xForm.id,
         type: this.xForm.type,
-        name: this.xForm.name,
+        name: this.xForm.pmtName,
         description: this.xForm.description,
         startTime: this.xForm.startTime,
         endTime: this.xForm.endTime,
-        limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
         // mode: this.xForm.mode,
+        limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
         pmtRule: {
           freePostFee: this.xForm.freePostFee,
           pmtMode: this.xForm.mode,
@@ -773,6 +783,7 @@ export default {
         }
       }
       const params = Object.assign(data, formData)
+      console.log('data----params', params)
       updateActLimit(params)
         .then(res => {
           if (res.code === '10000') {

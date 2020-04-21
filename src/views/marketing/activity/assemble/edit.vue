@@ -372,7 +372,8 @@ export default {
             description: res.data && res.data.description,
             allStore: false,
             effectiveTime: res.data && res.data.effectiveTime,
-            img: res.data && res.data.imgUrl ? '2' : '1'
+            img: res.data && res.data.imgUrl ? '2' : '1',
+            imgUrl: res.data && res.data.imgUrl
           }
           this.chooseStore = res.data && Array.isArray(res.data.storeResDTOList) ? res.data.storeResDTOList : []
           this.$refs.selectStoreComponent.dataFrom(res.data.storeResDTOList)

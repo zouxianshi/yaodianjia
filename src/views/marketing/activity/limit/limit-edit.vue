@@ -335,7 +335,9 @@ export default {
         limitAmount: ''
       },
       xRules: {
-        pmtName: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
+        pmtName: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' }
+        ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
         ],
@@ -347,7 +349,7 @@ export default {
       editDetail: null, // 编辑详情
       mutiSetType: '', // 设置类型 1.折扣 2.减价 3限购 4.库存
       propGoodsList: [],
-      selectedGoods: [],
+      selectedGoods: [], // 用户回显弹窗
       selectedStore: [],
       // allStore: false,
       storeIds: [],
@@ -404,15 +406,15 @@ export default {
       }
       this._getDetailData()
     }
-    let pageTitle = '限时优惠'
+    let pageTitle = '限时特惠'
     if (this.pageStatus === 2) {
       // pageStatus 1.新增 2.编辑 3.查看
-      pageTitle = '限时优惠编辑'
+      pageTitle = '限时特惠编辑'
     } else if (this.pageStatus === 3) {
-      pageTitle = '限时优惠详情'
+      pageTitle = '限时特惠详情'
       this.disabled = true
     } else {
-      pageTitle = '限时优惠新建'
+      pageTitle = '限时特惠新建'
     }
     this.$route.meta.title = pageTitle
     document.title = pageTitle
@@ -429,11 +431,13 @@ export default {
       this.$refs.selectStoreComponent.dataFrom(this.selectedStore)
     },
     handleSelectGoods(val) {
-      // this.sel = val
+      console.log('商品结果页出来了-------', val)
+      this.selectedGoods = val
       this.tableForm.selectedGoods = val.map(item => {
         return {
           ...item,
-          productName: this.formatSkuInfo(item.specSkus || '')
+          productName: item.name,
+          productNameSpec: this.formatSkuInfo(item.specSkus || '')
         }
       })
     },
@@ -601,11 +605,6 @@ export default {
           }
           this.$refs.tableForm.validate(valid => {
             if (valid) {
-              // const data = {
-              //   storeIds: this.xForm.storeRange === 1 && this.storeIds.length > 0 ? this.storeIds.join(',') : '',
-              //   storeNames: this.xForm.storeRange === 1 && this.storeNames.length > 0 ? this.storeNames.join(',')
-              //     : ''
-              // }
               const data = {
                 storeIds: this.selectedStore.map(item => item.id)
               }
@@ -662,29 +661,42 @@ export default {
           if (res.code === '10000') {
             // / this.xForm = ''
             const data = res.data
-            this.tableForm.selectedGoods = Array.isArray(data.activityDetail.ruleList) ? data.activityDetail.ruleList.map(item => {
-              return {
-                activityId: item.activityId,
-                discount: '' + item.discount,
-                id: item.id,
-                erpCode: item.erpCode,
-                mprice: item.mprice,
-                productName: item.productName,
-                confineNum: '' + item.confineNum,
-                productNameSpec: this.formatSkuInfo(item.specSkus || ''),
-                stock: (item.stock || '') + ''
-              }
-            }) : []
+            this.selectedGoods =
+              data.activityDetail && Array.isArray(data.activityDetail.ruleList)
+                ? data.activityDetail.ruleList
+                : []
+            this.tableForm.selectedGoods = Array.isArray(
+              data.activityDetail.ruleList
+            )
+              ? data.activityDetail.ruleList.map(item => {
+                return {
+                  ...item,
+                  activityId: item.activityId,
+                  discount: '' + item.discount,
+                  id: item.id,
+                  erpCode: item.erpCode,
+                  mprice: item.mprice,
+                  productName: item.name,
+                  confineNum: '' + item.confineNum,
+                  productNameSpec: this.formatSkuInfo(item.specSkus || ''),
+                  picUrl: item.picUrl,
+                  stock: (item.stock || '') + ''
+                }
+              })
+              : []
 
             this.xForm = Object.assign(data, {
               dateRange: [res.data.startTime, res.data.endTime],
               type: data.pmtType,
               allStore: false,
               mode: data.activityDetail && data.activityDetail.pmtMode,
-              freePostFee: data.activityDetail && data.activityDetail.freePostFee
+              freePostFee:
+                data.activityDetail && data.activityDetail.freePostFee
             })
             console.log('this.xForm----', this.xForm)
-            this.selectedStore = Array.isArray(data.storeResDTOList) ? data.storeResDTOList : []
+            this.selectedStore = Array.isArray(data.storeResDTOList)
+              ? data.storeResDTOList
+              : []
             this.$refs.selectStoreComponent.dataFrom(data.storeResDTOList)
             console.log('this.selectedStore', this.selectedStore)
             // 编辑状态时，更新页面当前状态
@@ -755,6 +767,7 @@ export default {
         }
       }
       const params = Object.assign(data, formData)
+      console.log('data----params', params)
       updateActLimit(params)
         .then(res => {
           if (res.code === '10000') {
