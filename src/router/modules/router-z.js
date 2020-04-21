@@ -19,7 +19,7 @@ const router = [
         meta: {
           title: '商品库',
           auth: 'commodity.commodity-lib',
-          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       }, {
         path: 'addition',
