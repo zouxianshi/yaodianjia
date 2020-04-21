@@ -352,6 +352,13 @@ export default {
   created() {
     this.getList()
     this._loadTypeList()
+    const thisRoute = this.$route.name ? this.$route : null
+    if (thisRoute) this.$store.dispatch('tagsView/addCachedView', { route: thisRoute, token: this.token })
+
+    // this.$store.dispatch('tagsView/addCachedView', this.$route).then(res => {
+    //   console.log('success: ', res);
+    //   console.log(this.$store.getters.cachedViews);
+    // });
     // this._loadGoodTypeList()
   },
   methods: {

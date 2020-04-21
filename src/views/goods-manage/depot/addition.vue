@@ -97,7 +97,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
-            <el-button type="primary" :loading="scope.row.loading" size="mini" @click="handleSetStore(scope.row)">添加该商品</el-button>
+            <el-button type="primary" :loading="scope.row.loading" size="mini" :disabled="scope.row.isAdded" @click="handleSetStore(scope.row)">添加该商品</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -167,6 +167,7 @@ export default {
         const { data, totalCount } = res.data
         data.map(v => {
           v.loading = false
+          v.isAdded = false
         })
         this.tableData = data
         this.total = totalCount
@@ -182,6 +183,7 @@ export default {
           type: 'success',
           duration: 4000
         })
+        row.isAdded = true
         this.getList()
         row.loading = false
       }).catch(() => {

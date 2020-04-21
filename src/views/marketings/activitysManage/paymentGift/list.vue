@@ -5,25 +5,38 @@
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
-            <span class="label-name" style="width: 80px">活动状态</span>
+            <span class="label-name" style="width: 60px">活动状态</span>
             <el-select
               v-model="searchForm.timeStatus"
               size="small"
-              placeholder="全部"
+              placeholder="全部1"
               @change="search()"
             >
               <el-option label="全部" :value="-2" />
               <el-option label="进行中" :value="1" />
               <el-option label="未开始" :value="-1" />
               <el-option label="已结束" :value="0" />
+              <el-option label="已删除" :value="2" />
             </el-select>
           </div>
           <div class="search-item">
-            <span class="label-name" style="width: 80px">活动名称</span>
-            <el-input v-model.trim="searchForm.name" size="small" style="width: 200px" />
+            <span class="label-name" style="width: 60px">参与门店</span>
+            <el-select v-model="searchForm.store" size="small" placeholder="全部" @change="search()">
+              <el-option
+                v-for="item in storeData"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </div>
           <div class="search-item">
-            <el-button size="small" @click="search()">查 询</el-button>
+            <span class="label-name" style="width: 60px">活动名称</span>
+            <el-input v-model.trim="searchForm.name" size="small" style="width: 160px" />
+          </div>
+          <div class="search-item">
+            <el-button size="small" type="primary" @click="search()">查 询</el-button>
+            <el-button size="small" type="primary" @click="search()">导 出</el-button>
           </div>
         </div>
       </section>
@@ -110,8 +123,31 @@ export default {
         name: '',
         startTime: '',
         endTime: '',
+        store: '0', // 门店
         timeStatus: -2 // 活动.时间状态 int (-1: 未开始, 1: 进行中, 0: 已结束)
       },
+      storeData: [
+        {
+          value: '0',
+          label: '全部'
+        },
+        {
+          value: '选项2',
+          label: '双皮奶'
+        },
+        {
+          value: '选项3',
+          label: '蚵仔煎'
+        },
+        {
+          value: '选项4',
+          label: '龙须面'
+        },
+        {
+          value: '选项5',
+          label: '北京烤鸭'
+        }
+      ],
       tableData: [],
       pager: {
         current: 1,
@@ -165,52 +201,7 @@ export default {
       this.pager.current = val
       this._getTableData()
     },
-    handleTimeChange(val, type) {
-      console.log(val, type)
-      if (type === 1 || type === 2) {
-        // 搜索栏 1.开始时间 2.结束时间
-        if (!val) {
-          type === 1
-            ? (this.searchForm.startTime = '')
-            : (this.searchForm.endTime = '')
-        } else {
-          console.log('this.searchForm', this.searchForm)
-          if (
-            this.searchForm.startTime &&
-            this.searchForm.endTime &&
-            this.searchForm.startTime !== '' &&
-            this.searchForm.endTime !== ''
-          ) {
-            // 比较时间
-            const start = this.searchForm.startTime.replace(/[- :]/g, '')
-            const end = this.searchForm.endTime.replace(/[- :]/g, '')
-            if (parseInt(start) > parseInt(end)) {
-              this.$message('结束时间必须大于开始时间')
-              type === 1
-                ? (this.searchForm.startTime = '')
-                : (this.searchForm.endTime = '')
-              return
-            }
-          }
-        }
-        this.search()
-        // if (this.searchForm.startTime !== '' && this.searchForm.endTime !== '') {
-        //   this.search()
-        // } else {
-        //   this.searchForm.startTime = ''
-        //   this.searchForm.endTime = ''
-        // }
-      } else if (type === 3) {
-        // dialog
-        if (val && val.length === 2) {
-          this.xForm.startTime = val[0]
-          this.xForm.endTime = val[1]
-        } else {
-          this.xForm.startTime = ''
-          this.xForm.endTime = ''
-        }
-      }
-    },
+
     // 查询
     search() {
       this.pager = {
@@ -223,7 +214,12 @@ export default {
     // 创建/op=1:查看/row不为空：编辑
     toCreate(row, op) {
       if (row) {
-        this.$router.push('/marketings/activity-manage/payment-gift/add?id=' + row.id + '&op=' + op)
+        this.$router.push(
+          '/marketings/activity-manage/payment-gift/add?id=' +
+            row.id +
+            '&op=' +
+            op
+        )
       } else {
         this.$router.push('/marketings/activity-manage/payment-gift/add')
       }
@@ -252,7 +248,14 @@ export default {
     },
     // 获取列表数据
     _getTableData() {
-      this.tableData = [{ name: 'eee', startTime: '2019-10-21 22:22:22', endTime: '2019-10-28 22:22:22', id: '@@@' }]
+      this.tableData = [
+        {
+          name: 'eee',
+          startTime: '2019-10-21 22:22:22',
+          endTime: '2019-10-28 22:22:22',
+          id: '@@@'
+        }
+      ]
       // const params = {
       //   type: this.searchForm.type,
       //   name: this.searchForm.name,
