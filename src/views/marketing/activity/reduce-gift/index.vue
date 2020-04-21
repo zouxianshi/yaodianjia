@@ -352,7 +352,8 @@ export default {
             const { data } = res
             // 转换activityDetail 去除数据
             // ruleType, uint discountType
-            let ruleType, uint, discountType, ruleList_af
+            let ruleType, uint, ruleList_af
+            // let ruleType, uint, discountType, ruleList_af
             if (
               data.activityDetail &&
               data.activityDetail.ruleList &&
@@ -360,7 +361,7 @@ export default {
             ) {
               ruleType = data.activityDetail.ruleList[0].ruleType
               uint = data.activityDetail.ruleList[0].uint
-              discountType = data.activityDetail.ruleList[0].discountType
+              // discountType = data.activityDetail.ruleList[0].discountType
               // 转换giftOrNot checkOrNot
               ruleList_af = data.activityDetail.ruleList.map(item => {
                 return {
@@ -368,7 +369,8 @@ export default {
                   checkOrNot: !!item.checkOrNot,
                   giftOrNot: !!item.giftOrNot,
                   giftList: item.giftSpecDTO,
-                  [`discount${discountType}`]: item.discount
+                  discountType: item.discountType,
+                  [`discount${item.discountType}`]: item.discount
                 }
               })
             }
@@ -380,16 +382,24 @@ export default {
               type: data.userCoupons === 3 ? ['1'] : [],
               ruleType,
               uint,
-              discountType,
+              // discountType,
               ruleList: ruleList_af,
               startTime: data.startTime,
               endTime: data.endTime
             }
-            this.chooseStore = Array.isArray(data.storeResDTOList) ? data.storeResDTOList : []
-            this.$refs.selectStoreComponent.dataFrom(Array.isArray(data.storeResDTOList) ? data.storeResDTOList : [])
-            this.storeSelectGoods = Array.isArray(data.commList) ? data.commList : []
-            this.$refs.storeGods.dataFrom(Array.isArray(data.commList) ? data.commList : [])
-            // this.$refs.selectGiftComponent.dataFrom(item.giftSpecDTO)
+            console.log('-----------------', ruleList_af)
+            this.chooseStore = Array.isArray(data.storeResDTOList)
+              ? data.storeResDTOList
+              : []
+            this.$refs.selectStoreComponent.dataFrom(
+              Array.isArray(data.storeResDTOList) ? data.storeResDTOList : []
+            )
+            this.storeSelectGoods = Array.isArray(data.commList)
+              ? data.commList
+              : []
+            this.$refs.storeGods.dataFrom(
+              Array.isArray(data.commList) ? data.commList : []
+            )
           }
         })
         .catch(e => {
@@ -464,20 +474,23 @@ export default {
         ) {
           return callback(new Error('必须为大于0.01的正数'))
         }
+        if (value > this.form.ruleList[index].threshold) {
+          return callback(new Error('不能大于满减门槛'))
+        }
         if (value > 99999999) {
           return callback(new Error('满减金额不可大于99999999'))
         }
         // 后续的数值必须大于前面的金额
-        if (this.form.ruleList.length > 1) {
-          if (index >= 1) {
-            if (
-              Number(this.form.ruleList[index].discount0 || 0) <=
-              Number(this.form.ruleList[index - 1].discount0 || 0)
-            ) {
-              return callback(new Error('此项满减金额必须大于前一项满减金额'))
-            }
-          }
-        }
+        // if (this.form.ruleList.length > 1) {
+        //   if (index >= 1) {
+        //     if (
+        //       Number(this.form.ruleList[index].discount0 || 0) <=
+        //       Number(this.form.ruleList[index - 1].discount0 || 0)
+        //     ) {
+        //       return callback(new Error('此项满减金额必须大于前一项满减金额'))
+        //     }
+        //   }
+        // }
       }
       callback()
     },
@@ -497,17 +510,17 @@ export default {
         if (value >= 10) {
           return callback(new Error('折扣力度必须小于10'))
         }
-        if (this.form.ruleList.length > 1) {
-          if (index >= 1) {
-            console.log('2222-validDiscountPrice---力度', this.form.ruleList)
-            if (
-              Number(this.form.ruleList[index].discount1 || 0) >=
-              Number(this.form.ruleList[index - 1].discount1 || 0)
-            ) {
-              return callback(new Error('此项折扣力度必须大于前一项折扣力度'))
-            }
-          }
-        }
+        // if (this.form.ruleList.length > 1) {
+        //   if (index >= 1) {
+        //     console.log('2222-validDiscountPrice---力度', this.form.ruleList)
+        //     if (
+        //       Number(this.form.ruleList[index].discount1 || 0) >=
+        //       Number(this.form.ruleList[index - 1].discount1 || 0)
+        //     ) {
+        //       return callback(new Error('此项折扣力度必须大于前一项折扣力度'))
+        //     }
+        //   }
+        // }
       }
       callback()
     },
@@ -582,9 +595,6 @@ export default {
         }
       })
       this.form.ruleList = data
-      // if (val === 1) {
-      //   this.form.discountType = 1
-      // }
     },
     discountTypeChange(val) {
       const data = this.form.ruleList.map(item => {
@@ -638,6 +648,9 @@ export default {
               }
               if (!item.giftOrNot && !item.checkOrNot) {
                 throw new Error(`第${index + 1}项必须要选择一项优惠内容`)
+              }
+              if (item.giftOrNot && !giftSpecIds.length) {
+                throw new Error(`第${index + 1}项已勾选赠品，但未选择赠品内容`)
               }
               return {
                 ...item,

@@ -68,21 +68,20 @@
                     <!-- <el-dropdown-item>
                       <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
                     </el-dropdown-item> -->
-                    <el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.validStatus !==1 ">
                       <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
                     </el-dropdown-item>
-                    <el-dropdown-item>
-                      <!--  v-if="scope.row.validStatus===1" -->
+                    <el-dropdown-item v-if="scope.row.validStatus===1">
                       <product-kucun :row-item="scope.row" />
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button type="text">失败列表</el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
+                      <el-button type="text" disabled>失败列表</el-button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
+              </template>
+              <template v-else>
+                <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
               </template>
             </template>
           </el-table-column>
@@ -289,7 +288,7 @@ export default {
     },
     formatter(row, column, cellValue) {
       if (column.property === 'activityType') {
-        return '加价购'
+        return '拼团'
       } else {
         return cellValue
       }

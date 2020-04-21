@@ -56,7 +56,7 @@
           </template>
           <el-table-column label="操作" width="130">
             <template slot-scope="scope">
-              <template v-if="scope.row.status">
+              <template v-if="!!scope.row.status">
                 <el-button type="text" @click="toLook(scope.row)">查看</el-button>
                 <el-divider direction="vertical" />
                 <el-dropdown trigger="hover">
@@ -69,16 +69,16 @@
                       <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
+                      <el-button type="text" :disabled="scope.row.validStatus ===1 " @click="toEdit(scope.row)">编辑</el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button type="text">失败列表</el-button>
+                      <el-button disabled type="text">失败列表</el-button>
                     </el-dropdown-item>
-                    <!-- <el-dropdown-item>
-                    <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
-                    </el-dropdown-item>-->
                   </el-dropdown-menu>
                 </el-dropdown>
+              </template>
+              <template v-else>
+                <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
               </template>
             </template>
           </el-table-column>

@@ -158,7 +158,7 @@ export default {
       }
       .activity-title {
         position: absolute;
-        top: 84px;
+        top: 104px;
         left: 50%;
         transform: translate(-50%, 0);
         font-size: 24px;
@@ -167,7 +167,7 @@ export default {
       }
       .activity-desc {
         position: absolute;
-        top: 120px;
+        top: 140px;
         left: 50%;
         transform: translate(-50%, 0);
         font-size: 14px;

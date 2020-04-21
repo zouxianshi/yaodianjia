@@ -55,29 +55,31 @@
             </el-table-column>
           </template>
           <el-table-column label="操作" width="130">
-            <template v-if="!!scope.row.status" slot-scope="scope">
-              <el-button type="text" @click="toLook(scope.row)">查看</el-button>
-              <el-divider direction="vertical" />
-              <el-dropdown trigger="hover">
-                <span class="el-dropdown-link">
-                  更多
-                  <i class="el-icon-arrow-down el-icon--right" />
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <el-button type="text">失败列表</el-button>
-                  </el-dropdown-item>
-                  <!-- <el-dropdown-item>
-                    <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
-                  </el-dropdown-item>-->
-                </el-dropdown-menu>
-              </el-dropdown>
+            <template slot-scope="scope">
+              <template v-if="!!scope.row.status">
+                <el-button type="text" @click="toLook(scope.row)">查看</el-button>
+                <el-divider direction="vertical" />
+                <el-dropdown trigger="hover">
+                  <span class="el-dropdown-link">
+                    更多
+                    <i class="el-icon-arrow-down el-icon--right" />
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>
+                      <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.validStatus !==1 ">
+                      <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button disabled type="text">失败列表</el-button>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+              <template v-else>
+                <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
+              </template>
             </template>
           </el-table-column>
           <div slot="empty">
@@ -217,15 +219,11 @@ export default {
     },
     // 查看
     toLook(row) {
-      this.$router.push(
-        `/marketing/activity/limit-sec-edit?id=${row.id}&_ck=1`
-      )
+      this.$router.push(`/marketing/activity/limit-sec-edit?id=${row.id}&_ck=1`)
     },
     // 编辑
     toEdit(row) {
-      this.$router.push(
-        `/marketing/activity/limit-sec-edit?id=${row.id}`
-      )
+      this.$router.push(`/marketing/activity/limit-sec-edit?id=${row.id}`)
     },
     // 删除
     handleDel(row) {

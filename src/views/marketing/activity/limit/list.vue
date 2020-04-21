@@ -72,7 +72,7 @@
                       <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button type="text">失败列表</el-button>
+                      <el-button disabled type="text">失败列表</el-button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
