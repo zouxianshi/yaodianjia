@@ -207,6 +207,7 @@ export default {
         ]
       },
       edit: false,
+      disabled: false,
       chooseStore: [],
       pageInfoloading: false,
       storeSelectGoods: [], // 选取的主商品

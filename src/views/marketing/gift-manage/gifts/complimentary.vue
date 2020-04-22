@@ -25,7 +25,34 @@
             :prop="col.prop"
             :min-width="col.width"
           />
+          <el-table-column
+            v-else-if="col.prop==='provideNum'"
+            :key="col.prop"
+            :label="col.label"
+            :prop="col.prop"
+          >
+            <template slot-scope="scope">
+              <span size="small" type="info">{{ scope.row.provideNum?scope.row.provideNum:0 }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-else-if="col.prop==='limitCount'"
+            :key="col.prop"
+            :label="col.label"
+            :prop="col.prop"
+          >
+            <template slot-scope="scope">
+              <span size="small" type="info">{{ scope.row.limitCount===0?'不限购':scope.row.limitCount }}</span>
+            </template>
+          </el-table-column>
         </template>
+        <el-table-column label="操作" width="130">
+          <template slot-scope="scope">
+            <el-button disabled type="text" @click="toLook(scope.row)">查看</el-button>
+            <el-divider direction="vertical" />
+            <el-button disabled type="text" @click="toEdit(scope.row)">编辑</el-button>
+          </template>
+        </el-table-column>
         <div slot="empty">
           <no-data />
         </div>
@@ -65,15 +92,19 @@ export default {
         {
           prop: 'provideNum',
           label: '已发放',
-          width: '80'
+          width: '80',
+          render: true
         },
         {
           prop: 'leaveStock',
-          label: '剩余库存'
+          label: '剩余库存',
+          width: '80'
         },
         {
           prop: 'limitCount',
-          label: '每人限领'
+          label: '每人限领',
+          width: '80',
+          render: true
         }
       ],
       pager: {
@@ -136,16 +167,24 @@ export default {
           this.listLoading = false
         })
     },
-    onSubmit() {
-
+    toLook(row) {
+      this.$router.push(`/marketing/gifts/complimentary-edit?id=${row.id}&_ck=1`)
+    },
+    toEdit(row) {
+      this.$router.push(`/marketing/gifts/complimentary-edit?id=${row.id}`)
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .info-content {
   line-height: 30px;
   font-size: 14px;
+}
+.app-container {
+  .el-table thead th {
+    text-align: left;
+  }
 }
 </style>

@@ -14,7 +14,7 @@
         <template>
           <el-button type="primary" plain size="small" @click="$refs.GoodsComponent.open()">选择商品</el-button>
           <!-- <store-goods-view :limit-max="1" @on-change="handleSelectGoods">选择商品</store-goods-view> -->
-          <div class="info">一个赠品对应一个商品</div>
+          <div class="info-create">一个赠品对应一个商品</div>
         </template>
       </el-form-item>
       <el-form-item>
@@ -24,7 +24,7 @@
       <el-form-item label="赠品库存：" prop="stock">
         <template>
           <el-input-number v-model="form.stock" :min="0" :max="9999999999" />
-          <span class="info">赠品赠完不再续增</span>
+          <span class="info-create">赠品赠完不再续增</span>
         </template>
       </el-form-item>
       <el-form-item label="每人限领：">
@@ -39,7 +39,7 @@
           </el-form-item>
           <el-form-item prop="limitStock">
             <el-input-number v-model="form.limitStock" :disabled="form.limit!==1" />
-            <span style="margin-left: 5px" class="info">件</span>
+            <span style="margin-left: 5px" class="info-create">件</span>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -126,7 +126,24 @@ export default {
         stock: [{ required: true, validator: checkStock, trigger: 'change' }],
         limitStock: [{ validator: checkLimitStock, trigger: 'change' }]
       },
-      loading: false
+      loading: false,
+      leaveAction: false,
+      disabled: false,
+      edit: false
+    }
+  },
+  created() {
+    if (this.$route.query.id) {
+      this.activityId = this.$route.query.id
+      this.disabled = this.$route.query.id && !!this.$route.query._ck // 当前页面为查看
+      this.edit = this.$route.query.id && !this.$route.query._ck // 当前页面为编辑
+      this.getDetailInfo(this.$route.query.id)
+      this.$route.meta.title = !this.$route.query._ck
+        ? '编辑赠品'
+        : '查看赠品详情'
+      document.title = !this.$route.query._ck
+        ? '编辑赠品'
+        : '查看赠品详情'
     }
   },
   methods: {
@@ -162,6 +179,7 @@ export default {
                     message: '创建成功',
                     type: 'success'
                   })
+                  this.leaveAction = true
                   this.$router.replace({
                     path: `/marketing/gifts/complimentary`
                   })
@@ -169,6 +187,7 @@ export default {
               })
               .catch(error => {
                 console.log(error)
+                this.leaveAction = true
                 this.loading = false
               })
           } else {
@@ -188,7 +207,27 @@ export default {
       console.log('item, index', item, index)
       this.storeSelectGoods.splice(index, 1)
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
-      // this.storeSelectGoods = this.storeSelectGoods
+    },
+    getDetailInfo() {
+      console.log('调用详情--------')
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.leaveAction) {
+      next()
+      if (this.pageLoading) {
+        this.pageLoading.close()
+      }
+    } else {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        if (this.pageLoading) {
+          this.pageLoading.close()
+        }
+        next()
+      } else {
+        next(false)
+      }
     }
   }
 }
@@ -205,7 +244,7 @@ export default {
     display: flex;
     flex-direction: row;
   }
-  .info {
+  .info-create {
     color: #bdbdbd;
   }
 }

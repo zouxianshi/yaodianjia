@@ -306,6 +306,7 @@ export default {
         ]
       },
       initRuleFull: {
+        // 这个是在添加层级时用到的数据格式
         discountType: 1,
         threshold: '', // 满减门槛金额
         giftOrNot: false,
@@ -328,8 +329,7 @@ export default {
       },
       pageLoading: '',
       pageInfoloading: false,
-      leaveAction: false,
-      pageStatus: '1' // 1.新增 2.编辑 3.查看
+      leaveAction: false
     }
   },
   created() {
@@ -541,11 +541,6 @@ export default {
       }
     },
     handleSelectStore(val) {
-      console.log(
-        '门店结果页出来了-------',
-        val,
-        this.$refs.selectStoreComponent
-      )
       this.chooseStore = val
       this.$refs.selectStoreComponent.dataFrom(val)
     },
@@ -715,7 +710,7 @@ export default {
             }
           }
           console.log('待提交数据-----', dataParam)
-          this.leaveAction = true
+          this.leaveAction = false
           const loading = this.$loading({
             lock: true,
             text: '努力创建中，请稍后',
@@ -730,9 +725,11 @@ export default {
                   type: 'success'
                 })
                 loading.close()
+                this.leaveAction = true
                 this.$router.replace('/marketing/activity/list?type=14')
               })
               .catch(() => {
+                this.leaveAction = true
                 loading.close()
               })
           } else {
@@ -803,7 +800,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .text-overflow-1 {
   overflow: hidden;
   text-overflow: ellipsis;
