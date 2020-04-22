@@ -53,10 +53,18 @@ export function getactivitList(params) {
   })
 }
 
-// 领券中心)添加优惠券新增优惠券
+// 领券中心添加优惠券新增优惠券
 export function marketaddCoupon(params) {
   return request({
     url: `${config.merGoods}/1.0/marketingActivities/addCoupon`,
+    method: 'post',
+    data: params
+  })
+}
+// 编辑优惠券
+export function updateCoupon(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/updateCoupon`,
     method: 'post',
     data: params
   })
