@@ -593,7 +593,7 @@ export default {
           })
           setTimeout(_ => {
             this.saveLoading = false
-            this.$router.push('/marketing/activity/assemble')
+            this.$router.push('/marketing/activity/list?type=13')
           }, 1000)
         })
         .catch(err => {
@@ -610,7 +610,7 @@ export default {
             type: 'success'
           })
           setTimeout(_ => {
-            this.$router.push('/marketing/activity/assemble')
+            this.$router.push('/marketing/activity/list?type=13')
           }, 1000)
         })
         .catch(err => {

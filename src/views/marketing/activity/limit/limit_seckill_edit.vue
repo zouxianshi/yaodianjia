@@ -753,7 +753,7 @@ export default {
           if (res.code === '10000') {
             this.$message.success('创建成功')
             setTimeout(_ => {
-              this.$router.push('/marketing/activity/limit-sec')
+              this.$router.push('/marketing/activity/list?type=12')
               this.saveLoading = false
             }, 1000)
           }
@@ -789,7 +789,7 @@ export default {
           if (res.code === '10000') {
             this.$message.success('保存成功')
             setTimeout(_ => {
-              this.$router.push('/marketing/activity/limit-sec')
+              this.$router.push('/marketing/activity/list?type=12')
               this.saveLoading = false
             }, 1000)
           }

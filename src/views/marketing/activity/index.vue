@@ -47,7 +47,6 @@ export default {
    * desc -> 相关描述
    * linkUrl -> 跳转详情连接
    * extra -> 额为的事件
-   * type: 类型【activity 】
    */
   data() {
     return {

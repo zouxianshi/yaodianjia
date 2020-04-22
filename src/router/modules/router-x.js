@@ -118,31 +118,11 @@ const router = [
         }
       },
       {
-        path: 'activity/reduce-gift-list',
-        component: () => import('@/views/marketing/activity/reduce-gift/list'),
-        name: 'reduceGiftList',
-        meta: {
-          title: '满减满赠列表',
-          noCache: true,
-          activeMenu: '/marketing/activity'
-        }
-      },
-      {
         path: 'activity/reduce-gift-list-edit',
         component: () => import('@/views/marketing/activity/reduce-gift'),
         name: 'reduceGift',
         meta: {
           title: '创建满减满赠',
-          noCache: true,
-          activeMenu: '/marketing/activity'
-        }
-      },
-      {
-        path: 'activity/aprice',
-        component: () => import('@/views/marketing/activity/addPrice/list'),
-        name: 'addPriceList',
-        meta: {
-          title: '加价购列表',
           noCache: true,
           activeMenu: '/marketing/activity'
         }
@@ -166,15 +146,6 @@ const router = [
           noCache: true,
           activeMenu: '/marketing/activity'
         }
-      }, {
-        path: 'activity/assemble',
-        component: () => import('@/views/marketing/activity/assemble/list'),
-        name: 'assembleList',
-        meta: {
-          title: '拼团活动',
-          noCache: true,
-          activeMenu: '/marketing/activity/assemble'
-        }
       },
       {
         path: 'activity/assemble-edit',
@@ -187,31 +158,11 @@ const router = [
         }
       },
       {
-        path: 'activity/limit',
-        component: () => import('@/views/marketing/activity/limit/list'),
-        name: 'limitList',
-        meta: {
-          title: '限时特惠',
-          noCache: true,
-          activeMenu: '/marketing/activity'
-        }
-      },
-      {
         path: 'activity/limit-edit',
         component: () => import('@/views/marketing/activity/limit/limit-edit'),
         name: 'limitEdit',
         meta: {
           title: '创建限时特惠',
-          noCache: true,
-          activeMenu: '/marketing/activity'
-        }
-      },
-      {
-        path: 'activity/limit-sec',
-        component: () => import('@/views/marketing/activity/limit/list_seckill'),
-        name: 'limitSecList',
-        meta: {
-          title: '限时秒杀',
           noCache: true,
           activeMenu: '/marketing/activity'
         }

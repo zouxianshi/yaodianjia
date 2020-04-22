@@ -730,7 +730,7 @@ export default {
                   type: 'success'
                 })
                 loading.close()
-                this.$router.replace('/marketing/activity/reduce-gift-list')
+                this.$router.replace('/marketing/activity/list?type=14')
               })
               .catch(() => {
                 loading.close()
@@ -743,7 +743,7 @@ export default {
                   type: 'success'
                 })
                 loading.close()
-                this.$router.replace('/marketing/activity/reduce-gift-list')
+                this.$router.replace('/marketing/activity/list?type=14')
               })
               .catch(() => {
                 loading.close()

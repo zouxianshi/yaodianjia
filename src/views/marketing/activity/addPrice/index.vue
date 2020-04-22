@@ -382,7 +382,7 @@ export default {
                         type: 'success'
                       })
                       loading.close()
-                      this.$router.replace('/marketing/activity/aprice')
+                      this.$router.replace('/marketing/activity/list?type=15')
                     }
                   })
                   .catch(() => {
@@ -397,7 +397,7 @@ export default {
                         type: 'success'
                       })
                       loading.close()
-                      this.$router.replace('/marketing/activity/aprice')
+                      this.$router.replace('/marketing/activity/list?type=15')
                     }
                   })
                   .catch(() => {
