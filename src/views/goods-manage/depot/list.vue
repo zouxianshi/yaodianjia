@@ -253,7 +253,7 @@
                 </template>
                 <template v-if="scope.row.commodityType!==2">
                   <el-divider direction="vertical" />
-                  <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                  <a @click="handleEdit(scope.row.id)">
                     <el-button type="text" size="mini">编辑</el-button>
                   </a>
                 </template>
@@ -277,6 +277,7 @@
       :status="status"
       :choose-num="specData.length"
       :spec-data="specData"
+      :mer-code="merCode"
       :is-show="dialogVisible"
       @close="dialogVisible=false"
       @complete="dialogVisible=false;getList()"
@@ -325,6 +326,7 @@ export default {
         value: 'id'
       },
       goodsData: [],
+      merCode: '',
       specData: [],
       loading: false,
       tableData: [],
@@ -351,6 +353,7 @@ export default {
     }
   },
   created() {
+    this.merCode = this.$store.state.user.merCode
     this.getList()
     this._loadTypeList()
     // const thisRoute = this.$route.name ? this.$route : null
@@ -512,6 +515,10 @@ export default {
       this.specData = [`${row.specId}`]
       this.status = status
       this.dialogVisible = true
+    },
+    handleEdit(id) {
+      this.$store.dispatch('tagsView/delCachedView', this.$route)
+      this.$router.push('/goods-manage/edit?id=' + id)
     },
     //
     handleDel(row) {

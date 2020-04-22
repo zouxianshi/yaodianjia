@@ -77,7 +77,7 @@
   </div>
 </template>
 <script>
-import { setBatchUpdown, getStoreList } from '@/api/depot'
+import { setBatchUpdown, getStoreOnlineList } from '@/api/depot'
 export default {
   props: {
     isShow: {
@@ -91,6 +91,10 @@ export default {
     chooseNum: {
       type: Number,
       default: 0
+    },
+    merCode: {
+      type: String,
+      default: ''
     },
     specData: {
       type: Array,
@@ -145,11 +149,14 @@ export default {
       const query = {
         searchKey: this.storeCode,
         currentPage: this.currentPage,
-        onlineStatus: 1,
-        status: 1,
-        pageSize: 10
+        storeOnlineStatus: 1,
+        storeStatus: 1,
+        pageSize: 10,
+        merCode: this.merCode,
+        specIds: this.specData,
+        commOnlineStatus: this.status
       }
-      getStoreList(query).then(res => {
+      getStoreOnlineList(query).then(res => {
         const { data, totalCount } = res.data
         this.list = data
         this.total = totalCount
@@ -184,6 +191,8 @@ export default {
     // 给非本次选择为已上架或已下架的商品设置为不可用
     setSelectable(v) {
       v.selectable = true
+      console.log(this.status)
+      console.log(v.commOnlineStatus)
       if (
         (this.status === 0 && v.commOnlineStatus === 0) ||
         (this.status === 1 && v.commOnlineStatus === 1)

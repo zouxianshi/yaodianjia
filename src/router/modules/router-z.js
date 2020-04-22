@@ -87,10 +87,10 @@ const router = [
       }, {
         path: 'edit',
         component: () => import('@/views/goods-manage/new-goods/edit'),
-        name: 'goodsEdit',
+        name: 'GoodsEdit',
         meta: {
           title: '商品信息编辑',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/apply'
         }
       }, {

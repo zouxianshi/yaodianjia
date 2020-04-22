@@ -978,6 +978,7 @@ import { checkNumberdouble } from '@/utils/validate'
 // import { throttle } from '@/utils/throttle'
 
 export default {
+  name: 'GoodsEdit',
   components: { Tinymce, vueUploadImg, editTable, editGroup },
   mixins: [mixins, specsMixin],
   data() {
@@ -1220,6 +1221,7 @@ export default {
       pageSize: 30,
       currentPage: 1
     }) // 获取所属品牌
+    console.log('@@@@@@@@@@@@@')
     this.getTypeListData()
       .then(res => {
         this._loadBasicInfo()
@@ -1831,14 +1833,6 @@ export default {
               type: 'warning'
             })
               .then(() => {
-                // this.$store.state.tagsView.visitedViews.splice(
-                //   this.$store.state.tagsView.visitedViews.findIndex(
-                //     item => item.path === this.$route.path
-                //   ),
-                //   1
-                // )
-                // this.$router.push(this.$store.state.tagsView.visitedViews[this.$store.state.tagsView.visitedViews.length-1].path)
-                console.log('dddd:' + url)
                 this.$store
                   .dispatch('tagsView/delVisitedView', this.$route)
                   .then(res => {})

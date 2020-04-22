@@ -54,7 +54,14 @@ export function getStoreList(params) {
     data: params
   })
 }
-
+// 单个商品的所有门店上架状态查询
+export function getStoreOnlineList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/store-spec/online-status`,
+    method: 'post',
+    data: params
+  })
+}
 // 批量上下架商品
 export function setBatchUpdown(params) {
   return request({
