@@ -13,9 +13,9 @@ const router = [
     alwaysShow: true,
     children: [
       {
-        path: 'depot',
+        path: 'Depot',
         component: () => import('@/views/goods-manage/depot/list'),
-        name: 'depot',
+        name: 'Depot',
         meta: {
           title: '商品库',
           auth: 'commodity.commodity-lib',
