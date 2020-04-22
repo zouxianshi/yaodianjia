@@ -252,7 +252,7 @@ import {
   getActivityGoods,
   updateAssembleInfo,
   updateAcAssmbleProductInfo
-} from '@/api/marketing'
+} from '@/api/activity'
 export default {
   components: { selectStore, storeGoods, EditGoodsModals, storeDialog },
   data() {

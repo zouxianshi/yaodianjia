@@ -462,8 +462,8 @@ export default {
     validAmountPrice(rule, value, callback) {
       // 如果选择的是打折那么范围为0.1-10
       // 如果选择是元那么打折的范围为0-99999999
-      console.log('111111', rule, value)
       const index = rule.field.split('.')[1]
+      console.log('111111', rule, value, this.form.ruleList[index].threshold)
       if (this.form.ruleList[index].discountType === 0) {
         if (!value) {
           return callback(new Error('请输入满减金额'))
@@ -474,7 +474,7 @@ export default {
         ) {
           return callback(new Error('必须为大于0.01的正数'))
         }
-        if (value > this.form.ruleList[index].threshold) {
+        if (value > Number(this.form.ruleList[index].threshold || 0)) {
           return callback(new Error('不能大于满减门槛'))
         }
         if (value > 99999999) {

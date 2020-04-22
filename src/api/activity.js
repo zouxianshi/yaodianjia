@@ -290,3 +290,40 @@ export function getAssembleAcInfo(activityId) {
     method: 'get'
   })
 }
+/**
+ * 拼团活动创建
+ * @param {*} params
+ */
+export function assembleActivityAdd(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/create`,
+    method: 'post',
+    data: params
+  })
+}
+/**
+ * 编辑修改拼团活动产品信息
+ * @param {*} params
+ */
+export function updateAcAssmbleProductInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/modifyProduct`,
+    method: 'post',
+    data: params
+  })
+}
+/**
+ * 进行中的活动排序商品
+ * [{
+    "activityId": 0,
+    "sort": 0,
+    "specId": 0
+  }]
+ */
+export function sortAcAssmbleProductInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/_sort`,
+    method: 'post',
+    data: params
+  })
+}

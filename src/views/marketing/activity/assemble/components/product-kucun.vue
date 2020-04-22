@@ -108,13 +108,7 @@
 </template>
 
 <script>
-import {
-  getActivityGoods,
-  setAssembleStock,
-  clearProductStock,
-  setSingleAssembleStock
-} from '@/api/marketing'
-
+import { sortAcAssmbleProductInfo, clearProductStock, setSingleAssembleStock, getActivityGoods } from '@/api/activity'
 export default {
   props: {
     rowItem: {
@@ -190,17 +184,14 @@ export default {
     },
     async handleSubmitStock() {
       this.saveLoading = true
-      const specIds = []
-      this.modalGoodList.forEach(item => {
-        specIds.push(item.specId)
-      })
-      this.clearStock({
-        activityId: this.rowItem.id,
-        specIds: this.cleanAllCount ? [] : specIds
-      })
+
+      Promise.all([
+        this.updateAssembleStock(),
+        this.clearStock()
+      ])
         .then(res => {
           this.$message({
-            message: '活动商品库存修改成功',
+            message: '编辑成功',
             type: 'success'
           })
           this.saveLoading = false
@@ -215,23 +206,43 @@ export default {
       // 修改库存
     },
     // 清空库存
-    clearStock(params) {
-      console.log('1111111111111111', params)
+    clearStock() {
+      // 清空库存的情况
+      // 如果点击了清空所有那么则调用，另外需查询商品列表是否单独设置库存为0，否则不调用此接口
       return new Promise((resolve, reject) => {
-        clearProductStock(params)
-          .then(res => {
-            if (res.code === '10000') {
-              resolve()
-            }
-            reject()
+        const specIds = []
+        this.modalGoodList.forEach(item => {
+          item.isClearn && specIds.push(item.specId)
+        })
+        if (this.cleanAllCount || specIds.length) {
+          clearProductStock({
+            activityId: this.rowItem.id,
+            specIds: this.cleanAllCount ? [] : specIds
           })
-          .catch(e => reject(e))
+            .then(res => {
+              if (res.code === '10000') {
+                resolve()
+              }
+              reject()
+            })
+            .catch(e => reject(e))
+        } else {
+          resolve()
+        }
       })
     },
     // 增加库存或排序功能
     updateAssembleStock() {
       return new Promise((resolve, reject) => {
-        setAssembleStock(this.modalGoodList)
+        // console.log('this.modalGoodList00000', this.modalGoodList)
+        const data = this.modalGoodList.map(item => {
+          return {
+            activityId: item.activityId,
+            sort: item.sortNumber,
+            specId: item.specId
+          }
+        })
+        sortAcAssmbleProductInfo(data)
           .then(res => {
             if (res.code === '10000') {
               resolve()
@@ -242,6 +253,7 @@ export default {
       })
     },
     handleSettingcount(row) {
+      console.log('--------------', row)
       // 设置该条记录0库存
       row.productActivityCount = 0
       row.isClearn = true
