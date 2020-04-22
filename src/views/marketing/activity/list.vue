@@ -59,7 +59,7 @@
               <template v-if="!!scope.row.status">
                 <el-button type="text" @click="toLook(scope.row)">查看</el-button>
                 <el-divider direction="vertical" />
-                <el-dropdown trigger="hover">
+                <el-dropdown trigger="hover" @command="handleCommand">
                   <span class="el-dropdown-link">
                     更多
                     <i class="el-icon-arrow-down el-icon--right" />
@@ -69,17 +69,16 @@
                     <el-dropdown-item v-if="scope.row.validStatus===1 && type === '13'">
                       <product-kucun :row-item="scope.row" />
                     </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
+                    <el-dropdown-item :command="{id: scope.row.id, type: 'end', disabled: scope.row.validStatus ===1}">
+                      <el-button type="text">失效</el-button>
                     </el-dropdown-item>
-                    <el-dropdown-item>
+                    <el-dropdown-item :command="{id: scope.row.id, type: 'edit', disabled: scope.row.validStatus ===1}">
                       <el-button
                         type="text"
                         :disabled="scope.row.validStatus ===1 "
-                        @click="toEdit(scope.row)"
                       >编辑</el-button>
                     </el-dropdown-item>
-                    <el-dropdown-item>
+                    <el-dropdown-item :command="{id: scope.row.id, type: 'failList', disabled: true}">
                       <el-button disabled type="text">失败列表</el-button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -326,6 +325,15 @@ export default {
         console.log('此活动已失效')
         this._getTableData()
       })
+    },
+    handleCommand(val) {
+      if (val.type === 'edit' && !val.disabled) {
+        this.toEdit(val.id)
+      } else if (val.type === 'end' && !val.disabled) {
+        this.endActivity(val.id)
+      } else if (val.type === 'failList' && !val.disabled) {
+        this.endActivity(val.id)
+      }
     },
 
     // 获取列表数据

@@ -14,43 +14,39 @@
       </el-form>
     </section>
     <section class="table-box webkit-scroll" style="overflow: auto">
-      <el-table :data="tableData" style="width: 100%; height: 100%">
-        <template v-for="col in cols">
-          <el-table-column
-            v-if="!col.render"
-            :key="col.prop"
-            :formatter="formatter"
-            :label="col.label"
-            :show-overflow-tooltip="true"
-            :prop="col.prop"
-            :min-width="col.width"
-          />
-          <el-table-column
-            v-else-if="col.prop==='provideNum'"
-            :key="col.prop"
-            :label="col.label"
-            :prop="col.prop"
-          >
-            <template slot-scope="scope">
-              <span size="small" type="info">{{ scope.row.provideNum?scope.row.provideNum:0 }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            v-else-if="col.prop==='limitCount'"
-            :key="col.prop"
-            :label="col.label"
-            :prop="col.prop"
-          >
-            <template slot-scope="scope">
-              <span size="small" type="info">{{ scope.row.limitCount===0?'不限购':scope.row.limitCount }}</span>
-            </template>
-          </el-table-column>
-        </template>
-        <el-table-column label="操作" width="130">
+      <el-table v-loading="listLoading" :data="tableData" style="width: 100%; height: 100%">
+        <el-table-column label="赠品名称" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span size="small" type="info">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="总库存" width="100">
+          <template slot-scope="scope">
+            <span size="small" type="info">{{ scope.row.stock?scope.row.stock:0 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="已发放" width="100">
+          <template slot-scope="scope">
+            <span size="small" type="info">{{ scope.row.provideNum?scope.row.provideNum:0 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="剩余库存" width="100">
+          <template slot-scope="scope">
+            <span size="small" type="info">{{ scope.row.leaveStock }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="每人限领" width="100">
+          <template slot-scope="scope">
+            <span size="small" type="info">{{ scope.row.limitCount===0?'不限购':scope.row.limitCount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="260">
           <template slot-scope="scope">
             <el-button disabled type="text" @click="toLook(scope.row)">查看</el-button>
             <el-divider direction="vertical" />
-            <el-button disabled type="text" @click="toEdit(scope.row)">编辑</el-button>
+            <el-button disabled type="text" @click="toEdit(scope.row)">增加库存</el-button>
+            <el-divider direction="vertical" />
+            <el-button disabled type="text" @click="toEdit(scope.row)">清空库存</el-button>
           </template>
         </el-table-column>
         <div slot="empty">
@@ -83,30 +79,6 @@ export default {
   data() {
     return {
       tableData: [],
-      cols: [
-        {
-          prop: 'name',
-          label: '赠品名称',
-          width: '150'
-        },
-        {
-          prop: 'provideNum',
-          label: '已发放',
-          width: '80',
-          render: true
-        },
-        {
-          prop: 'leaveStock',
-          label: '剩余库存',
-          width: '80'
-        },
-        {
-          prop: 'limitCount',
-          label: '每人限领',
-          width: '80',
-          render: true
-        }
-      ],
       pager: {
         current: 1,
         total: 0,
@@ -168,7 +140,9 @@ export default {
         })
     },
     toLook(row) {
-      this.$router.push(`/marketing/gifts/complimentary-edit?id=${row.id}&_ck=1`)
+      this.$router.push(
+        `/marketing/gifts/complimentary-edit?id=${row.id}&_ck=1`
+      )
     },
     toEdit(row) {
       this.$router.push(`/marketing/gifts/complimentary-edit?id=${row.id}`)

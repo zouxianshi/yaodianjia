@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="预览"
+    title="推广设置"
     custom-class="preview-diaglog"
     center
     :append-to-body="true"

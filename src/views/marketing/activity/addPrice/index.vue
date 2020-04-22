@@ -250,11 +250,11 @@ export default {
               startTime: data.startTime,
               endTime: data.endTime
             }
-            this.chooseStore = data.storeResDTOList
-            this.$refs.selectStoreComponent.dataFrom(data.storeResDTOList)
-            this.storeSelectGoods = data.commList
-            this.$refs.storeGods.dataFrom(data.commList)
-            this.storeActivityGoods = data.activityDetail.ruleList
+            this.chooseStore = Array.isArray(data.storeResDTOList) ? data.storeResDTOList : []
+            this.$refs.selectStoreComponent.dataFrom(Array.isArray(data.storeResDTOList) ? data.storeResDTOList : [])
+            this.storeSelectGoods = Array.isArray(data.commList) ? data.commList : []
+            this.$refs.storeGods.dataFrom(Array.isArray(data.commList) ? data.commList : [])
+            this.storeActivityGoods = data.activityDetail && Array.isArray(data.activityDetail.ruleList) ? data.activityDetail.ruleList : []
             this.$refs.activityGod.dataFrom(
               data.activityDetail && Array.isArray(data.activityDetail.ruleList)
                 ? data.activityDetail.ruleList
