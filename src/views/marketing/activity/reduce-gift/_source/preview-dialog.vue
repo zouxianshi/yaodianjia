@@ -12,13 +12,13 @@
     </el-input>-->
     <div class="post-img-wrap">
       <div ref="img_wrapper" class="img_wrapper">
-        <img :src="poster">
+        <img :src="poster" />
         <div class="activity-store">益丰大药房</div>
         <div class="activity-title">满减专场</div>
         <div class="activity-desc">爆款商品限时限量优惠</div>
         <!-- <div class="activity-time">活动时间：2020.02.11至2020.04.18</div> -->
         <div class="qcodeimg">
-          <img :src="item.qcode">
+          <img :src="qcode" />
         </div>
         <div class="activity-info">扫码参加活动</div>
       </div>
@@ -30,14 +30,14 @@
           type="primary"
           @click="downPoster"
         >下载海报</el-button>
-        <a :href="item.qcode" download="二维码.png">
+        <a :href="qcode" download="二维码.png">
           <el-button plain type="primary">下载二维码</el-button>
         </a>
         <el-button
           slot="append"
           style="margin-top: 10px"
           type="success"
-          @click="doCopy('www.baidu.com')"
+          @click="doCopy(activityUrl)"
         >复制活动连接</el-button>
       </div>
     </div>
@@ -55,26 +55,31 @@ import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
 import html2canvas from 'html2canvas'
 import poster from '@/assets/image/acvity/poster.png'
+import QRCode from 'qrcode'
+import { mapGetters } from 'vuex'
 Vue.use(VueClipboard)
 export default {
-  props: {
-    item: {
-      type: Object,
-      default() {
-        return {
-          input3: 'www.baidu.com',
-          qcode:
-            'data:image/jpg;base64,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'
-        }
-      }
-    }
+   computed: {
+    ...mapGetters(['merCode'])
   },
   data() {
     return {
       dialogVisible: false,
       downLoding: false,
-      poster
+      poster,
+      qcode: '',
+      activityUrl: `${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`
     }
+  },
+  created() {
+    QRCode.toDataURL(`${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`)
+      .then(url => {
+        console.log(url)
+        this.qcode = url
+      })
+      .catch(err => {
+        console.error(err)
+      })
   },
   methods: {
     open() {
@@ -162,7 +167,7 @@ export default {
         left: 50%;
         transform: translate(-50%, 0);
         font-size: 24px;
-        color: #FC6963;
+        color: #fc6963;
         white-space: nowrap;
       }
       .activity-desc {
@@ -171,7 +176,7 @@ export default {
         left: 50%;
         transform: translate(-50%, 0);
         font-size: 14px;
-        color: #DD9B7E;
+        color: #dd9b7e;
         white-space: nowrap;
       }
       .activity-time {
@@ -184,7 +189,7 @@ export default {
         font-size: 12px;
         color: #999;
         white-space: nowrap;
-        border:1px solid rgba(255,239,232,1);
+        border: 1px solid rgba(255, 239, 232, 1);
       }
       .activity-info {
         color: #ffd0d0;
