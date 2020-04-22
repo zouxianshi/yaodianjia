@@ -28,3 +28,11 @@ export function addCoupon(params) {
     data: params
   })
 }
+// 编辑优惠券
+export function updateCoupon(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/updateCoupon`,
+    method: 'post',
+    data: params
+  })
+}

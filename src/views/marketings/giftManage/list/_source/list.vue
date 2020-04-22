@@ -121,7 +121,6 @@ export default {
       } else {
         this.$router.push('/marketings/gift-manage/gift?id=' + data.id)
       }
-      console.log(data)
     }
   }
 }

@@ -72,8 +72,8 @@ export default {
   data() {
     return {
       gridData: [],
-      selectedArr: [], //  已选择门店所有信息
-      hasSelectList: [], // 已选择门店code集合
+      selectedArr: [], //  已选择商品所有信息
+      hasSelectList: [], // 已选择商品id集合
       totalCount: 0,
       searchParams: {
         erpOrName: ''
@@ -91,27 +91,26 @@ export default {
     show(product) {
       this.hasSelectList = []
       product.forEach(item => {
-        this.hasSelectList.push(item.name)
+        this.hasSelectList.push(item.id)
       })
-      this.dialogTableVisible = true
       this.queryGoodsData()
-      this.$nextTick(() => {
-        this.$refs.dataTable.clearSelection()
-        this.gridData.forEach(row => {
-          if (this.hasSelectList.indexOf(row.name) >= 0) {
-            this.$refs.dataTable.toggleRowSelection(row, true)
-          }
-        })
-      })
     },
     // 查询商品
     queryGoodsData() {
       var params = Object.assign({}, this.pageInfo, this.searchParams)
       queryGoods(params).then(res => {
-        console.log(res)
+        this.dialogTableVisible = true
         if (res.data && res.data.data) {
           this.gridData = res.data.data
           this.totalCount = res.data.totalCount
+          this.$nextTick(() => {
+            this.$refs.dataTable.clearSelection()
+            this.gridData.forEach(row => {
+              if (this.hasSelectList.indexOf(row.id) >= 0) {
+                this.$refs.dataTable.toggleRowSelection(row, true)
+              }
+            })
+          })
         }
       })
     },

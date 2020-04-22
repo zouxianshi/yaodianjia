@@ -1,7 +1,7 @@
 <template>
   <div class="phone-view-modal">
     <div class="header">
-      <span> &emsp;‹返回 </span>
+      <span> &emsp;‹ 返回 </span>
       <span class="title">优惠券</span>
       <span class="title">...&emsp;</span>
     </div>

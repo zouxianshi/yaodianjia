@@ -82,9 +82,9 @@ export default {
     queryStoreDate() {
       var params = Object.assign({}, this.searchParams, this.pageInfo)
       queryStores(params).then(res => {
+        this.dialogTableVisible = true
         if (res.data && res.data.data) {
           this.gridData = res.data.data
-          this.dialogTableVisible = true
           this.totalCount = res.data.totalCount
           this.$nextTick(() => {
             this.$refs.dataTable.clearSelection()

@@ -1,6 +1,6 @@
 <template>
   <div class="selected-store-view">
-    <el-table ref="dataTable" :data="selectedStores">
+    <el-table ref="dataTable" :data="selectedStores.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)" height="250">
       <el-table-column property="stCode" label="门店编码" width="100" />
       <el-table-column property="stName" label="门店名称" width="100" />
       <el-table-column property="address" label="门店地址" />
@@ -12,12 +12,10 @@
     </el-table>
     <el-pagination
       :current-page="pageInfo.currentPage"
-      :page-sizes="[100, 200, 300, 400]"
       :page-size="pageInfo.pageSize"
       layout="prev, pager, next"
-      :total="400"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      :total="selectedStores.length"
+      @current-change="handleSizeChange"
     />
     <div class="amTips">已选门店{{ selectedStores.length }}家</div>
   </div>
@@ -28,8 +26,8 @@ export default {
     return {
       selectedStores: [],
       pageInfo: {
-        currentPage: 0,
-        pageSize: 100
+        currentPage: 1,
+        pageSize: 5
       }
     }
   },
@@ -44,16 +42,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.pageInfo.currentPage = 1
         this.selectedStores = this.selectedStores.filter(item => item !== row)
         this.$emit('onDel', this.selectedStores)
       })
     },
     // 分页
     handleSizeChange(e) {
-      console.log(e)
-    },
-    handleCurrentChange(e) {
-      console.log(e)
+      this.pageInfo.currentPage = e
     }
   }
 }
