@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" v-loading="pageInfoloading" :model="form" :rules="rules" size="small" label-width="120px">
+    <el-form
+      ref="form"
+      v-loading="pageInfoloading"
+      :model="form"
+      :rules="rules"
+      :disabled="disabled"
+      size="small"
+      label-width="120px"
+    >
       <div class="form-title">基本信息</div>
       <el-form-item label="活动名称：" prop="name">
         <el-input
@@ -83,7 +91,7 @@
             @click="$refs.storeGoodsComponent.open()"
           >选择换购商品 | 已选（{{ storeActivityGoods.length }}）</el-button>
         </template>
-        <select-activity-goods ref="activityGod" @del-item="delActivityGoods" />
+        <select-activity-goods ref="activityGod" :disabled="disabled" @del-item="delActivityGoods" />
       </el-form-item>
       <el-form-item label="换购数量：" prop="confineNum">
         <template>
@@ -104,7 +112,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" style="width: 120px" @click="onSubmit">提交</el-button>
+        <el-button type="primary" style="width: 120px" @click="onSubmit">{{ edit?'更新':'提交' }}</el-button>
       </el-form-item>
     </el-form>
     <!-- 选取换购商品组件 -->
@@ -198,6 +206,7 @@ export default {
           { required: true, validator: checkActivityNum, trigger: 'blur' }
         ]
       },
+      edit: false,
       chooseStore: [],
       pageInfoloading: false,
       storeSelectGoods: [], // 选取的主商品
@@ -207,9 +216,15 @@ export default {
   created() {
     if (this.$route.query.id) {
       this.activityId = this.$route.query.id
-      this.disabled = this.$route.query.id && !this.$route.query.edit // 当前页面为查看
-      this.edit = this.$route.query.id && this.$route.query.edit // 当前页面为编辑
+      this.disabled = this.$route.query.id && !!this.$route.query._ck // 当前页面为查看
+      this.edit = this.$route.query.id && !this.$route.query._ck // 当前页面为编辑
       this.getInfo(this.$route.query.id)
+      this.$route.meta.title = !this.$route.query._ck
+        ? '编辑加价购'
+        : '查看加价购详情'
+      document.title = !this.$route.query._ck
+        ? '编辑加价购'
+        : '查看加价购详情'
     }
   },
   methods: {

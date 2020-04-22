@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <a href="#/marketing/activity/aprice-edit">
+      <a :href="`#${createdUrl}`">
         <el-button class="btn btn-add" type="primary" size="small">新建活动</el-button>
       </a>
       <!-- 列表表单控件 -->
@@ -56,28 +56,38 @@
           </template>
           <el-table-column label="操作" width="130">
             <template slot-scope="scope">
-              <el-button type="text" @click="toLook(scope.row)">查看</el-button>
-              <el-divider direction="vertical" />
-              <el-dropdown trigger="hover">
-                <span class="el-dropdown-link">
-                  更多
-                  <i class="el-icon-arrow-down el-icon--right" />
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <el-button type="text" @click="toEdit(scope.row)">编辑</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <el-button type="text">失败列表</el-button>
-                  </el-dropdown-item>
-                  <!-- <el-dropdown-item>
-                    <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
-                  </el-dropdown-item>-->
-                </el-dropdown-menu>
-              </el-dropdown>
+              <template v-if="!!scope.row.status">
+                <el-button type="text" @click="toLook(scope.row)">查看</el-button>
+                <el-divider direction="vertical" />
+                <el-dropdown trigger="hover">
+                  <span class="el-dropdown-link">
+                    更多
+                    <i class="el-icon-arrow-down el-icon--right" />
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <!-- 拼团活动的编辑活动库存按钮 -->
+                    <el-dropdown-item v-if="scope.row.validStatus===1 && type === '13'">
+                      <product-kucun :row-item="scope.row" />
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button type="text" @click="endActivity(scope.row.id)">失效</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button
+                        type="text"
+                        :disabled="scope.row.validStatus ===1 "
+                        @click="toEdit(scope.row)"
+                      >编辑</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button disabled type="text">失败列表</el-button>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+              <template v-else>
+                <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
+              </template>
             </template>
           </el-table-column>
           <div slot="empty">
@@ -107,11 +117,13 @@ import { mapGetters, mapMutations } from 'vuex'
 import { delActInfo, endActInfo } from '@/api/activity'
 import listForm from './_source/list-form'
 import noData from '@/components/NoData'
+import productKucun from './assemble/components/product-kucun'
 
 export default {
   components: {
     listForm,
-    noData
+    noData,
+    productKucun
   },
   data() {
     return {
@@ -162,7 +174,37 @@ export default {
           align: 'center',
           render: true
         }
-      ]
+      ],
+      promotionType: [
+        {
+          id: '11',
+          label: '限时特惠',
+          createUrl: '/marketing/activity/limit-edit'
+        },
+        {
+          id: '12',
+          label: '限时秒杀',
+          createUrl: '/marketing/activity/limit-sec-edit'
+        },
+        {
+          id: '13',
+          label: '拼团列表',
+          createUrl: '/marketing/activity/assemble-edit'
+        },
+        {
+          id: '14',
+          label: '满减满赠',
+          createUrl: '/marketing/activity/reduce-gift-list-edit'
+        },
+        {
+          id: '15',
+          label: '加价购',
+          createUrl: '/marketing/activity/aprice-edit'
+        }
+      ],
+      createdUrl: '',
+      promotionTypeLable: '',
+      type: ''
     }
   },
   computed: {
@@ -180,6 +222,22 @@ export default {
   created() {
     // this._loadStoreList() // 加载活动店铺
     console.log('this.$router--------', this.$route)
+    const filterType = this.promotionType.filter(
+      item => item.id === this.$route.query.type
+    )
+    const pageTitle =
+      Array.isArray(filterType) && filterType.length
+        ? filterType[0].label
+        : '活动列表'
+    this.$route.meta.title = `${pageTitle}列表`
+    document.title = `${pageTitle}列表`
+    this.createdUrl =
+      Array.isArray(filterType) && filterType.length
+        ? filterType[0].createUrl
+        : ''
+    this.promotionTypeLable =
+      Array.isArray(filterType) && filterType.length ? filterType[0].label : ''
+    this.type = this.$route.query.type || ''
     this.fetchData()
   },
   methods: {
@@ -218,15 +276,11 @@ export default {
     },
     // 查看
     toLook(row) {
-      this.$router.push(
-        `/marketing/activity/aprice-edit?id=${row.id}`
-      )
+      this.$router.push(`${this.createdUrl}?id=${row.id}&_ck=1`)
     },
     // 编辑
     toEdit(row) {
-      this.$router.push(
-        `/marketing/activity/aprice-edit?id=${row.id}&edit=1`
-      )
+      this.$router.push(`${this.createdUrl}?id=${row.id}`)
     },
     // 删除
     handleDel(row) {
@@ -262,7 +316,7 @@ export default {
     // 获取列表数据
     _getTableData() {
       const params = {
-        promotionType: this.type,
+        promotionType: this.$route.query.type,
         pmtName: this.searchForm.pmtName,
         currentPage: this.pager.current,
         pageSize: this.pager.size,
@@ -286,7 +340,7 @@ export default {
     },
     formatter(row, column, cellValue) {
       if (column.property === 'activityType') {
-        return '加价购'
+        return this.promotionTypeLable
       } else {
         return cellValue
       }

@@ -6,6 +6,7 @@
         :model="formData"
         :rules="rules"
         label-width="120px"
+        :disabled="disabled"
         size="small"
         class="demo-ruleForm"
       >
@@ -139,7 +140,11 @@
         </el-form-item>
         <!-- 门店列表 -->
         <el-form-item v-show="!formData.allStore">
-          <select-store ref="selectStoreComponent" :disabled="!!activityId" @del-item="delSelectStore" />
+          <select-store
+            ref="selectStoreComponent"
+            :disabled="!!activityId"
+            @del-item="delSelectStore"
+          />
         </el-form-item>
 
         <!-- 二期需求 -->
@@ -326,6 +331,14 @@ export default {
   created() {
     this.activityId = this.$route.query.id
     if (this.activityId) {
+      this.disabled = this.$route.query.id && !!this.$route.query._ck // 当前页面为查看
+      this.edit = this.$route.query.id && !this.$route.query._ck // 当前页面为编辑
+      this.$route.meta.title = !this.$route.query._ck
+        ? '编辑拼团'
+        : '查看拼团详情'
+      document.title = !this.$route.query._ck
+        ? '编辑拼团'
+        : '查看拼团详情'
       this._loadInfo()
     }
   },

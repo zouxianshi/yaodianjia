@@ -56,7 +56,7 @@
         </el-table-column>
         <el-table-column label="操作" width="60">
           <template slot-scope="scope">
-            <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
+            <el-button type="text" :disabled="disabled" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -67,6 +67,12 @@
 // import noData from '@/components/NoData'
 export default {
   // components: { noData },
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     const check_limit = (rule, value, callback) => {
       const reg = /^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/
@@ -110,8 +116,7 @@ export default {
           label: '商品规格'
         }
       ],
-      check_limit: check_limit,
-      disabled: false
+      check_limit: check_limit
     }
   },
   methods: {

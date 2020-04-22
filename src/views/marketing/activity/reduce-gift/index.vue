@@ -328,16 +328,23 @@ export default {
       },
       pageLoading: '',
       pageInfoloading: false,
-      leaveAction: false
+      leaveAction: false,
+      pageStatus: '1' // 1.新增 2.编辑 3.查看
     }
   },
   created() {
     console.log(this.$route)
     if (this.$route.query.id) {
       this.activityId = this.$route.query.id
-      this.disabled = this.$route.query.id && !this.$route.query.edit // 当前页面为查看
-      this.edit = this.$route.query.id && this.$route.query.edit // 当前页面为编辑
+      this.disabled = this.$route.query.id && !!this.$route.query._ck // 当前页面为查看
+      this.edit = this.$route.query.id && !this.$route.query._ck // 当前页面为编辑
       this.getActFullInfo(this.$route.query.id)
+      this.$route.meta.title = !this.$route.query._ck
+        ? '编辑满减满赠'
+        : '查看满减满赠详情'
+      document.title = !this.$route.query._ck
+        ? '编辑满减满赠'
+        : '查看满减满赠详情'
     }
   },
   methods: {
@@ -644,7 +651,7 @@ export default {
             ruleList_af = this.form.ruleList.map((item, index) => {
               let giftSpecIds = []
               if (Array.isArray(item.giftList)) {
-                giftSpecIds = item.giftList.map(giftItem => giftItem.id)
+                giftSpecIds = item.giftList.map(giftItem => giftItem.specId)
               }
               if (!item.giftOrNot && !item.checkOrNot) {
                 throw new Error(`第${index + 1}项必须要选择一项优惠内容`)
