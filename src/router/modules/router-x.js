@@ -162,21 +162,21 @@ const router = [
         component: () => import('@/views/marketing/activity/limit/limit-edit'),
         name: 'limitEdit',
         meta: {
-          title: '创建限时特惠',
+          title: '创建限时活动',
           noCache: true,
           activeMenu: '/marketing/activity'
         }
       },
-      {
-        path: 'activity/limit-sec-edit',
-        component: () => import('@/views/marketing/activity/limit/limit_seckill_edit'),
-        name: 'limitSecEdit',
-        meta: {
-          title: '创建限时秒杀',
-          noCache: true,
-          activeMenu: '/marketing/activity'
-        }
-      },
+      // {
+      //   path: 'activity/limit-sec-edit',
+      //   component: () => import('@/views/marketing/activity/limit/limit_seckill_edit'),
+      //   name: 'limitSecEdit',
+      //   meta: {
+      //     title: '创建限时秒杀',
+      //     noCache: true,
+      //     activeMenu: '/marketing/activity'
+      //   }
+      // },
       // 礼品管理模块
       {
         path: 'gifts',

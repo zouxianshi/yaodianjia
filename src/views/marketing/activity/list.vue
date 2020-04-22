@@ -7,7 +7,7 @@
       <!-- 列表表单控件 -->
       <list-form @form-search="search" />
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table v-loading="loading" :data="tableData" style="width: 100%">
           <template v-for="col in cols">
             <el-table-column
               v-if="!col.render"
@@ -129,11 +129,11 @@ export default {
     return {
       searchForm: {},
       cols: [
-        {
-          prop: 'id',
-          label: '活动编号',
-          width: '150'
-        },
+        // {
+        //   prop: 'id',
+        //   label: '活动编号',
+        //   width: '150'
+        // },
         {
           prop: 'activityType',
           label: '活动类型',
@@ -179,12 +179,12 @@ export default {
         {
           id: '11',
           label: '限时特惠',
-          createUrl: '/marketing/activity/limit-edit'
+          createUrl: '/marketing/activity/limit-edit?l_type=11'
         },
         {
           id: '12',
           label: '限时秒杀',
-          createUrl: '/marketing/activity/limit-sec-edit'
+          createUrl: '/marketing/activity/limit-edit?l_type=12'
         },
         {
           id: '13',
@@ -217,6 +217,9 @@ export default {
     },
     pager() {
       return this.activity.pager
+    },
+    loading() {
+      return this.activity.tabloading
     }
   },
   created() {
@@ -250,7 +253,7 @@ export default {
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.updatePager({
-        size: val || 20
+        size: val
       })
       this._getTableData()
     },
@@ -268,7 +271,7 @@ export default {
       // 更新pager数据
       this.updatePager({
         current: 1,
-        size: 10,
+        size: 20,
         total: 0
       })
       this.searchForm = { ...params }
@@ -276,11 +279,23 @@ export default {
     },
     // 查看
     toLook(row) {
-      this.$router.push(`${this.createdUrl}?id=${row.id}&_ck=1`)
+      if (this.type === '11') {
+        this.$router.push(`${this.createdUrl}&id=${row.id}&_ck=1`)
+      } else if (this.type === '12') {
+        this.$router.push(`${this.createdUrl}&id=${row.id}&_ck=1`)
+      } else {
+        this.$router.push(`${this.createdUrl}?id=${row.id}&_ck=1`)
+      }
     },
     // 编辑
     toEdit(row) {
-      this.$router.push(`${this.createdUrl}?id=${row.id}`)
+      if (this.type === '11') {
+        this.$router.push(`${this.createdUrl}&id=${row.id}`)
+      } else if (this.type === '12') {
+        this.$router.push(`${this.createdUrl}&id=${row.id}`)
+      } else {
+        this.$router.push(`${this.createdUrl}?id=${row.id}`)
+      }
     },
     // 删除
     handleDel(row) {

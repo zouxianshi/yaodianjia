@@ -5,7 +5,7 @@ const state = {
   pager: {
     total: 0,
     current: 1,
-    size: 10
+    size: 20
   },
   tabloading: false
 }
@@ -36,12 +36,10 @@ const actions = {
     getActList(params).then(res => {
       const { code, data } = res
       if (code === '10000') {
-        const { currentPage, totalCount, pageSize } = data
+        const { totalCount } = data
         commit('SET_TABLE_DATA', data && data.data)
         commit('SET_TABLE_PAGATION', {
-          total: totalCount || 0,
-          current: currentPage || 1,
-          size: pageSize || 10
+          total: totalCount || 0
         })
         commit('SET_TABLE_LOADING', false)
       }

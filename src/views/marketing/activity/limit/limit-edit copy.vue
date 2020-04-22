@@ -17,8 +17,7 @@
         >
           <el-form-item label="活动类型">
             <el-radio-group v-model="xForm.type">
-              <el-radio v-if="xForm.type=== '12'" label="12">限时秒杀</el-radio>
-              <el-radio v-if="xForm.type=== '11'" label="11">限时特惠</el-radio>
+              <el-radio :label="11">限时特惠</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="活动名称" prop="pmtName">
@@ -200,22 +199,6 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column v-if="xForm.type === '12'" label="库存" prop="name" min-width="160px">
-                <template slot-scope="scope">
-                  <el-form-item
-                    :prop="'selectedGoods.' + scope.$index + '.stock'"
-                    :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
-                  >
-                    <el-input
-                      v-model="scope.row.stock"
-                      style="width: 92px"
-                      :disabled="disabled"
-                      maxlength="8"
-                    />
-                  </el-form-item>
-                </template>
-              </el-table-column>
-
               <el-table-column v-if="!disabled" label="操作" prop="name" width="90px" align="center">
                 <template slot-scope="scope">
                   <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
@@ -274,8 +257,6 @@ export default {
   },
   data() {
     const check_discount = (rule, value, callback) => {
-      console.log('check_discount----', rule, value)
-      const index = rule.field.split('.')[1]
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
@@ -283,10 +264,6 @@ export default {
         if (this.xForm.mode === 2 && !checkNumberdouble(value)) {
           // 2.减价
           callback(new Error('请输入最多2位小数的正数'))
-        }
-        if (this.xForm.mode === 2 && (value > Number(this.tableForm.selectedGoods[index].mprice))) {
-          // 2.减价
-          callback(new Error('减价金额不可大于参考价'))
         }
         if (this.xForm.mode === 1) {
           // 1.折扣
@@ -343,10 +320,10 @@ export default {
       check_num: check_num,
       disabled: false,
       dataid: '',
-      type: this.$route.query.l_type,
+      type: '',
       xForm: {
         id: '',
-        type: this.$route.query.l_type, // 11.限时优惠 12.限时秒杀
+        type: 11, // 11.限时优惠 12.限时秒杀
         pmtName: '',
         description: '',
         dateRange: [],
@@ -417,7 +394,7 @@ export default {
     }
   },
   created() {
-    console.log('222222222222', this.$route)
+    console.log(this.$route)
     const dataid = this.$route.query.id || ''
     const _ck = this.$route.query._ck
     if (dataid && dataid !== '') {
@@ -429,15 +406,15 @@ export default {
       }
       this._getDetailData()
     }
-    let pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}`
+    let pageTitle = '限时特惠'
     if (this.pageStatus === 2) {
       // pageStatus 1.新增 2.编辑 3.查看
-      pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}编辑`
+      pageTitle = '限时特惠编辑'
     } else if (this.pageStatus === 3) {
-      pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}详情`
+      pageTitle = '限时特惠详情'
       this.disabled = true
     } else {
-      pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}新建`
+      pageTitle = '限时特惠新建'
     }
     this.$route.meta.title = pageTitle
     document.title = pageTitle
@@ -501,18 +478,15 @@ export default {
         this.mutiSetType = ''
       }
     },
+    // toSelectStore() {
+    //   this.$refs.dialogStore.open()
+    // },
     onSetReset() {
       this.mutiSetType = ''
     },
     onSetChange(data) {
-      console.log('11111=--------onSetChange', data)
-      console.log(
-        '11111=--------this.tableForm.selectedGoods',
-        this.tableForm.selectedGoods
-      )
-      console.log('11111=--------this.tableForm.mutiSetType', this.mutiSetType)
       // 设置类型 1.折扣 2.减价 3限购 4.库存
-      const dataMap = this.tableForm.selectedGoods.map((goods, index) => {
+      this.tableForm.selectedGoods.forEach((goods, index) => {
         if (this.mutiSetType === '1' || this.mutiSetType === '2') {
           goods.discount = data.value
           this.$refs.tableForm.clearValidate(
@@ -529,12 +503,7 @@ export default {
             'selectedGoods.' + index + '.stock'
           )
         }
-        return {
-          ...goods
-        }
       })
-      this.selectedGoods = dataMap
-      this.tableForm.selectedGoods = dataMap
       this.$refs.dialogSet.close()
     },
     onSelectedStore(list, checkedAll) {
@@ -661,6 +630,7 @@ export default {
       let ret = []
       ret = goodsList.map(v => {
         const item = v
+        delete item.mprice
         return item
       })
       console.log('formatItems', ret)
@@ -717,7 +687,7 @@ export default {
 
             this.xForm = Object.assign(data, {
               dateRange: [res.data.startTime, res.data.endTime],
-              type: data.pmtType + '',
+              type: data.pmtType,
               allStore: false,
               mode: data.activityDetail && data.activityDetail.pmtMode,
               freePostFee:
@@ -767,9 +737,7 @@ export default {
           if (res.code === '10000') {
             this.$message.success('创建成功')
             setTimeout(_ => {
-              this.$router.push(
-                `/marketing/activity/list?type=${this.$route.query.l_type}`
-              )
+              this.$router.push('/marketing/activity/list?type=11')
               this.saveLoading = false
             }, 1000)
           }
@@ -805,9 +773,7 @@ export default {
           if (res.code === '10000') {
             this.$message.success('保存成功')
             setTimeout(_ => {
-              this.$router.push(
-                `/marketing/activity/list?type=${this.$route.query.l_type}`
-              )
+              this.$router.push('/marketing/activity/list?type=11')
               this.saveLoading = false
             }, 1000)
           }

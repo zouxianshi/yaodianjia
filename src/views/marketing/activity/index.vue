@@ -85,7 +85,7 @@ export default {
           lable: '限时特惠',
           img: limitPreferential,
           listUrl: '/marketing/activity/list?type=11',
-          linkUrl: '/marketing/activity/limit-edit',
+          linkUrl: '/marketing/activity/limit-edit?l_type=11',
           desc:
             '限时折扣则更侧重于优惠折扣。设置固定周期的限时活动，可提高顾客粘性。'
         },
@@ -103,7 +103,7 @@ export default {
           lable: '限时秒杀',
           img: limitSecKill,
           listUrl: '/marketing/activity/list?type=12',
-          linkUrl: '/marketing/activity/limit-sec-edit',
+          linkUrl: '/marketing/activity/limit-edit?l_type=12',
           desc:
             '限时秒杀更强调高时效性的低价刺激，可设置独立库存，限时折扣则更侧重于优惠折扣。'
         }

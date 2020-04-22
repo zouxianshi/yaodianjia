@@ -339,7 +339,7 @@ export default {
       type: '',
       xForm: {
         id: '',
-        type: 12, // 11.限时优惠 12.限时秒杀
+        type: '', // 11.限时优惠 12.限时秒杀
         pmtName: '',
         description: '',
         dateRange: [],
@@ -413,6 +413,8 @@ export default {
     console.log(this.$route)
     const dataid = this.$route.query.id || ''
     const _ck = this.$route.query._ck
+    this.type = this.$route.query.l_type
+    this.form.type = this.$route.query.l_type
     if (dataid && dataid !== '') {
       this.dataid = dataid
       if (_ck === '1') {
