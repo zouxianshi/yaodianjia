@@ -7,8 +7,8 @@
           <m-edit :item="{type:'mall-title'}" />
         </div>
       </div>
-      <div class="title">
-        <b>{{ dragGlobal.name || '' }}</b>
+      <div id="va-title" class="title">
+        <b>{{ dragGlobal.title || '' }}</b>
       </div>
     </div>
   </div>

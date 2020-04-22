@@ -4,9 +4,9 @@
   </div>
 </template>
 <script>
-import { uuid } from '@/utils'
-import { itemParams } from './../../_source/default'
-import { findComponentsDownward } from '@/utils'
+
+import { jumpCurrentSet } from './utils'
+
 export default {
   name: 'VaEdit',
   data() {
@@ -20,19 +20,11 @@ export default {
   },
   methods: {
     onSettings() {
-      const { item, item: { type }} = this
-      const instance = findComponentsDownward(this.$root, 'SettingsArea')[0]
-      const setItem = item
-      if (setItem.type === 'mall-title') {
-        setItem.itemList = [itemParams]
-      }
-      // No caching update uuid.
-      instance.setSelected(_.assign(setItem, {
-        uuid: `${uuid(`${type}-`)}${uuid()}${uuid()}${uuid()}`
-      }))
+      jumpCurrentSet(this.$root, this.item)
     }
   },
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {

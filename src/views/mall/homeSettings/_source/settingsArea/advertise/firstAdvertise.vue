@@ -23,9 +23,9 @@ export default {
       searchParams: {
         dimensionId: '',
         id: '',
-        itemList: '',
+        itemList: [],
         subType: 'first',
-        title: 'aaa',
+        title: '',
         type: 'advertise'
       },
       loading: false
@@ -51,7 +51,9 @@ export default {
         this.searchParams.itemList = list
         this.loading = true
         this.$emit('on-update', _.cloneDeep(this.searchParams), () => {
-          this.loading = false
+          setTimeout(() => {
+            this.loading = false
+          }, 800)
         })
       }
     },

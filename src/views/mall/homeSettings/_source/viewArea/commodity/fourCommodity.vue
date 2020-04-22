@@ -1,6 +1,6 @@
 <template>
   <div class="va-four-commodity-model">
-    <m-four-item v-for="(el,i) in 1" :key="i" />
+    <m-four-item v-for="(el,i) in item.itemList" :key="i" :item="el" />
   </div>
 </template>
 <script>
@@ -8,11 +8,18 @@ import mFourItem from './fourItem'
 export default {
   name: 'VaFourCommodity',
   data() {
-    return {}
+    return {
+    }
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {

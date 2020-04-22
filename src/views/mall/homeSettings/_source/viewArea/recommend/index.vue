@@ -3,11 +3,12 @@
     <div class="vre-title">
       <m-title :item="{itemList:[{name:'为你推荐'}]}" />
     </div>
-    <component :is="mod" :item="item" />
+    <component :is="mod" :item="item" @on-update="_onUpdate" />
   </div>
 </template>
 <script>
 import mTitle from '../title'
+import { mapState, mapActions } from 'vuex'
 import mFirstRecommend from './firstRecommend'
 import mSecondRecommend from './secondRecommend'
 
@@ -22,7 +23,15 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+    ...mapActions('mall', ['saveAssembly']),
+    _onUpdate(searchParams) {
+      const { item: { uuid }, dragGlobal: { id }} = this
+      this.saveAssembly({ searchParams: { ...searchParams, dimensionId: id }, uuid }).then(() => {
+        this.$message.success('组件保存成功')
+      })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -41,6 +50,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('mall', ['dragData', 'dragGlobal']),
     mod() {
       return this.item.subType === 'first' ? mFirstRecommend : mSecondRecommend
     }

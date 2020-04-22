@@ -11,8 +11,11 @@
   </div>
 </template>
 <script>
+import { mapMutations, mapActions } from 'vuex'
 import mComponentBar from './_source/componentBar'
 import mHomeMain from './_source/homeMain'
+import { noDragData, noDragGlobal } from './_source/_source/default'
+
 export default {
   name: 'HomeSettings',
   components: { mComponentBar, mHomeMain },
@@ -25,6 +28,8 @@ export default {
   beforeCreate() {
   },
   created() {
+    const { merCode } = this.$store.state.user
+    this.getCenterStoreId({ merCode })
   },
   beforeMount() {
   },
@@ -35,10 +40,15 @@ export default {
   updated() {
   },
   beforeDestroy() {
+    this.setDragData(noDragData)
+    this.setDragGlobal(noDragGlobal)
   },
   destroyed() {
   },
-  methods: {}
+  methods: {
+    ...mapActions('mall', ['getCenterStoreId']),
+    ...mapMutations('mall', ['setDragData', 'setDragGlobal'])
+  }
 }
 </script>
 

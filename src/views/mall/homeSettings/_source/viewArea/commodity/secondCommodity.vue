@@ -1,6 +1,6 @@
 <template>
   <div class="va-second-commodity-model">
-    <m-second-item v-for="(el,i) in 3" :key="i" />
+    <m-second-item v-for="(el,i) in item.itemList" :key="i" :item="el" />
   </div>
 </template>
 <script>
@@ -8,11 +8,18 @@ import mSecondItem from './secondItem'
 export default {
   name: 'VaSecondCommodity',
   data() {
-    return {}
+    return {
+    }
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {

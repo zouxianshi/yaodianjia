@@ -1,15 +1,24 @@
 <template>
   <div class="second-recommend-model">
-    <m-four-commodity />
+    <m-four-commodity :item="searchParams" />
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+import { getRecommendedFormat } from './../_source/utils'
 import mFourCommodity from '../commodity/fourCommodity'
 export default {
   name: 'VaSecondRecommend',
   data() {
     return {
-      dragList: []
+      searchParams: {
+        dimensionId: '',
+        id: '',
+        itemList: [],
+        subType: 'second',
+        title: '',
+        type: 'recommend'
+      }
     }
   },
   props: {
@@ -24,6 +33,11 @@ export default {
   beforeCreate() {
   },
   created() {
+    this.searchParams = _.cloneDeep(this.item)
+    getRecommendedFormat(this).then(itemList => {
+      this.searchParams.itemList = itemList
+      this.$emit('on-update', this.searchParams)
+    })
   },
   beforeMount() {
   },
@@ -38,7 +52,7 @@ export default {
   destroyed() {
   },
   computed: {
-
+    ...mapState('mall', ['centerStoreId', 'centerStoreName'])
   },
   components: { mFourCommodity }
 }

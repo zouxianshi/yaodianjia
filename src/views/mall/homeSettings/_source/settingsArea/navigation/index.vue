@@ -8,10 +8,9 @@
   </div>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import mFirstNavigation from './firstNavigation'
 import mSecondNavigation from './secondNavigation'
-import { saveAssembly } from '@/api/mallService'
 export default {
   name: 'SaNavigation',
   data() {
@@ -26,22 +25,19 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('mall', ['setUUidDragData']),
+    ...mapActions('mall', ['saveAssembly']),
     _onUpdate(searchParams, fn) {
-      saveAssembly(searchParams).then(res => {
-        const { uuid } = this.item
-        this.setUUidDragData({ uuid, ...searchParams, ...res.data })
-        setTimeout(() => {
-          this.$message.success('保存成功')
-          fn()
-        }, 1200)
+      const { item: { uuid }, dragGlobal: { id }} = this
+      this.saveAssembly({ searchParams: { ...searchParams, dimensionId: id }, uuid }).then(() => {
+        this.$message.success('组件保存成功')
+        fn()
       }).catch(() => {
         fn()
       })
     }
   },
   computed: {
-    ...mapState('mall', ['dragData']),
+    ...mapState('mall', ['dragGlobal']),
     mod() {
       switch (this.item.subType) {
         case 'second':

@@ -9,8 +9,7 @@
 </template>
 <script>
 import mTitle from './title'
-import { mapState, mapMutations } from 'vuex'
-import { saveAssembly } from '@/api/mallService'
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'SaTitle',
   data() {
@@ -24,17 +23,16 @@ export default {
       default: () => {}
     }
   },
-
+  computed: {
+    ...mapState('mall', ['dragGlobal'])
+  },
   methods: {
-    ...mapMutations('mall', ['setUUidDragData']),
-    _onUpdate(p, fn) {
-      saveAssembly(p).then(res => {
-        const { uuid } = this.item
-        this.setUUidDragData({ uuid, ...p, ...res.data })
-        setTimeout(() => {
-          this.$message.success('保存成功')
-          fn()
-        }, 1200)
+    ...mapActions('mall', ['saveAssembly']),
+    _onUpdate(searchParams, fn) {
+      const { item: { uuid }, dragGlobal: { id }} = this
+      this.saveAssembly({ searchParams: { ...searchParams, dimensionId: id }, uuid }).then(() => {
+        this.$message.success('组件保存成功')
+        fn()
       }).catch(() => {
         fn()
       })
@@ -43,7 +41,6 @@ export default {
   mounted() {
 
   },
-  ...mapState('mall', ['dragData']),
   watch: {
     'item.type': {
       deep: true,

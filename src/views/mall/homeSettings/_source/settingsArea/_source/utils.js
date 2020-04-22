@@ -17,3 +17,6 @@ export const pageTypeList = [
   //   code: 4
   // }
 ]
+
+export const saIsId = (data, id) => _.map(data, v => v.id).includes(id)
+

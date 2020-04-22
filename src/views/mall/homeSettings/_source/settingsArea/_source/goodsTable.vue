@@ -1,85 +1,128 @@
 <template>
   <div class="goods-table-model">
     <div class="gtm-conditions">
-      <el-select v-model="value" placeholder="商品分组" size="mini" style="width: 160px;">
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
-      <el-input placeholder="商品品牌" size="mini" style="width: 214px;" />
-      <el-input placeholder="商品编码/名称" size="mini" style="width: 214px;" />
-      <el-button type="primary" size="mini">查询</el-button>
+      <m-gt-conditions @on-conditions="_onConditions" />
     </div>
-    <div class="gtm-content">
-      <el-table :data="tableData" :row-key="getRowKeys" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 258px)">
-        <el-table-column :reserve-selection="true" type="selection" width="55" />
-        <el-table-column label="" width="50">
-          <template>sadsadad</template>
-        </el-table-column>
-        <el-table-column prop="date" label="日期" width="100" />
-        <el-table-column prop="name" label="姓名" />
-        <el-table-column prop="address" label="地址" />
-      </el-table>
+    <div v-loading="loading" class="gtm-content">
+      <m-gt-list ref="gtList" :list="list" :item-list="activesData" @on-selects="_onSelects" />
       <div class="gtm-pages">
-        <el-pagination :current-page="4" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400" />
+        <el-pagination :current-page="searchParams.currentPage" :page-size="searchParams.pageSize" :total="totalCount" @current-change="onPage" />
+      </div>
+      <el-divider content-position="left">已选数据</el-divider>
+      <div class="gtm-active">
+        <div class="gtm-active-box">
+          <template v-for="(item,i) in activesData">
+            <m-second-item v-if="isItem(item)" :key="i" source="sa-select-goods" :item="item" @on-delete="_onDelete" />
+          </template>
+        </div>
       </div>
     </div>
     <div class="gtm-ope">
-      <el-button size="small" type="text">取消</el-button>
-      <el-button type="primary" size="small">确定</el-button>
+      <el-button size="small" type="text" @click="$parent.closeDrawer()">取消</el-button>
+      <el-button type="primary" size="small" @click="onSave">确定</el-button>
     </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+import mGtConditions from './gtConditions'
+import mGtList from './gtList'
+import { saIsId } from './utils'
+import { getActivityComm } from '@/api/mallService'
+import mSecondItem from './../../viewArea/commodity/secondItem'
+
 export default {
   name: 'GoodsTable',
   data() {
     return {
-      options: [
-        {
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
-      ],
-      value: '',
-      tableData: [
-        {
-          id: 22,
-          photo: '-',
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          id: 23,
-          photo: '-',
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }
-      ]
+      list: [],
+      totalCount: null,
+      loading: false,
+      activesData: [],
+      searchParams: {
+        brandName: '',
+        currentPage: 1,
+        distinct: true,
+        firstTypeId: '',
+        groupType: true,
+        merCode: 'string',
+        pageSize: 20,
+        searchKeyWord: '',
+        secondTypeId: '',
+        skuIds: [],
+        storeIds: [],
+        threeTypeId: ''
+      }
     }
   },
-  props: {},
+  props: {
+    subType: {
+      type: String,
+      default: ''
+    },
+    itemList: {
+      type: Array,
+      default: () => []
+    }
+  },
   methods: {
-    getRowKeys(row) {
-      return row.id
+    _onConditions(o) {
+      this.searchParams = { ...this.searchParams, ...o }
+      this.getData()
+    },
+    isItem(item) {
+      return !_.isEmpty(item.id)
+    },
+    onPage(v) {
+      this.searchParams.currentPage = v
+      this.getData()
+    },
+    _onDelete(item) {
+      this.$refs.gtList.handlerClose(item, id => {
+        this.activesData = _.reject(this.activesData, ['id', id])
+      })
+    },
+    _onSelects(v) {
+      this.activesData = v
+    },
+    getData() {
+      this.loading = true
+      getActivityComm(this.searchParams).then(res => {
+        const { data, totalCount } = res.data
+        this.totalCount = totalCount
+        if (this.activesData.length) {
+          this.list = _.map(data, v => {
+            return { ...v, select: saIsId(this.activesData, v.specId) }
+          })
+        } else {
+          this.list = data
+        }
+
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    async onSave() {
+      const { subType, activesData } = this
+      if (subType === 'first' && activesData.length !== 2) {
+        this.$message.error('目前组件只允许添加（2）个商品！')
+        return
+      }
+      await this.$emit('on-update', activesData)
+      this.$parent.closeDrawer()
     }
   },
-  watch: {},
+  watch: {
+
+  },
   beforeCreate() {
   },
   created() {
+    this.searchParams.merCode = this.$store.getters.merCode
+    this.searchParams.storeIds = [this.centerStoreId]
+    this.activesData = this.itemList
+    this.getData()
   },
   beforeMount() {
   },
@@ -93,13 +136,16 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
-  components: {}
+  computed: {
+    ...mapState('mall', ['centerStoreId'])
+  },
+  components: { mGtConditions, mGtList, mSecondItem }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .goods-table-model {
+    margin-top: -20px;
     .gtm-conditions,.gtm-content {
       padding: 0 20px;
     }
@@ -107,7 +153,27 @@ export default {
       overflow-y: scroll;
       margin: 20px 0;
       padding-right: 16px;
-      height: calc(100vh - 208px);
+      height: calc(100vh - 188px);
+      .gtm-active {
+        width: 100%;
+        justify-content: space-between;
+        white-space: nowrap;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        display: flex;
+        background: rgb(249, 249, 250);
+        padding-top: 10px;
+        border-radius:4px;
+        &::-webkit-scrollbar{
+          display: none;
+        }
+        .gtm-active-box {
+          .c-second-item-model {
+            float:none;
+            display: inline-block;
+          }
+        }
+      }
       .gtm-pages {
         text-align: center;
         margin-top: 16px;

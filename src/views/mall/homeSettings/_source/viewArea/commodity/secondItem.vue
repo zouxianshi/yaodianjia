@@ -1,21 +1,35 @@
 <template>
   <div class="c-second-item-model">
-    <m-icon-activity />
-    <img class="csim-photo" src="../img/va_nav_1.png" alt="" width="100" height="100">
-    <p class="csim-name">拜耳力度伸维</p>
+    <el-button v-if="source === 'sa-select-goods'" class="csim-delete" size="mini" type="danger" icon="el-icon-close" circle @click="() => $emit('on-delete',item)" />
+    <m-icon-activity v-if="item.activityId || false" />
+    <div class="csim-photo" :class="{'no-data':!item.img}">
+      <img v-if="item.img" :src="`${showImg(item.img)}?x-oss-process=style/w_160`" alt="" width="100" height="100">
+      <m-icons v-else :is-center="true" />
+    </div>
+    <p class="csim-name">{{ item.name || '-' }}</p>
     <p class="csim-price">
-      <span class="p-1">¥188.00</span>
+      <span class="p-1">¥{{ item.price || '-' }}</span>
     </p>
   </div>
 </template>
 <script>
+import mIcons from './../../_source/icons'
 import mIconActivity from '../_source/iconActivity'
 export default {
   name: 'CSecondItem',
   data() {
     return {}
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    },
+    source: {
+      type: String,
+      default: 'va'
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -35,7 +49,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mIconActivity }
+  components: { mIconActivity, mIcons }
 }
 </script>
 
@@ -50,6 +64,12 @@ export default {
     margin: 0 5px;
     display: block;
     margin-bottom: 10px;
+    .csim-delete {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      padding: 2px;
+    }
     &:nth-child(1) {
       margin-left: 11px;
     }
@@ -57,8 +77,20 @@ export default {
       padding:0 10px;
     }
     .csim-photo {
-      margin: 14px auto 16px auto;
+      width: 126px;
+      height: 132px;
       display: block;
+      &.no-data {
+        background: #F0F2F5;
+        border-radius: 4px 4px 0 0;
+      }
+      >img {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -50px;
+        margin-top: -66px;
+      }
     }
     .csim-name {
       font-size: 14px;

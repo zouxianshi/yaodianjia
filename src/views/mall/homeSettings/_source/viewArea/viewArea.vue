@@ -4,7 +4,7 @@
     <m-header />
 
     <!--banner轮播图-->
-    <m-banner :item-list="bannerTestData" />
+    <m-banner :item-list="bannerItemList" style="margin-left: -0.5px" />
 
     <!--公告-->
     <m-notice />
@@ -41,11 +41,14 @@
 
     <!--底部导航-->
     <m-bottom-nav />
+    <el-dialog title="模板名称设置" append-to-body :visible.sync="isSaveVisible" width="500">
+      <m-save-dialog v-if="isSaveVisible" @on-close="() => isSaveVisible = false" />
+    </el-dialog>
   </div>
 </template>
 <script>
 import _ from 'lodash'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import vDraggable from 'vuedraggable'
 import mHeader from './header'
 import mBanner from './../_source/banner'
@@ -56,66 +59,26 @@ import mAdvertise from './advertise'
 import mCommodity from './commodity'
 import mRecommend from './recommend'
 import mEdit from './_source/edit'
+import mSaveDialog from './_source/saveDialog'
 import mDelete from './_source/delete'
 import mBottomNav from './bottomNav'
 import mNoData from './noData'
 import mVaErrorDrag from './_source/vaErrorDrag'
+import { jumpCurrentSet, verifRequired, toPosition, getBannerList } from './_source/utils'
 
 export default {
   name: 'ViewArea',
-  components: { mHeader, mBanner, mVaErrorDrag, mNotice, vDraggable, mNavigation, mTitle, mDelete, mEdit, mAdvertise, mCommodity, mRecommend, mNoData, mBottomNav },
+  components: { mHeader, mBanner, mSaveDialog, mVaErrorDrag, mNotice, vDraggable, mNavigation, mTitle, mDelete, mEdit, mAdvertise, mCommodity, mRecommend, mNoData, mBottomNav },
   props: {},
   data() {
     return {
       dragList: [],
-      bannerTestData: [
-        {
-          className: '',
-          id: '',
-          img: 'https://www.baidu.com/img/bd_logo1.png',
-          mprice: 0,
-          name: '请填写',
-          price: 0,
-          productName: '',
-          setId: '',
-          sort: 0,
-          specId: 0,
-          typeId: '',
-          url: ''
-        },
-        {
-          className: '',
-          id: '',
-          img: 'https://www.baidu.com/img/bd_logo1.png',
-          mprice: 0,
-          name: '请填写',
-          price: 0,
-          productName: '',
-          setId: '',
-          sort: 0,
-          specId: 0,
-          typeId: '',
-          url: ''
-        },
-        {
-          className: '',
-          id: '',
-          img: 'https://www.baidu.com/img/bd_logo1.png',
-          mprice: 0,
-          name: '请填写',
-          price: 0,
-          productName: '',
-          setId: '',
-          sort: 0,
-          specId: 0,
-          typeId: '',
-          url: ''
-        }
-      ]
+      isSaveVisible: false,
+      bannerItemList: []
     }
   },
   computed: {
-    ...mapState('mall', ['dragData']),
+    ...mapState('mall', ['dragData', 'dragGlobal']),
     dragOptions() {
       return {
         sort: true,
@@ -123,7 +86,8 @@ export default {
         group: 'shared',
         disabled: false,
         preventOnFilter: true,
-        ghostClass: 'ghost'
+        ghostClass: 'ghost',
+        bannerItemList: []
       }
     }
   },
@@ -132,6 +96,9 @@ export default {
   },
   created() {
     this.dragList = _.cloneDeep(this.dragData)
+    getBannerList().then(itemList => {
+      this.bannerItemList = itemList
+    })
   },
   beforeMount() {
   },
@@ -142,6 +109,7 @@ export default {
   updated() {
   },
   methods: {
+    ...mapActions('mall', ['saveStructure']),
     ...mapMutations('mall', ['setDragData']),
     /**
      * drag end
@@ -159,16 +127,34 @@ export default {
     /**
      * Process saved data and do error verification
      */
-    handlerVerifDragData() {
-      const required = {
-        title: (itemList) => _.some(itemList, { name: '' }),
-        navigation: (itemList) => _.some(itemList, { img: '', url: '', name: '' }),
-        advertise: (itemList) => _.some(itemList, { img: '', url: '' })
+    handlerVerifDragData(fn) {
+      const { dragList, dragGlobal } = this
+      const { subType } = _.head(dragList)
+
+      if (!dragGlobal.title) {
+        this.$message.error('请输入微商城名称！')
+        jumpCurrentSet(this.$root, { type: 'mall-title' })
+        return fn()
       }
-      this.dragList = _.map(this.dragList, v => { return { ...v, error: required[v.type](v.itemList) } })
-      const is = _.some(this.dragList, { error: false })
-      if (!is) {
-        alert('请全部填写完毕')
+
+      if (dragList.length === 1 && subType === 'no-data') {
+        this.$message.error('请拖拽部署商城首页！')
+        return fn()
+      }
+      this.dragList = _.map(dragList, v => { return { ...v, error: verifRequired[v.type](v.itemList) } })
+
+      this.setDragData(this.dragList)
+
+      const headItem = _.head(_.reject(this.dragList, ['error', false]))
+
+      if (!_.some(this.dragList, { error: true })) {
+        // todo 弹层保存
+        this.isSaveVisible = true
+        fn()
+      } else {
+        toPosition(headItem.uuid)
+        jumpCurrentSet(this.$root, headItem)
+        fn()
       }
     }
   },

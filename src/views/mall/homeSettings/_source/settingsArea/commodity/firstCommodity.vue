@@ -1,15 +1,15 @@
 <template>
   <m-sa-layout>
     <div slot="exhibition">
-      <m-first-commodity />
+      <m-first-commodity :item="searchParams" />
     </div>
     <div slot="item">
       <el-button size="mini" style="width: 100%;margin-bottom: 16px;" icon="el-icon-edit-outline" @click="dialogVisible = true">选择商品</el-button>
       <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body title="选择商品" size="700px" :visible.sync="dialogVisible" :with-header="false">
-        <m-goods-table />
+        <m-goods-table v-if="dialogVisible" :item-list="searchParams.itemList" :sub-type="searchParams.subType" @on-update="_onUpdate" />
       </el-drawer>
     </div>
-    <el-button slot="submit" type="primary" style="width: 100%" size="mini">保存商品设置1</el-button>
+    <el-button slot="submit" type="primary" style="width: 100%" size="mini" :loading="loading" @click="onSubmit">保存商品设置</el-button>
   </m-sa-layout>
 </template>
 <script>
@@ -20,15 +20,42 @@ export default {
   name: 'FirstCommodity',
   data() {
     return {
-      dialogVisible: false
+      loading: false,
+      dialogVisible: false,
+      searchParams: {
+        dimensionId: '',
+        id: '',
+        itemList: [],
+        subType: 'first',
+        title: '',
+        type: 'commodity'
+      }
     }
   },
-  props: {},
-  methods: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    onSubmit() {
+      this.loading = true
+      this.$emit('on-update', _.cloneDeep(this.searchParams), () => {
+        setTimeout(() => {
+          this.loading = false
+        }, 800)
+      })
+    },
+    _onUpdate(itemList) {
+      this.searchParams.itemList = _.cloneDeep(itemList)
+    }
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
+    this.searchParams = _.cloneDeep(this.item)
   },
   beforeMount() {
   },

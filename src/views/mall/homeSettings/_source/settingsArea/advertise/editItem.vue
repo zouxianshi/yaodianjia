@@ -96,7 +96,6 @@ export default {
         this.errorGather.isUrl = true
         return false
       }
-      console.log(this.searchParams)
       return { ...this.searchParams }
     },
     reset() {

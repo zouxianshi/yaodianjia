@@ -1,23 +1,33 @@
 <template>
   <div class="c-first-item-model">
-    <m-icon-activity />
-    <img class="cfim-photo" src="../img/va_nav_1.png" alt="" width="140" height="140">
-    <p class="cfim-name">拜耳力度伸维c泡腾片</p>
+    <m-icon-activity v-if="item.activityId" />
+    <div class="cfim-photo" :class="{'no-data':!item.img}">
+      <img v-if="item.img" :src="`${showImg(item.img)}?x-oss-process=style/w_160`" alt="" width="140" height="140">
+      <m-icons v-else :is-center="true" />
+    </div>
+
+    <p class="cfim-name">{{ item.name || '-' }}</p>
     <p class="cfim-price">
-      <span class="p-1">¥188.00</span>
-      <span class="p-2">¥120</span>
+      <span class="p-1">¥{{ item.price || '0.00' }}</span>
+      <span class="p-2">¥{{ item.mprice || '0.00' }}</span>
     </p>
     <p class="cfim-cart" />
   </div>
 </template>
 <script>
+import mIcons from './../../_source/icons'
 import mIconActivity from '../_source/iconActivity'
 export default {
   name: 'CFirstItem',
   data() {
     return {}
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -37,7 +47,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mIconActivity }
+  components: { mIconActivity, mIcons }
 }
 </script>
 
@@ -57,9 +67,19 @@ export default {
       padding:0 10px;
     }
     .cfim-photo {
-      width: 140px;
-      margin: 30px auto;
-      display: block;
+      width: 193px;
+      height: 200px;
+      &.no-data {
+        background: #F0F2F5;
+        border-radius: 4px 4px 0 0;
+      }
+      >img {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -70px;
+        margin-top: -96.5px;
+      }
     }
     .cfim-name {
       font-size: 14px;

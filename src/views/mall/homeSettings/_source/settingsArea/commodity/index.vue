@@ -2,13 +2,13 @@
   <div class="sa-commodity-model">
     <el-tabs :value="assemblyName" type="card">
       <el-tab-pane :label="assemblyName" :name="assemblyName">
-        <component :is="mod" :item="item" />
+        <component :is="mod" :item="item" @on-update="_onUpdate" />
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
-// comm-spec/_search
+import { mapState, mapActions } from 'vuex'
 import mFirstCommodity from './firstCommodity'
 import mSecondCommodity from './secondCommodity'
 import mThirdCommodity from './thirdCommodity'
@@ -26,7 +26,18 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+    ...mapActions('mall', ['saveAssembly']),
+    _onUpdate(searchParams, fn) {
+      const { item: { uuid }, dragGlobal: { id }} = this
+      this.saveAssembly({ searchParams: { ...searchParams, dimensionId: id }, uuid }).then(() => {
+        fn()
+        this.$message.success('组件保存成功')
+      }).catch(() => {
+        fn()
+      })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -45,6 +56,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('mall', ['dragGlobal']),
     mod() {
       switch (this.item.subType) {
         case 'second':

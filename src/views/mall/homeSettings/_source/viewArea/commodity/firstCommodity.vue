@@ -1,6 +1,6 @@
 <template>
   <div class="va-first-commodity-model">
-    <m-first-item v-for="(el,i) in 2" :key="i" />
+    <m-first-item v-for="(el,i) in item.itemList" :key="i" :item="el" />
   </div>
 </template>
 <script>
@@ -8,11 +8,19 @@ import mFirstItem from './firstItem'
 export default {
   name: 'VaFirstCommodity',
   data() {
-    return {}
+    return {
+    }
   },
-  props: {},
-  methods: {},
-  watch: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+  },
+  watch: {
+  },
   beforeCreate() {
   },
   created() {

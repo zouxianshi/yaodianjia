@@ -5,9 +5,10 @@
  */
 
 // import _ from 'lodash'
-import { uuid } from '@/utils'
-import { saveStructure } from '@/api/mallService'
-// import navigation from '@/views/mall/homeSettings/_source/viewArea/navigation/default'
+// import { uuid } from '@/utils'
+import { queryCenterStore } from '@/api/common'
+import { saveStructure, saveAssembly } from '@/api/mallService'
+import { noDragData, noDragGlobal } from '@/views/mall/homeSettings/_source/_source/default'
 
 /* const testData = [
   {
@@ -257,33 +258,24 @@ import { saveStructure } from '@/api/mallService'
   }
 ]*/
 
-/**
- * 默认无数据状态
- */
-const noData = [
-  {
-    uuid: `${uuid('no-data-')}${uuid()}${uuid()}${uuid()}`,
-    name: 'no-data',
-    subType: 'no-data',
-    type: 'no-data',
-    itemList: []
-  }
-]
-
 const state = {
-  dragGlobal: {
-    id: '',
-    name: '',
-    setIds: [],
-    title: '',
-    userName: ''
-  },
-  dragData: [...noData],
+  centerStoreId: '',
+  centerStoreName: '',
+  dragGlobal: { ...noDragGlobal },
+  dragData: [...noDragData],
   vaLoading: false,
   saLoading: false
 }
 
 const mutations = {
+  setCenterStore: (state, payload) => {
+    const { id, stName } = payload
+    state.centerStoreId = id
+    state.centerStoreName = stName
+  },
+  setDragGlobal: (state, payload) => {
+    state.dragGlobal = { ...state.dragGlobal, ...payload }
+  },
   setUUidDragData: (state, payload) => {
     const { uuid } = payload
     const i = _.findIndex(state.dragData, ['uuid', uuid])
@@ -299,9 +291,11 @@ const mutations = {
   delDragData: (state, payload) => {
     const { $index } = payload
     state.dragData.splice($index, 1)
+    if (!state.dragData.length) {
+      state.dragData.push(...noDragData)
+    }
   },
   setHomeName: (state, payload) => {
-    state.dragGlobal.name = payload
     state.dragGlobal.title = payload
   },
   setLoading: (state, payload) => {
@@ -315,6 +309,17 @@ const mutations = {
 }
 
 const actions = {
+  getCenterStoreId({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      queryCenterStore(payload).then(res => {
+        const { id, stName } = res.data
+        commit('setCenterStore', { id, stName })
+        resolve(res)
+      }).catch(e => {
+        reject(e)
+      })
+    })
+  },
   saveStructure({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const p = { ...state.dragGlobal, id: state.dragData[0].dimensionId, setIds: _.map(state.dragData, v => v.id) }
@@ -322,6 +327,21 @@ const actions = {
         resolve()
       }).catch(() => {
         reject()
+      })
+    })
+  },
+  saveAssembly({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { searchParams, uuid } = payload
+      saveAssembly(searchParams).then(res => {
+        const { dimensionId } = res.data
+        if (!state.dragGlobal.id) {
+          commit('setDragGlobal', { id: dimensionId })
+        }
+        commit('setUUidDragData', { uuid, ...searchParams, ...res.data, error: false })
+        resolve(res)
+      }).catch(e => {
+        reject(e)
       })
     })
   }

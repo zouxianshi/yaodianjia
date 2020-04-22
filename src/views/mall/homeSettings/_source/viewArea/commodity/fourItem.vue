@@ -1,25 +1,34 @@
 <template>
   <div class="c-four-item-model">
-    <m-icon-activity />
-    <img class="cfim-photo" src="../img/va_nav_1.png" alt="" width="100" height="100">
+    <m-icon-activity v-if="item.activityId" />
+    <div class="cfim-photo" :class="{'no-data':!item.img}">
+      <img v-if="item.img" :src="`${showImg(item.img)}?x-oss-process=style/w_160`" alt="" width="100" height="100">
+      <m-icons v-else :is-center="true" />
+    </div>
     <div class="cfim-content">
-      <div class="cfim-name">拜耳力度神维c泡疼片30片橙味增强抵抗力补充维生素c感冒vc</div>
+      <div class="cfim-name">{{ item.name || '-' }}</div>
       <div class="cfim-price">
-        <span class="sp1">¥88</span>
-        <span class="sp2">¥102</span>
+        <span class="sp1">¥{{ item.price || '0.00' }}</span>
+        <span class="sp2">¥{{ item.mprice || '0.00' }}</span>
       </div>
     </div>
     <div class="cfim-cart" />
   </div>
 </template>
 <script>
+import mIcons from './../../_source/icons'
 import mIconActivity from '../_source/iconActivity'
 export default {
   name: 'CFourItem',
   data() {
     return {}
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -39,7 +48,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mIconActivity }
+  components: { mIconActivity, mIcons }
 }
 </script>
 
@@ -57,9 +66,15 @@ export default {
     position: relative;
     @include white-background-radius;
     .cfim-photo {
+      width: 100px;
+      height: 100px;
       position: absolute;
       left: 14px;
       top: 14px;
+      &.no-data {
+        background: #F0F2F5;
+        border-radius: 4px;
+      }
     }
     .cfim-content {
       margin-left: 120px;

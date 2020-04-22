@@ -95,11 +95,22 @@ export function getRecommended() {
     asc: false,
     currentPage: 1,
     pageSize: 6,
-    storeId: '',
+    storeId: '053f891c1a524336a93695290d623a8a',
     sortField: 'newTime'
   }
   return request({
     url: `${config.customer}/1.0/commodity-search/_search`,
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取商品
+ */
+export function getActivityComm(data) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-spec/activityComm`,
     method: 'post',
     data
   })

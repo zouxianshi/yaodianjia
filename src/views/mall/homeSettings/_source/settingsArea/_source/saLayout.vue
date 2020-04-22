@@ -1,6 +1,6 @@
 <template>
   <div class="sa-layout-model">
-    <el-card class="box-card" shadow="always">
+    <el-card class="box-card" shadow="always" style="background: #f9f9fa">
       <div v-loading="saLoading" class="slm-exhibition">
         <slot name="exhibition" />
       </div>
@@ -26,6 +26,9 @@ export default {
   @import './../../../../../../assets/scss/helpers/mixins';
 
   .sa-layout-model {
+    .box-card {
+      border-top: 3px solid #E6EBF5;
+    }
     .box-card,.slm-list-box,.slm-submit {
       @include mixinFadeInUp()
     }

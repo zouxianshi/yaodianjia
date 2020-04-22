@@ -1,6 +1,24 @@
 
 import { uuid } from '@/utils'
 
+export const noDragData = [
+  {
+    uuid: `${uuid('no-data-')}${uuid()}${uuid()}${uuid()}`,
+    name: 'no-data',
+    subType: 'no-data',
+    type: 'no-data',
+    itemList: []
+  }
+]
+
+export const noDragGlobal = {
+  id: '',
+  name: '',
+  setIds: [],
+  title: '',
+  userName: ''
+}
+
 export const itemParams = {
   className: '',
   id: '',
@@ -37,6 +55,13 @@ export const advertise = {
   five: items(1)
 }
 
+export const commodity = {
+  first: items(2),
+  second: items(3),
+  third: items(4),
+  four: items(1)
+}
+
 export const handlerDragComp = () => {
   return [
     {
@@ -69,7 +94,7 @@ export const handlerDragComp = () => {
           subType: 'first',
           name: '2个一排',
           error: false,
-          itemList: []
+          itemList: commodity.first
         },
         {
           uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
@@ -77,7 +102,7 @@ export const handlerDragComp = () => {
           subType: 'second',
           name: '3个一排',
           error: false,
-          itemList: []
+          itemList: commodity.second
         },
         {
           uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
@@ -85,7 +110,7 @@ export const handlerDragComp = () => {
           subType: 'third',
           name: '多个滚动一排',
           error: false,
-          itemList: []
+          itemList: commodity.third
         },
         {
           uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
@@ -93,7 +118,7 @@ export const handlerDragComp = () => {
           subType: 'four',
           name: '单个一排',
           error: false,
-          itemList: []
+          itemList: commodity.four
         }
       ]
     },

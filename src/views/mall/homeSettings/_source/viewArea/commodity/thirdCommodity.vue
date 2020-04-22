@@ -1,7 +1,7 @@
 <template>
   <div class="scrollbar va-third-commodity-model">
-    <div class="vtcm-box" :style="{width:`${(137*10)}px`}">
-      <m-second-item v-for="(el,i) in 10" :key="i" />
+    <div class="vtcm-box" :style="{width:`${140 * item.itemList.length}px`}">
+      <m-second-item v-for="(el,i) in item.itemList" :key="i" :item="el" />
     </div>
   </div>
 </template>
@@ -10,11 +10,18 @@ import mSecondItem from './secondItem'
 export default {
   name: 'VaThirdCommodity',
   data() {
-    return {}
+    return {
+    }
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {
@@ -39,6 +46,9 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .va-third-commodity-model {
     margin-bottom: 10px;
+    &::-webkit-scrollbar{
+      display: none;
+    }
     .vtcm-box {
       height: 178px;
     }

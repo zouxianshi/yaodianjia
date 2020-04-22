@@ -1,0 +1,130 @@
+<template>
+  <el-table :data="tableData" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 490px)">
+    <el-table-column label="选择" width="55">
+      <template slot-scope="scope">
+        <el-checkbox v-model="scope.row.select" @change="v => onCheckbox(v, scope.row)" />
+      </template>
+    </el-table-column>
+    <el-table-column label="商品图片" width="70">
+      <template slot-scope="scope">
+        <template v-if="scope.row.picUrl">
+          <el-image style="width: 40px; height: 40px;display: block" fit="contain" :src="`${showImg(scope.row.picUrl)}?x-oss-process=style/w_80`" />
+        </template>
+        <template v-else>-</template>
+      </template>
+    </el-table-column>
+    <el-table-column prop="name" label="商品名称" />
+    <el-table-column prop="brandName" label="品牌" />
+    <el-table-column label="规格">
+      <template slot-scope="scope">
+        <span v-if="scope.row.specSkuList">
+          {{ scope.row.specSkuList[0].skuValue }}
+        </span>
+        <span v-else>-</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="参考价" width="60">
+      <template slot-scope="scope">
+        <span style="color:#ff0000">¥{{ scope.row.price }}</span>
+      </template>
+    </el-table-column>
+  </el-table>
+</template>
+<script>
+import { saIsId } from './utils'
+export default {
+  name: 'GtList',
+  data() {
+    return {
+      activesData: [],
+      tableData: []
+    }
+  },
+  props: {
+    list: {
+      type: Array,
+      default: () => []
+    },
+    itemList: {
+      type: Array,
+      default: () => []
+    }
+  },
+  methods: {
+    handlerActives() {
+      this.tableData = _.map(this.tableData, v => { return { ...v, select: saIsId(this.activesData, v.specId) } })
+    },
+    handlerClose({ id }, fn) {
+      this.activesData = _.reject(this.activesData, ['id', id])
+      this.handlerActives()
+      fn(id)
+    },
+    onCheckbox(e, item) {
+      const { specId } = item
+      const is = _.some(this.activesData, { id: specId })
+      item.select = !is
+      if (is) {
+        this.activesData = _.reject(this.activesData, ['id', specId])
+      } else {
+        this.activesData.push(this.handlerItem(item))
+      }
+      this.$emit('on-selects', _.reject(this.activesData, ['id', '']))
+    },
+    handlerItem(item) {
+      const { specId, picUrl, price, mprice, name, commodityId, storeId, storeName, merCode } = item
+      return {
+        id: specId,
+        img: picUrl,
+        price,
+        url: `${this.h5Base}pages/details/index?productId=${commodityId}&storeId=${storeId}&storeName=${storeName}&merCode=${merCode}`,
+        mprice,
+        name,
+        activityId: ''
+      }
+    },
+    handlerActiveData() {
+      return _.map(this.activesData, v => {
+        return this.handlerItem(v)
+      })
+    }
+  },
+  watch: {
+    'list': {
+      deep: true,
+      immediate: true,
+      handler(list) {
+        this.activesData = this.itemList
+        this.tableData = _.map(list, v => {
+          return { ...v, select: _.isEmpty(v.select) ? v.select : !!saIsId(this.activesData, v.specId) }
+        })
+      }
+    }
+  },
+  beforeCreate() {
+  },
+  created() {
+
+  },
+  beforeMount() {
+  },
+  mounted() {
+  },
+  beforeUpdate() {
+  },
+  updated() {
+  },
+  beforeDestroy() {
+  },
+  destroyed() {
+  },
+  computed: {
+  },
+  components: {}
+}
+</script>
+
+<style lang="scss" rel="stylesheet/scss">
+  .gt-list-model {
+
+  }
+</style>

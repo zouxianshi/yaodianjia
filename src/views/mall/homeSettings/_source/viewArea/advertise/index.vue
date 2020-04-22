@@ -1,6 +1,5 @@
 <template>
   <div class="va-advertise-model">
-
     <component :is="mod" :item="item" />
   </div>
 </template>
@@ -27,7 +26,6 @@ export default {
   beforeCreate() {
   },
   created() {
-    console.log(this.item)
   },
   beforeMount() {
   },

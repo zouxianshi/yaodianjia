@@ -29,10 +29,7 @@ export default {
     ...mapMutations('mall', ['setItemDragData']),
     onEnd() {
       const { item: { $index }, dragList } = this
-      this.setItemDragData({
-        $index,
-        itemList: dragList
-      })
+      this.setItemDragData({ $index, itemList: dragList })
     },
     onEvent() {
     }
