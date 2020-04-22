@@ -12,17 +12,17 @@
           <div class="search-item">
             <span class="label-name" style="width:100px">优惠券状态：</span>
             <el-select v-model="region" placeholder="活动区域">
-              <el-option label="全部" value="1" />
+              <el-option label="全部" value="0" />
+              <el-option label="折扣券" value="1" />
               <el-option label="满减券" value="2" />
-              <el-option label="折扣券" value="3" />
-              <el-option label="礼品券" value="4" />
+              <el-option label="礼品券" value="3" />
             </el-select>
           </div>
           <span class="label-name" style="width:100px">券名称：</span>
           <el-input v-model.trim="keyword" size="small" placeholder="请输入关键字" />
         </div>
         <div class="search-item">
-          <el-button type="primary" size="small" @click="getList">查询</el-button>
+          <el-button type="primary" size="small" @click="handleGetlist">查询</el-button>
         </div>
       </div>
       <el-table
@@ -33,24 +33,43 @@
         height="350"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column label="日期" width="120">
+        <!-- <el-table-column label="日期" width="120">
           <template slot-scope="scope">{{ scope.row.date }}</template>
+        </el-table-column>-->
+        <el-table-column prop="cname" label="优惠券名称" />
+        <el-table-column label="适用商品">
+          <template
+            slot-scope="scope"
+          >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.shopRule ===2?'部分商品':'' || scope.row.shopRule ===3?'部分商品不可用':'' }}</template>
         </el-table-column>
-        <el-table-column prop="name" label="优惠券名称" />
-        <el-table-column prop="address" label="适用商品" />
-        <el-table-column prop="address" label="优惠内容" />
-        <el-table-column prop="address" label="使用时间" show-overflow-tooltip />
-        <el-table-column prop="address" label="使用场景" />
-        <el-table-column prop="address" label="适用门店" />
+        <el-table-column prop="address" label="优惠内容">
+          <template
+            slot-scope="scope"
+          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
+        </el-table-column>
+        <el-table-column label="使用时间" show-overflow-tooltip>
+          <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
+        </el-table-column>
+        <el-table-column label="使用场景" width="90">
+          <template
+            slot-scope="scope"
+          >{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>
+        </el-table-column>
+        <el-table-column prop="productRule" label="适用门店" width="100">
+          <template
+            slot-scope="scope"
+          >{{ scope.row.productRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
+        </el-table-column>
         <el-table-column type="selection" width="55" />
       </el-table>
+      <div style="margin-top:20px">已选门店：</div>
       <div class="block">
         <el-pagination
-          :page-size="10"
+          :page-size="pageSize"
           :current-page="currentPage"
           :page-sizes="[10, 20, 30, 40]"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total="totalPage"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -63,11 +82,20 @@
   </el-dialog>
 </template>
 <script>
+import { getactivitList } from '@/api/coupon'
+import { mapGetters } from 'vuex'
 export default {
   name: 'CheckCoupon',
   components: {},
   props: {
     selectlist: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    // 起止时间
+    timevalue: {
       type: Array,
       default() {
         return []
@@ -78,39 +106,52 @@ export default {
     return {
       dialogVisible: false,
       currentPage: 1,
-      region: '1',
+      pageSize: 10,
+      totalPage: 0,
+      region: '0',
       keyword: '',
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎1',
-          address: '上海市普陀区金沙江路 1518 弄1'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎2',
-          address: '上海市普陀区金沙江路 1517 弄2'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎3',
-          address: '上海市普陀区金沙江路 1519 弄3'
-        }
-      ],
-      checklist: []
+      tableData: [],
+      checklist: [],
+      beforeTime: '',
+      endTime: ''
     }
   },
-  computed: {},
-  watch: {},
+  computed: {
+    ...mapGetters(['merCode'])
+  },
+  watch: {
+    timevalue(newName, oldName) {
+      this.beforeTime = this.filterDate(newName[0])
+      this.endTime = this.filterDate(newName[1])
+      this.handleGetlist()
+    }
+  },
   beforeCreate() {},
   created() {},
   beforeMount() {},
-  mounted() {},
+  mounted() {
+    this.handleGetlist()
+  },
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},
   destroyed() {},
   methods: {
+    handleGetlist() {
+      const params = {
+        beginTime: this.beforeTime,
+        endTime: this.endTime,
+        cname: this.keyword,
+        ctype: this.region,
+        currentPage: this.currentPage,
+        merCode: this.merCode,
+        pageSize: this.pageSize
+      }
+      getactivitList(params).then(res => {
+        this.tableData = res.data.records
+        this.totalPage = res.data.total
+      })
+    },
     handleClose() {
       this.dialogVisible = false
     },
@@ -120,30 +161,74 @@ export default {
       this.dialogVisible = false
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.handleGetlist()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      this.currentPage = val
     },
     handleSelectionChange(val) {
       this.checklist = val
     },
-    getList() {},
     defaultcheck(rows) {
       this.dialogVisible = true
       if (rows) {
-        var name = []
+        var id = []
         rows.map(item => {
-          name.push(item.name)
+          id.push(item.id)
         })
         this.$nextTick(() => {
           // this.$refs.multipleTable.clearSelection()
           this.tableData.forEach(row => {
-            if (name.indexOf(row.name) >= 0) {
+            if (id.indexOf(row.id) >= 0) {
               this.$refs.multipleTable.toggleRowSelection(row, true)
             }
           })
         })
+      }
+    },
+    filterDate(date) {
+      date = new Date(date)
+      var y = date.getFullYear()
+      var m = date.getMonth() + 1
+      var d = date.getDate()
+      var h = date.getHours()
+      var m1 = date.getMinutes()
+      var s = date.getSeconds()
+      m = m < 10 ? '0' + m : m
+      d = d < 10 ? '0' + d : d
+      h = h < 10 ? '0' + h : h
+      m1 = m1 < 10 ? '0' + m1 : m1
+      s = s < 10 ? '0' + s : s
+      return y + '-' + m + '-' + d + ' ' + h + ':' + m1 + ':' + s
+    },
+    // 商品折扣处理
+    handleshopRule(ctype, useRule, denomination) {
+      console.log(ctype, useRule, denomination)
+      if (ctype === 1) {
+        if (useRule === 0) {
+          return `无门槛，${denomination}折`
+        } else {
+          return `满${useRule}可用,${denomination}折`
+        }
+      } else if (ctype === 2) {
+        if (useRule === 0) {
+          return '无门槛，满减券'
+        } else {
+          return `满${useRule}可用,减${denomination}元`
+        }
+      } else {
+        return '指定礼品'
+      }
+    },
+    // 使用日期
+    handletimeRule(timeRule, effectTime) {
+      if (timeRule === 1) {
+        return `自领取${effectTime}天有效`
+      } else if (timeRule === 2) {
+        return `自领取${effectTime.split(',')[0]}天有效,${effectTime.split(',')[1]}天失效`
+      } else {
+        return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
       }
     }
   }
@@ -152,7 +237,15 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .checkCoupon-model {
+  .el-table--medium th,
+  // .el-table--medium td {
+  //   padding: 2px;
+  // }
+  // .el-table thead th {
+  //   height: 50px;
+  // }
   .search-form {
+    margin-bottom: 0px;
     .search-item {
       .el-input {
         width: 180px;

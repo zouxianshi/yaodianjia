@@ -3,10 +3,14 @@
     <el-button
       type="primary"
       size="mini"
-      @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add' })"
+      @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add', query: { activityTemplateCode: this.$route.query.code,activityTemplateName: this.$route.query.name} })"
     >添加优惠券</el-button>
     <div class="explain">
-      <el-alert title="领券中心可自由上架及下架优惠券，领券中心的优惠上架后用户可手工领取，您可根据活动营销方案定期上架以保持用户活跃" type="warning" :closable="false" />
+      <el-alert
+        title="领券中心可自由上架及下架优惠券，领券中心的优惠上架后用户可手工领取，您可根据活动营销方案定期上架以保持用户活跃"
+        type="warning"
+        :closable="false"
+      />
     </div>
     <div class="search-form">
       <div class="search-item">
@@ -27,10 +31,10 @@
         <el-button type="primary" size="small" @click="getList">查询</el-button>
       </div>
       <div class="search-item">
-        <el-button type="primary" size="small" @click="exportFun">
+        <!-- <el-button type="primary" size="small" @click="exportFun">
           导出
           <i class="el-icon-download el-icon--right" />
-        </el-button>
+        </el-button>-->
       </div>
     </div>
     <div style="margin-bottom:20px">
@@ -84,6 +88,8 @@
   </div>
 </template>
 <script>
+import { searchActivities } from '@/api/coupon'
+import { mapGetters } from 'vuex'
 export default {
   name: 'CouponsIndex',
   components: {},
@@ -95,42 +101,38 @@ export default {
       radio: '全部',
       keyword: '',
       tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
       ]
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   watch: {},
   beforeCreate() {},
   created() {},
   beforeMount() {},
-  mounted() {},
+  mounted() {
+    this.getList()
+  },
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},
   destroyed() {},
   methods: {
     getList() {
-      console.log('查')
+      const params = {
+        activityTemplateCode: this.$route.query.code,
+        activityTemplateName: this.$route.query.name,
+        activityType: '',
+        cname: '',
+        currentPage: 1,
+        merCode: this.merCode,
+        pageSize: 10,
+        state: ''
+      }
+      searchActivities(params).then(res => {
+        this.tableData = res.data
+      })
     },
     deleteRow(index, rows) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -160,8 +162,7 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
-    },
-    exportFun() {}
+    }
   }
 }
 </script>
@@ -171,6 +172,13 @@ export default {
   .explain {
     margin: 20px 0;
     font-size: 13px;
+  }
+  .el-table--medium th,
+  .el-table--medium td {
+    padding: 2px;
+  }
+  .el-table thead th {
+    height: 50px;
   }
   .search-form {
     margin-top: 10px;

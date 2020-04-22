@@ -28,3 +28,36 @@ export function addCoupon(params) {
     data: params
   })
 }
+// 模块列表
+export function moduleList(params) {
+  console.log(params)
+  return request({
+    url: `${config.merGoods}/1.0/marketingActivities/listActivityTemplate/${params.id}/${params.type}`,
+    method: 'post'
+  })
+}
+// 查领券中心优惠券列表
+export function searchActivities(params) {
+  return request({
+    url: `${config.merGoods}/1.0/marketingActivities/_search`,
+    method: 'post',
+    data: params
+  })
+}
+// 查询活动优惠券列表
+export function getactivitList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/_search`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 领券中心)添加优惠券新增优惠券
+export function marketaddCoupon(params) {
+  return request({
+    url: `${config.merGoods}/1.0/marketingActivities/addCoupon`,
+    method: 'post',
+    data: params
+  })
+}
