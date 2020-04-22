@@ -29,7 +29,7 @@ export const itemParams = {
   productName: '',
   setId: '',
   sort: 0,
-  specId: 0,
+  specId: '',
   typeId: '',
   url: ''
 }

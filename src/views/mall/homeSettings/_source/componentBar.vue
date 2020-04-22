@@ -4,7 +4,7 @@
       <b>组件选择</b>
     </div>
     <div class="cbm-operation">
-      <el-button size="mini">预览</el-button>
+      <el-button size="mini" @click="onPreview">预览</el-button>
       <el-button type="primary" size="mini" :loading="loading" @click="onSubmit">保存</el-button>
     </div>
     <div class="cbm-nav-box">
@@ -20,22 +20,28 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <el-dialog title="效果预览" append-to-body :visible.sync="isPreview" width="710px">
+      <m-preview v-if="isPreview" @on-close="() => isPreview = false" />
+    </el-dialog>
   </div>
 </template>
 <script>
+
 import { findComponentsDownward } from '@/utils'
 import vDraggable from 'vuedraggable'
 import { handlerDragComp } from './_source/default'
+import mPreview from './_source/preview'
 
 export default {
   name: 'ComponentBar',
-  components: { vDraggable },
+  components: { vDraggable, mPreview },
   props: {},
   data() {
     return {
       dragComponent: handlerDragComp(),
       activeName: '导航栏',
-      loading: false
+      loading: false,
+      isPreview: false
     }
   },
   computed: {
@@ -66,10 +72,24 @@ export default {
   updated() {
   },
   methods: {
+    onVerif(type) {
+      return new Promise((resolve, reject) => {
+        const instance = findComponentsDownward(this.$root, 'ViewArea')[0]
+        instance.handlerVerifDragData(type, (is) => {
+          resolve(is)
+        })
+      })
+    },
+    onPreview() {
+      this.onVerif('preview').then((is = true) => {
+        if (is) {
+          this.isPreview = true
+        }
+      })
+    },
     onSubmit() {
       this.loading = true
-      const instance = findComponentsDownward(this.$root, 'ViewArea')[0]
-      instance.handlerVerifDragData(() => {
+      this.onVerif().then(() => {
         this.loading = false
       })
     },

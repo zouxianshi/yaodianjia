@@ -3,8 +3,8 @@
     <div class="vnm-box">
       <div class="swiper-box">
         <swiper :options="{loop: true,direction: 'vertical',autoplay: {delay: 5000}}">
-          <swiper-slide v-for="(el,i) in 3" :key="i" class="slider-item">
-            <p class="text">防疫药品陆续到货中，速抢 >></p>
+          <swiper-slide v-for="(el,i) in list" :key="i" class="slider-item">
+            <p class="text">{{ el.name }} >></p>
           </swiper-slide>
         </swiper>
       </div>
@@ -12,19 +12,25 @@
   </div>
 </template>
 <script>
+import { getNotice } from './_source/utils'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 export default {
   name: 'VaNotice',
   components: { swiper, swiperSlide },
   props: {},
   data() {
-    return {}
+    return {
+      list: []
+    }
   },
   computed: {},
   watch: {},
   beforeCreate() {
   },
   created() {
+    getNotice({ merCode: this.$store.state.user.merCode }).then(res => {
+      this.list = res
+    })
   },
   beforeMount() {
   },

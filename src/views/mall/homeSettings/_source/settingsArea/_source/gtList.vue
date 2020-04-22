@@ -54,29 +54,29 @@ export default {
     handlerActives() {
       this.tableData = _.map(this.tableData, v => { return { ...v, select: saIsId(this.activesData, v.specId) } })
     },
-    handlerClose({ id }, fn) {
-      this.activesData = _.reject(this.activesData, ['id', id])
+    handlerClose({ specId }, fn) {
+      this.activesData = _.reject(this.activesData, ['specId', specId])
       this.handlerActives()
-      fn(id)
+      fn(specId)
     },
     onCheckbox(e, item) {
       const { specId } = item
-      const is = _.some(this.activesData, { id: specId })
+      const is = _.some(this.activesData, { specId: specId })
       item.select = !is
       if (is) {
-        this.activesData = _.reject(this.activesData, ['id', specId])
+        this.activesData = _.reject(this.activesData, ['specId', specId])
       } else {
         this.activesData.push(this.handlerItem(item))
       }
-      this.$emit('on-selects', _.reject(this.activesData, ['id', '']))
+      this.$emit('on-selects', _.reject(this.activesData, ['specId', '']))
     },
     handlerItem(item) {
-      const { specId, picUrl, price, mprice, name, commodityId, storeId, storeName, merCode } = item
+      const { specId, picUrl, price, mprice, name, storeId, storeName, merCode } = item
       return {
-        id: specId,
+        specId,
         img: picUrl,
         price,
-        url: `${this.h5Base}pages/details/index?productId=${commodityId}&storeId=${storeId}&storeName=${storeName}&merCode=${merCode}`,
+        url: `${this.h5Base}pages/details/index?productId=${specId}&storeId=${storeId}&storeName=${storeName}&merCode=${merCode}`,
         mprice,
         name,
         activityId: ''

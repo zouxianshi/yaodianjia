@@ -127,19 +127,19 @@ export default {
     /**
      * Process saved data and do error verification
      */
-    handlerVerifDragData(fn) {
+    handlerVerifDragData(type, fn) {
       const { dragList, dragGlobal } = this
       const { subType } = _.head(dragList)
 
       if (!dragGlobal.title) {
         this.$message.error('请输入微商城名称！')
         jumpCurrentSet(this.$root, { type: 'mall-title' })
-        return fn()
+        return fn(false)
       }
 
       if (dragList.length === 1 && subType === 'no-data') {
         this.$message.error('请拖拽部署商城首页！')
-        return fn()
+        return fn(false)
       }
       this.dragList = _.map(dragList, v => { return { ...v, error: verifRequired[v.type](v.itemList) } })
 
@@ -149,12 +149,14 @@ export default {
 
       if (!_.some(this.dragList, { error: true })) {
         // todo 弹层保存
-        this.isSaveVisible = true
+        if (type !== 'preview') {
+          this.isSaveVisible = true
+        }
         fn()
       } else {
         toPosition(headItem.uuid)
         jumpCurrentSet(this.$root, headItem)
-        fn()
+        fn(false)
       }
     }
   },

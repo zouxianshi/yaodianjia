@@ -69,6 +69,7 @@ export default {
       right: 6px;
       top: 6px;
       padding: 2px;
+      z-index: 1;
     }
     &:nth-child(1) {
       margin-left: 11px;

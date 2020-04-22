@@ -45,7 +45,7 @@ export default {
         distinct: true,
         firstTypeId: '',
         groupType: true,
-        merCode: 'string',
+        merCode: '',
         pageSize: 20,
         searchKeyWord: '',
         secondTypeId: '',
@@ -71,15 +71,15 @@ export default {
       this.getData()
     },
     isItem(item) {
-      return !_.isEmpty(item.id)
+      return !_.isEmpty(item.specId)
     },
     onPage(v) {
       this.searchParams.currentPage = v
       this.getData()
     },
     _onDelete(item) {
-      this.$refs.gtList.handlerClose(item, id => {
-        this.activesData = _.reject(this.activesData, ['id', id])
+      this.$refs.gtList.handlerClose(item, specId => {
+        this.activesData = _.reject(this.activesData, ['specId', specId])
       })
     },
     _onSelects(v) {
@@ -97,7 +97,6 @@ export default {
         } else {
           this.list = data
         }
-
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -105,8 +104,24 @@ export default {
     },
     async onSave() {
       const { subType, activesData } = this
-      if (subType === 'first' && activesData.length !== 2) {
-        this.$message.error('目前组件只允许添加（2）个商品！')
+      if (_.some(activesData, ['specId', ''])) {
+        this.$message.error('请选择商品！')
+        return
+      }
+      if (subType === 'first' && _.size(activesData) !== 2) {
+        this.$message.error('当前组件允许添加（2）个商品！')
+        return
+      }
+      if (subType === 'second' && _.size(activesData) !== 3) {
+        this.$message.error('当前组件允许添加（3）个商品！')
+        return
+      }
+      if (subType === 'third' && _.size(activesData) < 4 || _.size(activesData) > 8) {
+        this.$message.error('当前组件允许添加（4 - 8）个商品！')
+        return
+      }
+      if (subType === 'four' && _.size(activesData) !== 1) {
+        this.$message.error('当前组件允许添加（1）个商品！')
         return
       }
       await this.$emit('on-update', activesData)

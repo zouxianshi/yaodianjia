@@ -2,6 +2,16 @@ import request from '@/utils/request'
 import config from '@/utils/config'
 
 /**
+ * 获取大json
+ */
+export function getStructure(payload) {
+  return request({
+    url: `${config.merGoods}/1.0/cms-set/${payload.dimensionId}`,
+    method: 'get'
+  })
+}
+
+/**
  * 保存大json
  */
 export function saveStructure(data) {
@@ -11,6 +21,7 @@ export function saveStructure(data) {
     data
   })
 }
+
 /**
  * 保存组件
  */

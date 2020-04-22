@@ -18,5 +18,5 @@ export const pageTypeList = [
   // }
 ]
 
-export const saIsId = (data, id) => _.map(data, v => v.id).includes(id)
+export const saIsId = (data, specId) => _.map(data, v => v.specId).includes(specId)
 

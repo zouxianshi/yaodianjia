@@ -21,7 +21,7 @@
         <el-table-column label="操作" width="300px">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="copyHome(scope.row)">复制</el-button>
-            <el-button v-if="scope.row.isUse !== 1" type="primary" size="mini">编辑</el-button>
+            <el-button v-if="scope.row.isUse !== 1" type="primary" size="mini" @click="() => $router.push(`/mall/home-settings/${scope.row.id}`)">编辑</el-button>
             <m-delete v-if="scope.row.isUse !== 1" :item="scope.row" @on-update="getData" />
             <el-button v-if="scope.row.isUse !== 1" type="primary" size="mini" @click="setStatus(scope.row)">{{ scope.row.status === 1 ? '取消发布' : '发布' }}</el-button>
             <el-button v-if="scope.row.isUse === 0 && scope.row.status === 1" type="primary" size="mini" @click="setHome(scope.row)">设为首页</el-button>

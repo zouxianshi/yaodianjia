@@ -90,19 +90,23 @@ export const getNowFormatDate = () => {
   return currentdate
 }
 
+export const getSearchParams = p => {
+  return _.assign({
+    classId: '',
+    displayTime: getNowFormatDate(),
+    startTime: '',
+    endTime: '',
+    positionCode: '',
+    remark: '',
+    sortOrder: 1,
+    status: 1,
+    merCode: ''
+  }, p)
+}
+
 export const getBannerList = () => {
   return new Promise((resolve, reject) => {
-    const p = {
-      classId: '',
-      displayTime: getNowFormatDate(),
-      startTime: '',
-      endTime: '',
-      positionCode: 'I-03',
-      remark: '',
-      sortOrder: 1,
-      status: 1
-    }
-    getPageSets(p).then(res => {
+    getPageSets(getSearchParams({ positionCode: 'I-03' })).then(res => {
       resolve(_.map(res.data.data, v => {
         return {
           className: '',
@@ -110,6 +114,29 @@ export const getBannerList = () => {
           img: Vue.prototype.showImg(v.imageUrl),
           mprice: 0,
           name: '',
+          price: 0,
+          productName: '',
+          setId: '',
+          sort: 0,
+          specId: 0,
+          typeId: '',
+          url: v.url
+        }
+      }))
+    })
+  })
+}
+
+export const getNotice = (p) => {
+  return new Promise((resolve, reject) => {
+    getPageSets(getSearchParams({ positionCode: 'I-02', ...p })).then(res => {
+      resolve(_.map(res.data.data, v => {
+        return {
+          className: '',
+          id: '',
+          img: '',
+          mprice: 0,
+          name: v.announcement,
           price: 0,
           productName: '',
           setId: '',

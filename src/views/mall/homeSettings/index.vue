@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+import { getStructure } from '@/api/mallService'
 import { mapMutations, mapActions } from 'vuex'
 import mComponentBar from './_source/componentBar'
 import mHomeMain from './_source/homeMain'
@@ -28,8 +29,15 @@ export default {
   beforeCreate() {
   },
   created() {
+    const dimensionId = this.$route.params.id || null
     const { merCode } = this.$store.state.user
     this.getCenterStoreId({ merCode })
+
+    if (dimensionId) {
+      getStructure({ dimensionId }).then(res => {
+        console.log(res.data)
+      })
+    }
   },
   beforeMount() {
   },
