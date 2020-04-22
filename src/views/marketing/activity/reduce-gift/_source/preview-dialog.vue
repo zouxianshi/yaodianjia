@@ -12,13 +12,13 @@
     </el-input>-->
     <div class="post-img-wrap">
       <div ref="img_wrapper" class="img_wrapper">
-        <img :src="poster" />
+        <img :src="poster">
         <div class="activity-store">益丰大药房</div>
         <div class="activity-title">满减专场</div>
         <div class="activity-desc">爆款商品限时限量优惠</div>
         <!-- <div class="activity-time">活动时间：2020.02.11至2020.04.18</div> -->
         <div class="qcodeimg">
-          <img :src="qcode" />
+          <img :src="qcode">
         </div>
         <div class="activity-info">扫码参加活动</div>
       </div>
@@ -59,7 +59,7 @@ import QRCode from 'qrcode'
 import { mapGetters } from 'vuex'
 Vue.use(VueClipboard)
 export default {
-   computed: {
+  computed: {
     ...mapGetters(['merCode'])
   },
   data() {

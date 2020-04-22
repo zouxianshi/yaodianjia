@@ -167,7 +167,7 @@ export default {
         return callback(new Error('请输入活动门槛'))
       }
       if (!/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(value) || value <= 0) {
-        return callback(new Error('必须为大于0.01的正数'))
+        return callback(new Error('必须为大于0.01的正数,且最多两位小数'))
       }
       callback()
     }

@@ -404,10 +404,10 @@ export default {
     },
     _getTypeTree() {
       const params = {
-        dimensionId: '',
-        merCode: 'hydee',
-        type: 1, //	integer($int32)类型，1-分类，2-分组
-        use: false
+        // dimensionId: '',
+        merCode: this.merCode,
+        type: 2, //	integer($int32)类型，1-分类，2-分组
+        use: true
       }
       this.typeTreeLoading = true
       getTypeTree(params)
