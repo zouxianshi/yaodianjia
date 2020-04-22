@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-dialog
-      :title="`${status===0?'下架':'上架'}商品(已选${chooseNum}个商品)`"
       :visible.sync="isShow"
       append-to-body
       width="700px"
@@ -9,6 +8,11 @@
       :show-close="false"
       :close-on-click-modal="false"
     >
+      <div slot="title">
+        <span>{{ status===0?'下架':'上架' }}商品(已选{{ chooseNum }}个商品)</span>
+        <span v-if="status===0" style="color: #999999;font-size: 14px;">勾选并确定后，将执行商品从该门店下架</span>
+        <span v-else style="color: #999999;font-size: 14px;">勾选并确定后，将商品上架到该门店，已上架过的无需勾选</span>
+      </div>
       <div class="modal-body">
         <div class="search-box" @keydown.enter="_loadStoreData">
           <div class="search-item">
@@ -29,17 +33,13 @@
           @select-all="handleSelectionChangeStore"
           @select="handleSelect"
         >
-          <el-table-column
-            type="selection"
-            :selectable="checkSelectable"
-            width="55"
-          />
+          <el-table-column type="selection" :selectable="checkSelectable" width="55" />
           <el-table-column label="门店编号" prop="stCode" />
           <el-table-column label="门店名称" prop="stName" />
           <el-table-column label="门店地址" show-overflow-tooltip>
-            <template slot-scope="scope">
-              {{ scope.row.province }}{{ scope.row.city }}{{ scope.row.area }}{{ scope.row.address }}
-            </template>
+            <template
+              slot-scope="scope"
+            >{{ scope.row.province }}{{ scope.row.city }}{{ scope.row.area }}{{ scope.row.address }}</template>
           </el-table-column>
           <el-table-column label="门店电话" prop="mobile" />
         </el-table>
@@ -59,7 +59,9 @@
         <ul class="choose-box">
           <template v-if="!isAll&&multipleSelection.length!==0">
             <li v-for="(item,index) in multipleSelection" :key="index">
-              <el-tag type="info" size="small" closable @close="handleTagClose(item)"><span :title="item.stName">{{ item.stName }}</span></el-tag>
+              <el-tag type="info" size="small" closable @close="handleTagClose(item)">
+                <span :title="item.stName">{{ item.stName }}</span>
+              </el-tag>
             </li>
           </template>
           <template v-else>
@@ -68,14 +70,14 @@
         </ul>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="" size="small" @click="handleCanle">取消</el-button>
+        <el-button type size="small" @click="handleCanle">取消</el-button>
         <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmit">确定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getStoreList, setBatchUpdown } from '@/api/depot'
+import { setBatchUpdown, getStoreList } from '@/api/depot'
 export default {
   props: {
     isShow: {
@@ -117,19 +119,25 @@ export default {
       }
     }
   },
-  created() {
-
-  },
+  created() {},
   methods: {
-    checkSelectable() {
-      return !this.isAll
+    checkSelectable(row) {
+      // return !this.isAll
+      return row.selectable
     },
-    handleChooseStore() { // 选择全部
+    handleChooseStore() {
+      // 选择全部
       this.$refs.multipleTable.clearSelection()
       if (this.isAll) {
         this.multipleSelection = []
         this.list.map(v => {
           this.$refs.multipleTable.toggleRowSelection(v)
+        })
+      } else {
+        this.list.map(v => {
+          if (!v.selectable) {
+            this.$refs.multipleTable.toggleRowSelection(v)
+          }
         })
       }
     },
@@ -145,10 +153,16 @@ export default {
         const { data, totalCount } = res.data
         this.list = data
         this.total = totalCount
-        if (this.isAll) { // 选择全部  选中门店
+        setTimeout(() => {
+          this.$refs.multipleTable.clearSelection()
+        }, 300)
+
+        if (this.isAll) {
+          // 选择全部  选中门店
           setTimeout(() => {
             this.list.map(v => {
               this.$refs.multipleTable.toggleRowSelection(v)
+              this.setSelectable(v)
             })
           }, 300)
         } else {
@@ -161,16 +175,30 @@ export default {
               if (index > -1) {
                 this.$refs.multipleTable.toggleRowSelection(v)
               }
+              this.setSelectable(v)
             })
           }, 300)
         }
       })
     },
+    // 给非本次选择为已上架或已下架的商品设置为不可用
+    setSelectable(v) {
+      v.selectable = true
+      if (
+        (this.status === 0 && v.commOnlineStatus === 0) ||
+        (this.status === 1 && v.commOnlineStatus === 1)
+      ) {
+        v.selectable = false
+        this.$refs.multipleTable.toggleRowSelection(v)
+      }
+    },
     handleSubmit() {
       const data = []
       if (!this.isAll) {
         this.multipleSelection.map(res => {
-          data.push(res.id)
+          if (res.selectable) {
+            data.push(res.id)
+          }
         })
       }
 
@@ -189,18 +217,21 @@ export default {
         userName: this.$store.getters.name
       }
       this.subLoading = true
-      setBatchUpdown(params).then(res => {
-        this.subLoading = false
-        this.$message({
-          message: '操作成功',
-          type: 'success'
+      setBatchUpdown(params)
+        .then(res => {
+          this.subLoading = false
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.$emit('complete')
         })
-        this.$emit('complete')
-      }).catch(() => {
-        this.subLoading = false
-      })
+        .catch(() => {
+          this.subLoading = false
+        })
     },
-    handleSelectionChangeStore(allList) { // 门店列表选中事件 表格全选事件
+    handleSelectionChangeStore(allList) {
+      // 门店列表选中事件 表格全选事件
       if (!this.isAll) {
         this.list.map(item => {
           const index = this.multipleSelection.findIndex(mItem => {
@@ -208,24 +239,26 @@ export default {
           })
           if (index > -1) {
             if (allList.length > 0) {
-            // console.log('已存在' + item.commodityId + ':' + item.commodityName)
+              // console.log('已存在' + item.commodityId + ':' + item.commodityName)
             } else {
-            // 反选
+              // 反选
               this.multipleSelection.splice(index, 1)
             }
-          } else {
+          } else if (item.selectable) {
             this.multipleSelection.push(item)
           }
         })
       }
+      console.log(this.multipleSelection)
     },
-    handleSelect(selection, row) { // 单个选择
+    handleSelect(selection, row) {
+      // 单个选择
       const index = this.multipleSelection.findIndex(v => {
         return v.id === row.id
       })
       if (index > -1) {
         this.multipleSelection.splice(index, 1)
-      } else {
+      } else if (row.selectable) {
         this.multipleSelection.push(row)
       }
     },
@@ -239,6 +272,7 @@ export default {
       this.$refs.multipleTable.toggleRowSelection(row)
     },
     handleCanle() {
+      this.isAll = false
       this.$emit('close')
     },
     handleSizeChange(val) {
@@ -252,43 +286,46 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.modal-body{
-  .search-box{
+.modal-body {
+  .search-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-    .search-query{
+    .search-query {
       display: flex;
-      .el-input{
+      .el-input {
         margin-right: 10px;
       }
     }
   }
-  .pagination{
+  .pagination {
     margin: 10px 0;
   }
-  .choose-box{
-      li{
+  .choose-box {
+    li {
+      display: inline-block;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      .el-tag {
+        display: flex;
+        align-items: center;
+        span {
           display: inline-block;
-          margin-right: 10px;
-          margin-bottom: 10px;
-          .el-tag{
-            display: flex;
-            align-items: center;
-            span{
-              display: inline-block;
-              overflow: hidden;
-              max-width: 200px;
-              text-overflow:ellipsis;
-            }
-
-          }
-           .el-tag__close{
-              display: inline-block;
-              margin-top: 5px;
-            }
+          overflow: hidden;
+          max-width: 200px;
+          text-overflow: ellipsis;
+        }
       }
+      .el-tag__close {
+        display: inline-block;
+        margin-top: 5px;
+      }
+    }
+  }
+  .tips {
+    color: #999999;
+    font-size: 14px;
   }
 }
 </style>
