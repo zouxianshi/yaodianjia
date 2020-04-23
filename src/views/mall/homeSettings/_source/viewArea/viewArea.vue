@@ -92,11 +92,12 @@ export default {
       }
     }
   },
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {
-    this.dragList = _.cloneDeep(this.dragData)
+    this.dragList = this.dragData
     getBannerList().then(itemList => {
       this.bannerItemList = itemList
     })

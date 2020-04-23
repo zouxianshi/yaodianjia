@@ -68,11 +68,19 @@ export default {
       this.$set(this.searchParams.itemList, i, item)
     }
   },
-  watch: {},
+  watch: {
+    'item.itemList': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.searchParams.itemList = _.cloneDeep(v)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
-    this.searchParams.itemList = _.cloneDeep(this.item.itemList)
+    this.searchParams = _.cloneDeep(this.item)
   },
   beforeMount() {
   },

@@ -73,7 +73,7 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.searchParams.itemList = _.cloneDeep(this.item.itemList)
+    this.searchParams = _.cloneDeep(this.item)
   },
   beforeMount() {
   },

@@ -22,7 +22,8 @@ export default {
     }
   },
   methods: {},
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {
