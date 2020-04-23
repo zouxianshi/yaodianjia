@@ -4,8 +4,8 @@
       <b>组件选择</b>
     </div>
     <div class="cbm-operation">
-      <el-button size="mini" @click="onPreview">预览</el-button>
-      <el-button type="primary" size="mini" :loading="loading" @click="onSubmit">保存</el-button>
+      <el-button size="small" icon="el-icon-share" @click="onPreview">预览</el-button>
+      <el-button type="primary" size="small" icon="el-icon-upload" :loading="loading" @click="onSubmit">保存</el-button>
     </div>
     <div class="cbm-nav-box">
       <el-tabs v-model="activeName" type="card" size="small">
@@ -111,7 +111,7 @@ export default {
     .cbm-operation {
       position: absolute;
       right: 20px;
-      top: 12px;
+      top: 9px;
       z-index: 1;
     }
     .cbm-nav-box {

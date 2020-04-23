@@ -1,5 +1,5 @@
 <template>
-  <div class="sa-title-model">
+  <div class="sa-title-model ">
     <el-tabs :value="assemblyName" type="card">
       <el-tab-pane :label="assemblyName" :name="assemblyName">
         <m-title v-for="(el,i) in item.itemList" :key="i" :item="el" :item-params="item" @on-update="_onUpdate" />
