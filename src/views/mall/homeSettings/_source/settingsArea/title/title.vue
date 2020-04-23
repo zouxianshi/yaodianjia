@@ -1,10 +1,10 @@
 <template>
-  <div v-loading="saLoading" class="sa-title-box">
+  <div v-loading="saLoading" class="sa-title-box ">
     <el-form label-width="80px" size="mini">
       <el-form-item label="标题">
         <el-input v-model="name" placeholder="请输入标题" @change="() => isName = !name" />
         <div v-if="isName" class="sa-error">
-          {{ type === 'mall-title' ? '请填写微商城标题' : '请填写标题' }}
+          {{ searchParams.type === 'mall-title' ? '请填写微商城标题' : '请填写标题' }}
         </div>
       </el-form-item>
       <el-form-item>
@@ -15,7 +15,6 @@
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex'
-import { itemParams } from './../../_source/default'
 
 export default {
   name: 'SaTitleBox',
@@ -39,26 +38,26 @@ export default {
       type: Object,
       default: () => {}
     },
-    type: {
-      type: String,
-      default: ''
+    itemParams: {
+      type: Object,
+      default: () => {}
     }
   },
   methods: {
     ...mapMutations('mall', ['setHomeName']),
     onSubmit() {
-      const { name, searchParams } = this
+      const { name, searchParams, searchParams: { type }, item } = this
       this.isName = false
       if (!name) {
         this.isName = true
         return false
       }
       // handler title two operation
-      if (this.type === 'mall-title') {
+      if (type === 'mall-title') {
         // 保存全局接口
         this.setHomeName(name)
       } else {
-        this.$emit('on-update', { ...searchParams, itemList: [{ ...itemParams, name }] }, () => {
+        this.$emit('on-update', { ...searchParams, itemList: [{ ...item, name }] }, () => {
           this.loading = false
         })
       }
@@ -68,7 +67,8 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.name = _.cloneDeep(this.type === 'mall-title' ? this.dragGlobal.title : this.item.name)
+    this.searchParams = this.itemParams
+    this.name = _.cloneDeep(this.searchParams.type === 'mall-title' ? this.dragGlobal.title : this.item.name)
   },
   beforeMount() {
   },

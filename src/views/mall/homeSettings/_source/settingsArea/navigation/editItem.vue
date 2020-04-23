@@ -115,18 +115,18 @@ export default {
     }
   },
   watch: {
-    'item.img': {
+    'item': {
       deep: true,
       immediate: true,
-      handler(v) {
-        this.searchParams.img = v
+      handler(item) {
+        this.searchParams = item
       }
     }
   },
   beforeCreate() {
   },
   created() {
-    this.searchParams = _.cloneDeep(this.item)
+    this.searchParams = this.item
   },
   beforeMount() {
   },

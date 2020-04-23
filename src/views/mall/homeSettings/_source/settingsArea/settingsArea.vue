@@ -85,6 +85,9 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .settings-area-model {
     min-height: 500px;
+    .sam-width{
+      width: 70%;
+    }
     .el-tabs__nav-scroll {
       padding-left: 100px;
       .el-tabs__item {
