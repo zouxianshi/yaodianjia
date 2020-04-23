@@ -208,6 +208,7 @@ export default {
       },
       edit: false,
       disabled: false,
+      leaveAction: false,
       chooseStore: [],
       pageInfoloading: false,
       storeSelectGoods: [], // 选取的主商品
@@ -223,9 +224,7 @@ export default {
       this.$route.meta.title = !this.$route.query._ck
         ? '编辑加价购'
         : '查看加价购详情'
-      document.title = !this.$route.query._ck
-        ? '编辑加价购'
-        : '查看加价购详情'
+      document.title = !this.$route.query._ck ? '编辑加价购' : '查看加价购详情'
     }
   },
   methods: {
@@ -250,11 +249,22 @@ export default {
               startTime: data.startTime,
               endTime: data.endTime
             }
-            this.chooseStore = Array.isArray(data.storeResDTOList) ? data.storeResDTOList : []
-            this.$refs.selectStoreComponent.dataFrom(Array.isArray(data.storeResDTOList) ? data.storeResDTOList : [])
-            this.storeSelectGoods = Array.isArray(data.commList) ? data.commList : []
-            this.$refs.storeGods.dataFrom(Array.isArray(data.commList) ? data.commList : [])
-            this.storeActivityGoods = data.activityDetail && Array.isArray(data.activityDetail.ruleList) ? data.activityDetail.ruleList : []
+            this.chooseStore = Array.isArray(data.storeResDTOList)
+              ? data.storeResDTOList
+              : []
+            this.$refs.selectStoreComponent.dataFrom(
+              Array.isArray(data.storeResDTOList) ? data.storeResDTOList : []
+            )
+            this.storeSelectGoods = Array.isArray(data.commList)
+              ? data.commList
+              : []
+            this.$refs.storeGods.dataFrom(
+              Array.isArray(data.commList) ? data.commList : []
+            )
+            this.storeActivityGoods =
+              data.activityDetail && Array.isArray(data.activityDetail.ruleList)
+                ? data.activityDetail.ruleList
+                : []
             this.$refs.activityGod.dataFrom(
               data.activityDetail && Array.isArray(data.activityDetail.ruleList)
                 ? data.activityDetail.ruleList
@@ -348,7 +358,9 @@ export default {
                 this.storeSelectGoods.forEach(element => {
                   specIdData.push({
                     specId: element.specId,
-                    name: element.name
+                    name: element.name,
+                    manufacture: element.manufacture,
+                    erpCode: element.erpCode
                   })
                 })
               }
@@ -382,6 +394,7 @@ export default {
                         message: '更新成功',
                         type: 'success'
                       })
+                      this.leaveAction = true
                       loading.close()
                       this.$router.replace('/marketing/activity/list?type=15')
                     }
@@ -398,6 +411,7 @@ export default {
                         type: 'success'
                       })
                       loading.close()
+                      this.leaveAction = true
                       this.$router.replace('/marketing/activity/list?type=15')
                     }
                   })
@@ -415,6 +429,24 @@ export default {
           return false
         }
       })
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.disabled || this.leaveAction) {
+      next()
+      if (this.pageLoading) {
+        this.pageLoading.close()
+      }
+    } else {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        if (this.pageLoading) {
+          this.pageLoading.close()
+        }
+        next()
+      } else {
+        next(false)
+      }
     }
   }
 }

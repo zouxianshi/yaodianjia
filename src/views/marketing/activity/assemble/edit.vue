@@ -316,7 +316,8 @@ export default {
       activityId: '',
       currentPage: 1,
       total: 0,
-      multipleSelection: []
+      multipleSelection: [],
+      leaveAction: false
     }
   },
   computed: {
@@ -336,9 +337,7 @@ export default {
       this.$route.meta.title = !this.$route.query._ck
         ? '编辑拼团'
         : '查看拼团详情'
-      document.title = !this.$route.query._ck
-        ? '编辑拼团'
-        : '查看拼团详情'
+      document.title = !this.$route.query._ck ? '编辑拼团' : '查看拼团详情'
       this._loadInfo()
     }
   },
@@ -593,11 +592,13 @@ export default {
           })
           setTimeout(_ => {
             this.saveLoading = false
+            this.leaveAction = true
             this.$router.push('/marketing/activity/list?type=13')
           }, 1000)
         })
         .catch(err => {
           this.saveLoading = false
+          this.leaveAction = true
           console.log(err)
         })
     },
@@ -645,7 +646,7 @@ export default {
         }
         products.push({
           // 'activityId': v.activityId || '',
-          productManufacture: v.manufacture,
+          manufacture: v.manufacture,
           brandName: v.brandName,
           activityNumber: v.activityNumber, // 成团人数
           activityPrice: v.activityPrice, // 活动价格
@@ -741,6 +742,24 @@ export default {
     // 选择历史图片
     selectPic() {
       console.log('1111111111, 准备加载图片')
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.disabled || this.leaveAction) {
+      next()
+      if (this.pageLoading) {
+        this.pageLoading.close()
+      }
+    } else {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        if (this.pageLoading) {
+          this.pageLoading.close()
+        }
+        next()
+      } else {
+        next(false)
+      }
     }
   }
 }

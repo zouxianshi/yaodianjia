@@ -300,11 +300,11 @@ export default {
     // 编辑
     toEdit(row) {
       if (this.type === '11') {
-        this.$router.push(`${this.createdUrl}&id=${row.id}`)
+        this.$router.push(`${this.createdUrl}&id=${row}`)
       } else if (this.type === '12') {
-        this.$router.push(`${this.createdUrl}&id=${row.id}`)
+        this.$router.push(`${this.createdUrl}&id=${row}`)
       } else {
-        this.$router.push(`${this.createdUrl}?id=${row.id}`)
+        this.$router.push(`${this.createdUrl}?id=${row}`)
       }
     },
     // 删除

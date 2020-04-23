@@ -690,7 +690,9 @@ export default {
             this.storeSelectGoods.forEach(element => {
               specIdData.push({
                 specId: element.specId,
-                name: element.name
+                name: element.name,
+                manufacture: element.manufacture,
+                erpCode: element.erpCode
               })
             })
             if (Array.isArray(specIdData) && !specIdData.length) {
@@ -710,7 +712,6 @@ export default {
             }
           }
           console.log('待提交数据-----', dataParam)
-          this.leaveAction = false
           const loading = this.$loading({
             lock: true,
             text: '努力创建中，请稍后',
@@ -729,7 +730,6 @@ export default {
                 this.$router.replace('/marketing/activity/list?type=14')
               })
               .catch(() => {
-                this.leaveAction = true
                 loading.close()
               })
           } else {
@@ -740,6 +740,7 @@ export default {
                   type: 'success'
                 })
                 loading.close()
+                this.leaveAction = true
                 this.$router.replace('/marketing/activity/list?type=14')
               })
               .catch(() => {
