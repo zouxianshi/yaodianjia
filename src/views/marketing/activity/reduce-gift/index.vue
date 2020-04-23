@@ -384,8 +384,8 @@ export default {
             this.form = {
               name: data.pmtName,
               activitTime: [data.startTime, data.endTime],
-              allStore: !!data.isAllStore,
-              allSpec: false,
+              allStore: !!data.allStore,
+              allSpec: !!data.allSpec,
               type: data.userCoupons === 3 ? ['1'] : [],
               ruleType,
               uint,

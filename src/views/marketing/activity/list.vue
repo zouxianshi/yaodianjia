@@ -37,16 +37,7 @@
               :prop="col.prop"
             >
               <template slot="header" slot-scope="scope">
-                <el-tooltip placement="top">
-                  <div slot="content">
-                    时间状态为进行中或未开始的，状态为生效的活动;
-                    <br>时间状态为已结束的，状态为已失效的活动;
-                  </div>
-                  <span>
-                    {{ scope.column.label }}
-                    <i class="el-icon-question" />
-                  </span>
-                </el-tooltip>
+                <span>{{ scope.column.label }}</span>
               </template>
               <template slot-scope="scope">
                 <el-tag v-if="!!scope.row.status" size="small" type="primary">已生效</el-tag>
@@ -72,26 +63,42 @@
                   <el-dropdown-item
                     :command="{id: scope.row.id, type: 'end', disabled: scope.row.validStatus !==1 || !scope.row.status}"
                   >
-                    <el-button :disabled=" scope.row.validStatus !==1 || !scope.row.status" type="text">失效</el-button>
+                    <el-button
+                      :disabled=" scope.row.validStatus !==1 || !scope.row.status"
+                      type="text"
+                    >失效</el-button>
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="type === '14'"
                     :command="{id: scope.row.id, type: 'extend', disabled: (scope.row.validStatus ===2 || !scope.row.status)}"
                   >
-                    <el-button :disabled="scope.row.validStatus ===2 || !scope.row.status" type="text">推广设置</el-button>
+                    <el-button
+                      :disabled="scope.row.validStatus ===2 || !scope.row.status"
+                      type="text"
+                    >推广设置</el-button>
                   </el-dropdown-item>
                   <el-dropdown-item
                     :command="{id: scope.row.id, type: 'edit', disabled: scope.row.validStatus !== 0 || !scope.row.status}"
                   >
                     <!-- 失效或者结束不可编辑 -->
-                    <el-button type="text" :disabled="scope.row.validStatus !== 0 || !scope.row.status">编辑</el-button>
+                    <el-button
+                      type="text"
+                      :disabled="scope.row.validStatus !== 0 || !scope.row.status"
+                    >编辑</el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item :command="{id: scope.row.id, type: 'failList', disabled: !scope.row.status}">
+                  <el-dropdown-item
+                    :command="{id: scope.row.id, type: 'failList', disabled: !scope.row.status}"
+                  >
                     <el-button :disabled="!scope.row.status" type="text">失败列表</el-button>
                   </el-dropdown-item>
                   <!-- 禁止删除：状态为进行中的且为生效的 -->
-                  <el-dropdown-item :command="{id: scope.row.id, type: 'del', disabled: scope.row.validStatus ===1 && scope.row.status}">
-                    <el-button :disabled=" scope.row.validStatus ===1 && scope.row.status" type="text">删除</el-button>
+                  <el-dropdown-item
+                    :command="{id: scope.row.id, type: 'del', disabled: scope.row.validStatus ===1 && scope.row.status}"
+                  >
+                    <el-button
+                      :disabled=" scope.row.validStatus ===1 && scope.row.status"
+                      type="text"
+                    >删除</el-button>
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -198,7 +205,7 @@ export default {
         },
         {
           id: '13',
-          label: '拼团列表',
+          label: '拼团',
           createUrl: '/marketing/activity/assemble-edit'
         },
         {

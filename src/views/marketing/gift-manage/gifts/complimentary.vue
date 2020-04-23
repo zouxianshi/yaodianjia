@@ -40,13 +40,13 @@
             <span size="small" type="info">{{ scope.row.limitCount===0?'不限购':scope.row.limitCount }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="260">
+        <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button disabled type="text" @click="toLook(scope.row)">查看</el-button>
+            <el-button type="text" @click="toLook(scope.row)">查看</el-button>
             <el-divider direction="vertical" />
-            <el-button disabled type="text" @click="toEdit(scope.row)">增加库存</el-button>
-            <el-divider direction="vertical" />
-            <el-button disabled type="text" @click="toEdit(scope.row)">清空库存</el-button>
+            <el-button type="text" @click="toAdd(scope.row)">增加库存</el-button>
+            <!-- <el-divider direction="vertical" />
+            <el-button disabled type="text" @click="toEdit(scope.row)">清空库存</el-button> -->
           </template>
         </el-table-column>
         <div slot="empty">
@@ -66,11 +66,39 @@
         @current-change="handleCurrentChange"
       />
     </section>
+    <!-- 增加库存 -->
+    <el-dialog title="增加赠品库存" :visible.sync="dialogFormVisible" append-to-body @close="reset">
+      <el-form :model="form" label-width="120px">
+        <el-form-item label="增加数量：">
+          <el-input-number
+            v-model="dialogForm.count"
+            style="width: 150px; margin-right: 8px"
+            :step="1"
+            step-strictly
+            :min="0"
+            :max="9999999999"
+            autocomplete="off"
+          />个
+        </el-form-item>
+        <el-form-item label>
+          <el-alert
+            :closable="false"
+            :title="`剩余活动库存（${dialogForm.leaveStock || 0 + dialogForm.count || 0}）个`"
+            type="success"
+          />
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="toAddSubmit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getActGiftList } from '@/api/activity'
+import { getActGiftList, ActGiftAddStock } from '@/api/activity'
 import noData from '@/components/NoData'
 export default {
   components: {
@@ -85,7 +113,11 @@ export default {
         size: 20
       },
       listLoading: false,
-      form: {}
+      form: {},
+      dialogForm: {
+        count: 0
+      },
+      dialogFormVisible: false
     }
   },
   created() {
@@ -107,13 +139,6 @@ export default {
         size: val || 20
       })
       this._getTableData()
-    },
-    formatter(row, column, cellValue) {
-      if (column.property === 'activityType') {
-        return '满减满赠'
-      } else {
-        return cellValue
-      }
     },
     fetchData() {
       this._getTableData()
@@ -146,6 +171,37 @@ export default {
     },
     toEdit(row) {
       this.$router.push(`/marketing/gifts/complimentary-edit?id=${row.id}`)
+    },
+    toAdd(row) {
+      console.log('1111111', row)
+      this.dialogFormVisible = true
+      this.dialogForm = {
+        ...row,
+        ...this.dialogForm
+      }
+    },
+    reset() {
+      console.log('点击关闭了')
+      this.dialogForm = {
+        count: 0
+      }
+    },
+    toAddSubmit() {
+      ActGiftAddStock({
+        count: this.dialogForm.count,
+        id: this.dialogForm.id
+      }).then(res => {
+        console.log('1111111111111111111111', res)
+        if (res.code === '10000') {
+          this.dialogFormVisible = false
+          this.reset()
+          this.$message({
+            type: 'success',
+            message: '库存增加成功'
+          })
+          this._getTableData()
+        }
+      })
     }
   }
 }

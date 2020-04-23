@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
+    <el-form ref="form" :model="form" :rules="rules" size="small" :disabled="disabled" label-width="120px">
       <el-form-item label="赠品名称：" prop="name">
         <el-input
           v-model="form.name"
@@ -61,7 +61,7 @@
 import storeGoods from '../../components/store-gods'
 // import giftList from './list'
 import selectGoods from '../../components/select-goods'
-import { createActGift } from '@/api/activity'
+import { createActGift, getActGiftInfo } from '@/api/activity'
 import { mapGetters } from 'vuex'
 export default {
   components: { storeGoods, selectGoods },
@@ -144,6 +144,7 @@ export default {
       document.title = !this.$route.query._ck
         ? '编辑赠品'
         : '查看赠品详情'
+      this.getDetailInfo(this.$route.query.id)
     }
   },
   methods: {
@@ -208,8 +209,18 @@ export default {
       this.storeSelectGoods.splice(index, 1)
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
     },
-    getDetailInfo() {
+    getDetailInfo(id) {
       console.log('调用详情--------')
+      getActGiftInfo(id).then(res => {
+        console.log('getActGiftInfo----------', res)
+        const { data } = res
+        this.form = {
+          limit: data.limitCount === 0 ? 0 : 1,
+          limitStock: data.limitCount,
+          name: data.name,
+          stock: data.stock
+        }
+      })
     }
   },
   beforeRouteLeave(to, from, next) {

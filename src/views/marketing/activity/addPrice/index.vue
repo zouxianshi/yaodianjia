@@ -242,7 +242,7 @@ export default {
               name: data.pmtName,
               activitTime: [data.startTime, data.endTime],
               allStore: !!data.allStore,
-              allSpec: false,
+              allSpec: !!data.allSpec,
               type: data.userCoupons === 3 ? ['1'] : [],
               threshold: data.activityDetail.threshold,
               confineNum: data.activityDetail.confineNum,

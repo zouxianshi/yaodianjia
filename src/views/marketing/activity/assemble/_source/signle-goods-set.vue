@@ -14,7 +14,7 @@
     <div class="dialog-body">
       <section class="goods-basib-info">
         <div class="image">
-          <el-image :src="showImg(info.mainPic)" style="width:100px">
+          <el-image :src="showImg(info.picUrl)" style="width:100px">
             <div slot="placeholder" class="image-slot">
               加载中
               <span class="dot">...</span>
@@ -25,7 +25,7 @@
           <p>商品名称：{{ info.name }}</p>
           <p>商品编号：{{ info.specId }}</p>
           <p>
-            指导价格：
+            参考价：
             <span class="zd-price" v-text="'￥'+info.mprice" />
           </p>
         </div>
@@ -158,7 +158,7 @@ export default {
         return callback(new Error(`拼团价格不能为0`))
       }
       if (value >= this.info.mprice) {
-        return callback(new Error(`拼团价格需小于商品指导售价`))
+        return callback(new Error(`拼团价格需小于商品参考价`))
       }
       if (value && !checkNumberdouble(value)) {
         return callback(new Error('只能设置最多两位小数的正数'))

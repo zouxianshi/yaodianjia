@@ -120,6 +120,7 @@
               <span class="el-icon-arrow-down" @click="handleAddTime(2)" />
             </div>-->
             <span style="color: rgb(193, 193, 193); margin-left: 4px">小时</span>
+            <span style="color: rgb(193, 193, 193); margin-left: 4px">（设置开团后成团有效时间，过时则用户拼团失败）</span>
           </div>
         </el-form-item>
         <div class="form-title">活动店铺</div>
@@ -195,7 +196,7 @@
             </el-table-column>
             <el-table-column label="商品名称" prop="name" min-width="100" />
             <el-table-column label="商品编码" prop="erpCode" />
-            <el-table-column label="原售价" prop="mprice" />
+            <el-table-column label="参考价" prop="mprice" />
             <el-table-column label="拼团价" prop="activityPrice" />
             <el-table-column label="活动库存" prop="productActivityCount">
               <template slot-scope="scope">
@@ -383,7 +384,7 @@ export default {
             endTime: res.data.endTime,
             name: res.data && res.data.pmtName,
             description: res.data && res.data.description,
-            allStore: false,
+            allStore: !!(res.data && res.data.allStore),
             effectiveTime: res.data && res.data.effectiveTime,
             img: res.data && res.data.imgUrl ? '2' : '1',
             imgUrl: res.data && res.data.imgUrl
@@ -655,7 +656,7 @@ export default {
           isFreeshipping: v.isFreeshipping, // 是否包邮
           limitCount: v.limitCount, // 限购次数
           openLimitTimes: v.openLimitTimes, // 开团次数
-          price: v.mprice, // 原售价
+          price: v.mprice, // 参考价
           productActivityCount: v.productActivityCount, // 活动产品库存量
           specId: v.specId, //
           imgUrl: v.mainPic,

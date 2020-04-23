@@ -244,7 +244,38 @@ export function getActGiftList(params) {
     data: params
   })
 }
-
+/**
+ * 查询赠品详情
+ * @param {*} params
+ */
+export function getActGiftInfo(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-gift/${id}`,
+    method: 'get'
+  })
+}
+/**
+ * 清空赠品
+ * @param {*} params
+ */
+export function ActGiftClear(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-gift/clearStock/${id}`,
+    method: 'put'
+  })
+}
+/**
+ * 增加赠品库存
+ * @param {*number} count
+ * @param {*string} id
+ */
+export function ActGiftAddStock(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-gift/addStock`,
+    method: 'post',
+    data: params
+  })
+}
 /**
  * 清空活动下的商品库存
  * @param {*String} activityId

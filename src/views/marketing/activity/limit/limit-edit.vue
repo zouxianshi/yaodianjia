@@ -723,7 +723,7 @@ export default {
             this.xForm = Object.assign(data, {
               dateRange: [res.data.startTime, res.data.endTime],
               type: data.pmtType + '',
-              allStore: false,
+              allStore: !!data.allStore,
               mode: data.activityDetail && data.activityDetail.pmtMode,
               freePostFee:
                 data.activityDetail && data.activityDetail.freePostFee

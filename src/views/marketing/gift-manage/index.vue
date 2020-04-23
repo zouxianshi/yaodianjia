@@ -1,13 +1,13 @@
 <template>
   <div class="app-container activity">
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="优惠券" name="coupons">
+      <!-- <el-tab-pane label="优惠券" name="coupons">
         <el-row :gutter="20">
           <el-col v-for="o in coupons" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
             <card-item :item="o" />
           </el-col>
         </el-row>
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane label="赠品" name="complimentary">
         <el-row :gutter="20">
           <el-col v-for="o in complimentary" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
@@ -29,7 +29,7 @@ export default {
   components: { cardItem },
   data() {
     return {
-      activeName: 'coupons',
+      activeName: 'complimentary',
       // 结构解释
       // 约定大于配置
       // linkUrl: '/marketing/gifts/complimentary',
