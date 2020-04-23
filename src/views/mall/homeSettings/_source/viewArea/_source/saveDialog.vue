@@ -86,6 +86,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .save-dialog-model {
+    margin: 20px 0;
     .dialog-footer {
       padding-top: 20px;
       text-align: right;

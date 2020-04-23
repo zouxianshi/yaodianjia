@@ -71,7 +71,7 @@ export default {
       margin: 30px auto;
     }
     .pm-ok {
-      margin-top: 30px;
+      margin:30px 0 20px 0;
     }
   }
 </style>
