@@ -1,5 +1,5 @@
 <template>
-  <div class="home-main-model">
+  <div v-loading="isLoading" class="home-main-model">
     <div class="hmm-view-area">
       <m-view-area v-if="is" />
     </div>
@@ -23,7 +23,8 @@ export default {
   },
   data() {
     return {
-      is: false
+      is: false,
+      isLoading: true
     }
   },
   computed: {
@@ -54,9 +55,17 @@ export default {
         this.setDragData(list)
 
         this.is = true
+
+        setTimeout(() => {
+          this.isLoading = false
+        }, 800)
       })
     } else {
       this.is = true
+
+      setTimeout(() => {
+        this.isLoading = false
+      }, 800)
     }
   },
   beforeMount() {
@@ -80,6 +89,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .home-main-model {
     padding: 0 20px 20px 20px;
+    min-height: 460px;
     .hmm-view-area {
       width: 422px;
       float: left;
