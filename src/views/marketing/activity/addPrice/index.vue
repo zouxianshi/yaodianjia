@@ -125,7 +125,12 @@
       @on-change="handleSelectActivityGoods"
     />
     <!-- 选择主商品组件 -->
-    <store-goods ref="GoodsComponent" :store-ids="form.allStore?[]:chooseStore.map(item => item.id)" :list="storeSelectGoods" @on-change="handleSelectGoods" />
+    <store-goods
+      ref="GoodsComponent"
+      :store-ids="form.allStore?[]:chooseStore.map(item => item.id)"
+      :list="storeSelectGoods"
+      @on-change="handleSelectGoods"
+    />
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
   </div>
@@ -322,6 +327,10 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log('我准备通过了----------------------')
+          if (new Date(this.form.startTime).getTime() < new Date().getTime()) {
+            this.$message.warning('活动开始时间不能小于当前时间')
+            return
+          }
           this.$refs.activityGod
             .onsubmit()
             .then(res => {
