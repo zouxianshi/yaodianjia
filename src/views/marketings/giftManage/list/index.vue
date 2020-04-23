@@ -23,22 +23,22 @@ export default {
       cardInfo: [
         {
           imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-          name: '折扣券',
+          activityTemplateName: '折扣券',
           url: '/marketings/gift-manage/discount'
         },
         {
           imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-          name: '满减券',
+          activityTemplateName: '满减券',
           url: '/marketings/gift-manage/full-reduction'
         },
         {
           imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-          name: '礼品券',
+          activityTemplateName: '礼品券',
           url: '/marketings/gift-manage/gift'
         },
         {
           imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-          name: '优惠码',
+          activityTemplateName: '优惠码',
           url: ''
         }
       ]

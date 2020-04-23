@@ -21,7 +21,7 @@
         </div>
         <div class="p-bottom">
           <div class="codeImg">二维码</div>
-          <div class="code">券码：12345678</div>
+          <div class="code">券码：XXXXXXXX</div>
         </div>
       </div>
     </div>
@@ -32,6 +32,12 @@ export default {
   name: 'PhoneView',
   props: {
     data: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    otherData: {
       type: Object,
       default() {
         return {}
@@ -48,15 +54,11 @@ export default {
     userTime() {
       var str = ''
       if (this.data.timeRule === 1) { // 选择马上开始有效期
-        str += '自领取起' + this.data.effectTime + '天内有效'
+        str += '自领取起' + this.otherData.expirationDay + '天内有效'
       } else if (this.data.timeRule === 2) {
-        var arr = this.data.effectTime.split('-')
-        str += '自领取' + arr[0] + '天后' + arr[1] + '天有效'
+        str += '自领取' + this.otherData.notActive + '天后' + this.otherData.effective + '天有效'
       } else { // 选择日期
-        if (this.data.effectTime) {
-          var arr2 = this.data.effectTime.split(',')
-          str += this.formatDate(arr2[0]) + '到' + this.formatDate(arr2[1])
-        }
+        str += this.formatDate(this.otherData.expirationDate[0]) + '到' + this.formatDate(this.otherData.expirationDate[1])
       }
       return str
     }

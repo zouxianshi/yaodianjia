@@ -8,12 +8,11 @@
       <div class="nav-bar">
         <el-form :inline="true" :model="searchParams" class="demo-form-inline">
           <el-form-item label="门店信息" style="margin-left:10px">
-            <el-input v-model="searchParams.searchKey" placeholder="门店编码/门店名称" size="mini" />
+            <el-input v-model="searchParams.storeProperty" placeholder="门店编码/门店名称" size="mini" />
           </el-form-item>
           <el-form-item label="所属企业">
-            <el-select v-model="searchParams.storeName" placeholder="请选择" size="mini">
-              <el-option label="全部" value="0" />
-              <el-option label="未开始" value="1" />
+            <el-select v-model="searchParams.orgId" placeholder="请选择" size="mini">
+              <el-option v-for="(item, index) in organizations" :key="index" :label="item.orName" :value="item.id" />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -37,7 +36,7 @@
       </el-table>
       <el-pagination
         :current-page="pageInfo.currentPage"
-        :page-sizes="[10, 50, 100, 500]"
+        :page-sizes="[1, 50, 100, 500]"
         :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalCount"
@@ -58,7 +57,7 @@
   </div>
 </template>
 <script>
-import { queryStores } from '@/api/common'
+import { getOrganization, queryStoreByOrgId } from '@/api/coupon'
 export default {
   data() {
     return {
@@ -66,22 +65,30 @@ export default {
       selectedArr: [], //  已选择门店所有信息
       hasSelectList: [], // 已选择门店st_code集合
       searchParams: {
-        storeName: '',
-        searchKey: ''
+        orgId: '',
+        storeProperty: ''
       },
+      organizations: [], // 企业列表
       pageInfo: {
         currentPage: 1,
-        pageSize: 2
+        pageSize: 1
       },
       totalCount: 0,
       dialogTableVisible: false
     }
   },
+  created() {
+    getOrganization({ merCode: this.$store.state.user.merCode }).then(res => {
+      if (res.data) {
+        this.organizations = res.data
+      }
+    })
+  },
   methods: {
     // 查询列表数据
     queryStoreDate() {
       var params = Object.assign({}, this.searchParams, this.pageInfo)
-      queryStores(params).then(res => {
+      queryStoreByOrgId(params).then(res => {
         this.dialogTableVisible = true
         if (res.data && res.data.data) {
           this.gridData = res.data.data

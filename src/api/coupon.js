@@ -28,9 +28,32 @@ export function addCoupon(params) {
     data: params
   })
 }
+// 编辑优惠券
+export function updateCoupon(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/updateCoupon`,
+    method: 'post',
+    data: params
+  })
+}
+// 查询机构
+export function getOrganization(params) {
+  return request({
+    url: `${config.merGoods}/1.0/organization/${params.merCode}`,
+    method: 'get'
+  })
+}
+// 条件查询门店
+export function queryStoreByOrgId(params) {
+  return request({
+    url: `${config.merGoods}/1.0/store/queryStoreByOrgId`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 模块列表
 export function moduleList(params) {
-  console.log(params)
   return request({
     url: `${config.merGoods}/1.0/marketingActivities/listActivityTemplate/${params.id}/${params.type}`,
     method: 'post'
@@ -61,11 +84,4 @@ export function marketaddCoupon(params) {
     data: params
   })
 }
-// 编辑优惠券
-export function updateCoupon(params) {
-  return request({
-    url: `${config.merGoods}/1.0/coupon/updateCoupon`,
-    method: 'post',
-    data: params
-  })
-}
+

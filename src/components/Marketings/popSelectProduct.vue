@@ -91,7 +91,7 @@ export default {
     show(product) {
       this.hasSelectList = []
       product.forEach(item => {
-        this.hasSelectList.push(item.id)
+        this.hasSelectList.push(item.erpCode)
       })
       this.queryGoodsData()
     },
@@ -106,7 +106,7 @@ export default {
           this.$nextTick(() => {
             this.$refs.dataTable.clearSelection()
             this.gridData.forEach(row => {
-              if (this.hasSelectList.indexOf(row.id) >= 0) {
+              if (this.hasSelectList.indexOf(row.erpCode) >= 0) {
                 this.$refs.dataTable.toggleRowSelection(row, true)
               }
             })

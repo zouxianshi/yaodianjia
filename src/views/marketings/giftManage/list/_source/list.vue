@@ -21,7 +21,7 @@
     <div class="list-tabel">
       <el-table
         :data="tableData"
-        height="calc(100vh - 390px)"
+        height="calc(100vh - 430px)"
         style="width: 100%;"
         empty-text="您暂未创建任何优惠券"
       >
@@ -31,25 +31,33 @@
             {{ scope.row.sceneRule === 1? '仅商城' : scope.row.sceneRule === 2? '仅线下' : '线上线下通用' }}
           </template>
         </el-table-column>
-        <el-table-column prop="denomination" label="优惠内容" />
-        <el-table-column label="使用时间" width="200">
+        <el-table-column prop="denomination" label="优惠内容">
           <template slot-scope="scope">
-            {{ scope.row.effectTime.replace(',', ' - ') }}
+            <span v-if="scope.row.ctype === 1"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>{{ scope.row.denomination }}折</span>
+            <span v-if="scope.row.ctype === 2"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>减{{ scope.row.denomination }}元</span>
+            <span v-if="scope.row.ctype === 3">{{ scope.row.denomination }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="适用门店">
+        <el-table-column label="使用时间">
+          <template slot-scope="scope">
+            <span v-if="scope.row.timeRule === 1">领取后{{ scope.row.effectTime }}天内</span>
+            <span v-if="scope.row.timeRule === 2">领取{{ scope.row.effectTime.split(',')[0] }}天后{{ scope.row.effectTime.split(',')[1] }}天内</span>
+            <span v-if="scope.row.timeRule === 3">{{ scope.row.effectTime.split(',')[0] }} <br>到<br> {{ scope.row.effectTime.split(',')[1] }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="适用门店" width="110">
           <template slot-scope="scope">
             {{ scope.row.shopRule === 1? '全部门店' : scope.row.shopRule === 2? '部分门店可用' : '部分门店不可用' }}
           </template>
         </el-table-column>
-        <el-table-column label="适用商品">
+        <el-table-column label="适用商品" width="110">
           <template slot-scope="scope">
             {{ scope.row.productRule === 1? '全部商品' : scope.row.productRule === 2? '部分商品可用' : '部分商品不可用' }}
           </template>
         </el-table-column>
-        <el-table-column prop="totalCount" label="已领取量" />
-        <el-table-column prop="onlineCount" label="线上核销" />
-        <el-table-column prop="offlineCount" label="线下核销" />
+        <el-table-column prop="totalCount" label="已领取量" width="110" />
+        <el-table-column prop="onlineCount" label="线上核销" width="110" />
+        <el-table-column prop="offlineCount" label="线下核销" width="110" />
         <el-table-column label="操作" width="80" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="_edit(scope.row)">编辑</el-button>
@@ -131,9 +139,9 @@ export default {
   }
 }
 .list-tabel{
-  height: calc(100vh - 400px);position:relative;padding-bottom:42px;
+  height: calc(100vh - 395);position:relative;padding-bottom:42px;
   .el-pagination{
-    position: absolute;bottom: 0;right: 0;width: 100%;text-align: right;
+    position: absolute;bottom: 0;right: 0;width: 100%;text-align: right;background-color: #fff;
   }
 }
 </style>

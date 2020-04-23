@@ -2,7 +2,7 @@
   <div class="discount-index-model">
     <div class="content">
       <div class="discount-content-l">
-        <mPhoneView :data="discountForm" />
+        <mPhoneView :data="discountForm" :other-data="otherData" />
       </div>
       <div class="discount-content-r">
         <el-steps :active="active" simple>
@@ -82,20 +82,19 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="适用门店：">
-            <el-radio-group v-model="discountForm.shopRule" :disabled="isUpdate">
+            <el-radio-group v-model="discountForm.shopRule" :disabled="isUpdate" @change="changeStoreRule">
               <el-radio :label="1">全部门店</el-radio>
               <el-radio :label="2">指定门店&emsp; <el-button v-if="discountForm.shopRule===2" type="text" :disabled="isUpdate" @click="selectStore">选择门店</el-button></el-radio>
             </el-radio-group>
-            <mSelectedStore v-show="selectedStore.length>0" ref="selectedStore" @onDel="_deleteItem" />
+            <mSelectedStore v-show="selectedStore.length>0" ref="selectedStore" @onDel="_deleteItemSto" />
           </el-form-item>
           <el-form-item label="适用商品：">
             <el-radio-group v-model="discountForm.productRule" :disabled="isUpdate" @change="changeProductRule">
               <el-radio :label="1">全部商品</el-radio>
-              <el-radio :label="2">指定商品可用 <el-button v-if="discountForm.productRule===2" type="text" :disabled="isUpdate" @click="selectCommodity(1)">选择商品</el-button></el-radio>
-              <el-radio :label="3">指定商品不可用 <el-button v-if="discountForm.productRule===3" type="text" :disabled="isUpdate" @click="selectCommodity(2)">选择商品</el-button></el-radio>
+              <el-radio :label="2">指定商品可用 <el-button v-if="discountForm.productRule===2" type="text" :disabled="isUpdate" @click="selectCommodity()">选择商品</el-button></el-radio>
+              <el-radio :label="3">指定商品不可用 <el-button v-if="discountForm.productRule===3" type="text" :disabled="isUpdate" @click="selectCommodity()">选择商品</el-button></el-radio>
             </el-radio-group>
-            <mSelectedProduct v-show="discountForm.productRule===2&&selectedProUse.length>0" ref="selectedProUse" @onDel="_deleteItemUse" />
-            <mSelectedProduct v-show="discountForm.productRule===3&&selectedProNot.length>0" ref="selectedProNot" @onDel="_deleteItemNot" />
+            <mSelectedProduct v-show="selectedPro.length>0" ref="selectedPro" @onDel="_deleteItemPro" />
           </el-form-item>
         </el-form>
         <el-button v-if="active===1" size="mini" type="primary" @click="next">下一步</el-button>
@@ -104,8 +103,7 @@
       </div>
     </div>
     <mPopSelectStore ref="selectStore" @onSelect="getSelectedStore" />
-    <mPopSelectProduct ref="selectCommodityUse" @onSelect="getSelectedProUse" />
-    <mPopSelectProduct ref="selectCommodityNot" @onSelect="getSelectedProNot" />
+    <mPopSelectProduct ref="selectCommodity" @onSelect="getSelectedPro" />
   </div>
 </template>
 <script>
@@ -126,8 +124,7 @@ export default {
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
       active: 1, // 当前操作步骤
       selectedStore: [],
-      selectedProUse: [], // 指定可用商品
-      selectedProNot: [], // 指定不可用商品
+      selectedPro: [],
       otherData: {
         expirationDay: '0', // 直接开始有效天数
         expirationDate: [
@@ -148,14 +145,17 @@ export default {
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
         sceneRule: 3, // 使用场景
-        useRule: 1, // 门槛金额
-        shopRule: 0, // 适用门店
-        productRule: 0, // 使用商品
+        effectTime: 0,
+        useRule: 0, // 门槛金额
+        shopRule: 1, // 适用门店
+        productRule: 1, // 使用商品
+        timeRule: 1,
         logo: 'www.baidu.com'
       }
     }
   },
   created() {
+    this.useRuleLimit = this.discountForm.useRule === 0 ? 0 : 1 // 是否有使用门槛
     if (this.$route.query.id) { // 编辑
       this.isUpdate = true
       var params = {
@@ -192,13 +192,15 @@ export default {
   methods: {
     // 切换商品限制规则
     changeProductRule() {
-      this.selectedProUse = []
-      this.selectedProNot = []
+      this.selectedPro = []
+    },
+    changeStoreRule() {
+      this.selectedStore = []
     },
     next() {
       if (this.active++ > 1) this.active = 1
     },
-    _submit() {
+    _submit() { //  提交数据
       if (this.$route.query.id) {
         this.discountForm.expireInfo = Number(this.discountForm.expireInfo)
         updateCoupon(this.discountForm).then(res => {
@@ -211,7 +213,20 @@ export default {
           this.$router.push('/marketings/gift-manage/list')
         })
       } else { // 新增时处理数据
+        this.discountForm.couponStoreDTOList = []
         var params = this.discountForm
+        // 处理限制门店以及限制商品
+        if (params.shopRule === 2) {
+          this.selectedStore.forEach(item => {
+            var obj = {
+              'ruleType': 1,
+              'storeCode': item.stCode,
+              'storeId': item.id,
+              'storeName': item.stName
+            }
+            this.discountForm.couponStoreDTOList.push(obj)
+          })
+        }
         var _data = this.otherData
         if (params.timeRule === 1) {
           params.effectTime = _data.expirationDay
@@ -220,6 +235,7 @@ export default {
         } else {
           params.effectTime = formatDate(_data.expirationDate[0]) + ',' + formatDate(_data.expirationDate[1])
         }
+        console.log(params)
         addCoupon(params).then(res => {
           if (res.code === '10000') {
             this.$message({
@@ -236,39 +252,27 @@ export default {
       this.$refs.selectStore.show(this.selectedStore)
     },
     // 选择商品
-    selectCommodity(type) {
-      if (type === 1) { // 选择可使用商品
-        this.$refs.selectCommodityUse.show(this.selectedProUse)
-      } else { // 选择不可用商品
-        this.$refs.selectCommodityNot.show(this.selectedProNot)
-      }
+    selectCommodity() {
+      this.$refs.selectCommodity.show(this.selectedPro)
     },
     // 获取选择门店数据
     getSelectedStore(data) {
       this.selectedStore = data
       this.$refs.selectedStore.show(data) // 已选择的列表显示
     },
-    // 获取选择可用商品数据
-    getSelectedProUse(data) {
-      this.selectedProUse = data
-      this.$refs.selectedProUse.show(data)
-    },
-    // 获取选择不可用商品数据
-    getSelectedProNot(data) {
-      this.selectedProNot = data
-      this.$refs.selectedProNot.show(data)
+    // 获取选择商品数据
+    getSelectedPro(data) {
+      console.log(this.selectedStore.length)
+      this.selectedPro = data
+      this.$refs.selectedPro.show(data)
     },
     // 删除已选择门店数据
-    _deleteItem(data) {
+    _deleteItemSto(data) {
       this.selectedStore = data
     },
-    // 删除已选择可使用商品数据
-    _deleteItemUse(data) {
-      this.selectedProUse = data
-    },
-    // 删除已选择不可用商品数据
-    _deleteItemNot(data) {
-      this.selectedProNot = data
+    // 删除已选择商品数据
+    _deleteItemPro(data) {
+      this.selectedPro = data
     }
   }
 }
