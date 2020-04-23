@@ -70,9 +70,9 @@
                   </el-dropdown-item>
                   <!-- 失效：进行中且不失效 -->
                   <el-dropdown-item
-                    :command="{id: scope.row.id, type: 'end', disabled: scope.row.validStatus ===1 && scope.row.status}"
+                    :command="{id: scope.row.id, type: 'end', disabled: scope.row.validStatus !==1 || !scope.row.status}"
                   >
-                    <el-button :disabled=" scope.row.validStatus ===1 && scope.row.status" type="text">失效</el-button>
+                    <el-button :disabled=" scope.row.validStatus !==1 || !scope.row.status" type="text">失效</el-button>
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="type === '14'"
@@ -89,8 +89,9 @@
                   <el-dropdown-item :command="{id: scope.row.id, type: 'failList', disabled: !scope.row.status}">
                     <el-button :disabled="!scope.row.status" type="text">失败列表</el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item :command="{id: scope.row.id, type: 'del', disabled: true}">
-                    <el-button disabled type="text">删除</el-button>
+                  <!-- 禁止删除：状态为进行中的且为生效的 -->
+                  <el-dropdown-item :command="{id: scope.row.id, type: 'del', disabled: scope.row.validStatus ===1 && scope.row.status}">
+                    <el-button :disabled=" scope.row.validStatus ===1 && scope.row.status" type="text">删除</el-button>
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -349,11 +350,12 @@ export default {
       } else if (val.type === 'end' && !val.disabled) {
         this.endActivity(val.id)
       } else if (val.type === 'failList' && !val.disabled) {
-        this.endActivity(val.id)
+        console.log('失败列表-----&&&&&&&')
+        // this.endActivity(val.id)
       } else if (val.type === 'extend' && !val.disabled) {
         this.$refs.activityAcform.open(val.id)
-      } else if (val.type === 'del') {
-        this.handleDel(val.id && !val.disabled)
+      } else if (val.type === 'del' && !val.disabled) {
+        this.handleDel(val.id)
       }
     },
 
