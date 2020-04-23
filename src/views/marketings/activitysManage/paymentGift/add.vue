@@ -55,7 +55,7 @@
           </el-radio-group>
           <mSelectedProduct v-show="form.product==='1'&&selectedProducts.length>0" ref="selectedProductView" @onDel="onGetSelectProduct" />
         </el-form-item>
-        <el-form-item v-if="form.product=='0'" label="消费金额：" prop="amount">
+        <el-form-item label="消费金额：" prop="amount">
           <span class="amTips">
             购满金额
             <el-input v-model.number="form.amount" size="mini" style="width:80px" /> 元，可参与活动
@@ -66,12 +66,30 @@
     <div class="payment-gift-rules">
       <h4>权益设置</h4>
       <el-form ref="form" label-width="100px" class="demo-form-inline" :rules="rules" :model="form" :disabled="disabled">
-        <el-form-item label="选择权益：" prop="youhuiquan">
-          <el-checkbox v-model="form.youhuiquan" />送优惠券
-          <span class="zkTips">最多可选二十张</span>
-          <div>
-            <el-link v-if="!disabled" type="primary" :underline="false" @click="selectStore">选择优惠券</el-link>
-          </div>
+        <el-form-item label="选择权益：" prop="coupon">
+          <el-radio-group v-model="form.coupon">
+            <el-radio label="0">送优惠券
+              <span class="zkTips">最多可选二十张</span>
+              <div v-if="form.coupon==='0'&&!disabled" class="from-clickable" @click="selectStore">选择优惠券</div>
+            </el-radio>
+            <mSelectedCoupon v-show="form.store==='1'&&selectedCoupons.length>0" ref="selectedCouponView" @onDel="onGetSelectCoupon" />
+            <el-radio label="1">抽奖活动
+              <span class="zkTips">只能选择一个</span>
+              <div v-if="form.coupon==='1'&&!disabled" class="from-clickable" @click="selectActivity">选择活动</div>
+            </el-radio>
+          </el-radio-group>
+          <mSelectedActivity v-show="form.coupon==='1'&&selectedActivity.length>0" ref="selectedActivityView" @onDel="onGetSelectActivity" />
+        </el-form-item>
+        <el-form-item label="参与次数">
+          <el-radio-group v-model="form.range">
+            <el-radio label="0">不限次数
+              <span class="zkTips">用户每次消费达到条件后即送</span>
+            </el-radio>
+            <el-radio label="1"><span class="amTips">
+              每人限制参与
+              <el-input v-model.number="form.amount" size="mini" style="width:80px" /> 次
+            </span><span class="zkTips">用户达到条件后可获得权益的总次数</span></el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="发放时间：" prop="fafangshijian">
           <el-radio-group v-model="form.fafangshijian">
@@ -90,19 +108,23 @@
 
     </div>
     <mPopSelectStore ref="selectStore" @onSelect="onGetSelectStore" />
+    <mPopSelectActivity ref="selectActivity" @onSelect="onGetSelectActivity" />
     <mPopSelectProduct ref="selectProduct" @onSelect="onGetSelectProduct" />
   </div>
 </template>
 <script>
 // import { mapGetters } from 'vuex'
 import mPopSelectStore from '@/components/Marketings/popSelectStore'
+import mPopSelectActivity from '@/components/Marketings/popSelectActivity'
 import mPopSelectProduct from '@/components/Marketings/popSelectProduct'
 import mSelectedStore from '../../_source/SelectedStore'
+import mSelectedCoupon from '../../_source/SelectedCoupon'
+import mSelectedActivity from '../../_source/SelectedActivity'
 import mSelectedProduct from '../../_source/SelectedProduct'
 export default {
   name: 'PaymentGiftAdd',
   components: {
-    mPopSelectStore, mSelectedStore, mPopSelectProduct, mSelectedProduct
+    mPopSelectStore, mSelectedStore, mPopSelectProduct, mSelectedProduct, mPopSelectActivity, mSelectedActivity, mSelectedCoupon
   },
   data() {
     const amount_limit = (rule, value, callback) => {
@@ -129,7 +151,7 @@ export default {
         store: '0', // 门店
         product: '0', // 指定商品
         fafangshijian: '0', // 发放时间
-        youhuiquan: true // 优惠券
+        coupon: '0' // 优惠券
       },
       rules: {
         name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
@@ -141,7 +163,7 @@ export default {
         amount: [
           { required: true, validator: amount_limit, trigger: 'blur' }
         ],
-        youhuiquan: [
+        coupon: [
           { required: true, message: '请选择优惠券', trigger: 'blur' }
         ],
         product: [
@@ -151,8 +173,10 @@ export default {
           { required: true, message: '请选择发放时间', trigger: 'blur' }
         ]
       },
+      selectedActivity: [],
       selectedStores: [], // 已选的门店集合
-      selectedProducts: []
+      selectedProducts: [],
+      selectedCoupons: []
     }
   },
   computed: {
@@ -187,7 +211,9 @@ export default {
     selectStore() {
       this.$refs.selectStore.show(this.selectedStores)
     },
-
+    selectActivity() {
+      this.$refs.selectActivity.show(this.selectedActivity)
+    },
     // 选择商品
     selectProduct() {
       this.$refs.selectProduct.show(this.selectedProducts)
@@ -203,6 +229,16 @@ export default {
       this.selectedStores = selectedStores
       this.$refs.selectedStoreView.show(selectedStores)
       console.log('选择的门店：' + JSON.stringify(selectedStores))
+    },
+    onGetSelectActivity(selectedActivity) {
+      this.selectedActivity = selectedActivity
+      this.$refs.selectedActivityView.show(selectedActivity)
+      console.log('选择的活动：' + JSON.stringify(selectedActivity))
+    },
+    onGetSelectCoupon(selectedCoupons) {
+      this.selectedCoupons = selectedCoupons
+      this.$refs.selectedCouponView.show(selectedCoupons)
+      console.log('选择的优惠券：' + JSON.stringify(selectedCoupons))
     },
     onGetSelectProduct(selectedProducts) {
       this.selectedProducts = selectedProducts
@@ -234,7 +270,7 @@ export default {
         product: '1', // 指定商品
         fafangshijian: '1', // 发放时间
         tuihuiquanyi: '1', // 退回权益
-        youhuiquan: true // 优惠券
+        coupon: true // 优惠券
       }
       // this.pageLoading = true
       // const params = {
@@ -344,6 +380,9 @@ export default {
   }
   .set-store {
     margin-left: 20px;
+  }
+  .from-clickable{
+    padding: 15px 0 0 24px;
   }
 }
 </style>

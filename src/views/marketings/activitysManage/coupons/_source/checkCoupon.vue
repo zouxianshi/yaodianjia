@@ -63,6 +63,7 @@
         <el-table-column type="selection" width="55" />
       </el-table>
       <div style="margin-top:20px">已选门店：</div>
+      <div><el-tag v-for="(item, index) in multipleSelectionAll" :key="index" type="success" style="margin:10px;vertical-align: bottom;">{{ item.cname }}</el-tag></div>
       <div class="block">
         <el-pagination
           :page-size="pageSize"
@@ -88,12 +89,6 @@ export default {
   name: 'CheckCoupon',
   components: {},
   props: {
-    selectlist: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
     // 起止时间
     timevalue: {
       type: Array,
@@ -113,7 +108,13 @@ export default {
       tableData: [],
       checklist: [],
       beforeTime: '',
-      endTime: ''
+      endTime: '',
+      // 所有选中的数据包含跨页数据
+      multipleSelectionAll: [],
+      // 当前页选中的数据
+      multipleSelection: [],
+      // 标识列表数据中每一行的唯一键的名称
+      idKey: 'id'
     }
   },
   computed: {
@@ -150,42 +151,28 @@ export default {
       getactivitList(params).then(res => {
         this.tableData = res.data.records
         this.totalPage = res.data.total
+        this.setSelectRow()
       })
     },
     handleClose() {
       this.dialogVisible = false
     },
     checkSure() {
-      this.$emit('confincheck', this.checklist)
-      this.$refs.multipleTable.clearSelection()
+      const multipleSelectionAll = JSON.parse(JSON.stringify(this.multipleSelectionAll))
+      this.$emit('confincheck', multipleSelectionAll)
       this.dialogVisible = false
+      this.$refs.multipleTable.clearSelection()
     },
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.handleGetlist()
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val
-    },
-    handleSelectionChange(val) {
-      this.checklist = val
+    handlematching(rows) {
+      this.multipleSelectionAll = rows
+      this.setSelectRow()
     },
     defaultcheck(rows) {
+      const row = JSON.parse(JSON.stringify(rows))
       this.dialogVisible = true
-      if (rows) {
-        var id = []
-        rows.map(item => {
-          id.push(item.id)
-        })
-        this.$nextTick(() => {
-          // this.$refs.multipleTable.clearSelection()
-          this.tableData.forEach(row => {
-            if (id.indexOf(row.id) >= 0) {
-              this.$refs.multipleTable.toggleRowSelection(row, true)
-            }
-          })
-        })
-      }
+      this.allselect = row
+      this.handlematching(row)
+      this.changePageCoreRecordData()
     },
     filterDate(date) {
       date = new Date(date)
@@ -204,7 +191,6 @@ export default {
     },
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination) {
-      console.log(ctype, useRule, denomination)
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -226,10 +212,94 @@ export default {
       if (timeRule === 1) {
         return `自领取${effectTime}天有效`
       } else if (timeRule === 2) {
-        return `自领取${effectTime.split(',')[0]}天有效,${effectTime.split(',')[1]}天失效`
+        return `自领取${effectTime.split(',')[0]}天有效,${
+          effectTime.split(',')[1]
+        }天失效`
       } else {
         return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
       }
+    },
+    //
+    setSelectRow() {
+      if (!this.multipleSelectionAll || this.multipleSelectionAll.length <= 0) {
+        return
+      }
+      // 标识当前行的唯一键的名称
+      const idKey = this.idKey
+      const selectAllIds = []
+      this.multipleSelectionAll.forEach(row => {
+        selectAllIds.push(row[idKey])
+      })
+      // this.$refs.multipleTable.clearSelection()
+      this.$nextTick(() => {
+        this.tableData.forEach(row => {
+          if (selectAllIds.indexOf(row.id) >= 0) {
+            this.$refs.multipleTable.toggleRowSelection(row, true)
+          }
+        })
+      })
+    },
+    // 记忆选择核心方法
+    changePageCoreRecordData() {
+      // 标识当前行的唯一键的名称
+      const idKey = this.idKey
+      const that = this
+      if (this.multipleSelectionAll.length <= 0) {
+        this.multipleSelectionAll = this.multipleSelection
+        return
+      }
+      // 总选择里面的key集合
+      const selectAllIds = []
+      this.multipleSelectionAll.forEach(row => {
+        selectAllIds.push(row[idKey])
+      })
+      const selectIds = []
+      // 获取当前页选中的id
+      this.multipleSelection.forEach(row => {
+        selectIds.push(row[idKey])
+        // 如果总选择里面不包含当前页选中的数据，那么就加入到总选择集合里
+        if (selectAllIds.indexOf(row[idKey]) < 0) {
+          that.multipleSelectionAll.push(row)
+        }
+      })
+      const noSelectIds = []
+      // 得到当前页没有选中的id
+      this.tableData.forEach(row => {
+        if (selectIds.indexOf(row[idKey]) < 0) {
+          noSelectIds.push(row[idKey])
+        }
+      })
+      noSelectIds.forEach(id => {
+        if (selectAllIds.indexOf(id) >= 0) {
+          for (let i = 0; i < that.multipleSelectionAll.length; i++) {
+            if (that.multipleSelectionAll[i][idKey] === id) {
+              // 如果总选择中有未被选中的，那么就删除这条
+              that.multipleSelectionAll.splice(i, 1)
+              break
+            }
+          }
+        }
+      })
+    },
+    handleSizeChange(val) {
+      // 改变页的时候调用一次
+      this.pageSize = val
+      this.handleGetlist()
+    },
+    handleCurrentChange(val) {
+      // 改变每页显示条数的时候调用一次
+      this.changePageCoreRecordData()
+      this.currentPage = val
+      this.handleGetlist()
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      this.changePageCoreRecordData()
+    }, // 得到选中的所有数据
+    getAllSelectionData() {
+      // 再执行一次记忆勾选数据匹配，目的是为了在当前页操作勾选后直接获取选中数据
+      this.changePageCoreRecordData()
+      console.log(this.multipleSelectionAll)
     }
   }
 }

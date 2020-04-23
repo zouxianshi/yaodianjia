@@ -1,6 +1,6 @@
 <template>
   <div class="add-model app-container">
-    <el-radio-group v-model="radio" size="mini" @change="change">
+    <el-radio-group v-model="radio" size="mini">
       <el-radio-button label="免费领取" />
       <el-radio-button label="现金购买" />
       <el-radio-button label="积分兑换" />
@@ -23,7 +23,8 @@
       <span class="add-addLeft-model">选优惠券:</span>
       <div class="add-addRight-model">
         <el-button type="primary" size="mini" plain @click="handlecheck">选择会员券</el-button>
-        <div style="margin-top:10px">已选择6张优惠券</div>
+        <!-- <div style="margin-top:10px">已选择6张优惠券</div> -->
+        {{ write }}
       </div>
     </div>
     <div v-show="checkedit" class="add-addItem-model">
@@ -46,7 +47,7 @@
               slot-scope="scope"
             >{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>
           </el-table-column>
-          <el-table-column prop="productRule" label="适用门店" width="100">
+          <el-table-column label="适用门店" width="100">
             <template
               slot-scope="scope"
             >{{ scope.row.productRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
@@ -54,7 +55,11 @@
           <el-table-column label="券总数" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                <el-input v-model="scope.row.date" placeholder />
+                {{ scope.$index }}
+                <el-input
+                  type="text"
+                  placeholder="请输入数量"
+                />
                 <i class="el-icon-edit" />
               </div>
             </template>
@@ -62,15 +67,16 @@
           <el-table-column label="每人限领（张）" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                <el-input v-model="scope.row.date" placeholder />
+                {{ scope.$index }}
+                <el-input v-model.number="scope.row.totalLimit" @change="onChange($event,scope.row,scope.$index)" />
                 <i class="el-icon-edit" />
               </div>
             </template>
           </el-table-column>
-          <el-table-column v-if="radio==='积分兑换'" label="所需积分" width="130">
+          <el-table-column v-if="radio==='积分兑换'" label="所需积分" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                <el-input v-model.number="scope.row.date" type="number" placeholder />
+                <el-input v-model.number="write[scope.$index].totalNeed" type="number" placeholder />
                 <i class="el-icon-edit" />
               </div>
             </template>
@@ -78,7 +84,7 @@
           <el-table-column v-if="radio==='现金购买'" label="所需现金" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                <el-input v-model="scope.row.date" placeholder />
+                <el-input v-model="write[scope.$index].totalNeed" placeholder />
                 <i class="el-icon-edit" />
               </div>
             </template>
@@ -101,6 +107,7 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import { marketaddCoupon } from '@/api/coupon'
 import checkCoupon from './_source/checkCoupon'
 import { mapGetters } from 'vuex'
@@ -112,6 +119,7 @@ export default {
   props: {},
   data() {
     return {
+      valueInput: '',
       checkedit: false,
       radio: '免费领取',
       selectlist: [],
@@ -146,17 +154,18 @@ export default {
           }
         ]
       },
-      value: []
+      value: [],
+      write: []
     }
   },
   computed: {
     ...mapGetters(['merCode'])
   },
   watch: {
-    selectlist() {
+    selectlist(old, newv) {
+      console.log(old, newv)
       if (this.selectlist) {
         this.$nextTick(() => {
-          console.log(this.selectlist)
           if (this.selectlist.length === 0) {
             this.checkedit = false
           } else {
@@ -175,11 +184,28 @@ export default {
   beforeDestroy() {},
   destroyed() {},
   methods: {
+    onChange(event, row, $index) {
+      const { totalLimit } = row
+      this.$set(this.write[$index], 'totalLimit', totalLimit)
+      console.log(this.write)
+    },
+    // 点击选择优惠券
     handlecheck() {
       this.$refs.checkCoupons.defaultcheck(this.selectlist)
     },
     confincheck(val) {
       this.selectlist = val
+
+      const write = {
+        totalCoupons: 0,
+        totalLimit: 0,
+        totalNeed: 0
+      }
+      for (const i in val) {
+        console.log(i)
+        this.write.push(_.cloneDeep(write))
+      }
+      // console.log(this.write)
     },
     deleteRow(index, rows) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -188,6 +214,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
+          this.write.splice(index, 1)
           rows.splice(index, 1)
           this.$message({
             type: 'success',
@@ -201,14 +228,8 @@ export default {
           })
         })
     },
-    change() {},
-    // handlechange(val) {
-    //   console.log(val)
-    //   this.selectlist = val
-    // }
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination) {
-      console.log(ctype, useRule, denomination)
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -239,7 +260,6 @@ export default {
     },
     // 提交
     handleSumbit() {
-      console.log(this.selectlist)
       let radiotype = 0
       if (this.radio === '免费领取') {
         radiotype = 1
@@ -265,7 +285,6 @@ export default {
         ],
         merCode: '666666'
       }
-      console.log(params)
       marketaddCoupon(params).then(res => {
         console.log(res)
       })
@@ -284,7 +303,14 @@ export default {
       m1 = m1 < 10 ? '0' + m1 : m1
       s = s < 10 ? '0' + s : s
       return y + '-' + m + '-' + d + ' ' + h + ':' + m1 + ':' + s
+    },
+    handleinput(val, index) {
+      // this.$forceUpdate()
+      console.log(val, index)
     }
+    // changeInput(e) {
+    //   this.$forceUpdate()
+    // }
   }
 }
 </script>
