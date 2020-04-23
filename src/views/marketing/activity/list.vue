@@ -45,6 +45,15 @@
               </template>
             </el-table-column>
           </template>
+          <el-table-column label="未生效数据" width="100" align="center">
+            <template slot-scope="scope">
+              <el-tag v-if="!!scope.row.errorPath" size="small" type="warning">
+                <!-- v-if="!!scope.row.errorPath" -->
+                <a :href="configOrderOss(scope.row.errorPath)" download>查看数据</a>
+              </el-tag>
+              <span v-else>无</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="130">
             <template slot-scope="scope">
               <el-button type="text" @click="toLook(scope.row)">查看</el-button>
@@ -85,11 +94,6 @@
                       type="text"
                       :disabled="scope.row.validStatus !== 0 || !scope.row.status"
                     >编辑</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item
-                    :command="{id: scope.row.id, type: 'failList', disabled: !scope.row.status}"
-                  >
-                    <el-button :disabled="!scope.row.status" type="text">失败列表</el-button>
                   </el-dropdown-item>
                   <!-- 禁止删除：状态为进行中的且为生效的 -->
                   <el-dropdown-item
@@ -494,5 +498,12 @@ export default {
 .table-opeater {
   display: flex;
   align-items: center;
+}
+.dashboard-container {
+  .table-box {
+    .el-dropdown-link {
+      color: #147de8;
+    }
+  }
 }
 </style>

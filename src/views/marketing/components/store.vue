@@ -19,19 +19,15 @@
         <el-form-item label="所属企业">
           <el-cascader
             v-model="formInline.merchant"
+            v-loading="typeTreeLoading"
             :props="merchantOption"
             :options="options"
             clearable
+            @change="onTypeChange"
           />
         </el-form-item>
         <el-form-item label="门店信息">
-          <el-input v-model="formInline.storeCode" clearable placeholder="门店编码/门店名称" />
-        </el-form-item>
-        <el-form-item v-show="false" label="活动开始时间">
-          <el-input v-model="formInline.startTime" clearable placeholder="门店编码/门店名称" />
-        </el-form-item>
-        <el-form-item v-show="false" label="活动结束时间">
-          <el-input v-model="formInline.endTime" clearable placeholder="门店编码/门店名称" />
+          <el-input v-model="formInline.storeProperty" clearable placeholder="门店编码/门店名称" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="_loadStoreData">查询</el-button>
@@ -92,8 +88,9 @@
   </el-dialog>
 </template>
 <script>
-import { getStoreList } from '@/api/depot'
-let id = 0
+// import { getStoreList } from '@/api/depot'
+import { queryOrgMerchant, queryStoreByOrg } from '@/api/activity'
+import { mapGetters } from 'vuex'
 export default {
   props: {
     list: {
@@ -101,14 +98,10 @@ export default {
       default: () => {
         return []
       }
-    },
-    // 查询门店是否限制时间
-    activityStartTime: {
-      type: String
-    },
-    activityEndTime: {
-      type: String
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   data() {
     return {
@@ -122,11 +115,10 @@ export default {
       multipleSelection: [],
       isAll: false,
       subLoading: false,
+      typeTreeLoading: false,
       formInline: {
-        storeCode: '',
-        merchant: '',
-        startTime: this.activityStartTime || '',
-        endTime: this.activityEndTime || ''
+        storeProperty: '',
+        merchant: []
       },
       isShow: false,
       options: [
@@ -142,20 +134,7 @@ export default {
       merchantOption: {
         label: 'orName',
         value: 'id',
-        lazy: true,
-        checkStrictly: true, // 是否可以选择任一级
-        lazyLoad(node, resolve) {
-          const { level } = node
-          setTimeout(() => {
-            const nodes = Array.from({ length: level + 1 }).map(item => ({
-              id: ++id,
-              orName: `选项${id}`,
-              leaf: level >= 2
-            }))
-            // 通过调用resolve将子节点数据返回，通知组件数据加载完成
-            resolve(nodes)
-          }, 1000)
-        }
+        checkStrictly: true // 是否可以选择任一级
       }
     }
   },
@@ -170,6 +149,28 @@ export default {
         this.multipleSelection = []
       }
       this._loadStoreData()
+      this.getOrgMerchant()
+    },
+    getOrgMerchant() {
+      this.typeTreeLoading = true
+      queryOrgMerchant('888888')
+        .then(res => {
+          console.log('cccccccccccc', res)
+          this.typeTreeLoading = false
+          if (res.code === '10000' && res.data) {
+            this.options = res.data
+          } else {
+            this.options = []
+          }
+        })
+        .catch(res => {
+          this.typeTreeLoading = false
+        })
+    },
+    onTypeChange(typeid) {
+      // 分类切换
+      console.log('searchForm------', typeid)
+      this._loadStoreData()
     },
     checkSelectable() {
       return !this.isAll
@@ -183,14 +184,16 @@ export default {
       })
     },
     _loadStoreData() {
-      console.log('formInline-------------', this.formInline)
       const query = {
-        ...this.formInline,
-        onlineStatus: 1,
-        status: 1,
+        orgId:
+          this.formInline && Array.isArray(this.formInline.merchant)
+            ? this.formInline.merchant[this.formInline.merchant.length - 1]
+            : '',
+        storeProperty: this.formInline.storeProperty,
+        merCode: this.merCode,
         ...this.pageInfo
       }
-      getStoreList(query).then(res => {
+      queryStoreByOrg(query).then(res => {
         const { data, totalCount } = res.data
         this.tableData = data
         this.pageInfo.total = totalCount
@@ -200,10 +203,12 @@ export default {
       })
     },
     updateChecked() {
-      console.log('我准备回显数据------multipleSelection', this.multipleSelection)
+      console.log(
+        '我准备回显数据------multipleSelection',
+        this.multipleSelection
+      )
       console.log('我准备回显数据------tableData', this.tableData)
-      const currentCheckedList = []
-      this.tableData.forEach(item => {
+      const currentCheckedList = [](Array.isArray(this.tableData) ? this.tableData : []).forEach(item => {
         const index = this.multipleSelection.findIndex(mItem => {
           return mItem.id === item.id
         })

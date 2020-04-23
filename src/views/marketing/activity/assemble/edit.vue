@@ -236,9 +236,20 @@
       </el-form>
     </div>
     <!-- 门店列表 -->
-    <store-dialog ref="storeComponent" :list="chooseStore" :store-ids="formData.allStore?[]:chooseStore.map(item => item.id)" @complete="handletStoreComplete" />
+    <store-dialog
+      ref="storeComponent"
+      :list="chooseStore"
+      :store-ids="formData.allStore?[]:chooseStore.map(item => item.id)"
+      @complete="handletStoreComplete"
+    />
     <!-- 选择主商品组件 -->
-    <store-goods ref="dialogGoods" :limit-max="20" :list="goodsList" :store-ids="formData.allStore?[]:chooseStore.map(item => item.id)" @on-change="onSelectedGoods" />
+    <store-goods
+      ref="dialogGoods"
+      :limit-max="20"
+      :list="goodsList"
+      :store-ids="formData.allStore?[]:chooseStore.map(item => item.id)"
+      @on-change="onSelectedGoods"
+    />
     <!-- 编辑商品 -->
     <edit-goods-modals ref="editGoodsModals" :info="editGoods" @complete="handleSuccessSelectGood" />
   </div>
@@ -587,19 +598,12 @@ export default {
     addActivity(data) {
       assembleActivityAdd(data)
         .then(res => {
-          this.$message({
-            message: `保存成功`,
-            type: 'success'
-          })
-          setTimeout(_ => {
-            this.saveLoading = false
-            this.leaveAction = true
-            this.$router.push('/marketing/activity/list?type=13')
-          }, 1000)
+          this.saveLoading = false
+          this.leaveAction = true
+          this.resultData(res.data, '保存成功')
         })
         .catch(err => {
           this.saveLoading = false
-          this.leaveAction = true
           console.log(err)
         })
     },
@@ -607,17 +611,34 @@ export default {
       // 修改基本信息
       updateAssembleInfo(data)
         .then(res => {
-          this.$message({
-            message: '修改成功',
-            type: 'success'
-          })
-          setTimeout(_ => {
-            this.$router.push('/marketing/activity/list?type=13')
-          }, 1000)
+          this.saveLoading = false
+          this.leaveAction = true
+          this.resultData(res.data, '修改成功')
         })
         .catch(err => {
+          this.saveLoading = false
           console.log(err)
         })
+    },
+    resultData(data, msg) {
+      if (data) {
+        this.$alert(
+          '<div><h3 style="font-weight: 600">活动已成功创建，但部分商品未添加活动成功，部分商品创建不成功的原因可能有：</h3> <p style="color: red">1. 同一时间段内，门店部分商品已参加了其他互斥的营销活动</p> <p style="color: red">2. 部分门店对应商品未上架，该门店商品活动无法创建</p></div>',
+          '部分商品未添加成功提醒',
+          {
+            dangerouslyUseHTMLString: true,
+            confirmButtonText: '返回列表查看',
+            callback: () => {
+              this.$router.push('/marketing/activity/list?type=13')
+            }
+          }
+        )
+      } else {
+        this.$message.success(msg)
+        setTimeout(_ => {
+          this.$router.push('/marketing/activity/list?type=13')
+        }, 1000)
+      }
     },
     formatItems(list) {
       console.log('11111111111111111111111111-', list)

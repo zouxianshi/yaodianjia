@@ -1,6 +1,33 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
 
+/**
+ * 根据组织机构查询门店
+ * @param {*integer} currentPage
+ * @param {*string} merCode
+ * @param {*string} orgId
+ * @param {*integer} pageSize
+ * @param {*string} storeProperty
+ */
+export function queryStoreByOrg(params) {
+  return request({
+    url: `${config.merchant}/1.0/store/queryStoreByOrgId`,
+    method: 'post',
+    data: params
+  })
+}
+/**
+ * 获取企业信息
+ * @param {*} params
+ * /1.0/org/queryOrgByMerCode
+ *
+ */
+export function queryOrgMerchant() {
+  return request({
+    url: `${config.merchant}/1.0/org/queryOrgByMerCode`,
+    method: 'get'
+  })
+}
 // 获取冲突列表
 export function getConflict(params) {
   return request({

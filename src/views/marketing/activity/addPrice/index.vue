@@ -400,13 +400,9 @@ export default {
                 })
                   .then(res => {
                     if (res.code === '10000') {
-                      this.$message({
-                        message: '更新成功',
-                        type: 'success'
-                      })
                       this.leaveAction = true
                       loading.close()
-                      this.$router.replace('/marketing/activity/list?type=15')
+                      this.resultData(res.data, '更新成功')
                     }
                   })
                   .catch(() => {
@@ -416,13 +412,9 @@ export default {
                 createActAdd(dataParam)
                   .then(res => {
                     if (res.code === '10000') {
-                      this.$message({
-                        message: '创建成功',
-                        type: 'success'
-                      })
-                      loading.close()
                       this.leaveAction = true
-                      this.$router.replace('/marketing/activity/list?type=15')
+                      loading.close()
+                      this.resultData(res.data, '创建成功')
                     }
                   })
                   .catch(() => {
@@ -439,6 +431,24 @@ export default {
           return false
         }
       })
+    },
+    resultData(data, msg) {
+      if (data) {
+        this.$alert(
+          '<div><h3 style="font-weight: 600">活动已成功创建，但部分商品未添加活动成功，部分商品创建不成功的原因可能有：</h3> <p style="color: red">1. 同一时间段内，门店部分商品已参加了其他互斥的营销活动</p> <p style="color: red">2. 部分门店对应商品未上架，该门店商品活动无法创建</p></div>',
+          '部分商品未添加成功提醒',
+          {
+            dangerouslyUseHTMLString: true,
+            confirmButtonText: '返回列表查看',
+            callback: () => {
+              this.$router.replace('/marketing/activity/list?type=15')
+            }
+          }
+        )
+      } else {
+        this.$message.success(msg)
+        this.$router.replace('/marketing/activity/list?type=15')
+      }
     }
   },
   beforeRouteLeave(to, from, next) {

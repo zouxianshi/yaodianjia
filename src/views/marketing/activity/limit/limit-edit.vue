@@ -289,7 +289,10 @@ export default {
           // 2.减价
           callback(new Error('请输入最多2位小数的正数'))
         }
-        if (this.xForm.mode === 2 && (value > Number(this.tableForm.selectedGoods[index].mprice))) {
+        if (
+          this.xForm.mode === 2 &&
+          value > Number(this.tableForm.selectedGoods[index].mprice)
+        ) {
           // 2.减价
           callback(new Error('减价金额不可大于参考价'))
         }
@@ -437,12 +440,18 @@ export default {
     let pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}`
     if (this.pageStatus === 2) {
       // pageStatus 1.新增 2.编辑 3.查看
-      pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}编辑`
+      pageTitle = `限时${
+        this.$route.query.l_type === '11' ? '优惠' : '秒杀'
+      }编辑`
     } else if (this.pageStatus === 3) {
-      pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}详情`
+      pageTitle = `限时${
+        this.$route.query.l_type === '11' ? '优惠' : '秒杀'
+      }详情`
       this.disabled = true
     } else {
-      pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}新建`
+      pageTitle = `限时${
+        this.$route.query.l_type === '11' ? '优惠' : '秒杀'
+      }新建`
     }
     this.$route.meta.title = pageTitle
     document.title = pageTitle
@@ -770,13 +779,8 @@ export default {
       createActLimit(params)
         .then(res => {
           if (res.code === '10000') {
-            this.$message.success('创建成功')
-            setTimeout(_ => {
-              this.$router.push(
-                `/marketing/activity/list?type=${this.$route.query.l_type}`
-              )
-              this.saveLoading = false
-            }, 1000)
+            this.saveLoading = false
+            this.resultData(res.data, '创建成功')
           }
         })
         .catch(err => {
@@ -808,19 +812,38 @@ export default {
       updateActLimit(params)
         .then(res => {
           if (res.code === '10000') {
-            this.$message.success('保存成功')
-            setTimeout(_ => {
-              this.$router.push(
-                `/marketing/activity/list?type=${this.$route.query.l_type}`
-              )
-              this.saveLoading = false
-            }, 1000)
+            this.saveLoading = false
+            this.resultData(res.data, '保存成功')
           }
         })
         .catch(err => {
           console.log('err', err)
           this.saveLoading = false
         })
+    },
+    resultData(data, msg) {
+      if (data) {
+        this.$alert(
+          '<div><h3 style="font-weight: 600">活动已成功创建，但部分商品未添加活动成功，部分商品创建不成功的原因可能有：</h3> <p style="color: red">1. 同一时间段内，门店部分商品已参加了其他互斥的营销活动</p> <p style="color: red">2. 部分门店对应商品未上架，该门店商品活动无法创建</p></div>',
+          '部分商品未添加成功提醒',
+          {
+            dangerouslyUseHTMLString: true,
+            confirmButtonText: '返回列表查看',
+            callback: () => {
+              this.$router.push(
+                `/marketing/activity/list?type=${this.$route.query.l_type}`
+              )
+            }
+          }
+        )
+      } else {
+        this.$message.success(msg)
+        setTimeout(_ => {
+          this.$router.push(
+            `/marketing/activity/list?type=${this.$route.query.l_type}`
+          )
+        }, 1000)
+      }
     }
   }
 }

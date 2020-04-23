@@ -240,7 +240,12 @@
       </el-form-item>
     </el-form>
     <!-- 选择主商品组件 -->
-    <store-goods ref="GoodsComponent" :list="storeSelectGoods" :store-ids="form.allStore?[]:chooseStore.map(item => item.id)" @on-change="handleSelectGoods" />
+    <store-goods
+      ref="GoodsComponent"
+      :list="storeSelectGoods"
+      :store-ids="form.allStore?[]:chooseStore.map(item => item.id)"
+      @on-change="handleSelectGoods"
+    />
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!-- 选择赠品组件 -->
@@ -721,13 +726,9 @@ export default {
           if (this.edit) {
             updateActFull(dataParam)
               .then(res => {
-                this.$message({
-                  message: '更新成功',
-                  type: 'success'
-                })
                 loading.close()
                 this.leaveAction = true
-                this.$router.replace('/marketing/activity/list?type=14')
+                this.resultData(res.data, '更新成功')
               })
               .catch(() => {
                 loading.close()
@@ -735,13 +736,9 @@ export default {
           } else {
             createActFull(dataParam)
               .then(res => {
-                this.$message({
-                  message: '创建成功',
-                  type: 'success'
-                })
                 loading.close()
                 this.leaveAction = true
-                this.$router.replace('/marketing/activity/list?type=14')
+                this.resultData(res.data, '创建成功')
               })
               .catch(() => {
                 loading.close()
@@ -751,6 +748,26 @@ export default {
           return false
         }
       })
+    },
+    resultData(data, msg) {
+      if (data) {
+        this.$alert(
+          '<div><h3 style="font-weight: 600">活动已成功创建，但部分商品未添加活动成功，部分商品创建不成功的原因可能有：</h3> <p style="color: red">1. 同一时间段内，门店部分商品已参加了其他互斥的营销活动</p> <p style="color: red">2. 部分门店对应商品未上架，该门店商品活动无法创建</p></div>',
+          '部分商品未添加成功提醒',
+          {
+            dangerouslyUseHTMLString: true,
+            confirmButtonText: '返回列表查看',
+            callback: () => {
+              this.$router.replace('/marketing/activity/list?type=14')
+            }
+          }
+        )
+      } else {
+        this.$message.success(msg)
+        setTimeout(_ => {
+          this.$router.replace('/marketing/activity/list?type=14')
+        }, 1000)
+      }
     },
     delSelectStore(item, index) {
       console.log('item, index', item, index, this.chooseStore)
