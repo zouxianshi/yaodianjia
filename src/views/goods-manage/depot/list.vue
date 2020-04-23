@@ -45,12 +45,7 @@
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select
-              v-model="listQuery.drugType"
-              filterable
-              size="small"
-              placeholder="请选择"
-            >
+            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择">
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
@@ -325,6 +320,7 @@ export default {
         label: 'name',
         value: 'id'
       },
+      isToEdit: false,
       goodsData: [],
       merCode: '',
       specData: [],
@@ -364,6 +360,32 @@ export default {
     //   console.log(this.$store.getters.cachedViews);
     // });
     // this._loadGoodTypeList()
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'GoodsEdit' && from.name === 'Depot' && this.isToEdit) {
+      const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+        item => item.name === 'GoodsEdit'
+      )
+      if (hasGoodsEdit) {
+        const answer = window.confirm('你还有数据没有保存，是否确认退出')
+        if (answer) {
+          this.$store.dispatch('tagsView/delView', to).then(res => {
+            this.isToEdit = false
+            next()
+          })
+        } else {
+          next()
+        }
+      } else {
+        this.$store.dispatch('tagsView/delView', to).then(res => {
+          this.isToEdit = false
+          next()
+        })
+      }
+    } else {
+      this.isToEdit = false
+      next()
+    }
   },
   methods: {
     handleSettingLimitBuy() {
@@ -517,7 +539,7 @@ export default {
       this.dialogVisible = true
     },
     handleEdit(id) {
-      this.$store.dispatch('tagsView/delCachedView', this.$route)
+      this.isToEdit = true
       this.$router.push('/goods-manage/edit?id=' + id)
     },
     //

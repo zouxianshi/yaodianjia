@@ -1175,7 +1175,9 @@ export default {
         return false
       }
       return true
-    }
+    },
+    // 获取listView,判断tagsView是否关闭当前标签
+    ...mapGetters(['visitedViews'])
   },
   watch: {
     step(val) {
@@ -1187,27 +1189,30 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     // 路由离开关闭标签
-    // if (this.is_query) {
-    next()
-    if (this.pageLoading) {
-      this.pageLoading.close()
+    if (this.is_query) {
+      next()
+      if (this.pageLoading) {
+        this.pageLoading.close()
+      }
+    } else {
+      const hasGoodsEdit =
+        this.visitedViews.find(item => item.name === 'GoodsEdit')
+      if (!this.leaveAction && !hasGoodsEdit) {
+        const answer = window.confirm('你还有数据没有保存，是否确认退出')
+        if (answer) {
+          if (this.pageLoading) {
+            this.pageLoading.close()
+          }
+          this.$store.dispatch('tagsView/delView', from)
+          next()
+        } else {
+          next(false)
+          this.$store.dispatch('tagsView/addView', from)
+        }
+      } else {
+        next()
+      }
     }
-    // } else {
-    // if (!this.leaveAction) {
-    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
-    //   if (answer) {
-    //     if (this.pageLoading) {
-    //       this.pageLoading.close()
-    //     }
-    //     this.$store.dispatch('tagsView/delView', from)
-    //     next()
-    //   } else {
-    //     next(false)
-    //   }
-    // } else {
-    //   next()
-    // }
-    // }
   },
   created() {
     if (!this.$route.query.id) {
@@ -1833,9 +1838,10 @@ export default {
               type: 'warning'
             })
               .then(() => {
-                this.$store
-                  .dispatch('tagsView/delVisitedView', this.$route)
-                  .then(res => {})
+                this.$store.dispatch('tagsView/delView', this.$route)
+                // this.$store
+                //   .dispatch('tagsView/delVisitedView', this.$route)
+                //   .then(res => {})
                 this.$router.replace(url)
                 // this.$router.go(-1) // 返回上一个路由
               })
