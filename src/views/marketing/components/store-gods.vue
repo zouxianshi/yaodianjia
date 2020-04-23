@@ -176,6 +176,11 @@ export default {
       type: String,
       default: 'primary'
     },
+    // 是否根据门店筛选
+    storeIds: {
+      type: Array,
+      default: () => []
+    },
     groupType: {
       // 是否排除组合商品，true排除
       type: Boolean,
@@ -381,7 +386,8 @@ export default {
         secondTypeId,
         threeTypeId,
         merCode: this.merCode,
-        distinct: true
+        distinct: true,
+        storeIds: this.storeIds
       }
 
       queryActivityCommGoods(params)

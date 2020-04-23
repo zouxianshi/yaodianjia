@@ -240,7 +240,7 @@
       </el-form-item>
     </el-form>
     <!-- 选择主商品组件 -->
-    <store-goods ref="GoodsComponent" :list="storeSelectGoods" @on-change="handleSelectGoods" />
+    <store-goods ref="GoodsComponent" :list="storeSelectGoods" :store-ids="form.allStore?[]:chooseStore.map(item => item.id)" @on-change="handleSelectGoods" />
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!-- 选择赠品组件 -->

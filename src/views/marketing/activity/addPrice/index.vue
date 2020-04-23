@@ -121,10 +121,11 @@
       :limit-max="15"
       :list="storeActivityGoods"
       :group-type="true"
+      :store-ids="form.allStore?[]:chooseStore.map(item => item.id)"
       @on-change="handleSelectActivityGoods"
     />
     <!-- 选择主商品组件 -->
-    <store-goods ref="GoodsComponent" :list="storeSelectGoods" @on-change="handleSelectGoods" />
+    <store-goods ref="GoodsComponent" :store-ids="form.allStore?[]:chooseStore.map(item => item.id)" :list="storeSelectGoods" @on-change="handleSelectGoods" />
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
   </div>

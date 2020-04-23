@@ -235,9 +235,9 @@
       </el-form>
     </div>
     <!-- 门店列表 -->
-    <store-dialog ref="storeComponent" :list="chooseStore" @complete="handletStoreComplete" />
+    <store-dialog ref="storeComponent" :list="chooseStore" :store-ids="formData.allStore?[]:chooseStore.map(item => item.id)" @complete="handletStoreComplete" />
     <!-- 选择主商品组件 -->
-    <store-goods ref="dialogGoods" :limit-max="20" :list="goodsList" @on-change="onSelectedGoods" />
+    <store-goods ref="dialogGoods" :limit-max="20" :list="goodsList" :store-ids="formData.allStore?[]:chooseStore.map(item => item.id)" @on-change="onSelectedGoods" />
     <!-- 编辑商品 -->
     <edit-goods-modals ref="editGoodsModals" :info="editGoods" @complete="handleSuccessSelectGood" />
   </div>

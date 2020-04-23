@@ -247,7 +247,12 @@
       @on-reset="onSetReset"
     />
     <!-- 选择主商品组件 -->
-    <store-goods ref="GoodsComponent" :list="selectedGoods" @on-change="handleSelectGoods" />
+    <store-goods
+      ref="GoodsComponent"
+      :list="selectedGoods"
+      :store-ids="xForm.allStore?[]:selectedStore.map(item => item.id)"
+      @on-change="handleSelectGoods"
+    />
     <store-dialog ref="storeComponent" :list="selectedStore" @complete="handleSelectStore" />
   </div>
 </template>
