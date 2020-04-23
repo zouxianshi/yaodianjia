@@ -148,7 +148,7 @@
             <el-form-item>
               <el-radio
                 v-model="domain.discountType"
-                :disabled="!domain.checkOrNot"
+                :disabled="!domain.checkOrNot || form.ruleType === 0"
                 :label="1"
                 @change="validDiscountType($Index, 'discount1')"
               >打</el-radio>
@@ -163,7 +163,7 @@
                 v-model="domain.discount1"
                 style="width: 200px; margin-left: 10px"
                 class="input-with-select"
-                :disabled="!domain.checkOrNot || domain.discountType !== 1"
+                :disabled="!domain.checkOrNot || domain.discountType !== 1 || form.ruleType === 0"
               >
                 <template slot="append">折</template>
               </el-input>
@@ -218,7 +218,7 @@
           />
         </el-form-item>
       </div>
-      <el-divider v-if="form.ruleType === 1" content-position="left">
+      <el-divider v-if="form.ruleType === 1 && Array.isArray(form.ruleList) && form.ruleList.length < 5" content-position="left">
         <el-tooltip
           effect="dark"
           content="最多支持五级优惠，每级优惠不叠加，如：满足二级优惠条件后则不再享有一级优惠。"
@@ -300,7 +300,7 @@ export default {
         ruleList: [
           {
             uint: 0,
-            discountType: 1,
+            discountType: 1, // 0元1折
             threshold: '', // 满减门槛金额
             giftOrNot: false, // 是否赠送赠品默认0否，1是
             checkOrNot: true, // 0/false 否 1/true是
@@ -486,7 +486,7 @@ export default {
         ) {
           return callback(new Error('必须为大于0.01的正数'))
         }
-        if (value > Number(this.form.ruleList[index].threshold || 0)) {
+        if (value >= Number(this.form.ruleList[index].threshold || 0)) {
           return callback(new Error('不能大于满减门槛'))
         }
         if (value > 99999999) {
@@ -614,8 +614,9 @@ export default {
     },
     ruleTypeChange(val) {
       console.log('ruleTypeChange----', val)
+      // 单位切换，如果切换为循环满减，那么优惠内容只能为减金额
       if (val === 0) {
-        this.form.ruleList = [{ ...this.initRuleFull }]
+        this.form.ruleList = [{ ...this.initRuleFull, discountType: 0 }]
         this.form.uint = 0
       }
     },

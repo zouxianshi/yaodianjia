@@ -312,7 +312,7 @@ export default {
       console.log('勾选列表------', allList, this.mySelectList)
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.id === item.id
+          return mItem.specId === item.specId
         })
         if (index > -1) {
           if (allList.length > 0) {
@@ -331,7 +331,7 @@ export default {
       console.log('单独勾选了------', val, row)
       console.log('单独勾选了------this.mySelectList', this.mySelectList)
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.id === row.id
+        return mItem.specId === row.specId
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
@@ -342,7 +342,7 @@ export default {
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
       const index = this.tableData.findIndex(item => {
-        return item.id === myItem.id
+        return item.specId === myItem.specId
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
@@ -355,7 +355,7 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.id === item.id
+          return mItem.specId === item.specId
         })
         if (index > -1) {
           currentCheckedList.push(item)
