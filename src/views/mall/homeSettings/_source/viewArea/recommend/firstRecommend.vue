@@ -29,7 +29,24 @@ export default {
     }
   },
   methods: {
-
+    $_onUpdate(item) {
+      this.searchParams = _.cloneDeep(item)
+      this.getData().then(() => {
+        this.$emit('on-update', this.searchParams)
+      })
+    },
+    getData() {
+      return new Promise((resolve, reject) => {
+        this.loading = true
+        getRecommendedFormat(this).then(itemList => {
+          this.searchParams.itemList = itemList
+          resolve()
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      })
+    }
   },
   watch: {
 
@@ -37,19 +54,13 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.loading = true
     this.searchParams = _.cloneDeep(this.item)
-    getRecommendedFormat(this).then(itemList => {
-      this.searchParams.itemList = itemList
-      this.$emit('on-update', this.searchParams)
-      this.loading = false
-    }).catch(() => {
-      this.loading = true
-    })
+    this.getData()
   },
   beforeMount() {
   },
   mounted() {
+
   },
   beforeUpdate() {
   },

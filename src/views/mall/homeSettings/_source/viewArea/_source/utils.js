@@ -29,7 +29,7 @@ export const verifRequired = {
 }
 
 export const toPosition = (uuid, n = 28) => {
-  $('.hsm-hm').animate({ scrollTop: $(`#${uuid}`).position().top - n }, 400)
+  $('.hsm-hm').animate({ scrollTop: $(`#${uuid}`).position().top - n }, 800)
 }
 
 export const getRecommendedFormat = (that) => {

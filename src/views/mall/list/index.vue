@@ -4,7 +4,7 @@
     <div style="margin: 16px 0;">
       <el-button type="primary" size="small" @click="() => $router.push('/mall/home-settings')">新建首页</el-button>
     </div>
-    <div class="mlm-table-box">
+    <div v-loading="loading" class="mlm-table-box">
       <el-table :data="list" style="width: 100%;" height="calc(100vh - 300px)">
         <el-table-column prop="name" label="标题">
           <template slot-scope="scope">
@@ -39,7 +39,8 @@ export default {
   data() {
     return {
       list: [],
-      visible: false
+      visible: false,
+      loading: false
     }
   },
   props: {},
@@ -66,8 +67,14 @@ export default {
       })
     },
     getData() {
+      this.loading = true
       getMallList().then(res => {
         this.list = res.data
+        setTimeout(() => {
+          this.loading = false
+        }, 800)
+      }).catch(() => {
+        this.loading = false
       })
     }
   },

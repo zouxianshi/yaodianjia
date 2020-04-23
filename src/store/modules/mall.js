@@ -29,7 +29,10 @@ const mutations = {
   setUUidDragData: (state, payload) => {
     const { uuid } = payload
     const i = _.findIndex(state.dragData, ['uuid', uuid])
+
     state.dragData[i] = _.assign(state.dragData[i], payload)
+
+    console.log(state.dragData)
   },
   setDragData: (state, payload) => {
     state.dragData = payload
@@ -74,7 +77,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       // console.log(JSON.stringify({...state.dragGlobal,id: state.dragData[0].dimensionId}))
       // return
-      const p = { ...state.dragGlobal, id: state.dragData[0].dimensionId, setIds: _.map(state.dragData, v => v.id) }
+      console.log(state.dragData)
+      const p = { ...state.dragGlobal, setIds: _.map(state.dragData, v => v.id) }
       saveStructure(p).then(() => {
         resolve()
       }).catch(() => {
@@ -86,11 +90,11 @@ const actions = {
     return new Promise((resolve, reject) => {
       const { searchParams, uuid } = payload
       saveAssembly(searchParams).then(res => {
-        const { dimensionId } = res.data
+        const { dimensionId, id } = res.data
         if (!state.dragGlobal.id) {
           commit('setDragGlobal', { id: dimensionId })
         }
-        commit('setUUidDragData', { uuid, ...searchParams, ...res.data, error: false })
+        commit('setUUidDragData', { uuid, ...searchParams, ...res.data, error: false, id })
         resolve(res)
       }).catch(e => {
         reject(e)

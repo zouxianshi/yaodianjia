@@ -42,7 +42,7 @@ Object.keys(filters).forEach(key => {
 
 Vue.config.productionTip = false
 Vue.prototype.uploadFileURL = process.env.VUE_APP_API_BASE || '/api'
-Vue.prototype.h5Base = process.env.VUE_APP_H5_BASE || 'http://m.dev.ydjia.cn/h5/'
+Vue.prototype.h5Base = process.env.VUE_APP_H5_BASE || 'https://m.dev.ydjia.cn/h5/'
 Vue.prototype.payH5Base = process.env.VUE_APP_PAY_H5_BASE || 'm.dev.ydjia.cn/h5/pages/order/'
 
 // default config

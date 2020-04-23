@@ -1,5 +1,5 @@
 <template>
-  <div class="second-recommend-model">
+  <div v-loading="loading" class="second-recommend-model">
     <m-four-commodity :item="searchParams" />
   </div>
 </template>
@@ -11,6 +11,7 @@ export default {
   name: 'VaSecondRecommend',
   data() {
     return {
+      loading: false,
       searchParams: {
         dimensionId: '',
         id: '',
@@ -28,16 +29,31 @@ export default {
     }
   },
   methods: {
+    $_onUpdate(item) {
+      this.searchParams = _.cloneDeep(item)
+      this.getData().then(() => {
+        this.$emit('on-update', this.searchParams)
+      })
+    },
+    getData() {
+      return new Promise((resolve, reject) => {
+        this.loading = true
+        getRecommendedFormat(this).then(itemList => {
+          this.searchParams.itemList = itemList
+          resolve()
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      })
+    }
   },
   watch: {},
   beforeCreate() {
   },
   created() {
     this.searchParams = _.cloneDeep(this.item)
-    getRecommendedFormat(this).then(itemList => {
-      this.searchParams.itemList = itemList
-      this.$emit('on-update', this.searchParams)
-    })
+    this.getData()
   },
   beforeMount() {
   },

@@ -15,7 +15,8 @@ import mSecondRecommend from './secondRecommend'
 export default {
   name: 'VaRecommend',
   data() {
-    return {}
+    return {
+    }
   },
   props: {
     item: {

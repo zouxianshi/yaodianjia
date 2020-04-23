@@ -63,13 +63,12 @@ export default {
         })
       }
     }
-
   },
   watch: {},
   beforeCreate() {
   },
   created() {
-    this.name = _.cloneDeep(this.item.name)
+    this.name = _.cloneDeep(this.type === 'mall-title' ? this.dragGlobal.title : this.item.name)
   },
   beforeMount() {
   },
@@ -84,7 +83,7 @@ export default {
   destroyed() {
   },
   computed: {
-    ...mapState('mall', ['saLoading'])
+    ...mapState('mall', ['saLoading', 'dragGlobal'])
   },
   components: {}
 }

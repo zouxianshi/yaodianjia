@@ -1,29 +1,63 @@
 <template>
   <div class="home-main-model">
     <div class="hmm-view-area">
-      <m-view-area />
+      <m-view-area v-if="is" />
     </div>
     <div class="hmm-settings">
-      <m-settings-area />
+      <m-settings-area v-if="is" />
     </div>
     <div class="clearfix" />
   </div>
 </template>
 <script>
+import { uuid } from '@/utils'
+import { mapMutations, mapState } from 'vuex'
 import mViewArea from './viewArea/viewArea'
 import mSettingsArea from './settingsArea/settingsArea'
+import { getStructure } from '@/api/mallService'
+import { handlerDragComp } from './../_source/_source/default'
 export default {
   name: 'HomeMain',
   components: { mViewArea, mSettingsArea },
-  props: {},
-  data() {
-    return {}
+  props: {
   },
-  computed: {},
+  data() {
+    return {
+      is: false
+    }
+  },
+  computed: {
+    ...mapState('mall', ['vaLoading', 'saLoading'])
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
+    const dimensionId = this.$route.params.id || null
+
+    if (dimensionId) {
+      getStructure({ dimensionId }).then(res => {
+        const { id, name, setIds, title, setList } = res.data
+
+        this.setDragGlobal({ ...this.dragGlobal, id, name, setIds, title })
+        const list = _.map(setList, v => {
+          return {
+            id: v.id,
+            uuid: `${uuid(`${v.type}-`)}${uuid()}${uuid()}${uuid()}`,
+            type: v.type,
+            subType: v.subType,
+            name: _.find(_(handlerDragComp()).map('component').filter().flatMap().value(), { type: v.type, subType: v.subType })['name'],
+            error: false,
+            itemList: _.map(v.itemList, v1 => { return { ...v1, dimensionId: id } })
+          }
+        })
+        this.setDragData(list)
+
+        this.is = true
+      })
+    } else {
+      this.is = true
+    }
   },
   beforeMount() {
   },
@@ -33,7 +67,9 @@ export default {
   },
   updated() {
   },
-  methods: {},
+  methods: {
+    ...mapMutations('mall', ['setDragData', 'setDragGlobal', 'setLoading'])
+  },
   beforeDestroy() {
   },
   destroyed() {

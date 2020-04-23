@@ -64,6 +64,7 @@ import mDelete from './_source/delete'
 import mBottomNav from './bottomNav'
 import mNoData from './noData'
 import mVaErrorDrag from './_source/vaErrorDrag'
+import { findComponentDownward } from '@/utils'
 import { jumpCurrentSet, verifRequired, toPosition, getBannerList } from './_source/utils'
 
 export default {
@@ -120,8 +121,13 @@ export default {
     /**
      * drag add
      */
-    onAdd() {
+    onAdd(v) {
       this.dragList = _.reject(this.dragList, ['type', 'no-data'])
+      const { type, subType } = this.dragList[v.newIndex]
+      if (type === 'recommend') {
+        const instance = findComponentDownward(this, `Va${_.capitalize(subType)}Recommend`)
+        instance.$_onUpdate(this.dragList[v.newIndex])
+      }
       this.setDragData(this.dragList)
     },
     /**

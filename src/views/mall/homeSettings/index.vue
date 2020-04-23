@@ -11,8 +11,7 @@
   </div>
 </template>
 <script>
-import { getStructure } from '@/api/mallService'
-import { mapMutations, mapActions } from 'vuex'
+import { mapMutations, mapActions, mapState } from 'vuex'
 import mComponentBar from './_source/componentBar'
 import mHomeMain from './_source/homeMain'
 import { noDragData, noDragGlobal } from './_source/_source/default'
@@ -22,22 +21,19 @@ export default {
   components: { mComponentBar, mHomeMain },
   props: {},
   data() {
-    return {}
+    return {
+      isLoading: false
+    }
   },
-  computed: {},
+  computed: {
+    ...mapState('mall', ['dragGlobal'])
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
-    const dimensionId = this.$route.params.id || null
     const { merCode } = this.$store.state.user
     this.getCenterStoreId({ merCode })
-
-    if (dimensionId) {
-      getStructure({ dimensionId }).then(res => {
-        console.log(res.data)
-      })
-    }
   },
   beforeMount() {
   },
