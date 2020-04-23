@@ -163,6 +163,14 @@ export default {
         gender: '', // 性别
         organizations: null // 门店
       }
+      this.empCodesArr.forEach(item => {
+        item.selectFlag = false
+      })
+      this.organizationsArr.forEach(item => {
+        item.employees.forEach(items => {
+          items.selectFlag = false
+        })
+      })
     }
   }
 }
