@@ -314,7 +314,7 @@
                     <el-checkbox v-model="basicForm.isEasyBreak" :true-label="1" :false-label="0">易碎</el-checkbox>
                     <el-checkbox v-model="basicForm.isLiquid" :true-label="1" :false-label="0">液体</el-checkbox>
                     <template
-                      v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')"
+                      v-if="chooseTypeList&&chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')"
                     >
                       <el-checkbox
                         v-model="basicForm.hasEphedrine"
@@ -1188,30 +1188,10 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
+    next()
     // 路由离开关闭标签
-    if (this.is_query) {
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
-      }
-    } else {
-      const hasGoodsEdit =
-        this.visitedViews.find(item => item.name === 'GoodsEdit')
-      if (!this.leaveAction && !hasGoodsEdit) {
-        const answer = window.confirm('你还有数据没有保存，是否确认退出')
-        if (answer) {
-          if (this.pageLoading) {
-            this.pageLoading.close()
-          }
-          this.$store.dispatch('tagsView/delView', from)
-          next()
-        } else {
-          next(false)
-          this.$store.dispatch('tagsView/addView', from)
-        }
-      } else {
-        next()
-      }
+    if (this.is_query && this.pageLoading) {
+      this.pageLoading.close()
     }
   },
   created() {
@@ -1220,7 +1200,16 @@ export default {
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
     }
+
     this.is_query = this.$route.query.type === 'query'
+    console.log(this.$route.query.type)
+    if (this.is_query) {
+      sessionStorage.setItem('editId', '')
+      sessionStorage.setItem('editIsQuery', this.is_query)
+    } else {
+      sessionStorage.setItem('editIsQuery', '')
+      sessionStorage.setItem('editId', this.$route.query.id)
+    }
     this._loadTypeList() // 获取分组
     this._loadBrandList({
       pageSize: 30,
@@ -1248,7 +1237,9 @@ export default {
   methods: {
     tinymceLoad() {
       // 富文本渲染染成
-      this.pageLoading.close()
+      if (this.pageLoading) {
+        this.pageLoading.close()
+      }
     },
     handleGoStep(val) {
       console.log('val', val)
@@ -1826,23 +1817,29 @@ export default {
           this.subLoading = false
           this.leaveAction = true
           setTimeout(() => {
-            let url = ''
-            if (this.basicForm.origin === 1) {
-              url = '/goods-manage/depot'
-            } else {
-              url = '/goods-manage/apply-record'
-            }
+            // let url = ''
+            // if (this.basicForm.origin === 1) {
+            //   url = '/goods-manage/depot'
+            // } else {
+            //   url = '/goods-manage/apply-record'
+            // }
             this.$confirm('请确认已保存橱窗图', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
             })
               .then(() => {
-                this.$store.dispatch('tagsView/delView', this.$route)
+                this.$store
+                  .dispatch('tagsView/delView', this.$route)
+                  .then(res => {
+                    sessionStorage.setItem('isRefreshDepot', true)
+                    this.$router.go(-1) // 返回上一个路由
+                  })
+                // this.$store.dispatch('tagsView/delView', this.$route)
                 // this.$store
                 //   .dispatch('tagsView/delVisitedView', this.$route)
                 //   .then(res => {})
-                this.$router.replace(url)
+                // this.$router.replace(url)
                 // this.$router.go(-1) // 返回上一个路由
               })
               .catch(() => {

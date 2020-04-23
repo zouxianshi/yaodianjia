@@ -320,6 +320,7 @@ export default {
         label: 'name',
         value: 'id'
       },
+      editId: '',
       isToEdit: false,
       goodsData: [],
       merCode: '',
@@ -361,26 +362,41 @@ export default {
     // });
     // this._loadGoodTypeList()
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      console.log(vm)// 当前组件的实例
+      if (sessionStorage.getItem('isRefreshDepot')) {
+        sessionStorage.setItem('isRefreshDepot', false)
+        vm.getList()
+      }
+    })
+  },
   beforeRouteLeave(to, from, next) {
     if (to.name === 'GoodsEdit' && from.name === 'Depot' && this.isToEdit) {
       const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
         item => item.name === 'GoodsEdit'
       )
-      if (hasGoodsEdit) {
-        const answer = window.confirm('你还有数据没有保存，是否确认退出')
-        if (answer) {
+      const isComEditId = this.editId === sessionStorage.getItem('editId')
+      if (!isComEditId) {
+        if (hasGoodsEdit && !sessionStorage.getItem('editIsQuery')) {
+          const answer = window.confirm('你还有数据没有保存，是否确认退出')
+          if (answer) {
+            this.$store.dispatch('tagsView/delView', to).then(res => {
+              this.isToEdit = false
+              next()
+            })
+          } else {
+            next()
+          }
+        } else {
           this.$store.dispatch('tagsView/delView', to).then(res => {
             this.isToEdit = false
             next()
           })
-        } else {
-          next()
         }
       } else {
-        this.$store.dispatch('tagsView/delView', to).then(res => {
-          this.isToEdit = false
-          next()
-        })
+        this.isToEdit = false
+        next()
       }
     } else {
       this.isToEdit = false
@@ -540,6 +556,7 @@ export default {
     },
     handleEdit(id) {
       this.isToEdit = true
+      this.editId = id
       this.$router.push('/goods-manage/edit?id=' + id)
     },
     //

@@ -96,7 +96,7 @@ const router = [
       }, {
         path: 'apply-record',
         component: () => import('@/views/goods-manage/new-goods/record'),
-        name: 'goodsRecord',
+        name: 'GoodsRecord',
         meta: {
           auth: 'commodity.commodity-new-record',
           title: '新品申请记录',
