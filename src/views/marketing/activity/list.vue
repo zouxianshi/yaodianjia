@@ -56,37 +56,44 @@
           </template>
           <el-table-column label="操作" width="130">
             <template slot-scope="scope">
-              <template v-if="!!scope.row.status">
-                <el-button type="text" @click="toLook(scope.row)">查看</el-button>
-                <el-divider direction="vertical" />
-                <el-dropdown trigger="hover" @command="handleCommand">
-                  <span class="el-dropdown-link">
-                    更多
-                    <i class="el-icon-arrow-down el-icon--right" />
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <!-- 拼团活动的编辑活动库存按钮 -->
-                    <el-dropdown-item v-if="scope.row.validStatus===1 && type === '13'">
-                      <product-kucun :row-item="scope.row" />
-                    </el-dropdown-item>
-                    <el-dropdown-item :command="{id: scope.row.id, type: 'end', disabled: scope.row.validStatus ===1}">
-                      <el-button type="text">失效</el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item :command="{id: scope.row.id, type: 'edit', disabled: scope.row.validStatus ===1}">
-                      <el-button
-                        type="text"
-                        :disabled="scope.row.validStatus ===1 "
-                      >编辑</el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item :command="{id: scope.row.id, type: 'failList', disabled: true}">
-                      <el-button disabled type="text">失败列表</el-button>
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
-              <template v-else>
-                <el-button type="text" @click="handleDel(scope.row)">删除</el-button>
-              </template>
+              <el-button type="text" @click="toLook(scope.row)">查看</el-button>
+              <el-divider direction="vertical" />
+              <el-dropdown trigger="hover" @command="handleCommand">
+                <span class="el-dropdown-link">
+                  更多
+                  <i class="el-icon-arrow-down el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <!-- 拼团活动的编辑活动库存按钮进行中且为生效 -->
+                  <el-dropdown-item v-if="scope.row.validStatus===1 && type === '13'">
+                    <product-kucun :row-item="scope.row" />
+                  </el-dropdown-item>
+                  <!-- 失效：进行中且不失效 -->
+                  <el-dropdown-item
+                    :command="{id: scope.row.id, type: 'end', disabled: scope.row.validStatus ===1 && scope.row.status}"
+                  >
+                    <el-button :disabled=" scope.row.validStatus ===1 && scope.row.status" type="text">失效</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="type === '14'"
+                    :command="{id: scope.row.id, type: 'extend', disabled: (scope.row.validStatus ===2 || !scope.row.status)}"
+                  >
+                    <el-button :disabled="scope.row.validStatus ===2 || !scope.row.status" type="text">推广设置</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    :command="{id: scope.row.id, type: 'edit', disabled: scope.row.validStatus !== 0 || !scope.row.status}"
+                  >
+                    <!-- 失效或者结束不可编辑 -->
+                    <el-button type="text" :disabled="scope.row.validStatus !== 0 || !scope.row.status">编辑</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item :command="{id: scope.row.id, type: 'failList', disabled: !scope.row.status}">
+                    <el-button :disabled="!scope.row.status" type="text">失败列表</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item :command="{id: scope.row.id, type: 'del', disabled: true}">
+                    <el-button disabled type="text">删除</el-button>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
           <div slot="empty">
@@ -108,6 +115,7 @@
       </section>
     </div>
     <!-- 推广设置 -->
+    <acform ref="activityAcform" @complete="fetchData()" />
   </div>
 </template>
 
@@ -117,12 +125,14 @@ import { delActInfo, endActInfo } from '@/api/activity'
 import listForm from './_source/list-form'
 import noData from '@/components/NoData'
 import productKucun from './assemble/components/product-kucun'
+import acform from './reduce-gift/_source/actform'
 
 export default {
   components: {
     listForm,
     noData,
-    productKucun
+    productKucun,
+    acform
   },
   data() {
     return {
@@ -297,13 +307,13 @@ export default {
       }
     },
     // 删除
-    handleDel(row) {
+    handleDel(id) {
       this.$confirm('确认删除吗, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this._delData(row.id)
+        this._delData(id)
       })
     },
     // 失效操作
@@ -326,6 +336,13 @@ export default {
         this._getTableData()
       })
     },
+    /**
+     * 推广设置：进行中已生效  未开始已生效 均可编辑
+       查看：所有阶段均可查看
+       编辑：未开始且生效状态可编辑
+       删除：除进行中已生效外都可删除
+       失效：进行中已生效的才可以失效；
+     */
     handleCommand(val) {
       if (val.type === 'edit' && !val.disabled) {
         this.toEdit(val.id)
@@ -333,6 +350,10 @@ export default {
         this.endActivity(val.id)
       } else if (val.type === 'failList' && !val.disabled) {
         this.endActivity(val.id)
+      } else if (val.type === 'extend' && !val.disabled) {
+        this.$refs.activityAcform.open(val.id)
+      } else if (val.type === 'del') {
+        this.handleDel(val.id && !val.disabled)
       }
     },
 

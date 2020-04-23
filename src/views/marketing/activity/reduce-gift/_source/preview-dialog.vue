@@ -13,7 +13,7 @@
     <div class="post-img-wrap">
       <div ref="img_wrapper" class="img_wrapper">
         <img :src="poster">
-        <div class="activity-store">益丰大药房</div>
+        <div class="activity-store">{{ merName }}</div>
         <div class="activity-title">满减专场</div>
         <div class="activity-desc">爆款商品限时限量优惠</div>
         <!-- <div class="activity-time">活动时间：2020.02.11至2020.04.18</div> -->
@@ -55,6 +55,7 @@ import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
 import html2canvas from 'html2canvas'
 import poster from '@/assets/image/acvity/poster.png'
+import { merchantDetail } from '@/api/merchant_Person_Api'
 import QRCode from 'qrcode'
 import { mapGetters } from 'vuex'
 Vue.use(VueClipboard)
@@ -68,23 +69,29 @@ export default {
       downLoding: false,
       poster,
       qcode: '',
+      merName: '',
       activityUrl: `${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`
     }
   },
-  created() {
-    QRCode.toDataURL(`${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`)
-      .then(url => {
-        console.log(url)
-        this.qcode = url
-      })
-      .catch(err => {
-        console.error(err)
-      })
-  },
+  created() {},
   methods: {
     open() {
       console.log('1111111111111')
       this.dialogVisible = true
+      QRCode.toDataURL(
+        `${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`
+      )
+        .then(url => {
+          console.log(url)
+          this.qcode = url
+        })
+        .catch(err => {
+          console.error(err)
+        })
+      merchantDetail().then(res => {
+        console.log('获取了商家信息------------', res)
+        this.merName = res.data.merName
+      })
     },
     // 复制
     doCopy(row) {
