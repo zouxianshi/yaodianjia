@@ -2,16 +2,16 @@
   <div class="rs-index-model">
     <div class="app-container">
       <el-card class="box-card">
-        <AppleRs :showcode="showCode" />
+        <AppleRs />
       </el-card>
-      <el-card v-if="showCode==='1'" class="box-card">
+      <el-card v-if="showCode===1" class="box-card">
         <NoactiveCard />
       </el-card>
-      <el-card v-if="showCode==='0'" class="box-card">
+      <el-card v-if="showCode===0" class="box-card">
         <nobindingCard />
       </el-card>
-      <el-card v-if="showCode==='2' || showCode==='3'" class="box-card" :showcode="showCode">
-        <AemberCard :geturl="geturl" />
+      <el-card v-if="showCode===2 || showCode===3" class="box-card" :showcode="showCode">
+        <AemberCard :checkmemberlist="checkMemberList" :showcode="showCode" />
       </el-card>
     </div>
   </div>
@@ -53,9 +53,8 @@ export default {
   created() {
     // TODO test api
     checkMemberCard({ merCode: this.merCode }).then(res => {
-      // this.checkMemberList = res.data
-      this.showCode = res.data[0]
-      this.geturl = res.data[1]
+      this.checkMemberList = res.data
+      this.showCode = res.data.statusFlag
     })
   },
   beforeMount() {

@@ -7,7 +7,7 @@
           <span v-text="member.merBrandName">}</span>
         </el-form-item>
         <el-form-item label="商户LOGO">
-          <img :src="member.merLogoUrl" alt>
+          <img style="width:80px;height:80px" :src="member.merLogoUrl" alt>
         </el-form-item>
         <el-form-item label="卡片背景" prop="cardBgType">
           <el-radio-group v-model="member.cardBgType" @change="changeback">
@@ -53,7 +53,7 @@
               v-for="(item,index) in storelist"
               :key="index"
               :label="item.stName"
-              :value="item.stName"
+              :value="item.stCode"
             />
           </el-select>
         </el-form-item>
@@ -190,7 +190,8 @@ export default {
   data() {
     var validatePass = (rule, value, callback) => {
       const numReg = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/
-      if (numReg.test(value) === false) {
+      const ipone = /0\d{2,3}-\d{7,8}|\(?0\d{2,3}[)-]?\d{7,8}|\(?0\d{2,3}[)-]*\d{7,8}/
+      if (numReg.test(value) === false && ipone.test(value) === false) {
         callback(new Error('请输入正确的电话格式'))
       } else {
         callback()
@@ -268,7 +269,6 @@ export default {
         file.type === 'image/jpeg' ||
         file.type === 'image/png' ||
         file.type === 'image/jpg'
-      console.log(file)
       const isLt2M = file.size / 1024 / 1024 < 1
       if (!isLt2M) {
         this.$message({
@@ -347,7 +347,6 @@ export default {
             menuList
           ) {
             this.$emit('changeloading', true)
-            console.log(this.member)
             editMemberInfo(this.member).then(res => {
               this.$emit('changeloading', false)
               this.$message({
@@ -355,6 +354,7 @@ export default {
                 type: 'success'
               })
               this.$emit('getlist')
+              this.$router.push({ path: '/member/register-setting' })
             }).catch(error => {
               console.log(error, '111111')
               this.$emit('getlist')
@@ -388,11 +388,9 @@ export default {
         this.dialog.dialogInput = ''
         this.dialog.dialogVisible = false
       }
-      console.log(this.member.customCells)
     },
     // 删除菜单
     deletmenu(index) {
-      console.log(index)
       this.member.customCells.splice(index, 1)
     },
     // 显示修改地址弹框
