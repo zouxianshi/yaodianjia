@@ -91,9 +91,7 @@ export default {
   methods: {
     searchData() {
       var searchParams = Object.assign({}, this.searchParams, this.pageInfo)
-      console.log(searchParams)
       getCouponList(searchParams).then(res => {
-        console.log(res)
         if (res.data && res.data.records) {
           this.totalCount = res.data.total
           this.tableData = res.data.records
