@@ -144,7 +144,6 @@ export default {
       document.title = !this.$route.query._ck
         ? '编辑赠品'
         : '查看赠品详情'
-      this.getDetailInfo(this.$route.query.id)
     }
   },
   methods: {
@@ -224,7 +223,7 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (this.leaveAction) {
+    if (this.disabled || this.leaveAction) {
       next()
       if (this.pageLoading) {
         this.pageLoading.close()

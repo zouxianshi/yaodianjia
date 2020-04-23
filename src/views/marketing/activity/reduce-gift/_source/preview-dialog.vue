@@ -13,7 +13,10 @@
     <div class="post-img-wrap">
       <div ref="img_wrapper" class="img_wrapper">
         <img :src="poster">
-        <div class="activity-store">{{ merName }}</div>
+        <div class="activity-store">
+          <img class="icon" :src="storeIcon">
+          <span>{{ merName }}</span>
+        </div>
         <div class="activity-title">满减专场</div>
         <div class="activity-desc">爆款商品限时限量优惠</div>
         <!-- <div class="activity-time">活动时间：2020.02.11至2020.04.18</div> -->
@@ -55,6 +58,7 @@ import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
 import html2canvas from 'html2canvas'
 import poster from '@/assets/image/acvity/poster.png'
+import storeIcon from '@/assets/image/acvity/store_icon.png'
 import { merchantDetail } from '@/api/merchant_Person_Api'
 import QRCode from 'qrcode'
 import { mapGetters } from 'vuex'
@@ -68,6 +72,7 @@ export default {
       dialogVisible: false,
       downLoding: false,
       poster,
+      storeIcon,
       qcode: '',
       merName: '',
       activityUrl: `${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`
@@ -130,6 +135,11 @@ export default {
 </script>
 
 <style lang="scss">
+.text-overflow-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .preview-diaglog {
   .el-input-group__append {
     background: #147de8;
@@ -144,6 +154,7 @@ export default {
     align-items: flex-end;
     .img_wrapper {
       position: relative;
+      overflow: hidden;
       img {
         width: 100%;
         height: 100%;
@@ -163,10 +174,24 @@ export default {
         font-size: 18px;
         font-weight: 500;
         position: absolute;
+        max-width: 80%;
         top: 19px;
         left: 50%;
-        transform: translate(-24%, 0);
+        transform: translate(-50%, 0);
         color: #fff;
+        white-space: nowrap;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        .icon {
+          width: 30px;
+          height: 30px;
+          flex: 0 0 30px;
+        }
+        span {
+          flex: 1;
+          @extend .text-overflow-1;
+        }
       }
       .activity-title {
         position: absolute;
