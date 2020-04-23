@@ -34,8 +34,8 @@
             <el-input
               v-model="xForm.description"
               type="textarea"
-              :placeholder="disabled ? '':'不超过50字'"
-              maxlength="50"
+              :placeholder="disabled ? '':'不超过200字'"
+              maxlength="200"
               :rows="4"
               show-word-limit
               style="width: 380px;"

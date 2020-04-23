@@ -1,13 +1,13 @@
 <template>
   <div class="app-container activity">
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="会员营销" name="members">
+      <!-- <el-tab-pane label="会员营销" name="members">
         <el-row :gutter="20">
           <el-col v-for="o in members" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
             <card-item :item="o" />
           </el-col>
         </el-row>
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane label="商品促销" name="goodsActivity">
         <el-row :gutter="20">
           <el-col
@@ -23,7 +23,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane>
+      <!-- <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane> -->
     </el-tabs>
   </div>
 </template>
@@ -50,7 +50,7 @@ export default {
    */
   data() {
     return {
-      activeName: 'members',
+      activeName: 'goodsActivity',
       members: [
         {
           value: 'counpCenter',
@@ -65,7 +65,7 @@ export default {
           value: 'reduceGift',
           lable: '满减满赠',
           desc:
-            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。',
+            '会员消费达到某一条件后可以享受减价或折扣优惠，也可以通过添加赠送赠品的促销手段来提高客单价，提高销售额。',
           img: reduceGift,
           listUrl: '/marketing/activity/list?type=14',
           linkUrl: '/marketing/activity/reduce-gift-list-edit',
@@ -78,7 +78,7 @@ export default {
           listUrl: '/marketing/activity/list?type=15',
           linkUrl: '/marketing/activity/aprice-edit',
           desc:
-            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+            '会员消费满足一定的金额或商品件数后，可以通过添加低价换购商品的促销手段，来提升客单价，激活积压库存。'
         },
         {
           value: 'limitPreferential',
@@ -87,7 +87,7 @@ export default {
           listUrl: '/marketing/activity/list?type=11',
           linkUrl: '/marketing/activity/limit-edit?l_type=11',
           desc:
-            '限时折扣则更侧重于优惠折扣。设置固定周期的限时活动，可提高顾客粘性。'
+            '商品直接减价或打折的促销方法，设置商品在某个时间段有优惠，到期恢复原价，刺激会员消费。'
         },
         {
           value: 'spellGroup',
@@ -96,7 +96,7 @@ export default {
           listUrl: '/marketing/activity/list?type=13',
           linkUrl: '/marketing/activity/assemble-edit',
           desc:
-            '拼团活动可以为商家做拉新引流计划提供高效的途径，同事拼团活动也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长'
+            '为商家做拉新引流计划提供高效的途径，也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长。'
         },
         {
           value: 'limitSecKill',
@@ -105,14 +105,14 @@ export default {
           listUrl: '/marketing/activity/list?type=12',
           linkUrl: '/marketing/activity/limit-edit?l_type=12',
           desc:
-            '限时秒杀更强调高时效性的低价刺激，可设置独立库存，限时折扣则更侧重于优惠折扣。'
+            '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。'
         }
       ], // 商品促销
       activity: [] // 精彩活动
     }
   },
   created() {
-    this.activeName = this.$route.query.type || 'members'
+    this.activeName = this.$route.query.type || 'goodsActivity'
   },
   methods: {
     handleClick(val) {
