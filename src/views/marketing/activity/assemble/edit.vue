@@ -645,6 +645,8 @@ export default {
         }
         products.push({
           // 'activityId': v.activityId || '',
+          productManufacture: v.manufacture,
+          brandName: v.brandName,
           activityNumber: v.activityNumber, // 成团人数
           activityPrice: v.activityPrice, // 活动价格
           addLimitTimes: v.addLimitTimes, // 限购  加入次数
