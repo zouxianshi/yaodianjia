@@ -68,7 +68,7 @@
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
                 {{ scope.$index }}
-                <el-input :value="valueInput" @change="((val)=>{handleinput(val,scope.$inde)})" />
+                <el-input v-model.number="scope.row.totalLimit" @change="onChange($event,scope.row,scope.$index)" />
                 <i class="el-icon-edit" />
               </div>
             </template>
@@ -107,6 +107,7 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import { marketaddCoupon } from '@/api/coupon'
 import checkCoupon from './_source/checkCoupon'
 import { mapGetters } from 'vuex'
@@ -183,12 +184,18 @@ export default {
   beforeDestroy() {},
   destroyed() {},
   methods: {
+    onChange(event, row, $index) {
+      const { totalLimit } = row
+      this.$set(this.write[$index], 'totalLimit', totalLimit)
+      console.log(this.write)
+    },
     // 点击选择优惠券
     handlecheck() {
       this.$refs.checkCoupons.defaultcheck(this.selectlist)
     },
     confincheck(val) {
       this.selectlist = val
+
       const write = {
         totalCoupons: 0,
         totalLimit: 0,
@@ -196,7 +203,7 @@ export default {
       }
       for (const i in val) {
         console.log(i)
-        this.write.push(write)
+        this.write.push(_.cloneDeep(write))
       }
       // console.log(this.write)
     },
@@ -298,7 +305,7 @@ export default {
       return y + '-' + m + '-' + d + ' ' + h + ':' + m1 + ':' + s
     },
     handleinput(val, index) {
-      this.$forceUpdate()
+      // this.$forceUpdate()
       console.log(val, index)
     }
     // changeInput(e) {
