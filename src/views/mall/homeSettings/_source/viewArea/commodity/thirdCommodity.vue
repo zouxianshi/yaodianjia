@@ -45,7 +45,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .va-third-commodity-model {
-    margin-bottom: 10px;
     &::-webkit-scrollbar{
       display: none;
     }

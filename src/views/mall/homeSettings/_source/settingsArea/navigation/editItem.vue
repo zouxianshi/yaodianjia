@@ -119,14 +119,13 @@ export default {
       deep: true,
       immediate: true,
       handler(item) {
-        this.searchParams = item
+        this.searchParams = _.cloneDeep(item)
       }
     }
   },
   beforeCreate() {
   },
   created() {
-    this.searchParams = this.item
   },
   beforeMount() {
   },
