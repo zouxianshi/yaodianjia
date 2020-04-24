@@ -141,7 +141,7 @@
           >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
         </el-form-item>
         <!-- 门店列表 -->
-        <el-form-item v-show="!formData.allStore">
+        <el-form-item v-show="!formData.allStore || disabled || edit">
           <select-store
             ref="selectStoreComponent"
             :disabled="!!activityId"

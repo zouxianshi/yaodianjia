@@ -39,7 +39,7 @@
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item v-show="!form.allStore">
+      <el-form-item v-show="!form.allStore || disabled || edit">
         <!-- storeComponent -->
         <el-button
           type="primary"
@@ -48,7 +48,7 @@
         >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
       </el-form-item>
       <!-- 门店列表 -->
-      <el-form-item v-show="!form.allStore">
+      <el-form-item v-show="!form.allStore || disabled || edit">
         <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
       </el-form-item>
       <el-form-item label="活动商品：" prop="allSpec" required>
@@ -58,7 +58,7 @@
         </el-radio-group>
       </el-form-item>
       <!-- 选择的商品列表 -->
-      <el-form-item v-show="!form.allSpec">
+      <el-form-item v-show="!form.allSpec || disabled || edit">
         <div style="margin-bottom: 8px">
           <el-button
             type="primary"

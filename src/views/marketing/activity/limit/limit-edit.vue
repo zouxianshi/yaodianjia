@@ -75,7 +75,7 @@
               @click="$refs.storeComponent.open()"
             >选择门店 | 已选（{{ selectedStore.length }}）</el-button>
           </el-form-item>
-          <el-form-item v-show="!xForm.allStore">
+          <el-form-item v-show="!xForm.allStore || pageStatus === 2 || pageStatus === 3">
             <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
           </el-form-item>
           <el-form-item label="是否免运">
