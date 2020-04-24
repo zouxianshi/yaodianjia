@@ -87,8 +87,7 @@ export default {
           listUrl: '/marketing/activity/list/11',
           linkUrl: '/marketing/activity/limit-edit?l_type=11',
           desc:
-            '商品直接减价或打折的促销方法，设置商品在某个时间段有优惠，到期恢复原价，刺激会员消费。',
-          extra: share
+            '商品直接减价或打折的促销方法，设置商品在某个时间段有优惠，到期恢复原价，刺激会员消费。'
         },
         {
           value: 'spellGroup',
@@ -107,8 +106,7 @@ export default {
           listUrl: '/marketing/activity/list/12',
           linkUrl: '/marketing/activity/limit-edit?l_type=12',
           desc:
-            '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。',
-          extra: share
+            '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。'
         }
       ], // 商品促销
       activity: [] // 精彩活动

@@ -7,10 +7,7 @@
     :visible.sync="dialogVisible"
     width="500px"
   >
-    <!-- <el-input v-model="item.input3" placeholder="请输入内容" disabled class="input-with-select">
-      <el-button slot="append" type="primary" @click="doCopy('www.baidu.com')">复制连接</el-button>
-    </el-input>-->
-    <div class="post-img-wrap">
+    <div v-if="type === 'reduceGift'" class="post-img-wrap">
       <div ref="img_wrapper" class="img_wrapper">
         <img :src="poster">
         <div class="activity-store">
@@ -44,12 +41,20 @@
         >复制活动连接</el-button>
       </div>
     </div>
-    <!-- <span slot="footer" class="dialog-footer">
-      <a :href="item.qcode" download="二维码.png">
-        <el-button plain type="primary">下载二维码</el-button>
-      </a>
-      <el-button plain :loading="downLoding" type="primary" @click="downPoster">下载海报</el-button>
-    </span>-->
+    <!-- 无海报的分享下载情况 -->
+    <template v-else>
+      <el-input v-model="activityUrl" placeholder="请输入内容" disabled class="input-with-select">
+        <el-button slot="append" type="primary" @click="doCopy(activityUrl)">复制连接</el-button>
+      </el-input>
+      <div class="qcodeimg">
+        <img :src="qcode">
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <a :href="qcode" download="二维码.png">
+          <el-button plain type="primary">下载二维码</el-button>
+        </a>
+      </span>
+    </template>
   </el-dialog>
 </template>
 
@@ -75,17 +80,23 @@ export default {
       storeIcon,
       qcode: '',
       merName: '',
-      activityUrl: `${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`
+      type: '',
+      activityUrl: ''
     }
   },
   created() {},
   methods: {
-    open() {
-      console.log('1111111111111')
+    open(type) {
+      this.type = type
       this.dialogVisible = true
-      QRCode.toDataURL(
-        `${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`
-      )
+      let activityUrl = ''
+      if (type === 'reduceGift') {
+        activityUrl = `${this.h5Base}activity/discount/index?merCode=${this.merCode}&from=plantform`
+      } else if (type === 'spellGroup') {
+        activityUrl = `${this.h5Base}assemble/home/index?merCode=${this.merCode}&from=plantform`
+      }
+      this.activityUrl = activityUrl
+      QRCode.toDataURL(activityUrl)
         .then(url => {
           console.log(url)
           this.qcode = url
@@ -144,6 +155,9 @@ export default {
   .el-input-group__append {
     background: #147de8;
     color: #fff;
+  }
+  .qcodeimg {
+    text-align: center;
   }
   .post-img-wrap {
     // margin: 20px 0;

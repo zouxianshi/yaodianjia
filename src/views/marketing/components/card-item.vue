@@ -25,7 +25,7 @@
       </div>
     </div>
     <!-- 右上角的事件 -->
-    <el-image v-if="item.extra" class="share" :src="item.extra" alt @click="onShare" />
+    <el-image v-if="item.extra" class="share" :src="item.extra" alt @click="onShare(item.value)" />
     <preview-dialog ref="previewDialog" />
   </el-card>
 </template>
@@ -44,9 +44,9 @@ export default {
       console.log('1111111---handleJump', url)
       this.$router.push(url)
     },
-    onShare() {
+    onShare(type) {
       console.log('我是分享页面---------')
-      this.$refs.previewDialog.open()
+      this.$refs.previewDialog.open(type)
     }
   }
 }
