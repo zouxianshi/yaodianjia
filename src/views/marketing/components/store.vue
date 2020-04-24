@@ -299,13 +299,13 @@ export default {
     handleCurrentChange(val) {
       this.pageInfo.currentPage = val
       this._loadStoreData()
-    },
-    // 勾选界面
-    filterHandler(value, row, column) {
-      console.log('filterHandler----', value, row, column)
-      // const property = column['property']
-      // return row[property] === value
     }
+    // 勾选界面
+    // filterHandler(value, row, column) {
+    //   console.log('filterHandler----', value, row, column)
+    //   // const property = column['property']
+    //   // return row[property] === value
+    // }
   }
 }
 </script>

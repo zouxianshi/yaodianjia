@@ -23,7 +23,7 @@
         </div>
         <div class="txt-info">
           <p>商品名称：{{ info.name }}</p>
-          <p>商品编号：{{ info.specId }}</p>
+          <p>商品编码：{{ info.erpCode }}</p>
           <p>
             参考价：
             <span class="zd-price" v-text="'￥'+info.mprice" />
