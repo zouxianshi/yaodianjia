@@ -17,8 +17,8 @@
         <el-tab-pane v-for="(item,$index) in dragComponent" :key="$index" :name="item.name" :label="item.name">
           <div class="cbm-draggable">
             <v-draggable v-model="item.component" draggable=".item" v-bind="dragOptions" @start="onStart">
-              <el-tooltip v-for="(el,i) in item.component" :key="i" class="item" effect="dark" content="请拖拽至左下方布局" placement="top">
-                <el-button size="small">{{ el.name }}</el-button>
+              <el-tooltip v-for="(el,i) in item.component" :key="i" :class="isDisabled(el.type) ? 'no-item' : 'item'" effect="dark" content="请拖拽至左下方布局" placement="top">
+                <el-button size="small" :disabled="isDisabled(el.type)">{{ el.name }}</el-button>
               </el-tooltip>
             </v-draggable>
           </div>
@@ -51,7 +51,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('mall', ['dragGlobal']),
+    ...mapState('mall', ['dragGlobal', 'dragData']),
+    isDisabled() {
+      return (type) => {
+        return !!(type === 'recommend' && _.some(this.dragData, { type: 'recommend' }))
+      }
+    },
     dragOptions() {
       return {
         animation: 150,
@@ -156,8 +161,8 @@ export default {
       }
     }
     .cbm-draggable {
-      padding-left: 110px;
-      .item {
+      padding-left: 130px;
+      .item,.no-item {
         margin-right: 10px;
       }
     }
