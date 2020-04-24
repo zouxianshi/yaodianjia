@@ -38,13 +38,22 @@
       >
         <el-table-column type="selection" align="center" width="50" />
         <el-table-column prop="name" label="赠品名称" min-width="120" :show-overflow-tooltip="true" />
+        <el-table-column label="总库存" width="100">
+          <template slot-scope="scope">
+            <span size="small" type="info">{{ scope.row.stock?scope.row.stock:0 }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="provideNum"
           label="已发放"
           min-width="60"
           align="center"
           :show-overflow-tooltip="true"
-        />
+        >
+          <template slot-scope="scope">
+            <span size="small" type="info">{{ scope.row.provideNum?scope.row.provideNum:0 }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="leaveStock"
           label="剩余库存"
@@ -58,7 +67,11 @@
           min-width="60"
           align="center"
           :show-overflow-tooltip="true"
-        />
+        >
+          <template slot-scope="scope">
+            <span size="small" type="info">{{ scope.row.limitCount===0?'不限购':scope.row.limitCount }}</span>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="table-footer">
         <el-pagination

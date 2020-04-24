@@ -1,15 +1,30 @@
 <template>
   <el-table :data="tableData" size="small" show-overflow-tooltip style="width: 100%">
-    <template v-for="col in cols">
-      <el-table-column
-        v-if="!col.render"
-        :key="col.prop"
-        :label="col.label"
-        :show-overflow-tooltip="true"
-        :prop="col.prop"
-        :min-width="col.width"
-      />
-    </template>
+    <el-table-column label="赠品名称" show-overflow-tooltip>
+      <template slot-scope="scope">
+        <span size="small" type="info">{{ scope.row.name }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="总库存" width="100">
+      <template slot-scope="scope">
+        <span size="small" type="info">{{ scope.row.stock?scope.row.stock:0 }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="已发放" width="100">
+      <template slot-scope="scope">
+        <span size="small" type="info">{{ scope.row.provideNum?scope.row.provideNum:0 }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="剩余库存" width="100">
+      <template slot-scope="scope">
+        <span size="small" type="info">{{ scope.row.leaveStock }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="每人限领" width="100">
+      <template slot-scope="scope">
+        <span size="small" type="info">{{ scope.row.limitCount===0?'不限购':scope.row.limitCount }}</span>
+      </template>
+    </el-table-column>
     <el-table-column label="操作" width="60">
       <template slot-scope="scope">
         <el-button type="text" @click="handleDel(scope.row, scope.$index)">删除</el-button>
@@ -33,7 +48,6 @@ export default {
   },
   data() {
     return {
-      // tableData: [],
       cols: [
         {
           prop: 'name',
@@ -53,7 +67,7 @@ export default {
   },
   methods: {
     dataFrom(data) {
-      this.tableData = data
+      this.tableData = Array.isArray(data) ? data : []
     },
     handleDel(item, index) {
       // this.tableData.splice(index, 1)

@@ -219,6 +219,7 @@ export default {
           name: data.name,
           stock: data.stock
         }
+        this.$refs.storeGods.dataFrom(data.specDTOList)
       })
     }
   },
