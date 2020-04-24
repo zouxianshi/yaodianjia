@@ -27,7 +27,7 @@
           <el-table-column label="商品" min-width="200">
             <template slot-scope="scope">
               <div class="goods-info">
-                <el-image :src="showImg(scope.row.imgUrl)" style="width:100px" />
+                <el-image :src="showImg(scope.row.picUrl)" style="width:100px" />
                 <div class="goods-txt">
                   <p v-text="scope.row.productName" />
                   <div style="display:flex;justify-content: space-between;">
@@ -54,7 +54,7 @@
                     style="width:120px"
                     controls-position="right"
                     :min="0"
-                    :max="100000000000"
+                    :max="99999999"
                     placeholder
                     @input.native="handleInput($event,scope.row)"
                   />
@@ -145,7 +145,7 @@ export default {
     handleEditAcStock(row) {
       this.editInfo = row
       this.dialogVisible = true
-      this.dialogVisibleTitle = row.name || ''
+      this.dialogVisibleTitle = row.pmtName || ''
     },
     _loadActivityGoods() {
       this.listLoading = true

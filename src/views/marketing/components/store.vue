@@ -46,11 +46,16 @@
           type="selection"
           :selectable="checkSelectable"
           width="55"
-          :filters="[{text: '本页全选', value: '本页全选'},{text: '反选当页', value: '反选当页'}]"
-          :filter-method="filterHandler"
         />
+        <!--     :filters="[{text: '本页全选', value: '本页全选'},{text: '反选当页', value: '反选当页'}]"
+          :filter-method="filterHandler" -->
         <el-table-column label="门店编号" prop="stCode" width="100" />
-        <el-table-column label="门店名称" prop="stName" show-overflow-tooltip />
+        <el-table-column label="门店名称" prop="stName" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span>{{ scope.row.stName }}</span>
+            <span v-if="scope.row.centerStore" class="qijian-badge">旗舰店</span>
+          </template>
+        </el-table-column>
         <el-table-column label="门店地址" show-overflow-tooltip>
           <template
             slot-scope="scope"
@@ -341,6 +346,19 @@ export default {
         margin-top: 5px;
       }
     }
+  }
+  .qijian-badge {
+    position: absolute;
+    left: 50px;
+    top: 4px;
+    background: rgba(237, 20, 61, .7);
+    border: 1px solid #f78096;
+    border-radius: 10px;
+    height: 16px;
+    line-height: 16px;
+    color: #fff;
+    font-size: 10px;
+    padding: 0 10px;
   }
 }
 </style>

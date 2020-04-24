@@ -65,7 +65,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <!-- 拼团活动的编辑活动库存按钮进行中且为生效 -->
-                  <el-dropdown-item v-if="scope.row.validStatus===1 && type === '13'">
+                  <el-dropdown-item v-if="scope.row.validStatus === 1 && type==='13' && scope.row.status">
                     <product-kucun :row-item="scope.row" />
                   </el-dropdown-item>
                   <!-- 失效：进行中且不失效 -->
@@ -259,7 +259,7 @@ export default {
         : ''
     this.promotionTypeLable =
       Array.isArray(filterType) && filterType.length ? filterType[0].label : ''
-    // this.type = this.$route.params.type || ''
+    this.type = this.$route.params.type || ''
     this.fetchData()
   },
   methods: {
@@ -354,17 +354,19 @@ export default {
        失效：进行中已生效的才可以失效；
      */
     handleCommand(val) {
-      if (val.type === 'edit' && !val.disabled) {
-        this.toEdit(val.id)
-      } else if (val.type === 'end' && !val.disabled) {
-        this.endActivity(val.id)
-      } else if (val.type === 'failList' && !val.disabled) {
-        console.log('失败列表-----&&&&&&&')
-        // this.endActivity(val.id)
-      } else if (val.type === 'extend' && !val.disabled) {
-        this.$refs.activityAcform.open(val.id)
-      } else if (val.type === 'del' && !val.disabled) {
-        this.handleDel(val.id)
+      if (val) {
+        if (val.type === 'edit' && !val.disabled) {
+          this.toEdit(val.id)
+        } else if (val.type === 'end' && !val.disabled) {
+          this.endActivity(val.id)
+        } else if (val.type === 'failList' && !val.disabled) {
+          console.log('失败列表-----&&&&&&&')
+          // this.endActivity(val.id)
+        } else if (val.type === 'extend' && !val.disabled) {
+          this.$refs.activityAcform.open(val.id)
+        } else if (val.type === 'del' && !val.disabled) {
+          this.handleDel(val.id)
+        }
       }
     },
 

@@ -71,6 +71,7 @@
                     class="custom-inner-input"
                     placeholder
                     :min="1"
+                    :max="9999999"
                     @input.native="handleInput($event,'addLimitTimes')"
                   />
                   <!-- <div class="operate">
@@ -88,6 +89,7 @@
                     style="width:120px"
                     class="custom-inner-input"
                     :min="1"
+                    :max="9999999"
                     placeholder
                     @input.native="handleInput($event,'limitCount')"
                   />
@@ -114,6 +116,7 @@
                 class="custom-inner-input"
                 controls-position="right"
                 :min="2"
+                :max="9999999"
                 placeholder
                 @input.native="handleInput($event,'productActivityCount')"
               />
