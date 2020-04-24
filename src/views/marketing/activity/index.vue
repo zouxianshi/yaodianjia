@@ -7,7 +7,7 @@
             <card-item :item="o" />
           </el-col>
         </el-row>
-      </el-tab-pane> -->
+      </el-tab-pane>-->
       <el-tab-pane label="商品促销" name="goodsActivity">
         <el-row :gutter="20">
           <el-col
@@ -87,7 +87,8 @@ export default {
           listUrl: '/marketing/activity/list/11',
           linkUrl: '/marketing/activity/limit-edit?l_type=11',
           desc:
-            '商品直接减价或打折的促销方法，设置商品在某个时间段有优惠，到期恢复原价，刺激会员消费。'
+            '商品直接减价或打折的促销方法，设置商品在某个时间段有优惠，到期恢复原价，刺激会员消费。',
+          extra: share
         },
         {
           value: 'spellGroup',
@@ -96,7 +97,8 @@ export default {
           listUrl: '/marketing/activity/list/13',
           linkUrl: '/marketing/activity/assemble-edit',
           desc:
-            '为商家做拉新引流计划提供高效的途径，也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长。'
+            '为商家做拉新引流计划提供高效的途径，也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长。',
+          extra: share
         },
         {
           value: 'limitSecKill',
@@ -105,7 +107,8 @@ export default {
           listUrl: '/marketing/activity/list/12',
           linkUrl: '/marketing/activity/limit-edit?l_type=12',
           desc:
-            '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。'
+            '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。',
+          extra: share
         }
       ], // 商品促销
       activity: [] // 精彩活动

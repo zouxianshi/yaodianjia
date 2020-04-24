@@ -831,7 +831,7 @@ export default {
             confirmButtonText: '返回列表查看',
             callback: () => {
               this.$router.push(
-                `/marketing/activity/list?type=${this.$route.query.l_type}`
+                `/marketing/activity/list/${this.$route.query.l_type}`
               )
             }
           }
@@ -840,7 +840,7 @@ export default {
         this.$message.success(msg)
         setTimeout(_ => {
           this.$router.push(
-            `/marketing/activity/list?type=${this.$route.query.l_type}`
+            `/marketing/activity/list/${this.$route.query.l_type}`
           )
         }, 1000)
       }

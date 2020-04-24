@@ -11,7 +11,7 @@ import config from '@/utils/config'
  */
 export function queryStoreByOrg(params) {
   return request({
-    url: `${config.merchant}/1.0/store/queryStoreByOrgId`,
+    url: `${config.merGoods}/1.0/store/queryStoreByOrgId`,
     method: 'post',
     data: params
   })
@@ -22,9 +22,9 @@ export function queryStoreByOrg(params) {
  * /1.0/org/queryOrgByMerCode
  *
  */
-export function queryOrgMerchant() {
+export function queryOrgMerchant(merCode) {
   return request({
-    url: `${config.merchant}/1.0/org/queryOrgByMerCode`,
+    url: `${config.merGoods}/1.0/organization/${merCode}`,
     method: 'get'
   })
 }

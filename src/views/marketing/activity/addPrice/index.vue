@@ -441,13 +441,13 @@ export default {
             dangerouslyUseHTMLString: true,
             confirmButtonText: '返回列表查看',
             callback: () => {
-              this.$router.replace('/marketing/activity/list?type=15')
+              this.$router.replace('/marketing/activity/list/15')
             }
           }
         )
       } else {
         this.$message.success(msg)
-        this.$router.replace('/marketing/activity/list?type=15')
+        this.$router.replace('/marketing/activity/list/15')
       }
     }
   },

@@ -487,7 +487,7 @@ export default {
           return callback(new Error('必须为大于0.01的正数'))
         }
         if (value >= Number(this.form.ruleList[index].threshold || 0)) {
-          return callback(new Error('不能大于满减门槛'))
+          return callback(new Error('优惠金额必须小于满减门槛'))
         }
         if (value > 99999999) {
           return callback(new Error('满减金额不可大于99999999'))
@@ -759,14 +759,14 @@ export default {
             dangerouslyUseHTMLString: true,
             confirmButtonText: '返回列表查看',
             callback: () => {
-              this.$router.replace('/marketing/activity/list?type=14')
+              this.$router.replace('/marketing/activity/list/14')
             }
           }
         )
       } else {
         this.$message.success(msg)
         setTimeout(_ => {
-          this.$router.replace('/marketing/activity/list?type=14')
+          this.$router.replace('/marketing/activity/list/14')
         }, 1000)
       }
     },

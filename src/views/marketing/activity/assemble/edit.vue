@@ -629,14 +629,14 @@ export default {
             dangerouslyUseHTMLString: true,
             confirmButtonText: '返回列表查看',
             callback: () => {
-              this.$router.push('/marketing/activity/list?type=13')
+              this.$router.push('/marketing/activity/list/13')
             }
           }
         )
       } else {
         this.$message.success(msg)
         setTimeout(_ => {
-          this.$router.push('/marketing/activity/list?type=13')
+          this.$router.push('/marketing/activity/list/13')
         }, 1000)
       }
     },

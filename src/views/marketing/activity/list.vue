@@ -371,7 +371,7 @@ export default {
     // 获取列表数据
     _getTableData() {
       const params = {
-        promotionType: this.$route.query.type,
+        promotionType: this.$route.params.type,
         pmtName: this.searchForm.pmtName,
         currentPage: this.pager.current,
         pageSize: this.pager.size,

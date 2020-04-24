@@ -237,7 +237,7 @@ export default {
     open() {
       this.dialog.visible = true
       console.log('this.list-----', this.list)
-      if (this.list && this.list.length > 0) {
+      if (Array.isArray(this.list) && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
         this.mySelectList = []

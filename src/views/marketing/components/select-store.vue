@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     dataFrom(data) {
-      this.tableData = data
+      this.tableData = Array.isArray(data) ? data : []
     },
     handleDel(item, index) {
       // this.tableData.splice(index, 1)

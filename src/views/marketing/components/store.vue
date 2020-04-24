@@ -42,7 +42,13 @@
         @select-all="handleSelectionChangeStore"
         @select="handleSelect"
       >
-        <el-table-column type="selection" :selectable="checkSelectable" width="55" />
+        <el-table-column
+          type="selection"
+          :selectable="checkSelectable"
+          width="55"
+          :filters="[{text: '本页全选', value: '本页全选'},{text: '反选当页', value: '反选当页'}]"
+          :filter-method="filterHandler"
+        />
         <el-table-column label="门店编号" prop="stCode" width="100" />
         <el-table-column label="门店名称" prop="stName" show-overflow-tooltip />
         <el-table-column label="门店地址" show-overflow-tooltip>
@@ -51,6 +57,13 @@
           >{{ scope.row.province }}{{ scope.row.city }}{{ scope.row.area }}{{ scope.row.address }}</template>
         </el-table-column>
         <el-table-column label="门店电话" prop="mobile" />
+        <el-table-column label="配送方式" width="260">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.isdelivery">普通快递</el-tag>
+            <el-tag v-if="scope.row.isdistribution">配送上门</el-tag>
+            <el-tag v-if="scope.row.isself">门店自提</el-tag>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="text-right pagination">
         <el-pagination
@@ -121,16 +134,7 @@ export default {
         merchant: []
       },
       isShow: false,
-      options: [
-        {
-          orName: '111111',
-          id: 'a1282d9ef71c11e9955d000c29d52f39'
-        },
-        {
-          orName: '海典大药房',
-          id: 'a1282d9ef71c11e9955d2220c29d52f39'
-        }
-      ],
+      options: [],
       merchantOption: {
         label: 'orName',
         value: 'id',
@@ -138,12 +142,11 @@ export default {
       }
     }
   },
-  created() {},
   methods: {
     open() {
       this.isShow = true
       console.log('this.list-----', this.list)
-      if (this.list && this.list.length > 0) {
+      if (Array.isArray(this.list) && this.list.length > 0) {
         this.multipleSelection = this.list.slice()
       } else {
         this.multipleSelection = []
@@ -153,9 +156,8 @@ export default {
     },
     getOrgMerchant() {
       this.typeTreeLoading = true
-      queryOrgMerchant('888888')
+      queryOrgMerchant(this.merCode)
         .then(res => {
-          console.log('cccccccccccc', res)
           this.typeTreeLoading = false
           if (res.code === '10000' && res.data) {
             this.options = res.data
@@ -195,7 +197,7 @@ export default {
       }
       queryStoreByOrg(query).then(res => {
         const { data, totalCount } = res.data
-        this.tableData = data
+        this.tableData = Array.isArray(data) ? data : []
         this.pageInfo.total = totalCount
         this.$nextTick(() => {
           this.updateChecked()
@@ -208,7 +210,7 @@ export default {
         this.multipleSelection
       )
       console.log('我准备回显数据------tableData', this.tableData)
-      const currentCheckedList = [](Array.isArray(this.tableData) ? this.tableData : []).forEach(item => {
+      const currentCheckedList = this.tableData.forEach(item => {
         const index = this.multipleSelection.findIndex(mItem => {
           return mItem.id === item.id
         })
@@ -292,6 +294,12 @@ export default {
     handleCurrentChange(val) {
       this.pageInfo.currentPage = val
       this._loadStoreData()
+    },
+    // 勾选界面
+    filterHandler(value, row, column) {
+      console.log('filterHandler----', value, row, column)
+      // const property = column['property']
+      // return row[property] === value
     }
   }
 }

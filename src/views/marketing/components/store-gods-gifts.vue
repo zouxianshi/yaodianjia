@@ -164,7 +164,7 @@ export default {
   },
   methods: {
     dataFrom(data) {
-      this.tableData = data
+      this.tableData = Array.isArray(data) ? data : []
     },
     // 获取数据
     fetchData() {
@@ -173,7 +173,7 @@ export default {
     open(index) {
       this.dialog.visible = true
       this.index = index
-      if (this.list && this.list.length > 0) {
+      if (Array.isArray(this.list) && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
         this.mySelectList = []
