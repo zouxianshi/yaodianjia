@@ -71,8 +71,9 @@ export default {
       this.$emit('on-selects', _.reject(this.activesData, ['specId', '']))
     },
     handlerItem(item) {
-      const { specId, picUrl, price, mprice, name, storeId, storeName, merCode } = item
+      const { specId, picUrl, price, mprice, name, storeId, storeName, merCode, id } = item
       return {
+        commodityId: id,
         specId,
         img: picUrl,
         price,

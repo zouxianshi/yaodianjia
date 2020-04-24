@@ -18,8 +18,9 @@
             <el-tag v-if="scope.row.status === 0" type="danger">未发布</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="300px">
+        <el-table-column label="操作" width="340px">
           <template slot-scope="scope">
+            <el-button type="primary" size="mini" @click="onPreview(scope.row)">预览</el-button>
             <el-button type="primary" size="mini" @click="copyHome(scope.row)">复制</el-button>
             <el-button v-if="scope.row.isUse !== 1" type="primary" size="mini" @click="() => $router.push(`/mall/home-settings/${scope.row.id}`)">编辑</el-button>
             <m-delete v-if="scope.row.isUse !== 1" :item="scope.row" @on-update="getData" />
@@ -29,10 +30,14 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-dialog title="效果预览" append-to-body :visible.sync="isPreview" width="740px">
+      <m-preview v-if="isPreview" :dimension-id="dimensionId" @on-close="() => isPreview = false" />
+    </el-dialog>
   </div>
 </template>
 <script>
 import mDelete from './_source/delete'
+import mPreview from './../homeSettings/_source/_source/preview'
 import { getMallList, setStatus, setHome, copyHome } from '@/api/mallService'
 export default {
   name: 'Index',
@@ -40,11 +45,17 @@ export default {
     return {
       list: [],
       visible: false,
-      loading: false
+      loading: false,
+      isPreview: false,
+      dimensionId: null
     }
   },
   props: {},
   methods: {
+    onPreview({ id }) {
+      this.dimensionId = id
+      this.isPreview = true
+    },
     copyHome({ id }) {
       copyHome({ id }).then(() => {
         this.getData()
@@ -97,7 +108,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mDelete }
+  components: { mDelete, mPreview }
 }
 </script>
 

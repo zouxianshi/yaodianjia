@@ -13,6 +13,7 @@
             <m-el-upload @on-upload="_onUpload">
               <el-button icon="el-icon-position">本地上传</el-button>
             </m-el-upload>
+            <p class="p-size">尺寸：{{ subType === 'first' ? '128*128' : '96*96' }}</p>
           </div>
           <div v-if="errorGather.isImg" class="sa-error">
             图标不允许为默认图标！
@@ -64,6 +65,10 @@ export default {
     }
   },
   props: {
+    subType: {
+      type: String,
+      default: ''
+    },
     isAdd: {
       type: Boolean,
       default: false
@@ -151,7 +156,11 @@ export default {
       .snb-ope {
         position: absolute;
         left: 80px;
-        top: 14px;
+        top: 8px;
+        .p-size {
+          font-size: 12px;
+          color: #bbb;
+        }
       }
     }
     .el-button--mini {

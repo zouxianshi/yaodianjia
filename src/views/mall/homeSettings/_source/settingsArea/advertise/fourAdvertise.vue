@@ -4,7 +4,7 @@
       <m-four-advertise :item="searchParams" source="sa" />
     </div>
     <div slot="item">
-      <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :type="searchParams.type" :item="el" :index="i" @on-item="_onItem" />
+      <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :sub-type="searchParams.subType" :item="el" :index="i" @on-item="_onItem" />
     </div>
     <el-button slot="submit" type="primary" style="width: 100%" size="mini" :loading="loading" @click="onSubmit">保存广告设置</el-button>
   </m-sa-layout>

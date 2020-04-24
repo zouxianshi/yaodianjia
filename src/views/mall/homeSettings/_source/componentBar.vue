@@ -1,5 +1,5 @@
 <template>
-  <div class="component-bar-model" :style="{height:isNav ? '51px' : '116px'}">
+  <div class="component-bar-model" :class="{'is-nav':isNav}">
     <div class="cbm-title" @click="onToggle">
       <el-tooltip effect="dark" :content="isNav ? '显示导航栏' : '隐藏导航栏'" placement="top">
         <span>
@@ -25,7 +25,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog title="效果预览" append-to-body :visible.sync="isPreview" width="710px">
+    <el-dialog title="效果预览" append-to-body :visible.sync="isPreview" width="740px">
       <m-preview v-if="isPreview" @on-close="() => isPreview = false" />
     </el-dialog>
   </div>
@@ -119,6 +119,13 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .component-bar-model {
     position: relative;
+    height:116px;
+    &.is-nav {
+      height: 51px;
+      .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
+        border-color:#dfe4ed;
+      }
+    }
     .cbm-operation {
       position: absolute;
       right: 20px;

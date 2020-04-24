@@ -1,11 +1,11 @@
 <template>
   <m-el-card :is-add="isAdd" :index="index" :is-disabled="isDisabled" :title="`广告${index + 1}`">
     <el-form label-width="110px" size="mini">
-      <el-form-item label="图标">
+      <el-form-item label="广告图片">
         <div class="snb-photo">
-          <el-image v-if="searchParams.img" style="width: 140px;" :src="searchParams.img" />
+          <el-image v-if="searchParams.img" style="width: 250px;" :src="searchParams.img" />
           <div v-else :class="prefixClsNoImg">
-            <m-icons :size="50" :is-center="true" />
+            <m-icons :size="50" :is-center="true" :text="`尺寸：${sizeObj[subType][index]}`" />
           </div>
           <div class="snb-oper">
             <m-el-upload @on-upload="_onUpload">
@@ -36,10 +36,36 @@ import mElCard from './../_source/elCard'
 import mLinksTable from './../_source/linksTable'
 import mElUpload from './../_source/elUpload'
 
+const sizeObj = {
+  first: {
+    0: '718*240'
+  },
+  second: {
+    0: '320*360',
+    1: '382*172',
+    2: '382*172'
+  },
+  third: {
+    0: '228*228',
+    1: '228*228',
+    2: '228*228'
+  },
+  four: {
+    0: '352*160',
+    1: '352*160',
+    2: '352*160',
+    3: '352*160'
+  },
+  five: {
+    0: '750*不限高'
+  }
+}
+
 export default {
   name: 'VaFirstItem',
   data() {
     return {
+      sizeObj,
       visible: false,
       dialogVisible: false,
       searchParams: {
@@ -53,6 +79,10 @@ export default {
     }
   },
   props: {
+    subType: {
+      type: String,
+      default: ''
+    },
     isAdd: {
       type: Boolean,
       default: false
@@ -67,10 +97,6 @@ export default {
     },
     item: {
       type: Object,
-      default: () => {}
-    },
-    type: {
-      type: String,
       default: () => {}
     }
   },
@@ -131,12 +157,13 @@ export default {
   computed: {
     prefixClsNoImg() {
       const prefixCls = 'no-img'
-      const { type, index } = this
+      const { subType, index } = this
       return [
         `${prefixCls}`,
         {
-          [`${prefixCls}-second`]: (type === 'second' && index === 0),
-          [`${prefixCls}-third`]: type === 'third'
+          [`${prefixCls}-second`]: (subType === 'second' && index === 0),
+          [`${prefixCls}-third`]: subType === 'third',
+          [`${prefixCls}-four`]: subType === 'four'
         }
       ]
     }
@@ -148,10 +175,15 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .va-first-item-box-card {
     .no-img {
-      width: 140px;
-      height: 60px;
+      width: 250px;
+      height: 83px;
       background: #F0F2F5;
       margin-bottom: 12px;
+      .v-hs-icons {
+        .p-test {
+          margin-top: -4px;
+        }
+      }
       &.no-img-second {
         width: 181px;
         height: 203px;
@@ -162,6 +194,10 @@ export default {
       &.no-img-third {
         width: 129px;
         height: 129px;
+      }
+      &.no-img-four {
+        width: 199px;
+        height: 91px;
       }
     }
   }

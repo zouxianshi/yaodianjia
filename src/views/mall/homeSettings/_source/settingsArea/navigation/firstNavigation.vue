@@ -4,7 +4,7 @@
       <m-first-item v-for="(el,i) in searchParams.itemList" :key="i" source="sa" :item="el" :index="i" />
     </div>
     <div slot="item">
-      <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :item="el" :index="i" :is-add="isAdd(i)" :is-disabled="isDisabled(i)" @on-item="_onItem" />
+      <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :item="el" :sub-type="searchParams.subType" :index="i" :is-add="isAdd(i)" :is-disabled="isDisabled(i)" @on-item="_onItem" />
     </div>
     <el-button slot="submit" type="primary" style="width: 100%" size="mini" :loading="loading" @click="onSubmit">保存导航设置</el-button>
   </m-sa-layout>

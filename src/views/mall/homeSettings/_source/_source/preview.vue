@@ -21,7 +21,12 @@ export default {
       link: ''
     }
   },
-  props: {},
+  props: {
+    dimensionId: {
+      type: Number,
+      default: null
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -32,8 +37,8 @@ export default {
   beforeMount() {
   },
   mounted() {
-    const { dragGlobal: { id }, h5Base } = this
-    this.link = `${h5Base}pages/home/preview?dimensionId=${id}`
+    const { dragGlobal: { id }, h5Base, $store, dimensionId } = this
+    this.link = `${h5Base}pages/home/preview?dimensionId=${id || dimensionId}&merCode=${$store.getters.merCode}`
     this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
       text: this.link,
       width: 200,
@@ -64,6 +69,10 @@ export default {
     color: #777;
     .pm-text {
       margin-top: -10px;
+    }
+    .pm-link {
+      font-size: 12px;
+      color: #888;
     }
     .pm-qr-code {
       width: 200px;
