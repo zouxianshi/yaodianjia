@@ -1,6 +1,6 @@
 <template>
   <div v-loading="saLoading" class="sa-title-box sam-width">
-    <el-form label-width="80px" size="mini">
+    <el-form label-width="90px" size="mini">
       <el-form-item label="标题">
         <el-input v-model="name" placeholder="请输入标题" @change="() => isName = !name" />
         <div v-if="isName" class="sa-error">

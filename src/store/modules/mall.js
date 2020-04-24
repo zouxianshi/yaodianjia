@@ -4,6 +4,7 @@
  * @description   mall
  */
 
+import _ from 'lodash'
 import { queryCenterStore } from '@/api/common'
 import { saveStructure, saveAssembly } from '@/api/mallService'
 import { noDragData, noDragGlobal } from '@/views/mall/homeSettings/_source/_source/default'
@@ -29,10 +30,7 @@ const mutations = {
   setUUidDragData: (state, payload) => {
     const { uuid } = payload
     const i = _.findIndex(state.dragData, ['uuid', uuid])
-
     state.dragData[i] = _.assign(state.dragData[i], payload)
-
-    console.log(state.dragData)
   },
   setDragData: (state, payload) => {
     state.dragData = payload
@@ -78,7 +76,7 @@ const actions = {
       // console.log(JSON.stringify({...state.dragGlobal,id: state.dragData[0].dimensionId}))
       // return
       console.log(state.dragData)
-      const p = { ...state.dragGlobal, setIds: _.map(state.dragData, v => v.id) }
+      const p = { ...state.dragGlobal, setIds: _.compact(_.map(state.dragData, v => v.id)) }
       saveStructure(p).then(() => {
         resolve()
       }).catch(() => {

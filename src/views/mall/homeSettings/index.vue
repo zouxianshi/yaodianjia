@@ -2,10 +2,10 @@
   <div class="home-settings-model">
     <div class="hsm-cb">
       <el-card class="box-card" :body-style="{padding:'0px'}">
-        <m-component-bar />
+        <m-component-bar @on-toggle-nav="is => isNav = is" />
       </el-card>
     </div>
-    <div class="scrollbar hsm-hm">
+    <div class="scrollbar hsm-hm" :style="{height:`calc(100vh - ${isNav ? 230 : 290 }px)`}">
       <m-home-main />
     </div>
   </div>
@@ -22,7 +22,8 @@ export default {
   props: {},
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      isNav: false
     }
   },
   computed: {
@@ -63,7 +64,6 @@ export default {
       margin-left: -1px;
     }
     .hsm-hm {
-      height: calc(100vh - 290px);
       overflow-y:scroll;
       margin-top: 12px;
     }

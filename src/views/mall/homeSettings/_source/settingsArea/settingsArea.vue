@@ -10,6 +10,7 @@ import mAdvertise from './advertise'
 import mRecommend from './recommend'
 import mCommodity from './commodity'
 import mTitle from './title'
+import mSearchHint from './searchHint'
 import { itemParams } from './../_source/default'
 
 export default {
@@ -34,6 +35,8 @@ export default {
           return mTitle
         case 'mall-title':
           return mTitle
+        case 'mall-search-hint':
+          return mSearchHint
         case 'advertise':
           return mAdvertise
         case 'recommend':
@@ -91,7 +94,7 @@ export default {
       }
     }
     .el-tabs__nav-scroll {
-      padding-left: 100px;
+      padding-left: 110px;
       .el-tabs__item {
         height: 36px;
         line-height: 36px;

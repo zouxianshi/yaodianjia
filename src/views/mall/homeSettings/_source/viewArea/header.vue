@@ -1,8 +1,9 @@
 <template>
   <div class="va-header-model">
+
     <div class="vhm-title-box">
       <div class="drag-area">
-        <span class="sp1">标题栏</span>
+        <span class="sp1">商城名组件</span>
         <div class="oper">
           <m-edit :item="{type:'mall-title'}" />
         </div>
@@ -11,6 +12,19 @@
         <b>{{ dragGlobal.title || '' }}</b>
       </div>
     </div>
+
+    <div class="vhm-search-box">
+      <div class="drag-area">
+        <span class="sp1">搜索关键字组件</span>
+        <div class="oper">
+          <m-edit :item="{type:'mall-search-hint'}" />
+        </div>
+      </div>
+      <div id="va-search-hint" class="title">
+        <b>{{ dragGlobal.searchHint || '' }}</b>
+      </div>
+    </div>
+
   </div>
 </template>
 <script>
@@ -48,6 +62,50 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
+  @mixin vhm-box($left:-2px,$top:56px) {
+    width: 424px;
+    height: 36px;
+    line-height: 34px;
+    position: absolute;
+    left: $left;
+    top: $top;
+    border: 2px solid transparent;
+    &:hover {
+      border-color: #409EFF;
+      .drag-area {
+        display: block;
+      }
+    }
+    .drag-area {
+      width: 422px;
+      height: 30px;
+      line-height: 28px;
+      background: #409EFF;
+      position: absolute;
+      left: -2px;
+      top: -30px;
+      display: none;
+      text-align: center;
+      border-radius:4px 0 0 0;
+      .oper {
+        position: absolute;
+        right: -40px;
+        top: 0;
+        z-index: 2;
+      }
+      .sp1 {
+        position: absolute;
+        left: 10px;
+        top: 3px;
+        font-size: 13px;
+        color: #fff;
+      }
+    }
+    .title {
+      font-size: 18px;
+      color: #fff;
+    }
+  }
   .va-header-model {
     width: 420px;
     height: 150px;
@@ -55,48 +113,17 @@ export default {
     position: relative;
     z-index: 0;
     .vhm-title-box {
-      width: 424px;
-      height: 36px;
-      line-height: 34px;
-      position: absolute;
-      left: -2px;
-      top: 56px;
+      @include vhm-box();
       text-align: center;
-      border: 2px solid transparent;
-      &:hover {
-        border-color: #409EFF;
-        .drag-area {
-          display: block;
-        }
-      }
-      .drag-area {
-        width: 422px;
-        height: 30px;
-        line-height: 28px;
-        background: #409EFF;
-        position: absolute;
-        left: -2px;
-        top: -30px;
-        display: none;
-        text-align: center;
-        border-radius:4px 0 0 0;
-        .oper {
-          position: absolute;
-          right: -40px;
-          top: 0;
-          z-index: 2;
-        }
-        .sp1 {
-          position: absolute;
-          left: 10px;
-          top: 3px;
-          font-size: 13px;
-          color: #fff;
-        }
-      }
+    }
+    .vhm-search-box {
+      @include vhm-box(-2px,106px);
       .title {
-        font-size: 18px;
-        color: #fff;
+        b {
+          padding-left: 180px;
+          color: #8A95A4;
+          font-size: 16px;
+        }
       }
     }
   }

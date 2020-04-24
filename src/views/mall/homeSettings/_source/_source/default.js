@@ -16,7 +16,8 @@ export const noDragGlobal = {
   name: '',
   setIds: [],
   title: '',
-  userName: ''
+  userName: '',
+  searchHint: '请输入关键词'
 }
 
 export const itemParams = {

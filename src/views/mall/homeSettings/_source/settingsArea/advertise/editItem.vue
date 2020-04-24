@@ -1,6 +1,6 @@
 <template>
   <m-el-card :is-add="isAdd" :index="index" :is-disabled="isDisabled" :title="`广告${index + 1}`">
-    <el-form label-width="100px" size="mini">
+    <el-form label-width="110px" size="mini">
       <el-form-item label="图标">
         <div class="snb-photo">
           <el-image v-if="searchParams.img" style="width: 140px;" :src="searchParams.img" />
@@ -86,16 +86,16 @@ export default {
       this.errorGather.isImg = false
     },
     $verification() {
-      const { img, url } = this.searchParams
+      const { img } = this.searchParams
       this.reset()
       if (!img) {
         this.errorGather.isImg = true
         return false
       }
-      if (!url) {
-        this.errorGather.isUrl = true
-        return false
-      }
+      // if (!url) {
+      //   this.errorGather.isUrl = true
+      //   return false
+      // }
       return { ...this.searchParams }
     },
     reset() {

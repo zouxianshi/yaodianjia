@@ -2,7 +2,7 @@
   <div class="mall-list-model">
     <el-alert title="微页面新建上限为20个" type="warning" show-icon />
     <div style="margin: 16px 0;">
-      <el-button type="primary" size="small" @click="() => $router.push('/mall/home-settings')">新建首页</el-button>
+      <el-button type="primary" size="small" :disabled="list.length > 19" @click="() => $router.push('/mall/home-settings')">新建首页</el-button>
     </div>
     <div v-loading="loading" class="mlm-table-box">
       <el-table :data="list" style="width: 100%;" height="calc(100vh - 300px)">

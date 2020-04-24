@@ -6,11 +6,14 @@ import { findComponentsDownward } from '@/utils'
 import { getPageSets } from '@/api/wxmall'
 import { itemParams } from './../../_source/default'
 
+/**
+ * jump handler current config info.
+ */
 export const jumpCurrentSet = ($root, item) => {
   const { type } = item
   const instance = findComponentsDownward($root, 'SettingsArea')[0]
   const setItem = item
-  if (setItem.type === 'mall-title') {
+  if (setItem.type === 'mall-title' || setItem.type === 'mall-search-hint') {
     setItem.itemList = [itemParams]
   }
   // No caching update uuid.
@@ -19,19 +22,28 @@ export const jumpCurrentSet = ($root, item) => {
   }))
 }
 
-// verification rule
+/**
+ * provide validation rules
+ */
 export const verifRequired = {
   title: itemList => _.some(itemList, { name: '' }),
-  navigation: itemList => _.some(itemList, { img: '', url: '', name: '' }),
-  advertise: itemList => _.some(itemList, { img: '', url: '' }),
+  navigation: itemList => _.some(itemList, { img: '', name: '', url: '' }),
+  advertise: itemList => _.some(itemList, { img: '' }),
   commodity: itemList => !_.isEmpty(itemList) ? _.some(itemList, { id: '' }) : true,
-  recommend: () => false
+  recommend: () => false,
+  'mall-title': () => false,
+  'mall-search-hint': () => false,
+  'no-data': () => false
 }
 
-export const toPosition = (uuid, n = 28) => {
-  $('.hsm-hm').animate({ scrollTop: $(`#${uuid}`).position().top - n }, 800)
-}
+/**
+ * jump position
+ */
+export const toPosition = (uuid, n = 28) => $('.hsm-hm').animate({ scrollTop: $(`#${uuid}`).position().top - n }, 800)
 
+/**
+ * return filter data params
+ */
 export const getRecommendedFormat = (that) => {
   return new Promise((resolve, reject) => {
     getRecommended().then(res => {
@@ -104,6 +116,9 @@ export const getSearchParams = p => {
   }, p)
 }
 
+/**
+ * handler get banner data
+ */
 export const getBannerList = () => {
   return new Promise((resolve, reject) => {
     getPageSets(getSearchParams({ positionCode: 'I-03' })).then(res => {
@@ -127,6 +142,9 @@ export const getBannerList = () => {
   })
 }
 
+/**
+ * handler get notice data
+ */
 export const getNotice = (p) => {
   return new Promise((resolve, reject) => {
     getPageSets(getSearchParams({ positionCode: 'I-02', ...p })).then(res => {

@@ -136,7 +136,6 @@ export default {
      */
     handlerVerifDragData(type, fn) {
       const { dragList, dragGlobal } = this
-      const { subType } = _.head(dragList)
 
       if (!dragGlobal.title) {
         this.$message.error('请输入微商城名称！')
@@ -144,10 +143,6 @@ export default {
         return fn(false)
       }
 
-      if (dragList.length === 1 && subType === 'no-data') {
-        this.$message.error('请拖拽部署商城首页！')
-        return fn(false)
-      }
       this.dragList = _.map(dragList, v => { return { ...v, error: verifRequired[v.type](v.itemList) } })
 
       this.setDragData(this.dragList)

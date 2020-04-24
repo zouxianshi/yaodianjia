@@ -1,10 +1,15 @@
 <template>
-  <div class="component-bar-model">
-    <div class="cbm-title">
-      <b>组件选择</b>
+  <div class="component-bar-model" :style="{height:isNav ? '51px' : '116px'}">
+    <div class="cbm-title" @click="onToggle">
+      <el-tooltip effect="dark" :content="isNav ? '显示导航栏' : '隐藏导航栏'" placement="top">
+        <span>
+          <b>组件选择</b>
+          <i class="icon" :class="isNav ? 'el-icon-caret-top' : 'el-icon-caret-bottom'" />
+        </span>
+      </el-tooltip>
     </div>
     <div class="cbm-operation">
-      <el-button size="small" icon="el-icon-share" @click="onPreview">预览</el-button>
+      <el-button size="small" icon="el-icon-share" :disabled="!dragGlobal.id" @click="onPreview">预览</el-button>
       <el-button type="primary" size="small" icon="el-icon-upload" :loading="loading" @click="onSubmit">保存</el-button>
     </div>
     <div class="cbm-nav-box">
@@ -12,9 +17,9 @@
         <el-tab-pane v-for="(item,$index) in dragComponent" :key="$index" :name="item.name" :label="item.name">
           <div class="cbm-draggable">
             <v-draggable v-model="item.component" draggable=".item" v-bind="dragOptions" @start="onStart">
-              <span v-for="(el,i) in item.component" :key="i" class="item">
+              <el-tooltip v-for="(el,i) in item.component" :key="i" class="item" effect="dark" content="请拖拽至左下方布局" placement="top">
                 <el-button size="small">{{ el.name }}</el-button>
-              </span>
+              </el-tooltip>
             </v-draggable>
           </div>
         </el-tab-pane>
@@ -26,7 +31,7 @@
   </div>
 </template>
 <script>
-
+import { mapState } from 'vuex'
 import { findComponentsDownward } from '@/utils'
 import vDraggable from 'vuedraggable'
 import { handlerDragComp } from './_source/default'
@@ -41,10 +46,12 @@ export default {
       dragComponent: handlerDragComp(),
       activeName: '导航栏',
       loading: false,
-      isPreview: false
+      isPreview: false,
+      isNav: false
     }
   },
   computed: {
+    ...mapState('mall', ['dragGlobal']),
     dragOptions() {
       return {
         animation: 150,
@@ -58,7 +65,8 @@ export default {
       }
     }
   },
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {
@@ -72,6 +80,10 @@ export default {
   updated() {
   },
   methods: {
+    onToggle() {
+      this.isNav = !this.isNav
+      this.$emit('on-toggle-nav', this.isNav)
+    },
     onVerif(type) {
       return new Promise((resolve, reject) => {
         const instance = findComponentsDownward(this.$root, 'ViewArea')[0]
@@ -106,7 +118,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .component-bar-model {
-    height: 116px;
     position: relative;
     .cbm-operation {
       position: absolute;
@@ -116,7 +127,7 @@ export default {
     }
     .cbm-nav-box {
       .el-tabs__nav-scroll {
-        padding: 14px 0 0 110px;
+        padding: 14px 0 0 130px;
         .el-tabs__item {
           height: 36px;
           line-height: 36px;
@@ -127,8 +138,14 @@ export default {
       position: absolute;
       left: 27px;
       top: 21px;
+      z-index: 2;
+      cursor: pointer;
       b {
         font-size: 14px;
+      }
+      .icon {
+        font-size: 14px;
+        color: #666;
       }
     }
     .cbm-draggable {
