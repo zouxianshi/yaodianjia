@@ -228,6 +228,11 @@ export default {
       type: ''
     }
   },
+  watch: {
+    $route() {
+      this.type = this.$route.query.params
+    }
+  },
   computed: {
     ...mapGetters(['roles', 'merCode', 'activity']),
     merCode() {
@@ -244,24 +249,17 @@ export default {
     }
   },
   created() {
-    // this._loadStoreList() // 加载活动店铺
     console.log('this.$router--------', this.$route)
     const filterType = this.promotionType.filter(
-      item => item.id === this.$route.query.type
+      item => item.id === this.$route.params.type
     )
-    const pageTitle =
-      Array.isArray(filterType) && filterType.length
-        ? filterType[0].label
-        : '活动列表'
-    this.$route.meta.title = `${pageTitle}列表`
-    document.title = `${pageTitle}列表`
     this.createdUrl =
       Array.isArray(filterType) && filterType.length
         ? filterType[0].createUrl
         : ''
     this.promotionTypeLable =
       Array.isArray(filterType) && filterType.length ? filterType[0].label : ''
-    this.type = this.$route.query.type || ''
+    // this.type = this.$route.params.type || ''
     this.fetchData()
   },
   methods: {

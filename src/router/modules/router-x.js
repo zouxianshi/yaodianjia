@@ -108,7 +108,7 @@ const router = [
         }
       },
       {
-        path: 'activity/list',
+        path: 'activity/list/:type',
         component: () => import('@/views/marketing/activity/list'),
         name: 'activityList',
         meta: {

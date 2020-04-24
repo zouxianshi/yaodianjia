@@ -67,7 +67,7 @@ export default {
           desc:
             '会员消费达到某一条件后可以享受减价或折扣优惠，也可以通过添加赠送赠品的促销手段来提高客单价，提高销售额。',
           img: reduceGift,
-          listUrl: '/marketing/activity/list?type=14',
+          listUrl: '/marketing/activity/list/14',
           linkUrl: '/marketing/activity/reduce-gift-list-edit',
           extra: share
         },
@@ -75,7 +75,7 @@ export default {
           value: 'addPrice',
           lable: '加价购',
           img: addPrice,
-          listUrl: '/marketing/activity/list?type=15',
+          listUrl: '/marketing/activity/list/15',
           linkUrl: '/marketing/activity/aprice-edit',
           desc:
             '会员消费满足一定的金额或商品件数后，可以通过添加低价换购商品的促销手段，来提升客单价，激活积压库存。'
@@ -84,7 +84,7 @@ export default {
           value: 'limitPreferential',
           lable: '限时特惠',
           img: limitPreferential,
-          listUrl: '/marketing/activity/list?type=11',
+          listUrl: '/marketing/activity/list/11',
           linkUrl: '/marketing/activity/limit-edit?l_type=11',
           desc:
             '商品直接减价或打折的促销方法，设置商品在某个时间段有优惠，到期恢复原价，刺激会员消费。'
@@ -93,7 +93,7 @@ export default {
           value: 'spellGroup',
           lable: '拼团',
           img: spellGroup,
-          listUrl: '/marketing/activity/list?type=13',
+          listUrl: '/marketing/activity/list/13',
           linkUrl: '/marketing/activity/assemble-edit',
           desc:
             '为商家做拉新引流计划提供高效的途径，也是最流行的社群运营活动之一。用户可通过拼团活动购买到划算的商品，同时分享给好友参团，从而实现用户裂变增长。'
@@ -102,7 +102,7 @@ export default {
           value: 'limitSecKill',
           lable: '限时秒杀',
           img: limitSecKill,
-          listUrl: '/marketing/activity/list?type=12',
+          listUrl: '/marketing/activity/list/12',
           linkUrl: '/marketing/activity/limit-edit?l_type=12',
           desc:
             '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。'
