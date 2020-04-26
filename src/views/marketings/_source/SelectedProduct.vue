@@ -62,6 +62,10 @@ export default {
 </script>
 <style lang="scss">
 .selected-product-view {
+  .goods-logo{
+    width: 55px;
+    height: 55px;
+  }
   .el-pagination {
     text-align: right;
     margin-top: 15px;
