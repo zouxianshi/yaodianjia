@@ -5,7 +5,6 @@
       v-loading="pageInfoloading"
       :model="form"
       :rules="rules"
-      :disabled="disabled"
       size="small"
       label-width="120px"
     >
@@ -17,6 +16,7 @@
           style="width: 380px;"
           maxlength="30"
           show-word-limit
+          :disabled="disabled"
         />
       </el-form-item>
       <el-form-item label="活动时间：" prop="activitTime">
@@ -30,12 +30,13 @@
           :default-time="['00:00:00', '23:59:59']"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
+          :disabled="disabled"
           @change="handleTimeChange"
         />
       </el-form-item>
       <div class="form-title">活动范围</div>
       <el-form-item label="门店范围：" prop="allStore" required>
-        <el-radio-group v-model="form.allStore">
+        <el-radio-group v-model="form.allStore" :disabled="disabled">
           <el-radio :label="true">全部门店</el-radio>
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
@@ -46,16 +47,17 @@
         <el-button
           type="primary"
           plain
+          :disabled="disabled"
           @click="$refs.storeComponent.open()"
         >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
         <!-- <store-dialog @complete="handleSelectStore">选择门店</store-dialog> -->
       </el-form-item>
       <!-- 门店列表 -->
       <el-form-item v-show="!form.allStore || disabled || edit">
-        <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
+        <select-store ref="selectStoreComponent" :disabled="disabled" @del-item="delSelectStore" />
       </el-form-item>
       <el-form-item label="商品范围：" prop="allStore" required>
-        <el-radio-group v-model="form.allSpec">
+        <el-radio-group v-model="form.allSpec" :disabled="disabled">
           <el-radio :label="true">全部商品</el-radio>
           <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
@@ -67,15 +69,16 @@
             type="primary"
             plain
             size="small"
+            :disabled="disabled"
             @click="$refs.GoodsComponent.open()"
           >选择商品 | 已选（{{ storeSelectGoods.length }}）</el-button>
         </div>
-        <select-goods ref="storeGods" @del-item="delSelectGoods" />
+        <select-goods ref="storeGods" :disabled="disabled" @del-item="delSelectGoods" />
       </el-form-item>
       <div class="form-title">换购规则</div>
       <el-form-item label="活动门槛：" prop="threshold">
         <template>
-          <el-input v-model="form.threshold" style="width: 100px; margin-right: 8px" />元
+          <el-input v-model="form.threshold" :disabled="disabled" style="width: 100px; margin-right: 8px" />元
           <span class="info">以最终下单支付的金额计算</span>
         </template>
       </el-form-item>
@@ -88,6 +91,7 @@
             type="primary"
             plain
             style="margin-bottom: 8px"
+            :disabled="disabled"
             @click="$refs.storeGoodsComponent.open()"
           >选择换购商品 | 已选（{{ storeActivityGoods.length }}）</el-button>
         </template>
@@ -96,13 +100,13 @@
       <el-form-item label="换购数量：" prop="confineNum">
         <template>
           <span>最多可换购</span>
-          <el-input v-model="form.confineNum" style="width: 100px; margin-right: 8px" />
+          <el-input v-model="form.confineNum" :disabled="disabled" style="width: 100px; margin-right: 8px" />
           <span>件</span>
           <span class="info">换购商品允许顾客下单时在商品的总换购数量</span>
         </template>
       </el-form-item>
       <el-form-item label="下单规则：" prop="type">
-        <el-checkbox-group v-model="form.type">
+        <el-checkbox-group v-model="form.type" :disabled="disabled">
           <el-tooltip class="item" effect="dark" content="参加加价购是否可使用优惠券" placement="top-end">
             <el-checkbox label="1" name="type">
               优惠券
@@ -112,7 +116,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" style="width: 120px" @click="onSubmit">{{ edit?'更新':'提交' }}</el-button>
+        <el-button :disabled="disabled" type="primary" style="width: 120px" @click="onSubmit">{{ edit?'更新':'提交' }}</el-button>
       </el-form-item>
     </el-form>
     <!-- 选取换购商品组件 -->

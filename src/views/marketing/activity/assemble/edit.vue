@@ -6,16 +6,16 @@
         :model="formData"
         :rules="rules"
         label-width="120px"
-        :disabled="disabled"
+
         size="small"
         class="demo-ruleForm"
       >
         <div class="form-title">基础设置</div>
         <el-form-item label="活动名称" prop="name">
-          <el-input v-model="formData.name" maxlength="12" placeholder="活动名称不超过12字" />
+          <el-input v-model="formData.name" :disabled="disabled" maxlength="12" placeholder="活动名称不超过12字" />
         </el-form-item>
         <el-form-item label="活动底图">
-          <el-radio-group v-model="formData.img">
+          <el-radio-group v-model="formData.img" :disabled="disabled">
             <el-radio label="1">不添加</el-radio>
             <el-radio label="2">添加</el-radio>
           </el-radio-group>
@@ -29,6 +29,7 @@
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
                 :on-error="handleImgError"
+                :disabled="disabled"
               >
                 <el-image v-if="formData.imgUrl" :src="showImg(formData.imgUrl)" class="avatar" />
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -88,6 +89,7 @@
             type="textarea"
             maxlength="200"
             :autosize="{ minRows: 4, maxRows: 6}"
+            :disabled="disabled"
             style="width:300px"
             :show-word-limit="true"
             placeholder="活动描述尽量精简，将会展示在商品副标题内"
@@ -102,7 +104,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             :default-time="['00:00:00', '23:59:59']"
-            :disabled="!!activityId"
+            :disabled="!!activityId || disabled"
             @change="handleTimeChange"
           />
         </el-form-item>
@@ -114,6 +116,7 @@
               controls-position="right"
               :min="2"
               :max="48"
+              :disabled="disabled"
               @input.native="handleInput"
             />
             <!-- <div class="operate">
@@ -126,7 +129,7 @@
         </el-form-item>
         <div class="form-title">活动店铺</div>
         <el-form-item label="所有店铺" prop="allStore" required>
-          <el-radio-group v-model="formData.allStore" :disabled="!!activityId">
+          <el-radio-group v-model="formData.allStore" :disabled="!!activityId || disabled">
             <el-radio :label="true">全部门店</el-radio>
             <el-radio :label="false">部分门店</el-radio>
           </el-radio-group>
@@ -136,7 +139,7 @@
           <el-button
             type="primary"
             plain
-            :disabled="!!activityId"
+            :disabled="!!activityId || disabled"
             @click="$refs.storeComponent.open()"
           >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
         </el-form-item>
@@ -144,7 +147,7 @@
         <el-form-item v-show="!formData.allStore || disabled || edit">
           <select-store
             ref="selectStoreComponent"
-            :disabled="!!activityId"
+            :disabled="!!activityId || disabled"
             @del-item="delSelectStore"
           />
         </el-form-item>
@@ -169,12 +172,12 @@
               icon="el-icon-circle-plus-outline"
               type="primary"
               size="small"
-              :disabled="!formData.activitTime || (!formData.allStore && !chooseStore.length)"
+              :disabled="!formData.activitTime || (!formData.allStore && !chooseStore.length) || disabled"
               @click="handleOpenGoods"
             >添加商品</el-button>
             <el-button
               size="small"
-              :disabled="!goodsList.length"
+              :disabled="!goodsList.length || disabled"
               type="danger"
               @click="handleBatchDel"
             >批量删除</el-button>
@@ -188,6 +191,7 @@
                   v-model="scope.row.sortNumber"
                   size="mini"
                   placeholder
+                  :disabled="disabled"
                   style="width:50px"
                   @input.native="handleGoodsInput($event, scope.row.sortNumber,scope.$index)"
                   @blur="handleInputBlur(scope.$index,scope.row.sortNumber)"
@@ -208,10 +212,11 @@
             <el-table-column label="成团人数" prop="activityNumber" />
             <el-table-column label="操作" min-width="110">
               <template slot-scope="scope">
-                <el-button type size="mini" @click="handleEditSetting(scope.row)">设置</el-button>
+                <el-button type size="mini" :disabled="disabled" @click="handleEditSetting(scope.row)">设置</el-button>
                 <el-button
                   v-if="!activityId"
                   type="danger"
+                  :disabled="disabled"
                   size="mini"
                   @click="handleGoodsDel(scope.row,scope.$index)"
                 >删除</el-button>
@@ -231,8 +236,8 @@
         </el-form-item>
         <el-form-item />
         <el-form-item label class="text-center">
-          <el-button type @click="$router.go(-1)">取消</el-button>
-          <el-button type="primary" :loading="saveLoading" @click="handleSubmit">保存</el-button>
+          <el-button type :disabled="disabled" @click="$router.go(-1)">取消</el-button>
+          <el-button type="primary" :loading="saveLoading" :disabled="disabled" @click="handleSubmit">保存</el-button>
         </el-form-item>
       </el-form>
     </div>

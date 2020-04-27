@@ -70,11 +70,11 @@
       </el-table>
       <div style="margin-top: 20px">
         <el-button
-          :disabled="!(tableForm && Array.isArray(tableForm.tableData) && tableForm.tableData.length)"
+          :disabled="!(tableForm && Array.isArray(tableForm.tableData) && tableForm.tableData.length) || disabled"
           @click="selectAllSelection"
         >全选商品</el-button>
         <el-button
-          :disabled="!(Array.isArray(multipleSelection) && multipleSelection.length)"
+          :disabled="!(Array.isArray(multipleSelection) && multipleSelection.length) || disabled"
           @click="handleSetPrice"
         >批量设置换购价</el-button>
       </div>

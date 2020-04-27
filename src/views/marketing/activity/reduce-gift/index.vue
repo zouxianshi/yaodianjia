@@ -1,13 +1,6 @@
 <template>
   <div v-loading="pageInfoloading" class="app-container">
-    <el-form
-      ref="form"
-      :model="form"
-      :rules="rules"
-      size="small"
-      :disabled="disabled"
-      label-width="120px"
-    >
+    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
       <div class="form-title">基本信息</div>
       <el-form-item label="活动名称：" prop="name">
         <el-input
@@ -16,11 +9,13 @@
           style="width: 380px;"
           maxlength="30"
           show-word-limit
+          :disabled="disabled"
         />
       </el-form-item>
       <el-form-item label="活动时间：" prop="activitTime">
         <el-date-picker
           v-model="form.activitTime"
+          :disabled="disabled"
           style="width: 380px"
           size="small"
           type="datetimerange"
@@ -34,7 +29,7 @@
       </el-form-item>
       <div class="form-title">活动规则</div>
       <el-form-item label="活动范围：" prop="allStore" required>
-        <el-radio-group v-model="form.allStore">
+        <el-radio-group v-model="form.allStore" :disabled="disabled">
           <el-radio :label="true">全部门店</el-radio>
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
@@ -44,15 +39,16 @@
         <el-button
           type="primary"
           plain
+          :disabled="disabled"
           @click="$refs.storeComponent.open()"
         >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
       </el-form-item>
       <!-- 门店列表 -->
       <el-form-item v-show="!form.allStore || disabled || edit">
-        <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
+        <select-store ref="selectStoreComponent" :disabled="disabled" @del-item="delSelectStore" />
       </el-form-item>
       <el-form-item label="活动商品：" prop="allSpec" required>
-        <el-radio-group v-model="form.allSpec">
+        <el-radio-group v-model="form.allSpec" :disabled="disabled">
           <el-radio :label="true">全部商品</el-radio>
           <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
@@ -64,13 +60,14 @@
             type="primary"
             plain
             size="small"
+            :disabled="disabled"
             @click="$refs.GoodsComponent.open()"
           >选择商品 | 已选（{{ storeSelectGoods.length }}）</el-button>
         </div>
-        <select-goods ref="storeGods" @del-item="delSelectGoods" />
+        <select-goods ref="storeGods" :disabled="disabled" @del-item="delSelectGoods" />
       </el-form-item>
       <el-form-item label="下单规则：" prop="type">
-        <el-checkbox-group v-model="form.type">
+        <el-checkbox-group v-model="form.type" :disabled="disabled">
           <el-tooltip class="item" effect="dark" content="参加满减是否使用优惠" placement="top-end">
             <el-checkbox label="1" name="type">
               优惠券
@@ -80,7 +77,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="活动规则：" prop="ruleType" required>
-        <el-radio-group v-model="form.ruleType" @change="ruleTypeChange">
+        <el-radio-group v-model="form.ruleType" :disabled="disabled" @change="ruleTypeChange">
           <el-radio :label="1">阶梯满减</el-radio>
           <el-tooltip class="item" effect="dark" placement="top-start">
             <div slot="content">
@@ -97,7 +94,7 @@
       <!-- 优惠设置 -->
       <div class="form-title">优惠设置</div>
       <el-form-item label="满减规则：" required>
-        <el-radio-group v-model="form.uint" @change="unitChange">
+        <el-radio-group v-model="form.uint" :disabled="disabled" @change="unitChange">
           <el-radio :label="0">订单金额（元）</el-radio>
           <el-radio :label="1" :disabled="form.ruleType === 0">商品数量（件）</el-radio>
         </el-radio-group>
@@ -118,6 +115,7 @@
             size="mini"
             icon="el-icon-delete"
             circle
+            :disabled="disabled"
             @click="handleDelete($Index)"
           />
         </el-divider>
@@ -128,16 +126,22 @@
             required: true, validator:validThreshold, trigger: 'change'
           }"
         >
-          <el-input v-model="domain.threshold" style="width: 200px" class="input-with-select">
+          <el-input
+            v-model="domain.threshold"
+            :disabled="disabled"
+            style="width: 200px"
+            class="input-with-select"
+          >
             <template slot="append">{{ form.uint === 0 ? '元':'件' }}</template>
           </el-input>
         </el-form-item>
         <el-form-item v-show="false" :prop="'ruleList.'+ $Index + '.uint'">
-          <el-input v-model="domain.uint" />
+          <el-input v-model="domain.uint" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="优惠内容：" required>
           <el-checkbox
             v-model="domain.checkOrNot"
+            :disabled="disabled"
             border
             @input.native="orderFullChange($event, $Index)"
           >订单金额优惠</el-checkbox>
@@ -148,7 +152,7 @@
             <el-form-item>
               <el-radio
                 v-model="domain.discountType"
-                :disabled="!domain.checkOrNot || form.ruleType === 0"
+                :disabled="!domain.checkOrNot || form.ruleType === 0 || disabled"
                 :label="1"
                 @change="validDiscountType($Index, 'discount1')"
               >打</el-radio>
@@ -163,7 +167,7 @@
                 v-model="domain.discount1"
                 style="width: 200px; margin-left: 10px"
                 class="input-with-select"
-                :disabled="!domain.checkOrNot || domain.discountType !== 1 || form.ruleType === 0"
+                :disabled="!domain.checkOrNot || domain.discountType !== 1 || form.ruleType === 0 || disabled"
               >
                 <template slot="append">折</template>
               </el-input>
@@ -176,7 +180,7 @@
             <el-form-item>
               <el-radio
                 v-model="domain.discountType"
-                :disabled="!domain.checkOrNot || form.uint === 1"
+                :disabled="!domain.checkOrNot || form.uint === 1 || disabled"
                 :label="0"
                 @change="validDiscountType($Index, 'discount0')"
               >减</el-radio>
@@ -191,7 +195,7 @@
                 v-model="domain.discount0"
                 style="width: 200px; margin-left: 10px"
                 class="input-with-select"
-                :disabled="!domain.checkOrNot || form.uint === 1 || domain.discountType !== 0"
+                :disabled="!domain.checkOrNot || form.uint === 1 || domain.discountType !== 0 || disabled"
               >
                 <template slot="append">元</template>
               </el-input>
@@ -204,6 +208,7 @@
             <el-checkbox v-model="domain.giftOrNot" border>送赠品</el-checkbox>
             <el-button
               v-if="!!domain.giftOrNot"
+              :disabled="disabled"
               type="text"
               @click="handleOpenGiftDialog($Index)"
             >选择赠品</el-button>
@@ -213,13 +218,14 @@
           <select-gift-list
             ref="selectGiftComponent"
             :table-data="domain.giftList"
+            :disabled="disabled"
             :gift-index="$Index"
             @del-item="delSelectGifts"
           />
         </el-form-item>
       </div>
       <el-divider
-        v-if="form.ruleType === 1 && Array.isArray(form.ruleList) && form.ruleList.length < 5"
+        v-if="form.ruleType === 1 && Array.isArray(form.ruleList) && form.ruleList.length < 5 && !disabled"
         content-position="left"
       >
         <el-tooltip
@@ -227,7 +233,7 @@
           content="最多支持五级优惠，每级优惠不叠加，如：满足二级优惠条件后则不再享有一级优惠。"
           placement="top-start"
         >
-          <el-button plain type="warning" size="mini" @click="handleAdd">
+          <el-button plain type="warning" size="mini" :disabled="disabled" @click="handleAdd">
             添加层级
             <i class="el-icon-question" />
           </el-button>
@@ -238,6 +244,7 @@
           v-if="!disabled"
           type="primary"
           style="width: 120px; margin-top: 20px"
+          :disabled="disabled"
           @click="onSubmit"
         >{{ edit?'更新':'提交' }}</el-button>
       </el-form-item>
@@ -266,7 +273,7 @@ import selectStore from '../../components/select-store'
 import selectGoods from '../../components/select-goods'
 import { createActFull, getActFull, updateActFull } from '@/api/activity'
 import { mapGetters } from 'vuex'
-
+import { checkNumberdouble } from '@/utils/validate'
 export default {
   components: {
     storeGoods,
@@ -454,8 +461,11 @@ export default {
       }
       // 元
       if (this.form.uint === 0) {
-        if (!/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(value)) {
-          return callback(new Error('必须为大于0.01的正数'))
+        if (value > 99999999) {
+          return callback(new Error('满减门槛不可大于99999999'))
+        }
+        if (!checkNumberdouble(value)) {
+          return callback(new Error('请输入最多2位小数的正数'))
         }
       }
       // 件
@@ -494,17 +504,16 @@ export default {
         if (!value) {
           return callback(new Error('请输入满减金额'))
         }
-        if (
-          !/^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/.test(value) ||
-          value <= 0
-        ) {
-          return callback(new Error('必须为大于0.01的正数'))
-        }
         if (value >= Number(this.form.ruleList[index].threshold || 0)) {
           return callback(new Error('优惠金额必须小于满减门槛'))
         }
         if (value > 99999999) {
           return callback(new Error('满减金额不可大于99999999'))
+        }
+        if (
+          !checkNumberdouble(value)
+        ) {
+          return callback(new Error('请输入最多2位小数的正数'))
         }
         // 后续的数值必须大于前面的金额
         // if (this.form.ruleList.length > 1) {

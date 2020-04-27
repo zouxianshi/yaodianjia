@@ -27,7 +27,7 @@
     </el-table-column>
     <el-table-column label="操作" width="60">
       <template slot-scope="scope">
-        <el-button type="text" @click="handleDel(scope.row, scope.$index)">删除</el-button>
+        <el-button type="text" :disabled="disabled" @click="handleDel(scope.row, scope.$index)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -44,6 +44,10 @@ export default {
     giftIndex: {
       type: Number,
       default: 0
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

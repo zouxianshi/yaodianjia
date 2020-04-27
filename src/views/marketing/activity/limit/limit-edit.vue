@@ -13,10 +13,9 @@
           :rules="xRules"
           size="small"
           label-width="80px"
-          :disabled="disabled"
         >
           <el-form-item label="活动类型">
-            <el-radio-group v-model="xForm.type">
+            <el-radio-group v-model="xForm.type" :disabled="disabled">
               <el-radio v-if="xForm.type=== '12'" label="12">限时秒杀</el-radio>
               <el-radio v-if="xForm.type=== '11'" label="11">限时特惠</el-radio>
             </el-radio-group>
@@ -24,6 +23,7 @@
           <el-form-item label="活动名称" prop="pmtName">
             <el-input
               v-model="xForm.pmtName"
+              :disabled="disabled"
               :placeholder="disabled ? '':'不超过20字'"
               maxlength="20"
               style="width: 380px;"
@@ -33,6 +33,7 @@
           <el-form-item label="活动描述">
             <el-input
               v-model="xForm.description"
+              :disabled="disabled"
               type="textarea"
               :placeholder="disabled ? '':'不超过200字'"
               maxlength="200"
@@ -45,6 +46,7 @@
             <el-date-picker
               v-model="xForm.dateRange"
               style="width: 380px"
+              :disabled="disabled"
               size="small"
               type="datetimerange"
               value-format="yyyy-MM-dd HH:mm:ss"
@@ -56,12 +58,12 @@
             />
           </el-form-item>
           <el-form-item label="优惠模式">
-            <el-radio-group v-model="xForm.mode" @change="modeChange">
+            <el-radio-group v-model="xForm.mode" :disabled="disabled" @change="modeChange">
               <el-radio :label="1">折扣</el-radio>
               <el-radio :label="2">减价</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="选取门店" prop="allStore" required>
+          <el-form-item label="选取门店" prop="allStore" required :disabled="disabled">
             <el-radio-group v-model="xForm.allStore">
               <el-radio :label="true">全部门店</el-radio>
               <el-radio :label="false">部分门店</el-radio>
@@ -71,15 +73,16 @@
             <!-- storeComponent -->
             <el-button
               type="primary"
+              :disabled="disabled"
               plain
               @click="$refs.storeComponent.open()"
             >选择门店 | 已选（{{ selectedStore.length }}）</el-button>
           </el-form-item>
           <el-form-item v-show="!xForm.allStore || pageStatus === 2 || pageStatus === 3">
-            <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
+            <select-store ref="selectStoreComponent" :disabled="disabled" @del-item="delSelectStore" />
           </el-form-item>
           <el-form-item label="是否免运">
-            <el-radio-group v-model="xForm.freePostFee">
+            <el-radio-group v-model="xForm.freePostFee" :disabled="disabled">
               <el-radio :label="0">否</el-radio>
               <el-radio :label="1">是</el-radio>
             </el-radio-group>
@@ -88,12 +91,18 @@
             </template>
           </el-form-item>
           <el-form-item label="限购商品总数" label-width="108px" prop="limitAmount">
-            <el-input
+            <el-input-number
               v-model="xForm.limitAmount"
               class="input-center"
               maxlength="8"
-              style="width: 100px;"
+              style="width: 160px;"
+              :step="1"
+              step-strictly
+              :min="0"
+              :max="10000"
+              :disabled="disabled"
               placeholder="0"
+              controls-position="right"
             />
             <span
               v-show="xForm.limitAmount ==='0' || xForm.limitAmount === 0 || xForm.limitAmount === ''"
@@ -110,7 +119,7 @@
                 label="批量设置"
                 style="display:inline-block;margin-bottom:0"
               >
-                <el-select v-model="mutiSetType" placeholder="批量设置" @change="mutiSetChange">
+                <el-select v-model="mutiSetType" placeholder="批量设置" :disabled="disabled" @change="mutiSetChange">
                   <el-option v-if="xForm.mode === 1" class="x-option" label="批量设置折扣" value="1" />
                   <el-option v-if="xForm.mode === 2" label="批量设置减价" value="2" />
                   <el-option label="批量设置限购" value="3" />
@@ -218,7 +227,7 @@
 
               <el-table-column v-if="!disabled" label="操作" prop="name" width="90px" align="center">
                 <template slot-scope="scope">
-                  <el-button type="text" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
+                  <el-button type="text" :disabled="disabled" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -227,14 +236,15 @@
             v-if="!disabled"
             type="primary"
             size="small"
+            :disabled="disabled"
             @click="$refs.GoodsComponent.open()"
           >选择商品</el-button>
         </div>
       </section>
       <section class="form-footer">
         <template v-if="!disabled">
-          <el-button size="small" @click="$router.go(-1)">取 消</el-button>
-          <el-button type="primary" size="small" :loading="saveLoading" @click="submit">保 存</el-button>
+          <el-button size="small" :disabled="disabled" @click="$router.go(-1)">取 消</el-button>
+          <el-button type="primary" :disabled="disabled" size="small" :loading="saveLoading" @click="submit">保 存</el-button>
         </template>
         <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
       </section>
