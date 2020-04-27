@@ -69,7 +69,7 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span size="small" type="info">{{ scope.row.limitCount===0?'不限购':scope.row.limitCount }}</span>
+            <span size="small" type="info">{{ scope.row.limitCount===0?'不限次数':scope.row.limitCount }}</span>
           </template>
         </el-table-column>
       </el-table>

@@ -1,7 +1,14 @@
 <template>
   <div>
     <el-form ref="tableForm" class="table-form" :model="tableForm" size="small">
-      <el-table ref="activityTable" :data="tableForm.tableData" size="small" style="width: 100%">
+      <el-table
+        ref="activityTable"
+        :data="tableForm.tableData"
+        size="small"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55" />
         <template v-for="col in cols">
           <el-table-column
             v-if="!col.render"
@@ -61,17 +68,24 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- <div style="margin-top: 20px">
-        <el-button @click="toggleSelection([tableData[1], tableData[2]])">全选商品</el-button>
-        <el-button @click="toggleSelection()">批量设置换购价</el-button>
-      </div> -->
+      <div style="margin-top: 20px">
+        <el-button
+          :disabled="!(tableForm && Array.isArray(tableForm.tableData) && tableForm.tableData.length)"
+          @click="selectAllSelection"
+        >全选商品</el-button>
+        <el-button
+          :disabled="!(Array.isArray(multipleSelection) && multipleSelection.length)"
+          @click="handleSetPrice"
+        >批量设置换购价</el-button>
+      </div>
     </el-form>
+    <dialog-set ref="diaglogPriceSet" @on-change="onSetChange" />
   </div>
 </template>
 <script>
-// import noData from '@/components/NoData'
+import dialogSet from './dialog-set'
 export default {
-  // components: { noData },
+  components: { dialogSet },
   props: {
     disabled: {
       type: Boolean,
@@ -94,9 +108,9 @@ export default {
     }
     return {
       tableForm: {
-        tableData: [],
-        multipleSelection: [] // 勾选的列表项
+        tableData: []
       },
+      multipleSelection: [], // 勾选的列表项
       cols: [
         {
           prop: 'mainPic',
@@ -126,20 +140,43 @@ export default {
   },
   methods: {
     dataFrom(data) {
-      console.log('111111111111111111111', data)
-      this.tableForm.tableData = data.map(item => {
+      if (Array.isArray(data) && data.length) {
+        this.tableForm.tableData = data.map(item => {
+          return {
+            ...item,
+            productName: this.formatSkuInfo(item.specSkus || '')
+          }
+        })
+        this.multipleSelection = data
+        this.$refs.activityTable.toggleAllSelection()
+      }
+    },
+    handleSelectionChange(val) {
+      console.log('handleSelectionChange----------', val)
+      this.multipleSelection = val
+    },
+    handleSetPrice() {
+      this.$refs.diaglogPriceSet.open()
+    },
+    onSetChange(value) {
+      const dataMap = this.tableForm.tableData.map(good => {
+        this.multipleSelection.map(item => {
+          if (good.id === item.id) {
+            good.addPrice = value.value
+          }
+        })
         return {
-          ...item,
-          productName: this.formatSkuInfo(item.specSkus || '')
+          ...good
         }
       })
-      // this.tableForm.multipleSelection = data
-      // this.$refs.activityTable.toggleAllSelection()
+      this.tableForm.tableData = dataMap
+      this.$refs.diaglogPriceSet.close()
     },
-    // handleSelectionChange(val) {
-    //   console.log('handleSelectionChange----------', val)
-    //   this.tableForm.multipleSelection = val
-    // },
+    selectAllSelection() {
+      console.log('selectAllSelection----------', this.multipleSelection)
+      // this.multipleSelection = []
+      this.$refs.activityTable.toggleAllSelection()
+    },
     handleDel(item, index) {
       // this.tableForm.tableData.splice(index, 1)
       this.$emit('del-item', item, index)
