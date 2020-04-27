@@ -108,15 +108,15 @@ export default {
       dialogTableVisible: false
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     // 获取分组
     getTypeTree({ merCode: this.merCode, type: 2, use: true }).then(res => {
       this.groupData = res.data
       this.groupData.unshift({ name: '全部', id: '' })
     })
-  },
-  computed: {
-    ...mapGetters(['merCode'])
   },
   methods: {
     show(product) {
