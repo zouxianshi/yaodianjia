@@ -8,8 +8,14 @@
     <div class="body">
       <div class="content">
         <div class="algin-center">
-          <img :src="data.logo">
-          <div>{{ data.createName }}</div>
+          <el-image
+            style="width: 80px; height: 80px; border-radius:50%"
+            :src="showImg(data.logo)+'?x-oss-process=style/w_80'"
+            lazy
+            fit="contain"
+            :preview-src-list="[`${showImg(data.logo)}?x-oss-process=style/w_800`]"
+          />
+          <div>{{ otherData.merName }}</div>
           <div class="quanName">{{ data.cname || '未命名' }}</div>
           <div><el-button type="success" size="mini" @click="check">立即使用</el-button></div>
         </div>
@@ -98,9 +104,6 @@ export default {
       border: 1px solid #aaa;position:relative;
       .algin-center{
         text-align: center;width: 100%;padding-top:5%;margin-bottom: 20px;
-        img{
-          height: 80px;width: 80px;border-radius: 50%;border:1px solid #eee;
-        }
         div{
           margin-top: 10px;
         }

@@ -22,22 +22,22 @@ export default {
     return {
       cardInfo: [
         {
-          imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
+          imgUrl: '/image/marketings/discount.png',
           activityTemplateName: '折扣券',
           url: '/marketings/gift-manage/discount'
         },
         {
-          imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
+          imgUrl: '/image/marketings/fullReduction.png',
           activityTemplateName: '满减券',
           url: '/marketings/gift-manage/full-reduction'
         },
         {
-          imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
+          imgUrl: '/image/marketings/gift.png',
           activityTemplateName: '礼品券',
           url: '/marketings/gift-manage/gift'
         },
         {
-          imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
+          imgUrl: '/image/marketings/zengpin.png',
           activityTemplateName: '优惠码',
           url: ''
         }
@@ -53,9 +53,9 @@ export default {
     padding: 0 20px;
     .header-nav{
       .item-box{
-        display: flex;width: 500px; justify-content: space-between;padding: 10px 0;cursor:pointer;
+        display: flex;width: 660px; justify-content: space-between;padding: 10px 0;cursor:pointer;
         .gift-card-modal{
-          flex: 0 0 120px;text-align:center;
+          flex: 0 0 150px;
           .el-card__body{
             img{
               width: 100%;

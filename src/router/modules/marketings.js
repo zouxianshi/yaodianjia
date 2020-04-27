@@ -133,6 +133,28 @@ export default [
               noCache: true,
               activeMenu: '/marketings/activity-manage'
             }
+          },
+          {
+            path: '/marketings/activity-manage/turntable/list',
+            component: () => import('@/views/marketings/activitysManage/turntable/list'),
+            name: 'activitys-manage-turntable-list',
+            meta: {
+              title: '大转盘',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/activity-manage'
+            }
+          },
+          {
+            path: '/marketings/activity-manage/turntable/add',
+            component: () => import('@/views/marketings/activitysManage/turntable/add'),
+            name: 'activitys-manage-turntable-add',
+            meta: {
+              title: '活动',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/activity-manage'
+            }
           }
         ]
       }

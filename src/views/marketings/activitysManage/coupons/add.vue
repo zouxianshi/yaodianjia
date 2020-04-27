@@ -16,6 +16,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           align="right"
+          @change="dateChange"
         />
       </div>
     </div>
@@ -24,7 +25,6 @@
       <div class="add-addRight-model">
         <el-button type="primary" size="mini" plain @click="handlecheck">选择会员券</el-button>
         <!-- <div style="margin-top:10px">已选择6张优惠券</div> -->
-        {{ write }}
       </div>
     </div>
     <div v-show="checkedit" class="add-addItem-model">
@@ -32,7 +32,7 @@
       <div class="add-addRight-model">
         <el-table :data="selectlist" height="250" style="width: 100%">
           <el-table-column prop="cname" label="优惠券名称" />
-          <el-table-column prop="address" label="优惠内容">
+          <el-table-column label="优惠内容">
             <template
               slot-scope="scope"
             >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
@@ -55,10 +55,9 @@
           <el-table-column label="券总数" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                {{ scope.$index }}
                 <el-input
-                  type="text"
-                  placeholder="请输入数量"
+                  v-model.number="scope.row.totalCoupons"
+                  @change="onChangeCoupons($event,scope.row,scope.$index)"
                 />
                 <i class="el-icon-edit" />
               </div>
@@ -67,8 +66,10 @@
           <el-table-column label="每人限领（张）" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                {{ scope.$index }}
-                <el-input v-model.number="scope.row.totalLimit" @change="onChange($event,scope.row,scope.$index)" />
+                <el-input
+                  v-model.number="scope.row.totalLimit"
+                  @change="onChangeLimit($event,scope.row,scope.$index)"
+                />
                 <i class="el-icon-edit" />
               </div>
             </template>
@@ -76,7 +77,10 @@
           <el-table-column v-if="radio==='积分兑换'" label="所需积分" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                <el-input v-model.number="write[scope.$index].totalNeed" type="number" placeholder />
+                <el-input
+                  v-model.number="scope.row.totalNeed"
+                  @change="onChangeNeed($event,scope.row,scope.$index)"
+                />
                 <i class="el-icon-edit" />
               </div>
             </template>
@@ -84,7 +88,10 @@
           <el-table-column v-if="radio==='现金购买'" label="所需现金" width="100">
             <template slot-scope="scope">
               <div style="display:flex;align-items: center;">
-                <el-input v-model="write[scope.$index].totalNeed" placeholder />
+                <el-input
+                  v-model.number="scope.row.totalNeed"
+                  @change="onChangeNeed($event,scope.row,scope.$index)"
+                />
                 <i class="el-icon-edit" />
               </div>
             </template>
@@ -109,8 +116,9 @@
 <script>
 import _ from 'lodash'
 import { marketaddCoupon } from '@/api/coupon'
-import checkCoupon from './_source/checkCoupon'
+import checkCoupon from '@/components/Marketings/checkCoupon'
 import { mapGetters } from 'vuex'
+import { formatDate } from '@/utils/timer'
 export default {
   name: 'Add',
   components: {
@@ -163,7 +171,6 @@ export default {
   },
   watch: {
     selectlist(old, newv) {
-      console.log(old, newv)
       if (this.selectlist) {
         this.$nextTick(() => {
           if (this.selectlist.length === 0) {
@@ -184,18 +191,38 @@ export default {
   beforeDestroy() {},
   destroyed() {},
   methods: {
-    onChange(event, row, $index) {
+    dateChange() {
+      this.selectlist = []
+    },
+    onChangeCoupons(event, row, $index) {
+      const { totalCoupons } = row
+      this.$set(this.write[$index], 'totalNeed', totalCoupons)
+    },
+    onChangeNeed(event, row, $index) {
+      const { totalNeed } = row
+      this.$set(this.write[$index], 'totalNeed', totalNeed)
+    },
+    onChangeLimit(event, row, $index) {
       const { totalLimit } = row
       this.$set(this.write[$index], 'totalLimit', totalLimit)
-      console.log(this.write)
     },
     // 点击选择优惠券
     handlecheck() {
-      this.$refs.checkCoupons.defaultcheck(this.selectlist)
+      const time = new Date()
+      if (this.value.length > 0) {
+        if (this.value[0] < time) {
+          this.$message.error('起始时间必须大于当前时间')
+        } else {
+          this.$refs.checkCoupons.handleGetlist()
+          this.$refs.checkCoupons.defaultcheck(this.selectlist)
+        }
+      } else {
+        this.$message.error('请选择时间')
+      }
     },
     confincheck(val) {
       this.selectlist = val
-
+      this.write = []
       const write = {
         totalCoupons: 0,
         totalLimit: 0,
@@ -248,14 +275,16 @@ export default {
     },
     // 使用日期
     handletimeRule(timeRule, effectTime) {
-      if (timeRule === 1) {
-        return `自领取${effectTime}天有效`
-      } else if (timeRule === 2) {
-        return `自领取${effectTime.split(',')[0]}天有效,${
-          effectTime.split(',')[1]
-        }天失效`
-      } else {
-        return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
+      if (timeRule) {
+        if (timeRule === 1) {
+          return `自领取${effectTime}天有效`
+        } else if (timeRule === 2) {
+          return `自领取${effectTime.split(',')[0]}天有效,${
+            effectTime.split(',')[1]
+          }天失效`
+        } else {
+          return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
+        }
       }
     },
     // 提交
@@ -268,49 +297,44 @@ export default {
       } else if (this.radio === '积分兑换') {
         radiotype = 2
       }
+      const couponlist = []
+      for (const i of this.selectlist) {
+        const listActivityAddCouponRelationReqDto = {}
+        listActivityAddCouponRelationReqDto.couponId = i.id
+        if (this.radio === '免费领取') {
+          listActivityAddCouponRelationReqDto.amount = 0
+          listActivityAddCouponRelationReqDto.integral = 0
+        } else if (this.radio === '现金购买') {
+          listActivityAddCouponRelationReqDto.integral = 0
+          listActivityAddCouponRelationReqDto.amount = i.totalNeed
+        } else if (this.radio === '积分兑换') {
+          listActivityAddCouponRelationReqDto.integral = i.totalNeed
+          listActivityAddCouponRelationReqDto.amount = 0
+        }
+        listActivityAddCouponRelationReqDto.perCount = i.totalLimit
+        listActivityAddCouponRelationReqDto.totalCount = i.totalCoupons
+        couponlist.push(listActivityAddCouponRelationReqDto)
+      }
       const params = {
-        activityDetailName: this.$route.query.activityTemplateName,
         activityTemplateCode: this.$route.query.activityTemplateCode,
         activityType: radiotype,
-        beginTime: this.filterDate(this.value[0]),
-        endTime: this.filterDate(this.value[1]),
-        listActivityAddCouponRelationReqDto: [
-          {
-            amount: 8,
-            couponId: 8,
-            integral: 8,
-            perCount: 8,
-            totalCount: 8
-          }
-        ],
-        merCode: '666666'
+        beginTime: formatDate(this.value[0]),
+        endTime: formatDate(this.value[1]),
+        listActivityAddCouponRelationReqDto: couponlist,
+        merCode: this.merCode
       }
       marketaddCoupon(params).then(res => {
-        console.log(res)
+        if (res.code === '10000') {
+          this.$message({
+            type: 'success',
+            message: '添加成功!'
+          })
+          this.$router.push(
+            `/marketings/activity-manage/coupons/list?code=${this.$route.query.activityTemplateCode}&name=${this.$route.query.activityTemplateName}`
+          )
+        }
       })
-    },
-    filterDate(date) {
-      date = new Date(date)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      var d = date.getDate()
-      var h = date.getHours()
-      var m1 = date.getMinutes()
-      var s = date.getSeconds()
-      m = m < 10 ? '0' + m : m
-      d = d < 10 ? '0' + d : d
-      h = h < 10 ? '0' + h : h
-      m1 = m1 < 10 ? '0' + m1 : m1
-      s = s < 10 ? '0' + s : s
-      return y + '-' + m + '-' + d + ' ' + h + ':' + m1 + ':' + s
-    },
-    handleinput(val, index) {
-      // this.$forceUpdate()
-      console.log(val, index)
     }
-    // changeInput(e) {
-    //   this.$forceUpdate()
-    // }
   }
 }
 </script>

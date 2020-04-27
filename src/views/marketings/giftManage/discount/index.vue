@@ -9,21 +9,46 @@
           <el-step title="基本信息" />
           <el-step title="使用规则" />
         </el-steps>
-        <el-form v-show="active===1" ref="form" :inline="false" :model="discountForm" label-width="100px" size="mini" label-position="left">
+        <el-form
+          v-show="active===1"
+          ref="form"
+          :rules="rules"
+          :inline="false"
+          :model="discountForm"
+          label-width="110px"
+          size="mini"
+          label-position="left"
+        >
           <el-form-item label="优惠券类型：">
             <span>折扣券</span>
           </el-form-item>
-          <el-form-item label="优惠券名称：">
-            <el-input v-model="discountForm.cname" placeholder="请输入优惠券名称" maxlength="10" style="width:300px" />
+          <el-form-item label="优惠券名称：" prop="cname">
+            <el-input
+              v-model="discountForm.cname"
+              placeholder="请输入优惠券名称"
+              maxlength="10"
+              style="width:300px"
+            />
           </el-form-item>
-          <el-form-item label="优惠内容：">
-            <el-input v-model="discountForm.denomination" :disabled="isUpdate" style="width:80px" /> 折
+          <el-form-item label="优惠内容：" prop="denomination">
+            <el-input
+              v-model="discountForm.denomination"
+              maxlength="5"
+              onkeyup="value=value.replace(/[^0-9]/g,'')"
+              :disabled="isUpdate"
+              style="width:80px"
+            />折
             <span class="zkTips">例：若折扣为8折，填8即可</span>
-            <p style="margin-top:10px">
-              <el-checkbox v-model="isSelectMax" :disabled="isUpdate" />
-              最多优惠
-              <el-input v-model="discountForm.maxPrice" :disabled="isUpdate" style="width:80px" /> 元
-            </p>
+          </el-form-item>
+          <el-form-item label prop="maxPrice">
+            <el-checkbox v-model="isSelectMax" :disabled="isUpdate" @change="discountForm.maxPrice =0" />最多优惠
+            <el-input
+              v-model="discountForm.maxPrice"
+              maxlength="3"
+              onkeyup="value=value.replace(/[^0-9\.]/g,'')"
+              :disabled="isUpdate || !isSelectMax"
+              style="width:80px"
+            />元
           </el-form-item>
           <el-form-item label="退货规则：">
             <el-radio-group v-model="discountForm.returnRule" :disabled="isUpdate">
@@ -31,11 +56,14 @@
               <el-radio :label="2">退货后失效</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="到期提醒：">
-            <el-checkbox v-model="isRember" :disabled="isUpdate" />
-            到期前
-            <el-input v-model="discountForm.expireInfo" :disabled="isUpdate" size="mini" style="width:50px" />
-            天微信提醒
+          <el-form-item label="到期提醒：" prop="expireInfo">
+            <el-checkbox v-model="isRember" :disabled="isUpdate" @change="discountForm.expireInfo=0" />到期前
+            <el-input
+              v-model="discountForm.expireInfo"
+              :disabled="isUpdate || !isRember"
+              size="mini"
+              style="width:50px"
+            />天微信提醒
           </el-form-item>
           <el-form-item label="使用须知：">
             <el-input
@@ -47,7 +75,15 @@
             />
           </el-form-item>
         </el-form>
-        <el-form v-show="active===2" ref="form2" :model="discountForm" label-width="100px" size="mini" label-position="left">
+        <el-form
+          v-show="active===2"
+          ref="form2"
+          :rules="rules"
+          :model="discountForm"
+          label-width="100px"
+          size="mini"
+          label-position="left"
+        >
           <el-form-item label="使用场景：">
             <el-radio-group v-model="discountForm.sceneRule" :disabled="isUpdate">
               <el-radio :label="3">线上线下通用</el-radio>
@@ -55,19 +91,45 @@
               <el-radio :label="2">线下门店</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="使用门槛：">
-            <el-radio-group v-model="useRuleLimit" :disabled="isUpdate">
+          <el-form-item label="使用门槛：" prop="useRule">
+            <el-radio-group v-model="useRuleLimit" :disabled="isUpdate" @change="discountForm.useRule='0'">
               <el-radio :label="0">无门槛</el-radio>
-              <el-radio :label="1">订单满 <el-input v-model="discountForm.useRule" :disabled="isUpdate" style="width:100px" /> 元</el-radio>
+              <el-radio :label="1">
+                订单满
+                <el-input
+                  v-model="discountForm.useRule"
+                  :disabled="isUpdate || useRuleLimit != 1"
+                  style="width:100px"
+                  maxlength="5"
+                  onkeyup="value=value.replace(/[^0-9\.]/g,'')"
+                />元
+              </el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="使用时间：">
-            <el-radio-group v-model="discountForm.timeRule" style="width:200px" :disabled="isUpdate">
+            <el-radio-group
+              v-model="discountForm.timeRule"
+              style="width:200px"
+              :disabled="isUpdate"
+            >
               <el-radio :label="1">
-                自领取起 <el-input v-model="otherData.expirationDay" :disabled="isUpdate" style="width:60px" /> 天内有效
+                自领取起
+                <el-input
+                  v-model="otherData.expirationDay"
+                  onkeyup="value=value.replace(/[^0-9]/g,'')"
+                  :disabled="isUpdate || discountForm.timeRule != 1"
+                  style="width:60px"
+                />天内有效
               </el-radio>
               <el-radio :label="2">
-                自领取起 <el-input v-model="otherData.notActive" :disabled="isUpdate" style="width:60px" /> 天后生效，生效后 <el-input v-model="otherData.effective" :disabled="isUpdate" style="width:60px" /> 天失效
+                自领取起
+                <el-input
+                  v-model="otherData.notActive"
+                  onkeyup="value=value.replace(/[^0-9]/g,'')"
+                  :disabled="isUpdate || discountForm.timeRule != 2"
+                  style="width:60px"
+                />天后生效，生效后
+                <el-input v-model="otherData.effective" :disabled="isUpdate || discountForm.timeRule != 2" style="width:60px" />天失效
               </el-radio>
               <el-radio :label="3">
                 <el-date-picker
@@ -82,19 +144,59 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="适用门店：">
-            <el-radio-group v-model="discountForm.shopRule" :disabled="isUpdate" @change="changeStoreRule">
+            <el-radio-group
+              v-model="discountForm.shopRule"
+              :disabled="isUpdate"
+              @change="changeStoreRule"
+            >
               <el-radio :label="1">全部门店</el-radio>
-              <el-radio :label="2">指定门店&emsp; <el-button v-if="discountForm.shopRule===2" type="text" :disabled="isUpdate" @click="selectStore">选择门店</el-button></el-radio>
+              <el-radio :label="2">
+                指定门店&emsp;
+                <el-button
+                  v-if="discountForm.shopRule===2"
+                  type="text"
+                  :disabled="isUpdate"
+                  @click="selectStore"
+                >选择门店</el-button>
+              </el-radio>
             </el-radio-group>
-            <mSelectedStore v-show="selectedStore.length>0" ref="selectedStore" @onDel="_deleteItemSto" />
+            <mSelectedStore
+              v-show="selectedStore.length > 0"
+              ref="selectedStore"
+              @onDel="_deleteItemSto"
+            />
           </el-form-item>
           <el-form-item label="适用商品：">
-            <el-radio-group v-model="discountForm.productRule" :disabled="isUpdate" @change="changeProductRule">
+            <el-radio-group
+              v-model="discountForm.productRule"
+              :disabled="isUpdate"
+              @change="changeProductRule"
+            >
               <el-radio :label="1">全部商品</el-radio>
-              <el-radio :label="2">指定商品可用 <el-button v-if="discountForm.productRule===2" type="text" :disabled="isUpdate" @click="selectCommodity()">选择商品</el-button></el-radio>
-              <el-radio :label="3">指定商品不可用 <el-button v-if="discountForm.productRule===3" type="text" :disabled="isUpdate" @click="selectCommodity()">选择商品</el-button></el-radio>
+              <el-radio :label="2">
+                指定商品可用
+                <el-button
+                  v-if="discountForm.productRule===2"
+                  type="text"
+                  :disabled="isUpdate"
+                  @click="selectCommodity()"
+                >选择商品</el-button>
+              </el-radio>
+              <el-radio :label="3">
+                指定商品不可用
+                <el-button
+                  v-if="discountForm.productRule===3"
+                  type="text"
+                  :disabled="isUpdate"
+                  @click="selectCommodity()"
+                >选择商品</el-button>
+              </el-radio>
             </el-radio-group>
-            <mSelectedProduct v-show="selectedPro.length>0" ref="selectedPro" @onDel="_deleteItemPro" />
+            <mSelectedProduct
+              v-show="selectedPro.length>0"
+              ref="selectedPro"
+              @onDel="_deleteItemPro"
+            />
           </el-form-item>
         </el-form>
         <el-button v-if="active===1" size="mini" type="primary" @click="next">下一步</el-button>
@@ -107,35 +209,70 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
+import { mapGetters } from 'vuex'
 import mPhoneView from '../_source/phoneView'
 import mPopSelectStore from '@/components/Marketings/popSelectStore'
 import mPopSelectProduct from '@/components/Marketings/popSelectProduct'
 import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
 import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
-import { getCouponDetail, addCoupon, updateCoupon } from '@/api/coupon'
+import {
+  getCouponDetail,
+  addCoupon,
+  updateCoupon,
+  _searchByMercode
+} from '@/api/coupon'
 import { formatDate } from '@/utils/timer'
 export default {
   name: 'DiscountIndex',
   components: {
-    mPhoneView, mPopSelectStore, mPopSelectProduct, mSelectedStore, mSelectedProduct
+    mPhoneView,
+    mPopSelectStore,
+    mPopSelectProduct,
+    mSelectedStore,
+    mSelectedProduct
   },
   data() {
+    var validateExpireInfo = (rule, value, callback) => {
+      if (this.isRember && !value) {
+        // 如果选择了提醒，提醒天数就不能为空
+        return callback(new Error('请输入正确提醒天数'))
+      } else {
+        callback()
+      }
+    }
+    var validateMaxPrice = (rule, value, callback) => {
+      // 验证最大优惠金额
+      if (this.isSelectMax && !value) {
+        return callback(new Error('请正确输入最大优惠金额'))
+      } else {
+        callback()
+      }
+    }
+    var validateDenomination = (rule, value, callback) => {
+      // 验证优惠内容
+      if (!value || parseFloat(value) < 0 || parseFloat(value) >= 10) {
+        return callback(new Error('请输入正确的优惠折扣'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
       active: 1, // 当前操作步骤
       selectedStore: [],
       selectedPro: [],
       otherData: {
-        expirationDay: '0', // 直接开始有效天数
-        expirationDate: [
-          new Date(), new Date()
-        ], // 有效期(当选择开始、结束日期是)
-        notActive: '0', // 等待生效天数
-        effective: '0' // 有效天数
+        expirationDay: '1', // 直接开始有效天数
+        expirationDate: [new Date(), new Date()], // 有效期(当选择开始、结束日期是)
+        notActive: '1', // 等待生效天数
+        effective: '1', // 有效天数
+        merName: ''
       },
-      isRember: '', // 是否到期提醒
-      isSelectMax: '', // 是否输入最大优惠
-      useRuleLimit: '0', // 使用门槛
+      isRember: false, // 是否到期提醒
+      isSelectMax: false, // 是否输入最大优惠
+      useRuleLimit: 0, // 使用门槛
       discountForm: {
         ctype: 1,
         cname: '', // 折扣名称
@@ -150,13 +287,25 @@ export default {
         shopRule: 1, // 适用门店
         productRule: 1, // 使用商品
         timeRule: 1,
-        logo: 'www.baidu.com'
+        logo: ''
+      },
+      rules: {
+        cname: [
+          { required: true, message: '请输入优惠券名称', trigger: 'blur' }
+        ],
+        denomination: [{ validator: validateDenomination, trigger: 'blur' }],
+        maxPrice: [{ validator: validateMaxPrice, trigger: 'blur' }],
+        expireInfo: [{ validator: validateExpireInfo, trigger: 'blur' }]
       }
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     this.useRuleLimit = this.discountForm.useRule === 0 ? 0 : 1 // 是否有使用门槛
-    if (this.$route.query.id) { // 编辑
+    if (this.$route.query.id) {
+      // 编辑
       this.isUpdate = true
       var params = {
         id: this.$route.query.id
@@ -170,9 +319,7 @@ export default {
           this.useRuleLimit = datas.useRule === 0 ? 0 : 1 // 是否有使用门槛
           this.otherData = {
             expirationDay: '0', // 直接开始有效天数
-            expirationDate: [
-              new Date(), new Date()
-            ], // 有效期(当选择开始、结束日期是)
+            expirationDate: [new Date(), new Date()], // 有效期(当选择开始、结束日期是)
             notActive: '0', // 等待生效天数
             effective: '0' // 有效天数
           }
@@ -183,11 +330,18 @@ export default {
             this.otherData.notActive = effectTimes[0]
             this.otherData.effective = effectTimes[1]
           } else {
-            this.otherData.expirationDate = [...(datas.effectTime.split(','))]
+            this.otherData.expirationDate = [...datas.effectTime.split(',')]
           }
         }
       })
     }
+    // 查询商户信息
+    _searchByMercode({ merCode: this.merCode }).then(res => {
+      if (res.data) {
+        this.discountForm.logo = res.data.merLogo
+        this.otherData.merName = res.data.merName
+      }
+    })
   },
   methods: {
     // 切换商品限制规则
@@ -200,52 +354,87 @@ export default {
     next() {
       if (this.active++ > 1) this.active = 1
     },
-    _submit() { //  提交数据
-      if (this.$route.query.id) {
-        this.discountForm.expireInfo = Number(this.discountForm.expireInfo)
-        updateCoupon(this.discountForm).then(res => {
-          if (res.code === '10000') {
-            this.$message({
-              message: res.msg,
-              type: 'success'
-            })
-          }
-          this.$router.push('/marketings/gift-manage/list')
-        })
-      } else { // 新增时处理数据
-        this.discountForm.couponStoreDTOList = []
-        var params = this.discountForm
-        // 处理限制门店以及限制商品
-        if (params.shopRule === 2) {
-          this.selectedStore.forEach(item => {
-            var obj = {
-              'ruleType': 1,
-              'storeCode': item.stCode,
-              'storeId': item.id,
-              'storeName': item.stName
+    _submit() {
+      //  提交数据
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          this.$refs['form2'].validate(valid => {
+            if (valid) {
+              if (this.$route.query.id) {
+                this.discountForm.expireInfo = Number(
+                  this.discountForm.expireInfo
+                )
+                updateCoupon(this.discountForm).then(res => {
+                  if (res.code === '10000') {
+                    this.$message({
+                      message: res.msg,
+                      type: 'success'
+                    })
+                  }
+                  this.$router.push('/marketings/gift-manage/list')
+                })
+              } else {
+                // 新增时处理数据
+                var params = _.cloneDeep(this.discountForm)
+                params.listCouponStore = []
+                // 处理限制门店以及限制商品
+                if (params.shopRule === 2) {
+                  this.selectedStore.forEach(item => {
+                    var obj = {
+                      ruleType: 1,
+                      storeCode: item.stCode,
+                      storeId: item.id,
+                      storeName: item.stName
+                    }
+                    params.listCouponStore.push(obj)
+                  })
+                }
+                params.listCouponProduct = []
+                if (params.productRule === 2 || params.productRule === 3) {
+                  this.selectedPro.forEach(item => {
+                    var obj = {
+                      proBrand: item.brandName,
+                      proCode: item.erpCode,
+                      proId: item.id,
+                      proName: item.name,
+                      proPrice: item.price,
+                      proSpec: item.specSkuList
+                        ? item.specSkuList[0].skuValue
+                        : '',
+                      ruleType: 1
+                    }
+                    params.listCouponProduct.push(obj)
+                  })
+                }
+                var _data = this.otherData
+                if (params.timeRule === 1) {
+                  params.effectTime = _data.expirationDay
+                } else if (params.timeRule === 2) {
+                  params.effectTime = _data.notActive + ',' + _data.effective
+                } else {
+                  params.effectTime =
+                    formatDate(_data.expirationDate[0]) +
+                    ',' +
+                    formatDate(_data.expirationDate[1])
+                }
+                addCoupon(params).then(res => {
+                  if (res.code === '10000') {
+                    this.$message({
+                      message: res.msg,
+                      type: 'success'
+                    })
+                    this.$router.push('/marketings/gift-manage/list')
+                  }
+                })
+              }
+            } else {
+              return false
             }
-            this.discountForm.couponStoreDTOList.push(obj)
           })
-        }
-        var _data = this.otherData
-        if (params.timeRule === 1) {
-          params.effectTime = _data.expirationDay
-        } else if (params.timeRule === 2) {
-          params.effectTime = _data.notActive + ',' + _data.effective
         } else {
-          params.effectTime = formatDate(_data.expirationDate[0]) + ',' + formatDate(_data.expirationDate[1])
+          return false
         }
-        console.log(params)
-        addCoupon(params).then(res => {
-          if (res.code === '10000') {
-            this.$message({
-              message: res.msg,
-              type: 'success'
-            })
-            this.$router.push('/marketings/gift-manage/list')
-          }
-        })
-      }
+      })
     },
     // 选择门店
     selectStore() {
@@ -262,7 +451,6 @@ export default {
     },
     // 获取选择商品数据
     getSelectedPro(data) {
-      console.log(this.selectedStore.length)
       this.selectedPro = data
       this.$refs.selectedPro.show(data)
     },
@@ -291,8 +479,8 @@ export default {
     .discount-content-r {
       flex: 0 0 60%;
       padding-left: 5%;
-      .el-form{
-        .el-radio-group{
+      .el-form {
+        .el-radio-group {
           display: inline-block;
           line-height: inherit;
           vertical-align: text-top;
@@ -300,11 +488,12 @@ export default {
           width: 100px;
         }
       }
-      .el-steps--simple{
+      .el-steps--simple {
         margin-bottom: 24px;
       }
-      .zkTips{
-        color: #bbb;margin-left: 24px;
+      .zkTips {
+        color: #bbb;
+        margin-left: 24px;
       }
     }
   }

@@ -63,7 +63,14 @@
         <el-table-column type="selection" width="55" />
       </el-table>
       <div style="margin-top:20px">已选门店：</div>
-      <div><el-tag v-for="(item, index) in multipleSelectionAll" :key="index" type="success" style="margin:10px;vertical-align: bottom;">{{ item.cname }}</el-tag></div>
+      <div>
+        <el-tag
+          v-for="(item, index) in multipleSelectionAll"
+          :key="index"
+          type="success"
+          style="margin:10px;vertical-align: bottom;"
+        >{{ item.cname }}</el-tag>
+      </div>
       <div class="block">
         <el-pagination
           :page-size="pageSize"
@@ -83,7 +90,8 @@
   </el-dialog>
 </template>
 <script>
-import { getactivitList } from '@/api/coupon'
+import { formatDate } from '@/utils/timer'
+import { searchActivities } from '@/api/coupon'
 import { mapGetters } from 'vuex'
 export default {
   name: 'CheckCoupon',
@@ -122,17 +130,14 @@ export default {
   },
   watch: {
     timevalue(newName, oldName) {
-      this.beforeTime = this.filterDate(newName[0])
-      this.endTime = this.filterDate(newName[1])
-      this.handleGetlist()
+      this.beforeTime = formatDate(newName[0])
+      this.endTime = formatDate(newName[1])
     }
   },
   beforeCreate() {},
   created() {},
   beforeMount() {},
-  mounted() {
-    this.handleGetlist()
-  },
+  mounted() {},
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},
@@ -141,6 +146,7 @@ export default {
     handleGetlist() {
       const params = {
         beginTime: this.beforeTime,
+        busType: 1,
         endTime: this.endTime,
         cname: this.keyword,
         ctype: this.region,
@@ -148,18 +154,23 @@ export default {
         merCode: this.merCode,
         pageSize: this.pageSize
       }
-      getactivitList(params).then(res => {
+      searchActivities(params).then(res => {
         this.tableData = res.data.records
         this.totalPage = res.data.total
         this.setSelectRow()
       })
     },
     handleClose() {
+      this.$refs.multipleTable.clearSelection()
+      this.currentPage = 1
       this.dialogVisible = false
     },
     checkSure() {
-      const multipleSelectionAll = JSON.parse(JSON.stringify(this.multipleSelectionAll))
+      const multipleSelectionAll = JSON.parse(
+        JSON.stringify(this.multipleSelectionAll)
+      )
       this.$emit('confincheck', multipleSelectionAll)
+      this.currentPage = 1
       this.dialogVisible = false
       this.$refs.multipleTable.clearSelection()
     },
@@ -173,21 +184,6 @@ export default {
       this.allselect = row
       this.handlematching(row)
       this.changePageCoreRecordData()
-    },
-    filterDate(date) {
-      date = new Date(date)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      var d = date.getDate()
-      var h = date.getHours()
-      var m1 = date.getMinutes()
-      var s = date.getSeconds()
-      m = m < 10 ? '0' + m : m
-      d = d < 10 ? '0' + d : d
-      h = h < 10 ? '0' + h : h
-      m1 = m1 < 10 ? '0' + m1 : m1
-      s = s < 10 ? '0' + s : s
-      return y + '-' + m + '-' + d + ' ' + h + ':' + m1 + ':' + s
     },
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination) {
@@ -209,14 +205,16 @@ export default {
     },
     // 使用日期
     handletimeRule(timeRule, effectTime) {
-      if (timeRule === 1) {
-        return `自领取${effectTime}天有效`
-      } else if (timeRule === 2) {
-        return `自领取${effectTime.split(',')[0]}天有效,${
-          effectTime.split(',')[1]
-        }天失效`
-      } else {
-        return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
+      if (timeRule) {
+        if (timeRule === 1) {
+          return `自领取${effectTime}天有效`
+        } else if (timeRule === 2) {
+          return `自领取${effectTime.split(',')[0]}天有效,${
+            effectTime.split(',')[1]
+          }天失效`
+        } else {
+          return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
+        }
       }
     },
     //

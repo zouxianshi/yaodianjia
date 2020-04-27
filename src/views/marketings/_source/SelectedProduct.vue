@@ -3,14 +3,24 @@
     <el-table ref="dataTable" :data="selectedProducts.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)" height="250">
       <el-table-column property="num" label="商品图片">
         <template slot-scope="scope">
-          <img class="goods-logo" :src="showImg(scope.row.mainPic)" :preview-src-list="[showImg(scope.row.mainPic)]">
+          <el-image
+            style="width: 70px; height: 70px"
+            :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
+            lazy
+            fit="contain"
+            :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
+          />
         </template>
       </el-table-column>
       <el-table-column property="erpCode" label="商品编码" />
       <el-table-column property="name" label="商品名称" />
       <el-table-column property="brandName" label="品牌" />
-      <el-table-column property="packStandard" label="规格" />
-      <el-table-column property="mprice" label="参考价" />
+      <el-table-column property="specSkuList" label="规格">
+        <template slot-scope="scope">
+          {{ scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}
+        </template>
+      </el-table-column>
+      <el-table-column property="price" label="参考价" />
       <el-table-column label="操作" width="60">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
@@ -50,6 +60,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.selectedProducts = this.selectedProducts.filter(item => item !== row)
+        this.pageInfo.currentPage = 1
         this.$emit('onDel', this.selectedProducts)
       })
     },
