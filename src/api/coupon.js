@@ -12,6 +12,22 @@ export function _searchByMercode(params) {
     data: {}
   })
 }
+// 查询机构
+export function getOrganization(params) {
+  return request({
+    url: `${config.merGoods}/1.0/organization/${params.merCode}`,
+    method: 'get'
+  })
+}
+// 条件查询门店
+export function queryStoreByOrgId(params) {
+  return request({
+    url: `${config.merGoods}/1.0/store/queryStoreByOrgId`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 查询优惠券列表
 export function getCouponList(params) {
   return request({
