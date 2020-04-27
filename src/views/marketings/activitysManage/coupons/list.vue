@@ -45,21 +45,36 @@
         <el-radio-button label="现金购买" />
       </el-radio-group>
     </div>
-    <el-table :data="tableData" style="width: 100%" empty-text="领券中心暂未上架任何优惠券">
-      <el-table-column prop="date" label="优惠券信息" width="120">
+    <el-table v-if="show" :data="tableData" style="width: 100%" empty-text="领券中心暂未上架任何优惠券">
+      <el-table-column prop="cname" label="优惠券信息" width="120">
         <template slot-scope="scope">
           <div>
-            {{ scope.row.name }}
-            <el-tag effect="dark" type="success" size="mini">满</el-tag>
+            {{ scope.row.cname }}
+            <el-tag
+              effect="dark"
+              type="success"
+              size="mini"
+            >{{ scope.row.ctype ===1?'折':'' || scope.row.ctype ===2?'满':'' || scope.row.ctype ===3?'礼':'' }}</el-tag>
           </div>
-          <div>{{ scope.row.name }}</div>
+          <div>{{ scope.row.id }}</div>
+          <div>{{ scope.row.shopRule ===1?'仅商城':'' || scope.row.shopRule ===2?'仅门店':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</div>
         </template>
       </el-table-column>
-      <el-table-column v-if="radio === '全部'" prop="name" label="领取方式" />
-      <el-table-column prop="name" label="券总数" />
-      <el-table-column prop="name" label="使用时间" />
-      <el-table-column prop="name" label="优惠内容" />
-      <el-table-column prop="name" label="限额" />
+      <el-table-column v-if="radio === '全部'" prop="name" label="领取方式">
+        <template
+          slot-scope="scope"
+        >{{ scope.row.activityType ===1?'免费领取':'' || scope.row.activityType ===2?'积分兑换':'' || scope.row.activityType ===3?'现金购买':'' }}</template>
+      </el-table-column>
+      <el-table-column prop="totalCount" label="券总数" />
+      <el-table-column label="使用时间" show-overflow-tooltip>
+        <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
+      </el-table-column>
+      <el-table-column label="优惠内容">
+        <template
+          slot-scope="scope"
+        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
+      </el-table-column>
+      <el-table-column prop="name" label="限领" />
       <el-table-column v-if="radio === '积分兑换'" prop="name" label="所需积分" />
       <el-table-column v-if="radio === '现金购买'" prop="name" label="所需现金" />
       <el-table-column prop="name" label="领券时间" />
@@ -88,7 +103,7 @@
   </div>
 </template>
 <script>
-import { searchActivities } from '@/api/coupon'
+import { searchActivitie } from '@/api/coupon'
 import { mapGetters } from 'vuex'
 export default {
   name: 'CouponsIndex',
@@ -96,32 +111,12 @@ export default {
   props: {},
   data() {
     return {
+      show: false,
       currentPage: 4,
       region: '1',
       radio: '全部',
       keyword: '',
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ]
+      tableData: []
     }
   },
   computed: {
@@ -142,7 +137,8 @@ export default {
     getList() {
       const params = {
         activityTemplateCode: this.$route.query.code,
-        activityTemplateName: this.$route.query.name,
+        busType: '0',
+        // activityTemplateName: this.$route.query.name,
         activityType: '',
         cname: '',
         currentPage: 1,
@@ -150,8 +146,10 @@ export default {
         pageSize: 10,
         state: ''
       }
-      searchActivities(params).then(res => {
-        // this.tableData = res.data
+      searchActivitie(params).then(res => {
+        console.log(res.data.records)
+        this.tableData = res.data.records
+        this.show = true
       })
     },
     deleteRow(index, rows) {
@@ -182,6 +180,38 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
+    },
+    // 商品折扣处理
+    handleshopRule(ctype, useRule, denomination) {
+      if (ctype === 1) {
+        if (useRule === 0) {
+          return `无门槛，${denomination}折`
+        } else {
+          return `满${useRule}可用,${denomination}折`
+        }
+      } else if (ctype === 2) {
+        if (useRule === 0) {
+          return '无门槛，满减券'
+        } else {
+          return `满${useRule}可用,减${denomination}元`
+        }
+      } else {
+        return '指定礼品'
+      }
+    },
+    // 使用日期
+    handletimeRule(timeRule, effectTime) {
+      if (timeRule) {
+        if (timeRule === 1) {
+          return `自领取${effectTime}天有效`
+        } else if (timeRule === 2) {
+          return `自领取${effectTime.split(',')[0]}天有效,${
+            effectTime.split(',')[1]
+          }天失效`
+        } else {
+          return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
+        }
+      }
     }
   }
 }
