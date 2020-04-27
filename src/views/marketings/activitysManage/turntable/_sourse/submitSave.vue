@@ -3,7 +3,7 @@
     <div>
       <img src="@/assets/image/save.png" style="width:120px;height:120px">
     </div>
-    <div style="font-size:18px;margin:15px 0">保存成功1</div>
+    <div style="font-size:18px;margin:15px 0">保存成功</div>
     <div style="color:#7E8E9E;margin:15px 0">活动已保存至活动列表</div>
     <div>{{ content }}</div>
     <div style="margin-top:50px">
@@ -35,13 +35,13 @@ export default {
   },
   beforeMount() {},
   mounted() {
-    this.countDown()
   },
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},
   destroyed() {},
   methods: {
+    // 倒计时
     countDown() {
       this.content = this.totalTime + 's后跳转至活动列表'
       this.clock = window.setInterval(() => {
