@@ -47,19 +47,24 @@
                 :disabled="disabled"
                 maxlength="8"
               />
-              <span
-                v-show="scope.row.addPrice ==='0'"
-                style="margin-left: 5px;color: #e6a23c;"
-              >不限购</span>
+              <span v-show="scope.row.addPrice ==='0'" style="margin-left: 5px;color: #e6a23c;">不限购</span>
             </el-form-item>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="60">
           <template slot-scope="scope">
-            <el-button type="text" :disabled="disabled" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
+            <el-button
+              type="text"
+              :disabled="disabled"
+              @click.stop="handleDel(scope.row, scope.$index)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <!-- <div style="margin-top: 20px">
+        <el-button @click="toggleSelection([tableData[1], tableData[2]])">全选商品</el-button>
+        <el-button @click="toggleSelection()">批量设置换购价</el-button>
+      </div> -->
     </el-form>
   </div>
 </template>

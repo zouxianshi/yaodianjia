@@ -74,7 +74,7 @@
         <el-pagination
           :current-page="pageInfo.currentPage"
           background
-          :page-sizes="[10,20,50]"
+          :page-sizes="[10,20,50,100]"
           :page-size="pageInfo.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="pageInfo.total"
@@ -215,7 +215,8 @@ export default {
         this.multipleSelection
       )
       console.log('我准备回显数据------tableData', this.tableData)
-      const currentCheckedList = this.tableData.forEach(item => {
+      const currentCheckedList = []
+      this.tableData.forEach(item => {
         const index = this.multipleSelection.findIndex(mItem => {
           return mItem.id === item.id
         })

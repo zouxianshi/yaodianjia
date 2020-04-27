@@ -112,7 +112,7 @@
             background
             style="text-align: right;margin-top: 20px"
             :current-page="pager.current"
-            :page-sizes="[10, 15, 20, 50]"
+            :page-sizes="[10, 20, 50, 100]"
             :page-size="pager.size"
             layout="total, sizes, prev, pager, next, jumper"
             :total="pager.total"
