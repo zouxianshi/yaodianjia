@@ -1,5 +1,12 @@
 <template>
   <div class="list-ListIndex-model app-container">
+    <div style="margin:20px 10px">
+      活动类型：
+      <el-radio-group v-model="radioType" @change="onchange">
+        <el-radio :label="1">渠道</el-radio>
+        <el-radio :label="2">活动</el-radio>
+      </el-radio-group>
+    </div>
     <!-- <div style="position: absolute;right:20px;top:25px;z-index:300">
       <el-input
         v-model="input1"
@@ -57,7 +64,9 @@ export default {
     return {
       input1: '',
       activeName: 'first',
-      moduleData: []
+      moduleData: [],
+      radioType: 1,
+      tabNum: 1
     }
   },
   computed: {},
@@ -73,30 +82,42 @@ export default {
   beforeDestroy() {},
   destroyed() {},
   methods: {
+    onchange(val) {
+      this.handleGetlist(this.tabNum)
+    },
     handleGetlist(id) {
+      console.log(id, this.radioType)
       var params = {
         id: id,
-        type: 2
+        type: this.radioType
       }
       moduleList(params).then(res => {
         this.moduleData = res.data
         for (const i of this.moduleData) {
-          i.imgUrl = 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'
+          i.imgUrl =
+            'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'
           if (i.activityTemplateName === '支付有礼') {
             i.url = '/marketings/activity-manage/payment-gift/list/'
           } else {
-            i.url = `/marketings/activity-manage/coupons/list`
-            i.query = { code: i.activityTemplateCode, name: i.activityTemplateName }
+            // i.url = `/marketings/activity-manage/coupons/list`
+            i.url = `/marketings/activity-manage/turntable/list`
+            i.query = {
+              code: i.activityTemplateCode,
+              name: i.activityTemplateName
+            }
           }
         }
       })
     },
     handleClick(val) {
       if (val.label === '会员营销') {
+        this.tabNum = 1
         this.handleGetlist(1)
       } else if (val.label === '商品促销') {
+        this.tabNum = 2
         this.handleGetlist(2)
       } else if (val.label === '精彩活动') {
+        this.tabNum = 3
         this.handleGetlist(3)
       }
     }
