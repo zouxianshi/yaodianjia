@@ -227,11 +227,24 @@ export default {
       this.disabled = this.$route.query.id && !!this.$route.query._ck // 当前页面为查看
       this.edit = this.$route.query.id && !this.$route.query._ck // 当前页面为编辑
       this.getInfo(this.$route.query.id)
-      this.$route.meta.title = !this.$route.query._ck
+    }
+  },
+  mounted() {
+    let title = ''
+    title = this.$route.query.id
+      ? !this.$route.query._ck
         ? '编辑加价购'
         : '查看加价购详情'
-      document.title = !this.$route.query._ck ? '编辑加价购' : '查看加价购详情'
-    }
+      : '创建加价购'
+    this.$route.meta.title = title
+    this.$store.dispatch('tagsView/updateVisitedView', {
+      ...this.$route,
+      meta: {
+        ...this.$route.meta,
+        title
+      },
+      title
+    })
   },
   methods: {
     getInfo(id) {

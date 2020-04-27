@@ -347,12 +347,25 @@ export default {
     if (this.activityId) {
       this.disabled = this.$route.query.id && !!this.$route.query._ck // 当前页面为查看
       this.edit = this.$route.query.id && !this.$route.query._ck // 当前页面为编辑
-      this.$route.meta.title = !this.$route.query._ck
-        ? '编辑拼团'
-        : '查看拼团详情'
-      document.title = !this.$route.query._ck ? '编辑拼团' : '查看拼团详情'
       this._loadInfo()
     }
+  },
+  mounted() {
+    let title = ''
+    title = this.$route.query.id
+      ? !this.$route.query._ck
+        ? '编辑拼团'
+        : '查看拼团详情'
+      : '创建拼团'
+    this.$route.meta.title = title
+    this.$store.dispatch('tagsView/updateVisitedView', {
+      ...this.$route,
+      meta: {
+        ...this.$route.meta,
+        title
+      },
+      title
+    })
   },
   methods: {
     delSelectStore(item, index) {

@@ -432,29 +432,31 @@ export default {
       this.dataid = dataid
       if (_ck === '1') {
         this.pageStatus = 3
+        this.disabled = true
       } else {
         this.pageStatus = 2
       }
       this._getDetailData()
     }
-    let pageTitle = `限时${this.$route.query.l_type === '11' ? '优惠' : '秒杀'}`
-    if (this.pageStatus === 2) {
-      // pageStatus 1.新增 2.编辑 3.查看
-      pageTitle = `限时${
-        this.$route.query.l_type === '11' ? '优惠' : '秒杀'
-      }编辑`
-    } else if (this.pageStatus === 3) {
-      pageTitle = `限时${
-        this.$route.query.l_type === '11' ? '优惠' : '秒杀'
-      }详情`
-      this.disabled = true
-    } else {
-      pageTitle = `限时${
-        this.$route.query.l_type === '11' ? '优惠' : '秒杀'
-      }新建`
-    }
-    this.$route.meta.title = pageTitle
-    document.title = pageTitle
+  },
+  mounted() {
+    let title = ''
+    title = this.$route.query.id
+      ? this.$route.query._ck === '1'
+        ? `查看限时${this.$route.query.l_type === '11' ? '特惠' : '秒杀'}活动`
+        : `编辑限时${
+          this.$route.query.l_type === '11' ? '特惠' : '秒杀'
+        }活动详情`
+      : `创建限时${this.$route.query.l_type === '11' ? '特惠' : '秒杀'}活动`
+    this.$route.meta.title = title
+    this.$store.dispatch('tagsView/updateVisitedView', {
+      ...this.$route,
+      meta: {
+        ...this.$route.meta,
+        title
+      },
+      title
+    })
   },
   methods: {
     handleSelectStore(val) {

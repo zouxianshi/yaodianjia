@@ -218,7 +218,10 @@
           />
         </el-form-item>
       </div>
-      <el-divider v-if="form.ruleType === 1 && Array.isArray(form.ruleList) && form.ruleList.length < 5" content-position="left">
+      <el-divider
+        v-if="form.ruleType === 1 && Array.isArray(form.ruleList) && form.ruleList.length < 5"
+        content-position="left"
+      >
         <el-tooltip
           effect="dark"
           content="最多支持五级优惠，每级优惠不叠加，如：满足二级优惠条件后则不再享有一级优惠。"
@@ -344,13 +347,24 @@ export default {
       this.disabled = this.$route.query.id && !!this.$route.query._ck // 当前页面为查看
       this.edit = this.$route.query.id && !this.$route.query._ck // 当前页面为编辑
       this.getActFullInfo(this.$route.query.id)
-      this.$route.meta.title = !this.$route.query._ck
-        ? '编辑满减满赠'
-        : '查看满减满赠详情'
-      document.title = !this.$route.query._ck
-        ? '编辑满减满赠'
-        : '查看满减满赠详情'
     }
+  },
+  mounted() {
+    let title = ''
+    title = this.$route.query.id
+      ? !this.$route.query._ck
+        ? '编辑满减满赠'
+        : '查看满减满赠详情'
+      : '创建满减满赠'
+    this.$route.meta.title = title
+    this.$store.dispatch('tagsView/updateVisitedView', {
+      ...this.$route,
+      meta: {
+        ...this.$route.meta,
+        title
+      },
+      title
+    })
   },
   methods: {
     // 查询活动详情
@@ -555,7 +569,10 @@ export default {
     },
     handleOpenGiftDialog($Index) {
       // 打开赠品列表组件 当前设置的层级索引 && 当前要回显的list数据
-      this.$refs.storeGiftsComponent.open($Index, this.form.ruleList[$Index].giftList)
+      this.$refs.storeGiftsComponent.open(
+        $Index,
+        this.form.ruleList[$Index].giftList
+      )
     },
     handleGiftList(list, index) {
       console.log('提交的数据-----赠品列表', list, this.$refs)
