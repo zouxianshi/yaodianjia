@@ -99,8 +99,11 @@ export default {
           if (i.activityTemplateName === '支付有礼') {
             i.url = '/marketings/activity-manage/payment-gift/list/'
           } else {
-            // i.url = `/marketings/activity-manage/coupons/list`
-            i.url = `/marketings/activity-manage/turntable/list`
+            if (i.activityTemplateName === '领券中心') {
+              i.url = `/marketings/activity-manage/coupons/list`
+            } else {
+              i.url = `/marketings/activity-manage/turntable/list`
+            }
             i.query = {
               code: i.activityTemplateCode,
               name: i.activityTemplateName
