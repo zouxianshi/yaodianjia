@@ -7,54 +7,18 @@
     :visible.sync="dialogVisible"
     width="500px"
   >
-    <div v-if="type === 'reduceGift'" class="post-img-wrap">
-      <div ref="img_wrapper" class="img_wrapper">
-        <img :src="poster">
-        <div class="activity-store">
-          <img class="icon" :src="storeIcon">
-          <span>{{ merName }}</span>
-        </div>
-        <div class="activity-title">满减专场</div>
-        <div class="activity-desc">爆款商品限时限量优惠</div>
-        <!-- <div class="activity-time">活动时间：2020.02.11至2020.04.18</div> -->
-        <div class="qcodeimg">
-          <img :src="qcode">
-        </div>
-        <div class="activity-info">扫码参加活动</div>
-      </div>
-      <div class="action">
-        <el-button
-          style="margin-bottom: 10px"
-          plain
-          :loading="downLoding"
-          type="primary"
-          @click="downPoster"
-        >下载海报</el-button>
-        <a :href="qcode" download="二维码.png">
-          <el-button plain type="primary">下载二维码</el-button>
-        </a>
-        <el-button
-          slot="append"
-          style="margin-top: 10px"
-          type="success"
-          @click="doCopy(activityUrl)"
-        >复制活动连接</el-button>
-      </div>
-    </div>
     <!-- 无海报的分享下载情况 -->
-    <template v-else>
-      <el-input v-model="activityUrl" placeholder="请输入内容" disabled class="input-with-select">
-        <el-button slot="append" type="primary" @click="doCopy(activityUrl)">复制连接</el-button>
-      </el-input>
-      <div class="qcodeimg">
-        <img :src="qcode">
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <a :href="qcode" download="二维码.png">
-          <el-button plain type="primary">下载二维码</el-button>
-        </a>
-      </span>
-    </template>
+    <el-input v-model="activityUrl" placeholder="请输入内容" disabled class="input-with-select">
+      <el-button slot="append" type="primary" @click="doCopy(activityUrl)">复制连接</el-button>
+    </el-input>
+    <div class="qcodeimg">
+      <img :src="qcode">
+    </div>
+    <span slot="footer" class="dialog-footer">
+      <a :href="qcode" download="二维码.png">
+        <el-button plain type="primary">下载二维码</el-button>
+      </a>
+    </span>
   </el-dialog>
 </template>
 
@@ -64,7 +28,7 @@ import VueClipboard from 'vue-clipboard2'
 import html2canvas from 'html2canvas'
 import poster from '@/assets/image/acvity/poster.png'
 import storeIcon from '@/assets/image/acvity/store_icon.png'
-import { merchantDetail } from '@/api/merchant_Person_Api'
+// import { merchantDetail } from '@/api/merchant_Person_Api'
 import QRCode from 'qrcode'
 import { mapGetters } from 'vuex'
 Vue.use(VueClipboard)
@@ -79,7 +43,7 @@ export default {
       poster,
       storeIcon,
       qcode: '',
-      merName: '',
+      // merName: '',
       type: '',
       activityUrl: ''
     }
@@ -104,10 +68,10 @@ export default {
         .catch(err => {
           console.error(err)
         })
-      merchantDetail().then(res => {
-        console.log('获取了商家信息------------', res)
-        this.merName = res.data.merName
-      })
+      // merchantDetail().then(res => {
+      //   console.log('获取了商家信息------------', res)
+      //   this.merName = res.data.merName
+      // })
     },
     // 复制
     doCopy(row) {
