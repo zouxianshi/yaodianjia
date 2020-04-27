@@ -554,10 +554,8 @@ export default {
       this.$refs.storeGods.dataFrom(val)
     },
     handleOpenGiftDialog($Index) {
-      this.$refs.storeGiftsComponent.open($Index)
-      this.$refs.storeGiftsComponent.dialogSelect(
-        this.form.ruleList[$Index].giftList
-      )
+      // 打开赠品列表组件 当前设置的层级索引 && 当前要回显的list数据
+      this.$refs.storeGiftsComponent.open($Index, this.form.ruleList[$Index].giftList)
     },
     handleGiftList(list, index) {
       console.log('提交的数据-----赠品列表', list, this.$refs)
@@ -567,7 +565,7 @@ export default {
         list,
         this.$refs.selectGiftComponent
       )
-      this.$refs.selectGiftComponent[index].dataFrom(list)
+      // this.$refs.selectGiftComponent[index].dataFrom(list)
     },
     // 追加优惠层级
     handleAdd() {

@@ -117,10 +117,10 @@ import { getActGiftList } from '@/api/activity'
 export default {
   name: 'DialogGoods',
   props: {
-    list: {
-      type: Array,
-      default: () => []
-    },
+    // list: {
+    //   type: Array,
+    //   default: () => []
+    // },
     limitMax: {
       // 选取数量限制个数 0表示不限制
       type: Number,
@@ -163,18 +163,18 @@ export default {
     this.fetchData()
   },
   methods: {
-    dataFrom(data) {
-      this.tableData = Array.isArray(data) ? data : []
-    },
+    // dataFrom(data) {
+    //   this.tableData = Array.isArray(data) ? data : []
+    // },
     // 获取数据
     fetchData() {
       this._getTableData() // 统计列表
     },
-    open(index) {
+    open(index, list) {
       this.dialog.visible = true
       this.index = index
-      if (Array.isArray(this.list) && this.list.length > 0) {
-        this.mySelectList = this.list.slice()
+      if (Array.isArray(list) && list.length > 0) {
+        this.mySelectList = list.slice()
       } else {
         this.mySelectList = []
       }
@@ -388,6 +388,9 @@ export default {
           }
         }
       }
+    }
+    .table-footer {
+      justify-content: flex-end;
     }
   }
   .note-text {
