@@ -4,7 +4,14 @@ import config from '@/utils/config'
 /*
  优惠券管理
 */
-
+// 查询当前商户
+export function _searchByMercode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/merchant/_searchByMercode/${params.merCode}`,
+    method: 'post',
+    data: {}
+  })
+}
 // 查询优惠券列表
 export function getCouponList(params) {
   return request({

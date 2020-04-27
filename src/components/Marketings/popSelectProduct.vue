@@ -1,23 +1,25 @@
 <template>
   <div class="select-product-modal">
-    <el-dialog
-      :visible.sync="dialogTableVisible"
-      :append-to-body="true"
-    >
+    <el-dialog :visible.sync="dialogTableVisible" :append-to-body="true">
       <span slot="title">选择商品</span>
       <div class="nav-bar">
         <el-form :inline="true" :model="searchParams" class="demo-form-inline">
-          <!-- <el-form-item label="商品分组">
-            <el-select v-model="searchParams.groupId" placeholder="请选择" size="mini" style="width:120px">
-              <el-option label="全部" value="1" />
-              <el-option label="未开始" value="2" />
-            </el-select>
-          </el-form-item> -->
+          <el-form-item label="商品分组">
+            <el-cascader
+              ref="groupRef"
+              v-model="searchParams.groupId"
+              class="cascader"
+              :props="defaultProps"
+              :options="groupData"
+              size="mini"
+              @change="handleChangeGroup"
+            />
+          </el-form-item>
           <!-- <el-form-item label="商品品牌" style="margin-left:10px;">
             <el-input v-model="searchParams.brand" placeholder="门店编码/门店名称" size="mini" style="width:120px" />
           </el-form-item> -->
           <el-form-item label="商品信息" style="margin-left:10px">
-            <el-input v-model="searchParams.erpOrName" placeholder="门店编码/门店名称" size="mini" style="width:120px" />
+            <el-input v-model="searchParams.erpOrName" placeholder="商品编码/商品名称" size="mini" style="width:120px" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" size="mini" @click="searchData()">查询</el-button>
@@ -35,13 +37,23 @@
         <el-table-column type="selection" width="55" />
         <el-table-column property="num" label="商品图片">
           <template slot-scope="scope">
-            <img class="goods-logo" :src="showImg(scope.row.mainPic)" :preview-src-list="[showImg(scope.row.mainPic)]">
+            <el-image
+              style="width: 70px; height: 70px"
+              :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
+              lazy
+              fit="contain"
+              :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
+            />
           </template>
         </el-table-column>
         <el-table-column property="erpCode" label="商品编码" />
         <el-table-column property="name" label="商品名称" />
         <el-table-column property="brandName" label="品牌" />
-        <el-table-column property="packStandard" label="规格" />
+        <el-table-column property="specSkuList" label="规格">
+          <template slot-scope="scope">
+            {{ scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}
+          </template>
+        </el-table-column>
         <el-table-column property="mprice" label="参考价" />
       </el-table>
       <el-pagination
@@ -67,18 +79,27 @@
   </div>
 </template>
 <script>
-import { queryGoods } from '@/api/common'
+import { getStoreGoodsList } from '@/api/store-goods'
+import { getTypeTree } from '@/api/group'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
       gridData: [],
       selectedArr: [], //  已选择商品所有信息
       hasSelectList: [], // 已选择商品id集合
+      nowSelect: [],
       totalCount: 0,
+      groupData: [],
       searchParams: {
-        erpOrName: ''
+        erpOrName: '',
         // brand: '',
-        // groupId: null
+        groupId: null
+      },
+      defaultProps: {
+        children: 'children',
+        label: 'name',
+        value: 'id'
       },
       pageInfo: {
         currentPage: 1,
@@ -87,18 +108,32 @@ export default {
       dialogTableVisible: false
     }
   },
+  created() {
+    // 获取分组
+    getTypeTree({ merCode: this.merCode, type: 2, use: true }).then(res => {
+      this.groupData = res.data
+      this.groupData.unshift({ name: '全部', id: '' })
+    })
+  },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   methods: {
     show(product) {
+      this.selectedArr = product
       this.hasSelectList = []
       product.forEach(item => {
         this.hasSelectList.push(item.erpCode)
       })
       this.queryGoodsData()
     },
+    handleChangeGroup(val) {
+      this.searchParams.groupId = val[val.length - 1]
+    },
     // 查询商品
     queryGoodsData() {
       var params = Object.assign({}, this.pageInfo, this.searchParams)
-      queryGoods(params).then(res => {
+      getStoreGoodsList(params).then(res => {
         this.dialogTableVisible = true
         if (res.data && res.data.data) {
           this.gridData = res.data.data
@@ -117,7 +152,9 @@ export default {
     // 提交选中
     _submit() {
       this.dialogTableVisible = false
-      this.$emit('onSelect', this.selectedArr)
+      this.pageInfo.currentPage = 1
+      var selectedData = JSON.parse(JSON.stringify(this.selectedArr))
+      this.$emit('onSelect', selectedData)
     },
     searchData() {
       this.queryGoodsData()
@@ -133,15 +170,44 @@ export default {
     },
     // 单选
     select(e, rows) {
-      this.selectedArr = e
+      this.checkSelect(e)
     },
     // 全选
     selectAll(e) {
-      this.selectedArr = e
+      this.checkSelect(e)
     },
-    // 预设选中（下面tag标签）
+    // 改变选中状态时触发
     selectAuto(e) {
-      this.selectedArr = e
+    },
+    // 处理所有选中项
+    checkSelect(e) {
+      // 添加当前页选中项中未在所有已选择的数组中的item
+      this.nowSelect = e
+      var nowSelectCode = []
+      e.forEach(item => {
+        nowSelectCode.push(item.erpCode)
+        if (this.hasSelectList.indexOf(item.erpCode) < 0) {
+          this.selectedArr.push(item)
+          this.hasSelectList.push(item.erpCode)
+        }
+      })
+      // 得到当前页没有选中的id(当前页取消选择)
+      var noSelectIds = []
+      this.gridData.forEach(row => {
+        if (nowSelectCode.indexOf(row.erpCode) < 0) {
+          noSelectIds.push(row['erpCode'])
+        }
+      })
+      noSelectIds.forEach(erpCode => {
+        for (var i = 0; i < this.hasSelectList.length; i++) {
+          if (this.hasSelectList[i] === erpCode) {
+            // 如果总选择中有未被选中的，那么就删除这条
+            this.hasSelectList.splice(i, 1)
+            this.selectedArr.splice(i, 1)
+            break
+          }
+        }
+      })
     }
   }
 }

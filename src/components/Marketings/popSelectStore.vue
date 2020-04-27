@@ -106,6 +106,7 @@ export default {
     },
     show(store) {
       this.hasSelectList = []
+      this.selectedArr = store
       store.forEach(item => {
         this.hasSelectList.push(item.stCode)
       })
@@ -114,7 +115,9 @@ export default {
     // 提交选中
     _submit() {
       this.dialogTableVisible = false
-      this.$emit('onSelect', this.selectedArr)
+      this.pageInfo.currentPage = 1
+      var selectedData = JSON.parse(JSON.stringify(this.selectedArr))
+      this.$emit('onSelect', selectedData)
     },
     searchData() {
       this.queryStoreDate()
@@ -130,15 +133,44 @@ export default {
     },
     // 单选
     select(e, rows) {
-      this.selectedArr = e
+      this.checkSelect(e)
     },
     // 全选
     selectAll(e) {
-      this.selectedArr = e
+      this.checkSelect(e)
     },
     // 预设选中（下面tag标签）
     selectAuto(e) {
-      this.selectedArr = e
+      // this.selectedArr = e
+    },
+    // 处理所有选中项
+    checkSelect(e) {
+      // 添加当前页选中项中未在所有已选择的数组中的item
+      var nowSelectCode = []
+      e.forEach(item => {
+        nowSelectCode.push(item.stCode)
+        if (this.hasSelectList.indexOf(item.stCode) < 0) {
+          this.selectedArr.push(item)
+          this.hasSelectList.push(item.stCode)
+        }
+      })
+      // 得到当前页没有选中的id(当前页取消选择)
+      var noSelectIds = []
+      this.gridData.forEach(row => {
+        if (nowSelectCode.indexOf(row.stCode) < 0) {
+          noSelectIds.push(row['stCode'])
+        }
+      })
+      noSelectIds.forEach(stCode => {
+        for (var i = 0; i < this.hasSelectList.length; i++) {
+          if (this.hasSelectList[i] === stCode) {
+            // 如果总选择中有未被选中的，那么就删除这条
+            this.hasSelectList.splice(i, 1)
+            this.selectedArr.splice(i, 1)
+            break
+          }
+        }
+      })
     }
   }
 }

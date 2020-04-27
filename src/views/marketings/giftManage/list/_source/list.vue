@@ -83,7 +83,8 @@ export default {
     return {
       searchParams: {
         cname: '',
-        ctype: 0
+        ctype: 0,
+        busType: 0
       },
       totalCount: 0,
       pageInfo: {

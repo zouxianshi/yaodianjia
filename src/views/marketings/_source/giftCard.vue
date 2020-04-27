@@ -1,11 +1,17 @@
 <template>
   <div class="gift-card-modal" @click="gotoUrl(info.url,info.query)">
-    <el-card :body-style="{ padding: '10px 10px' }">
+    <el-card :body-style="{ padding: '0px' }">
+      <img :src="info.imgUrl" class="image">
+      <div style="padding: 10px;">
+        <div class="text-box"><span>{{ info.activityTemplateName }}</span><el-button type="text" size="mini" class="button">新增</el-button></div>
+      </div>
+    </el-card>
+    <!-- <el-card :body-style="{ padding: '10px 10px' }">
       <img :src="info.imgUrl" class="image">
       <div style="padding: 10px 0 0;">
         {{ info.activityTemplateName }}
       </div>
-    </el-card>
+    </el-card> -->
   </div>
 </template>
 <script>
@@ -30,6 +36,11 @@ export default {
   }
 }
 </script>
-<style scoped>
-
+<style lang="scss">
+.text-box{
+  height: 30px;
+  line-height: 30px;
+  display: flex;
+  justify-content: space-between;
+}
 </style>
