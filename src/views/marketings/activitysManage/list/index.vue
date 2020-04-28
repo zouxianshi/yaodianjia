@@ -100,7 +100,7 @@ export default {
           i.imgUrl =
             'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'
           if (i.activityTemplateName === '支付有礼') {
-            i.url = '/public/image/marketings/discount.png'
+            i.url = `/marketings/activity-manage/payment-gift/list`
             i.imgUrl = payImage
           } else {
             if (i.activityTemplateName === '领券中心') {

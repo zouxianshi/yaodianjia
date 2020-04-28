@@ -48,7 +48,7 @@
       <el-table-column prop="cname" label="优惠券信息" width="120">
         <template slot-scope="scope">
           <div>
-            {{ scope.row.cname }}
+            {{ scope.row.cname + scope.row.ctype }}
             <el-tag
               effect="dark"
               type="success"

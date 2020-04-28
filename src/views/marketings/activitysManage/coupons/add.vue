@@ -257,7 +257,7 @@ export default {
     },
     onChangeCoupons(event, row, $index) {
       const { totalCoupons } = row
-      this.$set(this.write[$index], 'totalNeed', totalCoupons)
+      this.$set(this.write[$index], 'totalCoupons', totalCoupons)
     },
     onChangeNeed(event, row, $index) {
       const { totalNeed } = row
