@@ -347,9 +347,9 @@ export default {
     handletimeRule(timeRule, effectTime) {
       if (timeRule) {
         if (timeRule === 1) {
-          return `自领取${effectTime}天有效`
+          return `自领取起${effectTime}天有效`
         } else if (timeRule === 2) {
-          return `自领取${effectTime.split(',')[0]}天有效,${
+          return `自领取起${effectTime.split(',')[0]}天有效,${
             effectTime.split(',')[1]
           }天失效`
         } else {
