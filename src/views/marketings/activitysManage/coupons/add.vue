@@ -30,82 +30,108 @@
     <div v-show="checkedit" class="add-addItem-model">
       <span class="add-addLeft-model">选择优惠券:</span>
       <div class="add-addRight-model">
-        <el-table :data="selectlist" height="250" style="width: 100%">
-          <el-table-column prop="cname" label="优惠券名称" />
-          <el-table-column label="优惠内容">
-            <template
-              slot-scope="scope"
-            >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
-          </el-table-column>
-          <el-table-column label="使用时间" show-overflow-tooltip>
-            <template
-              slot-scope="scope"
-            >{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
-          </el-table-column>
-          <el-table-column label="使用场景" width="90">
-            <template
-              slot-scope="scope"
-            >{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>
-          </el-table-column>
-          <el-table-column label="适用门店" width="100">
-            <template
-              slot-scope="scope"
-            >{{ scope.row.productRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
-          </el-table-column>
-          <el-table-column label="券总数" width="100">
-            <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <el-input
-                  v-model.number="scope.row.totalCoupons"
-                  @change="onChangeCoupons($event,scope.row,scope.$index)"
-                />
-                <i class="el-icon-edit" />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="每人限领（张）" width="100">
-            <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <el-input
-                  v-model.number="scope.row.totalLimit"
-                  @change="onChangeLimit($event,scope.row,scope.$index)"
-                />
-                <i class="el-icon-edit" />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column v-if="radio==='积分兑换'" label="所需积分" width="100">
-            <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <el-input
-                  v-model.number="scope.row.totalNeed"
-                  @change="onChangeNeed($event,scope.row,scope.$index)"
-                />
-                <i class="el-icon-edit" />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column v-if="radio==='现金购买'" label="所需现金" width="100">
-            <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <el-input
-                  v-model.number="scope.row.totalNeed"
-                  @change="onChangeNeed($event,scope.row,scope.$index)"
-                />
-                <i class="el-icon-edit" />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="100">
-            <template slot-scope="scope">
-              <el-button
-                type="text"
-                size="small"
-                @click.native.prevent="deleteRow(scope.$index, selectlist)"
-              >移除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-form ref="forms" :model="forms" :rules="rules">
+          <el-table :data="forms.selectlist" height="450" style="width: 100%">
+            <el-table-column prop="cname" label="优惠券名称" />
+            <el-table-column label="优惠内容">
+              <template
+                slot-scope="scope"
+              >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
+            </el-table-column>
+            <el-table-column label="使用时间" width="150">
+              <template
+                slot-scope="scope"
+              >{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
+            </el-table-column>
+            <el-table-column label="使用场景" width="80">
+              <template
+                slot-scope="scope"
+              >{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>
+            </el-table-column>
+            <el-table-column label="适用门店" width="100">
+              <template
+                slot-scope="scope"
+              >{{ scope.row.productRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
+            </el-table-column>
+            <el-table-column label="券总数" width="110">
+              <template slot-scope="scope">
+                <div style="display:flex;align-items: center;padding-top:15px">
+                  <el-form-item
+                    :prop="'selectlist.'+scope.$index+'.totalCoupons'"
+                    :rules="rules.totalCoupons"
+                  >
+                    <el-input
+                      v-model.number="scope.row.totalCoupons"
+                      size="mini"
+                      @change="onChangeCoupons($event,scope.row,scope.$index)"
+                    />
+                  </el-form-item>
+                  <i class="el-icon-edit" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="每人限领（张）" width="110">
+              <template slot-scope="scope">
+                <div style="display:flex;align-items: center;padding-top:15px">
+                  <el-form-item
+                    :prop="'selectlist.'+scope.$index+'.totalLimit'"
+                    :rules="rules.totalLimit"
+                  >
+                    <el-input
+                      v-model="scope.row.totalLimit"
+                      size="mini"
+                      @change="onChangeLimit($event,scope.row,scope.$index)"
+                    />
+                  </el-form-item>
+                  <i class="el-icon-edit" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column v-if="radio==='积分兑换'" label="所需积分" width="110">
+              <template slot-scope="scope">
+                <div style="display:flex;align-items: center;padding-top:15px">
+                  <el-form-item
+                    :prop="'selectlist.'+scope.$index+'.totalNeed'"
+                    :rules="rules.totalNeed"
+                  >
+                    <el-input
+                      v-model.number="scope.row.totalNeed"
+                      size="mini"
+                      @change="onChangeNeed($event,scope.row,scope.$index)"
+                    />
+                  </el-form-item>
+                  <i class="el-icon-edit" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column v-if="radio==='现金购买'" label="所需现金" width="110">
+              <template slot-scope="scope">
+                <div style="display:flex;align-items: center;padding-top:15px">
+                  <el-form-item
+                    :prop="'selectlist.'+scope.$index+'.totalNeed'"
+                    :rules="rules.totalNeed"
+                  >
+                    <el-input
+                      v-model.number="scope.row.totalNeed"
+                      size="mini"
+                      @change="onChangeNeed($event,scope.row,scope.$index)"
+                    />
+                  </el-form-item>
+                  <i class="el-icon-edit" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="100">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  size="small"
+                  @click.native.prevent="deleteRow(scope.$index, forms.selectlist)"
+                >移除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-form>
       </div>
     </div>
     <el-button size="mini">取 消</el-button>
@@ -126,11 +152,46 @@ export default {
   },
   props: {},
   data() {
+    var validatetotalLimit = (rule, value, callback) => {
+      const val = Number(value)
+      const reg = /^[0-9]*[1-9][0-9]*$/
+      if (!reg.test(val)) {
+        callback(new Error('请输入正整数'))
+      } else if (val < 0 || val > 101) {
+        callback(new Error('大于0小于100'))
+      } else {
+        callback()
+      }
+    }
+    var validatetotalCoupons = (rule, value, callback) => {
+      const val = Number(value)
+      const reg = /^[0-9]*[1-9][0-9]*$/
+      if (!reg.test(val)) {
+        callback(new Error('请输入正整数'))
+      } else if (val < 0 || val > 100000001) {
+        callback(new Error('小于100000000'))
+      } else {
+        callback()
+      }
+    }
     return {
       valueInput: '',
       checkedit: false,
       radio: '免费领取',
-      selectlist: [],
+      forms: {
+        selectlist: []
+      },
+      rules: {
+        totalLimit: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { validator: validatetotalLimit, trigger: 'blur' }
+        ],
+        totalCoupons: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { validator: validatetotalCoupons, trigger: 'blur' }
+        ],
+        totalNeed: [{ required: true, message: '不能为空', trigger: 'blur' }]
+      },
       pickerOptions: {
         shortcuts: [
           {
@@ -170,17 +231,17 @@ export default {
     ...mapGetters(['merCode'])
   },
   watch: {
-    selectlist(old, newv) {
-      if (this.selectlist) {
-        this.$nextTick(() => {
-          if (this.selectlist.length === 0) {
-            this.checkedit = false
-          } else {
-            this.checkedit = true
-          }
-        })
-      }
-    }
+    // selectlist(old, newv) {
+    //   if (this.selectlist) {
+    //     this.$nextTick(() => {
+    //       if (this.selectlist.length === 0) {
+    //         this.checkedit = false
+    //       } else {
+    //         this.checkedit = true
+    //       }
+    //     })
+    //   }
+    // }
   },
   beforeCreate() {},
   created() {},
@@ -192,7 +253,7 @@ export default {
   destroyed() {},
   methods: {
     dateChange() {
-      this.selectlist = []
+      this.forms.selectlist = []
     },
     onChangeCoupons(event, row, $index) {
       const { totalCoupons } = row
@@ -214,14 +275,19 @@ export default {
           this.$message.error('起始时间必须大于当前时间')
         } else {
           this.$refs.checkCoupons.handleGetlist()
-          this.$refs.checkCoupons.defaultcheck(this.selectlist)
+          this.$refs.checkCoupons.defaultcheck(this.forms.selectlist)
         }
       } else {
         this.$message.error('请选择时间')
       }
     },
     confincheck(val) {
-      this.selectlist = val
+      this.forms.selectlist = val
+      if (this.forms.selectlist.length === 0) {
+        this.checkedit = false
+      } else {
+        this.checkedit = true
+      }
       this.write = []
       const write = {
         totalCoupons: 0,
@@ -232,10 +298,9 @@ export default {
         console.log(i)
         this.write.push(_.cloneDeep(write))
       }
-      // console.log(this.write)
     },
     deleteRow(index, rows) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('此操作删除该优惠券, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -247,6 +312,11 @@ export default {
             type: 'success',
             message: '删除成功!'
           })
+          if (this.forms.selectlist.length === 0) {
+            this.checkedit = false
+          } else {
+            this.checkedit = true
+          }
         })
         .catch(() => {
           this.$message({
@@ -283,55 +353,73 @@ export default {
             effectTime.split(',')[1]
           }天失效`
         } else {
-          return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
+          return `${effectTime.split(',')[0]} 到 ${effectTime.split(',')[1]}`
         }
       }
     },
     // 提交
     handleSumbit() {
-      let radiotype = 0
-      if (this.radio === '免费领取') {
-        radiotype = 1
-      } else if (this.radio === '现金购买') {
-        radiotype = 3
-      } else if (this.radio === '积分兑换') {
-        radiotype = 2
-      }
-      const couponlist = []
-      for (const i of this.selectlist) {
-        const listActivityAddCouponRelationReqDto = {}
-        listActivityAddCouponRelationReqDto.couponId = i.id
-        if (this.radio === '免费领取') {
-          listActivityAddCouponRelationReqDto.amount = 0
-          listActivityAddCouponRelationReqDto.integral = 0
-        } else if (this.radio === '现金购买') {
-          listActivityAddCouponRelationReqDto.integral = 0
-          listActivityAddCouponRelationReqDto.amount = i.totalNeed
-        } else if (this.radio === '积分兑换') {
-          listActivityAddCouponRelationReqDto.integral = i.totalNeed
-          listActivityAddCouponRelationReqDto.amount = 0
+      this.$refs['forms'].validate(valid => {
+        let val = true
+        for (const j in this.forms.selectlist) {
+          if (
+            this.forms.selectlist[j].totalLimit >
+            this.forms.selectlist[j].totalCoupons
+          ) {
+            val = false
+            this.$message({
+              message: `表格第${Number(j) + 1}行限领不能大于券总数`,
+              type: 'error'
+            })
+            return
+          }
         }
-        listActivityAddCouponRelationReqDto.perCount = i.totalLimit
-        listActivityAddCouponRelationReqDto.totalCount = i.totalCoupons
-        couponlist.push(listActivityAddCouponRelationReqDto)
-      }
-      const params = {
-        activityTemplateCode: this.$route.query.activityTemplateCode,
-        activityType: radiotype,
-        beginTime: formatDate(this.value[0]),
-        endTime: formatDate(this.value[1]),
-        listActivityAddCouponRelationReqDto: couponlist,
-        merCode: this.merCode
-      }
-      marketaddCoupon(params).then(res => {
-        if (res.code === '10000') {
-          this.$message({
-            type: 'success',
-            message: '添加成功!'
+        if (valid && val) {
+          let radiotype = 0
+          if (this.radio === '免费领取') {
+            radiotype = 1
+          } else if (this.radio === '现金购买') {
+            radiotype = 3
+          } else if (this.radio === '积分兑换') {
+            radiotype = 2
+          }
+          const couponlist = []
+          for (const i of this.forms.selectlist) {
+            const listActivityAddCouponRelationReqDto = {}
+            listActivityAddCouponRelationReqDto.couponId = i.id
+            if (this.radio === '免费领取') {
+              listActivityAddCouponRelationReqDto.amount = 0
+              listActivityAddCouponRelationReqDto.integral = 0
+            } else if (this.radio === '现金购买') {
+              listActivityAddCouponRelationReqDto.integral = 0
+              listActivityAddCouponRelationReqDto.amount = i.totalNeed
+            } else if (this.radio === '积分兑换') {
+              listActivityAddCouponRelationReqDto.integral = i.totalNeed
+              listActivityAddCouponRelationReqDto.amount = 0
+            }
+            listActivityAddCouponRelationReqDto.perCount = i.totalLimit
+            listActivityAddCouponRelationReqDto.totalCount = i.totalCoupons
+            couponlist.push(listActivityAddCouponRelationReqDto)
+          }
+          const params = {
+            activityTemplateCode: this.$route.query.activityTemplateCode,
+            activityType: radiotype,
+            beginTime: formatDate(this.value[0]),
+            endTime: formatDate(this.value[1]),
+            listActivityAddCouponRelationReqDto: couponlist,
+            merCode: this.merCode
+          }
+          marketaddCoupon(params).then(res => {
+            if (res.code === '10000') {
+              this.$message({
+                type: 'success',
+                message: '添加成功!'
+              })
+              this.$router.push(
+                `/marketings/activity-manage/coupons/list?code=${this.$route.query.activityTemplateCode}&name=${this.$route.query.activityTemplateName}`
+              )
+            }
           })
-          this.$router.push(
-            `/marketings/activity-manage/coupons/list?code=${this.$route.query.activityTemplateCode}&name=${this.$route.query.activityTemplateName}`
-          )
         }
       })
     }
