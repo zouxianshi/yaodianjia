@@ -54,7 +54,6 @@
                 :disabled="disabled"
                 maxlength="8"
               />
-              <span v-show="scope.row.addPrice ==='0'" style="margin-left: 5px;color: #e6a23c;">不限购</span>
             </el-form-item>
           </template>
         </el-table-column>
@@ -94,8 +93,9 @@ export default {
   },
   data() {
     const check_limit = (rule, value, callback) => {
+      console.log('rule', rule, value)
       const reg = /^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/
-      if (rule.required && !value) {
+      if (rule.required && (!value || value === '0')) {
         callback(new Error('请输入数值'))
       }
       if (!reg.test(value)) {
