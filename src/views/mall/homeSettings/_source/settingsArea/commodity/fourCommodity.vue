@@ -9,7 +9,7 @@
         <m-goods-table v-if="dialogVisible" :item-list="searchParams.itemList" :sub-type="searchParams.subType" @on-update="_onUpdate" />
       </el-drawer>
     </div>
-    <el-button slot="submit" type="primary" style="width: 100%" size="mini" :loading="loading" @click="onSubmit">保存商品设置</el-button>
+    <el-button slot="submit" type="primary" size="mini" :loading="loading" @click="onSubmit">保存商品设置</el-button>
   </m-sa-layout>
 </template>
 <script>

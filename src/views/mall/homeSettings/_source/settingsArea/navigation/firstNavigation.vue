@@ -6,7 +6,7 @@
     <div slot="item">
       <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :item="el" :sub-type="searchParams.subType" :index="i" :is-add="isAdd(i)" :is-disabled="isDisabled(i)" @on-item="_onItem" />
     </div>
-    <el-button slot="submit" type="primary" style="width: 100%" size="mini" :loading="loading" @click="onSubmit">保存导航设置</el-button>
+    <el-button slot="submit" type="primary" size="mini" :loading="loading" @click="onSubmit">保存导航设置</el-button>
   </m-sa-layout>
 </template>
 <script>

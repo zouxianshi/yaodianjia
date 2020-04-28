@@ -12,18 +12,25 @@
     <!--拖拽操作-->
     <div class="vam-draggable">
       <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
-        <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" class="item-component">
+        <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" class="item-component" @click.stop="(item.type !== 'recommend' && item.type !== 'no-data') && jumpCurrentSet($root,item)">
           <m-va-error-drag v-if="item.type !== 'no-data' && item.error" :type="item.type" />
           <m-no-data v-if="item.type === 'no-data'" />
           <template v-else>
             <div class="drag-area">
-              <span class="sp1">{{ item.name }}组件</span>
-              <span class="sp2">请在此区域拖拽</span>
               <div class="oper">
-                <m-edit v-if="item.type !== 'recommend'" :item="item" />
                 <m-delete :index="$index" />
               </div>
             </div>
+            <!-- 产品让我先干掉 必须做备份 并未对此操作签字画押！！！
+              <div class="drag-area">
+                <span class="sp1">{{ item.name }}组件</span>
+                <span class="sp2">请在此区域拖拽</span>
+                <div class="oper">
+                  <m-edit v-if="item.type !== 'recommend'" :item="item" />
+                  <m-delete :index="$index" />
+                </div>
+              </div>
+            -->
             <!--导航栏-->
             <m-navigation v-if="item.type === 'navigation'" :key="item.uuid" :item="{...item,$index:$index}" />
             <!--标题-->
@@ -58,7 +65,7 @@ import mTitle from './title'
 import mAdvertise from './advertise'
 import mCommodity from './commodity'
 import mRecommend from './recommend'
-import mEdit from './_source/edit'
+// import mEdit from './_source/edit'
 import mSaveDialog from './_source/saveDialog'
 import mDelete from './_source/delete'
 import mBottomNav from './bottomNav'
@@ -69,7 +76,7 @@ import { jumpCurrentSet, verifRequired, toPosition, getBannerList } from './_sou
 
 export default {
   name: 'ViewArea',
-  components: { mHeader, mBanner, mSaveDialog, mVaErrorDrag, mNotice, vDraggable, mNavigation, mTitle, mDelete, mEdit, mAdvertise, mCommodity, mRecommend, mNoData, mBottomNav },
+  components: { mHeader, mBanner, mSaveDialog, mVaErrorDrag, mNotice, vDraggable, mNavigation, mTitle, mDelete, mAdvertise, mCommodity, mRecommend, mNoData, mBottomNav },
   props: {},
   data() {
     return {
@@ -111,6 +118,7 @@ export default {
   updated() {
   },
   methods: {
+    jumpCurrentSet,
     ...mapActions('mall', ['saveStructure']),
     ...mapMutations('mall', ['setDragData']),
     /**
@@ -124,7 +132,7 @@ export default {
      */
     onAdd(v) {
       this.dragList = _.reject(this.dragList, ['type', 'no-data'])
-      const { type, subType } = this.dragList[v.newIndex]
+      const { type = '', subType = '' } = this.dragList[v.newIndex]
       if (type === 'recommend') {
         const instance = findComponentDownward(this, `Va${_.capitalize(subType)}Recommend`)
         instance.$_onUpdate(this.dragList[v.newIndex])
@@ -188,6 +196,7 @@ export default {
         padding: 8px 0;
         &:hover{
           border-color: #409EFF;
+          border-style: dashed;
           box-shadow: 0px 2px 18px 0 rgba(0,0,0,0.2);
           // border-style: dashed;
           .drag-area {
@@ -198,17 +207,21 @@ export default {
           width: 422px;
           height: 30px;
           line-height: 28px;
-          background: #409EFF;
+          /*background: #409EFF;*/
+          background: transparent;
           position: absolute;
           left: -2px;
-          top: -30px;
+          /*top: -30px;*/
+          top: -0px;
           display: none;
           text-align: center;
           border-radius:4px 0 0 0;
           .oper {
             position: absolute;
+            /*right: -40px;
+            top: 0;*/
             right: -40px;
-            top: 0;
+            top: -2px;
           }
           .sp1,.sp2 {
             font-size: 13px;

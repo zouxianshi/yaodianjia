@@ -8,7 +8,7 @@
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" style="width: 100%" :loading="loading" @click="onSubmit">保存</el-button>
+        <el-button type="primary" :loading="loading" @click="onSubmit">保存</el-button>
       </el-form-item>
     </el-form>
   </div>

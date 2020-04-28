@@ -7,7 +7,7 @@
             <el-input v-model="searchHint" placeholder="请输入搜索关键词" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" style="width: 100%" @click="onSubmit">保存</el-button>
+            <el-button type="primary" @click="onSubmit">保存</el-button>
           </el-form-item>
         </el-form>
       </div>
