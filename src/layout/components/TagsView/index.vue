@@ -225,6 +225,12 @@ export default {
       if (this.visitedViews.length === 1 && view.name === 'home') {
         return
       }
+      if (view.name === 'GoodsEdit' && !sessionStorage.getItem('editIsQuery')) {
+        const answer = window.confirm('你还有数据没有保存，是否确认退出')
+        if (!answer) {
+          return
+        }
+      }
       this.$store
         .dispatch('tagsView/delView', view)
         .then(({ visitedViews }) => {

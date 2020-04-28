@@ -45,12 +45,7 @@
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select
-              v-model="listQuery.drugType"
-              filterable
-              size="small"
-              placeholder="请选择"
-            >
+            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择">
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
@@ -253,7 +248,7 @@
                 </template>
                 <template v-if="scope.row.commodityType!==2">
                   <el-divider direction="vertical" />
-                  <a :href="`#/goods-manage/edit?id=${scope.row.id}`">
+                  <a @click="handleEdit(scope.row.id)">
                     <el-button type="text" size="mini">编辑</el-button>
                   </a>
                 </template>
@@ -277,6 +272,7 @@
       :status="status"
       :choose-num="specData.length"
       :spec-data="specData"
+      :mer-code="merCode"
       :is-show="dialogVisible"
       @close="dialogVisible=false"
       @complete="dialogVisible=false;getList()"
@@ -307,6 +303,7 @@ import store from '../components/store'
 import group from '../components/grouping'
 import limitBuy from './_source/limit-buy'
 export default {
+  name: 'Depot',
   components: { Pagination, store, group, limitBuy },
   mixins: [mixins],
   data() {
@@ -323,7 +320,10 @@ export default {
         label: 'name',
         value: 'id'
       },
+      editId: '',
+      isToEdit: false,
       goodsData: [],
+      merCode: '',
       specData: [],
       loading: false,
       tableData: [],
@@ -350,9 +350,58 @@ export default {
     }
   },
   created() {
+    this.merCode = this.$store.state.user.merCode
     this.getList()
     this._loadTypeList()
+    // const thisRoute = this.$route.name ? this.$route : null
+    // if (thisRoute) this.$store.dispatch('tagsView/addCachedView', { route: thisRoute, token: this.token })
+
+    // this.$store.dispatch('tagsView/addCachedView', this.$route).then(res => {
+    //   console.log('success: ', res);
+    //   console.log(this.$store.getters.cachedViews);
+    // });
     // this._loadGoodTypeList()
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      console.log(vm)// 当前组件的实例
+      if (sessionStorage.getItem('isRefreshDepot')) {
+        sessionStorage.setItem('isRefreshDepot', false)
+        vm.getList()
+      }
+    })
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'GoodsEdit' && from.name === 'Depot' && this.isToEdit) {
+      const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+        item => item.name === 'GoodsEdit'
+      )
+      const isComEditId = this.editId === sessionStorage.getItem('editId')
+      if (!isComEditId) {
+        if (hasGoodsEdit && !sessionStorage.getItem('editIsQuery')) {
+          const answer = window.confirm('你还有数据没有保存，是否确认退出')
+          if (answer) {
+            this.$store.dispatch('tagsView/delView', to).then(res => {
+              this.isToEdit = false
+              next()
+            })
+          } else {
+            next()
+          }
+        } else {
+          this.$store.dispatch('tagsView/delView', to).then(res => {
+            this.isToEdit = false
+            next()
+          })
+        }
+      } else {
+        this.isToEdit = false
+        next()
+      }
+    } else {
+      this.isToEdit = false
+      next()
+    }
   },
   methods: {
     handleSettingLimitBuy() {
@@ -504,6 +553,11 @@ export default {
       this.specData = [`${row.specId}`]
       this.status = status
       this.dialogVisible = true
+    },
+    handleEdit(id) {
+      this.isToEdit = true
+      this.editId = id
+      this.$router.push('/goods-manage/edit?id=' + id)
     },
     //
     handleDel(row) {

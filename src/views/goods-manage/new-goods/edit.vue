@@ -314,7 +314,7 @@
                     <el-checkbox v-model="basicForm.isEasyBreak" :true-label="1" :false-label="0">易碎</el-checkbox>
                     <el-checkbox v-model="basicForm.isLiquid" :true-label="1" :false-label="0">液体</el-checkbox>
                     <template
-                      v-if="chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')"
+                      v-if="chooseTypeList&&chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')"
                     >
                       <el-checkbox
                         v-model="basicForm.hasEphedrine"
@@ -406,7 +406,7 @@
                         />
                       </template>
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>-->
                   <el-table-column
                     v-for="(propsf,indexs) in dynamicProp"
                     :key="indexs"
@@ -831,12 +831,7 @@
                 </div>
               </div>
               <p v-if="!is_query" class="add-spec">
-                <el-button
-                  type="text"
-                  icon="el-icon-plus"
-                  size="small"
-                  @click="handleAddSpec"
-                >添加规格</el-button>
+                <el-button type="text" icon="el-icon-plus" size="small" @click="handleAddSpec">添加规格</el-button>
               </p>
             </el-form-item>
           </el-form>
@@ -946,7 +941,13 @@
     />
     <div class="action-wapper">
       <el-button v-if="step !== 1" type size="small" @click="backStep">上一步</el-button>
-      <el-button v-if="setp3show" :loading="subLoading" size="small" type="primary" @click="nextStep">{{ step===3?'保存':"下一步" }}</el-button>
+      <el-button
+        v-if="setp3show"
+        :loading="subLoading"
+        size="small"
+        type="primary"
+        @click="nextStep"
+      >{{ step===3?'保存':"下一步" }}</el-button>
     </div>
   </div>
 </template>
@@ -977,6 +978,7 @@ import { checkNumberdouble } from '@/utils/validate'
 // import { throttle } from '@/utils/throttle'
 
 export default {
+  name: 'GoodsEdit',
   components: { Tinymce, vueUploadImg, editTable, editGroup },
   mixins: [mixins, specsMixin],
   data() {
@@ -1158,11 +1160,14 @@ export default {
       return { Authorization: this.token }
     },
     getContentLength: function() {
-      const text = this.basicForm.intro
-        .replace(/<[^>]+>/g, '')
-        .replace(/&nbsp;/g, '')
-      const count = text.trim().length
-      return count
+      if (this.basicForm.intro) {
+        const text = this.basicForm.intro
+          .replace(/<[^>]+>/g, '')
+          .replace(/&nbsp;/g, '')
+        const count = text.trim().length
+        return count
+      }
+      return ''
     },
     // 计算是否需要下一步
     setp3show() {
@@ -1170,7 +1175,9 @@ export default {
         return false
       }
       return true
-    }
+    },
+    // 获取listView,判断tagsView是否关闭当前标签
+    ...mapGetters(['visitedViews'])
   },
   watch: {
     step(val) {
@@ -1181,27 +1188,10 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
+    next()
     // 路由离开关闭标签
-    if (this.is_query) {
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
-      }
-    } else {
-      if (!this.leaveAction) {
-        const answer = window.confirm('你还有数据没有保存，是否确认退出')
-        if (answer) {
-          if (this.pageLoading) {
-            this.pageLoading.close()
-          }
-          this.$store.dispatch('tagsView/delView', from)
-          next()
-        } else {
-          next(false)
-        }
-      } else {
-        next()
-      }
+    if (this.is_query && this.pageLoading) {
+      this.pageLoading.close()
     }
   },
   created() {
@@ -1210,12 +1200,22 @@ export default {
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
     }
+
     this.is_query = this.$route.query.type === 'query'
+    console.log(this.$route.query.type)
+    if (this.is_query) {
+      sessionStorage.setItem('editId', '')
+      sessionStorage.setItem('editIsQuery', this.is_query)
+    } else {
+      sessionStorage.setItem('editIsQuery', '')
+      sessionStorage.setItem('editId', this.$route.query.id)
+    }
     this._loadTypeList() // 获取分组
     this._loadBrandList({
       pageSize: 30,
       currentPage: 1
     }) // 获取所属品牌
+    console.log('@@@@@@@@@@@@@')
     this.getTypeListData()
       .then(res => {
         this._loadBasicInfo()
@@ -1237,7 +1237,9 @@ export default {
   methods: {
     tinymceLoad() {
       // 富文本渲染染成
-      this.pageLoading.close()
+      if (this.pageLoading) {
+        this.pageLoading.close()
+      }
     },
     handleGoStep(val) {
       console.log('val', val)
@@ -1815,19 +1817,30 @@ export default {
           this.subLoading = false
           this.leaveAction = true
           setTimeout(() => {
-            let url = ''
-            if (this.basicForm.origin === 1) {
-              url = '/goods-manage/depot'
-            } else {
-              url = '/goods-manage/apply-record'
-            }
+            // let url = ''
+            // if (this.basicForm.origin === 1) {
+            //   url = '/goods-manage/depot'
+            // } else {
+            //   url = '/goods-manage/apply-record'
+            // }
             this.$confirm('请确认已保存橱窗图', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
             })
               .then(() => {
-                this.$router.replace(url)
+                this.$store
+                  .dispatch('tagsView/delView', this.$route)
+                  .then(res => {
+                    sessionStorage.setItem('isRefreshDepot', true)
+                    this.$router.go(-1) // 返回上一个路由
+                  })
+                // this.$store.dispatch('tagsView/delView', this.$route)
+                // this.$store
+                //   .dispatch('tagsView/delVisitedView', this.$route)
+                //   .then(res => {})
+                // this.$router.replace(url)
+                // this.$router.go(-1) // 返回上一个路由
               })
               .catch(() => {
                 console.log('已取消')

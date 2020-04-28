@@ -13,13 +13,13 @@ const router = [
     alwaysShow: true,
     children: [
       {
-        path: 'depot',
+        path: 'Depot',
         component: () => import('@/views/goods-manage/depot/list'),
-        name: 'depot',
+        name: 'Depot',
         meta: {
           title: '商品库',
           auth: 'commodity.commodity-lib',
-          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       }, {
         path: 'addition',
@@ -87,16 +87,16 @@ const router = [
       }, {
         path: 'edit',
         component: () => import('@/views/goods-manage/new-goods/edit'),
-        name: 'goodsEdit',
+        name: 'GoodsEdit',
         meta: {
           title: '商品信息编辑',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/apply'
         }
       }, {
         path: 'apply-record',
         component: () => import('@/views/goods-manage/new-goods/record'),
-        name: 'goodsRecord',
+        name: 'GoodsRecord',
         meta: {
           auth: 'commodity.commodity-new-record',
           title: '新品申请记录',

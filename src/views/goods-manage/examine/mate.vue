@@ -180,7 +180,7 @@
             <span v-else-if="pairData.drugType===2">乙类OTC</span>
             <span v-else>非处方药</span>
           </p>
-          <p>是否含有麻黄碱：<span v-text="pairData.hasEphedrine===0?'不包含':'包含'" /></p>
+          <p>是否含有麻黄碱：<span v-text="pairData.hasEphedrine===1?'包含':'不包含'" /></p>
           <p>品牌名称：<span v-text="pairData.brandName" /></p>
           <p>通用名：<span v-text="pairData.commonName" /></p>
           <p>功能疗效：<span v-text="pairData.keyFeature" /></p>

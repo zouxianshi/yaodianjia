@@ -2,50 +2,68 @@
   <div class="app-container">
     <el-link type="warning" @click="dialogVisible=true">从标库新建商品规范说明?</el-link>
     <section class="addition-wrapper">
-      <p class="title">
-        从商品库新建商品
-      </p>
+      <p class="title">从商品库新建商品</p>
       <el-divider />
       <section @keydown.enter="getList">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品名称</span>
-            <el-input v-model.trim="listQuery.name" size="small" style="width:200px" placeholder="商品名称" />
+            <el-input
+              v-model.trim="listQuery.name"
+              size="small"
+              style="width:200px"
+              placeholder="商品名称"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
-            <el-input v-model.trim="listQuery.manufacture" size="small" style="width:200px" placeholder="生产企业" />
+            <el-input
+              v-model.trim="listQuery.manufacture"
+              size="small"
+              style="width:200px"
+              placeholder="生产企业"
+            />
           </div>
         </div>
         <div class="search-form">
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="listQuery.barCode" size="small" style="width:200px" placeholder="条形码" />
+            <el-input
+              v-model.trim="listQuery.barCode"
+              size="small"
+              style="width:200px"
+              placeholder="条形码"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">批准文号</span>
-            <el-input v-model.trim="listQuery.approvalNumber" size="small" style="width:200px" placeholder="批准文号" />
+            <el-input
+              v-model.trim="listQuery.approvalNumber"
+              size="small"
+              style="width:200px"
+              placeholder="批准文号"
+            />
           </div>
           <div class="search-item">
             <el-button type="primary" size="small" @click="getList">查询</el-button>
-            <el-button type="" size="small" @click="resetQuery">重置</el-button>
+            <el-button type size="small" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </section>
-      <el-alert
-        type="warning"
-        style="margin-bottom:10px"
-        :closable="false"
-      >
+      <el-alert type="warning" style="margin-bottom:10px" :closable="false">
         <p slot="title" class="alret-title">
-          没有想要商品，去<router-link tag="span" class="link" to="/goods-manage/apply">创建自有新品</router-link>
+          没有想要商品，去
+          <router-link tag="span" class="link" to="/goods-manage/apply">创建自有新品</router-link>
         </p>
       </el-alert>
       <el-table v-loading="loading" :data="tableData" stripe>
         <template slot="empty">
           <div v-show="!loading" class="table-nodata">
             <p class="text-center">搜索无结果</p>
-            <p class="text-center">未找到您要创建的商品，您可尝试其他名称搜索，您也可以自行创建标库没有的新品 <router-link tag="span" to="/goods-manage/apply" class="link">自建新品</router-link></p>
+            <p class="text-center">
+              未找到您要创建的商品，您可尝试其他名称搜索，您也可以自行创建标库没有的新品
+              <router-link tag="span" to="/goods-manage/apply" class="link">自建新品</router-link>
+            </p>
             <p class="text-center">自主创建的商品由运营人员自行审核上架</p>
           </div>
         </template>
@@ -68,7 +86,7 @@
               />
             </template>
             <template v-else>
-              <p class="">暂未上传</p>
+              <p class>暂未上传</p>
             </template>
           </template>
         </el-table-column>
@@ -77,9 +95,10 @@
             <div>
               <p class="ellipsis" v-text="scope.row.name" />
               <p class="ellipsis">
-                <span v-for="(item,index) in scope.row.specSkuList" :key="index">
-                  {{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}
-                </span>
+                <span
+                  v-for="(item,index) in scope.row.specSkuList"
+                  :key="index"
+                >{{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}</span>
               </p>
               <p class="ellipsis" v-text="scope.row.approvalNumber" />
             </div>
@@ -97,7 +116,12 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
-            <el-button type="primary" :loading="scope.row.loading" size="mini" @click="handleSetStore(scope.row)">添加该商品</el-button>
+            <el-button
+              type="primary"
+              :loading="scope.row.loading"
+              size="mini"
+              @click="handleSetStore(scope.row)"
+            >添加该商品</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -137,10 +161,10 @@ export default {
       tableData: [],
       dialogVisible: false,
       listQuery: {
-        'approvalNumber': '',
-        'barCode': '',
-        'manufacture': '',
-        'name': ''
+        approvalNumber: '',
+        barCode: '',
+        manufacture: '',
+        name: ''
       }
     }
   },
@@ -153,59 +177,64 @@ export default {
   methods: {
     resetQuery() {
       this.listQuery = {
-        'approvalNumber': '',
-        'barCode': '',
-        'manufacture': '',
-        'name': ''
+        approvalNumber: '',
+        barCode: '',
+        manufacture: '',
+        name: ''
       }
-      this.getList()
+      this.getList(null)
     },
-    getList() {
+    getList(rowId) {
       this.loading = true
-      getProductList(this.listQuery).then(res => {
-        this.loading = false
-        const { data, totalCount } = res.data
-        data.map(v => {
-          v.loading = false
+      getProductList(this.listQuery)
+        .then(res => {
+          this.loading = false
+          const { data, totalCount } = res.data
+          data.map(v => {
+            v.loading = false
+          })
+          this.tableData = data
+          this.total = totalCount
         })
-        this.tableData = data
-        this.total = totalCount
-      }).catch(() => {
-        this.loading = false
-      })
+        .catch(() => {
+          this.loading = false
+        })
     },
     handleSetStore(row) {
       row.loading = true
-      setComAddGoods({ ids: [row.id], userName: this.name }).then(res => {
-        this.$message({
-          message: '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
-          type: 'success',
-          duration: 4000
+      setComAddGoods({ ids: [row.id], userName: this.name })
+        .then(res => {
+          this.$message({
+            message:
+              '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
+            type: 'success',
+            duration: 4000
+          })
+
+          this.getList(row.id)
+          row.loading = false
         })
-        this.getList()
-        row.loading = false
-      }).catch(() => {
-        row.loading = false
-      })
+        .catch(() => {
+          row.loading = false
+        })
     }
   }
 }
 </script>
 <style lang="scss">
-.el-table__empty-text{
-    width: 60%;
-    padding: 20px 0 ;
-    line-height: 35px;
+.el-table__empty-text {
+  width: 60%;
+  padding: 20px 0;
+  line-height: 35px;
 }
 </style>
 <style lang="scss" scoped>
-
-.addition-wrapper{
+.addition-wrapper {
   background: #f6f7fb;
   padding: 15px;
   margin-top: 10px;
-  .title{
-      color: #333;
+  .title {
+    color: #333;
   }
 }
 </style>
