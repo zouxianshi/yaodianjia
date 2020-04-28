@@ -1,12 +1,19 @@
 <template>
-  <el-form ref="cnameForm" :model="params" :rules="cnameRules" size="mini" label-position="left" label-width="110px">
+  <el-form
+    ref="cnameForm"
+    :model="params"
+    :rules="cnameRules"
+    size="mini"
+    label-position="left"
+    label-width="110px"
+  >
     <el-form-item label="优惠券名称：" prop="cname">
       <el-input
         v-model="params.cname"
+        :disabled="disabled"
         placeholder="请输入优惠券名称"
         maxlength="10"
         style="width:300px"
-        @keyup.native="verification()"
       />
     </el-form-item>
   </el-form>
@@ -20,12 +27,15 @@ export default {
       default() {
         return {}
       }
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      params: {
-      },
+      params: {},
       cnameRules: {
         cname: [
           { required: true, message: '请输入优惠券名称', trigger: 'blur' }
@@ -33,12 +43,24 @@ export default {
       }
     }
   },
-  created() {
-    this.params = _.cloneDeep(this.discountForm)
+  watch: {
+    discountForm(newVal) {
+      this.params = _.cloneDeep(newVal)
+    }
   },
   methods: {
-    verification() {
-      console.log(this.params)
+    $verification() {
+      var _self = this
+      var result = new Promise(function(resolve, reject) {
+        _self.$refs['cnameForm'].validate(valid => {
+          if (valid) {
+            resolve({ cname: _self.params.cname })
+          } else {
+            reject(valid)
+          }
+        })
+      })
+      return result
     }
   }
 }
