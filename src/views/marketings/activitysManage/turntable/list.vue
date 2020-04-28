@@ -17,11 +17,10 @@
         <div class="search-item">
           <span class="label-name" style="width:100px">状态：</span>
           <el-select v-model="region" placeholder="活动区域">
-            <el-option label="全部" value="1" />
+            <el-option label="全部" value="" />
+            <el-option label="进行中" value="1" />
             <el-option label="未开始" value="2" />
-            <el-option label="进行中" value="3" />
-            <el-option label="已结束" value="4" />
-            <el-option label="已删除" value="5" />
+            <el-option label="已结束" value="3" />
           </el-select>
         </div>
         <div class="search-item">
@@ -98,7 +97,7 @@
   </div>
 </template>
 <script>
-// import { searchActivitie } from '@/api/coupon'
+import { normalActivityList } from '@/api/marketing'
 import { mapGetters } from 'vuex'
 export default {
   name: 'TurntableIndex',
@@ -106,6 +105,14 @@ export default {
   props: {},
   data() {
     return {
+      searchParams: {
+        activeName: '',
+        activityTemplateCode: '',
+        currentPage: 0,
+        pageSize: 0,
+        state: 0,
+        storeCode: ''
+      },
       selectValue: '',
       currentPage: 4,
       region: '1',
@@ -158,60 +165,55 @@ export default {
   },
   watch: {},
   beforeCreate() {},
-  created() {},
+  created() {
+    // this.searchParams =
+
+    this.getData()
+  },
   beforeMount() {},
   mounted() {
-    this.getList()
   },
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},
   destroyed() {},
   methods: {
-    getList() {
-      // const params = {
-      //   activityTemplateCode: this.$route.query.code,
-      //   activityTemplateName: this.$route.query.name,
-      //   activityType: '',
-      //   cname: '',
-      //   currentPage: 1,
-      //   merCode: this.merCode,
-      //   pageSize: 10,
-      //   state: ''
-      // }
-      // searchActivities(params).then(res => {
-      //   // this.tableData = res.data
-      // })
-    },
-    deleteRow(index, rows) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+    getData(searchParams) {
+      const p = { ...this.searchParams, searchParams }
+      normalActivityList(p).then(res => {
+        console.log(res)
       })
-        .then(() => {
-          rows.splice(index, 1)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-    },
-    changeOption(val) {
-      console.log(val)
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
     }
+
+  },
+  deleteRow(index, rows) {
+    this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+      .then(() => {
+        rows.splice(index, 1)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      })
+      .catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+  },
+  changeOption(val) {
+    console.log(val)
+  },
+  handleSizeChange(val) {
+    console.log(`每页 ${val} 条`)
+  },
+  handleCurrentChange(val) {
+    console.log(`当前页: ${val}`)
   }
 }
 </script>
