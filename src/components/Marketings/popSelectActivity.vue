@@ -75,7 +75,7 @@
   </div>
 </template>
 <script>
-import { normalAddActivityList } from '@/api/marketing'
+import { normalAddActivityList } from '@/api/coupon'
 export default {
   data() {
     return {

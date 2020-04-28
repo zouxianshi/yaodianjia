@@ -108,3 +108,52 @@ export function couponInvalid(params) {
     data: params
   })
 }
+// 新增普通活动列表
+export function updateActivity(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/updateActivity`,
+    method: 'post',
+    data: params
+  })
+}
+// 普通活动列表
+export function normalActivityList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/ActivityList`,
+    method: 'post',
+    data: params
+  })
+}
+// 新增普通活动列表
+export function createActivity(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/createActivity`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 支付有礼可被添加的活动列表
+export function normalAddActivityList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/normalAddActivityList`,
+    method: 'post',
+    data: params
+  })
+}
+// 普通活动详情
+export function ActivityDetail(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/ActivityDetail/${params.id}`,
+    method: 'get'
+  })
+}
+// 失效或删除普通活动(支付有礼)
+export function setNormalActivity(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/setNormalActivity`,
+    method: 'post',
+    data: params
+  })
+}
+
