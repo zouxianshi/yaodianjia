@@ -6,7 +6,7 @@
       <m-icons v-else :is-center="true" />
     </div>
 
-    <p class="cfim-name">{{ item.name || '-' }}</p>
+    <p class="cfim-name">{{ truName(item.name) || '-' }}</p>
     <p class="cfim-price">
       <span class="p-1">¥{{ item.price || '0.00' }}</span>
       <span class="p-2">¥{{ item.mprice || '0.00' }}</span>
@@ -28,7 +28,11 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+    truName(name) {
+      return _.truncate(name, { 'length': 12, 'omission': '' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },

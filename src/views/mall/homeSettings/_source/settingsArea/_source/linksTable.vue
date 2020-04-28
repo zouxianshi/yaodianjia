@@ -12,8 +12,8 @@
             <el-radio v-model="linkUrl" :label="scope.row.linkAddress">&nbsp;</el-radio>
           </template>
         </el-table-column>
-        <el-table-column prop="pageName" label="跳转页面" width="100" />
-        <el-table-column prop="linkAddress" label="链接" />
+        <el-table-column prop="pageName" label="跳转页面" show-overflow-tooltip width="100" />
+        <el-table-column prop="linkAddress" label="链接" show-overflow-tooltip />
       </el-table>
     </div>
     <div class="slm-page-ope">

@@ -13,9 +13,9 @@
         <template v-else>-</template>
       </template>
     </el-table-column>
-    <el-table-column prop="name" label="商品名称" />
+    <el-table-column prop="name" label="商品名称" show-overflow-tooltip />
     <el-table-column prop="brandName" label="品牌" />
-    <el-table-column prop="specStr" label="规格" />
+    <el-table-column prop="specStr" label="规格" show-overflow-tooltip />
     <el-table-column label="参考价" width="60">
       <template slot-scope="scope">
         <span style="color:#ff0000">¥{{ scope.row.price }}</span>

@@ -6,7 +6,7 @@
       <img v-if="item.img" :src="`${showImg(item.img)}?x-oss-process=style/w_160`" alt="" width="100" height="100">
       <m-icons v-else :is-center="true" />
     </div>
-    <p class="csim-name">{{ item.name || '-' }}</p>
+    <p class="csim-name">{{ truName(item.name) || '-' }}</p>
     <p class="csim-price">
       <span class="p-1">¥{{ item.price || '-' }}</span>
     </p>
@@ -30,7 +30,11 @@ export default {
       default: 'va'
     }
   },
-  methods: {},
+  methods: {
+    truName(name) {
+      return _.truncate(name, { 'length': 7, 'omission': '' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
