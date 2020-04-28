@@ -263,6 +263,13 @@
                             :key="index2"
                             class="goods-item"
                           >
+                            <!-- 标签 -->
+                            <!-- isPromotion是否促销活动0否1是 -->
+                            <!-- pmtProductType 促销商品类型N.正品G.赠品R.换购商品 -->
+                            <div
+                              v-if="list.isPromotion === 1 && (list.pmtProductType === 'G' || list.pmtProductType === 'R')"
+                              :class="{ 'goods-tag': true, 'gift': list.pmtProductType === 'G' }"
+                            >{{ list.pmtProductType === 'G'? '赠品':'换购' }}</div>
                             <div class="goods-img padding10">
                               <div v-if="list.mpic && list.mpic!==''">
                                 <div class="x-image__preview">
@@ -452,9 +459,7 @@
                         </template>
                       </div>
                       <div class="header-right">
-                        <div
-                          class="header-cell"
-                        >
+                        <div class="header-cell">
                           <!-- 查看退款申请单 -->
                           <dialog-refund-order
                             :id="item.returnQuestId"
@@ -1837,6 +1842,7 @@ export default {
           width: 30vw;
           .goods-item {
             display: flex;
+            position: relative;
             // justify-content: flex-start;
             // align-items: center;
             border-bottom: solid 1px #dfe6ec;
@@ -1886,6 +1892,24 @@ export default {
                 align-content: space-between;
                 cursor: pointer;
               }
+            }
+            .goods-tag {
+              position: absolute;
+              top: 6px;
+              left: 6px;
+              z-index: 1;
+              background-color: #fef0f0;
+              border: 1px solid #f75a5a;
+              color: #f75a5a;
+              padding: 0 8px;
+              font-size: 12px;
+              line-height: 16px;
+              border-radius: 4px;
+              &.gift {
+                background-color: #f75a5a;
+                color: #fff;
+              }
+              // #f75a5a
             }
           }
         }

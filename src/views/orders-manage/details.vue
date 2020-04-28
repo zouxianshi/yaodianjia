@@ -585,6 +585,10 @@
                           </div>
                           <div v-else style="line-height: 32px">暂无上传</div>
                         </div>
+                        <div
+                          v-if="item.isPromotion === 1 && (item.pmtProductType === 'G' || item.pmtProductType === 'R')"
+                          :class="{ 'goods-tag': true, 'gift': item.pmtProductType === 'G' }"
+                        >{{ item.pmtProductType === 'G'? '赠品':'换购' }}</div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">{{ item.commodityName }}</div>
@@ -604,7 +608,8 @@
                         <div class="cell-text">￥{{ item.totalActualAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div class="cell-text">{{ item.couponAmount }}</div>
+                        <div v-if="item.isPromotion === 1" class="cell-text">立减：{{ item.activityDiscountAmont }}</div>
+                        <div class="cell-text">优惠：{{ item.couponAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">
@@ -1222,15 +1227,35 @@ export default {
               // border-right: 1px solid #ccc;
               border-bottom: 1px solid #dfe6ec;
               height: 120px;
+              position: relative;
               .cell-text {
                 text-align: left;
                 word-break: break-all;
+              }
+              .goods-tag {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                z-index: 1;
+                background-color: #fef0f0;
+                border: 1px solid #f75a5a;
+                color: #f75a5a;
+                padding: 0 8px;
+                font-size: 12px;
+                line-height: 16px;
+                border-radius: 4px;
+                &.gift {
+                  background-color: #f75a5a;
+                  color: #fff;
+                }
+                // #f75a5a
               }
             }
             .cell-con {
               display: flex;
               align-items: center;
               justify-content: center;
+              flex-direction: column;
             }
           }
           .detail-item-middle {
@@ -1245,6 +1270,7 @@ export default {
               padding: 10px;
               border-bottom: 1px solid #dfe6ec;
               border-right: 1px solid #dfe6ec;
+              flex-direction: column;
               &:nth-last-child(1) {
                 border-right: none;
               }

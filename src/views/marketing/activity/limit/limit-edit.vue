@@ -7,13 +7,7 @@
       element-loading-text="加载中"
     >
       <section class="form-box">
-        <el-form
-          ref="xForm"
-          :model="xForm"
-          :rules="xRules"
-          size="small"
-          label-width="80px"
-        >
+        <el-form ref="xForm" :model="xForm" :rules="xRules" size="small" label-width="80px">
           <el-form-item label="活动类型">
             <el-radio-group v-model="xForm.type" :disabled="disabled">
               <el-radio v-if="xForm.type=== '12'" label="12">限时秒杀</el-radio>
@@ -79,7 +73,11 @@
             >选择门店 | 已选（{{ selectedStore.length }}）</el-button>
           </el-form-item>
           <el-form-item v-show="!xForm.allStore || pageStatus === 2 || pageStatus === 3">
-            <select-store ref="selectStoreComponent" :disabled="disabled" @del-item="delSelectStore" />
+            <select-store
+              ref="selectStoreComponent"
+              :disabled="disabled"
+              @del-item="delSelectStore"
+            />
           </el-form-item>
           <el-form-item label="是否免运">
             <el-radio-group v-model="xForm.freePostFee" :disabled="disabled">
@@ -90,7 +88,7 @@
               <span class="note-grey" style="margin-left: 15px;">选择是表示免配送费或快递费用</span>
             </template>
           </el-form-item>
-          <el-form-item label="限购商品总数" label-width="108px" prop="limitAmount">
+          <!-- <el-form-item label="限购商品总数" label-width="108px" prop="limitAmount">
             <el-input-number
               v-model="xForm.limitAmount"
               class="input-center"
@@ -109,6 +107,30 @@
               style="display:inline-block;width: 45px;margin-left: 5px;color: #e6a23c;"
             >不限购</span>
             <span class="note-grey" style="margin-left: 15px;">1个用户在该活动下可多次购买的商品总件数，输入0代表不限购</span>
+          </el-form-item> -->
+          <el-form-item label="参与次数">
+            <el-col :span="24">
+              <el-form-item>
+                <el-radio v-model="xForm.limit" :label="0" :disabled="disabled">不限次数</el-radio>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24" class="limit">
+              <el-form-item style="margin-right: 10px">
+                <el-radio v-model="xForm.limit" :label="1" :disabled="disabled">每人限制参与</el-radio>
+              </el-form-item>
+              <el-form-item prop="limitAmount">
+                <el-input-number
+                  v-model="xForm.limitAmount"
+                  :min="0"
+                  :max="10000"
+                  :step="1"
+                  step-strictly
+                  :disabled="xForm.limit!==1 || disabled"
+                />
+                <span style="margin-left: 5px" class="info-create">次</span>
+              </el-form-item>
+            </el-col>
+            <el-col class="note-grey" :span="24">单个用户可参与该活动的总次数限制</el-col>
           </el-form-item>
         </el-form>
         <div class="table-box">
@@ -119,7 +141,12 @@
                 label="批量设置"
                 style="display:inline-block;margin-bottom:0"
               >
-                <el-select v-model="mutiSetType" placeholder="批量设置" :disabled="disabled" @change="mutiSetChange">
+                <el-select
+                  v-model="mutiSetType"
+                  placeholder="批量设置"
+                  :disabled="disabled"
+                  @change="mutiSetChange"
+                >
                   <el-option v-if="xForm.mode === 1" class="x-option" label="批量设置折扣" value="1" />
                   <el-option v-if="xForm.mode === 2" label="批量设置减价" value="2" />
                   <el-option label="批量设置限购" value="3" />
@@ -227,7 +254,11 @@
 
               <el-table-column v-if="!disabled" label="操作" prop="name" width="90px" align="center">
                 <template slot-scope="scope">
-                  <el-button type="text" :disabled="disabled" @click.stop="handleDel(scope.row, scope.$index)">删除</el-button>
+                  <el-button
+                    type="text"
+                    :disabled="disabled"
+                    @click.stop="handleDel(scope.row, scope.$index)"
+                  >删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -244,7 +275,13 @@
       <section class="form-footer">
         <template v-if="!disabled">
           <el-button size="small" :disabled="disabled" @click="$router.go(-1)">取 消</el-button>
-          <el-button type="primary" :disabled="disabled" size="small" :loading="saveLoading" @click="submit">保 存</el-button>
+          <el-button
+            type="primary"
+            :disabled="disabled"
+            size="small"
+            :loading="saveLoading"
+            @click="submit"
+          >保 存</el-button>
         </template>
         <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
       </section>
@@ -373,7 +410,8 @@ export default {
         mode: 1, // 优惠模式: 1-折扣, 2-减价
         allStore: true, // 门店活动范围: 0-全部, 1-指定门店
         freePostFee: 0, // 是否免邮 免运费配送
-        limitAmount: ''
+        limitAmount: '',
+        limit: 0
       },
       xRules: {
         pmtName: [
@@ -747,7 +785,13 @@ export default {
               allStore: !!data.allStore,
               mode: data.activityDetail && data.activityDetail.pmtMode,
               freePostFee:
-                data.activityDetail && data.activityDetail.freePostFee
+                data.activityDetail && data.activityDetail.freePostFee,
+              limit:
+                data.limitAmount === 0 ||
+                data.limitAmount === '0' ||
+                data.limitAmount === ''
+                  ? 0
+                  : 1
             })
             console.log('this.xForm----', this.xForm)
             this.selectedStore = Array.isArray(data.storeResDTOList)
@@ -777,7 +821,8 @@ export default {
         description: this.xForm.description,
         startTime: this.xForm.startTime,
         endTime: this.xForm.endTime,
-        limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
+        // limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
+        limitAmount: this.xForm.limit === 0 ? 0 : this.xForm.limitAmount,
         // mode: this.xForm.mode,
         pmtRule: {
           freePostFee: this.xForm.freePostFee,
@@ -811,7 +856,8 @@ export default {
         startTime: this.xForm.startTime,
         endTime: this.xForm.endTime,
         // mode: this.xForm.mode,
-        limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
+        // limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
+        limitAmount: this.xForm.limit === 0 ? 0 : this.xForm.limitAmount,
         pmtRule: {
           freePostFee: this.xForm.freePostFee,
           pmtMode: this.xForm.mode,
@@ -920,5 +966,11 @@ export default {
 }
 .form-footer {
   text-align: center;
+}
+.dashboard-container {
+  .limit {
+    display: flex;
+    flex-direction: row;
+  }
 }
 </style>
