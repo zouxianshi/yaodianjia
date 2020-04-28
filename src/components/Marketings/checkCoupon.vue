@@ -22,11 +22,12 @@
           <el-input v-model.trim="keyword" size="small" placeholder="请输入关键字" />
         </div>
         <div class="search-item">
-          <el-button type="primary" size="small" @click="handleGetlist">查询</el-button>
+          <el-button type="primary" size="small" @click="handleGetlist('查询')">查询</el-button>
         </div>
       </div>
       <el-table
         ref="multipleTable"
+        v-loading="tableLoading"
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
@@ -47,7 +48,7 @@
             slot-scope="scope"
           >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
         </el-table-column>
-        <el-table-column label="使用时间" show-overflow-tooltip>
+        <el-table-column label="使用时间" width="150">
           <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
         </el-table-column>
         <el-table-column label="使用场景" width="90">
@@ -107,6 +108,7 @@ export default {
   },
   data() {
     return {
+      tableLoading: false,
       dialogVisible: false,
       currentPage: 1,
       pageSize: 10,
@@ -143,7 +145,12 @@ export default {
   beforeDestroy() {},
   destroyed() {},
   methods: {
-    handleGetlist() {
+    handleGetlist(val) {
+      if (val === '查询') {
+        this.pageSize = 10
+        this.currentPage = 1
+      }
+      this.tableLoading = true
       const params = {
         beginTime: this.beforeTime,
         busType: 1,
@@ -158,11 +165,13 @@ export default {
         this.tableData = res.data.records
         this.totalPage = res.data.total
         this.setSelectRow()
+        this.tableLoading = false
       })
     },
     handleClose() {
       this.$refs.multipleTable.clearSelection()
       this.currentPage = 1
+      this.tableData = []
       this.dialogVisible = false
     },
     checkSure() {
@@ -171,6 +180,7 @@ export default {
       )
       this.$emit('confincheck', multipleSelectionAll)
       this.currentPage = 1
+      this.tableData = []
       this.dialogVisible = false
       this.$refs.multipleTable.clearSelection()
     },
@@ -213,7 +223,7 @@ export default {
             effectTime.split(',')[1]
           }天失效`
         } else {
-          return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
+          return `${effectTime.split(',')[0]} 到 ${effectTime.split(',')[1]}`
         }
       }
     },
