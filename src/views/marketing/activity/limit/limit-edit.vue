@@ -118,10 +118,10 @@
               <el-form-item style="margin-right: 10px">
                 <el-radio v-model="xForm.limit" :label="1" :disabled="disabled">每人限制参与</el-radio>
               </el-form-item>
-              <el-form-item prop="limitAmount">
+              <el-form-item prop="limitTimes">
                 <el-input-number
-                  v-model="xForm.limitAmount"
-                  :min="0"
+                  v-model="xForm.limitTimes"
+                  :min="1"
                   :max="10000"
                   :step="1"
                   step-strictly
@@ -410,7 +410,7 @@ export default {
         mode: 1, // 优惠模式: 1-折扣, 2-减价
         allStore: true, // 门店活动范围: 0-全部, 1-指定门店
         freePostFee: 0, // 是否免邮 免运费配送
-        limitAmount: '',
+        limitTimes: '',
         limit: 0
       },
       xRules: {
@@ -420,7 +420,7 @@ export default {
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
         ],
-        limitAmount: [{ validator: check_limit, trigger: 'blur' }]
+        limitTimes: [{ validator: check_limit, trigger: 'blur' }]
       },
       tableForm: {
         selectedGoods: []
@@ -787,9 +787,9 @@ export default {
               freePostFee:
                 data.activityDetail && data.activityDetail.freePostFee,
               limit:
-                data.limitAmount === 0 ||
-                data.limitAmount === '0' ||
-                data.limitAmount === ''
+                data.limitTimes === 0 ||
+                data.limitTimes === '0' ||
+                data.limitTimes === ''
                   ? 0
                   : 1
             })
@@ -821,8 +821,7 @@ export default {
         description: this.xForm.description,
         startTime: this.xForm.startTime,
         endTime: this.xForm.endTime,
-        // limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
-        limitAmount: this.xForm.limit === 0 ? 0 : this.xForm.limitAmount,
+        limitTimes: this.xForm.limit === 0 ? 0 : this.xForm.limitTimes,
         // mode: this.xForm.mode,
         pmtRule: {
           freePostFee: this.xForm.freePostFee,
@@ -856,8 +855,7 @@ export default {
         startTime: this.xForm.startTime,
         endTime: this.xForm.endTime,
         // mode: this.xForm.mode,
-        // limitAmount: this.xForm.limitAmount <= 0 ? 0 : this.xForm.limitAmount,
-        limitAmount: this.xForm.limit === 0 ? 0 : this.xForm.limitAmount,
+        limitTimes: this.xForm.limit === 0 ? 0 : this.xForm.limitTimes,
         pmtRule: {
           freePostFee: this.xForm.freePostFee,
           pmtMode: this.xForm.mode,
