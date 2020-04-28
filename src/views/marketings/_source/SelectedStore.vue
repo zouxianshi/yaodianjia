@@ -1,19 +1,24 @@
 <template>
   <div class="selected-store-view">
-    <el-table ref="dataTable" :data="selectedStores.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)" height="250">
+    <el-table
+      ref="dataTable"
+      :data="selectedStores.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)"
+      height="250"
+    >
       <el-table-column label="门店编码">
-        <template slot-scope="scope">
-          {{ scope.row.stCode || scope.row.storeCode }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.stCode || scope.row.storeCode }}</template>
       </el-table-column>
       <el-table-column label="门店名称">
-        <template slot-scope="scope">
-          {{ scope.row.stName || scope.row.storeName }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.stName || scope.row.storeName }}</template>
       </el-table-column>
-      <el-table-column label="操作" width="60">
+      <el-table-column v-if="pageStatus!=3" label="操作" width="60">
         <template slot-scope="scope">
-          <el-button type="text" size="small" :disabled="!!scope.row.storeCode" @click="handleDel(scope.row)">删除</el-button>
+          <el-button
+            type="text"
+            size="small"
+            :disabled="!!scope.row.storeCode"
+            @click="handleDel(scope.row)"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -31,6 +36,7 @@
 export default {
   data() {
     return {
+      pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
       selectedStores: [],
       pageInfo: {
         currentPage: 1,
@@ -40,6 +46,10 @@ export default {
   },
   methods: {
     show(selectedStores) {
+      this.selectedStores = selectedStores
+    },
+    showPage(selectedStores, pageStatus) {
+      this.pageStatus = pageStatus
       this.selectedStores = selectedStores
     },
     // 删除已选门店

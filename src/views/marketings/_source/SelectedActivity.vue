@@ -17,7 +17,7 @@
       <el-table-column property="countRule" label="抽奖次数">
         <template slot-scope="scope">{{ '可抽奖'+scope.row.countRule+'次' }}</template>
       </el-table-column>
-      <el-table-column label="操作" width="60">
+      <el-table-column v-if="pageStatus!=3" label="操作" width="60">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
         </template>
@@ -29,6 +29,7 @@
 export default {
   data() {
     return {
+      pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
       selectedActivity: []
     }
   },
@@ -36,7 +37,10 @@ export default {
     show(selectedActivity) {
       this.selectedActivity = selectedActivity
     },
-    // 使用日期
+    showPage(selectedActivity, pageStatus) {
+      this.pageStatus = pageStatus
+      this.selectedActivity = selectedActivity
+    },
     handletimeRule(beginTime, endTime) {
       return beginTime.replace('T', ' ') + '-' + endTime.replace('T', ' ')
     },

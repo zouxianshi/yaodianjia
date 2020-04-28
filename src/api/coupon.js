@@ -87,7 +87,7 @@ export function getactivitList(params) {
 // 领券中心添加优惠券新增优惠券
 export function marketaddCoupon(params) {
   return request({
-    url: `${config.merGoods}/1.0/marketingActivities/addCoupon`,
+    url: `${config.merGoods}/1.0/market/addCoupon`,
     method: 'post',
     data: params
   })
@@ -96,6 +96,14 @@ export function marketaddCoupon(params) {
 export function updateCoupon(params) {
   return request({
     url: `${config.merGoods}/1.0/coupon/updateCoupon`,
+    method: 'post',
+    data: params
+  })
+}
+// (领券中心)失效优惠券
+export function couponInvalid(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/unvalidCoupon`,
     method: 'post',
     data: params
   })

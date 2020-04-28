@@ -54,6 +54,9 @@
 <script>
 import mGiftCard from '../../_source/giftCard'
 import { moduleList } from '@/api/coupon'
+import payImage from '@/assets/image/marketings/pay.png'
+import getcoupon from '@/assets/image/marketings/getcoupon.png'
+import zhuan from '@/assets/image/marketings/zhuan.png'
 export default {
   name: 'ListIndex',
   components: {
@@ -97,12 +100,15 @@ export default {
           i.imgUrl =
             'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'
           if (i.activityTemplateName === '支付有礼') {
-            i.url = '/marketings/activity-manage/payment-gift/list/'
+            i.url = `/marketings/activity-manage/payment-gift/list`
+            i.imgUrl = payImage
           } else {
             if (i.activityTemplateName === '领券中心') {
               i.url = `/marketings/activity-manage/coupons/list`
+              i.imgUrl = getcoupon
             } else {
               i.url = `/marketings/activity-manage/turntable/list`
+              i.imgUrl = zhuan
             }
             i.query = {
               code: i.activityTemplateCode,
