@@ -11,9 +11,6 @@
       <el-table-column property="sceneRule" label="活动场景">
         <template slot-scope="scope">{{ scope.row.sceneRule===1?'线上活动':'线下活动' }}</template>
       </el-table-column>
-      <el-table-column property="joinRule" label="参与方式">
-        <template slot-scope="scope">{{ scope.row.joinRule===1?'消耗积分':'不消耗积分' }}</template>
-      </el-table-column>
       <el-table-column property="countRule" label="抽奖次数">
         <template slot-scope="scope">{{ '可抽奖'+scope.row.countRule+'次' }}</template>
       </el-table-column>
@@ -47,6 +44,12 @@ export default {
     handleTemplateName(activityTemplateCode) {
       let name = ''
       switch (activityTemplateCode) {
+        case 'TA001':
+          name = '领券中心'
+          break
+        case 'TC002':
+          name = '支付有礼'
+          break
         case 'TA003':
           name = '大转盘'
           break

@@ -98,6 +98,7 @@ export default {
   },
   methods: {
     show(activity) {
+      this.selectedArr = [...activity]
       this.hasSelectList = []
       activity.forEach(item => {
         this.hasSelectList.push(item.name)
@@ -111,6 +112,12 @@ export default {
     handleTemplateName(activityTemplateCode) {
       let name = ''
       switch (activityTemplateCode) {
+        case 'TA001':
+          name = '领券中心'
+          break
+        case 'TC002':
+          name = '支付有礼'
+          break
         case 'TA003':
           name = '大转盘'
           break
@@ -141,15 +148,6 @@ export default {
                 this.selectedArr.push(this.currentRow)
               }
             }
-
-            // if (this.gridData.indexOf(this.selectedArr) >= 0) {
-            //     this.$refs.dataTable.toggleRowSelection(row, true)
-            //   }
-            // this.gridData.forEach(row => {
-            //   if (this.hasSelectList.indexOf(row.erpCode) >= 0) {
-            //     this.$refs.dataTable.toggleRowSelection(row, true)
-            //   }
-            // })
           })
         }
       })
@@ -168,7 +166,7 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentRow = val
-      if (this.gridData.length > 0) {
+      if (this.gridData.length > 0 && this.currentRow) {
         const index = this.gridData.findIndex(
           item => item.id === this.currentRow.id
         )
@@ -176,7 +174,7 @@ export default {
           this.radio = index
           this.selectedArr.splice(0)
           console.log(this.selectedArr)
-          this.selectedArr.push(val)
+          this.selectedArr.push(this.currentRow)
         }
       }
     },

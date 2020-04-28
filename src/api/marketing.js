@@ -88,3 +88,12 @@ export function ActivityDetail(params) {
     method: 'get'
   })
 }
+// 失效或删除普通活动(支付有礼)
+export function setNormalActivity(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/setNormalActivity`,
+    method: 'post',
+    data: params
+  })
+}
+

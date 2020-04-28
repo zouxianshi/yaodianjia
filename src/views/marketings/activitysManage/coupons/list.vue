@@ -50,12 +50,25 @@
           <div>
             {{ scope.row.cname + scope.row.ctype }}
             <el-tag
+              v-if="scope.row.ctype ===1"
               effect="dark"
               type="success"
               size="mini"
-            >{{ scope.row.ctype ===1?'折':'' || scope.row.ctype ===2?'满':'' || scope.row.ctype ===3?'礼':'' }}</el-tag>
+            >折</el-tag>
+            <el-tag
+              v-if="scope.row.ctype ===2"
+              effect="dark"
+              type="danger"
+              size="mini"
+            >满</el-tag>
+            <el-tag
+              v-if="scope.row.ctype ===3"
+              effect="dark"
+              type="warning"
+              size="mini"
+            >礼</el-tag>
           </div>
-          <div>{{ scope.row.id }}</div>
+          <div>ID:{{ scope.row.id }}</div>
           <div>{{ scope.row.shopRule ===1?'仅商城':'' || scope.row.shopRule ===2?'仅门店':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</div>
         </template>
       </el-table-column>
@@ -74,8 +87,8 @@
         >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
       </el-table-column>
       <el-table-column prop="perCount" label="限领" />
-      <el-table-column v-if="radio === '积分兑换'" prop="integral" label="所需积分" />
-      <el-table-column v-if="radio === '现金购买'" prop="amount" label="所需现金" />
+      <el-table-column v-if="radio === '积分兑换' || radio === '全部'" prop="integral" label="所需积分" />
+      <el-table-column v-if="radio === '现金购买' || radio === '全部'" prop="amount" label="所需现金" />
       <el-table-column prop="timeLimit" label="领券时间" width="160">
         <template
           slot-scope="scope"
@@ -167,14 +180,14 @@ export default {
       }
       const params = {
         activityTemplateCode: this.$route.query.code,
-        busType: '0',
+        // busType: '0',
         // activityTemplateName: this.$route.query.name,
-        activityType: this.couponStatus,
+        activityType: radioVal,
         cname: this.couponName,
         currentPage: this.currentPage,
         merCode: this.merCode,
         pageSize: this.pageSize,
-        state: radioVal
+        state: this.couponStatus
       }
       searchActivitie(params).then(res => {
         this.tableData = res.data.records
@@ -190,13 +203,17 @@ export default {
       })
         .then(() => {
           const params = {
-            id: this.$route.query.code,
+            id: rows[index].activityId,
             listCouponRemove: [rows[index].id]
           }
-          couponInvalid(params).then(res => {})
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          couponInvalid(params).then(res => {
+            if (res.code === '10000') {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.getList()
+            }
           })
         })
         .catch(() => {
@@ -239,9 +256,9 @@ export default {
     handletimeRule(timeRule, effectTime) {
       if (timeRule) {
         if (timeRule === 1) {
-          return `自领取${effectTime}天有效`
+          return `自领取起${effectTime}天有效`
         } else if (timeRule === 2) {
-          return `自领取${effectTime.split(',')[0]}天有效,${
+          return `自领取起${effectTime.split(',')[0]}天有效,${
             effectTime.split(',')[1]
           }天失效`
         } else {

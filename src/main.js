@@ -32,6 +32,7 @@ Vue.use(Element, {
 })
 
 import { MC } from '@merchant/commons'
+// import { MC } from 'D:/vueWorkspace/merchant-commons/src'
 
 MC.setCookie('mc-system', 'medical')
 
