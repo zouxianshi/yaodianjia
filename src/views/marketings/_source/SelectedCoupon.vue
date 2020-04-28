@@ -112,8 +112,10 @@ export default {
       })
     },
     onChangeLimit(event, row, $index) {
-      // const { totalLimit } = row
-      // this.$set(this.write[$index], 'totalLimit', totalLimit)
+      const { totalLimit } = row
+      this.$set(this.selectedCoupons[$index], 'totalLimit', totalLimit)
+
+      console.log('ddd:', this.selectedCoupons)
     },
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination) {
@@ -141,9 +143,9 @@ export default {
     handletimeRule(timeRule, effectTime) {
       if (timeRule) {
         if (timeRule === 1) {
-          return `自领取起${effectTime}天有效`
+          return `自领取${effectTime}天有效`
         } else if (timeRule === 2) {
-          return `自领取起${effectTime.split(',')[0]}天有效,${
+          return `自领取${effectTime.split(',')[0]}天有效,${
             effectTime.split(',')[1]
           }天失效`
         } else {

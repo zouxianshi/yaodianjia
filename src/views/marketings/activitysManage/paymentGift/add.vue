@@ -166,7 +166,13 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { createActivity, ActivityDetail, updateActivity } from '@/api/coupon'
+import {
+  createActivity,
+  ActivityDetail,
+  updateActivity,
+  normalActivityAddedCouponList,
+  normalAddedActivityList
+} from '@/api/coupon'
 import checkCoupon from '@/components/Marketings/checkCoupon'
 import mPopSelectStore from '@/components/Marketings/popSelectStore'
 import mPopSelectActivity from '@/components/Marketings/popSelectActivity'
@@ -608,6 +614,52 @@ export default {
         })
         .catch(err => {
           this.pageLoading = false
+          console.log('err', err)
+        })
+      this._getAddedCouponList(id)
+      this._getAddedActivityList(id)
+    },
+    _getAddedCouponList(id) {
+      const params = { currentPage: 1, id: id, pageSize: 5 }
+      normalActivityAddedCouponList(params)
+        .then(res => {
+          if (res.code === '10000') {
+            //  this.selectedCoupons.push({
+            //       cname: '',
+            //       ctype: '',
+            //       useRule: '',
+            //       denomination: '',
+            //       timeRule: '',
+            //       effectTime: '',
+            //       shopRule: '',
+            //       productRule: '',
+            //       totalLimit: ''
+            //     })
+          }
+        })
+        .catch(err => {
+          console.log('err', err)
+        })
+    },
+    _getAddedActivityList(id) {
+      const params = { currentPage: 1, id: id, pageSize: 5 }
+      normalAddedActivityList(params)
+        .then(res => {
+          if (res.code === '10000') {
+            this.selectedCoupons.push({
+              cname: '',
+              ctype: '',
+              useRule: '',
+              denomination: '',
+              timeRule: '',
+              effectTime: '',
+              shopRule: '',
+              productRule: '',
+              totalLimit: ''
+            })
+          }
+        })
+        .catch(err => {
           console.log('err', err)
         })
     }

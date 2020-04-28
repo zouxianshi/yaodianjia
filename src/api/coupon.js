@@ -156,4 +156,20 @@ export function setNormalActivity(params) {
     data: params
   })
 }
+// 支付有礼已被添加的优惠券列表
+export function normalActivityAddedCouponList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/normalActivityAddedCouponList`,
+    method: 'post',
+    data: params
+  })
+}
 
+// 支付有礼已被添加的活动列表
+export function normalAddedActivityList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/normalAddedActivityList`,
+    method: 'post',
+    data: params
+  })
+}
