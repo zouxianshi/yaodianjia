@@ -79,7 +79,7 @@
   </div>
 </template>
 <script>
-import { getStoreGoodsList } from '@/api/coupon'
+import { getStoreGoodsList } from '@/api/store-goods'
 import { getTypeTree } from '@/api/group'
 import { mapGetters } from 'vuex'
 export default {
