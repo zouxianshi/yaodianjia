@@ -124,10 +124,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import {
+  queryStoreByOrgId,
   setNormalActivity,
   normalActivityList
-} from '@/api/marketing'
-import { queryStoreByOrgId } from '@/api/coupon'
+} from '@/api/coupon'
 import config from '@/utils/config'
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
@@ -197,7 +197,11 @@ export default {
         .then(res => {
           console.log('_loadStoresList-------', res)
           res.data.data.map(st => {
-            this.storeData.push({ stCode: st.stCode, stName: st.stName, id: st.id })
+            this.storeData.push({
+              stCode: st.stCode,
+              stName: st.stName,
+              id: st.id
+            })
           })
         })
         .catch(() => {})

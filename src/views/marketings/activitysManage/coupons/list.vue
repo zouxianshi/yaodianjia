@@ -97,7 +97,11 @@
       <el-table-column prop="name" label="活动状态">
         <template
           slot-scope="scope"
-        >{{ scope.row.state===1?'进行中':'' || scope.row.state===2?'未开始':'' || scope.row.state===3?'已结束':'' }}</template>
+        >
+          <el-tag>
+            {{ scope.row.activityState===1?'进行中':'' || scope.row.activityState===2?'未开始':'' || scope.row.activityState===3?'已结束':'' }}
+          </el-tag>
+        </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
@@ -212,7 +216,7 @@ export default {
                 type: 'success',
                 message: '删除成功!'
               })
-              this.getList()
+              this.getList('类型')
             }
           })
         })
@@ -244,7 +248,7 @@ export default {
         }
       } else if (ctype === 2) {
         if (useRule === 0) {
-          return '无门槛，满减券'
+          return `无门槛，减${denomination}`
         } else {
           return `满${useRule}可用,减${denomination}元`
         }

@@ -1,6 +1,6 @@
 <template>
-  <div class="add">
-    <div v-loading="pageLoading" class="payment-gift-rules" element-loading-text="加载中">
+  <div v-loading="pageLoading" class="add" element-loading-text="加载中">
+    <div class="payment-gift-rules">
       <h4>活动信息</h4>
       <el-form ref="form" :rules="rules" :model="form" label-width="100px" :disabled="disabled">
         <el-form-item label="活动名称：" prop="activityDetailName">
@@ -165,10 +165,14 @@
   </div>
 </template>
 <script>
-import _ from 'lodash'
 import { mapGetters } from 'vuex'
-import { createActivity } from '@/api/marketing'
-import { ActivityDetail } from '@/api/marketing'
+import {
+  createActivity,
+  ActivityDetail,
+  updateActivity,
+  normalActivityAddedCouponList,
+  normalAddedActivityList
+} from '@/api/coupon'
 import checkCoupon from '@/components/Marketings/checkCoupon'
 import mPopSelectStore from '@/components/Marketings/popSelectStore'
 import mPopSelectActivity from '@/components/Marketings/popSelectActivity'
@@ -370,7 +374,7 @@ export default {
     },
     // 选择商品
     selectProduct() {
-      this.$refs.selectProduct.show(this.form.listCouponProduct)
+      this.$refs.selectProduct.show(this.selectedProducts)
     },
     setTagsViewTitle(title) {
       const route = Object.assign({}, this.tempRoute, { title: `${title}` })
@@ -440,17 +444,38 @@ export default {
         }
         var params = {}
         params = JSON.parse(JSON.stringify(this.form))
-        createActivity(params).then(res => {
-          if (res.code === '10000') {
-            this.$message({
-              message: res.msg,
-              type: 'success'
-            })
-            this.$router.replace(
-              '/marketings/activity-manage/payment-gift/list'
-            )
-          }
-        })
+        if (this.pageStatus === 1) {
+          createActivity(params).then(res => {
+            if (res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.$router.replace(
+                '/marketings/activity-manage/payment-gift/list'
+              )
+            }
+          })
+        } else {
+          delete params['createName']
+          delete params['createTime']
+          delete params['giftType']
+          delete params['isValid']
+          delete params['status']
+          delete params['updateName']
+          delete params['updateTime']
+          updateActivity(params).then(res => {
+            if (res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.$router.replace(
+                '/marketings/activity-manage/payment-gift/list'
+              )
+            }
+          })
+        }
       }
     },
 
@@ -516,7 +541,36 @@ export default {
               res.data.sceneRuleReal = []
               res.data.sceneRuleReal.push(res.data.sceneRule)
             }
-            this.form = _.cloneDeep(res.data)
+            res.data.listActivityPayEntity.forEach(item => {
+              if (!res.data.giftType) {
+                res.data.giftType = item.giftType
+              }
+              if (item.giftType === 1) {
+                this.selectedCoupons.push({
+                  cname: '',
+                  ctype: '',
+                  useRule: '',
+                  denomination: '',
+                  timeRule: '',
+                  effectTime: '',
+                  shopRule: '',
+                  productRule: '',
+                  totalLimit: ''
+                })
+              } else {
+                this.selectedActivity.push({
+                  activityTemplateCode: '',
+                  activityDetailName: '',
+                  beginTime: '',
+                  endTime: '',
+                  sceneRule: '',
+                  countRule: '',
+                  id: ''
+                })
+              }
+            })
+            // this.form = _.cloneDeep(res.data)
+            this.form = Object.assign({}, this.form, res.data)
             this.beginEndTime = [
               res.data.beginTime.replace(/T/g, ' ').replace(/Z/g, ''),
               res.data.endTime.replace(/T/g, ' ').replace(/Z/g, '')
@@ -549,49 +603,7 @@ export default {
               }
             )
             this.onGetSelectProduct(this.selectedProducts)
-            res.data.listActivityPayEntity.forEach(item => {
-              this.form.giftType = item.giftType
-              if (item.giftType === 1) {
-                this.selectedCoupons.push({
-                  cname: '',
-                  ctype: '',
-                  useRule: '',
-                  denomination: '',
-                  timeRule: '',
-                  effectTime: '',
-                  shopRule: '',
-                  productRule: '',
-                  totalLimit: ''
-                })
-              } else {
-                this.selectedActivity.push(item)
-              }
-            })
-            // this.tableForm.selectedGoods = data.items.map(item => {
-            //   return {
-            //     activityId: item.activityId,
-            //     discount: '' + item.discount,
-            //     id: item.id,
-            //     limituseRule: '' + item.limituseRule,
-            //     productManufacture: item.productManufacture,
-            //     productName: item.productName,
-            //     productSpecId: item.productSpecId,
-            //     productSpecName: item.productSpecName,
-            //     stockuseRule: (item.stockuseRule || '') + ''
-            //   }
-            // })
-            // console.log('this.xForm', this.xForm)
-            // this.xForm = Object.assign(data, {
-            //   dateRange: [res.data.startTime, res.data.endTime]
-            // })
-            // this.selectedStore = data.stores.map(v => {
-            //   const store = {
-            //     id: v.storeId,
-            //     stName: v.storeName
-            //   }
-            //   return store
-            // })
-            // console.log('this.selectedStore', this.selectedStore)
+
             // 编辑状态时，更新页面当前状态
             // if (this.pageStatus === 2) {
             //   this.updateActivityStatus(data)
@@ -602,6 +614,52 @@ export default {
         })
         .catch(err => {
           this.pageLoading = false
+          console.log('err', err)
+        })
+      this._getAddedCouponList(id)
+      this._getAddedActivityList(id)
+    },
+    _getAddedCouponList(id) {
+      const params = { currentPage: 1, id: id, pageSize: 5 }
+      normalActivityAddedCouponList(params)
+        .then(res => {
+          if (res.code === '10000') {
+            //  this.selectedCoupons.push({
+            //       cname: '',
+            //       ctype: '',
+            //       useRule: '',
+            //       denomination: '',
+            //       timeRule: '',
+            //       effectTime: '',
+            //       shopRule: '',
+            //       productRule: '',
+            //       totalLimit: ''
+            //     })
+          }
+        })
+        .catch(err => {
+          console.log('err', err)
+        })
+    },
+    _getAddedActivityList(id) {
+      const params = { currentPage: 1, id: id, pageSize: 5 }
+      normalAddedActivityList(params)
+        .then(res => {
+          if (res.code === '10000') {
+            this.selectedCoupons.push({
+              cname: '',
+              ctype: '',
+              useRule: '',
+              denomination: '',
+              timeRule: '',
+              effectTime: '',
+              shopRule: '',
+              productRule: '',
+              totalLimit: ''
+            })
+          }
+        })
+        .catch(err => {
           console.log('err', err)
         })
     }

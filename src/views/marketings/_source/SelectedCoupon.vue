@@ -112,8 +112,10 @@ export default {
       })
     },
     onChangeLimit(event, row, $index) {
-      // const { totalLimit } = row
-      // this.$set(this.write[$index], 'totalLimit', totalLimit)
+      const { totalLimit } = row
+      this.$set(this.selectedCoupons[$index], 'totalLimit', totalLimit)
+
+      console.log('ddd:', this.selectedCoupons)
     },
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination) {
@@ -125,7 +127,7 @@ export default {
         }
       } else if (ctype === 2) {
         if (useRule === 0) {
-          return '无门槛，满减券'
+          return `无门槛，减${denomination}`
         } else {
           return `满${useRule}可用,减${denomination}元`
         }
@@ -141,9 +143,9 @@ export default {
     handletimeRule(timeRule, effectTime) {
       if (timeRule) {
         if (timeRule === 1) {
-          return `自领取起${effectTime}天有效`
+          return `自领取${effectTime}天有效`
         } else if (timeRule === 2) {
-          return `自领取起${effectTime.split(',')[0]}天有效,${
+          return `自领取${effectTime.split(',')[0]}天有效,${
             effectTime.split(',')[1]
           }天失效`
         } else {
