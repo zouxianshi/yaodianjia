@@ -35,7 +35,7 @@
         <template slot-scope="scope">
           <div style="display:flex;align-items: center;">
             <el-input
-              v-model.number="scope.row.totalLimit"
+              v-model.number="scope.row.giftNum"
               @change="onChangeLimit($event,scope.row,scope.$index)"
             />
             <i class="el-icon-edit" />
@@ -112,10 +112,14 @@ export default {
       })
     },
     onChangeLimit(event, row, $index) {
-      const { totalLimit } = row
-      this.$set(this.selectedCoupons[$index], 'totalLimit', totalLimit)
-
-      console.log('ddd:', this.selectedCoupons)
+      const { giftNum } = row
+      if (giftNum < 1) {
+        this.$message.error('发放张数不得小于1')
+      } else if (giftNum > 10000) {
+        this.$message.error('发放张数不得超过100000')
+      } else {
+        this.$set(this.selectedCoupons[$index], 'giftNum', giftNum)
+      }
     },
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination) {

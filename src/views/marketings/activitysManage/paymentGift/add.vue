@@ -166,6 +166,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import _ from 'lodash'
 import {
   createActivity,
   ActivityDetail,
@@ -428,8 +429,16 @@ export default {
         }
         if (this.form.giftType === 1 && this.selectedCoupons.length > 0) {
           this.selectedCoupons.forEach(coupon => {
+            if (coupon.giftNum < 1) {
+              this.$message.error('发放张数不得小于1')
+              return
+            } else if (coupon.giftNum > 10000) {
+              this.$message.error('发放张数不得超过100000')
+              return
+            }
             this.form.activityPayReqDTO.push({
               giftId: coupon.id,
+              giftNum: coupon.giftNum,
               giftType: 1
             })
           })
@@ -445,6 +454,7 @@ export default {
         var params = {}
         params = JSON.parse(JSON.stringify(this.form))
         if (this.pageStatus === 1) {
+          console.log('createActivity', JSON.stringify(params))
           createActivity(params).then(res => {
             if (res.code === '10000') {
               this.$message({
@@ -531,7 +541,7 @@ export default {
         id: id
       }
       this.form.sceneRuleReal = [1, 2]
-      console.log('params detail', params)
+      console.log('params detail', JSON.stringify(params))
       ActivityDetail(params)
         .then(res => {
           if (res.code === '10000') {
@@ -544,29 +554,6 @@ export default {
             res.data.listActivityPayEntity.forEach(item => {
               if (!res.data.giftType) {
                 res.data.giftType = item.giftType
-              }
-              if (item.giftType === 1) {
-                this.selectedCoupons.push({
-                  cname: '',
-                  ctype: '',
-                  useRule: '',
-                  denomination: '',
-                  timeRule: '',
-                  effectTime: '',
-                  shopRule: '',
-                  productRule: '',
-                  totalLimit: ''
-                })
-              } else {
-                this.selectedActivity.push({
-                  activityTemplateCode: '',
-                  activityDetailName: '',
-                  beginTime: '',
-                  endTime: '',
-                  sceneRule: '',
-                  countRule: '',
-                  id: ''
-                })
               }
             })
             // this.form = _.cloneDeep(res.data)
@@ -593,11 +580,10 @@ export default {
                   busId: item.busId,
                   ruleType: item.ruleType,
                   id: item.id,
-                  mainPic: '',
                   erpCode: item.proCode,
                   name: item.proName,
                   brandName: item.proBrand,
-                  specSkuList: '',
+                  proSpec: item.proSpec,
                   price: item.proPrice
                 }
               }
@@ -621,20 +607,12 @@ export default {
     },
     _getAddedCouponList(id) {
       const params = { currentPage: 1, id: id, pageSize: 5 }
+      console.log('normalActivityAddedCouponList', JSON.stringify(params))
       normalActivityAddedCouponList(params)
         .then(res => {
-          if (res.code === '10000') {
-            //  this.selectedCoupons.push({
-            //       cname: '',
-            //       ctype: '',
-            //       useRule: '',
-            //       denomination: '',
-            //       timeRule: '',
-            //       effectTime: '',
-            //       shopRule: '',
-            //       productRule: '',
-            //       totalLimit: ''
-            //     })
+          if (res.code === '10000' && res.data.records.length > 0) {
+            this.selectedCoupons = _.cloneDeep(res.data.records)
+            this.onGetSelectCoupon(this.selectedCoupons)
           }
         })
         .catch(err => {
@@ -643,20 +621,12 @@ export default {
     },
     _getAddedActivityList(id) {
       const params = { currentPage: 1, id: id, pageSize: 5 }
+      console.log('normalAddedActivityList', JSON.stringify(params))
       normalAddedActivityList(params)
         .then(res => {
-          if (res.code === '10000') {
-            this.selectedCoupons.push({
-              cname: '',
-              ctype: '',
-              useRule: '',
-              denomination: '',
-              timeRule: '',
-              effectTime: '',
-              shopRule: '',
-              productRule: '',
-              totalLimit: ''
-            })
+          if (res.code === '10000' && res.data.records.length > 0) {
+            this.selectedActivity = _.cloneDeep(res.data.records)
+            this.onGetSelectActivity(this.selectedActivity)
           }
         })
         .catch(err => {
