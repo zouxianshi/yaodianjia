@@ -6,33 +6,39 @@
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name" style="width: 60px">活动状态</span>
-            <el-select
-              v-model="searchForm.timeStatus"
-              size="small"
-              placeholder="全部1"
-              @change="search()"
-            >
-              <el-option label="全部" :value="-2" />
+            <el-select v-model="searchForm.state" size="small" placeholder="全部1" @change="search()">
+              <el-option label="全部" :value="0" />
               <el-option label="进行中" :value="1" />
-              <el-option label="未开始" :value="-1" />
-              <el-option label="已结束" :value="0" />
-              <el-option label="已删除" :value="2" />
+              <el-option label="未开始" :value="2" />
+              <el-option label="已结束" :value="3" />
+              <!-- <el-option label="已删除" :value="2" /> -->
             </el-select>
           </div>
           <div class="search-item">
             <span class="label-name" style="width: 60px">参与门店</span>
-            <el-select v-model="searchForm.store" size="small" placeholder="全部" @change="search()">
+            <el-select
+              v-model="searchForm.storeCode"
+              size="small"
+              placeholder="全部"
+              @change="search()"
+              @focus="_loadStoresList()"
+            >
               <el-option
                 v-for="item in storeData"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.id"
+                :label="item.stName"
+                :value="item.stCode"
               />
             </el-select>
           </div>
           <div class="search-item">
             <span class="label-name" style="width: 60px">活动名称</span>
-            <el-input v-model.trim="searchForm.name" size="small" style="width: 160px" />
+            <el-input
+              v-model.trim="searchForm.activeName"
+              size="small"
+              style="width: 160px"
+              @change="search()"
+            />
           </div>
           <div class="search-item">
             <el-button size="small" type="primary" @click="search()">查 询</el-button>
@@ -42,48 +48,57 @@
       </section>
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
         <el-table :data="tableData" style="width: 100%" size="small">
-          <el-table-column prop="startTime" label="活动类型" min-width="80">
+          <el-table-column prop="activityType" label="活动类型" min-width="80">
             <template slot-scope="scope">
-              <span v-if="scope.row.type === '10'">电子DM单</span>
-              <span v-if="scope.row.type === '11'">限时特惠</span>
-              <span v-if="scope.row.type === '12'">限时秒杀</span>
+              <span v-if="scope.row.activityType === 0">其他类型</span>
+              <span v-if="scope.row.activityType === 1">免费</span>
+              <span v-if="scope.row.activityType === 2">积分</span>
+              <span v-if="scope.row.activityType === 3">现金</span>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="活动名称" min-width="120" />
-          <el-table-column prop="name" label="参与门店" min-width="120" />
-          <el-table-column prop="startTime" label="活动开始时间" min-width="150" align="center" />
-          <el-table-column prop="endTime" label="活动结束时间" min-width="150" align="center" />
+          <el-table-column prop="activityDetailName" label="活动名称" min-width="120" />
+          <el-table-column label="金额门槛" min-width="80" prop="userRule" />
+          <el-table-column label="活动开始时间" min-width="150" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.beginTime!=null?scope.row.beginTime.replace('T',' '):'-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="活动结束时间" min-width="150" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.endTime!=null?scope.row.endTime.replace('T',' '):'-' }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="时间状态" min-width="80" align="center">
             <template slot-scope="scope">
-              <el-tag v-if="statusCupte(scope.row)==0" size="small" type="info">未开始</el-tag>
-              <el-tag v-if="statusCupte(scope.row)==1" size="small" type="success">进行中</el-tag>
-              <el-tag v-if="statusCupte(scope.row)==2" size="small" type="danger">已结束</el-tag>
+              <el-tag v-if="scope.row.state===1" size="small" type="success">进行中</el-tag>
+              <el-tag v-if="scope.row.state===2" size="small" type="info">未开始</el-tag>
+              <el-tag v-if="scope.row.state===3" size="small" type="danger">已结束</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="状态" min-width="80" align="center">
             <template slot-scope="scope">
-              <el-tag v-if="statusCupte(scope.row)==2" size="small" type="info">已失效</el-tag>
+              <el-tag v-if="scope.row.status===0" size="small" type="info">已失效</el-tag>
               <el-tag v-else size="small">生效</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
               <el-button
-                v-if="statusCupte(scope.row)===0"
+                v-if="scope.row.state===2&&scope.row.status===1"
                 plain
                 size="mini"
                 @click="toCreate(scope.row)"
               >编辑</el-button>
               <el-button
-                v-else-if="statusCupte(scope.row)===2||statusCupte(scope.row)===1"
+                v-else-if="scope.row.state===3||scope.row.state===1"
                 plain
                 size="mini"
                 @click="toCreate(scope.row, 1)"
               >查看</el-button>
-              <template v-if="statusCupte(scope.row)===1">
+              <template v-if="scope.row.state===1&&scope.row.status===1">
                 <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
               </template>
-              <template v-if="statusCupte(scope.row)===0||statusCupte(scope.row)===2">
+              <template v-else>
                 <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
               </template>
             </template>
@@ -108,7 +123,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { delActivity, disableActivity } from '@/api/marketing'
+import {
+  setNormalActivity,
+  normalActivityList
+} from '@/api/marketing'
+import { queryStoreByOrgId } from '@/api/coupon'
 import config from '@/utils/config'
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
@@ -118,36 +137,13 @@ export default {
   name: 'Banner',
   data() {
     return {
+      storeData: [{ stCode: '', stName: '全部', id: '' }],
       searchForm: {
         type: '-1', // 活动类型 (int)(10: 电子DM单, 11: 限时特惠, 12: 限时秒杀)
-        name: '',
-        startTime: '',
-        endTime: '',
-        store: '0', // 门店
-        timeStatus: -2 // 活动.时间状态 int (-1: 未开始, 1: 进行中, 0: 已结束)
+        activeName: '',
+        storeCode: '', // 门店
+        state: 0 // 活动.时间状态 int (2: 未开始, 1: 进行中, 3: 已结束)
       },
-      storeData: [
-        {
-          value: '0',
-          label: '全部'
-        },
-        {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项3',
-          label: '蚵仔煎'
-        },
-        {
-          value: '选项4',
-          label: '龙须面'
-        },
-        {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
-      ],
       tableData: [],
       pager: {
         current: 1,
@@ -177,7 +173,7 @@ export default {
   },
   methods: {
     statusCupte(row) {
-      const startTimestamp = Date.parse(new Date(row.startTime))
+      const startTimestamp = Date.parse(new Date(row.beginTime))
       const endTimestamp = Date.parse(new Date(row.endTime))
       const timestamp = Date.parse(new Date())
       if (timestamp < startTimestamp) {
@@ -187,6 +183,24 @@ export default {
       } else if (timestamp > endTimestamp) {
         return 2
       }
+    },
+    // 门店
+    _loadStoresList() {
+      const param = {
+        currentPage: 1,
+        merCode: this.merCode,
+        orgId: '',
+        pageSize: 9999,
+        storeProperty: ''
+      }
+      queryStoreByOrgId(param)
+        .then(res => {
+          console.log('_loadStoresList-------', res)
+          res.data.data.map(st => {
+            this.storeData.push({ stCode: st.stCode, stName: st.stName, id: st.id })
+          })
+        })
+        .catch(() => {})
     },
     fetchData() {
       this._getTableData()
@@ -248,42 +262,35 @@ export default {
     },
     // 获取列表数据
     _getTableData() {
-      this.tableData = [
-        {
-          name: 'eee',
-          startTime: '2019-10-21 22:22:22',
-          endTime: '2019-10-28 22:22:22',
-          id: '@@@'
+      const params = {
+        currentPage: this.pager.current,
+        pageSize: this.pager.size,
+        activityTemplateCode: 'TC002',
+        merCode: this.merCode,
+        activeName: this.searchForm.activeName,
+        state: this.searchForm.state,
+        storeCode: this.searchForm.storeCode
+      }
+      console.log('params', params)
+      normalActivityList(params).then(res => {
+        if (res.code === '10000') {
+          this.tableData = res.data.records || []
+          this.pager.total = res.data.total || 0
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
         }
-      ]
-      // const params = {
-      //   type: this.searchForm.type,
-      //   name: this.searchForm.name,
-      //   minStartTime: this.searchForm.startTime,
-      //   maxStartTime: this.searchForm.endTime,
-      //   timeStatus: this.searchForm.timeStatus,
-      //   currentPage: this.pager.current,
-      //   pageSize: this.pager.size
-      // }
-      // console.log('params', params)
-      // getActivityList(params).then(res => {
-      //   if (res.code === '10000') {
-      // this.tableData = res.data.data || []
-      // this.pager.total = res.data.totalCount || 0
-      //   } else {
-      //     this.$message({
-      //       message: res.msg,
-      //       type: 'error',
-      //       duration: 5 * 1000
-      //     })
-      //   }
-      // })
+      })
     },
     _delData(id) {
       const params = {
-        id: id
+        id: id,
+        state: 1
       }
-      delActivity(params).then(res => {
+      setNormalActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('已删除')
           // 更新列表
@@ -296,9 +303,10 @@ export default {
     // 失效数据
     _disableData(id) {
       const params = {
-        id: id
+        id: id,
+        state: 2
       }
-      disableActivity(params).then(res => {
+      setNormalActivity(params).then(res => {
         if (res.code === '10000') {
           this.$message.success('已失效')
           // 更新列表

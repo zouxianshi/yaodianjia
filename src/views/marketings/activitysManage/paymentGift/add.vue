@@ -3,22 +3,29 @@
     <div v-loading="pageLoading" class="payment-gift-rules" element-loading-text="加载中">
       <h4>活动信息</h4>
       <el-form ref="form" :rules="rules" :model="form" label-width="100px" :disabled="disabled">
-        <el-form-item label="活动名称：" prop="name">
-          <el-input v-model="form.name" maxlength="30" placeholder="请输入活动名称" clearable />
+        <el-form-item label="活动名称：" prop="activityDetailName">
+          <el-input
+            v-model="form.activityDetailName"
+            maxlength="30"
+            placeholder="请输入活动名称"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="活动时间：" prop="huodongshijian">
+        <el-form-item label="活动时间：" prop="beginEndTime">
           <el-date-picker
-            v-model="form.huodongshijian"
+            v-model="beginEndTime"
             type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-time="['00:00:00','23:59:59']"
           />
         </el-form-item>
 
-        <el-form-item label="活动说明：" prop="desc">
+        <el-form-item label="活动说明：" prop="activityNote">
           <el-input
-            v-model="form.desc"
+            v-model="form.activityNote"
             type="textarea"
             maxlength="200"
             placeholder="请输入活动说明"
@@ -29,73 +36,118 @@
     </div>
     <div class="payment-gift-rules">
       <h4>活动规则</h4>
-      <el-form ref="form" label-width="100px" class="demo-form-inline" :rules="rules" :model="form" :disabled="disabled">
-        <el-form-item label="活动范围：">
-          <el-radio-group v-model="form.range">
-            <el-radio label="0">线上商城</el-radio>
-            <el-radio label="1">线下门店</el-radio>
-          </el-radio-group>
+      <el-form
+        ref="form2"
+        label-width="100px"
+        class="demo-form-inline"
+        :rules="rules"
+        :model="form"
+        :disabled="disabled"
+      >
+        <el-form-item label="活动场景：" prop="sceneRuleReal">
+          <el-checkbox-group v-model="form.sceneRuleReal">
+            <el-checkbox :label="1">线上商城</el-checkbox>
+            <el-checkbox :label="2">线下门店</el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
-
-        <el-form-item label="活动门店：" prop="store">
-          <el-radio-group v-model="form.store">
-            <el-radio label="0">全部门店</el-radio>
-            <el-radio label="1">指定门店
-              <span v-if="form.store==='1'&&!disabled" @click="selectStore">选择门店</span>
+        <el-form-item label="活动门店：" prop="shopRule">
+          <el-radio-group v-model="form.shopRule">
+            <el-radio :label="1">全部门店</el-radio>
+            <el-radio :label="2">
+              指定门店
+              <span v-if="form.shopRule===2&&!disabled" @click="selectStore">选择门店</span>
             </el-radio>
           </el-radio-group>
-          <mSelectedStore v-show="form.store==='1'&&selectedStores.length>0" ref="selectedStoreView" @onDel="onGetSelectStore" />
+          <mSelectedStore
+            v-show="form.shopRule===2&&selectedStores.length>0"
+            ref="selectedStoreView"
+            @onDel="onGetSelectStore"
+          />
         </el-form-item>
-        <el-form-item label="适用商品：" prop="product">
-          <el-radio-group v-model="form.product">
-            <el-radio label="0">全部商品</el-radio>
-            <el-radio label="1">指定商品
-              <span v-if="form.product==='1'&&!disabled" @click="selectProduct">选择商品</span>
+        <el-form-item label="适用商品：" prop="productRule">
+          <el-radio-group v-model="form.productRule">
+            <el-radio :label="1">全部商品</el-radio>
+            <el-radio :label="2">
+              指定商品
+              <span v-if="form.productRule===2&&!disabled" @click="selectProduct">选择商品</span>
             </el-radio>
           </el-radio-group>
-          <mSelectedProduct v-show="form.product==='1'&&selectedProducts.length>0" ref="selectedProductView" @onDel="onGetSelectProduct" />
+          <mSelectedProduct
+            v-show="form.productRule===2&&selectedProducts.length>0"
+            ref="selectedProductView"
+            @onDel="onGetSelectProduct"
+          />
         </el-form-item>
-        <el-form-item label="消费金额：" prop="amount">
+        <el-form-item label="消费金额：" prop="useRule">
           <span class="amTips">
             购满金额
-            <el-input v-model.number="form.amount" size="mini" style="width:80px" /> 元，可参与活动
+            <el-input v-model.number="form.useRule" size="mini" style="width:80px" />元，可参与活动
           </span>
         </el-form-item>
       </el-form>
     </div>
     <div class="payment-gift-rules">
       <h4>权益设置</h4>
-      <el-form ref="form" label-width="100px" class="demo-form-inline" :rules="rules" :model="form" :disabled="disabled">
-        <el-form-item label="选择权益：" prop="coupon">
-          <el-radio-group v-model="form.coupon">
-            <el-radio label="0">送优惠券
+      <el-form
+        ref="form3"
+        label-width="100px"
+        class="demo-form-inline"
+        :rules="rules"
+        :model="form"
+        :disabled="disabled"
+      >
+        <el-form-item label="选择权益：" prop="giftType">
+          <el-radio-group v-model="form.giftType">
+            <el-radio :label="1">
+              送优惠券
               <span class="zkTips">最多可选二十张</span>
-              <div v-if="form.coupon==='0'&&!disabled" class="from-clickable" @click="selectStore">选择优惠券</div>
+              <div
+                v-if="form.giftType===1&&!disabled"
+                class="from-clickable"
+                @click="selectCoupon"
+              >选择优惠券</div>
             </el-radio>
-            <mSelectedCoupon v-show="form.store==='1'&&selectedCoupons.length>0" ref="selectedCouponView" @onDel="onGetSelectCoupon" />
-            <el-radio label="1">抽奖活动
+            <mSelectedCoupon
+              v-show="form.giftType===1&&selectedCoupons.length>0"
+              ref="selectedCouponView"
+              @onDel="onGetSelectCoupon"
+            />
+            <el-radio :label="2">
+              抽奖活动
               <span class="zkTips">只能选择一个</span>
-              <div v-if="form.coupon==='1'&&!disabled" class="from-clickable" @click="selectActivity">选择活动</div>
+              <div
+                v-if="form.giftType===2&&!disabled"
+                class="from-clickable"
+                @click="selectActivity"
+              >选择活动</div>
             </el-radio>
           </el-radio-group>
-          <mSelectedActivity v-show="form.coupon==='1'&&selectedActivity.length>0" ref="selectedActivityView" @onDel="onGetSelectActivity" />
+          <mSelectedActivity
+            v-show="form.giftType===2&&selectedActivity.length>0"
+            ref="selectedActivityView"
+            @onDel="onGetSelectActivity"
+          />
         </el-form-item>
-        <el-form-item label="参与次数">
-          <el-radio-group v-model="form.range">
-            <el-radio label="0">不限次数
+        <el-form-item label="参与次数：" prop="countRule">
+          <el-radio-group v-model="countRuleReal">
+            <el-radio :label="0">
+              不限次数
               <span class="zkTips">用户每次消费达到条件后即送</span>
             </el-radio>
-            <el-radio label="1"><span class="amTips">
-              每人限制参与
-              <el-input v-model.number="form.amount" size="mini" style="width:80px" /> 次
-            </span><span class="zkTips">用户达到条件后可获得权益的总次数</span></el-radio>
+            <el-radio :label="1">
+              <span class="amTips">
+                每人限制参与
+                <el-input v-model.number="form.countRule" size="mini" style="width:80px" />次
+              </span>
+              <span class="zkTips">用户达到条件后可获得权益的总次数</span>
+            </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="发放时间：" prop="fafangshijian">
-          <el-radio-group v-model="form.fafangshijian">
-            <el-radio label="0">支付后发放</el-radio>
-            <el-radio label="1">订单完成时发放</el-radio>
+        <el-form-item label="发放时间：" prop="sendRule">
+          <el-radio-group v-model="form.sendRule">
+            <el-radio :label="1">支付后发放</el-radio>
           </el-radio-group>
+          <div class="zfTips">在下单付款完成并满足条件后，优惠券直接发送至用户卡包，用户将收到一条微信消息提醒</div>
         </el-form-item>
       </el-form>
     </div>
@@ -105,15 +157,19 @@
         <el-button type="primary" size="small" :loading="saveLoading" @click="submitData()">提 交</el-button>
       </template>
       <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
-
     </div>
     <mPopSelectStore ref="selectStore" @onSelect="onGetSelectStore" />
     <mPopSelectActivity ref="selectActivity" @onSelect="onGetSelectActivity" />
     <mPopSelectProduct ref="selectProduct" @onSelect="onGetSelectProduct" />
+    <checkCoupon ref="checkCoupons" :timevalue="beginEndTime" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
 <script>
-// import { mapGetters } from 'vuex'
+import _ from 'lodash'
+import { mapGetters } from 'vuex'
+import { createActivity } from '@/api/marketing'
+import { ActivityDetail } from '@/api/marketing'
+import checkCoupon from '@/components/Marketings/checkCoupon'
 import mPopSelectStore from '@/components/Marketings/popSelectStore'
 import mPopSelectActivity from '@/components/Marketings/popSelectActivity'
 import mPopSelectProduct from '@/components/Marketings/popSelectProduct'
@@ -121,90 +177,175 @@ import mSelectedStore from '../../_source/SelectedStore'
 import mSelectedCoupon from '../../_source/SelectedCoupon'
 import mSelectedActivity from '../../_source/SelectedActivity'
 import mSelectedProduct from '../../_source/SelectedProduct'
+import { throttle } from '@/utils/throttle'
 export default {
   name: 'PaymentGiftAdd',
   components: {
-    mPopSelectStore, mSelectedStore, mPopSelectProduct, mSelectedProduct, mPopSelectActivity, mSelectedActivity, mSelectedCoupon
+    mPopSelectStore,
+    checkCoupon,
+    mSelectedStore,
+    mPopSelectProduct,
+    mSelectedProduct,
+    mPopSelectActivity,
+    mSelectedActivity,
+    mSelectedCoupon
   },
   data() {
-    const amount_limit = (rule, value, callback) => {
-      const reg = /[^0-9]/
+    const useRule_limit = (rule, value, callback) => {
+      const reg = /[^1-9]/
       if (value !== '' && reg.test(value)) {
-        callback(new Error('购满金额必须是数字且不得小于0'))
+        callback(new Error('必须是数字且不得小于或等于0'))
       }
-      if (value > 99999999) {
-        callback(new Error('最大值不能超过99999999'))
+      if (value > 100000) {
+        callback(new Error('最大值不能超过100000'))
+      }
+      callback()
+    }
+    const countRule_limit = (rule, value, callback) => {
+      if (this.countRuleReal === 1) {
+        const reg = /[^1-9]/
+        if (value !== '' && reg.test(value)) {
+          callback(new Error('必须是数字且不得小于或等于0'))
+        }
+        if (value > 100000) {
+          callback(new Error('最大值不能超过100000'))
+        }
+      }
+      callback()
+    }
+    const productRule_limit = (rule, value, callback) => {
+      if (this.form.productRule === 2 && this.selectedProducts.length === 0) {
+        callback(new Error('请选择商品'))
+      }
+      callback()
+    }
+    const shopRule_limit = (rule, value, callback) => {
+      if (this.form.shopRule === 2 && this.selectedStores.length === 0) {
+        callback(new Error('请选择门店'))
+      }
+      callback()
+    }
+    const giftType_limit = (rule, value, callback) => {
+      if (this.form.giftType === 1 && this.selectedCoupons.length === 0) {
+        callback(new Error('请选择优惠券'))
+      } else if (
+        this.form.giftType === 2 &&
+        this.selectedActivity.length === 0
+      ) {
+        callback(new Error('请选择活动'))
+      }
+      callback()
+    }
+    const time_limit = (rule, value, callback) => {
+      const nowDate = new Date()
+      if (this.beginEndTime.length === 0) {
+        callback(new Error('请选择活动时间'))
+      } else if (new Date(this.beginEndTime[0].replace(/\-/g, '/')) < nowDate) {
+        callback(new Error('起始时间必须大于当前时间'))
       }
       callback()
     }
     return {
+      beginEndTime: [],
+      countRuleReal: 0,
       disabled: false,
       saveLoading: false, // 保存loading
       pageLoading: false, // 页面加载loading
       pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
       form: {
-        huodongshijian: [], // 活动时间
-        name: '', // 活动名称
-        desc: '', // 活动说明
-        range: '0', // 活动范围
-        amount: 0, // 金额
-        store: '0', // 门店
-        product: '0', // 指定商品
-        fafangshijian: '0', // 发放时间
-        coupon: '0' // 优惠券
+        sceneRuleReal: [1, 2],
+        activityDetailName: '',
+        activityGiftReqDTO: [],
+        activityNote: '',
+        activityPayReqDTO: [],
+        activityTemplateCode: 'TC002',
+        activityType: 1,
+        beginTime: '',
+        endTime: '',
+        bottomNote: '',
+        countRule: 0,
+        countType: 1,
+        integralRule: 1,
+        joinRule: 0,
+        listCouponProduct: [],
+        listCouponStore: [],
+        merCode: '',
+        productRule: 1,
+        returnRule: 1,
+        // sceneRule: 0,
+        sendRule: 1,
+        shopRule: 1,
+        useRule: 0,
+        giftType: 1
       },
       rules: {
-        name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
-        huodongshijian: [
-          { required: true, message: '请选择活动时间', trigger: 'blur' }
+        activityDetailName: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' }
         ],
-        desc: [{ required: true, message: '请输入活动说明', trigger: 'blur' }],
-        store: [{ required: true, message: '请选择活动门店', trigger: 'blur' }],
-        amount: [
-          { required: true, validator: amount_limit, trigger: 'blur' }
+        beginEndTime: [
+          { required: true, validator: time_limit, trigger: 'blur' }
         ],
-        coupon: [
-          { required: true, message: '请选择优惠券', trigger: 'blur' }
+        activityNote: [
+          { required: true, message: '请输入活动说明', trigger: 'blur' }
         ],
-        product: [
-          { required: true, message: '请选择指定商品', trigger: 'blur' }
+        useRule: [
+          { required: true, validator: useRule_limit, trigger: 'blur' }
         ],
-        fafangshijian: [
-          { required: true, message: '请选择发放时间', trigger: 'blur' }
+        productRule: [
+          { required: true, validator: productRule_limit, trigger: 'blur' }
+        ],
+        sceneRuleReal: [
+          {
+            required: true,
+            type: 'array',
+            message: '请选择活动场景',
+            trigger: 'change'
+          }
+        ],
+        shopRule: [
+          { required: true, validator: shopRule_limit, trigger: 'blur' }
+        ],
+        giftType: [
+          { required: true, validator: giftType_limit, trigger: 'blur' }
+        ],
+        countRule: [
+          { required: true, validator: countRule_limit, trigger: 'blur' }
         ]
       },
       selectedActivity: [],
       selectedStores: [], // 已选的门店集合
+      selectedCoupons: [],
       selectedProducts: [],
-      selectedCoupons: []
+      form1Validate: false,
+      form2Validate: false,
+      form3Validate: false,
+      tempRoute: {},
+      pageTitle: '支付有礼'
     }
   },
   computed: {
-    // ...mapGetters(['merCode', 'name', 'token']),
-    // headers() {
-    //   return { Authorization: this.token, merCode: this.merCode }
-    // }
+    ...mapGetters(['merCode'])
   },
   created() {
     const id = this.$route.query.id
     const op = this.$route.query.op
-    let pageTitle = '支付有礼'
     if (id) {
       if (op === '1') {
         this.pageStatus = 3
-        pageTitle = pageTitle + '详情'
+        this.pageTitle = this.pageTitle + '详情'
         this.disabled = true
       } else {
         this.pageStatus = 2
-        pageTitle = pageTitle + '编辑'
+        this.pageTitle = this.pageTitle + '编辑'
       }
-
-      this._getDetailData()
+      this._getDetailData(id)
     } else {
-      pageTitle = pageTitle + '新增'
+      this.pageTitle = this.pageTitle + '新增'
     }
-    this.$route.meta.title = pageTitle
-    document.title = pageTitle
+    this.$route.meta.title = this.pageTitle
+    // document.title = pageTitle
+    this.tempRoute = Object.assign({}, this.$route)
+    this.setTagsViewTitle(this.pageTitle)
   },
   methods: {
     // 选择门店
@@ -214,108 +355,255 @@ export default {
     selectActivity() {
       this.$refs.selectActivity.show(this.selectedActivity)
     },
+    selectCoupon() {
+      const nowDate = new Date()
+      if (this.beginEndTime.length > 0) {
+        if (this.beginEndTime[0] < nowDate) {
+          this.$message.error('起始时间必须大于当前时间')
+        } else {
+          this.$refs.checkCoupons.handleGetlist()
+          this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
+        }
+      } else {
+        this.$message.error('请先选择活动时间')
+      }
+    },
     // 选择商品
     selectProduct() {
-      this.$refs.selectProduct.show(this.selectedProducts)
+      this.$refs.selectProduct.show(this.form.listCouponProduct)
     },
-    goToSetting() {
-      this.$router.push('/distribution/store-reservation-setting')
+    setTagsViewTitle(title) {
+      const route = Object.assign({}, this.tempRoute, { title: `${title}` })
+      this.$store.dispatch('tagsView/updateVisitedView', route)
     },
-    submitData() {
-      console.log(this.form)
-      console.log(this.selectedStores)
+    doSubmitForm() {
+      if (this.form1Validate && this.form2Validate && this.form3Validate) {
+        this.form.merCode = this.merCode
+        if (this.form.sceneRuleReal.length === 2) {
+          this.form.sceneRule = 0
+        } else {
+          this.form.sceneRule = this.form.sceneRuleReal[0]
+        }
+        if (this.beginEndTime) {
+          this.form.beginTime = this.beginEndTime[0]
+            .replace(/T/g, ' ')
+            .replace(/Z/g, '')
+          this.form.endTime = this.beginEndTime[1]
+            .replace(/T/g, ' ')
+            .replace(/Z/g, '')
+        }
+        if (this.form.shopRule === 2) {
+          this.selectedStores.forEach(store => {
+            this.form.listCouponStore.push({
+              // busId: 0,
+              // id: 0,
+              ruleType: 2,
+              storeCode: store.stCode,
+              storeId: store.id,
+              storeName: store.stName
+            })
+          })
+        }
+        if (this.countRuleReal === 0) {
+          this.form.countRule = 0
+        }
+        if (this.form.productRule === 2) {
+          this.selectedProducts.forEach(product => {
+            this.form.listCouponProduct.push({
+              // busId: 0,
+              // id: 0,
+              proBrand: product.brandName,
+              proCode: product.erpCode,
+              proId: product.id,
+              proName: product.name,
+              proPrice: product.mprice,
+              proSpec: product.packStandard,
+              ruleType: 2
+            })
+          })
+        }
+        if (this.form.giftType === 1 && this.selectedCoupons.length > 0) {
+          this.selectedCoupons.forEach(coupon => {
+            this.form.activityPayReqDTO.push({
+              giftId: coupon.id,
+              giftType: 1
+            })
+          })
+        }
+        if (this.form.giftType === 2 && this.selectedActivity.length > 0) {
+          this.selectedCoupons.forEach(coupon => {
+            this.form.activityPayReqDTO.push({
+              giftId: this.selectedActivity.id,
+              giftType: 2
+            })
+          })
+        }
+        var params = {}
+        params = JSON.parse(JSON.stringify(this.form))
+        createActivity(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              message: res.msg,
+              type: 'success'
+            })
+            this.$router.replace(
+              '/marketings/activity-manage/payment-gift/list'
+            )
+          }
+        })
+      }
     },
+
+    submitData: throttle(function() {
+      this.$refs.form.validate(flag => {
+        this.form1Validate = flag
+        this.doSubmitForm()
+      })
+      this.$refs.form2.validate(flag => {
+        this.form2Validate = flag
+        this.doSubmitForm()
+      })
+      this.$refs.form3.validate(flag => {
+        this.form3Validate = flag
+        this.doSubmitForm()
+      })
+    }, 3000),
     onGetSelectStore(selectedStores) {
       this.selectedStores = selectedStores
-      this.$refs.selectedStoreView.show(selectedStores)
-      console.log('选择的门店：' + JSON.stringify(selectedStores))
+      this.$refs.selectedStoreView.showPage(selectedStores, this.pageStatus)
     },
     onGetSelectActivity(selectedActivity) {
       this.selectedActivity = selectedActivity
       this.$refs.selectedActivityView.show(selectedActivity)
-      console.log('选择的活动：' + JSON.stringify(selectedActivity))
     },
     onGetSelectCoupon(selectedCoupons) {
       this.selectedCoupons = selectedCoupons
       this.$refs.selectedCouponView.show(selectedCoupons)
-      console.log('选择的优惠券：' + JSON.stringify(selectedCoupons))
     },
     onGetSelectProduct(selectedProducts) {
       this.selectedProducts = selectedProducts
       this.$refs.selectedProductView.show(selectedProducts)
-      console.log('选择的商品：' + JSON.stringify(selectedProducts))
     },
     updateActivityStatus(activity) {
       console.log('activity', activity)
-      if (activity.status && activity.timeStatus === -1) { // 未开始
-        console.log('活动未开始！')
-      } else if (activity.status && activity.timeStatus === 1) { // 进行中
+      if (activity.status && activity.timeStatus === -1) {
+        // 未开始
+      } else if (activity.status && activity.timeStatus === 1) {
+        // 进行中
         this.pageStatus = 3
         this.disabled = true
         this.$message.warning('活动已开始！')
-      } else if (activity.status || activity.timeStatus === 0) { // 已结束
+      } else if (activity.status || activity.timeStatus === 0) {
+        // 已结束
         this.pageStatus = 3
         this.disabled = true
         this.$message('活动已结束！')
       }
     },
-    _getDetailData() {
-      this.form = {
-        huodongshijian: ['2011-11-11 22:22:22', '2011-11-15 22:22:22'], // 活动时间
-        name: 'ddd', // 活动名称
-        desc: 'dd', // 活动说明
-        range: '0', // 活动范围
-        amount: 100, // 金额
-        store: '1', // 门店
-        product: '1', // 指定商品
-        fafangshijian: '1', // 发放时间
-        tuihuiquanyi: '1', // 退回权益
-        coupon: true // 优惠券
+    _getDetailData(id) {
+      this.pageLoading = true
+      const params = {
+        id: id
       }
-      // this.pageLoading = true
-      // const params = {
-      //   id: this.dataid
-      // }
-      // console.log('params detail', params)
-      // getActivityDetail(params).then(res => {
-      //   if (res.code === '10000') {
-      //     // / this.xForm = ''
-      //     const data = res.data
-      //     this.tableForm.selectedGoods = data.items.map((item) => {
-      //       return {
-      //         activityId: item.activityId,
-      //         discount: '' + item.discount,
-      //         id: item.id,
-      //         limitAmount: '' + item.limitAmount,
-      //         productManufacture: item.productManufacture,
-      //         productName: item.productName,
-      //         productSpecId: item.productSpecId,
-      //         productSpecName: item.productSpecName,
-      //         stockAmount: (item.stockAmount || '') + ''
-      //       }
-      //     })
-      //     console.log('this.xForm', this.xForm)
-      //     this.xForm = Object.assign(data, {
-      //       'dateRange': [res.data.startTime, res.data.endTime]
-      //     })
-      //     this.selectedStore = data.stores.map(v => {
-      //       const store = {
-      //         id: v.storeId,
-      //         stName: v.storeName
-      //       }
-      //       return store
-      //     })
-      //     console.log('this.selectedStore', this.selectedStore)
-      //     // 编辑状态时，更新页面当前状态
-      // if (this.pageStatus === 2) {
-      //   this.updateActivityStatus(data)
-      // }
-      // }
-      //   this.pageLoading = false
-      // }).catch(err => {
-      //   this.pageLoading = false
-      //   console.log('err', err)
-      // })
+      this.form.sceneRuleReal = [1, 2]
+      console.log('params detail', params)
+      ActivityDetail(params)
+        .then(res => {
+          if (res.code === '10000') {
+            if (res.data.sceneRule === 0) {
+              res.data.sceneRuleReal = [1, 2]
+            } else {
+              res.data.sceneRuleReal = []
+              res.data.sceneRuleReal.push(res.data.sceneRule)
+            }
+            this.form = _.cloneDeep(res.data)
+            this.beginEndTime = [
+              res.data.beginTime.replace(/T/g, ' ').replace(/Z/g, ''),
+              res.data.endTime.replace(/T/g, ' ').replace(/Z/g, '')
+            ]
+            this.selectedStores = res.data.listCouponStoreEntity.map(item => {
+              return {
+                stCode: item.storeCode,
+                storeId: item.storeId,
+                stName: item.storeName,
+                id: item.id,
+                address: '',
+                busId: item.busId,
+                ruleType: item.ruleType
+              }
+            })
+            this.onGetSelectStore(this.selectedStores)
+            this.selectedProducts = res.data.listCouponProductEntity.map(
+              item => {
+                return {
+                  busId: item.busId,
+                  ruleType: item.ruleType,
+                  id: item.id,
+                  mainPic: '',
+                  erpCode: item.proCode,
+                  name: item.proName,
+                  brandName: item.proBrand,
+                  specSkuList: '',
+                  price: item.proPrice
+                }
+              }
+            )
+            this.onGetSelectProduct(this.selectedProducts)
+            res.data.listActivityPayEntity.forEach(item => {
+              this.form.giftType = item.giftType
+              if (item.giftType === 1) {
+                this.selectedCoupons.push({
+                  cname: '',
+                  ctype: '',
+                  useRule: '',
+                  denomination: '',
+                  timeRule: '',
+                  effectTime: '',
+                  shopRule: '',
+                  productRule: '',
+                  totalLimit: ''
+                })
+              } else {
+                this.selectedActivity.push(item)
+              }
+            })
+            // this.tableForm.selectedGoods = data.items.map(item => {
+            //   return {
+            //     activityId: item.activityId,
+            //     discount: '' + item.discount,
+            //     id: item.id,
+            //     limituseRule: '' + item.limituseRule,
+            //     productManufacture: item.productManufacture,
+            //     productName: item.productName,
+            //     productSpecId: item.productSpecId,
+            //     productSpecName: item.productSpecName,
+            //     stockuseRule: (item.stockuseRule || '') + ''
+            //   }
+            // })
+            // console.log('this.xForm', this.xForm)
+            // this.xForm = Object.assign(data, {
+            //   dateRange: [res.data.startTime, res.data.endTime]
+            // })
+            // this.selectedStore = data.stores.map(v => {
+            //   const store = {
+            //     id: v.storeId,
+            //     stName: v.storeName
+            //   }
+            //   return store
+            // })
+            // console.log('this.selectedStore', this.selectedStore)
+            // 编辑状态时，更新页面当前状态
+            // if (this.pageStatus === 2) {
+            //   this.updateActivityStatus(data)
+            // }
+          }
+
+          this.pageLoading = false
+        })
+        .catch(err => {
+          this.pageLoading = false
+          console.log('err', err)
+        })
     }
   }
 }
@@ -337,6 +625,9 @@ export default {
       .zkTips {
         color: #999;
         margin-left: 10px;
+      }
+      .zfTips {
+        color: #999;
       }
       .amTips {
         color: #606266;
@@ -381,7 +672,7 @@ export default {
   .set-store {
     margin-left: 20px;
   }
-  .from-clickable{
+  .from-clickable {
     padding: 15px 0 0 24px;
   }
 }
