@@ -108,7 +108,7 @@ export default {
     },
     show(store) {
       this.hasSelectList = []
-      this.selectedArr = store
+      this.selectedArr = [...store]
       store.forEach(item => {
         this.hasSelectList.push(item.stCode)
       })

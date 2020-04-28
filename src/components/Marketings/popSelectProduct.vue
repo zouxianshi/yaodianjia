@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     show(product) {
-      this.selectedArr = product
+      this.selectedArr = [...product]
       this.hasSelectList = []
       product.forEach(item => {
         this.hasSelectList.push(item.erpCode)

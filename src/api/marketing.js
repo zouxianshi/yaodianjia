@@ -57,3 +57,34 @@ export function disableActivity(params) {
     method: 'put'
   })
 }
+// 普通活动列表
+export function normalActivityList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/ActivityList`,
+    method: 'post',
+    data: params
+  })
+}
+// 新增普通活动列表
+export function createActivity(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/createActivity`,
+    method: 'post',
+    data: params
+  })
+}
+// 支付有礼可被添加的活动列表
+export function normalAddActivityList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/normalAddActivityList`,
+    method: 'post',
+    data: params
+  })
+}
+// 普通活动详情
+export function ActivityDetail(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/ActivityDetail/${params.id}`,
+    method: 'get'
+  })
+}
