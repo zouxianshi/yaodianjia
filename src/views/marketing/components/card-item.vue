@@ -21,7 +21,7 @@
           icon="el-icon-document-add"
           class="button"
           @click="handleJump(item.linkUrl)"
-        >新建数据</el-button>
+        >新建活动</el-button>
       </div>
     </div>
     <!-- 右上角的事件 -->
