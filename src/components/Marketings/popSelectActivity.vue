@@ -5,20 +5,27 @@
       <div class="nav-bar">
         <el-form :inline="true" :model="searchParams" class="demo-form-inline">
           <el-form-item label="活动类型">
-            <el-select v-model="searchParams.info" placeholder="请选择" size="mini">
+            <el-select v-model="searchParams.activityTemplateCode" placeholder="请选择" size="mini">
               <el-option label="全部" value="0" />
-              <el-option label="未开始" value="1" />
+              <el-option label="大转盘" value="TA003" />
+              <el-option label="刮刮乐" value="TA004" />
             </el-select>
           </el-form-item>
           <el-form-item label="活动名称" style="margin-left:10px">
-            <el-input v-model="searchParams.company" placeholder="活动名称" size="mini" />
+            <el-input v-model="searchParams.activityName" placeholder="活动名称" size="mini" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" size="mini" @click="searchData()">查询</el-button>
           </el-form-item>
         </el-form>
       </div>
-      <el-table ref="orderTable" :data="gridData" tooltip-effect="light" highlight-current-row @current-change="handleCurrentChange">
+      <el-table
+        ref="orderTable"
+        :data="gridData"
+        tooltip-effect="light"
+        highlight-current-row
+        @current-change="handleCurrentChange"
+      >
         <el-table-column label="选择" width="50" center>
           <template slot-scope="scope">
             <el-radio
@@ -28,26 +35,36 @@
             >&nbsp;</el-radio>
           </template>
         </el-table-column>
-        <el-table-column property="num" label="活动类型" width="80" />
-        <el-table-column property="name" label="活动名称" />
-        <el-table-column property="address" label="活动时间" width="100" />
-        <el-table-column property="address" label="活动场景" />
-        <el-table-column property="address" label="参与方式" />
-        <el-table-column property="address" label="参与次数" />
+        <el-table-column label="活动类型" width="80">
+          <template slot-scope="scope">{{ handleTemplateName(scope.row.activityTemplateCode) }}</template>
+        </el-table-column>
+        <el-table-column property="activityDetailName" label="活动名称" />
+        <el-table-column label="活动时间" width="100" show-overflow-tooltip>
+          <template slot-scope="scope">{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
+        </el-table-column>
+        <el-table-column property="sceneRule" label="活动场景">
+          <template slot-scope="scope">{{ scope.row.sceneRule===1?'线上活动':'线下活动' }}</template>
+        </el-table-column>
+        <el-table-column property="joinRule" label="参与方式">
+          <template slot-scope="scope">{{ scope.row.joinRule===1?'消耗积分':'不消耗积分' }}</template>
+        </el-table-column>
+        <el-table-column property="countRule" label="参与次数">
+          <template slot-scope="scope">{{ scope.row.countRule+'次' }}</template>
+        </el-table-column>
       </el-table>
       <el-pagination
         :current-page="pageInfo.currentPage"
-        :page-sizes="[100, 200, 300, 400]"
+        :page-sizes="[5, 50, 100, 500]"
         :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :total="totalCount"
         @size-change="handleSizeChange"
         @current-change="changePage"
       />
       <div class="has-selected">
-        已选门店：
+        已选活动：
         <span v-for="(item ,index) in selectedArr" :key="index">
-          <el-tag style="margin-right:10px" type="success">{{ item.name }}</el-tag>
+          <el-tag style="margin-right:10px" type="success">{{ item.activityDetailName }}</el-tag>
         </span>
       </div>
       <span slot="footer">
@@ -58,30 +75,21 @@
   </div>
 </template>
 <script>
+import { normalAddActivityList } from '@/api/marketing'
 export default {
   data() {
     return {
-      gridData: [
-        {
-          num: '20000',
-          name: '上海2店',
-          address: '上海黄浦江'
-        },
-        {
-          num: '20001',
-          name: '上海一店',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }
-      ],
-      selectedArr: [], //  已选择门店所有信息
-      hasSelectList: [], // 已选择门店name集合（以后会修改为主键）
+      gridData: [],
+      selectedArr: [],
+      hasSelectList: [],
       searchParams: {
-        info: '',
-        company: ''
+        activityTemplateCode: '',
+        activityName: ''
       },
+      totalCount: 0,
       pageInfo: {
         currentPage: 0,
-        pageSize: 100
+        pageSize: 5
       },
       currentRow: null,
       radio: false,
@@ -89,30 +97,87 @@ export default {
     }
   },
   methods: {
-    show(store) {
+    show(activity) {
       this.hasSelectList = []
-      store.forEach(item => {
+      activity.forEach(item => {
         this.hasSelectList.push(item.name)
       })
-      this.dialogTableVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs.dataTable.clearSelection()
-      //   this.gridData.forEach(row => {
-      //     if (this.hasSelectList.indexOf(row.name) >= 0) {
-      //       this.$refs.dataTable.toggleRowSelection(row, true)
-      //     }
-      //   })
-      // })
+      this.queryData()
+    },
+    // 使用日期
+    handletimeRule(beginTime, endTime) {
+      return beginTime.replace('T', ' ') + '-' + endTime.replace('T', ' ')
+    },
+    handleTemplateName(activityTemplateCode) {
+      let name = ''
+      switch (activityTemplateCode) {
+        case 'TA003':
+          name = '大转盘'
+          break
+        case 'TA004':
+          name = '刮刮乐'
+          break
+      }
+      return name
+    },
+    // 查询商品
+    queryData() {
+      var params = Object.assign({}, this.pageInfo, this.searchParams)
+      normalAddActivityList(params).then(res => {
+        this.dialogTableVisible = true
+        if (res.data && res.data.records) {
+          this.gridData = res.data.records
+          this.totalCount = res.data.total
+          this.$nextTick(() => {
+            // this.selectedArr.splice(0)
+            if (this.gridData.length > 0 && this.currentRow) {
+              const index = this.gridData.findIndex(
+                item => item.id === this.currentRow.id
+              )
+              if (index > -1) {
+                this.radio = index
+                this.selectedArr.splice(0)
+                console.log(this.selectedArr)
+                this.selectedArr.push(this.currentRow)
+              }
+            }
+
+            // if (this.gridData.indexOf(this.selectedArr) >= 0) {
+            //     this.$refs.dataTable.toggleRowSelection(row, true)
+            //   }
+            // this.gridData.forEach(row => {
+            //   if (this.hasSelectList.indexOf(row.erpCode) >= 0) {
+            //     this.$refs.dataTable.toggleRowSelection(row, true)
+            //   }
+            // })
+          })
+        }
+      })
+    },
+    searchData() {
+      this.queryData()
+    },
+    // 分页
+    handleSizeChange(e) {
+      this.pageInfo.pageSize = e
+      this.queryData()
+    },
+    changePage(e) {
+      this.pageInfo.currentPage = e
+      this.queryData()
     },
     handleCurrentChange(val) {
       this.currentRow = val
-      const index = this.gridData.findIndex(
-        item => item.num === this.currentRow.num
-      )
-      if (index > -1) {
-        this.radio = index
-        this.selectedArr.splice(0)
-        this.selectedArr.push(val)
+      if (this.gridData.length > 0) {
+        const index = this.gridData.findIndex(
+          item => item.id === this.currentRow.id
+        )
+        if (index > -1) {
+          this.radio = index
+          this.selectedArr.splice(0)
+          console.log(this.selectedArr)
+          this.selectedArr.push(val)
+        }
       }
     },
     getCurrentRow(index) {
@@ -124,16 +189,7 @@ export default {
       this.dialogTableVisible = false
       this.$emit('onSelect', this.selectedArr)
     },
-    searchData() {
-      console.log(this.searchParams)
-    },
-    // 分页
-    handleSizeChange(e) {
-      console.log(e)
-    },
-    changePage(e) {
-      console.log(e)
-    },
+
     // 单选
     select(e, rows) {
       this.selectedArr = e

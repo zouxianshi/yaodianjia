@@ -1,12 +1,22 @@
 <template>
   <div class="selected-store-view">
-    <el-table ref="dataTable" :data="selectedStores">
-      <el-table-column property="num" label="活动类型" width="80" />
-      <el-table-column property="name" label="活动名称" />
-      <el-table-column property="address" label="活动时间" width="100" />
-      <el-table-column property="address" label="活动场景" />
-      <el-table-column property="address" label="参与方式" />
-      <el-table-column property="address" label="参与次数" />
+    <el-table ref="dataTable" :data="selectedActivity">
+      <el-table-column label="活动类型" width="80">
+        <template slot-scope="scope">{{ handleTemplateName(scope.row.activityTemplateCode) }}</template>
+      </el-table-column>
+      <el-table-column property="activityDetailName" label="活动名称" />
+      <el-table-column label="活动时间" width="100" show-overflow-tooltip>
+        <template slot-scope="scope">{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
+      </el-table-column>
+      <el-table-column property="sceneRule" label="活动场景">
+        <template slot-scope="scope">{{ scope.row.sceneRule===1?'线上活动':'线下活动' }}</template>
+      </el-table-column>
+      <el-table-column property="joinRule" label="参与方式">
+        <template slot-scope="scope">{{ scope.row.joinRule===1?'消耗积分':'不消耗积分' }}</template>
+      </el-table-column>
+      <el-table-column property="countRule" label="抽奖次数">
+        <template slot-scope="scope">{{ '可抽奖'+scope.row.countRule+'次' }}</template>
+      </el-table-column>
       <el-table-column label="操作" width="60">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
@@ -19,12 +29,28 @@
 export default {
   data() {
     return {
-      selectedStores: []
+      selectedActivity: []
     }
   },
   methods: {
-    show(selectedStores) {
-      this.selectedStores = selectedStores
+    show(selectedActivity) {
+      this.selectedActivity = selectedActivity
+    },
+    // 使用日期
+    handletimeRule(beginTime, endTime) {
+      return beginTime.replace('T', ' ') + '-' + endTime.replace('T', ' ')
+    },
+    handleTemplateName(activityTemplateCode) {
+      let name = ''
+      switch (activityTemplateCode) {
+        case 'TA003':
+          name = '大转盘'
+          break
+        case 'TA004':
+          name = '刮刮乐'
+          break
+      }
+      return name
     },
     // 删除已选门店
     handleDel(row) {
@@ -33,11 +59,12 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.selectedStores = this.selectedStores.filter(item => item !== row)
-        this.$emit('onDel', this.selectedStores)
+        this.selectedActivity = this.selectedActivity.filter(
+          item => item !== row
+        )
+        this.$emit('onDel', this.selectedActivity)
       })
     }
-
   }
 }
 </script>
