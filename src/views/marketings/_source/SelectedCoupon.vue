@@ -64,9 +64,9 @@
               </div>
             </template>
       </el-table-column>-->
-      <el-table-column label="操作" width="100">
+      <el-table-column v-if="pageStatus!=3" label="操作" width="60">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click.native.prevent="handleDel(scope.row)">移除</el-button>
+          <el-button type="text" size="small" @click.native.prevent="handleDel(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -84,6 +84,7 @@
 export default {
   data() {
     return {
+      pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
       selectedCoupons: [],
       pageInfo: {
         currentPage: 1,
@@ -96,7 +97,10 @@ export default {
       this.selectedCoupons = selectedCoupons
       console.log('应该要显示了')
     },
-    // 删除已选门店
+    showPage(selectedCoupons, pageStatus) {
+      this.pageStatus = pageStatus
+      this.selectedCoupons = selectedCoupons
+    },
     handleDel(row) {
       this.$confirm('确认删除吗, 是否继续?', '提示', {
         confirmButtonText: '确定',

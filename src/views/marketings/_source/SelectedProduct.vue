@@ -37,7 +37,7 @@
           {{ scope.row.price || scope.row.proPrice }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="60">
+      <el-table-column v-if="pageStatus!=3" label="操作" width="60">
         <template slot-scope="scope">
           <el-button type="text" size="small" :disabled="!!scope.row.proCode" @click="handleDel(scope.row)">删除</el-button>
         </template>
@@ -57,6 +57,7 @@
 export default {
   data() {
     return {
+      pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
       selectedProducts: [],
       pageInfo: {
         currentPage: 1,
@@ -66,7 +67,10 @@ export default {
   },
   methods: {
     show(selectedProducts) {
-      console.log(selectedProducts)
+      this.selectedProducts = selectedProducts
+    },
+    showPage(selectedProducts, pageStatus) {
+      this.pageStatus = pageStatus
       this.selectedProducts = selectedProducts
     },
     // 删除已选商品
