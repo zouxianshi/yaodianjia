@@ -125,7 +125,7 @@ export default {
         }
       } else if (ctype === 2) {
         if (useRule === 0) {
-          return '无门槛，满减券'
+          return `无门槛，减${denomination}`
         } else {
           return `满${useRule}可用,减${denomination}元`
         }
