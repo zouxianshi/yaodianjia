@@ -870,7 +870,7 @@
               </ol>
               <div class="text-center">
                 <el-button type size="small" @click="step=2">上一步</el-button>
-                <el-button v-if="!is_query" type="primary" size="small" @click="handleSubImg">保存</el-button>
+                <el-button v-if="!is_query" type="primary" size="small" :loading="subLoading1" @click="handleSubImg">保存</el-button>
               </div>
             </div>
           </div>
@@ -902,7 +902,7 @@
                   v-if="!is_query"
                   type="primary"
                   size="small"
-                  :loading="subLoading"
+                  :loading="subLoading2"
                   @click="handleSubIntro"
                 >保存</el-button>
               </div>
@@ -1146,7 +1146,8 @@ export default {
       uploadIndex: 0,
       is_query: false, // 是否为查看
       subLoading: false,
-
+      subLoading2: false,
+      subLoading1: false, // 加载
       pageLoading: false, // 加载
       leaveAction: false // 离开页面动作，true为保存离开  false异常离开
     }
@@ -1781,7 +1782,7 @@ export default {
         })
         return
       }
-      this.subLoading = true
+      this.subLoading1 = true
       const data = {
         commodityId: this.basicForm.id,
         imgs: this.fileList
@@ -1795,15 +1796,15 @@ export default {
             message: '保存成功',
             type: 'success'
           })
-          this.subLoading = false
+          this.subLoading1 = false
         })
         .catch(_ => {
-          this.subLoading = false
+          this.subLoading1 = false
         })
     },
     handleSubIntro() {
       // 保存商品详情
-      this.subLoading = true
+      this.subLoading2 = true
       const data = {
         content: this.goodsIntro.content,
         id: this.basicForm.id
@@ -1814,7 +1815,7 @@ export default {
           //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
           //   type: 'success'
           // })
-          this.subLoading = false
+          this.subLoading2 = false
           this.leaveAction = true
           setTimeout(() => {
             // let url = ''
@@ -1848,7 +1849,7 @@ export default {
           }, 1000)
         })
         .catch(_ => {
-          this.subLoading = false
+          this.subLoading2 = false
         })
     }
   }
