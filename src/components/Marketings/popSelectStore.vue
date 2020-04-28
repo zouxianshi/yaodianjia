@@ -36,7 +36,7 @@
       </el-table>
       <el-pagination
         :current-page="pageInfo.currentPage"
-        :page-sizes="[1, 50, 100, 500]"
+        :page-sizes="[10, 50, 100, 500]"
         :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalCount"
@@ -71,7 +71,7 @@ export default {
       organizations: [], // 企业列表
       pageInfo: {
         currentPage: 1,
-        pageSize: 1
+        pageSize: 10
       },
       totalCount: 0,
       dialogTableVisible: false

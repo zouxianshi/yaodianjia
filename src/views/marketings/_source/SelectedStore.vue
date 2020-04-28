@@ -40,7 +40,6 @@ export default {
   },
   methods: {
     show(selectedStores) {
-      console.log(selectedStores)
       this.selectedStores = selectedStores
     },
     // 删除已选门店

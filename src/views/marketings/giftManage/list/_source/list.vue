@@ -38,7 +38,7 @@
             <span v-if="scope.row.ctype === 3">{{ scope.row.denomination }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="使用时间">
+        <el-table-column label="使用时间" width="180">
           <template slot-scope="scope">
             <span v-if="scope.row.timeRule === 1">领取后{{ scope.row.effectTime }}天内</span>
             <span v-if="scope.row.timeRule === 2">领取{{ scope.row.effectTime.split(',')[0] }}天后{{ scope.row.effectTime.split(',')[1] }}天内</span>

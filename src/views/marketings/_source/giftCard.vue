@@ -6,12 +6,6 @@
         <div class="text-box"><span>{{ info.activityTemplateName }}</span><el-button type="text" size="mini" class="button">新增</el-button></div>
       </div>
     </el-card>
-    <!-- <el-card :body-style="{ padding: '10px 10px' }">
-      <img :src="info.imgUrl" class="image">
-      <div style="padding: 10px 0 0;">
-        {{ info.activityTemplateName }}
-      </div>
-    </el-card> -->
   </div>
 </template>
 <script>

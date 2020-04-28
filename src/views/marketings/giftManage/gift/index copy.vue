@@ -9,7 +9,6 @@
           <el-step title="基本信息" />
           <el-step title="使用规则" />
         </el-steps>
-        <!-- <mCounponName :discountForm="discountForm" /> -->
         <el-form
           v-show="active===1"
           ref="form"
@@ -169,7 +168,6 @@ import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择�
 import mPopSelectProduct from './selectOneProduct' // 选择商品弹窗
 import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
 import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
-// import mCounponName from '../_source/formItems/couponName' // cname
 import {
   getCouponDetail,
   addCoupon,
@@ -185,7 +183,6 @@ export default {
     mPopSelectProduct,
     mSelectedStore,
     mSelectedProduct
-    // mCounponName
   },
   data() {
     var validateExpireInfo = (rule, value, callback) => {
