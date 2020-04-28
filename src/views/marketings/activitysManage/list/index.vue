@@ -89,7 +89,6 @@ export default {
       this.handleGetlist(this.tabNum)
     },
     handleGetlist(id) {
-      console.log(id, this.radioType)
       var params = {
         id: id,
         type: this.radioType
@@ -112,7 +111,8 @@ export default {
             }
             i.query = {
               code: i.activityTemplateCode,
-              name: i.activityTemplateName
+              name: i.activityTemplateName,
+              id: id
             }
           }
         }
