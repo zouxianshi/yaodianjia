@@ -41,25 +41,25 @@
         <el-table-column label="适用商品">
           <template
             slot-scope="scope"
-          >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.shopRule ===2?'部分商品':'' || scope.row.shopRule ===3?'部分商品不可用':'' }}</template>
+          >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}</template>
         </el-table-column>
         <el-table-column prop="address" label="优惠内容">
           <template
             slot-scope="scope"
           >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
         </el-table-column>
-        <el-table-column label="使用时间" width="150">
+        <el-table-column label="使用时间" width="160">
           <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
         </el-table-column>
         <el-table-column label="使用场景" width="90">
           <template
             slot-scope="scope"
-          >{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>
+          >{{ }}{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
         </el-table-column>
         <el-table-column prop="productRule" label="适用门店" width="100">
           <template
             slot-scope="scope"
-          >{{ scope.row.productRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
+          >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
         </el-table-column>
         <el-table-column type="selection" width="55" />
       </el-table>
@@ -205,7 +205,7 @@ export default {
         }
       } else if (ctype === 2) {
         if (useRule === 0) {
-          return '无门槛，满减券'
+          return `无门槛，减${denomination}`
         } else {
           return `满${useRule}可用,减${denomination}元`
         }
