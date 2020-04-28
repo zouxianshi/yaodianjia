@@ -15,9 +15,9 @@
               @change="handleChangeGroup"
             />
           </el-form-item>
-          <!-- <el-form-item label="商品品牌" style="margin-left:10px;">
-            <el-input v-model="searchParams.brand" placeholder="门店编码/门店名称" size="mini" style="width:120px" />
-          </el-form-item> -->
+          <el-form-item label="商品品牌" style="margin-left:10px;">
+            <el-input v-model="searchParams.brandName" placeholder="商品品牌名称" size="mini" style="width:120px" />
+          </el-form-item>
           <el-form-item label="商品信息" style="margin-left:10px">
             <el-input v-model="searchParams.erpOrName" placeholder="商品编码/商品名称" size="mini" style="width:120px" />
           </el-form-item>
@@ -51,7 +51,7 @@
         <el-table-column property="brandName" label="品牌" />
         <el-table-column property="specSkuList" label="规格">
           <template slot-scope="scope">
-            {{ scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}
+            {{ scope.row.specSkuList&&scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}
           </template>
         </el-table-column>
         <el-table-column property="mprice" label="参考价" />
@@ -93,7 +93,7 @@ export default {
       groupData: [],
       searchParams: {
         erpOrName: '',
-        // brand: '',
+        brandName: '',
         groupId: null
       },
       defaultProps: {
@@ -134,6 +134,7 @@ export default {
     queryGoodsData() {
       var params = Object.assign({}, this.pageInfo, this.searchParams)
       getStoreGoodsList(params).then(res => {
+        console.log(res)
         this.dialogTableVisible = true
         if (res.data && res.data.data) {
           this.gridData = res.data.data

@@ -100,6 +100,7 @@
               v-model="discountForm.timeRule"
               style="width:200px"
               :disabled="isUpdate"
+              @change="changeTimeRule"
             >
               <el-radio :label="1">
                 自领取起
@@ -128,6 +129,7 @@
                   range-separator="至"
                   start-placeholder="生效日期"
                   end-placeholder="失效日期"
+                  @change="changeData"
                 />
               </el-radio>
             </el-radio-group>
@@ -334,6 +336,19 @@ export default {
     changeStoreRule() {
       this.selectedStore = []
     },
+    changeTimeRule() {
+      this.otherData.expirationDay = 1
+      this.otherData.expirationDate = [new Date(), new Date()]
+      this.otherData.notActive = 1
+      this.otherData.effective = 1
+    },
+    changeData(e) { // 限制时间
+      if (new Date(e[0]).getTime() < new Date().getTime()) {
+        this.$alert('有效期开始时间需大于当前时间，请重新选择', '有效期有误', {
+          confirmButtonText: '确定'
+        })
+      }
+    },
     next() {
       if (this.active++ > 1) this.active = 1
     },
@@ -395,6 +410,12 @@ export default {
                 } else if (params.timeRule === 2) {
                   params.effectTime = _data.notActive + ',' + _data.effective
                 } else {
+                  if (new Date(_data.expirationDate[0]).getTime() < new Date().getTime()) {
+                    this.$alert('有效期开始时间需大于当前时间，请重新选择', '有效期有误', {
+                      confirmButtonText: '确定'
+                    })
+                    return
+                  }
                   params.effectTime =
                     formatDate(_data.expirationDate[0]) +
                     ',' +

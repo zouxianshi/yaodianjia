@@ -27,7 +27,14 @@ export function queryStoreByOrgId(params) {
     data: params
   })
 }
-
+// 查询商品
+export function getStoreGoodsList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/comm-spec/_searchWares`,
+    method: 'post',
+    data: params
+  })
+}
 // 查询优惠券列表
 export function getCouponList(params) {
   return request({
