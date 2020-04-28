@@ -136,7 +136,7 @@ export default {
   created() {
     this.searchParams.merCode = this.$store.getters.merCode
     this.searchParams.storeIds = [this.centerStoreId]
-    this.activesData = this.itemList
+    this.activesData = _.cloneDeep(this.itemList)
     this.getData()
   },
   beforeMount() {

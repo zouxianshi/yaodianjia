@@ -15,14 +15,7 @@
     </el-table-column>
     <el-table-column prop="name" label="商品名称" />
     <el-table-column prop="brandName" label="品牌" />
-    <el-table-column label="规格">
-      <template slot-scope="scope">
-        <span v-if="scope.row.specSkuList">
-          {{ scope.row.specSkuList[0].skuValue }}
-        </span>
-        <span v-else>-</span>
-      </template>
-    </el-table-column>
+    <el-table-column prop="specStr" label="规格" />
     <el-table-column label="参考价" width="60">
       <template slot-scope="scope">
         <span style="color:#ff0000">¥{{ scope.row.price }}</span>
