@@ -1,12 +1,19 @@
 <template>
   <div class="selected-store-view">
     <el-table ref="dataTable" :data="selectedStores.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)" height="250">
-      <el-table-column property="stCode" label="门店编码" width="100" />
-      <el-table-column property="stName" label="门店名称" width="100" />
-      <el-table-column property="address" label="门店地址" />
+      <el-table-column label="门店编码">
+        <template slot-scope="scope">
+          {{ scope.row.stCode || scope.row.storeCode }}
+        </template>
+      </el-table-column>
+      <el-table-column label="门店名称">
+        <template slot-scope="scope">
+          {{ scope.row.stName || scope.row.storeName }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="60">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
+          <el-button type="text" size="small" :disabled="!!scope.row.storeCode" @click="handleDel(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -33,6 +40,7 @@ export default {
   },
   methods: {
     show(selectedStores) {
+      console.log(selectedStores)
       this.selectedStores = selectedStores
     },
     // 删除已选门店

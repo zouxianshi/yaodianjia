@@ -124,7 +124,7 @@
                 <el-date-picker
                   v-model="otherData.expirationDate"
                   :disabled="isUpdate"
-                  type="daterange"
+                  type="datetimerange"
                   range-separator="至"
                   start-placeholder="生效日期"
                   end-placeholder="失效日期"
@@ -232,8 +232,8 @@ export default {
     }
     var validateDenomination = (rule, value, callback) => {
       // 验证优惠内容
-      if (!value || parseFloat(value) < 0 || parseFloat(value) >= 10) {
-        return callback(new Error('请输入正确的优惠折扣'))
+      if (!value || parseFloat(value) < 0) {
+        return callback(new Error('请输入正确的优惠金额'))
       } else {
         callback()
       }
@@ -282,7 +282,7 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
-  created() {
+  mounted() {
     this.useRuleLimit = this.discountForm.useRule === 0 ? 0 : 1 // 是否有使用门槛
     if (this.$route.query.id) {
       // 编辑
@@ -294,6 +294,10 @@ export default {
         if (res.data) {
           var datas = res.data
           this.discountForm = datas
+          this.selectedStore = datas.listCouponStoreEntity
+          this.$refs.selectedStore.show(datas.listCouponStoreEntity) // 已选择的门店列表显示
+          this.selectedPro = datas.listCouponProductEntity
+          this.$refs.selectedPro.show(datas.listCouponProductEntity) // 已选择的商品列表显示
           this.isRember = !!datas.expireInfo // 是否需要到期提醒
           this.useRuleLimit = datas.useRule === 0 ? 0 : 1 // 是否有使用门槛
           this.otherData = {

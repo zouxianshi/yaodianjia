@@ -20,7 +20,7 @@
           label-position="left"
         >
           <el-form-item label="优惠券类型：">
-            <span>满减券</span>
+            <span>礼品券</span>
           </el-form-item>
           <el-form-item label="优惠券名称：" prop="cname">
             <el-input
@@ -30,14 +30,13 @@
               style="width:300px"
             />
           </el-form-item>
-          <el-form-item label="优惠内容：" prop="denomination">
-            <el-input
-              v-model="discountForm.denomination"
-              maxlength="5"
-              onkeyup="value=value.replace(/[^0-9]/g,'')"
-              :disabled="isUpdate"
-              style="width:80px"
-            />元
+          <el-form-item label="兑换商品：">
+            <el-button type="text" @click="selectCommodity()">选择商品</el-button>
+            <mSelectedProduct
+              v-show="selectedPro.length>0"
+              ref="selectedPro"
+              @onDel="_deleteItemPro"
+            />
           </el-form-item>
           <el-form-item label="退货规则：">
             <el-radio-group v-model="discountForm.returnRule" :disabled="isUpdate">
@@ -74,11 +73,7 @@
           label-position="left"
         >
           <el-form-item label="使用场景：">
-            <el-radio-group v-model="discountForm.sceneRule" :disabled="isUpdate">
-              <el-radio :label="3">线上线下通用</el-radio>
-              <el-radio :label="1">微商城</el-radio>
-              <el-radio :label="2">线下门店</el-radio>
-            </el-radio-group>
+            <span>门店</span>
           </el-form-item>
           <el-form-item label="使用门槛：" prop="useRule">
             <el-radio-group v-model="useRuleLimit" :disabled="isUpdate" @change="discountForm.useRule='0'">
@@ -124,7 +119,7 @@
                 <el-date-picker
                   v-model="otherData.expirationDate"
                   :disabled="isUpdate"
-                  type="daterange"
+                  type="datetimerange"
                   range-separator="至"
                   start-placeholder="生效日期"
                   end-placeholder="失效日期"
@@ -155,38 +150,6 @@
               @onDel="_deleteItemSto"
             />
           </el-form-item>
-          <el-form-item label="适用商品：">
-            <el-radio-group
-              v-model="discountForm.productRule"
-              :disabled="isUpdate"
-              @change="changeProductRule"
-            >
-              <el-radio :label="1">全部商品</el-radio>
-              <el-radio :label="2">
-                指定商品可用
-                <el-button
-                  v-if="discountForm.productRule===2"
-                  type="text"
-                  :disabled="isUpdate"
-                  @click="selectCommodity()"
-                >选择商品</el-button>
-              </el-radio>
-              <el-radio :label="3">
-                指定商品不可用
-                <el-button
-                  v-if="discountForm.productRule===3"
-                  type="text"
-                  :disabled="isUpdate"
-                  @click="selectCommodity()"
-                >选择商品</el-button>
-              </el-radio>
-            </el-radio-group>
-            <mSelectedProduct
-              v-show="selectedPro.length>0"
-              ref="selectedPro"
-              @onDel="_deleteItemPro"
-            />
-          </el-form-item>
         </el-form>
         <el-button v-if="active===1" size="mini" type="primary" @click="next">下一步</el-button>
         <el-button v-if="active===2" size="mini" type="primary" @click="active = 1">上一步</el-button>
@@ -201,8 +164,8 @@
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import mPhoneView from '../_source/phoneView'
-import mPopSelectStore from '@/components/Marketings/popSelectStore'
-import mPopSelectProduct from '@/components/Marketings/popSelectProduct'
+import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择门店弹窗
+import mPopSelectProduct from './selectOneProduct' // 选择商品弹窗
 import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
 import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
 import {
@@ -230,14 +193,6 @@ export default {
         callback()
       }
     }
-    var validateDenomination = (rule, value, callback) => {
-      // 验证优惠内容
-      if (!value || parseFloat(value) < 0 || parseFloat(value) >= 10) {
-        return callback(new Error('请输入正确的优惠折扣'))
-      } else {
-        callback()
-      }
-    }
 
     return {
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
@@ -255,26 +210,24 @@ export default {
       isSelectMax: false, // 是否输入最大优惠
       useRuleLimit: 0, // 使用门槛
       discountForm: {
-        ctype: 2,
-        cname: '', // 折扣名称
-        denomination: '', // 优惠内容
-        maxPrice: 0, // 最大优惠
+        ctype: 3, // 礼品券
+        cname: '', // 优惠券名称
+        // maxPrice: 0, // 最大优惠
         returnRule: 1, // 退货规则
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
-        sceneRule: 3, // 使用场景
+        sceneRule: 2, // 使用场景 (2.线下门店)
         effectTime: 0,
         useRule: 0, // 门槛金额
         shopRule: 1, // 适用门店
-        productRule: 1, // 使用商品
+        productRule: 2, // 使用商品(2.部分商品可用)
         timeRule: 1,
-        logo: ''
+        logo: '' // 预览图片
       },
       rules: {
         cname: [
           { required: true, message: '请输入优惠券名称', trigger: 'blur' }
         ],
-        denomination: [{ validator: validateDenomination, trigger: 'blur' }],
         expireInfo: [{ validator: validateExpireInfo, trigger: 'blur' }]
       }
     }
@@ -282,7 +235,7 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
-  created() {
+  mounted() {
     this.useRuleLimit = this.discountForm.useRule === 0 ? 0 : 1 // 是否有使用门槛
     if (this.$route.query.id) {
       // 编辑
@@ -294,6 +247,10 @@ export default {
         if (res.data) {
           var datas = res.data
           this.discountForm = datas
+          this.selectedStore = datas.listCouponStoreEntity
+          this.$refs.selectedStore.show(datas.listCouponStoreEntity) // 已选择的门店列表显示
+          this.selectedPro = datas.listCouponProductEntity
+          this.$refs.selectedPro.show(datas.listCouponProductEntity) // 已选择的商品列表显示
           this.isRember = !!datas.expireInfo // 是否需要到期提醒
           this.useRuleLimit = datas.useRule === 0 ? 0 : 1 // 是否有使用门槛
           this.otherData = {
@@ -372,7 +329,7 @@ export default {
                 if (params.productRule === 2 || params.productRule === 3) {
                   this.selectedPro.forEach(item => {
                     var obj = {
-                      proBrand: item.brandId,
+                      proBrand: item.brandName,
                       proCode: item.erpCode,
                       proId: item.id,
                       proName: item.name,

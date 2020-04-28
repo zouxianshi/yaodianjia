@@ -26,15 +26,12 @@
           </el-form-item>
         </el-form>
       </div>
-      <el-table
-        ref="dataTable"
-        :data="gridData"
-        height="300px"
-        @select="select"
-        @select-all="selectAll"
-        @selection-change="selectAuto"
-      >
-        <el-table-column type="selection" width="55" />
+      <el-table ref="dataTable" :data="gridData" height="300px" @select="select" @select-all="selectAll">
+        <el-table-column>
+          <template scope="scope">
+            <el-radio v-model="selectErpCode" :label="scope.row.erpCode" @change.native="getTemplateRow(scope.$index,scope.row)">&nbsp;</el-radio>
+          </template>
+        </el-table-column>
         <el-table-column property="num" label="商品图片">
           <template slot-scope="scope">
             <el-image
@@ -51,7 +48,7 @@
         <el-table-column property="brandName" label="品牌" />
         <el-table-column property="specSkuList" label="规格">
           <template slot-scope="scope">
-            {{ scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}
+            {{ scope.row.specSkuList && scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}
           </template>
         </el-table-column>
         <el-table-column property="mprice" label="参考价" />
@@ -86,9 +83,8 @@ export default {
   data() {
     return {
       gridData: [],
+      selectErpCode: '', // 选择商品id
       selectedArr: [], //  已选择商品所有信息
-      hasSelectList: [], // 已选择商品id集合
-      nowSelect: [],
       totalCount: 0,
       groupData: [],
       searchParams: {
@@ -108,6 +104,9 @@ export default {
       dialogTableVisible: false
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   created() {
     // 获取分组
     getTypeTree({ merCode: this.merCode, type: 2, use: true }).then(res => {
@@ -115,18 +114,13 @@ export default {
       this.groupData.unshift({ name: '全部', id: '' })
     })
   },
-  computed: {
-    ...mapGetters(['merCode'])
-  },
   methods: {
     show(product) {
       this.selectedArr = product
-      this.hasSelectList = []
-      product.forEach(item => {
-        this.hasSelectList.push(item.erpCode)
-      })
+      this.selectErpCode = product.length > 0 ? product[0].erpCode : ''
       this.queryGoodsData()
     },
+    // 查询商品分组条件
     handleChangeGroup(val) {
       this.searchParams.groupId = val[val.length - 1]
     },
@@ -138,14 +132,6 @@ export default {
         if (res.data && res.data.data) {
           this.gridData = res.data.data
           this.totalCount = res.data.totalCount
-          this.$nextTick(() => {
-            this.$refs.dataTable.clearSelection()
-            this.gridData.forEach(row => {
-              if (this.hasSelectList.indexOf(row.erpCode) >= 0) {
-                this.$refs.dataTable.toggleRowSelection(row, true)
-              }
-            })
-          })
         }
       })
     },
@@ -170,44 +156,14 @@ export default {
     },
     // 单选
     select(e, rows) {
-      this.checkSelect(e)
+    },
+    getTemplateRow(e, row) {
+      console.log(row)
+      this.selectedArr = [row]
+      this.selectErpCode = row.erpCode
     },
     // 全选
     selectAll(e) {
-      this.checkSelect(e)
-    },
-    // 改变选中状态时触发
-    selectAuto(e) {
-    },
-    // 处理所有选中项
-    checkSelect(e) {
-      // 添加当前页选中项中未在所有已选择的数组中的item
-      this.nowSelect = e
-      var nowSelectCode = []
-      e.forEach(item => {
-        nowSelectCode.push(item.erpCode)
-        if (this.hasSelectList.indexOf(item.erpCode) < 0) {
-          this.selectedArr.push(item)
-          this.hasSelectList.push(item.erpCode)
-        }
-      })
-      // 得到当前页没有选中的id(当前页取消选择)
-      var noSelectIds = []
-      this.gridData.forEach(row => {
-        if (nowSelectCode.indexOf(row.erpCode) < 0) {
-          noSelectIds.push(row['erpCode'])
-        }
-      })
-      noSelectIds.forEach(erpCode => {
-        for (var i = 0; i < this.hasSelectList.length; i++) {
-          if (this.hasSelectList[i] === erpCode) {
-            // 如果总选择中有未被选中的，那么就删除这条
-            this.hasSelectList.splice(i, 1)
-            this.selectedArr.splice(i, 1)
-            break
-          }
-        }
-      })
     }
   }
 }

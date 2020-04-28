@@ -1,7 +1,7 @@
 <template>
   <div class="selected-product-view">
     <el-table ref="dataTable" :data="selectedProducts.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)" height="250">
-      <el-table-column property="num" label="商品图片">
+      <el-table-column label="商品图片">
         <template slot-scope="scope">
           <el-image
             style="width: 70px; height: 70px"
@@ -12,18 +12,34 @@
           />
         </template>
       </el-table-column>
-      <el-table-column property="erpCode" label="商品编码" />
-      <el-table-column property="name" label="商品名称" />
-      <el-table-column property="brandName" label="品牌" />
-      <el-table-column property="specSkuList" label="规格">
+      <el-table-column property="erpCode" label="商品编码">
         <template slot-scope="scope">
-          {{ scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}
+          {{ scope.row.erpCode || scope.row.proCode }}
         </template>
       </el-table-column>
-      <el-table-column property="price" label="参考价" />
+      <el-table-column property="name" label="商品名称">
+        <template slot-scope="scope">
+          {{ scope.row.name || scope.row.proName }}
+        </template>
+      </el-table-column>
+      <el-table-column property="brandName" label="品牌">
+        <template slot-scope="scope">
+          {{ scope.row.brandName || scope.row.proBrand }}
+        </template>
+      </el-table-column>
+      <el-table-column property="specSkuList" label="规格">
+        <template slot-scope="scope">
+          {{ scope.row.specSkuList&&scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : scope.row.proSpec }}
+        </template>
+      </el-table-column>
+      <el-table-column property="price" label="参考价">
+        <template slot-scope="scope">
+          {{ scope.row.price || scope.row.proPrice }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="60">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
+          <el-button type="text" size="small" :disabled="!!scope.row.proCode" @click="handleDel(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,6 +66,7 @@ export default {
   },
   methods: {
     show(selectedProducts) {
+      console.log(selectedProducts)
       this.selectedProducts = selectedProducts
     },
     // 删除已选商品

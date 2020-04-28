@@ -22,7 +22,7 @@
         <div class="algin-left">
           <div>使用条件：{{ useRules }}</div>
           <div>可用时间：{{ userTime }}</div>
-          <div>可用门店：{{ data.store === '0' ? '全部门店':'部分门店' }}</div>
+          <div>可用门店：{{ data.shopRule === 1 ? '全部门店':'部分门店' }}</div>
           <div style="white-space:normal;word-break:break-all;word-wrap:break-word">使用须知：{{ data.note }}</div>
         </div>
         <div class="p-bottom">
