@@ -57,7 +57,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="activityDetailName" label="活动名称" min-width="120" />
-          <el-table-column label="金额门槛" min-width="80" prop="userRule" />
+          <el-table-column label="金额门槛" min-width="80" prop="useRule" />
           <el-table-column label="活动开始时间" min-width="150" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.beginTime!=null?scope.row.beginTime.replace('T',' '):'-' }}</span>
