@@ -16,12 +16,14 @@
               :label="col.label"
               :show-overflow-tooltip="true"
               :prop="col.prop"
-              :min-width="col.width"
+              :width="col.width"
+              :align="col.align"
             />
             <el-table-column
               v-else-if="col.prop==='validStatus'"
               :key="col.prop"
               :label="col.label"
+              :width="col.width"
               :prop="col.prop"
             >
               <template slot-scope="scope">
@@ -34,6 +36,7 @@
               v-else-if="col.prop==='status'"
               :key="col.prop"
               :label="col.label"
+              :width="col.width"
               :prop="col.prop"
             >
               <template slot="header" slot-scope="scope">
@@ -54,7 +57,7 @@
               <span v-else>无</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="130">
+          <el-table-column label="操作" width="180" align="center">
             <template slot-scope="scope">
               <el-button type="text" @click="toLook(scope.row)">查看</el-button>
               <el-divider direction="vertical" />
@@ -158,40 +161,41 @@ export default {
         {
           prop: 'activityType',
           label: '活动类型',
-          width: '80'
+          width: '120'
         },
         {
           prop: 'pmtName',
-          label: '活动名称',
-          width: '150'
+          label: '活动名称'
         },
         {
           prop: 'countStore',
-          label: '参与门店'
+          label: '参与门店',
+          width: '150',
+          align: 'center'
         },
         {
           prop: 'startTime',
           label: '活动开始时间',
-          width: '120',
+          width: '200',
           align: 'center'
         },
         {
           prop: 'endTime',
           label: '活动结束时间',
-          width: '120',
+          width: '200',
           align: 'center'
         },
         {
           prop: 'validStatus',
           label: '时间状态',
-          width: '80',
-          align: 'center',
+          width: '120',
+          // align: 'center',
           render: true
         },
         {
           prop: 'status',
           label: '状态',
-          width: '80',
+          width: '120',
           align: 'center',
           render: true
         }
