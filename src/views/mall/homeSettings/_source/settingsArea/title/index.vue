@@ -50,8 +50,6 @@ export default {
     }
   },
   created() {
-    console.log(this.item)
-    console.log('==========================122item')
   },
   components: { mTitle }
 }

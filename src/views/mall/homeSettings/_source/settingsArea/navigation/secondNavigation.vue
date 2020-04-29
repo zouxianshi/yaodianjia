@@ -63,8 +63,8 @@ export default {
     _onAdd() {
       this.searchParams.itemList.push(itemParams)
     },
-    _onDel(i) {
-      this.searchParams.itemList.splice(i, 1)
+    _onDel(index) {
+      this.searchParams.itemList = _.filter(this.searchParams.itemList, (v, i) => i !== index)
     },
     _onItem(item, i) {
       this.$set(this.searchParams.itemList, i, item)

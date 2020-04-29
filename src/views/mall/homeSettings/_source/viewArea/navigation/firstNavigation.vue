@@ -30,7 +30,6 @@ export default {
     onEnd() {
       const { item: { $index }, dragList } = this
       this.setItemDragData({ $index, itemList: dragList })
-      console.log(1111)
     },
     onEvent() {
     }

@@ -20,7 +20,6 @@ export default {
   },
   methods: {
     onSettings() {
-      console.log(this.item)
       jumpCurrentSet(this.$root, this.item)
     }
   },

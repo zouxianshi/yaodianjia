@@ -1,5 +1,5 @@
 <template>
-  <m-el-card class="nav-item-box-card" :is-add="isAdd" :is-disabled="isDisabled" :title="`导航${index + 1}`">
+  <m-el-card class="nav-item-box-card" :index="index" :is-add="isAdd" :is-disabled="isDisabled" :title="`导航${index + 1}`">
     <el-form label-width="100px" size="mini">
       <el-form-item label="图标">
         <div class="snb-photo">
