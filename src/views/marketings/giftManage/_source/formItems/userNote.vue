@@ -25,7 +25,6 @@ export default {
       type: Object,
       default() {
         return {
-          note: ''
         }
       }
     },
@@ -36,7 +35,9 @@ export default {
   },
   data() {
     return {
-      params: {}
+      params: {
+        note: ''
+      }
     }
   },
   watch: {

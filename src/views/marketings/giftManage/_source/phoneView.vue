@@ -34,6 +34,7 @@
   </div>
 </template>
 <script>
+import { formatDate } from '@/utils/timer'
 export default {
   name: 'PhoneView',
   props: {
@@ -59,12 +60,13 @@ export default {
     },
     userTime() {
       var str = ''
+      var times = this.data.effectTime
       if (this.data.timeRule === 1) { // 选择马上开始有效期
-        str += '自领取起' + this.otherData.expirationDay + '天内有效'
+        str += '自领取起' + times + '天内有效'
       } else if (this.data.timeRule === 2) {
-        str += '自领取' + this.otherData.notActive + '天后' + this.otherData.effective + '天有效'
+        str += '自领取' + times.split(',')[0] + '天后' + times.split(',')[1] + '天有效'
       } else { // 选择日期
-        str += this.formatDate(this.otherData.expirationDate[0]) + '到' + this.formatDate(this.otherData.expirationDate[1])
+        str += formatDate(times.split(',')[0]) + '到' + formatDate(times.split(',')[1])
       }
       return str
     }
@@ -72,15 +74,6 @@ export default {
   methods: {
     check() {
       console.log(this.data)
-    },
-    formatDate(dates) {
-      var date = new Date(dates)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      m = m < 10 ? '0' + m : m
-      var d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      return y + '年' + m + '月' + d
     }
   }
 }

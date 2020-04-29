@@ -14,6 +14,7 @@
         placeholder="请输入优惠券名称"
         maxlength="10"
         style="width:300px"
+        @keyup.native="changeView1"
       />
     </el-form-item>
   </el-form>
@@ -61,6 +62,13 @@ export default {
         })
       })
       return result
+    },
+    // 改变预览界面显示
+    changeView1() {
+      var obj = {
+        cname: this.params.cname
+      }
+      this.$emit('changeViews', obj)
     }
   }
 }
