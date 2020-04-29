@@ -37,7 +37,7 @@
         <el-input v-model.trim="keyword" size="small" placeholder="请输入关键字" />
       </div>
       <div class="search-item">
-        <el-button type="primary" size="small" @click="getList">查询</el-button>
+        <el-button type="primary" size="small">查询</el-button>
       </div>
       <div class="search-item">
         <!-- <el-button type="primary" size="small" @click="exportFun">
@@ -97,7 +97,8 @@
   </div>
 </template>
 <script>
-import { normalActivityList } from '@/api/marketing'
+import _ from 'lodash'
+import { normalActivityList } from '@/api/coupon'
 import { mapGetters } from 'vuex'
 export default {
   name: 'TurntableIndex',
@@ -179,42 +180,42 @@ export default {
   destroyed() {},
   methods: {
     getData(searchParams) {
-      const p = { ...this.searchParams, searchParams }
+      const p = _.assign(this.searchParams, searchParams)
       normalActivityList(p).then(res => {
         console.log(res)
       })
+    },
+    deleteRow(index, rows) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          rows.splice(index, 1)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    changeOption(val) {
+      console.log(val)
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
     }
-
-  },
-  deleteRow(index, rows) {
-    this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    })
-      .then(() => {
-        rows.splice(index, 1)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
-      })
-      .catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
-  },
-  changeOption(val) {
-    console.log(val)
-  },
-  handleSizeChange(val) {
-    console.log(`每页 ${val} 条`)
-  },
-  handleCurrentChange(val) {
-    console.log(`当前页: ${val}`)
   }
+
 }
 </script>
 
