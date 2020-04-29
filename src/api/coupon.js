@@ -60,7 +60,6 @@ export function addCoupon(params) {
 }
 // 模块列表
 export function moduleList(params) {
-  console.log(params)
   return request({
     url: `${config.merGoods}/1.0/market/_searchTemplate/${params.id}/${params.type}`,
     method: 'get'

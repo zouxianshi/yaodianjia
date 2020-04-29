@@ -19,7 +19,7 @@
     <el-button type="primary" @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add' })">添加优惠券</el-button>-->
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <el-tab-pane label="会员营销" name="first">
-        <div class="header-nav">
+        <div v-loading="loadingShow" class="header-nav">
           <div class="item-box">
             <div v-for="(item, index) in moduleData" :key="index" class="item-border">
               <m-gift-card :info="item" />
@@ -29,7 +29,7 @@
         <div v-if="moduleData.length===0" style="text-align:center;color:#bdc3cd">暂无活动</div>
       </el-tab-pane>
       <el-tab-pane label="商品促销" name="second">
-        <div class="header-nav">
+        <div v-loading="loadingShow" class="header-nav">
           <div class="item-box">
             <div v-for="(item, index) in moduleData" :key="index" class="item-border">
               <m-gift-card :info="item" />
@@ -39,7 +39,7 @@
         <div v-if="moduleData.length===0" style="text-align:center;color:#bdc3cd">暂无活动</div>
       </el-tab-pane>
       <el-tab-pane label="精彩活动" name="third">
-        <div class="header-nav">
+        <div v-loading="loadingShow" class="header-nav">
           <div class="item-box">
             <div v-for="(item, index) in moduleData" :key="index" class="item-border">
               <m-gift-card :info="item" />
@@ -57,6 +57,7 @@ import { moduleList } from '@/api/coupon'
 import payImage from '@/assets/image/marketings/pay.png'
 import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import zhuan from '@/assets/image/marketings/zhuan.png'
+import guagua from '@/assets/image/marketings/guagua.png'
 export default {
   name: 'ListIndex',
   components: {
@@ -69,7 +70,8 @@ export default {
       activeName: 'first',
       moduleData: [],
       radioType: 1,
-      tabNum: 1
+      tabNum: 1,
+      loadingShow: false
     }
   },
   computed: {},
@@ -89,6 +91,7 @@ export default {
       this.handleGetlist(this.tabNum)
     },
     handleGetlist(id) {
+      this.loadingShow = true
       var params = {
         id: id,
         type: this.radioType
@@ -96,26 +99,30 @@ export default {
       moduleList(params).then(res => {
         this.moduleData = res.data
         for (const i of this.moduleData) {
-          i.imgUrl =
-            'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'
-          if (i.activityTemplateName === '支付有礼') {
-            i.url = `/marketings/activity-manage/payment-gift/list`
-            i.imgUrl = payImage
-          } else {
-            if (i.activityTemplateName === '领券中心') {
+          switch (i.activityTemplateName) {
+            case '支付有礼':
+              i.url = `/marketings/activity-manage/payment-gift/list`
+              i.imgUrl = payImage
+              break
+            case '领券中心':
               i.url = `/marketings/activity-manage/coupons/list`
               i.imgUrl = getcoupon
-            } else {
+              break
+            case '大转盘':
               i.url = `/marketings/activity-manage/turntable/list`
               i.imgUrl = zhuan
-            }
-            i.query = {
-              code: i.activityTemplateCode,
-              name: i.activityTemplateName,
-              id: id
-            }
+              break
+            case '刮刮乐':
+              i.url = `/marketings/activity-manage/turntable/list`
+              i.imgUrl = guagua
+          }
+          i.query = {
+            code: i.activityTemplateCode,
+            name: i.activityTemplateName,
+            id: id
           }
         }
+        this.loadingShow = false
       })
     },
     handleClick(val) {

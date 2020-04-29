@@ -44,8 +44,8 @@
         <el-radio-button label="现金购买" />
       </el-radio-group>
     </div>
-    <el-table v-if="show" :data="tableData" style="width: 100%" empty-text="领券中心暂未上架任何优惠券">
-      <el-table-column prop="cname" label="优惠券信息" width="120">
+    <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="领券中心暂未上架任何优惠券">
+      <el-table-column prop="cname" label="优惠券信息" width="150">
         <template slot-scope="scope">
           <div>
             {{ scope.row.cname + scope.row.ctype }}
@@ -163,6 +163,7 @@ export default {
   destroyed() {},
   methods: {
     getList(val) {
+      this.show = true
       if (val === '查询') {
         this.pageSize = 10
         this.currentPage = 1
@@ -196,7 +197,7 @@ export default {
       searchActivitie(params).then(res => {
         this.tableData = res.data.records
         this.totalPage = res.data.total
-        this.show = true
+        this.show = false
       })
     },
     deleteRow(index, rows) {

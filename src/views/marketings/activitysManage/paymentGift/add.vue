@@ -231,8 +231,12 @@ export default {
       callback()
     }
     const giftType_limit = (rule, value, callback) => {
-      if (this.form.giftType === 1 && this.selectedCoupons.length === 0) {
-        callback(new Error('请选择优惠券'))
+      if (this.form.giftType === 1) {
+        if (this.selectedCoupons.length === 0) {
+          callback(new Error('请选择优惠券'))
+        } else if (this.selectedCoupons.length > 20) {
+          callback(new Error('优惠券最多不能超过20张'))
+        }
       } else if (
         this.form.giftType === 2 &&
         this.selectedActivity.length === 0
@@ -242,20 +246,15 @@ export default {
       callback()
     }
     const time_limit = (rule, value, callback) => {
-      const nowDate = new Date()
       if (this.beginEndTime.length === 0) {
         callback(new Error('请选择活动时间'))
-      } else if (new Date(this.beginEndTime[0].replace(/\-/g, '/')) < nowDate) {
-        callback(new Error('起始时间必须大于当前时间'))
       }
       callback()
     }
     return {
       isDisabled: {
         disabledDate(time) {
-          const myDate = new Date()
-          const _beforeDay = myDate.setDate(new Date().getDate() - 1)
-          return time.getTime() <= _beforeDay
+          return time.getTime() < new Date(new Date().getTime() - 86400000)
         }
       },
       beginEndTime: [],
@@ -356,7 +355,11 @@ export default {
 
   methods: {
     dateChange() {
-      this.selectCoupon = []
+      this.selectedCoupons = []
+      this.$refs.selectedCouponView.showPage(
+        this.selectedCoupons,
+        this.pageStatus
+      )
     },
     // 选择门店
     selectStore() {
@@ -366,14 +369,9 @@ export default {
       this.$refs.selectActivity.show(this.selectedActivity)
     },
     selectCoupon() {
-      const nowDate = new Date()
       if (this.beginEndTime.length > 0) {
-        if (this.beginEndTime[0] < nowDate) {
-          this.$message.error('起始时间必须大于当前时间')
-        } else {
-          this.$refs.checkCoupons.handleGetlist()
-          this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
-        }
+        this.$refs.checkCoupons.handleGetlist()
+        this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
       } else {
         this.$message.error('请先选择活动时间')
       }
@@ -387,8 +385,8 @@ export default {
       const route = Object.assign({}, this.tempRoute, { title: `${title}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
-    doSubmitForm() {
-      if (this.form1Validate && this.form2Validate && this.form3Validate) {
+    doSubmitForm(flag1, flag2, flag3) {
+      if (flag1 && flag2 && flag3) {
         this.form.merCode = this.merCode
         if (this.form.sceneRuleReal.length === 2) {
           this.form.sceneRule = 0
@@ -406,12 +404,10 @@ export default {
         if (this.form.shopRule === 2) {
           this.selectedStores.forEach(store => {
             this.form.listCouponStore.push({
-              // busId: 0,
-              // id: 0,
               ruleType: 2,
-              storeCode: store.stCode,
-              storeId: store.id,
-              storeName: store.stName
+              storeCode: store.storeCode || store.stCode,
+              storeId: store.storeId || store.id,
+              storeName: store.storeName || store.stName
             })
           })
         }
@@ -421,13 +417,12 @@ export default {
         if (this.form.productRule === 2) {
           this.selectedProducts.forEach(product => {
             this.form.listCouponProduct.push({
-              // busId: 0,
-              // id: 0,
-              proBrand: product.brandName,
-              proCode: product.erpCode,
-              proId: product.id,
-              proName: product.name,
-              proPrice: product.mprice,
+              proBrand: product.proBrand || product.brandNamed,
+              proCode: product.proCode || product.erpCode,
+              proId: product.proId || product.id,
+              proName: product.proName || product.name,
+              proPrice: product.proPrice || product.mprice,
+              proImg: product.proImg || product.mainPic,
               proSpec:
                 product.specSkuList && product.specSkuList.length > 0
                   ? product.specSkuList[0].skuValue
@@ -438,13 +433,6 @@ export default {
         }
         if (this.form.giftType === 1 && this.selectedCoupons.length > 0) {
           this.selectedCoupons.forEach(coupon => {
-            if (coupon.giftNum < 1) {
-              this.$message.error('发放张数不得小于1')
-              return
-            } else if (coupon.giftNum > 10000) {
-              this.$message.error('发放张数不得超过100000')
-              return
-            }
             this.form.activityPayReqDTO.push({
               giftId: coupon.id,
               giftNum: coupon.giftNum,
@@ -489,6 +477,12 @@ export default {
           delete params['status']
           delete params['updateName']
           delete params['updateTime']
+          delete params['sceneRuleReal']
+          delete params['listCouponStoreEntity']
+          delete params['listCouponProductEntity']
+          delete params['listActivityGiftEntity']
+          delete params['listActivityPayEntity']
+          console.log('updateActivity' + JSON.stringify(params))
           updateActivity(params)
             .then(res => {
               this.saveLoading = false
@@ -510,17 +504,12 @@ export default {
     },
 
     submitData: throttle(function() {
-      this.$refs.form.validate(flag => {
-        this.form1Validate = flag
-        this.doSubmitForm()
-      })
-      this.$refs.form2.validate(flag => {
-        this.form2Validate = flag
-        this.doSubmitForm()
-      })
-      this.$refs.form3.validate(flag => {
-        this.form3Validate = flag
-        this.doSubmitForm()
+      this.$refs.form.validate(flag1 => {
+        this.$refs.form2.validate(flag2 => {
+          this.$refs.form3.validate(flag3 => {
+            this.doSubmitForm(flag1, flag2, flag3)
+          })
+        })
       })
     }, 3000),
     onGetSelectStore(selectedStores) {
