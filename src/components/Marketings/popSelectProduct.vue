@@ -47,7 +47,7 @@
           </template>
         </el-table-column>
         <el-table-column property="erpCode" label="商品编码" />
-        <el-table-column property="name" label="商品名称" />
+        <el-table-column property="name" label="商品名称" :show-overflow-tooltip="true" />
         <el-table-column property="brandName" label="品牌" />
         <el-table-column property="specSkuList" label="规格">
           <template slot-scope="scope">

@@ -22,7 +22,14 @@
           <el-form-item label="优惠券类型：">
             <span>礼品券</span>
           </el-form-item>
-          <m-counpon-name ref="cname" :discount-form="discountForm" />
+          <el-form-item label="优惠券名称：" prop="cname">
+            <el-input
+              v-model="discountForm.cname"
+              placeholder="请输入优惠券名称"
+              maxlength="10"
+              style="width:300px"
+            />
+          </el-form-item>
           <el-form-item label="兑换商品：">
             <el-button type="text" :disabled="isUpdate" @click="selectCommodity()">选择商品</el-button>
             <mSelectedProduct
@@ -31,7 +38,12 @@
               @onDel="_deleteItemPro"
             />
           </el-form-item>
-          <mReturnRules ref="returnRules" :discount-form="discountForm" :disabled="isUpdate" />
+          <el-form-item label="退货规则：">
+            <el-radio-group v-model="discountForm.returnRule" :disabled="isUpdate">
+              <el-radio :label="1">退货退回</el-radio>
+              <el-radio :label="2">退货后失效</el-radio>
+            </el-radio-group>
+          </el-form-item>
           <el-form-item label="到期提醒：" prop="expireInfo">
             <el-checkbox v-model="isRember" :disabled="isUpdate" @change="discountForm.expireInfo=0" />到期前
             <el-input
@@ -83,6 +95,7 @@
               v-model="discountForm.timeRule"
               style="width:200px"
               :disabled="isUpdate"
+              @change="changeTimeRule"
             >
               <el-radio :label="1">
                 自领取起
@@ -111,6 +124,7 @@
                   range-separator="至"
                   start-placeholder="生效日期"
                   end-placeholder="失效日期"
+                  @change="changeData"
                 />
               </el-radio>
             </el-radio-group>
@@ -156,8 +170,6 @@ import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择�
 import mPopSelectProduct from './selectOneProduct' // 选择商品弹窗
 import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
 import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
-import mCounponName from '../_source/formItems/couponName' // cname
-import mReturnRules from '../_source/formItems/returnRules' // cname
 import {
   getCouponDetail,
   addCoupon,
@@ -172,8 +184,7 @@ export default {
     mPopSelectStore,
     mPopSelectProduct,
     mSelectedStore,
-    mSelectedProduct,
-    mCounponName, mReturnRules
+    mSelectedProduct
   },
   data() {
     var validateExpireInfo = (rule, value, callback) => {
@@ -184,8 +195,8 @@ export default {
         callback()
       }
     }
+
     return {
-      compArr: [{ ref: 'cname' }, { ref: 'returnRules' }],
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
       active: 1, // 当前操作步骤
       selectedStore: [],
@@ -216,6 +227,9 @@ export default {
         logo: '' // 预览图片
       },
       rules: {
+        cname: [
+          { required: true, message: '请输入优惠券名称', trigger: 'blur' }
+        ],
         expireInfo: [{ validator: validateExpireInfo, trigger: 'blur' }]
       }
     }
@@ -275,18 +289,23 @@ export default {
     changeStoreRule() {
       this.selectedStore = []
     },
+    changeTimeRule() {
+      this.otherData.expirationDay = 1
+      this.otherData.expirationDate = [new Date(), new Date()]
+      this.otherData.notActive = 1
+      this.otherData.effective = 1
+    },
+    changeData(e) { // 限制时间
+      if (new Date(e[0]).getTime() < new Date().getTime()) {
+        this.$alert('有效期开始时间需大于当前时间，请重新选择', '有效期有误', {
+          confirmButtonText: '确定'
+        })
+      }
+    },
     next() {
       if (this.active++ > 1) this.active = 1
     },
     _submit() {
-      _.map(this.compArr, item => {
-        var flag = this.$refs[item['ref']].$verification()
-        Promise.all([flag]).then(res => {
-          console.log(res)
-        }).catch(err => {
-          console.log(err)
-        })
-      })
       //  提交数据
       this.$refs['form'].validate(valid => {
         if (valid) {
@@ -329,6 +348,7 @@ export default {
                       proCode: item.erpCode,
                       proId: item.id,
                       proName: item.name,
+                      proImg: item.mainPic,
                       proPrice: item.price,
                       proSpec: item.specSkuList
                         ? item.specSkuList[0].skuValue
@@ -344,6 +364,12 @@ export default {
                 } else if (params.timeRule === 2) {
                   params.effectTime = _data.notActive + ',' + _data.effective
                 } else {
+                  if (new Date(_data.expirationDate[0]).getTime() < new Date().getTime()) {
+                    this.$alert('有效期开始时间需大于当前时间，请重新选择', '有效期有误', {
+                      confirmButtonText: '确定'
+                    })
+                    return
+                  }
                   params.effectTime =
                     formatDate(_data.expirationDate[0]) +
                     ',' +

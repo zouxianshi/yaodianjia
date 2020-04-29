@@ -5,10 +5,30 @@
       :data="selectedProducts.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)"
       height="250"
     >
+      <el-table-column property="erpCode" label="商品图片">
+        <template slot-scope="scope">
+          <el-image
+            v-if="scope.row.mainPic"
+            style="width: 70px; height: 70px"
+            :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
+            lazy
+            fit="contain"
+            :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
+          />
+          <el-image
+            v-else
+            style="width: 70px; height: 70px"
+            :src="showImg(scope.row.proImg)+'?x-oss-process=style/w_80'"
+            lazy
+            fit="contain"
+            :preview-src-list="[`${showImg(scope.row.proImg)}?x-oss-process=style/w_800`]"
+          />
+        </template>
+      </el-table-column>
       <el-table-column property="erpCode" label="商品编码">
         <template slot-scope="scope">{{ scope.row.erpCode || scope.row.proCode }}</template>
       </el-table-column>
-      <el-table-column property="name" label="商品名称">
+      <el-table-column property="name" label="商品名称" :show-overflow-tooltip="true">
         <template slot-scope="scope">{{ scope.row.name || scope.row.proName }}</template>
       </el-table-column>
       <el-table-column property="brandName" label="品牌">

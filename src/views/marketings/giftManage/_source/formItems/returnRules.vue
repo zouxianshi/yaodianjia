@@ -38,7 +38,9 @@ export default {
   },
   data() {
     return {
-      params: {}
+      params: {
+        returnRule: 1
+      }
     }
   },
   watch: {
@@ -48,15 +50,17 @@ export default {
   },
   methods: {
     $verification() {
-      return '退货规则'
-      // this.$refs['returnRuleForm'].validate(valid => {
-      //   if (valid) {
-      //     var obj = { returnRule: this.params.returnRule }
-      //     return obj
-      //   } else {
-      //     return false
-      //   }
-      // })
+      var _self = this
+      var result = new Promise(function(resolve, reject) {
+        _self.$refs['returnRuleForm'].validate(valid => {
+          if (valid) {
+            resolve({ returnRule: _self.params.returnRule })
+          } else {
+            reject(valid)
+          }
+        })
+      })
+      return result
     }
   }
 }

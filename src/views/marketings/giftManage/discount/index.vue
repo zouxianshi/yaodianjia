@@ -312,6 +312,7 @@ export default {
         id: this.$route.query.id
       }
       getCouponDetail(params).then(res => {
+        console.log(res)
         if (res.data) {
           var datas = res.data
           this.discountForm = datas
@@ -415,6 +416,7 @@ export default {
                       proCode: item.erpCode,
                       proId: item.id,
                       proName: item.name,
+                      proImg: item.mainPic,
                       proPrice: item.price,
                       proSpec: item.specSkuList
                         ? item.specSkuList[0].skuValue

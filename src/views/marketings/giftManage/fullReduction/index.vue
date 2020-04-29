@@ -395,6 +395,7 @@ export default {
                       proCode: item.erpCode,
                       proId: item.id,
                       proName: item.name,
+                      proImg: item.mainPic,
                       proPrice: item.price,
                       proSpec: item.specSkuList
                         ? item.specSkuList[0].skuValue
