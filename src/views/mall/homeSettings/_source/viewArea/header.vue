@@ -2,25 +2,25 @@
   <div class="va-header-model">
 
     <div class="vhm-title-box">
-      <div class="drag-area">
+      <!--<div class="drag-area">
         <span class="sp1">商城名组件</span>
         <div class="oper">
           <m-edit :item="{type:'mall-title'}" />
         </div>
-      </div>
-      <div id="va-title" class="title">
+      </div>-->
+      <div id="va-title" class="title" @click="jumpCurrentSet($root,{type:'mall-title'})">
         <b>{{ dragGlobal.title || '请输入商城名称' }}</b>
       </div>
     </div>
 
     <div class="vhm-search-box">
-      <div class="drag-area">
+      <!--<div class="drag-area">
         <span class="sp1">搜索关键字组件</span>
         <div class="oper">
-          <m-edit :item="{type:'mall-search-hint'}" />
+          <m-edit :item="{type:'mall-search-hint',name:'搜索关键词'}" />
         </div>
-      </div>
-      <div id="va-search-hint" class="title">
+      </div>-->
+      <div id="va-search-hint" class="title" @click="jumpCurrentSet($root,{type:'mall-search-hint',name:'搜索关键词'})">
         <b>{{ dragGlobal.searchHint || '' }}</b>
       </div>
     </div>
@@ -29,10 +29,11 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import mEdit from './_source/edit'
+// import mEdit from './_source/edit'
+import { jumpCurrentSet } from './_source/utils'
 export default {
   name: 'VaHeader',
-  components: { mEdit },
+  components: { },
   props: {},
   data() {
     return {}
@@ -53,7 +54,9 @@ export default {
   },
   updated() {
   },
-  methods: {},
+  methods: {
+    jumpCurrentSet
+  },
   beforeDestroy() {
   },
   destroyed() {
@@ -69,7 +72,7 @@ export default {
     position: absolute;
     left: $left;
     top: $top;
-    border: 2px solid transparent;
+    border: 2px dotted transparent;
     &:hover {
       border-color: #409EFF;
       .drag-area {

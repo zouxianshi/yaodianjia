@@ -16,11 +16,14 @@
       <el-tabs v-model="activeName" type="card" size="small">
         <el-tab-pane v-for="(item,$index) in dragComponent" :key="$index" :name="item.name" :label="item.name">
           <div class="cbm-draggable">
-            <v-draggable v-model="item.component" draggable=".item" v-bind="dragOptions" @start="onStart">
+            <v-draggable v-model="item.component" class="cbm-v-draggable" draggable=".item" v-bind="dragOptions" @start="onStart">
               <el-tooltip v-for="(el,i) in item.component" :key="i" :class="isDisabled(el.type) ? 'no-item' : 'item'" effect="dark" content="请拖拽至左下方布局" placement="top">
                 <el-button size="small" :disabled="isDisabled(el.type)">{{ el.name }}</el-button>
               </el-tooltip>
             </v-draggable>
+            <span class="cbm-tooltip">
+              <el-alert title="请拖拽您所需的组件样式到画布中" :closable="false" type="warning" show-icon />
+            </span>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -162,6 +165,13 @@ export default {
     }
     .cbm-draggable {
       padding-left: 130px;
+      .cbm-v-draggable {
+        display: inline-block;
+      }
+      .cbm-tooltip {
+        display: inline-block;
+        font-size: 12px;
+      }
       .item,.no-item {
         margin-right: 10px;
       }

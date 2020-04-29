@@ -30,9 +30,9 @@ export default {
     ...mapActions('mall', ['saveAssembly']),
     _onUpdate(searchParams, fn) {
       const { item: { uuid }, dragGlobal: { id }} = this
-      this.saveAssembly({ searchParams: { ...searchParams, dimensionId: id }, uuid }).then(() => {
+      this.saveAssembly({ searchParams: { ...searchParams, dimensionId: id }, uuid }).then((res) => {
         this.$message.success('组件保存成功')
-        fn()
+        fn(res.data)
       }).catch(() => {
         fn()
       })
@@ -50,6 +50,8 @@ export default {
     }
   },
   created() {
+    console.log(this.item)
+    console.log('==========================122item')
   },
   components: { mTitle }
 }

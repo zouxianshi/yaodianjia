@@ -13,7 +13,7 @@
     <div class="vam-draggable">
       <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
         <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" class="item-component">
-          <m-va-error-drag v-if="item.type !== 'no-data' && item.error" :type="item.type" />
+          <m-va-error-drag v-if="item.type !== 'no-data' && item.error" :type="item.type" @click.native="jumpCurrentSet($root,item)" />
           <m-no-data v-if="item.type === 'no-data'" />
           <template v-else>
             <div class="drag-area">
@@ -172,6 +172,7 @@ export default {
       } else {
         toPosition(headItem.uuid)
         jumpCurrentSet(this.$root, headItem)
+        this.$message.error('请先完善组件信息！')
         fn(false)
       }
     }

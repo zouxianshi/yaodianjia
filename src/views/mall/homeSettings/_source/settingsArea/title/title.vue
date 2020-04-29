@@ -2,7 +2,7 @@
   <div v-loading="saLoading" class="sa-title-box sam-width">
     <el-form label-width="90px" size="mini">
       <el-form-item label="标题">
-        <el-input v-model="name" placeholder="请输入标题" @change="() => isName = !name" />
+        <el-input v-model="name" placeholder="请输入标题" maxlength="10" @change="() => isName = !name" />
         <div v-if="isName" class="sa-error">
           {{ searchParams.type === 'mall-title' ? '请填写微商城标题' : '请填写标题' }}
         </div>
@@ -14,6 +14,7 @@
   </div>
 </template>
 <script>
+import { itemParams } from './../../_source/default'
 import { mapMutations, mapState } from 'vuex'
 
 export default {
@@ -25,7 +26,7 @@ export default {
       searchParams: {
         dimensionId: '',
         id: '',
-        itemList: [],
+        itemList: [itemParams],
         subType: 'first',
         title: '',
         type: 'title'
@@ -46,7 +47,7 @@ export default {
   methods: {
     ...mapMutations('mall', ['setHomeName']),
     onSubmit() {
-      const { name, searchParams, searchParams: { type }, item } = this
+      const { name, searchParams, searchParams: { type }} = this
       this.isName = false
       if (!name) {
         this.isName = true
@@ -57,13 +58,20 @@ export default {
         // 保存全局接口
         this.setHomeName(name)
       } else {
-        this.$emit('on-update', { ...searchParams, itemList: [{ ...item, name }] }, () => {
+        const id = _.isEmpty(searchParams.itemIds) ? '' : searchParams.itemIds[0]
+        const p = { ...searchParams.itemList[0], name }
+        if (id) {
+          p.id = id
+        }
+        this.$emit('on-update', { ...searchParams, itemList: [p] }, res => {
           this.loading = false
+          this.searchParams = _.assign(this.searchParams, res)
         })
       }
     }
   },
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {

@@ -41,7 +41,7 @@ export default {
     background: rgba(255,0,0,.2);
     position: absolute;
     left: 0;
-    top: 4px;
+    top: -2px;
     z-index: 2;
     .p-text {
       width: 100%;

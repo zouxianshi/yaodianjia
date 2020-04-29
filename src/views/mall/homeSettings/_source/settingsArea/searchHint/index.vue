@@ -1,10 +1,10 @@
 <template>
   <el-tabs :value="assemblyName" type="card">
-    <el-tab-pane :label="`${assemblyName}（${item.name}）`" :name="assemblyName">
+    <el-tab-pane :label="`${assemblyName}`" :name="assemblyName">
       <div class="sa-search-hint-box sam-width">
         <el-form label-width="110px" size="mini">
           <el-form-item label="搜索关键词">
-            <el-input v-model="searchHint" placeholder="请输入搜索关键词" />
+            <el-input v-model="searchHint" placeholder="请输入搜索关键词" maxlength="12" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -24,7 +24,12 @@ export default {
       searchHint: ''
     }
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {
     ...mapMutations('mall', ['setDragGlobal']),
     onSubmit() {

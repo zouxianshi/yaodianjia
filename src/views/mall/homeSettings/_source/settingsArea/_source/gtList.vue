@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="tableData" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 496px)">
+  <el-table :data="tableData" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 512px)">
     <el-table-column label="选择" width="55">
       <template slot-scope="scope">
         <el-checkbox v-model="scope.row.select" @change="v => onCheckbox(v, scope.row)" />
@@ -13,6 +13,7 @@
         <template v-else>-</template>
       </template>
     </el-table-column>
+    <el-table-column prop="erpCode" label="商品编码" show-overflow-tooltip />
     <el-table-column prop="name" label="商品名称" show-overflow-tooltip />
     <el-table-column prop="brandName" label="品牌" />
     <el-table-column prop="specStr" label="规格" show-overflow-tooltip />

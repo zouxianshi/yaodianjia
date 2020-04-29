@@ -13,7 +13,7 @@
         <el-alert :closable="false" title="*当前所选的商品会根据门店上架情况自动显示，按照添加顺序优先显示排在前面的商品" type="error" />
       </div>
       <div class="gtm-active">
-        <div class="gtm-active-box">
+        <div class="scrollbar gtm-active-box">
           <template v-for="(item,i) in activesData">
             <m-second-item v-if="isItem(item)" :key="i" source="sa-select-goods" :item="item" @on-delete="_onDelete" />
           </template>
@@ -49,7 +49,7 @@ export default {
         firstTypeId: '',
         groupType: true,
         merCode: '',
-        pageSize: 20,
+        pageSize: 10,
         searchKeyWord: '',
         secondTypeId: '',
         skuIds: [],
@@ -111,20 +111,20 @@ export default {
         this.$message.error('请选择商品！')
         return
       }
-      if (subType === 'first' && _.size(activesData) < 2) {
-        this.$message.error('当前组件最少添加（2）个商品！')
+      if (subType === 'first' && _.size(activesData) < 2 || _.size(activesData) > 20) {
+        this.$message.error('当前组件最少添加（2 - 20）个商品！')
         return
       }
-      if (subType === 'second' && _.size(activesData) < 3) {
-        this.$message.error('当前组件最少添加（3）个商品！')
+      if (subType === 'second' && _.size(activesData) < 3 || _.size(activesData) > 20) {
+        this.$message.error('当前组件最少添加（3 - 20）个商品！')
         return
       }
-      if (subType === 'third' && _.size(activesData) < 4) {
-        this.$message.error('当前组件最少添加（4）个商品！')
+      if (subType === 'third' && _.size(activesData) < 4 || _.size(activesData) > 20) {
+        this.$message.error('当前组件最少添加（4 - 20）个商品！')
         return
       }
-      if (subType === 'four' && _.size(activesData) < 1) {
-        this.$message.error('当前组件最少添加（1）个商品！')
+      if (subType === 'four' && _.size(activesData) < 1 || _.size(activesData) > 20) {
+        this.$message.error('当前组件最少添加（1 - 20）个商品！')
         return
       }
       await this.$emit('on-update', activesData)

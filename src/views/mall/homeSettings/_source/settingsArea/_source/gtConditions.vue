@@ -2,7 +2,7 @@
   <div class="gt-conditions-model">
     <el-cascader placeholder="商品分组" :show-all-levels="false" :props="{children: 'children',label: 'name',value: 'id'}" :options="groupData" size="mini" @change="onChange" />
     <el-input v-model.trim="searchParams.brandName" placeholder="商品品牌" size="mini" style="width: 202px;" />
-    <el-input v-model.trim="searchParams.searchKeyWord" placeholder="商品编码/名称" size="mini" style="width: 214px;" />
+    <el-input v-model.trim="searchParams.searchKeyWord" placeholder="商品编码/名称" size="mini" style="width: 207px;" />
     <el-button type="primary" size="mini" @click="onSubmit">查询</el-button>
   </div>
 </template>

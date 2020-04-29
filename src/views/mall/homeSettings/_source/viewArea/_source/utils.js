@@ -15,6 +15,12 @@ export const jumpCurrentSet = ($root, item) => {
   const setItem = item
   if (setItem.type === 'mall-title' || setItem.type === 'mall-search-hint') {
     setItem.itemList = [itemParams]
+    $('.hmm-settings ').css({ 'marginTop': `0px` })
+  } else {
+    const t = $(`#${item.uuid}`).position().top - 40
+    setTimeout(() => {
+      $('.hmm-settings ').css({ 'marginTop': `${t}px` })
+    }, 100)
   }
   // No caching update uuid.
   instance.setSelected(_.assign(setItem, {
@@ -121,7 +127,7 @@ export const getSearchParams = p => {
  */
 export const getBannerList = () => {
   return new Promise((resolve, reject) => {
-    getPageSets(getSearchParams({ positionCode: 'I-03' })).then(res => {
+    getPageSets(getSearchParams({ positionCode: 'I-01' })).then(res => {
       resolve(_.map(res.data.data, v => {
         return {
           className: '',

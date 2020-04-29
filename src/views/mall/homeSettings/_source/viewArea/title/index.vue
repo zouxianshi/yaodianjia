@@ -20,6 +20,8 @@ export default {
   beforeCreate() {
   },
   created() {
+    console.log(this.item)
+    console.log('s------------------------')
   },
   beforeMount() {
   },

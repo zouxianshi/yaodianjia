@@ -23,7 +23,7 @@ export default {
   },
   props: {
     dimensionId: {
-      type: Number,
+      type: String,
       default: null
     }
   },
