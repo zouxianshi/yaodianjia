@@ -46,6 +46,7 @@ export default {
         }
       })
       if (itemList.length === list.length) {
+        this.loading = true
         this.searchParams.itemList = list
         this.$emit('on-update', _.cloneDeep(this.searchParams), () => {
           this.loading = false
