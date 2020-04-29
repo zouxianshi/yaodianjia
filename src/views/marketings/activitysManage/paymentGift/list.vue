@@ -47,7 +47,13 @@
         </div>
       </section>
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
-        <el-table :data="tableData" style="width: 100%" size="small">
+        <el-table
+          v-loading="tableLoading"
+          :data="tableData"
+          style="width: 100%"
+          size="small"
+          element-loading-text="加载中"
+        >
           <el-table-column prop="activityType" label="活动类型" min-width="80">
             <template slot-scope="scope">
               <span v-if="scope.row.activityType === 0">其他类型</span>
@@ -129,6 +135,7 @@ export default {
   name: 'Banner',
   data() {
     return {
+      tableLoading: false,
       storeData: [{ stCode: '', stName: '全部', id: '' }],
       searchForm: {
         type: '-1', // 活动类型 (int)(10: 电子DM单, 11: 限时特惠, 12: 限时秒杀)
@@ -258,6 +265,7 @@ export default {
     },
     // 获取列表数据
     _getTableData() {
+      this.tableLoading = true
       const params = {
         currentPage: this.pager.current,
         pageSize: this.pager.size,
@@ -279,6 +287,7 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.tableLoading = false
       })
     },
     _delData(id) {

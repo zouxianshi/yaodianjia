@@ -1,6 +1,6 @@
 <template>
   <div class="selected-coupon-view">
-    <el-table :data="selectedCoupons" height="250" style="width: 100%">
+    <el-table height="250" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
       <el-table-column prop="cname" label="优惠券名称" />
       <el-table-column label="优惠内容">
         <template
@@ -122,6 +122,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.pageInfo.currentPage = 1
         this.selectedCoupons = this.selectedCoupons.filter(item => item !== row)
         this.$emit('onDel', this.selectedCoupons)
       })
