@@ -9,7 +9,7 @@
       label-width="120px"
     >
       <div class="form-title">基本信息</div>
-      <el-form-item label="活动名称：" prop="name">
+      <el-form-item ref="name" label="活动名称：" prop="name">
         <el-input
           v-model="form.name"
           placeholder="不超过30字"
@@ -19,7 +19,7 @@
           :disabled="disabled"
         />
       </el-form-item>
-      <el-form-item label="活动时间：" prop="activitTime">
+      <el-form-item ref="activitTime" label="活动时间：" prop="activitTime">
         <el-date-picker
           v-model="form.activitTime"
           style="width: 380px"
@@ -40,7 +40,7 @@
           <el-radio :label="true">全部门店</el-radio>
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
-      </el-form-item> -->
+      </el-form-item>-->
       <!-- <el-form-item v-if="form.allStores === 1">已选当前上线的全部门店</el-form-item> -->
       <el-form-item v-show="!form.allStore || disabled || edit" label="门店范围：" required>
         <!-- storeComponent -->
@@ -54,14 +54,18 @@
       </el-form-item>
       <!-- 门店列表 -->
       <el-form-item v-show="!form.allStore || disabled || edit">
-        <select-store ref="selectStoreComponent" :disabled="disabled || form.allStore" @del-item="delSelectStore" />
+        <select-store
+          ref="selectStoreComponent"
+          :disabled="disabled || form.allStore"
+          @del-item="delSelectStore"
+        />
       </el-form-item>
       <!-- <el-form-item label="商品范围：" prop="allStore" required>
         <el-radio-group v-model="form.allSpec" :disabled="disabled">
           <el-radio :label="true">全部商品</el-radio>
           <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
-      </el-form-item> -->
+      </el-form-item>-->
       <el-form-item v-show="!form.allSpec || disabled || edit" label="商品范围：" required>
         <div style="margin-bottom: 8px">
           <el-button
@@ -75,9 +79,13 @@
         <select-goods ref="storeGods" :disabled="disabled" @del-item="delSelectGoods" />
       </el-form-item>
       <div class="form-title">换购规则</div>
-      <el-form-item label="活动门槛：" prop="threshold">
+      <el-form-item ref="threshold" label="活动门槛：" prop="threshold">
         <template>
-          <el-input v-model="form.threshold" :disabled="disabled" style="width: 100px; margin-right: 8px" />元
+          <el-input
+            v-model="form.threshold"
+            :disabled="disabled"
+            style="width: 100px; margin-right: 8px"
+          />元
           <span class="info">以最终下单支付的金额计算</span>
         </template>
       </el-form-item>
@@ -96,15 +104,19 @@
         </template>
         <select-activity-goods ref="activityGod" :disabled="disabled" @del-item="delActivityGoods" />
       </el-form-item>
-      <el-form-item label="换购数量：" prop="confineNum">
+      <el-form-item ref="confineNum" label="换购数量：" prop="confineNum">
         <template>
           <span>最多可换购</span>
-          <el-input v-model="form.confineNum" :disabled="disabled" style="width: 100px; margin-right: 8px" />
+          <el-input
+            v-model="form.confineNum"
+            :disabled="disabled"
+            style="width: 100px; margin-right: 8px"
+          />
           <span>件</span>
           <span class="info">换购商品允许顾客下单时在商品的总换购数量</span>
         </template>
       </el-form-item>
-      <el-form-item label="下单规则：" prop="type">
+      <el-form-item ref="type" label="下单规则：" prop="type">
         <el-checkbox-group v-model="form.type" :disabled="disabled">
           <el-tooltip class="item" effect="dark" content="参加加价购是否可使用优惠券" placement="top-end">
             <el-checkbox label="1" name="type">
@@ -114,10 +126,25 @@
           </el-tooltip>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item>
-        <el-button :disabled="disabled" type="primary" style="width: 120px" @click="onSubmit">{{ edit?'更新':'提交' }}</el-button>
-      </el-form-item>
+      <!-- <el-form-item>
+        <el-button
+          :disabled="disabled"
+          type="primary"
+          style="width: 120px"
+          @click="onSubmit"
+        >{{ edit?'更新':'提交' }}</el-button>
+      </el-form-item>-->
     </el-form>
+    <!-- 操作按钮 -->
+    <div class="action-wapper">
+      <el-button
+        v-if="!disabled"
+        type="primary"
+        :disabled="disabled"
+        @click="onSubmit"
+      >{{ edit?'更新':'保存' }}</el-button>
+      <el-button @click="$router.go(-1)">返 回</el-button>
+    </div>
     <!-- 选取换购商品组件 -->
     <store-goods
       ref="storeGoodsComponent"
@@ -340,7 +367,7 @@ export default {
       // this.chooseStore = this.chooseStore
     },
     onSubmit() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid, object) => {
         if (valid) {
           console.log('我准备通过了----------------------')
           if (new Date(this.form.startTime).getTime() < new Date().getTime()) {
@@ -379,6 +406,10 @@ export default {
                 this.chooseStore.forEach(element => {
                   storeIdData.push(element.id)
                 })
+                if (Array.isArray(storeIdData) && !storeIdData.length) {
+                  this.$message.warning('活动门店不可为空')
+                  return
+                }
               }
               if (!this.form.allSpec) {
                 this.storeSelectGoods.forEach(element => {
@@ -389,6 +420,11 @@ export default {
                     erpCode: element.erpCode
                   })
                 })
+
+                if (Array.isArray(specIdData) && !specIdData.length) {
+                  this.$message.warning('活动商品不可为空')
+                  return
+                }
               }
               dataParam = {
                 ...dataParam,
@@ -444,6 +480,19 @@ export default {
             })
         } else {
           console.log('error submit!!', valid)
+          for (const i in object) {
+            let dom = this.$refs[i]
+            if (Object.prototype.toString.call(dom) !== '[object Object]') {
+              // 这里是针对遍历的情况（多个输入框），取值为数组
+              dom = dom[0]
+            } // 第一种方法（包含动画效果）
+            dom.$el.scrollIntoView({
+              // 滚动到指定节点
+              block: 'center', // 值有start,center,end，nearest，当前显示在视图区域中间
+              behavior: 'smooth' // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+            })
+            break // 因为我们只需要检测一项,所以就可以跳出循环了
+          }
           return false
         }
       })
@@ -489,7 +538,7 @@ export default {
 </script>
 <style lang='scss' scoped>
 .app-container {
-  position: relative;
+  padding-bottom: 80px;
   .form-title {
     line-height: 14px;
     font-size: 14px;
@@ -499,6 +548,17 @@ export default {
   }
   .info {
     color: #b3b3b3;
+  }
+  .action-wapper {
+    position: absolute;
+    padding: 12px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    text-align: center;
+    z-index: 1;
   }
 }
 </style>

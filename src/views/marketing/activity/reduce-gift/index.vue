@@ -2,7 +2,7 @@
   <div v-loading="pageInfoloading" class="app-container">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
       <div class="form-title">基本信息</div>
-      <el-form-item label="活动名称：" prop="name">
+      <el-form-item ref="name" label="活动名称：" prop="name">
         <el-input
           v-model="form.name"
           placeholder="不超过30字"
@@ -12,7 +12,7 @@
           :disabled="disabled"
         />
       </el-form-item>
-      <el-form-item label="活动时间：" prop="activitTime">
+      <el-form-item ref="activitTime" label="活动时间：" prop="activitTime">
         <el-date-picker
           v-model="form.activitTime"
           :disabled="disabled"
@@ -33,7 +33,7 @@
           <el-radio :label="true">全部门店</el-radio>
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
-      </el-form-item> -->
+      </el-form-item>-->
       <el-form-item v-show="!form.allStore || disabled || edit" label="活动范围：" required>
         <!-- storeComponent -->
         <el-button
@@ -52,7 +52,7 @@
           <el-radio :label="true">全部商品</el-radio>
           <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
-      </el-form-item> -->
+      </el-form-item>-->
       <!-- 选择的商品列表 -->
       <el-form-item v-show="!form.allSpec || disabled || edit" label="活动商品：" required>
         <div style="margin-bottom: 8px">
@@ -66,7 +66,7 @@
         </div>
         <select-goods ref="storeGods" :disabled="disabled" @del-item="delSelectGoods" />
       </el-form-item>
-      <el-form-item label="下单规则：" prop="type">
+      <el-form-item ref="type" label="下单规则：" prop="type">
         <el-checkbox-group v-model="form.type" :disabled="disabled">
           <el-tooltip class="item" effect="dark" content="参加满减是否使用优惠" placement="top-end">
             <el-checkbox label="1" name="type">
@@ -76,7 +76,7 @@
           </el-tooltip>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="活动规则：" prop="ruleType" required>
+      <el-form-item ref="ruleType" label="活动规则：" prop="ruleType" required>
         <el-radio-group v-model="form.ruleType" :disabled="disabled" @change="ruleTypeChange">
           <el-radio :label="1">阶梯满减</el-radio>
           <el-tooltip class="item" effect="dark" placement="top-start">
@@ -120,6 +120,7 @@
           />
         </el-divider>
         <el-form-item
+          :ref="'ruleList.'+ $Index + '.threshold'"
           label="满减门槛："
           :prop="'ruleList.'+ $Index + '.threshold'"
           :rules="{
@@ -135,7 +136,7 @@
             <template slot="append">{{ form.uint === 0 ? '元':'件' }}</template>
           </el-input>
         </el-form-item>
-        <el-form-item v-show="false" :prop="'ruleList.'+ $Index + '.uint'">
+        <el-form-item v-show="false" :ref="'ruleList.'+ $Index + '.uint'" :prop="'ruleList.'+ $Index + '.uint'">
           <el-input v-model="domain.uint" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="优惠内容：" required>
@@ -158,6 +159,7 @@
               >打</el-radio>
             </el-form-item>
             <el-form-item
+              :ref="'ruleList.'+ $Index + '.discount1'"
               :prop="'ruleList.'+ $Index + '.discount1'"
               :rules="{
                 validator:validDiscountPrice, trigger: 'change'
@@ -186,6 +188,7 @@
               >减</el-radio>
             </el-form-item>
             <el-form-item
+              :ref="'ruleList.'+ $Index + '.discount0'"
               :prop="'ruleList.'+ $Index + '.discount0'"
               :rules="{
                 validator:validAmountPrice, trigger: 'change'
@@ -239,16 +242,17 @@
           </el-button>
         </el-tooltip>
       </el-divider>
-      <el-form-item>
-        <el-button
-          v-if="!disabled"
-          type="primary"
-          style="width: 120px; margin-top: 20px"
-          :disabled="disabled"
-          @click="onSubmit"
-        >{{ edit?'更新':'提交' }}</el-button>
-      </el-form-item>
     </el-form>
+    <!-- 操作按钮 -->
+    <div class="action-wapper">
+      <el-button
+        v-if="!disabled"
+        type="primary"
+        :disabled="disabled"
+        @click="onSubmit"
+      >{{ edit?'更新':'保存' }}</el-button>
+      <el-button @click="$router.go(-1)">返 回</el-button>
+    </div>
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
@@ -500,7 +504,10 @@ export default {
       // 如果选择是元那么打折的范围为0-99999999
       const index = rule.field.split('.')[1]
       console.log('111111', rule, value, this.form.ruleList[index].threshold)
-      if (this.form.ruleList[index].discountType === 0 && this.form.ruleList[index].checkOrNot) {
+      if (
+        this.form.ruleList[index].discountType === 0 &&
+        this.form.ruleList[index].checkOrNot
+      ) {
         if (!value) {
           return callback(new Error('请输入满减金额'))
         }
@@ -510,9 +517,7 @@ export default {
         if (value > 99999999) {
           return callback(new Error('满减金额不可大于99999999'))
         }
-        if (
-          !checkNumberdouble(value)
-        ) {
+        if (!checkNumberdouble(value)) {
           return callback(new Error('请输入最多2位小数的正数'))
         }
         // 后续的数值必须大于前面的金额
@@ -648,7 +653,7 @@ export default {
     onSubmit() {
       //
       console.log('我是格式话表单提交数据----------------', this.form)
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid, object) => {
         if (valid) {
           if (new Date(this.form.startTime).getTime() < new Date().getTime()) {
             this.$message.warning('活动开始时间不能小于当前时间')
@@ -770,6 +775,20 @@ export default {
               })
           }
         } else {
+          console.log('我是格式话表单提交数据----------------object', object)
+          for (const i in object) {
+            let dom = this.$refs[i]
+            if (Object.prototype.toString.call(dom) !== '[object Object]') {
+              // 这里是针对遍历的情况（多个输入框），取值为数组
+              dom = dom[0]
+            } // 第一种方法（包含动画效果）
+            dom.$el.scrollIntoView({
+              // 滚动到指定节点
+              block: 'center', // 值有start,center,end，nearest，当前显示在视图区域中间
+              behavior: 'smooth' // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+            })
+            break // 因为我们只需要检测一项,所以就可以跳出循环了
+          }
           return false
         }
       })
@@ -850,7 +869,8 @@ export default {
   white-space: nowrap;
 }
 .app-container {
-  position: relative;
+  // position: relative;
+  padding-bottom: 80px;
   .form-title {
     line-height: 14px;
     font-size: 14px;
@@ -888,7 +908,8 @@ export default {
     right: 0;
     background: #fff;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    text-align: right;
+    text-align: center;
+    z-index: 1;
   }
 }
 </style>

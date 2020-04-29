@@ -45,6 +45,7 @@
         <el-table-column label="换购价" min-width="120px">
           <template slot-scope="scope">
             <el-form-item
+              :ref="'tableData.' + scope.$index + '.addPrice'"
               :prop="'tableData.' + scope.$index + '.addPrice'"
               :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
             >
@@ -140,16 +141,30 @@ export default {
   },
   methods: {
     dataFrom(data) {
+      const dataFromSource = []
       if (Array.isArray(data) && data.length) {
-        this.tableForm.tableData = data.map(item => {
-          return {
-            ...item,
-            productName: this.formatSkuInfo(item.specSkus || '')
+        data.forEach(good => {
+          const inIndex = this.tableForm.tableData.findIndex(item => {
+            return good.specId === item.specId
+          })
+          if (inIndex === -1) {
+            const item = {
+              ...good,
+              productName: this.formatSkuInfo(good.specSkus || '')
+            }
+            dataFromSource.push(item)
+          } else {
+            dataFromSource.push({
+              ...good,
+              addPrice: this.tableForm.tableData[inIndex].addPrice,
+              productName: this.formatSkuInfo(good.specSkus || '')
+            })
           }
         })
-        this.multipleSelection = data
-        this.$refs.activityTable.toggleAllSelection()
       }
+      this.tableForm.tableData = dataFromSource
+      this.multipleSelection = dataFromSource
+      this.$refs.activityTable.toggleAllSelection()
     },
     handleSelectionChange(val) {
       console.log('handleSelectionChange----------', val)
@@ -195,7 +210,7 @@ export default {
     },
     onsubmit() {
       return new Promise((resolve, reject) => {
-        this.$refs.tableForm.validate(valid => {
+        this.$refs.tableForm.validate((valid, object) => {
           if (valid) {
             if (
               Array.isArray(this.tableForm.tableData) &&
@@ -215,6 +230,19 @@ export default {
             }
           } else {
             console.log('error tableForm submit!!', valid)
+            for (const i in object) {
+              let dom = this.$refs[i]
+              if (Object.prototype.toString.call(dom) !== '[object Object]') {
+                // 这里是针对遍历的情况（多个输入框），取值为数组
+                dom = dom[0]
+              } // 第一种方法（包含动画效果）
+              dom.$el.scrollIntoView({
+                // 滚动到指定节点
+                block: 'center', // 值有start,center,end，nearest，当前显示在视图区域中间
+                behavior: 'smooth' // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+              })
+              break // 因为我们只需要检测一项,所以就可以跳出循环了
+            }
             reject()
             return false
           }

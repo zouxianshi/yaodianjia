@@ -6,13 +6,17 @@
         :model="formData"
         :rules="rules"
         label-width="120px"
-
         size="small"
         class="demo-ruleForm"
       >
         <div class="form-title">基础设置</div>
-        <el-form-item label="活动名称" prop="name">
-          <el-input v-model="formData.name" :disabled="disabled" maxlength="12" placeholder="活动名称不超过12字" />
+        <el-form-item ref="name" label="活动名称" prop="name">
+          <el-input
+            v-model="formData.name"
+            :disabled="disabled"
+            maxlength="12"
+            placeholder="活动名称不超过12字"
+          />
         </el-form-item>
         <el-form-item label="活动底图">
           <el-radio-group v-model="formData.img" :disabled="disabled">
@@ -95,7 +99,7 @@
             placeholder="活动描述尽量精简，将会展示在商品副标题内"
           />
         </el-form-item>
-        <el-form-item label="活动时间" prop="activitTime">
+        <el-form-item ref="activitTime" label="活动时间" prop="activitTime">
           <el-date-picker
             v-model="formData.activitTime"
             type="datetimerange"
@@ -133,7 +137,7 @@
             <el-radio :label="true">全部门店</el-radio>
             <el-radio :label="false">部分门店</el-radio>
           </el-radio-group>
-        </el-form-item> -->
+        </el-form-item>-->
         <el-form-item v-show="!formData.allStore" label="活动店铺" required>
           <!-- storeComponent -->
           <el-button
@@ -212,7 +216,12 @@
             <el-table-column label="成团人数" prop="activityNumber" />
             <el-table-column label="操作" min-width="110">
               <template slot-scope="scope">
-                <el-button type size="mini" :disabled="disabled" @click="handleEditSetting(scope.row)">设置</el-button>
+                <el-button
+                  type
+                  size="mini"
+                  :disabled="disabled"
+                  @click="handleEditSetting(scope.row)"
+                >设置</el-button>
                 <el-button
                   v-if="!activityId"
                   type="danger"
@@ -234,12 +243,18 @@
             />
           </div>
         </el-form-item>
-        <el-form-item />
-        <el-form-item label class="text-center">
-          <el-button type :disabled="disabled" @click="$router.go(-1)">取消</el-button>
-          <el-button type="primary" :loading="saveLoading" :disabled="disabled" @click="handleSubmit">保存</el-button>
-        </el-form-item>
       </el-form>
+    </div>
+    <!-- 操作按钮 -->
+    <div class="action-wapper">
+      <el-button
+        v-if="!disabled"
+        :loading="saveLoading"
+        type="primary"
+        :disabled="disabled"
+        @click="handleSubmit"
+      >保存</el-button>
+      <el-button @click="$router.go(-1)">返 回</el-button>
     </div>
     <!-- 门店列表 -->
     <store-dialog
@@ -552,7 +567,7 @@ export default {
     },
     handleSubmit() {
       // 数据提交
-      this.$refs.formData.validate(valid => {
+      this.$refs.formData.validate((valid, object) => {
         if (valid) {
           const data = JSON.parse(JSON.stringify(this.formData))
           console.log('this.formData', this.formData, this.goodsList)
@@ -575,7 +590,7 @@ export default {
             } else {
               this.$message({
                 message: '请选择门店',
-                type: 'error'
+                type: 'warning'
               })
               return
             }
@@ -585,7 +600,7 @@ export default {
           if (Array.isArray(this.goodsList) && !this.goodsList.length) {
             this.$message({
               message: '请选择商品',
-              type: 'error'
+              type: 'warning'
             })
             return false
           }
@@ -610,6 +625,19 @@ export default {
           }
         } else {
           console.log('error submit!!')
+          for (const i in object) {
+            let dom = this.$refs[i]
+            if (Object.prototype.toString.call(dom) !== '[object Object]') {
+              // 这里是针对遍历的情况（多个输入框），取值为数组
+              dom = dom[0]
+            } // 第一种方法（包含动画效果）
+            dom.$el.scrollIntoView({
+              // 滚动到指定节点
+              block: 'center', // 值有start,center,end，nearest，当前显示在视图区域中间
+              behavior: 'smooth' // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+            })
+            break // 因为我们只需要检测一项,所以就可以跳出循环了
+          }
           return false
         }
       })
@@ -912,4 +940,19 @@ export default {
     }
   }
 }
+.app-container {
+  padding-bottom: 100px;
+ .action-wapper {
+    position: absolute;
+    padding: 12px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    text-align: center;
+    z-index: 1;
+  }
+}
+
 </style>

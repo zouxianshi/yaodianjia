@@ -14,7 +14,7 @@
               <el-radio v-if="xForm.type=== '11'" label="11">限时特惠</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="活动名称" prop="pmtName">
+          <el-form-item ref="pmtName" label="活动名称" prop="pmtName">
             <el-input
               v-model="xForm.pmtName"
               :disabled="disabled"
@@ -36,7 +36,7 @@
               style="width: 380px;"
             />
           </el-form-item>
-          <el-form-item label="生效时间" prop="startTime">
+          <el-form-item ref="startTime" label="生效时间" prop="startTime">
             <el-date-picker
               v-model="xForm.dateRange"
               style="width: 380px"
@@ -62,7 +62,7 @@
               <el-radio :label="true">全部门店</el-radio>
               <el-radio :label="false">部分门店</el-radio>
             </el-radio-group>
-          </el-form-item> -->
+          </el-form-item>-->
           <el-form-item v-show="!xForm.allStore" label="选取门店" required>
             <!-- storeComponent -->
             <el-button
@@ -107,7 +107,7 @@
               style="display:inline-block;width: 45px;margin-left: 5px;color: #e6a23c;"
             >不限购</span>
             <span class="note-grey" style="margin-left: 15px;">1个用户在该活动下可多次购买的商品总件数，输入0代表不限购</span>
-          </el-form-item> -->
+          </el-form-item>-->
           <el-form-item label="参与次数">
             <el-col :span="24">
               <el-form-item>
@@ -203,6 +203,7 @@
               <el-table-column :label="xForm.mode===1?'折扣':'减价'" min-width="180px">
                 <template slot-scope="scope">
                   <el-form-item
+                    :ref="'selectedGoods.' + scope.$index + '.discount'"
                     :prop="'selectedGoods.' + scope.$index + '.discount'"
                     :rules="[{ required: true, validator: check_discount, trigger: 'blur' }]"
                   >
@@ -220,6 +221,7 @@
               <el-table-column label="限购" prop="name" min-width="160px">
                 <template slot-scope="scope">
                   <el-form-item
+                    :ref="'selectedGoods.' + scope.$index + '.confineNum'"
                     :prop="'selectedGoods.' + scope.$index + '.confineNum'"
                     :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
                   >
@@ -239,6 +241,7 @@
               <el-table-column v-if="xForm.type === '12'" label="库存" prop="name" min-width="160px">
                 <template slot-scope="scope">
                   <el-form-item
+                    :ref="'selectedGoods.' + scope.$index + '.stock'"
                     :prop="'selectedGoods.' + scope.$index + '.stock'"
                     :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
                   >
@@ -274,7 +277,6 @@
       </section>
       <section class="form-footer">
         <template v-if="!disabled">
-          <el-button size="small" :disabled="disabled" @click="$router.go(-1)">取 消</el-button>
           <el-button
             type="primary"
             :disabled="disabled"
@@ -283,7 +285,7 @@
             @click="submit"
           >保 存</el-button>
         </template>
-        <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
+        <el-button size="small" @click="$router.go(-1)">返 回</el-button>
       </section>
     </div>
     <dialog-set
@@ -676,7 +678,7 @@ export default {
     submit() {
       console.log('xForm', this.xForm)
       // 表单验证
-      this.$refs.xForm.validate(valid => {
+      this.$refs.xForm.validate((valid, object) => {
         if (valid) {
           // 验证时间
           const start_time = new Date(this.xForm.startTime).getTime()
@@ -698,7 +700,7 @@ export default {
             this.$message.warning('请选取商品')
             return false
           }
-          this.$refs.tableForm.validate(valid => {
+          this.$refs.tableForm.validate((valid, object) => {
             if (valid) {
               const data = {
                 storeIds: this.selectedStore.map(item => item.id)
@@ -711,12 +713,36 @@ export default {
                 this._addActivity(data)
               }
             } else {
-              this.$message.warning('请完善商品信息')
+              for (const i in object) {
+                let dom = this.$refs[i]
+                if (Object.prototype.toString.call(dom) !== '[object Object]') {
+                  // 这里是针对遍历的情况（多个输入框），取值为数组
+                  dom = dom[0]
+                } // 第一种方法（包含动画效果）
+                dom.$el.scrollIntoView({
+                  // 滚动到指定节点
+                  block: 'center', // 值有start,center,end，nearest，当前显示在视图区域中间
+                  behavior: 'smooth' // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+                })
+                break // 因为我们只需要检测一项,所以就可以跳出循环了
+              }
               return false
             }
           })
         } else {
-          this.$message.warning('请完善活动信息')
+          for (const i in object) {
+            let dom = this.$refs[i]
+            if (Object.prototype.toString.call(dom) !== '[object Object]') {
+              // 这里是针对遍历的情况（多个输入框），取值为数组
+              dom = dom[0]
+            } // 第一种方法（包含动画效果）
+            dom.$el.scrollIntoView({
+              // 滚动到指定节点
+              block: 'center', // 值有start,center,end，nearest，当前显示在视图区域中间
+              behavior: 'smooth' // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+            })
+            break // 因为我们只需要检测一项,所以就可以跳出循环了
+          }
           return false
         }
       })
@@ -963,7 +989,18 @@ export default {
   color: #999999;
 }
 .form-footer {
+  position: absolute;
+  padding: 12px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   text-align: center;
+  z-index: 1;
+}
+.app-container {
+  padding-bottom: 80px;
 }
 .dashboard-container {
   .limit {
