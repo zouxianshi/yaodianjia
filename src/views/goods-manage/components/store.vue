@@ -129,8 +129,7 @@ export default {
   created() {},
   methods: {
     checkSelectable(row) {
-      // return !this.isAll
-      return row.selectable
+      return typeof (row.selectable) === 'undefined' ? true : row.selectable
     },
     handleChooseStore() {
       if (this.isAll) {
@@ -180,6 +179,7 @@ export default {
                 this.$refs.multipleTable.toggleRowSelection(v)
                 this.setSelectable(v)
               })
+              this.dialogLoading = false
             }, 300)
           } else {
             setTimeout(() => {
@@ -193,9 +193,9 @@ export default {
                 }
                 this.setSelectable(v)
               })
+              this.dialogLoading = false
             }, 300)
           }
-          this.dialogLoading = false
         })
         .catch(err => {
           this.dialogLoading = false
@@ -242,6 +242,7 @@ export default {
         .then(res => {
           this.subLoading = false
           this.isAll = false
+          this.storeCode = ''
           this.$message({
             message: '操作成功',
             type: 'success'
@@ -292,6 +293,7 @@ export default {
     },
     handleCanle() {
       this.isAll = false
+      this.storeCode = ''
       this.$emit('close')
     },
     handleSizeChange(val) {
