@@ -47,7 +47,13 @@
         </div>
       </section>
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
-        <el-table :data="tableData" style="width: 100%" size="small">
+        <el-table
+          v-loading="tableLoading"
+          :data="tableData"
+          style="width: 100%"
+          size="small"
+          element-loading-text="加载中"
+        >
           <el-table-column prop="activityType" label="活动类型" min-width="80">
             <template slot-scope="scope">
               <span v-if="scope.row.activityType === 0">其他类型</span>
@@ -68,39 +74,31 @@
               <span>{{ scope.row.endTime!=null?scope.row.endTime.replace('T',' '):'-' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="时间状态" min-width="80" align="center">
+          <el-table-column label="时间状态" min-width="100" align="center">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.state===1" size="small" type="success">进行中</el-tag>
               <el-tag v-if="scope.row.state===2" size="small" type="info">未开始</el-tag>
               <el-tag v-if="scope.row.state===3" size="small" type="danger">已结束</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="状态" min-width="80" align="center">
+          <el-table-column label="状态" min-width="100" align="center">
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.status===0" size="small" type="info">已失效</el-tag>
-              <el-tag v-else size="small">生效</el-tag>
+              <el-tag v-if="scope.row.status===1" size="small">已生效</el-tag>
+              <el-tag v-else size="small" type="info">已失效</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180">
+          <el-table-column label="操作" width="140">
             <template slot-scope="scope">
-              <el-button
-                v-if="scope.row.state===2&&scope.row.status===1"
-                plain
-                size="mini"
-                @click="toCreate(scope.row)"
-              >编辑</el-button>
-              <el-button
-                v-else-if="scope.row.state===3||scope.row.state===1"
-                plain
-                size="mini"
-                @click="toCreate(scope.row, 1)"
-              >查看</el-button>
-              <template v-if="scope.row.state===1&&scope.row.status===1">
-                <el-button type="danger" size="mini" @click="handleDisable(scope.row)">失效</el-button>
-              </template>
-              <template v-else>
-                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
-              </template>
+              <div
+                v-if="scope.row.state===1&&scope.row.status===1||scope.row.state===2&&scope.row.status===1"
+              >
+                <el-button type="text" size="small" @click="toCreate(scope.row)">编辑</el-button>
+                <el-button type="text" size="small" @click="handleDisable(scope.row)">失效</el-button>
+              </div>
+              <div v-else>
+                <el-button type="text" size="small" @click="toCreate(scope.row, 1)">查看</el-button>
+                <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -137,6 +135,7 @@ export default {
   name: 'Banner',
   data() {
     return {
+      tableLoading: false,
       storeData: [{ stCode: '', stName: '全部', id: '' }],
       searchForm: {
         type: '-1', // 活动类型 (int)(10: 电子DM单, 11: 限时特惠, 12: 限时秒杀)
@@ -266,6 +265,7 @@ export default {
     },
     // 获取列表数据
     _getTableData() {
+      this.tableLoading = true
       const params = {
         currentPage: this.pager.current,
         pageSize: this.pager.size,
@@ -287,6 +287,7 @@ export default {
             duration: 5 * 1000
           })
         }
+        this.tableLoading = false
       })
     },
     _delData(id) {

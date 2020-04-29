@@ -1,6 +1,6 @@
 <template>
   <div class="selected-coupon-view">
-    <el-table :data="selectedCoupons" height="250" style="width: 100%">
+    <el-table height="250" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
       <el-table-column prop="cname" label="优惠券名称" />
       <el-table-column label="优惠内容">
         <template
@@ -84,11 +84,11 @@
     <el-pagination
       :current-page="pageInfo.currentPage"
       :page-size="pageInfo.pageSize"
-      layout="prev, pager, next"
+      layout="total,prev, pager, next"
       :total="selectedCoupons.length"
       @current-change="handleSizeChange"
     />
-    <div class="amTips">已选优惠券{{ selectedCoupons.length }}张</div>
+    <!-- <div class="amTips">已选优惠券{{ selectedCoupons.length }}张</div> -->
   </div>
 </template>
 <script>
@@ -109,10 +109,11 @@ export default {
       console.log('应该要显示了')
     },
     showPage(selectedCoupons, pageStatus) {
+      console.log('应该要显示了')
       this.pageStatus = pageStatus
       this.selectedCoupons = selectedCoupons
       this.selectedCoupons.forEach(item => {
-        item.giftNum = 1
+        item.giftNum = item.giftNum || 1
       })
     },
     handleDel(row) {
@@ -121,6 +122,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.pageInfo.currentPage = 1
         this.selectedCoupons = this.selectedCoupons.filter(item => item !== row)
         this.$emit('onDel', this.selectedCoupons)
       })

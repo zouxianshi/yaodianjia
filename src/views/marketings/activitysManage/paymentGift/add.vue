@@ -592,6 +592,7 @@ export default {
                   busId: item.busId,
                   ruleType: item.ruleType,
                   id: item.id,
+                  mainPic: item.proImg,
                   erpCode: item.proCode,
                   name: item.proName,
                   brandName: item.proBrand,
@@ -618,7 +619,7 @@ export default {
       this._getAddedActivityList(id)
     },
     _getAddedCouponList(id) {
-      const params = { currentPage: 1, id: id, pageSize: 5 }
+      const params = { currentPage: 1, id: id, pageSize: 9999 }
       console.log('normalActivityAddedCouponList', JSON.stringify(params))
       normalActivityAddedCouponList(params)
         .then(res => {
@@ -632,7 +633,7 @@ export default {
         })
     },
     _getAddedActivityList(id) {
-      const params = { currentPage: 1, id: id, pageSize: 5 }
+      const params = { currentPage: 1, id: id, pageSize: 9999 }
       console.log('normalAddedActivityList', JSON.stringify(params))
       normalAddedActivityList(params)
         .then(res => {
