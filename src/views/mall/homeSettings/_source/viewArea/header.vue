@@ -9,7 +9,7 @@
         </div>
       </div>
       <div id="va-title" class="title">
-        <b>{{ dragGlobal.title || '' }}</b>
+        <b>{{ dragGlobal.title || '请输入商城名称' }}</b>
       </div>
     </div>
 

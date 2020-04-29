@@ -51,6 +51,8 @@ export default {
                 this.$router.push(`/mall/home`)
                 this.loading = false
               }, 1200)
+            }).catch(() => {
+              this.loading = false
             })
           })
         } else {

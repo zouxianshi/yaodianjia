@@ -75,7 +75,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       // console.log(JSON.stringify({...state.dragGlobal,id: state.dragData[0].dimensionId}))
       // return
-      console.log(state.dragData)
       const p = { ...state.dragGlobal, setIds: _.compact(_.map(state.dragData, v => v.id)) }
       saveStructure(p).then(() => {
         resolve()

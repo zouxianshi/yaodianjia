@@ -1,5 +1,5 @@
 <template>
-  <div class="c-second-item-model">
+  <div class="c-second-item-model" :style="stylecs">
     <el-button v-if="source === 'sa-select-goods'" class="csim-delete" size="mini" type="danger" icon="el-icon-close" circle @click="() => $emit('on-delete',item)" />
     <m-icon-activity v-if="item.activityId || false" />
     <div class="csim-photo" :class="{'no-data':!item.img}">
@@ -28,11 +28,15 @@ export default {
     source: {
       type: String,
       default: 'va'
+    },
+    stylecs: {
+      type: Object,
+      default: () => {}
     }
   },
   methods: {
     truName(name) {
-      return _.truncate(name, { 'length': 7, 'omission': '' })
+      return _.truncate(name, { 'length': 6, 'omission': '' })
     }
   },
   watch: {},

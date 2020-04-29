@@ -1,7 +1,7 @@
 <template>
   <div class="sa-title-model ">
     <el-tabs :value="assemblyName" type="card">
-      <el-tab-pane :label="assemblyName" :name="assemblyName">
+      <el-tab-pane :label="item.name ? `${assemblyName}（${item.name}）` : assemblyName" :name="assemblyName">
         <m-title v-for="(el,i) in item.itemList" :key="i" :item="el" :item-params="item" @on-update="_onUpdate" />
       </el-tab-pane>
     </el-tabs>
@@ -39,8 +39,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.item)
-    console.log('+++++++++++++++++++++++++++++++++++')
   },
   watch: {
     'item.type': {

@@ -1,7 +1,7 @@
 <template>
   <div class="sa-advertise-model ">
     <el-tabs :value="assemblyName" type="card">
-      <el-tab-pane :label="assemblyName" :name="assemblyName">
+      <el-tab-pane :label="`${assemblyName}（${item.name}）`" :name="assemblyName">
         <component :is="mod" :item="item" class="sam-width" @on-update="_onUpdate" />
       </el-tab-pane>
     </el-tabs>

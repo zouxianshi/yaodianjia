@@ -20,7 +20,6 @@ export default {
   beforeCreate() {
   },
   created() {
-    console.log(this.item)
   },
   beforeMount() {
   },
@@ -42,6 +41,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .va-title-model {
     padding: 0px 10px 0px 10px;
+    position: relative;
     .sp1 {
       font-weight: bold;
       font-size: 16px;

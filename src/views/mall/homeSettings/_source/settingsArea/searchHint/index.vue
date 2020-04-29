@@ -1,6 +1,6 @@
 <template>
   <el-tabs :value="assemblyName" type="card">
-    <el-tab-pane :label="assemblyName" :name="assemblyName">
+    <el-tab-pane :label="`${assemblyName}（${item.name}）`" :name="assemblyName">
       <div class="sa-search-hint-box sam-width">
         <el-form label-width="110px" size="mini">
           <el-form-item label="搜索关键词">

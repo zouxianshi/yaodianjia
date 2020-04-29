@@ -1,7 +1,7 @@
 <template>
   <div class="scrollbar va-third-commodity-model">
-    <div class="vtcm-box" :style="{width:`${140 * item.itemList.length}px`}">
-      <m-second-item v-for="(el,i) in item.itemList" :key="i" :item="el" />
+    <div class="vtcm-box" :style="{width:`${132 * item.itemList.length}px`}">
+      <m-second-item v-for="(el,i) in item.itemList" :key="i" :item="el" :stylecs="{width:'116px'}" />
     </div>
   </div>
 </template>

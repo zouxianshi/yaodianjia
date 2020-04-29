@@ -1,5 +1,6 @@
 <template>
   <div class="va-first-advertise-model">
+    <div class="t" />
     <m-banner width="400px" :item-list="item.itemList" />
   </div>
 </template>
@@ -43,6 +44,16 @@ export default {
   .va-first-advertise-model {
     padding: 0 10px;
     position: relative;
+    .t {
+      width: 420px;
+      height: 180px;
+      background: red;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 2;
+      opacity: 0;
+    }
     .va-error-drag {
 
     }
