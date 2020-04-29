@@ -242,20 +242,15 @@ export default {
       callback()
     }
     const time_limit = (rule, value, callback) => {
-      const nowDate = new Date()
       if (this.beginEndTime.length === 0) {
         callback(new Error('请选择活动时间'))
-      } else if (new Date(this.beginEndTime[0].replace(/\-/g, '/')) < nowDate) {
-        callback(new Error('起始时间必须大于当前时间'))
       }
       callback()
     }
     return {
       isDisabled: {
         disabledDate(time) {
-          const myDate = new Date()
-          const _beforeDay = myDate.setDate(new Date().getDate() - 1)
-          return time.getTime() <= _beforeDay
+          return time.getTime() < new Date(new Date().getTime() - 86400000)
         }
       },
       beginEndTime: [],
@@ -356,7 +351,11 @@ export default {
 
   methods: {
     dateChange() {
-      this.selectCoupon = []
+      this.selectedCoupons = []
+      this.$refs.selectedCouponView.showPage(
+        this.selectedCoupons,
+        this.pageStatus
+      )
     },
     // 选择门店
     selectStore() {
@@ -366,14 +365,9 @@ export default {
       this.$refs.selectActivity.show(this.selectedActivity)
     },
     selectCoupon() {
-      const nowDate = new Date()
       if (this.beginEndTime.length > 0) {
-        if (this.beginEndTime[0] < nowDate) {
-          this.$message.error('起始时间必须大于当前时间')
-        } else {
-          this.$refs.checkCoupons.handleGetlist()
-          this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
-        }
+        this.$refs.checkCoupons.handleGetlist()
+        this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
       } else {
         this.$message.error('请先选择活动时间')
       }
@@ -388,139 +382,128 @@ export default {
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     doSubmitForm() {
-      if (this.form1Validate && this.form2Validate && this.form3Validate) {
-        this.form.merCode = this.merCode
-        if (this.form.sceneRuleReal.length === 2) {
-          this.form.sceneRule = 0
-        } else {
-          this.form.sceneRule = this.form.sceneRuleReal[0]
-        }
-        if (this.beginEndTime) {
-          this.form.beginTime = this.beginEndTime[0]
-            .replace(/T/g, ' ')
-            .replace(/Z/g, '')
-          this.form.endTime = this.beginEndTime[1]
-            .replace(/T/g, ' ')
-            .replace(/Z/g, '')
-        }
-        if (this.form.shopRule === 2) {
-          this.selectedStores.forEach(store => {
-            this.form.listCouponStore.push({
-              // busId: 0,
-              // id: 0,
-              ruleType: 2,
-              storeCode: store.stCode,
-              storeId: store.id,
-              storeName: store.stName
-            })
+      this.form.merCode = this.merCode
+      if (this.form.sceneRuleReal.length === 2) {
+        this.form.sceneRule = 0
+      } else {
+        this.form.sceneRule = this.form.sceneRuleReal[0]
+      }
+      if (this.beginEndTime) {
+        this.form.beginTime = this.beginEndTime[0]
+          .replace(/T/g, ' ')
+          .replace(/Z/g, '')
+        this.form.endTime = this.beginEndTime[1]
+          .replace(/T/g, ' ')
+          .replace(/Z/g, '')
+      }
+      if (this.form.shopRule === 2) {
+        this.selectedStores.forEach(store => {
+          this.form.listCouponStore.push({
+            ruleType: 2,
+            storeCode: store.storeCode || store.stCode,
+            storeId: store.storeId || store.id,
+            storeName: store.storeName || store.stName
           })
-        }
-        if (this.countRuleReal === 0) {
-          this.form.countRule = 0
-        }
-        if (this.form.productRule === 2) {
-          this.selectedProducts.forEach(product => {
-            this.form.listCouponProduct.push({
-              // busId: 0,
-              // id: 0,
-              proBrand: product.brandName,
-              proCode: product.erpCode,
-              proId: product.id,
-              proName: product.name,
-              proPrice: product.mprice,
-              proSpec:
-                product.specSkuList && product.specSkuList.length > 0
-                  ? product.specSkuList[0].skuValue
-                  : product.proSpec,
-              ruleType: 2
-            })
+        })
+      }
+      if (this.countRuleReal === 0) {
+        this.form.countRule = 0
+      }
+      if (this.form.productRule === 2) {
+        this.selectedProducts.forEach(product => {
+          this.form.listCouponProduct.push({
+            proBrand: product.proBrand || product.brandNamed,
+            proCode: product.proCode || product.erpCode,
+            proId: product.proId || product.id,
+            proName: product.proName || product.name,
+            proPrice: product.proPrice || product.mprice,
+            proImg: product.proImg || product.mainPic,
+            proSpec:
+              product.specSkuList && product.specSkuList.length > 0
+                ? product.specSkuList[0].skuValue
+                : product.proSpec,
+            ruleType: 2
           })
-        }
-        if (this.form.giftType === 1 && this.selectedCoupons.length > 0) {
-          this.selectedCoupons.forEach(coupon => {
-            if (coupon.giftNum < 1) {
-              this.$message.error('发放张数不得小于1')
-              return
-            } else if (coupon.giftNum > 10000) {
-              this.$message.error('发放张数不得超过100000')
-              return
+        })
+      }
+      if (this.form.giftType === 1 && this.selectedCoupons.length > 0) {
+        this.selectedCoupons.forEach(coupon => {
+          this.form.activityPayReqDTO.push({
+            giftId: coupon.id,
+            giftNum: coupon.giftNum,
+            giftType: 1
+          })
+        })
+      }
+      if (this.form.giftType === 2 && this.selectedActivity.length > 0) {
+        this.selectedCoupons.forEach(coupon => {
+          this.form.activityPayReqDTO.push({
+            giftId: this.selectedActivity.id,
+            giftType: 2
+          })
+        })
+      }
+      var params = {}
+      params = JSON.parse(JSON.stringify(this.form))
+      this.saveLoading = true
+      if (this.pageStatus === 1) {
+        console.log('createActivity', JSON.stringify(params))
+        createActivity(params)
+          .then(res => {
+            this.saveLoading = false
+            if (res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.$router.replace(
+                '/marketings/activity-manage/payment-gift/list'
+              )
             }
-            this.form.activityPayReqDTO.push({
-              giftId: coupon.id,
-              giftNum: coupon.giftNum,
-              giftType: 1
-            })
           })
-        }
-        if (this.form.giftType === 2 && this.selectedActivity.length > 0) {
-          this.selectedCoupons.forEach(coupon => {
-            this.form.activityPayReqDTO.push({
-              giftId: this.selectedActivity.id,
-              giftType: 2
-            })
+          .catch(_ => {
+            this.saveLoading = false
           })
-        }
-        var params = {}
-        params = JSON.parse(JSON.stringify(this.form))
-        this.saveLoading = true
-        if (this.pageStatus === 1) {
-          console.log('createActivity', JSON.stringify(params))
-          createActivity(params)
-            .then(res => {
-              this.saveLoading = false
-              if (res.code === '10000') {
-                this.$message({
-                  message: res.msg,
-                  type: 'success'
-                })
-                this.$router.replace(
-                  '/marketings/activity-manage/payment-gift/list'
-                )
-              }
-            })
-            .catch(_ => {
-              this.saveLoading = false
-            })
-        } else {
-          delete params['createName']
-          delete params['createTime']
-          delete params['giftType']
-          delete params['isValid']
-          delete params['status']
-          delete params['updateName']
-          delete params['updateTime']
-          updateActivity(params)
-            .then(res => {
-              this.saveLoading = false
-              if (res.code === '10000') {
-                this.$message({
-                  message: res.msg,
-                  type: 'success'
-                })
-                this.$router.replace(
-                  '/marketings/activity-manage/payment-gift/list'
-                )
-              }
-            })
-            .catch(_ => {
-              this.saveLoading = false
-            })
-        }
+      } else {
+        delete params['createName']
+        delete params['createTime']
+        delete params['giftType']
+        delete params['isValid']
+        delete params['status']
+        delete params['updateName']
+        delete params['updateTime']
+        delete params['sceneRuleReal']
+        delete params['listCouponStoreEntity']
+        delete params['listCouponProductEntity']
+        delete params['listActivityGiftEntity']
+        delete params['listActivityPayEntity']
+        console.log('updateActivity' + JSON.stringify(params))
+        updateActivity(params)
+          .then(res => {
+            this.saveLoading = false
+            if (res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.$router.replace(
+                '/marketings/activity-manage/payment-gift/list'
+              )
+            }
+          })
+          .catch(_ => {
+            this.saveLoading = false
+          })
       }
     },
 
     submitData: throttle(function() {
       this.$refs.form.validate(flag => {
-        this.form1Validate = flag
-        this.doSubmitForm()
-      })
-      this.$refs.form2.validate(flag => {
-        this.form2Validate = flag
-        this.doSubmitForm()
-      })
-      this.$refs.form3.validate(flag => {
-        this.form3Validate = flag
-        this.doSubmitForm()
+        this.$refs.form2.validate(flag => {
+          this.$refs.form3.validate(flag => {
+            this.doSubmitForm()
+          })
+        })
       })
     }, 3000),
     onGetSelectStore(selectedStores) {
