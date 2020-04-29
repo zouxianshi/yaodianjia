@@ -32,6 +32,7 @@ export default {
       this.delDragData({
         $index: this.index
       })
+      this.$emit('on-delete', this.index)
       this.visible = false
       const { name, title } = this.dragGlobal
       const instance = findComponentsDownward(this.$root, 'SettingsArea')[0]

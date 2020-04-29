@@ -12,13 +12,13 @@
     <!--拖拽操作-->
     <div class="vam-draggable">
       <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
-        <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" class="item-component" @click.stop="(item.type !== 'recommend' && item.type !== 'no-data') && jumpCurrentSet($root,item)">
+        <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" class="item-component">
           <m-va-error-drag v-if="item.type !== 'no-data' && item.error" :type="item.type" />
           <m-no-data v-if="item.type === 'no-data'" />
           <template v-else>
             <div class="drag-area">
               <div class="oper">
-                <m-delete :index="$index" />
+                <m-delete :index="$index" @on-delete="_onDelete" />
               </div>
             </div>
             <!-- 产品让我先干掉 必须做备份 并未对此操作签字画押！！！
@@ -32,13 +32,13 @@
               </div>
             -->
             <!--导航栏-->
-            <m-navigation v-if="item.type === 'navigation'" :key="item.uuid" :item="{...item,$index:$index}" />
+            <m-navigation v-if="item.type === 'navigation'" :key="item.uuid" :item="{...item,$index:$index}" @click.native="jumpCurrentSet($root,item)" />
             <!--标题-->
-            <m-title v-if="item.type === 'title'" :key="item.uuid" :item="{...item,$index:$index}" />
+            <m-title v-if="item.type === 'title'" :key="item.uuid" :item="{...item,$index:$index}" @click.native="jumpCurrentSet($root,item)" />
             <!--广告图-->
-            <m-advertise v-if="item.type === 'advertise'" :key="item.uuid" :item="{...item,$index:$index}" />
+            <m-advertise v-if="item.type === 'advertise'" :key="item.uuid" :item="{...item,$index:$index}" @click.native="jumpCurrentSet($root,item)" />
             <!--商品-->
-            <m-commodity v-if="item.type === 'commodity'" :key="item.uuid" :item="{...item,$index:$index}" />
+            <m-commodity v-if="item.type === 'commodity'" :key="item.uuid" :item="{...item,$index:$index}" @click.native="jumpCurrentSet($root,item)" />
             <!--为你推荐-->
             <m-recommend v-if="item.type === 'recommend'" :key="item.uuid" :item="{...item,$index:$index}" />
           </template>
@@ -100,6 +100,9 @@ export default {
     }
   },
   watch: {
+    dragData(v) {
+      this.dragList = v
+    }
   },
   beforeCreate() {
   },
@@ -121,6 +124,9 @@ export default {
     jumpCurrentSet,
     ...mapActions('mall', ['saveStructure']),
     ...mapMutations('mall', ['setDragData']),
+    _onDelete(i) {
+
+    },
     /**
      * drag end
      */

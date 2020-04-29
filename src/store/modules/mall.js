@@ -41,7 +41,7 @@ const mutations = {
   },
   delDragData: (state, payload) => {
     const { $index } = payload
-    state.dragData.splice($index, 1)
+    state.dragData = _.filter(state.dragData, (v, i) => i !== $index)
     if (!state.dragData.length) {
       state.dragData.push(...noDragData)
     }
