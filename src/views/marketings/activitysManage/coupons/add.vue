@@ -193,6 +193,9 @@ export default {
         totalNeed: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < new Date(new Date().getTime() - 86400000)
+        },
         shortcuts: [
           {
             text: '最近一周',
@@ -269,14 +272,14 @@ export default {
     },
     // 点击选择优惠券
     handlecheck() {
-      const time = new Date()
+      // const time = new Date()
       if (this.value.length > 0) {
-        if (this.value[0] < time) {
-          this.$message.error('起始时间必须大于当前时间')
-        } else {
-          this.$refs.checkCoupons.handleGetlist()
-          this.$refs.checkCoupons.defaultcheck(this.forms.selectlist)
-        }
+        // if (this.value[0] < time) {
+        //   this.$message.error('起始时间必须大于当前时间')
+        // } else {
+        this.$refs.checkCoupons.handleGetlist()
+        this.$refs.checkCoupons.defaultcheck(this.forms.selectlist)
+        // }
       } else {
         this.$message.error('请选择时间')
       }
