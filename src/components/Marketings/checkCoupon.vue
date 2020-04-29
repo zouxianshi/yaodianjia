@@ -54,7 +54,7 @@
         <el-table-column label="使用场景" width="90">
           <template
             slot-scope="scope"
-          >{{ }}{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
+          >{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
         </el-table-column>
         <el-table-column prop="productRule" label="适用门店" width="100">
           <template
@@ -62,6 +62,9 @@
           >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
         </el-table-column>
         <el-table-column type="selection" width="55" />
+        <div slot="empty" style="height:200px;line-height: 200px;">
+          当前无任何优惠券，先去<span style="color:#2790FA" class="creatcoucops" @click="$router.push({ path: '/marketings/gift-manage/list' })">创建优惠券</span>吧
+        </div>
       </el-table>
       <div style="margin-top:20px">已选门店：</div>
       <div>
@@ -322,6 +325,9 @@ export default {
   // .el-table thead th {
   //   height: 50px;
   // }
+  .creatcoucops:hover{
+    cursor:pointer
+  }
   .search-form {
     margin-bottom: 0px;
     .search-item {
