@@ -3,7 +3,7 @@
     <el-table
       ref="dataTable"
       :data="selectedProducts.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)"
-      height="250"
+      :height="heightAuto"
     >
       <el-table-column property="erpCode" label="商品图片">
         <template slot-scope="scope">
@@ -40,7 +40,7 @@
         >{{ scope.row.specSkuList&&scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : scope.row.proSpec }}</template>
       </el-table-column>
       <el-table-column property="price" label="参考价">
-        <template slot-scope="scope">{{ scope.row.price || scope.row.proPrice }}</template>
+        <template slot-scope="scope">{{ scope.row.price || scope.row.proPrice || scope.row.mprice }}</template>
       </el-table-column>
       <el-table-column v-if="pageStatus!=3" label="操作" width="60">
         <template slot-scope="scope">
@@ -54,17 +54,24 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      v-if="!isGift"
       :current-page="pageInfo.currentPage"
       :page-size="pageInfo.pageSize"
       layout="prev, pager, next"
       :total="selectedProducts.length"
       @current-change="handleSizeChange"
     />
-    <div class="amTips">已选商品{{ selectedProducts.length }}个</div>
+    <div v-if="!isGift" class="amTips">已选商品{{ selectedProducts.length }}个</div>
   </div>
 </template>
 <script>
 export default {
+  props: {
+    isGift: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
@@ -75,9 +82,16 @@ export default {
       }
     }
   },
+  computed: {
+    heightAuto() {
+      return this.isGift ? '160px' : '250px'
+    }
+  },
   methods: {
     show(selectedProducts) {
+      console.log(selectedProducts)
       this.selectedProducts = selectedProducts
+      console.log(this.selectedProducts.slice((this.pageInfo.currentPage - 1) * this.pageInfo.pageSize, this.pageInfo.currentPage * this.pageInfo.pageSize))
     },
     showPage(selectedProducts, pageStatus) {
       this.pageStatus = pageStatus

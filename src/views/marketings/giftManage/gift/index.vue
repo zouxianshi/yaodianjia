@@ -27,6 +27,7 @@
             <mSelectedProduct
               v-show="selectedPro.length>0"
               ref="selectedPro"
+              :is-gift="true"
               @onDel="_deleteItemPro"
             />
           </el-form-item>
@@ -146,12 +147,12 @@ export default {
       discountForm: {
         ctype: 3, // 礼品券
         cname: '', // 优惠券名称
-        proId: '',
         returnRule: 1, // 退货规则
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
         sceneRule: 2, // 使用场景 (2.线下门店)
         effectTime: 1,
+        giftId: '',
         useRule: 0, // 门槛金额
         shopRule: 1, // 适用门店
         productRule: 2, // 使用商品(2.部分商品可用)
@@ -172,15 +173,18 @@ export default {
         id: this.$route.query.id
       }
       getCouponDetail(params).then(res => {
-        console.log('fanhui')
-        console.log(res)
         if (res.data) {
           var datas = res.data
           this.discountForm = datas
           this.selectedStore = datas.listCouponStoreEntity
           this.$refs.selectedStore.show(datas.listCouponStoreEntity) // 已选择的门店列表显示
-          this.selectedPro = datas.listCouponProductEntity
-          this.$refs.selectedPro.show(datas.listCouponProductEntity) // 已选择的商品列表显示
+          if (datas.ctype === 3 && this.isUpdate) { // 礼品券编辑页面需要特殊处理
+            this.selectedPro = [datas.giftResDTO]
+            this.$refs.selectedPro.show([datas.giftResDTO]) // 已选择的商品列表显示
+          } else {
+            this.selectedPro = datas.listCouponProductEntity
+            this.$refs.selectedPro.show(datas.listCouponProductEntity) // 已选择的商品列表显示
+          }
           this.useRuleLimit = datas.useRule === 0 ? 0 : 1 // 是否有使用门槛
         }
       })
@@ -247,7 +251,7 @@ export default {
                 params.listCouponStore.push(obj)
               })
             }
-            params.proId = this.selectedPro[0].erpCode
+            params.giftId = this.selectedPro[0].erpCode
             addCoupon(params).then(res => {
               if (res.code === '10000') {
                 this.$message({
