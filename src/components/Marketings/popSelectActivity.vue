@@ -21,6 +21,7 @@
       </div>
       <el-table
         ref="orderTable"
+        v-loading="tableLoading"
         :data="gridData"
         tooltip-effect="light"
         highlight-current-row
@@ -79,6 +80,7 @@ import { normalAddActivityList } from '@/api/coupon'
 export default {
   data() {
     return {
+      tableLoading: false,
       gridData: [],
       selectedArr: [],
       hasSelectList: [],
@@ -129,6 +131,7 @@ export default {
     },
     // 查询商品
     queryData() {
+      this.tableLoading = true
       var params = Object.assign({}, this.pageInfo, this.searchParams)
       normalAddActivityList(params).then(res => {
         this.dialogTableVisible = true
@@ -150,6 +153,7 @@ export default {
             }
           })
         }
+        this.tableLoading = false
       })
     },
     searchData() {

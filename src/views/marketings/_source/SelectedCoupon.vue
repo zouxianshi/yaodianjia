@@ -84,11 +84,11 @@
     <el-pagination
       :current-page="pageInfo.currentPage"
       :page-size="pageInfo.pageSize"
-      layout="prev, pager, next"
+      layout="total,prev, pager, next"
       :total="selectedCoupons.length"
       @current-change="handleSizeChange"
     />
-    <div class="amTips">已选优惠券{{ selectedCoupons.length }}张</div>
+    <!-- <div class="amTips">已选优惠券{{ selectedCoupons.length }}张</div> -->
   </div>
 </template>
 <script>
@@ -109,10 +109,11 @@ export default {
       console.log('应该要显示了')
     },
     showPage(selectedCoupons, pageStatus) {
+      console.log('应该要显示了')
       this.pageStatus = pageStatus
       this.selectedCoupons = selectedCoupons
       this.selectedCoupons.forEach(item => {
-        item.giftNum = 1
+        item.giftNum = item.giftNum || 1
       })
     },
     handleDel(row) {
