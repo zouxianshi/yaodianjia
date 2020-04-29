@@ -365,8 +365,9 @@
                         <div class="body-cell cell-right padding10">
                           <div class="cell-text">
                             ￥
-                            <template v-if="item.couponDeduction">
-                              <span>{{ item.couponDeduction }}</span>
+                            <template v-if="item.couponDeduction || item.activityDiscountAmont">
+                              <span>{{ (item.couponDeduction || 0) + (item.activityDiscountAmont || 0) }}</span>
+                              <!-- activityDiscountAmont -->
                             </template>
                             <template v-else>
                               <span>0</span>
