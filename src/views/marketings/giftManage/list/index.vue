@@ -13,6 +13,10 @@
 <script>
 import mGiftCard from '../../_source/giftCard'
 import mList from './_source/list'
+import discountImg from '@/assets/image/marketings/discount.png'
+import fullReductionImg from '@/assets/image/marketings/fullReduction.png'
+import giftImg from '@/assets/image/marketings/gift.png'
+import zengpinImg from '@/assets/image/marketings/zengpin.png'
 export default {
   name: 'ListIndex',
   components: {
@@ -22,22 +26,22 @@ export default {
     return {
       cardInfo: [
         {
-          imgUrl: '/image/marketings/discount.png',
+          imgUrl: discountImg,
           activityTemplateName: '折扣券',
           url: '/marketings/gift-manage/discount'
         },
         {
-          imgUrl: '/image/marketings/fullReduction.png',
+          imgUrl: fullReductionImg,
           activityTemplateName: '满减券',
           url: '/marketings/gift-manage/full-reduction'
         },
         {
-          imgUrl: '/image/marketings/gift.png',
+          imgUrl: giftImg,
           activityTemplateName: '礼品券',
           url: '/marketings/gift-manage/gift'
         },
         {
-          imgUrl: '/image/marketings/zengpin.png',
+          imgUrl: zengpinImg,
           activityTemplateName: '优惠码',
           url: ''
         }
