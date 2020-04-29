@@ -1,9 +1,9 @@
 
 export const pageTypeList = [
-  // {
-  //   name: '商城页面',
-  //   code: 1
-  // },
+  {
+    name: '商城页面',
+    code: 1
+  },
   {
     name: '活动页面',
     code: 2
