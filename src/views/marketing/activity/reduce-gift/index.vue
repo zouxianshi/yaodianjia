@@ -500,7 +500,7 @@ export default {
       // 如果选择是元那么打折的范围为0-99999999
       const index = rule.field.split('.')[1]
       console.log('111111', rule, value, this.form.ruleList[index].threshold)
-      if (this.form.ruleList[index].discountType === 0) {
+      if (this.form.ruleList[index].discountType === 0 && this.form.ruleList[index].checkOrNot) {
         if (!value) {
           return callback(new Error('请输入满减金额'))
         }
@@ -816,7 +816,7 @@ export default {
     // 订单金额优惠复选款选择
     orderFullChange(e, i) {
       console.log('orderFullChange', e, i)
-      this.form.ruleList[i].discountType = ''
+      this.form.ruleList[i].discountType = 1
       // this.$set(this.form)
       console.log(this.form)
     }
