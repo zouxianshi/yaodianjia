@@ -205,7 +205,7 @@
 
         <el-form-item>
           <template>
-            <el-checkbox v-model="domain.giftOrNot" border>送赠品</el-checkbox>
+            <el-checkbox v-model="domain.giftOrNot" :disabled="disabled" border>送赠品</el-checkbox>
             <el-button
               v-if="!!domain.giftOrNot"
               :disabled="disabled"
