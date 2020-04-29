@@ -35,35 +35,34 @@
         />
       </el-form-item>
       <div class="form-title">活动范围</div>
-      <el-form-item label="门店范围：" prop="allStore" required>
+      <!-- <el-form-item label="门店范围：" prop="allStore" required>
         <el-radio-group v-model="form.allStore" :disabled="disabled">
           <el-radio :label="true">全部门店</el-radio>
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item v-if="form.allStores === 1">已选当前上线的全部门店</el-form-item> -->
-      <el-form-item v-show="!form.allStore || disabled || edit">
+      <el-form-item v-show="!form.allStore || disabled || edit" label="门店范围：" required>
         <!-- storeComponent -->
         <el-button
           type="primary"
           plain
-          :disabled="disabled"
+          :disabled="disabled || form.allStore"
           @click="$refs.storeComponent.open()"
         >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
         <!-- <store-dialog @complete="handleSelectStore">选择门店</store-dialog> -->
       </el-form-item>
       <!-- 门店列表 -->
       <el-form-item v-show="!form.allStore || disabled || edit">
-        <select-store ref="selectStoreComponent" :disabled="disabled" @del-item="delSelectStore" />
+        <select-store ref="selectStoreComponent" :disabled="disabled || form.allStore" @del-item="delSelectStore" />
       </el-form-item>
-      <el-form-item label="商品范围：" prop="allStore" required>
+      <!-- <el-form-item label="商品范围：" prop="allStore" required>
         <el-radio-group v-model="form.allSpec" :disabled="disabled">
           <el-radio :label="true">全部商品</el-radio>
           <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
-      </el-form-item>
-      <!-- <el-form-item v-if="form.allSpecs === 1">已选当前上线的全部商品</el-form-item> -->
-      <el-form-item v-show="!form.allSpec || disabled || edit">
+      </el-form-item> -->
+      <el-form-item v-show="!form.allSpec || disabled || edit" label="商品范围：" required>
         <div style="margin-bottom: 8px">
           <el-button
             type="primary"
@@ -196,8 +195,8 @@ export default {
     return {
       form: {
         type: ['1'],
-        allStore: true,
-        allSpec: true,
+        allStore: false,
+        allSpec: false,
         threshold: ''
       },
       rules: {

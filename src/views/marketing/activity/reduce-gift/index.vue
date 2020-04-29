@@ -28,13 +28,13 @@
         />
       </el-form-item>
       <div class="form-title">活动规则</div>
-      <el-form-item label="活动范围：" prop="allStore" required>
+      <!-- <el-form-item label="活动范围：" prop="allStore" required>
         <el-radio-group v-model="form.allStore" :disabled="disabled">
           <el-radio :label="true">全部门店</el-radio>
           <el-radio :label="false">部分门店</el-radio>
         </el-radio-group>
-      </el-form-item>
-      <el-form-item v-show="!form.allStore || disabled || edit">
+      </el-form-item> -->
+      <el-form-item v-show="!form.allStore || disabled || edit" label="活动范围：" required>
         <!-- storeComponent -->
         <el-button
           type="primary"
@@ -47,14 +47,14 @@
       <el-form-item v-show="!form.allStore || disabled || edit">
         <select-store ref="selectStoreComponent" :disabled="disabled" @del-item="delSelectStore" />
       </el-form-item>
-      <el-form-item label="活动商品：" prop="allSpec" required>
+      <!-- <el-form-item label="活动商品：" prop="allSpec" required>
         <el-radio-group v-model="form.allSpec" :disabled="disabled">
           <el-radio :label="true">全部商品</el-radio>
           <el-radio :label="false">部分商品</el-radio>
         </el-radio-group>
-      </el-form-item>
+      </el-form-item> -->
       <!-- 选择的商品列表 -->
-      <el-form-item v-show="!form.allSpec || disabled || edit">
+      <el-form-item v-show="!form.allSpec || disabled || edit" label="活动商品：" required>
         <div style="margin-bottom: 8px">
           <el-button
             type="primary"
@@ -303,8 +303,8 @@ export default {
       edit: false,
       form: {
         type: ['1'], // 下单规则
-        allStore: true,
-        allSpec: true,
+        allStore: false,
+        allSpec: false,
         ruleType: 1, // 循环0/阶梯1
         uint: 0, // 满减门槛元/件 0元1件
         ruleList: [

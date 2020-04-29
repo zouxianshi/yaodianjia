@@ -57,13 +57,13 @@
               <el-radio :label="2">减价</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="选取门店" prop="allStore" required :disabled="disabled">
+          <!-- <el-form-item label="选取门店" prop="allStore" required :disabled="disabled">
             <el-radio-group v-model="xForm.allStore">
               <el-radio :label="true">全部门店</el-radio>
               <el-radio :label="false">部分门店</el-radio>
             </el-radio-group>
-          </el-form-item>
-          <el-form-item v-show="!xForm.allStore">
+          </el-form-item> -->
+          <el-form-item v-show="!xForm.allStore" label="选取门店" required>
             <!-- storeComponent -->
             <el-button
               type="primary"
@@ -408,7 +408,7 @@ export default {
         startTime: '',
         endTime: '',
         mode: 1, // 优惠模式: 1-折扣, 2-减价
-        allStore: true, // 门店活动范围: 0-全部, 1-指定门店
+        allStore: false, // 门店活动范围: 0-全部, 1-指定门店
         freePostFee: 0, // 是否免邮 免运费配送
         limitTimes: '',
         limit: 0

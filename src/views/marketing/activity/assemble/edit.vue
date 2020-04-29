@@ -128,13 +128,13 @@
           </div>
         </el-form-item>
         <div class="form-title">活动店铺</div>
-        <el-form-item label="所有店铺" prop="allStore" required>
+        <!-- <el-form-item label="活动店铺" prop="allStore" required>
           <el-radio-group v-model="formData.allStore" :disabled="!!activityId || disabled">
             <el-radio :label="true">全部门店</el-radio>
             <el-radio :label="false">部分门店</el-radio>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item v-show="!formData.allStore">
+        </el-form-item> -->
+        <el-form-item v-show="!formData.allStore" label="活动店铺" required>
           <!-- storeComponent -->
           <el-button
             type="primary"
@@ -307,7 +307,7 @@ export default {
         activitTime: '',
         img: '1',
         imgUrl: '',
-        allStore: true,
+        allStore: false,
         startTime: '',
         endTime: '',
         description: ''
