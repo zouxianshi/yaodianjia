@@ -345,6 +345,7 @@ export default {
       this.$refs[formName].resetFields()
       this.form = {
         searchKey: '',
+        searchValue: '',
         groupStatus: 0, // 拼团状态(0全部，1.待成团，2已成团，3拼团失败)
         storeId: '',
         activitTime: null
