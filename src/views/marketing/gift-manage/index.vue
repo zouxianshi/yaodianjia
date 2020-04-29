@@ -63,10 +63,11 @@ export default {
           value: 'complimentary',
           lable: '赠品',
           img: complimentary,
+          createText: '新增赠品',
           listUrl: '/marketing/gifts/complimentary',
           linkUrl: '/marketing/gifts/complimentary-edit',
           desc:
-            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+            '设置赠品，回馈客户'
         }
       ]
     }

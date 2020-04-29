@@ -20,27 +20,27 @@
             <span size="small" type="info">{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="总库存" width="100">
+        <el-table-column label="总库存" align="center">
           <template slot-scope="scope">
             <span size="small" type="info">{{ scope.row.stock?scope.row.stock:0 }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="已发放" width="100">
+        <el-table-column label="已发放" align="center">
           <template slot-scope="scope">
             <span size="small" type="info">{{ scope.row.provideNum?scope.row.provideNum:0 }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="剩余库存" width="100">
+        <el-table-column label="剩余库存" align="center">
           <template slot-scope="scope">
             <span size="small" type="info">{{ scope.row.leaveStock }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="每人限领" width="100">
+        <!-- <el-table-column label="每人限领" width="100">
           <template slot-scope="scope">
             <span size="small" type="info">{{ scope.row.limitCount===0?'不限次数':scope.row.limitCount }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="操作" width="200">
+        </el-table-column> -->
+        <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
             <el-button type="text" @click="toLook(scope.row)">查看</el-button>
             <el-divider direction="vertical" />

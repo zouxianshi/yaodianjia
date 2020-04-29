@@ -27,7 +27,7 @@
           <span class="info-create">赠品赠完不再续增</span>
         </template>
       </el-form-item>
-      <el-form-item label="每人限领：">
+      <!-- <el-form-item label="每人限领：">
         <el-col :span="24">
           <el-form-item>
             <el-radio v-model="form.limit" :label="0">不限次数</el-radio>
@@ -42,7 +42,7 @@
             <span style="margin-left: 5px" class="info-create">件</span>
           </el-form-item>
         </el-col>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" style="width: 120px" @click="submit">提交</el-button>
       </el-form-item>

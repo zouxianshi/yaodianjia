@@ -20,11 +20,11 @@
         <span size="small" type="info">{{ scope.row.leaveStock }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="每人限领" width="100">
+    <!-- <el-table-column label="每人限领" width="100">
       <template slot-scope="scope">
         <span size="small" type="info">{{ scope.row.limitCount===0?'不限次数':scope.row.limitCount }}</span>
       </template>
-    </el-table-column>
+    </el-table-column>-->
     <el-table-column label="操作" width="60">
       <template slot-scope="scope">
         <el-button type="text" :disabled="disabled" @click="handleDel(scope.row, scope.$index)">删除</el-button>
@@ -51,23 +51,7 @@ export default {
     }
   },
   data() {
-    return {
-      cols: [
-        {
-          prop: 'name',
-          label: '赠品名称',
-          width: '150'
-        },
-        {
-          prop: 'leaveStock',
-          label: '剩余库存'
-        },
-        {
-          prop: 'limitCount',
-          label: '每人限领'
-        }
-      ]
-    }
+    return {}
   },
   methods: {
     dataFrom(data) {

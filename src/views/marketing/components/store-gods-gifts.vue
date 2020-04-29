@@ -61,7 +61,7 @@
           align="center"
           :show-overflow-tooltip="true"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="limitCount"
           label="每人限领"
           min-width="60"
@@ -71,7 +71,7 @@
           <template slot-scope="scope">
             <span size="small" type="info">{{ scope.row.limitCount===0?'不限次数':scope.row.limitCount }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="table-footer">
         <el-pagination
