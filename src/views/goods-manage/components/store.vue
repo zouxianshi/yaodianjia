@@ -26,6 +26,8 @@
         </div>
         <el-table
           ref="multipleTable"
+          v-loading="dialogLoading"
+          element-loading-text="加载中"
           :data="list"
           stripe
           style="width: 100%"
@@ -105,6 +107,7 @@ export default {
   },
   data() {
     return {
+      dialogLoading: false,
       storeCode: '',
       total: 0, // 门店总页数
       currentPage: 1, // 门店分页
@@ -130,22 +133,27 @@ export default {
       return row.selectable
     },
     handleChooseStore() {
-      // 选择全部
-      this.$refs.multipleTable.clearSelection()
       if (this.isAll) {
+        this.list.map(v => {
+          this.$refs.multipleTable.toggleRowSelection(v)
+          const index = this.multipleSelection.findIndex(item => {
+            return item.id === v.id
+          })
+          if (index > -1) {
+            this.$refs.multipleTable.toggleRowSelection(v)
+          }
+          this.setSelectable(v)
+        })
+      } else {
         this.multipleSelection = []
         this.list.map(v => {
           this.$refs.multipleTable.toggleRowSelection(v)
-        })
-      } else {
-        this.list.map(v => {
-          if (!v.selectable) {
-            this.$refs.multipleTable.toggleRowSelection(v)
-          }
+          this.setSelectable(v)
         })
       }
     },
     _loadStoreData() {
+      this.dialogLoading = true
       const query = {
         searchKey: this.storeCode,
         currentPage: this.currentPage,
@@ -156,43 +164,47 @@ export default {
         specIds: this.specData,
         commOnlineStatus: this.status
       }
-      getStoreOnlineList(query).then(res => {
-        const { data, totalCount } = res.data
-        this.list = data
-        this.total = totalCount
-        setTimeout(() => {
-          this.$refs.multipleTable.clearSelection()
-        }, 300)
+      getStoreOnlineList(query)
+        .then(res => {
+          const { data, totalCount } = res.data
+          this.list = data
+          this.total = totalCount
+          setTimeout(() => {
+            this.$refs.multipleTable.clearSelection()
+          }, 100)
 
-        if (this.isAll) {
-          // 选择全部  选中门店
-          setTimeout(() => {
-            this.list.map(v => {
-              this.$refs.multipleTable.toggleRowSelection(v)
-              this.setSelectable(v)
-            })
-          }, 300)
-        } else {
-          setTimeout(() => {
-            // 翻页 如果存在之前选中的就选中
-            this.list.map(v => {
-              const index = this.multipleSelection.findIndex(item => {
-                return item.id === v.id
-              })
-              if (index > -1) {
+          if (this.isAll) {
+            // 选择全部  选中门店
+            setTimeout(() => {
+              this.list.map(v => {
                 this.$refs.multipleTable.toggleRowSelection(v)
-              }
-              this.setSelectable(v)
-            })
-          }, 300)
-        }
-      })
+                this.setSelectable(v)
+              })
+            }, 300)
+          } else {
+            setTimeout(() => {
+              // 翻页 如果存在之前选中的就选中
+              this.list.map(v => {
+                const index = this.multipleSelection.findIndex(item => {
+                  return item.id === v.id
+                })
+                if (index > -1) {
+                  this.$refs.multipleTable.toggleRowSelection(v)
+                }
+                this.setSelectable(v)
+              })
+            }, 300)
+          }
+          this.dialogLoading = false
+        })
+        .catch(err => {
+          this.dialogLoading = false
+          console.log(err)
+        })
     },
     // 给非本次选择为已上架或已下架的商品设置为不可用
     setSelectable(v) {
       v.selectable = true
-      console.log(this.status)
-      console.log(v.commOnlineStatus)
       if (
         (this.status === 0 && v.commOnlineStatus === 0) ||
         (this.status === 1 && v.commOnlineStatus === 1)
@@ -229,6 +241,7 @@ export default {
       setBatchUpdown(params)
         .then(res => {
           this.subLoading = false
+          this.isAll = false
           this.$message({
             message: '操作成功',
             type: 'success'
@@ -247,9 +260,7 @@ export default {
             return mItem.id === item.id
           })
           if (index > -1) {
-            if (allList.length > 0) {
-              // console.log('已存在' + item.commodityId + ':' + item.commodityName)
-            } else {
+            if (allList.length === 0) {
               // 反选
               this.multipleSelection.splice(index, 1)
             }
@@ -258,7 +269,6 @@ export default {
           }
         })
       }
-      console.log(this.multipleSelection)
     },
     handleSelect(selection, row) {
       // 单个选择

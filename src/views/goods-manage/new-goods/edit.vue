@@ -903,7 +903,7 @@
                   type="primary"
                   size="small"
                   :loading="subLoading2"
-                  @click="handleSubIntro"
+                  @click="handleSubInfo"
                 >保存</el-button>
               </div>
             </div>
@@ -1802,9 +1802,29 @@ export default {
           this.subLoading1 = false
         })
     },
-    handleSubIntro() {
+    handleSubInfo() {
       // 保存商品详情
       this.subLoading2 = true
+      const data = {
+        content: this.goodsIntro.content,
+        id: this.basicForm.id
+      }
+      saveGoodsDetails(data)
+        .then(res => {
+          this.subLoading2 = false
+          this.$message({
+            message: '商品详情保存成功',
+            type: 'success'
+          })
+          this.subLoading2 = false
+        })
+        .catch(_ => {
+          this.subLoading2 = false
+        })
+    },
+    handleSubIntro() {
+      // 保存商品详情
+      this.subLoading = true
       const data = {
         content: this.goodsIntro.content,
         id: this.basicForm.id
@@ -1815,7 +1835,7 @@ export default {
           //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
           //   type: 'success'
           // })
-          this.subLoading2 = false
+          this.subLoading = false
           this.leaveAction = true
           setTimeout(() => {
             // let url = ''
@@ -1849,7 +1869,7 @@ export default {
           }, 1000)
         })
         .catch(_ => {
-          this.subLoading2 = false
+          this.subLoading = false
         })
     }
   }
