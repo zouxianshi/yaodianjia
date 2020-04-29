@@ -34,9 +34,20 @@
       <el-table-column label="发放张数" width="100">
         <template slot-scope="scope">
           <div style="display:flex;align-items: center;">
-            <el-input
+            <!-- <el-input
               v-model.number="scope.row.giftNum"
               @change="onChangeLimit($event,scope.row,scope.$index)"
+            />-->
+            <el-input-number
+              v-model="scope.row.giftNum"
+              style="width: 80px"
+              :controls="false"
+              :precision="0"
+              size="mini"
+              :min="1"
+              :max="10000"
+              label="请输入发放张数"
+              @change="onChangeLimit($event, scope.row)"
             />
             <i class="el-icon-edit" />
           </div>
@@ -100,6 +111,9 @@ export default {
     showPage(selectedCoupons, pageStatus) {
       this.pageStatus = pageStatus
       this.selectedCoupons = selectedCoupons
+      this.selectedCoupons.forEach(item => {
+        item.giftNum = 1
+      })
     },
     handleDel(row) {
       this.$confirm('确认删除吗, 是否继续?', '提示', {
@@ -111,15 +125,10 @@ export default {
         this.$emit('onDel', this.selectedCoupons)
       })
     },
-    onChangeLimit(event, row, $index) {
-      const { giftNum } = row
-      if (giftNum < 1) {
-        this.$message.error('发放张数不得小于1')
-      } else if (giftNum > 10000) {
-        this.$message.error('发放张数不得超过100000')
-      } else {
-        this.$set(this.selectedCoupons[$index], 'giftNum', giftNum)
-      }
+    onChangeLimit($event, item) {
+      this.$nextTick(() => {
+        item.giftNum = $event || 1
+      })
     },
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination) {

@@ -6,9 +6,10 @@
         <el-form-item label="活动名称：" prop="activityDetailName">
           <el-input
             v-model="form.activityDetailName"
-            maxlength="30"
             placeholder="请输入活动名称"
             clearable
+            maxlength="30"
+            show-word-limit
           />
         </el-form-item>
         <el-form-item label="活动时间：" prop="beginEndTime">
@@ -19,7 +20,9 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd HH:mm:ss"
+            :picker-options="isDisabled"
             :default-time="['00:00:00','23:59:59']"
+            @change="dateChange"
           />
         </el-form-item>
 
@@ -30,6 +33,7 @@
             maxlength="200"
             placeholder="请输入活动说明"
             clearable
+            show-word-limit
           />
         </el-form-item>
       </el-form>
@@ -81,7 +85,16 @@
         <el-form-item label="消费金额：" prop="useRule">
           <span class="amTips">
             购满金额
-            <el-input v-model.number="form.useRule" size="mini" style="width:80px" />元，可参与活动
+            <el-input-number
+              v-model="form.useRule"
+              style="width: 80px"
+              :controls="false"
+              :precision="2"
+              size="mini"
+              :min="1"
+              :max="100000"
+              label="请输入购满金额"
+            />元，可参与活动
           </span>
         </el-form-item>
       </el-form>
@@ -137,7 +150,16 @@
             <el-radio :label="1">
               <span class="amTips">
                 每人限制参与
-                <el-input v-model.number="form.countRule" size="mini" style="width:80px" />次
+                <el-input-number
+                  v-model="form.countRule"
+                  style="width: 80px"
+                  :controls="false"
+                  :precision="0"
+                  size="mini"
+                  :min="1"
+                  :max="100000"
+                  label="请输入次数"
+                />次
               </span>
               <span class="zkTips">用户达到条件后可获得权益的总次数</span>
             </el-radio>
@@ -196,28 +218,6 @@ export default {
     mSelectedCoupon
   },
   data() {
-    const useRule_limit = (rule, value, callback) => {
-      const reg = /[^1-9]/
-      if (value !== '' && reg.test(value)) {
-        callback(new Error('必须是数字且不得小于或等于0'))
-      }
-      if (value > 100000) {
-        callback(new Error('最大值不能超过100000'))
-      }
-      callback()
-    }
-    const countRule_limit = (rule, value, callback) => {
-      if (this.countRuleReal === 1) {
-        const reg = /[^1-9]/
-        if (value !== '' && reg.test(value)) {
-          callback(new Error('必须是数字且不得小于或等于0'))
-        }
-        if (value > 100000) {
-          callback(new Error('最大值不能超过100000'))
-        }
-      }
-      callback()
-    }
     const productRule_limit = (rule, value, callback) => {
       if (this.form.productRule === 2 && this.selectedProducts.length === 0) {
         callback(new Error('请选择商品'))
@@ -251,6 +251,13 @@ export default {
       callback()
     }
     return {
+      isDisabled: {
+        disabledDate(time) {
+          const myDate = new Date()
+          const _beforeDay = myDate.setDate(new Date().getDate() - 1)
+          return time.getTime() <= _beforeDay
+        }
+      },
       beginEndTime: [],
       countRuleReal: 0,
       disabled: false,
@@ -268,7 +275,7 @@ export default {
         beginTime: '',
         endTime: '',
         bottomNote: '',
-        countRule: 0,
+        countRule: 1,
         countType: 1,
         integralRule: 1,
         joinRule: 0,
@@ -280,7 +287,7 @@ export default {
         // sceneRule: 0,
         sendRule: 1,
         shopRule: 1,
-        useRule: 0,
+        useRule: 1,
         giftType: 1
       },
       rules: {
@@ -292,9 +299,6 @@ export default {
         ],
         activityNote: [
           { required: true, message: '请输入活动说明', trigger: 'blur' }
-        ],
-        useRule: [
-          { required: true, validator: useRule_limit, trigger: 'blur' }
         ],
         productRule: [
           { required: true, validator: productRule_limit, trigger: 'blur' }
@@ -312,9 +316,6 @@ export default {
         ],
         giftType: [
           { required: true, validator: giftType_limit, trigger: 'blur' }
-        ],
-        countRule: [
-          { required: true, validator: countRule_limit, trigger: 'blur' }
         ]
       },
       selectedActivity: [],
@@ -352,7 +353,11 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
     this.setTagsViewTitle(this.pageTitle)
   },
+
   methods: {
+    dateChange() {
+      this.selectCoupon = []
+    },
     // 选择门店
     selectStore() {
       this.$refs.selectStore.show(this.selectedStores)
@@ -375,6 +380,7 @@ export default {
     },
     // 选择商品
     selectProduct() {
+      console.log('已选商品：', this.selectedProducts)
       this.$refs.selectProduct.show(this.selectedProducts)
     },
     setTagsViewTitle(title) {
@@ -422,7 +428,10 @@ export default {
               proId: product.id,
               proName: product.name,
               proPrice: product.mprice,
-              proSpec: product.packStandard,
+              proSpec:
+                product.specSkuList && product.specSkuList.length > 0
+                  ? product.specSkuList[0].skuValue
+                  : product.proSpec,
               ruleType: 2
             })
           })
@@ -453,19 +462,25 @@ export default {
         }
         var params = {}
         params = JSON.parse(JSON.stringify(this.form))
+        this.saveLoading = true
         if (this.pageStatus === 1) {
           console.log('createActivity', JSON.stringify(params))
-          createActivity(params).then(res => {
-            if (res.code === '10000') {
-              this.$message({
-                message: res.msg,
-                type: 'success'
-              })
-              this.$router.replace(
-                '/marketings/activity-manage/payment-gift/list'
-              )
-            }
-          })
+          createActivity(params)
+            .then(res => {
+              this.saveLoading = false
+              if (res.code === '10000') {
+                this.$message({
+                  message: res.msg,
+                  type: 'success'
+                })
+                this.$router.replace(
+                  '/marketings/activity-manage/payment-gift/list'
+                )
+              }
+            })
+            .catch(_ => {
+              this.saveLoading = false
+            })
         } else {
           delete params['createName']
           delete params['createTime']
@@ -474,17 +489,22 @@ export default {
           delete params['status']
           delete params['updateName']
           delete params['updateTime']
-          updateActivity(params).then(res => {
-            if (res.code === '10000') {
-              this.$message({
-                message: res.msg,
-                type: 'success'
-              })
-              this.$router.replace(
-                '/marketings/activity-manage/payment-gift/list'
-              )
-            }
-          })
+          updateActivity(params)
+            .then(res => {
+              this.saveLoading = false
+              if (res.code === '10000') {
+                this.$message({
+                  message: res.msg,
+                  type: 'success'
+                })
+                this.$router.replace(
+                  '/marketings/activity-manage/payment-gift/list'
+                )
+              }
+            })
+            .catch(_ => {
+              this.saveLoading = false
+            })
         }
       }
     },
@@ -509,15 +529,18 @@ export default {
     },
     onGetSelectActivity(selectedActivity) {
       this.selectedActivity = selectedActivity
-      this.$refs.selectedActivityView.show(selectedActivity)
+      this.$refs.selectedActivityView.showPage(
+        selectedActivity,
+        this.pageStatus
+      )
     },
     onGetSelectCoupon(selectedCoupons) {
       this.selectedCoupons = selectedCoupons
-      this.$refs.selectedCouponView.show(selectedCoupons)
+      this.$refs.selectedCouponView.showPage(selectedCoupons, this.pageStatus)
     },
     onGetSelectProduct(selectedProducts) {
       this.selectedProducts = selectedProducts
-      this.$refs.selectedProductView.show(selectedProducts)
+      this.$refs.selectedProductView.showPage(selectedProducts, this.pageStatus)
     },
     updateActivityStatus(activity) {
       console.log('activity', activity)

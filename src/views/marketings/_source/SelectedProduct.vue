@@ -14,7 +14,7 @@
       <el-table-column property="brandName" label="品牌">
         <template slot-scope="scope">{{ scope.row.brandName || scope.row.proBrand }}</template>
       </el-table-column>
-      <el-table-column property="specSkuList" label="规格">
+      <el-table-column label="规格">
         <template
           slot-scope="scope"
         >{{ scope.row.specSkuList&&scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : scope.row.proSpec }}</template>
