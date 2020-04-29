@@ -1,6 +1,8 @@
 <template>
   <div class="va-four-commodity-model">
-    <m-four-item v-for="(el,i) in item.itemList" :key="i" :item="el" />
+    <template v-for="(el,i) in item.itemList">
+      <m-four-item v-if="size > i" :key="i" :item="el" />
+    </template>
   </div>
 </template>
 <script>
@@ -15,6 +17,10 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    size: {
+      type: Number,
+      default: 1
     }
   },
   methods: {},

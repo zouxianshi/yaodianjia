@@ -68,7 +68,7 @@ export default {
   $hs-icons-prefix-cls: "v-hs-icons";
 
   .#{$hs-icons-prefix-cls} {
-    @for $i from 0 through 17 {
+    @for $i from 0 through 25 {
       .sa_default_icons_#{$i} {
         background: url('./img/sa_default_icons_#{$i}.png') no-repeat;
         display: block;

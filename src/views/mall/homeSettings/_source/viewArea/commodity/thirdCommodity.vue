@@ -1,7 +1,9 @@
 <template>
   <div class="scrollbar va-third-commodity-model">
     <div class="vtcm-box" :style="{width:`${132 * item.itemList.length}px`}">
-      <m-second-item v-for="(el,i) in item.itemList" :key="i" :item="el" :stylecs="{width:'116px'}" />
+      <template v-for="(el,i) in item.itemList">
+        <m-second-item v-if="size > i" :key="i" :item="el" :stylecs="{width:'116px'}" />
+      </template>
     </div>
   </div>
 </template>
@@ -17,6 +19,10 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    size: {
+      type: Number,
+      default: 8
     }
   },
   methods: {},

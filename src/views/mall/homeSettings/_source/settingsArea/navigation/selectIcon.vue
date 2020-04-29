@@ -22,7 +22,7 @@ export default {
     return {
       visible: false,
       activeIcon: '',
-      defaultIcons: _.times(17, v => {
+      defaultIcons: _.times(26, v => {
         return {
           icon: `sa_default_icons_${v}`
         }
