@@ -113,7 +113,7 @@
             style="width: 100px; margin-right: 8px"
           />
           <span>件</span>
-          <span class="info">换购商品允许顾客下单时在商品的总换购数量</span>
+          <span class="info">限制顾客可选择换购的最高件数</span>
         </template>
       </el-form-item>
       <el-form-item ref="type" label="下单规则：" prop="type">
