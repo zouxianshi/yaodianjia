@@ -57,7 +57,7 @@
               <span v-else>无</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" align="center">
+          <el-table-column label="操作" width="180" align="center" fixed="right">
             <template slot-scope="scope">
               <el-button type="text" @click="toLook(scope.row)">查看</el-button>
               <el-divider direction="vertical" />
