@@ -5,17 +5,16 @@
       <el-step title="奖项设置" />
       <el-step title="保存提交" />
     </el-steps>
-    <ruleList v-show="showFirst" @handleNext="handleNext" />
-    <awardSetting v-show="showSecond" @handleNext="handleNext" />
-    <submitSave v-show="showThird" @handleNext="handleNext" />
+    <ruleList v-show="stepActive === 1" :params="params" @handleNext="handleNext" />
+    <awardSetting v-show="stepActive === 2" :params="params" @handleNext="handleNext" @submitAjax="submitAjax" />
+    <submitSave v-show="stepActive === 3" @handleNext="handleNext" />
   </div>
 </template>
 <script>
-// import { searchActivities } from '@/api/coupon'
+import { createLuckDraw } from '@/api/coupon'
 import ruleList from './_sourse/ruleList'
 import awardSetting from './_sourse/awardSetting'
 import submitSave from './_sourse/submitSave'
-// import { mapGetters } from 'vuex'
 export default {
   name: 'TurntableIndex',
   components: {
@@ -26,43 +25,51 @@ export default {
   props: {},
   data() {
     return {
-      showFirst: true,
-      showSecond: false,
-      showThird: false,
-      stepActive: 1
+      stepActive: 1, // 显示第几步
+      params: {
+        activityDetailName: '',
+        activityGiftReqDTO: [],
+        activityNote: '',
+        activityTemplateCode: 'TA003',
+        beginTime: '',
+        bottomNote: '',
+        countRule: '',
+        countType: '',
+        endTime: '',
+        integralRule: '',
+        joinRule: '',
+        activityType: 0
+      }
     }
   },
-  computed: {
-    // ...mapGetters(['merCode'])
-  },
-  watch: {},
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
-  mounted() {
-  },
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
-    handleNext(showFirst, showSecond, showThird) {
-      this.showFirst = showFirst
-      this.showSecond = showSecond
-      this.showThird = showThird
-      if (showFirst) {
-        this.stepActive = 1
-      } else if (showSecond) {
-        this.stepActive = 2
-      } else {
-        this.stepActive = 3
-      }
+    handleNext(stepActive, obj = {}) {
+      this.stepActive = stepActive
+      Object.assign(this.params, obj)
+    },
+    submitAjax(obj = {}) { // 新增优惠券
+      Object.assign(this.params, obj)
+      var params = this.params
+      createLuckDraw(params).then(res => {
+        if (res.code === '10000') {
+          this.stepActive = 3
+        } else {
+          this.$message({
+            message: '添加失败！',
+            type: 'error'
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$message({
+          message: '添加失败！',
+          type: 'error'
+        })
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-.turntable-add-model {
-}
 </style>

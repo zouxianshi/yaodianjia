@@ -77,6 +77,14 @@
 import { formatDate } from '@/utils/timer'
 export default {
   name: 'GiftCard',
+  props: {
+    params: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   data() {
     var validateparticipatio = (rule, value, callback) => {
       if (this.ruleForm.joinRule === 2 && (value === 0 || ('' + value).trim() === '')) {
@@ -104,7 +112,6 @@ export default {
         integralRule: '1', // 参与消耗积分
         joinRule: 1, // 参与方式
         countType: 2, // 参与限制类型  1：每人 2：每天
-        participatioInput: '',
         countRule: 0 // 次数限制
       },
       rules: {
@@ -142,13 +149,10 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      console.log(this.ruleForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!')
-          this.$emit('handleNext', false, true, false)
+          this.$emit('handleNext', 2, this.ruleForm)
         } else {
-          console.log('error submit!!')
           return false
         }
       })

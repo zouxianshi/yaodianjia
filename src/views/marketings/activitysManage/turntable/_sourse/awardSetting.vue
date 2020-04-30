@@ -5,29 +5,45 @@
       :closable="false"
     >奖项个数说明：大转盘支持设置6或8个奖项； 排序说明：将按照您添加的先后顺序在大转盘活动中显示；中奖几率说明：单位默认为百分比，中奖总和必须等于1</el-alert>
     <div style="margin:20px 0">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="date" label="奖品顺序" width="50" />
-        <el-table-column prop="name" label="奖品类型" />
-        <el-table-column prop="province" label="图片" />
-        <el-table-column prop="city" label="奖品名称" />
-        <el-table-column prop="address" label="内容" />
-        <el-table-column prop="zip" label="中奖几率" />
-        <el-table-column prop="zip" label="奖品数量" />
+      <el-table :data="selectedGift" style="width: 100%" height="calc(100vh - 430px)">
+        <el-table-column
+          label="奖品顺序"
+          type="index"
+          width="100"
+        />
+        <el-table-column label="奖品类型">
+          <template slot-scope="scope">
+            {{ formatType(scope.row.giftType) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="giftImg" label="图片">
+          <template slot-scope="scope">
+            <el-image :src="showImgHandler(scope.row.giftImg)" style="width:70px;height:70px" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="giftName" label="奖品名称" />
+        <el-table-column prop="giftContent" label="内容" />
+        <el-table-column label="中奖几率">
+          <template slot-scope="scope">
+            {{ (scope.row.winRandom) }}%
+          </template>
+        </el-table-column>
+        <el-table-column prop="giftNum" label="奖品数量" />
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <el-button
               type="text"
               size="small"
-              @click.native.prevent="deleteRow(scope.$index, tableData)"
+              @click.native.prevent="deleteRow(scope.$index, selectedGift)"
             >移除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-button type="primary" plain @click="dialogVisible = true">添加奖品</el-button>
+    <el-button type="primary" plain :disabled="selectedGift.length>= 8" @click="dialogVisible = true">添加奖品</el-button>
     <div style="margin-top:40px">
-      <el-button type="primary" @click="$emit('handleNext', true, false, false)">上一步</el-button>
-      <el-button type="primary" @click="$emit('handleNext', false, false, true)">保存并提交</el-button>
+      <el-button type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
+      <el-button type="primary" @click="submitData">保存并提交</el-button>
     </div>
     <el-dialog title="添加奖品" :visible.sync="dialogVisible" width="70%" append-to-body>
       <el-form
@@ -37,17 +53,17 @@
         label-width="100px"
         class="demo-ruleForm"
       >
-        <el-form-item label="奖品类型" prop="region">
-          <el-select v-model="ruleForm.region">
-            <el-option label="优惠券" value="1" />
-            <el-option label="积分" value="2" />
-            <el-option label="实物" value="3" />
-            <el-option label="谢谢参与" value="4" />
-            <el-option label="再来一次" value="5" />
+        <el-form-item label="奖品类型" prop="giftType">
+          <el-select v-model="ruleForm.giftType" @change="changeType">
+            <el-option label="优惠券" :value="2" />
+            <el-option label="积分" :value="3" />
+            <el-option label="实物" :value="1" />
+            <el-option label="再来一次" :value="4" />
+            <el-option label="谢谢参与" :value="5" />
           </el-select>
         </el-form-item>
-        <el-form-item v-show="ruleForm.region==='1'" label="奖品内容" prop="region">
-          <el-select v-model="ruleForm.inputValue" filterable placeholder="请选择">
+        <el-form-item v-show="ruleForm.giftType===2" label="奖品内容" prop="giftContent">
+          <el-select ref="giftIds" v-model="ruleForm.giftId" filterable placeholder="请选择" @change="changeGift">
             <el-option
               v-for="item in couponList"
               :key="item.id"
@@ -56,7 +72,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="奖品图片" prop="awardImage">
+        <el-form-item label="奖品图片" prop="giftImg">
           <el-upload
             v-loading="uploadLoading"
             class="avatar-uploader x-uploader"
@@ -66,18 +82,21 @@
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="ruleForm.awardImage" :src="showImgHandler(ruleForm.awardImage)" class="avatar">
+            <img v-if="ruleForm.giftImg" :src="showImgHandler(ruleForm.giftImg)" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
-        <el-form-item v-show="ruleForm.region!=='1'" label="奖品内容" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入奖品名称 不超过六个字" style="width:400px" />
+        <el-form-item v-show="ruleForm.giftType !== 2" label="奖品内容" prop="giftContent">
+          <span v-if="ruleForm.giftType === 3"><el-input v-model="ruleForm.giftContent" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" placeholder="请输入积分值" style="width:400px" />积分</span>
+          <span v-if="ruleForm.giftType === 5"> 谢谢参与 </span>
+          <span v-if="ruleForm.giftType === 4"> 再来一次 </span>
+          <el-input v-if="ruleForm.giftType === 1" v-model="ruleForm.giftContent" maxlength="6" placeholder="请输入奖品名称 不超过六个字" style="width:400px" />
         </el-form-item>
-        <el-form-item label="中奖几率" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入中奖几率 默认单位百分比" style="width:400px" />%
+        <el-form-item label="中奖几率" prop="winRandom">
+          <el-input v-model="ruleForm.winRandom" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="2" placeholder="请输入中奖几率 默认单位百分比" style="width:400px" />%
         </el-form-item>
-        <el-form-item label="奖品数量" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入总数量" style="width:400px" />份
+        <el-form-item label="奖品数量" prop="giftNum">
+          <el-input v-model="ruleForm.giftNum" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="10" placeholder="请输入总数量" style="width:400px" />份
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -90,123 +109,34 @@
 <script>
 import { getCouponList } from '@/api/coupon'
 import { mapGetters } from 'vuex'
+import { formatDate } from '@/utils/timer'
 import config from '@/utils/config'
+import _ from 'lodash'
 export default {
   name: 'AwardSetting',
-  // props: {
-
-  // },
   data() {
     return {
       uploadLoading: false,
       dialogVisible: false,
-      tableData: [
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-08',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-06',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-07',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }
-      ],
+      selectedGift: [], // 已选择的礼品券
       couponList: [],
       ruleForm: {
-        name: '',
-        region: '1',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: '',
-        inputValue: '',
-        awardImage: ''
+        giftId: '', // 选择优惠券时的id
+        giftType: 1, // 礼品类型
+        giftNum: '', // 礼品数量
+        giftName: '', // 礼品名称
+        giftContent: '', // 礼品内容
+        giftImg: '', // 礼品图片
+        winRandom: '' // 中
       },
       rules: {
-        name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        winRandom: [
+          { required: true, message: '请设置中奖几率', trigger: 'blur' }
         ],
-        region: [
-          { required: true, message: '请选择活动区域', trigger: 'change' }
+        giftNum: [
+          { required: true, message: '请设置奖品数量', trigger: 'blur' }
         ],
-        date1: [
-          {
-            type: 'date',
-            required: true,
-            message: '请选择日期',
-            trigger: 'change'
-          }
-        ],
-        date2: [
-          {
-            type: 'date',
-            required: true,
-            message: '请选择时间',
-            trigger: 'change'
-          }
-        ],
-        type: [
-          {
-            type: 'array',
-            required: true,
-            message: '请至少选择一个活动性质',
-            trigger: 'change'
-          }
-        ],
-        resource: [
-          { required: true, message: '请选择活动资源', trigger: 'change' }
-        ],
-        desc: [{ required: true, message: '请填写活动形式', trigger: 'blur' }]
+        giftContent: [{ required: true, message: '请设置奖品内容', trigger: 'blur' }]
       }
     }
   },
@@ -223,18 +153,19 @@ export default {
     this.getcouponList()
   },
   methods: {
-    deleteRow(index, rows) {
+    deleteRow(index, table) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          rows.splice(index, 1)
+          table.splice(index, 1)
           this.$message({
             type: 'success',
             message: '删除成功!'
           })
+          console.log(this.selectedGift)
         })
         .catch(() => {
           this.$message({
@@ -244,25 +175,63 @@ export default {
         })
     },
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      var that = this
+      that.$refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!')
+          if (this.ruleForm.giftType === 3) { // 积分时数据处理
+            this.ruleForm.giftId = this.ruleForm.giftContent
+            this.ruleForm.giftName = this.ruleForm.giftContent = this.ruleForm.giftContent + '积分'
+          } else {
+            this.ruleForm.giftName = this.ruleForm.giftContent
+          }
+          that.selectedGift.push(_.cloneDeep(that.ruleForm))
+          this.ruleForm = {
+            giftId: '', // 选择优惠券时的id
+            giftType: 1, // 礼品类型
+            giftNum: '', // 礼品数量
+            giftName: '', // 礼品名称
+            giftContent: '', // 礼品内容
+            giftImg: '', // 礼品图片
+            winRandom: ''
+          }
+          this.dialogVisible = false
         } else {
-          console.log('error submit!!')
           return false
         }
       })
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
+    changeGift() {
+      this.$nextTick(() => {
+        this.ruleForm.giftContent = this.$refs.giftIds.selectedLabel
+      })
+    },
+    changeType() {
+      var types = this.ruleForm.giftType
+      if (types === 5) {
+        this.ruleForm.giftContent = '谢谢参与'
+      } else if (types === 4) {
+        this.ruleForm.giftContent = '再来一次'
+      } else {
+        this.ruleForm.giftContent = ''
+      }
+      this.resetForm()
+    },
+    resetForm() {
+      var form = this.ruleForm
+      form.giftId = ''
+      form.giftNum = ''
+      form.giftName = ''
+      form.giftImg = ''
+      form.winRandom = ''
     },
     getcouponList() {
       const searchParams = {
         cname: '',
-        ctype: 0,
+        ctype: 1,
         busType: 0,
         currentPage: 1,
-        pageSize: 999
+        pageSize: 999,
+        beginTime: formatDate(new Date())
       }
       getCouponList(searchParams).then(res => {
         if (res.data && res.data.records) {
@@ -270,9 +239,34 @@ export default {
         }
       })
     },
+    // 格式化表格数据：礼品类型
+    formatType(type) {
+      var typeName = ''
+      switch (type) {
+        case 1:
+          typeName = '实物'
+          break
+        case 2:
+          typeName = '优惠券'
+          break
+        case 3:
+          typeName = '积分'
+          break
+        case 4:
+          typeName = '再来一次'
+          break
+        case 5:
+          typeName = '谢谢参与'
+          break
+        default:
+          typeName = ''
+      }
+      return typeName
+    },
     handleAvatarSuccess(res, file) {
       if (res.code === '10000') {
-        this.ruleForm.awardImage = res.data
+        this.ruleForm.giftImg = res.data
+        this.uploadLoading = false
       } else {
         this.uploadLoading = false
         this.$message({
@@ -305,6 +299,33 @@ export default {
         this.uploadLoading = true
       }
       return isImg
+    },
+    // 提交数据到add
+    submitData() {
+      var params = {}
+      var selected = this.selectedGift
+      if (selected.length !== 6 && selected.length !== 8) {
+        this.$message({
+          message: '奖品数量需设置为6或者8',
+          type: 'error'
+        })
+        return
+      }
+      var num = 0
+      _.map(selected, item => {
+        num += Number(item.winRandom)
+        item.winRandom = item.winRandom / 100
+      })
+      console.log(selected)
+      if (num !== 100) {
+        this.$message({
+          message: '奖品总中奖几率需等于100%',
+          type: 'error'
+        })
+        return
+      }
+      params.activityGiftReqDTO = selected
+      this.$emit('submitAjax', params)
     }
   }
 }

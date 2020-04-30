@@ -29,17 +29,9 @@ export default {
     // ...mapGetters(['merCode'])
   },
   watch: {},
-  beforeCreate() {},
-  created() {
-
+  destroyed() {
+    window.clearInterval(this.clock)
   },
-  beforeMount() {},
-  mounted() {
-  },
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
     // 倒计时
     countDown() {

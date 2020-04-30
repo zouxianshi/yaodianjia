@@ -179,3 +179,16 @@ export function normalAddedActivityList(params) {
     data: params
   })
 }
+/**
+ * 大转盘活动相关
+ *
+ * **/
+// 新增大转盘接口
+export function createLuckDraw(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/createLuckDraw`,
+    method: 'post',
+    data: params
+  })
+}
+
