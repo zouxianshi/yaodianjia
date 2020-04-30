@@ -49,8 +49,8 @@
     </div>
     <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="大转盘暂未上架任何活动">
       <el-table-column prop="date" label="活动类型" width="120">
-        <template slot-scope="scope">
-          <div>{{ scope.row.activityDetailName }}</div>
+        <template>
+          <div>大转盘</div>
         </template>
       </el-table-column>
       <el-table-column prop="activityDetailName" label="活动名称" />
@@ -226,12 +226,13 @@ export default {
                 id: 3,
                 value: '3',
                 label: '失效'
-              },
-              {
-                id: 4,
-                value: '4',
-                label: '推广'
               }
+              // ,
+              // {
+              //   id: 4,
+              //   value: '4',
+              //   label: '推广'
+              // }
             ]
           } else if (state === 2 && status === 1) {
             i.options = [
@@ -244,12 +245,13 @@ export default {
                 id: 6,
                 value: '5',
                 label: '删除'
-              },
-              {
-                id: 7,
-                value: '4',
-                label: '推广'
               }
+              // ,
+              // {
+              //   id: 7,
+              //   value: '4',
+              //   label: '推广'
+              // }
             ]
           } else if (
             (state === 3 && status === 1) ||
@@ -347,7 +349,7 @@ export default {
         this.dialogVisible = true
       } else if (val === '2' || val === '1') {
         // 编辑或查看
-        this.$router.push({ path: '/marketings/activity-manage/turntable/add' })
+        this.$router.push({ path: '/marketings/activity-manage/turntable/add', query: { id: this.tableData[index].id }})
       }
     },
     changeOption(val) {
