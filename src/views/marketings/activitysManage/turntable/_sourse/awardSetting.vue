@@ -64,8 +64,7 @@
             :headers="headers"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
-            :before-upload="beforeUpload"
-            @preview="handlePreview"
+            :before-upload="beforeAvatarUpload"
           >
             <img v-if="ruleForm.awardImage" :src="showImgHandler(ruleForm.awardImage)" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
