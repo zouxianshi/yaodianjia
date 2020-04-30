@@ -29,13 +29,7 @@
       <el-button type="primary" @click="$emit('handleNext', true, false, false)">上一步</el-button>
       <el-button type="primary" @click="$emit('handleNext', false, false, true)">保存并提交</el-button>
     </div>
-    <el-dialog
-      title="添加奖品"
-      :visible.sync="dialogVisible"
-      width="70%"
-      :before-close="handleClose"
-      append-to-body
-    >
+    <el-dialog title="添加奖品" :visible.sync="dialogVisible" width="70%" append-to-body>
       <el-form
         ref="ruleForm"
         :model="ruleForm"
@@ -53,13 +47,29 @@
           </el-select>
         </el-form-item>
         <el-form-item v-show="ruleForm.region==='1'" label="奖品内容" prop="region">
-          <el-select v-model="ruleForm.region">
-            <el-option label="优惠券" value="1" />
-            <el-option label="积分" value="2" />
-            <el-option label="实物" value="3" />
-            <el-option label="谢谢参与" value="4" />
-            <el-option label="再来一次" value="5" />
+          <el-select v-model="ruleForm.inputValue" filterable placeholder="请选择">
+            <el-option
+              v-for="item in couponList"
+              :key="item.id"
+              :label="item.cname"
+              :value="item.id"
+            />
           </el-select>
+        </el-form-item>
+        <el-form-item label="奖品图片" prop="awardImage">
+          <el-upload
+            v-loading="uploadLoading"
+            class="avatar-uploader x-uploader"
+            :action="upLoadUrl"
+            :headers="headers"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeUpload"
+            @preview="handlePreview"
+          >
+            <img v-if="ruleForm.awardImage" :src="showImgHandler(ruleForm.awardImage)" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
         </el-form-item>
         <el-form-item v-show="ruleForm.region!=='1'" label="奖品内容" prop="name">
           <el-input v-model="ruleForm.name" placeholder="请输入奖品名称 不超过六个字" style="width:400px" />
@@ -79,6 +89,9 @@
   </div>
 </template>
 <script>
+import { getCouponList } from '@/api/coupon'
+import { mapGetters } from 'vuex'
+import config from '@/utils/config'
 export default {
   name: 'AwardSetting',
   // props: {
@@ -86,6 +99,7 @@ export default {
   // },
   data() {
     return {
+      uploadLoading: false,
       dialogVisible: false,
       tableData: [
         {
@@ -145,6 +159,7 @@ export default {
           zip: 200333
         }
       ],
+      couponList: [],
       ruleForm: {
         name: '',
         region: '1',
@@ -153,7 +168,9 @@ export default {
         delivery: false,
         type: [],
         resource: '',
-        desc: ''
+        desc: '',
+        inputValue: '',
+        awardImage: ''
       },
       rules: {
         name: [
@@ -194,7 +211,18 @@ export default {
       }
     }
   },
-  watch: {},
+  computed: {
+    ...mapGetters(['merCode', 'name', 'token']),
+    upLoadUrl() {
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImgAny?merCode=${this.merCode}`
+    },
+    headers() {
+      return { Authorization: this.token }
+    }
+  },
+  mounted() {
+    this.getcouponList()
+  },
   methods: {
     deleteRow(index, rows) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -228,6 +256,56 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+    },
+    getcouponList() {
+      const searchParams = {
+        cname: '',
+        ctype: 0,
+        busType: 0,
+        currentPage: 1,
+        pageSize: 999
+      }
+      getCouponList(searchParams).then(res => {
+        if (res.data && res.data.records) {
+          this.couponList = res.data.records
+        }
+      })
+    },
+    handleAvatarSuccess(res, file) {
+      if (res.code === '10000') {
+        this.ruleForm.awardImage = res.data
+      } else {
+        this.uploadLoading = false
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+    },
+    beforeAvatarUpload(file) {
+      const isImg =
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/jpg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message({
+          message: '上传图片大小不能超过 2MB!',
+          type: 'warning'
+        })
+        return false
+      }
+      if (!isImg) {
+        this.$message({
+          message: '请上传jpeg、png、jpg格式的图片',
+          type: 'warning'
+        })
+        return false
+      }
+      if (isImg) {
+        this.uploadLoading = true
+      }
+      return isImg
     }
   }
 }
@@ -235,5 +313,28 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
 .rule-awardSetting-modal {
   padding-top: 10px;
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 }
 </style>
