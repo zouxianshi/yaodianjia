@@ -78,7 +78,7 @@ export default {
       position: relative;
       height: 100%;
       .vhi-default {
-        width: 100px;
+        width: 104px;
         height: 80px;
         position: absolute;
         left: 50%;
