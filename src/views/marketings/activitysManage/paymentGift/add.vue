@@ -575,12 +575,12 @@ export default {
               res.data.sceneRuleReal.push(res.data.sceneRule)
             }
             this.countRuleReal = res.data.countRule === 0 ? 0 : 1
-            res.data['removeList'] = []
+            res.data['removedList'] = []
             res.data.listActivityPayEntity.forEach(item => {
               if (!res.data.giftType) {
                 res.data.giftType = item.giftType
               }
-              res.data['removeList'].push(item.id)
+              res.data['removedList'].push(item.id)
             })
             // this.form = _.cloneDeep(res.data)
             this.form = Object.assign({}, this.form, res.data)
