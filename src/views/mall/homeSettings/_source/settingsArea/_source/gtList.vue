@@ -2,7 +2,7 @@
   <el-table :data="tableData" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 512px)">
     <el-table-column label="选择" width="55">
       <template slot-scope="scope">
-        <el-checkbox v-model="scope.row.select" @change="v => onCheckbox(v, scope.row)" />
+        <el-checkbox v-model="scope.row.select" :disabled="isDisabled" @change="v => onCheckbox(v, scope.row)" />
       </template>
     </el-table-column>
     <el-table-column label="商品图片" width="70">
@@ -113,6 +113,9 @@ export default {
   destroyed() {
   },
   computed: {
+    isDisabled() {
+      return this.activesData.length > 20
+    }
   },
   components: {}
 }

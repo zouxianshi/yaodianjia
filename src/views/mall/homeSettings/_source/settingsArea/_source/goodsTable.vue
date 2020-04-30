@@ -111,20 +111,20 @@ export default {
         this.$message.error('请选择商品！')
         return
       }
-      if (subType === 'first' && _.size(activesData) < 2 || _.size(activesData) > 20) {
-        this.$message.error('当前组件最少添加（2 - 20）个商品！')
+      if (subType === 'first' && _.size(activesData) < 2) {
+        this.$message.error('当前组件只能添加（2）个商品！')
         return
       }
-      if (subType === 'second' && _.size(activesData) < 3 || _.size(activesData) > 20) {
-        this.$message.error('当前组件最少添加（3 - 20）个商品！')
+      if (subType === 'second' && _.size(activesData) < 3) {
+        this.$message.error('当前组件只能添加（3）个商品！')
         return
       }
-      if (subType === 'third' && _.size(activesData) < 4 || _.size(activesData) > 20) {
-        this.$message.error('当前组件最少添加（4 - 20）个商品！')
+      if (subType === 'third' && _.size(activesData) < 4) {
+        this.$message.error('当前组件只能添加（4）个商品！')
         return
       }
-      if (subType === 'four' && _.size(activesData) < 1 || _.size(activesData) > 20) {
-        this.$message.error('当前组件最少添加（1 - 20）个商品！')
+      if (subType === 'four' && _.size(activesData) < 1) {
+        this.$message.error('当前组件只能添加（1）个商品！')
         return
       }
       await this.$emit('on-update', activesData)
