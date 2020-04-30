@@ -23,7 +23,6 @@
         ref="orderTable"
         v-loading="tableLoading"
         :data="gridData"
-        tooltip-effect="light"
         highlight-current-row
         @current-change="handleCurrentChange"
       >
@@ -39,17 +38,17 @@
         <el-table-column label="活动类型" width="80">
           <template slot-scope="scope">{{ handleTemplateName(scope.row.activityTemplateCode) }}</template>
         </el-table-column>
-        <el-table-column property="activityDetailName" label="活动名称" />
-        <el-table-column label="活动时间" width="100" show-overflow-tooltip>
+        <el-table-column property="activityDetailName" label="活动名称" show-overflow-tooltip />
+        <el-table-column label="活动时间" width="145" show-overflow-tooltip>
           <template slot-scope="scope">{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
         </el-table-column>
-        <el-table-column property="sceneRule" label="活动场景">
+        <el-table-column property="sceneRule" label="活动场景" width="80">
           <template slot-scope="scope">{{ scope.row.sceneRule===1?'线上活动':'线下活动' }}</template>
         </el-table-column>
-        <el-table-column property="joinRule" label="参与方式">
+        <el-table-column property="joinRule" label="参与方式" width="100">
           <template slot-scope="scope">{{ scope.row.joinRule===1?'消耗积分':'不消耗积分' }}</template>
         </el-table-column>
-        <el-table-column property="countRule" label="参与次数">
+        <el-table-column property="countRule" label="参与次数" width="80">
           <template slot-scope="scope">{{ scope.row.countRule+'次' }}</template>
         </el-table-column>
       </el-table>
@@ -62,10 +61,17 @@
         @size-change="handleSizeChange"
         @current-change="changePage"
       />
+
       <div class="has-selected">
         已选活动：
         <span v-for="(item ,index) in selectedArr" :key="index">
-          <el-tag style="margin-right:10px" type="success">{{ item.activityDetailName }}</el-tag>
+          <el-tooltip placement="top">
+            <div slot="content">{{ item.activityDetailName }}</div>
+            <el-tag
+              style="margin-right:10px"
+              type="success"
+            >{{ item.activityDetailName.length>10?item.activityDetailName.substring(0,10)+'...':item.activityDetailName }}</el-tag>
+          </el-tooltip>
         </span>
       </div>
       <span slot="footer">
@@ -208,6 +214,9 @@ export default {
 }
 </script>
 <style lang="scss">
+.el-dialog{
+  width: 55%;
+}
 .el-dialog__body {
   padding-top: 10px;
   padding-bottom: 0;

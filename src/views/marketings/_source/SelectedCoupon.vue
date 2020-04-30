@@ -1,8 +1,8 @@
 <template>
   <div class="selected-coupon-view">
     <el-table height="250" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
-      <el-table-column prop="cname" label="优惠券名称" />
-      <el-table-column label="优惠内容">
+      <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
+      <el-table-column label="优惠内容" width="120" show-overflow-tooltip>
         <template
           slot-scope="scope"
         >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
@@ -10,7 +10,7 @@
       <el-table-column label="使用时间" show-overflow-tooltip>
         <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
       </el-table-column>
-      <el-table-column label="使用场景" width="90">
+      <el-table-column label="使用场景" width="80">
         <template
           slot-scope="scope"
         >{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>
@@ -20,24 +20,9 @@
           slot-scope="scope"
         >{{ scope.row.productRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
       </el-table-column>
-      <!-- <el-table-column label="券总数" width="100">
-            <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <el-input
-                  v-model.number="scope.row.totalCoupons"
-                  @change="onChangeCoupons($event,scope.row,scope.$index)"
-                />
-                <i class="el-icon-edit" />
-              </div>
-            </template>
-      </el-table-column>-->
       <el-table-column label="发放张数" width="100">
         <template slot-scope="scope">
           <div style="display:flex;align-items: center;">
-            <!-- <el-input
-              v-model.number="scope.row.giftNum"
-              @change="onChangeLimit($event,scope.row,scope.$index)"
-            />-->
             <el-input-number
               v-model="scope.row.giftNum"
               style="width: 80px"
@@ -53,28 +38,6 @@
           </div>
         </template>
       </el-table-column>
-      <!-- <el-table-column v-if="radio==='积分兑换'" label="所需积分" width="100">
-            <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <el-input
-                  v-model.number="scope.row.totalNeed"
-                  @change="onChangeNeed($event,scope.row,scope.$index)"
-                />
-                <i class="el-icon-edit" />
-              </div>
-            </template>
-      </el-table-column>-->
-      <!-- <el-table-column v-if="radio==='现金购买'" label="所需现金" width="100">
-            <template slot-scope="scope">
-              <div style="display:flex;align-items: center;">
-                <el-input
-                  v-model.number="scope.row.totalNeed"
-                  @change="onChangeNeed($event,scope.row,scope.$index)"
-                />
-                <i class="el-icon-edit" />
-              </div>
-            </template>
-      </el-table-column>-->
       <el-table-column v-if="pageStatus!=3" label="操作" width="60">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click.native.prevent="handleDel(scope.row)">删除</el-button>
@@ -84,11 +47,11 @@
     <el-pagination
       :current-page="pageInfo.currentPage"
       :page-size="pageInfo.pageSize"
-      layout="total,prev, pager, next"
+      layout="prev, pager, next"
       :total="selectedCoupons.length"
       @current-change="handleSizeChange"
     />
-    <!-- <div class="amTips">已选优惠券{{ selectedCoupons.length }}张</div> -->
+    <div class="amTips" style="margin-bottom: 22px;font-size: 14px">已选优惠券{{ selectedCoupons.length }}张</div>
   </div>
 </template>
 <script>

@@ -385,131 +385,140 @@ export default {
       const route = Object.assign({}, this.tempRoute, { title: `${title}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
-    doSubmitForm(flag1, flag2, flag3) {
-      if (flag1 && flag2 && flag3) {
-        this.form.merCode = this.merCode
-        if (this.form.sceneRuleReal.length === 2) {
-          this.form.sceneRule = 0
-        } else {
-          this.form.sceneRule = this.form.sceneRuleReal[0]
-        }
-        if (this.beginEndTime) {
-          this.form.beginTime = this.beginEndTime[0]
-            .replace(/T/g, ' ')
-            .replace(/Z/g, '')
-          this.form.endTime = this.beginEndTime[1]
-            .replace(/T/g, ' ')
-            .replace(/Z/g, '')
-        }
-        if (this.form.shopRule === 2) {
-          this.selectedStores.forEach(store => {
-            this.form.listCouponStore.push({
-              ruleType: 2,
-              storeCode: store.storeCode || store.stCode,
-              storeId: store.storeId || store.id,
-              storeName: store.storeName || store.stName
-            })
+    doSubmitForm() {
+      this.form.merCode = this.merCode
+      if (this.form.sceneRuleReal.length === 2) {
+        this.form.sceneRule = 0
+      } else {
+        this.form.sceneRule = this.form.sceneRuleReal[0]
+      }
+      if (this.beginEndTime) {
+        this.form.beginTime = this.beginEndTime[0]
+          .replace(/T/g, ' ')
+          .replace(/Z/g, '')
+        this.form.endTime = this.beginEndTime[1]
+          .replace(/T/g, ' ')
+          .replace(/Z/g, '')
+      }
+      if (this.form.shopRule === 2) {
+        this.selectedStores.forEach(store => {
+          this.form.listCouponStore.push({
+            ruleType: 2,
+            storeCode: store.storeCode || store.stCode,
+            storeId: store.storeId || store.id,
+            storeName: store.storeName || store.stName
           })
-        }
-        if (this.countRuleReal === 0) {
-          this.form.countRule = 0
-        }
-        if (this.form.productRule === 2) {
-          this.selectedProducts.forEach(product => {
-            this.form.listCouponProduct.push({
-              proBrand: product.proBrand || product.brandNamed,
-              proCode: product.proCode || product.erpCode,
-              proId: product.proId || product.id,
-              proName: product.proName || product.name,
-              proPrice: product.proPrice || product.mprice,
-              proImg: product.proImg || product.mainPic,
-              proSpec:
-                product.specSkuList && product.specSkuList.length > 0
-                  ? product.specSkuList[0].skuValue
-                  : product.proSpec,
-              ruleType: 2
-            })
+        })
+      }
+      if (this.countRuleReal === 0) {
+        this.form.countRule = 0
+      }
+      if (this.form.productRule === 2) {
+        this.selectedProducts.forEach(product => {
+          this.form.listCouponProduct.push({
+            proBrand: product.proBrand || product.brandNamed,
+            proCode: product.proCode || product.erpCode,
+            proId: product.proId || product.id,
+            proName: product.proName || product.name,
+            proPrice: product.proPrice || product.mprice,
+            proImg: product.proImg || product.mainPic,
+            proSpec:
+              product.specSkuList && product.specSkuList.length > 0
+                ? product.specSkuList[0].skuValue
+                : product.proSpec,
+            ruleType: 2
           })
-        }
-        if (this.form.giftType === 1 && this.selectedCoupons.length > 0) {
-          this.selectedCoupons.forEach(coupon => {
-            this.form.activityPayReqDTO.push({
-              giftId: coupon.id,
-              giftNum: coupon.giftNum,
-              giftType: 1
-            })
+        })
+      }
+      if (this.form.giftType === 1 && this.selectedCoupons.length > 0) {
+        this.selectedCoupons.forEach(coupon => {
+          this.form.activityPayReqDTO.push({
+            giftId: coupon.id,
+            giftNum: coupon.giftNum,
+            giftType: 1
           })
-        }
-        if (this.form.giftType === 2 && this.selectedActivity.length > 0) {
-          this.selectedCoupons.forEach(coupon => {
-            this.form.activityPayReqDTO.push({
-              giftId: this.selectedActivity.id,
-              giftType: 2
-            })
+        })
+      }
+      if (this.form.giftType === 2 && this.selectedActivity.length > 0) {
+        this.selectedActivity.forEach(activity => {
+          this.form.activityPayReqDTO.push({
+            giftId: activity.id,
+            giftType: 2
           })
-        }
-        var params = {}
-        params = JSON.parse(JSON.stringify(this.form))
-        this.saveLoading = true
-        if (this.pageStatus === 1) {
-          console.log('createActivity', JSON.stringify(params))
-          createActivity(params)
-            .then(res => {
-              this.saveLoading = false
-              if (res.code === '10000') {
-                this.$message({
-                  message: res.msg,
-                  type: 'success'
-                })
-                this.$router.replace(
-                  '/marketings/activity-manage/payment-gift/list'
-                )
-              }
-            })
-            .catch(_ => {
-              this.saveLoading = false
-            })
-        } else {
-          delete params['createName']
-          delete params['createTime']
-          delete params['giftType']
-          delete params['isValid']
-          delete params['status']
-          delete params['updateName']
-          delete params['updateTime']
-          delete params['sceneRuleReal']
-          delete params['listCouponStoreEntity']
-          delete params['listCouponProductEntity']
-          delete params['listActivityGiftEntity']
-          delete params['listActivityPayEntity']
-          console.log('updateActivity' + JSON.stringify(params))
-          updateActivity(params)
-            .then(res => {
-              this.saveLoading = false
-              if (res.code === '10000') {
-                this.$message({
-                  message: res.msg,
-                  type: 'success'
-                })
-                this.$router.replace(
-                  '/marketings/activity-manage/payment-gift/list'
-                )
-              }
-            })
-            .catch(_ => {
-              this.saveLoading = false
-            })
-        }
+        })
+      }
+      var params = {}
+      params = JSON.parse(JSON.stringify(this.form))
+      this.saveLoading = true
+      if (this.pageStatus === 1) {
+        console.log('createActivity', JSON.stringify(params))
+        createActivity(params)
+          .then(res => {
+            this.saveLoading = false
+            if (res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.$router.replace(
+                '/marketings/activity-manage/payment-gift/list'
+              )
+            }
+          })
+          .catch(_ => {
+            this.saveLoading = false
+          })
+      } else {
+        delete params['createName']
+        delete params['createTime']
+        delete params['giftType']
+        delete params['isValid']
+        delete params['status']
+        delete params['updateName']
+        delete params['updateTime']
+        delete params['sceneRuleReal']
+        delete params['listCouponStoreEntity']
+        delete params['listCouponProductEntity']
+        delete params['listActivityGiftEntity']
+        delete params['listActivityPayEntity']
+        console.log('updateActivity' + JSON.stringify(params))
+        updateActivity(params)
+          .then(res => {
+            this.saveLoading = false
+            if (res.code === '10000') {
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this.$router.replace(
+                '/marketings/activity-manage/payment-gift/list'
+              )
+            }
+          })
+          .catch(_ => {
+            this.saveLoading = false
+          })
       }
     },
 
     submitData: throttle(function() {
-      this.$refs.form.validate(flag1 => {
-        this.$refs.form2.validate(flag2 => {
-          this.$refs.form3.validate(flag3 => {
-            this.doSubmitForm(flag1, flag2, flag3)
-          })
+      const p1 = new Promise((resolve, reject) => {
+        this.$refs.form.validate(valid => {
+          if (valid) resolve()
         })
+      })
+      const p2 = new Promise((resolve, reject) => {
+        this.$refs.form2.validate(valid => {
+          if (valid) resolve()
+        })
+      })
+      const p3 = new Promise((resolve, reject) => {
+        this.$refs.form3.validate(valid => {
+          if (valid) resolve()
+        })
+      })
+      Promise.all([p1, p2, p3]).then(() => {
+        this.doSubmitForm()
       })
     }, 3000),
     onGetSelectStore(selectedStores) {
@@ -563,6 +572,7 @@ export default {
               res.data.sceneRuleReal = []
               res.data.sceneRuleReal.push(res.data.sceneRule)
             }
+            this.countRuleReal = res.data.countRule === 0 ? 0 : 1
             res.data.listActivityPayEntity.forEach(item => {
               if (!res.data.giftType) {
                 res.data.giftType = item.giftType
