@@ -26,7 +26,9 @@
           <div style="white-space:normal;word-break:break-all;word-wrap:break-word">使用须知：{{ data.note }}</div>
         </div>
         <div class="p-bottom">
-          <div class="codeImg">二维码</div>
+          <div class="codeImg">
+            <el-image :src="imgSrc" style="width: 100%; height: 80px;" />
+          </div>
           <div class="code">券码：XXXXXXXX</div>
         </div>
       </div>
@@ -34,6 +36,7 @@
   </div>
 </template>
 <script>
+import eCode from '@/assets/image/marketings/ecode.png'
 import { formatDate } from '@/utils/timer'
 export default {
   name: 'PhoneView',
@@ -49,6 +52,11 @@ export default {
       default() {
         return {}
       }
+    }
+  },
+  data() {
+    return {
+      imgSrc: eCode
     }
   },
   computed: {
@@ -112,7 +120,7 @@ export default {
         text-align: center;height: 130px;width: 100%;margin-top: 20px;
         padding-top: 10px;border-top: 2px dotted #999;
         .codeImg{
-          height: 80px;border: 1px solid #eee;width: 80%;margin: 0 auto 15px;
+          height: 80px;width: 80%;margin: 0 auto 15px;
         }
         .code{
           font-size: 12px;
