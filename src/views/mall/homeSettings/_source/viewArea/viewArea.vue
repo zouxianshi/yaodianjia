@@ -124,6 +124,7 @@ export default {
     jumpCurrentSet,
     ...mapActions('mall', ['saveStructure']),
     ...mapMutations('mall', ['setDragData']),
+
     _onDelete(i) {
 
     },
