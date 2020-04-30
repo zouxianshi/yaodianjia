@@ -237,11 +237,12 @@ export default {
         } else if (this.selectedCoupons.length > 20) {
           callback(new Error('优惠券最多不能超过20张'))
         }
-      } else if (
-        this.form.giftType === 2 &&
-        this.selectedActivity.length === 0
-      ) {
-        callback(new Error('请选择活动'))
+      } else if (this.form.giftType === 2) {
+        if (this.selectedActivity.length === 0) {
+          callback(new Error('请选择活动'))
+        } else if (this.selectedActivity.length > 1) {
+          callback(new Error('活动只能选择一个'))
+        }
       }
       callback()
     }
@@ -481,6 +482,7 @@ export default {
         delete params['listCouponProductEntity']
         delete params['listActivityGiftEntity']
         delete params['listActivityPayEntity']
+
         console.log('updateActivity' + JSON.stringify(params))
         updateActivity(params)
           .then(res => {
@@ -573,10 +575,12 @@ export default {
               res.data.sceneRuleReal.push(res.data.sceneRule)
             }
             this.countRuleReal = res.data.countRule === 0 ? 0 : 1
+            res.data['removeList'] = []
             res.data.listActivityPayEntity.forEach(item => {
               if (!res.data.giftType) {
                 res.data.giftType = item.giftType
               }
+              res.data['removeList'].push(item.id)
             })
             // this.form = _.cloneDeep(res.data)
             this.form = Object.assign({}, this.form, res.data)

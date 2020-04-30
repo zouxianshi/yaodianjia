@@ -42,7 +42,7 @@
           </div>
           <div class="search-item">
             <el-button size="small" type="primary" @click="search()">查 询</el-button>
-            <el-button size="small" type="primary" @click="search()">导 出</el-button>
+            <!-- <el-button size="small" type="primary" @click="search()">导 出</el-button> -->
           </div>
         </div>
       </section>
