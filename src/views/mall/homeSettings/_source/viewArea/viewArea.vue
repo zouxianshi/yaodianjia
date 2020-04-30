@@ -11,8 +11,8 @@
 
     <!--拖拽操作-->
     <div class="vam-draggable">
-      <v-draggable v-model="dragList" draggable=".item-component" v-bind="dragOptions" @end="onEnd" @add="onAdd">
-        <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" class="item-component">
+      <v-draggable ref="draggable" v-model="dragList" draggable=".item-component" v-bind="dragOptions" @add="onAdd">
+        <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" :class="item.type === 'recommend' ? 'item-component-recommend' : 'item-component'">
           <m-va-error-drag v-if="item.type !== 'no-data' && item.error" :type="item.type" @click.native="jumpCurrentSet($root,item)" />
           <m-no-data v-if="item.type === 'no-data'" />
           <template v-else>
@@ -128,22 +128,23 @@ export default {
 
     },
     /**
-     * drag end
-     */
-    onEnd(v) {
-      // this.setDragData()
-    },
-    /**
      * drag add
      */
     onAdd(v) {
-      this.dragList = _.reject(this.dragList, ['type', 'no-data'])
-      const { type = '', subType = '' } = this.dragList[v.newIndex]
+      let dragList = _.reject(this.dragList, ['type', 'no-data'])
+      const item = this.dragList[v.newIndex]
+      const { type = '', subType = '' } = item
       if (type === 'recommend') {
         const instance = findComponentDownward(this, `Va${_.capitalize(subType)}Recommend`)
-        instance.$_onUpdate(this.dragList[v.newIndex])
+        instance.$_onUpdate(item)
       }
-      this.setDragData(this.dragList)
+      const itemRecommend = _.find(dragList, ['type', 'recommend'])
+      if (!_.isEmpty(itemRecommend)) {
+        dragList = _.reject(dragList, ['type', 'recommend'])
+        dragList.push(itemRecommend)
+      }
+
+      this.setDragData(dragList)
     },
     /**
      * Process saved data and do error verification
@@ -192,7 +193,7 @@ export default {
     .vam-draggable {
       background: #f5f5f8;
       cursor: move;
-      .item-component {
+      .item-component,.item-component-recommend {
         position: relative;
         z-index: 21;
         margin-left: -2px;
