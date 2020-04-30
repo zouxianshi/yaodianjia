@@ -1,8 +1,8 @@
 <template>
   <div class="selected-coupon-view">
     <el-table height="250" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
-      <el-table-column prop="cname" label="优惠券名称" />
-      <el-table-column label="优惠内容">
+      <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
+      <el-table-column label="优惠内容" width="120" show-overflow-tooltip>
         <template
           slot-scope="scope"
         >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
@@ -10,7 +10,7 @@
       <el-table-column label="使用时间" show-overflow-tooltip>
         <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
       </el-table-column>
-      <el-table-column label="使用场景" width="90">
+      <el-table-column label="使用场景" width="80">
         <template
           slot-scope="scope"
         >{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>

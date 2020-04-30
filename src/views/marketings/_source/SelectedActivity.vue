@@ -1,10 +1,10 @@
 <template>
   <div class="selected-store-view">
     <el-table ref="dataTable" :data="selectedActivity">
-      <el-table-column label="活动类型" width="80">
+      <el-table-column label="活动类型" width="80" show-overflow-tooltip>
         <template slot-scope="scope">{{ handleTemplateName(scope.row.activityTemplateCode) }}</template>
       </el-table-column>
-      <el-table-column property="activityDetailName" label="活动名称" />
+      <el-table-column property="activityDetailName" label="活动名称" show-overflow-tooltip />
       <el-table-column label="活动时间" width="100" show-overflow-tooltip>
         <template slot-scope="scope">{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
       </el-table-column>
