@@ -46,7 +46,13 @@
       <div class="has-selected">
         已选门店：
         <span v-for="(item ,index) in selectedArr" :key="index">
-          <el-tag style="margin-right:10px" type="success">{{ item.stName }}</el-tag>
+          <el-tooltip placement="top">
+            <div slot="content">{{ item.stName }}</div>
+            <el-tag
+              style="margin-right:10px"
+              type="success"
+            >{{ item.stName.length>10?item.stName.substring(0,10)+'...':item.stName }}</el-tag>
+          </el-tooltip>
         </span>
       </div>
       <span slot="footer">

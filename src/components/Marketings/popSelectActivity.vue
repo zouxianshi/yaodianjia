@@ -62,10 +62,17 @@
         @size-change="handleSizeChange"
         @current-change="changePage"
       />
+
       <div class="has-selected">
         已选活动：
         <span v-for="(item ,index) in selectedArr" :key="index">
-          <el-tag style="margin-right:10px" type="success">{{ item.activityDetailName }}</el-tag>
+          <el-tooltip placement="top">
+            <div slot="content">{{ item.activityDetailName }}</div>
+            <el-tag
+              style="margin-right:10px"
+              type="success"
+            >{{ item.activityDetailName.length>10?item.activityDetailName.substring(0,10)+'...':item.activityDetailName }}</el-tag>
+          </el-tooltip>
         </span>
       </div>
       <span slot="footer">

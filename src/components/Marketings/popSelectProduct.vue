@@ -16,10 +16,20 @@
             />
           </el-form-item>
           <el-form-item label="商品品牌" style="margin-left:10px;">
-            <el-input v-model="searchParams.brandName" placeholder="商品品牌名称" size="mini" style="width:120px" />
+            <el-input
+              v-model="searchParams.brandName"
+              placeholder="商品品牌名称"
+              size="mini"
+              style="width:120px"
+            />
           </el-form-item>
           <el-form-item label="商品信息" style="margin-left:10px">
-            <el-input v-model="searchParams.erpOrName" placeholder="商品编码/商品名称" size="mini" style="width:120px" />
+            <el-input
+              v-model="searchParams.erpOrName"
+              placeholder="商品编码/商品名称"
+              size="mini"
+              style="width:120px"
+            />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" size="mini" @click="searchData()">查询</el-button>
@@ -50,9 +60,9 @@
         <el-table-column property="name" label="商品名称" :show-overflow-tooltip="true" />
         <el-table-column property="brandName" label="品牌" />
         <el-table-column property="specSkuList" label="规格">
-          <template slot-scope="scope">
-            {{ scope.row.specSkuList&&scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}
-          </template>
+          <template
+            slot-scope="scope"
+          >{{ scope.row.specSkuList&&scope.row.specSkuList.length > 0 ? scope.row.specSkuList[0].skuValue : '' }}</template>
         </el-table-column>
         <el-table-column property="mprice" label="参考价" />
       </el-table>
@@ -68,7 +78,12 @@
       <div class="has-selected">
         已选商品：
         <span v-for="(item ,index) in selectedArr" :key="index">
-          <el-tag style="margin-right:10px" type="success">{{ item.name }}</el-tag>
+          <el-tooltip placement="top">
+            <div slot="content">
+              {{ item.name }}
+            </div>
+            <el-tag style="margin-right:10px" type="success">{{ item.name.length>10?item.name.substring(0, 10)+'...':item.name }}</el-tag>
+          </el-tooltip>
         </span>
       </div>
       <span slot="footer">
@@ -178,8 +193,7 @@ export default {
       this.checkSelect(e)
     },
     // 改变选中状态时触发
-    selectAuto(e) {
-    },
+    selectAuto(e) {},
     // 处理所有选中项
     checkSelect(e) {
       // 添加当前页选中项中未在所有已选择的数组中的item
@@ -214,19 +228,24 @@ export default {
 }
 </script>
 <style lang="scss">
-.el-dialog__body{
-  .goods-logo{
+.el-dialog__body {
+  .goods-logo {
     width: 55px;
     height: 55px;
   }
-  padding-top: 10px;padding-bottom: 0;
-  .el-pagination{
-    text-align: right;margin-top: 15px;
+  padding-top: 10px;
+  padding-bottom: 0;
+  .el-pagination {
+    text-align: right;
+    margin-top: 15px;
   }
-  .has-selected{
-    margin-top: 10px;border-top: 2px solid #eee;padding: 20px 0 10px;line-height: 36px;
+  .has-selected {
+    margin-top: 10px;
+    border-top: 2px solid #eee;
+    padding: 20px 0 10px;
+    line-height: 36px;
   }
-  .el-table thead th{
+  .el-table thead th {
     height: 40px;
   }
 }
