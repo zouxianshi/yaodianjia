@@ -255,7 +255,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column v-if="!disabled" label="操作" prop="name" width="90px" align="center">
+              <el-table-column v-if="!disabled" label="操作" prop="name" width="90px" fixed="right" align="center">
                 <template slot-scope="scope">
                   <el-button
                     type="text"
@@ -541,6 +541,7 @@ export default {
     },
     handleDel(item, index) {
       this.tableForm.selectedGoods.splice(index, 1)
+      this.selectedGoods.splice(index, 1)
     },
     modeChange(val) {
       if (val === 1 && this.mutiSetType === '2') {
