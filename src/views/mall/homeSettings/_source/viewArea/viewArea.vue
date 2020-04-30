@@ -40,7 +40,7 @@
             <!--商品-->
             <m-commodity v-if="item.type === 'commodity'" :key="item.uuid" :item="{...item,$index:$index}" @click.native="jumpCurrentSet($root,item)" />
             <!--为你推荐-->
-            <m-recommend v-if="item.type === 'recommend'" :key="item.uuid" :item="{...item,$index:$index}" />
+            <m-recommend v-if="item.type === 'recommend'" :key="item.uuid" :item="{...item,$index:$index}" @click.native="jumpCurrentSet($root,item)" />
           </template>
         </div>
       </v-draggable>

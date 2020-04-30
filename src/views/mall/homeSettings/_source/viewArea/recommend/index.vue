@@ -37,6 +37,7 @@ export default {
   beforeCreate() {
   },
   created() {
+
   },
   beforeMount() {
   },

@@ -101,13 +101,13 @@ export function copyHome(data) {
 /**
  * 为你推荐
  */
-export function getRecommended() {
+export function getRecommended(p) {
   const data = {
     asc: false,
     currentPage: 1,
     pageSize: 6,
-    storeId: '053f891c1a524336a93695290d623a8a',
-    sortField: 'newTime'
+    sortField: 'newTime',
+    ...p
   }
   return request({
     url: `${config.customer}/1.0/commodity-search/_search`,

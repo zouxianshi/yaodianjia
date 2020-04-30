@@ -5,6 +5,7 @@ import { getRecommended } from '@/api/mallService'
 import { findComponentsDownward } from '@/utils'
 import { getPageSets } from '@/api/wxmall'
 import { itemParams } from './../../_source/default'
+import store from '@/store'
 
 /**
  * jump handler current config info.
@@ -20,6 +21,7 @@ export const jumpCurrentSet = ($root, item) => {
     const t = $(`#${item.uuid}`).position().top - 40
     setTimeout(() => {
       $('.hmm-settings ').css({ 'marginTop': `${t}px` })
+      $('.hsm-hm').animate({ scrollTop: t }, 400)
     }, 100)
   }
   // No caching update uuid.
@@ -52,7 +54,7 @@ export const toPosition = (uuid, n = 28) => $('.hsm-hm').animate({ scrollTop: $(
  */
 export const getRecommendedFormat = (that) => {
   return new Promise((resolve, reject) => {
-    getRecommended().then(res => {
+    getRecommended({ storeId: store.state.mall.centerStoreId }).then(res => {
       const itemList = _.map(res.data.data, v => {
         const { centerStoreId, centerStoreName, h5Base, $store } = that
         const { commodityId, mainPic, mprice, name, lprice } = v

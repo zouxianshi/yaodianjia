@@ -1,7 +1,7 @@
 <template>
   <div class="va-second-commodity-model">
     <template v-for="(el,i) in item.itemList">
-      <m-second-item v-if="size > i" :key="i" :item="el" />
+      <m-second-item :key="i" :item="el" />
     </template>
   </div>
 </template>
@@ -17,10 +17,6 @@ export default {
     item: {
       type: Object,
       default: () => {}
-    },
-    size: {
-      type: Number,
-      default: 3
     }
   },
   methods: {},

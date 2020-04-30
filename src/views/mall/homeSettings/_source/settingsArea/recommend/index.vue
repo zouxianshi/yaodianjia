@@ -1,7 +1,9 @@
 <template>
   <div class="sa-recommend-model">
     <el-tabs value="为你推荐" type="card">
-      <el-tab-pane label="为你推荐" name="为你推荐">为你推荐</el-tab-pane>
+      <el-tab-pane label="为你推荐" name="为你推荐">
+        <el-alert title="为你推荐组件只能放于页面底部，自动为用户提供喜好商品的推荐" :closable="false" type="warning" />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>

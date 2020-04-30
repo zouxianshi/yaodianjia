@@ -68,7 +68,6 @@ export default {
     setSelected(item) {
       this.isComponent = false
       this.setLoading({ type: 'sa', is: true })
-      // $('.hsm-hm').animate({ scrollTop: 0 }, 400)
       setTimeout(() => {
         this.item = item
         this.isComponent = true

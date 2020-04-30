@@ -38,9 +38,9 @@ export default {
 
     if (dimensionId) {
       getStructure({ dimensionId }).then(res => {
-        const { id, name, setIds, title, setList } = res.data
+        const { id, name, setIds, title, setList, searchHint } = res.data
 
-        this.setDragGlobal({ ...this.dragGlobal, id, name, setIds, title })
+        this.setDragGlobal({ ...this.dragGlobal, id, name, setIds, title, searchHint })
         const list = _.map(setList, v => {
           return {
             id: v.id,
