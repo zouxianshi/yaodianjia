@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import { uuid } from '@/utils'
+// import { uuid } from '@/utils'
 import { mapMutations, mapState } from 'vuex'
 import mNavigation from './navigation'
 import mAdvertise from './advertise'
@@ -69,11 +69,15 @@ export default {
     setSelected(item) {
       this.isComponent = false
       this.setLoading({ type: 'sa', is: true })
+
+      // No caching update uuid.
+      // this.item = _.assign(item, {
+      //   uuid: `${uuid(`${item.type}-`)}${uuid()}${uuid()}${uuid()}`
+      // })
+
+      this.item = item
+
       setTimeout(() => {
-        // No caching update uuid.
-        this.item = _.assign(item, {
-          uuid: `${uuid(`${item.type}-`)}${uuid()}${uuid()}${uuid()}`
-        })
         this.isComponent = true
         this.setLoading({ type: 'sa', is: false })
       })
