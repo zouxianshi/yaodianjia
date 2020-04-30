@@ -95,7 +95,7 @@
               @change="selectChange(scope.$index,scope.row.selectValue)"
             >
               <el-option
-                v-for="item in scope.row.options"
+                v-for="item in scope.row.options.slice(1)"
                 :key="item.id"
                 :label="item.label"
                 :value="item.value"
@@ -218,11 +218,6 @@ export default {
           if (state === 1 && status === 1) {
             i.options = [
               {
-                id: 1,
-                value: '1',
-                label: '查看'
-              },
-              {
                 id: 2,
                 value: '2',
                 label: '编辑'
@@ -341,7 +336,8 @@ export default {
           if (res.code === '10000') {
             this.$message({
               message: res.msg,
-              type: 'success'
+              type: 'success',
+              duration: 5 * 1000
             })
             this.currentPage = 1
             this.getData()
@@ -349,6 +345,9 @@ export default {
         })
       } else if (val === '4') {
         this.dialogVisible = true
+      } else if (val === '2' || val === '1') {
+        // 编辑或查看
+        this.$router.push({ path: '/marketings/activity-manage/turntable/add' })
       }
     },
     changeOption(val) {
