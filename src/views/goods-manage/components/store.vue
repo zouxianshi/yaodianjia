@@ -122,6 +122,7 @@ export default {
     isShow(val) {
       if (val) {
         this.multipleSelection = []
+        this.list = []
         this._loadStoreData()
       }
     }
@@ -129,7 +130,7 @@ export default {
   created() {},
   methods: {
     checkSelectable(row) {
-      return typeof (row.selectable) === 'undefined' ? true : row.selectable
+      return typeof row.selectable === 'undefined' ? true : row.selectable
     },
     handleChooseStore() {
       if (this.isAll) {
@@ -160,8 +161,7 @@ export default {
         storeStatus: 1,
         pageSize: 10,
         merCode: this.merCode,
-        specIds: this.specData,
-        commOnlineStatus: this.status
+        specId: this.chooseNum === 1 ? this.specData[0] : ''
       }
       getStoreOnlineList(query)
         .then(res => {
@@ -206,8 +206,10 @@ export default {
     setSelectable(v) {
       v.selectable = true
       if (
-        (this.status === 0 && v.commOnlineStatus === 0) ||
-        (this.status === 1 && v.commOnlineStatus === 1)
+        (this.chooseNum === 1 &&
+          this.status === 0 &&
+          v.commOnlineStatus === 0) ||
+        (this.chooseNum === 1 && this.status === 1 && v.commOnlineStatus === 1)
       ) {
         v.selectable = false
         this.$refs.multipleTable.toggleRowSelection(v)
