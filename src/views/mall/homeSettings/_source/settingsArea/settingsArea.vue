@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+import { uuid } from '@/utils'
 import { mapMutations, mapState } from 'vuex'
 import mNavigation from './navigation'
 import mAdvertise from './advertise'
@@ -69,11 +70,12 @@ export default {
       this.isComponent = false
       this.setLoading({ type: 'sa', is: true })
       setTimeout(() => {
-        this.item = item
+        // No caching update uuid.
+        this.item = _.assign(item, {
+          uuid: `${uuid(`${item.type}-`)}${uuid()}${uuid()}${uuid()}`
+        })
         this.isComponent = true
-        setTimeout(() => {
-          this.setLoading({ type: 'sa', is: false })
-        }, 800)
+        this.setLoading({ type: 'sa', is: false })
       })
     }
   },

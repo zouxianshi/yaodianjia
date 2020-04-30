@@ -22,7 +22,7 @@ export default {
     return {
       visible: false,
       activeIcon: '',
-      defaultIcons: _.times(26, v => {
+      defaultIcons: _.times(12, v => {
         return {
           icon: `sa_default_icons_${v}`
         }
@@ -79,7 +79,7 @@ export default {
     .select-icon-box {
       overflow: hidden;
       width: 310px;
-      height: 304px;
+      height: 232px;
       margin-right: -8px;
       overflow-y: scroll;
       .sim-item {

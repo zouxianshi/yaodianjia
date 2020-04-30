@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import Vue from 'vue'
-import { uuid } from '@/utils'
 import { getRecommended } from '@/api/mallService'
 import { findComponentsDownward } from '@/utils'
 import { getPageSets } from '@/api/wxmall'
@@ -11,7 +10,6 @@ import store from '@/store'
  * jump handler current config info.
  */
 export const jumpCurrentSet = ($root, item) => {
-  const { type } = item
   const instance = findComponentsDownward($root, 'SettingsArea')[0]
   const setItem = item
   if (setItem.type === 'mall-title' || setItem.type === 'mall-search-hint') {
@@ -19,15 +17,10 @@ export const jumpCurrentSet = ($root, item) => {
     $('.hmm-settings ').css({ 'marginTop': `0px` })
   } else {
     const t = $(`#${item.uuid}`).position().top - 40
-    setTimeout(() => {
-      $('.hmm-settings ').css({ 'marginTop': `${t}px` })
-      $('.hsm-hm').animate({ scrollTop: t }, 400)
-    }, 100)
+    $('.hsm-hm').animate({ scrollTop: t }, 400)
+    $('.hmm-settings ').css({ 'marginTop': `${t}px` })
   }
-  // No caching update uuid.
-  instance.setSelected(_.assign(setItem, {
-    uuid: `${uuid(`${type}-`)}${uuid()}${uuid()}${uuid()}`
-  }))
+  instance.setSelected(setItem)
 }
 
 /**
