@@ -540,7 +540,8 @@ export default {
       // 如果选择是元那么打折的范围为0-99999999
       console.log('2222-validDiscountPrice', rule, value)
       const index = rule.field.split('.')[1]
-      if (this.form.ruleList[index].discountType === 1) {
+      console.log('2222-validDiscountPrice---ruleList', this.form.ruleList)
+      if (this.form.ruleList[index].discountType === 1 && this.form.ruleList[index].checkOrNot) {
         if (!value) {
           return callback(new Error('请输入折扣力度'))
         }
@@ -566,7 +567,7 @@ export default {
     },
     // 校验折扣方式
     validDiscountType(rule, value, callback) {
-      console.log('11111', rule, value, this.$refs.form)
+      console.log('11111=----validDiscountType', rule, value, this.$refs.form)
       if (value === 'discount1') {
         this.$refs.form.clearValidate()
       } else {
