@@ -360,6 +360,7 @@ export default {
     handleCommand(val) {
       if (val) {
         if (val.type === 'edit' && !val.disabled) {
+          console.log('handleComang----', val)
           this.toEdit(val.id)
         } else if (val.type === 'end' && !val.disabled) {
           this.endActivity(val.id)

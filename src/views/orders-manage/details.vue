@@ -1231,6 +1231,7 @@ export default {
               .cell-text {
                 text-align: left;
                 word-break: break-all;
+                line-height: 24px;
               }
               .goods-tag {
                 position: absolute;
@@ -1276,6 +1277,7 @@ export default {
               }
               .cell-text {
                 text-align: center;
+                line-height: 24px;
               }
             }
             .cell-con {

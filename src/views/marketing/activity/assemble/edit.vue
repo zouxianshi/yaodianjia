@@ -815,6 +815,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (this.disabled || this.leaveAction) {
+      this.$store.dispatch('tagsView/delView', from)
       next()
       if (this.pageLoading) {
         this.pageLoading.close()
@@ -825,6 +826,7 @@ export default {
         if (this.pageLoading) {
           this.pageLoading.close()
         }
+        this.$store.dispatch('tagsView/delView', from)
         next()
       } else {
         next(false)

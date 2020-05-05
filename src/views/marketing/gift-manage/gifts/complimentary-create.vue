@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" :rules="rules" size="small" :disabled="disabled" label-width="120px">
+    <el-form
+      ref="form"
+      :model="form"
+      :rules="rules"
+      size="small"
+      :disabled="disabled"
+      label-width="120px"
+    >
       <el-form-item label="赠品名称：" prop="name">
         <el-input
           v-model="form.name"
@@ -42,7 +49,7 @@
             <span style="margin-left: 5px" class="info-create">件</span>
           </el-form-item>
         </el-col>
-      </el-form-item> -->
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" style="width: 120px" @click="submit">提交</el-button>
       </el-form-item>
@@ -141,9 +148,7 @@ export default {
       this.$route.meta.title = !this.$route.query._ck
         ? '编辑赠品'
         : '查看赠品详情'
-      document.title = !this.$route.query._ck
-        ? '编辑赠品'
-        : '查看赠品详情'
+      document.title = !this.$route.query._ck ? '编辑赠品' : '查看赠品详情'
     }
   },
   methods: {
@@ -225,6 +230,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (this.disabled || this.leaveAction) {
+      this.$store.dispatch('tagsView/delView', from)
       next()
       if (this.pageLoading) {
         this.pageLoading.close()
@@ -236,6 +242,7 @@ export default {
           this.pageLoading.close()
         }
         next()
+        this.$store.dispatch('tagsView/delView', from)
       } else {
         next(false)
       }
