@@ -292,6 +292,7 @@ import {
   updateAcAssmbleProductInfo
 } from '@/api/activity'
 export default {
+  name: 'AssembleEdit',
   components: { selectStore, storeGoods, EditGoodsModals, storeDialog },
   data() {
     const checkEffectiveTime = (rule, value, callback) => {

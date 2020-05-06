@@ -120,7 +120,7 @@ const router = [
       {
         path: 'activity/reduce-gift-list-edit',
         component: () => import('@/views/marketing/activity/reduce-gift'),
-        name: 'reduceGift',
+        name: 'ReduceGift',
         meta: {
           title: '创建满减满赠',
           noCache: false,
@@ -130,7 +130,7 @@ const router = [
       {
         path: 'activity/aprice-edit',
         component: () => import('@/views/marketing/activity/addPrice'),
-        name: 'addPriceCreate',
+        name: 'AddPriceCreate',
         meta: {
           title: '创建加价购',
           noCache: false,
@@ -150,7 +150,7 @@ const router = [
       {
         path: 'activity/assemble-edit',
         component: () => import('@/views/marketing/activity/assemble/edit'),
-        name: 'assembleEdit',
+        name: 'AssembleEdit',
         meta: {
           title: '拼团活动',
           noCache: false,
@@ -160,7 +160,7 @@ const router = [
       {
         path: 'activity/limit-edit',
         component: () => import('@/views/marketing/activity/limit/limit-edit'),
-        name: 'limitEdit',
+        name: 'LimitEdit',
         meta: {
           title: '创建限时活动',
           noCache: false,
@@ -201,7 +201,7 @@ const router = [
       {
         path: 'gifts/complimentary-edit',
         component: () => import('@/views/marketing/gift-manage/gifts/complimentary-create'),
-        name: 'giftsComplimentaryCreate',
+        name: 'GiftsComplimentaryCreate',
         meta: {
           title: '创建赠品',
           auth: 'marketing.gift',
