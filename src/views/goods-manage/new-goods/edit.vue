@@ -727,7 +727,7 @@
                         @blur="input_checkMprice(item,index)"
                       />
                     </el-form-item>
-                    <el-form-item label="限购">
+                    <el-form-item label="限购数量">
                       <div style="padding-top:10px;">
                         <el-radio-group
                           v-model="item.limitType"
