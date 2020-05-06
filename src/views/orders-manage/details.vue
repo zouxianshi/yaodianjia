@@ -608,7 +608,10 @@
                         <div class="cell-text">￥{{ item.totalActualAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div v-if="item.isPromotion === 1" class="cell-text">立减：{{ item.activityDiscountAmont }}</div>
+                        <div
+                          v-if="item.isPromotion === 1"
+                          class="cell-text"
+                        >立减：{{ item.activityDiscountAmont }}</div>
                         <div class="cell-text">优惠：{{ item.couponAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
@@ -620,10 +623,14 @@
                           <template v-else>{{ item.status | orderStatus }}</template>
                           <div
                             v-if="item.orderPackage && item.status!==8 && item.status!==10 && item.status!==20 && item.status!==30"
-                            class="marginTop20"
+                            class="express"
                           >
-                            <span class="font12">快递单号</span>
-                            <span class="font12">{{ item.orderPackage.packageNo }}</span>
+                            <span class="font12">快递单号:</span>
+                            <span class="number">{{ item.orderPackage.packageNo }}</span>
+                            <i
+                              class="el-icon-copy-document copy"
+                              @click="doCopy(item.orderPackage.packageNo)"
+                            />
                           </div>
                         </div>
                       </div>
@@ -642,9 +649,12 @@
   </div>
 </template>
 <script>
+import Vue from 'vue'
 import mixins from '@/utils/mixin'
+import VueClipboard from 'vue-clipboard2'
 import { mapGetters } from 'vuex'
 import { getOrderDetail, setPushErp } from '@/api/order'
+Vue.use(VueClipboard)
 export default {
   filters: {
     orderType: function(value) {
@@ -1038,6 +1048,18 @@ export default {
 
       // 返回解析信息对象
       return msgObj
+    },
+    doCopy(row) {
+      this.$copyText(row).then(
+        e => {
+          console.log(e)
+          this.$message.success('复制成功')
+        },
+        e => {
+          console.log(e)
+          this.$message.warning('复制失败')
+        }
+      )
     }
   }
 }
@@ -1278,6 +1300,24 @@ export default {
               .cell-text {
                 text-align: center;
                 line-height: 24px;
+                width: 100%;
+              }
+              .express {
+                display: flex;
+                flex-direction: row;
+                white-space: nowrap;
+                font-size: 12px;
+                align-items: center;
+                .number {
+                  flex: 1;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                }
+                .copy {
+                  cursor: pointer;
+                  color: #2d8cf0;
+                }
               }
             }
             .cell-con {

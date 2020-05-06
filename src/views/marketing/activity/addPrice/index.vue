@@ -81,10 +81,15 @@
       <div class="form-title">换购规则</div>
       <el-form-item ref="threshold" label="活动门槛：" prop="threshold">
         <template>
-          <el-input
+          <el-input-number
             v-model="form.threshold"
+            step="0.01"
+            controls-position="right"
+            step-strictly
+            :min="0.01"
+            :max="99999999"
             :disabled="disabled"
-            style="width: 100px; margin-right: 8px"
+            style="width: 150px; margin-right: 8px"
           />元
           <span class="info">以最终下单支付的金额计算</span>
         </template>
@@ -107,8 +112,13 @@
       <el-form-item ref="confineNum" label="换购数量：" prop="confineNum">
         <template>
           <span>最多可换购</span>
-          <el-input
+          <el-input-number
             v-model="form.confineNum"
+            controls-position="right"
+            step="1"
+            step-strictly
+            :min="1"
+            :max="15"
             :disabled="disabled"
             style="width: 100px; margin-right: 8px"
           />
