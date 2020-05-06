@@ -93,6 +93,7 @@
               size="mini"
               placeholder="更多"
               @change="selectChange(scope.$index,scope.row.selectValue)"
+              @blur="selectChange(scope.$index,scope.row.selectValue)"
             >
               <el-option
                 v-for="item in scope.row.options.slice(1)"
@@ -105,7 +106,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="推广设置" append-to-body :visible.sync="dialogVisible" width="70%">
+    <el-dialog title="推广设置" append-to-body :visible.sync="dialogVisible" :before-close="handleClose" width="70%">
       <div style="text-align:center">
         <el-input v-model="input" placeholder="请输入内容" style="width:300px" />
         <el-button
@@ -114,8 +115,8 @@
           v-clipboard:success="onCopy"
           type="primary"
         >复制连接</el-button>
-        <div>
-          <!-- <img src alt /> -->
+        <div v-loading="loading">
+          <img :src="imageUrl" style="width:300px;height:300px">
         </div>
         <el-button type="primary" plain @click="downloadIamge">下载二维码</el-button>
       </div>
@@ -141,7 +142,8 @@ Vue.use(VueClipboard)
 import {
   normalActivityList,
   setNormalActivity,
-  queryStoreByOrgId
+  queryStoreByOrgId,
+  queryQrCode
 } from '@/api/coupon'
 import { mapGetters } from 'vuex'
 export default {
@@ -150,7 +152,8 @@ export default {
   props: {},
   data() {
     return {
-      input: '11',
+      input: '',
+      imageUrl: '',
       pageTotal: 1,
       currentPage: 1,
       pageSize: 10,
@@ -160,7 +163,8 @@ export default {
       storeData: [{ id: '0', stName: '全部', stCode: '' }],
       storeCode: '',
       dialogVisible: false,
-      show: false
+      show: false,
+      loading: false
     }
   },
   computed: {
@@ -179,11 +183,16 @@ export default {
   beforeDestroy() {},
   destroyed() {},
   methods: {
+    handleClose() {
+      this.input = ''
+      this.imageUrl = ''
+      this.dialogVisible = false
+    },
     // 下载二维码
     downloadIamge() {
       var alink = document.createElement('a')
-      alink.href = this.programData.programImg
-      alink.download = 'pic' // 图片名
+      alink.href = this.imageUrl
+      alink.download = 'qrCode' // 图片名
       alink.click()
     },
     onCopy(e) {
@@ -226,13 +235,12 @@ export default {
                 id: 3,
                 value: '3',
                 label: '失效'
+              },
+              {
+                id: 4,
+                value: '4',
+                label: '推广'
               }
-              // ,
-              // {
-              //   id: 4,
-              //   value: '4',
-              //   label: '推广'
-              // }
             ]
           } else if (state === 2 && status === 1) {
             i.options = [
@@ -245,13 +253,12 @@ export default {
                 id: 6,
                 value: '5',
                 label: '删除'
+              },
+              {
+                id: 7,
+                value: '4',
+                label: '推广'
               }
-              // ,
-              // {
-              //   id: 7,
-              //   value: '4',
-              //   label: '推广'
-              // }
             ]
           } else if (
             (state === 3 && status === 1) ||
@@ -299,7 +306,6 @@ export default {
         .catch(() => {})
     },
     selectChange(index, val) {
-      console.log(index, val)
       if (val === '5') {
         this.$confirm('删除该活动, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -347,9 +353,23 @@ export default {
         })
       } else if (val === '4') {
         this.dialogVisible = true
+        this.loading = true
+        const p = {
+          activityId: this.tableData[index].id
+        }
+        queryQrCode(p).then(res => {
+          if (res.code === '10000') {
+            this.input = res.data.qrcodeUrl
+            this.imageUrl = res.data.qrCodeImg
+            this.loading = false
+          }
+        })
       } else if (val === '2' || val === '1') {
         // 编辑或查看
-        this.$router.push({ path: '/marketings/activity-manage/turntable/add', query: { id: this.tableData[index].id }})
+        this.$router.push({
+          path: '/marketings/activity-manage/turntable/add',
+          query: { id: this.tableData[index].id }
+        })
       }
     },
     changeOption(val) {
