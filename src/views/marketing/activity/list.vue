@@ -217,19 +217,19 @@ export default {
           id: '13',
           label: '拼团',
           createUrl: '/marketing/activity/assemble-edit',
-          name: 'assembleEdit'
+          name: 'AssembleEdit'
         },
         {
           id: '14',
           label: '满减满赠',
           createUrl: '/marketing/activity/reduce-gift-list-edit',
-          name: 'reduceGift'
+          name: 'ReduceGift'
         },
         {
           id: '15',
           label: '加价购',
           createUrl: '/marketing/activity/aprice-edit',
-          name: 'addPriceCreate'
+          name: 'AddPriceCreate'
         }
       ],
       createdUrl: '',

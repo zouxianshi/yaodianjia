@@ -164,7 +164,7 @@ export default {
     },
     toLook(row) {
       this.$store.dispatch('tagsView/delCachedView', {
-        name: 'giftsComplimentaryCreate'
+        name: 'GiftsComplimentaryCreate'
       })
       setTimeout(() => {
         this.$router.push(
@@ -174,7 +174,7 @@ export default {
     },
     toEdit(row) {
       this.$store.dispatch('tagsView/delCachedView', {
-        name: 'giftsComplimentaryCreate'
+        name: 'GiftsComplimentaryCreate'
       })
       setTimeout(() => {
         this.$router.push(`/marketing/gifts/complimentary-edit?id=${row.id}`)
@@ -182,7 +182,7 @@ export default {
     },
     jumpeCreateUrl() {
       this.$store.dispatch('tagsView/delCachedView', {
-        name: 'giftsComplimentaryCreate'
+        name: 'GiftsComplimentaryCreate'
       })
       setTimeout(() => {
         this.$router.push('/marketing/gifts/complimentary-edit')
