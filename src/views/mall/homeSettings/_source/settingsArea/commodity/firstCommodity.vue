@@ -5,7 +5,7 @@
     </div>
     <div slot="item">
       <el-button size="mini" style="width: 100%;margin-bottom: 16px;" icon="el-icon-edit-outline" @click="dialogVisible = true">选择商品</el-button>
-      <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body title="选择商品" size="700px" :visible.sync="dialogVisible" :with-header="false">
+      <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body title="选择商品" size="700px" :visible.sync="dialogVisible">
         <m-goods-table v-if="dialogVisible" ref="gt" :item-list="searchParams.itemList" :sub-type="searchParams.subType" @on-update="_onUpdate" />
       </el-drawer>
     </div>
