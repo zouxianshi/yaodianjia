@@ -33,7 +33,8 @@ export const itemParams = {
   specId: '',
   typeId: '',
   url: '',
-  commodityId: ''
+  commodityId: '',
+  keyFeature: ''
 }
 
 const items = (n = 1) => {

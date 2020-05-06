@@ -50,8 +50,9 @@ export const getRecommendedFormat = (that) => {
     getRecommended({ storeId: store.state.mall.centerStoreId }).then(res => {
       const itemList = _.map(res.data.data, v => {
         const { centerStoreId, centerStoreName, h5Base, $store } = that
-        const { commodityId, mainPic, mprice, name, lprice } = v
+        const { commodityId, mainPic, mprice, name, lprice, keyFeature } = v
         return {
+          keyFeature,
           id: commodityId,
           img: mainPic,
           mprice,

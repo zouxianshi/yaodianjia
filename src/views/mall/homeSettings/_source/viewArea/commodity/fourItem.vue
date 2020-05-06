@@ -6,7 +6,11 @@
       <m-icons v-else :is-center="true" />
     </div>
     <div class="cfim-content">
-      <div class="cfim-name">{{ item.name || '-' }}</div>
+      <div class="cfim-name">{{ tru(item.name,35) || '-' }}
+        <p class="cfim-kf">
+          {{ tru(item.keyFeature,44) || '' }}
+        </p>
+      </div>
       <div class="cfim-price">
         <span class="sp1">¥{{ item.price || '0.00' }}</span>
         <span class="sp2">¥{{ item.mprice || '0.00' }}</span>
@@ -29,7 +33,11 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+    tru(key, length) {
+      return _.truncate(key, { 'length': length, 'omission': '' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -84,6 +92,12 @@ export default {
       .cfim-name {
         font-size: 14px;
         line-height: 20px;
+      }
+      .cfim-kf {
+        color: #999;
+        font-size: 12px;
+        padding-top: 4px;
+        line-height: 18px;
       }
       .cfim-price {
         font-size: 14px;
