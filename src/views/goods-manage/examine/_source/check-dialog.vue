@@ -3,8 +3,8 @@
     <el-dialog title="批量审核" :visible.sync="isShow" :append-to-body="true">
       <el-form ref="form" :model="form" :rules="rules">
         <el-form-item label="选择结果：" label-width="120px" prop="result">
-          <el-radio v-model="form.result" :label="2">拒绝</el-radio>
           <el-radio v-model="form.result" :label="1">通过</el-radio>
+          <el-radio v-model="form.result" :label="2">拒绝</el-radio>
         </el-form-item>
         <el-form-item v-if="form.result===2" label="拒绝原因：" label-width="120px" prop="reason">
           <el-select v-model="form.reason" size="small">
