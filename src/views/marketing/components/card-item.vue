@@ -13,14 +13,14 @@
           type="text"
           icon="el-icon-takeaway-box"
           class="button"
-          @click="handleJump(item.listUrl)"
+          @click="handleJump(item, 'list')"
         >{{ item.lable }}列表</el-button>
         <el-divider direction="vertical" />
         <el-button
           type="text"
           icon="el-icon-document-add"
           class="button"
-          @click="handleJump(item.linkUrl)"
+          @click="handleJump(item)"
         >{{ item.createText || '新建活动' }}</el-button>
       </div>
     </div>
@@ -40,9 +40,20 @@ export default {
     item: Object
   },
   methods: {
-    handleJump(url) {
-      console.log('1111111---handleJump', url)
-      this.$router.push(url)
+    handleJump(itemUrl, jumpType) {
+      console.log('1111111---handleJump', itemUrl)
+      // 跳转列表
+      if (jumpType === 'list') {
+        this.$router.push(itemUrl.listUrl)
+      } else {
+        // 跳转新增页面，并清除之前得缓存数据；
+        this.$store.dispatch('tagsView/delCachedView', {
+          name: itemUrl.name
+        })
+        setTimeout(() => {
+          this.$router.push(itemUrl.linkUrl)
+        }, 0)
+      }
     },
     onShare(type) {
       console.log('我是分享页面---------')

@@ -62,12 +62,13 @@ export default {
         {
           value: 'complimentary',
           lable: '赠品',
+          name: 'GiftsComplimentaryCreate',
           img: complimentary,
           createText: '新增赠品',
           listUrl: '/marketing/gifts/complimentary',
           linkUrl: '/marketing/gifts/complimentary-edit',
           desc:
-            '设置赠品，回馈客户'
+            '设置赠品，可达到回馈客户，提升客单价，清空滞销商品库存的作用。'
         }
       ]
     }

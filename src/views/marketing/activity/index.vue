@@ -63,6 +63,7 @@ export default {
       goodsActivity: [
         {
           value: 'reduceGift',
+          name: 'ReduceGift',
           lable: '满减满赠',
           desc:
             '会员消费达到某一条件后可以享受减价或折扣优惠，也可以通过添加赠送赠品的促销手段来提高客单价，提高销售额。',
@@ -73,6 +74,7 @@ export default {
         },
         {
           value: 'addPrice',
+          name: 'AddPriceCreate',
           lable: '加价购',
           img: addPrice,
           listUrl: '/marketing/activity/list/15',
@@ -82,6 +84,7 @@ export default {
         },
         {
           value: 'limitPreferential',
+          name: 'LimitEdit',
           lable: '限时特惠',
           img: limitPreferential,
           listUrl: '/marketing/activity/list/11',
@@ -91,6 +94,7 @@ export default {
         },
         {
           value: 'spellGroup',
+          name: 'AssembleEdit',
           lable: '拼团',
           img: spellGroup,
           listUrl: '/marketing/activity/list/13',
@@ -102,6 +106,7 @@ export default {
         {
           value: 'limitSecKill',
           lable: '限时秒杀',
+          name: 'LimitEdit',
           img: limitSecKill,
           listUrl: '/marketing/activity/list/12',
           linkUrl: '/marketing/activity/limit-edit?l_type=12',
