@@ -697,12 +697,12 @@
                     </el-form-item>
                     <el-form-item label>
                       <span slot="label">
-                        <span class="tip">*</span> 条码
+                        <span class="tip">*</span> 商品条码
                       </span>
                       <el-input
                         v-model.trim="item.barCode"
                         maxlength="30"
-                        placeholder="输入条码"
+                        placeholder="输入商品条码"
                         @blur="input_checkBarCode(item.barCode)"
                       />
                     </el-form-item>
@@ -712,18 +712,18 @@
                       </span>
                       <el-input
                         v-model.trim="item.erpCode"
-                        placeholder="输入条码"
+                        placeholder="输入商品编码"
                         maxlength="16"
                         @blur="input_checkErpcode(item.erpCode)"
                       />
                     </el-form-item>
                     <el-form-item>
                       <span slot="label">
-                        <span class="tip">*</span> 价格
+                        <span class="tip">*</span> 参考价格
                       </span>
                       <el-input
                         v-model.trim="item.mprice"
-                        placeholder="输入价格"
+                        placeholder="输入参考价格"
                         @blur="input_checkMprice(item,index)"
                       />
                     </el-form-item>
