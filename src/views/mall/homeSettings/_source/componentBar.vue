@@ -17,7 +17,10 @@
         <el-tab-pane v-for="(item,$index) in dragComponent" :key="$index" :name="item.name" :label="item.name">
           <div class="cbm-draggable">
             <v-draggable v-model="item.component" class="cbm-v-draggable" draggable=".item" v-bind="dragOptions" @start="onStart">
-              <el-button v-for="(el,i) in item.component" :key="i" :class="isDisabled(el.type) ? 'no-item' : 'item'" size="small" :disabled="isDisabled(el.type)">{{ el.name }}</el-button>
+              <el-button v-for="(el,i) in item.component" :key="i" style="padding: 1px 10px;position: relative;top:-2px;" :class="isDisabled(el.type) ? 'no-item' : 'item'" size="small" :disabled="isDisabled(el.type)">
+                <img style="vertical-align: middle;width: 28px;" :src="rtImg(el.type,i)" alt="">
+                <span style="vertical-align: middle">{{ el.name }}</span>
+              </el-button>
             </v-draggable>
             <span class="cbm-tooltip">
               <el-alert title="请拖拽您所需的组件样式到画布中" :closable="false" type="warning" show-icon />
@@ -86,6 +89,9 @@ export default {
   updated() {
   },
   methods: {
+    rtImg(type, i) {
+      return require(`./_source/img/hs_icon_${type}_${i}.png`)
+    },
     onToggle() {
       this.isNav = !this.isNav
       this.$emit('on-toggle-nav', this.isNav)
