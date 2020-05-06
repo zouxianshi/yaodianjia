@@ -76,16 +76,17 @@ const mixin = {
             return
           }
           // eslint-disable-next-line no-undef
-        } else if (keys === 'barCode') {
-          // const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
-          if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
-            this.$message({
-              message: '已存在相同的条形码,请重新编辑输入',
-              type: 'error'
-            })
-            return
-          }
         }
+        // else if (keys === 'barCode') {
+        //   // const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
+        //   if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
+        //     this.$message({
+        //       message: '已存在相同的条形码,请重新编辑输入',
+        //       type: 'error'
+        //     })
+        //     return
+        //   }
+        // }
         this.$set(this.editSpecsData, index, row)
       }
     },
@@ -405,6 +406,7 @@ const mixin = {
                   v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
                 })
               }
+              v.owner = v.owner || 0
             })
           }
           console.log('------请求规格数据')
@@ -465,6 +467,7 @@ const mixin = {
                     })
                   }
                 }
+                element.owner = element.owner || 0
               }
               specList.map(v => {
                 if (v.specSkuList) {
@@ -491,6 +494,7 @@ const mixin = {
               .find('.el-checkbox__input')
             findInput.remove() // 设置全选disabeld
             specList.map((v, index) => {
+              v.owner = v.owner || 0
               const findIndex = findArray(this.editSpecsData, {
                 barCode: v.barCode
               })
@@ -499,6 +503,7 @@ const mixin = {
                 const row = this.editSpecsData[findIndex]
                 row.disabled = true
                 row.id = v.id
+                row.owner = v.owner
                 row.mprice = v.mprice
                 row.erpCode = v.erpCode
                 row.isCheck = true // 数据做标识  选中
@@ -571,6 +576,7 @@ const mixin = {
         mprice: '',
         erpCode: '',
         barCode: '',
+        owner: 0,
         limitType: 0,
         limitNum: '',
         limit: '',

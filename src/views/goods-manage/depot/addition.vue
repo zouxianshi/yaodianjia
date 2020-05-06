@@ -109,7 +109,7 @@
         <el-table-column label="品牌" prop="brandName" />
         <el-table-column label="商品分类" min-width="140">
           <template slot-scope="scope">
-            <span v-text="scope.row.multilevelType" />
+            <span v-text="scope.row.multilevelType||'-'" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right">

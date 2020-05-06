@@ -61,6 +61,14 @@
               placeholder="商品名称"
             />
           </div>
+          <div class="search-item">
+            <span class="label-name">货主</span>
+            <el-select v-model="listQuery.owner" filterable size="small" placeholder="请选择">
+              <el-option label="全部" value />
+              <el-option label="自营" value="0" />
+              <el-option label="平安" value="1" />
+            </el-select>
+          </div>
         </div>
         <div class="search-form">
           <div class="search-item">
@@ -344,6 +352,7 @@ export default {
         auditStatus: 1,
         groupId: '', // 分组id
         currentPage: 1,
+        owner: '',
         typeId: '' // 商品分类id
       },
       goodsTypeList: []

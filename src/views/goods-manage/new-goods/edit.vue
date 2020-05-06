@@ -456,6 +456,16 @@
                       </template>
                     </template>
                   </el-table-column>
+                  <el-table-column label="货主">
+                    <template slot-scope="scope">
+                      <template v-if="!is_query">
+                        <el-select v-model="scope.row.owner" size="small" clearable>
+                          <el-option label="自营" :value="0" />
+                          <el-option label="平安" :value="1" />
+                        </el-select>
+                      </template>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="参考价格">
                     <template slot-scope="scope">
                       <span v-text="scope.row.mprice" />
@@ -587,6 +597,16 @@
                           </template>
                         </template>
                       </el-table-column>
+                      <el-table-column label="货主">
+                        <template slot-scope="scope">
+                          <template v-if="!is_query">
+                            <el-select v-model="scope.row.owner" size="small" clearable>
+                              <el-option label="自营" :value="0" />
+                              <el-option label="平安" :value="1" />
+                            </el-select>
+                          </template>
+                        </template>
+                      </el-table-column>
                       <el-table-column label="参考价格" prop="mprice">
                         <template slot-scope="scope">
                           <span v-text="scope.row.mprice" />
@@ -705,6 +725,13 @@
                         placeholder="输入商品条码"
                         @blur="input_checkBarCode(item.barCode)"
                       />
+                    </el-form-item>
+                    <el-form-item label>
+                      <span slot="label">货主</span>
+                      <el-select v-model="item.owner" size="small" clearable>
+                        <el-option label="自营" :value="0" />
+                        <el-option label="平安" :value="1" />
+                      </el-select>
                     </el-form-item>
                     <el-form-item>
                       <span slot="label">
@@ -870,7 +897,13 @@
               </ol>
               <div class="text-center">
                 <el-button type size="small" @click="step=2">上一步</el-button>
-                <el-button v-if="!is_query" type="primary" size="small" :loading="subLoading1" @click="handleSubImg">保存</el-button>
+                <el-button
+                  v-if="!is_query"
+                  type="primary"
+                  size="small"
+                  :loading="subLoading1"
+                  @click="handleSubImg"
+                >保存</el-button>
               </div>
             </div>
           </div>
