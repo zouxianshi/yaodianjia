@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
-    <a href="#/marketing/gifts/complimentary-edit">
-      <el-button class="btn btn-add" type="primary" size="small">新建赠品</el-button>
-    </a>
+    <el-button class="btn btn-add" type="primary" size="small" @click="jumpeCreateUrl">新建赠品</el-button>
     <section style="margin-top: 10px">
       <el-form :inline="true" size="small" :model="form" class="demo-form-inline">
         <el-form-item label="赠品名称">
@@ -39,14 +37,14 @@
           <template slot-scope="scope">
             <span size="small" type="info">{{ scope.row.limitCount===0?'不限次数':scope.row.limitCount }}</span>
           </template>
-        </el-table-column> -->
+        </el-table-column>-->
         <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
             <el-button type="text" @click="toLook(scope.row)">查看</el-button>
             <el-divider direction="vertical" />
             <el-button type="text" @click="toAdd(scope.row)">增加库存</el-button>
             <!-- <el-divider direction="vertical" />
-            <el-button disabled type="text" @click="toEdit(scope.row)">清空库存</el-button> -->
+            <el-button disabled type="text" @click="toEdit(scope.row)">清空库存</el-button>-->
           </template>
         </el-table-column>
         <div slot="empty">
@@ -165,12 +163,30 @@ export default {
         })
     },
     toLook(row) {
-      this.$router.push(
-        `/marketing/gifts/complimentary-edit?id=${row.id}&_ck=1`
-      )
+      this.$store.dispatch('tagsView/delCachedView', {
+        name: 'giftsComplimentaryCreate'
+      })
+      setTimeout(() => {
+        this.$router.push(
+          `/marketing/gifts/complimentary-edit?id=${row.id}&_ck=1`
+        )
+      }, 0)
     },
     toEdit(row) {
-      this.$router.push(`/marketing/gifts/complimentary-edit?id=${row.id}`)
+      this.$store.dispatch('tagsView/delCachedView', {
+        name: 'giftsComplimentaryCreate'
+      })
+      setTimeout(() => {
+        this.$router.push(`/marketing/gifts/complimentary-edit?id=${row.id}`)
+      }, 0)
+    },
+    jumpeCreateUrl() {
+      this.$store.dispatch('tagsView/delCachedView', {
+        name: 'giftsComplimentaryCreate'
+      })
+      setTimeout(() => {
+        this.$router.push('/marketing/gifts/complimentary-edit')
+      }, 0)
     },
     toAdd(row) {
       console.log('1111111', row)

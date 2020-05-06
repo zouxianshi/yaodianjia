@@ -71,6 +71,7 @@ import selectGoods from '../../components/select-goods'
 import { createActGift, getActGiftInfo } from '@/api/activity'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'GiftsComplimentaryCreate',
   components: { storeGoods, selectGoods },
   computed: {
     ...mapGetters(['merCode'])
@@ -145,11 +146,24 @@ export default {
       this.disabled = this.$route.query.id && !!this.$route.query._ck // 当前页面为查看
       this.edit = this.$route.query.id && !this.$route.query._ck // 当前页面为编辑
       this.getDetailInfo(this.$route.query.id)
-      this.$route.meta.title = !this.$route.query._ck
+    }
+  },
+  mounted() {
+    let title = ''
+    title = this.$route.query.id
+      ? !this.$route.query._ck
         ? '编辑赠品'
         : '查看赠品详情'
-      document.title = !this.$route.query._ck ? '编辑赠品' : '查看赠品详情'
-    }
+      : '创建赠品'
+    this.$route.meta.title = title
+    this.$store.dispatch('tagsView/updateVisitedView', {
+      ...this.$route,
+      meta: {
+        ...this.$route.meta,
+        title
+      },
+      title
+    })
   },
   methods: {
     handleSelectGoods(val) {
@@ -192,7 +206,6 @@ export default {
               })
               .catch(error => {
                 console.log(error)
-                this.leaveAction = true
                 this.loading = false
               })
           } else {
@@ -229,24 +242,25 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (this.disabled || this.leaveAction) {
+    if (this.leaveAction) {
       this.$store.dispatch('tagsView/delView', from)
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
-      }
-    } else {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        if (this.pageLoading) {
-          this.pageLoading.close()
-        }
-        next()
-        this.$store.dispatch('tagsView/delView', from)
-      } else {
-        next(false)
-      }
     }
+    next()
+    // if (this.disabled || this.leaveAction) {
+    //   // this.$store.dispatch('tagsView/delView', from)
+    //   next()
+    // } else {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     next()
+    //     this.$store.dispatch('tagsView/delView', from)
+    //   } else {
+    //     next(false)
+    //   }
+    // }
   }
 }
 </script>

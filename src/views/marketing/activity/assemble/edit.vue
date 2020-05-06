@@ -814,24 +814,29 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (this.disabled || this.leaveAction) {
+    // 路由离开关闭标签
+    if (this.leaveAction) {
       this.$store.dispatch('tagsView/delView', from)
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
-      }
-    } else {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        if (this.pageLoading) {
-          this.pageLoading.close()
-        }
-        this.$store.dispatch('tagsView/delView', from)
-        next()
-      } else {
-        next(false)
-      }
     }
+    next()
+    // if (this.disabled || this.leaveAction) {
+    //   this.$store.dispatch('tagsView/delView', from)
+    //   next()
+    //   if (this.pageLoading) {
+    //     this.pageLoading.close()
+    //   }
+    // } else {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // }
   }
 }
 </script>
@@ -944,7 +949,7 @@ export default {
 }
 .app-container {
   padding-bottom: 100px;
- .action-wapper {
+  .action-wapper {
     position: absolute;
     padding: 12px;
     bottom: 0;
@@ -956,5 +961,4 @@ export default {
     z-index: 1;
   }
 }
-
 </style>

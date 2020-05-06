@@ -255,7 +255,14 @@
                 </template>
               </el-table-column>
 
-              <el-table-column v-if="!disabled" label="操作" prop="name" width="90px" fixed="right" align="center">
+              <el-table-column
+                v-if="!disabled"
+                label="操作"
+                prop="name"
+                width="90px"
+                fixed="right"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <el-button
                     type="text"
@@ -440,24 +447,29 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     // 路由离开关闭标签
-    if (this.disabled || this.leaveAction) {
+    // if (this.disabled || this.leaveAction) {
+    //   this.$store.dispatch('tagsView/delView', from)
+    //   next()
+    //   if (this.pageLoading) {
+    //     this.pageLoading.close()
+    //   }
+    // } else {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // }
+    // 路由离开关闭标签
+    if (this.leaveAction) {
       this.$store.dispatch('tagsView/delView', from)
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
-      }
-    } else {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        if (this.pageLoading) {
-          this.pageLoading.close()
-        }
-        this.$store.dispatch('tagsView/delView', from)
-        next()
-      } else {
-        next(false)
-      }
     }
+    next()
   },
   computed: {
     ...mapGetters(['roles', 'merCode']),

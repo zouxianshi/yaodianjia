@@ -1,9 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <a :href="`#${createdUrl}`">
-        <el-button class="btn btn-add" type="primary" size="small">新建活动</el-button>
-      </a>
+      <el-button class="btn btn-add" type="primary" size="small" @click="jumpeCreateUrl">新建活动</el-button>
       <!-- 列表表单控件 -->
       <list-form @form-search="search" />
       <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
@@ -68,7 +66,9 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <!-- 拼团活动的编辑活动库存按钮进行中且为生效 -->
-                  <el-dropdown-item v-if="scope.row.validStatus === 1 && type==='13' && scope.row.status">
+                  <el-dropdown-item
+                    v-if="scope.row.validStatus === 1 && type==='13' && scope.row.status"
+                  >
                     <product-kucun :row-item="scope.row" />
                   </el-dropdown-item>
                   <!-- 失效：进行中且不失效 -->
@@ -204,27 +204,32 @@ export default {
         {
           id: '11',
           label: '限时特惠',
-          createUrl: '/marketing/activity/limit-edit?l_type=11'
+          createUrl: '/marketing/activity/limit-edit?l_type=11',
+          name: 'LimitEdit'
         },
         {
           id: '12',
           label: '限时秒杀',
-          createUrl: '/marketing/activity/limit-edit?l_type=12'
+          createUrl: '/marketing/activity/limit-edit?l_type=12',
+          name: 'LimitEdit'
         },
         {
           id: '13',
           label: '拼团',
-          createUrl: '/marketing/activity/assemble-edit'
+          createUrl: '/marketing/activity/assemble-edit',
+          name: 'assembleEdit'
         },
         {
           id: '14',
           label: '满减满赠',
-          createUrl: '/marketing/activity/reduce-gift-list-edit'
+          createUrl: '/marketing/activity/reduce-gift-list-edit',
+          name: 'reduceGift'
         },
         {
           id: '15',
           label: '加价购',
-          createUrl: '/marketing/activity/aprice-edit'
+          createUrl: '/marketing/activity/aprice-edit',
+          name: 'addPriceCreate'
         }
       ],
       createdUrl: '',
@@ -261,6 +266,8 @@ export default {
       Array.isArray(filterType) && filterType.length
         ? filterType[0].createUrl
         : ''
+    this.name =
+      Array.isArray(filterType) && filterType.length ? filterType[0].name : ''
     this.promotionTypeLable =
       Array.isArray(filterType) && filterType.length ? filterType[0].label : ''
     this.type = this.$route.params.type || ''
@@ -302,23 +309,30 @@ export default {
     },
     // 查看
     toLook(row) {
-      if (this.type === '11') {
-        this.$router.push(`${this.createdUrl}&id=${row.id}&_ck=1`)
-      } else if (this.type === '12') {
-        this.$router.push(`${this.createdUrl}&id=${row.id}&_ck=1`)
-      } else {
-        this.$router.push(`${this.createdUrl}?id=${row.id}&_ck=1`)
-      }
+      this.$store.dispatch('tagsView/delCachedView', {
+        name: this.name
+      })
+      setTimeout(() => {
+        if (this.type === '11' || this.type === '12') {
+          this.$router.push(`${this.createdUrl}&id=${row.id}&_ck=1`)
+        } else {
+          this.$router.push(`${this.createdUrl}?id=${row.id}&_ck=1`)
+        }
+      }, 0)
     },
     // 编辑
     toEdit(row) {
-      if (this.type === '11') {
-        this.$router.push(`${this.createdUrl}&id=${row}`)
-      } else if (this.type === '12') {
-        this.$router.push(`${this.createdUrl}&id=${row}`)
-      } else {
-        this.$router.push(`${this.createdUrl}?id=${row}`)
-      }
+      this.$store.dispatch('tagsView/delCachedView', {
+        name: this.name
+      })
+      setTimeout(() => {
+        console.log('111111111', this.$router, this.createdUrl)
+        if (this.type === '11' || this.type === '12') {
+          this.$router.push(`${this.createdUrl}&id=${row}`)
+        } else {
+          this.$router.push(`${this.createdUrl}?id=${row}`)
+        }
+      }, 0)
     },
     // 删除
     handleDel(id) {
@@ -406,6 +420,14 @@ export default {
       } else {
         return cellValue
       }
+    },
+    jumpeCreateUrl() {
+      this.$store.dispatch('tagsView/delCachedView', {
+        name: this.name
+      })
+      setTimeout(() => {
+        this.$router.push(this.createdUrl)
+      }, 0)
     }
   }
 }

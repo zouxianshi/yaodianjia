@@ -136,7 +136,11 @@
             <template slot="append">{{ form.uint === 0 ? '元':'件' }}</template>
           </el-input>
         </el-form-item>
-        <el-form-item v-show="false" :ref="'ruleList.'+ $Index + '.uint'" :prop="'ruleList.'+ $Index + '.uint'">
+        <el-form-item
+          v-show="false"
+          :ref="'ruleList.'+ $Index + '.uint'"
+          :prop="'ruleList.'+ $Index + '.uint'"
+        >
           <el-input v-model="domain.uint" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="优惠内容：" required>
@@ -279,6 +283,7 @@ import { createActFull, getActFull, updateActFull } from '@/api/activity'
 import { mapGetters } from 'vuex'
 import { checkNumberdouble } from '@/utils/validate'
 export default {
+  name: 'ReduceGift',
   components: {
     storeGoods,
     storeDialog,
@@ -405,7 +410,7 @@ export default {
                   ...item,
                   checkOrNot: !!item.checkOrNot,
                   giftOrNot: !!item.giftOrNot,
-                  giftList: item.giftSpecDTO,
+                  giftList: item.giftSpecDTO ? [item.giftSpecDTO] : [],
                   discountType: item.discountType,
                   [`discount${item.discountType}`]: item.discount
                 }
@@ -541,7 +546,10 @@ export default {
       console.log('2222-validDiscountPrice', rule, value)
       const index = rule.field.split('.')[1]
       console.log('2222-validDiscountPrice---ruleList', this.form.ruleList)
-      if (this.form.ruleList[index].discountType === 1 && this.form.ruleList[index].checkOrNot) {
+      if (
+        this.form.ruleList[index].discountType === 1 &&
+        this.form.ruleList[index].checkOrNot
+      ) {
         if (!value) {
           return callback(new Error('请输入折扣力度'))
         }
@@ -809,9 +817,7 @@ export default {
         )
       } else {
         this.$message.success(msg)
-        setTimeout(_ => {
-          this.$router.replace('/marketing/activity/list/14')
-        }, 1000)
+        this.$router.replace('/marketing/activity/list/14')
       }
     },
     delSelectStore(item, index) {
@@ -841,26 +847,12 @@ export default {
       console.log(this.form)
     }
   },
-
   beforeRouteLeave(to, from, next) {
-    if (this.disabled || this.leaveAction) {
+    // 路由离开关闭标签
+    if (this.leaveAction) {
       this.$store.dispatch('tagsView/delView', from)
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
-      }
-    } else {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        if (this.pageLoading) {
-          this.pageLoading.close()
-        }
-        this.$store.dispatch('tagsView/delView', from)
-        next()
-      } else {
-        next(false)
-      }
     }
+    next()
   }
 }
 </script>

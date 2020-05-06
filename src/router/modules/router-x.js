@@ -123,7 +123,7 @@ const router = [
         name: 'reduceGift',
         meta: {
           title: '创建满减满赠',
-          noCache: true,
+          noCache: false,
           activeMenu: '/marketing/activity'
         }
       },
@@ -133,7 +133,7 @@ const router = [
         name: 'addPriceCreate',
         meta: {
           title: '创建加价购',
-          noCache: true,
+          noCache: false,
           activeMenu: '/marketing/activity'
         }
       },
@@ -143,7 +143,7 @@ const router = [
         name: 'conflictList',
         meta: {
           title: '冲突列表',
-          noCache: true,
+          noCache: false,
           activeMenu: '/marketing/activity'
         }
       },
@@ -153,7 +153,7 @@ const router = [
         name: 'assembleEdit',
         meta: {
           title: '拼团活动',
-          noCache: true,
+          noCache: false,
           activeMenu: '/marketing/activity/assemble'
         }
       },
@@ -163,7 +163,7 @@ const router = [
         name: 'limitEdit',
         meta: {
           title: '创建限时活动',
-          noCache: true,
+          noCache: false,
           activeMenu: '/marketing/activity'
         }
       },
@@ -205,7 +205,7 @@ const router = [
         meta: {
           title: '创建赠品',
           auth: 'marketing.gift',
-          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       }
     ]

@@ -83,7 +83,7 @@
         <template>
           <el-input-number
             v-model="form.threshold"
-            step="0.01"
+            :step="0.01"
             controls-position="right"
             step-strictly
             :min="0.01"
@@ -115,7 +115,7 @@
           <el-input-number
             v-model="form.confineNum"
             controls-position="right"
-            step="1"
+            :step="1"
             step-strictly
             :min="1"
             :max="15"
@@ -187,6 +187,7 @@ import { createActAdd, getActAddInfo, updateActAdd } from '@/api/activity'
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'AddPriceCreate',
   components: {
     storeGoods,
     storeDialog,
@@ -527,24 +528,29 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (this.disabled || this.leaveAction) {
+    // 路由离开关闭标签
+    if (this.leaveAction) {
       this.$store.dispatch('tagsView/delView', from)
-      next()
-      if (this.pageLoading) {
-        this.pageLoading.close()
-      }
-    } else {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        if (this.pageLoading) {
-          this.pageLoading.close()
-        }
-        this.$store.dispatch('tagsView/delView', from)
-        next()
-      } else {
-        next(false)
-      }
     }
+    next()
+    // if (this.disabled || this.leaveAction) {
+    //   this.$store.dispatch('tagsView/delView', from)
+    //   next()
+    //   if (this.pageLoading) {
+    //     this.pageLoading.close()
+    //   }
+    // } else {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // }
   }
 }
 </script>
