@@ -191,4 +191,11 @@ export function createLuckDraw(params) {
     data: params
   })
 }
-
+// 大转盘推广Extension
+export function queryQrCode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/queryQrCode`,
+    method: 'post',
+    data: params
+  })
+}
