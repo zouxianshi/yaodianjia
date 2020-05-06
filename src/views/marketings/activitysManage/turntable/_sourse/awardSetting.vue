@@ -18,7 +18,8 @@
         </el-table-column>
         <el-table-column prop="giftImg" label="图片">
           <template slot-scope="scope">
-            <el-image :src="showImgHandler(scope.row.giftImg)" style="width:70px;height:70px" />
+            <img :src="showImgsTabel(scope.row)" style="width:70px;height:70px">
+            <!-- <el-image :src="showImgsTabel(scope.row)" style="width:70px;height:70px" /> -->
           </template>
         </el-table-column>
         <el-table-column prop="giftName" label="奖品名称" />
@@ -34,13 +35,14 @@
             <el-button
               type="text"
               size="small"
+              :disabled="isPageUpdateOrView || isRuning"
               @click.native.prevent="deleteRow(scope.$index, selectedGift)"
             >移除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-button type="primary" plain :disabled="selectedGift.length>= 8" @click="dialogVisible = true">添加奖品</el-button>
+    <el-button type="primary" plain :disabled="selectedGift.length>= 8 || isPageUpdateOrView || isRuning" @click="dialogVisible = true">添加奖品</el-button>
     <div style="margin-top:40px">
       <el-button type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
       <el-button type="primary" @click="submitData">保存并提交</el-button>
@@ -82,8 +84,7 @@
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="ruleForm.giftImg" :src="showImgHandler(ruleForm.giftImg)" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
+            <img :src="showImgs()" class="avatar">
           </el-upload>
         </el-form-item>
         <el-form-item v-show="ruleForm.giftType !== 2" label="奖品内容" prop="giftContent">
@@ -112,8 +113,19 @@ import { mapGetters } from 'vuex'
 import { formatDate } from '@/utils/timer'
 import config from '@/utils/config'
 import _ from 'lodash'
+// import discountpng from '@/assets/image/marketings/discountpng.png'
+// import coinpng from '@/assets/image/marketings/coin.png'
+// import giftpng from '@/assets/image/marketings/giftpng.png'
 export default {
   name: 'AwardSetting',
+  props: {
+    params: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       uploadLoading: false,
@@ -147,12 +159,52 @@ export default {
     },
     headers() {
       return { Authorization: this.token }
+    },
+    isPageUpdateOrView() { // 判断编辑还是查看页面
+      if (this.params.pageState === 2) { // 查看
+        return true
+      } else { // 编辑
+        return false
+      }
+    },
+    isRuning() { // 活动进行中
+      if (this.params.state === 1) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   mounted() {
     this.getcouponList()
   },
   methods: {
+    showImgs() {
+      if (this.ruleForm.giftImg) {
+        return this.showImgHandler(this.ruleForm.giftImg)
+      } else {
+        if (this.ruleForm.giftType === 2) {
+          return require('../img/discountpng.png')
+        } else if (this.ruleForm.giftType === 3) {
+          return require('../img/coin.png')
+        } else {
+          return require('../img/giftpng.png')
+        }
+      }
+    },
+    showImgsTabel(data) {
+      if (data.giftImg.length < 1) {
+        if (data.giftType === 2) {
+          return require('../img/discountpng.png')
+        } else if (data.giftType === 3) {
+          return require('../img/coin.png')
+        } else {
+          return require('../img/giftpng.png')
+        }
+      } else {
+        return this.showImgHandler(data.giftImg)
+      }
+    },
     deleteRow(index, table) {
       this.$confirm('删除该项奖品, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -277,6 +329,7 @@ export default {
       }
     },
     beforeAvatarUpload(file) {
+      console.log(file)
       const isImg =
         file.type === 'image/jpeg' ||
         file.type === 'image/png' ||
@@ -313,7 +366,6 @@ export default {
         return
       }
       var num = 0
-      console.log(selected)
       _.map(selected, item => {
         num += item.winRandom * 100
       })
