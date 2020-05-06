@@ -7,8 +7,8 @@
     <div style="color:#7E8E9E;margin:15px 0">活动已保存至活动列表</div>
     <div>{{ content }}</div>
     <div style="margin-top:50px">
-      <el-button>继续创建</el-button>
-      <el-button type="primary" plain>返回活动列表</el-button>
+      <el-button @click="$router.go(0);">继续创建</el-button>
+      <el-button type="primary" plain @click="toUrl()">返回活动列表</el-button>
     </div>
   </div>
 </template>
@@ -41,8 +41,12 @@ export default {
         this.content = this.totalTime + 's后跳转至活动列表'
         if (this.totalTime < 1) {
           window.clearInterval(this.clock)
+          this.toUrl()
         }
       }, 1000)
+    },
+    toUrl() {
+      this.$router.push('/marketings/activity-manage/turntable/list?code=TA003&name=大转盘&id=1')
     }
   }
 }

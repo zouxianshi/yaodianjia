@@ -25,7 +25,7 @@
         <el-table-column prop="giftContent" label="内容" />
         <el-table-column label="中奖几率">
           <template slot-scope="scope">
-            {{ (scope.row.winRandom) }}%
+            {{ (scope.row.winRandom)*100 }}%
           </template>
         </el-table-column>
         <el-table-column prop="giftNum" label="奖品数量" />
@@ -121,7 +121,7 @@ export default {
       selectedGift: [], // 已选择的礼品券
       couponList: [],
       ruleForm: {
-        giftId: '', // 选择优惠券时的id
+        giftId: null, // 选择优惠券时的id
         giftType: 1, // 礼品类型
         giftNum: '', // 礼品数量
         giftName: '', // 礼品名称
@@ -154,7 +154,7 @@ export default {
   },
   methods: {
     deleteRow(index, table) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('删除该项奖品, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -184,6 +184,7 @@ export default {
           } else {
             this.ruleForm.giftName = this.ruleForm.giftContent
           }
+          this.ruleForm.winRandom = this.ruleForm.winRandom / 100
           that.selectedGift.push(_.cloneDeep(that.ruleForm))
           this.ruleForm = {
             giftId: '', // 选择优惠券时的id
@@ -312,11 +313,10 @@ export default {
         return
       }
       var num = 0
-      _.map(selected, item => {
-        num += Number(item.winRandom)
-        item.winRandom = item.winRandom / 100
-      })
       console.log(selected)
+      _.map(selected, item => {
+        num += item.winRandom * 100
+      })
       if (num !== 100) {
         this.$message({
           message: '奖品总中奖几率需等于100%',
