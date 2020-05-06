@@ -145,6 +145,10 @@ export default {
       }
 
       this.setDragData(dragList)
+
+      setTimeout(() => {
+        jumpCurrentSet(this.$root, item)
+      }, 10)
     },
     /**
      * Process saved data and do error verification

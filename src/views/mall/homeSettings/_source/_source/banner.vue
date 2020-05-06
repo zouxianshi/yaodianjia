@@ -1,11 +1,11 @@
 <template>
-  <div class="va-banner-model" :style="{width:width}">
+  <div class="va-banner-model" :style="{width:width,height:height}">
     <swiper v-if="isList" :options="{loop: true,autoplay: list.length === 1 ? false : {delay: 5000}}">
       <swiper-slide v-for="(item,i) in list" :key="i" class="slider-item">
         <div class="vbm-img-wrap">
           <m-tag-ads v-if="source === 'sa'" :text="`广告${i+1}`" />
-          <img v-if="item.img" :src="item.img" :width="width" height="180">
-          <div v-else class="no-banner" :style="{width:width}">
+          <img v-if="item.img" :src="item.img" :width="width" :height="height">
+          <div v-else class="no-banner" :style="{width:width,height:height}">
             <m-icons :is-center="true" text="请添加banner图" />
             <div style="padding-top: 50px">
               暂无图片，请上传
@@ -38,6 +38,10 @@ export default {
     width: {
       type: String,
       default: '420px'
+    },
+    height: {
+      type: String,
+      default: '180px'
     },
     itemList: {
       type: Array,
@@ -86,7 +90,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .va-banner-model {
-    height: 180px;
     overflow: hidden;
     margin: 0 auto;
     .vbm-img-wrap {

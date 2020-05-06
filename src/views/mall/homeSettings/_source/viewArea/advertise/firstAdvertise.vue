@@ -1,7 +1,7 @@
 <template>
   <div class="va-first-advertise-model">
     <div class="t" />
-    <m-banner width="400px" :item-list="item.itemList" />
+    <m-banner width="400px" height="120px" :item-list="item.itemList" />
   </div>
 </template>
 <script>

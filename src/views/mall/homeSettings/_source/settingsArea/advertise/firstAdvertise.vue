@@ -1,7 +1,7 @@
 <template>
   <m-sa-layout>
     <div slot="exhibition">
-      <m-va-banner width="400px" source="sa" :item-list="searchParams.itemList" />
+      <m-va-banner width="400px" height="120px" source="sa" :item-list="searchParams.itemList" />
     </div>
     <div slot="item">
       <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :sub-type="searchParams.subType" :item="el" :index="i" :is-add="isAdd(i)" :is-disabled="isDisabled(i)" @on-item="_onItem" />
