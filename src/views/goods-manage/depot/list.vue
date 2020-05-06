@@ -373,7 +373,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      console.log(vm)// 当前组件的实例
+      console.log(vm) // 当前组件的实例
       if (sessionStorage.getItem('isRefreshDepot')) {
         sessionStorage.setItem('isRefreshDepot', false)
         vm.getList()
