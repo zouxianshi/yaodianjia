@@ -76,6 +76,7 @@ export default {
   .first-navigation-model {
     overflow: hidden;
     .fnm-item {
+      margin: 0 15px;
       float: left;
       cursor: move;
       &:nth-child(1),&:nth-child(5) {

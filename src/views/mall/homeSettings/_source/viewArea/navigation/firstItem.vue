@@ -63,7 +63,7 @@ export default {
   .n-first-item-model {
     text-align: center;
     width: 73px;
-    margin: 0 15px 18px 15px;
+    margin: 0 0px 18px 0px;
     position: relative;
     .icon {
       width: 73px;

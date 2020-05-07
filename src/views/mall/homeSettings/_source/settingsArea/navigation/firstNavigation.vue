@@ -107,6 +107,8 @@ export default {
     overflow: hidden;
     .n-first-item-model {
       float: left;
+      margin: 0 15px;
+      padding-bottom: 20px;
     }
   }
 </style>

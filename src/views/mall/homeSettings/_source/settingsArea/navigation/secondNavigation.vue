@@ -97,6 +97,8 @@ export default {
   .sa-second-navigation {
     overflow: hidden;
     .n-second-item-model {
+      margin: 0 14px;
+      padding-bottom: 20px;
       float: left;
     }
   }

@@ -11,7 +11,7 @@
 
     <!--拖拽操作-->
     <div class="vam-draggable">
-      <v-draggable ref="draggable" v-model="dragList" draggable=".item-component" v-bind="dragOptions" @add="onAdd">
+      <v-draggable ref="draggable" v-model="dragList" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onAdd">
         <div v-for="(item,$index) in dragList" :id="item.uuid" :key="item.uuid" :class="item.type === 'recommend' ? 'item-component-recommend' : 'item-component'">
           <m-va-error-drag v-if="item.type !== 'no-data' && item.error" :type="item.type" @click.native="jumpCurrentSet($root,item)" />
           <m-no-data v-if="item.type === 'no-data'" />
@@ -124,6 +124,9 @@ export default {
     jumpCurrentSet,
     ...mapActions('mall', ['saveStructure']),
     ...mapMutations('mall', ['setDragData']),
+    onDragChange() {
+      this.setDragData(this.dragList)
+    },
     _onDelete(i) {
 
     },

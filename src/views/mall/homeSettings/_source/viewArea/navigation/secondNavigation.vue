@@ -76,6 +76,7 @@ export default {
     .snm-item {
       float: left;
       cursor: move;
+      margin: 0 14px;
       &:nth-child(1),&:nth-child(6) {
         padding-left: 3px;
       }

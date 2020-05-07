@@ -60,7 +60,7 @@ export default {
   .n-second-item-model {
     text-align: center;
     width: 55px;
-    margin: 0 14px 16px 14px;
+    margin: 0 0px 16px 0px;
     position: relative;
     .icon {
       width: 55px;
