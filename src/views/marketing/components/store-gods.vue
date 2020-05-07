@@ -184,7 +184,7 @@ export default {
     groupType: {
       // 是否排除组合商品，true排除
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
