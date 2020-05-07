@@ -715,6 +715,17 @@
                         :placeholder="'输入'+items.attributeName"
                       />
                     </el-form-item>
+                    <el-form-item>
+                      <span slot="label">
+                        <span class="tip">*</span> 商品编码
+                      </span>
+                      <el-input
+                        v-model.trim="item.erpCode"
+                        placeholder="输入商品编码"
+                        maxlength="16"
+                        @blur="input_checkErpcode(item.erpCode)"
+                      />
+                    </el-form-item>
                     <el-form-item label>
                       <span slot="label">
                         <span class="tip">*</span> 商品条码
@@ -733,17 +744,7 @@
                         <el-option label="平安" :value="1" />
                       </el-select>
                     </el-form-item>
-                    <el-form-item>
-                      <span slot="label">
-                        <span class="tip">*</span> 商品编码
-                      </span>
-                      <el-input
-                        v-model.trim="item.erpCode"
-                        placeholder="输入商品编码"
-                        maxlength="16"
-                        @blur="input_checkErpcode(item.erpCode)"
-                      />
-                    </el-form-item>
+
                     <el-form-item>
                       <span slot="label">
                         <span class="tip">*</span> 参考价格
