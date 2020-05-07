@@ -61,14 +61,12 @@
             />
           </div>
           <div class="search-item">
-            <span class="label-name">货主</span>
+            <span class="label-name">货   主</span>
             <el-select v-model="listQuery.owner" size="small" placeholder="请选择货主" @change="handleQuery">
               <el-option label="自营" :value="0" />
               <el-option label="平安" :value="1" />
             </el-select>
           </div>
-        </div>
-        <div class="search-form">
           <div class="search-item">
             <span class="label-name">条形码</span>
             <el-input
@@ -109,6 +107,9 @@
               <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
+
+        </div>
+        <div class="search-form">
 
           <div class="search-item">
             <el-button type="primary" size="small" @click="handleQuery">查询</el-button>
@@ -700,7 +701,7 @@ export default {
   margin-bottom: 30px;
   .search-item {
     .label-name {
-      text-align: left;
+      text-align: center;
       width: 60px;
     }
   }
