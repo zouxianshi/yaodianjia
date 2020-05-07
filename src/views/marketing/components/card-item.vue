@@ -1,6 +1,6 @@
 <template>
   <el-card class="activity-card" shadow="hover">
-    <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item.listUrl)" />
+    <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item, 'list')" />
     <div class="activity-bottom">
       <div class="activity-header">
         <div class="title">{{ item.lable }}</div>
