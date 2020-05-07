@@ -1872,12 +1872,12 @@ export default {
           this.subLoading = false
           this.leaveAction = true
           setTimeout(() => {
-            // let url = ''
-            // if (this.basicForm.origin === 1) {
-            //   url = '/goods-manage/depot'
-            // } else {
-            //   url = '/goods-manage/apply-record'
-            // }
+            let url = ''
+            if (this.basicForm.origin === 1) {
+              url = '/goods-manage/depot'
+            } else {
+              url = '/goods-manage/apply-record'
+            }
             this.$confirm('请确认已保存橱窗图', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
@@ -1888,7 +1888,7 @@ export default {
                   .dispatch('tagsView/delView', this.$route)
                   .then(res => {
                     sessionStorage.setItem('isRefreshDepot', true)
-                    this.$router.go(-1) // 返回上一个路由
+                    this.$router.replace(url)
                   })
                 // this.$store.dispatch('tagsView/delView', this.$route)
                 // this.$store
