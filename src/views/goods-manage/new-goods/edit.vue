@@ -457,8 +457,13 @@
                   </el-table-column>
                   <el-table-column label="货主" min-width="100">
                     <template slot-scope="scope">
-                      <template v-if="!is_query">
-                        <el-select v-model="scope.row.owner" size="small" clearable :disabled="scope.row.isSku===0">
+                      <template>
+                        <el-select
+                          v-model="scope.row.owner"
+                          size="small"
+                          clearable
+                          :disabled="scope.row.isSku===0"
+                        >
                           <el-option label="自营" :value="0" />
                           <el-option label="平安" :value="1" />
                         </el-select>
@@ -598,8 +603,13 @@
                       </el-table-column>
                       <el-table-column label="货主" min-width="100">
                         <template slot-scope="scope">
-                          <template v-if="!is_query">
-                            <el-select v-model="scope.row.owner" size="small" clearable :disabled="scope.row.isSku===0">
+                          <template>
+                            <el-select
+                              v-model="scope.row.owner"
+                              size="small"
+                              clearable
+                              :disabled="scope.row.isSku===0"
+                            >
                               <el-option label="自营" :value="0" />
                               <el-option label="平安" :value="1" />
                             </el-select>
