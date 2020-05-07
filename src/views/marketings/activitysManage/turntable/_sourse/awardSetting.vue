@@ -296,7 +296,7 @@ export default {
     getcouponList() {
       const searchParams = {
         cname: '',
-        ctype: 1,
+        ctype: 0,
         busType: 0,
         currentPage: 1,
         pageSize: 999,
