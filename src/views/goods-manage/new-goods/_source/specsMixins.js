@@ -407,9 +407,10 @@ const mixin = {
                 })
               }
               v.owner = v.owner || 0
+              v.isSku = 1
             })
           }
-          console.log('------请求规格数据')
+          console.log('------请求标库规格数据')
           this.editSpecsData = res.data || []
           this.standardNoData = !res.data
           if (this.$route.query.type === 'query') {
@@ -468,6 +469,7 @@ const mixin = {
                   }
                 }
                 element.owner = element.owner || 0
+                element.isSku = 0
               }
               specList.map(v => {
                 if (v.specSkuList) {
