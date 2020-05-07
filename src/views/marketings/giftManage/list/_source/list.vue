@@ -33,9 +33,9 @@
         </el-table-column>
         <el-table-column prop="denomination" label="优惠内容">
           <template slot-scope="scope">
-            <span v-if="scope.row.ctype === 1"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>{{ scope.row.denomination }}折</span>
-            <span v-if="scope.row.ctype === 2"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>减{{ scope.row.denomination }}元</span>
-            <span v-if="scope.row.ctype === 3">{{ scope.row.denomination }}</span>
+            <span v-if="scope.row.ctype === 1"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>{{ scope.row.denomination }}折优惠券</span>
+            <span v-if="scope.row.ctype === 2"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>减{{ scope.row.denomination }}元优惠券</span>
+            <span v-if="scope.row.ctype === 3">{{ scope.row.cname }}</span>
           </template>
         </el-table-column>
         <el-table-column label="使用时间" width="180">
