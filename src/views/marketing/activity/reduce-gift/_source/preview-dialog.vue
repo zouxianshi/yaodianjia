@@ -25,7 +25,7 @@
 <script>
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
-import html2canvas from 'html2canvas'
+// import html2canvas from 'html2canvas'
 import poster from '@/assets/image/acvity/poster.png'
 import storeIcon from '@/assets/image/acvity/store_icon.png'
 // import { merchantDetail } from '@/api/merchant_Person_Api'
@@ -85,26 +85,26 @@ export default {
           this.$message.warning('复制失败')
         }
       )
-    },
-    downPoster() {
-      this.downLoding = true
-      html2canvas(this.$refs.img_wrapper, {
-        width: this.$refs.img_wrapper.clientWidth, // 设置canvas尺寸与所截图尺寸相同，防止白边
-        height: this.$refs.img_wrapper.clientHeight // 防止白边
-      })
-        .then(canvas => {
-          // this.postBase64 = canvas.toDataURL()
-          const a = document.createElement('a') // 创建a标签
-          a.setAttribute('download', '海报.png') // download属性
-          a.setAttribute('href', canvas.toDataURL()) // href链接
-          a.click() // 自执行点击事件
-          this.downLoding = false
-        })
-        .catch(error => {
-          console.log('error', error)
-          this.downLoding = false
-        })
     }
+    // downPoster() {
+    //   this.downLoding = true
+    //   html2canvas(this.$refs.img_wrapper, {
+    //     width: this.$refs.img_wrapper.clientWidth, // 设置canvas尺寸与所截图尺寸相同，防止白边
+    //     height: this.$refs.img_wrapper.clientHeight // 防止白边
+    //   })
+    //     .then(canvas => {
+    //       // this.postBase64 = canvas.toDataURL()
+    //       const a = document.createElement('a') // 创建a标签
+    //       a.setAttribute('download', '海报.png') // download属性
+    //       a.setAttribute('href', canvas.toDataURL()) // href链接
+    //       a.click() // 自执行点击事件
+    //       this.downLoding = false
+    //     })
+    //     .catch(error => {
+    //       console.log('error', error)
+    //       this.downLoding = false
+    //     })
+    // }
   }
 }
 </script>

@@ -77,16 +77,16 @@ const router = [
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
-      {
-        path: 'activity/create',
-        component: () => import('@/views/marketing/activity/create'),
-        name: 'create',
-        meta: {
-          title: '新建活动',
-          auth: 'marketing.marketing-manager',
-          noCache: true
-        }
-      },
+      // {
+      //   path: 'activity/create',
+      //   component: () => import('@/views/marketing/activity/create'),
+      //   name: 'create',
+      //   meta: {
+      //     title: '新建活动',
+      //     auth: 'marketing.marketing-manager',
+      //     noCache: true
+      //   }
+      // },
       {
         path: 'activity/dm-template',
         component: () => import('@/views/marketing/activity/DM/template'),
