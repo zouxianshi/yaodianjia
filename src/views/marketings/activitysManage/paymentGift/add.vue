@@ -402,6 +402,7 @@ export default {
           .replace(/Z/g, '')
       }
       if (this.form.shopRule === 2) {
+        this.form.listCouponStore = []
         this.selectedStores.forEach(store => {
           this.form.listCouponStore.push({
             ruleType: 2,
@@ -415,6 +416,7 @@ export default {
         this.form.countRule = 0
       }
       if (this.form.productRule === 2) {
+        this.form.listCouponProduct = []
         this.selectedProducts.forEach(product => {
           this.form.listCouponProduct.push({
             proBrand: product.proBrand || product.brandNamed,
@@ -432,6 +434,7 @@ export default {
         })
       }
       if (this.form.giftType === 1 && this.selectedCoupons.length > 0) {
+        this.form.activityPayReqDTO = []
         this.selectedCoupons.forEach(coupon => {
           this.form.activityPayReqDTO.push({
             giftId: coupon.id,
@@ -441,6 +444,7 @@ export default {
         })
       }
       if (this.form.giftType === 2 && this.selectedActivity.length > 0) {
+        this.form.activityPayReqDTO = []
         this.selectedActivity.forEach(activity => {
           this.form.activityPayReqDTO.push({
             giftId: activity.id,
