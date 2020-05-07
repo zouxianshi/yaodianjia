@@ -35,7 +35,6 @@
             <span class="label-name">商品类型</span>
             <el-select
               v-model="listQuery.commodityType"
-              filterable
               size="small"
               placeholder="普通商品/组合商品"
             >
@@ -45,7 +44,7 @@
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择">
+            <el-select v-model="listQuery.drugType" size="small" placeholder="请选择药品类型">
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
@@ -63,7 +62,7 @@
           </div>
           <div class="search-item">
             <span class="label-name">货主</span>
-            <el-select v-model="listQuery.owner" filterable size="small" placeholder="请选择">
+            <el-select v-model="listQuery.owner" size="small" placeholder="请选择货主">
               <el-option label="全部" value />
               <el-option label="自营" value="0" />
               <el-option label="平安" value="1" />
