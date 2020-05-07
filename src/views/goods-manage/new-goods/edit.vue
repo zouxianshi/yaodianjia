@@ -455,7 +455,7 @@
                       </template>
                     </template>
                   </el-table-column>
-                  <el-table-column label="货主">
+                  <el-table-column label="货主" min-width="80">
                     <template slot-scope="scope">
                       <template v-if="!is_query">
                         <el-select v-model="scope.row.owner" size="small" clearable>
@@ -596,7 +596,7 @@
                           </template>
                         </template>
                       </el-table-column>
-                      <el-table-column label="货主">
+                      <el-table-column label="货主" min-width="80">
                         <template slot-scope="scope">
                           <template v-if="!is_query">
                             <el-select v-model="scope.row.owner" size="small" clearable>

@@ -509,6 +509,7 @@ const mixin = {
                 row.isCheck = true // 数据做标识  选中
                 row.picUrl = v.picUrl
                 row.limitNum = v.limitNum
+                row.limitType = v.limitType
                 row.type = v.type || 2
                 this.$set(this.editSpecsData, findIndex, row)
               } else {
