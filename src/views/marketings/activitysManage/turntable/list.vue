@@ -382,7 +382,6 @@ export default {
         .catch(() => {})
     },
     handleCommand(command) {
-      console.log(command)
       if (command.val === '5') {
         this.$confirm('删除该活动, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -413,21 +412,34 @@ export default {
             })
           })
       } else if (command.val === '3') {
-        const p = {
-          id: this.tableData[command.index].id,
-          state: 2
-        }
-        setNormalActivity(p).then(res => {
-          if (res.code === '10000') {
-            this.$message({
-              message: res.msg,
-              type: 'success',
-              duration: 5 * 1000
-            })
-            this.currentPage = 1
-            this.getData()
-          }
+        this.$confirm('该活动失效, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
+          .then(() => {
+            const p = {
+              id: this.tableData[command.index].id,
+              state: 2
+            }
+            setNormalActivity(p).then(res => {
+              if (res.code === '10000') {
+                this.$message({
+                  message: res.msg,
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.currentPage = 1
+                this.getData()
+              }
+            })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
       } else if (command.val === '4') {
         this.dialogVisible = true
         this.loading = true
@@ -472,7 +484,7 @@ export default {
     font-size: 13px;
   }
   .el-dropdown{
-    font-size: 16px;
+    font-size: 14px;
     color: #147de8;
   }
   .el-table--medium th,

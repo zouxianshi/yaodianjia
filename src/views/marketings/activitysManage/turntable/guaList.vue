@@ -413,21 +413,34 @@ export default {
             })
           })
       } else if (command.val === '3') {
-        const p = {
-          id: this.tableData[command.index].id,
-          state: 2
-        }
-        setNormalActivity(p).then(res => {
-          if (res.code === '10000') {
-            this.$message({
-              message: res.msg,
-              type: 'success',
-              duration: 5 * 1000
-            })
-            this.currentPage = 1
-            this.getData()
-          }
+        this.$confirm('该活动失效, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
+          .then(() => {
+            const p = {
+              id: this.tableData[command.index].id,
+              state: 2
+            }
+            setNormalActivity(p).then(res => {
+              if (res.code === '10000') {
+                this.$message({
+                  message: res.msg,
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.currentPage = 1
+                this.getData()
+              }
+            })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
       } else if (command.val === '4') {
         this.dialogVisible = true
         this.loading = true
@@ -445,7 +458,10 @@ export default {
         // 编辑或查看
         this.$router.push({
           path: '/marketings/activity-manage/turntable/add',
-          query: { id: this.tableData[command.index].id, code: this.$route.query.code }
+          query: {
+            id: this.tableData[command.index].id,
+            code: this.$route.query.code
+          }
         })
       }
     },
@@ -472,8 +488,8 @@ export default {
     margin: 20px 0;
     font-size: 13px;
   }
-  .el-dropdown{
-    font-size: 16px;
+  .el-dropdown {
+    font-size: 14px;
     color: #147de8;
   }
   .el-table--medium th,
