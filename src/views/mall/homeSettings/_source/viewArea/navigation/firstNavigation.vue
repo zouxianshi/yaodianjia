@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import vDraggable from 'vuedraggable'
 import mFirstItem from './firstItem'
 
@@ -26,10 +26,14 @@ export default {
     }
   },
   methods: {
+    ...mapActions('mall', ['saveAssembly']),
     ...mapMutations('mall', ['setItemDragData']),
     onEnd() {
-      const { item: { $index }, dragList } = this
+      const { item: { $index, uuid }, item, dragList, dragGlobal: { id }} = this
       this.setItemDragData({ $index, itemList: dragList })
+      this.saveAssembly({ searchParams: { ...item, itemList: dragList, dimensionId: id || '' }, uuid }).then(() => {
+        this.$message.success('导航排序成功！')
+      })
     },
     onEvent() {
     }
@@ -55,6 +59,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('mall', ['dragGlobal']),
     dragOptions() {
       return {
         sort: true,
