@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container turntable-index-model">
+  <div class="app-container turntable-guagua-model">
     <el-button
       type="primary"
       size="mini"
@@ -50,7 +50,7 @@
     <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="大转盘暂未上架任何活动">
       <el-table-column prop="date" label="活动类型" width="120">
         <template>
-          <div>大转盘</div>
+          <div>刮刮乐</div>
         </template>
       </el-table-column>
       <el-table-column prop="activityDetailName" label="活动名称" />
@@ -449,6 +449,7 @@ export default {
         })
       }
     },
+    selectChange(index, val) {},
     changeOption(val) {
       console.log(val)
     },
@@ -466,7 +467,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-.turntable-index-model {
+.turntable-guagua-model {
   .explain {
     margin: 20px 0;
     font-size: 13px;

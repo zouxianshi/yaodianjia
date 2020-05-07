@@ -194,7 +194,6 @@ export default {
       }
       queryStoreByOrgId(param)
         .then(res => {
-          console.log('_loadStoresList-------', res)
           res.data.data.map(st => {
             this.storeData.push({
               stCode: st.stCode,

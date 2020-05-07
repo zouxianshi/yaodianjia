@@ -146,6 +146,17 @@ export default [
             }
           },
           {
+            path: '/marketings/activity-manage/turntable/guaList',
+            component: () => import('@/views/marketings/activitysManage/turntable/guaList'),
+            name: 'activitys-manage-turntable-list',
+            meta: {
+              title: '刮刮乐',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketings/activity-manage'
+            }
+          },
+          {
             path: '/marketings/activity-manage/turntable/add',
             component: () => import('@/views/marketings/activitysManage/turntable/add'),
             name: 'activitys-manage-turntable-add',

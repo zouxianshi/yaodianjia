@@ -113,13 +113,13 @@ export default {
               i.imgUrl = zhuan
               break
             case '刮刮乐':
-              i.url = `/marketings/activity-manage/turntable/list`
+              i.url = `/marketings/activity-manage/turntable/guaList`
               i.imgUrl = guagua
           }
           i.query = {
             code: i.activityTemplateCode,
-            name: i.activityTemplateName,
-            id: id
+            name: i.activityTemplateName
+            // id: id
           }
         }
         this.loadingShow = false
