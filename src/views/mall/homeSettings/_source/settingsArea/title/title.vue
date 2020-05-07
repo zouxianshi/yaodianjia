@@ -2,9 +2,9 @@
   <div v-loading="saLoading" class="sa-title-box sam-width">
     <el-form label-width="90px" size="mini">
       <el-form-item label="标题">
-        <el-input v-model="name" placeholder="请输入标题" maxlength="10" @change="() => isName = !name" />
+        <el-input v-model="name" placeholder="请输入标题" :maxlength="searchParams.type === 'mall-title' ? 12 : 10" @change="() => isName = !name" />
         <div v-if="isName" class="sa-error">
-          {{ searchParams.type === 'mall-title' ? '请填写微商城标题' : '请填写标题' }}
+          {{ searchParams.type === 'mall-title' ? '输入页面标题内容' : '请填写标题' }}
         </div>
       </el-form-item>
       <el-form-item>
