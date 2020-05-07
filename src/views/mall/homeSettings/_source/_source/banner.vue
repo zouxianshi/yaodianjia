@@ -4,7 +4,7 @@
       <swiper-slide v-for="(item,i) in list" :key="i" class="slider-item">
         <div class="vbm-img-wrap">
           <m-tag-ads v-if="source === 'sa'" :text="`广告${i+1}`" />
-          <img v-if="item.img" :src="item.img" :width="width" :height="height">
+          <img v-if="item.img" :src="showImg(item.img)" :width="width" :height="height">
           <div v-else class="no-banner" :style="{width:width,height:height}">
             <m-icons :is-center="true" text="请添加banner图" />
             <div style="padding-top: 50px">

@@ -2,7 +2,7 @@
   <div class="va-four-advertise-model">
     <div v-for="(el,i) in item.itemList" :key="i" class="vfam-item">
       <m-tag-ads v-if="source === 'sa'" :text="`广告${i + 1}`" />
-      <img v-if="el.img" :src="el.img" alt="" width="199" height="91">
+      <img v-if="el.img" :src="showImg(el.img)" alt="" width="199" height="91">
       <div v-else class="no-img">
         <m-icons :is-center="true" text="请上传广告图" />
       </div>

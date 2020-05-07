@@ -3,7 +3,7 @@
     <div class="vsam-left">
       <div class="ads-p1">
         <m-tag-ads v-if="source === 'sa'" text="广告1" />
-        <img v-if="isItemList && item.itemList[0].img" :src="item.itemList[0].img" alt="" width="181" height="203">
+        <img v-if="isItemList && item.itemList[0].img" :src="showImg(item.itemList[0].img)" alt="" width="181" height="203">
         <div v-else class="no-img">
           <m-icons :is-center="true" text="请上传广告图" />
         </div>
@@ -12,14 +12,14 @@
     <div class="vsam-right">
       <div class="ads-p2">
         <m-tag-ads v-if="source === 'sa'" text="广告2" />
-        <img v-if="isItemList && item.itemList[1].img" :src="item.itemList[1].img" alt="" width="215" height="96">
+        <img v-if="isItemList && item.itemList[1].img" :src="showImg(item.itemList[1].img)" alt="" width="215" height="96">
         <div v-else class="no-img">
           <m-icons :is-center="true" text="请上传广告图" />
         </div>
       </div>
       <div class="ads-p3">
         <m-tag-ads v-if="source === 'sa'" text="广告3" />
-        <img v-if="isItemList && item.itemList[2].img" :src="item.itemList[2].img" alt="" width="215" height="96">
+        <img v-if="isItemList && item.itemList[2].img" :src="showImg(item.itemList[2].img)" alt="" width="215" height="96">
         <div v-else class="no-img">
           <m-icons :is-center="true" text="请上传广告图" />
         </div>
