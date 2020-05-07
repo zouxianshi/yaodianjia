@@ -75,9 +75,6 @@ import { throttle } from '@/utils/throttle'
 export default {
   name: 'GiftsComplimentaryCreate',
   components: { storeGoods, selectGoods },
-  computed: {
-    ...mapGetters(['merCode'])
-  },
   data() {
     const checkLimitStock = (rule, value, callback) => {
       if (this.form.limit === 1) {
@@ -141,6 +138,9 @@ export default {
       disabled: false,
       edit: false
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   created() {
     if (this.$route.query.id) {

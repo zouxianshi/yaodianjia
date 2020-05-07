@@ -196,9 +196,6 @@ export default {
     selectStore,
     selectActivityGoods
   },
-  computed: {
-    ...mapGetters(['merCode'])
-  },
   data() {
     const checkActivitTime = (rule, value, callback) => {
       console.log('我是时间检测-----------------------')
@@ -262,6 +259,9 @@ export default {
       storeSelectGoods: [], // 选取的主商品
       storeActivityGoods: [] // 选区的换购商品
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   created() {
     if (this.$route.query.id) {

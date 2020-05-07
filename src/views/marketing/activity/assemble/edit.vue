@@ -179,15 +179,16 @@
               :disabled="!formData.activitTime || (!formData.allStore && !chooseStore.length) || disabled"
               @click="handleOpenGoods"
             >添加商品</el-button>
-            <el-button
+            <!-- <el-button
               size="small"
               :disabled="!goodsList.length || disabled"
               type="danger"
               @click="handleBatchDel"
-            >批量删除</el-button>
+            >批量删除</el-button> -->
           </p>
-          <el-table :data="goodsList" border size="small" @selection-change="handleSelectionChange">
-            <el-table-column v-if="!activityId" type="selection" width="55" />
+          <!-- <el-table :data="goodsList" border size="small" @selection-change="handleSelectionChange"> -->
+          <el-table :data="goodsList" border size="small">
+            <!-- <el-table-column v-if="!activityId" type="selection" width="55" /> -->
             <el-table-column label="展示顺序" width="80">
               <template slot-scope="scope">
                 <el-input

@@ -33,9 +33,6 @@ import QRCode from 'qrcode'
 import { mapGetters } from 'vuex'
 Vue.use(VueClipboard)
 export default {
-  computed: {
-    ...mapGetters(['merCode'])
-  },
   data() {
     return {
       dialogVisible: false,
@@ -47,6 +44,9 @@ export default {
       type: '',
       activityUrl: ''
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   created() {},
   methods: {
