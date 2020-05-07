@@ -346,7 +346,6 @@
                     style="display:inline-block;margin-right:10px;"
                   >
                     <el-checkbox
-                      v-if="shows(item)"
                       :key="index"
                       checked
                       :disabled="true||is_query"
