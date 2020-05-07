@@ -55,11 +55,12 @@
           element-loading-text="加载中"
         >
           <el-table-column prop="activityType" label="活动类型" min-width="80">
-            <template slot-scope="scope">
-              <span v-if="scope.row.activityType === 0">其他类型</span>
+            <template>
+              <span>支付有礼</span>
+              <!-- <span v-if="scope.row.activityType === 0">其他类型</span>
               <span v-if="scope.row.activityType === 1">免费</span>
               <span v-if="scope.row.activityType === 2">积分</span>
-              <span v-if="scope.row.activityType === 3">现金</span>
+              <span v-if="scope.row.activityType === 3">现金</span> -->
             </template>
           </el-table-column>
           <el-table-column prop="activityDetailName" label="活动名称" min-width="120" />
