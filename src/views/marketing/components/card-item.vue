@@ -37,7 +37,10 @@ export default {
     previewDialog
   },
   props: {
-    item: Object
+    item: {
+      type: Object,
+      default: () => {}
+    }
   },
   methods: {
     handleJump(itemUrl, jumpType) {

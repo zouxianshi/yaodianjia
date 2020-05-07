@@ -42,13 +42,9 @@
         @select-all="handleSelectionChangeStore"
         @select="handleSelect"
       >
-        <el-table-column
-          type="selection"
-          :selectable="checkSelectable"
-          width="55"
-        />
+        <el-table-column type="selection" :selectable="checkSelectable" width="55" />
         <!--     :filters="[{text: '本页全选', value: '本页全选'},{text: '反选当页', value: '反选当页'}]"
-          :filter-method="filterHandler" -->
+        :filter-method="filterHandler"-->
         <el-table-column label="门店编号" prop="stCode" width="100" />
         <el-table-column label="门店名称" prop="stName" show-overflow-tooltip>
           <template slot-scope="scope">
@@ -118,9 +114,6 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters(['merCode'])
-  },
   data() {
     return {
       pageInfo: {
@@ -146,6 +139,9 @@ export default {
         checkStrictly: true // 是否可以选择任一级
       }
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   methods: {
     open() {
@@ -352,7 +348,7 @@ export default {
     position: absolute;
     left: 50px;
     top: 4px;
-    background: rgba(237, 20, 61, .7);
+    background: rgba(237, 20, 61, 0.7);
     border: 1px solid #f78096;
     border-radius: 10px;
     height: 16px;

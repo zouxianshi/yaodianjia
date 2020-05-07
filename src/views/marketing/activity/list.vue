@@ -237,11 +237,6 @@ export default {
       type: ''
     }
   },
-  watch: {
-    $route() {
-      this.type = this.$route.query.params
-    }
-  },
   computed: {
     ...mapGetters(['roles', 'merCode', 'activity']),
     merCode() {
@@ -255,6 +250,11 @@ export default {
     },
     loading() {
       return this.activity.tabloading
+    }
+  },
+  watch: {
+    $route() {
+      this.type = this.$route.query.params
     }
   },
   created() {
