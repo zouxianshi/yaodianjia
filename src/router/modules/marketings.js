@@ -148,7 +148,7 @@ export default [
           {
             path: '/marketings/activity-manage/turntable/guaList',
             component: () => import('@/views/marketings/activitysManage/turntable/guaList'),
-            name: 'activitys-manage-turntable-list',
+            name: 'activitys-manage-turntable-guaList',
             meta: {
               title: '刮刮乐',
               auth: false,

@@ -63,12 +63,18 @@
       <el-table-column prop="endTime" label="活动结束时间" />
       <el-table-column label="时间状态">
         <template slot-scope="scope">
-          <div>{{ scope.row.state.toString()==='1'?'进行中':'' || scope.row.state.toString()==='2'?'未开始':'' || scope.row.state.toString()==='3'?'已结束':'' }}</div>
+          <el-button v-if="scope.row.state.toString()==='1'" size="mini" type="success" plain>进行中</el-button>
+          <el-button v-if="scope.row.state.toString()==='2'" size="mini" type="primary" plain>未开始</el-button>
+          <el-button v-if="scope.row.state.toString()==='3'" size="mini" type="danger" plain>已结束</el-button>
+          <!-- <div>{{ scope.row.state.toString()==='1'?'进行中':'' || scope.row.state.toString()==='2'?'未开始':'' || scope.row.state.toString()==='3'?'已结束':'' }}</div> -->
         </template>
       </el-table-column>
       <el-table-column prop="name" label="状态">
         <template slot-scope="scope">
-          <div>{{ scope.row.status.toString()==='0'?'失效':'' || scope.row.status.toString()==='1'?'生效':'' }}</div>
+          <div>
+            <el-button v-if="scope.row.status.toString()==='0'" size="mini" type="danger" plain>已失效</el-button>
+            <el-button v-if="scope.row.status.toString()==='1'" size="mini" type="primary" plain>已生效</el-button>
+          </div>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
@@ -383,7 +389,7 @@ export default {
     },
     handleCommand(command) {
       if (command.val === '5') {
-        this.$confirm('删除该活动, 是否继续?', '提示', {
+        this.$confirm('确认将此活动设置为失效状态吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -412,7 +418,7 @@ export default {
             })
           })
       } else if (command.val === '3') {
-        this.$confirm('该活动失效, 是否继续?', '提示', {
+        this.$confirm('确认将此活动设置为失效状态吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

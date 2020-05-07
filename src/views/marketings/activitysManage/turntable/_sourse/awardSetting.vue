@@ -50,7 +50,8 @@
     <el-button type="primary" plain :disabled="selectedGift.length>= 8 || isPageUpdateOrView || isRuning" @click="dialogVisible = true">添加奖品</el-button>
     <div style="margin-top:40px">
       <el-button type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
-      <el-button type="primary" @click="submitData">保存并提交</el-button>
+      <el-button v-if="params.pageState!==2" type="primary" @click="submitData">保存并提交</el-button>
+      <el-button v-if="params.pageState===2" type="primary" @click="goBack">返回</el-button>
     </div>
     <el-dialog title="添加奖品" :visible.sync="dialogVisible" width="70%" append-to-body>
       <el-form
@@ -184,6 +185,17 @@ export default {
     this.getcouponList()
   },
   methods: {
+    goBack() {
+      if (this.$route.query.code === 'TA003') {
+        this.$router.push(
+          '/marketings/activity-manage/turntable/list?code=TA003&name=大转盘'
+        )
+      } else if (this.$route.query.code === 'TA004') {
+        this.$router.push(
+          '/marketings/activity-manage/turntable/guaList?code=TA004&name=刮刮乐'
+        )
+      }
+    },
     showImgs() {
       if (this.ruleForm.giftImg) {
         return this.showImgHandler(this.ruleForm.giftImg)
