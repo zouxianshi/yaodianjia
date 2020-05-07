@@ -1,0 +1,87 @@
+<template>
+  <m-sa-layout>
+    <div slot="exhibition">
+      <m-second-advertise :item="searchParams" source="sa" />
+    </div>
+    <div slot="item">
+      <m-edit-item v-for="(el,i) in searchParams.itemList" :ref="`editItem_${i}`" :key="i" :sub-type="searchParams.subType" :item="el" :index="i" @on-item="_onItem" />
+    </div>
+    <el-button slot="submit" type="primary" size="mini" :loading="loading" @click="onSubmit">保存广告设置</el-button>
+  </m-sa-layout>
+</template>
+<script>
+
+import mEditItem from './editItem'
+import mSaLayout from '../_source/saLayout'
+import mSecondAdvertise from '../../viewArea/advertise/secondAdvertise'
+export default {
+  name: 'SaSecondAdvertise',
+  data() {
+    return {
+      searchParams: {
+        dimensionId: '',
+        id: '',
+        itemList: '',
+        subType: 'second',
+        title: '',
+        type: 'advertise'
+      },
+      loading: false
+    }
+  },
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    onSubmit() {
+      const { itemList } = this.searchParams
+      const list = []
+      _.map(itemList, (v, i) => {
+        const refs = this.$refs[`editItem_${i}`][0].$verification()
+        if (typeof refs === 'object') {
+          list.push(refs)
+        }
+      })
+      if (itemList.length === list.length) {
+        this.searchParams.itemList = list
+        this.loading = true
+        this.$emit('on-update', _.cloneDeep(this.searchParams), () => {
+          this.loading = false
+        })
+      }
+    },
+    _onItem(item, i) {
+      this.$set(this.searchParams.itemList, i, item)
+    }
+  },
+  watch: {},
+  beforeCreate() {
+  },
+  created() {
+    this.searchParams = _.cloneDeep(this.item)
+  },
+  beforeMount() {
+  },
+  mounted() {
+  },
+  beforeUpdate() {
+  },
+  updated() {
+  },
+  beforeDestroy() {
+  },
+  destroyed() {
+  },
+  computed: {},
+  components: { mEditItem, mSecondAdvertise, mSaLayout }
+}
+</script>
+
+<style lang="scss" rel="stylesheet/scss">
+  .sa-second-advertise {
+
+  }
+</style>

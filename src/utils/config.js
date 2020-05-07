@@ -3,7 +3,8 @@ const config = {
   merchandise: '/merchandise',
   merGoods: '/mer-manager', // 药店加服务名
   merPromote: '/promote', // 促销活动服务名
-  mask: '/mask'
+  mask: '/mask',
+  customer: '/customer'
 }
 
 export default config

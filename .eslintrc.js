@@ -4,6 +4,9 @@ module.exports = {
     parser: 'babel-eslint',
     sourceType: 'module'
   },
+  globals:{
+    _:true
+  },
   env: {
     browser: true,
     node: true,
@@ -23,6 +26,7 @@ module.exports = {
       }
     }],
     "vue/singleline-html-element-content-newline": "off",
+    "vue/order-in-components": "off",
     "vue/multiline-html-element-content-newline":"off",
     "vue/name-property-casing": ["error", "PascalCase"],
     "vue/no-v-html": "off",

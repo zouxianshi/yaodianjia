@@ -76,7 +76,12 @@ class InnerCtor {
         disabled: this.get('yaodianjia-wxmall'),
         children: [
           {
-            name: '主页设置',
+            name: '主页设置（新）',
+            path: '/mall/home',
+            disabled: true
+          },
+          {
+            name: '主页设置（旧）',
             path: '/wxmall/home-set',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
           },
