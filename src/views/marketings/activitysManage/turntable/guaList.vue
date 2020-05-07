@@ -63,17 +63,17 @@
       <el-table-column prop="endTime" label="活动结束时间" />
       <el-table-column label="时间状态">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.state.toString()==='1'" size="mini" type="success" plain>进行中</el-button>
-          <el-button v-if="scope.row.state.toString()==='2'" size="mini" type="primary" plain>未开始</el-button>
-          <el-button v-if="scope.row.state.toString()==='3'" size="mini" type="danger" plain>已结束</el-button>
+          <el-tag v-if="scope.row.state.toString()==='2'" size="small" type="info">未开始</el-tag>
+          <el-tag v-if="scope.row.state.toString()==='1'" size="small" type="success">进行中</el-tag>
+          <el-tag v-if="scope.row.state.toString()==='3'" size="small" type="danger">已结束</el-tag>
           <!-- <div>{{ scope.row.state.toString()==='1'?'进行中':'' || scope.row.state.toString()==='2'?'未开始':'' || scope.row.state.toString()==='3'?'已结束':'' }}</div> -->
         </template>
       </el-table-column>
       <el-table-column prop="name" label="状态">
         <template slot-scope="scope">
           <div>
-            <el-button v-if="scope.row.status.toString()==='0'" size="mini" type="danger" plain>已失效</el-button>
-            <el-button v-if="scope.row.status.toString()==='1'" size="mini" type="primary" plain>已生效</el-button>
+            <el-tag v-if="scope.row.status.toString()==='1'" size="small">生效</el-tag>
+            <el-tag v-else size="small" type="danger">已失效</el-tag>
           </div>
         </template>
       </el-table-column>

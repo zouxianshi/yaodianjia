@@ -98,9 +98,9 @@
         <template
           slot-scope="scope"
         >
-          <el-button v-if="scope.row.activityState.toString()==='1'" size="mini" type="success" plain>进行中</el-button>
-          <el-button v-if="scope.row.activityState.toString()==='2'" size="mini" type="primary" plain>未开始</el-button>
-          <el-button v-if="scope.row.activityState.toString()==='3'" size="mini" type="danger" plain>已结束</el-button>
+          <el-tag v-if="scope.row.activityState.toString()==='1'" size="mini" type="success">进行中</el-tag>
+          <el-tag v-if="scope.row.activityState.toString()==='2'" size="mini" type="info">未开始</el-tag>
+          <el-tag v-if="scope.row.activityState.toString()==='3'" size="mini" type="danger">已结束</el-tag>
           <!-- <el-tag>
             {{ scope.row.activityState===1?'进行中':'' || scope.row.activityState===2?'未开始':'' || scope.row.activityState===3?'已结束':'' }}
           </el-tag> -->
