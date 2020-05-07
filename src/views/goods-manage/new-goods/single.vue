@@ -1,27 +1,24 @@
 <template>
   <div class="app-container">
     <div class="singleCreate-wrapper">
-      <el-alert
-        title="商家可自行创建海典标准库没有的商品，创建后由商家内部审核，审核后上架并发布到其他门店使用"
-        type="info"
-        :closable="false"
-      />
+      <el-alert title="商家可自行创建海典标准库没有的商品，创建后由商家内部审核，审核后上架并发布到其他门店使用" type="info" :closable="false" />
       <div class="step-box">
-        <el-steps
-          :active="1"
-          finish-status="success"
-          simple
-        >
-          <el-step
-            title="选择分类"
-            icon="el-icon-finished"
-          />
+        <el-steps :active="1" finish-status="success" simple>
+          <el-step title="选择分类" icon="el-icon-finished" />
         </el-steps>
       </div>
       <div v-loading="loading" class="step-content">
-        <el-cascader-panel v-model="chooseList" :options="typeList" :props="defaultProps" @change="handleChoose" />
+        <el-cascader-panel
+          v-model="chooseList"
+          :options="typeList"
+          :props="defaultProps"
+          @change="handleChoose"
+        />
         <el-card style="width:730px;margin-top:12px;">
-          <span>您当前选择的是：</span> <span v-if="chooseTypeList.length!==0">{{ chooseTypeList[0].name }}>{{ chooseTypeList[1]?chooseTypeList[1].name:'' }}>{{ chooseTypeList[2]?chooseTypeList[2].name:'' }}</span>
+          <span>您当前选择的是：</span>
+          <span
+            v-if="chooseTypeList.length!==0"
+          >{{ chooseTypeList[0].name }}>{{ chooseTypeList[1]?chooseTypeList[1].name:'' }}>{{ chooseTypeList[2]?chooseTypeList[2].name:'' }}</span>
         </el-card>
       </div>
       <footer class="footer text-center">
@@ -34,10 +31,12 @@
 import minxis from './_source/mixin'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'SingleCreate',
   mixins: [minxis],
   data() {
     const _this = this
     return {
+      isToEdit: false,
       active: 0,
       defaultProps: {
         // lazy: true,
@@ -71,10 +70,39 @@ export default {
       loading: false
     }
   },
-  beforeRouteLeave(to, from, next) { // 路由离开关闭标签
-    this.$store
-      .dispatch('tagsView/delView', from)
-    next()
+  beforeRouteLeave(to, from, next) {
+    // 路由离开关闭标签
+    // this.$store
+    //   .dispatch('tagsView/delView', from)
+    // next()
+    if (
+      to.name === 'GoodsEdit' &&
+      from.name === 'SingleCreate' &&
+      this.isToEdit
+    ) {
+      const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+        item => item.name === 'GoodsEdit'
+      )
+      if (hasGoodsEdit) {
+        const answer = window.confirm('你还有数据没有保存，是否确认退出')
+        if (answer) {
+          this.$store.dispatch('tagsView/delView', to).then(res => {
+            this.isToEdit = false
+            next()
+          })
+        } else {
+          next()
+        }
+      } else {
+        this.$store.dispatch('tagsView/delView', to).then(res => {
+          this.isToEdit = false
+          next()
+        })
+      }
+    } else {
+      this.isToEdit = false
+      next()
+    }
   },
   computed: {
     ...mapGetters(['merCode'])
@@ -104,6 +132,7 @@ export default {
         return
       }
       sessionStorage.setItem('types', JSON.stringify(this.chooseTypeList))
+      this.isToEdit = true
       this.$router.push('/goods-manage/edit')
     }
   }
@@ -119,9 +148,9 @@ export default {
     width: 730px;
     margin-top: 12px;
   }
-  .footer{
-      margin-top: 20px;
-      width: 600px;
+  .footer {
+    margin-top: 20px;
+    width: 600px;
   }
 }
 </style>
