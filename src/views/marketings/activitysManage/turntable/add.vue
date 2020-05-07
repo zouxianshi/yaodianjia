@@ -31,7 +31,7 @@ export default {
         activityDetailName: '',
         activityGiftReqDTO: [],
         activityNote: '',
-        activityTemplateCode: 'TA003',
+        activityTemplateCode: this.$route.query.code,
         beginTime: '',
         bottomNote: '',
         countRule: '',

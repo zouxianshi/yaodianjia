@@ -17,12 +17,14 @@
 export default {
   name: 'SubmitSave',
   components: {},
-  props: {},
+  props: {
+  },
   data() {
     return {
       content: '',
       totalTime: 5, // 记录具体倒计时时间
-      clock: ''
+      clock: '',
+      activityTemplateCode: this.$route.query.code
     }
   },
   computed: {
@@ -46,7 +48,15 @@ export default {
       }, 1000)
     },
     toUrl() {
-      this.$router.push('/marketings/activity-manage/turntable/list?code=TA003&name=大转盘&id=1')
+      if (this.activityTemplateCode === 'TA003') {
+        this.$router.push(
+          '/marketings/activity-manage/turntable/list?code=TA003&name=大转盘'
+        )
+      } else if (this.activityTemplateCode === 'TA004') {
+        this.$router.push(
+          '/marketings/activity-manage/turntable/guaList?code=TA004&name=刮刮乐'
+        )
+      }
     }
   }
 }

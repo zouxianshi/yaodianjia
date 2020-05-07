@@ -31,7 +31,7 @@
         <el-input v-model="ruleForm.bottomNote" :disabled="isRuning" style="width:400px" placeholder="解释说明，最多20字" />
       </el-form-item>
       <el-form-item>
-        <div v-if="intrShow" style="font-size:13px;margin-left:20px">
+        <div v-if="intrShow" class="intrwarning">
           大转盘的玩法场景说明：
           <ul>
             <li>1. 免费参与：创建抽奖活动后，将链接发布至商城首页或打印活动二维码，会员进入免费参与抽奖，较适用于小面额优惠券抽奖，提高用户活跃，促进商品销售；</li>
@@ -41,7 +41,7 @@
         </div>
         <div slot="label">
           活动规则
-          <i class="el-icon-warning-outline" @click="()=>intrShow?intrShow=false:intrShow=true" />
+          <i style="color: #faad14;" class="el-icon-question" @click="()=>intrShow?intrShow=false:intrShow=true" />
         </div>
       </el-form-item>
       <el-form-item label="参与方式" prop="integralRule">
@@ -50,7 +50,7 @@
           <el-radio :label="2">消耗积分&emsp;每消耗&emsp;
             <el-input v-model="ruleForm.integralRule" onkeyup="this.value=this.value.replace(/\D/g,'')" :disabled="isRuning || ruleForm.joinRule !== 2" maxlength="8" style="width:100px" />&emsp;积分，参与一次
           </el-radio>
-          <el-radio :label="3">免费参与</el-radio>
+          <el-radio :label="3">活动参与</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="抽奖次数">
@@ -203,11 +203,21 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
 .rule-ruleList-modal {
   .rule-ruleList-title {
-    height: 50px;
-    line-height: 50px;
+    height: 15px;
+    padding-left: 10px;
+    margin-top: 10px;
+    line-height: 15px;
     width: 70%;
-    border-bottom: 2px solid #bbbbbb;
+    border-left: 2px solid #409eff;
     margin-bottom: 20px;
+  }
+  .intrwarning{
+    font-size:13px;
+    margin-left:20px;
+    background-color: #fdf6ec;
+    color: #e6a23c;
+    border-radius: 5px;
+    padding:10px
   }
   .el-textarea__inner {
     min-height: 70px !important;
