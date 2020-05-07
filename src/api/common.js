@@ -46,3 +46,10 @@ export function getTypeTree(params) {
   })
 }
 
+// 获取所有门店
+export function getAllStore(merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/getAllStores/${merCode}`,
+    method: 'get'
+  })
+}

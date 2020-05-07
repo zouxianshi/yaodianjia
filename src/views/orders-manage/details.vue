@@ -585,6 +585,10 @@
                           </div>
                           <div v-else style="line-height: 32px">暂无上传</div>
                         </div>
+                        <div
+                          v-if="item.isPromotion === 1 && (item.pmtProductType === 'G' || item.pmtProductType === 'R')"
+                          :class="{ 'goods-tag': true, 'gift': item.pmtProductType === 'G' }"
+                        >{{ item.pmtProductType === 'G'? '赠品':'换购' }}</div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">{{ item.commodityName }}</div>
@@ -604,7 +608,11 @@
                         <div class="cell-text">￥{{ item.totalActualAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div class="cell-text">{{ item.couponAmount }}</div>
+                        <div
+                          v-if="item.isPromotion === 1"
+                          class="cell-text"
+                        >立减：{{ item.activityDiscountAmont }}</div>
+                        <div class="cell-text">优惠：{{ item.couponAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">
@@ -615,10 +623,14 @@
                           <template v-else>{{ item.status | orderStatus }}</template>
                           <div
                             v-if="item.orderPackage && item.status!==8 && item.status!==10 && item.status!==20 && item.status!==30"
-                            class="marginTop20"
+                            class="express"
                           >
-                            <span class="font12">快递单号</span>
-                            <span class="font12">{{ item.orderPackage.packageNo }}</span>
+                            <span class="font12">快递单号:</span>
+                            <span class="number">{{ item.orderPackage.packageNo }}</span>
+                            <i
+                              class="el-icon-copy-document copy"
+                              @click="doCopy(item.orderPackage.packageNo)"
+                            />
                           </div>
                         </div>
                       </div>
@@ -637,9 +649,12 @@
   </div>
 </template>
 <script>
+import Vue from 'vue'
 import mixins from '@/utils/mixin'
+import VueClipboard from 'vue-clipboard2'
 import { mapGetters } from 'vuex'
 import { getOrderDetail, setPushErp } from '@/api/order'
+Vue.use(VueClipboard)
 export default {
   filters: {
     orderType: function(value) {
@@ -1033,11 +1048,23 @@ export default {
 
       // 返回解析信息对象
       return msgObj
+    },
+    doCopy(row) {
+      this.$copyText(row).then(
+        e => {
+          console.log(e)
+          this.$message.success('复制成功')
+        },
+        e => {
+          console.log(e)
+          this.$message.warning('复制失败')
+        }
+      )
     }
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 // @import "../../scss/helpers/mixins";
 .store-goods-wrapper {
   .cascader {
@@ -1222,15 +1249,36 @@ export default {
               // border-right: 1px solid #ccc;
               border-bottom: 1px solid #dfe6ec;
               height: 120px;
+              position: relative;
               .cell-text {
                 text-align: left;
                 word-break: break-all;
+                line-height: 24px;
+              }
+              .goods-tag {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                z-index: 1;
+                background-color: #fef0f0;
+                border: 1px solid #f75a5a;
+                color: #f75a5a;
+                padding: 0 8px;
+                font-size: 12px;
+                line-height: 16px;
+                border-radius: 4px;
+                &.gift {
+                  background-color: #f75a5a;
+                  color: #fff;
+                }
+                // #f75a5a
               }
             }
             .cell-con {
               display: flex;
               align-items: center;
               justify-content: center;
+              flex-direction: column;
             }
           }
           .detail-item-middle {
@@ -1245,11 +1293,31 @@ export default {
               padding: 10px;
               border-bottom: 1px solid #dfe6ec;
               border-right: 1px solid #dfe6ec;
+              flex-direction: column;
               &:nth-last-child(1) {
                 border-right: none;
               }
               .cell-text {
                 text-align: center;
+                line-height: 24px;
+                width: 100%;
+              }
+              .express {
+                display: flex;
+                flex-direction: row;
+                white-space: nowrap;
+                font-size: 12px;
+                align-items: center;
+                .number {
+                  flex: 1;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                }
+                .copy {
+                  cursor: pointer;
+                  color: #2d8cf0;
+                }
               }
             }
             .cell-con {
