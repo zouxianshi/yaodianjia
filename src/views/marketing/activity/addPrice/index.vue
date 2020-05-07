@@ -185,6 +185,7 @@ import selectGoods from '../../components/select-goods'
 import selectActivityGoods from './_source/select-activity-goods'
 import { createActAdd, getActAddInfo, updateActAdd } from '@/api/activity'
 import { mapGetters } from 'vuex'
+import { throttle } from '@/utils/throttle'
 
 export default {
   name: 'AddPriceCreate',
@@ -377,7 +378,7 @@ export default {
       this.$refs.selectStoreComponent.dataFrom(this.chooseStore)
       // this.chooseStore = this.chooseStore
     },
-    onSubmit() {
+    onSubmit: throttle(function() {
       this.$refs.form.validate((valid, object) => {
         if (valid) {
           console.log('我准备通过了----------------------')
@@ -507,7 +508,7 @@ export default {
           return false
         }
       })
-    },
+    }, 3000),
     resultData(data, msg) {
       if (data) {
         this.$alert(

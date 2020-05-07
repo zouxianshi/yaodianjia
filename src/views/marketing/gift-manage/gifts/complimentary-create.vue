@@ -70,6 +70,8 @@ import storeGoods from '../../components/store-gods'
 import selectGoods from '../../components/select-goods'
 import { createActGift, getActGiftInfo } from '@/api/activity'
 import { mapGetters } from 'vuex'
+import { throttle } from '@/utils/throttle'
+
 export default {
   name: 'GiftsComplimentaryCreate',
   components: { storeGoods, selectGoods },
@@ -171,7 +173,7 @@ export default {
       this.storeSelectGoods = val
       this.$refs.storeGods.dataFrom(val)
     },
-    submit() {
+    submit: throttle(function() {
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log('submit ok', valid, this.form, this.storeSelectGoods)
@@ -220,7 +222,7 @@ export default {
           return false
         }
       })
-    },
+    }, 3000),
     delSelectGoods(item, index) {
       console.log('item, index', item, index)
       this.storeSelectGoods.splice(index, 1)

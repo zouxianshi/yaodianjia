@@ -282,6 +282,8 @@ import selectGoods from '../../components/select-goods'
 import { createActFull, getActFull, updateActFull } from '@/api/activity'
 import { mapGetters } from 'vuex'
 import { checkNumberdouble } from '@/utils/validate'
+import { throttle } from '@/utils/throttle'
+
 export default {
   name: 'ReduceGift',
   components: {
@@ -659,7 +661,7 @@ export default {
       }
     },
 
-    onSubmit() {
+    onSubmit: throttle(function() {
       //
       console.log('我是格式话表单提交数据----------------', this.form)
       this.$refs.form.validate((valid, object) => {
@@ -801,7 +803,7 @@ export default {
           return false
         }
       })
-    },
+    }, 3000),
     resultData(data, msg) {
       if (data) {
         this.$alert(

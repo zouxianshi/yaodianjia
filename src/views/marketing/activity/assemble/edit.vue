@@ -284,6 +284,8 @@ import storeDialog from '../../components/store'
 import storeGoods from '../../components/store-gods'
 import selectStore from '../../components/select-store'
 import { mapGetters } from 'vuex'
+import { throttle } from '@/utils/throttle'
+
 import {
   assembleActivityAdd,
   getAssembleAcInfo,
@@ -566,7 +568,7 @@ export default {
       console.log('onSelectedGoods', row)
       this.goodsList = row
     },
-    handleSubmit() {
+    handleSubmit: throttle(function() {
       // 数据提交
       this.$refs.formData.validate((valid, object) => {
         if (valid) {
@@ -642,7 +644,7 @@ export default {
           return false
         }
       })
-    },
+    }, 3000),
     addActivity(data) {
       assembleActivityAdd(data)
         .then(res => {

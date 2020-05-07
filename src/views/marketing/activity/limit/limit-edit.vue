@@ -322,6 +322,7 @@ import selectStore from '../../components/select-store'
 import storeGoods from '../../components/store-gods'
 
 import { checkNumberdouble } from '@/utils/validate'
+import { throttle } from '@/utils/throttle'
 import { createActLimit, updateActLimit, getActLimit } from '@/api/activity'
 import config from '@/utils/config'
 
@@ -690,7 +691,7 @@ export default {
       console.log('skuStr', skuStr)
       return skuStr
     },
-    submit() {
+    submit: throttle(function() {
       console.log('xForm', this.xForm)
       // 表单验证
       this.$refs.xForm.validate((valid, object) => {
@@ -761,7 +762,7 @@ export default {
           return false
         }
       })
-    },
+    }, 3000),
     formatItems(goodsList) {
       let ret = []
       ret = goodsList.map(v => {
