@@ -3,7 +3,7 @@
     <el-button
       type="primary"
       size="mini"
-      @click="() => $router.push({path:'/marketings/activity-manage/turntable/add'})"
+      @click="() => $router.push({path:'/marketings/activity-manage/turntable/add', query: {code: this.$route.query.code }})"
     >新建活动</el-button>
     <div class="explain">
       <!-- <el-alert
