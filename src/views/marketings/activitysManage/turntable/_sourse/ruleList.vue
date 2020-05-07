@@ -54,7 +54,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="抽奖次数">
-        <el-radio-group v-model="ruleForm.countType" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;" @change="changeCount">
+        <el-radio-group v-if="ruleForm.joinRule !== 3" v-model="ruleForm.countType" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;" @change="changeCount">
           <el-radio :label="2">
             <span>
               每天可抽奖&emsp;
@@ -68,6 +68,7 @@
             </span>
           </el-radio>
         </el-radio-group>
+        <el-input v-else v-model="ruleForm.countRule" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" />
       </el-form-item>
     </el-form>
     <div style="margin-left:30px">
@@ -183,7 +184,7 @@ export default {
           }
           if (Number(this.ruleForm.countRule) === 0) {
             this.$message({
-              message: '请输入抽奖次数限制',
+              message: '请输入正确抽奖次数限制',
               type: 'error'
             })
             return false
