@@ -346,7 +346,6 @@
                     style="display:inline-block;margin-right:10px;"
                   >
                     <el-checkbox
-                      v-if="shows(item)"
                       :key="index"
                       checked
                       :disabled="true||is_query"
@@ -453,6 +452,16 @@
                           :index="scope.$index"
                           @saveInfo="handleEditTabSpecs"
                         />
+                      </template>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="货主" min-width="100">
+                    <template slot-scope="scope">
+                      <template v-if="!is_query">
+                        <el-select v-model="scope.row.owner" size="small" clearable :disabled="scope.row.isSku===0">
+                          <el-option label="自营" :value="0" />
+                          <el-option label="平安" :value="1" />
+                        </el-select>
                       </template>
                     </template>
                   </el-table-column>
@@ -587,6 +596,16 @@
                           </template>
                         </template>
                       </el-table-column>
+                      <el-table-column label="货主" min-width="100">
+                        <template slot-scope="scope">
+                          <template v-if="!is_query">
+                            <el-select v-model="scope.row.owner" size="small" clearable :disabled="scope.row.isSku===0">
+                              <el-option label="自营" :value="0" />
+                              <el-option label="平安" :value="1" />
+                            </el-select>
+                          </template>
+                        </template>
+                      </el-table-column>
                       <el-table-column label="参考价格" prop="mprice">
                         <template slot-scope="scope">
                           <span v-text="scope.row.mprice" />
@@ -695,39 +714,47 @@
                         :placeholder="'输入'+items.attributeName"
                       />
                     </el-form-item>
-                    <el-form-item label>
-                      <span slot="label">
-                        <span class="tip">*</span> 条码
-                      </span>
-                      <el-input
-                        v-model.trim="item.barCode"
-                        maxlength="30"
-                        placeholder="输入条码"
-                        @blur="input_checkBarCode(item.barCode)"
-                      />
-                    </el-form-item>
                     <el-form-item>
                       <span slot="label">
                         <span class="tip">*</span> 商品编码
                       </span>
                       <el-input
                         v-model.trim="item.erpCode"
-                        placeholder="输入条码"
+                        placeholder="输入商品编码"
                         maxlength="16"
                         @blur="input_checkErpcode(item.erpCode)"
                       />
                     </el-form-item>
+                    <el-form-item label>
+                      <span slot="label">
+                        <span class="tip">*</span> 商品条码
+                      </span>
+                      <el-input
+                        v-model.trim="item.barCode"
+                        maxlength="30"
+                        placeholder="输入商品条码"
+                        @blur="input_checkBarCode(item.barCode)"
+                      />
+                    </el-form-item>
+                    <el-form-item label>
+                      <span slot="label">货主</span>
+                      <el-select v-model="item.owner" size="small" clearable>
+                        <el-option label="自营" :value="0" />
+                        <el-option label="平安" :value="1" />
+                      </el-select>
+                    </el-form-item>
+
                     <el-form-item>
                       <span slot="label">
-                        <span class="tip">*</span> 价格
+                        <span class="tip">*</span> 参考价格
                       </span>
                       <el-input
                         v-model.trim="item.mprice"
-                        placeholder="输入价格"
+                        placeholder="输入参考价格"
                         @blur="input_checkMprice(item,index)"
                       />
                     </el-form-item>
-                    <el-form-item label="限购">
+                    <el-form-item label="限购数量">
                       <div style="padding-top:10px;">
                         <el-radio-group
                           v-model="item.limitType"
@@ -870,7 +897,13 @@
               </ol>
               <div class="text-center">
                 <el-button type size="small" @click="step=2">上一步</el-button>
-                <el-button v-if="!is_query" type="primary" size="small" :loading="subLoading1" @click="handleSubImg">保存</el-button>
+                <el-button
+                  v-if="!is_query"
+                  type="primary"
+                  size="small"
+                  :loading="subLoading1"
+                  @click="handleSubImg"
+                >保存</el-button>
               </div>
             </div>
           </div>
@@ -1838,12 +1871,12 @@ export default {
           this.subLoading = false
           this.leaveAction = true
           setTimeout(() => {
-            // let url = ''
-            // if (this.basicForm.origin === 1) {
-            //   url = '/goods-manage/depot'
-            // } else {
-            //   url = '/goods-manage/apply-record'
-            // }
+            let url = ''
+            if (this.basicForm.origin === 1) {
+              url = '/goods-manage/depot'
+            } else {
+              url = '/goods-manage/apply-record'
+            }
             this.$confirm('请确认已保存橱窗图', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
@@ -1854,7 +1887,7 @@ export default {
                   .dispatch('tagsView/delView', this.$route)
                   .then(res => {
                     sessionStorage.setItem('isRefreshDepot', true)
-                    this.$router.go(-1) // 返回上一个路由
+                    this.$router.replace(url)
                   })
                 // this.$store.dispatch('tagsView/delView', this.$route)
                 // this.$store

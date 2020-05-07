@@ -76,16 +76,17 @@ const mixin = {
             return
           }
           // eslint-disable-next-line no-undef
-        } else if (keys === 'barCode') {
-          // const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
-          if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
-            this.$message({
-              message: '已存在相同的条形码,请重新编辑输入',
-              type: 'error'
-            })
-            return
-          }
         }
+        // else if (keys === 'barCode') {
+        //   // const findIndex = findArray(this.editSpecsData, { barCode: row[keys] })
+        //   if (findIndex > -1 && this.editSpecsData[findIndex].id !== row.id) {
+        //     this.$message({
+        //       message: '已存在相同的条形码,请重新编辑输入',
+        //       type: 'error'
+        //     })
+        //     return
+        //   }
+        // }
         this.$set(this.editSpecsData, index, row)
       }
     },
@@ -405,9 +406,11 @@ const mixin = {
                   v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
                 })
               }
+              v.owner = v.owner || 0
+              v.isSku = 1
             })
           }
-          console.log('------请求规格数据')
+          console.log('------请求标库规格数据')
           this.editSpecsData = res.data || []
           this.standardNoData = !res.data
           if (this.$route.query.type === 'query') {
@@ -465,6 +468,8 @@ const mixin = {
                     })
                   }
                 }
+                element.owner = element.owner || 0
+                element.isSku = 0
               }
               specList.map(v => {
                 if (v.specSkuList) {
@@ -491,6 +496,7 @@ const mixin = {
               .find('.el-checkbox__input')
             findInput.remove() // 设置全选disabeld
             specList.map((v, index) => {
+              v.owner = v.owner || 0
               const findIndex = findArray(this.editSpecsData, {
                 barCode: v.barCode
               })
@@ -499,11 +505,13 @@ const mixin = {
                 const row = this.editSpecsData[findIndex]
                 row.disabled = true
                 row.id = v.id
+                row.owner = v.owner
                 row.mprice = v.mprice
                 row.erpCode = v.erpCode
                 row.isCheck = true // 数据做标识  选中
                 row.picUrl = v.picUrl
                 row.limitNum = v.limitNum
+                row.limitType = v.limitType
                 row.type = v.type || 2
                 this.$set(this.editSpecsData, findIndex, row)
               } else {
@@ -571,6 +579,7 @@ const mixin = {
         mprice: '',
         erpCode: '',
         barCode: '',
+        owner: 0,
         limitType: 0,
         limitNum: '',
         limit: '',
