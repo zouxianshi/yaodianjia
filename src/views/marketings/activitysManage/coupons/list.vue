@@ -48,7 +48,7 @@
       <el-table-column prop="cname" label="优惠券信息" width="150">
         <template slot-scope="scope">
           <div>
-            {{ scope.row.cname + scope.row.ctype }}
+            {{ scope.row.cname }}
             <el-tag
               v-if="scope.row.ctype ===1"
               effect="dark"
