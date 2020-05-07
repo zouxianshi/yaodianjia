@@ -53,7 +53,7 @@
         </div>
       </el-form-item>
       <el-form-item label="参与方式" prop="integralRule">
-        <el-radio-group v-model="ruleForm.joinRule" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;" @change="ruleForm.integralRule=0">
+        <el-radio-group v-model="ruleForm.joinRule" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;" @change="ruleForm.integralRule=ruleForm.countRule=0">
           <el-radio :label="1">免费参与</el-radio>
           <el-radio :label="2">消耗积分&emsp;每消耗&emsp;
             <el-input v-model="ruleForm.integralRule" onkeyup="this.value=this.value.replace(/\D/g,'')" :disabled="isRuning || ruleForm.joinRule !== 2" maxlength="8" style="width:100px" />&emsp;积分，参与一次
@@ -76,7 +76,7 @@
             </span>
           </el-radio>
         </el-radio-group>
-        <el-input v-else v-model="ruleForm.countRule" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" />
+        <el-input v-else v-model="ruleForm.countRule" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" style="width:120px" />
       </el-form-item>
     </el-form>
     <div style="margin-left:30px">

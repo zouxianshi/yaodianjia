@@ -34,9 +34,6 @@ export default {
   destroyed() {
     window.clearInterval(this.clock)
   },
-  created() {
-    this.countDown()
-  },
   methods: {
     // 倒计时
     countDown() {

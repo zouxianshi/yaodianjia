@@ -7,7 +7,7 @@
     </el-steps>
     <ruleList v-show="stepActive === 1" ref="ruleList" :params="params" @handleNext="handleNext" />
     <awardSetting v-show="stepActive === 2" ref="awardSetting" :params="params" @handleNext="handleNext" @submitAjax="submitAjax" />
-    <submitSave v-show="stepActive === 3" @handleNext="handleNext" />
+    <submitSave v-show="stepActive === 3" ref="submitSave" @handleNext="handleNext" />
   </div>
 </template>
 <script>
@@ -93,6 +93,7 @@ export default {
         updateActivity(params).then(res => {
           if (res.code === '10000') {
             this.stepActive = 3
+            this.$refs.submitSave.countDown()
           } else {
             this.$message({
               message: '修改失败！',
