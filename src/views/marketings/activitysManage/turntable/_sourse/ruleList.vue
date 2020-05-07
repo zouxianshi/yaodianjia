@@ -182,7 +182,6 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log(this.ruleForm)
           if (!this.activeTime[0]) {
             this.$message({
               message: '请选择活动时间',

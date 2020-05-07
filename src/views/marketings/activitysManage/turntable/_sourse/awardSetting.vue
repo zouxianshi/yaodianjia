@@ -217,7 +217,6 @@ export default {
             type: 'success',
             message: '删除成功!'
           })
-          console.log(this.selectedGift)
         })
         .catch(() => {
           this.$message({
@@ -329,7 +328,6 @@ export default {
       }
     },
     beforeAvatarUpload(file) {
-      console.log(file)
       const isImg =
         file.type === 'image/jpeg' ||
         file.type === 'image/png' ||
