@@ -76,15 +76,15 @@ class InnerCtor {
         disabled: this.get('yaodianjia-wxmall'),
         children: [
           {
-            name: '主页设置（新）',
+            name: '主页设置',
             path: '/mall/home',
-            disabled: true
-          },
-          {
-            name: '主页设置（旧）',
-            path: '/wxmall/home-set',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
           },
+          // {
+          //   name: '主页设置（旧）',
+          //   path: '/wxmall/home-set',
+          //   disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
+          // },
           {
             name: '首页轮播图',
             path: '/wxmall/banner',
