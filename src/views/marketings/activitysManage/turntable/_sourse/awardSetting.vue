@@ -26,10 +26,15 @@
         <el-table-column prop="giftContent" label="内容" />
         <el-table-column label="中奖几率">
           <template slot-scope="scope">
-            {{ (scope.row.winRandom)*100 }}%
+            <el-input v-model="scope.row.winRandom" size="mini" :disabled="isPageUpdateOrView || isRuning" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="2" style="width: 50px" />
+            <span style="font-size:16px">%</span>
           </template>
         </el-table-column>
-        <el-table-column prop="giftNum" label="奖品数量" />
+        <el-table-column label="奖品数量">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.giftNum" :disabled="isPageUpdateOrView || isRuning" size="mini" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <el-button
@@ -235,7 +240,7 @@ export default {
           } else {
             this.ruleForm.giftName = this.ruleForm.giftContent
           }
-          this.ruleForm.winRandom = this.ruleForm.winRandom / 100
+          this.ruleForm.winRandom = this.ruleForm.winRandom
           that.selectedGift.push(_.cloneDeep(that.ruleForm))
           this.ruleForm = {
             giftId: '', // 选择优惠券时的id
@@ -355,7 +360,10 @@ export default {
     // 提交数据到add
     submitData() {
       var params = {}
-      var selected = this.selectedGift
+      var selected = _.cloneDeep(this.selectedGift)
+      selected.map(item => {
+        item.winRandom = item.winRandom / 100
+      })
       if (selected.length !== 6 && selected.length !== 8) {
         this.$message({
           message: '奖品数量需设置为6或者8',

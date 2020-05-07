@@ -62,6 +62,9 @@ export default {
         } else {
           this.$refs.ruleList.dayLimit = data.countRule
         }
+        data.listActivityGiftEntity.map(item => {
+          item.winRandom = item.winRandom * 100
+        })
         this.$refs.awardSetting.selectedGift = data.listActivityGiftEntity
         if (data.state === 1 && data.status === 1) {
           this.params.pageState = 1 // 1编辑 2查看

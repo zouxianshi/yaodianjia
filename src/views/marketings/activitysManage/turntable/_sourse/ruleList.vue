@@ -76,7 +76,7 @@
             </span>
           </el-radio>
         </el-radio-group>
-        <el-input v-else v-model="ruleForm.countRule" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" style="width:120px" />
+        <el-input v-else v-model="ruleForm.countRule" :disabled="isRuning" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" style="width:120px" />
       </el-form-item>
     </el-form>
     <div style="margin-left:30px">
