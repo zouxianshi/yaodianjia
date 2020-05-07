@@ -34,9 +34,7 @@ export default {
         itemList: dragList
       })
       this.setItemDragData({ $index, itemList: dragList })
-      this.saveAssembly({ searchParams: { ...item, itemList: dragList, dimensionId: id || '' }, uuid }).then(() => {
-        this.$message.success('导航排序成功！')
-      })
+      this.saveAssembly({ searchParams: { ...item, itemList: dragList, dimensionId: id || '' }, uuid })
     }
   },
   watch: {},
