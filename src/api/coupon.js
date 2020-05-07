@@ -58,6 +58,23 @@ export function addCoupon(params) {
     data: params
   })
 }
+// 编辑优惠券
+export function updateCoupon(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/updateCoupon`,
+    method: 'post',
+    data: params
+  })
+}
+// 删除优惠券
+export function deleteCoupon(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/deleteCoupon?id=${params.id}`,
+    method: 'post',
+    data: {}
+  })
+}
+
 // 模块列表
 export function moduleList(params) {
   return request({
@@ -98,14 +115,7 @@ export function marketaddCoupon(params) {
     data: params
   })
 }
-// 编辑优惠券
-export function updateCoupon(params) {
-  return request({
-    url: `${config.merGoods}/1.0/coupon/updateCoupon`,
-    method: 'post',
-    data: params
-  })
-}
+
 // (领券中心)失效优惠券
 export function couponInvalid(params) {
   return request({

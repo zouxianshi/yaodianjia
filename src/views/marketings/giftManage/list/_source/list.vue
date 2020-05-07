@@ -58,9 +58,10 @@
         <el-table-column prop="totalCount" label="已领取量" width="110" />
         <el-table-column prop="onlineCount" label="线上核销" width="110" />
         <el-table-column prop="offlineCount" label="线下核销" width="110" />
-        <el-table-column label="操作" width="80" align="center">
+        <el-table-column label="操作" width="120" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="_edit(scope.row)">编辑</el-button>
+            <el-button type="text" size="mini" @click="deleteCoupons(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -77,7 +78,7 @@
   </div>
 </template>
 <script>
-import { getCouponList } from '@/api/coupon'
+import { getCouponList, deleteCoupon } from '@/api/coupon'
 export default {
   data() {
     return {
@@ -128,6 +129,23 @@ export default {
       } else {
         this.$router.push('/marketings/gift-manage/gift?id=' + data.id)
       }
+    },
+    // 删除优惠券
+    deleteCoupons(ids) {
+      deleteCoupon({ id: ids }).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+          this.searchData()
+        } else {
+          this.$message({
+            message: '删除失败！',
+            type: 'error'
+          })
+        }
+      })
     }
   }
 }

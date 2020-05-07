@@ -45,10 +45,10 @@
         </div>
       </el-form-item>
       <el-form-item label="参与方式" prop="integralRule">
-        <el-radio-group v-model="ruleForm.joinRule" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;">
+        <el-radio-group v-model="ruleForm.joinRule" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;" @change="ruleForm.integralRule=0">
           <el-radio :label="1">免费参与</el-radio>
           <el-radio :label="2">消耗积分&emsp;每消耗&emsp;
-            <el-input v-model="ruleForm.integralRule" :disabled="isRuning || ruleForm.joinRule !== 2" maxlength="8" style="width:100px" />&emsp;积分，参与一次
+            <el-input v-model="ruleForm.integralRule" onkeyup="this.value=this.value.replace(/\D/g,'')" :disabled="isRuning || ruleForm.joinRule !== 2" maxlength="8" style="width:100px" />&emsp;积分，参与一次
           </el-radio>
           <el-radio :label="3">免费参与</el-radio>
         </el-radio-group>
@@ -58,13 +58,13 @@
           <el-radio :label="2">
             <span>
               每天可抽奖&emsp;
-              <el-input v-model="dayLimit" :disabled="isRuning || ruleForm.countType===1" maxlength="6" style="width:100px" />
+              <el-input v-model="dayLimit" onkeyup="this.value=this.value.replace(/\D/g,'')" :disabled="isRuning || ruleForm.countType===1" maxlength="6" style="width:100px" />
             </span>
           </el-radio>
           <el-radio :label="1">
             <span>
               每人可抽奖&emsp;
-              <el-input v-model="personLimit" :disabled=" isRuning || ruleForm.countType===2" maxlength="6" style="width:100px" />
+              <el-input v-model="personLimit" onkeyup="this.value=this.value.replace(/\D/g,'')" :disabled=" isRuning || ruleForm.countType===2" maxlength="6" style="width:100px" />
             </span>
           </el-radio>
         </el-radio-group>
@@ -89,7 +89,7 @@ export default {
   },
   data() {
     var validateparticipatio = (rule, value, callback) => {
-      if (this.ruleForm.joinRule === 2 && (value === 0 || ('' + value).trim() === '')) {
+      if (this.ruleForm.joinRule === 2 && (Number(value) === 0 || ('' + value).trim() === '')) {
         callback(new Error('请输入大于0的消耗积分数'))
       } else {
         callback()
