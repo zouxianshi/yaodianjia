@@ -496,7 +496,7 @@ export default {
   // }
   .el-dropdown-link {
     cursor: pointer;
-    color: #409eff;
+    color: #147de8;
   }
   .el-icon-arrow-down {
     font-size: 12px;
