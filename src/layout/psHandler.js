@@ -140,13 +140,13 @@ class InnerCtor {
         path: '',
         disabled: this.get('marketing'),
         children: [
+          // {
+          //   name: '新建活动',
+          //   path: '/marketing/activity/create',
+          //   disabled: this.get('marketing.marketing-create')
+          // },
           {
-            name: '新建活动',
-            path: '/marketing/activity/create',
-            disabled: this.get('marketing.marketing-create')
-          },
-          {
-            name: '活动管理',
+            name: '精彩活动',
             path: '/marketing/activity',
             disabled: this.get('marketing.marketing-manager')
           },
