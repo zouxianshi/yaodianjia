@@ -37,9 +37,7 @@
             <el-image
               style="width: 70px; height: 70px"
               :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
-              lazy
               fit="contain"
-              :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
             />
           </template>
         </el-table-column>
@@ -76,7 +74,7 @@
   </div>
 </template>
 <script>
-import { getStoreGoodsList } from '@/api/store-goods'
+import { getStoreGoodsList } from '@/api/coupon'
 import { getTypeTree } from '@/api/group'
 import { mapGetters } from 'vuex'
 export default {
