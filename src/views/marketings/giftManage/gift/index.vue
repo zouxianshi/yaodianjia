@@ -58,18 +58,17 @@
               <el-radio :label="2">
                 指定门店&emsp;
                 <el-button
-                  v-if="discountForm.shopRule===2"
-                  type="text"
-                  :disabled="isUpdate"
-                  @click="selectStore"
-                >选择门店</el-button>
+                  type="primary"
+                  plain
+                  :disabled="isUpdate || discountForm.shopRule === 1"
+                  @click="$refs.storeComponent.open()"
+                >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
               </el-radio>
             </el-radio-group>
-            <mSelectedStore
-              v-show="selectedStore.length > 0"
-              ref="selectedStore"
-              @onDel="_deleteItemSto"
-            />
+          </el-form-item>
+          <!-- 门店列表 -->
+          <el-form-item>
+            <select-store ref="selectStoreComponent" :disabled="isUpdate" @del-item="delSelectStore" />
           </el-form-item>
         </el-form>
         <el-button v-if="active===1" size="mini" type="primary" @click="next">下一步</el-button>
@@ -77,7 +76,8 @@
         <el-button v-if="active===2" size="mini" type="primary" @click="_submit">确认</el-button>
       </div>
     </div>
-    <mPopSelectStore ref="selectStore" @onSelect="getSelectedStore" />
+    <!-- 门店列表 -->
+    <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <mPopSelectProduct ref="selectCommodity" @onSelect="getSelectedPro" />
   </div>
 </template>
@@ -85,9 +85,7 @@
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import mPhoneView from '../_source/phoneView'
-import mPopSelectStore from '@/components/Marketings/popSelectStore' // 选择门店弹窗
 import mPopSelectProduct from './selectOneProduct' // 选择商品弹窗
-import mSelectedStore from '../../_source/SelectedStore' // 已选择门店列表
 import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
 import mCounponName from '../_source/formItems/couponName' // cname
 import mReturnRules from '../_source/formItems/returnRules' // returnRuler
@@ -95,6 +93,8 @@ import mExpireInfo from '../_source/formItems/expireInfo'
 import mUserNote from '../_source/formItems/userNote' // 使用须知
 import mTimeRule from '../_source/formItems/timeRule' // 时间限制
 import mUserRule from '../_source/formItems/userRule' // 使用门槛
+import storeDialog from '../../../marketing/components/store' // 已选择门店
+import selectStore from '../../../marketing/components/select-store' // 已选择门店列表
 import {
   getCouponDetail,
   addCoupon,
@@ -104,10 +104,10 @@ import {
 export default {
   name: 'DiscountIndex',
   components: {
+    storeDialog,
+    selectStore,
     mPhoneView,
-    mPopSelectStore,
     mPopSelectProduct,
-    mSelectedStore,
     mSelectedProduct,
     mCounponName,
     mReturnRules,
@@ -133,7 +133,7 @@ export default {
       ],
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
       active: 1, // 当前操作步骤
-      selectedStore: [],
+      chooseStore: [], // 选择的门店
       selectedPro: [],
       otherData: {
         expirationDay: '1', // 直接开始有效天数
@@ -176,8 +176,23 @@ export default {
         if (res.data) {
           var datas = res.data
           this.discountForm = datas
-          this.selectedStore = datas.listCouponStoreEntity
-          this.$refs.selectedStore.show(datas.listCouponStoreEntity) // 已选择的门店列表显示
+          this.chooseStore = []
+          // 回显选择门店
+          datas.listCouponStoreEntity.map(items => {
+            var obj = {
+              busId: items.busId,
+              id: items.id,
+              ruleType: items.ruleType,
+              storeId: items.storeId,
+              stCode: items.storeCode,
+              stName: items.storeName,
+              address: items.storeAddress
+            }
+            this.chooseStore.push(obj)
+          })
+          this.$refs.selectStoreComponent.dataFrom(
+            Array.isArray(this.chooseStore) ? this.chooseStore : []
+          )
           if (datas.ctype === 3 && this.isUpdate) { // 礼品券编辑页面需要特殊处理
             this.selectedPro = [datas.giftResDTO]
             this.$refs.selectedPro.show([datas.giftResDTO]) // 已选择的商品列表显示
@@ -198,6 +213,16 @@ export default {
     })
   },
   methods: {
+    // 删除已选择门店
+    delSelectStore(item, index) {
+      this.chooseStore.splice(index, 1)
+      this.$refs.selectStoreComponent.dataFrom(this.chooseStore)
+    },
+    // 选择门店
+    handleSelectStore(val) {
+      this.chooseStore = val
+      this.$refs.selectStoreComponent.dataFrom(val)
+    },
     // 更新预览界面
     changeView(obj) {
       Object.assign(this.discountForm, obj)
@@ -207,7 +232,8 @@ export default {
       this.selectedPro = []
     },
     changeStoreRule() {
-      this.selectedStore = []
+      this.chooseStore = []
+      this.$refs.selectStoreComponent.dataFrom([])
     },
     next() {
       if (this.active++ > 1) this.active = 1
@@ -241,12 +267,13 @@ export default {
             params.listCouponStore = []
             // 处理限制门店以及限制商品
             if (params.shopRule === 2) {
-              this.selectedStore.forEach(item => {
+              this.chooseStore.forEach(item => {
                 var obj = {
                   ruleType: 1,
                   storeCode: item.stCode,
                   storeId: item.id,
-                  storeName: item.stName
+                  storeName: item.stName,
+                  storeAddress: item.province + item.city + item.area + item.address
                 }
                 params.listCouponStore.push(obj)
               })
@@ -269,27 +296,14 @@ export default {
         })
       //  提交数据
     },
-    // 选择门店
-    selectStore() {
-      this.$refs.selectStore.show(this.selectedStore)
-    },
     // 选择商品
     selectCommodity() {
       this.$refs.selectCommodity.show(this.selectedPro)
-    },
-    // 获取选择门店数据
-    getSelectedStore(data) {
-      this.selectedStore = data
-      this.$refs.selectedStore.show(data) // 已选择的列表显示
     },
     // 获取选择商品数据
     getSelectedPro(data) {
       this.selectedPro = data
       this.$refs.selectedPro.show(data)
-    },
-    // 删除已选择门店数据
-    _deleteItemSto(data) {
-      this.selectedStore = data
     },
     // 删除已选择商品数据
     _deleteItemPro(data) {

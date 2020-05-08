@@ -136,7 +136,7 @@ export default {
       this.selectedArr = [...product]
       this.hasSelectList = []
       product.forEach(item => {
-        this.hasSelectList.push(item.storeSpecId)
+        this.hasSelectList.push(item.erpCode)
       })
       this.queryGoodsData()
     },
@@ -155,7 +155,7 @@ export default {
           this.$nextTick(() => {
             this.$refs.dataTable.clearSelection()
             this.gridData.forEach(row => {
-              if (this.hasSelectList.indexOf(row.storeSpecId) >= 0) {
+              if (this.hasSelectList.indexOf(row.erpCode) >= 0) {
                 this.$refs.dataTable.toggleRowSelection(row, true)
               }
             })
@@ -198,22 +198,22 @@ export default {
       this.nowSelect = e
       var nowSelectCode = []
       e.forEach(item => {
-        nowSelectCode.push(item.storeSpecId)
-        if (this.hasSelectList.indexOf(item.storeSpecId) < 0) {
+        nowSelectCode.push(item.erpCode)
+        if (this.hasSelectList.indexOf(item.erpCode) < 0) {
           this.selectedArr.push(item)
-          this.hasSelectList.push(item.storeSpecId)
+          this.hasSelectList.push(item.erpCode)
         }
       })
       // 得到当前页没有选中的id(当前页取消选择)
       var noSelectIds = []
       this.gridData.forEach(row => {
-        if (nowSelectCode.indexOf(row.storeSpecId) < 0) {
-          noSelectIds.push(row['storeSpecId'])
+        if (nowSelectCode.indexOf(row.erpCode) < 0) {
+          noSelectIds.push(row['erpCode'])
         }
       })
-      noSelectIds.forEach(storeSpecId => {
+      noSelectIds.forEach(erpCode => {
         for (var i = 0; i < this.hasSelectList.length; i++) {
-          if (this.hasSelectList[i] === storeSpecId) {
+          if (this.hasSelectList[i] === erpCode) {
             // 如果总选择中有未被选中的，那么就删除这条
             this.hasSelectList.splice(i, 1)
             this.selectedArr.splice(i, 1)
