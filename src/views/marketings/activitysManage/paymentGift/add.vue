@@ -59,7 +59,10 @@
             <el-radio :label="1">全部门店</el-radio>
             <el-radio :label="2">
               指定门店
-              <span v-if="form.shopRule===2&&!disabled" @click="selectStore">选择门店</span>
+              <span
+                v-if="form.shopRule===2&&!disabled"
+                @click="$refs.storeComponent.open()"
+              >选择门店</span>
             </el-radio>
           </el-radio-group>
           <mSelectedStore
@@ -73,7 +76,10 @@
             <el-radio :label="1">全部商品</el-radio>
             <el-radio :label="2">
               指定商品
-              <span v-if="form.productRule===2&&!disabled" @click="selectProduct">选择商品</span>
+              <span
+                v-if="form.productRule===2&&!disabled"
+                @click="$refs.GoodsComponent.open()"
+              >选择商品</span>
             </el-radio>
           </el-radio-group>
           <mSelectedProduct
@@ -180,9 +186,15 @@
       </template>
       <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
     </div>
-    <mPopSelectStore ref="selectStore" @onSelect="onGetSelectStore" />
+    <store-dialog ref="storeComponent" :list="selectedStores" @complete="onGetSelectStore" />
     <mPopSelectActivity ref="selectActivity" @onSelect="onGetSelectActivity" />
-    <mPopSelectProduct ref="selectProduct" @onSelect="onGetSelectProduct" />
+    <!-- 选择主商品组件 -->
+    <store-goods
+      ref="GoodsComponent"
+      :list="selectedProducts"
+      :store-ids="[]"
+      @on-change="onGetSelectProduct"
+    />
     <checkCoupon ref="checkCoupons" :timevalue="beginEndTime" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
@@ -196,10 +208,10 @@ import {
   normalActivityAddedCouponList,
   normalAddedActivityList
 } from '@/api/coupon'
+import storeDialog from '../../../marketing/components/store'
+import storeGoods from '../../../marketing/components/store-gods'
 import checkCoupon from '@/components/Marketings/checkCoupon'
-import mPopSelectStore from '@/components/Marketings/popSelectStore'
 import mPopSelectActivity from '@/components/Marketings/popSelectActivity'
-import mPopSelectProduct from '@/components/Marketings/popSelectProduct'
 import mSelectedStore from '../../_source/SelectedStore'
 import mSelectedCoupon from '../../_source/SelectedCoupon'
 import mSelectedActivity from '../../_source/SelectedActivity'
@@ -208,14 +220,14 @@ import { throttle } from '@/utils/throttle'
 export default {
   name: 'PaymentGiftAdd',
   components: {
-    mPopSelectStore,
     checkCoupon,
     mSelectedStore,
-    mPopSelectProduct,
     mSelectedProduct,
     mPopSelectActivity,
     mSelectedActivity,
-    mSelectedCoupon
+    mSelectedCoupon,
+    storeDialog,
+    storeGoods
   },
   data() {
     const productRule_limit = (rule, value, callback) => {
@@ -377,11 +389,6 @@ export default {
         this.$message.error('请先选择活动时间')
       }
     },
-    // 选择商品
-    selectProduct() {
-      console.log('已选商品：', this.selectedProducts)
-      this.$refs.selectProduct.show(this.selectedProducts)
-    },
     setTagsViewTitle(title) {
       const route = Object.assign({}, this.tempRoute, { title: `${title}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
@@ -419,16 +426,13 @@ export default {
         this.form.listCouponProduct = []
         this.selectedProducts.forEach(product => {
           this.form.listCouponProduct.push({
-            proBrand: product.proBrand || product.brandNamed,
+            proBrand: product.proBrand || product.brandName,
             proCode: product.proCode || product.erpCode,
             proId: product.proId || product.id,
             proName: product.proName || product.name,
             proPrice: product.proPrice || product.mprice,
-            proImg: product.proImg || product.mainPic,
-            proSpec:
-              product.specSkuList && product.specSkuList.length > 0
-                ? product.specSkuList[0].skuValue
-                : product.proSpec,
+            proImg: product.proImg || product.picUrl,
+            proSpec: product.specStr || product.proSpec,
             ruleType: 2
           })
         })
@@ -528,6 +532,9 @@ export default {
       })
     }, 3000),
     onGetSelectStore(selectedStores) {
+      selectedStores.map(item => {
+        item.id = item.storeId || item.id
+      })
       this.selectedStores = selectedStores
       this.$refs.selectedStoreView.showPage(selectedStores, this.pageStatus)
     },
@@ -543,8 +550,17 @@ export default {
       this.$refs.selectedCouponView.showPage(selectedCoupons, this.pageStatus)
     },
     onGetSelectProduct(selectedProducts) {
+      console.log(selectedProducts)
+      selectedProducts.map(item => {
+        item.id = item.proId || item.id
+        item.proImg = item.picUrl || item.proImg
+        item.proSpec = item.specStr || item.proSpec
+      })
       this.selectedProducts = selectedProducts
-      this.$refs.selectedProductView.showPage(selectedProducts, this.pageStatus)
+      this.$refs.selectedProductView.showPage(
+        this.selectedProducts,
+        this.pageStatus
+      )
     },
     updateActivityStatus(activity) {
       console.log('activity', activity)
@@ -610,7 +626,8 @@ export default {
                   busId: item.busId,
                   ruleType: item.ruleType,
                   id: item.id,
-                  mainPic: item.proImg,
+                  proId: item.proId,
+                  proImg: item.proImg,
                   erpCode: item.proCode,
                   name: item.proName,
                   brandName: item.proBrand,
