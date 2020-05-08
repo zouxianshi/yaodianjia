@@ -3,7 +3,7 @@
     <el-form label-width="110px" size="mini">
       <el-form-item label="广告图片">
         <div class="snb-photo">
-          <el-image v-if="searchParams.img" style="width: 140px;" :src="searchParams.img" />
+          <el-image v-if="searchParams.img" style="width: 140px;" :src="showImg(searchParams.img)" />
           <div v-else :class="prefixClsNoImg">
             <m-icons :size="50" :is-center="true" :text="`尺寸：${sizeObj[subType][index]}`" />
           </div>
