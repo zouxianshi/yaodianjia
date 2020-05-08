@@ -77,7 +77,7 @@
           slot-scope="scope"
         >{{ scope.row.activityType ===1?'免费领取':'' || scope.row.activityType ===2?'积分兑换':'' || scope.row.activityType ===3?'现金购买':'' }}</template>
       </el-table-column>
-      <el-table-column prop="totalCount" label="券总数" />
+      <el-table-column prop="totalCount" label="券总数" min-width="80" align="center" />
       <el-table-column label="使用时间" width="160">
         <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
       </el-table-column>
@@ -86,15 +86,15 @@
           slot-scope="scope"
         >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
       </el-table-column>
-      <el-table-column prop="perCount" label="限领" />
-      <el-table-column v-if="radio === '积分兑换' || radio === '全部'" prop="integral" label="所需积分" />
-      <el-table-column v-if="radio === '现金购买' || radio === '全部'" prop="amount" label="所需现金" />
+      <el-table-column prop="perCount" label="限领" min-width="80" align="center" />
+      <el-table-column v-if="radio === '积分兑换' || radio === '全部'" prop="integral" label="所需积分" min-width="80" align="center" />
+      <el-table-column v-if="radio === '现金购买' || radio === '全部'" prop="amount" label="所需现金" min-width="80" align="center" />
       <el-table-column prop="timeLimit" label="领券时间" width="160">
         <template
           slot-scope="scope"
         >{{ scope.row.timeLimit? scope.row.timeLimit.replace(/,/," 到 ") : scope.row.timeLimit }}</template>
       </el-table-column>
-      <el-table-column prop="name" label="活动状态">
+      <el-table-column prop="name" label="活动状态" min-width="80" align="center">
         <template
           slot-scope="scope"
         >

@@ -61,7 +61,7 @@
       </el-table-column>
       <el-table-column prop="beginTime" label="活动开始时间" />
       <el-table-column prop="endTime" label="活动结束时间" />
-      <el-table-column label="时间状态">
+      <el-table-column label="时间状态" min-width="80" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state.toString()==='2'" size="small" type="info">未开始</el-tag>
           <el-tag v-if="scope.row.state.toString()==='1'" size="small" type="success">进行中</el-tag>
@@ -69,7 +69,7 @@
           <!-- <div>{{ scope.row.state.toString()==='1'?'进行中':'' || scope.row.state.toString()==='2'?'未开始':'' || scope.row.state.toString()==='3'?'已结束':'' }}</div> -->
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="状态">
+      <el-table-column prop="name" label="状态" min-width="80" align="center">
         <template slot-scope="scope">
           <div>
             <el-tag v-if="scope.row.status.toString()==='1'" size="small">生效</el-tag>
