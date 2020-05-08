@@ -29,7 +29,7 @@
       <el-table ref="dataTable" :data="gridData" height="300px" @select="select" @select-all="selectAll">
         <el-table-column>
           <template scope="scope">
-            <el-radio v-model="selectStoreSpecId" :label="scope.row.storeSpecId" @change.native="getTemplateRow(scope.$index,scope.row)">&nbsp;</el-radio>
+            <el-radio v-model="selectStoreSpecId" :label="scope.row.erpCode" @change.native="getTemplateRow(scope.$index,scope.row)">&nbsp;</el-radio>
           </template>
         </el-table-column>
         <el-table-column property="num" label="商品图片">
@@ -115,7 +115,7 @@ export default {
   methods: {
     show(product) {
       this.selectedArr = product
-      this.selectStoreSpecId = product.length > 0 ? product[0].storeSpecId : ''
+      this.selectStoreSpecId = product.length > 0 ? product[0].erpCode : ''
       this.queryGoodsData()
     },
     // 查询商品分组条件
@@ -157,7 +157,7 @@ export default {
     },
     getTemplateRow(e, row) {
       this.selectedArr = [row]
-      this.selectStoreSpecId = row.storeSpecId
+      this.selectStoreSpecId = row.erpCode
     },
     // 全选
     selectAll(e) {
