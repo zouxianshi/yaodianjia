@@ -35,7 +35,6 @@
             <span class="label-name">商品类型</span>
             <el-select
               v-model="listQuery.commodityType"
-              filterable
               size="small"
               placeholder="普通商品/组合商品"
             >
@@ -45,7 +44,7 @@
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择">
+            <el-select v-model="listQuery.drugType" size="small" placeholder="请选择药品类型">
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
@@ -61,8 +60,13 @@
               placeholder="商品名称"
             />
           </div>
-        </div>
-        <div class="search-form">
+          <div class="search-item">
+            <span class="label-name">货&nbsp;&nbsp;&nbsp;&nbsp;主</span>
+            <el-select v-model="listQuery.owner" size="small" placeholder="请选择货主" @change="handleQuery">
+              <el-option label="自营" :value="0" />
+              <el-option label="平安" :value="1" />
+            </el-select>
+          </div>
           <div class="search-item">
             <span class="label-name">条形码</span>
             <el-input
@@ -103,6 +107,9 @@
               <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
+
+        </div>
+        <div class="search-form">
 
           <div class="search-item">
             <el-button type="primary" size="small" @click="handleQuery">查询</el-button>
@@ -344,6 +351,7 @@ export default {
         auditStatus: 1,
         groupId: '', // 分组id
         currentPage: 1,
+        owner: 0,
         typeId: '' // 商品分类id
       },
       goodsTypeList: []
@@ -364,7 +372,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      console.log(vm)// 当前组件的实例
+      console.log(vm) // 当前组件的实例
       if (sessionStorage.getItem('isRefreshDepot')) {
         sessionStorage.setItem('isRefreshDepot', false)
         vm.getList()
@@ -531,6 +539,13 @@ export default {
         })
         return
       }
+      if (this.listQuery.owner === 1) {
+        this.$message({
+          message: '操作失败，非自营的不能上架到商城',
+          type: 'error'
+        })
+        return
+      }
       let flag = true
       this.multiselect.map(res => {
         if (res.commodityType === 2) {
@@ -550,6 +565,13 @@ export default {
     },
     handleUpDown(status, row) {
       // 单个上下架
+      if (this.listQuery.owner === 1) {
+        this.$message({
+          message: '操作失败，非自营的不能上架到商城',
+          type: 'error'
+        })
+        return
+      }
       this.specData = [`${row.specId}`]
       this.status = status
       this.dialogVisible = true
@@ -679,7 +701,7 @@ export default {
   margin-bottom: 30px;
   .search-item {
     .label-name {
-      text-align: left;
+      text-align: center;
       width: 60px;
     }
   }

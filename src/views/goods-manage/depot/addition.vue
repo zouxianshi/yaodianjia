@@ -109,9 +109,7 @@
         <el-table-column label="品牌" prop="brandName" />
         <el-table-column label="商品分类" min-width="140">
           <template slot-scope="scope">
-            <span v-text="scope.row.multilevelTypeDTO.name" /> >
-            <span v-text="scope.row.multilevelTypeDTO.child.name" /> >
-            <span v-text="scope.row.multilevelTypeDTO.child.child.name" />
+            <span v-text="scope.row.multilevelType||'-'" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right">
@@ -192,6 +190,19 @@ export default {
           const { data, totalCount } = res.data
           data.map(v => {
             v.loading = false
+            if (v.multilevelTypeDTO) {
+              v['multilevelType'] = v.multilevelTypeDTO.name
+              if (v.multilevelTypeDTO.child) {
+                v['multilevelType'] =
+                  v['multilevelType'] + ' > ' + v.multilevelTypeDTO.child.name
+                if (v.multilevelTypeDTO.child.child) {
+                  v['multilevelType'] =
+                    v['multilevelType'] +
+                    ' > ' +
+                    v.multilevelTypeDTO.child.child.name
+                }
+              }
+            }
           })
           this.tableData = data
           this.total = totalCount

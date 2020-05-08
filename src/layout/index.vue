@@ -19,7 +19,7 @@
         </div>
         <div class="app-main-model">
           <app-main />
-          <p class="copyright">Copyright © 2016-2019 上海海典软件股份有限公司 版权所有 沪ICP备10208754号</p>
+          <p class="copyright">Copyright © 2016-2020 上海海典软件股份有限公司 版权所有 沪ICP备10208754号</p>
         </div>
       </div>
     </div>

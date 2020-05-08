@@ -77,9 +77,14 @@ class InnerCtor {
         children: [
           {
             name: '主页设置',
-            path: '/wxmall/home-set',
+            path: '/mall/home',
             disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
           },
+          // {
+          //   name: '主页设置（旧）',
+          //   path: '/wxmall/home-set',
+          //   disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
+          // },
           {
             name: '首页轮播图',
             path: '/wxmall/banner',
@@ -103,12 +108,18 @@ class InnerCtor {
         name: '订单中心',
         icon: 'icongoods',
         path: '/orders-manage',
-        disabled: this.get('order'),
+        // disabled: this.get('order'),
+        disabled: true,
         children: [
           {
             name: `所有订单`,
             path: '/orders-manage/list',
             disabled: this.get('order.order-all')
+          },
+          {
+            name: `拼团订单`,
+            path: '/orders-manage/spell-group',
+            disabled: this.get('order.order-group')
           },
           // {
           //   name: `订单详情`,
@@ -129,16 +140,26 @@ class InnerCtor {
         path: '',
         disabled: this.get('marketing'),
         children: [
+          // {
+          //   name: '新建活动',
+          //   path: '/marketing/activity/create',
+          //   disabled: this.get('marketing.marketing-create')
+          // },
           {
-            name: '新建活动',
-            path: '/marketing/activity/create',
-            disabled: this.get('marketing.marketing-create')
-          },
-          {
-            name: '活动管理',
+            name: '精彩活动',
             path: '/marketing/activity',
             disabled: this.get('marketing.marketing-manager')
-          }
+          },
+          {
+            name: '礼品管理',
+            path: '/marketing/gifts',
+            disabled: this.get('marketing.gift')
+          },
+          // {
+          //   name: '拼团活动',
+          //   path: '/marketing/activity/assemble',
+          //   disabled: this.get('marketing.marketing-manager')
+          // }
         ]
       },
       {

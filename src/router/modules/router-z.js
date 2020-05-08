@@ -69,7 +69,7 @@ const router = [
       }, {
         path: 'single-create',
         component: () => import('@/views/goods-manage/new-goods/single'),
-        name: 'single-create',
+        name: 'SingleCreate',
         meta: {
           title: '单品创建',
           noCache: true,
