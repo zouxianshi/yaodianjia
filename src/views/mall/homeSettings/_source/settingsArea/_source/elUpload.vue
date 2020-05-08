@@ -15,7 +15,7 @@ export default {
   methods: {
     handleUploadSuccess(res, file) {
       this.$message.success('上传成功！')
-      this.$emit('on-upload', { img: this.showImgHandler(res.data), file })
+      this.$emit('on-upload', { img: this.showImg(res.data), file })
     },
     handleUploadError() {
       this.$message.error('图片上传失败')
