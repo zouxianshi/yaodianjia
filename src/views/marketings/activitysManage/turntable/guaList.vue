@@ -506,8 +506,7 @@ export default {
   //   height: 50px;
   // }
   .el-dropdown-link {
-    cursor: pointer;
-    color: #409eff;
+    cursor: pointer
   }
   .el-icon-arrow-down {
     font-size: 12px;
