@@ -4,7 +4,7 @@
       <el-form-item label="图标">
         <div class="snb-photo">
           <template v-if="searchParams.img">
-            <el-image v-if="searchParams.img.startsWith('http')" style="width: 60px; height: 60px" :src="searchParams.img" />
+            <el-image v-if="searchParams.img.startsWith('http')" style="width: 60px; height: 60px" :src="showImg(searchParams.img)" />
             <m-icons v-else :icon-clx="searchParams.img" :size="60" />
           </template>
           <m-icons v-else icon-clx="no-data" :size="60" />

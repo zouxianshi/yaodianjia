@@ -2,7 +2,7 @@
   <div class="n-second-item-model">
     <m-tag-ads v-if="source === 'sa'" :text="`导航${index + 1}`" />
     <template v-if="item.img">
-      <img v-if="item.img.startsWith('http')" class="icon" :src="item.img" :alt="item.name">
+      <img v-if="item.img.startsWith('http')" class="icon" :src="showImg(item.img)" :alt="item.name">
       <div v-else>
         <m-icons :icon-clx="item.img" :size="55" />
       </div>
