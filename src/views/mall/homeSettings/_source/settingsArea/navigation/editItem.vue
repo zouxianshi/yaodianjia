@@ -34,7 +34,10 @@
         </div>
       </el-form-item>
     </el-form>
-    <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body title="选择链接" size="600px" :visible.sync="dialogVisible">
+    <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body size="600px" :visible.sync="dialogVisible">
+      <div slot="title">
+        选择链接
+      </div>
       <m-links-table v-if="dialogVisible" :url="searchParams.url" @on-link="_onLink" />
     </el-drawer>
   </m-el-card>
