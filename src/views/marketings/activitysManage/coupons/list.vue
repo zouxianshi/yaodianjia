@@ -72,7 +72,7 @@
           <div>{{ scope.row.shopRule ===1?'仅商城':'' || scope.row.shopRule ===2?'仅门店':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</div>
         </template>
       </el-table-column>
-      <el-table-column v-if="radio === '全部'" prop="name" label="领取方式">
+      <el-table-column v-show="radio === '全部'" prop="name" label="领取方式">
         <template
           slot-scope="scope"
         >{{ scope.row.activityType ===1?'免费领取':'' || scope.row.activityType ===2?'积分兑换':'' || scope.row.activityType ===3?'现金购买':'' }}</template>
