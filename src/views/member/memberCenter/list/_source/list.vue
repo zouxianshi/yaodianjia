@@ -51,8 +51,8 @@
           <el-button type="text" size="small" @click="tail(scope.row.userId)">详情</el-button>
           <span>|</span>
           <el-popover placement="bottom" trigger="click">
-            <div class="more-items"><el-button type="text" size="mini" @click="tailfDetail(scope.row.userId)">健康豆明细</el-button></div>
-            <div class="more-items"><el-button type="text" size="mini" @click="editBeans(scope.row.userId)">健康豆管理</el-button></div>
+            <div class="more-items"><el-button type="text" size="mini" @click="tailfDetail(scope.row.userId)">海贝明细</el-button></div>
+            <div class="more-items"><el-button type="text" size="mini" @click="editBeans(scope.row.userId)">海贝管理</el-button></div>
             <el-button slot="reference" size="mini" type="text">更多</el-button>
           </el-popover>
         </template>
@@ -63,8 +63,8 @@
   </div>
 </template>
 <script>
-import mPopBeansDetails from '../../../_source/popBeansDetails' // 健康豆详情
-import mPopEditBeans from './popEditBeans' // 健康豆编辑
+import mPopBeansDetails from '../../../_source/popBeansDetails' // 海贝详情
+import mPopEditBeans from './popEditBeans' // 海贝编辑
 import mPopConsultantList from './popConsultantList' // 健康顾问悬浮显示
 import { queryOnlineIntegra, menberBaseInfo } from '@/api/memberService'
 export default {
@@ -77,7 +77,7 @@ export default {
     return {
       tabelDatas: [],
       loading: false,
-      beanTotalNum: 0 // 健康豆总数量
+      beanTotalNum: 0 // 海贝总数量
     }
   },
   computed: {
@@ -94,9 +94,9 @@ export default {
     tail(userId) {
       this.$router.push(`/member/member-center/details?userId=${userId}`)
     },
-    // 查看健康豆详情
+    // 查看海贝详情
     tailfDetail(userId) {
-      // 先获取健康豆总数（健康豆详细接口没有返回）
+      // 先获取海贝总数（海贝详细接口没有返回）
       var params2 = {
         userId: userId,
         merCode: this.$store.state.user.merCode
@@ -117,7 +117,7 @@ export default {
         })
       })
     },
-    // 编辑健康豆
+    // 编辑海贝
     editBeans(userId) {
       this.$refs.B.changeDia(userId)
     }

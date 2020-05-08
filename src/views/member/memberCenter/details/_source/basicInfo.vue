@@ -46,7 +46,7 @@
               <el-form-item label="会员卡号：">
                 <span>{{ basicInfo.memberCard || '-' }}</span>
               </el-form-item>
-              <el-form-item label="健康豆：">
+              <el-form-item label="海贝：">
                 <span>{{ basicInfo.onlineIntegral }}</span>
                 <span class="more-info">
                   <el-button type="primary" plain size="mini" @click="tailsBeans">查看明细</el-button>
@@ -148,7 +148,7 @@ export default {
       this.searchParams.currentPage = v
       this.queryHealthData()
     },
-    // 查看健康豆详情
+    // 查看海贝详情
     tailsBeans() {
       var params = {
         'currentPage': 1,

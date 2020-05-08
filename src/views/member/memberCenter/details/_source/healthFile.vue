@@ -120,7 +120,7 @@ export default {
     pageChange(e) {
       console.log(e)
     },
-    // 查看健康豆详情
+    // 查看海贝详情
     popHealth(ids) {
       console.log(ids)
       this.$refs.popHealth.openDetail(ids)

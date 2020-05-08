@@ -64,7 +64,7 @@ export function menberBaseInfo(params) {
     method: 'get'
   })
 }
-// 查询会员健康豆明细
+// 查询会员海贝明细
 export function queryOnlineIntegra(data) {
   return request({
     url: `${config.merGoods}/1.0/integral/query`,
@@ -73,7 +73,7 @@ export function queryOnlineIntegra(data) {
   })
 }
 
-// 编辑会员健康豆
+// 编辑会员海贝
 export function beanManagement(data) {
   return request({
     url: `${config.merGoods}/1.0/integral/manage`,

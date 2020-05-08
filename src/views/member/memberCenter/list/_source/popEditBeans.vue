@@ -1,11 +1,11 @@
 <template>
   <div class="edit-beans-model">
     <el-dialog :visible.sync="dialogVisible" width="550px" :modal-append-to-body="true" :append-to-body="true" :before-close="closeDia">
-      <div slot="title" class="dialog-title">健康豆管理</div>
+      <div slot="title" class="dialog-title">海贝管理</div>
       <div class="beans-content-body">
-        <div class="beans-num">健康豆<span>{{ beanTotalNum }}</span></div>
+        <div class="beans-num">海贝<span>{{ beanTotalNum }}</span></div>
         <el-form ref="beansForm" label-position="right" label-width="120px" :rules="rules" :model="beansForm">
-          <el-form-item label="增减健康豆：">
+          <el-form-item label="增减海贝：">
             <el-radio v-model="addOrD" label="1">增加</el-radio>
             <el-radio v-model="addOrD" label="2">删减</el-radio>
           </el-form-item>
@@ -39,7 +39,7 @@ export default {
       },
       rules: {
         integral: [
-          { required: true, message: '请输入健康豆数量', trigger: 'blur' }
+          { required: true, message: '请输入海贝数量', trigger: 'blur' }
         ]
       }
     }
@@ -56,7 +56,7 @@ export default {
     changeDia(userId) {
       this.beansForm.userId = userId
       this.dialogVisible = true
-      // 先获取健康豆总数（健康豆详细接口没有返回）
+      // 先获取海贝总数（海贝详细接口没有返回）
       var params2 = {
         userId: userId,
         merCode: this.$store.state.user.merCode
@@ -78,7 +78,7 @@ export default {
       }
       this.dialogVisible = false
     },
-    // 提交数据(修改健康豆数据)
+    // 提交数据(修改海贝数据)
     _submitData() {
       var params = JSON.parse(JSON.stringify(this.beansForm))
       if (this.addOrD === '2') {

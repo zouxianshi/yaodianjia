@@ -1,10 +1,10 @@
 <template>
   <div class="pop-beans-model">
     <el-dialog :visible.sync="dialogVisible" width="50%" :append-to-body="true" :close-on-click-modal="false" :before-close="closeDia">
-      <div slot="title" class="dialog-title">健康豆明细</div>
+      <div slot="title" class="dialog-title">海贝明细</div>
       <div class="contents-body">
         <div class="nav-bar">
-          <span>健康豆： {{ beanTotalNum }}</span>
+          <span>海贝： {{ beanTotalNum }}</span>
           <el-select v-model="value" placeholder="请选择" @change="changeDate">
             <el-option
               v-for="item in options"
@@ -23,7 +23,7 @@
         >
           <el-table-column
             prop="integral"
-            label="健康豆数量"
+            label="海贝数量"
             width="100"
             align="center"
           />
