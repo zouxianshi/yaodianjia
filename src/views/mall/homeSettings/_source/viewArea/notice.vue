@@ -1,5 +1,5 @@
 <template>
-  <div class="va-notice-model">
+  <div v-if="list.length" class="va-notice-model">
     <div class="vnm-box">
       <div class="swiper-box">
         <swiper :options="{loop: true,direction: 'vertical',autoplay: {delay: 5000}}">
