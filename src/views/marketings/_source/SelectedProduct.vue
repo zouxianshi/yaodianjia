@@ -89,9 +89,7 @@ export default {
   },
   methods: {
     show(selectedProducts) {
-      console.log(selectedProducts)
       this.selectedProducts = selectedProducts
-      console.log(this.selectedProducts.slice((this.pageInfo.currentPage - 1) * this.pageInfo.pageSize, this.pageInfo.currentPage * this.pageInfo.pageSize))
     },
     showPage(selectedProducts, pageStatus) {
       this.pageStatus = pageStatus

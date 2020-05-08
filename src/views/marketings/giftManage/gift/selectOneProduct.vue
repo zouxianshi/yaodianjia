@@ -29,7 +29,7 @@
       <el-table ref="dataTable" :data="gridData" height="300px" @select="select" @select-all="selectAll">
         <el-table-column>
           <template scope="scope">
-            <el-radio v-model="selectErpCode" :label="scope.row.erpCode" @change.native="getTemplateRow(scope.$index,scope.row)">&nbsp;</el-radio>
+            <el-radio v-model="selectStoreSpecId" :label="scope.row.storeSpecId" @change.native="getTemplateRow(scope.$index,scope.row)">&nbsp;</el-radio>
           </template>
         </el-table-column>
         <el-table-column property="num" label="商品图片">
@@ -83,7 +83,7 @@ export default {
   data() {
     return {
       gridData: [],
-      selectErpCode: '', // 选择商品id
+      selectStoreSpecId: '', // 选择商品id
       selectedArr: [], //  已选择商品所有信息
       totalCount: 0,
       groupData: [],
@@ -117,7 +117,7 @@ export default {
   methods: {
     show(product) {
       this.selectedArr = product
-      this.selectErpCode = product.length > 0 ? product[0].erpCode : ''
+      this.selectStoreSpecId = product.length > 0 ? product[0].storeSpecId : ''
       this.queryGoodsData()
     },
     // 查询商品分组条件
@@ -158,9 +158,8 @@ export default {
     select(e, rows) {
     },
     getTemplateRow(e, row) {
-      console.log(row)
       this.selectedArr = [row]
-      this.selectErpCode = row.erpCode
+      this.selectStoreSpecId = row.storeSpecId
     },
     // 全选
     selectAll(e) {
