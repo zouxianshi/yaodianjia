@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
-
 /** *
  * 营销活动 -- 活动管理
  */
@@ -19,6 +18,13 @@ export function getActivityList(params) {
 export function getActivityDetail(params) {
   return request({
     url: `${config.merPromote}/1.0/activities/${params.id}`,
+    method: 'get'
+  })
+}
+
+export function getActivityDetailPromote(params) {
+  return request({
+    url: `${config.merGoods}/1.0/promote/${params.id}`,
     method: 'get'
   })
 }
@@ -55,5 +61,34 @@ export function disableActivity(params) {
   return request({
     url: `${config.merPromote}/1.0/admin/activities/_invalid/${params.id}`,
     method: 'put'
+  })
+}
+
+// 拼团活动 活动新建
+
+export function assembleActivityAdd(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/create`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 获取拼团活动列表
+export function getAssembleList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 删除拼团活动
+export function delAssembleActivity(params) {
+  return request({
+    url: `${config.merGoods}/1.0/admin/activityGroup/deleteByIds`,
+    method: 'post',
+    data: params,
+    noMerCode: true
   })
 }

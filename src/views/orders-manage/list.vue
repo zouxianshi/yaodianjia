@@ -59,16 +59,19 @@
           <div class="search-item">
             <span class="label-name">订单类型</span>
             <el-select
-              v-model="listQuery.prescriptionSheetMark"
+              v-model="listQuery.orderType"
               filterable
               placeholder="订单类型"
               @change="handleChangeCommodityType"
             >
               <el-option label="全部" value />
-              <el-option label="处方药订单" value="1" />
-              <el-option label="普通订单" value="0" />
+              <el-option label="处方药订单" value="R" />
+              <el-option label="普通订单" value="N" />
+              <el-option label="拼团订单" value="G" />
               <!-- <el-option label="积分订单" value="V" /> -->
             </el-select>
+            <!-- R处方药/N正常订单/V虚拟商品订单/G拼团订单 -->
+            <!-- prescriptionSheetMark -->
           </div>
           <!-- <div class="search-item">
             <span class="label-name">订单来源</span>
@@ -179,121 +182,336 @@
           </div>
         </div>
       </section>
-      <div class="order_tab">
-        <el-radio-group v-model="listQuery.orderStatus" size="small" @change="orderStatusChange">
-          <el-radio-button label>全部</el-radio-button>
-          <el-radio-button label="2">待付款</el-radio-button>
-          <el-radio-button v-loading="loadingCountReceived" label="4">
-            待发货
-            <template v-if="preSendNum>0">
-              <span class="badge">{{ preSendNum }}</span>
-            </template>
-          </el-radio-button>
-          <el-radio-button label="6">已发货</el-radio-button>
-          <el-radio-button label="7">待提货</el-radio-button>
-          <el-radio-button label="12">已完成</el-radio-button>
-          <!-- <el-radio-button label="8">待退货</el-radio-button> -->
-          <el-radio-button label="10">待退款</el-radio-button>
-          <el-radio-button label="8">待退货</el-radio-button>
-          <el-radio-button label="30">退款完成</el-radio-button>
-          <el-radio-button label="20">已取消</el-radio-button>
-        </el-radio-group>
-      </div>
-      <div class="table-box">
-        <div class="order-table">
-          <div class="order-table-header">
-            <div class="header-left">
-              <div class="header-cell">商品</div>
-              <div class="header-cell">商品编号</div>
-              <div class="header-cell">单价/数量</div>
-            </div>
-            <div class="header-cell">收货人</div>
-            <template v-if="refundStatus.includes(listQuery.orderStatus)">
-              <!-- 带退款/待退货 显示 -->
-              <div v-if="['10', '8'].includes(listQuery.orderStatus)" class="header-cell">退款申请时间</div>
-              <!-- 退款完成 显示-->
-              <div v-if="['30'].includes(listQuery.orderStatus)" class="header-cell">退款完成时间</div>
-              <!-- 带退款/待退货/退款完成 显示 -->
-              <div class="header-cell">退款退货状态</div>
-              <div class="header-cell">订单来源</div>
-              <div class="header-cell">退款金额</div>
-            </template>
-            <template v-else>
-              <div class="header-cell">下单时间</div>
-              <div class="header-cell">订单状态</div>
-              <div class="header-cell">订单来源</div>
-              <div class="header-cell">优惠金额</div>
-              <div class="header-cell">实付金额</div>
-            </template>
+      <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+        <el-tab-pane label="主状态订单" name="first">
+          <div class="order_tab">
+            <el-radio-group
+              v-model="listQuery.orderStatus"
+              size="small"
+              @change="orderStatusChange"
+            >
+              <el-radio-button label>全部</el-radio-button>
+              <el-radio-button label="2">待付款</el-radio-button>
+              <el-radio-button v-loading="loadingCountReceived" label="4">
+                待发货
+                <template v-if="preSendNum>0">
+                  <span class="badge">{{ preSendNum }}</span>
+                </template>
+              </el-radio-button>
+              <el-radio-button label="6">已发货</el-radio-button>
+              <el-radio-button label="7">待提货</el-radio-button>
+              <el-radio-button label="12">已完成</el-radio-button>
+              <el-radio-button label="20">已取消</el-radio-button>
+            </el-radio-group>
           </div>
-          <div class="order-table-body-box">
-            <template v-if="tableData && tableData.length>0">
-              <div v-for="item in tableData" :key="item.returnQuestId || item.serialNumber " class="order-table-body">
-                <div class="order-detail-header">
-                  <div class="header-left">
-                    <div class="header-cell">订单编号：</div>
-                    <div
-                      class="header-cell"
-                    >{{ item.serialNumber }}（{{ item.prescriptionSheetMark | orderType }}）</div>
-                  </div>
-                  <div class="header-right">
-                    <div v-if="refundStatus.includes(listQuery.orderStatus)" class="header-cell">
-                      <!-- 查看退款申请单 -->
-                      <dialog-refund-order
-                        :id="item.returnQuestId"
-                        :returnresp-dto="item.returnQuestRespDTO"
-                      />
-                    </div>
-                    <div v-else class="header-cell">
-                      <a
-                        :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"
-                      >订单详情</a>
-                    </div>
-                  </div>
+          <div class="table-box">
+            <div class="order-table">
+              <div class="order-table-header">
+                <div class="header-left">
+                  <div class="header-cell">商品</div>
+                  <div class="header-cell">商品编号</div>
+                  <div class="header-cell">单价/数量</div>
                 </div>
-                <div class="order-detail-body">
-                  <!-- 商品展示列 -->
-                  <div class="body-cell cell-left">
-                    <div v-if="item.detailList" class="goods-list">
-                      <div
-                        v-for="(list,index2) in item.detailList"
-                        :key="index2"
-                        class="goods-item"
-                      >
-                        <div class="goods-img padding10">
-                          <div v-if="list.mpic && list.mpic!==''">
-                            <div class="x-image__preview">
-                              <el-image
-                                :src="showImg(list.mpic)"
-                                :preview-src-list="[showImg(list.mpic)]"
-                              />
+                <div class="header-cell">收货人</div>
+                <div class="header-cell">下单时间</div>
+                <div class="header-cell">订单状态</div>
+                <div class="header-cell">订单来源</div>
+                <div class="header-cell">优惠金额</div>
+                <div class="header-cell">实付金额</div>
+              </div>
+              <div class="order-table-body-box">
+                <template v-if="tableData && tableData.length>0">
+                  <div
+                    v-for="item in tableData"
+                    :key="item.returnQuestId || item.serialNumber "
+                    class="order-table-body"
+                  >
+                    <div class="order-detail-header">
+                      <div class="header-left">
+                        <div class="header-cell">订单编号：</div>
+                        <div class="header-cell" style="margin-right: 8px">
+                          {{ item.serialNumber }}
+                          <span
+                            v-if="item.orderType !== 'G'"
+                          >{{ item.prescriptionSheetMark | orderType }}</span>
+                        </div>
+                        <template v-if="item.orderType === 'G'">
+                          <div class="header-cell">拼团订单：</div>
+                          <div class="header-cell">{{ item.groupCode }}</div>
+                        </template>
+                      </div>
+                      <div class="header-right">
+                        <div class="header-cell">
+                          <el-link
+                            v-if="item.orderType === 'G'"
+                            :underline="false"
+                            type="primary"
+                            @click="listQuery.prescriptionSheetMark = ''; listQuery.orderSearchType = 5;listQuery.currentPage=1;listQuery.searchValue=item.groupCode;_loadList()"
+                          >查看同团订单</el-link>
+                          <a
+                            :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"
+                          >订单详情</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="order-detail-body">
+                      <!-- 商品展示列 -->
+                      <div class="body-cell cell-left">
+                        <div v-if="item.detailList" class="goods-list">
+                          <div
+                            v-for="(list,index2) in item.detailList"
+                            :key="index2"
+                            class="goods-item"
+                          >
+                            <!-- 标签 -->
+                            <!-- isPromotion是否促销活动0否1是 -->
+                            <!-- pmtProductType 促销商品类型N.正品G.赠品R.换购商品 -->
+                            <div
+                              v-if="list.isPromotion === 1 && (list.pmtProductType === 'G' || list.pmtProductType === 'R')"
+                              :class="{ 'goods-tag': true, 'gift': list.pmtProductType === 'G' }"
+                            >{{ list.pmtProductType === 'G'? '赠品':'换购' }}</div>
+                            <div class="goods-img padding10">
+                              <div v-if="list.mpic && list.mpic!==''">
+                                <div class="x-image__preview">
+                                  <el-image
+                                    :src="showImg(list.mpic)"
+                                    :preview-src-list="[showImg(list.mpic)]"
+                                  />
+                                </div>
+                              </div>
+                              <div v-else style="line-height: 32px">暂无上传</div>
+                            </div>
+                            <div class="goods-info padding10">
+                              <div
+                                class="goods-name"
+                                :title="list.commodityName"
+                              >{{ list.commodityName }}</div>
+                              <div
+                                v-if="!(refundStatus.includes(listQuery.orderStatus))"
+                                class="goods-state"
+                              >
+                                <template v-if="item.prescriptionSheetMark === '0'">
+                                  <template v-if="list.status===6">
+                                    <template v-if="item.deliveryType===2">(待提货)</template>
+                                    <template v-else>(已发货)</template>
+                                  </template>
+                                  <template v-else>({{ list.status | orderStatus }})</template>
+                                </template>
+                              </div>
+                              <div class="goods-number marginTop20">{{ list.commodityCode }}</div>
+                            </div>
+                            <div class="goods-info padding10">
+                              <div class="goods-price">￥{{ list.commodityPrice }}</div>
+                              <div class="goods-num">({{ list.commodityNumber }}件)</div>
                             </div>
                           </div>
-                          <div v-else style="line-height: 32px">暂无上传</div>
                         </div>
-                        <div class="goods-info padding10">
-                          <div
-                            class="goods-name"
-                            :title="list.commodityName"
-                          >{{ list.commodityName }}</div>
-                          <div
-                            v-if="!(refundStatus.includes(listQuery.orderStatus))"
-                            class="goods-state"
-                          >
-                            <template v-if="item.prescriptionSheetMark === '0'">
-                              <template v-if="list.status===6">
-                                <template v-if="item.deliveryType===2">(待提货)</template>
-                                <template v-else>(已发货)</template>
+                      </div>
+                      <!-- 收货人 -->
+                      <div class="body-cell cell-right padding10">
+                        <div v-if="item.orderDeliveryAddress" class="cell-text">
+                          <div>{{ item.orderDeliveryAddress.receiver }}</div>
+                          <template v-if="item.orderDeliveryAddress.receiverMobile">
+                            <div>{{ item.orderDeliveryAddress.receiverMobile | receiverMobile }}</div>
+                          </template>
+                        </div>
+                      </div>
+                      <template>
+                        <!-- 下单时间 -->
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">
+                            <div>{{ item.orderTime }}</div>
+                          </div>
+                        </div>
+                        <!-- 订单状态 -->
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">
+                            <!-- 当前状态为处方单且部位待付款，待收货等状态且需求单审核状态没通过 -->
+                            <template
+                              v-if="item.prescriptionSheetMark==='1' && perStatusShow(item.orderStatus) && item.prescriptionStatus !== 2"
+                            >
+                              <span v-text="orderStatusText(item)" />
+                              <span v-if="item.prescriptionStatus!==1" v-text="lianouStatus(item)" />
+                              <span v-if="item.prescriptionStatus===1">(待审批)</span>
+                            </template>
+                            <template v-else>
+                              <template v-if="item.orderStatus===6">
+                                <template v-if="item.deliveryType===2">待提货</template>
+                                <template v-else>已发货</template>
                               </template>
-                              <template v-else>({{ list.status | orderStatus }})</template>
+                              <span v-else v-text="orderStatusText(item)" />
+                            </template>
+                            <!-- 立即发货出现时机，当前订单状态为代发货且配送方式不为自提；当为处方单时，必须要保证需求单审核状态为通过 -->
+                            <template
+                              v-if="item.orderStatus===4 && item.deliveryType!==2 && (item.prescriptionSheetMark === '0'|| (item.prescriptionSheetMark === '1'&& item.prescriptionStatus === 2 ))"
+                            >
+                              <div class="order_btn btn_normal" style="text-align:right">
+                                <!-- 立即发货 -->
+                                <dialog-delivery-order
+                                  v-if="showSendBtn"
+                                  :employee-data="employeeData"
+                                  :p-item="item"
+                                  @sendOrder="sendOrder"
+                                />
+                              </div>
                             </template>
                           </div>
-                          <div class="goods-number marginTop20">{{ list.commodityCode }}</div>
                         </div>
-                        <div class="goods-info padding10">
-                          <div class="goods-price">￥{{ list.commodityPrice }}</div>
-                          <div class="goods-num">({{ list.commodityNumber }}件)</div>
-                          <!-- <template v-if="!(refundStatus.includes(listQuery.orderStatus))">
+                        <!-- 订单来源 -->
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">微商城</div>
+                        </div>
+                        <!-- 优惠金额 -->
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">
+                            ￥
+                            <template v-if="item.couponDeduction || item.activityDiscountAmont">
+                              <span>{{ (item.couponDeduction || 0) + (item.activityDiscountAmont || 0) }}</span>
+                              <!-- activityDiscountAmont -->
+                            </template>
+                            <template v-else>
+                              <span>0</span>
+                            </template>
+                          </div>
+                        </div>
+                        <!-- 实付金额 -->
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">
+                            <div>
+                              ￥
+                              <template v-if="item.actuallyPaid">
+                                <span>{{ item.actuallyPaid }}</span>
+                              </template>
+                              <template v-else>
+                                <span>0</span>
+                              </template>
+                            </div>
+                            <div>
+                              （含运费
+                              <template v-if="item.actualFreightAmount">
+                                <span>{{ item.actualFreightAmount }}</span>
+                              </template>
+                              <template v-else>
+                                <span>0</span>
+                              </template>元）
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="noneData">暂无数据</div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="售后订单" name="second">
+          <div class="order_tab">
+            <el-radio-group
+              v-model="listQuery.orderStatus"
+              size="small"
+              @change="orderStatusChange"
+            >
+              <el-radio-button label="10">待退款</el-radio-button>
+              <el-radio-button label="8">待退货</el-radio-button>
+              <el-radio-button label="30">退款完成</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="table-box">
+            <div class="order-table">
+              <div class="order-table-header">
+                <div class="header-left">
+                  <div class="header-cell">商品</div>
+                  <div class="header-cell">商品编号</div>
+                  <div class="header-cell">单价/数量</div>
+                </div>
+                <div class="header-cell">收货人</div>
+                <!-- 带退款/待退货 显示 -->
+                <div v-if="['10', '8'].includes(listQuery.orderStatus)" class="header-cell">退款申请时间</div>
+                <!-- 退款完成 显示-->
+                <div v-if="['30'].includes(listQuery.orderStatus)" class="header-cell">退款完成时间</div>
+                <!-- 带退款/待退货/退款完成 显示 -->
+                <div class="header-cell">退款退货状态</div>
+                <div class="header-cell">订单来源</div>
+                <div class="header-cell">退款金额</div>
+              </div>
+              <div class="order-table-body-box">
+                <template v-if="tableData && tableData.length>0">
+                  <div
+                    v-for="item in tableData"
+                    :key="item.returnQuestId || item.serialNumber "
+                    class="order-table-body"
+                  >
+                    <div class="order-detail-header">
+                      <div class="header-left">
+                        <div class="header-cell">订单编号：</div>
+                        <div class="header-cell" style="margin-right: 8px">
+                          {{ item.serialNumber }}
+                          <span
+                            v-if="item.orderType !== 'G'"
+                          >{{ item.prescriptionSheetMark | orderType }}</span>
+                        </div>
+                        <template v-if="item.orderType === 'G'">
+                          <div class="header-cell">拼团订单：</div>
+                          <div class="header-cell">{{ item.groupCode }}</div>
+                        </template>
+                      </div>
+                      <div class="header-right">
+                        <div class="header-cell">
+                          <!-- 查看退款申请单 -->
+                          <dialog-refund-order
+                            :id="item.returnQuestId"
+                            :returnresp-dto="item.returnQuestRespDTO"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="order-detail-body">
+                      <!-- 商品展示列 -->
+                      <div class="body-cell cell-left">
+                        <div v-if="item.detailList" class="goods-list">
+                          <div
+                            v-for="(list,index2) in item.detailList"
+                            :key="index2"
+                            class="goods-item"
+                          >
+                            <div class="goods-img padding10">
+                              <div v-if="list.mpic && list.mpic!==''">
+                                <div class="x-image__preview">
+                                  <el-image
+                                    :src="showImg(list.mpic)"
+                                    :preview-src-list="[showImg(list.mpic)]"
+                                  />
+                                </div>
+                              </div>
+                              <div v-else style="line-height: 32px">暂无上传</div>
+                            </div>
+                            <div class="goods-info padding10">
+                              <div
+                                class="goods-name"
+                                :title="list.commodityName"
+                              >{{ list.commodityName }}</div>
+                              <div
+                                v-if="!(refundStatus.includes(listQuery.orderStatus))"
+                                class="goods-state"
+                              >
+                                <template v-if="item.prescriptionSheetMark === '0'">
+                                  <template v-if="list.status===6">
+                                    <template v-if="item.deliveryType===2">(待提货)</template>
+                                    <template v-else>(已发货)</template>
+                                  </template>
+                                  <template v-else>({{ list.status | orderStatus }})</template>
+                                </template>
+                              </div>
+                              <div class="goods-number marginTop20">{{ list.commodityCode }}</div>
+                            </div>
+                            <div class="goods-info padding10">
+                              <div class="goods-price">￥{{ list.commodityPrice }}</div>
+                              <div class="goods-num">({{ list.commodityNumber }}件)</div>
+                              <!-- <template v-if="!(refundStatus.includes(listQuery.orderStatus))">
                             <template v-if="list.status===8||list.status===10">
                               <div
                                 class="goods-remark marginTop10"
@@ -325,44 +543,44 @@
                                 </div>
                               </div>
                             </template>
-                          </template>-->
+                              </template>-->
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <!-- 收货人 -->
-                  <div class="body-cell cell-right padding10">
-                    <div v-if="item.orderDeliveryAddress" class="cell-text">
-                      <div>{{ item.orderDeliveryAddress.receiver }}</div>
-                      <template v-if="item.orderDeliveryAddress.receiverMobile">
-                        <div>{{ item.orderDeliveryAddress.receiverMobile | receiverMobile }}</div>
-                      </template>
-                    </div>
-                  </div>
-                  <template v-if="refundStatus.includes(listQuery.orderStatus)">
-                    <!-- 退款申请时间 -->
-                    <div
-                      v-if="['10', '8'].includes(listQuery.orderStatus)"
-                      class="body-cell cell-right padding10"
-                    >
-                      <div class="cell-text">
-                        <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.createTime }}</div>
+                      <!-- 收货人 -->
+                      <div class="body-cell cell-right padding10">
+                        <div v-if="item.orderDeliveryAddress" class="cell-text">
+                          <div>{{ item.orderDeliveryAddress.receiver }}</div>
+                          <template v-if="item.orderDeliveryAddress.receiverMobile">
+                            <div>{{ item.orderDeliveryAddress.receiverMobile | receiverMobile }}</div>
+                          </template>
+                        </div>
                       </div>
-                    </div>
-                    <!-- 退款完成时间 -->
-                    <div
-                      v-if="['30'].includes(listQuery.orderStatus)"
-                      class="body-cell cell-right padding10"
-                    >
-                      <div class="cell-text">
-                        <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.modifyTime }}</div>
-                      </div>
-                    </div>
-                    <!-- 退款退货状态 -->
-                    <div class="body-cell cell-right padding10">
-                      <div class="cell-text">
-                        <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.status | returnType }}</div>
-                        <!-- <div class="order_btn">
+                      <template>
+                        <!-- 退款申请时间 -->
+                        <div
+                          v-if="['10', '8'].includes(listQuery.orderStatus)"
+                          class="body-cell cell-right padding10"
+                        >
+                          <div class="cell-text">
+                            <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.createTime }}</div>
+                          </div>
+                        </div>
+                        <!-- 退款完成时间 -->
+                        <div
+                          v-if="['30'].includes(listQuery.orderStatus)"
+                          class="body-cell cell-right padding10"
+                        >
+                          <div class="cell-text">
+                            <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.modifyTime }}</div>
+                          </div>
+                        </div>
+                        <!-- 退款退货状态 -->
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">
+                            <div>{{ item.returnQuestRespDTO && item.returnQuestRespDTO.status | returnType }}</div>
+                            <!-- <div class="order_btn">
                           <el-button
                             type="warning"
                             size="mini"
@@ -373,115 +591,42 @@
                             size="mini"
                             @click="dialogPendingAgreeVisible = true;agreeRefund(list.orderId,list.id,list.totalActualAmount,item.actualFreightAmount,list.status)"
                           >退款</el-button>
-                        </div>-->
-                      </div>
-                    </div>
-                    <!-- 订单来源 -->
-                    <div class="body-cell cell-right padding10">
-                      <div class="cell-text">微商城</div>
-                    </div>
-                    <!-- 退款金额 -->
-                    <div class="body-cell cell-right padding10">
-                      <div v-if="item.returnQuestRespDTO" class="cell-text">
-                        <!-- refundAmount退款金额 -->
-                        <div>
-                          ￥
-                          <span v-if="item.returnQuestRespDTO.isReturnFreight === 1">{{ ((item.returnQuestRespDTO.refundAmount || 0)*100 + (item.returnQuestRespDTO.freightAmount ||0)*100) / 100 }}</span>
-                          <span v-else>{{ item.returnQuestRespDTO.refundAmount || 0 }}</span>
-                        </div>
-                        <!-- actualRefundAmount退款金额 isReturnFreight是否退还运费 0.否 1.是 -->
-                        <div v-if="item.returnQuestRespDTO.isReturnFreight === 1">
-                          （含运费{{ item.returnQuestRespDTO.freightAmount || 0 }}元）
-                        </div>
-                      </div>
-                    </div>
-                  </template>
-                  <template v-else>
-                    <!-- 下单时间 -->
-                    <div class="body-cell cell-right padding10">
-                      <div class="cell-text">
-                        <div>{{ item.orderTime }}</div>
-                      </div>
-                    </div>
-                    <!-- 订单状态 -->
-                    <div class="body-cell cell-right padding10">
-                      <div class="cell-text">
-                        <!-- 当前状态为处方单且部位待付款，待收货等状态且需求单审核状态没通过 -->
-                        <template
-                          v-if="item.prescriptionSheetMark==='1' && perStatusShow(item.orderStatus) && item.prescriptionStatus !== 2"
-                        >
-                          <span v-text="orderStatusText(item)" />
-                          <span v-if="item.prescriptionStatus!==1" v-text="lianouStatus(item)" />
-                          <span v-if="item.prescriptionStatus===1">(待审批)</span>
-                        </template>
-                        <template v-else>
-                          <template v-if="item.orderStatus===6">
-                            <template v-if="item.deliveryType===2">待提货</template>
-                            <template v-else>已发货</template>
-                          </template>
-                          <span v-else v-text="orderStatusText(item)" />
-                        </template>
-                        <!-- 立即发货出现时机，当前订单状态为代发货且配送方式不为自提；当为处方单时，必须要保证需求单审核状态为通过 -->
-                        <template
-                          v-if="item.orderStatus===4 && item.deliveryType!==2 && (item.prescriptionSheetMark === '0'|| (item.prescriptionSheetMark === '1'&& item.prescriptionStatus === 2 ))"
-                        >
-                          <div class="order_btn btn_normal" style="text-align:right">
-                            <!-- 立即发货 -->
-                            <dialog-delivery-order v-if="showSendBtn" :employee-data="employeeData" :p-item="item" @sendOrder="sendOrder" />
+                            </div>-->
                           </div>
-                        </template>
-                      </div>
-                    </div>
-                    <!-- 订单来源 -->
-                    <div class="body-cell cell-right padding10">
-                      <div class="cell-text">微商城</div>
-                    </div>
-                    <!-- 优惠金额 -->
-                    <div class="body-cell cell-right padding10">
-                      <div class="cell-text">
-                        ￥
-                        <template v-if="item.couponDeduction">
-                          <span>{{ item.couponDeduction }}</span>
-                        </template>
-                        <template v-else>
-                          <span>0</span>
-                        </template>
-                      </div>
-                    </div>
-                    <!-- 实付金额 -->
-                    <div class="body-cell cell-right padding10">
-                      <div class="cell-text">
-                        <div>
-                          ￥
-                          <template v-if="item.actuallyPaid">
-                            <span>{{ item.actuallyPaid }}</span>
-                          </template>
-                          <template v-else>
-                            <span>0</span>
-                          </template>
                         </div>
-                        <div>
-                          （含运费
-                          <template v-if="item.actualFreightAmount">
-                            <span>{{ item.actualFreightAmount }}</span>
-                          </template>
-                          <template v-else>
-                            <span>0</span>
-                          </template>元）
+                        <!-- 订单来源 -->
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">微商城</div>
                         </div>
-                      </div>
+                        <!-- 退款金额 -->
+                        <div class="body-cell cell-right padding10">
+                          <div v-if="item.returnQuestRespDTO" class="cell-text">
+                            <!-- refundAmount退款金额 -->
+                            <div>
+                              ￥
+                              <span
+                                v-if="item.returnQuestRespDTO.isReturnFreight === 1"
+                              >{{ ((item.returnQuestRespDTO.refundAmount || 0)*100 + (item.returnQuestRespDTO.freightAmount ||0)*100) / 100 }}</span>
+                              <span v-else>{{ item.returnQuestRespDTO.refundAmount || 0 }}</span>
+                            </div>
+                            <!-- actualRefundAmount退款金额 isReturnFreight是否退还运费 0.否 1.是 -->
+                            <div
+                              v-if="item.returnQuestRespDTO.isReturnFreight === 1"
+                            >（含运费{{ item.returnQuestRespDTO.freightAmount || 0 }}元）</div>
+                          </div>
+                        </div>
+                      </template>
                     </div>
-                  </template>
-                </div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="noneData">暂无数据</div>
+                </template>
               </div>
-            </template>
-            <template v-else>
-              <div class="noneData">暂无数据</div>
-            </template>
+            </div>
           </div>
-        </div>
-      </div>
-
+        </el-tab-pane>
+      </el-tabs>
       <div class="table-footer">
         <pagination
           :total="total"
@@ -754,19 +899,22 @@ import {
 } from '@/api/order'
 import { exportData } from '@/api/task'
 export default {
-  components: { Pagination, exportTable, dialogRefundOrder, dialogDeliveryOrder },
+  components: {
+    Pagination,
+    exportTable,
+    dialogRefundOrder,
+    dialogDeliveryOrder
+  },
   filters: {
     orderType: function(value) {
       // 订单类型
       if (value === '0') {
-        return '普通订单'
+        return '(普通订单)'
       }
       if (value === '1') {
-        return '处方药订单'
+        return '(处方药订单)'
       }
-      // if (value === 'V') {
-      //   return '积分订单'
-      // }
+      return ''
     },
     orderStatus: function(value) {
       // 订单状态
@@ -934,7 +1082,7 @@ export default {
         orderSearchType: 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
         orderStatus: '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货7) ===已发货 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
+        // prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
         payment: '', // 支付方式
         proName: '', // 商品名称
         receive: '', // 收货方式
@@ -947,6 +1095,10 @@ export default {
         {
           value: 1,
           label: '订单号'
+        },
+        {
+          value: 5,
+          label: '拼团订单号'
         },
         {
           value: 2,
@@ -1019,7 +1171,8 @@ export default {
       loadingCountReceived: false, // 加载待发货数量
       loadingSend: false, // 加载待发货商品
       loadingSendNow: false, // 加载立即发货
-      refundStatus: ['10', '8', '30'] // 退款三子
+      refundStatus: ['10', '8', '30'], // 退款三子
+      activeName: 'first'
     }
   },
   computed: {
@@ -1117,7 +1270,7 @@ export default {
         orderSearchType: 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
         // 'orderSource': '', // 订单来源 1.微商城
         orderStatus: '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
+        // prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
         payment: '', // 支付方式
         proName: '', // 商品名称
         receive: '', // 收货方式
@@ -1320,12 +1473,18 @@ export default {
       this._loadList()
     },
     handleChangeOrderStatus(val) {
+      console.log('11111111-----handleChangeOrderStatus', val)
       // 订单状态改变时触发
       this.storeList.map(v => {
         if (v.id === val) {
           this.chooseStore = v
         }
       })
+      if (this.refundStatus.includes(val)) {
+        this.activeName = 'second'
+      } else {
+        this.activeName = 'first'
+      }
       this.listQuery.currentPage = 1
       this._loadList()
     },
@@ -1553,6 +1712,16 @@ export default {
       console.log('1111111', val)
       this.getList()
       this.getpreSendNum() // 获取待发货商品数量
+    },
+    handleClick(val) {
+      console.log('tab切换了-------', val)
+      if (val.name === 'first') {
+        this.listQuery.orderStatus = ''
+      } else {
+        this.listQuery.orderStatus = '10'
+      }
+      this.listQuery.currentPage = 1
+      this._loadList()
     }
   }
 }
@@ -1674,6 +1843,7 @@ export default {
           width: 30vw;
           .goods-item {
             display: flex;
+            position: relative;
             // justify-content: flex-start;
             // align-items: center;
             border-bottom: solid 1px #dfe6ec;
@@ -1723,6 +1893,24 @@ export default {
                 align-content: space-between;
                 cursor: pointer;
               }
+            }
+            .goods-tag {
+              position: absolute;
+              top: 6px;
+              left: 6px;
+              z-index: 1;
+              background-color: #fef0f0;
+              border: 1px solid #f75a5a;
+              color: #f75a5a;
+              padding: 0 8px;
+              font-size: 12px;
+              line-height: 16px;
+              border-radius: 4px;
+              &.gift {
+                background-color: #f75a5a;
+                color: #fff;
+              }
+              // #f75a5a
             }
           }
         }
