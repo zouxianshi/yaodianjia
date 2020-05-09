@@ -195,7 +195,7 @@ const mixin = {
         return
       }
       data = this.specsForm.specs
-      let index = 0
+      let index = this.editSpecsData ? this.editSpecsData.length : 0
       let flag = true
       this.specsForm.specs.map(v => {
         index++
