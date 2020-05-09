@@ -23,13 +23,12 @@
           </el-form-item>
           <m-counpon-name ref="cname" :discount-form="discountForm" @changeViews="changeView" />
           <el-form-item label="兑换商品：">
-            <el-button type="text" :disabled="isUpdate" @click="selectCommodity()">选择商品</el-button>
-            <mSelectedProduct
-              v-show="selectedPro.length>0"
-              ref="selectedPro"
-              :is-gift="true"
-              @onDel="_deleteItemPro"
-            />
+            <el-button type="primary" plain size="mini" :disabled="isUpdate" @click="$refs.GoodsComponent.open()">
+              选择商品
+            </el-button>
+          </el-form-item>
+          <el-form-item v-show="storeSelectGoods.length > 0">
+            <select-goods ref="storeGods" :disabled="isUpdate" @del-item="delSelectGoods" />
           </el-form-item>
           <mReturnRules ref="returnRules" :discount-form="discountForm" :disabled="isUpdate" />
           <mExpireInfo ref="expireInfo" :discount-form="discountForm" :disabled="isUpdate" />
@@ -78,15 +77,19 @@
     </div>
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
-    <mPopSelectProduct ref="selectCommodity" @onSelect="getSelectedPro" />
+    <!-- 选择主商品组件 -->
+    <store-goods
+      ref="GoodsComponent"
+      :limit-max="1"
+      :list="storeSelectGoods"
+      @on-change="handleSelectGoods"
+    />
   </div>
 </template>
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import mPhoneView from '../_source/phoneView'
-import mPopSelectProduct from './selectOneProduct' // 选择商品弹窗
-import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
 import mCounponName from '../_source/formItems/couponName' // cname
 import mReturnRules from '../_source/formItems/returnRules' // returnRuler
 import mExpireInfo from '../_source/formItems/expireInfo'
@@ -95,6 +98,8 @@ import mTimeRule from '../_source/formItems/timeRule' // 时间限制
 import mUserRule from '../_source/formItems/userRule' // 使用门槛
 import storeDialog from '../../../marketing/components/store' // 已选择门店
 import selectStore from '../../../marketing/components/select-store' // 已选择门店列表
+import storeGoods from '../../../marketing/components/store-gods'
+import selectGoods from '../../../marketing/components/select-goods'
 import {
   getCouponDetail,
   addCoupon,
@@ -106,9 +111,10 @@ export default {
   components: {
     storeDialog,
     selectStore,
+    // 选择商品
+    storeGoods,
+    selectGoods,
     mPhoneView,
-    mPopSelectProduct,
-    mSelectedProduct,
     mCounponName,
     mReturnRules,
     mExpireInfo,
@@ -134,7 +140,7 @@ export default {
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
       active: 1, // 当前操作步骤
       chooseStore: [], // 选择的门店
-      selectedPro: [],
+      storeSelectGoods: [], // 选择的商品
       otherData: {
         expirationDay: '1', // 直接开始有效天数
         expirationDate: [new Date(), new Date()], // 有效期(当选择开始、结束日期是)
@@ -193,14 +199,22 @@ export default {
           this.$refs.selectStoreComponent.dataFrom(
             Array.isArray(this.chooseStore) ? this.chooseStore : []
           )
-          if (datas.ctype === 3 && this.isUpdate) { // 礼品券编辑页面需要特殊处理
-            this.selectedPro = [datas.giftResDTO]
-            this.$refs.selectedPro.show([datas.giftResDTO]) // 已选择的商品列表显示
-          } else {
-            this.selectedPro = datas.listCouponProductEntity
-            this.$refs.selectedPro.show(datas.listCouponProductEntity) // 已选择的商品列表显示
-          }
-          this.useRuleLimit = datas.useRule === 0 ? 0 : 1 // 是否有使用门槛
+
+          this.$refs.storeGods.dataFrom(this.storeSelectGoods)
+          // 回显选择商品
+          var data = [datas.giftResDTO]
+          this.storeSelectGoods = []
+          data.map(item => {
+            var obj = {
+              picUrl: item.picUrl,
+              erpCode: item.erpCode,
+              name: item.name,
+              mprice: item.mprice,
+              specSkus: item.specSkuList
+            }
+            this.storeSelectGoods.push(obj)
+          })
+          this.$refs.storeGods.dataFrom(this.storeSelectGoods)
         }
       })
     }
@@ -223,13 +237,24 @@ export default {
       this.chooseStore = val
       this.$refs.selectStoreComponent.dataFrom(val)
     },
+    // 选择商品
+    handleSelectGoods(val) {
+      this.storeSelectGoods = val
+      this.$refs.storeGods.dataFrom(val)
+    },
+    // 删除已选择商品
+    delSelectGoods(item, index) {
+      this.storeSelectGoods.splice(index, 1)
+      this.$refs.storeGods.dataFrom(this.storeSelectGoods)
+    },
     // 更新预览界面
     changeView(obj) {
       Object.assign(this.discountForm, obj)
     },
     // 切换商品限制规则
     changeProductRule() {
-      this.selectedPro = []
+      this.storeSelectGoods = []
+      this.$refs.storeGods.dataFrom(this.storeSelectGoods)
     },
     changeStoreRule() {
       this.chooseStore = []
@@ -278,7 +303,7 @@ export default {
                 params.listCouponStore.push(obj)
               })
             }
-            params.giftId = this.selectedPro[0].erpCode
+            params.giftId = this.storeSelectGoods[0].erpCode
             addCoupon(params).then(res => {
               if (res.code === '10000') {
                 this.$message({
@@ -295,19 +320,6 @@ export default {
           this.$message('参数错误，请重新填写！')
         })
       //  提交数据
-    },
-    // 选择商品
-    selectCommodity() {
-      this.$refs.selectCommodity.show(this.selectedPro)
-    },
-    // 获取选择商品数据
-    getSelectedPro(data) {
-      this.selectedPro = data
-      this.$refs.selectedPro.show(data)
-    },
-    // 删除已选择商品数据
-    _deleteItemPro(data) {
-      this.selectedPro = data
     }
   }
 }

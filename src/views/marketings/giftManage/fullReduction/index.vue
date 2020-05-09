@@ -87,36 +87,22 @@
             <select-store ref="selectStoreComponent" :disabled="isUpdate" @del-item="delSelectStore" />
           </el-form-item>
           <el-form-item label="适用商品：">
-            <el-radio-group
-              v-model="discountForm.productRule"
-              :disabled="isUpdate"
-              @change="changeProductRule"
-            >
+            <el-radio-group v-model="discountForm.productRule" :disabled="isUpdate" @change="changeProductRule">
               <el-radio :label="1">全部商品</el-radio>
-              <el-radio :label="2">
-                指定商品可用
-                <el-button
-                  v-if="discountForm.productRule===2"
-                  type="text"
-                  :disabled="isUpdate"
-                  @click="selectCommodity()"
-                >选择商品</el-button>
+              <el-radio :label="2">指定商品可用&emsp;
+                <el-button v-show="discountForm.productRule === 2" type="primary" plain size="mini" :disabled="isUpdate" @click="$refs.GoodsComponent.open()">
+                  选择商品 | 已选（{{ storeSelectGoods.length }}）
+                </el-button>
               </el-radio>
-              <el-radio :label="3">
-                指定商品不可用
-                <el-button
-                  v-if="discountForm.productRule===3"
-                  type="text"
-                  :disabled="isUpdate"
-                  @click="selectCommodity()"
-                >选择商品</el-button>
+              <el-radio :label="3">指定商品不可用&emsp;
+                <el-button v-show="discountForm.productRule === 3" type="primary" plain size="mini" :disabled="isUpdate" @click="$refs.GoodsComponent.open()">
+                  选择商品 | 已选（{{ storeSelectGoods.length }}）
+                </el-button>
               </el-radio>
             </el-radio-group>
-            <mSelectedProduct
-              v-show="selectedPro.length>0"
-              ref="selectedPro"
-              @onDel="_deleteItemPro"
-            />
+          </el-form-item>
+          <el-form-item v-show="storeSelectGoods.length > 0">
+            <select-goods ref="storeGods" :disabled="isUpdate" @del-item="delSelectGoods" />
           </el-form-item>
         </el-form>
         <el-button v-if="active===1" size="mini" type="primary" @click="next">下一步</el-button>
@@ -126,7 +112,13 @@
     </div>
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
-    <mPopSelectProduct ref="selectCommodity" @onSelect="getSelectedPro" />
+    <!-- 选择主商品组件 -->
+    <store-goods
+      ref="GoodsComponent"
+      :limit-max="9999"
+      :list="storeSelectGoods"
+      @on-change="handleSelectGoods"
+    />
   </div>
 </template>
 <script>
@@ -141,8 +133,8 @@ import mTimeRule from '../_source/formItems/timeRule' // 时间限制
 import mUserRule from '../_source/formItems/userRule' // 使用门槛
 import storeDialog from '../../../marketing/components/store' // 已选择门店
 import selectStore from '../../../marketing/components/select-store' // 已选择门店列表
-import mPopSelectProduct from '@/components/Marketings/popSelectProduct' // 选择商品
-import mSelectedProduct from '../../_source/SelectedProduct' // 已选择商品列表
+import storeGoods from '../../../marketing/components/store-gods'
+import selectGoods from '../../../marketing/components/select-goods'
 import {
   getCouponDetail,
   addCoupon,
@@ -154,9 +146,10 @@ export default {
   components: {
     storeDialog,
     selectStore,
+    // 选择商品
+    storeGoods,
+    selectGoods,
     mPhoneView,
-    mPopSelectProduct,
-    mSelectedProduct,
     mCounponName,
     mReturnRules,
     mExpireInfo,
@@ -183,7 +176,7 @@ export default {
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
       active: 1, // 当前操作步骤
       chooseStore: [], // 选择的门店
-      selectedPro: [],
+      storeSelectGoods: [], // 选择的商品
       compArr: [
         { ref: 'cname' },
         { ref: 'returnRules' },
@@ -256,8 +249,20 @@ export default {
             Array.isArray(this.chooseStore) ? this.chooseStore : []
           )
           // 回显选择商品
-          this.selectedPro = datas.listCouponProductEntity
-          this.$refs.selectedPro.show(datas.listCouponProductEntity) // 已选择的商品列表显示
+          var data = datas.listCouponProductEntity
+          this.storeSelectGoods = []
+          data.map(item => {
+            var arr = [{ skuKeyName: item.proSpec.split(':')[0], skuValue: item.proSpec.split(':')[1] }]
+            var obj = {
+              picUrl: item.proImg,
+              erpCode: item.proCode,
+              name: item.proName,
+              mprice: item.proPrice,
+              specSkus: arr
+            }
+            this.storeSelectGoods.push(obj)
+          })
+          this.$refs.storeGods.dataFrom(this.storeSelectGoods)
         }
       })
     }
@@ -279,6 +284,16 @@ export default {
     handleSelectStore(val) {
       this.chooseStore = val
       this.$refs.selectStoreComponent.dataFrom(val)
+    },
+    // 选择商品
+    handleSelectGoods(val) {
+      this.storeSelectGoods = val
+      this.$refs.storeGods.dataFrom(val)
+    },
+    // 删除已选择商品
+    delSelectGoods(item, index) {
+      this.storeSelectGoods.splice(index, 1)
+      this.$refs.storeGods.dataFrom(this.storeSelectGoods)
     },
     // 更新预览界面
     changeView(obj) {
@@ -344,15 +359,15 @@ export default {
             }
             params.listCouponProduct = []
             if (params.productRule === 2 || params.productRule === 3) {
-              this.selectedPro.forEach(item => {
+              this.storeSelectGoods.forEach(item => {
                 var obj = {
                   proBrand: item.brandName,
                   proCode: item.erpCode,
                   proId: item.id,
                   proName: item.name,
-                  proImg: item.mainPic,
+                  proImg: item.picUrl,
                   proPrice: item.price,
-                  proSpec: item.specSkuList ? item.specSkuList[0].skuValue : '',
+                  proSpec: item.specStr,
                   ruleType: 1
                 }
                 params.listCouponProduct.push(obj)
@@ -373,20 +388,6 @@ export default {
           console.log(err)
           this.$message('参数错误，请重新填写！')
         })
-      //  提交数据
-    },
-    // 选择商品
-    selectCommodity() {
-      this.$refs.selectCommodity.show(this.selectedPro)
-    },
-    // 获取选择商品数据
-    getSelectedPro(data) {
-      this.selectedPro = data
-      this.$refs.selectedPro.show(data)
-    },
-    // 删除已选择商品数据
-    _deleteItemPro(data) {
-      this.selectedPro = data
     }
   }
 }
