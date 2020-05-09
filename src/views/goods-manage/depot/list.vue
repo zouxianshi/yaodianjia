@@ -2,7 +2,6 @@
   <div class="app-container">
     <div class="depot-wrappe clearfix">
       <el-alert type="warning" :closable="false">
-        <el-image style="width: 100px; height: 100px" :src="url" :preview-src-list="srcList" />
         <p slot="title" class="alret-title">
           为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您
           <router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
@@ -34,7 +33,11 @@
           </div>
           <div class="search-item">
             <span class="label-name">商品类型</span>
-            <el-select v-model="listQuery.commodityType" size="small" placeholder="普通商品/组合商品">
+            <el-select
+              v-model="listQuery.commodityType"
+              size="small"
+              placeholder="普通商品/组合商品"
+            >
               <el-option label="普通商品" value="1" />
               <el-option label="组合商品" value="2" />
             </el-select>
@@ -58,13 +61,9 @@
             />
           </div>
           <div class="search-item">
+            <span class="label-name">货   主</span>
             <span class="label-name">货&nbsp;&nbsp;&nbsp;&nbsp;主</span>
-            <el-select
-              v-model="listQuery.owner"
-              size="small"
-              placeholder="请选择货主"
-              @change="handleQuery"
-            >
+            <el-select v-model="listQuery.owner" size="small" placeholder="请选择货主" @change="handleQuery">
               <el-option label="自营" :value="0" />
               <el-option label="平安" :value="1" />
             </el-select>
@@ -109,8 +108,10 @@
               <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
+
         </div>
         <div class="search-form">
+
           <div class="search-item">
             <el-button type="primary" size="small" @click="handleQuery">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
@@ -184,15 +185,12 @@
             >
               <template slot-scope="scope">
                 <template v-if="scope.row.mainPic">
-                  <!-- <el-image
+                  <el-image
                     style="width: 70px; height: 70px"
                     :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
-                    :preview-src-list="[showImg(scope.row.mainPic)+'?x-oss-process=style/w_800']"
-                  />-->
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="url"
-                    :preview-src-list="srcList"
+                    lazy
+                    fit="contain"
+                    @click="onLook(scope.row.mainPic)"
                   />
                 </template>
                 <template v-else>
@@ -269,7 +267,9 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-image-viewer v-if="isShowImg" :on-close="onCloseImg" :url-list="srcList" />
         </div>
+
         <pagination
           :total="total"
           :page.sync="listQuery.currentPage"
@@ -304,6 +304,8 @@
   </div>
 </template>
 <script>
+import ElImageViewer from 'element-ui/packages/image/src/image-viewer'
+
 import { getGoodsList, exportData, delGoods } from '@/api/depot'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
@@ -314,12 +316,12 @@ import group from '../components/grouping'
 import limitBuy from './_source/limit-buy'
 export default {
   name: 'Depot',
-  components: { Pagination, store, group, limitBuy },
+  components: { Pagination, store, group, limitBuy, ElImageViewer },
   mixins: [mixins],
   data() {
     return {
-      url:
-        'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+      isShowImg: false,
+      srcList: [],
       keyword: '',
       goodStatus: 1,
       chooseNum: 0,
@@ -360,14 +362,6 @@ export default {
         typeId: '' // 商品分类id
       },
       goodsTypeList: []
-    }
-  },
-  computed: {
-    srcList() {
-      return [
-        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-        'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
-      ]
     }
   },
   created() {
@@ -425,6 +419,13 @@ export default {
     }
   },
   methods: {
+    onLook(url) {
+      this.srcList = [this.showImg(url)]
+      this.isShowImg = true
+    },
+    onCloseImg() {
+      this.isShowImg = false
+    },
     handleSettingLimitBuy() {
       // 设置限购
       this.specData = []
@@ -471,8 +472,8 @@ export default {
       this.listQuery.currentPage = 1
       if (
         this.listQuery.typeId &&
-        Array.isArray(this.listQuery.typeId) &&
-        this.listQuery.typeId.length
+          Array.isArray(this.listQuery.typeId) &&
+          this.listQuery.typeId.length
       ) {
         this.listQuery.typeId = this.listQuery.typeId[
           this.listQuery.typeId.length - 1
@@ -670,70 +671,70 @@ export default {
 }
 </script>
 <style lang="scss">
-.custom-tree-node {
-  display: -webkit-box;
-  display: flex;
-  display: -ms-flexbox;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  font-size: 14px;
-  padding-right: 8px;
-  width: 100%;
-  &.active {
-    color: #2d8cf0;
-  }
-  i {
-    display: inline-block;
-    margin-left: 10px;
-  }
-  .ellipsis {
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 9px;
-  }
-}
-</style>
-<style lang="scss">
-.el-tree-node__content {
-  margin-top: 5px;
-}
-</style>
-<style lang="scss" scoped>
-.el-divider--vertical {
-  margin: 0 4px;
-}
-.el-button + .el-button {
-  margin-left: 0;
-}
-.depot-wrappe {
-  margin-bottom: 30px;
-  .search-item {
-    .label-name {
-      text-align: center;
-      width: 60px;
+  .custom-tree-node {
+    display: -webkit-box;
+    display: flex;
+    display: -ms-flexbox;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+    width: 100%;
+    &.active {
+      color: #2d8cf0;
+    }
+    i {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    .ellipsis {
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 9px;
     }
   }
-}
-.table-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.depot-list {
-  float: left;
-  width: 210px;
-  .search-form {
-    margin: 10px 0;
+</style>
+<style lang="scss">
+  .el-tree-node__content {
+    margin-top: 5px;
   }
-}
+</style>
+<style lang="scss" scoped>
+  .el-divider--vertical {
+    margin: 0 4px;
+  }
+  .el-button + .el-button {
+    margin-left: 0;
+  }
+  .depot-wrappe {
+    margin-bottom: 30px;
+    .search-item {
+      .label-name {
+        text-align: center;
+        width: 60px;
+      }
+    }
+  }
+  .table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .depot-list {
+    float: left;
+    width: 210px;
+    .search-form {
+      margin: 10px 0;
+    }
+  }
 
-.depot-table {
-  margin-left: 230px;
-}
+  .depot-table {
+    margin-left: 230px;
+  }
 </style>
 
