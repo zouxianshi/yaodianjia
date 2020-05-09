@@ -303,7 +303,7 @@
   </div>
 </template>
 <script>
-import ElImageViewer from 'element-ui/packages/image/src/image-viewer'
+import ElImageViewer from '@/components/imageViewer/imageViewer'
 
 import { getGoodsList, exportData, delGoods } from '@/api/depot'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
@@ -419,7 +419,7 @@ export default {
   },
   methods: {
     onLook(url) {
-      this.srcList = [this.showImg(url)]
+      this.srcList = [`${this.showImg(url)}?x-oss-process=style/w_800`]
       this.isShowImg = true
     },
     onCloseImg() {

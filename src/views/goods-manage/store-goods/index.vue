@@ -158,7 +158,7 @@
                   :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
                   lazy
                   fit="contain"
-                  :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
+                  @click="onLook(scope.row.mainPic)"
                 />
               </template>
               <template v-else>
@@ -234,6 +234,7 @@
           />
         </div>
       </div>
+      <el-image-viewer v-if="isShowImg" :on-close="onCloseImg" :url-list="srcList" />
     </div>
     <el-dialog
       title="锁定库存价格"
@@ -304,6 +305,7 @@ import Pagination from '@/components/Pagination'
 import exportTable from './export-table'
 import { mapGetters } from 'vuex'
 import { getTypeTree, exportData } from '@/api/group'
+import ElImageViewer from '@/components/imageViewer/imageViewer'
 import {
   getStoreGoodsList,
   setLockPrice,
@@ -313,7 +315,7 @@ import {
   setSynchro
 } from '@/api/store-goods'
 export default {
-  components: { Pagination, exportTable },
+  components: { Pagination, exportTable, ElImageViewer },
   mixins: [mixins],
   data() {
     const _checkTime = (rule, value, callback) => {
@@ -415,7 +417,9 @@ export default {
       subLoading: false,
       editData: 0,
       type: 'price',
-      isShow: false
+      isShow: false,
+      srcList: [],
+      isShowImg: false
     }
   },
   computed: {
@@ -426,6 +430,13 @@ export default {
     this._loadTypeList()
   },
   methods: {
+    onLook(url) {
+      this.srcList = [`${this.showImg(url)}?x-oss-process=style/w_800`]
+      this.isShowImg = true
+    },
+    onCloseImg() {
+      this.isShowImg = false
+    },
     resetQuery() {
       this.listQuery = {
         approvalNumber: '',
