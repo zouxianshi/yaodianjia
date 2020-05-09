@@ -61,7 +61,6 @@
             />
           </div>
           <div class="search-item">
-            <span class="label-name">货   主</span>
             <span class="label-name">货&nbsp;&nbsp;&nbsp;&nbsp;主</span>
             <el-select v-model="listQuery.owner" size="small" placeholder="请选择货主" @change="handleQuery">
               <el-option label="自营" :value="0" />
