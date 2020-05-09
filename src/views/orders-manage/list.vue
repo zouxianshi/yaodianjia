@@ -478,6 +478,10 @@
                             :key="index2"
                             class="goods-item"
                           >
+                            <div
+                              v-if="list.isPromotion === 1 && (list.pmtProductType === 'G' || list.pmtProductType === 'R')"
+                              :class="{ 'goods-tag': true, 'gift': list.pmtProductType === 'G' }"
+                            >{{ list.pmtProductType === 'G'? '赠品':'换购' }}</div>
                             <div class="goods-img padding10">
                               <div v-if="list.mpic && list.mpic!==''">
                                 <div class="x-image__preview">
