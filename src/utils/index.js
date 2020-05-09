@@ -2,6 +2,8 @@
  * Created by PanJiaChen on 16/11/18.
  */
 
+export * from '@vue/utils'
+
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
@@ -404,3 +406,16 @@ export function downloadBlob(data, fileNameS = 'excel') {
     window.navigator.msSaveBlob(blob, fileName)
   }
 }
+
+/**
+ * `${uuid('test-')}${uuid() + uuid() + uuid()}`
+ */
+export function uuid(prefix) {
+  var id = Math.floor(Math.random() * 10000).toString(36)
+  return prefix
+    ? ~prefix.indexOf('%{s}')
+      ? prefix.replace(/%\{s\}/g, id)
+      : prefix + id
+    : id
+}
+

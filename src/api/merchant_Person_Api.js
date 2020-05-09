@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import config from '@/utils/config'
 
 export function updateRole(id, data) {
   return request({
@@ -89,7 +90,7 @@ export function employResetPassWD(id) {
 // 查询商家信息
 export function merchantDetail() {
   return request({
-    url: `/1.0/mer/_queryMerchantByUser`,
+    url: `${config.merchant}/1.0/mer/_queryMerchantByUser`,
     method: 'post'
     // headers: { 'id': `${id}`,
     //   'userName': 'uaua'

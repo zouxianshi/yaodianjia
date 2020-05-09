@@ -180,9 +180,9 @@
                 @change="handleTimeChange($event, 3)"
               />
             </el-form-item>
-            <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
+            <!--<el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
               <el-input v-model="xForm.sort" size="small" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
-            </el-form-item>
+            </el-form-item>-->
           </el-form>
         </div>
         <div class="preview-box">

@@ -12,6 +12,7 @@ import routeR from './modules/router-r'
 import routeC from './modules/router-c'
 import routeF from './modules/router-f'
 import routeD from './modules/router-d'
+import mall from './modules/mall'
 import { mUsersModule } from '@merchant/commons'
 
 // merge component layout module
@@ -81,7 +82,8 @@ export const asyncRoutes = [
   ...routeR,
   ...routeC,
   ...routeF,
-  ...routeD
+  ...routeD,
+  ...mall
 ]
 
 const createRouter = () => new Router({

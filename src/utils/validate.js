@@ -110,10 +110,10 @@ export function checkEmail(value) {
 
 // 校验两位小数
 export function checkNumberdouble(value) {
-  const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
+  // const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
+  const reg = /^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/
   return reg.test(value)
 }
-
 //  只能输入 字母数字 字符
 export function checkZmSZ(value) {
   const reg = /^[0-9a-zA-Z]*$/g

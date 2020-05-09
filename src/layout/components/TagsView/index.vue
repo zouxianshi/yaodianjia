@@ -58,7 +58,14 @@ export default {
       tagBodyLeft: 0,
       outerPadding: 4,
       contextMenuLeft: 0,
-      contextMenuTop: 0
+      contextMenuTop: 0,
+      promotionType: [
+        { id: '11', label: '限时特惠' },
+        { id: '12', label: '限时秒杀' },
+        { id: '13', label: '拼团' },
+        { id: '14', label: '满减满赠' },
+        { id: '15', label: '加价购' }
+      ]
     }
   },
   computed: {
@@ -75,7 +82,7 @@ export default {
     }
   },
   watch: {
-    $route(to) {
+    $route(newRouter, oldRouter) {
       this.addTags()
       this.moveToCurrentTag()
     },
@@ -154,9 +161,28 @@ export default {
       return route.path === this.$route.path
     },
     addTags() {
-      const { name } = this.$route
+      const { name, params, meta } = this.$route
       if (name) {
-        this.$store.dispatch('tagsView/addView', this.$route)
+        // 兼容处理活动公用一个list更改tagView的问题
+        let route = this.$route
+        if (name === 'activityList') {
+          const data = this.promotionType.filter(
+            item => item.id === params.type
+          )
+          if (params.type) {
+            route = {
+              ...route,
+              meta: {
+                ...meta,
+                title:
+                  Array.isArray(data) && data.length
+                    ? `${data[0].label}列表`
+                    : '活动列表'
+              }
+            }
+          }
+        }
+        this.$store.dispatch('tagsView/addView', route)
       }
       return false
     },

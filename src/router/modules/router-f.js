@@ -22,6 +22,15 @@ const router = [
           auth: 'order.order-all'
         }
       }, {
+        path: 'spell-group',
+        component: () => import('@/views/orders-manage/spellList'),
+        name: 'orders-manage-spell_group',
+        meta: {
+          title: '拼团订单',
+          noCache: true,
+          auth: 'order.order-group'
+        }
+      }, {
         path: `details`,
         component: () => import('@/views/orders-manage/details'),
         name: 'orders-manage-details',

@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
-const webpack = require('webpack')
+// const webpack = require('webpack')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -65,13 +65,13 @@ module.exports = {
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
-          // '^/api': `http://middle.test.ydjia.cn`
-          '^/api': `http://middle.dev.ydjia.cn`
+          // '^/api': `http://middle.dev.ydjia.cn`
+          '^/api': `http://middle.uat.ydjia.cn`
         }
       },
       '/hss': {
-        target: `http://middle.test.ydjia.cn/businesses-gateway`,
-        // target: `https://middle.uat.ydjia.cn/businesses-gateway/mask`,
+        // target: `http://middle.test.ydjia.cn/businesses-gateway`,
+        target: `https://middle.uat.ydjia.cn/businesses-gateway/mask`,
         // target: `http://10.200.25.183:8080`,
         changeOrigin: true,
         pathRewrite: {
@@ -112,14 +112,17 @@ module.exports = {
         })
       ]
     },
+    externals: {
+      vue: 'Vue',
+      vuex: 'Vuex',
+      'vue-router': 'VueRouter',
+      jquery: '$',
+      lodash: '_',
+      'element': 'ELEMENT',
+      'vuedraggable': 'vuedraggable',
+      'tinymce': 'tinymce'
+    },
     plugins: [
-      new webpack.ProvidePlugin({
-        $: 'jquery',
-
-        jQuery: 'jquery',
-
-        'windows.jQuery': 'jquery'
-      })
       //   // GZIP配置
       //   new CompressionWebpackPlugin({
       //     filename: '[path].gz[query]',
@@ -189,11 +192,11 @@ module.exports = {
             priority: 10,
             chunks: 'initial' // only package third parties that are initially dependent
           },
-          elementUI: {
-            name: 'chunk-elementUI', // split elementUI into a single package
-            priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-            test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
-          },
+          // elementUI: {
+          //   name: 'chunk-elementUI', // split elementUI into a single package
+          //   priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+          //   test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
+          // },
           commons: {
             name: 'chunk-commons',
             test: resolve('src/components'), // can customize your rules
