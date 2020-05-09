@@ -347,7 +347,7 @@
                   >
                     <el-checkbox
                       :key="index"
-                      checked
+                      :checked="chooseSpec.indexOf(item.id)>-1"
                       :disabled="true||is_query"
                       @change="handleSpecsChange(item)"
                     >{{ item.attributeName }}</el-checkbox>
@@ -359,7 +359,7 @@
                   v-for="(item,index) in specsList"
                   :key="index"
                   v-model="item.isCheck"
-                  :disabled="basicForm.origin===1||is_query"
+                  :disabled="is_query"
                   @change="handleSpecsChange(item)"
                 >{{ item.attributeName }}</el-checkbox>
               </template>
