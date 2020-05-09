@@ -305,7 +305,7 @@
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
-      :list="selectedGoods"
+      :list="tableForm.selectedGoods"
       :store-ids="xForm.allStore?[]:selectedStore.map(item => item.id)"
       @on-change="handleSelectGoods"
     />
@@ -438,7 +438,7 @@ export default {
       editDetail: null, // 编辑详情
       mutiSetType: '', // 设置类型 1.折扣 2.减价 3限购 4.库存
       propGoodsList: [],
-      selectedGoods: [], // 用户回显弹窗
+      // selectedGoods: [], // 用户回显弹窗
       selectedStore: [],
       // allStore: false,
       storeIds: [],
@@ -536,7 +536,7 @@ export default {
     },
     handleSelectGoods(val) {
       console.log('商品结果页出来了-------', val)
-      this.selectedGoods = val
+      // this.selectedGoods = val
       this.tableForm.selectedGoods = val.map(item => {
         return {
           ...item,
@@ -556,7 +556,7 @@ export default {
     },
     handleDel(item, index) {
       this.tableForm.selectedGoods.splice(index, 1)
-      this.selectedGoods.splice(index, 1)
+      // this.selectedGoods.splice(index, 1)
     },
     modeChange(val) {
       if (val === 1 && this.mutiSetType === '2') {
@@ -615,7 +615,7 @@ export default {
           ...goods
         }
       })
-      this.selectedGoods = dataMap
+      // this.selectedGoods = dataMap
       this.tableForm.selectedGoods = dataMap
       this.$refs.dialogSet.close()
     },
@@ -797,10 +797,10 @@ export default {
           if (res.code === '10000') {
             // / this.xForm = ''
             const data = res.data
-            this.selectedGoods =
-              data.activityDetail && Array.isArray(data.activityDetail.ruleList)
-                ? data.activityDetail.ruleList
-                : []
+            // this.selectedGoods =
+            //   data.activityDetail && Array.isArray(data.activityDetail.ruleList)
+            //     ? data.activityDetail.ruleList
+            //     : []
             this.tableForm.selectedGoods = Array.isArray(
               data.activityDetail.ruleList
             )
