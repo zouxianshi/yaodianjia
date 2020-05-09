@@ -2,6 +2,7 @@
   <div class="app-container">
     <div class="depot-wrappe clearfix">
       <el-alert type="warning" :closable="false">
+        <el-image style="width: 100px; height: 100px" :src="url" :preview-src-list="srcList" />
         <p slot="title" class="alret-title">
           为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您
           <router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
@@ -33,11 +34,7 @@
           </div>
           <div class="search-item">
             <span class="label-name">商品类型</span>
-            <el-select
-              v-model="listQuery.commodityType"
-              size="small"
-              placeholder="普通商品/组合商品"
-            >
+            <el-select v-model="listQuery.commodityType" size="small" placeholder="普通商品/组合商品">
               <el-option label="普通商品" value="1" />
               <el-option label="组合商品" value="2" />
             </el-select>
@@ -62,7 +59,12 @@
           </div>
           <div class="search-item">
             <span class="label-name">货&nbsp;&nbsp;&nbsp;&nbsp;主</span>
-            <el-select v-model="listQuery.owner" size="small" placeholder="请选择货主" @change="handleQuery">
+            <el-select
+              v-model="listQuery.owner"
+              size="small"
+              placeholder="请选择货主"
+              @change="handleQuery"
+            >
               <el-option label="自营" :value="0" />
               <el-option label="平安" :value="1" />
             </el-select>
@@ -107,10 +109,8 @@
               <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
-
         </div>
         <div class="search-form">
-
           <div class="search-item">
             <el-button type="primary" size="small" @click="handleQuery">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
@@ -184,12 +184,15 @@
             >
               <template slot-scope="scope">
                 <template v-if="scope.row.mainPic">
-                  <el-image
+                  <!-- <el-image
                     style="width: 70px; height: 70px"
                     :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
-                    lazy
-                    fit="contain"
-                    :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
+                    :preview-src-list="[showImg(scope.row.mainPic)+'?x-oss-process=style/w_800']"
+                  />-->
+                  <el-image
+                    style="width: 100px; height: 100px"
+                    :src="url"
+                    :preview-src-list="srcList"
                   />
                 </template>
                 <template v-else>
@@ -315,6 +318,8 @@ export default {
   mixins: [mixins],
   data() {
     return {
+      url:
+        'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       keyword: '',
       goodStatus: 1,
       chooseNum: 0,
@@ -355,6 +360,14 @@ export default {
         typeId: '' // 商品分类id
       },
       goodsTypeList: []
+    }
+  },
+  computed: {
+    srcList() {
+      return [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+        'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
+      ]
     }
   },
   created() {
