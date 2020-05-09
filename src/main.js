@@ -14,7 +14,6 @@ import * as filters from './filters' // global filters
 import './permission'
 // import { setSystem } from './utils/auth'
 import utils from '@/utils/util'
-
 Vue.use(permission)
 Vue.use(utils)
 Vue.use(loadmore)
