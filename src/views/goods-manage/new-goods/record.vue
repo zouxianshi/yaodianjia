@@ -62,7 +62,7 @@
                   :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
                   lazy
                   fit="contain"
-                  :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
+                  @click="onLook(scope.row.mainPic)"
                 />
               </template>
               <template v-else>
@@ -162,6 +162,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-image-viewer v-if="isShowImg" :on-close="onCloseImg" :url-list="srcList" />
         <div class="table-footer">
           <pagination
             :total="total"
@@ -180,9 +181,10 @@ import mixins from '@/utils/mixin'
 import { getNewGoodsRecord, deleteGoods } from '@/api/new-goods'
 import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
+import ElImageViewer from '@/components/imageViewer/imageViewer'
 export default {
   name: 'GoodsRecord',
-  components: { Pagination },
+  components: { Pagination, ElImageViewer },
   mixins: [mixins],
   data() {
     return {
@@ -202,7 +204,9 @@ export default {
         origin: 0,
         currentPage: 1
       },
-      multipleSelection: []
+      multipleSelection: [],
+      srcList: [],
+      isShowImg: false
     }
   },
   computed: {
@@ -249,6 +253,13 @@ export default {
     }
   },
   methods: {
+    onLook(url) {
+      this.srcList = [`${this.showImg(url)}?x-oss-process=style/w_800`]
+      this.isShowImg = true
+    },
+    onCloseImg() {
+      this.isShowImg = false
+    },
     resetQuery() {
       this.listQuery = {
         approvalNumber: '',
