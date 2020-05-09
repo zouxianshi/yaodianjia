@@ -428,7 +428,7 @@ export default {
           this.form.listCouponProduct.push({
             proBrand: product.proBrand || product.brandName,
             proCode: product.proCode || product.erpCode,
-            proId: product.proId || product.id,
+            proId: product.proId || product.specId,
             proName: product.proName || product.name,
             proPrice: product.proPrice || product.mprice || product.price,
             proImg: product.proImg || product.picUrl,
@@ -633,7 +633,7 @@ export default {
                   name: item.proName,
                   brandName: item.proBrand,
                   proSpec: item.proSpec,
-                  specId: item.specId,
+                  specId: item.proId,
                   price: item.proPrice
                 }
               }

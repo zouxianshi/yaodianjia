@@ -27,6 +27,37 @@ class InnerCtor {
         children: []
       },
       {
+        name: '会员管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: true,
+        children: [
+          {
+            name: '会员中心',
+            path: '/member/member-center',
+            disabled: true
+          },
+          {
+            name: '会员注册设置',
+            path: '/member/register-setting',
+            disabled: true
+          },
+        ]
+      },
+      {
+        name: '渠道管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: true,
+        children: [
+          {
+            name: '微信公众号',
+            path: '/channel/wx-official-account',
+            disabled: true
+          },
+        ]
+      },
+      {
         name: '商品中心',
         icon: 'icongoods',
         path: '',
