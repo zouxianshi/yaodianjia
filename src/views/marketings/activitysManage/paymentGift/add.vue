@@ -430,9 +430,10 @@ export default {
             proCode: product.proCode || product.erpCode,
             proId: product.proId || product.id,
             proName: product.proName || product.name,
-            proPrice: product.proPrice || product.mprice,
+            proPrice: product.proPrice || product.mprice || product.price,
             proImg: product.proImg || product.picUrl,
             proSpec: product.specStr || product.proSpec,
+            specId: product.specId,
             ruleType: 2
           })
         })
@@ -632,6 +633,7 @@ export default {
                   name: item.proName,
                   brandName: item.proBrand,
                   proSpec: item.proSpec,
+                  specId: item.specId,
                   price: item.proPrice
                 }
               }
