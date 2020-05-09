@@ -205,7 +205,7 @@
           >
             <div class="con">
               优惠：￥
-              {{ detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont }}
+              {{ (detailsData.couponDeduction*100+detailsData.integralDeduction*100+detailsData.activityDiscountAmont*100+detailsData.otherDiscountAmont*100)/100 }}
             </div>
           </template>
 
