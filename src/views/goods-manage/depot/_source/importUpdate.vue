@@ -29,7 +29,7 @@
             <em>点击上传</em>
           </div>
           <div slot="tip" class="el-upload__tip">
-            仅支持XLS/XLSX文件格式。每次最多导入5000条。导入后将替换原值。
+            仅支持XLS/XLSX文件格式。每次最多导入500条。导入后将替换原值。
             <!-- <span class="tip">一次只允许上传1个文件</span> -->
             <div style="margin-top: 7px">
               <el-link type="primary" :href="batchEditUrl">点击下载导入模板</el-link>
@@ -52,13 +52,13 @@
     >
       <div class="error-dialog-model">
         <span>{{ errorText }}</span>
-        <el-link type="primary" :href="batchEditUrl">下载结果文件</el-link>
+        <el-link v-show="errorResultUrl" type="primary" :href="errorResultUrl">下载结果文件</el-link>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-link :href="batchEditUrl" :underline="false">
+        <el-link v-show="errorResultUrl" :href="errorResultUrl" :underline="false">
           <el-button type="primary">下 载</el-button>
         </el-link>
-        <el-button @click="errorDialogVisible = false">关 闭</el-button>
+        <el-button @click="errorDialogVisible = false;">关 闭</el-button>
       </span>
     </el-dialog>
   </div>
@@ -77,7 +77,8 @@ export default {
     return {
       is_file: false,
       errorDialogVisible: false,
-      errorText: ''
+      errorText: '',
+      errorResultUrl: ''
     }
   },
   computed: {
@@ -107,6 +108,7 @@ export default {
       this.errorDialogVisible = false
     },
     handleColse() {
+      this.$refs.file.clearFiles()
       this.$emit('close')
     },
     fileChange() {
@@ -119,13 +121,16 @@ export default {
         this.errorDialogVisible = true
         if (res.data.fail === 0) {
           this.errorText = `上传${res.data.success +
-            res.data.fail}条数据：操作成功${res.data.success}条；可点击下载结果文件查看。`
+            res.data.fail}条数据：操作成功${
+            res.data.success
+          }条；可点击下载结果文件查看。`
         } else {
           this.errorText = `上传${res.data.success +
             res.data.fail}条数据：操作成功${res.data.success}条；操作失败${
             res.data.fail
           }条，失败原因可点击下载结果文件查看。`
         }
+        this.errorResultUrl = res.data.url
       } else {
         this.$message.close() // 关闭
         this.$message({
