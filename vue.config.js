@@ -1,5 +1,6 @@
 'use strict'
 const path = require('path')
+const getEnv = require('env-parse').getEnv
 const defaultSettings = require('./src/settings.js')
 const webpack = require('webpack')
 function resolve(dir) {
@@ -7,7 +8,6 @@ function resolve(dir) {
 }
 
 const name = defaultSettings.title || '海典商户平台' // page title
-const port = 7002 // dev port
 
 // 引用uglifyjs，代码压缩、去除console
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
@@ -52,7 +52,7 @@ module.exports = {
   },
   devServer: {
     disableHostCheck: true,
-    port: port,
+    port: getEnv('DEV_PORT','7002'),
     open: false,
     overlay: {
       warnings: false,
@@ -60,20 +60,17 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: `http://middle.dev.ydjia.cn/businesses-gateway`,
+        target: getEnv('API_BASE'),
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
-          // '^/api': `http://middle.dev.ydjia.cn`
-          '^/api': `http://middle.dev.ydjia.cn`
+          '^/api': getEnv('API_BASE') && getEnv('API_BASE').split("/businesses-gateway")[0]
         }
       },
       '/hss': {
-        target: `https://middle.dev.ydjia.cn/businesses-gateway/mask`,
-        // target: `http://10.200.25.183:8080`,
+        target: `${getEnv('API_BASE')}/mask`,
         changeOrigin: true,
         pathRewrite: {
-          // '^/api': `http://middle.test.ydjia.cn`
           '^/hss': ``
         }
       }
