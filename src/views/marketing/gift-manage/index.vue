@@ -1,16 +1,16 @@
 <template>
   <div class="app-container activity">
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <!-- <el-tab-pane label="优惠券" name="coupons">
-        <el-row :gutter="20">
-          <el-col v-for="o in coupons" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-            <card-item :item="o" />
-          </el-col>
-        </el-row>
-      </el-tab-pane> -->
       <el-tab-pane label="赠品" name="complimentary">
         <el-row :gutter="20">
           <el-col v-for="o in complimentary" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="优惠券" name="coupons">
+        <el-row :gutter="20">
+          <el-col v-for="o in coupons" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
             <card-item :item="o" />
           </el-col>
         </el-row>
@@ -19,12 +19,15 @@
   </div>
 </template>
 <script>
-import discountCoupons from '@/assets/image/acvity/discount-coupons.png'
-import fullCutCoupons from '@/assets/image/acvity/full-cut-coupons.png'
-import giftCertificate from '@/assets/image/acvity/gift-certificate.png'
+// import discountCoupons from '@/assets/image/acvity/discount-coupons.png'
+// import fullCutCoupons from '@/assets/image/acvity/full-cut-coupons.png'
+// import giftCertificate from '@/assets/image/acvity/gift-certificate.png'
 import complimentary from '@/assets/image/acvity/complimentary.png'
 import cardItem from '../components/card-item'
-
+import discountImg from '@/assets/image/marketings/discount.png'
+import fullReductionImg from '@/assets/image/marketings/fullReduction.png'
+import giftImg from '@/assets/image/marketings/gift.png'
+import zengpinImg from '@/assets/image/marketings/zengpin.png'
 export default {
   components: { cardItem },
   data() {
@@ -39,23 +42,38 @@ export default {
         {
           value: 'discount-coupons',
           lable: '折扣券',
-          img: discountCoupons,
+          img: discountImg,
           desc:
-            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+            '',
+          listUrl: '/marketings/gift-manage/list?id=1',
+          linkUrl: '/marketings/gift-manage/discount'
         },
         {
           value: 'full-cut-coupons',
           lable: '满减券',
-          img: fullCutCoupons,
+          img: fullReductionImg,
           desc:
-            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+            '',
+          listUrl: '/marketings/gift-manage/list?id=2',
+          linkUrl: '/marketings/gift-manage/full-reduction'
         },
         {
           value: 'gift-certificate',
           lable: '礼品券',
-          img: giftCertificate,
+          img: giftImg,
           desc:
-            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+            '',
+          listUrl: '/marketings/gift-manage/list?id=3',
+          linkUrl: '/marketings/gift-manage/gift'
+        },
+        {
+          value: 'gift-certificate',
+          lable: '优惠码',
+          img: zengpinImg,
+          desc:
+            '',
+          listUrl: '',
+          linkUrl: ''
         }
       ],
       complimentary: [
@@ -73,9 +91,13 @@ export default {
       ]
     }
   },
+  created() {
+    this.activeName = this.$route.query.type || 'complimentary'
+  },
   methods: {
     handleClick(val) {
       console.log('点击tab切换', val)
+      this.$router.replace(`/marketing/gifts?type=${val.name}`)
     }
   }
 }

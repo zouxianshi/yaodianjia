@@ -47,7 +47,7 @@
         </el-button>-->
       </div>
     </div>
-    <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="大转盘暂未上架任何活动">
+    <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="刮刮乐暂未上架任何活动">
       <el-table-column prop="date" label="活动类型" width="120">
         <template>
           <div>刮刮乐</div>

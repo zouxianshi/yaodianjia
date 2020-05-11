@@ -97,6 +97,7 @@ export default {
   },
   created() {
     this.searchData()
+    this.searchParams.ctype = this.$route.query.id || '0'
   },
   methods: {
     searchData() {
