@@ -381,7 +381,14 @@
                   @selection-change="handleSelectionChange"
                   @select="handleSelectChange"
                 >
-                  <el-table-column type="selection" :selectable="selectable" width="55" />
+                  <!-- <el-table-column type="selection" :selectable="selectable" width="55" v-if="showSelect()"/> -->
+                  <el-table-column
+                    width="55"
+                  >
+                    <template slot-scope="scope">
+                      <el-checkbox v-if="scope.row.isShowSelect" v-model="scope.row.isCheck" :disabled="scope.row.disabled" />
+                    </template>
+                  </el-table-column>
                   <!-- <el-table-column
                     v-for="(items,index1) in dynamicProp"
                     :key="index1"
@@ -1102,6 +1109,7 @@ export default {
       }
     }
     return {
+      isShow: false,
       step: 1,
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组
@@ -1192,7 +1200,7 @@ export default {
       subLoading2: false,
       subLoading1: false, // 加载
       pageLoading: false, // 加载
-      leaveAction: false // 离开页面动作，true为保存离开  false异常离开
+      leaveAction: false// 离开页面动作，true为保存离开  false异常离开
     }
   },
   computed: {
@@ -1237,6 +1245,22 @@ export default {
     if (this.is_query && this.pageLoading) {
       this.pageLoading.close()
     }
+    // } else {
+    // if (!this.leaveAction) {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // } else {
+    //   next()
+    // }
+    // }
   },
   created() {
     if (!this.$route.query.id) {
