@@ -224,13 +224,13 @@ const mixin = {
             }
           }
         }
-        if (flag && !v.barCode) {
-          this.$message({
-            message: `请输入规格${index}中的条码`,
-            type: 'error'
-          })
-          flag = false
-        }
+        // if (flag && !v.barCode) {
+        //   this.$message({
+        //     message: `请输入规格${index}中的条码`,
+        //     type: 'error'
+        //   })
+        //   flag = false
+        // }
         if (flag && !v.erpCode) {
           this.$message({
             message: `请输入规格${index}中的商品编码`,
