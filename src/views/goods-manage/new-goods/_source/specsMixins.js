@@ -119,7 +119,6 @@ const mixin = {
         data = [...this.chooseTableSpec, ...data]
         console.log('保存获取的数据,-----', data)
         if (data.length === 0) {
-          console.log('1231231312')
           this.$message({
             message: '请选择规格信息',
             type: 'error'
