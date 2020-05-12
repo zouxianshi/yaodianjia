@@ -27,7 +27,7 @@ import cardItem from '../components/card-item'
 import discountImg from '@/assets/image/marketings/discount.png'
 import fullReductionImg from '@/assets/image/marketings/fullReduction.png'
 import giftImg from '@/assets/image/marketings/gift.png'
-import zengpinImg from '@/assets/image/marketings/zengpin.png'
+// import zengpinImg from '@/assets/image/marketings/zengpin.png'
 export default {
   components: { cardItem },
   data() {
@@ -65,16 +65,17 @@ export default {
             '',
           listUrl: '/marketings/gift-manage/list?id=3',
           linkUrl: '/marketings/gift-manage/gift'
-        },
-        {
-          value: 'discount-code',
-          lable: '优惠码',
-          img: zengpinImg,
-          desc:
-            '',
-          listUrl: '',
-          linkUrl: ''
         }
+        // ,
+        // {
+        //   value: 'discount-code',
+        //   lable: '优惠码',
+        //   img: zengpinImg,
+        //   desc:
+        //     '',
+        //   listUrl: '',
+        //   linkUrl: ''
+        // }
       ],
       complimentary: [
         {

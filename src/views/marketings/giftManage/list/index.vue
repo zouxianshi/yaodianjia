@@ -16,7 +16,7 @@ import mList from './_source/list'
 import discountImg from '@/assets/image/marketings/discount.png'
 import fullReductionImg from '@/assets/image/marketings/fullReduction.png'
 import giftImg from '@/assets/image/marketings/gift.png'
-import zengpinImg from '@/assets/image/marketings/zengpin.png'
+// import zengpinImg from '@/assets/image/marketings/zengpin.png'
 export default {
   name: 'ListIndex',
   components: {
@@ -39,12 +39,13 @@ export default {
           imgUrl: giftImg,
           activityTemplateName: '礼品券',
           url: '/marketings/gift-manage/gift'
-        },
-        {
-          imgUrl: zengpinImg,
-          activityTemplateName: '优惠码',
-          url: ''
         }
+        // ,
+        // {
+        //   imgUrl: zengpinImg,
+        //   activityTemplateName: '优惠码',
+        //   url: ''
+        // }
       ]
     }
   },
@@ -57,7 +58,7 @@ export default {
     padding: 0 20px;
     .header-nav{
       .item-box{
-        display: flex;width: 660px; justify-content: space-between;padding: 10px 0;cursor:pointer;
+        display: flex;width: 495px; justify-content: space-between;padding: 10px 0;cursor:pointer;
         .gift-card-modal{
           flex: 0 0 150px;
           .el-card__body{
