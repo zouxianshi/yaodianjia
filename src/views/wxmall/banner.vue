@@ -1,201 +1,203 @@
 <template>
-  <div class="dashboard-container">
-    <div class="app-container">
-      <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加轮播图</el-button>
-      <section @keydown.enter="search()">
-        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-          <!-- <div class="search-item">
-            <span class="label-name">有效时间</span>
-            <el-date-picker
-              v-model="searchForm.timeBeg"
-              size="small"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              placeholder="开始时间"
-              @change="handleTimeChange($event, 1)"
-            /> -
-            <el-date-picker
-              v-model="searchForm.timeEnd"
-              size="small"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              placeholder="结束时间"
-              @change="handleTimeChange($event, 2)"
-            />
-          </div> -->
-          <div class="search-item">
-            <span class="label-name" style="width: 50px">状态</span>
-            <el-select
-              v-model="searchForm.status"
-              size="small"
-              placeholder="使用状态"
-              @change="search()"
-            >
-              <el-option
-                v-for="item in statusOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+  <div class="app-container">
+    <div class="dashboard-container">
+      <div class="app-container">
+        <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加轮播图</el-button>
+        <section @keydown.enter="search()">
+          <div class="search-form" style="margin-top:20px;margin-bottom:10px">
+            <!-- <div class="search-item">
+              <span class="label-name">有效时间</span>
+              <el-date-picker
+                v-model="searchForm.timeBeg"
+                size="small"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="开始时间"
+                @change="handleTimeChange($event, 1)"
+              /> -
+              <el-date-picker
+                v-model="searchForm.timeEnd"
+                size="small"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="结束时间"
+                @change="handleTimeChange($event, 2)"
               />
-            </el-select>
-          </div>
-          <div class="search-item">
-            <span class="label-name" style="width: 50px">备注</span>
-            <el-input v-model.trim="searchForm.remark" size="small" style="width: 200px" />
-          </div>
-          <div class="search-item">
-            <el-button size="small" @click="search()">查 询</el-button>
-          </div>
-        </div>
-      </section>
-      <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column label="序号" width="60" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.sortNumber || '' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="img" label="图片" min-width="100" align="center">
-            <template slot-scope="scope">
-              <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
-                <div class="x-image__preview">
-                  <el-image
-                    style="width: 50px;height: 50px;"
-                    fit="contain"
-                    :src="showImg(scope.row.imageUrl)"
-                    :preview-src-list="[showImg(scope.row.imageUrl)]"
-                  />
-                </div>
-              </div>
-              <div v-else style="line-height: 32px">暂未上传</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="url" label="链接地址" min-width="240">
-            <template v-if="scope.row.url && scope.row.url!==''" slot-scope="scope">
-              <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
-            </template>
-          </el-table-column>
-          <el-table-column prop="startTime" label="开始时间" min-width="180" align="center" />
-          <el-table-column prop="endTime" label="结束时间" min-width="180" align="center" />
-          <el-table-column label="状态" min-width="80" align="center">
-            >
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
-              <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="remark" label="备注" min-width="120" align="center" />
-          <el-table-column label="操作" align="center" min-width="240">
-            <template slot-scope="scope">
-              <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-              <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
-              <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
-              <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </section>
-      <section class="c-footer">
-        <el-pagination
-          background
-          :current-page="pager.current"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="pager.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pager.total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </section>
-    </div>
-    <el-dialog
-      :title="`${xForm.id==''? '添加':'修改'}轮播图`"
-      append-to-body
-      :visible.sync="dialogFormVisible"
-      width="800px"
-      :close-on-click-modal="false"
-      @closed="dialogClose('xForm')"
-    >
-      <div v-loading="uploadLoading" element-loading-text="图片上传中" class="x-dialog-body">
-        <div class="form-box">
-          <el-form ref="xForm" :model="xForm" :rules="xRules">
-            <el-form-item label="图片" :label-width="formLabelWidth" prop="imgUrl">
-              <el-upload
-                class="avatar-uploader x-uploader"
-                :headers="headers"
-                :action="upLoadUrl"
-                :show-file-list="false"
-                :on-success="handleUploadSuccess"
-                :on-error="handleUploadError"
-                :before-upload="beforeUpload"
+            </div> -->
+            <div class="search-item">
+              <span class="label-name" style="width: 50px">状态</span>
+              <el-select
+                v-model="searchForm.status"
+                size="small"
+                placeholder="使用状态"
+                @change="search()"
               >
-                <div v-if="xForm.imgUrl" class="el-img-box">
-                  <img :src="showImg(xForm.imgUrl)" class="image">
-                  <div class="img-actions" @click.stop>
-                    <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
-                    <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
+                <el-option
+                  v-for="item in statusOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </div>
+            <div class="search-item">
+              <span class="label-name" style="width: 50px">备注</span>
+              <el-input v-model.trim="searchForm.remark" size="small" style="width: 200px" />
+            </div>
+            <div class="search-item">
+              <el-button size="small" @click="search()">查 询</el-button>
+            </div>
+          </div>
+        </section>
+        <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
+          <el-table :data="tableData" style="width: 100%">
+            <el-table-column label="序号" width="60" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.sortNumber || '' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="img" label="图片" min-width="100" align="center">
+              <template slot-scope="scope">
+                <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
+                  <div class="x-image__preview">
+                    <el-image
+                      style="width: 50px;height: 50px;"
+                      fit="contain"
+                      :src="showImg(scope.row.imageUrl)"
+                      :preview-src-list="[showImg(scope.row.imageUrl)]"
+                    />
                   </div>
                 </div>
-                <i v-else class="el-icon-plus icon-add" />
-              </el-upload>
-              <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
-            </el-form-item>
-            <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
-              <el-input
-                v-model="xForm.linkUrl"
-                size="small"
-                autocomplete="off"
-                style="width: 350px"
-                :maxlength="500"
-                placeholder="http:// 或 https://"
-              />
-            </el-form-item>
-            <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
-              <el-date-picker
-                v-model="xForm.dateRange"
-                style="width: 350px"
-                size="small"
-                type="datetimerange"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                range-separator="至"
-                :default-time="['00:00:00','23:59:59']"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                @change="handleTimeChange($event, 3)"
-              />
-            </el-form-item>
-            <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
-              <el-input v-model="xForm.sort" size="small" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
-            </el-form-item>
-            <el-form-item label="备注" :label-width="formLabelWidth">
-              <el-input
-                v-model="xForm.remark"
-                size="small"
-                autocomplete="off"
-                placeholder="10字以内"
-                :maxlength="10"
-                style="width: 350px"
-              />
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="preview-box">
-          <p class="title">
-            <label style="font-weight: bold">内容位置：</label> 首页-轮播图
-          </p>
-          <div class="prview-pic">
-            <img src="../../assets/image/h5/priview_1.png" style="width:100%;height:100%">
+                <div v-else style="line-height: 32px">暂未上传</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="url" label="链接地址" min-width="240">
+              <template v-if="scope.row.url && scope.row.url!==''" slot-scope="scope">
+                <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
+              </template>
+            </el-table-column>
+            <el-table-column prop="startTime" label="开始时间" min-width="180" align="center" />
+            <el-table-column prop="endTime" label="结束时间" min-width="180" align="center" />
+            <el-table-column label="状态" min-width="80" align="center">
+              >
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
+                <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="remark" label="备注" min-width="120" align="center" />
+            <el-table-column label="操作" align="center" min-width="240">
+              <template slot-scope="scope">
+                <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+                <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
+                <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
+                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </section>
+        <section class="c-footer">
+          <el-pagination
+            background
+            :current-page="pager.current"
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size="pager.size"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pager.total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </section>
+      </div>
+      <el-dialog
+        :title="`${xForm.id==''? '添加':'修改'}轮播图`"
+        append-to-body
+        :visible.sync="dialogFormVisible"
+        width="800px"
+        :close-on-click-modal="false"
+        @closed="dialogClose('xForm')"
+      >
+        <div v-loading="uploadLoading" element-loading-text="图片上传中" class="x-dialog-body">
+          <div class="form-box">
+            <el-form ref="xForm" :model="xForm" :rules="xRules">
+              <el-form-item label="图片" :label-width="formLabelWidth" prop="imgUrl">
+                <el-upload
+                  class="avatar-uploader x-uploader"
+                  :headers="headers"
+                  :action="upLoadUrl"
+                  :show-file-list="false"
+                  :on-success="handleUploadSuccess"
+                  :on-error="handleUploadError"
+                  :before-upload="beforeUpload"
+                >
+                  <div v-if="xForm.imgUrl" class="el-img-box">
+                    <img :src="showImg(xForm.imgUrl)" class="image">
+                    <div class="img-actions" @click.stop>
+                      <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
+                      <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
+                    </div>
+                  </div>
+                  <i v-else class="el-icon-plus icon-add" />
+                </el-upload>
+                <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
+              </el-form-item>
+              <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
+                <el-input
+                  v-model="xForm.linkUrl"
+                  size="small"
+                  autocomplete="off"
+                  style="width: 350px"
+                  :maxlength="500"
+                  placeholder="http:// 或 https://"
+                />
+              </el-form-item>
+              <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
+                <el-date-picker
+                  v-model="xForm.dateRange"
+                  style="width: 350px"
+                  size="small"
+                  type="datetimerange"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  range-separator="至"
+                  :default-time="['00:00:00','23:59:59']"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
+                  @change="handleTimeChange($event, 3)"
+                />
+              </el-form-item>
+              <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
+                <el-input v-model="xForm.sort" size="small" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
+              </el-form-item>
+              <el-form-item label="备注" :label-width="formLabelWidth">
+                <el-input
+                  v-model="xForm.remark"
+                  size="small"
+                  autocomplete="off"
+                  placeholder="10字以内"
+                  :maxlength="10"
+                  style="width: 350px"
+                />
+              </el-form-item>
+            </el-form>
+          </div>
+          <div class="preview-box">
+            <p class="title">
+              <label style="font-weight: bold">内容位置：</label> 首页-轮播图
+            </p>
+            <div class="prview-pic">
+              <img src="../../assets/image/h5/priview_1.png" style="width:100%;height:100%">
+            </div>
           </div>
         </div>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="showImg(dialogImageUrl)" alt="">
-    </el-dialog>
+        <div slot="footer" class="dialog-footer">
+          <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="showImg(dialogImageUrl)" alt="">
+      </el-dialog>
+    </div>
   </div>
 </template>
 

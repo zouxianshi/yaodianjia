@@ -14,7 +14,6 @@
           <r-y v-if="showMsgBtn" />
           <m-header>
             <breadcrumb slot="breadcrumb" />
-            <tags-view slot="tags" />
           </m-header>
         </div>
         <div class="app-main-model">
@@ -30,7 +29,7 @@
 /* eslint-disable */
   import { mapState } from "vuex";
   import ResizeMixin from "./mixin/ResizeHandler";
-  import { mSidebar, mHeader, MC } from "@merchant/commons";
+  import { mSidebar, mHeader, MC } from "/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src";
   import RightPanel from "@/components/RightPanel";
   import { AppMain, TagsView } from "./components";
   // 融云消息按钮 sdk初始化
@@ -132,7 +131,8 @@
       width: calc(100% - 255px);
       z-index: 1;
       .app-main-model {
-        margin-top: 138px;
+        margin-top: 130px;
+        background: #F5F7FA;
         .copyright {
           height: 20px;
           line-height: 20px;

@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div class="app-container">
+  <div class="app-container">
+    <div class="ac-box">
       <el-radio-group v-model="tabPosition" style="margin-bottom: 30px;" size="small">
         <el-radio-button :label="0">旗舰店设置</el-radio-button>
         <el-radio-button :label="1">支付设置</el-radio-button>

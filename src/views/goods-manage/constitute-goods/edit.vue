@@ -1,241 +1,243 @@
 <template>
   <div class="app-container">
-    <el-form
-      ref="basic"
-      :model="basicForm"
-      label-width="160px"
-      :rules="basicRules"
-      @submit.native.prevent
-    >
-      <div class="edit-wrapper">
-        <div class="edit-card">
-          <div class="edit-card-cnt">
-            <div class="content">
-              <p class="type-list">
-                <span class="type-list-title">
-                  <span class="color_red">*</span> 组合商品名称：
-                </span>
-                <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
-                <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
-              </p>
-              <!-- <el-form-item label="组合商品名称：" prop="name" required>
-                <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
-                <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
-              </el-form-item> -->
-              <p class="type-list">
-                <span class="type-list-title">
-                  <span class="color_red">*</span> 组合商品分类：
-                </span>
-                <el-tag v-if="chooseTypeList.length">
-                  <span v-if="chooseTypeList.length">
-                    {{ chooseTypeList[0].name }}&nbsp;>&nbsp;
-                    {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}
+    <div class="ac-box">
+      <el-form
+        ref="basic"
+        :model="basicForm"
+        label-width="160px"
+        :rules="basicRules"
+        @submit.native.prevent
+      >
+        <div class="edit-wrapper">
+          <div class="edit-card">
+            <div class="edit-card-cnt">
+              <div class="content">
+                <p class="type-list">
+                  <span class="type-list-title">
+                    <span class="color_red">*</span> 组合商品名称：
                   </span>
-                </el-tag>
-                <span v-if="!this.$route.query.id" class="link link-btn" @click="typeVisible=true;_loadClassList()">选择分类</span>
-              </p>
-              <div class="type-list groups">
-                <span class="type-list-title">
-                  <span class="color_red">*</span> 组合商品分组：
-                </span>
-                <p class="group-list">
-                  <!-- <el-tag v-if="chooseGroup.length" style="margin-right:10px">
-                    <span v-if="chooseGroup.length">
-                      {{ chooseGroup[0].name }}&nbsp;>&nbsp;
-                      {{ chooseGroup[1].name }}&nbsp;>&nbsp;{{ chooseGroup[2].name }}
-                    </span>
-                  </el-tag> -->
-                  <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
-                    <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
-                  </el-tag>
+                  <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
+                  <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
                 </p>
-                <span class="opreate">
-                  <span class="link link-btn" @click="groupVisible=true">选择分组</span>
-                  <span class="link link-btn" @click="handleRefresh">刷新</span>
-                </span>
-              </div>
+                <!-- <el-form-item label="组合商品名称：" prop="name" required>
+                  <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
+                  <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
+                </el-form-item> -->
+                <p class="type-list">
+                  <span class="type-list-title">
+                    <span class="color_red">*</span> 组合商品分类：
+                  </span>
+                  <el-tag v-if="chooseTypeList.length">
+                    <span v-if="chooseTypeList.length">
+                      {{ chooseTypeList[0].name }}&nbsp;>&nbsp;
+                      {{ chooseTypeList[1].name }}&nbsp;>&nbsp;{{ chooseTypeList[2].name }}
+                    </span>
+                  </el-tag>
+                  <span v-if="!this.$route.query.id" class="link link-btn" @click="typeVisible=true;_loadClassList()">选择分类</span>
+                </p>
+                <div class="type-list groups">
+                  <span class="type-list-title">
+                    <span class="color_red">*</span> 组合商品分组：
+                  </span>
+                  <p class="group-list">
+                    <!-- <el-tag v-if="chooseGroup.length" style="margin-right:10px">
+                      <span v-if="chooseGroup.length">
+                        {{ chooseGroup[0].name }}&nbsp;>&nbsp;
+                        {{ chooseGroup[1].name }}&nbsp;>&nbsp;{{ chooseGroup[2].name }}
+                      </span>
+                    </el-tag> -->
+                    <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
+                      <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                    </el-tag>
+                  </p>
+                  <span class="opreate">
+                    <span class="link link-btn" @click="groupVisible=true">选择分组</span>
+                    <span class="link link-btn" @click="handleRefresh">刷新</span>
+                  </span>
+                </div>
 
-              <el-form-item label="组合商品图片：" prop="image" required>
-                <el-upload
-                  v-loading="uploadLoading"
-                  class="avatar-uploader x-uploader"
-                  :action="upLoadUrl"
-                  :headers="headers"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  :before-upload="beforeUpload"
-                  @preview="handlePreview"
-                >
-                  <div v-if="basicForm.image" class="el-img-box">
-                    <img
-                      style="width:120px;height:120px"
-                      :src="showImg(basicForm.image)"
-                      class="avatar"
-                    >
-                    <div class="img-actions" @click.stop>
-                      <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
-                      <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
-                    </div>
-                  </div>
-                  <i v-else class="el-icon-plus avatar-uploader-icon" />
-                </el-upload>
-              </el-form-item>
-
-              <el-form-item label="关键字：" prop="keyWord" @submit.native.prevent>
-                <el-input v-model="basicForm.keyWord" placeholder="请输入关键字" size="small" />&nbsp;用、隔开
-                <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
-              </el-form-item>
-
-              <el-form-item label="组合商品详细信息：">
-                <p class="color_gray">填写商品说明书，详细介绍文字</p>
-                <Tinymce ref="editor" v-model="basicForm.detail" :height="400" />
-              </el-form-item>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="edit-wrapper">
-        <div class="edit-card">
-          <div class="header">
-            <span>选择商品</span>
-          </div>
-          <div class="edit-card-cnt">
-            <div class="content">
-              <div class="table-box">
-                <el-table v-loading="loading" :data="basicForm.childCommodities" stripe style="width: 100%" class="table-form">
-                  <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
-                  <el-table-column prop="standard" label="规格" align="center" min-width="150" />
-                  <el-table-column
-                    align="left"
-                    label="组合数量"
-
-                    min-width="120"
+                <el-form-item label="组合商品图片：" prop="image" required>
+                  <el-upload
+                    v-loading="uploadLoading"
+                    class="avatar-uploader x-uploader"
+                    :action="upLoadUrl"
+                    :headers="headers"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeUpload"
+                    @preview="handlePreview"
                   >
-                    <template slot-scope="scope">
-                      <el-form-item
-                        label-width="0"
-                        :prop="'childCommodities.' + scope.$index + '.number'"
-                        :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
+                    <div v-if="basicForm.image" class="el-img-box">
+                      <img
+                        style="width:120px;height:120px"
+                        :src="showImg(basicForm.image)"
+                        class="avatar"
                       >
-                        <el-input v-model="scope.row.number" size="small" class="inp_mini" />
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="mprice"
-                    align="left"
-                    label="参考价(元)"
-                    :show-overflow-tooltip="true"
-                    min-width="100"
-                  />
-                  <el-table-column prop="price" label="组合单价(元)" min-width="160" align="left">
-                    <template slot-scope="scope">
-                      <el-form-item
-                        label-width="0"
-                        :prop="'childCommodities.' + scope.$index + '.price'"
-                        :rules="[{ required: true, validator: check_price, trigger: 'blur' }]"
-                      >
-                        <el-input v-model="scope.row.price" size="small" class="inp_mini" />
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <!-- <el-table-column prop="weight" align="left" min-width="120" label="商品重量" style="display:none" /> -->
-                  <el-table-column prop="erpCode" align="left" min-width="120" label="商品编码" />
-                  <el-table-column align="left" min-width="130" label="操作">
-                    <template slot-scope="scope">
-                      <el-button
-                        type="primary"
-                        size="mini"
-                        @click="handleDelete(scope.$index,scope.row)"
-                      >删除</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
+                      <div class="img-actions" @click.stop>
+                        <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
+                        <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
+                      </div>
+                    </div>
+                    <i v-else class="el-icon-plus avatar-uploader-icon" />
+                  </el-upload>
+                </el-form-item>
+
+                <el-form-item label="关键字：" prop="keyWord" @submit.native.prevent>
+                  <el-input v-model="basicForm.keyWord" placeholder="请输入关键字" size="small" />&nbsp;用、隔开
+                  <input id="hiddenText" type="text" style="display:none" onkeypress="searchKeywordKeyboard(event)">
+                </el-form-item>
+
+                <el-form-item label="组合商品详细信息：">
+                  <p class="color_gray">填写商品说明书，详细介绍文字</p>
+                  <Tinymce ref="editor" v-model="basicForm.detail" :height="400" />
+                </el-form-item>
               </div>
-
-              <div class="icon-add icon_items" @click.stop="toSelectGoods">
-                <el-button type="primary" size="small">选择商品</el-button>
-              </div>
-
-              <el-form-item label="组合商品价格(元)：" prop="price" required>
-                <span>{{ basicForm.price }}</span>
-              </el-form-item>
-
-              <el-form-item label="参考价(元)：" prop="mprice" required>
-                <span>{{ basicForm.mprice }}</span>
-              </el-form-item>
-
-              <el-form-item label="组合商品重量(克)：" prop="weight">
-                <span>{{ basicForm.weight }}</span>
-              </el-form-item>
-
-              <el-form-item label="限购设置：" prop="limitNum">
-                <span>单个用户限购数量为</span>
-                <el-input v-model="basicForm.limitNum" placeholder="0" size="mini" class="inp_mini" />
-                <span v-show="basicForm.limitNum <= 0 && basicForm.limitNum >= 0" style="margin-left: 5px;margin-right: 10px;color: #e6a23c;">不限购</span>
-                <span class="color_gray">同一个用户限制购买的数量</span>
-              </el-form-item>
-
             </div>
           </div>
         </div>
+
+        <div class="edit-wrapper">
+          <div class="edit-card">
+            <div class="header">
+              <span>选择商品</span>
+            </div>
+            <div class="edit-card-cnt">
+              <div class="content">
+                <div class="table-box">
+                  <el-table v-loading="loading" :data="basicForm.childCommodities" stripe style="width: 100%" class="table-form">
+                    <el-table-column align="left" prop="commodityName" min-width="150" label="子商品名称" />
+                    <el-table-column prop="standard" label="规格" align="center" min-width="150" />
+                    <el-table-column
+                      align="left"
+                      label="组合数量"
+
+                      min-width="120"
+                    >
+                      <template slot-scope="scope">
+                        <el-form-item
+                          label-width="0"
+                          :prop="'childCommodities.' + scope.$index + '.number'"
+                          :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
+                        >
+                          <el-input v-model="scope.row.number" size="small" class="inp_mini" />
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      prop="mprice"
+                      align="left"
+                      label="参考价(元)"
+                      :show-overflow-tooltip="true"
+                      min-width="100"
+                    />
+                    <el-table-column prop="price" label="组合单价(元)" min-width="160" align="left">
+                      <template slot-scope="scope">
+                        <el-form-item
+                          label-width="0"
+                          :prop="'childCommodities.' + scope.$index + '.price'"
+                          :rules="[{ required: true, validator: check_price, trigger: 'blur' }]"
+                        >
+                          <el-input v-model="scope.row.price" size="small" class="inp_mini" />
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <!-- <el-table-column prop="weight" align="left" min-width="120" label="商品重量" style="display:none" /> -->
+                    <el-table-column prop="erpCode" align="left" min-width="120" label="商品编码" />
+                    <el-table-column align="left" min-width="130" label="操作">
+                      <template slot-scope="scope">
+                        <el-button
+                          type="primary"
+                          size="mini"
+                          @click="handleDelete(scope.$index,scope.row)"
+                        >删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+
+                <div class="icon-add icon_items" @click.stop="toSelectGoods">
+                  <el-button type="primary" size="small">选择商品</el-button>
+                </div>
+
+                <el-form-item label="组合商品价格(元)：" prop="price" required>
+                  <span>{{ basicForm.price }}</span>
+                </el-form-item>
+
+                <el-form-item label="参考价(元)：" prop="mprice" required>
+                  <span>{{ basicForm.mprice }}</span>
+                </el-form-item>
+
+                <el-form-item label="组合商品重量(克)：" prop="weight">
+                  <span>{{ basicForm.weight }}</span>
+                </el-form-item>
+
+                <el-form-item label="限购设置：" prop="limitNum">
+                  <span>单个用户限购数量为</span>
+                  <el-input v-model="basicForm.limitNum" placeholder="0" size="mini" class="inp_mini" />
+                  <span v-show="basicForm.limitNum <= 0 && basicForm.limitNum >= 0" style="margin-left: 5px;margin-right: 10px;color: #e6a23c;">不限购</span>
+                  <span class="color_gray">同一个用户限制购买的数量</span>
+                </el-form-item>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-form>
+      <div class="footer">
+        <span>
+          <el-button size="small" @click="$router.go(-1)">取 消</el-button>
+          <el-button type="primary" size="small" :loading="subLoading" @click="handleConstituteGoods">确 定</el-button>
+        </span>
       </div>
-    </el-form>
-    <div class="footer">
-      <span>
-        <el-button size="small" @click="$router.go(-1)">取 消</el-button>
-        <el-button type="primary" size="small" :loading="subLoading" @click="handleConstituteGoods">确 定</el-button>
-      </span>
+
+      <!-- <el-dialog
+        title="选择分组"
+        :visible.sync="groupVisible"
+        :close-on-click-modal="false"
+        width="30%"
+        append-to-body
+      >
+        <div class="modal-body">
+          <el-cascader
+            v-model="chooseArray"
+            class="cascader"
+            style="width:300px"
+            :options="groupData"
+            :props="defaultProps"
+          />
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="groupVisible = false">取 消</el-button>
+          <el-button type="primary" size="small" @click="handleSaveGroup">确 定</el-button>
+        </span>
+      </el-dialog> -->
+      <el-dialog
+
+        title="选择分类"
+        :visible.sync="typeVisible"
+        :close-on-click-modal="false"
+        width="30%"
+        append-to-body
+      >
+        <div v-loading="loading" class="modal-body">
+          <el-cascader
+            v-model="chooseList"
+            class="cascader"
+            style="width:300px"
+            :options="typeList"
+            :props="defaultProps"
+          />
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="typeVisible = false">取 消</el-button>
+          <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!--弹窗--选择商品-->
+      <dialog-goods ref="goodsDialog" :list="propGoodsList" @confirm="goodsSelectChange" @on-change="onSelectedGoods" />
+      <!--弹窗--选择分组-->
+      <edit-group :is-show="groupVisible" type="1" :group-data="groupDataDimens" @back="handleSaveGroup" @close="groupVisible=false" />
     </div>
-
-    <!-- <el-dialog
-      title="选择分组"
-      :visible.sync="groupVisible"
-      :close-on-click-modal="false"
-      width="30%"
-      append-to-body
-    >
-      <div class="modal-body">
-        <el-cascader
-          v-model="chooseArray"
-          class="cascader"
-          style="width:300px"
-          :options="groupData"
-          :props="defaultProps"
-        />
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="groupVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSaveGroup">确 定</el-button>
-      </span>
-    </el-dialog> -->
-    <el-dialog
-
-      title="选择分类"
-      :visible.sync="typeVisible"
-      :close-on-click-modal="false"
-      width="30%"
-      append-to-body
-    >
-      <div v-loading="loading" class="modal-body">
-        <el-cascader
-          v-model="chooseList"
-          class="cascader"
-          style="width:300px"
-          :options="typeList"
-          :props="defaultProps"
-        />
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="typeVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
-      </span>
-    </el-dialog>
-    <!--弹窗--选择商品-->
-    <dialog-goods ref="goodsDialog" :list="propGoodsList" @confirm="goodsSelectChange" @on-change="onSelectedGoods" />
-    <!--弹窗--选择分组-->
-    <edit-group :is-show="groupVisible" type="1" :group-data="groupDataDimens" @back="handleSaveGroup" @close="groupVisible=false" />
   </div>
 </template>
 <script>

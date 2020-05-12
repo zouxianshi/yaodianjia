@@ -13,7 +13,7 @@ import routeC from './modules/router-c'
 import routeF from './modules/router-f'
 import routeD from './modules/router-d'
 import mall from './modules/mall'
-import { mUsersModule } from '@merchant/commons'
+import { mUsersModule } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
 
 // merge component layout module
 const userModule = _.assign(mUsersModule, {

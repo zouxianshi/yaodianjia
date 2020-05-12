@@ -728,7 +728,6 @@ export default {
   margin-left: 0;
 }
 .depot-wrappe {
-  margin-bottom: 30px;
   .search-item {
     .label-name {
       text-align: center;

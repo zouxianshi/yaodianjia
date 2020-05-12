@@ -24,11 +24,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.app-main {
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
+
 </style>
 
 <style lang="scss">

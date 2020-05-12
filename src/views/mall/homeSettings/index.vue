@@ -5,7 +5,7 @@
         <m-component-bar @on-toggle-nav="is => isNav = is" />
       </el-card>
     </div>
-    <div class="scrollbar hsm-hm" :style="{height:`calc(100vh - ${isNav ? 230 : 290 }px)`}">
+    <div class="scrollbar hsm-hm" :style="{height:`calc(100vh - ${isNav ? 215 : 280 }px)`}">
       <m-home-main />
     </div>
   </div>
@@ -59,6 +59,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .home-settings-model {
+    background: #fff;
     .hsm-cb {
       width: calc(100% + 2px);
       margin-left: -1px;

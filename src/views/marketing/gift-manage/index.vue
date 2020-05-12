@@ -1,22 +1,25 @@
 <template>
-  <div class="app-container activity">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <!-- <el-tab-pane label="优惠券" name="coupons">
-        <el-row :gutter="20">
-          <el-col v-for="o in coupons" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-            <card-item :item="o" />
-          </el-col>
-        </el-row>
-      </el-tab-pane> -->
-      <el-tab-pane label="赠品" name="complimentary">
-        <el-row :gutter="20">
-          <el-col v-for="o in complimentary" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-            <card-item :item="o" />
-          </el-col>
-        </el-row>
-      </el-tab-pane>
-    </el-tabs>
+  <div class="app-container">
+    <div class="activity">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <!-- <el-tab-pane label="优惠券" name="coupons">
+          <el-row :gutter="20">
+            <el-col v-for="o in coupons" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+              <card-item :item="o" />
+            </el-col>
+          </el-row>
+        </el-tab-pane> -->
+        <el-tab-pane label="赠品" name="complimentary">
+          <el-row :gutter="20">
+            <el-col v-for="o in complimentary" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+              <card-item :item="o" />
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
+
 </template>
 <script>
 import discountCoupons from '@/assets/image/acvity/discount-coupons.png'
@@ -81,19 +84,18 @@ export default {
 }
 </script>
 <style lang="scss">
-.app-container.activity {
-  background: #f7f7f7;
-  padding: 0;
-  .el-tabs__header {
-    background: #fff;
-    padding: 0 20px;
-    padding-top: 40px;
+  .app-container {
+    .activity {
+      background: #f7f7f7;
+      padding: 0;
+      .el-tabs__header {
+      }
+      .el-tabs__nav-wrap::after {
+        height: 0;
+      }
+      .el-tabs__content {
+      }
+    }
   }
-  .el-tabs__nav-wrap::after {
-    height: 0;
-  }
-  .el-tabs__content {
-    padding: 0 20px;
-  }
-}
+
 </style>
