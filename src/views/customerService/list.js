@@ -404,14 +404,14 @@ export default {
     }
   },
   updated() {
-    this.loadingMask = this.$loading({
-      lock: true,
-      text: '加载中...',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     console.log('udpated: this.ryConnected', this.ryConnected, this.isFirstQueryFinished, this.webSocketConnected)
     if (this.webSocketConnected && !this.isFirstQueryFinished) {
+      this.loadingMask = this.$loading({
+        lock: true,
+        text: '加载中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       setTimeout(() => {
         this.querySupportStaffList('first')
       }, 300)
