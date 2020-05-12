@@ -119,6 +119,7 @@ const mixin = {
         data = [...this.chooseTableSpec, ...data]
         console.log('保存获取的数据,-----', data)
         if (data.length === 0) {
+          console.log('1231231312')
           this.$message({
             message: '请选择规格信息',
             type: 'error'
@@ -136,6 +137,12 @@ const mixin = {
           } else if (!v.mprice && !is_err) {
             this.$message({
               message: `请完善已勾选的规格，商品价格未填写`,
+              type: 'error'
+            })
+            is_err = true
+          } else if (!v.picUrl && !is_err) {
+            this.$message({
+              message: `请完善已勾选的规格，图片未上传`,
               type: 'error'
             })
             is_err = true
@@ -224,13 +231,13 @@ const mixin = {
             }
           }
         }
-        // if (flag && !v.barCode) {
-        //   this.$message({
-        //     message: `请输入规格${index}中的条码`,
-        //     type: 'error'
-        //   })
-        //   flag = false
-        // }
+        if (flag && !v.barCode) {
+          this.$message({
+            message: `请输入规格${index}中的条码`,
+            type: 'error'
+          })
+          flag = false
+        }
         if (flag && !v.erpCode) {
           this.$message({
             message: `请输入规格${index}中的商品编码`,
@@ -259,14 +266,14 @@ const mixin = {
           })
           flag = false
         }
-        // if (this.basicForm.origin === 1 && flag && !v.picUrl) {
-        //   this.$message.close()
-        //   this.$message({
-        //     message: `请上传表单规格${index}中的图片`,
-        //     type: 'error'
-        //   })
-        //   flag = false
-        // }
+        if (this.basicForm.origin === 1 && flag && !v.picUrl) {
+          this.$message.close()
+          this.$message({
+            message: `请上传表单规格${index}中的图片`,
+            type: 'error'
+          })
+          flag = false
+        }
       })
       if (flag) {
         // return
@@ -293,7 +300,7 @@ const mixin = {
           if (this.basicForm.origin === 1) {
             data = [...data]
             this.editSpecsData.map(v => {
-              console.log('标库提交处理', v)
+              console.log('标库处理', v)
               if (v.disabled || v.isCheck) {
                 data.push(v)
               }
@@ -382,8 +389,6 @@ const mixin = {
           if (res.data) {
             res.data.map(v => {
               v.disabled = false
-              v.isCheck = false
-              v.isShowSelect = true
               // 标库数据回显 规格处理
               if (v.productSpecSkuDTOs) {
                 if (this.dynamicProp.length === 0) {
@@ -492,39 +497,26 @@ const mixin = {
             findInput.remove() // 设置全选disabeld
             specList.map((v, index) => {
               v.owner = v.owner || 0
-              v.isSku = 0
               const findIndex = findArray(this.editSpecsData, {
                 barCode: v.barCode
               })
               if (findIndex > -1) {
                 this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
                 const row = this.editSpecsData[findIndex]
-
-                if (row.erpCode && row.erpCode !== v.erpCode) {
-                  // push
-                  const object = Object.assign({}, row, v)
-                  object.isCheck = true
-                  object.disabled = true
-                  object.type = object.type || 2
-                  this.editSpecsData.push(object)
-                } else {
-                  row.disabled = true
-                  row.isSku = 0
-                  row.id = v.id
-                  row.owner = v.owner
-                  row.mprice = v.mprice
-                  row.erpCode = v.erpCode
-                  row.isCheck = true // 数据做标识  选中
-                  row.picUrl = v.picUrl
-                  row.limitNum = v.limitNum
-                  row.limitType = v.limitType
-                  row.type = v.type || 2
-                  this.$set(this.editSpecsData, findIndex, row)
-                }
+                row.disabled = true
+                row.id = v.id
+                row.owner = v.owner
+                row.mprice = v.mprice
+                row.erpCode = v.erpCode
+                row.isCheck = true // 数据做标识  选中
+                row.picUrl = v.picUrl
+                row.limitNum = v.limitNum
+                row.limitType = v.limitType
+                row.type = v.type || 2
+                this.$set(this.editSpecsData, findIndex, row)
               } else {
                 v.disabled = true
-                v.isShowSelect = false
-                // v.isCheck = true // 数据做标识  选中
+                v.isCheck = true // 数据做标识  选中
                 if (v.specSkuList) {
                   v.specSkuList.map(vs => {
                     v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
@@ -568,6 +560,13 @@ const mixin = {
           this.specsForm.specs = []
         }
       })
+    },
+    selectable(row) {
+      // 是否可以选择
+      if (row.disabled) {
+        return false
+      }
+      return true
     },
     shows(row) {
       const findIndex = findArray(this.dynamicProp, { id: row.id })
