@@ -162,7 +162,7 @@
                 size="small"
                 autocomplete="off"
                 style="width: 350px"
-                :maxlength="500"
+                :maxlength="1000"
                 placeholder="http:// 或 https://"
               />
             </el-form-item>
