@@ -139,12 +139,6 @@ const mixin = {
               type: 'error'
             })
             is_err = true
-          } else if (!v.picUrl && !is_err) {
-            this.$message({
-              message: `请完善已勾选的规格，图片未上传`,
-              type: 'error'
-            })
-            is_err = true
           } else {
             v.merCode = this.merCode
             v.valueList = v.productSpecSkuDTOs
@@ -265,14 +259,14 @@ const mixin = {
           })
           flag = false
         }
-        if (this.basicForm.origin === 1 && flag && !v.picUrl) {
-          this.$message.close()
-          this.$message({
-            message: `请上传表单规格${index}中的图片`,
-            type: 'error'
-          })
-          flag = false
-        }
+        // if (this.basicForm.origin === 1 && flag && !v.picUrl) {
+        //   this.$message.close()
+        //   this.$message({
+        //     message: `请上传表单规格${index}中的图片`,
+        //     type: 'error'
+        //   })
+        //   flag = false
+        // }
       })
       if (flag) {
         // return
