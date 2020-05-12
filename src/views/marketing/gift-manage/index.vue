@@ -67,7 +67,7 @@ export default {
           linkUrl: '/marketings/gift-manage/gift'
         },
         {
-          value: 'gift-certificate',
+          value: 'discount-code',
           lable: '优惠码',
           img: zengpinImg,
           desc:

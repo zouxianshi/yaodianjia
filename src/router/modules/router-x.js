@@ -185,7 +185,8 @@ const router = [
         meta: {
           title: '礼品管理',
           auth: 'marketing.gift',
-          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          activeMenu: '/marketing/gifts'
         }
       },
       {
@@ -195,7 +196,8 @@ const router = [
         meta: {
           title: '赠品管理',
           auth: 'marketing.gift',
-          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          activeMenu: '/marketing/gifts'
         }
       },
       {

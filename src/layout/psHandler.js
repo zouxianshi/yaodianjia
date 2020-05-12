@@ -171,16 +171,16 @@ class InnerCtor {
           //   path: '/marketing/activity/create',
           //   disabled: this.get('marketing.marketing-create')
           // },
-          {
-            name: '礼品管理',
-            path: '/marketings/gift-manage',
-            disabled: true
-          },
-          {
-            name: '活动管理（新）',
-            path: '/marketings/activity-manage',
-            disabled: true
-          },
+          // {
+          //   name: '礼品管理',
+          //   path: '/marketings/gift-manage',
+          //   disabled: true
+          // },
+          // {
+          //   name: '活动管理（新）',
+          //   path: '/marketings/activity-manage',
+          //   disabled: true
+          // },
           {
             name: '新建活动',
             path: '/marketing/activity/create',

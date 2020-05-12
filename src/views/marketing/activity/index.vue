@@ -163,8 +163,8 @@ export default {
           desc:
             '',
           img: TurnTable,
-          listUrl: '/marketings/activity-manage/turntable/guaList?code=TA004&name=刮刮乐',
-          linkUrl: '/marketings/activity-manage/turntable/add?code=TA004'
+          listUrl: '/marketings/activity-manage/turntable/list?code=TA003&name=大转盘',
+          linkUrl: '/marketings/activity-manage/turntable/add?code=TA003'
         }
       ],
       activity: [] // 精彩活动

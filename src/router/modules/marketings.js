@@ -30,7 +30,7 @@ export default [
               title: '礼品管理列表',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/gift-manage'
+              activeMenu: '/marketing/gifts'
             }
           },
           {
@@ -41,7 +41,7 @@ export default [
               title: '折扣券',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/gift-manage'
+              activeMenu: '/marketing/gifts'
             }
           },
           {
@@ -52,7 +52,7 @@ export default [
               title: '满减券',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/gift-manage'
+              activeMenu: '/marketing/gifts'
             }
           },
           {
@@ -63,7 +63,7 @@ export default [
               title: '礼品券',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/gift-manage'
+              activeMenu: '/marketing/gifts'
             }
           }
         ]
@@ -87,7 +87,7 @@ export default [
               title: '活动管理列表',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/activity-manage'
+              activeMenu: '/marketing/activity'
             }
           },
           {
@@ -98,7 +98,7 @@ export default [
               title: '领劵中心',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/activity-manage'
+              activeMenu: '/marketing/activity'
             }
           },
           {
@@ -109,7 +109,7 @@ export default [
               title: '添加优惠券',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/activity-manage'
+              activeMenu: '/marketing/activity'
             }
           },
           {
@@ -120,7 +120,7 @@ export default [
               title: '支付有礼',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/activity-manage'
+              activeMenu: '/marketing/activity'
             }
           },
           {
@@ -131,7 +131,7 @@ export default [
               title: '新增-支付有礼',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/activity-manage'
+              activeMenu: '/marketing/activity'
             }
           },
           {
@@ -142,7 +142,7 @@ export default [
               title: '大转盘',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/activity-manage'
+              activeMenu: '/marketing/activity'
             }
           },
           {
@@ -153,7 +153,7 @@ export default [
               title: '刮刮乐',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/activity-manage'
+              activeMenu: '/marketing/activity'
             }
           },
           {
@@ -164,7 +164,7 @@ export default [
               title: '活动',
               auth: false,
               noCache: true,
-              activeMenu: '/marketings/activity-manage'
+              activeMenu: '/marketing/activity'
             }
           }
         ]
