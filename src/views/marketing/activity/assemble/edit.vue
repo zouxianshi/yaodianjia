@@ -351,8 +351,8 @@ export default {
       pageLoading: '',
       saveLoading: false,
       activityId: '',
-      currentPage: 1,
-      total: 0,
+      // currentPage: 1,
+      // total: 0,
       multipleSelection: [],
       leaveAction: false
     }
@@ -461,7 +461,7 @@ export default {
       getActivityGoods({
         activityId: this.activityId,
         pageSize: 20,
-        currentPage: this.currentPage
+        currentPage: 1
       })
         .then(res => {
           const { data, totalCount } = res.data
@@ -752,11 +752,11 @@ export default {
       }
       this.pageLoading.close()
     },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
-      this.currentPage = val
-      this._loadGoods()
-    },
+    // handleCurrentChange(val) {
+    //   console.log(`当前页: ${val}`)
+    //   this.currentPage = val
+    //   this._loadGoods()
+    // },
     handleSuccessSelectGood(row) {
       // 单个商品设置确定callback
       console.log('11111', row)
