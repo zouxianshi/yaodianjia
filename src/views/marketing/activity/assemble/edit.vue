@@ -233,7 +233,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div v-if="activityId" class="page-box">
+          <!-- <div v-if="activityId" class="page-box">
             <el-pagination
               background
               small
@@ -242,7 +242,7 @@
               :total="total"
               @current-change="handleCurrentChange"
             />
-          </div>
+          </div> -->
         </el-form-item>
       </el-form>
     </div>
@@ -460,7 +460,7 @@ export default {
       // 通过活动id查询商品
       getActivityGoods({
         activityId: this.activityId,
-        pageSize: 10,
+        pageSize: 20,
         currentPage: this.currentPage
       })
         .then(res => {
