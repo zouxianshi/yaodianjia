@@ -360,6 +360,7 @@ export default {
       subLoading: false,
       groupVisible: false,
       listQuery: {
+        isIgnorePic: true,
         drugType: '', // 药品类型
         erpOrName: '', // 商品信息
         commodityType: '', // 商品分类
@@ -463,6 +464,8 @@ export default {
     resetQuery() {
       // 重置
       this.listQuery = {
+        isIgnorePic: true,
+        owner: 0,
         approvalNumber: '',
         barCode: '',
         manufacture: '',

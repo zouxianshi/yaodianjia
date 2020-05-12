@@ -193,6 +193,7 @@
                         <el-option label="甲类OTC" :value="0" />
                         <el-option label="处方药" :value="1" />
                         <el-option label="乙类OTC" :value="2" />
+                        <el-option label="OTC" :value="4" />
                       </el-select>
                     </el-form-item>
                     <el-form-item label="剂型：">
@@ -214,7 +215,7 @@
                       size="small"
                     />
                   </el-form-item>
-                  <el-form-item label="产地：" prop="produceOrigin">
+                  <el-form-item label="产地：">
                     <el-input
                       v-model.trim="basicForm.produceOrigin"
                       maxlength="50"
@@ -381,7 +382,14 @@
                   @selection-change="handleSelectionChange"
                   @select="handleSelectChange"
                 >
-                  <el-table-column type="selection" :selectable="selectable" width="55" />
+                  <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
+                  <el-table-column
+                    width="55"
+                  >
+                    <template slot-scope="scope">
+                      <el-checkbox v-if="scope.row.isShowSelect" v-model="scope.row.isCheck" :disabled="scope.row.disabled" />
+                    </template>
+                  </el-table-column>
                   <!-- <el-table-column
                     v-for="(items,index1) in dynamicProp"
                     :key="index1"
@@ -737,12 +745,12 @@
                     </el-form-item>
                     <el-form-item label>
                       <span slot="label">
-                        <span class="tip">*</span> 商品条码
+                        商品条码
                       </span>
                       <el-input
                         v-model.trim="item.barCode"
                         maxlength="30"
-                        placeholder="输入商品条码"
+                        placeholder="若有条形码请务必填写"
                         @blur="input_checkBarCode(item.barCode)"
                       />
                     </el-form-item>
@@ -753,7 +761,6 @@
                         <el-option label="平安" :value="1" />
                       </el-select>
                     </el-form-item>
-
                     <el-form-item>
                       <span slot="label">
                         <span class="tip">*</span> 参考价格
@@ -880,6 +887,7 @@
           <div class="header">
             商品橱窗图
             <span class="img-tips">最多6张，图片800*800</span>
+            <span class="img-tipe-noImg">(无图片则无法上架到商城)</span>
           </div>
           <div class="edit-card-cnt">
             <div class="content">
@@ -907,13 +915,7 @@
               </ol>
               <div class="text-center">
                 <el-button type size="small" @click="step=2">上一步</el-button>
-                <el-button
-                  v-if="!is_query"
-                  type="primary"
-                  size="small"
-                  :loading="subLoading1"
-                  @click="handleSubImg"
-                >保存</el-button>
+                <el-button v-if="!is_query" type="primary" size="small" :loading="subLoading1" @click="handleSubImg">保存</el-button>
               </div>
             </div>
           </div>
@@ -1820,10 +1822,10 @@ export default {
       // 保存图片
       if (this.fileList.length === 0) {
         this.$message({
-          message: '必须上传图片',
+          message: '无图片则无法上架到商城',
           type: 'error'
         })
-        return
+        // return
       }
       this.subLoading1 = true
       const data = {
@@ -1880,6 +1882,7 @@ export default {
           // })
           this.subLoading = false
           this.leaveAction = true
+
           setTimeout(() => {
             let url = ''
             if (this.basicForm.origin === 1) {
@@ -1946,6 +1949,12 @@ export default {
     li {
       margin-bottom: 5px;
     }
+  }
+  .img-tipe-noImg{
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color:red;
   }
   .specs-box {
     margin-top: 20px;

@@ -64,7 +64,7 @@ module.exports = {
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
-          '^/api': getEnv('API_BASE').split("/businesses-gateway")[0]
+          '^/api': getEnv('API_BASE') && getEnv('API_BASE').split("/businesses-gateway")[0]
         }
       },
       '/hss': {
