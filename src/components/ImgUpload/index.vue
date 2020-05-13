@@ -188,7 +188,8 @@ export default {
       }
     },
     handleRemove(index) {
-      this.fileList.splice(index, 1)
+      this.$emit('remove', index)
+      // this.fileList.splice(index, 1)
     }
   }
 }

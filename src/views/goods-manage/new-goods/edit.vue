@@ -383,11 +383,13 @@
                   @select="handleSelectChange"
                 >
                   <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
-                  <el-table-column
-                    width="55"
-                  >
+                  <el-table-column width="55">
                     <template slot-scope="scope">
-                      <el-checkbox v-if="scope.row.isShowSelect" v-model="scope.row.isCheck" :disabled="scope.row.disabled" />
+                      <el-checkbox
+                        v-if="scope.row.isShowSelect"
+                        v-model="scope.row.isCheck"
+                        :disabled="scope.row.disabled"
+                      />
                     </template>
                   </el-table-column>
                   <!-- <el-table-column
@@ -744,9 +746,7 @@
                       />
                     </el-form-item>
                     <el-form-item label>
-                      <span slot="label">
-                        商品条码
-                      </span>
+                      <span slot="label">商品条码</span>
                       <el-input
                         v-model.trim="item.barCode"
                         maxlength="30"
@@ -902,6 +902,7 @@
                 @onsort="handleSortEnd"
                 @onSuccess="handleImgSuccess"
                 @onError="handleImgError"
+                @remove="handleRemove"
               />
               <el-dialog append-to-body :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt>
@@ -915,7 +916,13 @@
               </ol>
               <div class="text-center">
                 <el-button type size="small" @click="step=2">上一步</el-button>
-                <el-button v-if="!is_query" type="primary" size="small" :loading="subLoading1" @click="handleSubImg">保存</el-button>
+                <el-button
+                  v-if="!is_query"
+                  type="primary"
+                  size="small"
+                  :loading="subLoading1"
+                  @click="handleSubImg"
+                >保存</el-button>
               </div>
             </div>
           </div>
@@ -1194,7 +1201,8 @@ export default {
       subLoading2: false,
       subLoading1: false, // 加载
       pageLoading: false, // 加载
-      leaveAction: false // 离开页面动作，true为保存离开  false异常离开
+      leaveAction: false, // 离开页面动作，true为保存离开  false异常离开
+      isHasImg: false
     }
   },
   computed: {
@@ -1469,6 +1477,7 @@ export default {
               fileList.push(item)
             })
             this.fileList = fileList
+            this.isHasImg = fileList.length > 0
           }
         })
       }
@@ -1539,6 +1548,16 @@ export default {
         })
         this.pageLoading.close()
       }
+    },
+    handleRemove(index) {
+      if (this.isHasImg && this.fileList.length === 1) {
+        this.$message({
+          message: '删除失败，请至少保留一张图片',
+          type: 'error'
+        })
+        return false
+      }
+      this.fileList.splice(index, 1)
     },
     handlePreview(file) {
       this.dialogImageUrl = file.imgUrl
@@ -1821,11 +1840,19 @@ export default {
     handleSubImg() {
       // 保存图片
       if (this.fileList.length === 0) {
-        this.$message({
-          message: '无图片则无法上架到商城',
-          type: 'error'
-        })
-        // return
+        if (this.isHasImg) {
+          // 判断之前是否有图片
+          this.$message({
+            message: '保存失败，请至少保留一张图片',
+            type: 'error'
+          })
+        } else {
+          this.$message({
+            message: '无图片则无法上架到商城',
+            type: 'warning'
+          })
+        }
+        return
       }
       this.subLoading1 = true
       const data = {
@@ -1950,11 +1977,11 @@ export default {
       margin-bottom: 5px;
     }
   }
-  .img-tipe-noImg{
+  .img-tipe-noImg {
     font-size: 12px;
     margin-bottom: 10px;
     margin-top: 10px;
-    color:red;
+    color: red;
   }
   .specs-box {
     margin-top: 20px;
