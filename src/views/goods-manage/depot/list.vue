@@ -599,7 +599,7 @@ export default {
         })
         return
       }
-      if (status === 1 && row.mainPic) {
+      if (status === 1 && !row.mainPic) {
         this.$message({
           message: '操作失败，橱窗图不能为空',
           type: 'error'
