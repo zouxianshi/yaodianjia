@@ -256,6 +256,7 @@ export default {
   destroyed() {},
   methods: {
     dateChange() {
+      console.log(this.value)
       this.forms.selectlist = []
     },
     onChangeCoupons(event, row, $index) {

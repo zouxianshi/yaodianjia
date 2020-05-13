@@ -102,6 +102,17 @@ export default [
             }
           },
           {
+            path: '/marketings/activity-manage/coupons/edit',
+            component: () => import('@/views/marketings/activitysManage/coupons/editCoupon'),
+            name: 'edit-actives',
+            meta: {
+              title: '编辑优惠券',
+              auth: false,
+              noCache: true,
+              activeMenu: '/marketing/activity'
+            }
+          },
+          {
             path: '/marketings/activity-manage/coupons/add',
             component: () => import('@/views/marketings/activitysManage/coupons/add'),
             name: 'activitys-manage-coupons-add',

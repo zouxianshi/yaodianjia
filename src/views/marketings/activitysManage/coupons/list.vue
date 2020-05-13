@@ -112,6 +112,11 @@
           <el-button
             type="text"
             size="small"
+            @click.native.prevent="editRow(scope.row)"
+          >编辑</el-button>
+          <el-button
+            type="text"
+            size="small"
             @click.native.prevent="deleteRow(scope.$index, tableData)"
           >移除</el-button>
         </template>
@@ -231,6 +236,19 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+    // 编辑优惠券
+    editRow(row) {
+      sessionStorage.setItem('couponCenterDetail', JSON.stringify(row))
+      this.$router.push(`/marketings/activity-manage/coupons/edit`)
+      // this.$router.push({
+      //   name: 'edit-actives',
+      //   params: {
+      //     id: row.id,
+      //     activityId: row.activityId,
+      //     data: row
+      //   }
+      // })
     },
     changeOption(val) {
       this.getList('类型')

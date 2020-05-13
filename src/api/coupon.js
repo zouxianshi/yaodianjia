@@ -124,6 +124,14 @@ export function couponInvalid(params) {
     data: params
   })
 }
+// (领券中心)查询单个优惠券详情
+export function getActivityCouponDetail(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/activityCouponDetail/${params.activityId}/${params.couponId}`,
+    method: 'get'
+  })
+}
+
 // 新增普通活动列表
 export function updateActivity(params) {
   return request({
