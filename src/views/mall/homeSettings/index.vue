@@ -5,11 +5,11 @@
         <m-component-bar @on-toggle-nav="is => isNav = is" />
       </el-card>
     </div>
-    <div class="scrollbar hsm-hm" :style="{height:`calc(100vh - ${isNav ? 215 : 280 }px)`}">
+    <div class="scrollbar hsm-hm" :style="{height:`calc(100vh - ${isNav ? 229 : 294 }px)`}">
       <m-home-main />
     </div>
   </div>
-</template>
+</template>294294
 <script>
 import { mapMutations, mapActions, mapState } from 'vuex'
 import mComponentBar from './_source/componentBar'
@@ -60,6 +60,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .home-settings-model {
     background: #fff;
+    margin: -20px;
     .hsm-cb {
       width: calc(100% + 2px);
       margin-left: -1px;

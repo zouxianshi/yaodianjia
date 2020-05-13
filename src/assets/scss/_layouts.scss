@@ -122,6 +122,9 @@ aside {
   height: calc(100vh - 130px);
   overflow-y: scroll;
   padding: 0px 20px 6px 20px;
+  .mc-home-model {
+    height: calc(100vh - 220px);
+  }
   &:hover::-webkit-scrollbar-thumb {
     background: #409eff;
     min-width: 200px;

@@ -134,7 +134,6 @@ export default {
 <style lang="scss">
   .app-container {
     .activity {
-      background: #f7f7f7;
       padding: 0;
       .el-tabs__header {
         background: #fff;
