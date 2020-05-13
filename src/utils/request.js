@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+// import { Loading } from 'element-ui'
 
 const API_BASE = process.env.VUE_APP_API_BASE || '/api'
 
@@ -14,6 +15,7 @@ const service = axios.create({
 
 // request interceptor
 let isExport = false
+// let loadingInstance;
 service.interceptors.request.use(
   config => {
     if (store.getters.token) {
@@ -50,6 +52,7 @@ service.interceptors.request.use(
       }
     }
 
+    // loadingInstance = Loading.service({text: '加载中...'})
     return config
   },
   error => {
@@ -60,6 +63,7 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
+    // loadingInstance.close();
     const res = response.data
     if (isExport) {
       // 如果是数据导出，直接pass
@@ -77,6 +81,7 @@ service.interceptors.response.use(
     return Promise.resolve(res)
   },
   error => {
+    // loadingInstance.close()
     let msg = ''
     switch (error.response && error.response.status) {
       case 401:
