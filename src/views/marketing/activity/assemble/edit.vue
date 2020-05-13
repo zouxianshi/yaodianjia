@@ -726,7 +726,7 @@ export default {
           activityNumber: v.activityNumber, // 成团人数
           activityPrice: v.activityPrice, // 活动价格
           addLimitTimes: v.addLimitTimes, // 限购  加入次数
-          id: '',
+          id: v.id,
           isFreeshipping: v.isFreeshipping, // 是否包邮
           limitCount: v.limitCount, // 限购次数
           openLimitTimes: v.openLimitTimes, // 开团次数
