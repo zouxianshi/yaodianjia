@@ -1,15 +1,13 @@
 <template>
   <div class="app-container">
-    <div class="ac-box">
-      <p style="font-size:13px"> 当前分组标题：{{ $route.query.name }}</p>
-      <div class="gt-create-model">
-        <div class="content">
-          <div class="conditions">
-            <m-conditions />
-          </div>
-          <div class="list">
-            <m-drag-tree :list="groupList" />
-          </div>
+    <p style="font-size:13px"> 当前分组标题：{{ $route.query.name }}</p>
+    <div class="gt-create-model">
+      <div class="content">
+        <div class="conditions">
+          <m-conditions />
+        </div>
+        <div class="list">
+          <m-drag-tree :list="groupList" />
         </div>
       </div>
     </div>

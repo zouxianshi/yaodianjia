@@ -2,12 +2,7 @@
   <div class="app-wrapper">
     <div class="layout-wary">
       <div class="sidebar-box" :style="{width:!isOpen ? ' 255px' : '64px'}">
-        <m-sidebar
-          v-model="isOpen"
-          :sidebar-list="navList"
-          :def-page="$route.path"
-          @on-path="_onPath"
-        />
+        <m-sidebar v-model="isOpen" :res-list="resList" :nav-list="navList" :sys-router="$router" :def-page="$route.path" />
       </div>
       <div class="app-main-box" :style="_styleToggle">
         <div class="flx" :style="_styleToggle">
@@ -18,7 +13,7 @@
         </div>
         <div class="app-main-model">
           <app-main />
-          <p class="copyright">Copyright © 2016-2020 上海海典软件股份有限公司 版权所有 沪ICP备10208754号</p>
+          <mc-copyright />
         </div>
       </div>
     </div>
@@ -29,7 +24,7 @@
 /* eslint-disable */
   import { mapState } from "vuex";
   import ResizeMixin from "./mixin/ResizeHandler";
-  import { mSidebar, mHeader, MC } from "/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src";
+  import { mSidebar, mHeader, MC,mCommon } from "/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src";
   import RightPanel from "@/components/RightPanel";
   import { AppMain, TagsView } from "./components";
   // 融云消息按钮 sdk初始化
@@ -37,6 +32,9 @@
   import Breadcrumb from "@/components/Breadcrumb";
   import ps from "./psHandler";
   import { removeToken } from "@/utils/auth";
+
+const {McCopyright} = mCommon
+
   export default {
     name: "merchant-commons-app",
     data() {
@@ -47,10 +45,11 @@
         isOpen: false
       };
     },
-    components: { mSidebar, TagsView, AppMain, RightPanel, mHeader, Breadcrumb, RY },
+    components: { mSidebar, TagsView, AppMain, RightPanel, mHeader, Breadcrumb, RY ,McCopyright},
     mixins: [ResizeMixin],
     computed: {
       ...mapState({
+        resList: state => state.user.resList,
         userInfo: state => state.user.userInfo,
         sidebar: state => state.app.sidebar,
         device: state => state.app.device,

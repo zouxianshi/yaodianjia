@@ -1,68 +1,66 @@
 <template>
   <div class="app-container">
-    <div class="ac-box">
-      <el-form
-        ref="form"
-        :model="form"
-        :rules="rules"
-        size="small"
-        :disabled="disabled"
-        label-width="120px"
-      >
-        <el-form-item label="赠品名称：" prop="name">
-          <el-input
-            v-model="form.name"
-            placeholder="不超过15字"
-            style="width: 380px;"
-            maxlength="15"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="选择商品：" required>
-          <template>
-            <el-button type="primary" plain size="small" @click="$refs.GoodsComponent.open()">选择商品</el-button>
-            <!-- <store-goods-view :limit-max="1" @on-change="handleSelectGoods">选择商品</store-goods-view> -->
-            <div class="info-create">一个赠品对应一个商品</div>
-          </template>
-        </el-form-item>
-        <el-form-item>
-          <!-- <gift-list :cols="cols" :data="storeSelectGoods" /> -->
-          <select-goods ref="storeGods" @del-item="delSelectGoods" />
-        </el-form-item>
-        <el-form-item label="赠品库存：" prop="stock">
-          <template>
-            <el-input-number v-model="form.stock" :min="0" :max="9999999999" />
-            <span class="info-create">赠品赠完不再续增</span>
-          </template>
-        </el-form-item>
-        <!-- <el-form-item label="每人限领：">
-          <el-col :span="24">
-            <el-form-item>
-              <el-radio v-model="form.limit" :label="0">不限次数</el-radio>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" class="limit">
-            <el-form-item style="margin-right: 10px">
-              <el-radio v-model="form.limit" :label="1">每人限领</el-radio>
-            </el-form-item>
-            <el-form-item prop="limitStock">
-              <el-input-number v-model="form.limitStock" :disabled="form.limit!==1" />
-              <span style="margin-left: 5px" class="info-create">件</span>
-            </el-form-item>
-          </el-col>
-        </el-form-item>-->
-        <el-form-item>
-          <el-button type="primary" style="width: 120px" @click="submit">提交</el-button>
-        </el-form-item>
-      </el-form>
-      <!-- 选择主商品组件 -->
-      <store-goods
-        ref="GoodsComponent"
-        :limit-max="1"
-        :list="storeSelectGoods"
-        @on-change="handleSelectGoods"
-      />
-    </div>
+    <el-form
+      ref="form"
+      :model="form"
+      :rules="rules"
+      size="small"
+      :disabled="disabled"
+      label-width="120px"
+    >
+      <el-form-item label="赠品名称：" prop="name">
+        <el-input
+          v-model="form.name"
+          placeholder="不超过15字"
+          style="width: 380px;"
+          maxlength="15"
+          show-word-limit
+        />
+      </el-form-item>
+      <el-form-item label="选择商品：" required>
+        <template>
+          <el-button type="primary" plain size="small" @click="$refs.GoodsComponent.open()">选择商品</el-button>
+          <!-- <store-goods-view :limit-max="1" @on-change="handleSelectGoods">选择商品</store-goods-view> -->
+          <div class="info-create">一个赠品对应一个商品</div>
+        </template>
+      </el-form-item>
+      <el-form-item>
+        <!-- <gift-list :cols="cols" :data="storeSelectGoods" /> -->
+        <select-goods ref="storeGods" @del-item="delSelectGoods" />
+      </el-form-item>
+      <el-form-item label="赠品库存：" prop="stock">
+        <template>
+          <el-input-number v-model="form.stock" :min="0" :max="9999999999" />
+          <span class="info-create">赠品赠完不再续增</span>
+        </template>
+      </el-form-item>
+      <!-- <el-form-item label="每人限领：">
+        <el-col :span="24">
+          <el-form-item>
+            <el-radio v-model="form.limit" :label="0">不限次数</el-radio>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24" class="limit">
+          <el-form-item style="margin-right: 10px">
+            <el-radio v-model="form.limit" :label="1">每人限领</el-radio>
+          </el-form-item>
+          <el-form-item prop="limitStock">
+            <el-input-number v-model="form.limitStock" :disabled="form.limit!==1" />
+            <span style="margin-left: 5px" class="info-create">件</span>
+          </el-form-item>
+        </el-col>
+      </el-form-item>-->
+      <el-form-item>
+        <el-button type="primary" style="width: 120px" @click="submit">提交</el-button>
+      </el-form-item>
+    </el-form>
+    <!-- 选择主商品组件 -->
+    <store-goods
+      ref="GoodsComponent"
+      :limit-max="1"
+      :list="storeSelectGoods"
+      @on-change="handleSelectGoods"
+    />
   </div>
 </template>
 
