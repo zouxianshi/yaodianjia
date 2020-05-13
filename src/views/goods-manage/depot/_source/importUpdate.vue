@@ -2,6 +2,7 @@
   <div>
     <el-dialog
       title="批量导入修改商品分组"
+      class="import-update-dialog"
       :visible.sync="isShow"
       append-to-body
       :close-on-press-escape="false"
@@ -187,15 +188,16 @@ export default {
 .el-dialog {
   width: 35%;
 }
+.import-update-dialog {
+  .upload-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-.upload-demo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .el-upload__tip {
-    width: 360px;
-    line-height: 20px;
+    .el-upload__tip {
+      width: 360px;
+      line-height: 20px;
+    }
   }
 }
 .error-dialog {
