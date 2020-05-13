@@ -21,6 +21,7 @@
             <el-option label="未开始" value="2" />
             <el-option label="进行中" value="1" />
             <el-option label="已结束" value="3" />
+            <el-option label="已删除" value="5" />
           </el-select>
         </div>
         <span class="label-name" style="width:100px">优惠券名称：</span>
