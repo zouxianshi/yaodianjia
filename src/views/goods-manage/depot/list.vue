@@ -45,6 +45,7 @@
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
+              <el-option label="OTC" value="4" />
             </el-select>
           </div>
           <div class="search-item">
@@ -668,8 +669,13 @@ export default {
       this.groupVisible = true
     },
     handleExport() {
+      // 修改分组
+      this.goodsData = []
+      this.multiselect.map(res => {
+        this.goodsData.push(res.id)
+      })
       // 商品导出
-      exportData(this.listQuery)
+      exportData(this.goodsData)
         .then(res => {
           if (res.type === 'application/json') {
             this.$message({
