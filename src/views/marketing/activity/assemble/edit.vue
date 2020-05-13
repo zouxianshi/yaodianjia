@@ -290,7 +290,6 @@ import { throttle } from '@/utils/throttle'
 import {
   assembleActivityAdd,
   getAssembleAcInfo,
-  getActivityGoods,
   updateAssembleInfo,
   updateAcAssmbleProductInfo
 } from '@/api/activity'
@@ -456,27 +455,30 @@ export default {
           console.log(err)
         })
     },
-    _loadGoods() {
-      // 通过活动id查询商品
-      getActivityGoods({
-        activityId: this.activityId,
-        pageSize: 20,
-        currentPage: 1
-      })
-        .then(res => {
-          const { data, totalCount } = res.data
-          data.map(v => {
-            v.mprice = v.price
-            v.name = v.productName
-            v.mainPic = v.imgUrl
-          })
-          this.goodsList = data
-          this.total = totalCount
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
+    // _loadGoods() {
+    //   // 通过活动id查询商品
+    //   getActivityGoods({
+    //     activityId: this.activityId,
+    //     pageSize: 20,
+    //     currentPage: 1
+    //   })
+    //     .then(res => {
+    //       // const { data, totalCount } = res.data
+    //       console.log('1111111---getActivityGoods', res);
+    //       const dataList = res.data
+    //       dataList.map(v => {
+    //         v.mprice = v.price
+    //         v.name = v.productName
+    //         v.erpCode = v.productCode
+    //         v.mainPic = v.imgUrl
+    //       })
+    //       this.goodsList = dataList
+    //       // this.total = totalCount
+    //     })
+    //     .catch(err => {
+    //       console.log(err)
+    //     })
+    // },
     handleImgError(row) {
       const data = JSON.parse(row.toString().replace('Error:', ''))
       if (data.code === 40301) {
@@ -762,7 +764,8 @@ export default {
       console.log('11111', row)
       if (this.activityId) {
         const data = {
-          ...row
+          ...row,
+          ruleId: row.id
         }
         updateAcAssmbleProductInfo(data)
           .then(res => {
@@ -770,7 +773,8 @@ export default {
               message: '修改成功',
               type: 'success'
             })
-            this._loadGoods()
+            // this._loadGoods()
+            this._loadInfo()
           })
           .catch(_ => {})
       } else {
