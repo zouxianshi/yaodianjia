@@ -8,8 +8,7 @@ const router = [
     name: 'customerService',
     meta: {
       title: '客服管理',
-      icon: 'goods',
-      auth: 'staff'
+      icon: 'goods'
     },
     // alwaysShow: true,
     children: [
@@ -19,8 +18,7 @@ const router = [
         name: 'msgSettings',
         meta: {
           title: '快捷消息设置',
-          noCache: true,
-          auth: 'staff.quick-message-set'
+          noCache: true
         }
       },
       {
@@ -29,8 +27,7 @@ const router = [
         name: 'consultation',
         meta: {
           title: '在线咨询',
-          noCache: true,
-          auth: 'staff.online-ask'
+          noCache: true
         }
       },
       {
@@ -39,8 +36,7 @@ const router = [
         name: 'list',
         meta: {
           title: '客服列表',
-          noCache: true,
-          auth: 'staff.staff-list'
+          noCache: true
         }
       },
       {
@@ -49,8 +45,7 @@ const router = [
         name: 'historyMsg',
         meta: {
           title: '消息记录',
-          noCache: false,
-          auth: 'staff.message-record'
+          noCache: false
         }
       }
     ]
