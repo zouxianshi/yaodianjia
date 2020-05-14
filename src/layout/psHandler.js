@@ -42,6 +42,11 @@ class InnerCtor {
             path: '/member/register-setting',
             disabled: true
           },
+          {
+            name: '会员反馈',
+            path: '/member/member-feedback',
+            disabled: true
+          }
         ]
       },
       {
@@ -195,6 +200,11 @@ class InnerCtor {
             name: '礼品管理',
             path: '/marketing/gifts',
             disabled: this.get('marketing.gift')
+          },
+          {
+            name: '权益设置',
+            path: '/marketing/settings-equity/list',
+            disabled: true
           },
           // {
           //   name: '拼团活动',

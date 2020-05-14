@@ -1,10 +1,15 @@
 <template>
   <div class="add-model app-container">
-    <el-radio-group v-model="radio" size="mini">
-      <el-radio-button label="免费领取" />
-      <el-radio-button label="现金购买" />
-      <el-radio-button label="积分兑换" />
-    </el-radio-group>
+    <div class="add-addItem-model">
+      <span class="add-addLeft-model">领取方式:</span>
+      <div class="add-addRight-model">
+        <el-radio-group v-model="radio" @change="handleChange">
+          <el-radio :label="1">免费领取</el-radio>
+          <el-radio :label="2">积分兑换</el-radio>
+          <el-radio :label="3">现金购买</el-radio>
+        </el-radio-group>
+      </div>
+    </div>
     <div class="add-addItem-model">
       <span class="add-addLeft-model">领取时间:</span>
       <div class="add-addRight-model">
@@ -87,7 +92,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column v-if="radio==='积分兑换'" label="所需积分" width="110">
+            <el-table-column v-if="radio.toString()==='2'" label="所需积分" width="110">
               <template slot-scope="scope">
                 <div style="display:flex;align-items: center;padding-top:15px">
                   <el-form-item
@@ -104,7 +109,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column v-if="radio==='现金购买'" label="所需现金" width="110">
+            <el-table-column v-if="radio.toString()==='3'" label="所需现金" width="110">
               <template slot-scope="scope">
                 <div style="display:flex;align-items: center;padding-top:15px">
                   <el-form-item
@@ -134,7 +139,7 @@
         </el-form>
       </div>
     </div>
-    <el-button size="mini">取 消</el-button>
+    <el-button size="mini" @click="handleClose">取 消</el-button>
     <el-button type="primary" size="mini" @click="handleSumbit">确 定</el-button>
     <checkCoupon ref="checkCoupons" :timevalue="value" @confincheck="confincheck" />
   </div>
@@ -174,10 +179,21 @@ export default {
         callback()
       }
     }
+    var validatetotalNeedCoupons = (rule, value, callback) => {
+      const val = Number(value)
+      const reg = /^[0-9]*[1-9][0-9]*$/
+      if (!reg.test(val)) {
+        callback(new Error('请输入正整数'))
+      } else if (this.radio.toString() === '3' && val > 1001) {
+        callback(new Error('小于1000'))
+      } else {
+        callback()
+      }
+    }
     return {
       valueInput: '',
       checkedit: false,
-      radio: '免费领取',
+      radio: 1,
       forms: {
         selectlist: []
       },
@@ -190,7 +206,10 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' },
           { validator: validatetotalCoupons, trigger: 'blur' }
         ],
-        totalNeed: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        totalNeed: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { validator: validatetotalNeedCoupons, trigger: 'blur' }
+        ]
       },
       pickerOptions: {
         disabledDate(time) {
@@ -255,6 +274,14 @@ export default {
   beforeDestroy() {},
   destroyed() {},
   methods: {
+    handleChange(val) {
+      this.$refs['forms'].validate(valid => {})
+    },
+    handleClose() {
+      this.$router.push(
+        `/marketings/activity-manage/coupons/list?code=${this.$route.query.activityTemplateCode}&name=${this.$route.query.activityTemplateName}`
+      )
+    },
     dateChange() {
       console.log(this.value)
       this.forms.selectlist = []
@@ -379,25 +406,17 @@ export default {
           }
         }
         if (valid && val) {
-          let radiotype = 0
-          if (this.radio === '免费领取') {
-            radiotype = 1
-          } else if (this.radio === '现金购买') {
-            radiotype = 3
-          } else if (this.radio === '积分兑换') {
-            radiotype = 2
-          }
           const couponlist = []
           for (const i of this.forms.selectlist) {
             const listActivityAddCouponRelationReqDto = {}
             listActivityAddCouponRelationReqDto.couponId = i.id
-            if (this.radio === '免费领取') {
+            if (this.radio.toString() === '1') {
               listActivityAddCouponRelationReqDto.amount = 0
               listActivityAddCouponRelationReqDto.integral = 0
-            } else if (this.radio === '现金购买') {
+            } else if (this.radio.toString() === '3') {
               listActivityAddCouponRelationReqDto.integral = 0
               listActivityAddCouponRelationReqDto.amount = i.totalNeed
-            } else if (this.radio === '积分兑换') {
+            } else if (this.radio.toString() === '2') {
               listActivityAddCouponRelationReqDto.integral = i.totalNeed
               listActivityAddCouponRelationReqDto.amount = 0
             }
@@ -407,7 +426,7 @@ export default {
           }
           const params = {
             activityTemplateCode: this.$route.query.activityTemplateCode,
-            activityType: radiotype,
+            activityType: this.radio,
             beginTime: formatDate(this.value[0]),
             endTime: formatDate(this.value[1]),
             listActivityAddCouponRelationReqDto: couponlist,
