@@ -14,7 +14,13 @@
         <a href="#/goods-manage/import">
           <el-button type="primary" size="small" icon="el-icon-upload2">商品导入</el-button>
         </a>
-        <el-button type size="small" icon="el-icon-download" :loading="exportLoading" @click="handleExport">导出</el-button>
+        <el-button
+          type
+          size="small"
+          icon="el-icon-download"
+          :loading="exportLoading"
+          @click="handleExport"
+        >导出</el-button>
       </div>
       <section @keydown.enter="handleQuery">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
@@ -569,21 +575,32 @@ export default {
       }
       if (this.listQuery.owner === 1) {
         this.$message({
-          message: '操作失败，非自营的不能上架到商城',
+          message: `平安的商品暂不支持此操作`,
           type: 'error'
         })
         return
       }
       let flag = true
+      let picFlag = true
       this.multiselect.map(res => {
         if (res.commodityType === 2) {
           flag = false
+        }
+        if (status === 1 && !res.mainPic) {
+          picFlag = false
         }
         this.specData.push(`${res.specId}`)
       })
       if (!flag) {
         this.$message({
           message: '当前页面不允许操作组合商品，请重新选择',
+          type: 'error'
+        })
+        return
+      }
+      if (!picFlag) {
+        this.$message({
+          message: '不允许橱窗图为空的商品上架，请先完善信息',
           type: 'error'
         })
         return
@@ -596,14 +613,14 @@ export default {
       // 单个上下架
       if (this.listQuery.owner === 1) {
         this.$message({
-          message: '操作失败，非自营的不能上架到商城',
+          message: `平安的商品暂不支持此操作`,
           type: 'error'
         })
         return
       }
       if (status === 1 && !row.mainPic) {
         this.$message({
-          message: '操作失败，橱窗图不能为空',
+          message: '不允许橱窗图为空的商品上架，请先完善信息',
           type: 'error'
         })
         return
