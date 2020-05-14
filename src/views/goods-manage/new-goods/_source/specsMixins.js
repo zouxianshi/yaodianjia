@@ -499,8 +499,14 @@ const mixin = {
               if (findIndex > -1) {
                 this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
                 const row = this.editSpecsData[findIndex]
-
+                if (v.specSkuList) {
+                  v.specSkuList.map(vs => {
+                    row[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
+                  })
+                }
                 if (row.erpCode && row.erpCode !== v.erpCode) {
+                  console.log('row', row)
+                  console.log('v', v)
                   // push
                   const object = Object.assign({}, row, v)
                   object.isCheck = true
