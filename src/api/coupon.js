@@ -131,6 +131,14 @@ export function getActivityCouponDetail(params) {
     method: 'get'
   })
 }
+// (领券中心)编辑优惠券
+export function editCoupon(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/activityCouponEdit`,
+    method: 'post',
+    data: params
+  })
+}
 
 // 新增普通活动列表
 export function updateActivity(params) {

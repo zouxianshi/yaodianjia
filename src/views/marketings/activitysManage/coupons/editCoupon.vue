@@ -1,6 +1,6 @@
 <template>
   <div class="edit-coupons-modal">
-    <el-form v-model="couponParams" label-width="100" label-position="right" :disabled="isNotStart">
+    <el-form v-model="couponParams" label-width="100" label-position="right" :disabled="isCheck || isNotStart">
       <el-form-item label="领取方式：">
         <el-radio-group v-model="couponParams.activityType" size="mini" :disabled="true">
           <el-radio :label="1">免费领取</el-radio>
@@ -31,7 +31,7 @@
           </el-table-column>
           <el-table-column prop="sceneRule" label="使用场景">
             <template slot-scope="scope">
-              {{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}
+              {{ scope.row.sceneRule ===1 ? '仅商城' : scope.row.sceneRule === 2 ? '仅门店' : '线上线下通用' }}
             </template>
           </el-table-column>
           <el-table-column prop="shopRule" label="适用门店">
@@ -54,14 +54,14 @@
               <el-input v-model="scope.row.perCount" maxlength="2" onkeyup="this.value=this.value.replace(/\D/g,'')" size="mini" />
             </template>
           </el-table-column>
-          <el-table-column prop="perCount" label="每人限领（张）" width="120">
+          <el-table-column v-if="couponParams.activityType === 3" prop="amount" required label="所需现金" width="120">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.perCount" maxlength="2" onkeyup="this.value=this.value.replace(/\D/g,'')" size="mini" />
+              <el-input v-model="scope.row.amount" maxlength="5" size="mini" />
             </template>
           </el-table-column>
-          <el-table-column prop="perCount" label="每人限领（张）" width="120">
+          <el-table-column v-if="couponParams.activityType === 2" prop="integral" required label="所需积分" width="120">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.perCount" maxlength="2" onkeyup="this.value=this.value.replace(/\D/g,'')" size="mini" />
+              <el-input v-model="scope.row.integral" maxlength="5" onkeyup="this.value=this.value.replace(/\D/g,'')" size="mini" />
             </template>
           </el-table-column>
           <el-table-column prop="date" label="操作" width="80">
@@ -72,15 +72,15 @@
         </el-table>
       </el-form-item>
       <el-form>
-        <el-button size="mini">取消</el-button>
-        <el-button size="mini" type="primary" @click="submitUp">确认</el-button>
+        <el-button size="mini" @click="returnList">{{ isCheck ? '返回' : '取消' }}</el-button>
+        <el-button v-if="!isCheck" size="mini" type="primary" @click="submitUp">确认</el-button>
       </el-form>
     </el-form>
   </div>
 </template>
 
 <script>
-import { getActivityCouponDetail } from '@/api/coupon'
+import { getActivityCouponDetail, editCoupon } from '@/api/coupon'
 export default {
   data() {
     return {
@@ -89,12 +89,13 @@ export default {
       },
       couponInfo: [],
       dataValue: [],
-      isNotStart: 0 // 活动是否未开始
+      isNotStart: 0, // 活动是否未开始
+      isCheck: false
     }
   },
   created() {
     var serachParams = JSON.parse(sessionStorage.getItem('couponCenterDetail'))
-    console.log(serachParams)
+    this.isCheck = this.$route.query.check === 'true'
     this.isNotStart = serachParams.activityState !== 2
     this.couponParams = serachParams
     var timeArr = serachParams.timeLimit.split(',')
@@ -150,7 +151,28 @@ export default {
     },
     // 提交数据
     submitUp() {
-      console.log(this.couponInfo)
+      const datas = this.couponInfo[0]
+      const params = {
+        'amount': datas.amount,
+        'id': datas.id,
+        'integral': datas.integral,
+        'perCount': datas.perCount,
+        'totalCount': datas.totalCount
+      }
+      editCoupon(params).then(res => {
+        console.log(res)
+        if (res.code === '10000') {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this.$router.push('/marketings/activity-manage/coupons/list?code=TA001&name=领券中心')
+        }
+      })
+    },
+    // 返回列表
+    returnList() {
+      this.$router.push('/marketings/activity-manage/coupons/list?code=TA001&name=领券中心')
     }
   }
 }

@@ -102,18 +102,21 @@
           <el-tag v-if="scope.row.activityState.toString()==='1'" size="mini" type="success">进行中</el-tag>
           <el-tag v-if="scope.row.activityState.toString()==='2'" size="mini" type="info">未开始</el-tag>
           <el-tag v-if="scope.row.activityState.toString()==='3'" size="mini" type="danger">已结束</el-tag>
-          <!-- <el-tag>
-            {{ scope.row.activityState===1?'进行中':'' || scope.row.activityState===2?'未开始':'' || scope.row.activityState===3?'已结束':'' }}
-          </el-tag> -->
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="80" align="center">
+      <el-table-column fixed="right" label="操作" width="130">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.activityState.toString()==='2'"
             type="text"
             size="small"
             @click.native.prevent="editRow(scope.row)"
           >编辑</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click.native.prevent="editRow(scope.row, true)"
+          >查看</el-button>
           <el-button
             type="text"
             size="small"
@@ -238,17 +241,13 @@ export default {
         })
     },
     // 编辑优惠券
-    editRow(row) {
+    editRow(row, check = false) {
       sessionStorage.setItem('couponCenterDetail', JSON.stringify(row))
-      this.$router.push(`/marketings/activity-manage/coupons/edit`)
-      // this.$router.push({
-      //   name: 'edit-actives',
-      //   params: {
-      //     id: row.id,
-      //     activityId: row.activityId,
-      //     data: row
-      //   }
-      // })
+      if (check) {
+        this.$router.push(`/marketings/activity-manage/coupons/edit?check=${check}`)
+      } else {
+        this.$router.push(`/marketings/activity-manage/coupons/edit`)
+      }
     },
     changeOption(val) {
       this.getList('类型')
