@@ -501,31 +501,17 @@ const mixin = {
                 const row = this.editSpecsData[findIndex]
                 if (v.specSkuList) {
                   v.specSkuList.map(vs => {
-                    row[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
+                    v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
                   })
                 }
+                const object = Object.assign({}, row, v)
+                object.isCheck = true
+                object.disabled = true
+                object.type = object.type || 2
                 if (row.erpCode && row.erpCode !== v.erpCode) {
-                  console.log('row', row)
-                  console.log('v', v)
-                  // push
-                  const object = Object.assign({}, row, v)
-                  object.isCheck = true
-                  object.disabled = true
-                  object.type = object.type || 2
                   this.editSpecsData.push(object)
                 } else {
-                  row.disabled = true
-                  row.isSku = 0
-                  row.id = v.id
-                  row.owner = v.owner
-                  row.mprice = v.mprice
-                  row.erpCode = v.erpCode
-                  row.isCheck = true // 数据做标识  选中
-                  row.picUrl = v.picUrl
-                  row.limitNum = v.limitNum
-                  row.limitType = v.limitType
-                  row.type = v.type || 2
-                  this.$set(this.editSpecsData, findIndex, row)
+                  this.$set(this.editSpecsData, findIndex, object)
                 }
               } else {
                 v.disabled = true
