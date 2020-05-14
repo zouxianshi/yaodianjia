@@ -219,8 +219,8 @@ export default {
   beforeRouteLeave(to, from, next) {
     if (
       to.name === 'GoodsEdit' &&
-      from.name === 'GoodsRecord' &&
-      this.isToEdit
+        from.name === 'GoodsRecord' &&
+        this.isToEdit
     ) {
       const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
         item => item.name === 'GoodsEdit'

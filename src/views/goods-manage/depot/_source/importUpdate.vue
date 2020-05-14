@@ -185,27 +185,27 @@ export default {
 }
 </script>
 <style lang="scss">
-.el-dialog {
-  width: 35%;
-}
-.import-update-dialog {
-  .upload-demo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .el-dialog {
+    width: 35%;
+  }
+  .import-update-dialog {
+    .upload-demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-    .el-upload__tip {
-      width: 360px;
-      line-height: 20px;
+      .el-upload__tip {
+        width: 360px;
+        line-height: 20px;
+      }
     }
   }
-}
-.error-dialog {
-  .error-dialog-model {
-    line-height: 24px;
+  .error-dialog {
+    .error-dialog-model {
+      line-height: 24px;
+    }
+    .el-dialog__body {
+      padding: 15px 20px;
+    }
   }
-  .el-dialog__body {
-    padding: 15px 20px;
-  }
-}
 </style>
