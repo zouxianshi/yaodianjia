@@ -193,6 +193,7 @@
                         <el-option label="甲类OTC" :value="0" />
                         <el-option label="处方药" :value="1" />
                         <el-option label="乙类OTC" :value="2" />
+                        <el-option label="OTC" :value="4" />
                       </el-select>
                     </el-form-item>
                     <el-form-item label="剂型：">
@@ -214,7 +215,7 @@
                       size="small"
                     />
                   </el-form-item>
-                  <el-form-item label="产地：" prop="produceOrigin">
+                  <el-form-item label="产地：">
                     <el-input
                       v-model.trim="basicForm.produceOrigin"
                       maxlength="50"
@@ -749,7 +750,7 @@
                       <el-input
                         v-model.trim="item.barCode"
                         maxlength="30"
-                        placeholder="输入商品条码"
+                        placeholder="若有条形码请务必填写"
                         @blur="input_checkBarCode(item.barCode)"
                       />
                     </el-form-item>
@@ -760,7 +761,6 @@
                         <el-option label="平安" :value="1" />
                       </el-select>
                     </el-form-item>
-
                     <el-form-item>
                       <span slot="label">
                         <span class="tip">*</span> 参考价格
@@ -887,6 +887,7 @@
           <div class="header">
             商品橱窗图
             <span class="img-tips">最多6张，图片800*800</span>
+            <span class="img-tipe-noImg">(无图片则无法上架到商城)</span>
           </div>
           <div class="edit-card-cnt">
             <div class="content">
@@ -1908,6 +1909,7 @@ export default {
           // })
           this.subLoading = false
           this.leaveAction = true
+
           setTimeout(() => {
             let url = ''
             if (this.basicForm.origin === 1) {
