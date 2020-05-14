@@ -57,8 +57,8 @@
               <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
             </template>
           </el-table-column>
-          <el-table-column prop="startTime" label="开始时间" min-width="150" align="center" />
-          <el-table-column prop="endTime" label="结束时间" min-width="150" align="center" />
+          <!-- <el-table-column prop="startTime" label="开始时间" min-width="150" align="center" />
+          <el-table-column prop="endTime" label="结束时间" min-width="150" align="center" /> -->
           <el-table-column label="状态" min-width="80" align="center">
             >
             <template slot-scope="scope">
@@ -118,8 +118,10 @@
                 :maxlength="500"
                 placeholder="http:// 或 https://"
               />
+            </el-form-item><el-form-item label="启用状态" :label-width="formLabelWidth">
+              <el-switch v-model="xForm.status" />
             </el-form-item>
-            <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
+            <!-- <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
               <el-date-picker
                 v-model="xForm.dateRange"
                 style="width: 350px"
@@ -132,7 +134,7 @@
                 end-placeholder="结束时间"
                 @change="handleTimeChange($event, 3)"
               />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
               <el-input v-model="xForm.sort" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
             </el-form-item>
@@ -222,9 +224,7 @@ export default {
         id: '',
         notice: '',
         linkUrl: '',
-        dateRange: '',
-        startTime: '',
-        endTime: '',
+        status: true,
         sort: ''
       },
       xRules: {
@@ -353,9 +353,7 @@ export default {
         id: row.id,
         notice: row.announcement,
         linkUrl: row.url,
-        dateRange: [row.startTime, row.endTime],
-        startTime: row.startTime,
-        endTime: row.endTime,
+        status: row.status === 1,
         sort: row.sortNumber
       }
       this.dialogFormVisible = true
@@ -370,27 +368,14 @@ export default {
         notice: '',
         linkUrl: '',
         dateRange: '',
-        startTime: '',
-        endTime: '',
-        sort: ''
+        sort: '',
+        status: true
       }
       this.$refs[formName].resetFields()
     },
     handleSubmit(formName) {
       // 表单验证
       this.$refs[formName].validate((valid) => {
-        // 验证结束时间
-        const start_time = new Date(this.xForm.startTime).getTime()
-        const end_time = new Date(this.xForm.endTime).getTime()
-        const current_time = new Date().getTime()
-        if (start_time >= end_time) {
-          this.$message.warning('结束时间必要大于开始时间')
-          return false
-        }
-        if (current_time >= end_time) {
-          this.$message.warning('结束时间必要大于当前时间')
-          return false
-        }
         if (valid) {
           if (this.xForm.id === '') {
             // 新增
@@ -472,7 +457,7 @@ export default {
         announcement: this.xForm.notice,
         classId: '',
         createName: '',
-        endTime: this.xForm.endTime,
+        status: this.xForm.status ? 1 : 0,
         id: '',
         imageUrl: '',
         merCode: '',
@@ -480,7 +465,6 @@ export default {
         remark: '',
         productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
-        startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
       console.log('add params', params)
@@ -515,15 +499,14 @@ export default {
         announcement: this.xForm.notice,
         classId: '',
         createName: '',
-        endTime: this.xForm.endTime,
         id: this.xForm.id,
+        status: this.xForm.status ? 1 : 0,
         imageUrl: '1',
         merCode: '',
         positionCode: this.positionCode,
         remark: '',
         productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
-        startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
       editPageSet(params).then(res => {
@@ -602,41 +585,41 @@ export default {
 }
 </script>
 <style lang="scss">
-.scope-img-wrap {
-  width: 60px;
-  height: 40px;
-  background: #f5f5f5;
-  margin: auto;
-  img {
-    width: 100%;
-    height: 100%;
-  }
-}
-.x-dialog-body {
-  width: 100%;
-  display: flex;
-  .form-box {
-    flex: 1;
-  }
-  .preview-box {
-    margin-right: 15px;
-    flex: 0 0 250px;
-    .title {
-      font-size: 18px;
-    }
-    .prview-pic {
-      margin-top: 20px;
+  .scope-img-wrap {
+    width: 60px;
+    height: 40px;
+    background: #f5f5f5;
+    margin: auto;
+    img {
       width: 100%;
-      height: 450px;
+      height: 100%;
     }
   }
-  .test-1 {
-    color: red;
+  .x-dialog-body {
+    width: 100%;
+    display: flex;
+    .form-box {
+      flex: 1;
+    }
+    .preview-box {
+      margin-right: 15px;
+      flex: 0 0 250px;
+      .title {
+        font-size: 18px;
+      }
+      .prview-pic {
+        margin-top: 20px;
+        width: 100%;
+        height: 450px;
+      }
+    }
+    .test-1 {
+      color: red;
+    }
   }
-}
-.note-grey {
-  font-size: 14px;
-  line-height: 1.1;
-  color: #999999;
-}
+  .note-grey {
+    font-size: 14px;
+    line-height: 1.1;
+    color: #999999;
+  }
 </style>

@@ -202,7 +202,7 @@ export default {
 }
 </script>
 <style scoped>
-.tip{
-  font-size: 12px;
-}
+  .tip{
+    font-size: 12px;
+  }
 </style>

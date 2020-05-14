@@ -1037,8 +1037,8 @@ export default {
       if (!value) {
         if (
           this.basicForm.origin !== 1 &&
-          this.chooseTypeList.length !== 0 &&
-          this.chooseTypeList[0].name === '中西药品'
+            this.chooseTypeList.length !== 0 &&
+            this.chooseTypeList[0].name === '中西药品'
         ) {
           callback(new Error('请输入通用名'))
         } else {
@@ -1075,8 +1075,8 @@ export default {
         }
         if (
           rule.field === 'long' ||
-          rule.field === 'height' ||
-          rule.field === 'width'
+            rule.field === 'height' ||
+            rule.field === 'width'
         ) {
           if ((value && value <= 0) || value >= 100) {
             return callback(new Error('长宽高必须大于0 小于100'))
@@ -1565,9 +1565,9 @@ export default {
     beforeUpload(file) {
       const size = file.size / 1024
       const isImg =
-        file.type === 'image/jpeg' ||
-        file.type === 'image/png' ||
-        file.type === 'image/jpg'
+          file.type === 'image/jpeg' ||
+          file.type === 'image/png' ||
+          file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
           message: '只能上传格式为 jpg、jpeg、png的图片',
@@ -1775,8 +1775,8 @@ export default {
             ].id // 分类id
             if (
               this.chooseTypeList &&
-              (this.chooseTypeList[0].name === '医疗器械' ||
-                this.chooseTypeList[0].name === '营养保健')
+                (this.chooseTypeList[0].name === '医疗器械' ||
+                  this.chooseTypeList[0].name === '营养保健')
             ) {
               this.basicForm.hasEphedrine = 0
             }
@@ -1927,12 +1927,12 @@ export default {
                     sessionStorage.setItem('isRefreshDepot', true)
                     this.$router.replace(url)
                   })
-                // this.$store.dispatch('tagsView/delView', this.$route)
-                // this.$store
-                //   .dispatch('tagsView/delVisitedView', this.$route)
-                //   .then(res => {})
-                // this.$router.replace(url)
-                // this.$router.go(-1) // 返回上一个路由
+              // this.$store.dispatch('tagsView/delView', this.$route)
+              // this.$store
+              //   .dispatch('tagsView/delVisitedView', this.$route)
+              //   .then(res => {})
+              // this.$router.replace(url)
+              // this.$router.go(-1) // 返回上一个路由
               })
               .catch(() => {
                 console.log('已取消')
@@ -1947,210 +1947,210 @@ export default {
 }
 </script>
 <style lang="scss">
-.specs-img-table {
-  .avatar-uploader-icon {
-    width: 60px;
-    height: 60px;
-    line-height: 60px !important;
+  .specs-img-table {
+    .avatar-uploader-icon {
+      width: 60px;
+      height: 60px;
+      line-height: 60px !important;
+    }
+    .avatar {
+      width: 60px;
+      height: 60px;
+    }
   }
-  .avatar {
-    width: 60px;
-    height: 60px;
+  .tox .tox-statusbar {
+    display: none !important;
   }
-}
-.tox .tox-statusbar {
-  display: none !important;
-}
 </style>
 <style lang="scss" scoped>
-.edit-wrapper {
-  color: #333;
-  padding-bottom: 50px;
-  .img-tips {
-    font-size: 12px;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    color: #e6a23c;
-    li {
-      margin-bottom: 5px;
-    }
-  }
-  .img-tipe-noImg {
-    font-size: 12px;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    color: red;
-  }
-  .specs-box {
-    margin-top: 20px;
-    .el-table {
-      width: auto;
-    }
-  }
-  .edit-card {
-    margin-top: 10px;
-    .el-input {
-      width: 300px;
-    }
-    .el-textarea {
-      @extend .el-input;
-    }
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    .header {
-      height: 40px;
-      line-height: 40px;
-      padding: 0 10px;
-      font-size: 16px;
-    }
-    .edit-card-cnt {
-      padding: 10px;
-      color: #333;
-      .content {
-        padding: 20px 30px;
-        background: #f6f7fb;
+  .edit-wrapper {
+    color: #333;
+    padding-bottom: 50px;
+    .img-tips {
+      font-size: 12px;
+      margin-bottom: 10px;
+      margin-top: 10px;
+      color: #e6a23c;
+      li {
+        margin-bottom: 5px;
       }
-      .type-list {
-        margin-bottom: 10px;
-        &:last-child {
-          margin: 0;
+    }
+    .img-tipe-noImg {
+      font-size: 12px;
+      margin-bottom: 10px;
+      margin-top: 10px;
+      color: red;
+    }
+    .specs-box {
+      margin-top: 20px;
+      .el-table {
+        width: auto;
+      }
+    }
+    .edit-card {
+      margin-top: 10px;
+      .el-input {
+        width: 300px;
+      }
+      .el-textarea {
+        @extend .el-input;
+      }
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      .header {
+        height: 40px;
+        line-height: 40px;
+        padding: 0 10px;
+        font-size: 16px;
+      }
+      .edit-card-cnt {
+        padding: 10px;
+        color: #333;
+        .content {
+          padding: 20px 30px;
+          background: #f6f7fb;
         }
-        &.groups {
-          display: flex;
-          align-items: center;
-        }
-        .group-list {
-          display: inline-block;
-          // max-width: 600px;
-          margin-right: 5px;
-          .tag {
-            margin-right: 10px;
+        .type-list {
+          margin-bottom: 10px;
+          &:last-child {
+            margin: 0;
+          }
+          &.groups {
+            display: flex;
+            align-items: center;
+          }
+          .group-list {
+            display: inline-block;
+            // max-width: 600px;
+            margin-right: 5px;
+            .tag {
+              margin-right: 10px;
+            }
+          }
+          .link {
+            cursor: pointer;
           }
         }
-        .link {
+      }
+      .editorWrap {
+        position: relative;
+        .wordcount {
+          position: absolute;
+          // bottom: -5px;
+          height: 18px;
+          line-height: 18px;
+          // right: 10px;
+          text-align: right;
+          font-size: 12px;
+          width: 100%;
+          background: #fff;
+          border: 1px solid #ccc;
+          border-top: 0 none;
+          padding-right: 10px;
+          color: rgba(34, 47, 62, 0.7);
+        }
+      }
+    }
+    .next-btn {
+      margin-top: 20px;
+    }
+    .goods-details {
+      display: flex;
+      margin-bottom: 10px;
+      .left-show {
+        width: 320px;
+        height: auto;
+        border: 1px solid #e0e0e0;
+        .img {
+          width: 320px;
+          height: 64px;
+          background: url('../../../assets/image/sprite_dm.png') -2px -86px;
+        }
+        .basicMsgs {
+          width: 100%;
+          height: 100px;
+          color: #666;
+          line-height: 25px;
+          text-align: center;
+          padding-top: 20px;
+          background: #f2f2f2;
+        }
+        .editSqu {
+          height: 376px;
+          border: 1px dashed red;
+          img {
+            max-width: 100% !important;
+          }
+        }
+        .w-e-text {
+          padding: 5px 10px;
+          overflow-y: scroll;
+        }
+      }
+      .edit-box {
+        margin-left: 20px;
+        padding: 10px;
+        background: #f8f8f8;
+        border: 1px solid #d1d1d1;
+        position: relative;
+      }
+    }
+    .spec-list {
+      width: 550px;
+      border-radius: 5px;
+      border: 1px solid #c9c9cc;
+      margin-left: 80px;
+      margin-bottom: 10px;
+      .header {
+        height: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 12px;
+        border-bottom: 1px solid #c9c9cc;
+        i {
           cursor: pointer;
         }
       }
-    }
-    .editorWrap {
-      position: relative;
-      .wordcount {
-        position: absolute;
-        // bottom: -5px;
-        height: 18px;
-        line-height: 18px;
-        // right: 10px;
-        text-align: right;
-        font-size: 12px;
-        width: 100%;
-        background: #fff;
-        border: 1px solid #ccc;
-        border-top: 0 none;
-        padding-right: 10px;
-        color: rgba(34, 47, 62, 0.7);
-      }
-    }
-  }
-  .next-btn {
-    margin-top: 20px;
-  }
-  .goods-details {
-    display: flex;
-    margin-bottom: 10px;
-    .left-show {
-      width: 320px;
-      height: auto;
-      border: 1px solid #e0e0e0;
-      .img {
-        width: 320px;
-        height: 64px;
-        background: url('../../../assets/image/sprite_dm.png') -2px -86px;
-      }
-      .basicMsgs {
-        width: 100%;
-        height: 100px;
-        color: #666;
-        line-height: 25px;
-        text-align: center;
-        padding-top: 20px;
-        background: #f2f2f2;
-      }
-      .editSqu {
-        height: 376px;
-        border: 1px dashed red;
-        img {
-          max-width: 100% !important;
+      .spec-content {
+        padding: 12px;
+        .el-input {
+          width: 250px;
+        }
+        .specs-img {
+          .avatar-uploader-icon {
+            width: 100px;
+            height: 100px;
+            line-height: 100px !important;
+          }
+          .avatar {
+            width: 100px;
+            height: 100px;
+          }
         }
       }
-      .w-e-text {
-        padding: 5px 10px;
-        overflow-y: scroll;
-      }
     }
-    .edit-box {
-      margin-left: 20px;
-      padding: 10px;
-      background: #f8f8f8;
-      border: 1px solid #d1d1d1;
-      position: relative;
+    .add-spec {
+      margin-left: 80px;
     }
   }
-  .spec-list {
-    width: 550px;
-    border-radius: 5px;
-    border: 1px solid #c9c9cc;
-    margin-left: 80px;
-    margin-bottom: 10px;
-    .header {
-      height: 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 12px;
-      border-bottom: 1px solid #c9c9cc;
-      i {
-        cursor: pointer;
-      }
-    }
-    .spec-content {
-      padding: 12px;
+  .action-wapper {
+    position: absolute;
+    padding: 12px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    text-align: right;
+  }
+  .link-btn {
+    font-size: 14px;
+  }
+  .modal-body {
+    .cascader {
       .el-input {
-        width: 250px;
-      }
-      .specs-img {
-        .avatar-uploader-icon {
-          width: 100px;
-          height: 100px;
-          line-height: 100px !important;
-        }
-        .avatar {
-          width: 100px;
-          height: 100px;
-        }
+        width: 300px !important;
       }
     }
   }
-  .add-spec {
-    margin-left: 80px;
-  }
-}
-.action-wapper {
-  position: absolute;
-  padding: 12px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #fff;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  text-align: right;
-}
-.link-btn {
-  font-size: 14px;
-}
-.modal-body {
-  .cascader {
-    .el-input {
-      width: 300px !important;
-    }
-  }
-}
 </style>
