@@ -1975,15 +1975,12 @@ export default {
       margin-bottom: 5px;
     }
   }
-<<<<<<< HEAD
-=======
   .img-tipe-noImg {
     font-size: 12px;
     margin-bottom: 10px;
     margin-top: 10px;
     color: red;
   }
->>>>>>> fixbug-urgent-v1.0.8
   .specs-box {
     margin-top: 20px;
     .el-table {
