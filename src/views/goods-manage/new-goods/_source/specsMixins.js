@@ -496,14 +496,15 @@ const mixin = {
               const findIndex = findArray(this.editSpecsData, {
                 barCode: v.barCode
               })
+              if (v.specSkuList) {
+                v.specSkuList.map(vs => {
+                  v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
+                })
+                v.productSpecSkuDTOs = v.specSkuList
+              }
               if (findIndex > -1) {
                 this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
                 const row = this.editSpecsData[findIndex]
-                if (v.specSkuList) {
-                  v.specSkuList.map(vs => {
-                    v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
-                  })
-                }
                 const object = Object.assign({}, row, v)
                 object.isCheck = true
                 object.disabled = true
@@ -517,12 +518,7 @@ const mixin = {
                 v.disabled = true
                 v.isShowSelect = false
                 // v.isCheck = true // 数据做标识  选中
-                if (v.specSkuList) {
-                  v.specSkuList.map(vs => {
-                    v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
-                  })
-                  v.productSpecSkuDTOs = v.specSkuList
-                }
+
                 if (this.dynamicProp.length === 0 && this.standardNoData) {
                   const data = []
                   v.specSkuList.map(v => {
