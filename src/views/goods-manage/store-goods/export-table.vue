@@ -149,7 +149,7 @@ export default {
             : ''
         filePathObj.sortName =
           Array.isArray(sortnameArr) && sortnameArr.length > 1
-            ? `订单列表-${sortnameArr[1]}.zip`
+            ? `门店商品-${sortnameArr[1]}.zip`
             : ''
       }
       return filePathObj
