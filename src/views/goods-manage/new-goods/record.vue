@@ -123,7 +123,7 @@
               >
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
               </template>
-              <template v-else-if="scope.row.infoStatus===15&&scope.row.auditStatus===0">
+              <template v-else-if="(scope.row.infoStatus===15||scope.row.infoStatus===13)&&scope.row.auditStatus===0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
               </template>
               <template v-else>
@@ -148,7 +148,7 @@
                   <el-button type size="mini">完善信息</el-button>
                 </a>
               </template>
-              <template v-if="scope.row.auditStatus===0">
+              <template v-if="listQuery.auditStatus!==-1&&scope.row.auditStatus===0">
                 <a @click="handleEdit(scope.row.id)">
                   <el-button type size="mini">编辑</el-button>
                 </a>

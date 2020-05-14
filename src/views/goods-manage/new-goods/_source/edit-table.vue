@@ -48,7 +48,7 @@
             </el-form-item>
           </template>
           <template v-else>
-            <el-form-item v-if="keys!=='mprice'&&keys!=='barCode'" label="" :prop="keys" :rules="[{ required: true, message: '不能为空11', trigger: 'blur' }]">
+            <el-form-item v-if="keys!=='mprice'&&keys!=='barCode'" label="" :prop="keys" :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]">
               <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
               <span>
                 <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />

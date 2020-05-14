@@ -367,7 +367,7 @@ const mixin = {
           this.specsList = res.data
           this.specsForm.specsData = []
           console.log('--根据一级分类查找规格----')
-          this.handleAddSpec()
+          // this.handleAddSpec()
         }
         if (this.basicForm.id) {
           this._loadSpecsInfo()
