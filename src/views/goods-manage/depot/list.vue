@@ -14,7 +14,13 @@
         <a href="#/goods-manage/import">
           <el-button type="primary" size="small" icon="el-icon-upload2">商品导入</el-button>
         </a>
-        <!-- <el-button type="" size="small" icon="el-icon-download" @click="handleExport">导出</el-button> -->
+        <el-button
+          type
+          size="small"
+          icon="el-icon-download"
+          :loading="exportLoading"
+          @click="handleExport"
+        >导出</el-button>
       </div>
       <section @keydown.enter="handleQuery">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
@@ -45,6 +51,7 @@
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
+              <el-option label="OTC" value="4" />
             </el-select>
           </div>
           <div class="search-item">
@@ -310,7 +317,7 @@
 </template>
 <script>
 import ElImageViewer from '@/components/imageViewer/imageViewer'
-import { getGoodsList, exportData, delGoods } from '@/api/depot'
+import { getGoodsList, delGoods, exportDataNew } from '@/api/depot'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
@@ -319,6 +326,7 @@ import store from '../components/store'
 import group from '../components/grouping'
 import limitBuy from './_source/limit-buy'
 import importUpdate from './_source/importUpdate'
+
 export default {
   name: 'Depot',
   components: {
@@ -352,6 +360,7 @@ export default {
       merCode: '',
       specData: [],
       loading: false,
+      exportLoading: false,
       tableData: [],
       dialogVisible: false,
       importAllVisible: false,
@@ -563,21 +572,32 @@ export default {
       }
       if (this.listQuery.owner === 1) {
         this.$message({
-          message: '操作失败，非自营的不能上架到商城',
+          message: `平安的商品暂不支持此操作`,
           type: 'error'
         })
         return
       }
       let flag = true
+      let picFlag = true
       this.multiselect.map(res => {
         if (res.commodityType === 2) {
           flag = false
+        }
+        if (status === 1 && !res.mainPic) {
+          picFlag = false
         }
         this.specData.push(`${res.specId}`)
       })
       if (!flag) {
         this.$message({
           message: '当前页面不允许操作组合商品，请重新选择',
+          type: 'error'
+        })
+        return
+      }
+      if (!picFlag) {
+        this.$message({
+          message: '不允许橱窗图为空的商品上架，请先完善信息',
           type: 'error'
         })
         return
@@ -590,14 +610,14 @@ export default {
       // 单个上下架
       if (this.listQuery.owner === 1) {
         this.$message({
-          message: '操作失败，非自营的不能上架到商城',
+          message: `平安的商品暂不支持此操作`,
           type: 'error'
         })
         return
       }
-      if (status === 1 && row.mainPic) {
+      if (status === 1 && !row.mainPic) {
         this.$message({
-          message: '操作失败，橱窗图不能为空',
+          message: '不允许橱窗图为空的商品上架，请先完善信息',
           type: 'error'
         })
         return
@@ -665,9 +685,17 @@ export default {
       this.groupVisible = true
     },
     handleExport() {
+      // 修改分组
+      this.goodsData = []
+      this.multiselect.map(res => {
+        this.goodsData.push(res.id)
+      })
+      const param = { ids: this.goodsData, merCode: this.merCode }
+      this.exportLoading = true
       // 商品导出
-      exportData(this.listQuery)
+      exportDataNew(param)
         .then(res => {
+          this.exportLoading = false
           if (res.type === 'application/json') {
             this.$message({
               message: '导出的记录为空',
