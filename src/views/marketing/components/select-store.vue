@@ -1,6 +1,6 @@
 <template>
   <div class="select-store">
-    <el-table :data="cutData" size="small" show-overflow-tooltip style="width: 100%">
+    <el-table :data="cutData" size="small" show-overflow-tooltip style="width: 100%" max-height="500">
       <template v-for="col in cols">
         <el-table-column
           v-if="!col.render"
@@ -92,6 +92,12 @@ export default {
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
+      this.pager = {
+        ...this.pager,
+        size: val,
+        current: 1
+      }
+      this.handleCutData()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)

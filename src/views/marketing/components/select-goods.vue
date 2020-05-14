@@ -1,6 +1,6 @@
 <template>
   <div class="select-goods">
-    <el-table :data="cutData" size="small" style="width: 100%">
+    <el-table :data="cutData" size="small" style="width: 100%" max-height="500">
       <template v-for="col in cols">
         <el-table-column
           v-if="!col.render"
