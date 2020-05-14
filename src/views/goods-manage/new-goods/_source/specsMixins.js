@@ -119,7 +119,6 @@ const mixin = {
         data = [...this.chooseTableSpec, ...data]
         console.log('保存获取的数据,-----', data)
         if (data.length === 0) {
-          console.log('1231231312')
           this.$message({
             message: '请选择规格信息',
             type: 'error'
@@ -137,12 +136,6 @@ const mixin = {
           } else if (!v.mprice && !is_err) {
             this.$message({
               message: `请完善已勾选的规格，商品价格未填写`,
-              type: 'error'
-            })
-            is_err = true
-          } else if (!v.picUrl && !is_err) {
-            this.$message({
-              message: `请完善已勾选的规格，图片未上传`,
               type: 'error'
             })
             is_err = true
@@ -266,14 +259,14 @@ const mixin = {
           })
           flag = false
         }
-        if (this.basicForm.origin === 1 && flag && !v.picUrl) {
-          this.$message.close()
-          this.$message({
-            message: `请上传表单规格${index}中的图片`,
-            type: 'error'
-          })
-          flag = false
-        }
+        // if (this.basicForm.origin === 1 && flag && !v.picUrl) {
+        //   this.$message.close()
+        //   this.$message({
+        //     message: `请上传表单规格${index}中的图片`,
+        //     type: 'error'
+        //   })
+        //   flag = false
+        // }
       })
       if (flag) {
         // return
@@ -300,7 +293,7 @@ const mixin = {
           if (this.basicForm.origin === 1) {
             data = [...data]
             this.editSpecsData.map(v => {
-              console.log('标库处理', v)
+              console.log('标库提交处理', v)
               if (v.disabled || v.isCheck) {
                 data.push(v)
               }
@@ -389,6 +382,8 @@ const mixin = {
           if (res.data) {
             res.data.map(v => {
               v.disabled = false
+              v.isCheck = false
+              v.isShowSelect = true
               // 标库数据回显 规格处理
               if (v.productSpecSkuDTOs) {
                 if (this.dynamicProp.length === 0) {
@@ -497,6 +492,7 @@ const mixin = {
             findInput.remove() // 设置全选disabeld
             specList.map((v, index) => {
               v.owner = v.owner || 0
+              v.isSku = 0
               const findIndex = findArray(this.editSpecsData, {
                 barCode: v.barCode
               })
@@ -560,13 +556,6 @@ const mixin = {
           this.specsForm.specs = []
         }
       })
-    },
-    selectable(row) {
-      // 是否可以选择
-      if (row.disabled) {
-        return false
-      }
-      return true
     },
     shows(row) {
       const findIndex = findArray(this.dynamicProp, { id: row.id })
