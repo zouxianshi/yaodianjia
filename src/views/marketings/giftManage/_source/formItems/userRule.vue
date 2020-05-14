@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="useRuleForm" :model="params" size="mini" label-position="left" label-width="110px">
+  <el-form ref="useRuleForm" :model="params" size="mini" label-position="left" label-width="110px" :rules="rules">
     <el-form-item label="使用门槛：" prop="useRule">
       <el-radio-group v-model="useRuleLimit" :disabled="disabled" @change="params.useRule='0'">
         <el-radio :label="0">无门槛</el-radio>

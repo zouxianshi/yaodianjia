@@ -23,6 +23,14 @@
             style="width:60px"
             @keyup.native="changeView1"
           />天内有效
+          <el-tooltip class="item" effect="light" placement="top-start">
+            <i class="el-icon-question" />
+            <div slot="content" style="width:500px;line-height:24px">
+              <p>有效期按自然日计算，如设置自领取起3天有效，用户在4月15日12:00时领取，则该优惠券的可用时间为4月15日的12:00:00至
+                4月17日的23:59:59。
+              </p>
+            </div>
+          </el-tooltip>
         </el-radio>
         <el-radio :label="2">
           自领取起
@@ -39,6 +47,14 @@
             style="width:60px"
             @keyup.native="changeView1"
           />天失效
+          <el-tooltip class="item" effect="light" placement="top-start">
+            <i class="el-icon-question" />
+            <div slot="content" style="width:500px;line-height:24px">
+              <p>有效期按自然日计算，如设置自领取起3天有效，用户在4月15日12:00时领取，则该优惠券的可用时间为4月15日的12:00:00至
+                4月17日的23:59:59。
+              </p>
+            </div>
+          </el-tooltip>
         </el-radio>
         <el-radio :label="3">
           <el-date-picker

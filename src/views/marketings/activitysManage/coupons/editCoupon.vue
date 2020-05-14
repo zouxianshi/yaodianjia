@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-coupons-modal">
+  <div class="app-container edit-coupons-modal">
     <el-form v-model="couponParams" label-width="100" label-position="right" :disabled="isCheck || isNotStart">
       <el-form-item label="领取方式：">
         <el-radio-group v-model="couponParams.activityType" size="mini" :disabled="true">
@@ -107,11 +107,9 @@ export default {
       couponId: serachParams.id
     }
     getActivityCouponDetail(params).then(res => {
-      console.log(res)
       if (res.data) {
         var arr = []
         arr.push(res.data)
-        console.log(arr)
         this.couponInfo = arr
       }
     })
@@ -179,7 +177,6 @@ export default {
 </script>
 <style lang="scss">
 .edit-coupons-modal{
-  width: 94%;
-  margin: 40px auto 0;
+  width: 94%
 }
 </style>
