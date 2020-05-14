@@ -107,7 +107,7 @@ export const getNowFormatDate = () => {
 export const getSearchParams = p => {
   return _.assign({
     classId: '',
-    displayTime: getNowFormatDate(),
+    displayTime: '',
     startTime: '',
     endTime: '',
     positionCode: '',
