@@ -116,3 +116,11 @@ export function queryStore(data) {
     data
   })
 }
+// 会员反馈
+export function queryMessageList(data) {
+  return request({
+    url: `${config.merGoods}/1.0/message/_search`,
+    method: 'post',
+    data
+  })
+}

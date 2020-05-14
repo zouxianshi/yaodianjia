@@ -66,6 +66,29 @@ export default [
           noCache: true,
           activeMenu: '/member/register-setting'
         }
+      },
+      {
+        path: '/member/member-feedback',
+        redirect: '/member/member-feedback/FeedbackList',
+        component: () => import('@/views/member/memberFeedback'),
+        name: 'memberFeedback',
+        meta: {
+          title: '会员反馈',
+          auth: false,
+          noCache: true
+        },
+        children: [
+          {
+            path: '/member/member-feedback/FeedbackList',
+            component: () => import('@/views/member/memberFeedback/list'),
+            name: 'FeedbackList',
+            meta: {
+              title: '会员反馈',
+              noCache: true,
+              activeMenu: '/member/member-feedback'
+            }
+          }
+        ]
       }
     ]
   }

@@ -174,6 +174,17 @@ export default {
         callback()
       }
     }
+    var validatetotalNeedCoupons = (rule, value, callback) => {
+      const val = Number(value)
+      const reg = /^[0-9]*[1-9][0-9]*$/
+      if (!reg.test(val)) {
+        callback(new Error('请输入正整数'))
+      } else if (val < 0 || val > 1001) {
+        callback(new Error('小于1000'))
+      } else {
+        callback()
+      }
+    }
     return {
       valueInput: '',
       checkedit: false,
@@ -190,7 +201,10 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' },
           { validator: validatetotalCoupons, trigger: 'blur' }
         ],
-        totalNeed: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        totalNeed: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { validator: validatetotalNeedCoupons, trigger: 'blur' }
+        ]
       },
       pickerOptions: {
         disabledDate(time) {

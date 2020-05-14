@@ -66,18 +66,6 @@
           当前无任何优惠券，先去<span style="color:#2790FA" class="creatcoucops" @click="$router.push({ path: '/marketings/gift-manage/list' })">创建优惠券</span>吧
         </div>
       </el-table>
-      <div style="margin-top:20px">已选优惠券：</div>
-      <div class="has-selected">
-        已选商品：
-        <span v-for="(item ,index) in multipleSelectionAll" :key="index">
-          <el-tooltip placement="top">
-            <div slot="content">
-              {{ item.cname }}
-            </div>
-            <el-tag style="margin-right:10px" type="success">{{ item.cname.length>10?item.cname.substring(0, 10)+'...':item.cname }}</el-tag>
-          </el-tooltip>
-        </span>
-      </div>
       <div class="block">
         <el-pagination
           :page-size="pageSize"
@@ -88,6 +76,17 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
+      </div>
+      <div style="margin-top:20px">已选优惠券：</div>
+      <div class="has-selected">
+        <span v-for="(item ,index) in multipleSelectionAll" :key="index">
+          <el-tooltip placement="top">
+            <div slot="content">
+              {{ item.cname }}
+            </div>
+            <el-tag style="margin-right:10px" type="success">{{ item.cname.length>10?item.cname.substring(0, 10)+'...':item.cname }}</el-tag>
+          </el-tooltip>
+        </span>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
