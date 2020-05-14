@@ -309,7 +309,7 @@ export default {
     },
     // 选取store-1.表格选取（全选/反选），更新 mySelectList
     handleSelectAllChange(allList) {
-      console.log('勾选列表------', allList, this.mySelectList)
+      // console.log('勾选列表------', allList, this.mySelectList)
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
           return mItem.specId === item.specId
@@ -328,8 +328,8 @@ export default {
     },
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
-      console.log('单独勾选了------', val, row)
-      console.log('单独勾选了------this.mySelectList', this.mySelectList)
+      // console.log('单独勾选了------', val, row)
+      // console.log('单独勾选了------this.mySelectList', this.mySelectList)
       const index = this.mySelectList.findIndex(mItem => {
         return mItem.specId === row.specId
       })

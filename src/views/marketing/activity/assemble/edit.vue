@@ -233,7 +233,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div v-if="activityId" class="page-box">
+          <!-- <div v-if="activityId" class="page-box">
             <el-pagination
               background
               small
@@ -242,7 +242,7 @@
               :total="total"
               @current-change="handleCurrentChange"
             />
-          </div>
+          </div> -->
         </el-form-item>
       </el-form>
     </div>
@@ -290,7 +290,6 @@ import { throttle } from '@/utils/throttle'
 import {
   assembleActivityAdd,
   getAssembleAcInfo,
-  getActivityGoods,
   updateAssembleInfo,
   updateAcAssmbleProductInfo
 } from '@/api/activity'
@@ -351,8 +350,8 @@ export default {
       pageLoading: '',
       saveLoading: false,
       activityId: '',
-      currentPage: 1,
-      total: 0,
+      // currentPage: 1,
+      // total: 0,
       multipleSelection: [],
       leaveAction: false
     }
@@ -456,27 +455,30 @@ export default {
           console.log(err)
         })
     },
-    _loadGoods() {
-      // 通过活动id查询商品
-      getActivityGoods({
-        activityId: this.activityId,
-        pageSize: 10,
-        currentPage: this.currentPage
-      })
-        .then(res => {
-          const { data, totalCount } = res.data
-          data.map(v => {
-            v.mprice = v.price
-            v.name = v.productName
-            v.mainPic = v.imgUrl
-          })
-          this.goodsList = data
-          this.total = totalCount
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
+    // _loadGoods() {
+    //   // 通过活动id查询商品
+    //   getActivityGoods({
+    //     activityId: this.activityId,
+    //     pageSize: 20,
+    //     currentPage: 1
+    //   })
+    //     .then(res => {
+    //       // const { data, totalCount } = res.data
+    //       console.log('1111111---getActivityGoods', res);
+    //       const dataList = res.data
+    //       dataList.map(v => {
+    //         v.mprice = v.price
+    //         v.name = v.productName
+    //         v.erpCode = v.productCode
+    //         v.mainPic = v.imgUrl
+    //       })
+    //       this.goodsList = dataList
+    //       // this.total = totalCount
+    //     })
+    //     .catch(err => {
+    //       console.log(err)
+    //     })
+    // },
     handleImgError(row) {
       const data = JSON.parse(row.toString().replace('Error:', ''))
       if (data.code === 40301) {
@@ -724,7 +726,7 @@ export default {
           activityNumber: v.activityNumber, // 成团人数
           activityPrice: v.activityPrice, // 活动价格
           addLimitTimes: v.addLimitTimes, // 限购  加入次数
-          id: '',
+          id: v.id,
           isFreeshipping: v.isFreeshipping, // 是否包邮
           limitCount: v.limitCount, // 限购次数
           openLimitTimes: v.openLimitTimes, // 开团次数
@@ -752,17 +754,18 @@ export default {
       }
       this.pageLoading.close()
     },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
-      this.currentPage = val
-      this._loadGoods()
-    },
+    // handleCurrentChange(val) {
+    //   console.log(`当前页: ${val}`)
+    //   this.currentPage = val
+    //   this._loadGoods()
+    // },
     handleSuccessSelectGood(row) {
       // 单个商品设置确定callback
       console.log('11111', row)
       if (this.activityId) {
         const data = {
-          ...row
+          ...row,
+          ruleId: row.id
         }
         updateAcAssmbleProductInfo(data)
           .then(res => {
@@ -770,7 +773,8 @@ export default {
               message: '修改成功',
               type: 'success'
             })
-            this._loadGoods()
+            // this._loadGoods()
+            this._loadInfo()
           })
           .catch(_ => {})
       } else {
