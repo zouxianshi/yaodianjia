@@ -1,35 +1,41 @@
+
 <template>
-  <div class="equitySubmit-model">
-    2
+  <div class="app-container tequitySubmit-model">
+    <div>
+      <img src="@/assets/image/save.png" style="width:120px;height:120px">
+    </div>
+    <div>{{ content }}</div>
+    <div style="margin-top:50px">
+      <el-button @click="$router.go(0);">继续设置</el-button>
+    </div>
   </div>
 </template>
 <script>
+// import { mapGetters } from 'vuex'
 export default {
   name: 'EquitySubmit',
-  props: {},
+  components: {},
+  props: {
+  },
   data() {
     return {
-
     }
   },
-  computed: {},
+  computed: {
+    // ...mapGetters(['merCode'])
+  },
   watch: {},
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
-  mounted() {},
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
+  destroyed() {
+    window.clearInterval(this.clock)
+  },
   methods: {
-
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-.equitySubmit-model {
-  padding: 20px;
+.tequitySubmit-model {
+  margin-top: 40px;
+  text-align: center;
 }
 </style>

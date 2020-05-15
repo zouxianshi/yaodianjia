@@ -16,7 +16,7 @@
       <el-form-item label="兑换比例">
         1 ：
         <el-form-item prop="num" style="display:inline-block">
-          <el-input v-model="forms.num" onkeyup="this.value=this.value.replace(/\D/g,'')" style="width:100px" />
+          <el-input v-model="forms.num" onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)" style="width:100px" />
         </el-form-item>
       &nbsp;
         <el-tooltip class="item" effect="dark" content="请根据实际情况设置海贝的兑换比例" placement="top-start">
@@ -38,12 +38,13 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { editMerChantSet } from '@/api/equity'
+import { editMerChantSet, editMerChantsearch } from '@/api/equity'
 export default {
   name: 'ActivityRules',
   props: {},
   data() {
     return {
+      dataList: '',
       forms: {
         num: 1
       },
@@ -61,21 +62,31 @@ export default {
   beforeCreate() {},
   created() {},
   beforeMount() {},
-  mounted() {},
+  mounted() {
+    this.getData()
+  },
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},
   destroyed() {},
   methods: {
+    getData() {
+      const params = {
+        sysKey: 'integral_exchange_proportion',
+        merCode: this.merCode
+      }
+      editMerChantsearch(params).then(res => {
+        this.dataList = res.data
+      })
+    },
     onSubmit() {
-      var params = {
+      const params = {
         merCode: this.merCode,
         sysKey: 'integral_exchange_proportion',
         sysName: '海币兑换',
         sysValue: this.num
       }
       this.$refs['forms'].validate((valid) => {
-        console.log(valid)
         if (valid) {
           editMerChantSet(params).then(res => {
             if (res.code === '10000') {
@@ -83,6 +94,7 @@ export default {
                 message: '保存成功',
                 type: 'success'
               })
+              this.$emit('submitactivit', 2)
             }
           })
         } else {

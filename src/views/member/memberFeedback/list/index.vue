@@ -6,17 +6,27 @@
           <div class="feedback-content">
             <div class="feedback-left">
               <div>
-                <img :src="item.memberHead" class="feedback-content-image">
+                <!-- <img :src="item.memberHead" class="feedback-content-image"> -->
+                <el-image
+                  style=" width: 50px;height: 50px;border-radius: 50%;"
+                  :src="item.memberHea"
+                >
+                  <div slot="error" class="image-slot">加载失败</div>
+                </el-image>
               </div>
               <div>
                 <p>
                   {{ item.nickName }}&nbsp;
-                  <span style="color:#909399;font-size: 14px;">{{ item.userId }}</span>
+                  <span
+                    style="color:#909399;font-size: 14px;"
+                  >{{ item.userId }}</span>
                 </p>
                 <p style="margin-top:10px;color:#909399;font-size: 14px;">{{ item.messageContext }}</p>
               </div>
             </div>
-            <div style="font-size: 14px;color:#909399;">{{ item.complaintTime.split(' ')[0].replace(/-/g,'/') }}</div>
+            <div
+              style="font-size: 14px;color:#909399;"
+            >{{ item.complaintTime.split(' ')[0].replace(/-/g,'/') }}</div>
           </div>
           <div class="feedback-line">
             <el-divider />
@@ -61,8 +71,7 @@ export default {
     this.getMessageList()
   },
   beforeMount() {},
-  mounted() {
-  },
+  mounted() {},
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},
@@ -103,7 +112,7 @@ export default {
     background: #ffffff;
     height: calc(100vh - 248px);
     padding-top: 24px;
-    .block{
+    .block {
       text-align: right;
       margin-top: 100px;
     }
@@ -114,6 +123,12 @@ export default {
       .feedback-left {
         display: flex;
         align-items: center;
+        .image-slot {
+          text-align: center;
+          line-height: 50px;
+          font-size:10px;
+          background: #f5f7fa
+        }
         .feedback-content-image {
           width: 50px;
           height: 50px;
