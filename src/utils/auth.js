@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 const TokenKey = 'Authorization'
 const doMain = document.domain.split('.').slice(-2).join('.') === 'localhost' ? 'localhost' : '.' + document.domain.split('.').slice(-2).join('.')
 
-import { MC } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
+import { MC } from '@merchant/commons'
 
 export function getToken() {
   return MC.getAuth()

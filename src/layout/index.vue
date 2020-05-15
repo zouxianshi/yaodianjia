@@ -24,7 +24,7 @@
 /* eslint-disable */
   import { mapState } from "vuex";
   import ResizeMixin from "./mixin/ResizeHandler";
-  import { mSidebar, mHeader, MC,mCommon } from "/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src";
+  import { mSidebar, mHeader, MC,mCommon } from "@merchant/commons";
   import RightPanel from "@/components/RightPanel";
   import { AppMain, TagsView } from "./components";
   // 融云消息按钮 sdk初始化
