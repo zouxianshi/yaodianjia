@@ -112,11 +112,19 @@ aside {
   }
 }
 
+
 //main-container全局样式
 .app-container {
-  padding: 20px;
-  height: calc(100vh - 158px);
+
+}
+
+.app-main-model {
+  height: calc(100vh - 130px);
   overflow-y: scroll;
+  padding: 0px 20px 6px 20px;
+  .mc-home-model {
+    height: calc(100vh - 220px);
+  }
   &:hover::-webkit-scrollbar-thumb {
     background: #409eff;
     min-width: 200px;
@@ -125,7 +133,7 @@ aside {
   &::-webkit-scrollbar {
     width: 5px;
     height: 10px;
-    background: #fff;
+    background: #F5F7FA;
   }
 
   &::-webkit-scrollbar-track {
@@ -138,9 +146,17 @@ aside {
     background: #409eff;
     border-radius: 5px;
   }
-
+  .app-main {
+    width: calc(100%) !important;
+    position: relative;
+    padding: 20px;
+    background: #fff !important;
+    border-radius: 4px;
+    box-shadow: 0 1px 9px 0 rgba(0,0,0,.1);
+    margin-bottom: 8px;
+    min-height: calc(100vh - 164px);
+  }
 }
-
 .webkit-scroll {
   &:hover::-webkit-scrollbar-thumb {
     background: #409eff;

@@ -47,7 +47,8 @@ Vue.prototype.payH5Base = process.env.VUE_APP_PAY_H5_BASE || 'm.dev.ydjia.cn/h5/
 
 // default config
 MC.init({
-  env: process.env.VUE_APP_ENV ? process.env.VUE_APP_ENV : 'local'
+  env: process.env.VUE_APP_ENV ? process.env.VUE_APP_ENV : 'local',
+  sysRouter: router
 }).then(() => {
   new Vue({
     el: '#app',

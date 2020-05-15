@@ -1,30 +1,32 @@
 <template>
-  <div class="app-container activity">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <!-- <el-tab-pane label="会员营销" name="members">
-        <el-row :gutter="20">
-          <el-col v-for="o in members" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-            <card-item :item="o" />
-          </el-col>
-        </el-row>
-      </el-tab-pane>-->
-      <el-tab-pane label="商品促销" name="goodsActivity">
-        <el-row :gutter="20">
-          <el-col
-            v-for="o in goodsActivity"
-            :key="o.value"
-            :xs="24"
-            :sm="12"
-            :md="8"
-            :lg="6"
-            :xl="4"
-          >
-            <card-item :item="o" />
-          </el-col>
-        </el-row>
-      </el-tab-pane>
-      <!-- <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane> -->
-    </el-tabs>
+  <div class="app-container ">
+    <div class="activity">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <!-- <el-tab-pane label="会员营销" name="members">
+          <el-row :gutter="20">
+            <el-col v-for="o in members" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+              <card-item :item="o" />
+            </el-col>
+          </el-row>
+        </el-tab-pane>-->
+        <el-tab-pane label="商品促销" name="goodsActivity">
+          <el-row :gutter="20">
+            <el-col
+              v-for="o in goodsActivity"
+              :key="o.value"
+              :xs="24"
+              :sm="12"
+              :md="8"
+              :lg="6"
+              :xl="4"
+            >
+              <card-item :item="o" />
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <!-- <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane> -->
+      </el-tabs>
+    </div>
   </div>
 </template>
 
@@ -130,19 +132,18 @@ export default {
 </script>
 
 <style lang="scss">
-.app-container.activity {
-  background: #f7f7f7;
-  padding: 0;
-  .el-tabs__header {
-    background: #fff;
-    padding: 0 20px;
-    padding-top: 40px;
+  .app-container {
+    .activity {
+      padding: 0;
+      .el-tabs__header {
+        background: #fff;
+      }
+      .el-tabs__nav-wrap::after {
+        height: 0;
+      }
+      .el-tabs__content {
+      }
+    }
   }
-  .el-tabs__nav-wrap::after {
-    height: 0;
-  }
-  .el-tabs__content {
-    padding: 0 20px;
-  }
-}
+
 </style>

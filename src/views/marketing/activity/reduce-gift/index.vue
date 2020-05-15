@@ -958,8 +958,10 @@ export default {
   white-space: nowrap;
 }
 .app-container {
+  background: #fff;
   // position: relative;
   padding-bottom: 80px;
+  padding-top: 20px;
   .form-title {
     line-height: 14px;
     font-size: 14px;
