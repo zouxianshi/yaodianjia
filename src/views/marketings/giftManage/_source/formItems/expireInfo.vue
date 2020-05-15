@@ -41,7 +41,7 @@ export default {
     var validateExpireInfo = (rule, value, callback) => {
       if (this.isRember && !((' ' + value).trim() && Number(value) !== 0)) {
         // 如果选择了提醒，提醒天数就不能为空
-        return callback(new Error('请输入正确提醒天数'))
+        callback(new Error('请输入正确提醒天数'))
       } else {
         callback()
       }
