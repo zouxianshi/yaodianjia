@@ -35,7 +35,7 @@
           大转盘的玩法场景说明：
           <ul>
             <li>1. 免费参与：创建抽奖活动后，将链接发布至商城首页或打印活动二维码，会员进入免费参与抽奖，较适用于小面额优惠券抽奖，提高用户活跃，促进商品销售；</li>
-            <li>2. 积分参与：会员需要消耗一定的积分才能参与抽奖， 消耗会员积分库存，设置活动后可以将链接发布至微商城广告位，或打印二维码制作海报，会员扫码参与抽奖；</li>
+            <li>2. 海贝参与：会员需要消耗一定的海贝才能参与抽奖， 消耗会员海贝库存，设置活动后可以将链接发布至微商城广告位，或打印二维码制作海报，会员扫码参与抽奖；</li>
             <li>3. 活动参与：适用于支付满一定金额获得抽奖机会的奖励，可以提高用户活跃，创建一个大转盘活动后，设置抽奖次数，然后在支付有礼中，添加支付后权益为参与抽奖，会员在微商城或线下消费满足条件后，触发抽奖机会入口，会员进入参与抽奖。</li>
           </ul>
         </div>
@@ -43,7 +43,7 @@
           刮刮乐的玩法场景说明：
           <ul>
             <li>1. 免费参与：创建抽奖活动后，将链接发布至商城首页或打印活动二维码，会员进入免费参与抽奖，较适用于小面额优惠券抽奖，提高用户活跃，促进商品销售；</li>
-            <li>2. 积分参与：会员需要消耗一定的积分才能参与抽奖， 消耗会员积分库存，设置活动后可以将链接发布至微商城广告位，或打印二维码制作海报，会员扫码参与抽奖；</li>
+            <li>2. 海贝参与：会员需要消耗一定的海贝才能参与抽奖， 消耗会员海贝库存，设置活动后可以将链接发布至微商城广告位，或打印二维码制作海报，会员扫码参与抽奖；</li>
             <li>3. 活动参与：适用于支付满一定金额获得抽奖机会的奖励，可以提高用户活跃，创建一个活动后，设置抽奖次数，然后在支付有礼中，添加支付后权益为参与抽奖，会员在微商城或线下消费满足条件后，触发抽奖机会入口，会员进入参与抽奖。</li>
           </ul>
         </div>
@@ -55,8 +55,8 @@
       <el-form-item label="参与方式" prop="integralRule">
         <el-radio-group v-model="ruleForm.joinRule" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;" @change="ruleForm.integralRule=ruleForm.countRule=0">
           <el-radio :label="1">免费参与</el-radio>
-          <el-radio :label="2">消耗积分&emsp;每消耗&emsp;
-            <el-input v-model="ruleForm.integralRule" onkeyup="this.value=this.value.replace(/\D/g,'')" :disabled="isRuning || ruleForm.joinRule !== 2" maxlength="8" style="width:100px" />&emsp;积分，参与一次
+          <el-radio :label="2">消耗海贝&emsp;每消耗&emsp;
+            <el-input v-model="ruleForm.integralRule" onkeyup="this.value=this.value.replace(/\D/g,'')" :disabled="isRuning || ruleForm.joinRule !== 2" maxlength="8" style="width:100px" />&emsp;海贝，参与一次
           </el-radio>
           <el-radio :label="3">活动参与</el-radio>
         </el-radio-group>
@@ -99,7 +99,7 @@ export default {
   data() {
     var validateparticipatio = (rule, value, callback) => {
       if (this.ruleForm.joinRule === 2 && (Number(value) === 0 || ('' + value).trim() === '')) {
-        callback(new Error('请输入大于0的消耗积分数'))
+        callback(new Error('请输入大于0的消耗海贝数'))
       } else {
         callback()
       }
@@ -120,7 +120,7 @@ export default {
         beginTime: '', // 活动开始时间
         endTime: '', // 活动结束时间
         activityNote: '', // 活动说明
-        integralRule: 0, // 参与消耗积分
+        integralRule: 0, // 参与消耗海贝
         joinRule: 1, // 参与方式
         countType: 2, // 参与限制类型  1：每人 2：每天
         countRule: 0 // 次数限制
@@ -138,7 +138,7 @@ export default {
           { required: true, message: '请填写活动说明', trigger: 'blur' },
           { min: 1, max: 200, message: '最多200字', trigger: 'blur' }
         ],
-        integralRule: [{ validator: validateparticipatio, trigger: 'blur' }] // 参与消耗积分
+        integralRule: [{ validator: validateparticipatio, trigger: 'blur' }] // 参与消耗海贝
       }
     }
   },

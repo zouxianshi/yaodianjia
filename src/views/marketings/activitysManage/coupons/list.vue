@@ -41,7 +41,7 @@
       <el-radio-group v-model="radio" size="mini" @change="changeOption">
         <el-radio-button label="全部" />
         <el-radio-button label="免费领取" />
-        <el-radio-button label="积分兑换" />
+        <el-radio-button label="海贝兑换" />
         <el-radio-button label="现金购买" />
       </el-radio-group>
     </div>
@@ -76,7 +76,7 @@
       <el-table-column v-show="radio === '全部'" prop="name" label="领取方式">
         <template
           slot-scope="scope"
-        >{{ scope.row.activityType ===1?'免费领取':'' || scope.row.activityType ===2?'积分兑换':'' || scope.row.activityType ===3?'现金购买':'' }}</template>
+        >{{ scope.row.activityType ===1?'免费领取':'' || scope.row.activityType ===2?'海贝兑换':'' || scope.row.activityType ===3?'现金购买':'' }}</template>
       </el-table-column>
       <el-table-column prop="totalCount" label="券总数" min-width="80" align="center" />
       <el-table-column label="使用时间" width="160">
@@ -88,7 +88,7 @@
         >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
       </el-table-column>
       <el-table-column prop="perCount" label="限领" min-width="80" align="center" />
-      <el-table-column v-if="radio === '积分兑换' || radio === '全部'" prop="integral" label="所需积分" min-width="80" align="center" />
+      <el-table-column v-if="radio === '海贝兑换' || radio === '全部'" prop="integral" label="所需海贝" min-width="80" align="center" />
       <el-table-column v-if="radio === '现金购买' || radio === '全部'" prop="amount" label="所需现金" min-width="80" align="center" />
       <el-table-column prop="timeLimit" label="领券时间" width="160">
         <template
@@ -190,7 +190,7 @@ export default {
         radioVal = ''
       } else if (this.radio === '免费领取') {
         radioVal = 1
-      } else if (this.radio === '积分兑换') {
+      } else if (this.radio === '海贝兑换') {
         radioVal = 2
       } else if (this.radio === '现金购买') {
         radioVal = 3

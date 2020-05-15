@@ -64,7 +64,7 @@
         <el-form-item label="奖品类型" prop="giftType">
           <el-select v-model="ruleForm.giftType" @change="changeType">
             <el-option label="优惠券" :value="2" />
-            <el-option label="积分" :value="3" />
+            <el-option label="海贝" :value="3" />
             <el-option label="实物" :value="1" />
             <el-option label="再来一次" :value="4" />
             <el-option label="谢谢参与" :value="5" />
@@ -94,7 +94,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item v-show="ruleForm.giftType !== 2" label="奖品内容" prop="giftContent">
-          <span v-if="ruleForm.giftType === 3"><el-input v-model="ruleForm.giftContent" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" placeholder="请输入积分值" style="width:400px" />积分</span>
+          <span v-if="ruleForm.giftType === 3"><el-input v-model="ruleForm.giftContent" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" placeholder="请输入海贝值" style="width:400px" />海贝</span>
           <span v-if="ruleForm.giftType === 5"> 谢谢参与 </span>
           <span v-if="ruleForm.giftType === 4"> 再来一次 </span>
           <el-input v-if="ruleForm.giftType === 1" v-model="ruleForm.giftContent" maxlength="6" placeholder="请输入奖品名称 不超过六个字" style="width:400px" />
@@ -246,9 +246,9 @@ export default {
       var that = this
       that.$refs[formName].validate(valid => {
         if (valid) {
-          if (this.ruleForm.giftType === 3) { // 积分时数据处理
+          if (this.ruleForm.giftType === 3) { // 海贝时数据处理
             this.ruleForm.giftId = this.ruleForm.giftContent
-            this.ruleForm.giftName = this.ruleForm.giftContent = this.ruleForm.giftContent + '积分'
+            this.ruleForm.giftName = this.ruleForm.giftContent = this.ruleForm.giftContent + '海贝'
           } else {
             this.ruleForm.giftName = this.ruleForm.giftContent
           }
@@ -319,7 +319,7 @@ export default {
           typeName = '优惠券'
           break
         case 3:
-          typeName = '积分'
+          typeName = '海贝'
           break
         case 4:
           typeName = '再来一次'

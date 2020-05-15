@@ -56,7 +56,7 @@
       <el-table-column prop="activityDetailName" label="活动名称" />
       <el-table-column label="活动方式">
         <template slot-scope="scope">
-          <div>{{ scope.row.joinRule.toString()==='0'?'渠道':'' || scope.row.joinRule.toString()==='1'?'免费参与':'' || scope.row.joinRule.toString()==='2'?'积分参与':'' || scope.row.joinRule.toString()==='3'?'活动参与':'' }}</div>
+          <div>{{ scope.row.joinRule.toString()==='0'?'渠道':'' || scope.row.joinRule.toString()==='1'?'免费参与':'' || scope.row.joinRule.toString()==='2'?'海贝参与':'' || scope.row.joinRule.toString()==='3'?'活动参与':'' }}</div>
         </template>
       </el-table-column>
       <el-table-column prop="beginTime" label="活动开始时间" />

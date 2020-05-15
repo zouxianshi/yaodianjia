@@ -59,7 +59,7 @@
               <span>支付有礼</span>
               <!-- <span v-if="scope.row.activityType === 0">其他类型</span>
               <span v-if="scope.row.activityType === 1">免费</span>
-              <span v-if="scope.row.activityType === 2">积分</span>
+              <span v-if="scope.row.activityType === 2">海贝</span>
               <span v-if="scope.row.activityType === 3">现金</span> -->
             </template>
           </el-table-column>

@@ -5,7 +5,7 @@
         <el-radio-group v-model="couponParams.activityType" size="mini" :disabled="true">
           <el-radio :label="1">免费领取</el-radio>
           <el-radio :label="3">现金购买</el-radio>
-          <el-radio :label="2">积分兑换</el-radio>
+          <el-radio :label="2">海贝兑换</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="领取时间：">
@@ -59,7 +59,7 @@
               <el-input v-model="scope.row.amount" maxlength="5" size="mini" />
             </template>
           </el-table-column>
-          <el-table-column v-if="couponParams.activityType === 2" prop="integral" required label="所需积分" width="120">
+          <el-table-column v-if="couponParams.activityType === 2" prop="integral" required label="所需海贝" width="120">
             <template slot-scope="scope">
               <el-input v-model="scope.row.integral" maxlength="5" onkeyup="this.value=this.value.replace(/\D/g,'')" size="mini" />
             </template>

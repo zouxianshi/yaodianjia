@@ -5,7 +5,7 @@
       <div class="add-addRight-model">
         <el-radio-group v-model="radio" @change="handleChange">
           <el-radio :label="1">免费领取</el-radio>
-          <el-radio :label="2">积分兑换</el-radio>
+          <el-radio :label="2">海贝兑换</el-radio>
           <el-radio :label="3">现金购买</el-radio>
         </el-radio-group>
       </div>
@@ -92,7 +92,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column v-if="radio.toString()==='2'" label="所需积分" width="110">
+            <el-table-column v-if="radio.toString()==='2'" label="所需海贝" width="110">
               <template slot-scope="scope">
                 <div style="display:flex;align-items: center;padding-top:15px">
                   <el-form-item
