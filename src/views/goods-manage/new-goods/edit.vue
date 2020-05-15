@@ -1391,7 +1391,7 @@ export default {
         this.basicLoading = false
         return
       }
-      this.subLoading = true
+      // this.subLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode)
         .then(res => {
           // 分组处理
@@ -1457,11 +1457,11 @@ export default {
           this.basicForm = data
           this.$refs.editor.setContent(this.basicForm.intro)
           this.basicLoading = false
-          this.subLoading = false
+          // this.subLoading = false
         })
         .catch(_ => {
           this.basicLoading = false
-          this.subLoading = false
+          // this.subLoading = false
         })
     },
     _loadGoodsImgAry() {
