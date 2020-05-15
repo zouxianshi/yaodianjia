@@ -5,13 +5,7 @@
       size="mini"
       @click="() => $router.push({path:'/marketings/activity-manage/turntable/add', query: {code: this.$route.query.code }})"
     >新建活动</el-button>
-    <div class="explain">
-      <!-- <el-alert
-        title="领券中心可自由上架及下架优惠券，领券中心的优惠上架后用户可手工领取，您可根据活动营销方案定期上架以保持用户活跃"
-        type="warning"
-        :closable="false"
-      />-->
-    </div>
+    <div class="explain" />
     <div class="search-form">
       <div class="search-item">
         <div class="search-item">
@@ -40,12 +34,7 @@
       <div class="search-item">
         <el-button type="primary" size="small" @click="getData">查询</el-button>
       </div>
-      <div class="search-item">
-        <!-- <el-button type="primary" size="small" @click="exportFun">
-          导出
-          <i class="el-icon-download el-icon--right" />
-        </el-button>-->
-      </div>
+      <div class="search-item" />
     </div>
     <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="刮刮乐暂未上架任何活动">
       <el-table-column prop="date" label="活动类型" width="120">
@@ -101,21 +90,6 @@
                 >{{ item.label }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <!-- <el-select
-              v-if="scope.row.options.length>2"
-              v-model="scope.row.selectValue"
-              size="mini"
-              placeholder="更多"
-              @change="selectChange(scope.$index,scope.row.selectValue)"
-              @blur="selectChange(scope.$index,scope.row.selectValue)"
-            >
-              <el-option
-                v-for="item in scope.row.options.slice(1)"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>-->
           </div>
         </template>
       </el-table-column>
@@ -190,18 +164,10 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
-  watch: {},
-  beforeCreate() {},
   created() {
     this.getData()
     this.getStore()
   },
-  beforeMount() {},
-  mounted() {},
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
     composeValue(index, val) {
       return {
@@ -303,21 +269,6 @@ export default {
                 label: '删除',
                 isActive: true
               }
-              // {
-              //   id: 5,
-              //   value: '2',
-              //   label: '编辑'
-              // },
-              // {
-              //   id: 6,
-              //   value: '5',
-              //   label: '删除'
-              // },
-              // {
-              //   id: 7,
-              //   value: '4',
-              //   label: '推广'
-              // }
             ]
           } else if (
             (state === 3 && status === 1) ||
@@ -350,16 +301,6 @@ export default {
                 label: '删除',
                 isActive: true
               }
-              // {
-              //   id: 8,
-              //   value: '1',
-              //   label: '查看'
-              // },
-              // {
-              //   id: 9,
-              //   value: '5',
-              //   label: '删除'
-              // }
             ]
           }
         }
@@ -499,12 +440,6 @@ export default {
     color: #147de8;
   }
   .el-table--medium th,
-  // .el-table--medium td {
-  //   padding: 2px;
-  // }
-  // .el-table thead th {
-  //   height: 50px;
-  // }
   .el-dropdown-link {
     cursor: pointer
   }
