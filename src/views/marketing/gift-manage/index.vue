@@ -46,7 +46,8 @@ export default {
           desc:
             '',
           listUrl: '/marketings/gift-manage/list?id=1',
-          linkUrl: '/marketings/gift-manage/discount'
+          linkUrl: '/marketings/gift-manage/discount',
+          createText: '新建折扣券'
         },
         {
           value: 'full-cut-coupons',
@@ -55,7 +56,8 @@ export default {
           desc:
             '',
           listUrl: '/marketings/gift-manage/list?id=2',
-          linkUrl: '/marketings/gift-manage/full-reduction'
+          linkUrl: '/marketings/gift-manage/full-reduction',
+          createText: '新建满减券'
         },
         {
           value: 'gift-certificate',
@@ -64,7 +66,8 @@ export default {
           desc:
             '',
           listUrl: '/marketings/gift-manage/list?id=3',
-          linkUrl: '/marketings/gift-manage/gift'
+          linkUrl: '/marketings/gift-manage/gift',
+          createText: '新建礼品券'
         }
         // ,
         // {
