@@ -92,6 +92,11 @@ export default {
       ]
     }
   },
+  watch: {
+    $route(newRoute) {
+      this.activeName = newRoute.query.type // 这里就是新的query
+    }
+  },
   created() {
     this.activeName = this.$route.query.type || 'complimentary'
   },

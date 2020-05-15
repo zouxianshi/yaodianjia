@@ -30,3 +30,19 @@ export function setMenuData(params, merCode) {
     data: params
   })
 }
+// 查询微信模板列表
+export function searchWxTemp(merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/wxTemplate/_searchWxTemp?${merCode}`,
+    method: 'get'
+  })
+}
+// 查询微信模板列表
+export function setTemplate(params, merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/wxTemplate/setTemplate`,
+    method: 'post',
+    data: params
+  })
+}
+
