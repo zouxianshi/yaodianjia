@@ -1,6 +1,6 @@
 <template>
   <div class="message-model">
-    <el-radio-group v-model="radio" size="mini">
+    <el-radio-group v-model="radio" size="mini" @change="handleChange">
       <el-radio-button label="卡券提醒" />
       <el-radio-button label="订单提醒" />
       <el-radio-button label="活动消息" />
@@ -9,22 +9,28 @@
       <el-alert
         title="模板消息推送功能可以通过微信公众号，给顾客或商家推送交易和物流相关的提醒消息，以提升顾客的购物体验，获得更高的订单转化率和复购率。"
         type="warning"
+        :closable="false"
       />
     </div>
     <div>
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column fixed prop="date" label="消息模板类型" width="200" />
-        <el-table-co prop="name" label="推送消息" />
-        <el-table-column prop="province" label="模板编号" />
-        <el-table-column prop="city" label="消息标题" />
-        <el-table-column prop="address" label="页面跳转" />
+      <el-table v-loading="loading" :data="tableData" style="width: 100%">
+        <!-- <el-table-column prop="date" label="消息模板类型" width="200">
+          <template
+            slot-scope="scope"
+          >{{ scope.row.modelType.toString() ==='1'? '卡券提醒' : '' || scope.row.modelType.toString() ==='2'? '订单提醒' : '' || scope.row.modelType.toString() ==='3'? '模块消息' : '' }}</template>
+        </el-table-column> -->
+        <el-table-column prop="modelTime" label="推送时间" />
+        <el-table-column prop="modelCode" label="模板编号" />
+        <el-table-column prop="modelHead" label="消息标题" />
+        <el-table-column prop="modelUrl" label="页面跳转" />
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click.native.prevent="deleteRow(scope.$index, tableData)"
-            >移除</el-button>
+            <el-switch
+              v-model="scope.row.isValid"
+              active-color="#13ce66"
+              inactive-color="#dcdfe6"
+              @change="switchChange(scope.row)"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -32,85 +38,77 @@
   </div>
 </template>
 <script>
+import { searchWxTemp, setTemplate } from '@/api/channelService'
+import { mapGetters } from 'vuex'
 export default {
   name: 'Message',
   props: {},
   data() {
     return {
+      loading: 'false',
       radio: '卡券提醒',
-      tableData: [
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-08',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-06',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-07',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }
-      ]
+      tableData: []
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   watch: {},
   beforeCreate() {},
   created() {},
   beforeMount() {},
-  mounted() {},
+  mounted() {
+    this.getDate()
+  },
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},
   destroyed() {},
   methods: {
-    deleteRow(index, rows) {
-      rows.splice(index, 1)
+    handleChange(val) {
+      this.getDate()
+    },
+    switchChange(val) {
+      console.log(val)
+      const params = {
+        merCode: this.merCode,
+        modelCode: val.modelCode,
+        modelHead: val.modelHead,
+        modelNote: val.modelNote,
+        modelType: val.modelType.toString(),
+        operate: val.isValid === true ? 1 : 0
+      }
+      setTemplate(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+        }
+      })
+    },
+    getDate() {
+      let radioValue = ''
+      this.loading = true
+      if (this.radio === '卡券提醒') {
+        radioValue = 'modelType=1'
+      } else if (this.radio === '订单提醒') {
+        radioValue = 'modelType=2'
+      } else if (this.radio === '活动消息') {
+        radioValue = 'modelType=3'
+      }
+      searchWxTemp(radioValue).then(res => {
+        this.tableData = res.data
+        this.tableData.forEach(element => {
+          console.log(element)
+          if (element.isValid.toString() === '1') {
+            element.isValid = true
+          } else {
+            element.isValid = false
+          }
+        })
+        this.loading = false
+      })
     }
   }
 }

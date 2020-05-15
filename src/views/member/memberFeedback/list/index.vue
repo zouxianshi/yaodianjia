@@ -1,7 +1,7 @@
 <template>
   <div class="feedback-model">
     <el-card class="box-card">
-      <div class="feedback-list">
+      <div v-loading="loading" class="feedback-list">
         <div v-for="(item,index) in dataList" :key="index">
           <div class="feedback-content">
             <div class="feedback-left">
@@ -45,6 +45,7 @@ export default {
   props: {},
   data() {
     return {
+      loading: false,
       currentPage: 1,
       pageSize: 20,
       totalCount: 1,
@@ -68,6 +69,7 @@ export default {
   destroyed() {},
   methods: {
     getMessageList() {
+      this.loading = true
       var params = {
         currentPage: this.currentPage,
         // isVisit: '',
@@ -78,6 +80,7 @@ export default {
       queryMessageList(params).then(res => {
         this.dataList = res.data.data
         this.totalCount = res.data.totalCount
+        this.loading = false
       })
     },
     handleSizeChange(val) {
