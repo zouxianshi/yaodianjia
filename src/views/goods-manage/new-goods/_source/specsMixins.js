@@ -25,7 +25,8 @@ const mixin = {
       mprice_err: false,
       erpCode_err: false,
       barCode_err: false,
-      limit_err: false
+      limit_err: false,
+      specLoading: false
     }
   },
   watch: {
@@ -353,16 +354,13 @@ const mixin = {
         })
     },
     _loadSpces() {
+      this.specLoading = true
       // 根据一级分类加载规格
       getSpecs(this.chooseTypeList[0].id).then(res => {
         if (res.data) {
           res.data.map(v => {
             v['index_' + v.id + '_' + v.attributeName] = ''
-            if (this.basicForm.origin === 1) {
-              v.isCheck = true
-            } else {
-              v.isCheck = false
-            }
+            v.isCheck = this.basicForm.origin === 1
           })
           this.specsList = res.data
           this.specsForm.specsData = []
@@ -371,6 +369,8 @@ const mixin = {
         }
         if (this.basicForm.id) {
           this._loadSpecsInfo()
+        } else {
+          this.specLoading = false
         }
       })
     },
@@ -553,8 +553,9 @@ const mixin = {
             }, 500)
           }
         } else {
-          this.specsForm.specs = []
+          this.handleAddSpec()
         }
+        this.specLoading = false
       })
     },
     shows(row) {
