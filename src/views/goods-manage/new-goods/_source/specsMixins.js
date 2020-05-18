@@ -119,9 +119,9 @@ const mixin = {
         // })
         data = [...this.chooseTableSpec, ...data]
         console.log('保存获取的数据,-----', data)
-        if (data.length === 0) {
+        if (data.length === 0 && this.specsForm.specsData.length === 0) {
           this.$message({
-            message: '请选择规格信息',
+            message: '请选择规格信息或添加规格',
             type: 'error'
           })
           return
@@ -474,8 +474,6 @@ const mixin = {
                 }
               })
               this.editSpecsData = specList
-            } else {
-              this.handleAddSpec()
             }
           } else {
             /** *
@@ -553,7 +551,9 @@ const mixin = {
             }, 500)
           }
         } else {
-          this.handleAddSpec()
+          if (this.editSpecsData.length === 0) {
+            this.handleAddSpec()
+          }
         }
         this.specLoading = false
       })
