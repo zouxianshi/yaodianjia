@@ -27,10 +27,11 @@
         </el-table-column>
         <el-table-column label="首重（Kg）" width="120px">
           <template slot-scope="scope">
-            <div :class="{'el-form-item is-error':scope.row.ykg === ''}">
+            <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.ykg)}">
               <div class="el-form-item__content">
-                <el-input v-model.number="scope.row.ykg" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5" style="width: 100px" @input="onChange" />
-                <div class="el-form-item__error"> 请输入首重 </div>
+                <el-input v-model="scope.row.ykg" oninput="value=value.replace(/[^0-9.]/g,'')" maxlength="5" style="width: 100px" @change="onChange" />
+                <div v-if="scope.row.ykg === ''" class="el-form-item__error"> 请输入首重 </div>
+                <div v-else class="el-form-item__error"> 最多2位小数 </div>
               </div>
             </div>
           </template>
@@ -48,10 +49,11 @@
         </el-table-column>
         <el-table-column label="续重（Kg）" width="120px">
           <template slot-scope="scope">
-            <div :class="{'el-form-item is-error':scope.row.continueWeight === ''}">
+            <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.continueWeight)}">
               <div class="el-form-item__content">
-                <el-input v-model="scope.row.continueWeight" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5" style="width: 100px" />
-                <div class="el-form-item__error"> 请输入续重 </div>
+                <el-input v-model="scope.row.continueWeight" oninput="value=value.replace(/[^0-9.]/g,'')" maxlength="5" style="width: 100px" @change="onChange" />
+                <div v-if="scope.row.continueWeight === ''" class="el-form-item__error"> 请输入首重 </div>
+                <div v-else class="el-form-item__error"> 最多2位小数 </div>
               </div>
             </div>
           </template>
