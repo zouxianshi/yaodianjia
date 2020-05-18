@@ -13,9 +13,9 @@
       <el-form-item label="活动名称" prop="activityDetailName">
         <el-input v-model="ruleForm.activityDetailName" style="width:400px" placeholder="最多30字" />
       </el-form-item>
-      <el-form-item label="活动时间">
+      <el-form-item label="活动时间" prop="activeTime">
         <el-date-picker
-          v-model="activeTime"
+          v-model="ruleForm.activeTime"
           :disabled="isRuning"
           type="datetimerange"
           range-separator="至"
@@ -25,10 +25,21 @@
         />
       </el-form-item>
       <el-form-item label="活动说明" prop="activityNote">
-        <el-input v-model="ruleForm.activityNote" style="width:500px" type="textarea" maxlength="200" placeholder="最多200字" />
+        <el-input
+          v-model="ruleForm.activityNote"
+          style="width:500px"
+          type="textarea"
+          maxlength="200"
+          placeholder="最多200字"
+        />
       </el-form-item>
       <el-form-item label="底部文案" prop="bottomNote">
-        <el-input v-model="ruleForm.bottomNote" :disabled="isRuning" style="width:400px" placeholder="解释说明，最多20字" />
+        <el-input
+          v-model="ruleForm.bottomNote"
+          :disabled="isRuning"
+          style="width:400px"
+          placeholder="解释说明，最多20字"
+        />
       </el-form-item>
       <el-form-item>
         <div v-if="intrShow && this.$route.query.code==='TA003'" class="intrwarning">
@@ -49,34 +60,75 @@
         </div>
         <div slot="label">
           活动规则
-          <i style="color: #faad14;" class="el-icon-question" @click="()=>intrShow?intrShow=false:intrShow=true" />
+          <i
+            style="color: #faad14;"
+            class="el-icon-question"
+            @click="()=>intrShow?intrShow=false:intrShow=true"
+          />
         </div>
       </el-form-item>
-      <el-form-item label="参与方式" prop="integralRule">
-        <el-radio-group v-model="ruleForm.joinRule" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;" @change="ruleForm.integralRule=ruleForm.countRule=0">
+      <el-form-item label="参与方式" prop="joinRule">
+        <el-radio-group
+          v-model="ruleForm.joinRule"
+          :disabled="isRuning"
+          style="width:120px;font-size: 18px;line-height: inherit;"
+          @change="ruleForm.integralRule=ruleForm.countRule=0"
+        >
           <el-radio :label="1">免费参与</el-radio>
-          <el-radio :label="2">消耗积分&emsp;每消耗&emsp;
-            <el-input v-model="ruleForm.integralRule" onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)" :disabled="isRuning || ruleForm.joinRule !== 2" maxlength="8" style="width:100px" />&emsp;积分，参与一次
+          <el-radio :label="2">
+            消耗海贝&emsp;每消耗&emsp;
+            <el-input
+              v-model="ruleForm.integralRule"
+              onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
+              :disabled="isRuning || ruleForm.joinRule !== 2"
+              maxlength="8"
+              style="width:100px"
+            />&emsp;积分，参与一次
           </el-radio>
           <el-radio :label="3">活动参与</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="抽奖次数">
-        <el-radio-group v-if="ruleForm.joinRule !== 3" v-model="ruleForm.countType" :disabled="isRuning" style="width:120px;font-size: 18px;line-height: inherit;" @change="changeCount">
+        <el-radio-group
+          v-if="ruleForm.joinRule !== 3"
+          v-model="ruleForm.countType"
+          :disabled="isRuning"
+          style="width:120px;font-size: 18px;line-height: inherit;"
+          @change="changeCount"
+        >
           <el-radio :label="2">
             <span>
               每天可抽奖&emsp;
-              <el-input v-model="dayLimit" onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)" :disabled="isRuning || ruleForm.countType===1" maxlength="6" style="width:100px" />
+              <el-input
+                v-model="dayLimit"
+                onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
+                :disabled="isRuning || ruleForm.countType===1"
+                maxlength="6"
+                style="width:100px"
+              />
             </span>
           </el-radio>
           <el-radio :label="1">
             <span>
               每人可抽奖&emsp;
-              <el-input v-model="personLimit" onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)" :disabled=" isRuning || ruleForm.countType===2" maxlength="6" style="width:100px" />
+              <el-input
+                v-model="personLimit"
+                onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
+                :disabled=" isRuning || ruleForm.countType===2"
+                maxlength="6"
+                style="width:100px"
+              />
             </span>
           </el-radio>
         </el-radio-group>
-        <el-input v-else v-model="ruleForm.countRule" :disabled="isRuning" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" style="width:120px" />
+        <el-input
+          v-else
+          v-model="ruleForm.countRule"
+          :disabled="isRuning"
+          onkeyup="this.value=this.value.replace(/\D/g,'')"
+          maxlength="6"
+          style="width:120px"
+        />
       </el-form-item>
     </el-form>
     <div style="margin-left:30px">
@@ -98,8 +150,13 @@ export default {
   },
   data() {
     var validateparticipatio = (rule, value, callback) => {
-      if (this.ruleForm.joinRule === 2 && (Number(value) === 0 || ('' + value).trim() === '')) {
-        callback(new Error('请输入大于0的消耗海贝数'))
+      if (
+        this.ruleForm.joinRule === 2 &&
+        (Number(this.ruleForm.integralRule) === 0 ||
+          ('' + this.ruleForm.integralRule).trim() === '' ||
+          Number(this.ruleForm.integralRule) > 10000)
+      ) {
+        callback(new Error('请输入0~10000的消耗海贝数'))
       } else {
         callback()
       }
@@ -111,10 +168,11 @@ export default {
           return time.getTime() < new Date(new Date().getTime() - 86400000)
         }
       },
-      activeTime: [], // 活动有效期
+      // activeTime: [], // 活动有效期
       dayLimit: 0, // 每天限制
       personLimit: 0, // 每人限制
       ruleForm: {
+        activeTime: [], // 活动有效期
         activityDetailName: '', // 活动名称
         bottomNote: '', // 底部文案
         beginTime: '', // 活动开始时间
@@ -138,19 +196,26 @@ export default {
           { required: true, message: '请填写活动说明', trigger: 'blur' },
           { min: 1, max: 200, message: '最多200字', trigger: 'blur' }
         ],
-        integralRule: [{ validator: validateparticipatio, trigger: 'blur' }] // 参与消耗海贝
+        joinRule: [{ validator: validateparticipatio, trigger: 'change' }], // 参与消耗海贝
+        activeTime: [
+          { required: true, message: '请填写活动说明', trigger: 'blur' }
+        ]
       }
     }
   },
   computed: {
-    isPageUpdateOrView() { // 判断编辑还是查看页面
-      if (this.params.pageState === 2) { // 查看
+    isPageUpdateOrView() {
+      // 判断编辑还是查看页面
+      if (this.params.pageState === 2) {
+        // 查看
         return true
-      } else { // 编辑
+      } else {
+        // 编辑
         return false
       }
     },
-    isRuning() { // 活动进行中
+    isRuning() {
+      // 活动进行中
       if (this.params.state === 1) {
         return true
       } else {
@@ -159,11 +224,19 @@ export default {
     }
   },
   watch: {
-    activeTime(newVal) {
-      this.ruleForm.beginTime = formatDate(newVal[0])
-      this.ruleForm.endTime = formatDate(newVal[1])
+    ruleForm: {
+      handler: function() {
+        this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
+        this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[1])
+      }
+      // deep: true
     },
-    personLimit(newVal) { // 监听按人限制变化
+    // activeTime(newVal) {
+    //   this.ruleForm.beginTime = formatDate(newVal[0])
+    //   this.ruleForm.endTime = formatDate(newVal[1])
+    // },
+    personLimit(newVal) {
+      // 监听按人限制变化
       if (this.ruleForm.countType === 1) {
         this.ruleForm.countRule = newVal
       }
@@ -175,21 +248,25 @@ export default {
     }
   },
   methods: {
-    changeCount() { // 改变限制次数类型
+    changeCount() {
+      // 改变限制次数类型
       this.personLimit = this.dayLimit = 0
       this.ruleForm.countRule = 0
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (!this.activeTime[0]) {
+          if (!this.ruleForm.activeTime[0]) {
             this.$message({
               message: '请选择活动时间',
               type: 'error'
             })
             return false
           }
-          if (Number(this.ruleForm.countRule) === 0) {
+          if (
+            Number(this.ruleForm.countRule) === 0 &&
+            Number(this.ruleForm.joinRule) === 3
+          ) {
             this.$message({
               message: '请输入正确抽奖次数限制',
               type: 'error'
@@ -219,13 +296,13 @@ export default {
     border-left: 2px solid #409eff;
     margin-bottom: 20px;
   }
-  .intrwarning{
-    font-size:13px;
-    margin-left:20px;
+  .intrwarning {
+    font-size: 13px;
+    margin-left: 20px;
     background-color: #fdf6ec;
     color: #e6a23c;
     border-radius: 5px;
-    padding:10px
+    padding: 10px;
   }
   .el-textarea__inner {
     min-height: 70px !important;

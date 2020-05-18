@@ -44,7 +44,6 @@ export default {
   props: {},
   data() {
     return {
-      dataList: '',
       forms: {
         num: 1
       },
@@ -71,12 +70,13 @@ export default {
   destroyed() {},
   methods: {
     getData() {
-      const params = {
-        sysKey: 'integral_exchange_proportion',
-        merCode: this.merCode
-      }
+      const params = `mercode=${this.merCode}&sysKey=integral_exchange_proportion`
       editMerChantsearch(params).then(res => {
-        this.dataList = res.data
+        if (res.data === 'null') {
+          this.forms.num = 1
+        } else {
+          this.forms.num = res.data.sysValue
+        }
       })
     },
     onSubmit() {

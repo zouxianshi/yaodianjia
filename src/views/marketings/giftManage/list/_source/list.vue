@@ -20,6 +20,7 @@
     </div>
     <div class="list-tabel">
       <el-table
+        v-loading="loading"
         :data="tableData"
         height="calc(100vh - 430px)"
         style="width: 100%;"
@@ -82,6 +83,7 @@ import { getCouponList, deleteCoupon } from '@/api/coupon'
 export default {
   data() {
     return {
+      loading: false,
       searchParams: {
         cname: '',
         ctype: 0,
@@ -89,23 +91,25 @@ export default {
       },
       totalCount: 0,
       pageInfo: {
-        currentPage: 0,
+        currentPage: 1,
         pageSize: 10
       },
       tableData: []
     }
   },
   created() {
+    this.searchParams.ctype = this.$route.query.id
     this.searchData()
-    this.searchParams.ctype = this.$route.query.id || '0'
   },
   methods: {
     searchData() {
+      this.loading = true
       var searchParams = Object.assign({}, this.searchParams, this.pageInfo)
       getCouponList(searchParams).then(res => {
         if (res.data && res.data.records) {
           this.totalCount = res.data.total
           this.tableData = res.data.records
+          this.loading = false
         }
       })
     },

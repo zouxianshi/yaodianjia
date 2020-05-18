@@ -48,6 +48,11 @@
           <div>{{ scope.row.joinRule.toString()==='0'?'渠道':'' || scope.row.joinRule.toString()==='1'?'免费参与':'' || scope.row.joinRule.toString()==='2'?'海贝参与':'' || scope.row.joinRule.toString()==='3'?'活动参与':'' }}</div>
         </template>
       </el-table-column>
+      <el-table-column label="抽奖次数">
+        <template slot-scope="scope">
+          <div>{{ sweepstakes(scope.row.countType,scope.row.countRule) }}</div>
+        </template>
+      </el-table-column>
       <el-table-column prop="beginTime" label="活动开始时间" />
       <el-table-column prop="endTime" label="活动结束时间" />
       <el-table-column label="时间状态" min-width="80" align="center">
@@ -169,6 +174,21 @@ export default {
     this.getStore()
   },
   methods: {
+    sweepstakes(countType, countRule) {
+      if (Number(countType) === 1) {
+        if (Number(countRule) === 0) {
+          return `每人可抽不限次数`
+        } else {
+          return `每人可抽${countRule}次`
+        }
+      } else {
+        if (Number(countRule) === 0) {
+          return `每天可抽不限次数`
+        } else {
+          return `每天可抽${countRule}次`
+        }
+      }
+    },
     composeValue(index, val) {
       return {
         index: index,
@@ -441,7 +461,7 @@ export default {
   }
   .el-table--medium th,
   .el-dropdown-link {
-    cursor: pointer
+    cursor: pointer;
   }
   .el-icon-arrow-down {
     font-size: 12px;
