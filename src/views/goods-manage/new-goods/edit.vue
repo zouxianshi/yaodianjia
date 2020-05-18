@@ -949,7 +949,7 @@
                   />
                 </div>
               </section>
-              <div class="text-center">
+              <!-- <div class="text-center">
                 <el-button
                   v-if="!is_query"
                   type="primary"
@@ -957,7 +957,7 @@
                   :loading="subLoading2"
                   @click="handleSubInfo"
                 >保存</el-button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
