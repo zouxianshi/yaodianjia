@@ -957,7 +957,7 @@
                   :loading="subLoading2"
                   @click="handleSubInfo"
                 >保存</el-button>
-              </div> -->
+              </div>-->
             </div>
           </div>
         </div>
@@ -1807,7 +1807,9 @@ export default {
             // }
             data.groupIds = []
             this.chooseGroup.map(v => {
-              data.groupIds.push(v[2].id)
+              v[2] && v[2].id
+                ? data.groupIds.push(v[2].id)
+                : data.groupIds.push(v[1].id)
             })
             if (this.chooseTypeList.length !== 3) {
               this.$message({
@@ -1905,47 +1907,48 @@ export default {
       }
       saveGoodsDetails(data)
         .then(res => {
+          this.doSubmitInfo()
           // this.$message({
           //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
           //   type: 'success'
           // })
-          this.subLoading = false
-          this.leaveAction = true
-
-          setTimeout(() => {
-            let url = ''
-            if (this.basicForm.origin === 1) {
-              url = '/goods-manage/depot'
-            } else {
-              url = '/goods-manage/apply-record'
-            }
-            this.$confirm('请确认已保存橱窗图', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            })
-              .then(() => {
-                this.$store
-                  .dispatch('tagsView/delView', this.$route)
-                  .then(res => {
-                    sessionStorage.setItem('isRefreshDepot', true)
-                    this.$router.replace(url)
-                  })
-                // this.$store.dispatch('tagsView/delView', this.$route)
-                // this.$store
-                //   .dispatch('tagsView/delVisitedView', this.$route)
-                //   .then(res => {})
-                // this.$router.replace(url)
-                // this.$router.go(-1) // 返回上一个路由
-              })
-              .catch(() => {
-                console.log('已取消')
-              })
-          }, 1000)
         })
         .catch(_ => {
           this.subLoading = false
         })
+    },
+    doSubmitInfo() {
+      this.subLoading = false
+      this.leaveAction = true
+
+      setTimeout(() => {
+        let url = ''
+        if (this.basicForm.origin === 1) {
+          url = '/goods-manage/depot'
+        } else {
+          url = '/goods-manage/apply-record'
+        }
+        this.$confirm('请确认已保存橱窗图', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$store.dispatch('tagsView/delView', this.$route).then(res => {
+              sessionStorage.setItem('isRefreshDepot', true)
+              this.$router.replace(url)
+            })
+            // this.$store.dispatch('tagsView/delView', this.$route)
+            // this.$store
+            //   .dispatch('tagsView/delVisitedView', this.$route)
+            //   .then(res => {})
+            // this.$router.replace(url)
+            // this.$router.go(-1) // 返回上一个路由
+          })
+          .catch(() => {
+            console.log('已取消')
+          })
+      }, 1000)
     }
   }
 }
