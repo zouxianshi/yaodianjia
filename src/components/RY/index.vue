@@ -355,6 +355,7 @@ export default {
     right: 330px;
     z-index: 200;
     color: #fff;
+    opacity: 0;
 
     @keyframes fade {
       from {
