@@ -7,17 +7,18 @@
       label-position="left"
       label-width="110px"
       :inline="false"
-      :rules="rules"
     >
-      <el-form-item label="到期提醒：" prop="expireInfo">
+      <el-form-item label="到期提醒：">
         <el-checkbox v-model="isRember" :disabled="disabled" @change="params.expireInfo=1" />到期前
-        <el-input
-          v-model="params.expireInfo"
-          :disabled="disabled || !isRember"
-          size="mini"
-          maxlength="4"
-          style="width:80px"
-        />天微信提醒
+        <el-select v-model="params.expireInfo" placeholder="请选择" style="width:80px" :disabled="disabled || !isRember">
+          <el-option
+            v-for="item in 10"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+        天微信提醒
       </el-form-item>
     </el-form>
   </div>
@@ -38,22 +39,11 @@ export default {
     }
   },
   data() {
-    var validateExpireInfo = (rule, value, callback) => {
-      if (this.isRember && !((' ' + value).trim() && Number(value) !== 0)) {
-        // 如果选择了提醒，提醒天数就不能为空
-        callback(new Error('请输入正确提醒天数'))
-      } else {
-        callback()
-      }
-    }
     return {
       params: {
         expireInfo: 1
       },
-      isRember: false,
-      rules: {
-        expireInfo: [{ validator: validateExpireInfo, trigger: 'blur' }]
-      }
+      isRember: false
     }
   },
   watch: {

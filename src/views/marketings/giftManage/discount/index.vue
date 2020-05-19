@@ -40,10 +40,9 @@
             />最多优惠
             <el-input
               v-model="discountForm.maxPrice"
-              maxlength="3"
-              onkeyup="value=value.replace(/[^0-9\.]/g,'')"
+              type="number"
               :disabled="isUpdate || !isSelectMax"
-              style="width:80px"
+              style="width:100px"
             />元
           </el-form-item>
           <mReturnRules ref="returnRules" :discount-form="discountForm" :disabled="isUpdate" />
@@ -176,8 +175,8 @@ export default {
   data() {
     var validateMaxPrice = (rule, value, callback) => {
       // 验证最大优惠金额
-      if (this.isSelectMax && !value) {
-        return callback(new Error('请正确输入最多优惠金额'))
+      if (this.isSelectMax && (value < 0.01 || value > 100000)) {
+        return callback(new Error('请正确输入最多优惠金额(0.01-100000)'))
       } else {
         callback()
       }
