@@ -2,7 +2,6 @@
   <el-form
     ref="cnameForm"
     :model="params"
-    :rules="cnameRules"
     size="mini"
     label-position="left"
     label-width="110px"
@@ -94,11 +93,6 @@ export default {
         effectTime: 0,
         timeRule: 1
       },
-      cnameRules: {
-        cname: [
-          { required: true, message: '请输入优惠券名称', trigger: 'blur' }
-        ]
-      },
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() < new Date(new Date().getTime() - 86400000)
@@ -106,7 +100,7 @@ export default {
       },
       otherData: {
         expirationDay: '1', // 直接开始有效天数
-        expirationDate: [new Date(), new Date()], // 有效期(当选择开始、结束日期是)
+        expirationDate: [new Date(), new Date(new Date().getTime() + 3600000)], // 有效期(当选择开始、结束日期是)
         notActive: '1', // 等待生效天数
         effective: '1', // 有效天数
         merName: ''

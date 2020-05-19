@@ -23,11 +23,10 @@
             <span>折扣券</span>
           </el-form-item>
           <m-counpon-name ref="cname" :discount-form="discountForm" @changeViews="changeView" />
-          <el-form-item label="优惠内容：" prop="denomination">
+          <el-form-item label="优惠内容：" prop="denomination" required>
             <el-input
               v-model="discountForm.denomination"
-              maxlength="5"
-              onkeyup="value=value.replace(/[^0-9]/g,'')"
+              type="number"
               :disabled="isUpdate"
               style="width:80px"
             />折
@@ -185,8 +184,8 @@ export default {
     }
     var validateDenomination = (rule, value, callback) => {
       // 验证优惠内容
-      if (!value || parseFloat(value) < 0 || parseFloat(value) >= 10) {
-        return callback(new Error('请输入正确的优惠折扣'))
+      if (!value || parseFloat(value) < 0 || parseFloat(value) >= 10 || '' + value.indexOf('-') >= 0) {
+        return callback(new Error('请输入正确的优惠折扣(1 - 9.9)'))
       } else {
         callback()
       }

@@ -10,7 +10,7 @@
       :rules="rules"
     >
       <el-form-item label="到期提醒：" prop="expireInfo">
-        <el-checkbox v-model="isRember" :disabled="disabled" @change="params.expireInfo=0" />到期前
+        <el-checkbox v-model="isRember" :disabled="disabled" @change="params.expireInfo=1" />到期前
         <el-input
           v-model="params.expireInfo"
           :disabled="disabled || !isRember"
@@ -48,7 +48,7 @@ export default {
     }
     return {
       params: {
-        expireInfo: 0
+        expireInfo: 1
       },
       isRember: false,
       rules: {
@@ -64,12 +64,15 @@ export default {
   },
   methods: {
     $verification() {
-      console.log(this.params)
       var _self = this
       var result = new Promise(function(resolve, reject) {
         _self.$refs['expireInfoForm'].validate(valid => {
           if (valid) {
-            resolve({ expireInfo: _self.params.expireInfo })
+            if (_self.isRember) {
+              resolve({ expireInfo: _self.params.expireInfo })
+            } else {
+              resolve({ expireInfo: 0 })
+            }
           } else {
             reject(valid)
           }

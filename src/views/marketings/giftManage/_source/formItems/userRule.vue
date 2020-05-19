@@ -1,7 +1,7 @@
 <template>
   <el-form ref="useRuleForm" :model="params" size="mini" label-position="left" label-width="110px" :rules="rules">
     <el-form-item label="使用门槛：" prop="useRule">
-      <el-radio-group v-model="useRuleLimit" :disabled="disabled" @change="params.useRule='0'">
+      <el-radio-group v-model="useRuleLimit" :disabled="disabled" @change="params.useRule=0">
         <el-radio :label="0">无门槛</el-radio>
         <el-radio :label="1">
           订单满
@@ -9,8 +9,7 @@
             v-model="params.useRule"
             :disabled="disabled || useRuleLimit != 1"
             style="width:100px"
-            maxlength="5"
-            onkeyup="value=value.replace(/[^0-9\.]/g,'')"
+            type="number"
             @keyup.native="changeView1"
           />元
         </el-radio>
@@ -34,11 +33,23 @@ export default {
     }
   },
   data() {
+    var validateUseRule = (rule, value, callback) => {
+      if (this.useRuleLimit === 1 && (value > 100000 || value < 0)) {
+        callback(new Error('请输入正确的门槛金额（0-100000元）'))
+      } else {
+        callback()
+      }
+    }
     return {
       params: {
         useRule: 0
       },
-      useRuleLimit: 0
+      useRuleLimit: 0,
+      rules: {
+        useRule: [
+          { validator: validateUseRule, trigger: 'blur' }
+        ]
+      }
     }
   },
   watch: {
