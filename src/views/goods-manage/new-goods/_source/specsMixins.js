@@ -21,11 +21,13 @@ const mixin = {
       standardSpecs: [], // 标库选中的历史数据
       dynamicProp: [], // 表格的动态字段
       chooseSpec: [], // 选中的规格参数
+      chooseSpecName: [], // 选中的规格参数
       specsList: [], // 规格
       mprice_err: false,
       erpCode_err: false,
       barCode_err: false,
-      limit_err: false
+      limit_err: false,
+      specLoading: false
     }
   },
   watch: {
@@ -92,35 +94,36 @@ const mixin = {
     },
     handleSelectionChange(row) {
       // 当用户手动勾选全选 Checkbox 时触发的事件
-      this.chooseTableSpec = row
+      row.isCheck = true
+      this.chooseTableSpec.push(row)
     },
-    handleSelectChange(selection, row) {
-      // 当用户手动勾选数据行的 Checkbox 时触发的事件
-      const findIndex = selection.findIndex(item => {
-        return item.id === row.id
-      })
-      if (findIndex > -1) {
-        row.isCheck = true
-      } else {
-        row.isCheck = false
-      }
-    },
+    // handleSelectChange(selection, row) {
+    //   // 当用户手动勾选数据行的 Checkbox 时触发的事件
+    //   const findIndex = selection.findIndex(item => {
+    //     return item.id === row.id
+    //   })
+    //   if (findIndex > -1) {
+    //     row.isCheck = true
+    //   } else {
+    //     row.isCheck = false
+    //   }
+    // },
     handleSubmitSpec() {
       // 规格保存操作
       let data = []
       if (this.basicForm.origin === 1) {
         // 标库商品
-        // //  获取一种选中的值
-        // this.specsForm.specs.map(v => {
-        //   if (v.isCheck) {
-        //     data.push(v)
-        //   }
-        // })
+        //  获取一种选中的值
+        this.editSpecsData.map(v => {
+          if (v.isCheck || !v.isShowSelect) {
+            data.push(v)
+          }
+        })
         data = [...this.chooseTableSpec, ...data]
         console.log('保存获取的数据,-----', data)
-        if (data.length === 0) {
+        if (data.length === 0 && this.specsForm.specsData.length === 0) {
           this.$message({
-            message: '请选择规格信息',
+            message: '请选择规格信息或添加规格',
             type: 'error'
           })
           return
@@ -231,6 +234,34 @@ const mixin = {
         //   })
         //   flag = false
         // }
+        if (flag && v.mprice_err) {
+          this.$message({
+            message: '规格中存在商品编码输入非法值，请输入正确的值',
+            type: 'error'
+          })
+          flag = false
+        }
+        if (flag && v.erpCode_err) {
+          this.$message({
+            message: '规格中存在商品编码输入非法值，请输入正确的值',
+            type: 'error'
+          })
+          flag = false
+        }
+        if (flag && v.barCode_err) {
+          this.$message({
+            message: '规格中存在条码输入非法值，请输入正确的值',
+            type: 'error'
+          })
+          flag = false
+        }
+        if (flag && v.limit_err) {
+          this.$message({
+            message: '规格中存在限购输入非法制，请输入正确的值',
+            type: 'error'
+          })
+          flag = false
+        }
         if (flag && !v.erpCode) {
           this.$message({
             message: `请输入规格${index}中的商品编码`,
@@ -302,34 +333,34 @@ const mixin = {
             data = [...data, ...this.editSpecsData]
           }
         }
-        if (this.mprice_err) {
-          this.$message({
-            message: '规格中存在价格输入非法值，请输入正确的值',
-            type: 'error'
-          })
-          return
-        }
-        if (this.erpCode_err) {
-          this.$message({
-            message: '规格中存在商品编码输入非法值，请输入正确的值',
-            type: 'error'
-          })
-          return
-        }
-        if (this.barCode_err) {
-          this.$message({
-            message: '规格中存在条码输入非法值，请输入正确的值',
-            type: 'error'
-          })
-          return
-        }
-        if (this.limit_err) {
-          this.$message({
-            message: '规格中存在限购输入非法制，请输入正确的值',
-            type: 'error'
-          })
-          return
-        }
+        // if (this.mprice_err) {
+        //   this.$message({
+        //     message: '规格中存在价格输入非法值，请输入正确的值',
+        //     type: 'error'
+        //   })
+        //   return
+        // }
+        // if (this.erpCode_err) {
+        //   this.$message({
+        //     message: '规格中存在商品编码输入非法值，请输入正确的值',
+        //     type: 'error'
+        //   })
+        //   return
+        // }
+        // if (this.barCode_err) {
+        //   this.$message({
+        //     message: '规格中存在条码输入非法值，请输入正确的值',
+        //     type: 'error'
+        //   })
+        //   return
+        // }
+        // if (this.limit_err) {
+        //   this.$message({
+        //     message: '规格中存在限购输入非法制，请输入正确的值',
+        //     type: 'error'
+        //   })
+        //   return
+        // }
         if (this.basicForm.origin === 1) {
           return data
         } else {
@@ -353,16 +384,13 @@ const mixin = {
         })
     },
     _loadSpces() {
+      this.specLoading = true
       // 根据一级分类加载规格
       getSpecs(this.chooseTypeList[0].id).then(res => {
         if (res.data) {
           res.data.map(v => {
             v['index_' + v.id + '_' + v.attributeName] = ''
-            if (this.basicForm.origin === 1) {
-              v.isCheck = true
-            } else {
-              v.isCheck = false
-            }
+            v.isCheck = this.basicForm.origin === 1
           })
           this.specsList = res.data
           this.specsForm.specsData = []
@@ -371,6 +399,8 @@ const mixin = {
         }
         if (this.basicForm.id) {
           this._loadSpecsInfo()
+        } else {
+          this.specLoading = false
         }
       })
     },
@@ -394,6 +424,7 @@ const mixin = {
                       keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
                       checked: true
                     })
+                    this.chooseSpecName.push(vs.skuKeyName)
                     this.chooseSpec.push(vs.skuKeyId) // 标库选中的规格存入chooseSpec  修改日期2020-03-25  标库需要添加规格使用
                   })
                 }
@@ -460,6 +491,7 @@ const mixin = {
                       data.push(v.skuKeyId)
                       // 设置默认选择
                       this.chooseSpec.push(v.skuKeyId)
+                      this.chooseSpecName.push(v.skuKeyName)
                     })
                   }
                 }
@@ -474,8 +506,6 @@ const mixin = {
                 }
               })
               this.editSpecsData = specList
-            } else {
-              this.handleAddSpec()
             }
           } else {
             /** *
@@ -531,6 +561,7 @@ const mixin = {
                     data.push(v.skuKeyId)
                     // 设置默认选择
                     this.chooseSpec.push(v.skuKeyId)
+                    this.chooseSpecName.push(v.skuKeyName)
                   })
                 }
                 this.editSpecsData.push(v)
@@ -553,8 +584,11 @@ const mixin = {
             }, 500)
           }
         } else {
-          this.specsForm.specs = []
+          if (this.editSpecsData.length === 0) {
+            this.handleAddSpec()
+          }
         }
+        this.specLoading = false
       })
     },
     shows(row) {
@@ -623,12 +657,14 @@ const mixin = {
         if (!this.chooseSpec.includes(row.id)) {
           // 是否在勾选的规格参数中是否存在
           this.chooseSpec.push(row.id)
+          this.chooseSpecName.push(row.attributeName)
         }
       } else {
         if (this.chooseSpec.includes(row.id)) {
           // 取消 就删除
           const index = this.chooseSpec.indexOf(row.id)
           this.chooseSpec.splice(index, 1)
+          this.chooseSpecName.splice(index, 1)
         }
         if (findIndex > -1) {
           const items = this.specsForm.specsData[findIndex]
@@ -667,7 +703,7 @@ const mixin = {
             message: '请输入数字',
             type: 'error'
           })
-          this.limit_err = true
+          row.limit_err = true
           return
         }
         if (value > 0 && value % 1 !== 0) {
@@ -675,7 +711,7 @@ const mixin = {
             message: '请输入大于0的整数',
             type: 'error'
           })
-          this.limit_err = true
+          row.limit_err = true
           return
         } else {
           if (value <= 0) {
@@ -683,12 +719,12 @@ const mixin = {
               message: '请输入大于0的整数',
               type: 'error'
             })
-            this.limit_err = true
+            row.limit_err = true
             return
           }
         }
       }
-      this.limit_err = false
+      row.limit_err = false
     },
     input_checkMprice(row, index) {
       // 校验价格
@@ -698,7 +734,7 @@ const mixin = {
           message: '价格最多只能输入8位数',
           type: 'error'
         })
-        this.mprice_err = true
+        row.mprice_err = true
         return
       }
       if (value && !checkNumberdouble(value)) {
@@ -706,36 +742,36 @@ const mixin = {
           message: '价格只能设置最多两位小数的正数',
           type: 'error'
         })
-        this.mprice_err = true
+        row.mprice_err = true
         return
       }
       if (!/^([1-9]\d*|0)(\.\d*[1-9])?$/.exec(value)) {
         row.mprice = ~~value
         this.$set(this.specsForm.specs, index, row)
       }
-      this.mprice_err = false
+      row.mprice_err = false
     },
-    input_checkErpcode(value) {
-      if (value && !/^[0-9]+$/.test(value)) {
+    input_checkErpcode(row, value) {
+      if (value && !checkZmSZ(value)) {
         this.$message({
-          message: '商品编码只能为纯数字',
+          message: '商品编码只能输入数字、英文、字符',
           type: 'error'
         })
-        this.erpCode_err = true
+        row.erpCode_err = true
         return
       }
-      this.erpCode_err = false
+      row.erpCode_err = false
     },
-    input_checkBarCode(value) {
+    input_checkBarCode(row, value) {
       if (value && !checkZmSZ(value)) {
         this.$message({
           message: '规格只能输入数字、英文、字符',
           type: 'error'
         })
-        this.barCode_err = true
+        row.barCode_err = true
         return
       }
-      this.barCode_err = false
+      row.barCode_err = false
     }
   }
 }

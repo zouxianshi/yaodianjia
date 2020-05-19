@@ -7,7 +7,7 @@
         <el-step title="图文信息" icon="el-icon-picture-outline-round" @click="handleGoStep(3)" />
       </el-steps>
       <!-- 第一步 -->
-      <div v-show="step===1">
+      <div v-show="step===1" class="basic-info-section">
         <section v-loading="basicLoading" element-loading-text="拼命加载中">
           <!-- 分类信息 -->
           <div class="edit-card">
@@ -332,7 +332,7 @@
       </div>
       <!-- 规格信息 -->
       <div v-show="step===2">
-        <div class="specs-box">
+        <div v-loading="specLoading" class="specs-box" element-loading-text="拼命加载中">
           <p
             class="text-right"
             style="font-size:13px"
@@ -379,8 +379,6 @@
                 <el-table
                   ref="multipleTable"
                   :data="editSpecsData"
-                  @selection-change="handleSelectionChange"
-                  @select="handleSelectChange"
                 >
                   <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
                   <el-table-column width="55">
@@ -388,7 +386,7 @@
                       <el-checkbox
                         v-if="scope.row.isShowSelect"
                         v-model="scope.row.isCheck"
-                        :disabled="scope.row.disabled"
+                        :disabled="scope.row.disabled||is_query"
                       />
                     </template>
                   </el-table-column>
@@ -742,7 +740,7 @@
                         v-model.trim="item.erpCode"
                         placeholder="输入商品编码"
                         maxlength="16"
-                        @blur="input_checkErpcode(item.erpCode)"
+                        @blur="input_checkErpcode(item,item.erpCode)"
                       />
                     </el-form-item>
                     <el-form-item label>
@@ -751,7 +749,7 @@
                         v-model.trim="item.barCode"
                         maxlength="30"
                         placeholder="若有条形码请务必填写"
-                        @blur="input_checkBarCode(item.barCode)"
+                        @blur="input_checkBarCode(item,item.barCode)"
                       />
                     </el-form-item>
                     <el-form-item label>
@@ -928,7 +926,7 @@
           </div>
         </div>
         <div class="edit-card">
-          <div class="header">商品详情</div>
+          <div class="header">图文详情</div>
           <div class="edit-card-cnt">
             <div class="content">
               <section class="goods-details">
@@ -949,7 +947,7 @@
                   />
                 </div>
               </section>
-              <div class="text-center">
+              <!-- <div class="text-center">
                 <el-button
                   v-if="!is_query"
                   type="primary"
@@ -957,7 +955,7 @@
                   :loading="subLoading2"
                   @click="handleSubInfo"
                 >保存</el-button>
-              </div>
+              </div>-->
             </div>
           </div>
         </div>
@@ -998,6 +996,7 @@
         :loading="subLoading"
         size="small"
         type="primary"
+        style="width:70px;margin-right: 10px;"
         @click="nextStep"
       >{{ step===3?'保存':"下一步" }}</el-button>
     </div>
@@ -1038,8 +1037,8 @@ export default {
       if (!value) {
         if (
           this.basicForm.origin !== 1 &&
-            this.chooseTypeList.length !== 0 &&
-            this.chooseTypeList[0].name === '中西药品'
+          this.chooseTypeList.length !== 0 &&
+          this.chooseTypeList[0].name === '中西药品'
         ) {
           callback(new Error('请输入通用名'))
         } else {
@@ -1076,8 +1075,8 @@ export default {
         }
         if (
           rule.field === 'long' ||
-            rule.field === 'height' ||
-            rule.field === 'width'
+          rule.field === 'height' ||
+          rule.field === 'width'
         ) {
           if ((value && value <= 0) || value >= 100) {
             return callback(new Error('长宽高必须大于0 小于100'))
@@ -1248,13 +1247,15 @@ export default {
       this.pageLoading.close()
     }
   },
+  mounted() {
+    this.basicLoading = true
+  },
   created() {
     if (!this.$route.query.id) {
       // 如果是编辑
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
     }
-
     this.is_query = this.$route.query.type === 'query'
     console.log(this.$route.query.type)
     if (this.is_query) {
@@ -1264,12 +1265,7 @@ export default {
       sessionStorage.setItem('editIsQuery', '')
       sessionStorage.setItem('editId', this.$route.query.id)
     }
-    this._loadTypeList() // 获取分组
-    this._loadBrandList({
-      pageSize: 30,
-      currentPage: 1
-    }) // 获取所属品牌
-    console.log('@@@@@@@@@@@@@')
+
     this.getTypeListData()
       .then(res => {
         this._loadBasicInfo()
@@ -1277,16 +1273,21 @@ export default {
       .catch(_ => {
         this._loadBasicInfo()
       })
+    this._loadTypeList() // 获取分组
+    this._loadBrandList({
+      pageSize: 30,
+      currentPage: 1
+    }) // 获取所属品牌
     this._loadUnit() // 加载单位
     // chooseTypeList不为空且第一个为中西药品才有必要加载
     this._loadMetering() // 加载剂型
 
-    this.pageLoading = this.$loading({
-      lock: true,
-      text: '数据初始化中...',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
+    // this.pageLoading = this.$loading({
+    //   lock: true,
+    //   text: '数据初始化中...',
+    //   spinner: 'el-icon-loading',
+    //   background: 'rgba(0, 0, 0, 0.7)'
+    // })
   },
   methods: {
     tinymceLoad() {
@@ -1389,7 +1390,7 @@ export default {
         this.basicLoading = false
         return
       }
-      this.subLoading = true
+      // this.subLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode)
         .then(res => {
           // 分组处理
@@ -1455,11 +1456,11 @@ export default {
           this.basicForm = data
           this.$refs.editor.setContent(this.basicForm.intro)
           this.basicLoading = false
-          this.subLoading = false
+          // this.subLoading = false
         })
         .catch(_ => {
           this.basicLoading = false
-          this.subLoading = false
+          // this.subLoading = false
         })
     },
     _loadGoodsImgAry() {
@@ -1566,9 +1567,9 @@ export default {
     beforeUpload(file) {
       const size = file.size / 1024
       const isImg =
-          file.type === 'image/jpeg' ||
-          file.type === 'image/png' ||
-          file.type === 'image/jpg'
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
           message: '只能上传格式为 jpg、jpeg、png的图片',
@@ -1776,8 +1777,8 @@ export default {
             ].id // 分类id
             if (
               this.chooseTypeList &&
-                (this.chooseTypeList[0].name === '医疗器械' ||
-                  this.chooseTypeList[0].name === '营养保健')
+              (this.chooseTypeList[0].name === '医疗器械' ||
+                this.chooseTypeList[0].name === '营养保健')
             ) {
               this.basicForm.hasEphedrine = 0
             }
@@ -1805,7 +1806,9 @@ export default {
             // }
             data.groupIds = []
             this.chooseGroup.map(v => {
-              data.groupIds.push(v[2].id)
+              v[2] && v[2].id
+                ? data.groupIds.push(v[2].id)
+                : data.groupIds.push(v[1].id)
             })
             if (this.chooseTypeList.length !== 3) {
               this.$message({
@@ -1903,256 +1906,265 @@ export default {
       }
       saveGoodsDetails(data)
         .then(res => {
+          this.doSubmitInfo()
           // this.$message({
           //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
           //   type: 'success'
           // })
-          this.subLoading = false
-          this.leaveAction = true
-
-          setTimeout(() => {
-            let url = ''
-            if (this.basicForm.origin === 1) {
-              url = '/goods-manage/depot'
-            } else {
-              url = '/goods-manage/apply-record'
-            }
-            this.$confirm('请确认已保存橱窗图', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            })
-              .then(() => {
-                this.$store
-                  .dispatch('tagsView/delView', this.$route)
-                  .then(res => {
-                    sessionStorage.setItem('isRefreshDepot', true)
-                    this.$router.replace(url)
-                  })
-              // this.$store.dispatch('tagsView/delView', this.$route)
-              // this.$store
-              //   .dispatch('tagsView/delVisitedView', this.$route)
-              //   .then(res => {})
-              // this.$router.replace(url)
-              // this.$router.go(-1) // 返回上一个路由
-              })
-              .catch(() => {
-                console.log('已取消')
-              })
-          }, 1000)
         })
         .catch(_ => {
           this.subLoading = false
         })
+    },
+    doSubmitInfo() {
+      this.subLoading = false
+      this.leaveAction = true
+
+      setTimeout(() => {
+        let url = ''
+        if (this.basicForm.origin === 1) {
+          url = '/goods-manage/depot'
+        } else {
+          url = '/goods-manage/apply-record'
+        }
+        this.$confirm('请确认已保存橱窗图', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$store.dispatch('tagsView/delView', this.$route).then(res => {
+              sessionStorage.setItem('isRefreshDepot', true)
+              this.$router.replace(url)
+            })
+            // this.$store.dispatch('tagsView/delView', this.$route)
+            // this.$store
+            //   .dispatch('tagsView/delVisitedView', this.$route)
+            //   .then(res => {})
+            // this.$router.replace(url)
+            // this.$router.go(-1) // 返回上一个路由
+          })
+          .catch(() => {
+            console.log('已取消')
+          })
+      }, 1000)
     }
   }
 }
 </script>
 <style lang="scss">
-  .specs-img-table {
-    .avatar-uploader-icon {
-      width: 60px;
-      height: 60px;
-      line-height: 60px !important;
-    }
-    .avatar {
-      width: 60px;
-      height: 60px;
-    }
+.specs-img-table {
+  .avatar-uploader-icon {
+    width: 60px;
+    height: 60px;
+    line-height: 60px !important;
   }
-  .tox .tox-statusbar {
-    display: none !important;
+  .avatar {
+    width: 60px;
+    height: 60px;
   }
+}
+.tox .tox-statusbar {
+  display: none !important;
+}
+.basic-info-section {
+  .el-loading-spinner {
+    top: 10%;
+  }
+}
 </style>
 <style lang="scss" scoped>
-  .edit-wrapper {
-    color: #333;
-    padding-bottom: 50px;
-    .img-tips {
-      font-size: 12px;
-      margin-bottom: 10px;
-      margin-top: 10px;
-      color: #e6a23c;
-      li {
-        margin-bottom: 5px;
-      }
+.edit-wrapper {
+  color: #333;
+  padding-bottom: 50px;
+
+  .img-tips {
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color: #e6a23c;
+    li {
+      margin-bottom: 5px;
     }
-    .img-tipe-noImg {
-      font-size: 12px;
-      margin-bottom: 10px;
-      margin-top: 10px;
-      color: red;
+  }
+  .img-tipe-noImg {
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color: red;
+  }
+  .specs-box {
+    margin-top: 20px;
+    .el-table {
+      width: auto;
     }
-    .specs-box {
-      margin-top: 20px;
-      .el-table {
-        width: auto;
-      }
+  }
+
+  .edit-card {
+    margin-top: 10px;
+    .el-input {
+      width: 300px;
     }
-    .edit-card {
-      margin-top: 10px;
-      .el-input {
-        width: 300px;
+    .el-textarea {
+      @extend .el-input;
+    }
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    .header {
+      height: 40px;
+      line-height: 40px;
+      padding: 0 10px;
+      font-size: 16px;
+    }
+    .edit-card-cnt {
+      padding: 10px;
+      color: #333;
+      .content {
+        padding: 20px 30px;
+        background: #f6f7fb;
       }
-      .el-textarea {
-        @extend .el-input;
-      }
-      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-      .header {
-        height: 40px;
-        line-height: 40px;
-        padding: 0 10px;
-        font-size: 16px;
-      }
-      .edit-card-cnt {
-        padding: 10px;
-        color: #333;
-        .content {
-          padding: 20px 30px;
-          background: #f6f7fb;
+      .type-list {
+        margin-bottom: 10px;
+        &:last-child {
+          margin: 0;
         }
-        .type-list {
-          margin-bottom: 10px;
-          &:last-child {
-            margin: 0;
-          }
-          &.groups {
-            display: flex;
-            align-items: center;
-          }
-          .group-list {
-            display: inline-block;
-            // max-width: 600px;
-            margin-right: 5px;
-            .tag {
-              margin-right: 10px;
-            }
-          }
-          .link {
-            cursor: pointer;
+        &.groups {
+          display: flex;
+          align-items: center;
+        }
+        .group-list {
+          display: inline-block;
+          // max-width: 600px;
+          margin-right: 5px;
+          .tag {
+            margin-right: 10px;
           }
         }
-      }
-      .editorWrap {
-        position: relative;
-        .wordcount {
-          position: absolute;
-          // bottom: -5px;
-          height: 18px;
-          line-height: 18px;
-          // right: 10px;
-          text-align: right;
-          font-size: 12px;
-          width: 100%;
-          background: #fff;
-          border: 1px solid #ccc;
-          border-top: 0 none;
-          padding-right: 10px;
-          color: rgba(34, 47, 62, 0.7);
-        }
-      }
-    }
-    .next-btn {
-      margin-top: 20px;
-    }
-    .goods-details {
-      display: flex;
-      margin-bottom: 10px;
-      .left-show {
-        width: 320px;
-        height: auto;
-        border: 1px solid #e0e0e0;
-        .img {
-          width: 320px;
-          height: 64px;
-          background: url('../../../assets/image/sprite_dm.png') -2px -86px;
-        }
-        .basicMsgs {
-          width: 100%;
-          height: 100px;
-          color: #666;
-          line-height: 25px;
-          text-align: center;
-          padding-top: 20px;
-          background: #f2f2f2;
-        }
-        .editSqu {
-          height: 376px;
-          border: 1px dashed red;
-          img {
-            max-width: 100% !important;
-          }
-        }
-        .w-e-text {
-          padding: 5px 10px;
-          overflow-y: scroll;
-        }
-      }
-      .edit-box {
-        margin-left: 20px;
-        padding: 10px;
-        background: #f8f8f8;
-        border: 1px solid #d1d1d1;
-        position: relative;
-      }
-    }
-    .spec-list {
-      width: 550px;
-      border-radius: 5px;
-      border: 1px solid #c9c9cc;
-      margin-left: 80px;
-      margin-bottom: 10px;
-      .header {
-        height: 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 12px;
-        border-bottom: 1px solid #c9c9cc;
-        i {
+        .link {
           cursor: pointer;
         }
       }
-      .spec-content {
-        padding: 12px;
-        .el-input {
-          width: 250px;
-        }
-        .specs-img {
-          .avatar-uploader-icon {
-            width: 100px;
-            height: 100px;
-            line-height: 100px !important;
-          }
-          .avatar {
-            width: 100px;
-            height: 100px;
-          }
-        }
+    }
+    .editorWrap {
+      position: relative;
+      .wordcount {
+        position: absolute;
+        // bottom: -5px;
+        height: 18px;
+        line-height: 18px;
+        // right: 10px;
+        text-align: right;
+        font-size: 12px;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-top: 0 none;
+        padding-right: 10px;
+        color: rgba(34, 47, 62, 0.7);
       }
     }
-    .add-spec {
-      margin-left: 80px;
+  }
+  .next-btn {
+    margin-top: 20px;
+  }
+  .goods-details {
+    display: flex;
+    margin-bottom: 10px;
+    .left-show {
+      width: 320px;
+      height: auto;
+      border: 1px solid #e0e0e0;
+      .img {
+        width: 320px;
+        height: 64px;
+        background: url('../../../assets/image/sprite_dm.png') -2px -86px;
+      }
+      .basicMsgs {
+        width: 100%;
+        height: 100px;
+        color: #666;
+        line-height: 25px;
+        text-align: center;
+        padding-top: 20px;
+        background: #f2f2f2;
+      }
+      .editSqu {
+        height: 376px;
+        border: 1px dashed red;
+        img {
+          max-width: 100% !important;
+        }
+      }
+      .w-e-text {
+        padding: 5px 10px;
+        overflow-y: scroll;
+      }
+    }
+    .edit-box {
+      margin-left: 20px;
+      padding: 10px;
+      background: #f8f8f8;
+      border: 1px solid #d1d1d1;
+      position: relative;
     }
   }
-  .action-wapper {
-    position: absolute;
-    padding: 12px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    text-align: right;
-  }
-  .link-btn {
-    font-size: 14px;
-  }
-  .modal-body {
-    .cascader {
+  .spec-list {
+    width: 550px;
+    border-radius: 5px;
+    border: 1px solid #c9c9cc;
+    margin-left: 80px;
+    margin-bottom: 10px;
+    .header {
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid #c9c9cc;
+      i {
+        cursor: pointer;
+      }
+    }
+    .spec-content {
+      padding: 12px;
       .el-input {
-        width: 300px !important;
+        width: 250px;
+      }
+      .specs-img {
+        .avatar-uploader-icon {
+          width: 100px;
+          height: 100px;
+          line-height: 100px !important;
+        }
+        .avatar {
+          width: 100px;
+          height: 100px;
+        }
       }
     }
   }
+  .add-spec {
+    margin-left: 80px;
+  }
+}
+.action-wapper {
+  position: absolute;
+  padding: 12px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3000;
+  background: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  text-align: right;
+}
+.link-btn {
+  font-size: 14px;
+}
+.modal-body {
+  .cascader {
+    .el-input {
+      width: 300px !important;
+    }
+  }
+}
 </style>

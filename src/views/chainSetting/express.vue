@@ -2,7 +2,7 @@
   <div class="container">
     <h3>快递运费</h3>
     <el-alert
-      v-if="cities && cities.length && cities.length - selected.length > 0"
+      v-if="cities && cities.length && selected && selected.length && cities.length - selected.length > 0"
       type="warning"
       :closable="false"
     >
@@ -145,7 +145,7 @@ export default {
       checkedCities: [],
       cities: null,
       showCities: [],
-      selected: [],
+      selected: null,
       editPosition: -1,
       form: {
         list: []

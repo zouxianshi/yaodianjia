@@ -119,11 +119,11 @@
           <el-table-column prop="address" align="left" fixed="right" label="操作" min-width="250">
             <template slot-scope="scope">
               <template
-                v-if="(scope.row.infoStatus===15||scope.row.infoStatus===13)&&scope.row.auditStatus===3&&(listQuery.auditStatus===''||listQuery.auditStatus===3)"
+                v-if="(scope.row.infoStatus >= 12)&&scope.row.auditStatus===3&&(listQuery.auditStatus===''||listQuery.auditStatus===3)"
               >
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
               </template>
-              <template v-else-if="(scope.row.infoStatus===15||scope.row.infoStatus===13)&&scope.row.auditStatus===0">
+              <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
               </template>
               <template v-else>
@@ -135,14 +135,14 @@
                 </a>
               </template>
               <template
-                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.infoStatus<=15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
+                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.infoStatus<=13)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
               >
                 <a @click="handleEdit(scope.row.id)">
                   <el-button type size="mini">完善信息</el-button>
                 </a>
               </template>
               <template
-                v-if="scope.row.origin===1&&scope.row.origin!==2&&((scope.row.infoStatus<15)&&scope.row.auditStatus===1)||listQuery.auditStatus===-1"
+                v-if="scope.row.origin===1&&scope.row.origin!==2&&((scope.row.infoStatus<=13)&&scope.row.auditStatus===1)||listQuery.auditStatus===-1"
               >
                 <a @click="handleEdit(scope.row.id)">
                   <el-button type size="mini">完善信息</el-button>
