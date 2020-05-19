@@ -91,32 +91,33 @@ const mixin = {
         this.$set(this.editSpecsData, index, row)
       }
     },
-    handleSelectionChange(row) {
-      // 当用户手动勾选全选 Checkbox 时触发的事件
-      this.chooseTableSpec = row
-    },
-    handleSelectChange(selection, row) {
-      // 当用户手动勾选数据行的 Checkbox 时触发的事件
-      const findIndex = selection.findIndex(item => {
-        return item.id === row.id
-      })
-      if (findIndex > -1) {
-        row.isCheck = true
-      } else {
-        row.isCheck = false
-      }
-    },
+    // handleSelectionChange(row) {
+    //   // 当用户手动勾选全选 Checkbox 时触发的事件
+    //   row.isCheck = true
+    //   this.chooseTableSpec.push(row)
+    // },
+    // handleSelectChange(selection, row) {
+    //   // 当用户手动勾选数据行的 Checkbox 时触发的事件
+    //   const findIndex = selection.findIndex(item => {
+    //     return item.id === row.id
+    //   })
+    //   if (findIndex > -1) {
+    //     row.isCheck = true
+    //   } else {
+    //     row.isCheck = false
+    //   }
+    // },
     handleSubmitSpec() {
       // 规格保存操作
       let data = []
       if (this.basicForm.origin === 1) {
         // 标库商品
-        // //  获取一种选中的值
-        // this.specsForm.specs.map(v => {
-        //   if (v.isCheck) {
-        //     data.push(v)
-        //   }
-        // })
+        //  获取一种选中的值
+        this.editSpecsData.map(v => {
+          if (v.isCheck) {
+            data.push(v)
+          }
+        })
         data = [...this.chooseTableSpec, ...data]
         console.log('保存获取的数据,-----', data)
         if (data.length === 0 && this.specsForm.specsData.length === 0) {
