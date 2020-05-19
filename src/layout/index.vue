@@ -6,9 +6,11 @@
       </div>
       <div class="app-main-box" :style="_styleToggle">
         <div class="flx" :style="_styleToggle">
-          <r-y v-auth:staff.online-ask />
           <m-header>
             <breadcrumb slot="breadcrumb" />
+            <div slot="consultation">
+              <r-y v-auth:staff.online-ask />
+            </div>
           </m-header>
         </div>
         <div class="app-main-model">
