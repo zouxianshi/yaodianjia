@@ -319,77 +319,86 @@ export default {
     async _submit() {
       var that = this
       var arr = []
-      _.map(that.compArr, item => {
-        var flag = that.$refs[item['ref']].$verification()
-        arr.push(flag)
-      })
-      Promise.all(arr)
-        .then(res => {
-          _.map(res, item => {
-            Object.assign(this.discountForm, item)
+      this.$refs['form'].validate(flag => {
+        if (flag) {
+          _.map(that.compArr, item => {
+            var flag = that.$refs[item['ref']].$verification()
+            arr.push(flag)
           })
-          if (this.$route.query.id) {
-            this.discountForm.expireInfo = Number(this.discountForm.expireInfo)
-            updateCoupon(this.discountForm).then(res => {
-              if (res.code === '10000') {
-                this.$message({
-                  message: res.msg,
-                  type: 'success'
+          Promise.all(arr)
+            .then(res => {
+              _.map(res, item => {
+                Object.assign(this.discountForm, item)
+              })
+              if (this.$route.query.id) {
+                this.discountForm.expireInfo = Number(this.discountForm.expireInfo)
+                updateCoupon(this.discountForm).then(res => {
+                  if (res.code === '10000') {
+                    this.$message({
+                      message: res.msg,
+                      type: 'success'
+                    })
+                  }
+                  this.$router.push('/marketings/gift-manage/list')
+                })
+              } else {
+              // 新增时处理数据
+                var params = _.cloneDeep(this.discountForm)
+                params.listCouponStore = []
+                // 处理限制门店以及限制商品
+                if (params.shopRule === 2) {
+                  this.chooseStore.forEach(item => {
+                    var obj = {
+                      ruleType: 1,
+                      storeCode: item.stCode,
+                      storeId: item.id,
+                      storeName: item.stName,
+                      storeAddress: item.province + item.city + item.area + item.address
+                    }
+                    params.listCouponStore.push(obj)
+                  })
+                }
+                params.listCouponProduct = []
+                if (params.productRule === 2 || params.productRule === 3) {
+                  this.storeSelectGoods.forEach(item => {
+                    var obj = {
+                      proBrand: item.brandName,
+                      proCode: item.erpCode,
+                      proId: item.id,
+                      proName: item.name,
+                      proImg: item.picUrl,
+                      proPrice: item.price,
+                      proSpec: item.specStr,
+                      ruleType: 1
+                    }
+                    params.listCouponProduct.push(obj)
+                  })
+                }
+                addCoupon(params).then(res => {
+                  if (res.code === '10000') {
+                    this.$message({
+                      message: res.msg,
+                      type: 'success'
+                    })
+                    this.$router.push('/marketings/gift-manage/list')
+                  }
                 })
               }
-              this.$router.push('/marketings/gift-manage/list')
             })
-          } else {
-            // 新增时处理数据
-            var params = _.cloneDeep(this.discountForm)
-            params.listCouponStore = []
-            // 处理限制门店以及限制商品
-            if (params.shopRule === 2) {
-              this.chooseStore.forEach(item => {
-                var obj = {
-                  ruleType: 1,
-                  storeCode: item.stCode,
-                  storeId: item.id,
-                  storeName: item.stName,
-                  storeAddress: item.province + item.city + item.area + item.address
-                }
-                params.listCouponStore.push(obj)
+            .catch(err => {
+              console.log(err)
+              this.$message({
+                message: '参数错误，请检查基本信息、使用规则参数！',
+                type: 'error'
               })
-            }
-            params.listCouponProduct = []
-            if (params.productRule === 2 || params.productRule === 3) {
-              this.storeSelectGoods.forEach(item => {
-                var obj = {
-                  proBrand: item.brandName,
-                  proCode: item.erpCode,
-                  proId: item.id,
-                  proName: item.name,
-                  proImg: item.picUrl,
-                  proPrice: item.price,
-                  proSpec: item.specStr,
-                  ruleType: 1
-                }
-                params.listCouponProduct.push(obj)
-              })
-            }
-            addCoupon(params).then(res => {
-              if (res.code === '10000') {
-                this.$message({
-                  message: res.msg,
-                  type: 'success'
-                })
-                this.$router.push('/marketings/gift-manage/list')
-              }
             })
-          }
-        })
-        .catch(err => {
-          console.log(err)
+        } else {
           this.$message({
             message: '参数错误，请检查基本信息、使用规则参数！',
             type: 'error'
           })
-        })
+        }
+      })
     }
   }
 }

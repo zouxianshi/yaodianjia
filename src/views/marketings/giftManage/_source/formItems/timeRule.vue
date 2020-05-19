@@ -130,8 +130,29 @@ export default {
             var _data = _self.otherData
             var params = _self.params
             if (params.timeRule === 1) {
+              if (_data.expirationDay.toString().indexOf('.') || _data.expirationDay > 3650 || _data.expirationDay < 1) {
+                _self.$message({
+                  message: '立即开始使用时间有效期仅支持1-3650之间的整数',
+                  type: 'error'
+                })
+                return
+              }
               params.effectTime = _data.expirationDay
             } else if (params.timeRule === 2) {
+              if (_data.notActive.toString().indexOf('.') || _data.notActive > 365 || _data.notActive < 1) {
+                _self.$message({
+                  message: '预设使用时间有效期，开始时间及到期时间仅支持1-365之间的整数',
+                  type: 'error'
+                })
+                return
+              }
+              if (_data.effective.toString().indexOf('.') || _data.effective > 365 || _data.effective < 1) {
+                _self.$message({
+                  message: '预设使用时间有效期，开始时间及到期时间仅支持1-365之间的整数',
+                  type: 'error'
+                })
+                return
+              }
               params.effectTime = _data.notActive + ',' + _data.effective
             } else {
               if (!_data.expirationDate) {
