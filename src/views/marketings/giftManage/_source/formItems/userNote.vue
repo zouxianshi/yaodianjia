@@ -6,12 +6,14 @@
     label-position="left"
     label-width="110px"
   >
-    <el-form-item label="使用须知">
+    <el-form-item label="使用须知：">
       <el-input
         v-model="params.note"
         type="textarea"
         style="width:300px"
-        rows="5"
+        maxlength="200"
+        show-word-limit
+        rows="9"
         placeholder="请输入使用须知"
       />
     </el-form-item>

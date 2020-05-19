@@ -27,7 +27,7 @@
         style="width: 100%;"
         empty-text="您暂未创建任何优惠券"
       >
-        <el-table-column prop="cname" label="优惠券信息" />
+        <el-table-column prop="cname" label="优惠券名称" />
         <el-table-column label="使用场景">
           <template slot-scope="scope">
             {{ scope.row.sceneRule === 1? '仅商城' : scope.row.sceneRule === 2? '仅线下' : '线上线下通用' }}

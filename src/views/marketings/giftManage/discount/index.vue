@@ -36,7 +36,7 @@
             <el-checkbox
               v-model="isSelectMax"
               :disabled="isUpdate"
-              @change="discountForm.maxPrice =0"
+              @change="discountForm.maxPrice =''"
             />最多优惠
             <el-input
               v-model="discountForm.maxPrice"
@@ -177,7 +177,7 @@ export default {
     var validateMaxPrice = (rule, value, callback) => {
       // 验证最大优惠金额
       if (this.isSelectMax && !value) {
-        return callback(new Error('请正确输入最大优惠金额'))
+        return callback(new Error('请正确输入最多优惠金额'))
       } else {
         callback()
       }
@@ -220,7 +220,7 @@ export default {
         ctype: 1,
         cname: '', // 折扣名称
         denomination: '', // 优惠内容
-        maxPrice: 0, // 最大优惠
+        maxPrice: '', // 最大优惠
         returnRule: 1, // 退货规则
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
