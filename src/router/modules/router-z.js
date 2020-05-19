@@ -169,6 +169,30 @@ const router = [
       }
     ]
   },
+  {
+    path: '/live-manage',
+    component: Layout,
+    redirect: '/live-manage/activity',
+    name: 'live-manage',
+    meta: {
+      title: '直播中心',
+      icon: 'live',
+      auth: 'live'
+    },
+    alwaysShow: true,
+    children: [
+      {
+        path: '/activity',
+        component: () => import('@/views/live-broadcast/activity'),
+        name: 'live-activity',
+        meta: {
+          // auth: 'commodity.commodity-combine',
+          title: '直播活动',
+          noCache: true
+        }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true, meta: { title: '404' }}
 ]
 
