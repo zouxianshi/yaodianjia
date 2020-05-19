@@ -1,8 +1,11 @@
 <template>
   <!-- 新消息图标 暂时用定位放在这里 -->
-  <el-badge class="msg-notice-btn" :is-dot="hasNewMsg" @click="msgBtnClick">
-    <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" />
-  </el-badge>
+  <div @click="msgBtnClick">
+    <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
+      <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" />
+    </el-badge>
+  </div>
+
 </template>
 
 <script>
@@ -350,10 +353,7 @@ export default {
 
 <style scoped lang="scss">
   .msg-notice-btn {
-    width: 100px;
-    height: 32px;
-    opacity: 0;
-    cursor: pointer;
+
     @keyframes fade {
       from {
         opacity: 1;
@@ -378,6 +378,10 @@ export default {
       }
     }
     i {
+      width: 100px;
+      height: 32px;
+      cursor: pointer;
+      opacity: 0;
       &.shaking {
         animation: fade 1000ms infinite;
       }
