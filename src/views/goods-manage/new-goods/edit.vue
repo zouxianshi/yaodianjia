@@ -996,6 +996,7 @@
         :loading="subLoading"
         size="small"
         type="primary"
+        style="width:70px"
         @click="nextStep"
       >{{ step===3?'保存':"下一步" }}</el-button>
     </div>
