@@ -84,7 +84,7 @@ export default {
         merCode: this.merCode,
         sysKey: 'integral_exchange_proportion',
         sysName: '海币兑换',
-        sysValue: this.num
+        sysValue: this.forms.num
       }
       this.$refs['forms'].validate((valid) => {
         if (valid) {

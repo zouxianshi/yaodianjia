@@ -74,9 +74,15 @@
           style="width:120px;font-size: 18px;line-height: inherit;"
           @change="ruleForm.integralRule=ruleForm.countRule=0"
         >
-          <el-radio :label="1">免费参与</el-radio>
+          <el-radio :label="1">
+            <span>
+              免费参与
+            </span>
+          </el-radio>
           <el-radio :label="2">
-            消耗海贝&emsp;每消耗&emsp;
+            <span>
+              消耗海贝&emsp;每消耗&emsp;
+            </span>
             <el-input
               v-model="ruleForm.integralRule"
               onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
@@ -85,7 +91,11 @@
               style="width:100px"
             />&emsp;积分，参与一次
           </el-radio>
-          <el-radio :label="3">活动参与</el-radio>
+          <el-radio :label="3">
+            <span>
+              活动参与
+            </span>
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="抽奖次数">
@@ -97,16 +107,16 @@
           @change="changeCount"
         >
           <el-radio :label="2">
-
-            每天可抽奖
-            <el-input
-              v-model="dayLimit"
-              onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
-              :disabled="isRuning || ruleForm.countType===1"
-              maxlength="6"
-              style="width:100px"
-            />次
-
+            <span>
+              每天可抽奖
+              <el-input
+                v-model="dayLimit"
+                onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
+                :disabled="isRuning || ruleForm.countType===1"
+                maxlength="6"
+                style="width:100px"
+              />次
+            </span>
           </el-radio>
           <el-radio :label="1">
             <span>
