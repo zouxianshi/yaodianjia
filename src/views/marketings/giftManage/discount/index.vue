@@ -184,7 +184,7 @@ export default {
     }
     var validateDenomination = (rule, value, callback) => {
       // 验证优惠内容
-      if (!value || parseFloat(value) < 0 || parseFloat(value) >= 10 || '' + value.indexOf('-') >= 0) {
+      if (!value || parseFloat(value) < 1 || parseFloat(value) >= 10 || '' + value.indexOf('-') >= 0) {
         return callback(new Error('请输入正确的优惠折扣(1 - 9.9)'))
       } else {
         callback()

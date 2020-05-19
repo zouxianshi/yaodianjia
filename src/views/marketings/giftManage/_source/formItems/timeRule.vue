@@ -134,6 +134,13 @@ export default {
             } else if (params.timeRule === 2) {
               params.effectTime = _data.notActive + ',' + _data.effective
             } else {
+              if (!_data.expirationDate) {
+                _self.$message({
+                  message: '使用时间不能为空',
+                  type: 'error'
+                })
+                return
+              }
               if (new Date(_data.expirationDate[1].getTime()) - new Date(_data.expirationDate[0].getTime()) < 3600000) {
                 _self.$message({
                   message: '使用时间间隔需大于等于1小时',
@@ -167,10 +174,14 @@ export default {
       } else if (params.timeRule === 2) {
         params.effectTime = _data.notActive + ',' + _data.effective
       } else {
-        params.effectTime =
+        if (!_data.expirationDate) {
+          params.effectTime = null
+        } else {
+          params.effectTime =
             formatDate(_data.expirationDate[0]) +
             ',' +
             formatDate(_data.expirationDate[1])
+        }
       }
       var obj = {
         effectTime: params.effectTime,

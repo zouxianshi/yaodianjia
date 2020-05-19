@@ -74,7 +74,11 @@ export default {
       } else if (this.data.timeRule === 2) {
         str += '自领取' + times.split(',')[0] + '天后' + times.split(',')[1] + '天有效'
       } else { // 选择日期
-        str += formatDate(times.split(',')[0]) + '到' + formatDate(times.split(',')[1])
+        if (!times) {
+          str = '未设置使用时间'
+        } else {
+          str += formatDate(times.split(',')[0]) + '到' + formatDate(times.split(',')[1])
+        }
       }
       return str
     }
