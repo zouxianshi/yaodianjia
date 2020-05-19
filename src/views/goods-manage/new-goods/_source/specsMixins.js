@@ -114,7 +114,7 @@ const mixin = {
         // 标库商品
         //  获取一种选中的值
         this.editSpecsData.map(v => {
-          if (v.isCheck) {
+          if (v.isCheck || !v.isShowSelect) {
             data.push(v)
           }
         })
