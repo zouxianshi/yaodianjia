@@ -926,7 +926,7 @@
           </div>
         </div>
         <div class="edit-card">
-          <div class="header">商品详情</div>
+          <div class="header">图文详情</div>
           <div class="edit-card-cnt">
             <div class="content">
               <section class="goods-details">
@@ -996,7 +996,7 @@
         :loading="subLoading"
         size="small"
         type="primary"
-        style="width:70px"
+        style="width:70px;margin-right: 10px;"
         @click="nextStep"
       >{{ step===3?'保存':"下一步" }}</el-button>
     </div>
