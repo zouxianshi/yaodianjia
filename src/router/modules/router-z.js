@@ -182,9 +182,18 @@ const router = [
     alwaysShow: true,
     children: [
       {
-        path: '/activity',
-        component: () => import('@/views/live-broadcast/activity'),
+        path: 'activity',
+        component: () => import('@/views/live-broadcast/activity/list'),
         name: 'live-activity',
+        meta: {
+          // auth: 'commodity.commodity-combine',
+          title: '直播活动',
+          noCache: true
+        }
+      }, {
+        path: 'activity-edit',
+        component: () => import('@/views/live-broadcast/activity/edit'),
+        name: 'live-activity-edit',
         meta: {
           // auth: 'commodity.commodity-combine',
           title: '直播活动',
