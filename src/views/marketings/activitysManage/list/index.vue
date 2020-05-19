@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-import mGiftCard from '../../_source/giftCard'
+// import mGiftCard from '../../_source/giftCard'
 import { moduleList } from '@/api/coupon'
 import payImage from '@/assets/image/marketings/pay.png'
 import getcoupon from '@/assets/image/marketings/getcoupon.png'
@@ -61,7 +61,7 @@ import guagua from '@/assets/image/marketings/guagua.png'
 export default {
   name: 'ListIndex',
   components: {
-    mGiftCard
+    // mGiftCard
   },
   props: {},
   data() {
