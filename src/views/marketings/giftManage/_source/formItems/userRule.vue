@@ -34,8 +34,8 @@ export default {
   },
   data() {
     var validateUseRule = (rule, value, callback) => {
-      if (this.useRuleLimit === 1 && (value > 100000 || value < 0)) {
-        callback(new Error('请输入正确的门槛金额（0-100000元）'))
+      if (this.useRuleLimit === 1 && (value > 100000 || value < 0.01)) {
+        callback(new Error('请输入正确的门槛金额（0.01 - 100000元）'))
       } else {
         callback()
       }

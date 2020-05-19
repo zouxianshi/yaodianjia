@@ -17,9 +17,9 @@
           自领取起
           <el-input
             v-model="otherData.expirationDay"
-            onkeyup="value=value.replace(/[^0-9]/g,'')"
             :disabled="disabled || params.timeRule != 1"
-            style="width:60px"
+            type="number"
+            style="width:80px"
             @keyup.native="changeView1"
           />天内有效
           <el-tooltip class="item" effect="light" placement="top-start">
@@ -35,15 +35,16 @@
           自领取起
           <el-input
             v-model="otherData.notActive"
-            onkeyup="value=value.replace(/[^0-9]/g,'')"
             :disabled="disabled || params.timeRule != 2"
-            style="width:60px"
+            type="number"
+            style="width:80px"
             @keyup.native="changeView1"
           />天后生效，生效后
           <el-input
             v-model="otherData.effective"
             :disabled="disabled || params.timeRule != 2"
-            style="width:60px"
+            type="number"
+            style="width:80px"
             @keyup.native="changeView1"
           />天失效
           <el-tooltip class="item" effect="light" placement="top-start">
@@ -91,7 +92,7 @@ export default {
     return {
       params: {
         effectTime: 0,
-        timeRule: 1
+        timeRule: 3
       },
       pickerOptions: {
         disabledDate(time) {
@@ -102,8 +103,7 @@ export default {
         expirationDay: '1', // 直接开始有效天数
         expirationDate: [new Date(), new Date(new Date().getTime() + 3600000)], // 有效期(当选择开始、结束日期是)
         notActive: '1', // 等待生效天数
-        effective: '1', // 有效天数
-        merName: ''
+        effective: '1' // 有效天数
       }
     }
   },
@@ -134,10 +134,18 @@ export default {
             } else if (params.timeRule === 2) {
               params.effectTime = _data.notActive + ',' + _data.effective
             } else {
-              params.effectTime =
+              if (new Date(_data.expirationDate[1].getTime()) - new Date(_data.expirationDate[0].getTime()) < 3600000) {
+                _self.$message({
+                  message: '使用时间间隔需大于等于1小时',
+                  type: 'error'
+                })
+                return
+              } else {
+                params.effectTime =
                 formatDate(_data.expirationDate[0]) +
                 ',' +
                 formatDate(_data.expirationDate[1])
+              }
             }
             resolve({
               effectTime: params.effectTime,
