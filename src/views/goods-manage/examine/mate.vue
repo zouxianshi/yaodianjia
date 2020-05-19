@@ -232,7 +232,7 @@
         <div class="info-image">
           <p style="margin-bottom:10px">商品图片：</p>
           <div class="main-img">
-            <!-- <el-image
+            <el-image
               v-if="pairData.mainPic"
               :src="showImg(pairData.mainPic)"
               fit="contain"
@@ -242,9 +242,9 @@
                 加载中
                 <span class="dot">...</span>
               </div>
-            </el-image>-->
-            <div class="no-image-content">
-              <div class="no-image-text">暂无上传</div>
+            </el-image>
+            <div v-else class="no-image-content">
+              <div class="no-image-text">暂未上传</div>
             </div>
           </div>
           <ul class="other-image">
