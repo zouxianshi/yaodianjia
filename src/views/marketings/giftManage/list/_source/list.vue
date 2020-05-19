@@ -27,7 +27,16 @@
         style="width: 100%;"
         empty-text="您暂未创建任何优惠券"
       >
-        <el-table-column prop="cname" label="优惠券名称" />
+        <el-table-column label="优惠券信息">
+          <template slot-scope="scope">
+            <p>{{ scope.row.cname }}
+              <el-tag v-if="scope.row.ctype === 1" size="mini" style="color:#fff" color="#52c41a">折</el-tag>
+              <el-tag v-if="scope.row.ctype === 2" size="mini" style="color:#fff" color="#f5222d">满</el-tag>
+              <el-tag v-if="scope.row.ctype === 3" size="mini" style="color:#fff" color="#faad14">礼</el-tag>
+            </p>
+            <p>ID：{{ scope.row.id }}</p>
+          </template>
+        </el-table-column>
         <el-table-column label="使用场景">
           <template slot-scope="scope">
             {{ scope.row.sceneRule === 1? '仅商城' : scope.row.sceneRule === 2? '仅线下' : '线上线下通用' }}
@@ -116,6 +125,7 @@ export default {
       this.loading = true
       var searchParams = Object.assign({}, this.searchParams, this.pageInfo)
       getCouponList(searchParams).then(res => {
+        console.log(res)
         if (res.data && res.data.records) {
           this.totalCount = res.data.total
           this.tableData = res.data.records

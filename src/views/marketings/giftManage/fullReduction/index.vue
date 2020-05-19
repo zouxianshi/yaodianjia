@@ -385,7 +385,10 @@ export default {
         })
         .catch(err => {
           console.log(err)
-          this.$message('参数错误，请重新填写！')
+          this.$message({
+            message: '参数错误，请检查基本信息、使用规则参数！',
+            type: 'error'
+          })
         })
     }
   }
