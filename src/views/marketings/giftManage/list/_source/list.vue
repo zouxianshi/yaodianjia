@@ -2,19 +2,20 @@
   <div class="list">
     <div class="nav-condition">
       <el-form :inline="true" :model="searchParams" class="demo-form-inline">
-        <el-form-item label="优惠券名称" style="margin-left:10px">
-          <el-input v-model="searchParams.cname" style="width:150px" placeholder="请输入关键词" size="mini" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" size="mini" @click="searchData()">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-radio-group v-model="searchParams.ctype" style="vertical-algin:middle;height:29px" size="mini" @change="changeType">
+        <el-form-item style="display:block">
+          <el-radio-group v-model="searchParams.ctype" style="vertical-algin:middle;height:29px" size="small" @change="changeType">
             <el-radio-button :label="0">全部</el-radio-button>
             <el-radio-button :label="1">折扣券</el-radio-button>
             <el-radio-button :label="2">满减券</el-radio-button>
             <el-radio-button :label="3">礼品券</el-radio-button>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="优惠券名称" style="margin-left:10px">
+          <el-input v-model="searchParams.cname" style="width:150px" placeholder="请输入关键词" size="mini" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" size="mini" @click="searchData()">查询</el-button>
+          <el-button type="primary" size="mini" @click="addData()">新增</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -22,7 +23,7 @@
       <el-table
         v-loading="loading"
         :data="tableData"
-        height="calc(100vh - 430px)"
+        height="calc(100vh - 400px)"
         style="width: 100%;"
         empty-text="您暂未创建任何优惠券"
       >
@@ -102,6 +103,15 @@ export default {
     this.searchData()
   },
   methods: {
+    addData() {
+      if (Number(this.searchParams.ctype) === 1) {
+        this.$router.push('/marketings/gift-manage/discount')
+      } else if (Number(this.searchParams.ctype) === 2) {
+        this.$router.push('/marketings/gift-manage/full-reduction')
+      } else if (Number(this.searchParams.ctype) === 3) {
+        this.$router.push('/marketings/gift-manage/gift')
+      }
+    },
     searchData() {
       this.loading = true
       var searchParams = Object.assign({}, this.searchParams, this.pageInfo)
@@ -157,7 +167,7 @@ export default {
 </script>
 <style lang="scss">
 .list{
-  height: calc(100vh - 325px);overflow: auto;
+  // height: calc(100vh - 325px);overflow: auto;
   .el-table thead th{
     height: 40px;
   }

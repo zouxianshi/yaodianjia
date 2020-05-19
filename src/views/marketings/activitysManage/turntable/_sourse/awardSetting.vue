@@ -26,13 +26,13 @@
         <el-table-column prop="giftContent" label="内容" />
         <el-table-column label="中奖几率">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.winRandom" size="mini" :disabled="isPageUpdateOrView || isRuning" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="2" style="width: 50px" />
+            <el-input v-model="scope.row.winRandom" size="mini" :disabled="isPageUpdateOrView || isRuning" maxlength="2" style="width: 50px" @change="this.value=this.value.replace(/\D/g,'')" />
             <span style="font-size:16px">%</span>
           </template>
         </el-table-column>
         <el-table-column label="奖品数量">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.giftNum" :disabled="isPageUpdateOrView || isRuning" size="mini" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="6" />
+            <el-input v-model="scope.row.giftNum" :disabled="isPageUpdateOrView || isRuning" size="mini" onkeyup="this.value=this.value.replace(/[1-9]\d{0,14}(\.\d{2})?/,'')" maxlength="6" />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120">

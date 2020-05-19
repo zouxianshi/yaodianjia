@@ -105,7 +105,7 @@
                 :disabled="isRuning || ruleForm.countType===1"
                 maxlength="6"
                 style="width:100px"
-              />
+              />次
             </span>
           </el-radio>
           <el-radio :label="1">
@@ -117,7 +117,7 @@
                 :disabled=" isRuning || ruleForm.countType===2"
                 maxlength="6"
                 style="width:100px"
-              />
+              />次
             </span>
           </el-radio>
         </el-radio-group>

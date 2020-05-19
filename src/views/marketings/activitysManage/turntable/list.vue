@@ -47,7 +47,7 @@
         </el-button>-->
       </div>
     </div>
-    <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="大转盘暂未上架任何活动">
+    <el-table :data="tableData" style="width: 100%" empty-text="大转盘暂未上架任何活动">
       <el-table-column prop="date" label="活动类型" width="120">
         <template>
           <div>大转盘</div>
@@ -88,7 +88,7 @@
             >{{ scope.row.options[0].label }}</el-button>
             <span style="padding: 0px 10px; color: rgb(153, 153, 153);">|</span>
             <el-dropdown v-if="scope.row.options.length>2" size="medium" @command="handleCommand">
-              <span class="el-dropdown-link">
+              <span class="el-dropdown-link" style="color: #147de8">
                 更多
                 <i class="el-icon-arrow-down el-icon--right" />
               </span>
@@ -502,7 +502,7 @@ export default {
   // }
   .el-dropdown-link {
     cursor: pointer;
-    color: #147de8;
+    // color: #147de8;
   }
   .el-icon-arrow-down {
     font-size: 12px;

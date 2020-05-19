@@ -2,7 +2,7 @@
   <div class="list-index-model">
     <div class="header-nav">
       <div class="item-box">
-        <m-gift-card v-for="(item, index) in cardInfo" :key="index" :info="item" />
+        <!-- <m-gift-card v-for="(item, index) in cardInfo" :key="index" :info="item" /> -->
       </div>
     </div>
     <div class="list-box">
@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import mGiftCard from '../../_source/giftCard'
+// import mGiftCard from '../../_source/giftCard'
 import mList from './_source/list'
 import discountImg from '@/assets/image/marketings/discount.png'
 import fullReductionImg from '@/assets/image/marketings/fullReduction.png'
@@ -20,7 +20,7 @@ import giftImg from '@/assets/image/marketings/gift.png'
 export default {
   name: 'ListIndex',
   components: {
-    mGiftCard, mList
+    mList
   },
   data() {
     return {
