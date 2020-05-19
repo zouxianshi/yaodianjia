@@ -97,20 +97,20 @@
           @change="changeCount"
         >
           <el-radio :label="2">
-            <span>
-              每天可抽奖&emsp;
-              <el-input
-                v-model="dayLimit"
-                onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
-                :disabled="isRuning || ruleForm.countType===1"
-                maxlength="6"
-                style="width:100px"
-              />次
-            </span>
+
+            每天可抽奖
+            <el-input
+              v-model="dayLimit"
+              onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
+              :disabled="isRuning || ruleForm.countType===1"
+              maxlength="6"
+              style="width:100px"
+            />次
+
           </el-radio>
           <el-radio :label="1">
             <span>
-              每人可抽奖&emsp;
+              每人可抽奖
               <el-input
                 v-model="personLimit"
                 onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
