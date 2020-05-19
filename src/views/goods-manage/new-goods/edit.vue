@@ -740,7 +740,7 @@
                         v-model.trim="item.erpCode"
                         placeholder="输入商品编码"
                         maxlength="16"
-                        @blur="input_checkErpcode(item.erpCode)"
+                        @blur="input_checkErpcode(item,item.erpCode)"
                       />
                     </el-form-item>
                     <el-form-item label>
@@ -749,7 +749,7 @@
                         v-model.trim="item.barCode"
                         maxlength="30"
                         placeholder="若有条形码请务必填写"
-                        @blur="input_checkBarCode(item.barCode)"
+                        @blur="input_checkBarCode(item,item.barCode)"
                       />
                     </el-form-item>
                     <el-form-item label>
