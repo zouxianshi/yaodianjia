@@ -379,8 +379,6 @@
                 <el-table
                   ref="multipleTable"
                   :data="editSpecsData"
-                  @selection-change="handleSelectionChange"
-                  @select="handleSelectChange"
                 >
                   <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
                   <el-table-column width="55">
@@ -388,7 +386,7 @@
                       <el-checkbox
                         v-if="scope.row.isShowSelect"
                         v-model="scope.row.isCheck"
-                        :disabled="scope.row.disabled"
+                        :disabled="scope.row.disabled||is_query"
                       />
                     </template>
                   </el-table-column>
