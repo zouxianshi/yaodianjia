@@ -4,7 +4,7 @@
     <div>
       <img src="@/assets/image/save.png" style="width:120px;height:120px">
     </div>
-    <div>{{ content }}</div>
+    <div>提交成功</div>
     <div style="margin-top:50px">
       <el-button @click="$router.go(0);">继续设置</el-button>
     </div>
@@ -37,5 +37,6 @@ export default {
 .tequitySubmit-model {
   margin-top: 40px;
   text-align: center;
+  height: calc(100vh - 250px);
 }
 </style>
