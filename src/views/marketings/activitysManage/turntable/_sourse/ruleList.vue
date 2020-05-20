@@ -278,8 +278,7 @@ export default {
             return false
           }
           if (
-            Number(this.ruleForm.countRule) === 0 &&
-            Number(this.ruleForm.joinRule) === 3
+            Number(this.ruleForm.countRule) === 0
           ) {
             this.$message({
               message: '请输入正确抽奖次数限制',
