@@ -162,7 +162,7 @@ export default {
                 })
                 return
               }
-              if (new Date(_data.expirationDate[1].getTime()) - new Date(_data.expirationDate[0].getTime()) < 3600000) {
+              if (new Date(_data.expirationDate[1]).getTime() - new Date(_data.expirationDate[0]).getTime() < 3600000) {
                 _self.$message({
                   message: '使用时间间隔需大于等于1小时',
                   type: 'error'
@@ -180,7 +180,7 @@ export default {
               timeRule: params.timeRule
             })
           } else {
-            reject(valid)
+            reject('请设置正确的可使用时间')
           }
         })
       })

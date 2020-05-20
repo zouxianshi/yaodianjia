@@ -36,7 +36,7 @@
             <el-checkbox
               v-model="isSelectMax"
               :disabled="isUpdate"
-              @change="discountForm.maxPrice =''"
+              @change="changeMaxPrice"
             />最多优惠
             <el-input
               v-model="discountForm.maxPrice"
@@ -175,16 +175,18 @@ export default {
   data() {
     var validateMaxPrice = (rule, value, callback) => {
       // 验证最大优惠金额
-      if (this.isSelectMax && (value < 0.01 || value > 100000)) {
-        return callback(new Error('请正确输入最多优惠金额(0.01-100000)'))
+      if (this.isSelectMax && !value) {
+        return callback(new Error('请输入优惠金额上限'))
+      } else if (this.isSelectMax && (value < 0.01 || value > 100000)) {
+        return callback(new Error('优惠金额上限大于0.01元且小于100000元'))
       } else {
         callback()
       }
     }
     var validateDenomination = (rule, value, callback) => {
       // 验证优惠内容
-      if (!value || parseFloat(value) < 1 || parseFloat(value) >= 10 || '' + value.indexOf('-') >= 0) {
-        return callback(new Error('请输入正确的优惠折扣(1 - 9.9)'))
+      if (!value || parseFloat(value) < 1 || parseFloat(value) >= 10) {
+        return callback(new Error('优惠券折扣必须大于等于1，且最大不能超过9.9'))
       } else {
         callback()
       }
@@ -297,6 +299,12 @@ export default {
     })
   },
   methods: {
+    // 修改是否有最大优惠
+    changeMaxPrice() {
+      this.discountForm.maxPrice = ''
+      this.$refs.form.validateField('maxPrice', (flag) => {
+      })
+    },
     // 删除已选择门店
     delSelectStore(item, index) {
       this.chooseStore.splice(index, 1)
@@ -332,7 +340,12 @@ export default {
       this.$refs.selectStoreComponent.dataFrom([])
     },
     next() {
-      if (this.active++ > 1) this.active = 1
+      if (this.active === 1) {
+        console.log('1dao2')
+      }
+      if (this.active++ > 1) {
+        this.active = 1
+      }
     },
     async _submit() {
       this.$refs['form'].validate(flag => {
@@ -410,11 +423,17 @@ export default {
               }
             })
             .catch(err => {
-              console.log(err)
-              this.$message({
-                message: '参数错误，请检查基本信息、使用规则参数！',
-                type: 'error'
-              })
+              if (typeof (err) === 'string') {
+                this.$message({
+                  message: err,
+                  type: 'error'
+                })
+              } else {
+                this.$message({
+                  message: '请检查参数',
+                  type: 'error'
+                })
+              }
             })
         }
       })

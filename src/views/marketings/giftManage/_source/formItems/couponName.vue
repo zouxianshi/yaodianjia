@@ -57,7 +57,7 @@ export default {
           if (valid) {
             resolve({ cname: _self.params.cname })
           } else {
-            reject(valid)
+            reject('请输入优惠券名称')
           }
         })
       })

@@ -65,7 +65,7 @@ export default {
           if (valid) {
             resolve({ useRule: _self.params.useRule })
           } else {
-            reject(valid)
+            reject('请输入正确的门槛金额（0.01 - 100000元）')
           }
         })
       })

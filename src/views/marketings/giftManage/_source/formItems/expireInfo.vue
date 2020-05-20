@@ -9,7 +9,7 @@
       :inline="false"
     >
       <el-form-item label="到期提醒：">
-        <el-checkbox v-model="isRember" :disabled="disabled" @change="params.expireInfo=1" />到期前
+        <el-checkbox v-model="isRember" :disabled="disabled" @change="changeIsRember" />到期前
         <el-select v-model="params.expireInfo" placeholder="请选择" style="width:80px" :disabled="disabled || !isRember">
           <el-option
             v-for="item in 10"
@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       params: {
-        expireInfo: 1
+        expireInfo: 0
       },
       isRember: false
     }
@@ -53,6 +53,13 @@ export default {
     }
   },
   methods: {
+    changeIsRember() {
+      if (this.isRember) {
+        this.params.expireInfo = 1
+      } else {
+        this.params.expireInfo = 0
+      }
+    },
     $verification() {
       var _self = this
       var result = new Promise(function(resolve, reject) {
