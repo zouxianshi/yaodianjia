@@ -76,7 +76,7 @@ export default {
         modelHead: val.modelHead,
         modelNote: val.modelNote,
         modelType: val.modelType.toString(),
-        operate: val.isValid === true ? 1 : 0
+        operate: val.noticeState === true ? 1 : 0
       }
       setTemplate(params).then(res => {
         if (res.code === '10000') {

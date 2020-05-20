@@ -70,7 +70,7 @@
             >礼</el-tag>
           </div>
           <div>ID:{{ scope.row.id }}</div>
-          <div>{{ scope.row.shopRule ===1?'仅商城':'' || scope.row.shopRule ===2?'仅门店':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</div>
+          <div>{{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</div>
         </template>
       </el-table-column>
       <el-table-column v-show="radio === '全部'" prop="name" label="领取方式">
@@ -85,7 +85,7 @@
       <el-table-column label="优惠内容">
         <template
           slot-scope="scope"
-        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
+        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
       </el-table-column>
       <el-table-column prop="perCount" label="限领" min-width="80" align="center" />
       <el-table-column prop="totalReceiveCountActivity" label="已领取量" min-width="80" align="center" />
@@ -265,7 +265,7 @@ export default {
       this.getList()
     },
     // 商品折扣处理
-    handleshopRule(ctype, useRule, denomination) {
+    handleshopRule(ctype, useRule, denomination, giftName) {
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -279,7 +279,11 @@ export default {
           return `满${useRule}可用,减${denomination}元`
         }
       } else {
-        return '指定礼品'
+        if (giftName === 'null' || null) {
+          return ''
+        } else {
+          return giftName
+        }
       }
     },
     // 使用日期

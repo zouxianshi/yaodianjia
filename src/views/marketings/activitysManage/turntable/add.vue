@@ -5,12 +5,13 @@
       <el-step title="奖项设置" />
       <el-step title="保存提交" />
     </el-steps>
-    <ruleList v-show="stepActive === 1" ref="ruleList" :params="params" @handleNext="handleNext" />
-    <awardSetting v-show="stepActive === 2" ref="awardSetting" :params="params" @handleNext="handleNext" @submitAjax="submitAjax" />
+    <ruleList v-show="stepActive === 1" ref="ruleList" :params="params" @handleNext="handleNext" @getcouponList="getcouponList" />
+    <awardSetting v-show="stepActive === 2" ref="awardSetting" :params="params" :couponlist="couponList" @handleNext="handleNext" @submitAjax="submitAjax" />
     <submitSave v-show="stepActive === 3" ref="submitSave" @handleNext="handleNext" />
   </div>
 </template>
 <script>
+import { searchActivities } from '@/api/coupon'
 import { createLuckDraw, ActivityDetail, updateActivity } from '@/api/coupon'
 import ruleList from './_sourse/ruleList'
 import awardSetting from './_sourse/awardSetting'
@@ -27,6 +28,7 @@ export default {
     return {
       stepActive: 1, // 显示第几步
       removedList: [],
+      couponList: [],
       params: {
         activityDetailName: '',
         activityGiftReqDTO: [],
@@ -82,6 +84,20 @@ export default {
     }
   },
   methods: {
+    getcouponList(ruleForm) {
+      const params = {
+        beginTime: ruleForm.beginTime,
+        busType: 1,
+        endTime: ruleForm.endTime,
+        ctype: '0',
+        currentPage: 1,
+        pageSize: 999,
+        merCode: this.merCode
+      }
+      searchActivities(params).then(res => {
+        this.couponList = res.data.records
+      })
+    },
     handleNext(stepActive, obj = {}) {
       this.stepActive = stepActive
       Object.assign(this.params, obj)

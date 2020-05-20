@@ -104,7 +104,7 @@
             @change="changeGift"
           >
             <el-option
-              v-for="item in couponList"
+              v-for="item in couponlist"
               :key="item.id"
               :label="item.cname"
               :value="item.id"
@@ -169,9 +169,9 @@
   </div>
 </template>
 <script>
-import { getCouponList } from '@/api/coupon'
+// import { getCouponList } from '@/api/coupon'
 import { mapGetters } from 'vuex'
-import { formatDate } from '@/utils/timer'
+// import { formatDate } from '@/utils/timer'
 import config from '@/utils/config'
 import _ from 'lodash'
 // import discountpng from '@/assets/image/marketings/discountpng.png'
@@ -184,6 +184,12 @@ export default {
       type: Object,
       default() {
         return {}
+      }
+    },
+    couponlist: {
+      type: Array,
+      default() {
+        return []
       }
     }
   },
@@ -205,7 +211,6 @@ export default {
       formsGift: {
         selectedGift: [] // 已选择的礼品券
       },
-      couponList: [],
       ruleForm: {
         giftId: null, // 选择优惠券时的id
         giftType: 1, // 礼品类型
@@ -276,7 +281,6 @@ export default {
     }
   },
   mounted() {
-    this.getcouponList()
   },
   methods: {
     goBack() {
@@ -388,21 +392,6 @@ export default {
       form.giftName = ''
       form.giftImg = ''
       form.winRandom = ''
-    },
-    getcouponList() {
-      const searchParams = {
-        cname: '',
-        ctype: 0,
-        busType: 0,
-        currentPage: 1,
-        pageSize: 999,
-        beginTime: formatDate(new Date())
-      }
-      getCouponList(searchParams).then(res => {
-        if (res.data && res.data.records) {
-          this.couponList = res.data.records
-        }
-      })
     },
     // 格式化表格数据：礼品类型
     formatType(type) {
