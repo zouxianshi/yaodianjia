@@ -100,10 +100,10 @@ export default {
         }
       },
       otherData: {
-        expirationDay: '1', // 直接开始有效天数
+        expirationDay: 1, // 直接开始有效天数
         expirationDate: [new Date(), new Date(new Date().getTime() + 3600000)], // 有效期(当选择开始、结束日期是)
-        notActive: '1', // 等待生效天数
-        effective: '1' // 有效天数
+        notActive: 1, // 等待生效天数
+        effective: 1 // 有效天数
       }
     }
   },
@@ -130,7 +130,7 @@ export default {
             var _data = _self.otherData
             var params = _self.params
             if (params.timeRule === 1) {
-              if (_data.expirationDay.toString().indexOf('.') || _data.expirationDay > 3650 || _data.expirationDay < 1) {
+              if (_data.expirationDay.toString().indexOf('.') > -1 || _data.expirationDay > 3650 || _data.expirationDay < 1) {
                 _self.$message({
                   message: '立即开始使用时间有效期仅支持1-3650之间的整数',
                   type: 'error'
@@ -139,14 +139,14 @@ export default {
               }
               params.effectTime = _data.expirationDay
             } else if (params.timeRule === 2) {
-              if (_data.notActive.toString().indexOf('.') || _data.notActive > 365 || _data.notActive < 1) {
+              if (_data.notActive.toString().indexOf('.') > -1 || _data.notActive > 365 || _data.notActive < 1) {
                 _self.$message({
                   message: '预设使用时间有效期，开始时间及到期时间仅支持1-365之间的整数',
                   type: 'error'
                 })
                 return
               }
-              if (_data.effective.toString().indexOf('.') || _data.effective > 365 || _data.effective < 1) {
+              if (_data.effective.toString().indexOf('.') > -1 || _data.effective > 365 || _data.effective < 1) {
                 _self.$message({
                   message: '预设使用时间有效期，开始时间及到期时间仅支持1-365之间的整数',
                   type: 'error'

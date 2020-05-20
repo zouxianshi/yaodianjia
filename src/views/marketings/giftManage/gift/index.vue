@@ -22,7 +22,7 @@
             <span>礼品券</span>
           </el-form-item>
           <m-counpon-name ref="cname" :discount-form="discountForm" @changeViews="changeView" />
-          <el-form-item label="兑换商品：">
+          <el-form-item label="兑换商品：" required>
             <el-button type="primary" plain size="mini" :disabled="isUpdate" @click="$refs.GoodsComponent.open()">
               选择商品
             </el-button>
@@ -129,14 +129,8 @@ export default {
           return time.getTime() < new Date(new Date().getTime() - 86400000)
         }
       },
-      compArr: [
-        { ref: 'cname' },
-        { ref: 'returnRules' },
-        { ref: 'expireInfo' },
-        { ref: 'note' },
-        { ref: 'timeRule' },
-        { ref: 'useRule' }
-      ],
+      compArr1: ['cname'],
+      compArr2: ['timeRule', 'useRule'],
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
       active: 1, // 当前操作步骤
       chooseStore: [], // 选择的门店
@@ -261,13 +255,37 @@ export default {
       this.$refs.selectStoreComponent.dataFrom([])
     },
     next() {
-      if (this.active++ > 1) this.active = 1
+      if (this.active === 1) {
+        if (this.storeSelectGoods.length <= 0) {
+          this.$message({
+            message: '请选择商品',
+            type: 'error'
+          })
+          return
+        }
+        this.$refs['form'].validate(flag => {
+          if (flag) {
+            var arr = []
+            _.map(this.compArr1, v => {
+              var flag = this.$refs[v].$verification()
+              arr.push(flag)
+            })
+            Promise.all(arr).then(res => {
+              console.log(res)
+              this.active++
+            }).catch(err => {
+              console.log(err)
+              return false
+            })
+          }
+        })
+      }
     },
     async _submit() {
       var that = this
       var arr = []
-      _.map(that.compArr, item => {
-        var flag = that.$refs[item['ref']].$verification()
+      _.map(that.compArr2, item => {
+        var flag = that.$refs[item].$verification()
         arr.push(flag)
       })
       Promise.all(arr).then(res => {
