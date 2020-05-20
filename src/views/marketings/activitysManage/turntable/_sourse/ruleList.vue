@@ -72,7 +72,7 @@
           v-model="ruleForm.joinRule"
           :disabled="isRuning"
           style="width:120px;font-size: 18px;line-height: inherit;"
-          @change="ruleForm.integralRule=ruleForm.countRule=0"
+          @change="ruleForm.integralRule=ruleForm.countRule=''"
         >
           <el-radio :label="1">
             <span>
@@ -180,8 +180,8 @@ export default {
         }
       },
       // activeTime: [], // 活动有效期
-      dayLimit: 0, // 每天限制
-      personLimit: 0, // 每人限制
+      dayLimit: '', // 每天限制
+      personLimit: '', // 每人限制
       ruleForm: {
         activeTime: [], // 活动有效期
         activityDetailName: '', // 活动名称
@@ -189,10 +189,10 @@ export default {
         beginTime: '', // 活动开始时间
         endTime: '', // 活动结束时间
         activityNote: '', // 活动说明
-        integralRule: 0, // 参与消耗海贝
+        integralRule: '', // 参与消耗海贝
         joinRule: 1, // 参与方式
         countType: 2, // 参与限制类型  1：每人 2：每天
-        countRule: 0 // 次数限制
+        countRule: '' // 次数限制
       },
       rules: {
         activityDetailName: [
@@ -264,8 +264,8 @@ export default {
   methods: {
     changeCount() {
       // 改变限制次数类型
-      this.personLimit = this.dayLimit = 0
-      this.ruleForm.countRule = 0
+      this.personLimit = this.dayLimit = ''
+      this.ruleForm.countRule = ''
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -278,7 +278,7 @@ export default {
             return false
           }
           if (
-            Number(this.ruleForm.countRule) === 0
+            Number(this.ruleForm.countRule) === ''
           ) {
             this.$message({
               message: '请输入正确抽奖次数限制',
@@ -287,6 +287,7 @@ export default {
             return false
           }
           this.$emit('handleNext', 2, this.ruleForm)
+          this.$emit('getcouponList', this.ruleForm)
         } else {
           return false
         }
