@@ -384,6 +384,9 @@ const mixin = {
         })
     },
     _loadSpces() {
+      this.chooseSpecName = []
+      this.chooseSpec = []
+      this.dynamicProp = []
       this.specLoading = true
       // 根据一级分类加载规格
       getSpecs(this.chooseTypeList[0].id).then(res => {
@@ -418,6 +421,11 @@ const mixin = {
               if (v.productSpecSkuDTOs) {
                 if (this.dynamicProp.length === 0) {
                   v.productSpecSkuDTOs.map(vs => {
+                    this.specsList.map(sp => {
+                      if (sp.attributeName === v.skuKeyName && sp.id !== v.skuKeyId) {
+                        v.skuKeyId = sp.id
+                      }
+                    })
                     this.dynamicProp.push({
                       name: vs.skuKeyName,
                       id: vs.skuKeyId,
@@ -477,33 +485,31 @@ const mixin = {
                 this.specsForm.specs = []
               }
               // 取出 sku的规格动态数据
-              for (let index = 0; index < specList.length; index++) {
-                const element = specList[index]
+              specList.map((element, index) => {
                 if (element.specSkuList) {
-                  if (this.dynamicProp.length === 0) {
-                    const data = []
-                    element.specSkuList.map(v => {
+                  const data = []
+                  element.specSkuList.map(v => {
+                    this.specsList.map(sp => {
+                      if (sp.attributeName === v.skuKeyName && sp.id !== v.skuKeyId) {
+                        v.skuKeyId = sp.id
+                      }
+                    })
+                    if (this.dynamicProp.length === 0) {
                       this.dynamicProp.push({
                         name: v.skuKeyName,
                         id: v.skuKeyId,
                         keys: `index_${v.skuKeyId}_${v.skuKeyName}`
                       })
                       data.push(v.skuKeyId)
-                      // 设置默认选择
-                      this.chooseSpec.push(v.skuKeyId)
-                      this.chooseSpecName.push(v.skuKeyName)
-                    })
-                  }
+                    }
+                    // 设置默认选择
+                    this.chooseSpec.push(v.skuKeyId)
+                    this.chooseSpecName.push(v.skuKeyName)
+                    element[`index_${v.skuKeyId}_${v.skuKeyName}`] = v.skuValue
+                  })
                 }
                 element.owner = element.owner || 0
                 element.isSku = 0
-              }
-              specList.map(v => {
-                if (v.specSkuList) {
-                  v.specSkuList.map(vs => {
-                    v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
-                  })
-                }
               })
               this.editSpecsData = specList
             }
@@ -552,6 +558,11 @@ const mixin = {
                 if (this.dynamicProp.length === 0 && this.standardNoData) {
                   const data = []
                   v.specSkuList.map(v => {
+                    this.specsList.map(sp => {
+                      if (sp.attributeName === v.skuKeyName && sp.id !== v.skuKeyId) {
+                        v.skuKeyId = sp.id
+                      }
+                    })
                     this.dynamicProp.push({
                       name: v.skuKeyName,
                       id: v.skuKeyId,
@@ -634,7 +645,7 @@ const mixin = {
                 this.specsForm.specsData.push(v)
               }
             } else {
-              if (this.chooseSpec.includes(v.id)) {
+              if (this.chooseSpec.includes(v.id) || this.chooseSpecName.includes(v.attributeName)) {
                 v.isCheck = true
                 this.specsForm.specsData.push(v)
               }
