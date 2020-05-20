@@ -46,7 +46,7 @@
       </el-radio-group>
     </div>
     <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="领券中心暂未上架任何优惠券">
-      <el-table-column prop="cname" label="优惠券信息" width="150">
+      <el-table-column key="1" prop="cname" label="优惠券信息" width="150">
         <template slot-scope="scope">
           <div>
             {{ scope.row.cname }}
@@ -73,30 +73,30 @@
           <div>{{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</div>
         </template>
       </el-table-column>
-      <el-table-column v-show="radio === '全部'" prop="name" label="领取方式">
+      <el-table-column v-if="radio === '全部'" key="2" prop="name" label="领取方式">
         <template
           slot-scope="scope"
         >{{ scope.row.activityType ===1?'免费领取':'' || scope.row.activityType ===2?'海贝兑换':'' || scope.row.activityType ===3?'现金购买':'' }}</template>
       </el-table-column>
-      <el-table-column prop="totalCount" label="券总数" min-width="80" align="center" />
-      <el-table-column label="使用时间" width="160">
+      <el-table-column key="3" prop="totalCount" label="券总数" min-width="80" align="center" />
+      <el-table-column key="4" label="使用时间" width="160">
         <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
       </el-table-column>
-      <el-table-column label="优惠内容">
+      <el-table-column key="5" label="优惠内容">
         <template
           slot-scope="scope"
         >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
       </el-table-column>
-      <el-table-column prop="perCount" label="限领" min-width="80" align="center" />
-      <el-table-column prop="totalReceiveCountActivity" label="已领取量" min-width="80" align="center" />
-      <el-table-column v-if="radio === '海贝兑换' || radio === '全部'" prop="integral" label="所需海贝" min-width="80" align="center" />
-      <el-table-column v-if="radio === '现金购买' || radio === '全部'" prop="amount" label="所需现金" min-width="80" align="center" />
-      <el-table-column prop="timeLimit" label="领券时间" width="160">
+      <el-table-column key="6" prop="perCount" label="限领" min-width="80" align="center" />
+      <el-table-column key="7" prop="totalReceiveCountActivity" label="已领取量" min-width="80" align="center" />
+      <el-table-column v-if="radio === '海贝兑换' || radio === '全部'" key="8" prop="integral" label="所需海贝" min-width="80" align="center" />
+      <el-table-column v-if="radio === '现金购买' || radio === '全部'" key="9" prop="amount" label="所需现金" min-width="80" align="center" />
+      <el-table-column key="10" prop="timeLimit" label="领券时间" width="160">
         <template
           slot-scope="scope"
         >{{ scope.row.timeLimit? scope.row.timeLimit.replace(/,/," 到 ") : scope.row.timeLimit }}</template>
       </el-table-column>
-      <el-table-column prop="name" label="优惠券状态" min-width="100" align="center">
+      <el-table-column key="11" prop="name" label="优惠券状态" min-width="100" align="center">
         <template
           slot-scope="scope"
         >
@@ -106,7 +106,7 @@
           <el-tag v-if="scope.row.activityState.toString()==='5'" size="mini" type="danger">已删除</el-tag>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="130">
+      <el-table-column key="12" fixed="right" label="操作" width="130">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.activityState.toString()==='2'"

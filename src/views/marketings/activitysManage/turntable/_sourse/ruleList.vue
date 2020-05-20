@@ -161,7 +161,6 @@ export default {
   },
   data() {
     var validateparticipatio = (rule, value, callback) => {
-      alert()
       if (
         this.ruleForm.joinRule === 2 &&
         (Number(this.ruleForm.integralRule) === 0 ||
