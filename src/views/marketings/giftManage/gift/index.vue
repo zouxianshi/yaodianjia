@@ -323,6 +323,7 @@ export default {
             })
           }
           params.giftId = this.storeSelectGoods[0].erpCode
+          params.giftName = this.storeSelectGoods[0].name
           addCoupon(params).then(res => {
             if (res.code === '10000') {
               this.$message({
