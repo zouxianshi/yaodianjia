@@ -163,7 +163,7 @@ export default {
       // 验证优惠内容
       if (!value || value > 100000 || value < 0.01) {
         return callback(new Error('请输入正确的优惠金额(0.01-100000)'))
-      } else if (value.toString().split('.')[1].length > 2) {
+      } else if (value.toString().indexOf('.') > 0 && value.toString().split('.')[1].length > 2) {
         return callback(new Error('最多支持两位小数'))
       } else {
         callback()

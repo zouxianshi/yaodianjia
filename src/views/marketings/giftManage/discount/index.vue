@@ -181,7 +181,7 @@ export default {
         return callback(new Error('请输入优惠金额上限'))
       } else if (this.isSelectMax && (value < 0.01 || value > 100000)) {
         return callback(new Error('优惠金额上限大于0.01元且小于100000元'))
-      } else if (value.toString().split('.')[1].length > 2) {
+      } else if (value.toString().indexOf('.') > 0 && value.toString().split('.')[1].length > 2) {
         return callback(new Error('最多支持两位小数'))
       } else {
         callback()
@@ -191,7 +191,7 @@ export default {
       // 验证优惠内容
       if (!value || parseFloat(value) < 1 || parseFloat(value) >= 10) {
         return callback(new Error('优惠券折扣必须大于等于1，且最大不能超过9.9'))
-      } else if (value.toString().split('.')[1].length > 2) {
+      } else if (value.toString().indexOf('.') > 0 && value.toString().split('.')[1].length > 2) {
         return callback(new Error('最多支持两位小数'))
       } else {
         callback()
