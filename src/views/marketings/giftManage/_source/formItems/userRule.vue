@@ -36,6 +36,8 @@ export default {
     var validateUseRule = (rule, value, callback) => {
       if (this.useRuleLimit === 1 && (value > 100000 || value < 0.01)) {
         callback(new Error('请输入正确的门槛金额（0.01 - 100000元）'))
+      } else if (value.toString().split('.')[1].length > 2) {
+        return callback(new Error('最多支持两位小数'))
       } else {
         callback()
       }
