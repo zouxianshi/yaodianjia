@@ -5,8 +5,8 @@
         <mPhoneView :data="discountForm" :other-data="otherData" />
       </div>
       <div class="discount-content-r">
-        <el-steps :active="active" simple>
-          <el-step title="基本信息" icon="1" />
+        <el-steps :active="active">
+          <el-step title="基本信息" />
           <el-step title="使用规则" />
         </el-steps>
         <el-form
@@ -150,6 +150,7 @@ import selectStore from '../../../marketing/components/select-store' // 已选�
 import storeGoods from '../../../marketing/components/store-gods'
 import selectGoods from '../../../marketing/components/select-goods'
 import { formatDate } from '@/utils/timer'
+
 import {
   getCouponDetail,
   addCoupon,
@@ -235,7 +236,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode'])
+    ...mapGetters(['merCode']),
+    oneImg() {
+      return require('../img/one.png')
+    },
+    twoImg() {
+      return require('../img/two.png')
+    }
   },
   mounted() {
     this.useRuleLimit = this.discountForm.useRule === 0 ? 0 : 1 // 是否有使用门槛

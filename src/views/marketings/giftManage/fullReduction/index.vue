@@ -5,7 +5,7 @@
         <mPhoneView :data="discountForm" :other-data="otherData" />
       </div>
       <div class="discount-content-r">
-        <el-steps :active="active" simple>
+        <el-steps :active="active">
           <el-step title="基本信息" />
           <el-step title="使用规则" />
         </el-steps>
@@ -134,6 +134,8 @@ import storeDialog from '../../../marketing/components/store' // 已选择门店
 import selectStore from '../../../marketing/components/select-store' // 已选择门店列表
 import storeGoods from '../../../marketing/components/store-gods'
 import selectGoods from '../../../marketing/components/select-goods'
+import { formatDate } from '@/utils/timer'
+
 import {
   getCouponDetail,
   addCoupon,
@@ -197,7 +199,7 @@ export default {
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
         sceneRule: 3, // 使用场景
-        effectTime: [new Date(), new Date(new Date().getTime() + 3600000)],
+        effectTime: [formatDate(new Date()), formatDate(new Date(new Date().getTime() + 3600000))].join(','),
         useRule: 0, // 门槛金额
         shopRule: 1, // 适用门店
         productRule: 1, // 使用商品
