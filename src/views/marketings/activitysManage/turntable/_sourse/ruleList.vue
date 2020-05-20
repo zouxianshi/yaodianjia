@@ -131,14 +131,15 @@
             </span>
           </el-radio>
         </el-radio-group>
-        <el-input
-          v-else
-          v-model="ruleForm.countRule"
-          :disabled="isRuning"
-          onkeyup="this.value=this.value.replace(/\D/g,'')"
-          maxlength="6"
-          style="width:120px"
-        />次
+        <span v-else>
+          <el-input
+            v-model="ruleForm.countRule"
+            :disabled="isRuning"
+            onkeyup="this.value=this.value.replace(/\D/g,'')"
+            maxlength="6"
+            style="width:120px"
+          />次
+        </span>
       </el-form-item>
     </el-form>
     <div style="margin-left:30px">
