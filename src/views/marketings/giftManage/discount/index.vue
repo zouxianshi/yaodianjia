@@ -149,6 +149,7 @@ import selectStore from '../../../marketing/components/select-store' // 已选�
 
 import storeGoods from '../../../marketing/components/store-gods'
 import selectGoods from '../../../marketing/components/select-goods'
+import { formatDate } from '@/utils/timer'
 import {
   getCouponDetail,
   addCoupon,
@@ -205,7 +206,7 @@ export default {
       compArr2: ['timeRule', 'useRule'],
       otherData: {
         expirationDay: '1', // 直接开始有效天数
-        expirationDate: [new Date(), new Date()], // 有效期(当选择开始、结束日期是)
+        expirationDate: [new Date(), new Date(new Date().getTime() + 3600000)], // 有效期(当选择开始、结束日期是)
         notActive: '1', // 等待生效天数
         effective: '1', // 有效天数
         merName: ''
@@ -220,11 +221,11 @@ export default {
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
         sceneRule: 3, // 使用场景
-        effectTime: 1,
+        effectTime: [formatDate(new Date()), formatDate(new Date(new Date().getTime() + 3600000))].join(','),
         useRule: 0, // 门槛金额
         shopRule: 1, // 适用门店
         productRule: 1, // 使用商品
-        timeRule: 1,
+        timeRule: 3,
         logo: ''
       },
       rules: {

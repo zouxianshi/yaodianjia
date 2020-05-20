@@ -69,6 +69,7 @@ export default {
     userTime() {
       var str = ''
       var times = this.data.effectTime
+      console.log(times, 'zhzzzzzzzzzzzzzz')
       if (this.data.timeRule === 1) { // 选择马上开始有效期
         str += '自领取起' + times + '天内有效'
       } else if (this.data.timeRule === 2) {

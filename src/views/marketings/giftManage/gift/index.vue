@@ -151,12 +151,12 @@ export default {
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
         sceneRule: 2, // 使用场景 (2.线下门店)
-        effectTime: 1,
+        effectTime: [new Date(), new Date(new Date().getTime() + 3600000)],
         giftId: '',
         useRule: 0, // 门槛金额
         shopRule: 1, // 适用门店
         productRule: 2, // 使用商品(2.部分商品可用)
-        timeRule: 1,
+        timeRule: 3,
         logo: '' // 预览图片
       }
     }

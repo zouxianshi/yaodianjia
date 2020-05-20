@@ -197,11 +197,11 @@ export default {
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
         sceneRule: 3, // 使用场景
-        effectTime: 0,
+        effectTime: [new Date(), new Date(new Date().getTime() + 3600000)],
         useRule: 0, // 门槛金额
         shopRule: 1, // 适用门店
         productRule: 1, // 使用商品
-        timeRule: 1,
+        timeRule: 3,
         logo: ''
       },
       rules: {
