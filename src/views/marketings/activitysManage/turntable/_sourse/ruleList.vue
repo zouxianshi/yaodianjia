@@ -208,7 +208,7 @@ export default {
         ],
         joinRule: [{ validator: validateparticipatio, trigger: 'change' }], // 参与消耗海贝
         activeTime: [
-          { required: true, message: '请填写活动说明', trigger: 'blur' }
+          { required: true, message: '请选择活动时间', trigger: 'blur' }
         ]
       }
     }
@@ -237,9 +237,9 @@ export default {
     ruleForm: {
       handler: function() {
         this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
-        this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[1])
-      }
-      // deep: true
+        this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
+      },
+      deep: true
     },
     // activeTime(newVal) {
     //   this.ruleForm.beginTime = formatDate(newVal[0])

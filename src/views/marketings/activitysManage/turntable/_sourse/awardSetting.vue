@@ -459,7 +459,7 @@ export default {
     // 提交数据到add
     submitData() {
       var params = {}
-      var selected = _.cloneDeep(this.selectedGift)
+      var selected = _.cloneDeep(this.formsGift.selectedGift)
       selected.map(item => {
         item.winRandom = item.winRandom / 100
       })

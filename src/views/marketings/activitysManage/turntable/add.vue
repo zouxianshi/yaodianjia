@@ -65,7 +65,7 @@ export default {
         data.listActivityGiftEntity.map(item => {
           item.winRandom = item.winRandom * 100
         })
-        this.$refs.awardSetting.selectedGift = data.listActivityGiftEntity
+        this.$refs.awardSetting.formsGift.selectedGift = data.listActivityGiftEntity
         if (data.state === 1 && data.status === 1) {
           this.params.pageState = 1 // 1编辑 2查看
         } else if (data.state === 2 && data.status === 1) {
