@@ -138,7 +138,7 @@
           onkeyup="this.value=this.value.replace(/\D/g,'')"
           maxlength="6"
           style="width:120px"
-        />
+        />次
       </el-form-item>
     </el-form>
     <div style="margin-left:30px">
@@ -199,11 +199,11 @@ export default {
           { min: 1, max: 30, message: '最多30字', trigger: 'blur' }
         ],
         bottomNote: [
-          { required: true, message: '请输入底部文案', trigger: 'blur' },
+          // { required: true, message: '请输入底部文案', trigger: 'blur' },
           { min: 1, max: 20, message: '最多20字', trigger: 'blur' }
         ],
         activityNote: [
-          { required: true, message: '请填写活动说明', trigger: 'blur' },
+          // { required: true, message: '请填写活动说明', trigger: 'blur' },
           { min: 1, max: 200, message: '最多200字', trigger: 'blur' }
         ],
         joinRule: [{ validator: validateparticipatio, trigger: 'change' }], // 参与消耗海贝
@@ -256,6 +256,9 @@ export default {
         this.ruleForm.countRule = newVal
       }
     }
+  },
+  mounted() {
+    console.log(this.ruleForm)
   },
   methods: {
     changeCount() {
