@@ -23,7 +23,7 @@
             <span>满减券</span>
           </el-form-item>
           <m-counpon-name ref="cname" :discount-form="discountForm" @changeViews="changeView" />
-          <el-form-item label="优惠内容：" prop="denomination" required>
+          <el-form-item label="优惠内容：" prop="denomination">
             <el-input
               v-model="discountForm.denomination"
               type="number"
@@ -209,7 +209,10 @@ export default {
         logo: ''
       },
       rules: {
-        denomination: [{ validator: validateDenomination, trigger: 'blur' }]
+        denomination: [
+          { validator: validateDenomination, trigger: 'blur' },
+          { required: true, message: '请填写优惠内容', trigger: 'blur' }
+        ]
       }
     }
   },

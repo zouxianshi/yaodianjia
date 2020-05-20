@@ -39,13 +39,13 @@
         </el-table-column>
         <el-table-column label="使用场景">
           <template slot-scope="scope">
-            {{ scope.row.sceneRule === 1? '仅商城' : scope.row.sceneRule === 2? '仅线下' : '线上线下通用' }}
+            {{ scope.row.sceneRule === 1? '仅商城' : scope.row.sceneRule === 2? '仅门店' : '线上线下通用' }}
           </template>
         </el-table-column>
         <el-table-column prop="denomination" label="优惠内容">
           <template slot-scope="scope">
-            <span v-if="scope.row.ctype === 1"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>{{ scope.row.denomination }}折优惠券</span>
-            <span v-if="scope.row.ctype === 2"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>减{{ scope.row.denomination }}元优惠券</span>
+            <span v-if="scope.row.ctype === 1"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>{{ scope.row.denomination }}折</span>
+            <span v-if="scope.row.ctype === 2"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>减{{ scope.row.denomination }}元</span>
             <span v-if="scope.row.ctype === 3">{{ scope.row.cname }}</span>
           </template>
         </el-table-column>
@@ -58,7 +58,7 @@
         </el-table-column>
         <el-table-column label="适用门店" width="110">
           <template slot-scope="scope">
-            {{ scope.row.shopRule === 1? '全部门店' : scope.row.shopRule === 2? '部分门店可用' : '部分门店不可用' }}
+            {{ scope.row.shopRule === 1? '全部门店' : scope.row.shopRule === 2? '部分门店' : '部分门店' }}
           </template>
         </el-table-column>
         <el-table-column label="适用商品" width="110">

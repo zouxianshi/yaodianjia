@@ -70,8 +70,8 @@
     <el-button
       type="primary"
       plain
-      :disabled="formsGift.selectedGift.length>= 8 || isPageUpdateOrView || isRuning"
-      @click="dialogVisible = true; $refs.ruleForm.clearValidate()"
+      :disabled="formsGift.selectedGift.length>= 10 || isPageUpdateOrView || isRuning"
+      @click="dialogVisible = true;$refs.ruleForm && $refs.ruleForm.clearValidate()"
     >添加奖品</el-button>
     <div style="margin-top:40px">
       <el-button type="primary" @click="$emit('handleNext', 1)">上一步</el-button>

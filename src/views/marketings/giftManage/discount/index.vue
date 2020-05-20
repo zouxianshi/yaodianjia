@@ -23,7 +23,7 @@
             <span>折扣券</span>
           </el-form-item>
           <m-counpon-name ref="cname" :discount-form="discountForm" @changeViews="changeView" />
-          <el-form-item label="优惠内容：" prop="denomination" required>
+          <el-form-item label="优惠内容：" prop="denomination">
             <el-input
               v-model="discountForm.denomination"
               type="number"
@@ -179,7 +179,7 @@ export default {
       // 验证最大优惠金额
       if (this.isSelectMax && !value) {
         return callback(new Error('请输入优惠金额上限'))
-      } else if (this.isSelectMax && (value < 0.01 || value > 100000)) {
+      } else if (this.isSelectMax && (value < 0.01 || value >= 100000)) {
         return callback(new Error('优惠金额上限大于0.01元且小于100000元'))
       } else if (value.toString().indexOf('.') > 0 && value.toString().split('.')[1].length > 2) {
         return callback(new Error('最多支持两位小数'))
@@ -189,8 +189,8 @@ export default {
     }
     var validateDenomination = (rule, value, callback) => {
       // 验证优惠内容
-      if (!value || parseFloat(value) < 1 || parseFloat(value) >= 10) {
-        return callback(new Error('优惠券折扣必须大于等于1，且最大不能超过9.9'))
+      if (!value || parseFloat(value) < 1 || parseFloat(value) >= 9.99) {
+        return callback(new Error('优惠券折扣必须大于等于1，且最大不能超过9.99'))
       } else if (value.toString().indexOf('.') > 0 && value.toString().split('.')[1].length > 2) {
         return callback(new Error('最多支持两位小数'))
       } else {
@@ -234,7 +234,10 @@ export default {
         logo: ''
       },
       rules: {
-        denomination: [{ validator: validateDenomination, trigger: 'blur' }],
+        denomination: [
+          { validator: validateDenomination, trigger: 'blur' },
+          { required: true, message: '请填写优惠内容', trigger: 'blur' }
+        ],
         maxPrice: [{ validator: validateMaxPrice, trigger: 'blur' }]
       }
     }
