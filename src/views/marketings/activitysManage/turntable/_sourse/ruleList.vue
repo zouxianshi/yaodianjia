@@ -98,7 +98,7 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="抽奖次数">
+      <el-form-item label="抽奖次数" prop="dayLimit">
         <el-radio-group
           v-if="ruleForm.joinRule !== 3"
           v-model="ruleForm.countType"
@@ -161,6 +161,7 @@ export default {
   },
   data() {
     var validateparticipatio = (rule, value, callback) => {
+      alert()
       if (
         this.ruleForm.joinRule === 2 &&
         (Number(this.ruleForm.integralRule) === 0 ||
@@ -208,6 +209,7 @@ export default {
           { min: 1, max: 200, message: '最多200字', trigger: 'blur' }
         ],
         joinRule: [{ validator: validateparticipatio, trigger: 'change' }], // 参与消耗海贝
+        dayLimit: [{ validator: validateparticipatio, trigger: 'change' }],
         activeTime: [
           { required: true, message: '请选择活动时间', trigger: 'blur' }
         ]

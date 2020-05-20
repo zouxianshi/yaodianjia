@@ -70,7 +70,7 @@
             >礼</el-tag>
           </div>
           <div>ID:{{ scope.row.id }}</div>
-          <div>{{ scope.row.shopRule ===1?'仅商城':'' || scope.row.shopRule ===2?'仅门店':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</div>
+          <div>{{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</div>
         </template>
       </el-table-column>
       <el-table-column v-show="radio === '全部'" prop="name" label="领取方式">
@@ -85,7 +85,7 @@
       <el-table-column label="优惠内容">
         <template
           slot-scope="scope"
-        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.denomination.giftName) }}</template>
+        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
       </el-table-column>
       <el-table-column prop="perCount" label="限领" min-width="80" align="center" />
       <el-table-column prop="totalReceiveCountActivity" label="已领取量" min-width="80" align="center" />
@@ -282,7 +282,7 @@ export default {
         if (giftName === 'null' || null) {
           return ''
         } else {
-          giftName
+          return giftName
         }
       }
     },
