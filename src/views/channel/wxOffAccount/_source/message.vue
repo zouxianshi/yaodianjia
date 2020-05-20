@@ -26,7 +26,7 @@
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-switch
-              v-model="scope.row.isValid"
+              v-model="scope.row.noticeState"
               active-color="#13ce66"
               inactive-color="#dcdfe6"
               @change="switchChange(scope.row)"
@@ -101,11 +101,12 @@ export default {
         this.tableData = res.data
         this.tableData.forEach(element => {
           console.log(element)
-          if (element.isValid.toString() === '1') {
-            element.isValid = true
+          if (element.noticeState.toString() === '1') {
+            element.noticeState = true
           } else {
-            element.isValid = false
+            element.noticeState = false
           }
+          console.log(this.tableData)
         })
         this.loading = false
       })

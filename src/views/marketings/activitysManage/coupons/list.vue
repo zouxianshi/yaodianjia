@@ -20,7 +20,7 @@
             <el-option label="全部" value />
             <el-option label="未开始" value="2" />
             <el-option label="进行中" value="1" />
-            <el-option label="已结束" value="3" />
+            <el-option label="已失效" value="3" />
             <el-option label="已删除" value="5" />
           </el-select>
         </div>
@@ -88,6 +88,7 @@
         >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
       </el-table-column>
       <el-table-column prop="perCount" label="限领" min-width="80" align="center" />
+      <el-table-column prop="totalReceiveCountActivity" label="已领取量" min-width="80" align="center" />
       <el-table-column v-if="radio === '海贝兑换' || radio === '全部'" prop="integral" label="所需海贝" min-width="80" align="center" />
       <el-table-column v-if="radio === '现金购买' || radio === '全部'" prop="amount" label="所需现金" min-width="80" align="center" />
       <el-table-column prop="timeLimit" label="领券时间" width="160">
@@ -95,13 +96,14 @@
           slot-scope="scope"
         >{{ scope.row.timeLimit? scope.row.timeLimit.replace(/,/," 到 ") : scope.row.timeLimit }}</template>
       </el-table-column>
-      <el-table-column prop="name" label="活动状态" min-width="80" align="center">
+      <el-table-column prop="name" label="优惠券状态" min-width="100" align="center">
         <template
           slot-scope="scope"
         >
           <el-tag v-if="scope.row.activityState.toString()==='1'" size="mini" type="success">进行中</el-tag>
           <el-tag v-if="scope.row.activityState.toString()==='2'" size="mini" type="info">未开始</el-tag>
-          <el-tag v-if="scope.row.activityState.toString()==='3'" size="mini" type="danger">已结束</el-tag>
+          <el-tag v-if="scope.row.activityState.toString()==='3'" size="mini" type="danger">已失效</el-tag>
+          <el-tag v-if="scope.row.activityState.toString()==='5'" size="mini" type="danger">已删除</el-tag>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="130">
@@ -113,6 +115,7 @@
             @click.native.prevent="editRow(scope.row)"
           >编辑</el-button>
           <el-button
+            v-if="scope.row.activityState.toString()!=='2'"
             type="text"
             size="small"
             @click.native.prevent="editRow(scope.row, true)"
