@@ -56,7 +56,7 @@ export default {
           this.removedList.push(item.id)
         })
         this.$refs.ruleList.ruleForm = data
-        this.$refs.ruleList.activeTime = [data.beginTime, data.endTime]
+        this.$refs.ruleList.ruleForm.activeTime = [data.beginTime, data.endTime]
         if (data.countType === 1) {
           this.$refs.ruleList.personLimit = data.countRule
         } else {
