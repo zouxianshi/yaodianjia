@@ -121,6 +121,7 @@
             @click.native.prevent="editRow(scope.row, true)"
           >查看</el-button>
           <el-button
+            v-if="scope.row.activityState.toString()!=='5'"
             type="text"
             size="small"
             @click.native.prevent="deleteRow(scope.$index, tableData)"

@@ -75,6 +75,7 @@ export default {
           value: 'counpCenter',
           lable: '领券中心',
           img: counpCenter,
+          createText: '新建优惠券',
           desc: '',
           listUrl:
             '/marketings/activity-manage/coupons/list?code=TA001&name=领券中心',
