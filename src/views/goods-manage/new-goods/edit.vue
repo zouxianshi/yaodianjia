@@ -1815,7 +1815,7 @@ export default {
             }
             if (
               this.chooseTypeList &&
-              (this.chooseTypeList[0].name === '中西药品') !== '中西药品'
+              this.chooseTypeList[0].name !== '中西药品'
             ) {
               data.drugType = ''
               data.dosageForm = ''
