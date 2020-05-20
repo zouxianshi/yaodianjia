@@ -80,7 +80,7 @@ export default {
           listUrl: '/marketing/activity/list/15',
           linkUrl: '/marketing/activity/aprice-edit',
           desc:
-            '会员消费满足一定的金额或商品件数后，可以通过添加低价换购商品的促销手段，来提升客单价，激活积压库存。'
+            '会员消费满足一定的金额后，可以通过添加低价换购商品的促销手段，来提升客单价，激活积压库存。'
         },
         {
           value: 'limitPreferential',
