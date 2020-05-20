@@ -3,7 +3,7 @@
     <el-alert
       type="warning"
       :closable="false"
-    >奖项个数说明：大转盘支持设置6或8个奖项； 排序说明：将按照您添加的先后顺序在大转盘活动中显示；中奖几率说明：单位默认为百分比，中奖总和必须等于1</el-alert>
+    >{{ numTips }}</el-alert>
     <div style="margin:20px 0">
       <el-form ref="formsGift" :model="formsGift" :rules="rulesGift">
         <el-table :data="formsGift.selectedGift" style="width: 100%" height="calc(100vh - 430px)">
@@ -241,6 +241,15 @@ export default {
   },
   computed: {
     ...mapGetters(['merCode', 'name', 'token']),
+    numTips() {
+      if (this.$route.query.code === 'TA003') {
+        return `奖项个数说明：大转盘支持设置6或8个奖项； 排
+                序说明：将按照您添加的先后顺序在大转盘活动中显示；中奖几率说明：单位默认为百分比，中奖总和必须等于1`
+      } else {
+        return `奖项个数说明：刮刮乐最多设置10个奖项；排序说明：奖品的添加先后顺序，刮刮乐的获奖几率与顺序无关；
+                中奖几率说明：单位默认为百分比，中奖总和必须等于1`
+      }
+    },
     upLoadUrl() {
       return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImgAny?merCode=${this.merCode}`
     },
@@ -463,12 +472,23 @@ export default {
       selected.map(item => {
         item.winRandom = item.winRandom / 100
       })
-      if (selected.length !== 6 && selected.length !== 8) {
-        this.$message({
-          message: '奖品数量需设置为6或者8',
-          type: 'error'
-        })
-        return
+      var activeCode = this.$route.query.code
+      if (activeCode === 'TA003') {
+        if (selected.length !== 6 && selected.length !== 8) {
+          this.$message({
+            message: '奖项总数需设置为6或者8',
+            type: 'error'
+          })
+          return
+        }
+      } else {
+        if (selected.length < 1 || selected.length > 10) {
+          this.$message({
+            message: '奖项总数限制1-10',
+            type: 'error'
+          })
+          return
+        }
       }
       var num = 0
       _.map(selected, item => {
