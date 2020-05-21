@@ -96,7 +96,10 @@ export default {
     }
   },
   watch: {
+    deep: true,
+    immediate: true,
     $route(newRoute) {
+      console.log(newRoute, '新路由')
       this.activeName = newRoute.query.type // 这里就是新的query
     }
   },
