@@ -28,6 +28,15 @@ export function exportData(params) {
   })
 }
 
+// 导出商品--新
+export function exportDataNew(params) {
+  return request({
+    url: `${config.merchandise}/1.0/ds/op/file/template/product/export?ids=${params.ids}`,
+    method: 'get',
+    isExport: true,
+    responseType: 'blob'
+  })
+}
 // 获取标库商品列表
 export function getProductList(params) {
   return request({

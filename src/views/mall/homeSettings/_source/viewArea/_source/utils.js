@@ -47,7 +47,7 @@ export const toPosition = (uuid, n = 28) => $('.hsm-hm').animate({ scrollTop: $(
  */
 export const getRecommendedFormat = (that) => {
   return new Promise((resolve, reject) => {
-    getRecommended({ storeId: store.state.mall.centerStoreId }).then(res => {
+    getRecommended({ storeId: store.state.mall.centerStoreId, searchType: 1 }).then(res => {
       const itemList = _.map(res.data.data, v => {
         const { centerStoreId, centerStoreName, h5Base, $store } = that
         const { commodityId, mainPic, mprice, name, lprice, keyFeature } = v
@@ -107,7 +107,7 @@ export const getNowFormatDate = () => {
 export const getSearchParams = p => {
   return _.assign({
     classId: '',
-    displayTime: getNowFormatDate(),
+    displayTime: '',
     startTime: '',
     endTime: '',
     positionCode: '',

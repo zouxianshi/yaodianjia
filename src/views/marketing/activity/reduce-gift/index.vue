@@ -12,6 +12,32 @@
           :disabled="disabled"
         />
       </el-form-item>
+      <el-form-item label="活动底图：">
+        <el-radio-group v-model="form.img" :disabled="disabled">
+          <el-radio label="1">不添加</el-radio>
+          <el-radio label="2">添加</el-radio>
+        </el-radio-group>
+        <template v-if="form.img==='2'">
+          <div class="select-picture">
+            <el-upload
+              class="avatar-uploader"
+              :action="upLoadUrl"
+              :show-file-list="false"
+              :headers="headers"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+              :on-error="handleImgError"
+              :disabled="disabled"
+            >
+              <el-image v-if="form.imgUrl" :src="showImg(form.imgUrl)" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon" />
+            </el-upload>
+            <div class="select-btn">
+              <div>上传图片尺寸比例建议：3:1</div>
+            </div>
+          </div>
+        </template>
+      </el-form-item>
       <el-form-item ref="activitTime" label="活动时间：" prop="activitTime">
         <el-date-picker
           v-model="form.activitTime"
@@ -282,6 +308,7 @@ import selectGoods from '../../components/select-goods'
 import { createActFull, getActFull, updateActFull } from '@/api/activity'
 import { mapGetters } from 'vuex'
 import { checkNumberdouble } from '@/utils/validate'
+import config from '@/utils/config'
 import { throttle } from '@/utils/throttle'
 
 export default {
@@ -313,7 +340,9 @@ export default {
         type: ['1'], // 下单规则
         allStore: false,
         allSpec: false,
+        imgUrl: '',
         ruleType: 1, // 循环0/阶梯1
+        img: '1',
         uint: 0, // 满减门槛元/件 0元1件
         ruleList: [
           {
@@ -356,7 +385,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode'])
+    ...mapGetters(['token', 'merCode']),
+    upLoadUrl() {
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+    },
+    headers() {
+      return { Authorization: this.token }
+    }
   },
   created() {
     console.log(this.$route)
@@ -424,6 +459,8 @@ export default {
               allStore: !!data.allStore,
               allSpec: !!data.allSpec,
               type: data.userCoupons === 3 ? ['1'] : [],
+              img: data.imgUrl ? '2' : '1',
+              imgUrl: data.imgUrl,
               ruleType,
               uint,
               // discountType,
@@ -660,7 +697,60 @@ export default {
         this.form.uint = 0
       }
     },
-
+    beforeAvatarUpload(file) {
+      const size = file.size / 1024
+      const isImg =
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/jpg'
+      if (!isImg) {
+        this.$message({
+          message: '只能上传格式为 jpg、jpeg、png的图片',
+          type: 'warning'
+        })
+        this.pageLoading.close()
+        return
+      }
+      if (size > 1024) {
+        this.$message({
+          message: '最大只能上传1MB的图片',
+          type: 'warning'
+        })
+        this.pageLoading.close()
+        return false
+      }
+      this.pageLoading = this.$loading({
+        lock: true,
+        text: '图片上传中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      return true
+    },
+    handleAvatarSuccess(res, file) {
+      if (res.code === '10000') {
+        this.form.imgUrl = res.data
+        console.log('1111111111111111', res.data, this.form)
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+      this.pageLoading.close()
+    },
+    handleImgError(row) {
+      const data = JSON.parse(row.toString().replace('Error:', ''))
+      if (data.code === 40301) {
+        // location.reload()
+      } else {
+        this.$message({
+          message: '图片上传失败',
+          type: 'error'
+        })
+        this.pageLoading.close()
+      }
+    },
     onSubmit: throttle(function() {
       //
       console.log('我是格式话表单提交数据----------------', this.form)
@@ -676,7 +766,8 @@ export default {
             'allStore',
             'endTime',
             'startTime',
-            'name'
+            'name',
+            'imgUrl'
           ])
           // 需要增加组装的参数    userCoupons  pmtRule:{ruleList, ruleType} activitySpecList storeIds merCode: this.merCode,
           if (Array.isArray(this.form.type)) {
@@ -748,6 +839,7 @@ export default {
           }
           dataParam = {
             ...dataParam,
+            imgUrl: this.form.img === '2' ? this.form.imgUrl : '',
             merCode: this.merCode,
             id: this.activityId,
             activitySpecList: specIdData, //
@@ -876,6 +968,29 @@ export default {
     border-left: #409eff 2px solid;
     padding-left: 10px;
     margin-bottom: 20px;
+  }
+  .avatar {
+    width: 100px;
+    height: 100px;
+    display: block;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 100px;
+    height: 100px;
+    line-height: 100px !important;
+    text-align: center;
+  }
+  .select-picture {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    .select-btn {
+      margin-left: 10px;
+      font-size: 12px;
+      color: #8c939d;
+    }
   }
   .el-select .el-input {
     width: 60px;

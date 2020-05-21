@@ -12,7 +12,8 @@ const getters = {
   permission_routes: state => state.permission.routes,
   merCode: state => state.user.merCode,
   groupList: state => state.group.list,
-  activity: state => state.activity
+  activity: state => state.activity,
+  userId: state => state.user.userId
 }
 
 export default getters

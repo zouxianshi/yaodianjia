@@ -5,6 +5,7 @@ export default {
   components: {},
   data() {
     return {
+      loadingMask: null, // 客服列表loading对象
       isFirstQueryFinished: false,
       delDialogVisible: false, // 删除对话框是否展示
       curDelRow: null, // 当前删除按钮所在的行数据
@@ -151,6 +152,7 @@ export default {
           total: result.totalCount,
           list: result.data
         }
+        this.loadingMask && this.loadingMask.close && this.loadingMask.close()
         console.log('merSupportTableData', this.merSupportTableData)
       })
     },
@@ -388,15 +390,31 @@ export default {
   watch: {
     webSocketConnected(value) {
       console.warn('watch: webSocketConnected change', value)
-      if (value && !this.isFirstQueryFinished) {
-        this.querySupportStaffList('first')
-      }
+      this.loadingMask = this.$loading({
+        lock: true,
+        text: '加载中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      setTimeout(() => {
+        if (value && !this.isFirstQueryFinished) {
+          this.querySupportStaffList('first')
+        }
+      }, 300)
     }
   },
   updated() {
     console.log('udpated: this.ryConnected', this.ryConnected, this.isFirstQueryFinished, this.webSocketConnected)
     if (this.webSocketConnected && !this.isFirstQueryFinished) {
-      this.querySupportStaffList('first')
+      this.loadingMask = this.$loading({
+        lock: true,
+        text: '加载中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      setTimeout(() => {
+        this.querySupportStaffList('first')
+      }, 300)
     }
   }
 }

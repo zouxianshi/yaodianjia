@@ -48,15 +48,23 @@
             </el-form-item>
           </template>
           <template v-else>
-            <el-form-item v-if="keys!=='mprice'" label="" :prop="keys" :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]">
+            <el-form-item v-if="keys!=='mprice'&&keys!=='barCode'" label="" :prop="keys" :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]">
               <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
               <span>
                 <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
                 <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
               </span>
-              <p v-if="keys==='erpCode'&&err_show" class="tip">商品编码只能为纯数字</p>
+              <p v-if="keys==='erpCode'&&err_show" class="tip">只能输入数字、英文、字符</p>
               <p v-show="keys==='barCode'&&err_show" class="tip">只能输入数字、英文、字符</p>
               <p v-show="keys==='limitNum'&&err_show" class="tip">只能输入不能小于0的整数</p>
+            </el-form-item>
+            <el-form-item v-else-if="keys==='barCode'" label="" :prop="keys">
+              <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
+              <span>
+                <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
+                <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
+              </span>
+              <p v-show="err_show" class="tip">只能输入数字、英文、字符</p>
             </el-form-item>
             <el-form-item v-else label="" :prop="keys">
               <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
@@ -152,7 +160,8 @@ export default {
     handleSubSave() {
       this.$refs['formData'].validate((valid) => {
         if (valid) {
-          if (this.keys === 'erpCode' && !/^[0-9]+$/.test(this.infoData[this.keys])) {
+          console.log(this.keys)
+          if (this.keys === 'erpCode' && !checkZmSZ(this.infoData[this.keys])) {
             this.err_show = true
             return
           }
@@ -202,7 +211,7 @@ export default {
 }
 </script>
 <style scoped>
-.tip{
-  font-size: 12px;
-}
+  .tip{
+    font-size: 12px;
+  }
 </style>

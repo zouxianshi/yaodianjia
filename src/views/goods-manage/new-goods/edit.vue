@@ -7,7 +7,7 @@
         <el-step title="图文信息" icon="el-icon-picture-outline-round" @click="handleGoStep(3)" />
       </el-steps>
       <!-- 第一步 -->
-      <div v-show="step===1">
+      <div v-show="step===1" class="basic-info-section">
         <section v-loading="basicLoading" element-loading-text="拼命加载中">
           <!-- 分类信息 -->
           <div class="edit-card">
@@ -193,6 +193,7 @@
                         <el-option label="甲类OTC" :value="0" />
                         <el-option label="处方药" :value="1" />
                         <el-option label="乙类OTC" :value="2" />
+                        <el-option label="OTC" :value="4" />
                       </el-select>
                     </el-form-item>
                     <el-form-item label="剂型：">
@@ -214,7 +215,7 @@
                       size="small"
                     />
                   </el-form-item>
-                  <el-form-item label="产地：" prop="produceOrigin">
+                  <el-form-item label="产地：">
                     <el-input
                       v-model.trim="basicForm.produceOrigin"
                       maxlength="50"
@@ -262,16 +263,14 @@
                       />
                     </div>-->
                   </el-form-item>
-                  <el-form-item
-                    :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'"
-                  >
+                  <el-form-item label="功能/适应症">
                     <el-input
                       v-model.trim="basicForm.keyFeature"
                       type="textarea"
                       maxlength="512"
                       :rows="3"
                       show-word-limit
-                      placeholder="请输入功能主治/适应症"
+                      placeholder="请输入功能/适应症"
                       size="small"
                     />
                   </el-form-item>
@@ -314,7 +313,7 @@
                     <el-checkbox v-model="basicForm.isEasyBreak" :true-label="1" :false-label="0">易碎</el-checkbox>
                     <el-checkbox v-model="basicForm.isLiquid" :true-label="1" :false-label="0">液体</el-checkbox>
                     <template
-                      v-if="chooseTypeList&&chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')"
+                      v-if="chooseTypeList&&chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'"
                     >
                       <el-checkbox
                         v-model="basicForm.hasEphedrine"
@@ -331,7 +330,7 @@
       </div>
       <!-- 规格信息 -->
       <div v-show="step===2">
-        <div class="specs-box">
+        <div v-loading="specLoading" class="specs-box" element-loading-text="拼命加载中">
           <p
             class="text-right"
             style="font-size:13px"
@@ -347,7 +346,7 @@
                   >
                     <el-checkbox
                       :key="index"
-                      :checked="chooseSpec.indexOf(item.id)>-1"
+                      :checked="chooseSpecName.indexOf(item.attributeName)>-1"
                       :disabled="true||is_query"
                       @change="handleSpecsChange(item)"
                     >{{ item.attributeName }}</el-checkbox>
@@ -375,13 +374,17 @@
             </el-form-item>
             <el-form-item label="规格信息：">
               <template v-if="basicForm.origin===1">
-                <el-table
-                  ref="multipleTable"
-                  :data="editSpecsData"
-                  @selection-change="handleSelectionChange"
-                  @select="handleSelectChange"
-                >
-                  <el-table-column type="selection" :selectable="selectable" width="55" />
+                <el-table ref="multipleTable" :data="editSpecsData">
+                  <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
+                  <el-table-column width="55">
+                    <template slot-scope="scope">
+                      <el-checkbox
+                        v-if="scope.row.isShowSelect"
+                        v-model="scope.row.isCheck"
+                        :disabled="scope.row.disabled||is_query"
+                      />
+                    </template>
+                  </el-table-column>
                   <!-- <el-table-column
                     v-for="(items,index1) in dynamicProp"
                     :key="index1"
@@ -732,18 +735,16 @@
                         v-model.trim="item.erpCode"
                         placeholder="输入商品编码"
                         maxlength="16"
-                        @blur="input_checkErpcode(item.erpCode)"
+                        @blur="input_checkErpcode(item,item.erpCode)"
                       />
                     </el-form-item>
                     <el-form-item label>
-                      <span slot="label">
-                        <span class="tip">*</span> 商品条码
-                      </span>
+                      <span slot="label">商品条码</span>
                       <el-input
                         v-model.trim="item.barCode"
                         maxlength="30"
-                        placeholder="输入商品条码"
-                        @blur="input_checkBarCode(item.barCode)"
+                        placeholder="若有条形码请务必填写"
+                        @blur="input_checkBarCode(item,item.barCode)"
                       />
                     </el-form-item>
                     <el-form-item label>
@@ -753,7 +754,6 @@
                         <el-option label="平安" :value="1" />
                       </el-select>
                     </el-form-item>
-
                     <el-form-item>
                       <span slot="label">
                         <span class="tip">*</span> 参考价格
@@ -880,6 +880,7 @@
           <div class="header">
             商品橱窗图
             <span class="img-tips">最多6张，图片800*800</span>
+            <span class="img-tipe-noImg">(无图片则无法上架到商城)</span>
           </div>
           <div class="edit-card-cnt">
             <div class="content">
@@ -894,6 +895,7 @@
                 @onsort="handleSortEnd"
                 @onSuccess="handleImgSuccess"
                 @onError="handleImgError"
+                @remove="handleRemove"
               />
               <el-dialog append-to-body :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt>
@@ -912,6 +914,7 @@
                   type="primary"
                   size="small"
                   :loading="subLoading1"
+                  style="width:70px"
                   @click="handleSubImg"
                 >保存</el-button>
               </div>
@@ -919,7 +922,7 @@
           </div>
         </div>
         <div class="edit-card">
-          <div class="header">商品详情</div>
+          <div class="header">图文详情</div>
           <div class="edit-card-cnt">
             <div class="content">
               <section class="goods-details">
@@ -940,7 +943,7 @@
                   />
                 </div>
               </section>
-              <div class="text-center">
+              <!-- <div class="text-center">
                 <el-button
                   v-if="!is_query"
                   type="primary"
@@ -948,7 +951,7 @@
                   :loading="subLoading2"
                   @click="handleSubInfo"
                 >保存</el-button>
-              </div>
+              </div>-->
             </div>
           </div>
         </div>
@@ -989,6 +992,7 @@
         :loading="subLoading"
         size="small"
         type="primary"
+        style="width:70px;margin-right: 10px;"
         @click="nextStep"
       >{{ step===3?'保存':"下一步" }}</el-button>
     </div>
@@ -997,7 +1001,11 @@
 <script>
 import Tinymce from '@/components/Tinymce'
 import vueUploadImg from '@/components/ImgUpload'
-import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
+import {
+  getTypeTree,
+  getPreGroupList,
+  getTypeDimensionList
+} from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import {
@@ -1192,7 +1200,8 @@ export default {
       subLoading2: false,
       subLoading1: false, // 加载
       pageLoading: false, // 加载
-      leaveAction: false // 离开页面动作，true为保存离开  false异常离开
+      leaveAction: false, // 离开页面动作，true为保存离开  false异常离开
+      isHasImg: false
     }
   },
   computed: {
@@ -1238,13 +1247,15 @@ export default {
       this.pageLoading.close()
     }
   },
+  mounted() {
+    this.basicLoading = true
+  },
   created() {
     if (!this.$route.query.id) {
       // 如果是编辑
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
     }
-
     this.is_query = this.$route.query.type === 'query'
     console.log(this.$route.query.type)
     if (this.is_query) {
@@ -1254,12 +1265,7 @@ export default {
       sessionStorage.setItem('editIsQuery', '')
       sessionStorage.setItem('editId', this.$route.query.id)
     }
-    this._loadTypeList() // 获取分组
-    this._loadBrandList({
-      pageSize: 30,
-      currentPage: 1
-    }) // 获取所属品牌
-    console.log('@@@@@@@@@@@@@')
+
     this.getTypeListData()
       .then(res => {
         this._loadBasicInfo()
@@ -1267,16 +1273,21 @@ export default {
       .catch(_ => {
         this._loadBasicInfo()
       })
+    this._loadTypeList() // 获取分组
+    this._loadBrandList({
+      pageSize: 30,
+      currentPage: 1
+    }) // 获取所属品牌
     this._loadUnit() // 加载单位
     // chooseTypeList不为空且第一个为中西药品才有必要加载
     this._loadMetering() // 加载剂型
 
-    this.pageLoading = this.$loading({
-      lock: true,
-      text: '数据初始化中...',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
+    // this.pageLoading = this.$loading({
+    //   lock: true,
+    //   text: '数据初始化中...',
+    //   spinner: 'el-icon-loading',
+    //   background: 'rgba(0, 0, 0, 0.7)'
+    // })
   },
   methods: {
     tinymceLoad() {
@@ -1362,11 +1373,21 @@ export default {
           ids.map(v => {
             const dat = datas[v]
             if (dat) {
-              this.chooseGroup.push([
-                { name: dat.name, id: dat.id },
-                { name: dat.child.name, id: dat.child.id },
-                { name: dat.child.child.name, id: dat.child.child.id }
-              ])
+              if (dat.child.child) {
+                this.chooseGroup.push([
+                  { name: dat.name, id: dat.id },
+                  { name: dat.child.name, id: dat.child.id },
+                  {
+                    name: dat.child.child.name,
+                    id: dat.child.child.id
+                  }
+                ])
+              } else {
+                this.chooseGroup.push([
+                  { name: dat.name, id: dat.id },
+                  { name: dat.child.name, id: dat.child.id }
+                ])
+              }
             }
           })
         }
@@ -1379,7 +1400,7 @@ export default {
         this.basicLoading = false
         return
       }
-      this.subLoading = true
+      // this.subLoading = true
       getBasicGoodsInfo(this.$route.query.id, this.merCode)
         .then(res => {
           // 分组处理
@@ -1445,11 +1466,11 @@ export default {
           this.basicForm = data
           this.$refs.editor.setContent(this.basicForm.intro)
           this.basicLoading = false
-          this.subLoading = false
+          // this.subLoading = false
         })
         .catch(_ => {
           this.basicLoading = false
-          this.subLoading = false
+          // this.subLoading = false
         })
     },
     _loadGoodsImgAry() {
@@ -1467,6 +1488,7 @@ export default {
               fileList.push(item)
             })
             this.fileList = fileList
+            this.isHasImg = fileList.length > 0
           }
         })
       }
@@ -1537,6 +1559,16 @@ export default {
         })
         this.pageLoading.close()
       }
+    },
+    handleRemove(index) {
+      if (this.isHasImg && this.fileList.length === 1) {
+        this.$message({
+          message: '删除失败，请至少保留一张图片',
+          type: 'error'
+        })
+        return false
+      }
+      this.fileList.splice(index, 1)
     },
     handlePreview(file) {
       this.dialogImageUrl = file.imgUrl
@@ -1784,7 +1816,9 @@ export default {
             // }
             data.groupIds = []
             this.chooseGroup.map(v => {
-              data.groupIds.push(v[2].id)
+              v[2] && v[2].id
+                ? data.groupIds.push(v[2].id)
+                : data.groupIds.push(v[1].id)
             })
             if (this.chooseTypeList.length !== 3) {
               this.$message({
@@ -1792,6 +1826,14 @@ export default {
                 type: 'error'
               })
               return
+            }
+            if (
+              this.chooseTypeList &&
+              this.chooseTypeList[0].name !== '中西药品'
+            ) {
+              data.drugType = ''
+              data.dosageForm = ''
+              data.hasEphedrine = ''
             }
             this.subLoading = true
             if (this.basicForm.id) {
@@ -1819,10 +1861,18 @@ export default {
     handleSubImg() {
       // 保存图片
       if (this.fileList.length === 0) {
-        this.$message({
-          message: '必须上传图片',
-          type: 'error'
-        })
+        if (this.isHasImg) {
+          // 判断之前是否有图片
+          this.$message({
+            message: '保存失败，请至少保留一张图片',
+            type: 'error'
+          })
+        } else {
+          this.$message({
+            message: '无图片则无法上架到商城',
+            type: 'warning'
+          })
+        }
         return
       }
       this.subLoading1 = true
@@ -1874,46 +1924,48 @@ export default {
       }
       saveGoodsDetails(data)
         .then(res => {
+          this.doSubmitInfo()
           // this.$message({
           //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
           //   type: 'success'
           // })
-          this.subLoading = false
-          this.leaveAction = true
-          setTimeout(() => {
-            let url = ''
-            if (this.basicForm.origin === 1) {
-              url = '/goods-manage/depot'
-            } else {
-              url = '/goods-manage/apply-record'
-            }
-            this.$confirm('请确认已保存橱窗图', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            })
-              .then(() => {
-                this.$store
-                  .dispatch('tagsView/delView', this.$route)
-                  .then(res => {
-                    sessionStorage.setItem('isRefreshDepot', true)
-                    this.$router.replace(url)
-                  })
-                // this.$store.dispatch('tagsView/delView', this.$route)
-                // this.$store
-                //   .dispatch('tagsView/delVisitedView', this.$route)
-                //   .then(res => {})
-                // this.$router.replace(url)
-                // this.$router.go(-1) // 返回上一个路由
-              })
-              .catch(() => {
-                console.log('已取消')
-              })
-          }, 1000)
         })
         .catch(_ => {
           this.subLoading = false
         })
+    },
+    doSubmitInfo() {
+      this.subLoading = false
+      this.leaveAction = true
+
+      setTimeout(() => {
+        let url = ''
+        if (this.basicForm.origin === 1) {
+          url = '/goods-manage/depot'
+        } else {
+          url = '/goods-manage/apply-record'
+        }
+        this.$confirm('请确认已保存橱窗图', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$store.dispatch('tagsView/delView', this.$route).then(res => {
+              sessionStorage.setItem('isRefreshDepot', true)
+              this.$router.replace(url)
+            })
+            // this.$store.dispatch('tagsView/delView', this.$route)
+            // this.$store
+            //   .dispatch('tagsView/delVisitedView', this.$route)
+            //   .then(res => {})
+            // this.$router.replace(url)
+            // this.$router.go(-1) // 返回上一个路由
+          })
+          .catch(() => {
+            console.log('已取消')
+          })
+      }, 1000)
     }
   }
 }
@@ -1933,11 +1985,17 @@ export default {
 .tox .tox-statusbar {
   display: none !important;
 }
+.basic-info-section {
+  .el-loading-spinner {
+    top: 10%;
+  }
+}
 </style>
 <style lang="scss" scoped>
 .edit-wrapper {
   color: #333;
   padding-bottom: 50px;
+
   .img-tips {
     font-size: 12px;
     margin-bottom: 10px;
@@ -1947,12 +2005,19 @@ export default {
       margin-bottom: 5px;
     }
   }
+  .img-tipe-noImg {
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color: red;
+  }
   .specs-box {
     margin-top: 20px;
     .el-table {
       width: auto;
     }
   }
+
   .edit-card {
     margin-top: 10px;
     .el-input {
@@ -2105,6 +2170,7 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 3000;
   background: #fff;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   text-align: right;

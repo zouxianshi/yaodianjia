@@ -80,7 +80,7 @@
                       type="text"
                     >失效</el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item
+                  <!-- <el-dropdown-item
                     v-if="type === '14'"
                     :command="{id: scope.row.id, type: 'extend', disabled: (scope.row.validStatus ===2 || !scope.row.status)}"
                   >
@@ -88,7 +88,7 @@
                       :disabled="scope.row.validStatus ===2 || !scope.row.status"
                       type="text"
                     >推广设置</el-button>
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-dropdown-item
                     :command="{id: scope.row.id, type: 'edit', disabled: scope.row.validStatus !== 0 || !scope.row.status}"
                   >

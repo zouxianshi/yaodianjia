@@ -121,7 +121,7 @@ export function getRecommended(p) {
  */
 export function getActivityComm(data) {
   return request({
-    url: `${config.merGoods}/1.0/comm-spec/activityComm`,
+    url: `${config.merGoods}/1.0/comm-spec/_page`,
     method: 'post',
     data
   })

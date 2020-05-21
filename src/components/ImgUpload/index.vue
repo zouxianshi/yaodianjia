@@ -2,11 +2,7 @@
   <div class="imgupload">
     <template v-if="!disable">
       <draggable id="upload-list" v-model="fileList" class="upload-list" @end="handeDragEnd">
-        <div
-          v-for="(item,index) in fileList"
-          :key="index"
-          class="upload-list-card"
-        >
+        <div v-for="(item,index) in fileList" :key="index" class="upload-list-card">
           <div v-if="item.status==='uploading'" class="process text-center">
             <el-progress type="circle" :width="80" :percentage="item.process" />
           </div>
@@ -24,20 +20,20 @@
       </draggable>
     </template>
     <template v-else>
-      <div
-        v-for="(item,index) in fileList"
-        :key="index"
-        class="upload-list-card"
-      >
-        <div class="uploaded-img">
-          <img :src="item.imgUrl" alt="">
-          <div class="action">
-            <i class="el-icon-zoom-in" @click="handlePreview(item)" />
-            <i class="el-icon-delete" @click.stop="handleRemove(index)" />
+      <div>
+        <div v-for="(item,index) in fileList" :key="index" class="upload-list-card">
+          <div class="uploaded-img">
+            <img :src="item.imgUrl" alt>
+            <div class="action">
+              <i class="el-icon-zoom-in" @click="handlePreview(item)" />
+            </div>
+            <label v-show="item.status==='success'" class="upload-status-label-suc">
+              <i class="el-icon-upload-success el-icon-check" />
+            </label>
           </div>
-          <label v-show="item.status==='success'" class="upload-status-label-suc">
-            <i class="el-icon-upload-success el-icon-check" />
-          </label>
+        </div>
+        <div v-if="fileList.length===0" class="no-image-content">
+          <div class="no-image-text">未上传图片</div>
         </div>
       </div>
     </template>
@@ -60,35 +56,42 @@ export default {
   name: 'Vueuploadimg',
   components: { draggable },
   props: {
-    multiple: { // 是否支持多选
+    multiple: {
+      // 是否支持多选
       type: Boolean,
       default: false
     },
-    actions: { // 上传地址
+    actions: {
+      // 上传地址
       type: String,
       default: ''
     },
-    disable: { // 是否可编辑
+    disable: {
+      // 是否可编辑
       type: Boolean,
       default: false
     },
-    name: { // 上传是的file名字
+    name: {
+      // 上传是的file名字
       type: String,
       default: 'file'
     },
-    fileData: { // 上传时的额外参数
+    fileData: {
+      // 上传时的额外参数
       type: Object,
       default: () => {
         return null
       }
     },
-    headers: { // 请求头
+    headers: {
+      // 请求头
       type: Object,
       default: () => {
         return null
       }
     },
-    withCredentials: { // 支持发送cookie信息
+    withCredentials: {
+      // 支持发送cookie信息
       type: Boolean,
       default: false
     },
@@ -108,7 +111,8 @@ export default {
         return true
       }
     },
-    httpRequest: { // 可自定义上传方法
+    httpRequest: {
+      // 可自定义上传方法
       type: Function,
       default: ajax
     }
@@ -125,9 +129,10 @@ export default {
   },
   methods: {
     handeDragEnd() {
-      this.$emit('onsort', this.fileList)// 排序成功之后抛出数据
+      this.$emit('onsort', this.fileList) // 排序成功之后抛出数据
     },
-    getFileList() { // 获取已上传的文件列表
+    getFileList() {
+      // 获取已上传的文件列表
       return this.fileList
     },
     handleChooseFile(e) {
@@ -160,7 +165,9 @@ export default {
           if (progressEvent.lengthComputable) {
             // 属性lengthComputable主要表明总共需要完成的工作量和已经完成的工作是否可以被测量
             // 如果lengthComputable为false，就获取不到progressEvent.total和progressEvent.loaded
-            const process = parseInt((progressEvent.loaded / progressEvent.total) * 100)
+            const process = parseInt(
+              (progressEvent.loaded / progressEvent.total) * 100
+            )
             this.fileList[index].process = process
           }
         },
@@ -188,7 +195,8 @@ export default {
       }
     },
     handleRemove(index) {
-      this.fileList.splice(index, 1)
+      this.$emit('remove', index)
+      // this.fileList.splice(index, 1)
     }
   }
 }
@@ -196,6 +204,19 @@ export default {
 <style lang="scss">
 .upload-list {
   display: inline-block;
+}
+.no-image-content {
+  width: 100px;
+  height: 100px;
+  background-color: #fbfdff;
+  border: 1px solid #c0ccda;
+  border-radius: 6px;
+  vertical-align: middle;
+  display: table-cell;
+}
+.no-image-text {
+  text-align: center;
+  color: #c0ccda;
 }
 .upload-list-card {
   display: inline-block;
@@ -242,7 +263,7 @@ export default {
         opacity: 1;
       }
     }
-    .upload-status-label-suc{
+    .upload-status-label-suc {
       position: absolute;
       display: block;
       right: -15px;
@@ -252,9 +273,9 @@ export default {
       background: #13ce66;
       text-align: center;
       transform: rotate(45deg);
-      box-shadow: 0 0 1pc 1px rgba(0,0,0,.2);
+      box-shadow: 0 0 1pc 1px rgba(0, 0, 0, 0.2);
       line-height: normal;
-      i{
+      i {
         font-size: 12px;
         margin-top: 11px;
         transform: rotate(-45deg);
@@ -274,7 +295,7 @@ export default {
       font-size: 20px;
       background-color: rgba(0, 0, 0, 0.5);
       transition: opacity 0.3s;
-      i{
+      i {
         cursor: pointer;
       }
     }

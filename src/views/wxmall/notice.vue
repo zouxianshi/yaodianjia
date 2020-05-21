@@ -1,20 +1,127 @@
 <template>
-  <div class="app-container">
-    <div class="dashboard-container">
-      <div class="app-container">
-        <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加公告</el-button>
-        <section @keydown.enter="search()">
-          <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-            <!-- <div class="search-item">
-              <span class="label-name">有效时间</span>
-              <el-date-picker
-                v-model="searchForm.timeBeg"
+  <div class="dashboard-container">
+    <div class="app-container">
+      <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加公告</el-button>
+      <section @keydown.enter="search()">
+        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
+          <!-- <div class="search-item">
+            <span class="label-name">有效时间</span>
+            <el-date-picker
+              v-model="searchForm.timeBeg"
+              size="small"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="开始时间"
+              @change="handleTimeChange($event, 1)"
+            /> -
+            <el-date-picker
+              v-model="searchForm.timeEnd"
+              size="small"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="结束时间"
+              @change="handleTimeChange($event, 2)"
+            />
+          </div> -->
+          <div class="search-item">
+            <span class="label-name" style="width: 50px">状态</span>
+            <el-select
+              v-model="searchForm.status"
+              size="small"
+              placeholder="使用状态"
+              @change="search()"
+            >
+              <el-option
+                v-for="item in statusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <el-button size="small" @click="search()">查 询</el-button>
+          </div>
+        </div>
+      </section>
+      <section class="table-box" style="height: calc(100% - 180px);overflow: auto">
+        <el-table :data="tableData" style="width: 100%">
+          <el-table-column label="序号" width="60" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.sortNumber || '' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="announcement" label="展示内容" min-width="150" />
+          <el-table-column prop="url" label="链接地址" min-width="240">
+            <template v-if="scope.row.url && scope.row.url!==''" slot-scope="scope">
+              <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
+            </template>
+          </el-table-column>
+          <!-- <el-table-column prop="startTime" label="开始时间" min-width="150" align="center" />
+          <el-table-column prop="endTime" label="结束时间" min-width="150" align="center" /> -->
+          <el-table-column label="状态" min-width="80" align="center">
+            >
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
+              <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" min-width="240">
+            <template slot-scope="scope">
+              <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
+              <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
+              <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </section>
+      <section class="c-footer">
+        <el-pagination
+          background
+          :current-page="pager.current"
+          :page-sizes="[10, 20, 30, 50]"
+          :page-size="pager.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pager.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </section>
+    </div>
+    <el-dialog
+      :title="`${xForm.id==''? '添加':'修改'}公告`"
+      append-to-body
+      :visible.sync="dialogFormVisible"
+      width="800px"
+      :close-on-click-modal="false"
+      @closed="dialogClose('xForm')"
+    >
+      <div class="x-dialog-body">
+        <div class="form-box">
+          <el-form ref="xForm" :model="xForm" :rules="xRules">
+            <el-form-item label="公告文字" :label-width="formLabelWidth" prop="notice">
+              <el-input
+                v-model="xForm.notice"
+                autocomplete="off"
+                style="width: 350px"
+                :maxlength="15"
+                placeholder="最多输入15字"
+              />
+            </el-form-item>
+            <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
+              <el-input
+                v-model="xForm.linkUrl"
                 size="small"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="开始时间"
-                @change="handleTimeChange($event, 1)"
-              /> -
+                autocomplete="off"
+                style="width: 350px"
+                :maxlength="500"
+                placeholder="http:// 或 https://"
+              />
+            </el-form-item><el-form-item label="启用状态" :label-width="formLabelWidth">
+              <el-switch v-model="xForm.status" />
+            </el-form-item>
+            <!-- <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
               <el-date-picker
                 v-model="searchForm.timeEnd"
                 size="small"
@@ -23,28 +130,20 @@
                 placeholder="结束时间"
                 @change="handleTimeChange($event, 2)"
               />
-            </div> -->
-            <div class="search-item">
-              <span class="label-name" style="width: 50px">状态</span>
-              <el-select
-                v-model="searchForm.status"
-                size="small"
-                placeholder="使用状态"
-                @change="search()"
-              >
-                <el-option
-                  v-for="item in statusOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </div>
-            <div class="search-item">
-              <el-button size="small" @click="search()">查 询</el-button>
-            </div>
+            </el-form-item> -->
+            <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
+              <el-input v-model="xForm.sort" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
+            </el-form-item>
+          </el-form>
+        </div>
+        <div class="preview-box">
+          <p class="title">
+            <label style="font-weight: bold">内容位置：</label> 首页-公告
+          </p>
+          <div class="prview-pic">
+            <img src="../../assets/image/h5/priview_2.png" style="width:100%;height:100%">
           </div>
-        </section>
+        </div>
         <section class="table-box" style="height: calc(100% - 180px);overflow: auto">
           <el-table :data="tableData" style="width: 100%">
             <el-table-column label="序号" width="60" align="center">
@@ -153,7 +252,7 @@
           <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
         </div>
       </el-dialog>
-    </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -224,9 +323,7 @@ export default {
         id: '',
         notice: '',
         linkUrl: '',
-        dateRange: '',
-        startTime: '',
-        endTime: '',
+        status: true,
         sort: ''
       },
       xRules: {
@@ -355,9 +452,7 @@ export default {
         id: row.id,
         notice: row.announcement,
         linkUrl: row.url,
-        dateRange: [row.startTime, row.endTime],
-        startTime: row.startTime,
-        endTime: row.endTime,
+        status: row.status === 1,
         sort: row.sortNumber
       }
       this.dialogFormVisible = true
@@ -372,27 +467,14 @@ export default {
         notice: '',
         linkUrl: '',
         dateRange: '',
-        startTime: '',
-        endTime: '',
-        sort: ''
+        sort: '',
+        status: true
       }
       this.$refs[formName].resetFields()
     },
     handleSubmit(formName) {
       // 表单验证
       this.$refs[formName].validate((valid) => {
-        // 验证结束时间
-        const start_time = new Date(this.xForm.startTime).getTime()
-        const end_time = new Date(this.xForm.endTime).getTime()
-        const current_time = new Date().getTime()
-        if (start_time >= end_time) {
-          this.$message.warning('结束时间必要大于开始时间')
-          return false
-        }
-        if (current_time >= end_time) {
-          this.$message.warning('结束时间必要大于当前时间')
-          return false
-        }
         if (valid) {
           if (this.xForm.id === '') {
             // 新增
@@ -474,7 +556,7 @@ export default {
         announcement: this.xForm.notice,
         classId: '',
         createName: '',
-        endTime: this.xForm.endTime,
+        status: this.xForm.status ? 1 : 0,
         id: '',
         imageUrl: '',
         merCode: '',
@@ -482,7 +564,6 @@ export default {
         remark: '',
         productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
-        startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
       console.log('add params', params)
@@ -517,15 +598,14 @@ export default {
         announcement: this.xForm.notice,
         classId: '',
         createName: '',
-        endTime: this.xForm.endTime,
         id: this.xForm.id,
+        status: this.xForm.status ? 1 : 0,
         imageUrl: '1',
         merCode: '',
         positionCode: this.positionCode,
         remark: '',
         productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
-        startTime: this.xForm.startTime,
         url: this.xForm.linkUrl
       }
       editPageSet(params).then(res => {
@@ -604,41 +684,41 @@ export default {
 }
 </script>
 <style lang="scss">
-.scope-img-wrap {
-  width: 60px;
-  height: 40px;
-  background: #f5f5f5;
-  margin: auto;
-  img {
-    width: 100%;
-    height: 100%;
-  }
-}
-.x-dialog-body {
-  width: 100%;
-  display: flex;
-  .form-box {
-    flex: 1;
-  }
-  .preview-box {
-    margin-right: 15px;
-    flex: 0 0 250px;
-    .title {
-      font-size: 18px;
-    }
-    .prview-pic {
-      margin-top: 20px;
+  .scope-img-wrap {
+    width: 60px;
+    height: 40px;
+    background: #f5f5f5;
+    margin: auto;
+    img {
       width: 100%;
-      height: 450px;
+      height: 100%;
     }
   }
-  .test-1 {
-    color: red;
+  .x-dialog-body {
+    width: 100%;
+    display: flex;
+    .form-box {
+      flex: 1;
+    }
+    .preview-box {
+      margin-right: 15px;
+      flex: 0 0 250px;
+      .title {
+        font-size: 18px;
+      }
+      .prview-pic {
+        margin-top: 20px;
+        width: 100%;
+        height: 450px;
+      }
+    }
+    .test-1 {
+      color: red;
+    }
   }
-}
-.note-grey {
-  font-size: 14px;
-  line-height: 1.1;
-  color: #999999;
-}
+  .note-grey {
+    font-size: 14px;
+    line-height: 1.1;
+    color: #999999;
+  }
 </style>
