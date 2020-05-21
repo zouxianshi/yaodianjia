@@ -19,7 +19,7 @@
     <el-table-column prop="specStr" label="规格" show-overflow-tooltip />
     <el-table-column label="参考价" width="60">
       <template slot-scope="scope">
-        <span style="color:#ff0000">¥{{ scope.row.mprice }}</span>
+        <span style="color:#ff0000">¥{{ scope.row.price }}</span>
       </template>
     </el-table-column>
   </el-table>
