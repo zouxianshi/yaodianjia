@@ -96,11 +96,19 @@ export default {
     }
   },
   watch: {
-    deep: true,
-    immediate: true,
-    $route(newRoute) {
-      console.log(newRoute, '新路由')
-      this.activeName = newRoute.query.type // 这里就是新的query
+    // deep: true,
+    // immediate: true,
+    // $route(newRoute) {
+    //   console.log(newRoute, '新路由')
+    //   this.activeName = newRoute.query.type // 这里就是新的query
+    // }
+    '$route': {
+      deep: true,
+      immediate: true,
+      handler(newRoute) {
+        console.log(newRoute, '新路由')
+        this.activeName = newRoute.query.type // 这里就是新的query
+      }
     }
   },
   created() {
@@ -108,7 +116,6 @@ export default {
   },
   methods: {
     handleClick(val) {
-      console.log('点击tab切换', val)
       this.$router.replace(`/marketing/gifts?type=${val.name}`)
     }
   }
