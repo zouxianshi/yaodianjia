@@ -18,6 +18,15 @@ export function getTypeDimensionList(merCode) {
 }
 
 // 获取分类或分组树结构
+export function getTypeTree_2(params) {
+  return request({
+    url: `${config.merGoods}/2.0/comm-type/getTypeTree`,
+    method: 'post',
+    data: params,
+    noMerCode: true
+  })
+}
+// 获取分类或分组树结构
 export function getTypeTree(params) {
   return request({
     url: `${config.merGoods}/1.0/comm-type/getTypeTree`,

@@ -31,6 +31,12 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
             <el-button
+              v-if="listQuery.auditStatus===3"
+              type="warning"
+              size="small"
+              @click="handleSendCheck(null,true)"
+            >批量提交审核</el-button>
+            <el-button
               v-if="listQuery.auditStatus===3||listQuery.auditStatus===2||listQuery.auditStatus===0||listQuery.auditStatus===-1"
               type="danger"
               size="small"
@@ -127,10 +133,7 @@
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
               </template>
               <template v-else>
-                <a
-                  v-if="scope.row.commodityType!==2"
-                  @click="handleQuery(scope.row.id)"
-                >
+                <a v-if="scope.row.commodityType!==2" @click="handleQuery(scope.row.id)">
                   <el-button type size="mini">查看</el-button>
                 </a>
               </template>
@@ -219,8 +222,8 @@ export default {
   beforeRouteLeave(to, from, next) {
     if (
       to.name === 'GoodsEdit' &&
-        from.name === 'GoodsRecord' &&
-        this.isToEdit
+      from.name === 'GoodsRecord' &&
+      this.isToEdit
     ) {
       const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
         item => item.name === 'GoodsEdit'
@@ -284,11 +287,26 @@ export default {
       this.isToEdit = true
       this.$router.push('/goods-manage/edit?id=' + id)
     },
-    handleSendCheck(row, status) {
+    handleSendCheck(row, isAll) {
+      let ids = []
+      if (row === null && isAll) {
+        if (this.multipleSelection.length === 0) {
+          this.$message({
+            message: '请选择商品',
+            type: 'warning'
+          })
+          return
+        }
+        this.multipleSelection.map(v => {
+          ids.push(v.id)
+        })
+      } else {
+        ids = [row.id]
+      }
       // 提交审核
       const data = {
         auditStatus: 2,
-        ids: [row.id],
+        ids: ids,
         userName: this.name
       }
       setAuditGoods(data).then(res => {

@@ -52,7 +52,7 @@ module.exports = {
   },
   devServer: {
     disableHostCheck: true,
-    port: getEnv('DEV_PORT', '7002'),
+    port: getEnv('DEV_PORT','7002'),
     open: false,
     overlay: {
       warnings: false,
@@ -64,7 +64,7 @@ module.exports = {
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
-          '^/api': getEnv('API_BASE') && getEnv('API_BASE').split('/businesses-gateway')[0]
+          '^/api': getEnv('API_BASE') && getEnv('API_BASE').split("/businesses-gateway")[0]
         }
       },
       '/hss': {

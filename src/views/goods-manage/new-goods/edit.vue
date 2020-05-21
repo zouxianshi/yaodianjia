@@ -263,16 +263,14 @@
                       />
                     </div>-->
                   </el-form-item>
-                  <el-form-item
-                    :label="chooseTypeList.length&&chooseTypeList[0].name=='营养保健'?'保健功能':'功能主治/适应症：'"
-                  >
+                  <el-form-item label="功能/适应症">
                     <el-input
                       v-model.trim="basicForm.keyFeature"
                       type="textarea"
                       maxlength="512"
                       :rows="3"
                       show-word-limit
-                      placeholder="请输入功能主治/适应症"
+                      placeholder="请输入功能/适应症"
                       size="small"
                     />
                   </el-form-item>
@@ -315,7 +313,7 @@
                     <el-checkbox v-model="basicForm.isEasyBreak" :true-label="1" :false-label="0">易碎</el-checkbox>
                     <el-checkbox v-model="basicForm.isLiquid" :true-label="1" :false-label="0">液体</el-checkbox>
                     <template
-                      v-if="chooseTypeList&&chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'||(chooseTypeList.length!==0&&chooseTypeList[0].name!=='医疗器械'&&chooseTypeList[0].name!=='营养保健')"
+                      v-if="chooseTypeList&&chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'"
                     >
                       <el-checkbox
                         v-model="basicForm.hasEphedrine"
@@ -348,7 +346,7 @@
                   >
                     <el-checkbox
                       :key="index"
-                      :checked="chooseSpec.indexOf(item.id)>-1"
+                      :checked="chooseSpecName.indexOf(item.attributeName)>-1"
                       :disabled="true||is_query"
                       @change="handleSpecsChange(item)"
                     >{{ item.attributeName }}</el-checkbox>
@@ -376,10 +374,7 @@
             </el-form-item>
             <el-form-item label="规格信息：">
               <template v-if="basicForm.origin===1">
-                <el-table
-                  ref="multipleTable"
-                  :data="editSpecsData"
-                >
+                <el-table ref="multipleTable" :data="editSpecsData">
                   <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
                   <el-table-column width="55">
                     <template slot-scope="scope">
@@ -919,6 +914,7 @@
                   type="primary"
                   size="small"
                   :loading="subLoading1"
+                  style="width:70px"
                   @click="handleSubImg"
                 >保存</el-button>
               </div>
@@ -1005,7 +1001,11 @@
 <script>
 import Tinymce from '@/components/Tinymce'
 import vueUploadImg from '@/components/ImgUpload'
-import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
+import {
+  getTypeTree,
+  getPreGroupList,
+  getTypeDimensionList
+} from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import {
@@ -1373,11 +1373,21 @@ export default {
           ids.map(v => {
             const dat = datas[v]
             if (dat) {
-              this.chooseGroup.push([
-                { name: dat.name, id: dat.id },
-                { name: dat.child.name, id: dat.child.id },
-                { name: dat.child.child.name, id: dat.child.child.id }
-              ])
+              if (dat.child.child) {
+                this.chooseGroup.push([
+                  { name: dat.name, id: dat.id },
+                  { name: dat.child.name, id: dat.child.id },
+                  {
+                    name: dat.child.child.name,
+                    id: dat.child.child.id
+                  }
+                ])
+              } else {
+                this.chooseGroup.push([
+                  { name: dat.name, id: dat.id },
+                  { name: dat.child.name, id: dat.child.id }
+                ])
+              }
             }
           })
         }
@@ -1816,6 +1826,14 @@ export default {
                 type: 'error'
               })
               return
+            }
+            if (
+              this.chooseTypeList &&
+              this.chooseTypeList[0].name !== '中西药品'
+            ) {
+              data.drugType = ''
+              data.dosageForm = ''
+              data.hasEphedrine = ''
             }
             this.subLoading = true
             if (this.basicForm.id) {
