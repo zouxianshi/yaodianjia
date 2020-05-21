@@ -130,6 +130,7 @@ export default {
         createLuckDraw(params).then(res => {
           if (res.code === '10000') {
             this.stepActive = 3
+            this.$refs.submitSave.countDown()
           } else {
             this.$message({
               message: '添加失败！',

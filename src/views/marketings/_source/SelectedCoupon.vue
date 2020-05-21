@@ -5,7 +5,7 @@
       <el-table-column label="优惠内容" width="120" show-overflow-tooltip>
         <template
           slot-scope="scope"
-        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
+        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
       </el-table-column>
       <el-table-column label="使用时间" show-overflow-tooltip>
         <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
@@ -96,7 +96,7 @@ export default {
       })
     },
     // 商品折扣处理
-    handleshopRule(ctype, useRule, denomination) {
+    handleshopRule(ctype, useRule, denomination, giftName) {
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -110,7 +110,11 @@ export default {
           return `满${useRule}可用,减${denomination}元`
         }
       } else {
-        return '指定礼品'
+        if (giftName === 'null' || null) {
+          return ''
+        } else {
+          return giftName
+        }
       }
     },
     // 分页

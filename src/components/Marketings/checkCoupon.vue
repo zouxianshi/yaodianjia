@@ -46,7 +46,7 @@
         <el-table-column prop="address" label="优惠内容">
           <template
             slot-scope="scope"
-          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.denomination.giftName) }}</template>
+          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
         </el-table-column>
         <el-table-column label="使用时间" width="160">
           <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
@@ -63,7 +63,12 @@
         </el-table-column>
         <el-table-column type="selection" width="55" />
         <div slot="empty" style="height:200px;line-height: 200px;">
-          当前无任何优惠券，先去<span style="color:#2790FA" class="creatcoucops" @click="$router.push({ path: '/marketings/gift-manage/list' })">创建优惠券</span>吧
+          当前无任何优惠券，先去
+          <span
+            style="color:#2790FA"
+            class="creatcoucops"
+            @click="$router.push({ path: '/marketings/gift-manage/list' })"
+          >创建优惠券</span>吧
         </div>
       </el-table>
       <div class="block">
@@ -81,10 +86,11 @@
       <div class="has-selected">
         <span v-for="(item ,index) in multipleSelectionAll" :key="index">
           <el-tooltip placement="top">
-            <div slot="content">
-              {{ item.cname }}
-            </div>
-            <el-tag style="margin-right:10px" type="success">{{ item.cname.length>10?item.cname.substring(0, 10)+'...':item.cname }}</el-tag>
+            <div slot="content">{{ item.cname }}</div>
+            <el-tag
+              style="margin-right:10px"
+              type="success"
+            >{{ item.cname.length>10?item.cname.substring(0, 10)+'...':item.cname }}</el-tag>
           </el-tooltip>
         </span>
       </div>
@@ -201,7 +207,7 @@ export default {
       this.changePageCoreRecordData()
     },
     // 商品折扣处理
-    handleshopRule(ctype, useRule, denomination) {
+    handleshopRule(ctype, useRule, denomination, giftName) {
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -215,7 +221,11 @@ export default {
           return `满${useRule}可用,减${denomination}元`
         }
       } else {
-        return '指定礼品'
+        if (giftName === 'null' || null) {
+          return ''
+        } else {
+          return giftName
+        }
       }
     },
     // 使用日期
@@ -327,8 +337,8 @@ export default {
   // .el-table thead th {
   //   height: 50px;
   // }
-  .creatcoucops:hover{
-    cursor:pointer
+  .creatcoucops:hover {
+    cursor: pointer;
   }
   .search-form {
     margin-bottom: 0px;
@@ -342,7 +352,7 @@ export default {
     text-align: right;
     margin-top: 40px;
   }
-    .has-selected {
+  .has-selected {
     margin-top: 10px;
     border-top: 2px solid #eee;
     padding: 20px 0 10px;

@@ -72,17 +72,13 @@
           v-model="ruleForm.joinRule"
           :disabled="isRuning"
           style="width:120px;font-size: 18px;line-height: inherit;"
-          @change="ruleForm.integralRule=ruleForm.countRule=''"
+          @change="changeJoinrule"
         >
           <el-radio :label="1">
-            <span>
-              免费参与
-            </span>
+            <span>免费参与</span>
           </el-radio>
           <el-radio :label="2">
-            <span>
-              消耗海贝&emsp;每消耗&emsp;
-            </span>
+            <span>消耗海贝&emsp;每消耗&emsp;</span>
             <el-input
               v-model="ruleForm.integralRule"
               onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
@@ -92,13 +88,11 @@
             />&emsp;积分，参与一次
           </el-radio>
           <el-radio :label="3">
-            <span>
-              活动参与
-            </span>
+            <span>活动参与</span>
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="抽奖次数" prop="dayLimit">
+      <el-form-item label="抽奖次数" prop="countRule">
         <el-radio-group
           v-if="ruleForm.joinRule !== 3"
           v-model="ruleForm.countType"
@@ -110,7 +104,7 @@
             <span>
               每天可抽奖
               <el-input
-                v-model="dayLimit"
+                v-model="ruleForm.dayLimit"
                 onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
                 :disabled="isRuning || ruleForm.countType===1"
                 maxlength="6"
@@ -122,7 +116,7 @@
             <span>
               每人可抽奖
               <el-input
-                v-model="personLimit"
+                v-model="ruleForm.personLimit"
                 onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
                 :disabled=" isRuning || ruleForm.countType===2"
                 maxlength="6"
@@ -133,7 +127,7 @@
         </el-radio-group>
         <span v-else>
           <el-input
-            v-model="ruleForm.countRule"
+            v-model="ruleForm.activeLimit"
             :disabled="isRuning"
             onkeyup="this.value=this.value.replace(/\D/g,'')"
             maxlength="6"
@@ -172,6 +166,36 @@ export default {
         callback()
       }
     }
+    var validatedayLimit = (rule, value, callback) => {
+      console.log('1111')
+      if (
+        this.ruleForm.joinRule === 3 &&
+        (Number(this.ruleForm.activeLimit) === 0 ||
+          ('' + this.ruleForm.activeLimit).trim() === '' ||
+          Number(this.ruleForm.activeLimit) > 1000)
+      ) {
+        console.log('2222')
+        callback(new Error('请输入0~1000的抽奖次数'))
+      } else if (
+        this.ruleForm.joinRule !== 3 &&
+        this.ruleForm.countType === 1 &&
+        (Number(this.ruleForm.personLimit) === 0 ||
+          ('' + this.ruleForm.personLimit).trim() === '' ||
+          Number(this.ruleForm.personLimit) > 1000)
+      ) {
+        callback(new Error('请输入0~10000抽奖次数'))
+      } else if (
+        this.ruleForm.joinRule !== 3 &&
+        this.ruleForm.countType === 2 &&
+        (Number(this.ruleForm.dayLimit) === 0 ||
+          ('' + this.ruleForm.dayLimit).trim() === '' ||
+          Number(this.ruleForm.dayLimit) > 1000)
+      ) {
+        callback(new Error('请输入0~10000抽奖次数'))
+      } else {
+        callback()
+      }
+    }
     return {
       intrShow: false,
       pickerOptions: {
@@ -180,8 +204,6 @@ export default {
         }
       },
       // activeTime: [], // 活动有效期
-      dayLimit: '', // 每天限制
-      personLimit: '', // 每人限制
       ruleForm: {
         activeTime: [], // 活动有效期
         activityDetailName: '', // 活动名称
@@ -192,7 +214,10 @@ export default {
         integralRule: '', // 参与消耗海贝
         joinRule: 1, // 参与方式
         countType: 2, // 参与限制类型  1：每人 2：每天
-        countRule: '' // 次数限制
+        countRule: '', // 次数限制
+        dayLimit: '', // 每天限制
+        personLimit: '', // 每人限制
+        activeLimit: '' // 活动参与
       },
       rules: {
         activityDetailName: [
@@ -208,7 +233,10 @@ export default {
           { min: 1, max: 200, message: '最多200字', trigger: 'blur' }
         ],
         joinRule: [{ validator: validateparticipatio, trigger: 'change' }], // 参与消耗海贝
-        dayLimit: [{ validator: validateparticipatio, trigger: 'change' }],
+        countRule: [
+          // { required: true, message: '请填写抽奖次数', trigger: 'change' },
+          { validator: validatedayLimit, trigger: 'change' }
+        ],
         activeTime: [
           { required: true, message: '请选择活动时间', trigger: 'blur' }
         ]
@@ -240,6 +268,13 @@ export default {
       handler: function() {
         this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
         this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
+        if (this.ruleForm.countType === 2) {
+          this.ruleForm.countRule = this.ruleForm.dayLimit
+        } else if (this.ruleForm.countType === 1) {
+          this.ruleForm.countRule = this.ruleForm.personLimit
+        } else {
+          this.ruleForm.countRule = this.ruleForm.activeLimit
+        }
       },
       deep: true
     },
@@ -249,23 +284,27 @@ export default {
     // },
     personLimit(newVal) {
       // 监听按人限制变化
-      if (this.ruleForm.countType === 1) {
-        this.ruleForm.countRule = newVal
-      }
-    },
-    dayLimit(newVal) {
-      if (this.ruleForm.countType === 2) {
-        this.ruleForm.countRule = newVal
-      }
     }
+    // dayLimit(newVal) {
+    //   if (this.ruleForm.countType === 2) {
+    //     this.ruleForm.countRule = newVal
+    //   }
+    // }
   },
   mounted() {
     console.log(this.ruleForm)
   },
   methods: {
+    changeJoinrule() {
+      if (this.ruleForm.joinRule === 3) {
+        this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.dayLimit = this.ruleForm.personLimit = this.ruleForm.activeLimit = ''
+      } else {
+        this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.activeLimit = ''
+      }
+    },
     changeCount() {
       // 改变限制次数类型
-      this.personLimit = this.dayLimit = ''
+      this.ruleForm.personLimit = this.ruleForm.dayLimit = this.ruleForm.activeLimit = ''
       this.ruleForm.countRule = ''
     },
     submitForm(formName) {
@@ -278,9 +317,7 @@ export default {
             })
             return false
           }
-          if (
-            Number(this.ruleForm.countRule) === ''
-          ) {
+          if (Number(this.ruleForm.countRule) === '') {
             this.$message({
               message: '请输入正确抽奖次数限制',
               type: 'error'
