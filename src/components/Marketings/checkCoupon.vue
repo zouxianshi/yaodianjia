@@ -191,7 +191,7 @@ export default {
     },
     checkSure() {
       if (this.singlechoice && this.tableData.length > 1) {
-        this.$message.error('只能单选')
+        this.$message.error('请单选')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
