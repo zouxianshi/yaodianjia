@@ -494,7 +494,7 @@ const mixin = {
                         v.skuKeyId = sp.id
                       }
                     })
-                    if (this.dynamicProp.length === 0) {
+                    if (this.dynamicProp.length !== this.specsList.length) {
                       this.dynamicProp.push({
                         name: v.skuKeyName,
                         id: v.skuKeyId,
