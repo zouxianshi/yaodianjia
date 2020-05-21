@@ -189,7 +189,7 @@ export default {
     }
     var validateDenomination = (rule, value, callback) => {
       // 验证优惠内容
-      if (!value || parseFloat(value) < 1 || parseFloat(value) >= 9.99) {
+      if (!value || parseFloat(value) < 1 || parseFloat(value) > 9.99) {
         return callback(new Error('优惠券折扣必须大于等于1，且最大不能超过9.99'))
       } else if (value.toString().indexOf('.') > 0 && value.toString().split('.')[1].length > 2) {
         return callback(new Error('最多支持两位小数'))
