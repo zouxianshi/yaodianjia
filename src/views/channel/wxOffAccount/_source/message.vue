@@ -83,9 +83,8 @@ export default {
             message: '操作成功',
             type: 'success'
           })
-        } else {
-          val.noticeState = false
         }
+        this.getDate()
       })
     },
     getDate() {

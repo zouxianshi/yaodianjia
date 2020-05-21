@@ -167,7 +167,6 @@ export default {
       }
     }
     var validatedayLimit = (rule, value, callback) => {
-      console.log('1111')
       if (
         this.ruleForm.joinRule === 3 &&
         (Number(this.ruleForm.activeLimit) === 0 ||
