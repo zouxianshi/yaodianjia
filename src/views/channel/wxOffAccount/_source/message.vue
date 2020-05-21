@@ -85,6 +85,8 @@ export default {
           })
         }
         this.getDate()
+      }).catch(() => {
+        this.getDate()
       })
     },
     getDate() {
