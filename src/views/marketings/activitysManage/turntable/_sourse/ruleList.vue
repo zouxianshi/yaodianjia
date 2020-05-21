@@ -183,7 +183,7 @@ export default {
           ('' + this.ruleForm.personLimit).trim() === '' ||
           Number(this.ruleForm.personLimit) > 1000)
       ) {
-        callback(new Error('请输入0~10000抽奖次数'))
+        callback(new Error('请输入0~1000抽奖次数'))
       } else if (
         this.ruleForm.joinRule !== 3 &&
         this.ruleForm.countType === 2 &&
@@ -191,7 +191,7 @@ export default {
           ('' + this.ruleForm.dayLimit).trim() === '' ||
           Number(this.ruleForm.dayLimit) > 1000)
       ) {
-        callback(new Error('请输入0~10000抽奖次数'))
+        callback(new Error('请输入0~1000抽奖次数'))
       } else {
         callback()
       }
