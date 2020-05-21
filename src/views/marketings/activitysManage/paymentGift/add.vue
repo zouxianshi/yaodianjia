@@ -147,7 +147,7 @@
             @onDel="onGetSelectActivity"
           />
         </el-form-item>
-        <el-form-item label="参与次数：" prop="countRule">
+        <el-form-item label="参与次数：" prop="countRule" required>
           <el-radio-group v-model="countRuleReal">
             <el-radio :label="0">
               不限次数
@@ -171,7 +171,7 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="发放时间：" prop="sendRule">
+        <el-form-item label="发放时间：" prop="sendRule" required>
           <el-radio-group v-model="form.sendRule">
             <el-radio :label="1">支付后发放</el-radio>
           </el-radio-group>
@@ -277,7 +277,7 @@ export default {
       pageLoading: false, // 页面加载loading
       pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)
       form: {
-        sceneRuleReal: [1, 2],
+        sceneRuleReal: [1],
         activityDetailName: '',
         activityGiftReqDTO: [],
         activityNote: '',
