@@ -126,17 +126,8 @@ export default {
 
   > .operation {
     width: 120px;
-    right: 15px;
-  }
-  > .operation-content-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    div {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    right: 0px;
+    padding-right: 15px;
   }
   > .operation-content-right {
     display: flex;
