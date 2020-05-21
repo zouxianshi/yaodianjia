@@ -199,6 +199,16 @@ const router = [
           title: '直播活动',
           noCache: true
         }
+      },
+      {
+        path: 'live-now',
+        component: () => import('@/views/live-broadcast/activity/live-now/index'),
+        name: 'live-now',
+        meta: {
+          // auth: 'commodity.commodity-combine',
+          title: '直播',
+          noCache: true
+        }
       }
     ]
   },
