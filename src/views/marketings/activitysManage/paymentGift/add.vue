@@ -119,7 +119,7 @@
           <el-radio-group v-model="form.giftType">
             <el-radio :label="1">
               送优惠券
-              <span class="zkTips">最多可选二十张</span>
+              <span class="zkTips">最多可选20张</span>
               <div
                 v-if="form.giftType===1&&!disabled"
                 class="from-clickable"
@@ -133,7 +133,7 @@
             />
             <el-radio :label="2">
               抽奖活动
-              <span class="zkTips">只能选择一个</span>
+              <span class="zkTips">只能选择1个</span>
               <div
                 v-if="form.giftType===2&&!disabled"
                 class="from-clickable"
@@ -299,7 +299,7 @@ export default {
         // sceneRule: 0,
         sendRule: 1,
         shopRule: 1,
-        useRule: 1,
+        useRule: '',
         giftType: 1
       },
       rules: {
@@ -309,11 +309,14 @@ export default {
         beginEndTime: [
           { required: true, validator: time_limit, trigger: 'blur' }
         ],
-        activityNote: [
-          { required: true, message: '请输入活动说明', trigger: 'blur' }
-        ],
+        // activityNote: [
+        //   { required: true, message: '请输入活动说明', trigger: 'blur' }
+        // ],
         productRule: [
           { required: true, validator: productRule_limit, trigger: 'blur' }
+        ],
+        useRule: [
+          { required: true, message: '请输入消费金额', trigger: 'blur' }
         ],
         sceneRuleReal: [
           {
@@ -491,8 +494,6 @@ export default {
         delete params['listCouponProductEntity']
         delete params['listActivityGiftEntity']
         delete params['listActivityPayEntity']
-
-        console.log('updateActivity' + JSON.stringify(params))
         updateActivity(params)
           .then(res => {
             this.saveLoading = false

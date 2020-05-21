@@ -34,7 +34,7 @@
           <div class="search-item">
             <span class="label-name" style="width: 60px">活动名称</span>
             <el-input
-              v-model.trim="searchForm.activeName"
+              v-model="searchForm.activeName"
               size="small"
               style="width: 160px"
               @change="search()"
