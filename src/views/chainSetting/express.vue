@@ -6,9 +6,7 @@
       type="warning"
       :closable="false"
     >
-      <template slot="title">
-        有未配置的区域{{ cities.length - selected.length }}个
-      </template>
+      <template slot="title">有未配置的区域{{ cities.length - selected.length }}个</template>
     </el-alert>
 
     <el-form ref="form" :model="form" label-position="right">
@@ -27,10 +25,18 @@
         </el-table-column>
         <el-table-column label="首重（Kg）" width="120px">
           <template slot-scope="scope">
-            <div :class="{'el-form-item is-error':scope.row.ykg === ''}">
+            <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.ykg)}">
               <div class="el-form-item__content">
-                <el-input v-model.number="scope.row.ykg" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5" style="width: 100px" @input="onChange" />
-                <div class="el-form-item__error"> 请输入首重 </div>
+                <!-- <el-input
+                  v-model="scope.row.ykg"
+                  oninput="value=value.replace(/[^0-9.]/g,'')"
+                  maxlength="5"
+                  style="width: 100px"
+                  @change="onChange"
+                /> -->
+                <el-input-number v-model="scope.row.ykg" max="99999" style="width: 100px" :controls="false" />
+                <div v-if="scope.row.ykg === ''" class="el-form-item__error">请输入首重</div>
+                <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
             </div>
           </template>
@@ -39,49 +45,98 @@
           <template slot-scope="scope">
             <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.freight)}">
               <div class="el-form-item__content">
-                <el-input v-model="scope.row.freight" oninput="value=value.replace(/[^0-9.]/g,'')" maxlength="5" style="width: 100px" @change="onChange" />
-                <div v-if="scope.row.freight === ''" class="el-form-item__error"> 请输入运费 </div>
-                <div v-else class="el-form-item__error"> 最多2位小数 </div>
+                <!-- <el-input
+                  v-model="scope.row.freight"
+                  oninput="value=value.replace(/[^0-9.]/g,'')"
+                  maxlength="5"
+                  style="width: 100px"
+                  @change="onChange"
+                /> -->
+                <el-input-number v-model="scope.row.freight" max="99999" style="width: 100px" :controls="false" />
+                <div v-if="scope.row.freight === ''" class="el-form-item__error">请输入运费</div>
+                <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="续重（Kg）" width="120px">
           <template slot-scope="scope">
-            <div :class="{'el-form-item is-error':scope.row.continueWeight === ''}">
+            <div
+              :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.continueWeight)}"
+            >
               <div class="el-form-item__content">
-                <el-input v-model="scope.row.continueWeight" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5" style="width: 100px" />
-                <div class="el-form-item__error"> 请输入续重 </div>
+                <!-- <el-input
+                  v-model="scope.row.continueWeight"
+                  oninput="value=value.replace(/[^0-9.]/g,'')"
+                  maxlength="5"
+                  style="width: 100px"
+                  @change="onChange"
+                /> -->
+                <el-input-number v-model="scope.row.continueWeight" max="99999" style="width: 100px" :controls="false" />
+                <div v-if="scope.row.continueWeight === ''" class="el-form-item__error">请输入首重</div>
+                <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="续费（元）" width="120px">
           <template slot-scope="scope">
-            <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.renewalCost)}">
+            <div
+              :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.renewalCost)}"
+            >
               <div class="el-form-item__content">
-                <el-input v-model="scope.row.renewalCost" :step="0.01" oninput="value=value.replace(/[^0-9.]/g,'')" maxlength="5" style="width: 100px" />
-                <div v-if="scope.row.renewalCost === ''" class="el-form-item__error"> 请输入续费 </div>
-                <div v-else class="el-form-item__error"> 最多2位小数 </div>
+                <!-- <el-input
+                  v-model="scope.row.renewalCost"
+                  :step="0.01"
+                  oninput="value=value.replace(/[^0-9.]/g,'')"
+                  maxlength="5"
+                  style="width: 100px"
+                /> -->
+                <el-input-number v-model="scope.row.renewalCost" max="99999" style="width: 100px" :controls="false" />
+                <div v-if="scope.row.renewalCost === ''" class="el-form-item__error">请输入续费</div>
+                <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="包邮门槛(元)" width="160px">
           <template slot-scope="scope">
-            <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.postageFreeThreshold)}">
+            <div
+              :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.postageFreeThreshold)}"
+            >
               <div class="el-form-item__content">
-                <el-input v-model="scope.row.postageFreeThreshold" oninput="value=value.replace(/[^0-9.]/g,'')" maxlength="5" style="width: 100px" />
-                <div v-if="scope.row.postageFreeThreshold === ''" class="el-form-item__error"> 请输入包邮门槛 </div>
-                <div v-else class="el-form-item__error"> 最多2位小数 </div>
+                <!-- <el-input
+                  v-model="scope.row.postageFreeThreshold"
+                  oninput="value=value.replace(/[^0-9.]/g,'')"
+                  maxlength="5"
+                  style="width: 100px"
+                /> -->
+                <el-input-number v-model="scope.row.postageFreeThreshold" max="99999" style="width: 100px" :controls="false" />
+                <div
+                  v-if="scope.row.postageFreeThreshold === ''"
+                  class="el-form-item__error"
+                >请输入包邮门槛</div>
+                <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="110px">
           <template slot-scope="scope">
-            <el-button size="small" type="primary" icon="el-icon-edit" circle @click="onEdit(scope.$index)" />
-            <el-button size="small" type="danger" icon="el-icon-delete" circle @click="onDel(scope.$index)" />
+            <el-button
+              size="small"
+              type="primary"
+              icon="el-icon-edit"
+              circle
+              @click="onEdit(scope.$index)"
+            />
+            <el-button
+              size="small"
+              type="danger"
+              icon="el-icon-delete"
+              circle
+              @click="onDel(scope.$index)"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -103,12 +158,13 @@
       @close="dismiss"
     >
       <div v-if="visable">
-        <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
+        <el-checkbox
+          v-model="checkAll"
+          :indeterminate="isIndeterminate"
+          @change="handleCheckAllChange"
+        >全选</el-checkbox>
         <div style="margin: 15px 0;" />
-        <span
-          v-for="city in showCities"
-          :key="city.id"
-        >
+        <span v-for="city in showCities" :key="city.id">
           <el-checkbox
             v-model="city.checked"
             :label="city.id"
@@ -130,11 +186,7 @@
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
-import {
-  getProvince,
-  saveDelivery,
-  getDelivery
-} from '../../api/chainSetting'
+import { getProvince, saveDelivery, getDelivery } from '../../api/chainSetting'
 export default {
   name: 'Express',
   data() {
@@ -166,31 +218,33 @@ export default {
         if (res.code === '10000') {
           const tempData = res.data
           // this.showCities = _.cloneDeep(res.data)
-          this.showCities = _.map(_.cloneDeep(res.data), (v) => {
+          this.showCities = _.map(_.cloneDeep(res.data), v => {
             return _.assign(v, { checked: false })
           })
           console.log('showCities', this.showCities)
-          getDelivery(this.merCode).then(res => {
-            if (res.code === '10000') {
-              this.form.list = _.cloneDeep(res.data)
-              this.selected = []
-              _.map(this.form.list, (o) => {
-                _.map(o.rangeResDTOList, (v) => {
-                  this.selected.push(v.rangeId)
+          getDelivery(this.merCode)
+            .then(res => {
+              if (res.code === '10000') {
+                this.form.list = _.cloneDeep(res.data)
+                this.selected = []
+                _.map(this.form.list, o => {
+                  _.map(o.rangeResDTOList, v => {
+                    this.selected.push(v.rangeId)
+                  })
                 })
-              })
-              console.log('selected', this.selected)
-            } else {
-              this.$message({
-                message: res.msg,
-                type: 'error',
-                duration: 5 * 1000
-              })
-            }
-            this.cities = _.cloneDeep(tempData)
-          }).catch(() => {
-            this.cities = _.cloneDeep(tempData)
-          })
+                console.log('selected', this.selected)
+              } else {
+                this.$message({
+                  message: res.msg,
+                  type: 'error',
+                  duration: 5 * 1000
+                })
+              }
+              this.cities = _.cloneDeep(tempData)
+            })
+            .catch(() => {
+              this.cities = _.cloneDeep(tempData)
+            })
         } else {
           this.$message({
             message: res.msg,
@@ -213,17 +267,18 @@ export default {
       } else {
         const selectedRangid = []
         _.filter(_.cloneDeep(this.selected), o => {
-          _.map(this.form.list[this.editPosition].rangeResDTOList, (v) => {
+          _.map(this.form.list[this.editPosition].rangeResDTOList, v => {
             if (o === v.rangeId) {
               selectedRangid.push(o)
             }
           })
         })
-        this.selectableCount = this.cities.length - this.selected.length + selectedRangid.length
+        this.selectableCount =
+          this.cities.length - this.selected.length + selectedRangid.length
         console.log('selectableCount', this.selectableCount)
       }
       const arr = []
-      _.map(this.form.list[this.editPosition].rangeResDTOList, (v) => {
+      _.map(this.form.list[this.editPosition].rangeResDTOList, v => {
         arr.push({
           name: v.name,
           id: v.rangeId
@@ -258,8 +313,11 @@ export default {
       console.log('index', index)
       const tempData = _.cloneDeep(this.form.list[index].rangeResDTOList)
       console.log('tempData', tempData)
-      _.map(tempData, (o) => {
-        this.selected = _.filter(_.cloneDeep(this.selected), (v) => v !== o.rangeId)
+      _.map(tempData, o => {
+        this.selected = _.filter(
+          _.cloneDeep(this.selected),
+          v => v !== o.rangeId
+        )
       })
       console.log('selected', this.selected)
       this.form.list.splice(index, 1)
@@ -267,7 +325,10 @@ export default {
     },
     isSelected(id) {
       if (this.editPosition !== -1) {
-        const arr = _.filter(this.form.list[this.editPosition].rangeResDTOList, { rangeId: id })
+        const arr = _.filter(
+          this.form.list[this.editPosition].rangeResDTOList,
+          { rangeId: id }
+        )
         if (this.selected.indexOf(id) !== -1 && arr.length <= 0) {
           return true
         } else {
@@ -291,7 +352,7 @@ export default {
         return
       }
       const rangeResDTOList = []
-      _.map(this.checkedCities, (v) => {
+      _.map(this.checkedCities, v => {
         rangeResDTOList.push({
           name: v.name,
           rangeId: v.id
@@ -334,11 +395,13 @@ export default {
         }
         console.log(tempData)
       } else {
-        this.form.list[this.editPosition].rangeResDTOList = _.cloneDeep(rangeResDTOList)
+        this.form.list[this.editPosition].rangeResDTOList = _.cloneDeep(
+          rangeResDTOList
+        )
       }
       this.selected = []
-      _.map(this.form.list, (v) => {
-        _.map(v.rangeResDTOList, (o) => {
+      _.map(this.form.list, v => {
+        _.map(v.rangeResDTOList, o => {
           this.selected.push(o.rangeId)
         })
       })
@@ -353,9 +416,13 @@ export default {
         console.log('da')
         const that = this
         if (this.editPosition === -1) {
-          this.checkedCities = _.filter(this.cities, function(o) { return that.selected.indexOf(o.id) === -1 })
+          this.checkedCities = _.filter(this.cities, function(o) {
+            return that.selected.indexOf(o.id) === -1
+          })
         } else {
-          this.checkedCities = _.filter(this.cities, function(o) { return that.selected.indexOf(o.id) === -1 })
+          this.checkedCities = _.filter(this.cities, function(o) {
+            return that.selected.indexOf(o.id) === -1
+          })
           console.log('checkedCities', this.checkedCities)
           _.map(this.form.list[this.editPosition].rangeResDTOList, function(o) {
             that.checkedCities.push({
@@ -410,7 +477,9 @@ export default {
           name: item.name
         })
       } else {
-        this.checkedCities = _.filter(this.checkedCities, function(o) { return o.id !== item.id })
+        this.checkedCities = _.filter(this.checkedCities, function(o) {
+          return o.id !== item.id
+        })
       }
       console.log('selectableCount:', this.selectableCount)
       console.log('cities:', this.cities)
@@ -428,7 +497,10 @@ export default {
     submit() {
       if (this.cities.length - this.selected.length > 0) {
         this.$message({
-          message: '有未配置的区域' + (this.cities.length - this.selected.length) + '个',
+          message:
+            '有未配置的区域' +
+            (this.cities.length - this.selected.length) +
+            '个',
           type: 'error',
           duration: 5 * 1000
         })
@@ -437,11 +509,13 @@ export default {
       const patten = /^\d+(\.\d{0,2})?$/
       let vlidate = true
       _.map(_.cloneDeep(this.form.list), o => {
-        if (o.ykg === '' ||
-          o.continueWeight === '' ||
+        if (
+          !patten.test(o.ykg) ||
+          !patten.test(o.continueWeight) ||
           !patten.test(o.freight) ||
           !patten.test(o.renewalCost) ||
-          !patten.test(o.postageFreeThreshold)) {
+          !patten.test(o.postageFreeThreshold)
+        ) {
           vlidate = false
           return
         }
@@ -457,7 +531,7 @@ export default {
       })
       console.log(params)
       saveDelivery({
-        'list': params
+        list: params
       }).then(res => {
         if (res.code === '10000') {
           /* this.cities = _.cloneDeep(res.data)
@@ -489,14 +563,14 @@ export default {
       this.isIndeterminate = false
       this.editPosition = -1
       this.visable = false
-      this.showCities = _.map(_.cloneDeep(this.cities), (v) => {
+      this.showCities = _.map(_.cloneDeep(this.cities), v => {
         return _.assign(v, { checked: false })
       })
     },
     onChange(cv, ov) {
       console.log(cv, ov)
     }
-  }/*,
+  } /*,
   watch: {
     'form.list': {
       deep: true,
@@ -509,22 +583,22 @@ export default {
 </script>
 
 <style scoped>
-  .container h3 {
-    font-size: 22px;
-    font-weight: 400;
-    margin: 0 0 10px;
-    color: #1f2d3d;
-  }
-  .container h6 {
-    font-size: 14px;
-    font-weight: 400;
-    color: #99a9bf;
-  }
-  .label-name {
-    display: inline-block;
-    margin-right: 10px;
-    text-align: right;
-    color: #999999;
-    font-size: 14px;
-  }
+.container h3 {
+  font-size: 22px;
+  font-weight: 400;
+  margin: 0 0 10px;
+  color: #1f2d3d;
+}
+.container h6 {
+  font-size: 14px;
+  font-weight: 400;
+  color: #99a9bf;
+}
+.label-name {
+  display: inline-block;
+  margin-right: 10px;
+  text-align: right;
+  color: #999999;
+  font-size: 14px;
+}
 </style>

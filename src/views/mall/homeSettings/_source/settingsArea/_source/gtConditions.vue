@@ -1,8 +1,8 @@
 <template>
   <div class="gt-conditions-model">
-    <el-cascader placeholder="商品分组" :show-all-levels="false" :props="{children: 'children',label: 'name',value: 'id'}" :options="groupData" size="mini" @change="onChange" />
+    <el-cascader placeholder="商品分组" :props="{children: 'children',label: 'name',value: 'id'}" :options="groupData" size="mini" @change="onChange" />
     <el-input v-model.trim="searchParams.brandName" placeholder="商品品牌" size="mini" style="width: 172px;" />
-    <el-input v-model.trim="searchParams.searchKeyWord" placeholder="商品编码/名称" size="mini" style="width: 192px;" />
+    <el-input v-model.trim="searchParams.erpOrName" placeholder="商品编码/名称" size="mini" style="width: 192px;" />
     <el-button type="primary" size="mini" @click="onSubmit">查询</el-button>
   </div>
 </template>
@@ -15,11 +15,9 @@ export default {
   data() {
     return {
       searchParams: {
-        firstTypeId: '',
-        secondTypeId: '',
-        threeTypeId: '',
         brandName: '',
-        searchKeyWord: ''
+        erpOrName: '',
+        groupId: ''
       },
       groupData: []
     }
@@ -27,26 +25,15 @@ export default {
   props: {},
   methods: {
     onChange(v) {
-      this.searchParams.firstTypeId = ''
-      this.searchParams.secondTypeId = ''
-      this.searchParams.threeTypeId = ''
-
-      if (v[0] === 'all') {
-        return
-      }
-
-      if (_.size(v) === 3) {
-        this.searchParams.threeTypeId = v[2]
-      }
-      if (_.size(v) === 2) {
-        this.searchParams.secondTypeId = v[1]
-      }
-      if (_.size(v) === 1) {
-        this.searchParams.firstTypeId = v[0]
+      const isAll = v.includes('all')
+      if (isAll) {
+        this.searchParams.groupId = ''
+      } else {
+        this.searchParams.groupId = _.last(v)
       }
     },
     onSubmit() {
-      this.$emit('on-conditions', this.searchParams)
+      this.$emit('on-conditions', { ...this.searchParams, currentPage: 1 })
     }
   },
   watch: {},

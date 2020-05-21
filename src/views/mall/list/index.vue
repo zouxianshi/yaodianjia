@@ -52,6 +52,14 @@
     <el-dialog title="效果预览" append-to-body :visible.sync="isPreview" width="740px">
       <m-preview v-if="isPreview" :dimension-id="dimensionId" @on-close="() => isPreview = false" />
     </el-dialog>
+
+    <el-dialog title="选择模版" append-to-body :visible.sync="isTpl" width="740px">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -66,7 +74,8 @@ export default {
       visible: false,
       loading: false,
       isPreview: false,
-      dimensionId: null
+      dimensionId: null,
+      isTpl: false
     }
   },
   props: {},
