@@ -75,7 +75,7 @@
                 <span>
                   {{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}
                   <span
-                    v-if="item[2].name"
+                    v-if="item[2]&&item[2].name"
                   >&nbsp;>&nbsp;{{ item[2].name }}</span>
                 </span>
               </el-tag>
@@ -111,6 +111,12 @@ export default {
         return []
       }
     },
+    chooseData: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
     type: {
       type: String,
       default: '0'
@@ -118,13 +124,13 @@ export default {
   },
   data() {
     return {
+      chooseGroup: [],
       modelList: [],
       group_id: '',
       groups1: [],
       groups2: [],
       active_row: '',
-      subLoading: false,
-      chooseGroup: [] // 选中的分组
+      subLoading: false
     }
   },
   computed: {
@@ -142,8 +148,16 @@ export default {
       if (this.groupData.length > 0) {
         this.group_id = this.groupData[0].id
         this.handleChooseGroup(this.group_id)
-        this.modelList = []
-        this.chooseGroup = []
+        if (this.chooseData.length > 0) {
+          this.chooseGroup = [...this.chooseData]
+          this.modelList = []
+          this.chooseGroup.map(cg => {
+            this.modelList.push(cg[cg.length - 1].id)
+          })
+        } else {
+          this.modelList = []
+          this.chooseGroup = []
+        }
       }
     }
   },
@@ -168,7 +182,9 @@ export default {
             this.active_row = res.children[0]
             this.groups2 = res.children[0].children.sort(this.compare('sort'))
             this.groups2.map(item => {
-              item.children = item.children.sort(this.compare('sort'))
+              item.children = item.children
+                ? item.children.sort(this.compare('sort'))
+                : null
             })
           }
         }
@@ -206,7 +222,10 @@ export default {
     },
     handleRemove(index) {
       // 移出选择的数据
-      const id = this.chooseGroup[index][3]
+      let id = this.chooseGroup[index][3]
+      if (!id) {
+        id = this.chooseGroup[index][1].id
+      }
       if (this.modelList.includes(id)) {
         const index = this.modelList.indexOf(id)
         this.modelList.splice(index, 1)
@@ -247,7 +266,11 @@ export default {
         }
         console.log('chooseGroup===========', this.chooseGroup)
         this.chooseGroup.map(v => {
-          data.push([v[0].id, v[1].id, v[2].id])
+          if (v[2] && v[2].id) {
+            data.push([v[0].id, v[1].id, v[2].id])
+          } else {
+            data.push([v[0].id, v[1].id])
+          }
         })
         console.log('chooseGroup===========data', data)
         this.$emit('back', data)
