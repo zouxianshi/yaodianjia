@@ -4,7 +4,7 @@
     <m-icon-activity v-if="item.activityId || false" />
     <div class="csim-photo" :class="{'no-data':!item.img}">
       <img v-if="item.img" :src="`${showImg(item.img)}?x-oss-process=style/w_160`" alt="" width="100" height="100">
-      <m-icons v-else :is-center="true" />
+      <m-icons v-else :is-center="true" style="width: 116px;" />
     </div>
     <p class="csim-name">{{ truName(item.name) || '-' }}</p>
     <p class="csim-price">
