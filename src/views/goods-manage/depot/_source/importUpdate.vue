@@ -88,7 +88,7 @@ export default {
       return `${this.uploadFileURL}${config.merchandise}/1.0/ds/op/file/template/batchEdit?merCode=${this.merCode}`
     },
     uploadUlr() {
-      return `${this.uploadFileURL}${config.merGoods}/1.0/comm-relate/excel/batchEdit`
+      return `${this.uploadFileURL}${config.merchandise}/1.0/comm-relate/excel/batchEdit`
     },
     headers() {
       return {
