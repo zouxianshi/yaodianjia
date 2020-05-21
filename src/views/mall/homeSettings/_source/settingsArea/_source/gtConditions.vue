@@ -33,7 +33,7 @@ export default {
       }
     },
     onSubmit() {
-      this.$emit('on-conditions', this.searchParams)
+      this.$emit('on-conditions', { ...this.searchParams, currentPage: 1 })
     }
   },
   watch: {},
