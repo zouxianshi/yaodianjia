@@ -1001,7 +1001,11 @@
 <script>
 import Tinymce from '@/components/Tinymce'
 import vueUploadImg from '@/components/ImgUpload'
-import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
+import {
+  getTypeTree_1,
+  getPreGroupList,
+  getTypeDimensionList
+} from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import {
@@ -1369,11 +1373,21 @@ export default {
           ids.map(v => {
             const dat = datas[v]
             if (dat) {
-              this.chooseGroup.push([
-                { name: dat.name, id: dat.id },
-                { name: dat.child.name, id: dat.child.id },
-                { name: dat.child.child.name, id: dat.child.child.id }
-              ])
+              if (dat.child.child) {
+                this.chooseGroup.push([
+                  { name: dat.name, id: dat.id },
+                  { name: dat.child.name, id: dat.child.id },
+                  {
+                    name: dat.child.child.name,
+                    id: dat.child.child.id
+                  }
+                ])
+              } else {
+                this.chooseGroup.push([
+                  { name: dat.name, id: dat.id },
+                  { name: dat.child.name, id: dat.child.id }
+                ])
+              }
             }
           })
         }
@@ -1608,7 +1622,7 @@ export default {
     },
     _loadTypeList(isRefresh) {
       // 获取分组
-      getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
+      getTypeTree_1({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
         console.log('获取分组----', res.data)
         if (isRefresh) {

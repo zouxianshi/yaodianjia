@@ -12,11 +12,7 @@
     >
       <div class="modal-body-group">
         <div class="header">
-          <el-select
-            v-model="group_id"
-            placeholder="选择商品分类"
-            @change="handleChooseGroup"
-          >
+          <el-select v-model="group_id" placeholder="选择商品分类" @change="handleChooseGroup">
             <el-option
               v-for="(item,index) in groupData"
               :key="index"
@@ -44,17 +40,22 @@
           </ul>
           <div class="group-details">
             <template v-if="groups1&&groups1.length!==0&&groups2&&groups2.length>0">
-              <div
-                v-for="(item,index) in groups2"
-                :key="index"
-                class="list"
-              >
-                <p class="titles" v-text="item.name" />
-                <el-checkbox-group
-                  v-model="modelList"
-                  style="padding-left:20px"
-                >
-                  <el-checkbox v-for="(items,index1) in item.children" :key="index1" :label="items.id" @change="handleCheckClk(items)">{{ items.name }}</el-checkbox>
+              <div v-for="(item,index) in groups2" :key="index" class="list">
+                <p v-if="item.children&&item.children.length>0" class="titles" v-text="item.name" />
+                <el-checkbox-group v-model="modelList" style="padding-left:20px">
+                  <el-checkbox
+                    v-if="!item.children||item.children.length===0"
+                    :key="index"
+                    :label="item.id"
+                    @change="handleCheckClk(item)"
+                  >{{ item.name }}</el-checkbox>
+                  <el-checkbox
+                    v-for="(items,index1) in item.children"
+                    v-else
+                    :key="index1"
+                    :label="items.id"
+                    @change="handleCheckClk(items)"
+                  >{{ items.name }}</el-checkbox>
                 </el-checkbox-group>
               </div>
             </template>
@@ -67,27 +68,19 @@
           <p class="choose-label">已选择：</p>
           <ul class="choose-list clearfix">
             <li v-for="(item,index) in chooseGroup" :key="index" class="choose-item">
-              <el-tag type="" closable @close="handleRemove(index)">
-                <span>{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+              <el-tag type closable @close="handleRemove(index)">
+                <span>
+                  {{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}
+                  <span v-if="item[2].name">&nbsp;>&nbsp;{{ item[2].name }}</span>
+                </span>
               </el-tag>
             </li>
           </ul>
         </div>
       </div>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          size="small"
-          @click="handleCanle"
-        >取 消</el-button>
-        <el-button
-          type="primary"
-          size="small"
-          :loading="subLoading"
-          @click="handleSubmit"
-        >确 定</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="handleCanle">取 消</el-button>
+        <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -126,7 +119,7 @@ export default {
       groups2: [],
       active_row: '',
       subLoading: false,
-      chooseGroup: []// 选中的分组
+      chooseGroup: [] // 选中的分组
     }
   },
   computed: {
@@ -153,7 +146,8 @@ export default {
     handleCanle() {
       this.$emit('close')
     },
-    handleChooseGroup(val) { // 第一阶分组
+    handleChooseGroup(val) {
+      // 第一阶分组
       this.groupData.map(res => {
         if (res.id === val) {
           this.groups1 = res.children
@@ -164,15 +158,23 @@ export default {
         }
       })
     },
-    handleLeftGroup(row) { // 左侧分组点击事件
+    handleLeftGroup(row) {
+      // 左侧分组点击事件
       this.active_row = row
       this.groups2 = row.children
     },
-    handleCheckClk(row) { // 单个checkbox选择触发
+    handleCheckClk(row) {
+      // 单个checkbox选择触发
       if (this.modelList.includes(row.id)) {
         this.active_row.children.map(res => {
-          if (row.parentId === res.id) {
-            this.chooseGroup.push([this.active_row, res, row, row.id])
+          if (res.children && res.children.length > 0) {
+            if (row.parentId === res.id) {
+              this.chooseGroup.push([this.active_row, res, row, row.id])
+            }
+          } else {
+            if (row.id === res.id) {
+              this.chooseGroup.push([this.active_row, res, '', row.id])
+            }
           }
         })
       } else {
@@ -186,7 +188,8 @@ export default {
         this.chooseGroup.splice(findIndex, 1)
       }
     },
-    handleRemove(index) { // 移出选择的数据
+    handleRemove(index) {
+      // 移出选择的数据
       const id = this.chooseGroup[index][3]
       if (this.modelList.includes(id)) {
         const index = this.modelList.indexOf(id)
@@ -196,24 +199,28 @@ export default {
     },
     handleSubmit() {
       console.log('1111111')
-      if (this.type === '0') { // 商品库批量修改商品
+      if (this.type === '0') {
+        // 商品库批量修改商品
         const params = {
           userName: this.name,
           typeIds: this.modelList,
           ids: this.goodsData
         }
         this.subLoading = true
-        setBatchGroup(params).then(res => {
-          this.$message({
-            message: '修改成功',
-            type: 'success'
+        setBatchGroup(params)
+          .then(res => {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.subLoading = false
+            this.$emit('complete')
           })
-          this.subLoading = false
-          this.$emit('complete')
-        }).catch(() => {
-          this.subLoading = false
-        })
-      } else { // 修改分组
+          .catch(() => {
+            this.subLoading = false
+          })
+      } else {
+        // 修改分组
         const data = []
         if (this.chooseGroup.length === 0) {
           this.$message({
@@ -241,5 +248,5 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-@import './group.scss'
+@import './group.scss';
 </style>
