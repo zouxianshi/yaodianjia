@@ -108,7 +108,7 @@ export default {
     }
   },
   created() {
-    this.searchParams.ctype = this.$route.query.id
+    this.searchParams.ctype = this.$route.query.id || 0
     this.searchData()
   },
   methods: {
@@ -119,6 +119,8 @@ export default {
         this.$router.push('/marketings/gift-manage/full-reduction')
       } else if (Number(this.searchParams.ctype) === 3) {
         this.$router.push('/marketings/gift-manage/gift')
+      } else {
+        this.$router.push('/marketing/gifts?type=coupons')
       }
     },
     searchData() {
