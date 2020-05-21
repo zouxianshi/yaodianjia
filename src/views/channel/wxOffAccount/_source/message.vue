@@ -98,16 +98,17 @@ export default {
         radioValue = 'modelType=3'
       }
       searchWxTemp(radioValue).then(res => {
-        this.tableData = res.data
-        this.tableData.forEach(element => {
-          console.log(element)
-          if (element.noticeState.toString() === '1') {
+        const tableData = res.data
+        tableData.forEach(element => {
+          if (element.noticeState === null) {
+            element.noticeState = false
+          } else if (element.noticeState.toString() === '1') {
             element.noticeState = true
           } else {
             element.noticeState = false
           }
-          console.log(this.tableData)
         })
+        this.tableData = tableData
         this.loading = false
       })
     }
