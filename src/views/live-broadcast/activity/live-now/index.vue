@@ -2,18 +2,18 @@
   <div class="app-container">
     <div class="live-now-wrapper">
       <div class="shopTop">
-        <el-image class="shopTop_avatar" :src="url" :fit="contain" />
-        <p class="shopTitle">老百姓大药房</p>
+        <el-image class="shopTop_avatar" :src="LiveDetails.merLogoUrl" :fit="contain" />
+        <p class="shopTitle">{{ LiveDetails.merName }}</p>
       </div>
       <div class="containerCenter">
         <div class="commentBox">
           <div class="flex-left coverbox">
-            <el-image class="comment_avatar" :src="url" :fit="contain" />
-            <p class="comment_Title">母亲节礼物促销</p>
+            <el-image class="comment_avatar" :src="LiveDetails.coverPicUrl" :fit="contain" />
+            <p class="comment_Title">{{ LiveDetails.name }}</p>
           </div>
           <div class="now-people">
             <span>在线人数:</span>
-            <span>50人</span>
+            <span>{{ liveNumber }}人</span>
           </div>
           <p class="tips">
             平台公告：
@@ -21,15 +21,15 @@
           </p>
           <div class="discuss-plan">
             <div>
-              <div v-for="items in discussList" :key="items+1" class="flex-left discuss-box">
+              <div v-for="items in chatList" :key="items.nick+1" class="flex-left discuss-box">
                 <div class="flex-left userMsg">
                   <el-image class="discuss_avatar" :src="url" :fit="contain" />
                   <strong>
-                    张三
+                    {{ items.nick }}
                     <span style="font-weight:700">:</span>
                   </strong>
                 </div>
-                <div class="discussConten" style="width:75%">药超级的便宜 药超级的便宜 药超级的便宜 药超级的便宜</div>
+                <div class="discussConten" style="width:75%">{{ items.payload.text }}</div>
               </div>
             </div>
           </div>
@@ -62,20 +62,23 @@
             <div class="shareIcon" @click="openShare">
               <i class="el-icon-share" />
             </div>
+            <div class="shareIcon" @click="closeLive()">
+              <i class="el-icon-switch-button" />
+            </div>
           </div>
           <div v-if="goodsListflag" class="goodslistBox">
             <div class="goodsTop flex-between">
               <div>全部商品</div>
               <div @click="showIcon()">
-                <i class="el-icon-close" />
+                <i class="el-icon-close" style=" cursor: pointer;" />
               </div>
             </div>
             <div class="goodList">
-              <div v-for="gitems in discussList" :key="gitems+21" class="flex-left goods">
-                <el-image class="good_avatar" :src="url" :fit="contain" />
+              <div v-for="gitems in goodList" :key="gitems+21" class="flex-left goods">
+                <el-image class="good_avatar" :src="gitems.commodityPic" :fit="contain" />
                 <div class="c-flex-top goodsMsg">
-                  <p>999超级感康感冒林</p>
-                  <p>直播间销售数量:99999</p>
+                  <p>{{ gitems.specName }}</p>
+                  <!-- <p>{{}}</p> -->
                 </div>
               </div>
             </div>
@@ -84,41 +87,54 @@
             <div class="share_colose" @click="closeShare">
               <i class="el-icon-close" />
             </div>
-            <div class="c-flex-center" style="margin-right:20px">
+            <div
+              v-for="sitem in shareList"
+              :key="sitem.avatar+1"
+              class="c-flex-center"
+              style="margin-right:20px;cursor:pointer;"
+            >
               <el-image class="share_avatar" :src="url" :fit="contain" />
-              <span style="margin-top:20px">微博</span>
-            </div>
-            <div class="c-flex-center" style="margin-right:20px">
-              <el-image class="share_avatar" :src="url" :fit="contain" />
-              <span style="margin-top:20px">微博</span>
-            </div>
-            <div class="c-flex-center" style="margin-right:20px">
-              <el-image class="share_avatar" :src="url" :fit="contain" />
-              <span style="margin-top:20px">微博</span>
-            </div>
-            <div class="c-flex-center">
-              <el-image class="share_avatar" :src="url" :fit="contain" />
-              <span style="margin-top:20px">微博</span>
+              <span style="margin-top:20px">{{ sitem.name }}</span>
             </div>
           </div>
 
           <el-dialog
-            title="直播地址"
+            title="链接地址"
             :visible.sync="dialogVisible"
             width="25%"
             top="350px"
-            modal="false"
+            append-to-body
             custom-class="sagoZindex"
             :before-close="handleClose"
           >
             <div>
               <div class="flex-left" style="margin-bottom:20px">
-                <span style="margin-right:10px">流地址：1111111111111111111111111</span>
-                <span class="cloneButtom" @click="cloneUrl(0)">复制</span>
+                <strong class="bold" style="margin-right:10px">服务地址:</strong>
+                <el-input v-model="LiveDetails.tlUrl" class="flex-1" placeholder="请输入内容">
+                  <template slot="append" icon="el-icon-search">
+                    <el-button
+                      slot="append"
+                      v-clipboard:copy="LiveDetails.tlUrl"
+                      v-clipboard:success="onCopy"
+                      v-clipboard:error="onError"
+                      icon="el-icon-document-copy"
+                    />
+                  </template>
+                </el-input>
               </div>
               <div class="flex-left">
-                <span style="margin-right:10px">流地址：111111</span>
-                <span class="cloneButtom" @click="cloneUrl(1)">复制</span>
+                <strong class="bold" style="margin-right:10px">串流密钥:</strong>
+                <el-input v-model="LiveDetails.skUrl" class="flex-1" placeholder="请输入内容">
+                  <template slot="append" icon="el-icon-search">
+                    <el-button
+                      slot="append"
+                      v-clipboard:copy="LiveDetails.skUrl"
+                      v-clipboard:success="onCopy"
+                      v-clipboard:error="onError"
+                      icon="el-icon-document-copy"
+                    />
+                  </template>
+                </el-input>
               </div>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -131,10 +147,14 @@
   </div>
 </template>
 <script>
+import Vue from 'vue'
+import VueClipboard from 'vue-clipboard2'
 import { mapGetters } from 'vuex'
+import liveRequest from '@/api/live'
 import config from '@/utils/config'
 import TIM from 'tim-js-sdk'
 import COS from 'cos-js-sdk-v5'
+Vue.use(VueClipboard)
 // import storeGoods from '@/views/marketing/components/store-gods'
 // import checkCoupon from '@/components/Marketings/checkCoupon'
 export default {
@@ -142,43 +162,29 @@ export default {
   //   components:[ { storeGoods, checkCoupon }],
   data() {
     return {
+      LiveDetails: {},
+      goodList: [],
+      chatList: [],
       url:
         'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-      discussList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      liveNumber: '',
+      shareList: [
+        { name: '微博', avatar: '' },
+        { name: 'QQ空间', avatar: '' },
+        { name: 'QQ好友', avatar: '' },
+        { name: '复制链接', avatar: '' }
+      ],
       goodsListflag: false,
       iconFlag: true,
       shareFlag: false,
       dialogVisible: false
     }
   },
-  created() {
-    const options = {
-      SDKAppID: 1400365628 // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
-    }
-    // 创建 SDK 实例，`TIM.create()`方法对于同一个 `SDKAppID` 只会返回同一份实例
-    const tim = TIM.create(options) // SDK 实例通常用 tim 表示
-    console.log(tim)
-    // 设置 SDK 日志输出级别，详细分级请参见 setLogLevel 接口的说明
-    tim.setLogLevel(0) // 普通级别，日志量较多，接入时建议使用
-    // tim.setLogLevel(1); // release 级别，SDK 输出关键信息，生产环境时建议使用
-    // 注册 COS SDK 插件
-    tim.registerPlugin({ 'cos-js-sdk': COS })
-    // 登录
-    const promise = tim.login({ userID: 'your userID', userSig: 'your userSig' })
-    promise
-      .then(function(imResponse) {
-        console.log(imResponse.data) // 登录成功
-      })
-      .catch(function(imError) {
-        console.warn('login error:', imError) // 登录失败的相关信息
-      })
-    // 接受消息
-    const onMessageReceived = function(event) {
-      console.log(event.data)
-      // event.data - 存储 Message 对象的数组 - [Message]
-    }
-    console.log(onMessageReceived)
-    tim.on(TIM.EVENT.MESSAGE_RECEIVED, onMessageReceived)
+  async created() {
+    await this.getTimgensing()
+    await this.getLiveDetails()
+    this.getLivegoods()
+    this.timOpen()
   },
   computed: {
     ...mapGetters(['merCode', 'name', 'token']),
@@ -190,6 +196,87 @@ export default {
     }
   },
   methods: {
+    async getTimgensing() {
+      try {
+        const { data } = await liveRequest.getTimgensing({ name: this.name })
+        console.log(data)
+        this.gensing = data
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async timOpen() {
+      console.log(this.name)
+      const options = {
+        SDKAppID: 1400365628 // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
+      }
+      // 创建 SDK 实例，`TIM.create()`方法对于同一个 `SDKAppID` 只会返回同一份实例
+      const tim = TIM.create(options) // SDK 实例通常用 tim 表示
+      console.log(tim)
+      // 设置 SDK 日志输出级别，详细分级请参见 setLogLevel 接口的说明
+      tim.setLogLevel(0) // 普通级别，日志量较多，接入时建议使用
+      // tim.setLogLevel(1); // release 级别，SDK 输出关键信息，生产环境时建议使用
+      // 注册 COS SDK 插件
+      tim.registerPlugin({ 'cos-js-sdk': COS })
+      // 登录
+      const promise = await tim.login({
+        userID: this.name,
+        userSig: this.gensing
+      })
+      console.log('promise-------------', promise)
+      // 接受消息
+      const onMessageReceived = event => {
+        // event.data - 存储 Message 对象的数组 - [Message]
+        if (event.data[0].payload.text) {
+          const { nick, payload, avatar } = event.data[0]
+          this.chatList.push({ nick: nick, payload: payload, avatar: avatar })
+        }
+      }
+      tim.on(TIM.EVENT.MESSAGE_RECEIVED, onMessageReceived)
+      // 加入群聊天室
+      const joinOptions = {
+        groupID: this.LiveDetails.groupId,
+        type: 'TIM.TYPES.GRP_PUBLIC'
+      }
+      const promise1 = await tim.joinGroup(joinOptions)
+      if (promise1.data.status) {
+        switch (promise1.data.status) {
+          case TIM.TYPES.JOIN_STATUS_WAIT_APPROVAL:
+            console.log('等待管理员同意')
+            break // 等待管理员同意
+          case TIM.TYPES.JOIN_STATUS_SUCCESS: // 加群成功
+            // 加入的群组资料、
+            console.log('成功')
+            break
+          default:
+            break
+        }
+      }
+      // 获取群成员人数
+      const promise2 = await tim.getGroupProfile({
+        groupID: this.LiveDetails.groupId
+      })
+      this.liveNumber = promise2.data.group.memberNum
+    },
+    async getLiveDetails() {
+      try {
+        const { data } = await liveRequest.getLiveDetails({ liveId: 16 })
+        this.LiveDetails = data
+        this.LiveDetails.tlUrl = data.pushStreamUrl.split('?')[0]
+        this.LiveDetails.skUrl = data.pushStreamUrl.split('?')[1]
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getLivegoods() {
+      try {
+        const { data } = await liveRequest.getLivegoods({ liveId: 16 })
+        console.log(data)
+        this.goodList = data
+      } catch (error) {
+        console.log(error)
+      }
+    },
     showGood() {
       this.goodsListflag = true
       this.iconFlag = false
@@ -214,19 +301,43 @@ export default {
     handleClose(done) {
       done()
     },
-    cloneUrl() {
-      document.execCommand('Copy') // 执行浏览器复制命令
+    onCopy: function() {
       this.$message({
         message: '复制成功',
         type: 'success'
       })
+    },
+    onError: function() {
+      this.$message({
+        message: '复制失败,请手动复制',
+        type: 'success'
+      })
+    },
+    async closeLive() {
+      try {
+        this.$confirm('是否确认下播?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          const { data } = await liveRequest.closeLive({ liveId: 1006 })
+          console.log(data)
+          if (data.code !== '10000') {
+            return
+          }
+        }).catch(() => {
+
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.sagoZindex {
-  z-index: 12004;
+.bold {
+  font-weight: 700;
 }
 .flex-left {
   display: flex;
@@ -476,6 +587,12 @@ export default {
       right: 0px;
       width: 50px;
       height: 50px;
+      cursor: pointer;
+    }
+    .closeLiveIcon {
+      position: absolute;
+      top: 5px;
+      right: 30px;
     }
   }
 }
