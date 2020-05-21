@@ -1002,7 +1002,7 @@
 import Tinymce from '@/components/Tinymce'
 import vueUploadImg from '@/components/ImgUpload'
 import {
-  getTypeTree_1,
+  getTypeTree,
   getPreGroupList,
   getTypeDimensionList
 } from '@/api/group'
@@ -1622,7 +1622,7 @@ export default {
     },
     _loadTypeList(isRefresh) {
       // 获取分组
-      getTypeTree_1({ merCode: this.merCode, type: 2 }).then(res => {
+      getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
         console.log('获取分组----', res.data)
         if (isRefresh) {
