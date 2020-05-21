@@ -34,9 +34,7 @@
         height="350"
         @selection-change="handleSelectionChange"
       >
-        <!-- <el-table-column label="日期" width="120">
-          <template slot-scope="scope">{{ scope.row.date }}</template>
-        </el-table-column>-->
+        <el-table-column type="selection" width="55" />
         <el-table-column prop="cname" label="优惠券名称" />
         <el-table-column label="适用商品">
           <template
@@ -61,7 +59,6 @@
             slot-scope="scope"
           >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
         </el-table-column>
-        <el-table-column type="selection" width="55" />
         <div slot="empty" style="height:200px;line-height: 200px;">
           当前无任何优惠券，先去
           <span
@@ -322,7 +319,6 @@ export default {
     getAllSelectionData() {
       // 再执行一次记忆勾选数据匹配，目的是为了在当前页操作勾选后直接获取选中数据
       this.changePageCoreRecordData()
-      console.log(this.multipleSelectionAll)
     }
   }
 }

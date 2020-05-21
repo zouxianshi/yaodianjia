@@ -389,7 +389,7 @@ export default {
     },
     handleCommand(command) {
       if (command.val === '5') {
-        this.$confirm('确认将此活动设置为失效状态吗?', '提示', {
+        this.$confirm('确认删除吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -414,7 +414,7 @@ export default {
           .catch(() => {
             this.$message({
               type: 'info',
-              message: '已取消删除'
+              message: '已取消'
             })
           })
       } else if (command.val === '3') {
@@ -443,7 +443,7 @@ export default {
           .catch(() => {
             this.$message({
               type: 'info',
-              message: '已取消删除'
+              message: '已取消'
             })
           })
       } else if (command.val === '4') {

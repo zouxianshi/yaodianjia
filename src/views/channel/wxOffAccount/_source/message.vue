@@ -69,7 +69,6 @@ export default {
       this.getDate()
     },
     switchChange(val) {
-      console.log(val)
       const params = {
         merCode: this.merCode,
         modelCode: val.modelCode,
@@ -84,6 +83,8 @@ export default {
             message: '操作成功',
             type: 'success'
           })
+        } else {
+          val.noticeState = false
         }
       })
     },
