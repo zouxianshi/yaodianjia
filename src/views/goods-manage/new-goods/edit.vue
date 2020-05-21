@@ -981,6 +981,7 @@
     <edit-group
       :is-show="groupVisible"
       type="1"
+      :choose-data="chooseGroup"
       :group-data="groupDataDimens"
       @back="handleSaveGroup"
       @close="groupVisible=false"
@@ -1689,7 +1690,7 @@ export default {
         const findIndex = findArray(this.groupData, { id: val[0] })
         console.log('0------', findIndex)
         if (findIndex > -1) {
-          console.table(this.groupData)
+          // console.table(this.groupData)
           console.log('0------data', this.groupData[findIndex])
           // 找一级
           if (!this.chooseGroup[index1]) {
