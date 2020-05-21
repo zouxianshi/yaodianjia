@@ -27,13 +27,14 @@
           <template slot-scope="scope">
             <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.ykg)}">
               <div class="el-form-item__content">
-                <el-input
+                <!-- <el-input
                   v-model="scope.row.ykg"
                   oninput="value=value.replace(/[^0-9.]/g,'')"
                   maxlength="5"
                   style="width: 100px"
                   @change="onChange"
-                />
+                /> -->
+                <el-input-number v-model="scope.row.ykg" max="99999" style="width: 100px" :controls="false" />
                 <div v-if="scope.row.ykg === ''" class="el-form-item__error">请输入首重</div>
                 <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
@@ -44,13 +45,14 @@
           <template slot-scope="scope">
             <div :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.freight)}">
               <div class="el-form-item__content">
-                <el-input
+                <!-- <el-input
                   v-model="scope.row.freight"
                   oninput="value=value.replace(/[^0-9.]/g,'')"
                   maxlength="5"
                   style="width: 100px"
                   @change="onChange"
-                />
+                /> -->
+                <el-input-number v-model="scope.row.freight" max="99999" style="width: 100px" :controls="false" />
                 <div v-if="scope.row.freight === ''" class="el-form-item__error">请输入运费</div>
                 <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
@@ -63,13 +65,14 @@
               :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.continueWeight)}"
             >
               <div class="el-form-item__content">
-                <el-input
+                <!-- <el-input
                   v-model="scope.row.continueWeight"
                   oninput="value=value.replace(/[^0-9.]/g,'')"
                   maxlength="5"
                   style="width: 100px"
                   @change="onChange"
-                />
+                /> -->
+                <el-input-number v-model="scope.row.continueWeight" max="99999" style="width: 100px" :controls="false" />
                 <div v-if="scope.row.continueWeight === ''" class="el-form-item__error">请输入首重</div>
                 <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
@@ -82,13 +85,14 @@
               :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.renewalCost)}"
             >
               <div class="el-form-item__content">
-                <el-input
+                <!-- <el-input
                   v-model="scope.row.renewalCost"
                   :step="0.01"
                   oninput="value=value.replace(/[^0-9.]/g,'')"
                   maxlength="5"
                   style="width: 100px"
-                />
+                /> -->
+                <el-input-number v-model="scope.row.renewalCost" max="99999" style="width: 100px" :controls="false" />
                 <div v-if="scope.row.renewalCost === ''" class="el-form-item__error">请输入续费</div>
                 <div v-else class="el-form-item__error">最多2位小数</div>
               </div>
@@ -101,12 +105,13 @@
               :class="{'el-form-item is-error':!/^\d+(\.\d{0,2})?$/.test(scope.row.postageFreeThreshold)}"
             >
               <div class="el-form-item__content">
-                <el-input
+                <!-- <el-input
                   v-model="scope.row.postageFreeThreshold"
                   oninput="value=value.replace(/[^0-9.]/g,'')"
                   maxlength="5"
                   style="width: 100px"
-                />
+                /> -->
+                <el-input-number v-model="scope.row.postageFreeThreshold" max="99999" style="width: 100px" :controls="false" />
                 <div
                   v-if="scope.row.postageFreeThreshold === ''"
                   class="el-form-item__error"
