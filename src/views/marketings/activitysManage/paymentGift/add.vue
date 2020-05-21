@@ -90,6 +90,14 @@
         </el-form-item>
         <el-form-item label="消费金额：" prop="useRule">
           <span class="amTips">
+            <el-tooltip class="item" effect="light" placement="top-start">
+              <i class="el-icon-question" />
+              <div slot="content" style="width:500px;line-height:24px">
+                <p>如选择指定商品，用户需要在限制门店中购买指定商品且满足金额才能推送优惠券</p>
+                <p>例子，指定门店01,02,03门店，指定商品ABC，消费金额88元，用户购买的订单中只要包含A/B/C任意一款商品，
+                  并订单总金额满足>=88元，系统将触发支付有礼活动</p>
+              </div>
+            </el-tooltip>
             购满金额
             <el-input-number
               v-model="form.useRule"
@@ -148,6 +156,15 @@
           />
         </el-form-item>
         <el-form-item label="参与次数：" prop="countRule" required>
+          <el-tooltip class="item" effect="light" placement="top-start">
+            <i class="el-icon-question" style="position: relative;top:-20px;color:#606266" />
+            <div slot="content" style="width:500px;line-height:24px">
+              <p>为活动的参与的限制次数，如用户多次满足条件将根据此限制来判断给用户推送几次活动权益</p>
+              <p>如设置不限制，那么用户每次消费到达条件后即送对应的优惠券和抽奖机会</p>
+              <p>如设置为限制次数，那么用户参与活动达到条件后可获得权益的总次数，抽奖次数活动以抽奖设置的次数为准</p>
+              <p>例子：设置消费门槛满100元，活动次数设置为2，抽奖次数设置为3，那么用户可最多可参与2次活动，且每次活动可抽奖2次</p>
+            </div>
+          </el-tooltip>
           <el-radio-group v-model="countRuleReal">
             <el-radio :label="0">
               不限次数
