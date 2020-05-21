@@ -44,7 +44,7 @@ class InnerCtor {
           },
           {
             name: '会员反馈',
-            path: '/member/member-feedback',
+            path: '/member/member-feedback/FeedbackList',
             disabled: true
           }
         ]

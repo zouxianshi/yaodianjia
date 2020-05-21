@@ -1,7 +1,8 @@
 <template>
   <div class="feedback-model">
     <el-card class="box-card">
-      <div v-loading="loading" class="feedback-list">
+      <div v-if="notDate" class="notdata-model">暂无数据</div>
+      <div v-if="!notDate" v-loading="loading" class="feedback-list">
         <div v-for="(item,index) in dataList" :key="index">
           <div class="feedback-content">
             <div class="feedback-left">
@@ -59,7 +60,8 @@ export default {
       currentPage: 1,
       pageSize: 20,
       totalCount: 1,
-      dataList: []
+      dataList: [],
+      notDate: false
     }
   },
   computed: {
@@ -90,6 +92,9 @@ export default {
         this.dataList = res.data.data
         this.totalCount = res.data.totalCount
         this.loading = false
+        if (this.totalCount === 0) {
+          this.notDate = true
+        }
       })
     },
     handleSizeChange(val) {
@@ -108,6 +113,13 @@ export default {
 .feedback-model {
   padding: 20px;
   background: #f5f7fa;
+  .notdata-model{
+    color:#c0c4cc;
+    text-align:center;
+    background: #ffffff;
+    height: calc(100vh - 248px);
+    line-height: calc(100vh - 248px);
+  }
   .feedback-list {
     background: #ffffff;
     height: calc(100vh - 248px);
