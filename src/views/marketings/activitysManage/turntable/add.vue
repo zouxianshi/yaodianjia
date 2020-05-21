@@ -60,9 +60,9 @@ export default {
         this.$refs.ruleList.ruleForm = data
         this.$refs.ruleList.ruleForm.activeTime = [data.beginTime, data.endTime]
         if (data.countType === 1) {
-          this.$refs.ruleList.personLimit = data.countRule
+          this.$refs.ruleList.ruleForm.personLimit = data.countRule
         } else {
-          this.$refs.ruleList.dayLimit = data.countRule
+          this.$refs.ruleList.ruleForm.dayLimit = data.countRule
         }
         data.listActivityGiftEntity.map(item => {
           item.winRandom = item.winRandom * 100
