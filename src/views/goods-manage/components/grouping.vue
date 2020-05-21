@@ -42,7 +42,10 @@
             <template v-if="groups1&&groups1.length!==0&&groups2&&groups2.length>0">
               <div v-for="(item,index) in groups2" :key="index" class="list">
                 <p v-if="item.children&&item.children.length>0" class="titles" v-text="item.name" />
-                <el-checkbox-group v-model="modelList" :style="!item.children||item.children.length===0?'':'padding-left:20px'">
+                <el-checkbox-group
+                  v-model="modelList"
+                  :style="!item.children||item.children.length===0?'':'padding-left:20px'"
+                >
                   <el-checkbox
                     v-if="!item.children||item.children.length===0"
                     :key="index"
@@ -71,7 +74,9 @@
               <el-tag type closable @close="handleRemove(index)">
                 <span>
                   {{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}
-                  <span v-if="item[2].name">&nbsp;>&nbsp;{{ item[2].name }}</span>
+                  <span
+                    v-if="item[2].name"
+                  >&nbsp;>&nbsp;{{ item[2].name }}</span>
                 </span>
               </el-tag>
             </li>
@@ -143,17 +148,28 @@ export default {
     }
   },
   methods: {
+    compare(property) {
+      return function(a, b) {
+        var value1 = a[property]
+        var value2 = b[property]
+        return value1 - value2
+      }
+    },
     handleCanle() {
       this.$emit('close')
     },
     handleChooseGroup(val) {
+      console.log('---groupData---', this.groupData)
       // 第一阶分组
       this.groupData.map(res => {
         if (res.id === val) {
-          this.groups1 = res.children
+          this.groups1 = res.children.sort(this.compare('sort'))
           if (res.children && res.children.length > 0) {
             this.active_row = res.children[0]
-            this.groups2 = res.children[0].children
+            this.groups2 = res.children[0].children.sort(this.compare('sort'))
+            this.groups2.map(item => {
+              item.children = item.children.sort(this.compare('sort'))
+            })
           }
         }
       })

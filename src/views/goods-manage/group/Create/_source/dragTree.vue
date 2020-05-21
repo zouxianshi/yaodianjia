@@ -117,13 +117,12 @@
                           :two-index="$index_2"
                           level="2"
                         />
-                        <span v-if="item_2.children&&item_2.children.length>0">
+                        <div v-if="item_2.children&&item_2.children.length>0">
                           <el-tooltip
                             class="item"
                             effect="dark"
                             content="该分组下有子级，不能添加商品"
                             placement="top"
-                            style="margin-right:-4px"
                           >
                             <el-button
                               type="info"
@@ -141,8 +140,8 @@
                           >
                             <el-button type="info" icon="el-icon-delete" circle size="mini" />
                           </el-tooltip>
-                        </span>
-                        <span v-else>
+                        </div>
+                        <div v-else>
                           <band :info="item_2" />
                           <m-delete
                             :one-index="$index_1"
@@ -150,7 +149,7 @@
                             level="2"
                             :group-id="item_2.id"
                           />
-                        </span>
+                        </div>
                       </div>
                     </div>
                   </m-item-info>
@@ -198,7 +197,7 @@
                               level="3"
                             />
                             <band :info="item_3" />
-                            <span v-if="item_3.itemRefs&&item_3.itemRefs>0">
+                            <div v-if="item_3.itemRefs&&item_3.itemRefs>0">
                               <el-tooltip
                                 slot="reference"
                                 class="item"
@@ -208,7 +207,7 @@
                               >
                                 <el-button type="info" icon="el-icon-delete" circle size="mini" />
                               </el-tooltip>
-                            </span>
+                            </div>
                             <m-delete
                               v-else
                               :one-index="$index_1"
@@ -354,7 +353,7 @@ export default {
       .creater,
       .create-time,
       .operation {
-        height: 40px !important;
+        height: 39px !important;
       }
     }
     .level-3-group {
