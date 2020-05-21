@@ -112,6 +112,13 @@ export default {
       default() {
         return []
       }
+    },
+    // 是否单选
+    singlechoice: {
+      type: Boolean,
+      default() {
+        return false
+      }
     }
   },
   data() {
@@ -183,14 +190,18 @@ export default {
       this.dialogVisible = false
     },
     checkSure() {
-      const multipleSelectionAll = JSON.parse(
-        JSON.stringify(this.multipleSelectionAll)
-      )
-      this.$emit('confincheck', multipleSelectionAll)
-      this.currentPage = 1
-      this.tableData = []
-      this.dialogVisible = false
-      this.$refs.multipleTable.clearSelection()
+      if (this.singlechoice && this.tableData.length > 1) {
+        this.$message.error('只能单选')
+      } else {
+        const multipleSelectionAll = JSON.parse(
+          JSON.stringify(this.multipleSelectionAll)
+        )
+        this.$emit('confincheck', multipleSelectionAll)
+        this.currentPage = 1
+        this.tableData = []
+        this.dialogVisible = false
+        this.$refs.multipleTable.clearSelection()
+      }
     },
     handlematching(rows) {
       this.multipleSelectionAll = rows
