@@ -42,7 +42,7 @@
             <template v-if="groups1&&groups1.length!==0&&groups2&&groups2.length>0">
               <div v-for="(item,index) in groups2" :key="index" class="list">
                 <p v-if="item.children&&item.children.length>0" class="titles" v-text="item.name" />
-                <el-checkbox-group v-model="modelList" style="padding-left:20px">
+                <el-checkbox-group v-model="modelList" :style="!item.children||item.children.length===0?'':'padding-left:20px'">
                   <el-checkbox
                     v-if="!item.children||item.children.length===0"
                     :key="index"
