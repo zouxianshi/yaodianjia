@@ -288,7 +288,18 @@ export default {
   beforeCreate() {},
   created() {},
   beforeMount() {},
-  mounted() {},
+  mounted() {
+    if (
+      this.$route.query.code === '免费领取' ||
+      this.$route.query.code === '全部'
+    ) {
+      this.radio = 1
+    } else if (this.$route.query.code === '海贝兑换') {
+      this.radio = 2
+    } else {
+      this.radio = 3
+    }
+  },
   beforeUpdate() {},
   updated() {},
   beforeDestroy() {},

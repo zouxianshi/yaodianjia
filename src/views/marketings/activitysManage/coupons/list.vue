@@ -3,7 +3,7 @@
     <el-button
       type="primary"
       size="mini"
-      @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add', query: { activityTemplateCode: this.$route.query.code,activityTemplateName: this.$route.query.name} })"
+      @click="() => $router.push({ path: '/marketings/activity-manage/coupons/add', query: { activityTemplateCode: this.$route.query.code,activityTemplateName: this.$route.query.name,code:radio} })"
     >添加优惠券</el-button>
     <div class="explain">
       <el-alert
