@@ -12,7 +12,7 @@
         <template slot-scope="scope">{{ scope.row.sceneRule===1?'线上活动':'线下活动' }}</template>
       </el-table-column>
       <el-table-column property="countRule" label="抽奖次数">
-        <template slot-scope="scope">{{ '可抽奖'+scope.row.countRule+'次' }}</template>
+        <template slot-scope="scope">{{ '可抽奖'+(scope.row.countRule || 0)+'次' }}</template>
       </el-table-column>
       <el-table-column v-if="pageStatus!=3" label="操作" width="60">
         <template slot-scope="scope">
