@@ -15,6 +15,15 @@ class LiveRequest {
     })
   }
   /**
+   * 发起直播
+   */
+  startLive(id) {
+    return request({
+      url: `${config.live}/1.0/live/sponsor?liveId=${id}`,
+      method: 'post'
+    })
+  }
+  /**
    *
    * @param {string} params.adLinkUrl  广告位Ulr
    * @description 创建直播
@@ -27,6 +36,24 @@ class LiveRequest {
     })
   }
   /**
+   * 更新直播数据
+   */
+  updateLiveInfo(params) {
+    return request({
+      url: `${config.live}/1.0/activity/edit`,
+      method: 'post',
+      data: params
+    })
+  }
+  /**
+   * 获取直播详情
+   */
+  getLiveInfo(liveId) {
+    return request({
+      url: `${config.live}/1.0/activity/editDetail/${liveId}`
+    })
+  }
+  /*
    *
    * @param {string} params.liveId  直播iD
    * @description 获取直播详情
@@ -49,6 +76,25 @@ class LiveRequest {
     })
   }
   /**
+   * 获取直播商品数据
+   */
+  getLiveGoods(liveId) {
+    return request({
+      url: `${config.live}/1.0/activity/commodity/list`,
+      method: 'get',
+      params: { liveId: liveId }
+    })
+  }
+  /**
+   * 获取分享地址
+   */
+  getShareLivePage(merCode, liveId) {
+    return request({
+      url: `${config.live}/1.0/activity/getPlayUrl/${merCode}/${liveId}`,
+      method: 'post'
+    })
+  }
+  /*
    *
    * @param {string} params.name  用户名
    * @description 获取IM签名密码
