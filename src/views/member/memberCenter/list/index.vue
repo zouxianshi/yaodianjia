@@ -19,7 +19,7 @@
             <el-input v-model="content" size="mini" style="width: 50%" placeholder="请输入会员姓名、手机号、卡号、身份证" />
           </el-form-item>
           <el-form-item label="">
-            <el-button size="mini" type="primary" :loading="loading" @click="getData()">
+            <el-button size="mini" type="primary" :loading="loading" @click="getData('查询')">
               查询
             </el-button>
             <el-button size="mini" @click="reSet()">重置</el-button>
@@ -31,7 +31,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <m-tabel-list ref="listA" />
+      <m-tabel-list ref="listA" @getData="getData" />
       <div class="pagination">
         <el-pagination
           background
@@ -84,46 +84,51 @@ export default {
       this.conditions = !this.conditions
     },
     // 获取列表数据
-    getData() {
-      var params = _.cloneDeep(this.$refs.conditionsA.conditions)
-      var choosedEmpCodesArr = this.$refs.conditionsA.choosedEmpCodesArr // 已选择顾问
-      var choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
-      params.currentPage = this.pageInfo.currentPage
-      params.pageSize = this.pageInfo.pageSize
-      params.content = this.content
-      // 如果顾问为选择顾问
-      if (params.empCodes === '1') {
-        var arr = []
-        choosedEmpCodesArr.map(items => {
-          arr.push(items.empCode)
-        })
-        params.empCodes = arr
-      }
-      // 如果门店参数为选择门店
-      if (params.organizations === '1') {
-        var arr2 = []
-        choosedOrganizationsArr.map(items => {
-          arr2.push(items.storeId)
-        })
-        params.organizations = arr2
-      }
-      this.$refs.listA.loading = true // 列表加载中
-      this.loading = true // 按钮加载
-      queryMembers(params).then(res => {
-        this.isNoData = true
-        this.loading = false
-        this.paramsBac = params
-        if (res.data && res.data.data) {
-          if (res.data.data.length > 0) {
-            this.isNoData = false
-          }
-          this.pageInfo.totalCont = res.data.totalCount
-          this.$refs.listA.dataFromIndex(res.data.data)
-        } else {
-          this.pageInfo.totalCont = 0
-          this.$refs.listA.dataFromIndex([])
+    getData(val) {
+      if (val === '查询' && Number(this.$refs.conditionsA.conditions.organizations) === 1 && this.$refs.conditionsA.choosedOrganizationsArr.length === 0) {
+        this.$message({ type: 'warning', message: '请选择门店' })
+      } else {
+        var params = _.cloneDeep(this.$refs.conditionsA.conditions)
+        // console.log(params)
+        var choosedEmpCodesArr = this.$refs.conditionsA.choosedEmpCodesArr // 已选择顾问
+        var choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
+        params.currentPage = this.pageInfo.currentPage
+        params.pageSize = this.pageInfo.pageSize
+        params.content = this.content
+        // 如果顾问为选择顾问
+        if (params.empCodes === '1') {
+          var arr = []
+          choosedEmpCodesArr.map(items => {
+            arr.push(items.empCode)
+          })
+          params.empCodes = arr
         }
-      })
+        // 如果门店参数为选择门店
+        if (params.organizations === '1') {
+          var arr2 = []
+          choosedOrganizationsArr.map(items => {
+            arr2.push(items.storeId)
+          })
+          params.organizations = arr2
+        }
+        this.$refs.listA.loading = true // 列表加载中
+        this.loading = true // 按钮加载
+        queryMembers(params).then(res => {
+          this.isNoData = true
+          this.loading = false
+          this.paramsBac = params
+          if (res.data && res.data.data) {
+            if (res.data.data.length > 0) {
+              this.isNoData = false
+            }
+            this.pageInfo.totalCont = res.data.totalCount
+            this.$refs.listA.dataFromIndex(res.data.data)
+          } else {
+            this.pageInfo.totalCont = 0
+            this.$refs.listA.dataFromIndex([])
+          }
+        })
+      }
     },
     // 页面切换
     pageChage(e) {

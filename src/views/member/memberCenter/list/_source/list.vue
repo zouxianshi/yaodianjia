@@ -8,16 +8,16 @@
         </template>
       </el-table-column>
       <el-table-column prop="nickName" label="昵称" />
-      <el-table-column prop="memberName" label="会员姓名" />
-      <el-table-column label="性别">
+      <el-table-column prop="memberName" label="会员姓名" align="center" />
+      <el-table-column label="性别" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.memberSex === 1">男</span>
           <span v-if="scope.row.memberSex === 2">女</span>
         </template>
       </el-table-column>
-      <el-table-column prop="memberAge" label="年龄" />
-      <el-table-column prop="memberPhone" width="150" label="手机号码" />
-      <el-table-column label="健康顾问">
+      <el-table-column prop="memberAge" label="年龄" align="center" />
+      <el-table-column prop="memberPhone" width="150" label="手机号码" align="center" />
+      <el-table-column label="健康顾问" align="center">
         <template slot-scope="scope">
           {{ scope.row.healthConsultants?scope.row.healthConsultants[0].name: '' }}
           <el-popover
@@ -37,7 +37,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="会员分类" width="100">
+      <el-table-column label="会员分类" width="100" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.memberActive === 1">普通会员</span>
           <span v-if="scope.row.memberActive === 2">新增会员</span>
@@ -46,7 +46,7 @@
           <span v-if="scope.row.memberActive === 9">沉寂会员</span>
         </template>
       </el-table-column>
-      <el-table-column prop="age" label="注册来源" width="120">
+      <el-table-column prop="age" label="注册来源" width="120" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.registerSource === 1">门店推荐注册</span>
           <span v-if="scope.row.registerSource === 2">员工推荐注册</span>
@@ -122,6 +122,7 @@ export default {
         delMerMember(paramsUnboundparams).then(res => {
           if (res.code === '10000') {
             this.$message.success(res.msg)
+            this.$emit('getData')
           }
         })
       })

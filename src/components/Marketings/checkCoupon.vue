@@ -190,7 +190,7 @@ export default {
       this.dialogVisible = false
     },
     checkSure() {
-      if (this.singlechoice && this.tableData.length > 1) {
+      if (this.singlechoice && this.multipleSelectionAll.length > 1) {
         this.$message.error('请单选')
       } else {
         const multipleSelectionAll = JSON.parse(
