@@ -58,18 +58,28 @@
                 slot-scope="scope"
               >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
             </el-table-column>
-            <el-table-column label="券总数" width="110">
+            <el-table-column label="券总数" width="150">
               <template slot-scope="scope">
                 <div style="display:flex;align-items: center;padding-top:15px">
                   <el-form-item
                     :prop="'selectlist.'+scope.$index+'.totalCoupons'"
                     :rules="rules.totalCoupons"
                   >
-                    <el-input
+                    <el-input-number
+                      v-model="scope.row.totalCoupons"
+                      style="width: 110px"
+                      :controls="false"
+                      :precision="0"
+                      size="mini"
+                      :min="1"
+                      :max="100000000"
+                      @change="onChangeCoupons($event,scope.row,scope.$index)"
+                    />
+                    <!-- <el-input
                       v-model.number="scope.row.totalCoupons"
                       size="mini"
                       @change="onChangeCoupons($event,scope.row,scope.$index)"
-                    />
+                    /> -->
                   </el-form-item>
                   <i class="el-icon-edit" />
                 </div>
@@ -82,9 +92,19 @@
                     :prop="'selectlist.'+scope.$index+'.totalLimit'"
                     :rules="rules.totalLimit"
                   >
-                    <el-input
+                    <!-- <el-input
                       v-model="scope.row.totalLimit"
                       size="mini"
+                      @change="onChangeLimit($event,scope.row,scope.$index)"
+                    /> -->
+                    <el-input-number
+                      v-model="scope.row.totalLimit"
+                      style="width: 80px"
+                      :controls="false"
+                      :precision="0"
+                      size="mini"
+                      :min="1"
+                      :max="100"
                       @change="onChangeLimit($event,scope.row,scope.$index)"
                     />
                   </el-form-item>
@@ -173,7 +193,7 @@ export default {
       const reg = /^[0-9]*[1-9][0-9]*$/
       if (!reg.test(val)) {
         callback(new Error('请输入正整数'))
-      } else if (val < 0 || val > 100000001) {
+      } else if (val < 0 || val > 100000000) {
         callback(new Error('小于100000000'))
       } else {
         callback()
