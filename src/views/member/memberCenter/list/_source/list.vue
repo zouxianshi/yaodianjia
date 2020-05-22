@@ -66,7 +66,7 @@
             <div class="more-items">
               <el-button type="text" size="mini" @click="editBeans(scope.row.userId)">海贝管理</el-button>
             </div>
-            <div v-if="handleEnvironmental()" class="more-items">
+            <div v-if="env === 'development'" class="more-items">
               <el-button type="text" size="mini" @click="handleUnbound(scope.row.userId)">解绑</el-button>
             </div>
             <el-button slot="reference" size="mini" type="text">更多</el-button>
@@ -97,6 +97,7 @@ export default {
   props: {},
   data() {
     return {
+      env: process.env.NODE_ENV,
       tabelDatas: [],
       loading: false,
       beanTotalNum: 0 // 海贝总数量
@@ -108,14 +109,6 @@ export default {
     }
   },
   methods: {
-    handleEnvironmental() {
-      console.log(process.env.NODE_ENV)
-      if (process.env.NODE_ENV === 'development') {
-        return true
-      } else {
-        return false
-      }
-    },
     handleUnbound(userId) {
       this.$confirm('确认解绑吗, 是否继续?', '提示', {
         confirmButtonText: '确定',
