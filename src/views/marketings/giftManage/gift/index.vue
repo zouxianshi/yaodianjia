@@ -131,7 +131,7 @@ export default {
           return time.getTime() < new Date(new Date().getTime() - 86400000)
         }
       },
-      compArr1: ['cname'],
+      compArr1: ['cname', 'returnRules', 'expireInfo', 'note'],
       compArr2: ['timeRule', 'useRule'],
       isUpdate: false, // 判断是不是更新页面，来禁止编辑某些选项
       active: 1, // 当前操作步骤
@@ -286,8 +286,8 @@ export default {
     async _submit() {
       var that = this
       var arr = []
-      _.map(that.compArr2, item => {
-        var flag = that.$refs[item].$verification()
+      _.map([...that.compArr1, ...that.compArr2], v => {
+        var flag = this.$refs[v].$verification()
         arr.push(flag)
       })
       Promise.all(arr).then(res => {

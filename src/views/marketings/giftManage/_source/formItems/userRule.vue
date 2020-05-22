@@ -57,6 +57,7 @@ export default {
   watch: {
     discountForm(newVal) {
       this.params = _.cloneDeep(newVal)
+      this.useRuleLimit = newVal.useRule > 0 ? 1 : 0
     }
   },
   methods: {

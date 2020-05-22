@@ -207,7 +207,7 @@ export default {
       chooseStore: [], // 选择的门店
       storeSelectGoods: [], // 选择的商品
       active: 1, // 当前操作步骤
-      compArr1: ['cname'],
+      compArr1: ['cname', 'returnRules', 'expireInfo', 'note'],
       compArr2: ['timeRule', 'useRule'],
       otherData: {
         expirationDay: '1', // 直接开始有效天数
@@ -371,6 +371,10 @@ export default {
     async _submit() {
       var that = this
       var arr = []
+      _.map([...that.compArr1, ...that.compArr2], item => {
+        var flag = that.$refs[item].$verification()
+        arr.push(flag)
+      })
       _.map(that.compArr2, item => {
         var flag = that.$refs[item].$verification()
         arr.push(flag)

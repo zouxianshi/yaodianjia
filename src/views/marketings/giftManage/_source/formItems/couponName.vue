@@ -39,7 +39,7 @@ export default {
       params: {},
       cnameRules: {
         cname: [
-          { required: true, message: '请输入优惠券名称', trigger: 'blur' }
+          { required: true, message: '请勿超过10个字', trigger: 'blur' }
         ]
       }
     }
@@ -57,7 +57,7 @@ export default {
           if (valid) {
             resolve({ cname: _self.params.cname })
           } else {
-            reject('请输入优惠券名称')
+            reject('请勿超过10个字')
           }
         })
       })

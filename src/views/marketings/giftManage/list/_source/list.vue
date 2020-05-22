@@ -10,8 +10,8 @@
             <el-radio-button :label="3">礼品券</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="优惠券名称" style="margin-left:10px">
-          <el-input v-model="searchParams.cname" style="width:150px" placeholder="请输入关键词" size="mini" />
+        <el-form-item label="优惠券信息" style="margin-left:10px">
+          <el-input v-model="searchParams.cname" style="width:160px" placeholder="请输入优惠券id/关键词" size="mini" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" size="mini" @click="searchData()">查询</el-button>
@@ -46,7 +46,7 @@
           <template slot-scope="scope">
             <span v-if="scope.row.ctype === 1"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>{{ scope.row.denomination }}折</span>
             <span v-if="scope.row.ctype === 2"><span v-if="scope.row.useRule">满{{ scope.row.useRule }}元</span>减{{ scope.row.denomination }}元</span>
-            <span v-if="scope.row.ctype === 3">{{ scope.row.cname }}</span>
+            <span v-if="scope.row.ctype === 3">{{ scope.row.giftName }}</span>
           </template>
         </el-table-column>
         <el-table-column label="使用时间" width="180">
