@@ -106,6 +106,7 @@ export default {
     }
     .action {
       // @extend .text-overflow-1;
+      white-space: nowrap;
     }
   }
   .share {
