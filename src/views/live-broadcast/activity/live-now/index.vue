@@ -17,7 +17,7 @@
           </div>
           <p class="tips">
             平台公告：
-            欢迎来到主播间，海典软件倡导绿色直播，直播内容严禁违法违规、低俗色情、吸烟酗酒等不良内容，若有违反，将视情节严重对主播账号进行禁播处理。抵制不良内容，共建健康直播间。
+            {{ LiveDetails.activityNotice }}
           </p>
           <div class="discuss-plan">
             <div>
@@ -77,21 +77,25 @@
               <div v-for="gitems in goodList" :key="gitems+21" class="flex-left goods">
                 <el-image class="good_avatar" :src="gitems.commodityPic" :fit="contain" />
                 <div class="c-flex-top goodsMsg">
+                  <p>{{ gitems.commodityName }}</p>
                   <p>{{ gitems.specName }}</p>
-                  <!-- <p>{{}}</p> -->
                 </div>
               </div>
             </div>
           </div>
-          <div v-if="shareFlag" class="flex-around shareBox">
+          <div v-if="shareFlag" class="flex-between shareBox">
             <div class="share_colose" @click="closeShare">
               <i class="el-icon-close" />
             </div>
             <div
-              v-for="sitem in shareList"
+              v-for="(sitem,index) in shareList"
               :key="sitem.avatar+1"
+              v-clipboard:copy="LiveDetails.tlUrl"
+              v-clipboard:success="onCopy"
+              v-clipboard:error="onError"
               class="c-flex-center"
-              style="margin-right:20px;cursor:pointer;"
+              :style="{'margin-right':index==shareList.length-1 ? '':'20px','cursor':'pointer'}"
+              @click="shares(index)"
             >
               <el-image class="share_avatar" :src="url" :fit="contain" />
               <span style="margin-top:20px">{{ sitem.name }}</span>
@@ -218,6 +222,11 @@ export default {
       // tim.setLogLevel(1); // release 级别，SDK 输出关键信息，生产环境时建议使用
       // 注册 COS SDK 插件
       tim.registerPlugin({ 'cos-js-sdk': COS })
+      tim.on(TIM.EVENT.SDK_READY, function(event) {
+        // 收到离线消息和会话列表同步完毕通知，接入侧可以调用 sendMessage 等需要鉴权的接口
+        // event.name - TIM.EVENT.SDK_READY
+        console.log('event--------------', event)
+      })
       // 登录
       const promise = await tim.login({
         userID: this.name,
@@ -257,10 +266,19 @@ export default {
         groupID: this.LiveDetails.groupId
       })
       this.liveNumber = promise2.data.group.memberNum
+      const as = this.LiveDetails.groupId
+      console.log(as)
+      const promise3 = tim.getMessageList({ conversationID: as, count: 30 })
+      promise3.then(function(imResponse) {
+        const messageList = imResponse.data.messageList // 消息列表。
+        console.log('messageList-------------------', messageList)
+        // const nextReqMessageID = imResponse.data.nextReqMessageID // 用于续拉，分页续拉时需传入该字段。
+        // const isCompleted = imResponse.data.isCompleted // 表示是否已经拉完所有消息。
+      })
     },
     async getLiveDetails() {
       try {
-        const { data } = await liveRequest.getLiveDetails({ liveId: 16 })
+        const { data } = await liveRequest.getLiveDetails({ liveId: 26 })
         this.LiveDetails = data
         this.LiveDetails.tlUrl = data.pushStreamUrl.split('?')[0]
         this.LiveDetails.skUrl = data.pushStreamUrl.split('?')[1]
@@ -270,7 +288,7 @@ export default {
     },
     async getLivegoods() {
       try {
-        const { data } = await liveRequest.getLivegoods({ liveId: 16 })
+        const { data } = await liveRequest.getLivegoods({ liveId: 26 })
         console.log(data)
         this.goodList = data
       } catch (error) {
@@ -319,17 +337,71 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(async() => {
-          const { data } = await liveRequest.closeLive({ liveId: 1006 })
-          console.log(data)
-          if (data.code !== '10000') {
-            return
-          }
-        }).catch(() => {
-
         })
+          .then(async() => {
+            const { data } = await liveRequest.closeLive({ liveId: 16 })
+            console.log(data)
+            if (data.code !== '10000') {
+              return
+            }
+          })
+          .catch(() => {})
       } catch (error) {
         console.log(error)
+      }
+    },
+    shares(index) {
+      let _shareUrl = ''
+      switch (index) {
+        case 0:
+          // 真实的appkey，必选参数
+          _shareUrl += 'http://v.t.sina.com.cn/share/share.php?title="123"'
+          '&url=' +
+            encodeURIComponent(this.LiveDetails.playUrl || document.location) // 参数url设置分享的内容链接|默认当前页location，可选参数
+          _shareUrl +=
+            '&title=' +
+            encodeURIComponent(this.LiveDetails.name || document.title) // 参数title设置分享的标题|默认当前页标题，可选参数
+          _shareUrl += '&content=' + 'utf-8' // 参数content设置页面编码gb2312|utf-8，可选参数
+          _shareUrl +=
+            '&pic=' + encodeURIComponent(this.LiveDetails.coverPicUrl || '') // 参数pic设置图片链接|默认为空，可选参数
+          window.open(_shareUrl, '_blank')
+          break
+        case 1:
+          _shareUrl =
+            'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?'
+          _shareUrl +=
+            'url=' +
+            encodeURIComponent(this.LiveDetails.playUrl || document.location) // 参数url设置分享的内容链接|默认当前页location
+          _shareUrl += '&showcount=' + '' || 0 // 参数showcount是否显示分享总数,显示：'1'，不显示：'0'，默认不显示
+          _shareUrl +=
+            '&desc=' +
+            encodeURIComponent(
+              '' || this.LiveDetails.merName + '正在直播中,速来围观'
+            ) // 参数desc设置分享的描述，可选参数
+          _shareUrl += '&summary=' + encodeURIComponent('') // 参数summary设置分享摘要，可选参数
+          _shareUrl +=
+            '&title=' +
+            encodeURIComponent(this.LiveDetails.name || document.title) // 参数title设置分享标题，可选参数
+          _shareUrl +=
+            '&pics=' + encodeURIComponent(this.LiveDetails.coverPicUrl || '') // 参数pics设置分享图片的路径，多张图片以＂|＂隔开，可选参数
+          window.open(_shareUrl, '_blank')
+          break
+        case 2:
+          _shareUrl = 'https://connect.qq.com/widget/shareqq/iframe_index.html?'
+          _shareUrl +=
+            'url=' +
+            encodeURIComponent(this.LiveDetails.playUrl || location.href) // 分享的链接
+          _shareUrl +=
+            '&title=' +
+            encodeURIComponent(this.LiveDetails.name || document.title) // 分享的标题
+          _shareUrl +=
+            '&pics=' +
+            encodeURIComponent(this.LiveDetails.coverPicUrl || document.title) // 分享的标题
+          window.open(_shareUrl, '_blank')
+          break
+        case 3:
+          console.log('复制')
+          break
       }
     }
   }
@@ -539,6 +611,7 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+      cursor: pointer;
     }
     .goodsTop {
       height: 60px;

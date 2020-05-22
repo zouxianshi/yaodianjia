@@ -66,9 +66,8 @@ class LiveRequest {
    */
   closeLive(params) {
     return request({
-      url: `${config.live}/1.0/live/close`,
-      method: 'post',
-      data: params
+      url: `${config.live}/1.0/live/close?liveId=${params.liveId}`,
+      method: 'post'
     })
   }
 }
