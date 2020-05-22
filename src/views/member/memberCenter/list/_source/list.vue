@@ -108,6 +108,10 @@ export default {
       return this.tabelDatas
     }
   },
+  created() {
+    console.log(process.env.VUE_APP_ENV)
+    console.log('.......22222', process.env.NODE_ENV)
+  },
   methods: {
     handleUnbound(userId) {
       this.$confirm('确认解绑吗, 是否继续?', '提示', {
