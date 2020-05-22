@@ -190,7 +190,8 @@ const router = [
           title: '直播活动',
           noCache: true
         }
-      }, {
+      },
+      {
         path: 'activity-edit',
         component: () => import('@/views/live-broadcast/activity/edit'),
         name: 'live-activity-edit',
@@ -198,6 +199,14 @@ const router = [
           // auth: 'commodity.commodity-combine',
           title: '直播活动',
           noCache: true
+        }
+      },
+      {
+        path: 'live-now',
+        component: () => import('@/views/live-broadcast/activity/live-now/index'),
+        name: 'live-now',
+        meta: {
+          title: '直播'
         }
       }, {
         path: 'introduce',

@@ -138,24 +138,25 @@
             <el-table-column label="每人限领张数" width="110">
               <template slot-scope="scope">
                 <span v-text="scope.row.perCount" />
+                <el-button type="text" icon="el-icon-edit" size="mini" circle @click="tableFrom.perCount=scope.row.perCount;popoverId=scope.row.id" />
                 <el-popover
-                  v-model="scope.row.showVisible"
-                  placement="bottom"
+                  v-show="popoverId===scope.row.id?true:false"
+                  v-model="showVisible"
+                  placement="top"
+                  title="每人限领张数"
                   width="200"
-                  trigger="manual"
                 >
                   <div style="text-align: right; margin: 0">
-                    <el-form :model="tableFrom" :rules="tableRules" size="mini">
+                    <el-form :model="tableFrom" :rules="tableRules" size="mini" @submit.native.prevent>
                       <el-form-item label="" prop="perCount">
                         <el-input v-model.number="tableFrom.perCount" placeholder="输入发放张数" />
                       </el-form-item>
                       <el-form-item label="">
-                        <el-button type="" @click="scope.row.showVisible=false">取消</el-button>
+                        <el-button type="" @click="showVisible=false">取消</el-button>
                         <el-button type="primary" @click="handlePerCount(scope.$index,scope.row)">确定</el-button>
                       </el-form-item>
                     </el-form>
                   </div>
-                  <el-button slot="reference" type="text" icon="el-icon-edit" size="mini" circle @click="scope.row.showVisible=!scope.row.showVisible;tableFrom.perCount=scope.row.perCount" />
                 </el-popover>
               </template>
             </el-table-column>
@@ -165,11 +166,12 @@
                 <el-popover
                   v-model="scope.row.showVisibleTotal"
                   placement="bottom"
+                  title="发放总数"
                   width="200"
                   trigger="manual"
                 >
                   <div style="text-align: right; margin: 0">
-                    <el-form :model="tableFrom" :rules="tableRules" size="mini">
+                    <el-form :model="tableFrom" :rules="tableRules" size="mini" @submit.native.prevent>
                       <el-form-item label="" prop="totalCount">
                         <el-input v-model.number="tableFrom.totalCount" placeholder="输入发放张数" />
                       </el-form-item>
@@ -179,7 +181,7 @@
                       </el-form-item>
                     </el-form>
                   </div>
-                  <el-button slot="reference" type="text" icon="el-icon-edit" size="mini" circle @click="scope.row.showVisibleTotal=!scope.row.showVisibleTotal;tableFrom.totalCount=scope.row.totalCount" />
+                  <el-button slot="reference" type="text" icon="el-icon-edit" size="mini" circle @click="scope.row.showVisibleTotal=true;tableFrom.totalCount=scope.row.totalCount" />
                 </el-popover>
               </template>
             </el-table-column>
@@ -243,11 +245,11 @@
     <store-goods
       ref="dialogGoods"
       :limit-max="20"
-      :list="formData.commoditySpecList"
+      :checklist="formData.commoditySpecList"
       @on-change="onSelectedGoods"
     />
     <!-- 选择优惠券 -->
-    <checkCoupon ref="checkCoupons" :timevalue="couponList" @confincheck="confincheck" />
+    <checkCoupon ref="checkCoupons" :singlechoice="true" :timevalue="couponList" @confincheck="confincheck" />
   </div>
 </template>
 <script>
@@ -264,6 +266,8 @@ export default {
   data() {
     return {
       chooseStore: [],
+      showVisible: true,
+      popoverId: '',
       showUpAvatar: false,
       formData: {
         couponRelationReqDto: [],
@@ -289,7 +293,6 @@ export default {
       },
       pageLoading: null,
       couponList: [],
-      showVisible: false,
       tableFrom: {
         perCount: 0
       },
@@ -341,6 +344,7 @@ export default {
     },
     confincheck(val) {
       _.map(val, v => {
+        v.totalCount = Number(v.totalCount)
         v.perCount = 0
         v.showVisible = false
         v.showVisibleTotal = false

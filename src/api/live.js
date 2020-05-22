@@ -50,7 +50,28 @@ class LiveRequest {
    */
   getLiveInfo(liveId) {
     return request({
-      url: `${config.live}/1.0/activity/editDetail/${liveId}`,
+      url: `${config.live}/1.0/activity/editDetail/${liveId}`
+    })
+  }
+  /*
+   *
+   * @param {string} params.liveId  直播iD
+   * @description 获取直播详情
+   */
+  getLiveDetails(params) {
+    return request({
+      url: `${config.live}/1.0/activity/detail/${params.liveId}`,
+      method: 'get'
+    })
+  }
+  /**
+   *
+   * @param {string} params.liveId  直播iD
+   * @description 获取直播商品列表
+   */
+  getLivegoods(params) {
+    return request({
+      url: `${config.live}/1.0/activity/commodity/list?liveId=${params.liveId}`,
       method: 'get'
     })
   }
@@ -71,6 +92,29 @@ class LiveRequest {
     return request({
       url: `${config.live}/1.0/activity/getPlayUrl/${merCode}/${liveId}`,
       method: 'post'
+    })
+  }
+  /*
+   *
+   * @param {string} params.name  用户名
+   * @description 获取IM签名密码
+   */
+  getTimgensing(params) {
+    return request({
+      url: `${config.live}/1.0/im/genSig/${params.name}`,
+      method: 'get'
+    })
+  }
+  /**
+   *
+   * @param {string} params.liveId  直播ID
+   * @description 关闭直播
+   */
+  closeLive(params) {
+    return request({
+      url: `${config.live}/1.0/live/close`,
+      method: 'post',
+      data: params
     })
   }
 }
