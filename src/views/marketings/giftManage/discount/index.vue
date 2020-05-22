@@ -397,6 +397,12 @@ export default {
             params.listCouponStore = []
             // 处理限制门店以及限制商品
             if (params.shopRule === 2) {
+              if (this.chooseStore.length === 0) {
+                this.$message({
+                  message: '请至少选择一家门店', type: 'error'
+                })
+                return false
+              }
               this.chooseStore.forEach(item => {
                 var obj = {
                   ruleType: 1,
@@ -410,6 +416,12 @@ export default {
             }
             params.listCouponProduct = []
             if (params.productRule === 2 || params.productRule === 3) {
+              if (this.storeSelectGoods.length === 0) {
+                this.$message({
+                  message: '请至少选择一件商品', type: 'error'
+                })
+                return false
+              }
               this.storeSelectGoods.forEach(item => {
                 var obj = {
                   proBrand: item.brandName,

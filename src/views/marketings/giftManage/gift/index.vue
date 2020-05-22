@@ -263,7 +263,7 @@ export default {
             message: '请选择商品',
             type: 'error'
           })
-          return
+          return false
         }
         this.$refs['form'].validate(flag => {
           if (flag) {
@@ -311,6 +311,12 @@ export default {
           params.listCouponStore = []
           // 处理限制门店以及限制商品
           if (params.shopRule === 2) {
+            if (this.chooseStore.length === 0) {
+              this.$message({
+                message: '请至少选择一家门店', type: 'error'
+              })
+              return false
+            }
             this.chooseStore.forEach(item => {
               var obj = {
                 ruleType: 1,
