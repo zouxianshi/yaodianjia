@@ -109,8 +109,8 @@ export default {
     }
   },
   created() {
-    console.log(process.env.VUE_APP_ENV)
-    console.log('.......22222', process.env.NODE_ENV)
+    alert(process.env.VUE_APP_ENV)
+    alert('.......22222' + process.env.NODE_ENV)
   },
   methods: {
     handleUnbound(userId) {
