@@ -20,8 +20,17 @@
       <el-table-column label="健康顾问">
         <template slot-scope="scope">
           {{ scope.row.healthConsultants?scope.row.healthConsultants[0].name: '' }}
-          <el-popover v-if="scope.row.healthConsultants" placement="bottom" title="最近添加" width="250" trigger="click">
-            <mPopConsultantList :datas="scope.row.healthConsultants|| []" :user-id="scope.row.userId" />
+          <el-popover
+            v-if="scope.row.healthConsultants"
+            placement="bottom"
+            title="最近添加"
+            width="250"
+            trigger="click"
+          >
+            <mPopConsultantList
+              :datas="scope.row.healthConsultants|| []"
+              :user-id="scope.row.userId"
+            />
             <el-button slot="reference" size="mini" type="text">
               <i class="el-icon-arrow-down" />
             </el-button>
@@ -51,8 +60,15 @@
           <el-button type="text" size="small" @click="tail(scope.row.userId)">详情</el-button>
           <span>|</span>
           <el-popover placement="bottom" trigger="click">
-            <div class="more-items"><el-button type="text" size="mini" @click="tailfDetail(scope.row.userId)">海贝明细</el-button></div>
-            <div class="more-items"><el-button type="text" size="mini" @click="editBeans(scope.row.userId)">海贝管理</el-button></div>
+            <div class="more-items">
+              <el-button type="text" size="mini" @click="tailfDetail(scope.row.userId)">海贝明细</el-button>
+            </div>
+            <div class="more-items">
+              <el-button type="text" size="mini" @click="editBeans(scope.row.userId)">海贝管理</el-button>
+            </div>
+            <div v-if="handleEnvironmental()" class="more-items">
+              <el-button type="text" size="mini" @click="handleUnbound(scope.row.userId)">解绑</el-button>
+            </div>
             <el-button slot="reference" size="mini" type="text">更多</el-button>
           </el-popover>
         </template>
@@ -66,11 +82,17 @@
 import mPopBeansDetails from '../../../_source/popBeansDetails' // 海贝详情
 import mPopEditBeans from './popEditBeans' // 海贝编辑
 import mPopConsultantList from './popConsultantList' // 健康顾问悬浮显示
-import { queryOnlineIntegra, menberBaseInfo } from '@/api/memberService'
+import {
+  queryOnlineIntegra,
+  menberBaseInfo,
+  delMerMember
+} from '@/api/memberService'
 export default {
   name: 'List',
   components: {
-    mPopBeansDetails, mPopConsultantList, mPopEditBeans
+    mPopBeansDetails,
+    mPopConsultantList,
+    mPopEditBeans
   },
   props: {},
   data() {
@@ -86,6 +108,31 @@ export default {
     }
   },
   methods: {
+    handleEnvironmental() {
+      console.log(process.env.NODE_ENV)
+      if (process.env.NODE_ENV === 'development') {
+        return true
+      } else {
+        return false
+      }
+    },
+    handleUnbound(userId) {
+      this.$confirm('确认解绑吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var paramsUnboundparams = {
+          userId: userId,
+          merCode: this.$store.state.user.merCode
+        }
+        delMerMember(paramsUnboundparams).then(res => {
+          if (res.code === '10000') {
+            this.$message.success(res.msg)
+          }
+        })
+      })
+    },
     // 数据改变
     dataFromIndex(data) {
       this.tabelDatas = [...data]
@@ -108,9 +155,9 @@ export default {
           this.beanTotalNum = 0
         }
         var params = {
-          'currentPage': 1,
-          'pageSize': 10,
-          'userId': userId
+          currentPage: 1,
+          pageSize: 10,
+          userId: userId
         }
         queryOnlineIntegra(params).then(res => {
           this.$refs.A.changeDia(res.data, userId, this.beanTotalNum)
@@ -126,24 +173,25 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .list-model {
-    .el-table__header tr,
-    .el-table__header th {
-      padding: 0;
-      height: 40px;
-      font-weight: bold;
-    }
-    .el-table__body td{
-      padding: 5px;
-    }
-    .headerImg{
-      width: 60px;height: 60px;
-    }
+.list-model {
+  .el-table__header tr,
+  .el-table__header th {
+    padding: 0;
+    height: 40px;
+    font-weight: bold;
   }
-  .more-items{
-    text-align: center;
-    &:nth-child(1){
-      border-bottom: 1px solid #eee;
-    }
+  .el-table__body td {
+    padding: 5px;
   }
+  .headerImg {
+    width: 60px;
+    height: 60px;
+  }
+}
+.more-items {
+  text-align: center;
+  &:nth-child(1) {
+    border-bottom: 1px solid #eee;
+  }
+}
 </style>
