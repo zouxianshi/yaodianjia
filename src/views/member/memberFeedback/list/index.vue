@@ -22,7 +22,7 @@
                     style="color:#909399;font-size: 14px;"
                   >{{ item.userId }}</span>
                 </p>
-                <p style="margin-top:10px;color:#909399;font-size: 14px;">{{ item.messageContext }}</p>
+                <p style="margin-top:10px;color:#909399;font-size: 14px;">{{ item.complaintContext }}</p>
               </div>
             </div>
             <div
