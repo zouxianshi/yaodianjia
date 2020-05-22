@@ -37,7 +37,7 @@
           <span />{{ formData.merName }}
         </el-form-item>
         <el-form-item label="直播主题：" prop="name">
-          <el-input v-model="formData.name" placeholder="请输入直播主题" />
+          <el-input v-model="formData.name" maxlength="50" placeholder="请输入直播主题" />
         </el-form-item>
         <el-form-item label="公告" prop="activityNotice">
           <el-input
@@ -58,7 +58,7 @@
           />
         </el-form-item>
         <el-form-item label="直播封面：" prop="coverPicUrl">
-          <div class="cover">
+          <div class="cover-img">
             <el-upload
               class="avatar-uploader"
               :action="upLoadUrl"
@@ -138,51 +138,13 @@
             <el-table-column label="每人限领张数" width="110">
               <template slot-scope="scope">
                 <span v-text="scope.row.perCount" />
-                <el-button type="text" icon="el-icon-edit" size="mini" circle @click="tableFrom.perCount=scope.row.perCount;popoverId=scope.row.id" />
-                <el-popover
-                  v-show="popoverId===scope.row.id?true:false"
-                  v-model="showVisible"
-                  placement="top"
-                  title="每人限领张数"
-                  width="200"
-                >
-                  <div style="text-align: right; margin: 0">
-                    <el-form :model="tableFrom" :rules="tableRules" size="mini" @submit.native.prevent>
-                      <el-form-item label="" prop="perCount">
-                        <el-input v-model.number="tableFrom.perCount" placeholder="输入发放张数" />
-                      </el-form-item>
-                      <el-form-item label="">
-                        <el-button type="" @click="showVisible=false">取消</el-button>
-                        <el-button type="primary" @click="handlePerCount(scope.$index,scope.row)">确定</el-button>
-                      </el-form-item>
-                    </el-form>
-                  </div>
-                </el-popover>
+                <el-button type="text" icon="el-icon-edit" size="mini" circle @click="handleEditCoupon('perCount',scope.$index,scope.row)" />
               </template>
             </el-table-column>
             <el-table-column label="发放总数" width="110">
               <template slot-scope="scope">
                 <span v-text="scope.row.totalCount" />
-                <el-popover
-                  v-model="scope.row.showVisibleTotal"
-                  placement="bottom"
-                  title="发放总数"
-                  width="200"
-                  trigger="manual"
-                >
-                  <div style="text-align: right; margin: 0">
-                    <el-form :model="tableFrom" :rules="tableRules" size="mini" @submit.native.prevent>
-                      <el-form-item label="" prop="totalCount">
-                        <el-input v-model.number="tableFrom.totalCount" placeholder="输入发放张数" />
-                      </el-form-item>
-                      <el-form-item label="">
-                        <el-button type="" @click="scope.row.showVisibleTotal=false">取消</el-button>
-                        <el-button type="primary" @click="handletotalCount(scope.$index,scope.row)">确定</el-button>
-                      </el-form-item>
-                    </el-form>
-                  </div>
-                  <el-button slot="reference" type="text" icon="el-icon-edit" size="mini" circle @click="scope.row.showVisibleTotal=true;tableFrom.totalCount=scope.row.totalCount" />
-                </el-popover>
+                <el-button type="text" icon="el-icon-edit" size="mini" circle @click="handleEditCoupon('totalCount',scope.$index,scope.row)" />
               </template>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="80">
@@ -245,11 +207,21 @@
     <store-goods
       ref="dialogGoods"
       :limit-max="20"
-      :checklist="formData.commoditySpecList"
+      :list="formData.commoditySpecList"
       @on-change="onSelectedGoods"
     />
     <!-- 选择优惠券 -->
-    <checkCoupon ref="checkCoupons" :singlechoice="true" :timevalue="couponList" @confincheck="confincheck" />
+    <checkCoupon ref="checkCoupons" :list="formData.couponRelationReqDto" :singlechoice="true" :timevalue="couponList" @confincheck="confincheck" />
+    <el-dialog :title="'设置'+titles==='perCount'?'没人限领张数':'发放总数'" width="30%" append-to-body="" :visible.sync="showVisible">
+      <el-form ref="editForm" :model="tableFrom" :rules="tableRules" size="mini" @submit.native.prevent>
+        <el-form-item label="" prop="keys">
+          <el-input v-model.number="tableFrom.keys" placeholder="输入要修改的值" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="handlePerCount">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -266,7 +238,6 @@ export default {
   data() {
     return {
       chooseStore: [],
-      showVisible: true,
       popoverId: '',
       showUpAvatar: false,
       formData: {
@@ -293,14 +264,16 @@ export default {
       },
       pageLoading: null,
       couponList: [],
+      showVisible: false,
       tableFrom: {
-        perCount: 0
+        keys: 0
       },
       saveLoading: false,
       tableRules: {
-        perCount: [{ required: true, message: '请输入没人限领张数', trigger: 'change' }, { type: 'number', message: '必须为数字值' }],
-        totalCount: [{ required: true, message: '请输入发放总数', trigger: 'change' }, { type: 'number', message: '必须为数字值' }]
-      }
+        keys: [{ required: true, message: '不能为空', trigger: 'change' }, { type: 'number', message: '必须为数字值' }]
+      },
+      titles: '',
+      editIndex: 0
     }
   },
   computed: {
@@ -400,6 +373,7 @@ export default {
     handleDeleteCoup(index) {
       this.formData.couponRelationReqDto.splice(index, 1)
     },
+
     // 使用日期
     handletimeRule(timeRule, effectTime) {
       if (timeRule) {
@@ -420,22 +394,30 @@ export default {
     },
     handleCheckCoupon() {
       this.$refs.checkCoupons.handleGetlist()
-      this.$refs.checkCoupons.defaultcheck(this.formData.couponRelationReqDto)
+      this.$refs.checkCoupons.defaultcheck([])
+    },
+    handleEditCoupon(type, editIndex, row) {
+      this.titles = type
+      this.tableFrom.keys = row[type]
+      this.editIndex = editIndex
+      this.showVisible = true
+      this.$nextTick(_ => {
+        this.$refs.editForm.clearValidate()
+      })
     },
     handlePerCount(index, row) {
-      row.perCount = this.tableFrom.perCount
-      row.showVisible = false
-    },
-    handletotalCount(index, row) {
-      row.totalCount = this.tableFrom.totalCount
-      row.showVisibleTotal = false
+      this.$refs['editForm'].validate((valid) => {
+        if (valid) {
+          this.formData.couponRelationReqDto[this.editIndex][this.titles] = this.tableFrom.keys
+          this.showVisible = false
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     onSelectedGoods(row) {
     //      // 商品选择确定事件
-    //   row.map((v, index) => {
-    //     v.sortNumber = index + 1
-    //     v.commodityId = v.erpCode
-    //   })
       console.log('onSelectedGoods', row)
       this.formData.commoditySpecList = row
     },
@@ -562,7 +544,8 @@ export default {
     }
     .edit-avatar{
       position: absolute;
-      top: 0;
+      top: -10px;
+     left: 40px;
     }
   .form-title {
     line-height: 16px;
@@ -580,6 +563,17 @@ export default {
     .avatar {
       width: 80px;
       height: 80px;
+    }
+  }
+  .cover-img{
+    .avatar-uploader-icon {
+      width: 150px;
+      height: 70px;
+      line-height: 70px !important;
+    }
+    .avatar {
+      width: 150px;
+      height: 70px;
     }
   }
   .ad-cover{

@@ -12,8 +12,9 @@
         </div>
       </div>
     </section> -->
+    <!-- <div id="qrcode" /> -->
     <section class="table-box webkit-scroll">
-      <el-table v-loading="loading" :data="tableData" height="calc(100vh - 400px)" size="small" style="width: 100%">
+      <el-table v-loading="loading" :data="tableData" height="calc(100vh - 350px)" size="small" style="width: 100%">
         <el-table-column label="序号" width="60" align="center">
           <template slot-scope="scope">
             <span>{{ scope.$index+1 }}</span>
@@ -58,18 +59,22 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" align="center" min-width="150">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" @click="handleStartLive(scope.row.id)">发起直播</el-button>
-            <el-button
-              slot="reference"
-              type="text"
-              size="mini"
-              @click="handleShareCode(scope.row)"
-            >分享</el-button>
-            <el-button
-              type="text"
-              size="mini"
-              @click="handleAdd(scope.row.id)"
-            >编辑</el-button>
+            <template v-if="scope.row.status!==2">
+              <el-button v-if="scope.row.status===1" size="mini" type="text" @click="handleStartLive(scope.row.id)">发起直播</el-button>
+              <el-button
+                slot="reference"
+                type="text"
+                size="mini"
+                @click="handleShareCode(scope.row)"
+              >分享</el-button>
+              <el-button
+                v-if="scope.row.status===0"
+                type="text"
+                size="mini"
+                @click="handleAdd(scope.row.id)"
+              >编辑</el-button>
+            </template>
+
           </template>
         </el-table-column>
       </el-table>
@@ -126,9 +131,9 @@
       </span>
     </el-dialog>
     <el-dialog title="扫码分享" :visible.sync="shareVisible" append-to-body="" width="30%">
-      <div id="qrcode" />
+      <preview v-if="shareVisible" :link="pageLink" />
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" size="small" @click="goodsVisible = false">关 闭</el-button>
+        <el-button type="primary" size="small" @click="shareVisible = false">关 闭</el-button>
       </span>
     </el-dialog>
   </div>
@@ -139,20 +144,23 @@ import mixins from '@/utils/mixin'
 import liveRequest from '@/api/live'
 import QRCode from 'qrcodejs2'
 import { mapGetters } from 'vuex'
+import preview from './_source/perview'
 export default {
   name: 'Live',
-  components: { Pagination },
+  components: { Pagination, preview },
   mixins: [mixins],
   data() {
     return {
       tableData: [],
+      qrcode: null,
       codeVisible: false,
       loading: false,
       videoVisible: false,
       aliPlay: null,
       goodsVisible: false,
       goodsList: [],
-      shareVisible: false
+      shareVisible: false,
+      pageLink: ''
     }
   },
   computed: {
@@ -186,7 +194,7 @@ export default {
     async handleStartLive(id) {
       try {
         await liveRequest.startLive(id)
-        this.$router.push('')
+        this.$router.push('/live-manage/live-now')
       } catch (error) {
         console.log(error)
       }
@@ -205,22 +213,24 @@ export default {
     /**
      * 分享二维码
      */
-    async handleShareCode(row) {
-      try {
-        const { data } = liveRequest.getShareLivePage(this.merCode, row.id)
+    handleShareCode(row) {
+      liveRequest.getShareLivePage(this.merCode, row.id).then(res => {
+        this.pageLink = res.data
         this.shareVisible = true
-        setTimeout(() => {
-          new QRCode('qrcode', {
-            width: 132,
-            height: 132,
-            text: data, // 二维码地址
-            colorDark: '#000',
-            colorLight: '#fff',
-            correctLevel: QRCode.CorrectLevel.L // 设置二维码容错率
-          })
-        }, 500)
-      } catch (error) {
-        console.log(error)
+      })
+    },
+    createQrCode(data) {
+      if (this.qrcode) {
+        this.qrcode.makeCode(data)
+      } else {
+        this.qrcode = new QRCode('qrcode', {
+          width: 132,
+          height: 132,
+          text: data, // 二维码地址
+          colorDark: '#000',
+          colorLight: '#fff',
+          correctLevel: QRCode.CorrectLevel.L // 设置二维码容错率
+        })
       }
     },
     handleColseVideo() {

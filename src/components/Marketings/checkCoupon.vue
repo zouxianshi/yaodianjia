@@ -106,6 +106,12 @@ export default {
   name: 'CheckCoupon',
   components: {},
   props: {
+    list: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
     // 起止时间
     timevalue: {
       type: Array,
@@ -190,8 +196,8 @@ export default {
       this.dialogVisible = false
     },
     checkSure() {
-      if (this.singlechoice && this.tableData.length > 1) {
-        this.$message.error('只能单选')
+      if (this.singlechoice && this.multipleSelectionAll.length > 1) {
+        this.$message.error('请单选')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
@@ -213,6 +219,15 @@ export default {
       this.allselect = row
       this.handlematching(row)
       this.changePageCoreRecordData()
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
     },
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination, giftName) {
@@ -252,7 +267,7 @@ export default {
     },
     //
     setSelectRow() {
-      if (!this.multipleSelectionAll || this.multipleSelectionAll.length <= 0) {
+      if (!this.singlechoice && (!this.multipleSelectionAll || this.multipleSelectionAll.length <= 0)) {
         return
       }
       // 标识当前行的唯一键的名称
@@ -268,6 +283,23 @@ export default {
             this.$refs.multipleTable.toggleRowSelection(row, true)
           }
         })
+        /** *
+       * 直播单选优惠券独享
+       */
+        if (this.singlechoice) {
+          const check = []
+          this.tableData.map(v => {
+            const findIndex = this.list.findIndex(item => {
+              console.log(v.id, item.couponId)
+              return v.id === item.couponId
+            })
+            console.log('findIndex', this.findIndex)
+            if (findIndex > -1) {
+              check.push(v)
+            }
+          })
+          this.toggleSelection(check)
+        }
       })
     },
     // 记忆选择核心方法
