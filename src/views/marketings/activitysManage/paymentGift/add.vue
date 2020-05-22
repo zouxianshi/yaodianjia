@@ -55,7 +55,7 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="活动门店：" prop="shopRule">
-          <el-radio-group v-model="form.shopRule">
+          <el-radio-group v-model="form.shopRule" @change="$refs.form2.clearValidate('shopRule')">
             <el-radio :label="1">全部门店</el-radio>
             <el-radio :label="2">
               指定门店
@@ -72,7 +72,7 @@
           />
         </el-form-item>
         <el-form-item label="适用商品：" prop="productRule">
-          <el-radio-group v-model="form.productRule">
+          <el-radio-group v-model="form.productRule" @change="$refs.form2.clearValidate('productRule')">
             <el-radio :label="1">全部商品</el-radio>
             <el-radio :label="2">
               指定商品
@@ -124,7 +124,7 @@
         :disabled="disabled"
       >
         <el-form-item label="选择权益：" prop="giftType">
-          <el-radio-group v-model="form.giftType">
+          <el-radio-group v-model="form.giftType" @change="$refs.form3.clearValidate('giftType')">
             <el-radio :label="1">
               送优惠券
               <span class="zkTips">最多可选20张</span>
@@ -363,6 +363,20 @@ export default {
   },
   computed: {
     ...mapGetters(['merCode'])
+  },
+  watch: {
+    selectedStores(newVal) {
+      this.$refs.form2.validate()
+    },
+    selectedProducts(newVal) {
+      this.$refs.form2.validate()
+    },
+    selectedCoupons(newVal) {
+      this.$refs.form3.validate()
+    },
+    selectedActivity(newVal) {
+      this.$refs.form3.validate()
+    }
   },
   created() {
     const id = this.$route.query.id
