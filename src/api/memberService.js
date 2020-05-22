@@ -124,3 +124,11 @@ export function queryMessageList(data) {
     data
   })
 }
+// 解绑会员卡
+export function delMerMember(data) {
+  return request({
+    url: `${config.merGoods}/1.0/memberCard/delMerMember`,
+    method: 'post',
+    data
+  })
+}

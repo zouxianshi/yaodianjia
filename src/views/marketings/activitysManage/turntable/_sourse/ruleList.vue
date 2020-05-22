@@ -85,7 +85,7 @@
               :disabled="isRuning || ruleForm.joinRule !== 2"
               maxlength="8"
               style="width:100px"
-            />&emsp;积分，参与一次
+            />&emsp;海贝，参与一次
           </el-radio>
           <el-radio :label="3">
             <span>活动参与</span>
