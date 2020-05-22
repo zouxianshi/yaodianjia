@@ -137,7 +137,7 @@
                     :rules="rules.totalNeed"
                   >
                     <el-input
-                      v-model.number="scope.row.totalNeed"
+                      v-model="scope.row.totalNeed"
                       size="mini"
                       @change="onChangeNeed($event,scope.row,scope.$index)"
                     />
@@ -201,13 +201,31 @@ export default {
     }
     var validatetotalNeedCoupons = (rule, value, callback) => {
       const val = Number(value)
-      const reg = /^[0-9]*[1-9][0-9]*$/
-      if (!reg.test(val)) {
-        callback(new Error('请输入正整数'))
-      } else if (this.radio.toString() === '3' && val > 1001) {
-        callback(new Error('小于1000'))
+      if (Number(this.radio) === 3) {
+        const reg1 = /^(?!0+(?:\.0+)?$)(?:[1-9]\d*|0)(?:\.\d{1,2})?$/
+        if (!reg1.test(val)) {
+          callback(new Error('请输入正数,最多两位小数'))
+        } else if (val > 1001) {
+          callback(new Error('请输入0~1000'))
+        } else {
+          callback()
+        }
+      } else if (Number(this.radio) === 2) {
+        const reg2 = /^(?!0+(?:\.0+)?$)(?:[1-9]\d*|0)(?:\.\d{1,2})?$/
+        if (!reg2.test(val)) {
+          callback(new Error('请输入正数,最多两位小数'))
+        } else if (val > 100001) {
+          callback(new Error('请输入0~100000'))
+        } else {
+          callback()
+        }
       } else {
-        callback()
+        const reg = /^[0-9]*[1-9][0-9]*$/
+        if (!reg.test(val)) {
+          callback(new Error('请输入正整数'))
+        } else {
+          callback()
+        }
       }
     }
     return {
