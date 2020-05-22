@@ -49,7 +49,7 @@
           <template slot-scope="scope">{{ scope.row.joinRule===1?'消耗积分':'不消耗积分' }}</template>
         </el-table-column>
         <el-table-column property="countRule" label="参与次数" width="80">
-          <template slot-scope="scope">{{ scope.row.countRule+'次' }}</template>
+          <template slot-scope="scope">{{ scope.row.countRule? scope.row.countRule : 0 }}次</template>
         </el-table-column>
       </el-table>
       <el-pagination
