@@ -24,10 +24,8 @@
               <div v-for="items in chatList" :key="items.nick+1" class="flex-left discuss-box">
                 <div class="flex-left userMsg">
                   <el-image class="discuss_avatar" :src="url" :fit="contain" />
-                  <strong>
-                    {{ items.nick }}
-                    <span style="font-weight:700">:</span>
-                  </strong>
+                  <strong class="ellipsis_one">{{ items.nick }}</strong>
+                  <span style="font-weight:700">:</span>
                 </div>
                 <div class="discussConten" style="width:75%">{{ items.payload.text }}</div>
               </div>
@@ -458,7 +456,7 @@ export default {
               liveId: this.$route.query.id
             })
             console.log(data)
-            if (data.code !== '10000') {
+            if (!data) {
               return
             }
             this.$router.push(`/live-manage/activity`)
@@ -524,6 +522,26 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.app-container {
+  padding: 20px;
+  height: calc(100vh - 158px);
+  overflow-y: scroll;
+}
+/* 文字换行 */
+.ellipsis_one {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  line-height: 1.3;
+}
+.ellipsis_two {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 1.3;
+}
 .bold {
   font-weight: 700;
 }
