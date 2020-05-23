@@ -35,20 +35,14 @@
             >&nbsp;</el-radio>
           </template>
         </el-table-column>
-        <el-table-column label="活动类型" width="80">
+        <el-table-column label="活动类型">
           <template slot-scope="scope">{{ handleTemplateName(scope.row.activityTemplateCode) }}</template>
         </el-table-column>
         <el-table-column property="activityDetailName" label="活动名称" show-overflow-tooltip />
-        <el-table-column label="活动时间" width="145" show-overflow-tooltip>
-          <template slot-scope="scope">{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
+        <el-table-column label="活动时间" width="300">
+          <template slot-scope="scope" width="300">{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
         </el-table-column>
-        <el-table-column property="sceneRule" label="活动场景" width="80">
-          <template slot-scope="scope">{{ scope.row.sceneRule===1?'线上活动':'线下活动' }}</template>
-        </el-table-column>
-        <el-table-column property="joinRule" label="参与方式" width="100">
-          <template slot-scope="scope">{{ scope.row.joinRule===1?'消耗积分':'不消耗积分' }}</template>
-        </el-table-column>
-        <el-table-column property="countRule" label="参与次数" width="80">
+        <el-table-column property="countRule" label="参与次数">
           <template slot-scope="scope">{{ scope.row.countRule? scope.row.countRule : 0 }}次</template>
         </el-table-column>
       </el-table>

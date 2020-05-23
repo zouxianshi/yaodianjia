@@ -1,15 +1,12 @@
 <template>
   <div class="selected-store-view">
     <el-table ref="dataTable" :data="selectedActivity">
-      <el-table-column label="活动类型" width="80" show-overflow-tooltip>
+      <el-table-column label="活动类型" show-overflow-tooltip>
         <template slot-scope="scope">{{ handleTemplateName(scope.row.activityTemplateCode) }}</template>
       </el-table-column>
       <el-table-column property="activityDetailName" label="活动名称" show-overflow-tooltip />
-      <el-table-column label="活动时间" width="100" show-overflow-tooltip>
+      <el-table-column label="活动时间" show-overflow-tooltip>
         <template slot-scope="scope">{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
-      </el-table-column>
-      <el-table-column property="sceneRule" label="活动场景">
-        <template slot-scope="scope">{{ scope.row.sceneRule===1?'线上活动':'线下活动' }}</template>
       </el-table-column>
       <el-table-column property="countRule" label="抽奖次数">
         <template slot-scope="scope">{{ '可抽奖'+(scope.row.countRule || 0)+'次' }}</template>
