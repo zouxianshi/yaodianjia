@@ -13,13 +13,13 @@
           </div>
           <div class="now-people">
             <span>在线人数:</span>
-            <span>{{ liveNumber }}人</span>
+            <span>{{ liveNumber|| '0' }}人</span>
           </div>
           <p class="tips">
             平台公告：
             {{ LiveDetails.activityNotice }}
           </p>
-          <div class="discuss-plan">
+          <div ref="box" class="discuss-plan">
             <div>
               <div v-for="items in chatList" :key="items.nick+1" class="flex-left discuss-box">
                 <div class="flex-left userMsg">
@@ -47,10 +47,7 @@
             <el-button round class="courseButtom" @click="dialogVisible = true">获取链接</el-button>
             <div class="courseTip">
               开播主播默认同意
-              <a class="courseAgreement">
-                《海典软件主播协议》
-                <a />
-              </a>
+              <span class="courseAgreement">《海典软件主播协议》</span>
             </div>
           </div>
         </div>
@@ -90,14 +87,14 @@
             <div
               v-for="(sitem,index) in shareList"
               :key="sitem.avatar+1"
-              v-clipboard:copy="LiveDetails.tlUrl"
+              v-clipboard:copy="shareUrl"
               v-clipboard:success="onCopy"
               v-clipboard:error="onError"
               class="c-flex-center"
               :style="{'margin-right':index==shareList.length-1 ? '':'20px','cursor':'pointer'}"
               @click="shares(index)"
             >
-              <el-image class="share_avatar" :src="url" :fit="contain" />
+              <el-image class="share_avatar" :src="sitem.avatar" :fit="contain" />
               <span style="margin-top:20px">{{ sitem.name }}</span>
             </div>
           </div>
@@ -114,11 +111,11 @@
             <div>
               <div class="flex-left" style="margin-bottom:20px">
                 <strong class="bold" style="margin-right:10px">服务地址:</strong>
-                <el-input v-model="LiveDetails.tlUrl" class="flex-1" placeholder="请输入内容">
+                <el-input v-model="LiveDetails.serviceUrl" class="flex-1" placeholder="请输入内容">
                   <template slot="append" icon="el-icon-search">
                     <el-button
                       slot="append"
-                      v-clipboard:copy="LiveDetails.tlUrl"
+                      v-clipboard:copy="LiveDetails.serviceUrl"
                       v-clipboard:success="onCopy"
                       v-clipboard:error="onError"
                       icon="el-icon-document-copy"
@@ -128,11 +125,15 @@
               </div>
               <div class="flex-left">
                 <strong class="bold" style="margin-right:10px">串流密钥:</strong>
-                <el-input v-model="LiveDetails.skUrl" class="flex-1" placeholder="请输入内容">
+                <el-input
+                  v-model="LiveDetails.crossfireSecretKey"
+                  class="flex-1"
+                  placeholder="请输入内容"
+                >
                   <template slot="append" icon="el-icon-search">
                     <el-button
                       slot="append"
-                      v-clipboard:copy="LiveDetails.skUrl"
+                      v-clipboard:copy="LiveDetails.crossfireSecretKey"
                       v-clipboard:success="onCopy"
                       v-clipboard:error="onError"
                       icon="el-icon-document-copy"
@@ -173,10 +174,26 @@ export default {
         'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       liveNumber: '',
       shareList: [
-        { name: '微博', avatar: '' },
-        { name: 'QQ空间', avatar: '' },
-        { name: 'QQ好友', avatar: '' },
-        { name: '复制链接', avatar: '' }
+        {
+          name: '微博',
+          avatar:
+            'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_wb.png'
+        },
+        {
+          name: 'QQ空间',
+          avatar:
+            'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_QQko.png'
+        },
+        {
+          name: 'QQ好友',
+          avatar:
+            'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_QQ.png'
+        },
+        {
+          name: '复制链接',
+          avatar:
+            'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_conyll.png'
+        }
       ],
       goodsListflag: false,
       iconFlag: true,
@@ -185,9 +202,11 @@ export default {
     }
   },
   async created() {
+    // 1获取IM密钥 2获取直播详情 拿到必要参数后 获取直播分享链接 和商品列表 还有打开tim流程
     await this.getTimgensing()
     await this.getLiveDetails()
     this.getLivegoods()
+    this.getShareLivePage()
     this.timOpen()
   },
   computed: {
@@ -200,6 +219,7 @@ export default {
     }
   },
   methods: {
+    // 获取IM 密钥
     async getTimgensing() {
       try {
         const { data } = await liveRequest.getTimgensing({ name: this.name })
@@ -209,6 +229,7 @@ export default {
         console.log(error)
       }
     },
+    // 打开IM 流程方法
     async timOpen() {
       console.log(this.name)
       const options = {
@@ -239,6 +260,8 @@ export default {
         if (event.data[0].payload.text) {
           const { nick, payload, avatar } = event.data[0]
           this.chatList.push({ nick: nick, payload: payload, avatar: avatar })
+          const box = this.$refs.box
+          box.scrollTop = box.scrollHeight
         }
       }
       tim.on(TIM.EVENT.MESSAGE_RECEIVED, onMessageReceived)
@@ -276,61 +299,80 @@ export default {
         // const isCompleted = imResponse.data.isCompleted // 表示是否已经拉完所有消息。
       })
     },
+    // 获取直播详情
     async getLiveDetails() {
       try {
-        const { data } = await liveRequest.getLiveDetails({ liveId: 26 })
+        const { data } = await liveRequest.getLiveDetails({
+          liveId: this.$route.query.id
+        })
         this.LiveDetails = data
-        this.LiveDetails.tlUrl = data.pushStreamUrl.split('?')[0]
-        this.LiveDetails.skUrl = data.pushStreamUrl.split('?')[1]
       } catch (error) {
         console.log(error)
       }
     },
+    // 获取直播商品列表
     async getLivegoods() {
       try {
-        const { data } = await liveRequest.getLivegoods({ liveId: 26 })
+        const { data } = await liveRequest.getLivegoods({
+          liveId: this.$route.query.id
+        })
         console.log(data)
         this.goodList = data
       } catch (error) {
         console.log(error)
       }
     },
+    // 获取C端直播链接
+    async getShareLivePage() {
+      try {
+        const { data } = await liveRequest.getShareLivePage(
+          `${this.merCode}`,
+          26
+        )
+        this.shareUrl = data
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // 显示直播商品列表
     showGood() {
       this.goodsListflag = true
       this.iconFlag = false
     },
+    // 显示分享 商品  等图标
     showIcon() {
       this.goodsListflag = false
       this.iconFlag = true
     },
+    // 关闭分享列表
     closeShare() {
       this.shareFlag = false
       this.iconFlag = true
     },
+    // 打开分享
     openShare() {
       this.shareFlag = true
       this.iconFlag = false
     },
-    open() {
-      this.$alert(`<strong>这是 <i>HTML</i> 片段</strong>`, '直播链接', {
-        dangerouslyUseHTMLString: true
-      })
-    },
+    // 打开复制链接盒子
     handleClose(done) {
       done()
     },
+    // 复制成功
     onCopy: function() {
       this.$message({
         message: '复制成功',
         type: 'success'
       })
     },
+    // 复制失败
     onError: function() {
       this.$message({
         message: '复制失败,请手动复制',
         type: 'success'
       })
     },
+    // 关闭直播
     async closeLive() {
       try {
         this.$confirm('是否确认下播?', '提示', {
@@ -339,25 +381,28 @@ export default {
           type: 'warning'
         })
           .then(async() => {
-            const { data } = await liveRequest.closeLive({ liveId: 16 })
+            const { data } = await liveRequest.closeLive({
+              liveId: this.$route.query.id
+            })
             console.log(data)
             if (data.code !== '10000') {
               return
             }
+            this.$router.push(`/live-manage/activity`)
           })
           .catch(() => {})
       } catch (error) {
         console.log(error)
       }
     },
+    // 分享到各个平台
     shares(index) {
       let _shareUrl = ''
       switch (index) {
         case 0:
           // 真实的appkey，必选参数
           _shareUrl += 'http://v.t.sina.com.cn/share/share.php?title="123"'
-          '&url=' +
-            encodeURIComponent(this.LiveDetails.playUrl || document.location) // 参数url设置分享的内容链接|默认当前页location，可选参数
+          '&url=' + encodeURIComponent(this.shareUrl || document.location) // 参数url设置分享的内容链接|默认当前页location，可选参数
           _shareUrl +=
             '&title=' +
             encodeURIComponent(this.LiveDetails.name || document.title) // 参数title设置分享的标题|默认当前页标题，可选参数
@@ -370,8 +415,7 @@ export default {
           _shareUrl =
             'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?'
           _shareUrl +=
-            'url=' +
-            encodeURIComponent(this.LiveDetails.playUrl || document.location) // 参数url设置分享的内容链接|默认当前页location
+            'url=' + encodeURIComponent(this.shareUrl || document.location) // 参数url设置分享的内容链接|默认当前页location
           _shareUrl += '&showcount=' + '' || 0 // 参数showcount是否显示分享总数,显示：'1'，不显示：'0'，默认不显示
           _shareUrl +=
             '&desc=' +
@@ -389,8 +433,7 @@ export default {
         case 2:
           _shareUrl = 'https://connect.qq.com/widget/shareqq/iframe_index.html?'
           _shareUrl +=
-            'url=' +
-            encodeURIComponent(this.LiveDetails.playUrl || location.href) // 分享的链接
+            'url=' + encodeURIComponent(this.shareUrl || location.href) // 分享的链接
           _shareUrl +=
             '&title=' +
             encodeURIComponent(this.LiveDetails.name || document.title) // 分享的标题
@@ -528,7 +571,7 @@ export default {
     .discuss-plan {
       width: 100%;
       margin-top: 20px;
-      height: 350px;
+      height: 450px;
       overflow-y: scroll;
     }
     ::-webkit-scrollbar {
