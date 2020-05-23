@@ -60,7 +60,7 @@
         <el-table-column label="操作" fixed="right" align="center" min-width="150">
           <template slot-scope="scope">
             <template v-if="scope.row.status!==2">
-              <el-button v-if="scope.row.status===1" size="mini" type="text" @click="handleStartLive(scope.row.id)">发起直播</el-button>
+              <el-button v-if="scope.row.status===0" size="mini" type="text" @click="handleStartLive(scope.row.id)">发起直播</el-button>
               <el-button
                 slot="reference"
                 type="text"

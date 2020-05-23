@@ -14,8 +14,6 @@ import * as filters from './filters' // global filters
 import './permission'
 // import { setSystem } from './utils/auth'
 import utils from '@/utils/util'
-import vcolorpicker from 'vcolorpicker'
-Vue.use(vcolorpicker)
 Vue.use(permission)
 Vue.use(utils)
 Vue.use(loadmore)
