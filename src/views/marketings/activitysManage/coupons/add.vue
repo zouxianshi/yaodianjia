@@ -211,9 +211,9 @@ export default {
           callback()
         }
       } else if (Number(this.radio) === 2) {
-        const reg2 = /^(?!0+(?:\.0+)?$)(?:[1-9]\d*|0)(?:\.\d{1,2})?$/
+        const reg2 = /^[0-9]*[1-9][0-9]*$/
         if (!reg2.test(val)) {
-          callback(new Error('请输入正数,最多两位小数'))
+          callback(new Error('请输入正数'))
         } else if (val > 100001) {
           callback(new Error('请输入0~100000'))
         } else {
