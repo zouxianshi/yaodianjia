@@ -194,7 +194,7 @@ export default {
     async handleStartLive(id) {
       try {
         await liveRequest.startLive(id)
-        this.$router.push('/live-manage/live-now')
+        this.$router.push('/live-manage/live-now?id=' + id)
       } catch (error) {
         console.log(error)
       }
