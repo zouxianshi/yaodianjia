@@ -8,7 +8,11 @@
       <div class="containerCenter">
         <div class="commentBox">
           <div class="flex-left coverbox">
-            <el-image class="comment_avatar" :src="LiveDetails.coverPicUrl" :fit="contain" />
+            <el-image
+              class="comment_avatar"
+              :src="showImg(LiveDetails.coverPicUrl)"
+              :fit="contain"
+            />
             <p class="comment_Title">{{ LiveDetails.name }}</p>
           </div>
           <div class="now-people">
@@ -24,7 +28,7 @@
               <div v-for="items in chatList" :key="items.nick+1" class="flex-left discuss-box">
                 <div class="flex-left userMsg">
                   <el-image class="discuss_avatar" :src="url" :fit="contain" />
-                  <strong class="ellipsis_one">{{ items.nick }}</strong>
+                  <strong class="ellipsis_one">{{ items.nick||'网友' }}|</strong>
                   <span style="font-weight:700">:</span>
                 </div>
                 <div class="discussConten" style="width:75%">{{ items.payload.text }}</div>
@@ -331,8 +335,11 @@ export default {
         if (event.data[0].payload.text) {
           const { nick, payload, avatar } = event.data[0]
           this.chatList.push({ nick: nick, payload: payload, avatar: avatar })
+          // 此时必须异步执行滚动条滑动至底部
           const box = this.$refs.box
-          box.scrollTop = box.scrollHeight
+          setTimeout(() => {
+            box.scrollTop = box.scrollHeight
+          }, 0)
         }
       }
       tim.on(TIM.EVENT.MESSAGE_RECEIVED, onMessageReceived)
@@ -343,32 +350,30 @@ export default {
       }
       const promise1 = await tim.joinGroup(joinOptions)
       if (promise1.data.status) {
+        // 加入的群组资料、
         switch (promise1.data.status) {
           case TIM.TYPES.JOIN_STATUS_WAIT_APPROVAL:
             console.log('等待管理员同意')
             break // 等待管理员同意
           case TIM.TYPES.JOIN_STATUS_SUCCESS: // 加群成功
-            // 加入的群组资料、
             console.log('成功')
             break
           default:
             break
         }
       }
+
       // 获取群成员人数
       const promise2 = await tim.getGroupProfile({
         groupID: this.LiveDetails.groupId
       })
       this.liveNumber = promise2.data.group.memberNum
-      const as = this.LiveDetails.groupId
-      console.log(as)
-      const promise3 = tim.getMessageList({ conversationID: as, count: 30 })
-      promise3.then(function(imResponse) {
-        const messageList = imResponse.data.messageList // 消息列表。
-        console.log('messageList-------------------', messageList)
-        // const nextReqMessageID = imResponse.data.nextReqMessageID // 用于续拉，分页续拉时需传入该字段。
-        // const isCompleted = imResponse.data.isCompleted // 表示是否已经拉完所有消息。
-      })
+      setInterval(async() => {
+        const promise2 = await tim.getGroupProfile({
+          groupID: this.LiveDetails.groupId
+        })
+        this.liveNumber = promise2.data.group.memberNum
+      }, 3000)
     },
     // 获取直播详情
     async getLiveDetails() {
@@ -398,7 +403,7 @@ export default {
       try {
         const { data } = await liveRequest.getShareLivePage(
           `${this.merCode}`,
-          26
+          `${this.$route.query.id}`
         )
         this.shareUrl = data
       } catch (error) {
