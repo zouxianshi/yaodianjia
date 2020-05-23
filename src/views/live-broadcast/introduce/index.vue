@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="background:#f5f7fa">
+  <div class="app-container">
     <el-card :body-style="{ padding: '0px' }">
       <el-image style="width:100%;height:180px" src="https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg" class="image" />
       <div style="padding: 20px;">
@@ -13,7 +13,7 @@
       <h1>套餐介绍</h1>
       <p>咨询电话：400-123-1234</p>
     </div>
-    <div class="live-package">
+    <div class="live-package clearfix">
       <el-col v-for="(o, index) in 1" :key="o" :xs="1" :sm="5" :md="7" :lg="6" :xl="4" :offset="index > 0 ? 1 : 0">
         <el-card>
           <p class="text-center" style="margin-top:30px">套餐一</p>
@@ -58,4 +58,9 @@
   margin-bottom: 12px;
   color: #bebfc1;
 }
+
+ .clearfix:after {
+      clear: both
+  }
+
 </style>
