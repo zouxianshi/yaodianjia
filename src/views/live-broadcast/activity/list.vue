@@ -38,9 +38,9 @@
         </el-table-column>
         <el-table-column prop="beginTime" label="开播时间" min-width="180" align="center" />
         <el-table-column prop="duration" label="时长" min-width="180" align="center" />
-        <el-table-column prop="url" label="相关商品" min-width="200">
+        <el-table-column prop="url" align="center" label="相关商品" min-width="200">
           <template slot-scope="scope">
-            <el-button type="text" @click="handleShowGoods(scope.row)">{{ scope.row.firstCommodityNum }}</el-button>
+            <el-button type="text" @click="handleShowGoods(scope.row)">{{ scope.row.firstCommodityName }}</el-button>
           </template>
         </el-table-column>
 
@@ -60,7 +60,7 @@
         <el-table-column label="操作" fixed="right" align="center" min-width="150">
           <template slot-scope="scope">
             <template v-if="scope.row.status!==2">
-              <el-button v-if="scope.row.status===0" size="mini" type="text" @click="handleStartLive(scope.row.id)">发起直播</el-button>
+              <el-button v-if="scope.row.status===0||scope.row.status===1" size="mini" type="text" @click="handleStartLive(scope.row.id)">发起直播</el-button>
               <el-button
                 slot="reference"
                 type="text"
@@ -121,10 +121,10 @@
             <div v-else style="line-height: 32px">暂未上传</div>
           </template>
         </el-table-column>
-        <el-table-column label="商品名称" prop="" />
-        <el-table-column label="商品编码" prop="" />
+        <el-table-column label="商品名称" prop="commodityName" />
+        <el-table-column label="商品编码" prop="erpCode" />
         <el-table-column label="规格" prop="specName" />
-        <el-table-column label="参考价格" />
+        <el-table-column label="参考价格" prop="mprice" />
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="goodsVisible = false">关 闭</el-button>

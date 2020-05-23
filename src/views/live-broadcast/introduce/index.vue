@@ -13,7 +13,7 @@
       <h1>套餐介绍</h1>
       <p>咨询电话：400-123-1234</p>
     </div>
-    <div class="live-package">
+    <div class="live-package clearfix">
       <el-col v-for="(o, index) in 1" :key="o" :xs="1" :sm="5" :md="7" :lg="6" :xl="4" :offset="index > 0 ? 1 : 0">
         <el-card>
           <p class="text-center" style="margin-top:30px">套餐一</p>
@@ -58,4 +58,9 @@
   margin-bottom: 12px;
   color: #bebfc1;
 }
+
+ .clearfix:after {
+      clear: both
+  }
+
 </style>
