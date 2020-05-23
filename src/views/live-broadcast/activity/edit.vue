@@ -11,13 +11,13 @@
         <div class="form-title">基本信息</div>
         <el-divider />
         <el-form-item label="直播头像：">
-          <template v-if="!showUpAvatar">
-            <div style="width:50px;height:50px;border-radius:50%">
-              <img :src="showImg(formData.merLogoUrl)" width="100%">
-              <el-button type="info" size="mini" circle class="edit-avatar" icon="el-icon-edit" @click="showUpAvatar=!showUpAvatar" />
-            </div>
-          </template>
-          <template v-else>
+          <!-- <template v-if="!showUpAvatar"> -->
+          <div style="width:50px;height:50px;border-radius:50%">
+            <img :src="showImg(formData.merLogoUrl)" width="100%">
+            <el-button type="info" size="mini" circle class="edit-avatar" icon="el-icon-edit" @click="handleEditMerchant" />
+          </div>
+          <!-- </template> -->
+          <!-- <template v-else>
             <div class="cover">
               <el-upload
                 class="avatar-uploader"
@@ -31,7 +31,7 @@
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
             </div>
-          </template>
+          </template> -->
         </el-form-item>
         <el-form-item label="直播名称：">
           <span />{{ formData.merName }}
@@ -293,6 +293,9 @@ export default {
     }
   },
   methods: {
+    handleEditMerchant() {
+      window.open('/merchant/#/merchant/index')
+    },
     async _loadMerchantInfo() {
       try {
         const { data } = await merchantDetail()
