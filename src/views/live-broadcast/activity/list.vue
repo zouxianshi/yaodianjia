@@ -254,7 +254,7 @@ export default {
         this.aliPlay = new Aliplayer({
           id: 'J_prismPlayer',
           width: '100%',
-          source: row.videoUrl,
+          source: row.videoUrl.replace('http', 'https'),
           'autoplay': true,
           'isLive': false,
           'rePlay': false,

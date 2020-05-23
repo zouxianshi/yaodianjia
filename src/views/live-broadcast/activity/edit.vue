@@ -101,7 +101,7 @@
                 <el-button
                   type="text"
                   size="mini"
-                  @click="handleGoodsDel(scope.row,scope.$index)"
+                  @click="handleGoodsDel(scope.$index)"
                 >移除</el-button>
               </template>
             </el-table-column>
@@ -152,7 +152,7 @@
                 <el-button
                   type="text"
                   size="small"
-                  @click.native.prevent="handleDeleteCoup(scope.$index, forms.couponRelationReqDto)"
+                  @click.native.prevent="handleDeleteCoup(scope.$index,)"
                 >移除</el-button>
               </template>
             </el-table-column>
@@ -199,7 +199,7 @@
         </el-form-item>
         <el-form-item label="">
           <el-button type="primary" :loading="saveLoading" @click="handleSubmit">保存</el-button>
-          <el-button>取消</el-button>
+          <el-button @click="handleCanle">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -463,6 +463,9 @@ export default {
           return false
         }
       })
+    },
+    handleCanle() {
+      this.$router.back()
     },
     async setLive() {
       this.saveLoading = true
