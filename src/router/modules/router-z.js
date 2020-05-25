@@ -40,6 +40,15 @@ const router = [
           activeMenu: '/goods-manage/depot'
         }
       }, {
+        path: 'importRecode',
+        component: () => import('@/views/goods-manage/depot/importRecode'),
+        name: 'importRecode',
+        meta: {
+          title: '导入历史',
+          noCache: true,
+          activeMenu: '/goods-manage/depot'
+        }
+      }, {
         path: 'paircode',
         component: () => import('@/views/goods-manage/depot/paircode'),
         name: 'paircode',

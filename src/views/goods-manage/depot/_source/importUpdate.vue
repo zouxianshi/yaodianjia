@@ -96,9 +96,6 @@ export default {
     isShow() {}
   },
   methods: {
-    handleErrorColse() {
-      this.errorDialogVisible = false
-    },
     handleColse() {
       this.$refs.file.clearFiles()
       this.$emit('close')
