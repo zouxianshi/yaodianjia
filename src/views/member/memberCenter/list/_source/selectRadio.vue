@@ -2,7 +2,7 @@
   <div class="select-radio-model">
     <div v-for="(items, index) in itemsArr" :key="index">
       <div v-if="items.show" class="items">
-        <span class="items-name">{{ items.empName?items.empName:items.storeName }}</span>
+        <span class="items-name">{{ items.empName?items.empName:items.stName }}</span>
         <i v-if="items.selectFlag" class="el-icon-circle-check" @click="choosed(items)" />
         <span v-else class="before-choose" @click="unchoosed(items)" />
       </div>
