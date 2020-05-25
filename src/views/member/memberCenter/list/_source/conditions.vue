@@ -14,7 +14,7 @@
           </span>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="健康顾问">
+      <!-- <el-form-item label="健康顾问">
         <el-radio-group v-model="conditions.empCodes" @change="conTypeChange">
           <el-radio :label="null">不限</el-radio>
           <el-radio label="1">
@@ -28,7 +28,7 @@
             </span>
           </span>
         </el-radio-group>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="会员分类">
         <el-radio-group v-model="conditions.memberActive">
           <el-radio label="">不限</el-radio>
@@ -43,7 +43,7 @@
         <el-radio-group v-model="conditions.registerSource">
           <el-radio :label="null">不限</el-radio>
           <el-radio :label="1">门店推荐</el-radio>
-          <el-radio :label="2">员工推荐</el-radio>
+          <el-radio :label="2">员工二维码推荐</el-radio>
           <el-radio :label="3">商户渠道</el-radio>
           <el-radio :label="4">平台渠道</el-radio>
           <el-radio :label="5">支付即会员</el-radio>

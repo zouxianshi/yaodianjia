@@ -307,6 +307,9 @@ export default {
       this.ruleForm.countRule = ''
     },
     submitForm(formName) {
+      // 活动参与选抽奖次数
+      this.ruleForm.countType === 1 ? 1 : 2
+      console.log(this.ruleForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!this.ruleForm.activeTime[0]) {
