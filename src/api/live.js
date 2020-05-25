@@ -24,6 +24,15 @@ class LiveRequest {
     })
   }
   /**
+   * @description 获取回看播放列表
+   */
+  getPlayList(liveId) {
+    return request({
+      url: `${config.live}/1.0/activity/getVideos/${liveId}`,
+      method: 'get'
+    })
+  }
+  /**
    *
    * @param {string} params.adLinkUrl  广告位Ulr
    * @description 创建直播
