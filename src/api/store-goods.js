@@ -13,7 +13,7 @@ export function getStoreGoodsList(params) {
 // 锁定价格
 export function setLockPrice(params) {
   return request({
-    url: `${config.merGoods}/1.0/store-spec/lock`,
+    url: `${config.merchandise}/1.0/store-spec/lock`,
     method: 'put',
     data: params
   })

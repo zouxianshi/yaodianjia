@@ -42,30 +42,41 @@
           </div>
           <div class="search-item">
             <span class="label-name">商品信息</span>
-            <el-input v-model.trim="listQuery.erpOrName" style="width:200px" size="small" placeholder="请输入商品名称/编码" />
+            <el-input
+              v-model.trim="listQuery.erpOrName"
+              style="width:200px"
+              size="small"
+              placeholder="请输入商品名称/编码"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="listQuery.barCode" style="width:200px" size="small" placeholder="条形码" />
+            <el-input
+              v-model.trim="listQuery.barCode"
+              style="width:200px"
+              size="small"
+              placeholder="条形码"
+            />
           </div>
         </div>
         <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">批准文号</span>
-            <el-input v-model.trim="listQuery.approvalNumber" style="width:200px" size="small" placeholder="批准文号" />
+            <el-input
+              v-model.trim="listQuery.approvalNumber"
+              style="width:200px"
+              size="small"
+              placeholder="批准文号"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select
-              v-model="listQuery.drugType"
-              filterable
-              size="small"
-              placeholder="请选择"
-            >
+            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择">
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
+              <el-option label="OTC" value="4" />
             </el-select>
           </div>
           <div class="search-item">
@@ -79,6 +90,22 @@
             >
               <el-option label="普通商品" value="1" />
               <el-option label="组合商品" value="2" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">锁定状态</span>
+            <el-select
+              v-model="listQuery.lockFlag"
+              filterable
+              size="small"
+              placeholder="请选择"
+              @change="_loadList"
+            >
+              <el-option label="全部" value />
+              <el-option label="锁定库存" :value="2" />
+              <el-option label="锁定价格" :value="1" />
+              <el-option label="锁定库存价格" :value="3" />
+              <el-option label="未锁定" :value="0" />
             </el-select>
           </div>
         </div>
@@ -111,11 +138,12 @@
               size="small"
               @click="handleBatchUpDown(0)"
             >批量下架</el-button>
-            <el-button type size="small" @click="handleLock">批量锁定库存价格</el-button>
+            <el-button type="warning" size="small" @click="handleLock(0)">锁定库存价格</el-button>
+            <el-button type="warning" size="small" @click="handleLock(1)">解锁库存价格</el-button>
             <!-- listQuery.storeId -->
             <el-button
               v-if="listQuery.status !== 3"
-              type
+              type="info"
               size="small"
               @click="handleSynchro"
             >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
@@ -211,6 +239,16 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column align="left" min-width="120" label="锁定状态">
+            <template slot-scope="scope">
+              <div>
+                <span v-if="scope.row.lockFlag===1">锁定价格</span>
+                <span v-else-if="scope.row.lockFlag===2">锁定库存</span>
+                <span v-else-if="scope.row.lockFlag===3">锁定库存价格</span>
+                <span v-else-if="scope.row.lockFlag===0">未锁定</span>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="address" align="left" fixed="right" label="操作" min-width="150">
             <template slot-scope="scope">
               <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
@@ -236,43 +274,13 @@
       </div>
       <el-image-viewer v-if="isShowImg" :on-close="onCloseImg" :url-list="srcList" />
     </div>
-    <el-dialog
-      title="锁定库存价格"
-      :visible.sync="dialogVisible"
-      width="30%"
-      append-to-body
-      :close-on-click-modal="false"
-    >
-      <el-form ref="lockForm" :model="formData" :rules="rules" label-width="100px" size="small">
-        <el-form-item label="锁定商品属性">
-          <el-checkbox-group v-model="lockFlag">
-            <el-checkbox :label="1">价格</el-checkbox>
-            <el-checkbox :label="2">库存</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="定时解锁设置">
-          <el-checkbox
-            v-model="formData.unlockType"
-            :true-label="1"
-            :false-label="0"
-            @change="unlockTypeChange"
-          >定时解锁</el-checkbox>
-        </el-form-item>
-        <el-form-item v-if="formData.unlockType===1" label="解锁时间" prop="unlockTime">
-          <el-date-picker
-            v-model="formData.unlockTime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            type="datetime"
-            class="custom-class"
-            placeholder="选择日期时间"
-          />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitLock">确 定</el-button>
-      </span>
-    </el-dialog>
+    <lock
+      :is-show="lockDialogVisible"
+      :lock-type="lockType"
+      :goods-list="multipleSelection"
+      @complete="lockDialogVisible=false;_loadList()"
+      @close="lockDialogVisible=false"
+    />
     <el-dialog
       :title="`修改${type=='price'?'价格':'库存'}`"
       :visible.sync="isShow"
@@ -305,36 +313,19 @@ import Pagination from '@/components/Pagination'
 import exportTable from './export-table'
 import { mapGetters } from 'vuex'
 import { getTypeTree, exportData } from '@/api/group'
+import lock from './_source/lock'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import {
   getStoreGoodsList,
-  setLockPrice,
   setUpdatePriceStock,
   setUpdateStoreData,
   getMyStoreList,
   setSynchro
 } from '@/api/store-goods'
 export default {
-  components: { Pagination, exportTable, ElImageViewer },
+  components: { Pagination, exportTable, ElImageViewer, lock },
   mixins: [mixins],
   data() {
-    const _checkTime = (rule, value, callback) => {
-      if (value) {
-        const chooseTime = Date.parse(new Date(value))
-        const nowTime = Date.parse(new Date())
-        if (chooseTime < nowTime) {
-          callback(new Error('选择时间必须大于当前时间'))
-        } else {
-          callback()
-        }
-      } else {
-        if (this.formData.unlockType === 1) {
-          callback(new Error('请选择解锁时间'))
-        } else {
-          callback()
-        }
-      }
-    }
     const _checkFloat = (rule, value, callback) => {
       const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
       if (value) {
@@ -376,22 +367,13 @@ export default {
       keyword: '',
       tableData: [],
       multipleSelection: [],
-      dialogVisible: false,
+      lockDialogVisible: false,
       defaultProps: {
         children: 'children',
         label: 'name',
         value: 'id'
       },
-      lockFlag: [],
-      formData: {
-        lockFlag: 0,
-        lockList: [],
-        unlockTime: '',
-        unlockType: 0
-      },
-      rules: {
-        unlockTime: [{ validator: _checkTime, trigger: 'change' }]
-      },
+      lockType: 0,
       editRules: {
         price: [{ required: true, validator: _checkFloat, trigger: 'blur' }],
         stock: [{ required: true, validator: _checkFloat, trigger: 'blur' }]
@@ -403,6 +385,7 @@ export default {
       listQuery: {
         drugType: '',
         commodityType: '',
+        lockFlag: '',
         approvalNumber: '',
         barCode: '',
         groupId: '',
@@ -456,10 +439,7 @@ export default {
       this.groupId = ['']
       this.getList()
     },
-    unlockTypeChange() {
-      // 定时解锁 chang
-      this.formData.unlockTime = ''
-    },
+
     getList(status) {
       this._loadStoreList().then(res => {
         if (res) {
@@ -718,18 +698,18 @@ export default {
         }
       })
     },
-    handleLock() {
+    handleLock(lockType) {
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: '请先选择要锁定库存价格的数据',
+          message: `请先选择要${
+            lockType === 0 ? '锁定' : '解锁'
+          }库存价格的数据`,
           type: 'warning'
         })
         return
       }
-      this.dialogVisible = true
-      this.lockFlag = []
-      this.formData.unlockType = 0
-      this.formData.unlockTime = ''
+      this.lockType = lockType
+      this.lockDialogVisible = true
     },
     handleSetPriceStock() {
       this.$refs['editData'].validate(valid => {
@@ -816,66 +796,7 @@ export default {
       }
       this._SetUpDown(data)
     },
-    handleSubmitLock() {
-      // 执行锁定请求
-      const ary = []
-      // 获取规格id
-      this.multipleSelection.map(v => {
-        ary.push({
-          specId: v.id,
-          storeId: v.storeId
-        })
-      })
-      this.formData.lockList = ary
-      if (this.lockFlag.length === 0) {
-        // 全部锁定
-        this.formData.lockFlag = 0
-      }
-      if (this.lockFlag.includes(1)) {
-        // 锁定价格
-        this.formData.lockFlag = 1
-      }
-      if (this.lockFlag.includes(2)) {
-        this.formData.lockFlag = 2 // 锁定库存
-      }
-      if (this.lockFlag.includes(2) && this.lockFlag.includes(1)) {
-        this.formData.lockFlag = 3 // 锁定价格和库存
-      }
 
-      this.$refs['lockForm'].validate(valid => {
-        if (valid) {
-          if (
-            this.formData.unlockType === 1 &&
-            this.formData.unlockTime !== '' &&
-            this.lockFlag.length === 0
-          ) {
-            this.$message({
-              message: '请选择锁定属性',
-              type: 'error'
-            })
-            return
-          }
-          this.subLoading = true
-          setLockPrice(this.formData)
-            .then(res => {
-              this.$message({
-                message: '操作成功',
-                type: 'success'
-              })
-              this.dialogVisible = false
-              this.subLoading = false
-              this._loadList()
-            })
-            .catch(() => {
-              this.subLoading = false
-              this.dialogVisible = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
     handleEditData(row, key) {
       this.editData = JSON.parse(JSON.stringify(row))
       this.type = key
@@ -901,6 +822,14 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+.lock-tip {
+  color: #999999;
+  font-size: 14px;
+  margin: 44px 0 0 4px;
+  span {
+    color: red;
+  }
+}
 .store-goods-wrapper {
   .search-form {
     .search-item {
@@ -912,6 +841,7 @@ export default {
       }
     }
   }
+
   .cascader {
     .el-input {
       width: 300px !important;
