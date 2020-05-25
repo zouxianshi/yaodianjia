@@ -17,7 +17,7 @@
           <div class="has-choosed">
             <div v-for="(items, index) in storeData" :key="index" style="display:inline-block">
               <el-tag v-if="items.selectFlag" type="info" closable size="mini" @close="items.selectFlag=false">
-                {{ items.storeName }}
+                {{ items.stName }}
               </el-tag>
             </div>
           </div>
@@ -62,7 +62,7 @@ export default {
     // 筛选门店
     filterStore() {
       _.forEach(this.storeData, item => {
-        if (item.storeName.indexOf(this.serachWord) < 0) {
+        if (item.stName.indexOf(this.serachWord) < 0) {
           item.show = false
         } else {
           item.show = true
