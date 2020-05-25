@@ -513,7 +513,7 @@ export default {
           window.open(_shareUrl, '_blank')
           break
         case 2:
-          _shareUrl = 'https://connect.qq.com/widget/shareqq/iframe_index.html?'
+          _shareUrl = 'https://connect.qq.com/widget/shareqq/index.html?'
           _shareUrl +=
             'url=' + encodeURIComponent(this.shareUrl || location.href) // 分享的链接
           _shareUrl +=
