@@ -132,7 +132,7 @@ export default {
         if (params.organizations === '1') {
           var arr2 = []
           choosedOrganizationsArr.map(items => {
-            arr2.push(items.storeId)
+            arr2.push(items.stCode)
           })
           params.organizations = arr2
         }
