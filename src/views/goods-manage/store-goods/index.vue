@@ -95,16 +95,17 @@
           <div class="search-item">
             <span class="label-name">锁定状态</span>
             <el-select
-              v-model="listQuery.lockType"
+              v-model="listQuery.lockFlag"
               filterable
               size="small"
               placeholder="请选择"
-              change="_loadList"
+              @change="_loadList"
             >
-              <el-option label="锁定库存" :value="1" />
-              <el-option label="锁定价格" :value="2" />
+              <el-option label="全部" value />
+              <el-option label="锁定库存" :value="2" />
+              <el-option label="锁定价格" :value="1" />
               <el-option label="锁定库存价格" :value="3" />
-              <el-option label="无" :value="0" />
+              <el-option label="未锁定" :value="0" />
             </el-select>
           </div>
         </div>
@@ -235,6 +236,16 @@
                   circle
                   @click="handleEditData(scope.row,'stock')"
                 />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column align="left" min-width="120" label="锁定状态">
+            <template slot-scope="scope">
+              <div>
+                <span v-if="scope.row.lockFlag===1">锁定价格</span>
+                <span v-else-if="scope.row.lockFlag===2">锁定库存</span>
+                <span v-else-if="scope.row.lockFlag===3">锁定库存价格</span>
+                <span v-else-if="scope.row.lockFlag===0">未锁定</span>
               </div>
             </template>
           </el-table-column>
@@ -374,7 +385,7 @@ export default {
       listQuery: {
         drugType: '',
         commodityType: '',
-        lockType: '',
+        lockFlag: '',
         approvalNumber: '',
         barCode: '',
         groupId: '',
@@ -690,7 +701,9 @@ export default {
     handleLock(lockType) {
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: `请先选择要${lockType === 0 ? '锁定' : '解锁'}库存价格的数据`,
+          message: `请先选择要${
+            lockType === 0 ? '锁定' : '解锁'
+          }库存价格的数据`,
           type: 'warning'
         })
         return

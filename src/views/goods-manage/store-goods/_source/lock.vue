@@ -97,7 +97,9 @@ export default {
     return {
       visable: false,
       rules: {
-        unlockTime: [{ required: true, validator: _checkTime, trigger: 'change' }],
+        unlockTime: [
+          { required: true, validator: _checkTime, trigger: 'change' }
+        ],
         lockFlag: [
           {
             required: true,
@@ -197,6 +199,7 @@ export default {
           })
           // delete this.formData.lockFlag
           console.log('---formData---', this.formData)
+          this.formData.lockType = checkStatus
           this.subLoading = true
           setLockPrice(this.formData)
             .then(res => {
