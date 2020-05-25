@@ -43,31 +43,22 @@
         <el-button type="primary" size="small" @click="handleSubmit">立即上传</el-button>
       </span>
     </el-dialog>
-    <el-dialog
-      title="上传结果"
-      :visible.sync="errorDialogVisible"
-      append-to-body
-      width="30%"
-      :before-close="handleErrorColse"
-      class="error-dialog"
-    >
-      <div class="error-dialog-model">
-        <span>{{ errorText }}</span>
-        <el-link v-show="errorResultUrl" type="primary" :href="errorResultUrl">下载结果文件</el-link>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-link v-show="errorResultUrl" :href="errorResultUrl" :underline="false">
-          <el-button type="primary">下 载</el-button>
-        </el-link>
-        <el-button @click="errorDialogVisible = false;">关 闭</el-button>
-      </span>
-    </el-dialog>
+    <importResult
+      :is-show="errorDialogVisible"
+      :error-text="errorText"
+      :error-result-url="errorResultUrl"
+      @close="errorDialogVisible=false"
+    />
   </div>
 </template>
 <script>
 import config from '@/utils/config'
+import importResult from './importResult'
 import { mapGetters } from 'vuex'
 export default {
+  components: {
+    importResult
+  },
   props: {
     isShow: {
       type: Boolean,
@@ -120,6 +111,7 @@ export default {
         this.$refs.file.clearFiles()
         this.handleColse()
         this.errorDialogVisible = true
+        console.log('上传结果', res)
         if (res.data.fail === 0) {
           this.errorText = `上传${res.data.success +
             res.data.fail}条数据：操作成功${
@@ -200,12 +192,5 @@ export default {
       }
     }
   }
-  .error-dialog {
-    .error-dialog-model {
-      line-height: 24px;
-    }
-    .el-dialog__body {
-      padding: 15px 20px;
-    }
-  }
+
 </style>
