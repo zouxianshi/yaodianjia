@@ -8,19 +8,14 @@
       :close-on-click-modal="false"
       @close="handleClose"
     >
-      <el-form
-        ref="lockForm"
-        :model="formData"
-        :rules="rules"
-        size="small"
-      >
+      <el-form ref="lockForm" :model="formData" :rules="rules" size="small">
         <el-form-item :label="`${lockType===0?'锁定':'解锁'}商品属性：`" prop="lockFlag">
           <el-checkbox-group v-model="formData.lockFlag">
             <el-checkbox :label="1">价格</el-checkbox>
             <el-checkbox :label="2">库存</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item v-if="lockType===0" label="定时解锁设置：">
+        <el-form-item v-if="lockType===0&&formData.lockFlag.length>0" label="定时解锁设置：">
           <el-checkbox
             v-model="formData.unlockType"
             :true-label="1"
@@ -102,7 +97,7 @@ export default {
     return {
       visable: false,
       rules: {
-        unlockTime: [{ validator: _checkTime, trigger: 'change' }],
+        unlockTime: [{ required: true, validator: _checkTime, trigger: 'change' }],
         lockFlag: [
           {
             required: true,
@@ -176,7 +171,14 @@ export default {
             // int 锁定同步标志，0-全不锁定，1-锁定价格，2-锁定库存，3-锁定价格和库存
             // 锁定
             if (this.lockType === 0) {
-              lockStatus = checkStatus === item.lockFlag ? checkStatus : 3
+              // lockStatus = checkStatus === item.lockFlag ? checkStatus : 3
+              if (checkStatus === 3) {
+                lockStatus = 3
+              } else if (checkStatus === 2) {
+                lockStatus = item.lockFlag === 3 || item.lockFlag === 1 ? 3 : 2
+              } else if (checkStatus === 1) {
+                lockStatus = item.lockFlag === 3 || item.lockFlag === 2 ? 3 : 1
+              }
             } else {
               // 解锁
               if (checkStatus === 3) {
