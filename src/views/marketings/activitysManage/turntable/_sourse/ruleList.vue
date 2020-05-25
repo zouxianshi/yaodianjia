@@ -296,20 +296,24 @@ export default {
   methods: {
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {
-        this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.dayLimit = this.ruleForm.personLimit = this.ruleForm.activeLimit = ''
+        this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.dayLimit = this.ruleForm.personLimit = this.ruleForm.activeLimit =
+          ''
       } else {
-        this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.activeLimit = ''
+        this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.activeLimit =
+          ''
       }
     },
     changeCount() {
       // 改变限制次数类型
-      this.ruleForm.personLimit = this.ruleForm.dayLimit = this.ruleForm.activeLimit = ''
+      this.ruleForm.personLimit = this.ruleForm.dayLimit = this.ruleForm.activeLimit =
+        ''
       this.ruleForm.countRule = ''
     },
     submitForm(formName) {
       // 活动参与选抽奖次数
-      this.ruleForm.countType === 1 ? 1 : 2
-      console.log(this.ruleForm)
+      if (this.ruleForm.joinRule === 3) {
+        this.ruleForm.countType = 1
+      }
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!this.ruleForm.activeTime[0]) {

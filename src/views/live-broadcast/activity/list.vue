@@ -90,11 +90,13 @@
     <el-dialog
       title="直播回放"
       :visible.sync="videoVisible"
-      width="50%"
+      width="600px"
       append-to-body=""
       :before-close="handleColseVideo"
     >
-      <div id="J_prismPlayer" class="prism-player" />
+      <div class="play-box">
+        <div id="J_prismPlayer" class="prism-player" />
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="handleColseVideo">关 闭</el-button>
       </span>
@@ -104,6 +106,7 @@
       :visible.sync="goodsVisible"
       width="700px"
       append-to-body=""
+      :close-on-click-modal="false"
     >
       <el-table :data="goodsList" height="350">
         <el-table-column label="商品图片">
@@ -160,7 +163,10 @@ export default {
       goodsVisible: false,
       goodsList: [],
       shareVisible: false,
-      pageLink: ''
+      pageLink: '',
+      playList: [],
+      playIndex: 0,
+      playUrl: ''
     }
   },
   computed: {
@@ -238,34 +244,71 @@ export default {
       this.videoVisible = false
     },
     handlePlayVideo(row) {
-      if (!row.videoUrl) {
+      if (row.status !== 2) {
         this.$message({
           message: '直播未完成',
           type: 'warning'
         })
         return
       }
-      this.videoVisible = true
+      this._loadPlayList(row.id)
+      // this.videoVisible = true
+    },
+    async _loadPlayList(id) {
+      try {
+        const { data } = await liveRequest.getPlayList(id)
+        data.map(v => {
+          if (v.videoUrl) {
+            v.videoUrl = v.videoUrl.replace('http', 'https')
+          }
+        })
+        this.playList = data
+        this.playUrl = this.playList[0].videoUrl
+        this.videoVisible = true
+        this.playVideo()
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    playVideo() {
       this.$nextTick(_ => {
         if (this.aliPlay) {
-          this.aliPlay.dispose()
+          // this.aliPlay.dispose()
+          this.aliPlay.loadByUrl(this.playUrl)
+        } else {
+          // eslint-disable-next-line no-undef
+          this.aliPlay = new Aliplayer({
+            id: 'J_prismPlayer',
+            width: '100%',
+            source: this.playUrl,
+            'autoplay': true,
+            'isLive': false,
+            'rePlay': false,
+            'playsinline': true,
+            'preload': true,
+            'controlBarVisibility': 'hover',
+            'useH5Prism': true
+          }, function(player) {
+            console.log('播放器创建好了。')
+          })
+          this.aliPlay.on('ended', this.handlePlayEnd)
         }
-        // eslint-disable-next-line no-undef
-        this.aliPlay = new Aliplayer({
-          id: 'J_prismPlayer',
-          width: '100%',
-          source: row.videoUrl.replace('http', 'https'),
-          'autoplay': true,
-          'isLive': false,
-          'rePlay': false,
-          'playsinline': true,
-          'preload': true,
-          'controlBarVisibility': 'hover',
-          'useH5Prism': true
-        }, function(player) {
-          console.log('播放器创建好了。')
-        })
       })
+    },
+    handleTogglePlay(row, index) {
+      this.playIndex = index
+      this.playUrl = row.videoUrl
+      this.playVideo()
+    },
+    handlePlayEnd() {
+      console.log('播放结束-----')
+      // 播放结束自动切换到下一个
+      if (this.playIndex !== this.playList.length - 1) {
+        this.playIndex = this.playIndex + 1
+        this.playUrl = this.playList[this.playIndex].videoUrl
+        console.log('playIndex', this.playIndex)
+        this.playVideo()
+      }
     },
     handleAdd(id) {
       this.$router.push(`/live-manage/activity-edit?id=${id}`)
@@ -306,5 +349,8 @@ export default {
         color: #fff;
       }
     }
+  }
+  .play-box{
+    display: flex;
   }
 </style>

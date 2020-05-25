@@ -10,7 +10,7 @@
                 <!-- <img :src="item.memberHead" class="feedback-content-image"> -->
                 <el-image
                   style=" width: 50px;height: 50px;border-radius: 50%;"
-                  :src="item.memberHea"
+                  :src="item.memberHead"
                 >
                   <div slot="error" class="image-slot">加载失败</div>
                 </el-image>
