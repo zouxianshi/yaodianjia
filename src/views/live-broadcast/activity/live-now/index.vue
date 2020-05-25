@@ -78,7 +78,7 @@
             <div class="goodList">
               <div v-for="gitems in goodList" :key="gitems+21" class="flex-left goods">
                 <!-- <el-image class="good_avatar" :src="gitems.commodityPic" :fit="contain" /> -->
-                <img class="good_avatar" :src="gitems.commodityPic" :fit="contain">
+                <img class="good_avatar" :src="showImg(gitems.commodityPic)">
                 <div class="c-flex-top goodsMsg">
                   <p>{{ gitems.commodityName }}</p>
                   <p>{{ gitems.specName }}</p>
