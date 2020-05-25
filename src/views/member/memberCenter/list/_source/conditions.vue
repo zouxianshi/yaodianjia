@@ -43,7 +43,7 @@
         <el-radio-group v-model="conditions.registerSource">
           <el-radio :label="null">不限</el-radio>
           <el-radio :label="1">门店推荐</el-radio>
-          <el-radio :label="2">员工推荐</el-radio>
+          <el-radio :label="2">员工二维码推荐</el-radio>
           <el-radio :label="3">商户渠道</el-radio>
           <el-radio :label="4">平台渠道</el-radio>
           <el-radio :label="5">支付即会员</el-radio>
