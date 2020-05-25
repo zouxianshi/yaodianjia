@@ -450,7 +450,8 @@ export default {
         this.dialogVisible = true
         this.loading = true
         const p = {
-          activityId: this.tableData[command.index].id
+          activityId: this.tableData[command.index].id,
+          type: 2
         }
         queryQrCode(p).then(res => {
           if (res.code === '10000') {
