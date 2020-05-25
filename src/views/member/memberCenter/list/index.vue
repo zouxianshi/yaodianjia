@@ -87,6 +87,8 @@ export default {
     getData(val) {
       if (val === '查询' && Number(this.$refs.conditionsA.conditions.organizations) === 1 && this.$refs.conditionsA.choosedOrganizationsArr.length === 0) {
         this.$message({ type: 'warning', message: '请选择门店' })
+      } else if (val === '查询' && Number(this.$refs.conditionsA.conditions.empCodes) === 1 && this.$refs.conditionsA.choosedEmpCodesArr.length === 0) {
+        this.$message({ type: 'warning', message: '请选择健康顾问' })
       } else {
         var params = _.cloneDeep(this.$refs.conditionsA.conditions)
         // console.log(params)
