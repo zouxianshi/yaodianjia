@@ -34,7 +34,6 @@
               clearable
               placeholder="选择商品分类"
               :show-all-levels="false"
-              @focus="_loadGoodTypeList()"
             />
           </div>
           <div class="search-item">
@@ -60,7 +59,7 @@
               v-model.trim="listQuery.erpOrName"
               size="small"
               style="width:200px"
-              placeholder="商品名称"
+              placeholder="商品名称/编码"
             />
           </div>
           <div class="search-item">
@@ -390,6 +389,7 @@ export default {
   created() {
     this.merCode = this.$store.state.user.merCode
     this.getList()
+    this._loadGoodTypeList()
     this._loadTypeList()
   },
   beforeRouteEnter(to, from, next) {
