@@ -40,7 +40,10 @@
         </el-table-column>
         <el-table-column property="activityDetailName" label="活动名称" show-overflow-tooltip />
         <el-table-column label="活动时间" width="300">
-          <template slot-scope="scope" width="300">{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
+          <template
+            slot-scope="scope"
+            width="300"
+          >{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
         </el-table-column>
         <el-table-column property="countRule" label="参与次数">
           <template slot-scope="scope">{{ scope.row.countRule? scope.row.countRule : 0 }}次</template>
@@ -78,6 +81,15 @@
 <script>
 import { normalAddActivityList } from '@/api/coupon'
 export default {
+  props: {
+    // 活动开始时间
+    beginendtime: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
   data() {
     return {
       tableLoading: false,
@@ -86,7 +98,8 @@ export default {
       hasSelectList: [],
       searchParams: {
         activityTemplateCode: '',
-        activityName: ''
+        activityName: '',
+        beginTime: ''
       },
       totalCount: 0,
       pageInfo: {
@@ -131,30 +144,40 @@ export default {
     },
     // 查询商品
     queryData() {
-      this.tableLoading = true
-      var params = Object.assign({}, this.pageInfo, this.searchParams)
-      normalAddActivityList(params).then(res => {
-        this.dialogTableVisible = true
-        if (res.data && res.data.records) {
-          this.gridData = res.data.records
-          this.totalCount = res.data.total
-          this.$nextTick(() => {
-            // this.selectedArr.splice(0)
-            if (this.gridData.length > 0 && this.currentRow) {
-              const index = this.gridData.findIndex(
-                item => item.id === this.currentRow.id
-              )
-              if (index > -1) {
-                this.radio = index
-                this.selectedArr.splice(0)
-                console.log(this.selectedArr)
-                this.selectedArr.push(this.currentRow)
+      if (this.beginendtime.length === 0) {
+        this.$message({
+          message: '请选择活动时间',
+          type: 'warning'
+        })
+      } else {
+        this.searchParams.beginTime = this.beginendtime[0]
+          .replace(/T/g, ' ')
+          .replace(/Z/g, '')
+        this.tableLoading = true
+        var params = Object.assign({}, this.pageInfo, this.searchParams)
+        normalAddActivityList(params).then(res => {
+          this.dialogTableVisible = true
+          if (res.data && res.data.records) {
+            this.gridData = res.data.records
+            this.totalCount = res.data.total
+            this.$nextTick(() => {
+              // this.selectedArr.splice(0)
+              if (this.gridData.length > 0 && this.currentRow) {
+                const index = this.gridData.findIndex(
+                  item => item.id === this.currentRow.id
+                )
+                if (index > -1) {
+                  this.radio = index
+                  this.selectedArr.splice(0)
+                  console.log(this.selectedArr)
+                  this.selectedArr.push(this.currentRow)
+                }
               }
-            }
-          })
-        }
-        this.tableLoading = false
-      })
+            })
+          }
+          this.tableLoading = false
+        })
+      }
     },
     searchData() {
       this.queryData()
@@ -208,7 +231,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.el-dialog{
+.el-dialog {
   width: 55%;
 }
 .el-dialog__body {
