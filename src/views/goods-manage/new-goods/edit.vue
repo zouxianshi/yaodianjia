@@ -7,7 +7,7 @@
         <el-step title="图文信息" icon="el-icon-picture-outline-round" @click="handleGoStep(3)" />
       </el-steps>
       <!-- 第一步 -->
-      <div v-show="step===1" class="basic-info-section">
+      <div class="basic-info-section">
         <section v-loading="basicLoading" element-loading-text="拼命加载中">
           <!-- 分类信息 -->
           <div class="edit-card">
@@ -25,7 +25,7 @@
                     </span>
                   </el-tag>
                   <span
-                    v-if="(basicForm.id!==1&&!is_query)&&basicForm.origin!==1"
+                    v-if="(basicForm.id!==1&&!is_query)"
                     class="link link-btn"
                     @click="typeVisible=true;_loadClassList()"
                   >修改分类</span>
@@ -191,9 +191,9 @@
                     <el-form-item label="药品类型：">
                       <el-select v-model="basicForm.drugType" placeholder="请选择药品类型">
                         <el-option label="甲类OTC" :value="0" />
-                        <el-option label="处方药" :value="1" />
                         <el-option label="乙类OTC" :value="2" />
                         <el-option label="OTC" :value="4" />
+                        <el-option label="处方药" :value="1" />
                       </el-select>
                     </el-form-item>
                     <el-form-item label="剂型：">
@@ -240,6 +240,7 @@
                         v-model="basicForm.intro"
                         :readonly="is_query"
                         :height="400"
+                        placeholder="请参考说明书。若是药品则必须包含用法用量，不良反应、禁忌、注意事项等。"
                         @onload="tinymceLoad"
                       />
                       <div class="wordcount">统计: {{ getContentLength }}字</div>
@@ -308,18 +309,24 @@
                       <el-radio :label="1">冷藏</el-radio>
                       <el-radio :label="2">冷冻</el-radio>
                     </el-radio-group>
-                  </el-form-item>
-                  <el-form-item label="其他属性：">
                     <el-checkbox v-model="basicForm.isEasyBreak" :true-label="1" :false-label="0">易碎</el-checkbox>
                     <el-checkbox v-model="basicForm.isLiquid" :true-label="1" :false-label="0">液体</el-checkbox>
-                    <template
-                      v-if="chooseTypeList&&chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'"
-                    >
+                  </el-form-item>
+                  <el-form-item
+                    v-if="chooseTypeList&&chooseTypeList.length!==0&&chooseTypeList[0].name==='中西药品'"
+                    label="其他属性："
+                  >
+                    <template>
                       <el-checkbox
                         v-model="basicForm.hasEphedrine"
                         :true-label="1"
                         :false-label="0"
                       >含麻黄碱</el-checkbox>
+                      <el-checkbox
+                        v-model="basicForm.hasEphedrine"
+                        :true-label="1"
+                        :false-label="0"
+                      >需要身份证</el-checkbox>
                     </template>
                   </el-form-item>
                 </div>
@@ -329,7 +336,7 @@
         </section>
       </div>
       <!-- 规格信息 -->
-      <div v-show="step===2">
+      <div>
         <div v-loading="specLoading" class="specs-box" element-loading-text="拼命加载中">
           <p
             class="text-right"
@@ -409,11 +416,11 @@
                       </template>
                     </template>
                   </el-table-column>-->
-                  <el-table-column
-                    v-for="(propsf,indexs) in dynamicProp"
-                    :key="indexs"
-                    :label="propsf.name"
-                  >
+                  <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs">
+                    <template slot="header">
+                      <span class="tip">*</span>
+                      {{ propsf.name }}
+                    </template>
                     <template slot-scope="scope">
                       <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
                       <template v-if="!is_query">
@@ -428,7 +435,10 @@
                       </template>
                     </template>
                   </el-table-column>
-                  <el-table-column label="商品编码">
+                  <el-table-column>
+                    <template slot="header">
+                      <span class="tip">*</span> 商品编码
+                    </template>
                     <template slot-scope="scope">
                       <span v-text="scope.row.erpCode" />
                       <template v-if="!is_query">
@@ -473,7 +483,10 @@
                       </template>
                     </template>
                   </el-table-column>
-                  <el-table-column label="参考价格">
+                  <el-table-column>
+                    <template slot="header">
+                      <span class="tip">*</span> 参考价格
+                    </template>
                     <template slot-scope="scope">
                       <span v-text="scope.row.mprice" />
                       <template v-if="!is_query">
@@ -555,11 +568,11 @@
                 <template v-if="basicForm.id&&editSpecsData.length>0">
                   <div class="spec-content">
                     <el-table :data="editSpecsData" @selection-change="handleSelectionChange">
-                      <el-table-column
-                        v-for="(propsf,indexs) in dynamicProp"
-                        :key="indexs"
-                        :label="propsf.name"
-                      >
+                      <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs">
+                        <template slot="header">
+                          <span class="tip">*</span>
+                          {{ propsf.name }}
+                        </template>
                         <template slot-scope="scope">
                           <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
                           <template v-if="!is_query">
@@ -574,7 +587,10 @@
                           </template>
                         </template>
                       </el-table-column>
-                      <el-table-column label="商品编码" prop="erpCode">
+                      <el-table-column prop="erpCode">
+                        <template slot="header">
+                          <span class="tip">*</span> 商品编码
+                        </template>
                         <template slot-scope="scope">
                           <span v-text="scope.row.erpCode" />
                           <template v-if="!is_query">
@@ -619,7 +635,10 @@
                           </template>
                         </template>
                       </el-table-column>
-                      <el-table-column label="参考价格" prop="mprice">
+                      <el-table-column prop="mprice">
+                        <template slot="header">
+                          <span class="tip">*</span> 参考价格
+                        </template>
                         <template slot-scope="scope">
                           <span v-text="scope.row.mprice" />
                           <template v-if="!is_query">
@@ -875,7 +894,7 @@
         </div>
       </div>
       <!-- 图文详情 -->
-      <div v-show="step==3">
+      <div>
         <div class="edit-card">
           <div class="header">
             商品橱窗图
@@ -907,7 +926,7 @@
                 <li>4、图片内容展示方向，应始终保持文字正向。</li>
                 <li>5、请上传商品正面、侧面、背面不少于3张图片，药品需上传药品说明书图片，器械需上传器械注册证图片</li>
               </ol>
-              <div class="text-center">
+              <!-- <div class="text-center">
                 <el-button type size="small" @click="step=2">上一步</el-button>
                 <el-button
                   v-if="!is_query"
@@ -917,7 +936,7 @@
                   style="width:70px"
                   @click="handleSubImg"
                 >保存</el-button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -986,7 +1005,7 @@
       @back="handleSaveGroup"
       @close="groupVisible=false"
     />
-    <div class="action-wapper">
+    <!-- <div class="action-wapper">
       <el-button v-if="step !== 1" type size="small" @click="backStep">上一步</el-button>
       <el-button
         v-if="setp3show"
@@ -996,17 +1015,23 @@
         style="width:70px;margin-right: 10px;"
         @click="nextStep"
       >{{ step===3?'保存':"下一步" }}</el-button>
+    </div> -->
+    <div class="action-wapper">
+      <el-button size="small" @click="backStep">取 消</el-button>
+      <el-button
+        :loading="subLoading"
+        size="small"
+        type="primary"
+        style="width:70px;margin-right: 10px;"
+        @click="nextStep"
+      >保 存</el-button>
     </div>
   </div>
 </template>
 <script>
 import Tinymce from '@/components/Tinymce'
 import vueUploadImg from '@/components/ImgUpload'
-import {
-  getTypeTree,
-  getPreGroupList,
-  getTypeDimensionList
-} from '@/api/group'
+import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import {
