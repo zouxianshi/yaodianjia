@@ -7,9 +7,9 @@
           <el-radio label="1">
             <span @click="chooseCon('A')">选择门店<i class="el-icon-arrow-down" /></span>
           </el-radio>
-          <span v-for="(items, index) in empCodesArr" :key="index">
+          <span v-for="(items, index) in organizationsArr" :key="index">
             <el-tag v-if="items.selectFlag" type="info" class="tags" closable size="small" @close="items.selectFlag=false">
-              {{ items.storeName }}
+              {{ items.stName }}
             </el-tag>
           </span>
         </el-radio-group>
@@ -20,7 +20,7 @@
           <el-radio label="1">
             <span @click="chooseCon('B')">选择顾问<i class="el-icon-arrow-down" /></span>
           </el-radio>
-          <span v-for="(items, index) in organizationsArr" :key="index">
+          <span v-for="(items, index) in empCodesArr" :key="index">
             <span v-for="(items2, index2) in items.employees" :key="index2">
               <el-tag v-if="items2.selectFlag" type="info" class="tags" closable size="small" @close="items2.selectFlag=false">
                 {{ items2.empName }}
@@ -62,6 +62,7 @@
   </div>
 </template>
 <script>
+import { queryStoreByOrgId } from '@/api/coupon'
 import mSelectStore from './selectStore' // 选择门店
 import mSelectConsultant from './selectConsultant' // 选择顾问
 import { queryEmployee } from '@/api/memberService' // 选择门店和顾问接口
@@ -88,7 +89,7 @@ export default {
     // 已选择的门店和顾问
     choosedEmpCodesArr() {
       var arr = []
-      this.organizationsArr.map(items => {
+      this.empCodesArr.map(items => {
         items.employees.map(items2 => {
           if (items2.selectFlag) {
             arr.push(items2)
@@ -109,6 +110,7 @@ export default {
   },
   created() {
     this.getEmployeeData()
+    this.getStoreData()
   },
   methods: {
     // 门店类型切换（不限 \ 选择门店）
@@ -122,7 +124,7 @@ export default {
     // 顾问类型切换（不限 \ 选择顾问）
     conTypeChange(e) {
       if (!e) {
-        this.organizationsArr.map(items => {
+        this.empCodesArr.map(items => {
           items.employees.map(items2 => {
             items2.selectFlag = false
           })
@@ -135,7 +137,7 @@ export default {
     chooseCon(type) { // 选择门店或顾问
       this.$refs[type].showDialogVisible()
     },
-    // 获取门店和顾问数据
+    // 获取顾问数据
     getEmployeeData() {
       var params = {
         'pageFlag': false
@@ -144,15 +146,26 @@ export default {
         var data = res.data
         data.map(items => {
           items.foldFlag = true // 是否折叠门店
-          items.selectFlag = false // 门店是否选中
-          items.show = true // 门店是否显示
           items.employees.map(items2 => {
             items2.selectFlag = false // 顾问是否选择
             items2.show = true // 顾问是否显示
           })
         })
         this.empCodesArr = res.data
-        this.organizationsArr = res.data
+      })
+    },
+    // 获取门店数据
+    getStoreData() {
+      queryStoreByOrgId(
+        { currentPage: 1, pageSize: 999 }
+      ).then(res => {
+        var data = res.data.data
+        console.log(res)
+        data.map(items => {
+          items.selectFlag = false // 门店是否选中
+          items.show = true // 门店是否显示
+        })
+        this.organizationsArr = res.data.data
       })
     },
     resetParams() {
@@ -163,10 +176,10 @@ export default {
         gender: '', // 性别
         organizations: null // 门店
       }
-      this.empCodesArr.forEach(item => {
+      this.organizationsArr.forEach(item => {
         item.selectFlag = false
       })
-      this.organizationsArr.forEach(item => {
+      this.empCodesArr.forEach(item => {
         item.employees.forEach(items => {
           items.selectFlag = false
         })
