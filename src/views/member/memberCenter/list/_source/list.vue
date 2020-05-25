@@ -17,7 +17,7 @@
       </el-table-column>
       <el-table-column prop="memberAge" label="年龄" align="center" />
       <el-table-column prop="memberPhone" width="150" label="手机号码" align="center" />
-      <el-table-column label="健康顾问" align="center">
+      <!-- <el-table-column label="健康顾问q" align="center">
         <template slot-scope="scope">
           {{ scope.row.healthConsultants?scope.row.healthConsultants[0].name: '' }}
           <el-popover
@@ -36,7 +36,7 @@
             </el-button>
           </el-popover>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="会员分类" width="100" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.memberActive === 1">普通会员</span>
@@ -81,7 +81,7 @@
 <script>
 import mPopBeansDetails from '../../../_source/popBeansDetails' // 海贝详情
 import mPopEditBeans from './popEditBeans' // 海贝编辑
-import mPopConsultantList from './popConsultantList' // 健康顾问悬浮显示
+// import mPopConsultantList from './popConsultantList' // 健康顾问悬浮显示
 import {
   queryOnlineIntegra,
   menberBaseInfo,
@@ -91,7 +91,7 @@ export default {
   name: 'List',
   components: {
     mPopBeansDetails,
-    mPopConsultantList,
+    // mPopConsultantList,
     mPopEditBeans
   },
   props: {},
