@@ -1677,19 +1677,6 @@ export default {
       console.log('导出')
       exportData(this.listQuery)
         .then(res => {
-          // if (res.type === 'application/json') {
-          //   this.$message({
-          //     message: '导出的记录为空',
-          //     type: 'error'
-          //   })
-          // } else {
-          //   download.blob(res, '所有订单')
-          //   this.$message({
-          //     message: '数据导出成功',
-          //     type: 'success'
-          //   })
-          // }
-          console.log('导出--------', res)
           if (res.code === '10000') {
             this.$alert(
               '订单列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',

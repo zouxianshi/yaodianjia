@@ -116,7 +116,6 @@ export default {
   },
   methods: {
     _loadList() {
-      console.log('查询列表----------', this.listQuery)
       this.loadingList = true
       getExportRecord({
         merCode: this.merCode,
