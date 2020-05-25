@@ -14,7 +14,6 @@ import * as filters from './filters' // global filters
 import './permission'
 // import { setSystem } from './utils/auth'
 import utils from '@/utils/util'
-
 Vue.use(permission)
 Vue.use(utils)
 Vue.use(loadmore)
@@ -32,6 +31,7 @@ Vue.use(Element, {
 })
 
 import { MC } from '@merchant/commons'
+// import { MC } from 'D:/vueWorkspace/merchant-commons/src'
 
 MC.setCookie('mc-system', 'medical')
 

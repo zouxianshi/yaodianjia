@@ -27,6 +27,42 @@ class InnerCtor {
         children: []
       },
       {
+        name: '会员管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: true,
+        children: [
+          {
+            name: '会员中心',
+            path: '/member/member-center',
+            disabled: true
+          },
+          {
+            name: '会员注册设置',
+            path: '/member/register-setting',
+            disabled: true
+          },
+          {
+            name: '会员反馈',
+            path: '/member/member-feedback/FeedbackList',
+            disabled: true
+          }
+        ]
+      },
+      {
+        name: '渠道管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: true,
+        children: [
+          {
+            name: '微信公众号',
+            path: '/channel/wx-official-account',
+            disabled: true
+          },
+        ]
+      },
+      {
         name: '商品中心',
         icon: 'icongoods',
         path: '',
@@ -145,6 +181,21 @@ class InnerCtor {
           //   path: '/marketing/activity/create',
           //   disabled: this.get('marketing.marketing-create')
           // },
+          // {
+          //   name: '礼品管理',
+          //   path: '/marketings/gift-manage',
+          //   disabled: true
+          // },
+          // {
+          //   name: '活动管理（新）',
+          //   path: '/marketings/activity-manage',
+          //   disabled: true
+          // },
+          {
+            name: '新建活动',
+            path: '/marketing/activity/create',
+            disabled: this.get('marketing.marketing-create')
+          },
           {
             name: '精彩活动',
             path: '/marketing/activity',
@@ -154,6 +205,11 @@ class InnerCtor {
             name: '礼品管理',
             path: '/marketing/gifts',
             disabled: this.get('marketing.gift')
+          },
+          {
+            name: '权益设置',
+            path: '/marketing/settings-equity/list',
+            disabled: true
           },
           // {
           //   name: '拼团活动',
