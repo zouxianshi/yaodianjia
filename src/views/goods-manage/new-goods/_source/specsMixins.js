@@ -606,7 +606,6 @@ const mixin = {
       const findIndex = findArray(this.dynamicProp, { id: row.id })
       return findIndex > -1
     },
-
     handleAddSpec() {
       // 增加 规格
       const data = {
