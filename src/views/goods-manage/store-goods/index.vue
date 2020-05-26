@@ -815,11 +815,11 @@ export default {
 }
 </script>
 <style lang="scss">
-.el-picker-panel__footer {
-  .el-button--text {
-    display: none;
-  }
-}
+// .el-picker-panel__footer {
+//   .el-button--text {
+//     display: none;
+//   }
+// }
 </style>
 <style lang="scss" scoped>
 .lock-tip {
