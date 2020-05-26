@@ -16,9 +16,12 @@
       <el-form-item label="兑换比例">
         1 ：
         <el-form-item prop="num" style="display:inline-block">
-          <el-input v-model="forms.num" onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)" style="width:100px" />
-        </el-form-item>
-      &nbsp;
+          <el-input
+            v-model="forms.num"
+            onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
+            style="width:100px"
+          />
+        </el-form-item>&nbsp;
         <el-tooltip class="item" effect="dark" content="请根据实际情况设置海贝的兑换比例" placement="top-start">
           <i class="el-icon-warning-outline" style="color: #409eff;" />
         </el-tooltip>
@@ -43,13 +46,25 @@ export default {
   name: 'ActivityRules',
   props: {},
   data() {
+    var validateNum = (rule, value, callback) => {
+      if (
+        Number(value) === 0 ||
+        ('' + value).trim() === '' ||
+        Number(value) > 999
+      ) {
+        callback(new Error('请输入数量0~999'))
+      } else {
+        callback()
+      }
+    }
     return {
       forms: {
         num: 1
       },
       rules: {
         num: [
-          { required: true, message: '请输入数量', trigger: 'blur' }
+          { required: true, message: '请输入数量', trigger: 'blur' },
+          { validator: validateNum, trigger: 'blur' }
         ]
       }
     }
@@ -72,7 +87,7 @@ export default {
     getData() {
       const params = `mercode=${this.merCode}&sysKey=integral_exchange_proportion`
       editMerChantsearch(params).then(res => {
-        if (res.data === 'null') {
+        if (res.data === null) {
           this.forms.num = 1
         } else {
           this.forms.num = res.data.sysValue
@@ -86,7 +101,7 @@ export default {
         sysName: '海币兑换',
         sysValue: this.forms.num
       }
-      this.$refs['forms'].validate((valid) => {
+      this.$refs['forms'].validate(valid => {
         if (valid) {
           editMerChantSet(params).then(res => {
             if (res.code === '10000') {
@@ -117,8 +132,8 @@ export default {
   .preview .el-form-item__label {
     color: #909399;
   }
-  .el-form-item__content{
-    margin-left: 0px !important
+  .el-form-item__content {
+    margin-left: 0px !important;
   }
 }
 </style>

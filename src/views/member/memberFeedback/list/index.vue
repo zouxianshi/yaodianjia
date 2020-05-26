@@ -119,10 +119,12 @@ export default {
     background: #ffffff;
     height: calc(100vh - 248px);
     line-height: calc(100vh - 248px);
+    overflow-y:scroll;
   }
   .feedback-list {
     background: #ffffff;
     height: calc(100vh - 248px);
+    overflow-y:scroll;
     padding-top: 24px;
     .block {
       text-align: right;
