@@ -105,7 +105,7 @@
               <el-option label="锁定库存" :value="2" />
               <el-option label="锁定价格" :value="1" />
               <el-option label="锁定库存价格" :value="3" />
-              <el-option label="未锁定" :value="0" />
+              <el-option v-if="listQuery.status!==3" label="未锁定" :value="0" />
             </el-select>
           </div>
         </div>
