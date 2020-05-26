@@ -15,6 +15,18 @@
       <div class="add-addRight-model">
         <el-date-picker
           v-model="value"
+          style="width: 380px"
+          size="small"
+          type="datetimerange"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          range-separator="至"
+          :default-time="['00:00:00', '23:59:59']"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          @change="dateChange"
+        />
+        <!-- <el-date-picker
+          v-model="value"
           type="datetimerange"
           :picker-options="pickerOptions"
           range-separator="至"
@@ -22,7 +34,7 @@
           end-placeholder="结束日期"
           align="right"
           @change="dateChange"
-        />
+        /> -->
       </div>
     </div>
     <div class="add-addItem-model">
@@ -349,14 +361,14 @@ export default {
     },
     // 点击选择优惠券
     handlecheck() {
-      // const time = new Date()
+      const time = new Date()
       if (this.value.length > 0) {
-        // if (this.value[0] < time) {
-        //   this.$message.error('起始时间必须大于当前时间')
-        // } else {
-        this.$refs.checkCoupons.handleGetlist()
-        this.$refs.checkCoupons.defaultcheck(this.forms.selectlist)
-        // }
+        if (new Date(this.value[0]).getTime() < time.getTime()) {
+          this.$message.warning('活动开始时间不能小于当前时间')
+        } else {
+          this.$refs.checkCoupons.handleGetlist()
+          this.$refs.checkCoupons.defaultcheck(this.forms.selectlist)
+        }
       } else {
         this.$message.error('请选择时间')
       }
