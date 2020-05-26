@@ -7,7 +7,7 @@
           <span v-else>未上传</span>
         </template>
       </el-table-column>
-      <el-table-column prop="nickName" label="昵称" />
+      <el-table-column prop="nickName" label="昵称" :show-overflow-tooltip="true" width="150" />
       <el-table-column prop="memberName" label="会员姓名" align="center" />
       <el-table-column label="性别" align="center">
         <template slot-scope="scope">
