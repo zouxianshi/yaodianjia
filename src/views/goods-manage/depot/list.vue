@@ -531,15 +531,15 @@ export default {
         this.treeData = JSON.parse(JSON.stringify(this.treeData))
         this.treeData.unshift({ name: '全部', id: '' })
         this.treeData.push({ name: '未分组', id: 'weifenzuflag' })
-        this.$nextTick(_ => {
-          $('.el-tree')
-            .find('.el-tree-node')
-            .each(function(i) {
-              $(this)
-                .find('.el-tree-node__content .el-tree-node__expand-icon')
-                .click()
-            })
-        })
+        // this.$nextTick(_ => {
+        //   $('.el-tree')
+        //     .find('.el-tree-node')
+        //     .each(function(i) {
+        //       $(this)
+        //         .find('.el-tree-node__content .el-tree-node__expand-icon')
+        //         .click()
+        //     })
+        // })
       })
       getTypeDimensionList(this.$store.state.user.merCode).then(res => {
         this.groupData = res.data
