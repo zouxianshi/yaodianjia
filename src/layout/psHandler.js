@@ -30,22 +30,22 @@ class InnerCtor {
         name: '会员管理',
         icon: 'icongoods',
         path: '',
-        disabled: true,
+        disabled: this.get('member_manager'),
         children: [
           {
             name: '会员中心',
             path: '/member/member-center',
-            disabled: true
+            disabled: this.get('member_manager.member_center')
           },
           {
             name: '会员注册设置',
             path: '/member/register-setting',
-            disabled: true
+            disabled: this.get('member_manager.member_register')
           },
           {
             name: '会员反馈',
             path: '/member/member-feedback/FeedbackList',
-            disabled: true
+            disabled: this.get('member_manager.member_response')
           }
         ]
       },
@@ -53,12 +53,12 @@ class InnerCtor {
         name: '渠道管理',
         icon: 'icongoods',
         path: '',
-        disabled: true,
+        disabled: this.get('channel_manager'),
         children: [
           {
             name: '微信公众号',
             path: '/channel/wx-official-account',
-            disabled: true
+            disabled: this.get('channel_manager.wechat_public')
           },
         ]
       },
@@ -144,8 +144,7 @@ class InnerCtor {
         name: '订单中心',
         icon: 'icongoods',
         path: '/orders-manage',
-        // disabled: this.get('order'),
-        disabled: true,
+        disabled: this.get('order'),
         children: [
           {
             name: `所有订单`,
@@ -209,7 +208,7 @@ class InnerCtor {
           {
             name: '权益设置',
             path: '/marketing/settings-equity/list',
-            disabled: true
+            disabled: this.get('marketing.gift-setting')
           },
           // {
           //   name: '拼团活动',

@@ -10,7 +10,7 @@
                 <!-- <img :src="item.memberHead" class="feedback-content-image"> -->
                 <el-image
                   style=" width: 50px;height: 50px;border-radius: 50%;"
-                  :src="item.memberHea"
+                  :src="item.memberHead"
                 >
                   <div slot="error" class="image-slot">加载失败</div>
                 </el-image>
@@ -111,6 +111,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .feedback-model {
+
   padding: 20px;
   background: #f5f7fa;
   .notdata-model{
@@ -119,6 +120,7 @@ export default {
     background: #ffffff;
     height: calc(100vh - 248px);
     line-height: calc(100vh - 248px);
+    overflow-y:scroll;
   }
   .feedback-list {
     background: #ffffff;

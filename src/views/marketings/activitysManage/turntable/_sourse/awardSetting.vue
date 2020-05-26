@@ -14,44 +14,39 @@
           <el-table-column prop="giftImg" label="图片">
             <template slot-scope="scope">
               <img :src="showImgsTabel(scope.row)" style="width:70px;height:70px">
-              <!-- <el-image :src="showImgsTabel(scope.row)" style="width:70px;height:70px" /> -->
             </template>
           </el-table-column>
           <el-table-column prop="giftName" label="奖品名称" />
           <el-table-column prop="giftContent" label="内容" />
           <el-table-column label="中奖几率">
             <template slot-scope="scope">
-              <el-form-item
-                :prop="'selectedGift.'+scope.$index+'.winRandom'"
-                :rules="rules.winRandom"
-              >
-                <el-input
-                  v-model="scope.row.winRandom"
-                  size="mini"
-                  :disabled="isPageUpdateOrView || isRuning"
-                  maxlength="2"
-                  style="width: 50px"
-                  onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
-                />
-                <span style="font-size:16px">%</span>
-              </el-form-item>
+              <el-input-number
+                v-model="scope.row.winRandom"
+                :disabled="isPageUpdateOrView || isRuning"
+                size="mini"
+                :precision="0"
+                :step="1"
+                :min="1"
+                :max="100"
+                :controls="false"
+                style="width:60px"
+              />
+              <span style="font-size:16px">%</span>
             </template>
           </el-table-column>
           <el-table-column label="奖品数量">
             <template slot-scope="scope">
-              <el-form-item
-                :prop="'selectedGift.'+scope.$index+'.giftNum'"
-                :rules="rules.giftNum"
-              >
-                <el-input
-                  v-model="scope.row.giftNum"
-                  :disabled="isPageUpdateOrView || isRuning"
-                  size="mini"
-                  style="width:100px"
-                  onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
-                  maxlength="8"
-                />
-              </el-form-item>
+              <el-input-number
+                v-model="scope.row.giftNum"
+                :disabled="isPageUpdateOrView || isRuning"
+                size="mini"
+                :precision="0"
+                :step="1"
+                :min="1"
+                :max="100000"
+                :controls="false"
+                style="width:100px"
+              />
             </template>
           </el-table-column>
           <el-table-column label="操作" width="120">
@@ -145,20 +140,28 @@
           />
         </el-form-item>
         <el-form-item label="中奖几率" prop="winRandom">
-          <el-input
+          <el-input-number
             v-model="ruleForm.winRandom"
-            onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
-            maxlength="2"
+            :precision="0"
+            :step="1"
+            :min="1"
+            :max="100"
+            :controls="false"
             style="width:400px"
-          />%
+          />
+          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 20px; font-weight: 500;width: 30px;">％</span>
         </el-form-item>
         <el-form-item label="奖品数量" prop="giftNum">
-          <el-input
+          <el-input-number
             v-model="ruleForm.giftNum"
-            onkeyup="this.value=this.value.match(/^[1-9]{1}[0-9]*$/)"
-            maxlength="8"
+            :precision="0"
+            :step="1"
+            :min="1"
+            :max="100000"
+            :controls="false"
             style="width:400px"
-          />份
+          />
+          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 20px; font-weight: 500;width: 30px;">份</span>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
