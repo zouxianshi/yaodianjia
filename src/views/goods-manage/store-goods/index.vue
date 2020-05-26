@@ -71,7 +71,7 @@
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择">
+            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择" @change="_loadList">
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
@@ -649,6 +649,7 @@ export default {
     handleChangeGroup(val) {
       console.log(val)
       this.listQuery.groupId = val[val.length - 1]
+      this._loadList()
     },
     remoteMethod(val) {
       this.selectloading = true
