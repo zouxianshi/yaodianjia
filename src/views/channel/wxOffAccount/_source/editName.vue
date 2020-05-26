@@ -49,7 +49,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('channel', ['menuData', 'VUE_APP_MEMBER_CENTER']),
+    ...mapState('channel', ['menuData']),
     isSlots() {
       return !_.isEmpty(this.$slots.default)
     }
@@ -98,12 +98,12 @@ export default {
     },
     async onSave() {
       if (this.verification()) {
-        const { nName, level1Index, level2Index, VUE_APP_MEMBER_CENTER } = this
+        const { nName, level1Index, level2Index } = this
         const item = {
           name: nName,
           sub_button: [],
-          type: 'memberCard',
-          url: VUE_APP_MEMBER_CENTER
+          type: 'view',
+          url: ''
         }
 
         if (_.isNull(level1Index) && _.isNull(level2Index)) {

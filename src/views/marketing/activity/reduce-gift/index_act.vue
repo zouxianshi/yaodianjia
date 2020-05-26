@@ -262,9 +262,6 @@ export default {
     selectGoods,
     selectGiftList
   },
-  computed: {
-    ...mapGetters(['merCode'])
-  },
   data() {
     const checkActivitTime = (rule, value, callback) => {
       console.log('我是时间检测-----------------------')
@@ -322,6 +319,9 @@ export default {
       pageInfoloading: false,
       leaveAction: false
     }
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   created() {
     console.log(this.$route)
