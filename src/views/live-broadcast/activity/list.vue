@@ -21,7 +21,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="name" label="主播主题" min-width="180" align="center" />
-        <el-table-column label="图片" min-width="100" align="center">
+        <el-table-column label="封面" min-width="100" align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.coverPicUrl && scope.row.coverPicUrl!==''" class="x-img-mini">
               <div class="x-image__preview">
@@ -60,7 +60,7 @@
         <el-table-column label="操作" fixed="right" align="center" min-width="150">
           <template slot-scope="scope">
             <template v-if="scope.row.status!==2">
-              <el-button v-if="scope.row.status===0||scope.row.status===1" size="mini" type="text" @click="handleStartLive(scope.row.id)">发起直播</el-button>
+              <el-button v-if="scope.row.status===0||scope.row.status===1" size="mini" type="text" @click="handleStartLive(scope.row.id)">开播</el-button>
               <el-button
                 slot="reference"
                 type="text"
