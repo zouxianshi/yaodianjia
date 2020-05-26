@@ -59,7 +59,9 @@ export default {
         })
         this.$refs.ruleList.ruleForm = data
         this.$refs.ruleList.ruleForm.activeTime = [data.beginTime, data.endTime]
-        if (data.countType === 1) {
+        if (data.joinRule === 3) {
+          this.$refs.ruleList.ruleForm.activeLimit = data.countRule
+        } else if (data.countType === 1) {
           this.$refs.ruleList.ruleForm.personLimit = data.countRule
         } else {
           this.$refs.ruleList.ruleForm.dayLimit = data.countRule
@@ -101,6 +103,7 @@ export default {
     handleNext(stepActive, obj = {}) {
       this.stepActive = stepActive
       Object.assign(this.params, obj)
+      console.log(this.params)
     },
     submitAjax(obj = {}) { // 新增优惠券
       Object.assign(this.params, obj)
