@@ -1,15 +1,18 @@
 <template>
   <el-popover v-model="visible" placement="top-end" popper-class="plx-to-url-model">
     <div class="to-url-box">
-      <el-radio-group v-model="type">
-        <el-radio class="radio-item" :label="'memberCard'">会员领卡链接</el-radio>
+      <div style="margin-bottom: 16px;">
+        自定义链接 <el-input v-model="url" style="width: 260px;margin-left: 10px" placeholder="请输入自定义链接地址" size="mini" />
+      </div>
+      <!--<el-radio-group v-model="type">
+        &lt;!&ndash;<el-radio class="radio-item" :label="'memberCard'">会员领卡链接</el-radio>&ndash;&gt;
         <el-radio class="radio-item" :label="'view'">
           <span>
             自定义链接 <el-input v-model="url" style="width: 260px;margin-left: 10px" placeholder="请输入自定义链接地址" size="mini" />
           </span>
           <p v-if="errorText" class="p-error">{{ errorText }}</p>
         </el-radio>
-      </el-radio-group>
+      </el-radio-group>-->
     </div>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
@@ -35,7 +38,7 @@ export default {
   },
   data() {
     return {
-      type: '',
+      type: 'view',
       url: '',
       visible: false,
       errorText: ''
@@ -50,7 +53,7 @@ export default {
   },
   watch: {
     type(v) {
-      if (v === 'memberCard') {
+      if (v !== 'view') {
         this.errorText = ''
         this.url = ''
       }
@@ -94,19 +97,12 @@ export default {
           : sub_button[level2Index].url
     },
     async onSave() {
-      const { type, url, level1Index, level2Index } = this
-      this.errorText = ''
-      if (type === 'view' && !url) {
-        this.errorText = '自定义链接地址不能为空'
-        return
-      }
-
+      const { level1Index, level2Index } = this
       this.loading = true
-
       await this.editMenu({
         item: {
-          type,
-          url: this.url || this.VUE_APP_MEMBER_CENTER
+          type: 'view',
+          url: this.url
         },
         level1Index,
         level2Index
