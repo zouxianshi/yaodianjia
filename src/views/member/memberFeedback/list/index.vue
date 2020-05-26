@@ -17,7 +17,7 @@
               </div>
               <div>
                 <p>
-                  {{ item.nickName }}&nbsp;
+                  <span style="color:#303133">{{ item.nickName }}</span>&nbsp;
                   <span
                     style="color:#909399;font-size: 14px;"
                   >{{ item.memberPhone }}</span>
