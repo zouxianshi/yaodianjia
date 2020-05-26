@@ -108,7 +108,7 @@ export default {
       Object.assign(this.params, obj)
       var params = this.params
       params.integralRule = parseInt(params.integralRule)
-      if (new Date(params.beginTime).getTime() < new Date().getTime()) {
+      if (new Date(params.beginTime).getTime() < new Date().getTime() && !this.$refs.ruleList.isRuning) {
         this.$message.warning('请返回上一步，活动开始时间不能小于当前时间')
         return
       }
