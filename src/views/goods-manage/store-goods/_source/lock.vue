@@ -199,7 +199,7 @@ export default {
           })
           // delete this.formData.lockFlag
           console.log('---formData---', this.formData)
-          this.formData.lockType = checkStatus
+          this.formData.lockType = this.lockType === 0 ? checkStatus : 0
           this.subLoading = true
           setLockPrice(this.formData)
             .then(res => {
