@@ -109,6 +109,7 @@
                 :disabled="isRuning || ruleForm.countType===1"
                 maxlength="6"
                 style="width:100px"
+                @input="$forceUpdate()"
               />次
             </span>
           </el-radio>
@@ -121,6 +122,7 @@
                 :disabled=" isRuning || ruleForm.countType===2"
                 maxlength="6"
                 style="width:100px"
+                @input="$forceUpdate()"
               />次
             </span>
           </el-radio>
@@ -132,6 +134,7 @@
             onkeyup="this.value=this.value.replace(/\D/g,'')"
             maxlength="6"
             style="width:120px"
+            @input="$forceUpdate()"
           />次
         </span>
       </el-form-item>
@@ -173,7 +176,6 @@ export default {
           ('' + this.ruleForm.activeLimit).trim() === '' ||
           Number(this.ruleForm.activeLimit) > 1000)
       ) {
-        console.log('2222')
         callback(new Error('请输入0~1000的抽奖次数'))
       } else if (
         this.ruleForm.joinRule !== 3 &&
@@ -269,7 +271,7 @@ export default {
         this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
         if (this.ruleForm.countType === 2) {
           this.ruleForm.countRule = this.ruleForm.dayLimit
-        } else if (this.ruleForm.countType === 1) {
+        } else if (this.ruleForm.countType === 1 && this.ruleForm.joinRule !== 3) {
           this.ruleForm.countRule = this.ruleForm.personLimit
         } else {
           this.ruleForm.countRule = this.ruleForm.activeLimit
@@ -277,18 +279,9 @@ export default {
       },
       deep: true
     },
-    // activeTime(newVal) {
-    //   this.ruleForm.beginTime = formatDate(newVal[0])
-    //   this.ruleForm.endTime = formatDate(newVal[1])
-    // },
     personLimit(newVal) {
       // 监听按人限制变化
     }
-    // dayLimit(newVal) {
-    //   if (this.ruleForm.countType === 2) {
-    //     this.ruleForm.countRule = newVal
-    //   }
-    // }
   },
   mounted() {
     console.log(this.ruleForm)
@@ -296,6 +289,8 @@ export default {
   methods: {
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {
+        // 活动参与选抽奖次数
+        this.ruleForm.countType = 1
         this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.dayLimit = this.ruleForm.personLimit = this.ruleForm.activeLimit = ''
       } else {
         this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.activeLimit = ''
@@ -307,9 +302,6 @@ export default {
       this.ruleForm.countRule = ''
     },
     submitForm(formName) {
-      // 活动参与选抽奖次数
-      this.ruleForm.countType === 1 ? 1 : 2
-      console.log(this.ruleForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!this.ruleForm.activeTime[0]) {
