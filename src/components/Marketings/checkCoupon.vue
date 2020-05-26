@@ -52,7 +52,7 @@
         <el-table-column label="使用场景" width="90">
           <template
             slot-scope="scope"
-          >{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
+          >{{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
         </el-table-column>
         <el-table-column prop="productRule" label="适用门店" width="100">
           <template
