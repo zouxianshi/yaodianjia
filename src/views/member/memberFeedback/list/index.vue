@@ -17,12 +17,12 @@
               </div>
               <div>
                 <p>
-                  <span style="color:#303133">{{ item.nickName }}</span>&nbsp;
+                  <span style="color:#000">{{ item.nickName }}</span>&nbsp;
                   <span
                     style="color:#909399;font-size: 14px;"
                   >{{ item.memberPhone }}</span>
                 </p>
-                <p style="margin-top:10px;color:#000;font-size: 14px;">{{ item.complaintContext }}</p>
+                <p style="margin-top:10px;color:#303133;font-size: 14px;">{{ item.complaintContext }}</p>
               </div>
             </div>
             <div
