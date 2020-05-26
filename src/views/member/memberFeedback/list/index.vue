@@ -2,7 +2,7 @@
   <div class="feedback-model">
     <el-card class="box-card">
       <div v-if="notDate" class="notdata-model">暂无数据</div>
-      <div v-if="!notDate" v-loading="loading" class="feedback-list">
+      <div v-if="!notDate" ref="box" v-loading="loading" class="feedback-list">
         <div v-for="(item,index) in dataList" :key="index">
           <div class="feedback-content">
             <div class="feedback-left">
@@ -20,9 +20,9 @@
                   {{ item.nickName }}&nbsp;
                   <span
                     style="color:#909399;font-size: 14px;"
-                  >{{ item.userId }}</span>
+                  >{{ item.memberPhone }}</span>
                 </p>
-                <p style="margin-top:10px;color:#909399;font-size: 14px;">{{ item.complaintContext }}</p>
+                <p style="margin-top:10px;color:#000;font-size: 14px;">{{ item.complaintContext }}</p>
               </div>
             </div>
             <div
@@ -33,17 +33,17 @@
             <el-divider />
           </div>
         </div>
-        <div class="block">
-          <el-pagination
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="totalCount"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
-        </div>
+      </div>
+      <div class="block">
+        <el-pagination
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalCount"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </div>
     </el-card>
   </div>
@@ -104,6 +104,7 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val
       this.getMessageList()
+      this.$refs.box.scrollTop = 0
     }
   }
 }
@@ -121,15 +122,15 @@ export default {
     line-height: calc(100vh - 248px);
     overflow-y:scroll;
   }
+  .block {
+      text-align: right;
+      margin-top: 20px;
+    }
   .feedback-list {
     background: #ffffff;
-    height: calc(100vh - 248px);
+    height: calc(100vh - 300px);
     overflow-y:scroll;
     padding-top: 24px;
-    .block {
-      text-align: right;
-      margin-top: 100px;
-    }
     .feedback-content {
       display: flex;
       justify-content: space-between;
