@@ -108,7 +108,7 @@ export default {
   methods: {
     beforeUpload(file) {
       const type = file.name.split('.')
-      if (type[1] !== 'xls') {
+      if (type[1] !== 'xls' && type[1] !== 'xlsx') {
         this.$message({
           message: '请上传正确的模板',
           type: 'warning'
