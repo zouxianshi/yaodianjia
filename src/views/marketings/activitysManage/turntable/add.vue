@@ -103,12 +103,15 @@ export default {
     handleNext(stepActive, obj = {}) {
       this.stepActive = stepActive
       Object.assign(this.params, obj)
-      console.log(this.params)
     },
     submitAjax(obj = {}) { // 新增优惠券
       Object.assign(this.params, obj)
       var params = this.params
       params.integralRule = parseInt(params.integralRule)
+      if (new Date(params.beginTime).getTime() < new Date().getTime()) {
+        this.$message.warning('活动开始时间不能小于当前时间')
+        return
+      }
       if (params.id) {
         params.listActivityGiftEntity = []
         params.removedList = this.removedList
