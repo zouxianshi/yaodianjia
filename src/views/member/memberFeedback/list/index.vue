@@ -111,6 +111,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .feedback-model {
+
   padding: 20px;
   background: #f5f7fa;
   .notdata-model{
@@ -119,6 +120,7 @@ export default {
     background: #ffffff;
     height: calc(100vh - 248px);
     line-height: calc(100vh - 248px);
+    overflow-y:scroll;
   }
   .feedback-list {
     background: #ffffff;
