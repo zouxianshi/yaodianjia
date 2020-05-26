@@ -109,7 +109,7 @@ export default {
       var params = this.params
       params.integralRule = parseInt(params.integralRule)
       if (new Date(params.beginTime).getTime() < new Date().getTime()) {
-        this.$message.warning('活动开始时间不能小于当前时间')
+        this.$message.warning('请返回上一步，活动开始时间不能小于当前时间')
         return
       }
       if (params.id) {
