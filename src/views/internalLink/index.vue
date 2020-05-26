@@ -3,9 +3,11 @@
     <el-table :data="list">
       <el-table-column label="页面名称" property="pageName" />
       <el-table-column label="链接地址" property="linkAddress" />
-      <el-table-column label="操作" width="100px">
+      <el-table-column label="操作" width="200px">
         <template slot-scope="scope">
           <el-button type="text" class="copy-key" :data-clipboard-text="scope.row.linkAddress" @click="onCopyLink">复制链接</el-button>
+          <el-link type="primary" :underline="false"><a class="download" :href="scope.row.QR_CODE" download>下载二维码</a></el-link>
+          <!-- <el-button type="text" class="copy-key" :data-clipboard-text="scope.row.linkAddress" @click="onCopyLink">下载二维码</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -37,6 +39,7 @@ export default {
     getData() {
       getInternalLink(this.merCode).then(res => {
         if (res.code === '10000') {
+          // this.QR_CODE = res.data.qrBase64
           this.list = _.cloneDeep(res.data)
         } else {
           this.loading = false
