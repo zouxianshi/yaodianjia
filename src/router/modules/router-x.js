@@ -210,6 +210,16 @@ const router = [
       }
     ]
   },
+  {
+    path: '/activity/exchangeMallList',
+    component: () => import('@/views/marketings/exchangeMall/exchange-list'),
+    name: 'exchangeMallList',
+    meta: {
+      title: '兑换商城',
+      noCache: false
+      // activeMenu: '/marketing/activity'
+    }
+  },
   { path: '*', redirect: '/404', hidden: true, meta: { title: '404' }}
 ]
 
