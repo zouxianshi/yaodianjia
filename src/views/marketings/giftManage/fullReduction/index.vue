@@ -397,7 +397,8 @@ export default {
                   proImg: item.picUrl,
                   proPrice: item.price,
                   proSpec: item.specStr,
-                  ruleType: 1
+                  ruleType: 1,
+                  proSpecId: item.specId
                 }
                 params.listCouponProduct.push(obj)
               })

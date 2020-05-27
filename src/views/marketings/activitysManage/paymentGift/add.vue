@@ -260,6 +260,7 @@ export default {
       callback()
     }
     const giftType_limit = (rule, value, callback) => {
+      console.log(this.selectedCoupons)
       if (this.form.giftType === 1) {
         if (this.selectedCoupons.length === 0) {
           callback(new Error('请选择优惠券'))
@@ -709,6 +710,7 @@ export default {
           if (res.code === '10000' && res.data.records.length > 0) {
             this.selectedActivity = _.cloneDeep(res.data.records)
             this.onGetSelectActivity(this.selectedActivity)
+            this.$refs[this.form].resetFields(this.form)
           }
         })
         .catch(err => {
