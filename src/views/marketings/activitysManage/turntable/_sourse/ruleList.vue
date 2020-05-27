@@ -23,6 +23,7 @@
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
           :disabled="isRuning"
+          @input="daterangeChange"
         />
         <!-- <el-date-picker
           v-model="ruleForm.activeTime"
@@ -157,7 +158,7 @@
 <script>
 import { formatDate } from '@/utils/timer'
 export default {
-  name: 'GiftCard',
+  name: 'RuleList',
   props: {
     params: {
       type: Object,
@@ -289,7 +290,7 @@ export default {
   },
   watch: {
     ruleForm: {
-      handler: function() {
+      handler: function(vv) {
         this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
         this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
         if (this.ruleForm.countType === 2) {
@@ -307,9 +308,22 @@ export default {
     }
   },
   mounted() {
-    console.log(this.ruleForm)
   },
   methods: {
+    daterangeChange(e) {
+      const _this = this
+      _this.$nextTick(() => {
+        _this.$set(_this.ruleForm, 'activeTime', [e[0], e[1]])
+        _this.ruleForm.beginTime = formatDate(e[0])
+        _this.ruleForm.endTime = formatDate(e[1])
+        _this.$forceUpdate()
+      })
+    },
+    setActiveTime(v) {
+      this.ruleForm.activeTime = v
+    },
+    handlechangetime() {
+    },
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {
         // 活动参与选抽奖次数
