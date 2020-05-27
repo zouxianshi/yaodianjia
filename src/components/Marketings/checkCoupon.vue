@@ -126,7 +126,7 @@ export default {
         return false
       }
     },
-    // 点击页面
+    // 支付：1 //领券：0
     state: {
       type: String,
       default() {
@@ -174,16 +174,15 @@ export default {
   destroyed() {},
   methods: {
     handleGetlist(val) {
-      let operatorType = ''
       if (val === '查询') {
         this.pageSize = 10
         this.currentPage = 1
       }
-      if (this.state === '领券中心') {
-        operatorType = 0
-      } else if (this.state === '支付有礼') {
-        operatorType = 1
-      }
+      // if (this.state === '领券中心') {
+      //   operatorType = 0
+      // } else if (this.state === '支付有礼') {
+      //   operatorType = 1
+      // }
       this.tableLoading = true
       const params = {
         beginTime: this.beforeTime,
@@ -194,7 +193,7 @@ export default {
         currentPage: this.currentPage,
         merCode: this.merCode,
         pageSize: this.pageSize,
-        operatorType: operatorType
+        operatorType: Number(this.state)
       }
       searchActivities(params).then(res => {
         this.tableData = res.data.records
