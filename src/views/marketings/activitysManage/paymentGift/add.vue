@@ -260,6 +260,7 @@ export default {
       callback()
     }
     const giftType_limit = (rule, value, callback) => {
+      console.log(this.selectedCoupons)
       if (this.form.giftType === 1) {
         if (this.selectedCoupons.length === 0) {
           callback(new Error('请选择优惠券'))
@@ -417,7 +418,7 @@ export default {
     },
     selectCoupon() {
       if (this.beginEndTime.length > 0) {
-        this.$refs.checkCoupons.handleGetlist()
+        this.$refs.checkCoupons.handleGetlist('支付有礼')
         this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
       } else {
         this.$message.error('请先选择活动时间')

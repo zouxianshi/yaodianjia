@@ -161,9 +161,14 @@ export default {
   destroyed() {},
   methods: {
     handleGetlist(val) {
+      let operatorType = ''
       if (val === '查询') {
         this.pageSize = 10
         this.currentPage = 1
+      } else if (val === '支付有礼') {
+        operatorType = 1
+      } else if (val === '领券中心') {
+        operatorType = 0
       }
       this.tableLoading = true
       const params = {
@@ -174,7 +179,8 @@ export default {
         ctype: this.region,
         currentPage: this.currentPage,
         merCode: this.merCode,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        operatorType: operatorType
       }
       searchActivities(params).then(res => {
         this.tableData = res.data.records

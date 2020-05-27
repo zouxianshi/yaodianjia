@@ -366,7 +366,7 @@ export default {
         if (new Date(this.value[0]).getTime() < time.getTime()) {
           this.$message.warning('活动开始时间不能小于当前时间')
         } else {
-          this.$refs.checkCoupons.handleGetlist()
+          this.$refs.checkCoupons.handleGetlist('领券中心')
           this.$refs.checkCoupons.defaultcheck(this.forms.selectlist)
         }
       } else {
