@@ -27,21 +27,23 @@ const mixin = {
       erpCode_err: false,
       barCode_err: false,
       limit_err: false,
-      specLoading: false
+      specLoading: false,
+      isLoadStep2: false
     }
   },
   watch: {
-    step(val) {
-      if (val === 2) {
-        // 获取规格
-        this.specsForm.specs = []
-        try {
-          this._loadSpces() // 获取规格
-        } catch (error) {
-          console.log(error)
-        }
-      }
-    }
+    // step(val) {
+    //   if (val === 2 && !this.isLoadStep2) {
+    //     this.isLoadStep2 = true
+    //     // 获取规格
+    //     this.specsForm.specs = []
+    //     try {
+    //       this._loadSpces() // 获取规格
+    //     } catch (error) {
+    //       console.log(error)
+    //     }
+    //   }
+    // }
   },
   methods: {
     handleEditTabSpecs(row, keys, index) {
@@ -377,7 +379,7 @@ const mixin = {
             type: 'success'
           })
           this.subLoading = false
-          this.step = 3
+          // this.step = 3
         })
         .catch(_ => {
           this.subLoading = false
@@ -387,9 +389,10 @@ const mixin = {
       this.chooseSpecName = []
       this.chooseSpec = []
       this.dynamicProp = []
-      this.specLoading = true
+      // this.specLoading = true
       // 根据一级分类加载规格
-      getSpecs(this.chooseTypeList[0].id).then(res => {
+      // this.chooseTypeList[0].id
+      getSpecs('a99917a7c7254ac281e844acf1610657').then(res => {
         if (res.data) {
           res.data.map(v => {
             v['index_' + v.id + '_' + v.attributeName] = ''

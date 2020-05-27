@@ -281,11 +281,11 @@ export default {
     },
     handleQuery(id) {
       this.isToEdit = true
-      this.$router.push('/goods-manage/edit?id=' + id + '&type=query')
+      this.$router.push('/goods-manage/edit?id=' + id + '&backUrl=apply-record' + '&type=query')
     },
     handleEdit(id) {
       this.isToEdit = true
-      this.$router.push('/goods-manage/edit?id=' + id)
+      this.$router.push('/goods-manage/edit?id=' + id + '&backUrl=apply-record')
     },
     handleSendCheck(row, isAll) {
       let ids = []

@@ -34,7 +34,6 @@
               clearable
               placeholder="选择商品分类"
               :show-all-levels="false"
-              @focus="_loadGoodTypeList()"
             />
           </div>
           <div class="search-item">
@@ -352,7 +351,8 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'name',
-        value: 'id'
+        value: 'id',
+        checkStrictly: true
       },
       editId: '',
       isToEdit: false,
@@ -391,6 +391,7 @@ export default {
     this.merCode = this.$store.state.user.merCode
     this.getList()
     this._loadTypeList()
+    this._loadGoodTypeList()
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -531,15 +532,15 @@ export default {
         this.treeData = JSON.parse(JSON.stringify(this.treeData))
         this.treeData.unshift({ name: '全部', id: '' })
         this.treeData.push({ name: '未分组', id: 'weifenzuflag' })
-        this.$nextTick(_ => {
-          $('.el-tree')
-            .find('.el-tree-node')
-            .each(function(i) {
-              $(this)
-                .find('.el-tree-node__content .el-tree-node__expand-icon')
-                .click()
-            })
-        })
+        // this.$nextTick(_ => {
+        //   $('.el-tree')
+        //     .find('.el-tree-node')
+        //     .each(function(i) {
+        //       $(this)
+        //         .find('.el-tree-node__content .el-tree-node__expand-icon')
+        //         .click()
+        //     })
+        // })
       })
       getTypeDimensionList(this.$store.state.user.merCode).then(res => {
         this.groupData = res.data
@@ -632,7 +633,7 @@ export default {
     handleEdit(id) {
       this.isToEdit = true
       this.editId = id
-      this.$router.push('/goods-manage/edit?id=' + id)
+      this.$router.push('/goods-manage/edit?id=' + id + '&backUrl=depot')
     },
     //
     handleDel(row) {
