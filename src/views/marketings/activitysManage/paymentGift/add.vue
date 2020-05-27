@@ -212,7 +212,7 @@
       :store-ids="[]"
       @on-change="onGetSelectProduct"
     />
-    <checkCoupon ref="checkCoupons" :timevalue="beginEndTime" state="支付有礼" @confincheck="onGetSelectCoupon" />
+    <checkCoupon ref="checkCoupons" :timevalue="beginEndTime" state="1" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
 <script>
