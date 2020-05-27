@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card :body-style="{ padding: '0px' }">
-      <el-image style="width:100%;height:200px" src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_banner.png" class="image" />
+      <el-image style="width:100%;height:300px" src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_banner.png" class="image" />
       <div style="padding: 20px;">
         <h4>直播介绍</h4>
         <p class="desc">
@@ -39,7 +39,7 @@
     font-size: 14px;
 }
 .live-titles{
-    margin-top: 50px;
+    margin-top: 20px;
     text-align: center;
     h1{
         font-size: 28px;
@@ -50,7 +50,7 @@
     }
 }
 .live-package{
-    margin-top: 60px
+    margin-top: 30px
 }
 .card-footer{
   display: flex;
