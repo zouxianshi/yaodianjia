@@ -23,6 +23,7 @@
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
           :disabled="isRuning"
+          @change="handlechangetime"
         />
         <!-- <el-date-picker
           v-model="ruleForm.activeTime"
@@ -155,9 +156,9 @@
   </div>
 </template>
 <script>
-import { formatDate } from '@/utils/timer'
+// import { formatDate } from '@/utils/timer'
 export default {
-  name: 'GiftCard',
+  name: 'RuleList',
   props: {
     params: {
       type: Object,
@@ -289,16 +290,17 @@ export default {
   },
   watch: {
     ruleForm: {
-      handler: function() {
-        this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
-        this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
-        if (this.ruleForm.countType === 2) {
-          this.ruleForm.countRule = this.ruleForm.dayLimit
-        } else if (this.ruleForm.countType === 1 && this.ruleForm.joinRule !== 3) {
-          this.ruleForm.countRule = this.ruleForm.personLimit
-        } else {
-          this.ruleForm.countRule = this.ruleForm.activeLimit
-        }
+      handler: function(vv) {
+        // console.log(vv)
+        // this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
+        // this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
+        // if (this.ruleForm.countType === 2) {
+        //   this.ruleForm.countRule = this.ruleForm.dayLimit
+        // } else if (this.ruleForm.countType === 1 && this.ruleForm.joinRule !== 3) {
+        //   this.ruleForm.countRule = this.ruleForm.personLimit
+        // } else {
+        //   this.ruleForm.countRule = this.ruleForm.activeLimit
+        // }
       },
       deep: true
     },
@@ -310,6 +312,13 @@ export default {
     console.log(this.ruleForm)
   },
   methods: {
+    setActiveTime(v) {
+      alert(v)
+      this.ruleForm.activeTime = v
+    },
+    handlechangetime() {
+      alert()
+    },
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {
         // 活动参与选抽奖次数

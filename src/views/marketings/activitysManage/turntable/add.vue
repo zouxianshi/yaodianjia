@@ -58,7 +58,17 @@ export default {
           this.removedList.push(item.id)
         })
         this.$refs.ruleList.ruleForm = data
-        this.$refs.ruleList.ruleForm.activeTime = [data.beginTime, data.endTime]
+        // let value = [new Date(data.beginTime) ,new Date(data.endTime)]
+        // this.$refs.ruleList.ruleForm.activeTime= ''
+        // console.log(this.$refs.ruleList.ruleForm.activeTime)
+        // this.$set( this.$refs.ruleList.ruleForm,'activeTime',value)
+        // this.$refs.ruleList.ruleForm.activeTime = [new Date(data.beginTime) ,new Date(data.endTime)]
+        // this.$refs.ruleList.setActiveTime([new Date(data.beginTime) ,new Date(data.endTime)])
+        // console.log(findComponentsDownward(this.$root, 'ruleList'))
+        // const ins = findComponentsDownward(this.$root,'ruleList')[0]
+        // console.log(ins)
+        // ins.setActiveTime([new Date(data.beginTime) ,new Date(data.endTime)])
+
         if (data.joinRule === 3) {
           this.$refs.ruleList.ruleForm.activeLimit = data.countRule
         } else if (data.countType === 1) {
