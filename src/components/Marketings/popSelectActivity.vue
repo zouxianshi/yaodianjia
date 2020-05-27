@@ -46,7 +46,7 @@
           >{{ handletimeRule(scope.row.beginTime,scope.row.endTime) }}</template>
         </el-table-column>
         <el-table-column property="countRule" label="参与次数">
-          <template slot-scope="scope">{{ scope.row.countRule? scope.row.countRule : 0 }}次</template>
+          <template slot-scope="scope">{{ scope.row.countRule? scope.row.countRule : '无限' }}次</template>
         </el-table-column>
       </el-table>
       <el-pagination

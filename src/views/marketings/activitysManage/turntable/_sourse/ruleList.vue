@@ -16,13 +16,24 @@
       <el-form-item label="活动时间" prop="activeTime">
         <el-date-picker
           v-model="ruleForm.activeTime"
+          type="datetimerange"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="['00:00:00', '23:59:59']"
+          :disabled="isRuning"
+          @input="daterangeChange"
+        />
+        <!-- <el-date-picker
+          v-model="ruleForm.activeTime"
           :disabled="isRuning"
           type="datetimerange"
           range-separator="至"
           :picker-options="pickerOptions"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-        />
+        /> -->
       </el-form-item>
       <el-form-item label="活动说明" prop="activityNote">
         <el-input
@@ -109,6 +120,7 @@
                 :disabled="isRuning || ruleForm.countType===1"
                 maxlength="6"
                 style="width:100px"
+                @input="$forceUpdate()"
               />次
             </span>
           </el-radio>
@@ -121,6 +133,7 @@
                 :disabled=" isRuning || ruleForm.countType===2"
                 maxlength="6"
                 style="width:100px"
+                @input="$forceUpdate()"
               />次
             </span>
           </el-radio>
@@ -132,6 +145,7 @@
             onkeyup="this.value=this.value.replace(/\D/g,'')"
             maxlength="6"
             style="width:120px"
+            @input="$forceUpdate()"
           />次
         </span>
       </el-form-item>
@@ -144,7 +158,7 @@
 <script>
 import { formatDate } from '@/utils/timer'
 export default {
-  name: 'GiftCard',
+  name: 'RuleList',
   props: {
     params: {
       type: Object,
@@ -173,7 +187,6 @@ export default {
           ('' + this.ruleForm.activeLimit).trim() === '' ||
           Number(this.ruleForm.activeLimit) > 1000)
       ) {
-        console.log('2222')
         callback(new Error('请输入0~1000的抽奖次数'))
       } else if (
         this.ruleForm.joinRule !== 3 &&
@@ -195,13 +208,22 @@ export default {
         callback()
       }
     }
+    const checkActivitTime = (rule, value, callback) => {
+      if (Number(value.length) === 0) {
+        return callback(new Error('请选择活动开始和结束时间'))
+      }
+      if (value[0] >= value[1]) {
+        return callback(new Error('活动结束时间要大于开始时间'))
+      }
+      callback()
+    }
     return {
       intrShow: false,
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() < new Date(new Date().getTime() - 86400000)
-        }
-      },
+      // pickerOptions: {
+      //   disabledDate(time) {
+      //     return time.getTime() < new Date(new Date().getTime() - 86400000)
+      //   }
+      // },
       // activeTime: [], // 活动有效期
       ruleForm: {
         activeTime: [], // 活动有效期
@@ -237,7 +259,11 @@ export default {
           { validator: validatedayLimit, trigger: 'change' }
         ],
         activeTime: [
-          { required: true, message: '请选择活动时间', trigger: 'blur' }
+          {
+            required: true,
+            validator: checkActivitTime,
+            trigger: 'change'
+          }
         ]
       }
     }
@@ -264,12 +290,12 @@ export default {
   },
   watch: {
     ruleForm: {
-      handler: function() {
+      handler: function(vv) {
         this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
         this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
         if (this.ruleForm.countType === 2) {
           this.ruleForm.countRule = this.ruleForm.dayLimit
-        } else if (this.ruleForm.countType === 1) {
+        } else if (this.ruleForm.countType === 1 && this.ruleForm.joinRule !== 3) {
           this.ruleForm.countRule = this.ruleForm.personLimit
         } else {
           this.ruleForm.countRule = this.ruleForm.activeLimit
@@ -277,25 +303,31 @@ export default {
       },
       deep: true
     },
-    // activeTime(newVal) {
-    //   this.ruleForm.beginTime = formatDate(newVal[0])
-    //   this.ruleForm.endTime = formatDate(newVal[1])
-    // },
     personLimit(newVal) {
       // 监听按人限制变化
     }
-    // dayLimit(newVal) {
-    //   if (this.ruleForm.countType === 2) {
-    //     this.ruleForm.countRule = newVal
-    //   }
-    // }
   },
   mounted() {
-    console.log(this.ruleForm)
   },
   methods: {
+    daterangeChange(e) {
+      const _this = this
+      _this.$nextTick(() => {
+        _this.$set(_this.ruleForm, 'activeTime', [e[0], e[1]])
+        _this.ruleForm.beginTime = formatDate(e[0])
+        _this.ruleForm.endTime = formatDate(e[1])
+        _this.$forceUpdate()
+      })
+    },
+    setActiveTime(v) {
+      this.ruleForm.activeTime = v
+    },
+    handlechangetime() {
+    },
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {
+        // 活动参与选抽奖次数
+        this.ruleForm.countType = 1
         this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.dayLimit = this.ruleForm.personLimit = this.ruleForm.activeLimit = ''
       } else {
         this.ruleForm.integralRule = this.ruleForm.countRule = this.ruleForm.activeLimit = ''
@@ -307,9 +339,6 @@ export default {
       this.ruleForm.countRule = ''
     },
     submitForm(formName) {
-      // 活动参与选抽奖次数
-      this.ruleForm.countType === 1 ? 1 : 2
-      console.log(this.ruleForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!this.ruleForm.activeTime[0]) {
