@@ -173,7 +173,7 @@
     </div>
     <el-button size="mini" @click="handleClose">取 消</el-button>
     <el-button type="primary" size="mini" @click="handleSumbit">确 定</el-button>
-    <checkCoupon ref="checkCoupons" :timevalue="value" :state="state" @confincheck="confincheck" />
+    <checkCoupon ref="checkCoupons" :timevalue="value" state="0" @confincheck="confincheck" />
   </div>
 </template>
 <script>
