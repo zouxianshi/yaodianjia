@@ -45,7 +45,7 @@
             type="textarea"
             :rows="2"
             show-word-limit
-            maxlength="200"
+            maxlength="150"
             placeholder="请输入公告"
           />
         </el-form-item>
