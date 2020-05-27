@@ -45,7 +45,7 @@
             type="textarea"
             :rows="2"
             show-word-limit
-            maxlength="200"
+            maxlength="150"
             placeholder="请输入公告"
           />
         </el-form-item>
@@ -226,6 +226,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { MC } from '@merchant/commons'
 import config from '@/utils/config'
 import storeGoods from '@/views/marketing/components/store-gods'
 import checkCoupon from '@/components/Marketings/checkCoupon'
@@ -306,7 +307,7 @@ export default {
   },
   methods: {
     handleEditMerchant() {
-      window.open('/merchant/#/merchant/index')
+      MC.jumpToPath('/merchant/index', 'merchant', '_blank')
     },
     async _loadMerchantInfo() {
       try {
