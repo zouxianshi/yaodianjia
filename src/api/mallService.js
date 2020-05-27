@@ -126,3 +126,10 @@ export function getActivityComm(data) {
     data
   })
 }
+
+export function getDefImg() {
+  return request({
+    url: `${config.merGoods}/1.0/cms-dim/_initImg`,
+    method: 'get'
+  })
+}
