@@ -426,7 +426,8 @@ export default {
           this.formData.couponRelationReqDto[this.editIndex][this.titles] = this.tableFrom.keys
           this.showVisible = false
         } else {
-          console.log('error submit!!')
+          this.$alert('请填写正确的信息')
+          console.log('error submit!!111111111')
           return false
         }
       })
@@ -459,6 +460,7 @@ export default {
             this.setLive()
           }
         } else {
+          this.$alert('请填写正确的信息')
           console.log('error submit!!')
           return false
         }
