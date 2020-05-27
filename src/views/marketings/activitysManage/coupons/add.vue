@@ -173,7 +173,7 @@
     </div>
     <el-button size="mini" @click="handleClose">取 消</el-button>
     <el-button type="primary" size="mini" @click="handleSumbit">确 定</el-button>
-    <checkCoupon ref="checkCoupons" :timevalue="value" @confincheck="confincheck" />
+    <checkCoupon ref="checkCoupons" :timevalue="value" :state="state" @confincheck="confincheck" />
   </div>
 </template>
 <script>
@@ -241,6 +241,7 @@ export default {
       }
     }
     return {
+      state: '领券中心',
       valueInput: '',
       checkedit: false,
       radio: 1,
