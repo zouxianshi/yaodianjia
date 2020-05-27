@@ -181,12 +181,8 @@ export default {
       }
       if (this.state === '领券中心') {
         operatorType = 0
-        this.pageSize = 10
-        this.currentPage = 1
       } else if (this.state === '支付有礼') {
         operatorType = 1
-        this.pageSize = 10
-        this.currentPage = 1
       }
       this.tableLoading = true
       const params = {
