@@ -193,7 +193,7 @@ export default {
         currentPage: this.currentPage,
         merCode: this.merCode,
         pageSize: this.pageSize,
-        operatorType: Number(this.state)
+        operatorType: this.state === '' ? '' : Number(this.state)
       }
       searchActivities(params).then(res => {
         this.tableData = res.data.records
