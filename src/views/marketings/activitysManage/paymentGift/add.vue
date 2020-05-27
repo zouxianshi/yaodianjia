@@ -418,7 +418,7 @@ export default {
     },
     selectCoupon() {
       if (this.beginEndTime.length > 0) {
-        this.$refs.checkCoupons.handleGetlist()
+        this.$refs.checkCoupons.handleGetlist('支付有礼')
         this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
       } else {
         this.$message.error('请先选择活动时间')
@@ -710,7 +710,6 @@ export default {
           if (res.code === '10000' && res.data.records.length > 0) {
             this.selectedActivity = _.cloneDeep(res.data.records)
             this.onGetSelectActivity(this.selectedActivity)
-            this.$refs[this.form].resetFields(this.form)
           }
         })
         .catch(err => {
