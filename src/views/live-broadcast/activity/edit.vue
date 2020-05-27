@@ -1,20 +1,21 @@
 <template>
   <div class="app-container">
     <div class="live-activity-wrapper">
-      <el-form
-        ref="formData"
-        :model="formData"
-        size="small"
-        label-width="120px"
-        :rules="ruleForm"
-      >
+      <el-form ref="formData" :model="formData" size="small" label-width="120px" :rules="ruleForm">
         <div class="form-title">基本信息</div>
         <el-divider />
         <el-form-item label="直播头像：">
           <!-- <template v-if="!showUpAvatar"> -->
           <div style="width:50px;height:50px;border-radius:50%">
             <img :src="showImg(formData.merLogoUrl)" width="100%" style="border-radius:50%">
-            <el-button type="info" size="mini" circle class="edit-avatar" icon="el-icon-edit" @click="handleEditMerchant" />
+            <el-button
+              type="info"
+              size="mini"
+              circle
+              class="edit-avatar"
+              icon="el-icon-edit"
+              @click="handleEditMerchant"
+            />
           </div>
           <!-- </template> -->
           <!-- <template v-else>
@@ -31,10 +32,11 @@
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
             </div>
-          </template> -->
+          </template>-->
         </el-form-item>
         <el-form-item label="直播名称：">
-          <span />{{ formData.merName }}
+          <span />
+          {{ formData.merName }}
         </el-form-item>
         <el-form-item label="直播主题：" prop="name">
           <el-input v-model="formData.name" maxlength="50" placeholder="请输入直播主题" />
@@ -72,14 +74,19 @@
             </el-upload>
             <span class="tip">建议上传16：9的图片</span>
           </div>
-
         </el-form-item>
         <!-- 关联商品 -->
         <div class="form-title">关联商品</div>
         <el-divider />
         <el-form-item label="参与商品：">
           <el-button type="primary" size="mini" @click="handleOpenGoods">选择商品</el-button>
-          <el-table :data="formData.commoditySpecList" max-height="450px" border size="small" style="margin-top:10px">
+          <el-table
+            :data="formData.commoditySpecList"
+            max-height="450px"
+            border
+            size="small"
+            style="margin-top:10px"
+          >
             <!-- <el-table-column v-if="!activityId" type="selection" width="55" /> -->
             <el-table-column label="商品名称" prop="name" min-width="100" />
             <el-table-column label="商品编码" prop="erpCode" />
@@ -97,19 +104,19 @@
                   size="mini"
                   :disabled="disabled"
                   @click="handleEditSetting(scope.row)"
-                >设置</el-button> -->
-                <el-button
-                  type="text"
-                  size="mini"
-                  @click="handleGoodsDel(scope.$index)"
-                >移除</el-button>
+                >设置</el-button>-->
+                <el-button type="text" size="mini" @click="handleGoodsDel(scope.$index)">移除</el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-form-item>
         <el-form-item label="选择优惠券：">
           <el-button type="primary" size="mini" @click="handleCheckCoupon">选择优惠券</el-button>
-          <el-table :data="formData.couponRelationReqDto" max-height="450" style="width: 100%;margin-top:10px">
+          <el-table
+            :data="formData.couponRelationReqDto"
+            max-height="450"
+            style="width: 100%;margin-top:10px"
+          >
             <el-table-column prop="cname" min-width="100" show-overflow-tooltip label="优惠券名称" />
             <el-table-column min-width="120" label="优惠内容">
               <template
@@ -117,7 +124,9 @@
               >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
             </el-table-column>
             <el-table-column label="使用时间" min-width="120">
-              <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
+              <template
+                slot-scope="scope"
+              >{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
             </el-table-column>
             <el-table-column label="使用场景" min-width="110">
               <template
@@ -132,19 +141,30 @@
             <el-table-column label="适用商品" min-width="100">
               <template
                 slot-scope="scope"
-              >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}
-              </template>
+              >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}</template>
             </el-table-column>
             <el-table-column label="每人限领张数" min-width="110">
               <template slot-scope="scope">
                 <span v-text="scope.row.perCount" />
-                <el-button type="text" icon="el-icon-edit" size="mini" circle @click="handleEditCoupon('perCount',scope.$index,scope.row)" />
+                <el-button
+                  type="text"
+                  icon="el-icon-edit"
+                  size="mini"
+                  circle
+                  @click="handleEditCoupon('perCount',scope.$index,scope.row)"
+                />
               </template>
             </el-table-column>
             <el-table-column label="发放总数" width="110">
               <template slot-scope="scope">
                 <span v-text="scope.row.totalCount" />
-                <el-button type="text" icon="el-icon-edit" size="mini" circle @click="handleEditCoupon('totalCount',scope.$index,scope.row)" />
+                <el-button
+                  type="text"
+                  icon="el-icon-edit"
+                  size="mini"
+                  circle
+                  @click="handleEditCoupon('totalCount',scope.$index,scope.row)"
+                />
               </template>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="80">
@@ -197,7 +217,7 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="">
+        <el-form-item label>
           <el-button type="primary" :loading="saveLoading" @click="handleSubmit">保存</el-button>
           <el-button @click="handleCanle">取消</el-button>
         </el-form-item>
@@ -211,10 +231,27 @@
       @on-change="onSelectedGoods"
     />
     <!-- 选择优惠券 -->
-    <checkCoupon ref="checkCoupons" :list="formData.couponRelationReqDto" :singlechoice="true" :timevalue="couponList" @confincheck="confincheck" />
-    <el-dialog :title="`设置${titles==='perCount'?'每人限领张数':'发放总数'}`" width="30%" append-to-body="" :visible.sync="showVisible">
-      <el-form ref="editForm" :model="tableFrom" :rules="tableRules" size="mini" @submit.native.prevent>
-        <el-form-item label="" prop="keys">
+    <checkCoupon
+      ref="checkCoupons"
+      :list="formData.couponRelationReqDto"
+      :singlechoice="true"
+      :timevalue="couponList"
+      @confincheck="confincheck"
+    />
+    <el-dialog
+      :title="`设置${titles==='perCount'?'每人限领张数':'发放总数'}`"
+      width="30%"
+      append-to-body
+      :visible.sync="showVisible"
+    >
+      <el-form
+        ref="editForm"
+        :model="tableFrom"
+        :rules="tableRules"
+        size="mini"
+        @submit.native.prevent
+      >
+        <el-form-item label prop="keys">
           <el-input v-model.number="tableFrom.keys" placeholder="输入要修改的值" />
         </el-form-item>
       </el-form>
@@ -265,15 +302,24 @@ export default {
         merLogoUrl: '',
         merName: '',
         name: '',
-        activityNotice: '欢迎来到直播间！平台倡导绿色直播，若直播间出现违法违规行为，请及时举报。为了您的购物安全，请点击直播间“相关商品”官方渠道选购商品。'
+        activityNotice:
+          '欢迎来到直播间！平台倡导绿色直播，若直播间出现违法违规行为，请及时举报。为了您的购物安全，请点击直播间“相关商品”官方渠道选购商品。'
       },
       ruleForm: {
         name: [{ required: true, message: '请输入直播主题', trigger: 'blur' }],
         beginTime: [{ validator: _checkTime, trigger: 'change' }],
-        adLinkUrl: [{ required: true, message: '请输入广告链接地址', trigger: 'blur' }],
-        activityNotice: [{ required: true, message: '请输入直播公告', trigger: 'blur' }],
-        adPicUrl: [{ required: true, message: '请上传广告位图片', trigger: 'change' }],
-        coverPicUrl: [{ required: true, message: '请上传封面', trigger: 'change' }]
+        adLinkUrl: [
+          { required: true, message: '请输入广告链接地址', trigger: 'blur' }
+        ],
+        activityNotice: [
+          { required: true, message: '请输入直播公告', trigger: 'blur' }
+        ],
+        adPicUrl: [
+          { required: true, message: '请上传广告位图片', trigger: 'change' }
+        ],
+        coverPicUrl: [
+          { required: true, message: '请上传封面', trigger: 'change' }
+        ]
       },
       pageLoading: null,
       couponList: [],
@@ -283,7 +329,10 @@ export default {
       },
       saveLoading: false,
       tableRules: {
-        keys: [{ required: true, message: '不能为空', trigger: 'change' }, { type: 'number', message: '必须为数字值' }]
+        keys: [
+          { required: true, message: '不能为空', trigger: 'change' },
+          { type: 'number', message: '必须为数字值' }
+        ]
       },
       titles: '',
       editIndex: 0
@@ -323,7 +372,8 @@ export default {
         const { data } = await liveRequest.getLiveInfo(this.$route.query.id)
         const detaiInfo = data
         detaiInfo.commoditySpecList = data.commoditys
-        detaiInfo.couponRelationReqDto = data.activityCouponList.activityCouponDetailResDTO
+        detaiInfo.couponRelationReqDto =
+          data.activityCouponList.activityCouponDetailResDTO
         delete detaiInfo.commoditys
         delete detaiInfo.activityCouponList
         this.formData = _.assign(this.formData, detaiInfo)
@@ -355,7 +405,8 @@ export default {
         this.write.push(_.cloneDeep(write))
       }
     },
-    handleGoodsDel(index) { // 删除选择的商品
+    handleGoodsDel(index) {
+      // 删除选择的商品
       this.formData.commoditySpecList.splice(index, 1)
     },
     // 格式化规格信息
@@ -422,9 +473,12 @@ export default {
       })
     },
     handlePerCount(index, row) {
-      this.$refs['editForm'].validate((valid) => {
+      console.log(this.formData)
+      this.$refs['editForm'].validate(valid => {
         if (valid) {
-          this.formData.couponRelationReqDto[this.editIndex][this.titles] = this.tableFrom.keys
+          this.formData.couponRelationReqDto[this.editIndex][
+            this.titles
+          ] = this.tableFrom.keys
           this.showVisible = false
         } else {
           this.$alert('请填写正确的信息')
@@ -434,13 +488,32 @@ export default {
       })
     },
     onSelectedGoods(row) {
-    //      // 商品选择确定事件
+      //      // 商品选择确定事件
       console.log('onSelectedGoods', row)
       this.formData.commoditySpecList = row
     },
     handleSubmit() {
-      this.$refs['formData'].validate((valid) => {
+      this.$refs['formData'].validate(valid => {
         if (valid) {
+          if (this.formData.couponRelationReqDto.length > 0) {
+            if (this.formData.commoditySpecList.length <= 0) {
+              this.$alert('有优惠券必须添加商品哦')
+            }
+            const couponRelationReqDto = this.formData.couponRelationReqDto[0]
+            if (
+              couponRelationReqDto.perCount <= 0 ||
+              couponRelationReqDto.totalCount <= 0
+            ) {
+              this.$alert('选择优惠券每人限领张数和发放总数必须大于0')
+              return
+            }
+            if (
+              couponRelationReqDto.perCount > couponRelationReqDto.totalCount
+            ) {
+              this.$alert('选择优惠券每人限领张数不能大于发放总数')
+              return
+            }
+          }
           // if (this.formData.commoditySpecList.length === 0) {
           //   this.$message({
           //     message: '请选择商品',
@@ -502,9 +575,7 @@ export default {
         this.saveLoading = false
       }
     },
-    errorHandler() {
-
-    },
+    errorHandler() {},
     handleCoverSuccess(res, file) {
       this.formData.coverPicUrl = res.data
       this.pageLoading.close()
@@ -520,9 +591,9 @@ export default {
     beforeAvatarUpload(file) {
       const size = file.size / 1024
       const isImg =
-          file.type === 'image/jpeg' ||
-          file.type === 'image/png' ||
-          file.type === 'image/jpg'
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
           message: '只能上传格式为 jpg、jpeg、png的图片',
@@ -552,22 +623,22 @@ export default {
 </script>
 <style lang="scss">
 .live-activity-wrapper {
-  .color-box{
+  .color-box {
     width: 10px;
     height: 10px;
     display: inline-block;
   }
-    .m-colorPicker .box{
-        z-index: 22
-    }
-    .avatar-box{
-      position: relative;
-    }
-    .edit-avatar{
-      position: absolute;
-      top: -10px;
-     left: 40px;
-    }
+  .m-colorPicker .box {
+    z-index: 22;
+  }
+  .avatar-box {
+    position: relative;
+  }
+  .edit-avatar {
+    position: absolute;
+    top: -10px;
+    left: 40px;
+  }
   .form-title {
     line-height: 16px;
     font-size: 16px;
@@ -575,7 +646,7 @@ export default {
     padding-left: 10px;
     margin-bottom: 16px;
   }
-  .cover{
+  .cover {
     .avatar-uploader-icon {
       width: 80px;
       height: 80px;
@@ -586,7 +657,7 @@ export default {
       height: 80px;
     }
   }
-  .cover-img{
+  .cover-img {
     .avatar-uploader-icon {
       width: 150px;
       height: 70px;
@@ -597,11 +668,11 @@ export default {
       height: 70px;
     }
   }
-  .ad-cover{
+  .ad-cover {
     .avatar-uploader-icon {
       width: 250px;
       height: 80px;
-      line-height:80px !important;
+      line-height: 80px !important;
     }
     .avatar {
       width: 250px;

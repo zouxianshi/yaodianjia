@@ -528,7 +528,37 @@ export default {
           console.log('复制')
           break
       }
+    },
+    beforeRouteLeave(to, from, next) {
+      next()
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        console.log('11')
+      } else {
+        next(false)
+      }
+    // 路由离开关闭标签
+    // if (this.is_query && this.pageLoading) {
+    //   this.pageLoading.close()
+    // }
+    // } else {
+    // if (!this.leaveAction) {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // } else {
+    //   next()
+    // }
+    // }
     }
+
   }
 }
 </script>
