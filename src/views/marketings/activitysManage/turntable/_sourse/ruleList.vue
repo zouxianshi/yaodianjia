@@ -23,7 +23,7 @@
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
           :disabled="isRuning"
-          @change="handlechangetime"
+          @input="daterangeChange"
         />
         <!-- <el-date-picker
           v-model="ruleForm.activeTime"
@@ -156,7 +156,7 @@
   </div>
 </template>
 <script>
-// import { formatDate } from '@/utils/timer'
+import { formatDate } from '@/utils/timer'
 export default {
   name: 'RuleList',
   props: {
@@ -291,16 +291,15 @@ export default {
   watch: {
     ruleForm: {
       handler: function(vv) {
-        // console.log(vv)
-        // this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
-        // this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
-        // if (this.ruleForm.countType === 2) {
-        //   this.ruleForm.countRule = this.ruleForm.dayLimit
-        // } else if (this.ruleForm.countType === 1 && this.ruleForm.joinRule !== 3) {
-        //   this.ruleForm.countRule = this.ruleForm.personLimit
-        // } else {
-        //   this.ruleForm.countRule = this.ruleForm.activeLimit
-        // }
+        this.ruleForm.beginTime = formatDate(this.ruleForm.activeTime[0])
+        this.ruleForm.endTime = formatDate(this.ruleForm.activeTime[1])
+        if (this.ruleForm.countType === 2) {
+          this.ruleForm.countRule = this.ruleForm.dayLimit
+        } else if (this.ruleForm.countType === 1 && this.ruleForm.joinRule !== 3) {
+          this.ruleForm.countRule = this.ruleForm.personLimit
+        } else {
+          this.ruleForm.countRule = this.ruleForm.activeLimit
+        }
       },
       deep: true
     },
@@ -309,15 +308,21 @@ export default {
     }
   },
   mounted() {
-    console.log(this.ruleForm)
   },
   methods: {
+    daterangeChange(e) {
+      const _this = this
+      _this.$nextTick(() => {
+        _this.$set(_this.ruleForm, 'activeTime', [e[0], e[1]])
+        _this.ruleForm.beginTime = formatDate(e[0])
+        _this.ruleForm.endTime = formatDate(e[1])
+        _this.$forceUpdate()
+      })
+    },
     setActiveTime(v) {
-      alert(v)
       this.ruleForm.activeTime = v
     },
     handlechangetime() {
-      alert()
     },
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {
