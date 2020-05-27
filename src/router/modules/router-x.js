@@ -167,17 +167,6 @@ const router = [
           activeMenu: '/marketing/activity'
         }
       },
-      // {
-      //   path: 'activity/limit-sec-edit',
-      //   component: () => import('@/views/marketing/activity/limit/limit_seckill_edit'),
-      //   name: 'limitSecEdit',
-      //   meta: {
-      //     title: '创建限时秒杀',
-      //     noCache: true,
-      //     activeMenu: '/marketing/activity'
-      //   }
-      // },
-      // 礼品管理模块
       {
         path: 'gifts',
         component: () => import('@/views/marketing/gift-manage/index'),
@@ -207,18 +196,28 @@ const router = [
           auth: 'marketing.gift',
           noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
+      },
+      {
+        path: '/activity/exchangeMallList',
+        component: () => import('@/views/marketings/exchangeMall/exchange-list'),
+        name: 'exchangeMallList',
+        meta: {
+          title: '兑换商城',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/exchangeMallAdd',
+        component: () => import('@/views/marketings/exchangeMall/exchange-add'),
+        name: 'exchangeMallAdd',
+        meta: {
+          title: '兑换商城',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
       }
     ]
-  },
-  {
-    path: '/activity/exchangeMallList',
-    component: () => import('@/views/marketings/exchangeMall/exchange-list'),
-    name: 'exchangeMallList',
-    meta: {
-      title: '兑换商城',
-      noCache: false
-      // activeMenu: '/marketing/activity'
-    }
   },
   { path: '*', redirect: '/404', hidden: true, meta: { title: '404' }}
 ]
