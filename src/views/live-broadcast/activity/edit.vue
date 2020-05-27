@@ -264,7 +264,7 @@ export default {
         merLogoUrl: '',
         merName: '',
         name: '',
-        activityNotice: ''
+        activityNotice: '欢迎来到直播间！平台倡导绿色直播，若直播间出现违法违规行为，请及时举报。为了您的购物安全，请点击直播间“相关商品”官方渠道选购商品。'
       },
       ruleForm: {
         name: [{ required: true, message: '请输入直播主题', trigger: 'blur' }],
@@ -426,7 +426,8 @@ export default {
           this.formData.couponRelationReqDto[this.editIndex][this.titles] = this.tableFrom.keys
           this.showVisible = false
         } else {
-          console.log('error submit!!')
+          this.$alert('请填写正确的信息')
+          console.log('error submit!!111111111')
           return false
         }
       })
@@ -459,6 +460,7 @@ export default {
             this.setLive()
           }
         } else {
+          this.$alert('请填写正确的信息')
           console.log('error submit!!')
           return false
         }
@@ -528,9 +530,9 @@ export default {
         this.pageLoading.close()
         return
       }
-      if (size > 1024) {
+      if (size > 2048) {
         this.$message({
-          message: '最大只能上传1MB的图片',
+          message: '最大只能上传2MB的图片',
           type: 'warning'
         })
         this.pageLoading.close()

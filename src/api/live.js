@@ -125,6 +125,42 @@ class LiveRequest {
       method: 'post'
     })
   }
+  /**
+   *
+   * @param {string} params 页码等
+   * @description 直播数据历史列表
+   */
+  getdataCenterlist(params) {
+    return request({
+      url: `${config.live}/1.0/statistics/history/list`,
+      method: 'post',
+      data: params
+    })
+  }
+
+  /**
+   *
+   * @param {string}
+   * @description 数据中中心数据
+   */
+  getdataCenterTotaldata(params) {
+    return request({
+      url: `${config.live}/1.0/statistics/totalData`,
+      method: 'get'
+    })
+  }
+
+  /**
+   *
+   * @param {string} liveId 直播ID
+   * @description 数据中中心数据
+   */
+  getdataCenterStatistics(params) {
+    return request({
+      url: `${config.live}/1.0/statistics/get?liveId=${params.liveId}`,
+      method: 'get'
+    })
+  }
 }
 
 export default new LiveRequest()

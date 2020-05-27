@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-card :body-style="{ padding: '0px' }">
-      <el-image style="width:100%;height:180px" src="https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg" class="image" />
+      <el-image style="width:100%;height:200px" src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_banner.png" class="image" />
       <div style="padding: 20px;">
         <h4>直播介绍</h4>
         <p class="desc">
-          海典直播是海典软件专门为商户打造的直播功能，支持商户在线直播，平台提供高清、快捷、流畅的视频直播和服务
+          海典直播是海典软件专门为商户打造的直播功能，支持商户在线直播，平台提供高清、快捷、流畅的视频直播和服务，且支持直播卖货服务，为商户更好服务我们的消费者。前期我们的直播的服务为免费功能，各大商户朋友需要开通的可以联系我们的相关人员开通即可。后续操作有任何问题都可以联系我们的相关人员服务。
         </p>
       </div>
     </el-card>
     <div class="live-titles">
-      <h1>套餐介绍</h1>
-      <p>咨询电话：400-123-1234</p>
+      <h1> 套餐介绍</h1>
+      <p> <span class="el-icon-phone-outline" /> 咨询电话：13107318388 </p>
     </div>
     <div class="live-package clearfix">
       <el-col v-for="(o, index) in 1" :key="o" :xs="1" :sm="5" :md="7" :lg="6" :xl="4" :offset="index > 0 ? 1 : 0">

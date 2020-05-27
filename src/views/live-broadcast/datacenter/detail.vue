@@ -2,34 +2,27 @@
   <div class="app-container">
     <div class="details-wrapper">
       <div class="live-total">
-        <el-card body-style="width:300px;height:130px">
-          这是视频
-        </el-card>
+        <el-card body-style="width:300px;height:130px">这是视频</el-card>
         <el-card class="box-card list-total">
           <div class="box-list">
-            <p class="nums">10</p>
-            <p>总直播场数</p>
+            <p class="nums">{{ statistics.totalOrderNum || 0 }}</p>
+            <p>成交订单</p>
           </div>
           <div class="box-list">
-            <p class="nums">10</p>
-            <p>总直播时长</p>
+            <p class="nums">{{ statistics.totalVisitOrderRate || 0 }}</p>
+            <p>用户成交率</p>
           </div>
           <div class="box-list">
-            <p class="nums">10</p>
-            <p>累计观看人数</p>
+            <p class="nums">{{ statistics.totalOrderAmount || 0 }}</p>
+            <p>总金额金额</p>
           </div>
         </el-card>
-        <el-card class="box-card">
-          <div class="box-list">
-            <p class="nums">10<span>&nbsp;笔</span></p>
-            <p>总直播场数</p>
-          </div>
-          <div class="box-list">
-            <p class="nums">10<span>&nbsp;%</span></p>
-            <p>总直播时长</p>
-          </div>
-          <div class="box-list">
-            <p class="nums">10<span>&nbsp;￥</span></p>
+        <el-card class="box-card flex-center " style="width: 300px; height: 130px;">
+          <div class="box-list ">
+            <p class="nums">
+              {{ statistics.totalVisitNum || 0 }}
+              <span>&nbsp;￥</span>
+            </p>
             <p>累计观看人数</p>
           </div>
         </el-card>
@@ -41,19 +34,25 @@
           <div class="info-wrapper">
             <el-form>
               <el-form-item label="直播名称：">
-                <span>老百姓大药房</span>
+                <span>{{ LiveDetails.name }}</span>
               </el-form-item>
               <el-form-item label="直播头像：">
-                <el-avatar size="medium" :src="'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" />
+                <el-avatar
+                  size="medium"
+                  :src="showImg(LiveDetails.merLogoUrl)"
+                />
               </el-form-item>
               <el-form-item label="直播主题：">
-                <span>老百姓大药房</span>
+                <span>{{ statistics.name }}</span>
               </el-form-item>
               <el-form-item label="开播时间：">
-                <span>老百姓大药房</span>
+                <span>{{ statistics.realBeginTime }}</span>
               </el-form-item>
               <el-form-item label="直播封面：">
-                <el-image style="width:100px;height:100px" src="https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg" />
+                <el-image
+                  style="width:100px;height:100px"
+                  :src="showImg(LiveDetails.coverPicUrl)"
+                />
               </el-form-item>
             </el-form>
           </div>
@@ -63,7 +62,7 @@
             <p style="margin-bottom:10px;font-size:14px">参与商品</p>
             <el-table :data="goodsList" max-height="450px" border size="small">
               <!-- <el-table-column v-if="!activityId" type="selection" width="55" /> -->
-              <el-table-column label="商品名称" prop="name" min-width="100" />
+              <el-table-column label="商品名称" prop="commodityName" min-width="100" />
               <el-table-column label="商品编码" prop="erpCode" />
               <el-table-column label="规格" prop="mprice">
                 <template slot-scope="scope" :show-overflow-tooltip="true">
@@ -78,7 +77,7 @@
                   size="mini"
                   :disabled="disabled"
                   @click="handleEditSetting(scope.row)"
-                >设置</el-button> -->
+                  >设置</el-button>-->
                   <el-button
                     type="text"
                     size="mini"
@@ -96,7 +95,9 @@
                 >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination) }}</template>
               </el-table-column>
               <el-table-column label="使用时间" width="160">
-                <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
+                <template
+                  slot-scope="scope"
+                >{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
               </el-table-column>
               <el-table-column label="使用场景" width="110">
                 <template
@@ -111,8 +112,7 @@
               <el-table-column label="适用商品" width="100">
                 <template
                   slot-scope="scope"
-                >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}
-                </template>
+                >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}</template>
               </el-table-column>
               <el-table-column label="发放张数" width="110">
                 <template slot-scope="scope">
@@ -124,17 +124,24 @@
                   >
                     <div style="text-align: right; margin: 0">
                       <el-form :model="tableFrom" :rules="tableRules" size="mini">
-                        <el-form-item label="" prop="sendNum">
+                        <el-form-item label prop="sendNum">
                           <el-input v-model.number="tableFrom.sendNum" placeholder="输入发放张数" />
                         </el-form-item>
-                        <el-form-item label="">
-                          <el-button type="" @click="scope.row.showVisible=false">取消</el-button>
+                        <el-form-item label>
+                          <el-button type @click="scope.row.showVisible=false">取消</el-button>
                           <el-button type="primary">确定</el-button>
                         </el-form-item>
                       </el-form>
                     </div>
                     <span v-text="scope.row.nul" />
-                    <el-button slot="reference" type="text" icon="el-icon-edit" size="mini" circle @click="scope.row.showVisible=!scope.row.showVisible" />
+                    <el-button
+                      slot="reference"
+                      type="text"
+                      icon="el-icon-edit"
+                      size="mini"
+                      circle
+                      @click="scope.row.showVisible=!scope.row.showVisible"
+                    />
                   </el-popover>
                 </template>
               </el-table-column>
@@ -155,63 +162,122 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+import liveRequest from '@/api/live'
+import config from '@/utils/config'
 export default {
   data() {
     return {
       goodsList: [],
-      selectlist: []
+      selectlist: [],
+      statistics: '',
+      LiveDetails: ''
+    }
+  },
+  computed: {
+    ...mapGetters(['merCode', 'name', 'token']),
+    upLoadUrl() {
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImgAny?merCode=${this.merCode}`
+    },
+    headers() {
+      return { Authorization: this.token }
+    }
+  },
+  created() {
+    this.getStatistics()
+    this.getLiveDetails()
+    this.getLivegoods()
+  },
+  methods: {
+    async getStatistics() {
+      try {
+        const { data } = await liveRequest.getdataCenterStatistics({
+          liveId: `${this.$route.query.id}`
+        })
+        this.statistics = data
+        console.log(data)
+        // this.totaldata = data
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // 获取直播详情
+    async getLiveDetails() {
+      try {
+        const { data } = await liveRequest.getLiveDetails({
+          liveId: this.$route.query.id
+        })
+        this.LiveDetails = data
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // 获取直播商品列表
+    async getLivegoods() {
+      try {
+        const { data } = await liveRequest.getLivegoods({
+          liveId: this.$route.query.id
+        })
+        console.log(data)
+        this.goodsList.push(data)
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
 </script>
 <style lang="scss">
- .flex-between {
-    display: flex;
-    justify-content: space-between;
-  }
- .live-total .el-card__body {
-    @extend .flex-between;
-    height: 130px;
-    align-items: center;
-  }
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+.live-total .el-card__body {
+  @extend .flex-between;
+  height: 130px;
+  align-items: center;
+}
 </style>
 <style lang="scss" scoped>
-  .flex-between {
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  height: 130px;
+  align-items: center;
+}
+.title-line {
+  padding: 20px 23px 0;
+}
+.live-total {
+  // padding:0 30px;
+  @extend .flex-between;
+  .nums {
+    margin-bottom: 10px;
+  }
+  .flex-center {
     display: flex;
-    justify-content: space-between;
-    height: 130px;
+    justify-content: center;
     align-items: center;
   }
-  .title-line{
-      padding: 20px 23px 0;
-
-  }
-  .live-total {
-    // padding:0 30px;
-    @extend .flex-between;
-    .nums{
-        margin-bottom: 10px;
-    }
-    .box-list{
-        margin: 0 30px;
-        text-align: center;
-        p{
-            &:first-child{
-                font-size: 20px;
-                font-weight: 600;
-                span{
-                    font-size: 12px;
-                }
-            }
-            &:last-child{
-               color: #bebfc1;
-               font-size: 14px;
-            }
+  .box-list {
+    margin: 0 30px;
+    text-align: center;
+    p {
+      &:first-child {
+        font-size: 20px;
+        font-weight: 600;
+        span {
+          font-size: 12px;
         }
+      }
+      &:last-child {
+        color: #bebfc1;
+        font-size: 14px;
+      }
     }
-
   }
-  .info-wrapper{
-        padding: 0 120px
-    }
+}
+.info-wrapper {
+  padding: 0 120px;
+}
 </style>
