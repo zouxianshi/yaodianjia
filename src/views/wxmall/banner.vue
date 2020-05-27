@@ -84,7 +84,6 @@
           <!-- <el-table-column prop="startTime" label="开始时间" min-width="180" align="center" />
           <el-table-column prop="endTime" label="结束时间" min-width="180" align="center" />-->
           <el-table-column label="状态" min-width="80" align="center">
-            >
             <template slot-scope="scope">
               <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
               <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
@@ -167,7 +166,7 @@
                   placeholder="http:// 或 https://"
                 />
               </el-tooltip>
-              <el-button icon="el-icon-link" style="padding: 7.5px 8px;" @click="dialogUrlVisible = true">选择链接</el-button>
+              <el-button icon="el-icon-link" size="small" @click="dialogUrlVisible = true">选择链接</el-button>
             </el-form-item>
             <el-form-item label="启用状态" :label-width="formLabelWidth">
               <el-switch v-model="xForm.status" />
@@ -191,7 +190,7 @@
                 v-model="xForm.sort"
                 size="small"
                 autocomplete="off"
-                style="width: 350px"
+                style="width: 380px"
                 :maxlength="5"
                 placeholder="正整数"
               />
@@ -203,7 +202,7 @@
                 autocomplete="off"
                 placeholder="10字以内"
                 :maxlength="10"
-                style="width: 350px"
+                style="width: 380px"
               />
             </el-form-item>
           </el-form>
@@ -266,9 +265,9 @@ export default {
         // callback(new Error('请输入链接地址'))
         callback()
       }
-      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-        callback(new Error('链接格式不正确，例：http://111.com'))
-      }
+      // if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+      //   callback(new Error('链接格式不正确，例：http://111.com'))
+      // }
       callback()
     }
     const checkNum = (rule, value, callback) => {

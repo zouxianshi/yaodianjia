@@ -104,7 +104,7 @@
               <el-input
                 v-model="xForm.notice"
                 autocomplete="off"
-                style="width: 350px"
+                style="width: 410px"
                 :maxlength="15"
                 placeholder="最多输入15字"
               />
@@ -114,11 +114,13 @@
                 v-model="xForm.linkUrl"
                 size="small"
                 autocomplete="off"
-                style="width: 350px"
+                style="width: 310px"
                 :maxlength="500"
                 placeholder="http:// 或 https://"
               />
-            </el-form-item><el-form-item label="启用状态" :label-width="formLabelWidth">
+              <el-button icon="el-icon-link" size="small" @click="dialogUrlVisible = true">选择链接</el-button>
+            </el-form-item>
+            <el-form-item label="启用状态" :label-width="formLabelWidth">
               <el-switch v-model="xForm.status" />
             </el-form-item>
             <!-- <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
@@ -136,7 +138,7 @@
               />
             </el-form-item> -->
             <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
-              <el-input v-model="xForm.sort" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
+              <el-input v-model="xForm.sort" autocomplete="off" style="width: 410px" :maxlength="5" placeholder="正整数" />
             </el-form-item>
           </el-form>
         </div>
@@ -154,6 +156,16 @@
         <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
       </div>
     </el-dialog>
+    <el-drawer
+      :wrapper-closable="false"
+      destroy-on-close
+      append-to-body
+      size="600px"
+      :visible.sync="dialogUrlVisible"
+    >
+      <div slot="title">选择链接</div>
+      <m-links-table v-if="dialogUrlVisible" :url="xForm.linkUrl" @on-link="_onLink" />
+    </el-drawer>
   </div>
 </template>
 
@@ -168,6 +180,7 @@ import {
   delPageSet,
   updatePageSetStatus
 } from '../../api/wxmall'
+import mLinksTable from '../mall/homeSettings/_source/settingsArea/_source/linksTable'
 
 export default {
   name: 'Notice',
@@ -177,9 +190,9 @@ export default {
         // callback(new Error('请输入链接地址'))
         callback()
       }
-      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-        callback(new Error('链接格式不正确，例：http://111.com'))
-      }
+      // if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+      //   callback(new Error('链接格式不正确，例：http://111.com'))
+      // }
       callback()
     }
     const checkNum = (rule, value, callback) => {
@@ -189,6 +202,7 @@ export default {
       callback()
     }
     return {
+      dialogUrlVisible: false,
       saveLoading: false,
       currentRole: 'adminDashboard',
       // I-01	轮播图
@@ -257,7 +271,11 @@ export default {
   created() {
     this.fetchData()
   },
+  components: { mLinksTable },
   methods: {
+    _onLink({ url }) {
+      this.xForm.linkUrl = url
+    },
     fetchData() {
       this._queryCenterStore().then(res => {
         if (res.code === '10000' && res.data) {
@@ -602,7 +620,6 @@ export default {
       flex: 1;
     }
     .preview-box {
-      margin-right: 15px;
       flex: 0 0 250px;
       .title {
         font-size: 18px;
