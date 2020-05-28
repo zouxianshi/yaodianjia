@@ -65,12 +65,12 @@ export default {
       this.$emit('on-selects', _.reject(this.activesData, ['specId', '']))
     },
     handlerItem(item) {
-      const { specId, picUrl, price, mprice, name, storeId, storeName, merCode, commodityId, keyFeature } = item
+      const { specId, picUrl, price, mprice, mainPic, name, storeId, storeName, merCode, commodityId, keyFeature } = item
       return {
         keyFeature,
         commodityId,
         specId,
-        img: picUrl,
+        img: picUrl || mainPic,
         price,
         url: `${this.h5Base}pages/details/index?productId=${specId}&storeId=${storeId}&storeName=${storeName}&merCode=${merCode}`,
         mprice,
