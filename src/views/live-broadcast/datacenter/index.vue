@@ -4,36 +4,36 @@
       <div class="live-total">
         <el-card class="box-card list-total">
           <div class="box-list">
-            <p class="nums">{{ totaldata.totalCount }}</p>
+            <p class="nums">{{ totaldata.totalCount ||0 }}</p>
             <p>总直播场数</p>
           </div>
           <div class="box-list">
-            <p class="nums">{{ totaldata.totalDuration }}</p>
+            <p class="nums">{{ totaldata.totalDuration ||0 }}</p>
             <p>总直播时长</p>
           </div>
           <div class="box-list">
-            <p class="nums">{{ totaldata.totalWatchNum }}</p>
+            <p class="nums">{{ totaldata.totalWatchNum ||0 }}</p>
             <p>累计观看人数</p>
           </div>
         </el-card>
         <el-card class="box-card">
           <div class="box-list">
             <p class="nums">
-              {{ totaldata.totalOrderNum }}
+              {{ totaldata.totalOrderNum ||0 }}
               <span>&nbsp;笔</span>
             </p>
-            <p>总直播场数</p>
+            <p>总直播订单数</p>
           </div>
           <div class="box-list">
             <p class="nums">
-              {{ totaldata.totalOrderNum }}
+              {{ totaldata.totalOrderNum || 0 }}
               <span>&nbsp;%</span>
             </p>
             <p>总观看用户支付率</p>
           </div>
           <div class="box-list">
             <p class="nums">
-              {{ totaldata.totalPayAmount }}
+              {{ totaldata.totalPayAmount || 0 }}
               <span>&nbsp;￥</span>
             </p>
             <p>总成交金额</p>
