@@ -55,11 +55,13 @@
           {{ scope.row.activityDetail ? scope.row.activityDetail.ruleList[0].totalAmount - scope.row.activityDetail.ruleList[0].leftAmount : '-' }}
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="操作" width="230">
+      <el-table-column label="操作" width="160">
         <template slot-scope="scope">
-          <el-button size="mini" @click="edit(scope.row)">{{ scope.row.status ? '查看': '编辑' }}</el-button>
-          <el-button size="mini" :disabled="scope.row.status" @click="onDeletes(scope.row)">删除</el-button>
-          <el-button size="mini" @click="changeStatus(scope.row)">{{ scope.row.status ? '失效': '生效' }}</el-button>
+          <div class="opca">
+            <el-button size="mini" @click="edit(scope.row)">{{ scope.row.status ? '查看': '编辑' }}</el-button>
+            <el-button size="mini" :disabled="scope.row.status" @click="onDeletes(scope.row)">删除</el-button>
+            <el-button size="mini" @click="changeStatus(scope.row)">{{ scope.row.status ? '失效': '生效' }}</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -177,6 +179,12 @@ export default {
   .pagination{
     margin-top: 20px;
     text-align: right;
+  }
+  .opca{
+    line-height: 40px;
+    .el-button+.el-button{
+      margin-left: 0;
+    }
   }
 }
 </style>

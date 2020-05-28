@@ -42,7 +42,7 @@
         </el-form-item>
       </el-form>
       <div v-if="!isDisabled">
-        <el-button size="mini">取消</el-button>
+        <el-button size="mini" @click="returnList">取消</el-button>
         <el-button size="mini" type="primary" @click="submitData">确定</el-button>
       </div>
       <div v-else>
@@ -158,6 +158,15 @@ export default {
           })
           this.$router.push('/activity/exchangeMallList')
         }
+      })
+    },
+    returnList() {
+      this.$confirm('当前页面数据暂未保存，确定要离开吗?', '操作提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push('/activity/exchangeMallList')
       })
     }
   }

@@ -45,3 +45,13 @@ export function getExchangeInfo(params) {
     expmethod: 'get'
   })
 }
+
+// 增加活动库存
+
+export function addStock(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-integral/addStock`,
+    expmethod: 'post',
+    data: params
+  })
+}
