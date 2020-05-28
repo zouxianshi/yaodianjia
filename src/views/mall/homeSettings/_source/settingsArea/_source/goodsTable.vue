@@ -133,7 +133,9 @@ export default {
   },
   created() {
     this.searchParams.merCode = this.$store.getters.merCode
-    this.activesData = _.cloneDeep(this.itemList)
+    console.log(this.itemList)
+    this.activesData = _.reject(_.cloneDeep(this.itemList), v => !v.commodityId)
+    console.log(this.activesData)
     this.getData()
   },
   beforeMount() {
