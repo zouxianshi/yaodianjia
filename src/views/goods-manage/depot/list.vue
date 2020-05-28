@@ -505,7 +505,7 @@ export default {
         ]
       }
       const nodesObj = this.$refs['cascType'].getCheckedNodes()
-      this.listQuery.level = nodesObj[0].level
+      this.listQuery.level = nodesObj.length > 0 ? nodesObj[0].level : ''
       this.getList()
     },
     getList() {

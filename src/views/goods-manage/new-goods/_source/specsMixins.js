@@ -2,7 +2,7 @@ import {
   getSelfSpecsInfo,
   setSpecsData,
   getSpecsProductSKU,
-  getSpecs
+  getSpecsKey
 } from '@/api/new-goods'
 import { checkNumberdouble, checkZmSZ } from '@/utils/validate'
 import { findArray } from '@/utils/index'
@@ -392,7 +392,24 @@ const mixin = {
       // this.specLoading = true
       // 根据一级分类加载规格
       // this.chooseTypeList[0].id
-      getSpecs('a99917a7c7254ac281e844acf1610657').then(res => {
+      // getSpecs('a99917a7c7254ac281e844acf1610657').then(res => {
+      //   if (res.data) {
+      //     res.data.map(v => {
+      //       v['index_' + v.id + '_' + v.attributeName] = ''
+      //       v.isCheck = this.basicForm.origin === 1
+      //     })
+      //     this.specsList = res.data
+      //     this.specsForm.specsData = []
+      //     console.log('--根据一级分类查找规格----')
+      //     // this.handleAddSpec()
+      //   }
+      //   if (this.basicForm.id) {
+      //     this._loadSpecsInfo()
+      //   } else {
+      //     this.specLoading = false
+      //   }
+      // })
+      getSpecsKey().then(res => {
         if (res.data) {
           res.data.map(v => {
             v['index_' + v.id + '_' + v.attributeName] = ''

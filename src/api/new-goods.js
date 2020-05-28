@@ -52,7 +52,13 @@ export function getSpecs(categoryId) {
     method: 'get'
   })
 }
-
+// 根据一级分类查询规格
+export function getSpecsKey() {
+  return request({
+    url: `${config.merchandise}/1.0/attr-key/list`,
+    method: 'get'
+  })
+}
 // 保存规格
 export function setSpecsData(params) {
   return request({

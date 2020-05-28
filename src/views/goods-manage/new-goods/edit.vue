@@ -110,6 +110,7 @@
                       <el-input
                         v-model.trim="basicForm.commonName"
                         maxlength="20"
+                        :disabled="basicForm.origin===1"
                         placeholder="请输入通用名"
                         size="small"
                       />
@@ -248,6 +249,7 @@
                     <el-form-item label="批准文号：" prop="approvalNumber">
                       <el-input
                         v-model.trim="basicForm.approvalNumber"
+                        :disabled="basicForm.origin===1"
                         maxlength="24"
                         placeholder="请输入批准文号"
                         size="small"
@@ -377,23 +379,28 @@
             >商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
             <el-form>
               <el-form-item label="规格设置：">
-                <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
-                  <template v-if="dynamicProp.length>0">
-                    <span
+                <template>
+                  <el-checkbox
+                    v-for="(item,index) in specsList"
+                    :key="index"
+                    v-model="item.isCheck"
+                    :checked="chooseSpecName.indexOf(item.attributeName)>-1"
+                    :disabled="is_query"
+                    @change="handleSpecsChange(item)"
+                  >{{ item.attributeName }}</el-checkbox>
+                </template>
+                <!-- <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0"> -->
+                <!-- <template v-if="dynamicProp.length>0">
+                    <el-checkbox
                       v-for="(item,index) in specsList"
                       :key="index"
-                      style="display:inline-block;margin-right:10px;"
-                    >
-                      <el-checkbox
-                        :key="index"
-                        :checked="chooseSpecName.indexOf(item.attributeName)>-1"
-                        :disabled="true||is_query"
-                        @change="handleSpecsChange(item)"
-                      >{{ item.attributeName }}</el-checkbox>
-                    </span>
-                  </template>
-                </template>
-                <template v-else-if="basicForm.origin===2&&basicForm.id">
+                      :checked="chooseSpecName.indexOf(item.attributeName)>-1"
+                      :disabled="is_query"
+                      @change="handleSpecsChange(item)"
+                    >{{ item.attributeName }}</el-checkbox>
+                </template>-->
+                <!-- </template> -->
+                <!-- <template v-else-if="basicForm.origin===2&&basicForm.id">
                   <el-checkbox
                     v-for="(item,index) in specsList"
                     :key="index"
@@ -407,14 +414,14 @@
                     v-for="(item,index) in dynamicProp"
                     :key="index"
                     v-model="item.checked"
-                    :disabled="basicForm.origin===1||is_query"
+                    :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.name }}</el-checkbox>
-                </template>
+                </template>-->
               </el-form-item>
               <el-form-item label="规格信息：">
                 <template v-if="basicForm.origin===1">
-                  <el-table ref="multipleTable" :data="editSpecsData">
+                  <el-table ref="multipleTable" :data="editSpecsData" height="300">
                     <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
                     <el-table-column width="55">
                       <template slot-scope="scope">
@@ -486,12 +493,12 @@
                         </template>
                       </template>
                     </el-table-column>
-                    <el-table-column label="商品条码" prop="barCode">
+                    <el-table-column label="条形码" prop="barCode">
                       <template slot-scope="scope">
                         <span v-text="scope.row.barCode" />
-                        <template v-if="!is_query">
+                        <template v-if="!is_query||basicForm.origin===2">
                           <edit-table
-                            title="商品条码"
+                            title="条形码"
                             keys="barCode"
                             :info="scope.row"
                             max-length="30"
@@ -638,12 +645,12 @@
                             </template>
                           </template>
                         </el-table-column>
-                        <el-table-column label="商品条码" prop="barCode">
+                        <el-table-column label="条形码" prop="barCode">
                           <template slot-scope="scope">
                             <span v-text="scope.row.barCode" />
-                            <template v-if="!is_query">
+                            <template v-if="!is_query||basicForm.origin===2">
                               <edit-table
-                                title="商品条码"
+                                title="条形码"
                                 keys="barCode"
                                 :info="scope.row"
                                 max-length="30"
@@ -791,7 +798,7 @@
                         />
                       </el-form-item>
                       <el-form-item label>
-                        <span slot="label">商品条码</span>
+                        <span slot="label">条形码</span>
                         <el-input
                           v-model.trim="item.barCode"
                           maxlength="30"
@@ -1375,12 +1382,11 @@ export default {
   methods: {
     onScroll() {
       const scrollTop = this.$refs.appContaniner.scrollTop
-      console.log(scrollTop)
       if (scrollTop <= 1250) {
         this.step = 1
-      } else if (scrollTop < 1800 && scrollTop > 1250) {
+      } else if (scrollTop < 2050 && scrollTop > 1250) {
         this.step = 2
-      } else if (scrollTop >= 1800) {
+      } else if (scrollTop >= 2050) {
         this.step = 3
       }
     },
@@ -1852,8 +1858,6 @@ export default {
     },
     nextStep() {
       this.handleSubmitForm()
-      this.handleSubmitSpec()
-      this.handleSubIntro()
     },
     backStep() {
       setTimeout(() => {
@@ -1940,17 +1944,36 @@ export default {
               data.dosageForm = ''
               data.hasEphedrine = ''
             }
-            this.subLoading = true
-            if (this.basicForm.id) {
-              data.firstTypeId = this.chooseTypeList[0].id
-              data.secondTypeId = this.chooseTypeList[1].id
-              data.commodityId = data.id
-              this._UpdateBasicInfo(data)
-            } else {
-              data.firstTypeId = this.chooseTypeList[0].id
-              data.secondTypeId = this.chooseTypeList[1].id
+            if (this.fileList.length === 0) {
+              this.$confirm(
+                '橱窗图为空，保存后无法上架。请确认是否返回编辑？',
+                '提示',
+                {
+                  confirmButtonText: '继续保存',
+                  cancelButtonText: '返回编辑',
+                  type: 'warning'
+                }
+              )
+                .then(() => {
+                  this.subLoading = true
+                  if (this.basicForm.id) {
+                    data.firstTypeId = this.chooseTypeList[0].id
+                    data.secondTypeId = this.chooseTypeList[1].id
+                    data.commodityId = data.id
+                    this._UpdateBasicInfo(data)
+                  } else {
+                    data.firstTypeId = this.chooseTypeList[0].id
+                    data.secondTypeId = this.chooseTypeList[1].id
 
-              this._CreateBasicInfo(data)
+                    this._CreateBasicInfo(data)
+                  }
+                  // 需修改
+                  this.handleSubmitSpec()
+                  this.handleSubIntro()
+                })
+                .catch(() => {
+                  console.log('已取消')
+                })
             }
           }
         } else {
