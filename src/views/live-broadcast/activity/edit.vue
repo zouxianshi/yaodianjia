@@ -233,6 +233,7 @@
     <!-- 选择优惠券 -->
     <checkCoupon
       ref="checkCoupons"
+      state="1"
       :list="formData.couponRelationReqDto"
       :singlechoice="true"
       :timevalue="couponList"
@@ -372,10 +373,15 @@ export default {
         const { data } = await liveRequest.getLiveInfo(this.$route.query.id)
         const detaiInfo = data
         detaiInfo.commoditySpecList = data.commoditys
-        detaiInfo.couponRelationReqDto =
-          data.activityCouponList.activityCouponDetailResDTO
+        if (data.activityCouponList) {
+          detaiInfo.couponRelationReqDto =
+            data.activityCouponList.activityCouponDetailResDTO
+        } else {
+          detaiInfo.couponRelationReqDto = []
+        }
         delete detaiInfo.commoditys
         delete detaiInfo.activityCouponList
+        console.log(_.assign(this.formData, detaiInfo))
         this.formData = _.assign(this.formData, detaiInfo)
       } catch (error) {
         console.log(error)
