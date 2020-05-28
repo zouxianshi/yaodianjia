@@ -290,6 +290,15 @@ export default {
     this.getShareLivePage()
     this.timOpen()
   },
+  // beforeRouteLeave(to, from, next) {
+  //   const answer = window.confirm('请问您是否确认下播?')
+  //   if (answer) {
+  //     console.log('11')
+  //     next()
+  //   } else {
+  //     next(false)
+  //   }
+  // },
   computed: {
     ...mapGetters(['merCode', 'name', 'token']),
     upLoadUrl() {
@@ -487,7 +496,12 @@ export default {
           '&url=' + encodeURIComponent(this.shareUrl || document.location) // 参数url设置分享的内容链接|默认当前页location，可选参数
           _shareUrl +=
             '&title=' +
-            encodeURIComponent(this.LiveDetails.name + this.LiveDetails.merName + '正在直播中,速来围观' + this.shareUrl || document.title) // 参数title设置分享的标题|默认当前页标题，可选参数
+            encodeURIComponent(
+              this.LiveDetails.name +
+                this.LiveDetails.merName +
+                '正在直播中,速来围观' +
+                this.shareUrl || document.title
+            ) // 参数title设置分享的标题|默认当前页标题，可选参数
           _shareUrl += '&content=' + 'utf-8' // 参数content设置页面编码gb2312|utf-8，可选参数
           _shareUrl +=
             '&pic=' + encodeURIComponent(this.LiveDetails.coverPicUrl || '') // 参数pic设置图片链接|默认为空，可选参数
@@ -502,12 +516,19 @@ export default {
           _shareUrl +=
             '&desc=' +
             encodeURIComponent(
-              '' || this.LiveDetails.name + this.LiveDetails.merName + '正在直播中,速来围观'
+              '' ||
+                this.LiveDetails.name +
+                  this.LiveDetails.merName +
+                  '正在直播中,速来围观'
             ) // 参数desc设置分享的描述，可选参数
           _shareUrl += '&summary=' + encodeURIComponent('') // 参数summary设置分享摘要，可选参数
           _shareUrl +=
             '&title=' +
-            encodeURIComponent(this.LiveDetails.name + this.LiveDetails.merName + '正在直播中,速来围观' || document.title) // 参数title设置分享标题，可选参数
+            encodeURIComponent(
+              this.LiveDetails.name +
+                this.LiveDetails.merName +
+                '正在直播中,速来围观' || document.title
+            ) // 参数title设置分享标题，可选参数
           _shareUrl +=
             '&pics=' + encodeURIComponent(this.LiveDetails.coverPicUrl || '') // 参数pics设置分享图片的路径，多张图片以＂|＂隔开，可选参数
           window.open(_shareUrl, '_blank')
@@ -518,47 +539,25 @@ export default {
             'url=' + encodeURIComponent(this.shareUrl || location.href) // 分享的链接
           _shareUrl +=
             '&title=' +
-            encodeURIComponent(this.LiveDetails.name + this.LiveDetails.merName + '正在直播中,速来围观' || document.title) // 分享的标题
+            encodeURIComponent(
+              this.LiveDetails.name +
+                this.LiveDetails.merName +
+                '正在直播中,速来围观' || document.title
+            ) // 分享的标题
           _shareUrl +=
             '&pics=' +
-            encodeURIComponent(this.LiveDetails.name + this.LiveDetails.merName + '正在直播中,速来围观' || document.title) // 分享的标题
+            encodeURIComponent(
+              this.LiveDetails.name +
+                this.LiveDetails.merName +
+                '正在直播中,速来围观' || document.title
+            ) // 分享的标题
           window.open(_shareUrl, '_blank')
           break
         case 3:
           console.log('复制')
           break
       }
-    },
-    beforeRouteLeave(to, from, next) {
-      next()
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        console.log('11')
-      } else {
-        next(false)
-      }
-    // 路由离开关闭标签
-    // if (this.is_query && this.pageLoading) {
-    //   this.pageLoading.close()
-    // }
-    // } else {
-    // if (!this.leaveAction) {
-    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
-    //   if (answer) {
-    //     if (this.pageLoading) {
-    //       this.pageLoading.close()
-    //     }
-    //     this.$store.dispatch('tagsView/delView', from)
-    //     next()
-    //   } else {
-    //     next(false)
-    //   }
-    // } else {
-    //   next()
-    // }
-    // }
     }
-
   }
 }
 </script>

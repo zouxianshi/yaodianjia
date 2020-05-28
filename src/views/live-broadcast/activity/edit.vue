@@ -233,7 +233,7 @@
     <!-- 选择优惠券 -->
     <checkCoupon
       ref="checkCoupons"
-      state="1"
+      state="2"
       :list="formData.couponRelationReqDto"
       :singlechoice="true"
       :timevalue="couponList"
