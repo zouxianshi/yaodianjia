@@ -94,7 +94,7 @@
           <p>
             <el-button type="primary" size="small" @click="goodsInfoVisible=true">查看商品详情</el-button>
           </p>
-          <el-button type="danger" size="small" @click="rejectVisible=true">拒绝</el-button>
+          <el-button type="danger" size="small" @click="rejectVisible=true">驳回</el-button>
         </div>
       </div>
       <div class="search-box" @keydown.enter="checkAdult">
@@ -265,11 +265,11 @@
       </div>
       <span slot="footer" class="ext-center">
         <el-button type="primary" size="small" @click="handleAudit(1)">通 过</el-button>
-        <el-button type="danger" size="small" @click="handleAudit(0)">拒 绝</el-button>
+        <el-button type="danger" size="small" @click="handleAudit(0)">驳 回</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="选择拒绝原因"
+      title="选择驳回原因"
       append-to-body
       close-on-click-modal
       :visible.sync="rejectVisible"
@@ -471,7 +471,7 @@ export default {
       let reason = ''
       if (!this.rejectForm.id) {
         this.$message({
-          message: '请选择拒绝原因',
+          message: '请选择驳回原因',
           type: 'error'
         })
         return
