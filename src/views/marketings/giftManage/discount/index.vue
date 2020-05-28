@@ -32,7 +32,7 @@
             />折
             <span class="zkTips">例：若折扣为8折，填8即可</span>
           </el-form-item>
-          <el-form-item label prop="maxPrice">
+          <!-- <el-form-item label prop="maxPrice">
             <el-checkbox
               v-model="isSelectMax"
               :disabled="isUpdate"
@@ -44,7 +44,7 @@
               :disabled="isUpdate || !isSelectMax"
               style="width:100px"
             />元
-          </el-form-item>
+          </el-form-item> -->
           <mReturnRules ref="returnRules" :discount-form="discountForm" :disabled="isUpdate" />
           <mExpireInfo ref="expireInfo" :discount-form="discountForm" :disabled="isUpdate" />
           <mUserNote ref="note" :discount-form="discountForm" />
@@ -221,7 +221,7 @@ export default {
         ctype: 1,
         cname: '', // 折扣名称
         denomination: '', // 优惠内容
-        maxPrice: '', // 最大优惠
+        maxPrice: 0, // 最大优惠
         returnRule: 1, // 退货规则
         expireInfo: 0, // 到期提醒
         note: '', // 使用须知
