@@ -59,6 +59,7 @@
         <template slot-scope="scope">
           <div class="opca">
             <el-button size="mini" @click="edit(scope.row)">{{ scope.row.status ? '查看': '编辑' }}</el-button>
+            <el-button size="mini" @click="dialogVisible=true">增加库存</el-button>
             <el-button size="mini" :disabled="scope.row.status" @click="onDeletes(scope.row)">删除</el-button>
             <el-button size="mini" @click="changeStatus(scope.row)">{{ scope.row.status ? '失效': '生效' }}</el-button>
           </div>
@@ -76,13 +77,29 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <div class="addStock-box">
+      <el-dialog
+        title="增加库存"
+        :visible.sync="dialogVisible"
+        :modal-append-to-body="true"
+        :append-to-body="true"
+        width="30%"
+      >
+        <span>增加库存</span>
+        <span slot="footer">
+          <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+          <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 <script>
-import { searchExchangeList, deleteExchange, failureExchange } from '@/api/exchangeMall'
+import { searchExchangeList, deleteExchange, failureExchange, addStock } from '@/api/exchangeMall'
 export default {
   data() {
     return {
+      dialogVisible: false,
       searchName: '',
       tableData: [
 
@@ -96,7 +113,9 @@ export default {
         hasSpec: true,
         hasRule: true,
         promotionType: 20
-      }
+      },
+      ids: 0, // 新增库存id
+      stockCount: 0 // 新增库存数量
     }
   },
   created() {
@@ -165,6 +184,16 @@ export default {
     handleCurrentChange(e) {
       this.pageInfo.currentPage = e
       this.getTabelData()
+    },
+    // 增加库存
+    addStocks(ids) {
+      var params = {
+        id: ids,
+        count: this.stockCount
+      }
+      addStock(params).then(res => {
+        console.log(res)
+      })
     }
   }
 }
