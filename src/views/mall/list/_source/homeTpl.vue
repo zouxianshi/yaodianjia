@@ -1,37 +1,53 @@
 <template>
-  <div class="home-tpl-model">
+  <div v-loading="isLoading" class="home-tpl-model">
     <div class="htm-item">
-      <div class="htm-default">
+      <div class="htm-default" @click="onToPath('blank')">
         <p class="htm-text-p1">新建空白模板</p>
         <p class="htm-text-p2"><i class="el-icon-circle-plus-outline" /></p>
       </div>
       <div class="htm-text">空白模板</div>
     </div>
     <div class="htm-item">
-      <div class="htm-photo">
-        <img :src="defaultHomeImg" alt="" width="160" height="333">
+      <div class="htm-photo" @click="onToPath('default')">
+        <img :src="defaultHomeImg + '?x-oss-process=style/w_160'" alt="" width="160" height="333">
       </div>
       <div class="htm-text">默认模板</div>
     </div>
   </div>
 </template>
 <script>
-import { getDefImg } from '@/api/mallService'
+import { getDefImg, createInitId } from '@/api/mallService'
 export default {
   name: 'HomeTpl',
   data() {
     return {
-      defaultHomeImg: ''
+      defaultHomeImg: '',
+      isLoading: false
     }
   },
   props: {},
-  methods: {},
+  methods: {
+    async onToPath(type) {
+      let url = '/mall/home-settings'
+      if (type === 'default') {
+        this.isLoading = true
+        const { data } = await createInitId()
+        this.isLoading = false
+        url = `${url}/${data}`
+      }
+      this.$router.push(url)
+    }
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
+    this.isLoading = true
     getDefImg().then((v) => {
       this.defaultHomeImg = v.data
+      this.isLoading = false
+    }).catch(() => {
+      this.isLoading = false
     })
   },
   beforeMount() {
@@ -60,6 +76,7 @@ export default {
       width: 160px;
       float: left;
       margin: 0 10px;
+      cursor: pointer;
       .htm-default,.htm-photo {
         transition: all 0.2s ease-out;
       }
@@ -68,7 +85,6 @@ export default {
           transition: all 0.2s ease-out;
           box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
         }
-
       }
       .htm-default {
         width: 158px;

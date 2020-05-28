@@ -8,7 +8,7 @@
     <el-table-column label="商品图片" width="70">
       <template slot-scope="scope">
         <template v-if="scope.row.picUrl">
-          <el-image style="width: 40px; height: 40px;display: block" fit="contain" :src="`${showImg(scope.row.picUrl)}?x-oss-process=style/w_80`" />
+          <el-image style="width: 40px; height: 40px;display: block" fit="contain" :src="`${showImg(scope.row.picUrl || scope.row.mainPic)}?x-oss-process=style/w_80`" />
         </template>
         <template v-else>-</template>
       </template>

@@ -73,7 +73,7 @@ export default {
       loading: false,
       isPreview: false,
       dimensionId: null,
-      isHomeTpl: true
+      isHomeTpl: false
     }
   },
   props: {},

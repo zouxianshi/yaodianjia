@@ -133,3 +133,10 @@ export function getDefImg() {
     method: 'get'
   })
 }
+
+export function createInitId() {
+  return request({
+    url: `${config.merGoods}/1.0/cms-dim/_init`,
+    method: 'post'
+  })
+}
