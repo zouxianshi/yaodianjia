@@ -28,7 +28,7 @@
             />
           </el-form-item>
           <el-form-item label>
-            <el-button size="mini" type="primary" :loading="loading" @click="getData('查询')">查询</el-button>
+            <el-button size="mini" type="primary" :loading="loading" @click="getDatasss('查询')">查询</el-button>
             <el-button size="mini" @click="reSet()">重置</el-button>
             <el-button
               size="mini"
@@ -99,6 +99,10 @@ export default {
     toggelCoditions() {
       // 切换选项隐藏/显示
       this.conditions = !this.conditions
+    },
+    getDatasss(val) {
+      this.pageInfo.currentPage = 1
+      this.getData(val)
     },
     // 获取列表数据
     getData(val) {
