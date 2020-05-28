@@ -357,7 +357,7 @@ export default {
   },
   methods: {
     handleEditMerchant() {
-      MC.jumpToPath('/merchant/index', 'merchant', '_blank')
+      MC.jumpToPath('merchant/index', 'merchant', '_blank')
     },
     async _loadMerchantInfo() {
       try {
