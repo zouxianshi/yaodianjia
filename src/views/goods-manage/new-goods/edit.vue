@@ -1375,12 +1375,12 @@ export default {
   methods: {
     onScroll() {
       const scrollTop = this.$refs.appContaniner.scrollTop
-      // console.log(scrollTop)
-      if (scrollTop <= 1300) {
+      console.log(scrollTop)
+      if (scrollTop <= 1250) {
         this.step = 1
-      } else if (scrollTop < 1600 && scrollTop > 1300) {
+      } else if (scrollTop < 1800 && scrollTop > 1250) {
         this.step = 2
-      } else if (scrollTop >= 1600) {
+      } else if (scrollTop >= 1800) {
         this.step = 3
       }
     },
