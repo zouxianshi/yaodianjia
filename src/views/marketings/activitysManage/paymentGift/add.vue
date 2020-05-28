@@ -260,7 +260,6 @@ export default {
       callback()
     }
     const giftType_limit = (rule, value, callback) => {
-      console.log(this.selectedCoupons)
       if (this.form.giftType === 1) {
         if (this.selectedCoupons.length === 0) {
           callback(new Error('请选择优惠券'))
@@ -348,7 +347,7 @@ export default {
           { required: true, validator: shopRule_limit, trigger: 'blur' }
         ],
         giftType: [
-          { required: true, validator: giftType_limit, trigger: 'blur' }
+          { required: true, validator: giftType_limit, trigger: 'change' }
         ]
       },
       selectedActivity: [],
@@ -496,7 +495,6 @@ export default {
       params = JSON.parse(JSON.stringify(this.form))
       this.saveLoading = true
       if (this.pageStatus === 1) {
-        console.log('createActivity', JSON.stringify(params))
         createActivity(params)
           .then(res => {
             this.saveLoading = false
@@ -584,7 +582,6 @@ export default {
       this.$refs.selectedCouponView.showPage(selectedCoupons, this.pageStatus)
     },
     onGetSelectProduct(selectedProducts) {
-      console.log(selectedProducts)
       selectedProducts.map(item => {
         item.id = item.proId || item.id
         item.proImg = item.picUrl || item.proImg
@@ -597,7 +594,6 @@ export default {
       )
     },
     updateActivityStatus(activity) {
-      console.log('activity', activity)
       if (activity.status && activity.timeStatus === -1) {
         // 未开始
       } else if (activity.status && activity.timeStatus === 1) {
@@ -614,11 +610,13 @@ export default {
     },
     _getDetailData(id) {
       this.pageLoading = true
+      // 先给个长度解决编辑时数据未加载完成前的表单验证显示bug（选择活动和选择优惠券）
+      this.selectedCoupons.length = 1
+      this.selectedActivity.length = 1
       const params = {
         id: id
       }
       this.form.sceneRuleReal = [1, 2]
-      console.log('params detail', JSON.stringify(params))
       ActivityDetail(params)
         .then(res => {
           if (res.code === '10000') {
@@ -690,7 +688,6 @@ export default {
     },
     _getAddedCouponList(id) {
       const params = { currentPage: 1, id: id, pageSize: 9999 }
-      console.log('normalActivityAddedCouponList', JSON.stringify(params))
       normalActivityAddedCouponList(params)
         .then(res => {
           if (res.code === '10000' && res.data.records.length > 0) {
