@@ -376,7 +376,7 @@
             <p
               class="text-right"
               style="font-size:13px"
-            >商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
+            >商品来源：{{ chooseSpecName.length }}{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
             <el-form>
               <el-form-item label="规格设置：">
                 <template>
@@ -496,7 +496,7 @@
                     <el-table-column label="条形码" prop="barCode">
                       <template slot-scope="scope">
                         <span v-text="scope.row.barCode" />
-                        <template v-if="!is_query||basicForm.origin===2">
+                        <template v-if="!is_query&&basicForm.origin===2">
                           <edit-table
                             title="条形码"
                             keys="barCode"
@@ -648,7 +648,7 @@
                         <el-table-column label="条形码" prop="barCode">
                           <template slot-scope="scope">
                             <span v-text="scope.row.barCode" />
-                            <template v-if="!is_query||basicForm.origin===2">
+                            <template v-if="!is_query&&basicForm.origin===2">
                               <edit-table
                                 title="条形码"
                                 keys="barCode"

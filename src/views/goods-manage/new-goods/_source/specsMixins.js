@@ -413,7 +413,7 @@ const mixin = {
         if (res.data) {
           res.data.map(v => {
             v['index_' + v.id + '_' + v.attributeName] = ''
-            v.isCheck = this.basicForm.origin === 1
+            // v.isCheck = this.basicForm.origin === 1
           })
           this.specsList = res.data
           this.specsForm.specsData = []
@@ -450,7 +450,7 @@ const mixin = {
                       name: vs.skuKeyName,
                       id: vs.skuKeyId,
                       keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
-                      checked: true
+                      isCheck: true
                     })
                     this.chooseSpecName.push(vs.skuKeyName)
                     this.chooseSpec.push(vs.skuKeyId) // 标库选中的规格存入chooseSpec  修改日期2020-03-25  标库需要添加规格使用
@@ -587,7 +587,7 @@ const mixin = {
                       name: v.skuKeyName,
                       id: v.skuKeyId,
                       keys: `index_${v.skuKeyId}_${v.skuKeyName}`,
-                      checked: true
+                      isCheck: true
                     })
                     data.push(v.skuKeyId)
                     // 设置默认选择
