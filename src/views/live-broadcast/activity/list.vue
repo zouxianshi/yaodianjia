@@ -11,10 +11,16 @@
           <el-button size="small" @click="search()">查 询</el-button>
         </div>
       </div>
-    </section> -->
+    </section>-->
     <!-- <div id="qrcode" /> -->
     <section class="table-box webkit-scroll">
-      <el-table v-loading="loading" :data="tableData" height="calc(100vh - 350px)" size="small" style="width: 100%">
+      <el-table
+        v-loading="loading"
+        :data="tableData"
+        height="calc(100vh - 350px)"
+        size="small"
+        style="width: 100%"
+      >
         <el-table-column label="序号" width="60" align="center">
           <template slot-scope="scope">
             <span>{{ scope.$index+1 }}</span>
@@ -37,10 +43,17 @@
           </template>
         </el-table-column>
         <el-table-column prop="beginTime" label="开播时间" min-width="180" align="center" />
-        <el-table-column prop="duration" label="时长" min-width="180" align="center" />
+        <el-table-column :prop="duration" label="时长" min-width="180" align="center">
+          <template slot-scope="scope">
+            <span>{{ ChangeHourMinutestr(scope.row.duration) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="url" align="center" label="相关商品" min-width="200">
           <template slot-scope="scope">
-            <el-button type="text" @click="handleShowGoods(scope.row)">{{ scope.row.firstCommodityName }}</el-button>
+            <el-button
+              type="text"
+              @click="handleShowGoods(scope.row)"
+            >{{ scope.row.firstCommodityName }}</el-button>
           </template>
         </el-table-column>
 
@@ -49,7 +62,7 @@
           <template slot-scope="scope">
             <div style="display:flex;justify-content: center;">
               <div class="cover">
-                <img :src="showImg(scope.row.coverPicUrl)" alt="">
+                <img :src="showImg(scope.row.coverPicUrl)" alt>
                 <div class="play" @click="handlePlayVideo(scope.row)">
                   <span class="play-btn el-icon-caret-right" />
                 </div>
@@ -60,7 +73,12 @@
         <el-table-column label="操作" fixed="right" align="center" min-width="150">
           <template slot-scope="scope">
             <template v-if="scope.row.status!==2">
-              <el-button v-if="scope.row.status===0||scope.row.status===1" size="mini" type="text" @click="handleStartLive(scope.row.id)">开播</el-button>
+              <el-button
+                v-if="scope.row.status===0||scope.row.status===1||scope.row.status===3"
+                size="mini"
+                type="text"
+                @click="handleStartLive(scope.row.id)"
+              >开播</el-button>
               <el-button
                 slot="reference"
                 type="text"
@@ -74,7 +92,6 @@
                 @click="handleAdd(scope.row.id)"
               >编辑</el-button>
             </template>
-
           </template>
         </el-table-column>
       </el-table>
@@ -91,7 +108,7 @@
       title="直播回放"
       :visible.sync="videoVisible"
       width="600px"
-      append-to-body=""
+      append-to-body
       :before-close="handleColseVideo"
     >
       <div class="play-box">
@@ -105,7 +122,7 @@
       title="商品列表"
       :visible.sync="goodsVisible"
       width="700px"
-      append-to-body=""
+      append-to-body
       :close-on-click-modal="false"
     >
       <el-table :data="goodsList" height="350">
@@ -133,7 +150,7 @@
         <el-button type="primary" size="small" @click="goodsVisible = false">关 闭</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="扫码分享" :visible.sync="shareVisible" append-to-body="" width="30%">
+    <el-dialog title="扫码分享" :visible.sync="shareVisible" append-to-body width="30%">
       <preview v-if="shareVisible" :link="pageLink" />
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="shareVisible = false">关 闭</el-button>
@@ -277,20 +294,23 @@ export default {
           this.aliPlay.loadByUrl(this.playUrl)
         } else {
           // eslint-disable-next-line no-undef
-          this.aliPlay = new Aliplayer({
-            id: 'J_prismPlayer',
-            width: '100%',
-            source: this.playUrl,
-            'autoplay': true,
-            'isLive': false,
-            'rePlay': false,
-            'playsinline': true,
-            'preload': true,
-            'controlBarVisibility': 'hover',
-            'useH5Prism': true
-          }, function(player) {
-            console.log('播放器创建好了。')
-          })
+          this.aliPlay = new Aliplayer(
+            {
+              id: 'J_prismPlayer',
+              width: '100%',
+              source: this.playUrl,
+              autoplay: true,
+              isLive: false,
+              rePlay: false,
+              playsinline: true,
+              preload: true,
+              controlBarVisibility: 'hover',
+              useH5Prism: true
+            },
+            function(player) {
+              console.log('播放器创建好了。')
+            }
+          )
           this.aliPlay.on('ended', this.handlePlayEnd)
         }
       })
@@ -316,41 +336,57 @@ export default {
     handleShowGoods(row) {
       this._loadLiveGoods(row)
       this.goodsVisible = true
+    },
+    ChangeHourMinutestr(str) {
+      console.log(str)
+      if (str !== '0' && str !== '' && str !== null) {
+        return (
+          (Math.floor(str / 60).toString().length < 2
+            ? '0' + Math.floor(str / 60).toString()
+            : Math.floor(str / 60).toString()) +
+          ':' +
+          ((str % 60).toString().length < 2
+            ? '0' + (str % 60).toString()
+            : (str % 60).toString())
+        )
+      } else {
+        return ''
+      }
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-  .cover{
-    position: relative;
-    width: 70px;
-    height: 40px;
-    img{
-      width: 100%;
-      height: 100%;
-    }
-    .play{
-      position: absolute;
-      left: 50%;
-      top:50%;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      margin-top: -15px;
-      margin-left: -15px;
-      opacity: .5;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      .play-btn{
-        font-size: 20px;
-        color: #fff;
-      }
-    }
+.cover {
+  position: relative;
+  width: 70px;
+  height: 40px;
+  img {
+    width: 100%;
+    height: 100%;
   }
-  .play-box{
+  .play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
+    opacity: 0.5;
+    background: #000;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    .play-btn {
+      font-size: 20px;
+      color: #fff;
+    }
   }
+}
+.play-box {
+  display: flex;
+}
 </style>
