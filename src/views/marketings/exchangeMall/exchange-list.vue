@@ -55,13 +55,27 @@
           {{ scope.row.activityDetail ? scope.row.activityDetail.ruleList[0].totalAmount - scope.row.activityDetail.ruleList[0].leftAmount : '-' }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="170">
         <template slot-scope="scope">
           <div class="opca">
-            <el-button size="mini" @click="edit(scope.row)">{{ scope.row.status ? '查看': '编辑' }}</el-button>
-            <el-button size="mini" @click="dialogVisible=true">增加库存</el-button>
-            <el-button size="mini" :disabled="scope.row.status" @click="onDeletes(scope.row)">删除</el-button>
-            <el-button size="mini" @click="changeStatus(scope.row)">{{ scope.row.status ? '失效': '生效' }}</el-button>
+            <el-button type="text" @click="changeStatus(scope.row)">{{ scope.row.status ? '下架': '上架' }} </el-button>
+            &emsp;
+            <el-dropdown trigger="click">
+              <span class="el-dropdown-link">
+                更多操作<i class="el-icon-arrow-down el-icon--right" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <el-button type="text" @click="edit(scope.row)">{{ scope.row.status ? '查看': '编辑' }}</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button type="text" @click="ids=scope.row.id;stockCount=1; dialogVisible=true">增加库存</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button type="text" :disabled="scope.row.status" @click="onDeletes(scope.row)">删除</el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
         </template>
       </el-table-column>
@@ -84,18 +98,23 @@
         :modal-append-to-body="true"
         :append-to-body="true"
         width="30%"
+        :destroy-on-close="true"
       >
-        <span>增加库存</span>
+        <el-form label-width="100">
+          <el-form-item label="增加数量">
+            <el-input-number v-model="stockCount" :controls="false" :precision="0" :step="1" :min="1" :max="99999999" /> 个
+          </el-form-item>
+        </el-form>
         <span slot="footer">
           <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
-          <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button size="mini" type="primary" @click="addStocks">确 定</el-button>
         </span>
       </el-dialog>
     </div>
   </div>
 </template>
 <script>
-import { searchExchangeList, deleteExchange, failureExchange, addStock } from '@/api/exchangeMall'
+import { searchExchangeList, deleteExchange, failureExchange, addStock, sxExchange } from '@/api/exchangeMall'
 export default {
   data() {
     return {
@@ -115,7 +134,7 @@ export default {
         promotionType: 20
       },
       ids: 0, // 新增库存id
-      stockCount: 0 // 新增库存数量
+      stockCount: 1 // 新增库存数量
     }
   },
   created() {
@@ -123,7 +142,6 @@ export default {
   },
   methods: {
     edit(data) {
-      console.log(data)
       if (data.status) {
         this.$router.push(`/activity/exchangeMallAdd?id=${data.id}&type=ck`)
       } else {
@@ -131,20 +149,32 @@ export default {
       }
     },
     onDeletes(data) {
-      console.log(data)
       const params = {
         id: data.id
       }
       deleteExchange(params).then(res => {
-        console.log(res)
+        if (res.code === '10000') {
+          this.getTabelData()
+        }
       })
     },
+    // 失效 | 生效
     changeStatus(data) {
+      const parmas = {
+        id: data.id
+      }
       if (data.status) {
-        const parmas = {
-          id: data.id
-        }
         failureExchange(parmas).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              message: '操作成功！',
+              type: 'success'
+            })
+            this.getTabelData()
+          }
+        })
+      } else {
+        sxExchange(parmas).then(res => {
           if (res.code === '10000') {
             this.$message({
               message: '操作成功！',
@@ -186,13 +216,21 @@ export default {
       this.getTabelData()
     },
     // 增加库存
-    addStocks(ids) {
+    addStocks() {
       var params = {
-        id: ids,
+        id: this.ids,
         count: this.stockCount
       }
       addStock(params).then(res => {
         console.log(res)
+        if (res.code === '10000') {
+          this.$message({
+            message: '增加成功！',
+            type: 'success'
+          })
+          this.getTabelData()
+          this.dialogVisible = false
+        }
       })
     }
   }
@@ -200,6 +238,13 @@ export default {
 </script>
 <style scoped lang="scss">
 .exchange-modal {
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
   .conditions {
     .search {
       margin: 20px 0;

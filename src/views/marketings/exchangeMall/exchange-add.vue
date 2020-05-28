@@ -5,10 +5,10 @@
       <el-divider style="margin-top:5px" />
       <el-form ref="formBase">
         <el-form-item label="选择商品" required>
-          <el-button type="text" :disabled="isDisabled" @click="$refs.GoodsComponent.open()">选择商品</el-button>
+          <el-button type="text" :disabled="isEdit" @click="$refs.GoodsComponent.open()">选择商品</el-button>
         </el-form-item>
         <el-form-item>
-          <select-goods ref="storeGods" :disabled="isDisabled" @del-item="delSelectGoods" />
+          <select-goods ref="storeGods" :disabled="isEdit" @del-item="delSelectGoods" />
         </el-form-item>
       </el-form>
     </div>
@@ -17,11 +17,11 @@
       <el-divider style="margin-top:5px" />
       <el-form ref="formRule" size="mini" label-width="100px" :model="params" :rules="rules" :disabled="isDisabled">
         <el-form-item label="可兑换库存" prop="totalAmount">
-          <el-input-number v-model="params.totalAmount" :controls="false" :precision="0" :min="1" :max="999999" />
+          <el-input-number v-model="params.totalAmount" :controls="false" :precision="0" :min="1" :max="999999" :disabled="isEdit" />
           <span class="tips"> 设置该积分商品在每个门店可兑换库存</span>
         </el-form-item>
         <el-form-item label="换购价格" required>
-          <el-input-number v-model="params.exchangePrice" :controls="false" :precision="2" :min="1" :max="99999999" />
+          <el-input-number v-model="params.exchangePrice" :controls="false" :precision="2" :min="0" :max="99999999" />
           <span style="font-size:18px;margin:0 20px;vertical-align: middle;">元 +</span>
           <el-input-number v-model="params.exchangeHb" :controls="false" :precision="0" :min="1" :max="99999999" />
           <span style="font-size:18px;margin:0 20px;vertical-align: middle;">海贝</span>
@@ -61,7 +61,7 @@
 <script>
 import storeGoods from '../../marketing/components/store-gods'
 import selectGoods from '../../marketing/components/select-goods'
-import { cerateExchange, getExchangeInfo } from '@/api/exchangeMall'
+import { cerateExchange, getExchangeInfo, editExchange } from '@/api/exchangeMall'
 export default {
   components: { storeGoods, selectGoods },
   data() {
@@ -90,7 +90,6 @@ export default {
         id: this.$route.query.id
       }
       getExchangeInfo(params).then(res => {
-        console.log(res)
         if (res.data) {
           this.storeSelectGoods = [res.data.activitySpecDTO]
           this.$refs.storeGods.dataFrom(this.storeSelectGoods)
@@ -109,6 +108,9 @@ export default {
   computed: {
     isDisabled() {
       return this.$route.query.type === 'ck'
+    },
+    isEdit() {
+      return !!this.$route.query.id
     }
   },
   methods: {
@@ -136,6 +138,7 @@ export default {
       }]
       const pmtRule = {
         ruleList: [{
+          limitAmount: this.params.limitAmount,
           exchangeHb: this.params.exchangeHb,
           exchangePrice: this.params.exchangePrice,
           totalAmount: this.params.totalAmount,
@@ -149,16 +152,34 @@ export default {
         pmtCommList: pmtCommList,
         pmtRule: pmtRule
       }
-      cerateExchange(params).then(res => {
-        console.log(res)
-        if (res.code === '10000') {
-          this.$message({
-            type: 'success',
-            message: '创建成功！'
-          })
-          this.$router.push('/activity/exchangeMallList')
-        }
-      })
+      if (this.$route.query.id) {
+        // var datas = this.paramsBack
+        params.id = this.$route.query.id
+        // datas.activityDetail.ruleList[0].exchangePrice = this.params.exchangePrice
+        // datas.activityDetail.ruleList[0].exchangeHb = this.params.exchangeHb
+        // datas.activityDetail.ruleList[0].limitAmount = this.params.limitAmount
+        // datas.activityDetail.ruleList[0].purchaseLimit = this.params.purchaseLimit ? 1 : 0
+        // params = this.paramsBack
+        editExchange(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              type: 'success',
+              message: '修改成功！'
+            })
+            this.$router.push('/activity/exchangeMallList')
+          }
+        })
+      } else {
+        cerateExchange(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              type: 'success',
+              message: '创建成功！'
+            })
+            this.$router.push('/activity/exchangeMallList')
+          }
+        })
+      }
     },
     returnList() {
       this.$confirm('当前页面数据暂未保存，确定要离开吗?', '操作提示', {

@@ -22,6 +22,15 @@ export function cerateExchange(params) {
   })
 }
 
+// 编辑活动
+export function editExchange(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-integral`,
+    method: 'put',
+    data: params
+  })
+}
+
 // 失效活动
 export function failureExchange(params) {
   return request({
@@ -30,11 +39,19 @@ export function failureExchange(params) {
     data: {}
   })
 }
+// 生效活动
+export function sxExchange(params) {
+  return request({
+    url: `${config.merGoods}/1.0/act-info/effective/${params.id}`,
+    method: 'post',
+    data: {}
+  })
+}
 // 删除活动
 export function deleteExchange(params) {
   return request({
     url: `${config.merGoods}/1.0/act-info/${params.id}`,
-    expmethod: 'delete'
+    method: 'delete'
   })
 }
 
@@ -42,7 +59,7 @@ export function deleteExchange(params) {
 export function getExchangeInfo(params) {
   return request({
     url: `${config.merGoods}/1.0/act-integral/${params.id}`,
-    expmethod: 'get'
+    method: 'get'
   })
 }
 
@@ -51,7 +68,7 @@ export function getExchangeInfo(params) {
 export function addStock(params) {
   return request({
     url: `${config.merGoods}/1.0/act-integral/addStock`,
-    expmethod: 'post',
+    method: 'post',
     data: params
   })
 }
