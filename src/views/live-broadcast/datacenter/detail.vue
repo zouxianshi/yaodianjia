@@ -21,7 +21,7 @@
           <div class="box-list ">
             <p class="nums">
               {{ statistics.totalVisitNum || 0 }}
-              <span>&nbsp;￥</span>
+              <span>&nbsp;</span>
             </p>
             <p>累计观看人数</p>
           </div>
@@ -37,10 +37,11 @@
                 <span>{{ LiveDetails.name }}</span>
               </el-form-item>
               <el-form-item label="直播头像：">
-                <el-avatar
+                <img class="detail_avatar" :src="showImg(LiveDetails.merLogoUrl)" alt="">
+                <!-- <el-avatar
                   size="medium"
                   :src="showImg(LiveDetails.merLogoUrl)"
-                />
+                /> -->
               </el-form-item>
               <el-form-item label="直播主题：">
                 <span>{{ statistics.name }}</span>
@@ -49,10 +50,11 @@
                 <span>{{ statistics.realBeginTime }}</span>
               </el-form-item>
               <el-form-item label="直播封面：">
-                <el-image
+                <img :src="showImg(LiveDetails.coverPicUrl)" class="detail_coverPicUrl">
+                <!-- <el-image
                   style="width:100px;height:100px"
-                  :src="showImg(LiveDetails.coverPicUrl)"
-                />
+                  :src=""
+                /> -->
               </el-form-item>
             </el-form>
           </div>
@@ -89,7 +91,6 @@ export default {
   created() {
     this.getStatistics()
     this.getLiveDetails()
-    this.getLivegoods()
   },
   methods: {
     async getStatistics() {
@@ -114,19 +115,8 @@ export default {
       } catch (error) {
         console.log(error)
       }
-    },
-    // 获取直播商品列表
-    async getLivegoods() {
-      try {
-        const { data } = await liveRequest.getLivegoods({
-          liveId: this.$route.query.id
-        })
-        console.log(data)
-        this.goodsList.push(data)
-      } catch (error) {
-        console.log(error)
-      }
     }
+
   }
 }
 </script>
@@ -182,5 +172,14 @@ export default {
 }
 .info-wrapper {
   padding: 0 120px;
+}
+.detail_avatar{
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+}
+.detail_coverPicUrl{
+  width: 100px;
+  height: 100px;
 }
 </style>
