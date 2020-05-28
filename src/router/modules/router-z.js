@@ -145,7 +145,7 @@ const router = [
         name: 'mate',
         meta: {
           title: '匹配列表',
-          activeMenu: '/goods-manage/examine',
+          activeMenu: '/goods-manage/apply-record',
           noCache: true
         }
       }, {
