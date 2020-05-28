@@ -84,7 +84,7 @@ export default {
         return
       }
       sessionStorage.setItem('types', JSON.stringify(this.chooseTypeList))
-      this.$router.push('/goods-manage/edit')
+      this.$router.push('/goods-manage/apply-record-edit')
     }
   }
 }

@@ -13,15 +13,27 @@ const router = [
     alwaysShow: true,
     children: [
       {
-        path: 'Depot',
+        path: 'depot',
         component: () => import('@/views/goods-manage/depot/list'),
-        name: 'Depot',
+        name: 'depot',
         meta: {
           title: '商品库',
           auth: 'commodity.commodity-lib',
           noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
-      }, {
+      },
+      {
+        path: 'depot-edit',
+        component: () => import('@/views/goods-manage/depot/editDepot'),
+        name: 'depot-edit',
+        meta: {
+          title: '商品库',
+          auth: 'commodity.commodity-lib',
+          noCache: false, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          activeMenu: '/goods-manage/depot'
+        }
+      },
+      {
         path: 'addition',
         component: () => import('@/views/goods-manage/depot/addition'),
         name: 'addition',
@@ -102,7 +114,8 @@ const router = [
           noCache: false,
           activeMenu: '/goods-manage/apply'
         }
-      }, {
+      },
+      {
         path: 'apply-record',
         component: () => import('@/views/goods-manage/new-goods/record'),
         name: 'GoodsRecord',
@@ -110,8 +123,22 @@ const router = [
           auth: 'commodity.commodity-new-record',
           title: '新品申请记录',
           noCache: true
-        }
-      }, {
+        },
+        children: []
+      },
+      {
+        path: 'apply-record-edit',
+        component: () => import('@/views/goods-manage/new-goods/editRecord'),
+        name: 'applyRecordEdit',
+        meta: {
+          auth: 'commodity.commodity-new-record',
+          title: '编辑新品申请记录',
+          noCache: true,
+          activeMenu: '/goods-manage/apply-record'
+        },
+        children: []
+      },
+      {
         path: 'group',
         component: () => import('@/views/goods-manage/group/list'),
         name: 'group',
