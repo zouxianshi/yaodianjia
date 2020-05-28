@@ -44,7 +44,7 @@
                 <span>点击下载</span></button></a>
             </div>
           </li>
-          <li class="yxbj">
+          <!-- <li class="yxbj">
             <div class="m">
               <div class="name">营养保健模板.xls</div>
               <a
@@ -69,10 +69,10 @@
               >
                 <span>点击下载</span></button></a>
             </div>
-          </li>
+          </li> -->
           <li class="qt">
             <div class="m">
-              <div class="name">其它模板.xls</div> <a
+              <div class="name">非药品模板.xls</div> <a
                 :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%85%B6%E4%BB%96%E6%A8%A1%E6%9D%BF.xls?times='+times"
                 download="其它模板.xls"
               ><button
