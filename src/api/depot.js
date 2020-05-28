@@ -106,7 +106,14 @@ export function getImportList(params) {
     data: params
   })
 }
-
+// 导入历史
+export function getImportRecode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/excel/_search`,
+    method: 'post',
+    data: params
+  })
+}
 // 删除匹配
 export function deletePair(params) {
   return request({

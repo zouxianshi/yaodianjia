@@ -108,7 +108,7 @@
           <el-tooltip class="item" effect="dark" placement="top-start">
             <div slot="content">
               循环次数说明
-              <br>循环满减最多循环1000次，比如每满100件10元，最多减10000元
+              <br>循环满减最多循环1000次，比如每满100减10元，最多减10000元
             </div>
             <el-radio :label="0">
               循环满减
