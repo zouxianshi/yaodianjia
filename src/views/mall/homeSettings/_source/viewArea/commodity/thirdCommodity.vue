@@ -48,7 +48,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .va-third-commodity-model {
     &::-webkit-scrollbar{
-      display: none;
+      /*display: none;*/
     }
     .vtcm-box {
       height: 178px;

@@ -1,59 +1,65 @@
 <template>
-  <div class="app-container">
-    <div class="mall-list-model">
-      <el-alert title="微页面新建上限为20个" type="warning" show-icon />
-      <div style="margin: 16px 0;">
-        <el-button type="primary" size="small" :disabled="list.length > 19" @click="() => $router.push('/mall/home-settings')">新建首页</el-button>
-      </div>
-      <div v-loading="loading" class="mlm-table-box">
-        <el-table :data="list" style="width: 100%;" height="calc(100vh - 300px)">
-          <el-table-column prop="name" label="模板名称">
-            <template slot-scope="scope">
-              <span>{{ scope.row.name }} <i v-if="scope.row.isUse === 1" class="el-icon-s-home" style="color: #147de8" /></span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="name" label="商城名称">
-            <template slot-scope="scope">
-              <span>{{ scope.row.title || '-' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="modifyTime" label="最后修改时间" />
-          <el-table-column label="操作" width="140">
-            <template slot-scope="scope">
-              <el-button type="text" @click="onPreview(scope.row)">预览</el-button>
-              <span style="padding: 0 10px;color:#999">|</span>
-              <el-dropdown @command="onDropdown($event,scope.row)">
-                <span class="el-dropdown-link" style="color: #147de8;">
-                  更多<i class="el-icon-arrow-down el-icon--right" />
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="copy">
-                    <el-button type="text">复制</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item command="edit">
-                    <el-button type="text">编辑</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item command="delete">
-                    <el-button type="text" :disabled="scope.row.isUse === 1">删除</el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item command="setHome">
-                    <el-button type="text" :disabled="scope.row.isUse !== 0">设为首页</el-button>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-              <!--<el-button type="primary" size="mini" @click="onPreview(scope.row)">预览</el-button>
-              <el-button type="primary" size="mini" @click="copyHome(scope.row)">复制</el-button>
-              <el-button type="primary" size="mini" @click="() => $router.push(`/mall/home-settings/${scope.row.id}`)">编辑</el-button>
-              <m-delete v-if="scope.row.isUse !== 1" :item="scope.row" @on-update="getData" />
-              <el-button v-if="scope.row.isUse === 0 && scope.row.status === 1" type="primary" size="mini" @click="setHome(scope.row)">设为首页</el-button>-->
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <el-dialog title="效果预览" append-to-body :visible.sync="isPreview" width="740px">
-        <m-preview v-if="isPreview" :dimension-id="dimensionId" @on-close="() => isPreview = false" />
-      </el-dialog>
+  <div class="mall-list-model">
+    <el-alert title="微页面新建上限为20个" type="warning" show-icon />
+    <div style="margin: 16px 0;">
+      <el-button type="primary" size="small" :disabled="list.length > 19" @click="() => $router.push('/mall/home-settings')">新建首页</el-button>
     </div>
+    <div v-loading="loading" class="mlm-table-box">
+      <el-table :data="list" style="width: 100%;" height="calc(100vh - 300px)">
+        <el-table-column prop="name" label="模板名称">
+          <template slot-scope="scope">
+            <span>{{ scope.row.name }} <i v-if="scope.row.isUse === 1" class="el-icon-s-home" style="color: #147de8" /></span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="商城名称">
+          <template slot-scope="scope">
+            <span>{{ scope.row.title || '-' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="modifyTime" label="最后修改时间" />
+        <el-table-column label="操作" width="140">
+          <template slot-scope="scope">
+            <el-button type="text" @click="onPreview(scope.row)">预览</el-button>
+            <span style="padding: 0 10px;color:#999">|</span>
+            <el-dropdown @command="onDropdown($event,scope.row)">
+              <span class="el-dropdown-link" style="color: #147de8;">
+                更多<i class="el-icon-arrow-down el-icon--right" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="copy">
+                  <el-button type="text">复制</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item command="edit">
+                  <el-button type="text">编辑</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item command="delete">
+                  <el-button type="text" :disabled="scope.row.isUse === 1">删除</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item command="setHome">
+                  <el-button type="text" :disabled="scope.row.isUse !== 0">设为首页</el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <!--<el-button type="primary" size="mini" @click="onPreview(scope.row)">预览</el-button>
+            <el-button type="primary" size="mini" @click="copyHome(scope.row)">复制</el-button>
+            <el-button type="primary" size="mini" @click="() => $router.push(`/mall/home-settings/${scope.row.id}`)">编辑</el-button>
+            <m-delete v-if="scope.row.isUse !== 1" :item="scope.row" @on-update="getData" />
+            <el-button v-if="scope.row.isUse === 0 && scope.row.status === 1" type="primary" size="mini" @click="setHome(scope.row)">设为首页</el-button>-->
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <el-dialog title="效果预览" append-to-body :visible.sync="isPreview" width="740px">
+      <m-preview v-if="isPreview" :dimension-id="dimensionId" @on-close="() => isPreview = false" />
+    </el-dialog>
+
+    <el-dialog title="选择模版" append-to-body :visible.sync="isTpl" width="740px">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -68,7 +74,8 @@ export default {
       visible: false,
       loading: false,
       isPreview: false,
-      dimensionId: null
+      dimensionId: null,
+      isTpl: false
     }
   },
   props: {},
@@ -179,4 +186,3 @@ export default {
     }
   }
 </style>
-

@@ -27,6 +27,42 @@ class InnerCtor {
         children: []
       },
       {
+        name: '会员管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('member_manager'),
+        children: [
+          {
+            name: '会员中心',
+            path: '/member/member-center',
+            disabled: this.get('member_manager.member_center')
+          },
+          {
+            name: '会员注册设置',
+            path: '/member/register-setting',
+            disabled: this.get('member_manager.member_register')
+          },
+          {
+            name: '会员反馈',
+            path: '/member/member-feedback/FeedbackList',
+            disabled: this.get('member_manager.member_response')
+          }
+        ]
+      },
+      {
+        name: '渠道管理',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('channel_manager'),
+        children: [
+          {
+            name: '微信公众号',
+            path: '/channel/wx-official-account',
+            disabled: this.get('channel_manager.wechat_public')
+          },
+        ]
+      },
+      {
         name: '商品中心',
         icon: 'icongoods',
         path: '',
@@ -106,8 +142,7 @@ class InnerCtor {
         name: '订单中心',
         icon: 'icongoods',
         path: '/orders-manage',
-        // disabled: this.get('order'),
-        disabled: true,
+        disabled: this.get('order'),
         children: [
           {
             name: `所有订单`,
@@ -143,6 +178,21 @@ class InnerCtor {
           //   path: '/marketing/activity/create',
           //   disabled: this.get('marketing.marketing-create')
           // },
+          // {
+          //   name: '礼品管理',
+          //   path: '/marketings/gift-manage',
+          //   disabled: true
+          // },
+          // {
+          //   name: '活动管理（新）',
+          //   path: '/marketings/activity-manage',
+          //   disabled: true
+          // },
+          {
+            name: '新建活动',
+            path: '/marketing/activity/create',
+            disabled: this.get('marketing.marketing-create')
+          },
           {
             name: '精彩活动',
             path: '/marketing/activity',
@@ -152,6 +202,11 @@ class InnerCtor {
             name: '礼品管理',
             path: '/marketing/gifts',
             disabled: true
+          },
+          {
+            name: '权益设置',
+            path: '/marketing/settings-equity/list',
+            disabled: this.get('marketing.gift-setting')
           },
           // {
           //   name: '拼团活动',

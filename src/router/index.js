@@ -13,7 +13,11 @@ import routeC from './modules/router-c'
 import routeF from './modules/router-f'
 import routeD from './modules/router-d'
 import mall from './modules/mall'
-import { mUsersModule, mHomeModule } from '@merchant/commons'
+import marketings from './modules/marketings'
+import member from './modules/member'
+import channel from './modules/channel'
+import auth from './modules/auth'
+import { mUsersModule } from '@merchant/commons'
 
 // merge component layout module
 const userModule = _.assign(mUsersModule, {
@@ -60,7 +64,13 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/home',
     children: [
-      mHomeModule
+      {
+        path: 'home',
+        component: () => import('@/views/home/index'),
+        name: 'home',
+        hidden: true,
+        meta: { title: '首页', icon: 'home', affix: true }
+      }
     ]
   },
   userModule
@@ -77,7 +87,11 @@ export const asyncRoutes = [
   ...routeC,
   ...routeF,
   ...routeD,
-  ...mall
+  ...mall,
+  ...marketings,
+  ...member,
+  ...channel,
+  ...auth
 ]
 
 const createRouter = () => new Router({

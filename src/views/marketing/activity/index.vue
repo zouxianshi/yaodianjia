@@ -1,32 +1,45 @@
 <template>
-  <div class="app-container ">
-    <div class="activity">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <!-- <el-tab-pane label="会员营销" name="members">
-          <el-row :gutter="20">
-            <el-col v-for="o in members" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-              <card-item :item="o" />
-            </el-col>
-          </el-row>
-        </el-tab-pane>-->
-        <el-tab-pane label="商品促销" name="goodsActivity">
-          <el-row :gutter="20">
-            <el-col
-              v-for="o in goodsActivity"
-              :key="o.value"
-              :xs="24"
-              :sm="12"
-              :md="8"
-              :lg="6"
-              :xl="4"
-            >
-              <card-item :item="o" />
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-        <!-- <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane> -->
-      </el-tabs>
-    </div>
+  <div class="app-container activity">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="商品促销" name="goodsActivity">
+        <el-row :gutter="20">
+          <el-col
+            v-for="o in goodsActivity"
+            :key="o.value"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            :xl="4"
+          >
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="会员营销" name="members">
+        <el-row :gutter="20">
+          <el-col v-for="o in members" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="趣味游戏" name="gamesfun">
+        <el-row :gutter="20">
+          <el-col
+            v-for="o in gamesFun"
+            :key="o.value"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            :xl="4"
+          >
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <!-- <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane> -->
+    </el-tabs>
   </div>
 </template>
 
@@ -39,7 +52,11 @@ import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
 import spellGroup from '@/assets/image/acvity/spell-group.png'
 import share from '@/assets/image/acvity/share.png'
-
+import paymentCourtesy from '@/assets/image/marketings/pay.png'
+// import payImage from '@/assets/image/marketings/pay.png'
+// import getcoupon from '@/assets/image/marketings/getcoupon.png'
+import TurnTable from '@/assets/image/marketings/zhuan.png'
+import SqueeGee from '@/assets/image/marketings/guagua.png'
 export default {
   components: { cardItem },
   /**
@@ -58,8 +75,21 @@ export default {
           value: 'counpCenter',
           lable: '领券中心',
           img: counpCenter,
-          desc:
-            '满减送促销是在一定范围内的商品中选择某几个商品，当这些商品价格总值达到某一条件后可以享受一定的优惠，或由商品赠送某些赠品的促销手段。'
+          createText: '新建优惠券',
+          desc: '',
+          listUrl:
+            '/marketings/activity-manage/coupons/list?code=TA001&name=领券中心',
+          linkUrl:
+            '/marketings/activity-manage/coupons/add?activityTemplateCode=TA001&activityTemplateName=领券中心'
+        },
+        {
+          value: 'paymentCourtesy',
+          lable: '支付有礼',
+          img: paymentCourtesy,
+          desc: '',
+          listUrl:
+            '/marketings/activity-manage/payment-gift/list?code=TC002&name=支付有礼',
+          linkUrl: '/marketings/activity-manage/payment-gift/add'
         }
       ], // 会员营销
       goodsActivity: [
@@ -82,7 +112,7 @@ export default {
           listUrl: '/marketing/activity/list/15',
           linkUrl: '/marketing/activity/aprice-edit',
           desc:
-            '会员消费满足一定的金额或商品件数后，可以通过添加低价换购商品的促销手段，来提升客单价，激活积压库存。'
+            '会员消费满足一定的金额后，可以通过添加低价换购商品的促销手段，来提升客单价，激活积压库存。'
         },
         {
           value: 'limitPreferential',
@@ -116,6 +146,28 @@ export default {
             '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。'
         }
       ], // 商品促销
+      gamesFun: [
+        {
+          value: 'Squeegee',
+          name: 'SqueeGee',
+          lable: '刮刮乐',
+          desc:
+            '',
+          img: SqueeGee,
+          listUrl: '/marketings/activity-manage/turntable/guaList?code=TA004&name=刮刮乐',
+          linkUrl: '/marketings/activity-manage/turntable/add?code=TA004'
+        },
+        {
+          value: 'turntable',
+          name: 'TurnTable',
+          lable: '大转盘',
+          desc:
+            '',
+          img: TurnTable,
+          listUrl: '/marketings/activity-manage/turntable/list?code=TA003&name=大转盘',
+          linkUrl: '/marketings/activity-manage/turntable/add?code=TA003'
+        }
+      ],
       activity: [] // 精彩活动
     }
   },
@@ -132,18 +184,19 @@ export default {
 </script>
 
 <style lang="scss">
-  .app-container {
-    .activity {
-      padding: 0;
-      .el-tabs__header {
-        background: #fff;
-      }
-      .el-tabs__nav-wrap::after {
-        height: 0;
-      }
-      .el-tabs__content {
-      }
-    }
+.app-container.activity {
+  background: #f7f7f7;
+  padding: 0;
+  .el-tabs__header {
+    background: #fff;
+    padding: 0 20px;
+    padding-top: 40px;
   }
-
+  .el-tabs__nav-wrap::after {
+    height: 0;
+  }
+  .el-tabs__content {
+    padding: 0 20px;
+  }
+}
 </style>
