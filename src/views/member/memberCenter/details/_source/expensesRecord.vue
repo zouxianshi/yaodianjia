@@ -1,5 +1,5 @@
 <template>
-  <div style="position:relative;width: 96%;margin: 20px auto 0;">
+  <div class="expenses-models">
     <el-card class="box-card" :body-style="{padding:'0px'}">
       <div class="expenses-record-model">
         <div class="list-owner">
@@ -32,7 +32,7 @@
             <el-table-column prop="totalActualOrderAmount" label="消费金额" align="center" />
           </el-table>
         </div>
-        <div class="pagination">
+        <div v-if="showPage" class="pagination">
           <el-pagination
             background
             layout="prev, pager, next"
@@ -64,6 +64,9 @@ export default {
   computed: {
     user() {
       return sessionStorage.getItem('mem_username')
+    },
+    showPage() {
+      return this.pageInfo.totalCon > this.pageInfo.pageSize
     }
   },
   created() {
@@ -89,29 +92,33 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" >
-  .expenses-record-model {
-    background-color: #fff;height: calc(100vh - 300px);border-radius: 6px;
-    position: relative;padding-bottom: 42px;
-    .box-card {
-      margin-bottom: 20px;
+  .expenses-models{
+    position:relative;width: 96%;margin: 20px auto 0;
+    .return-btn{
+      position: fixed;z-index: 2000;bottom: 35px;transform: translateX(50px);
     }
-    .list-owner{
-      text-align: right;height: 40px;line-height: 40px;margin-right: 2%;
-    }
-    .list-body{
-      width: 96%;margin: 0 auto;
-    }
-    .pagination{
-      text-align: right;position: absolute;bottom: 10px;right: 1%;
-    }
-    .el-table__header tr,
-    .el-table__header th {
-      padding: 0;
-      height: 40px;
-      font-weight: bold;
+    .expenses-record-model {
+      background-color: #fff;height: calc(100vh - 300px);border-radius: 6px;
+      position: relative;padding-bottom: 42px;
+      .box-card {
+        margin-bottom: 20px;
+      }
+      .list-owner{
+        text-align: right;height: 40px;line-height: 40px;margin-right: 2%;
+      }
+      .list-body{
+        width: 96%;margin: 0 auto;
+      }
+      .pagination{
+        text-align: right;position: absolute;bottom: 10px;right: 1%;
+      }
+      .el-table__header tr,
+      .el-table__header th {
+        padding: 0;
+        height: 40px;
+        font-weight: bold;
+      }
     }
   }
-  .return-btn{
-    position: fixed;z-index: 2000;bottom: 35px;transform: translateX(50px);
-  }
+
 </style>

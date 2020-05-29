@@ -100,7 +100,7 @@
             <el-table-column prop="createDate" label="添加时间" />
           </el-table>
         </div>
-        <div class="pagination">
+        <div v-if="showPage" class="pagination">
           <el-pagination
             background
             layout="prev, pager, next"
@@ -112,6 +112,7 @@
         </div>
       </div>
     </el-card>
+    <div class="return-btn"><el-button size="mini" @click="$router.push('/member/member-center/list')">返回列表</el-button></div>
     <m-popBeans-details ref="A" />
   </div>
 </template>
@@ -136,6 +137,11 @@ export default {
       basicInfo: {
       },
       tableData: []
+    }
+  },
+  computed: {
+    showPage() {
+      return this.totalCount > this.searchParams.pageSize
     }
   },
   created() {
@@ -223,6 +229,9 @@ export default {
   .el-table__header th {
     padding: 0;
     height: 40px;
+  }
+  .return-btn{
+
   }
 }
 </style>
