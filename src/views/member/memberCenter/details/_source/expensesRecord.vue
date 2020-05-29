@@ -6,7 +6,7 @@
           会员：{{ user }}
         </div>
         <div class="list-body">
-          <el-table :data="tableData" border style="width: 100%">
+          <el-table :data="tableData" border style="width: 100% ;height: calc(100vh - 300px)" height="calc(100vh - 400px)">
             <el-table-column prop="orderTime" label="消费时间" width="170" align="center" />
             <el-table-column prop="detailList" label="商品清单" align="center">
               <template slot-scope="scope">
@@ -81,6 +81,7 @@ export default {
       }
       queryOrderInfo(params).then(res => {
         this.tableData = res.data.data
+        this.pageInfo.totalCon = res.data.totalCount
       })
     },
     pageChange(e) {
@@ -99,7 +100,7 @@ export default {
     }
     .expenses-record-model {
       background-color: #fff;height: calc(100vh - 300px);border-radius: 6px;
-      position: relative;padding-bottom: 42px;
+      position: relative;overflow: auto;
       .box-card {
         margin-bottom: 20px;
       }
@@ -107,10 +108,10 @@ export default {
         text-align: right;height: 40px;line-height: 40px;margin-right: 2%;
       }
       .list-body{
-        width: 96%;margin: 0 auto;
+       width:98%; margin: 0 auto;
       }
       .pagination{
-        text-align: right;position: absolute;bottom: 10px;right: 1%;
+        text-align: right;margin-top: 10px;
       }
       .el-table__header tr,
       .el-table__header th {

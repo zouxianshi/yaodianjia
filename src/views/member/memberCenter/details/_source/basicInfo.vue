@@ -230,8 +230,5 @@ export default {
     padding: 0;
     height: 40px;
   }
-  .return-btn{
-
-  }
 }
 </style>
