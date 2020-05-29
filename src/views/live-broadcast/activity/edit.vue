@@ -320,15 +320,15 @@ export default {
       ruleForm: {
         name: [{ required: true, message: '请输入直播主题', trigger: 'blur' }],
         beginTime: [{ validator: _checkTime, trigger: 'change' }],
-        adLinkUrl: [
-          { required: true, message: '请输入广告链接地址', trigger: 'blur' }
-        ],
+        // adLinkUrl: [
+        //   { required: true, message: '请输入广告链接地址', trigger: 'blur' }
+        // ],
         activityNotice: [
           { required: true, message: '请输入直播公告', trigger: 'blur' }
         ],
-        adPicUrl: [
-          { required: true, message: '请上传广告位图片', trigger: 'change' }
-        ],
+        // adPicUrl: [
+        //   { required: true, message: '请上传广告位图片', trigger: 'change' }
+        // ],
         coverPicUrl: [
           { required: true, message: '请上传封面', trigger: 'change' }
         ]
