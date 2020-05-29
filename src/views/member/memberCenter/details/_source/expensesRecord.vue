@@ -22,7 +22,13 @@
                 </p>
               </template>
             </el-table-column>
-            <el-table-column prop="totalGoodsNumber" label="数量" width="80" align="center" />
+            <el-table-column label="数量" width="80" align="center">
+              <template slot-scope="scope">
+                <p v-for="(item, index) in scope.row.detailList" :key="index">
+                  {{ item.commodityNumber }}
+                </p>
+              </template>
+            </el-table-column>
             <el-table-column label="消费类型" align="center">
               <template>
                 线上消费
