@@ -134,7 +134,7 @@ export default {
       sessionStorage.setItem('types', JSON.stringify(this.chooseTypeList))
       this.isToEdit = true
       this.$store.dispatch('tagsView/delView', this.$route).then(res => {
-        this.$router.replace('/goods-manage/edit')
+        this.$router.replace('/goods-manage/apply-record-edit')
       })
     }
   }

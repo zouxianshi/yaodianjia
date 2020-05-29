@@ -638,7 +638,7 @@ export default {
     handleEdit(id) {
       this.isToEdit = true
       this.editId = id
-      this.$router.push('/goods-manage/edit?id=' + id + '&backUrl=depot')
+      this.$router.push('/goods-manage/depot-edit?id=' + id + '&backUrl=depot')
     },
     //
     handleDel(row) {
