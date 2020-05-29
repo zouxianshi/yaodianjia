@@ -7,29 +7,29 @@
         </div>
         <div class="list-body">
           <el-table :data="tableData" border style="width: 100%">
-            <el-table-column prop="payTime" label="消费时间" width="170" />
-            <el-table-column prop="detailList" label="商品清单">
+            <el-table-column prop="orderTime" label="消费时间" width="170" align="center" />
+            <el-table-column prop="detailList" label="商品清单" align="center">
               <template slot-scope="scope">
                 <p v-for="(item, index) in scope.row.detailList" :key="index">
                   {{ item.commodityName }}
                 </p>
               </template>
             </el-table-column>
-            <el-table-column prop="detailList" label="单价">
+            <el-table-column prop="detailList" label="单价" align="center">
               <template slot-scope="scope">
                 <p v-for="(item, index) in scope.row.detailList" :key="index">
                   ￥{{ item.commodityPrice }}
                 </p>
               </template>
             </el-table-column>
-            <el-table-column prop="totalGoodsNumber" label="数量" width="80" />
-            <el-table-column label="消费类型">
+            <el-table-column prop="totalGoodsNumber" label="数量" width="80" align="center" />
+            <el-table-column label="消费类型" align="center">
               <template>
                 线上消费
               </template>
             </el-table-column>
-            <el-table-column prop="storeName" label="消费渠道/门店" />
-            <el-table-column prop="totalActualOrderAmount" label="消费金额" />
+            <el-table-column prop="storeName" label="消费渠道/门店" align="center" />
+            <el-table-column prop="totalActualOrderAmount" label="消费金额" align="center" />
           </el-table>
         </div>
         <div class="pagination">
@@ -44,7 +44,7 @@
         </div>
       </div>
     </el-card>
-    <div class="return-btn"><el-button size="mini">返回列表</el-button></div>
+    <div class="return-btn"><el-button size="mini" @click="$router.push('/member/member-center/list')">返回列表</el-button></div>
   </div>
 </template>
 <script>
