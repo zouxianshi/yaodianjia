@@ -376,7 +376,7 @@
             <p
               class="text-right"
               style="font-size:13px"
-            >商品来源：{{ chooseSpecName.length }}{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
+            >商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
             <el-form>
               <el-form-item label="规格设置：">
                 <template>
@@ -384,7 +384,6 @@
                     v-for="(item,index) in specsList"
                     :key="index"
                     v-model="item.isCheck"
-                    :checked="chooseSpecName.indexOf(item.attributeName)>-1"
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.attributeName }}</el-checkbox>

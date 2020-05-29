@@ -411,14 +411,14 @@ const mixin = {
       // })
       getSpecsKey().then(res => {
         if (res.data) {
-          res.data.map(v => {
+          res.data.forEach(v => {
             v['index_' + v.id + '_' + v.attributeName] = ''
-            // v.isCheck = this.basicForm.origin === 1
+            v.isCheck = this.basicForm.origin === 1
           })
           this.specsList = res.data
           this.specsForm.specsData = []
           console.log('--根据一级分类查找规格----')
-          // this.handleAddSpec()
+          this.handleAddSpec()
         }
         if (this.basicForm.id) {
           this._loadSpecsInfo()
@@ -441,9 +441,10 @@ const mixin = {
               if (v.productSpecSkuDTOs) {
                 if (this.dynamicProp.length === 0) {
                   v.productSpecSkuDTOs.map(vs => {
-                    this.specsList.map(sp => {
+                    this.specsList.forEach(sp => {
                       if (sp.attributeName === v.skuKeyName && sp.id !== v.skuKeyId) {
                         v.skuKeyId = sp.id
+                        sp.isCheck = true
                       }
                     })
                     this.dynamicProp.push({
@@ -512,6 +513,7 @@ const mixin = {
                     this.specsList.map(sp => {
                       if (sp.attributeName === v.skuKeyName && sp.id !== v.skuKeyId) {
                         v.skuKeyId = sp.id
+                        sp.isCheck = true
                       }
                     })
                     if (this.dynamicProp.length !== this.specsList.length) {
@@ -578,9 +580,10 @@ const mixin = {
                 if (this.dynamicProp.length === 0 && this.standardNoData) {
                   const data = []
                   v.specSkuList.map(v => {
-                    this.specsList.map(sp => {
+                    this.specsList.forEach(sp => {
                       if (sp.attributeName === v.skuKeyName && sp.id !== v.skuKeyId) {
                         v.skuKeyId = sp.id
+                        sp.isCheck = true
                       }
                     })
                     this.dynamicProp.push({
