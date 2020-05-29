@@ -75,6 +75,16 @@
             <span class="tip">建议上传16：9的图片</span>
           </div>
         </el-form-item>
+        <el-form-item label="直播介绍" prop="liveIntroduce">
+          <el-input
+            v-model="formData.liveIntroduce"
+            type="textarea"
+            :rows="2"
+            show-word-limit
+            maxlength="500"
+            placeholder="请输入公告"
+          />
+        </el-form-item>
         <!-- 关联商品 -->
         <div class="form-title">关联商品</div>
         <el-divider />
@@ -303,6 +313,7 @@ export default {
         merLogoUrl: '',
         merName: '',
         name: '',
+        liveIntroduce: '',
         activityNotice:
           '欢迎来到直播间！平台倡导绿色直播，若直播间出现违法违规行为，请及时举报。为了您的购物安全，请点击直播间“相关商品”官方渠道选购商品。'
       },
