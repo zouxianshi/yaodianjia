@@ -111,7 +111,8 @@ export default {
         ctype: '0',
         currentPage: 1,
         pageSize: 999,
-        merCode: this.merCode
+        merCode: this.merCode,
+        operatorType: 1
       }
       searchActivities(params).then(res => {
         this.couponList = res.data.records

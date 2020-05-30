@@ -396,10 +396,11 @@ export default {
       const searchParams = {
         cname: '',
         ctype: 0,
-        busType: 0,
+        busType: 1,
         currentPage: 1,
         pageSize: 999,
-        beginTime: formatDate(new Date())
+        beginTime: formatDate(new Date()),
+        operatorType: 1
       }
       getCouponList(searchParams).then(res => {
         if (res.data && res.data.records) {
