@@ -149,7 +149,7 @@
             :controls="false"
             style="width:400px"
           />
-          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 20px; font-weight: 500;width: 30px;">％</span>
+          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">％</span>
         </el-form-item>
         <el-form-item label="奖品数量" prop="giftNum">
           <el-input-number
@@ -161,7 +161,7 @@
             :controls="false"
             style="width:400px"
           />
-          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 20px; font-weight: 500;width: 30px;">份</span>
+          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">份</span>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
