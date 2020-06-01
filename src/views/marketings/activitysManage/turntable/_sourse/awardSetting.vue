@@ -36,7 +36,9 @@
           </el-table-column>
           <el-table-column label="奖品数量">
             <template slot-scope="scope">
+              <el-input v-if="scope.row.giftNum===-1" disabled size="mini" style="width:100px" value="无限" />
               <el-input-number
+                v-else
                 v-model="scope.row.giftNum"
                 :disabled="isPageUpdateOrView || isRuning"
                 size="mini"
@@ -54,7 +56,7 @@
               <el-button
                 type="text"
                 size="small"
-                :disabled="isPageUpdateOrView || isRuning"
+                :disabled="scope.$index === 0 || isPageUpdateOrView || isRuning"
                 @click.native.prevent="deleteRow(scope.$index, formsGift.selectedGift)"
               >移除</el-button>
             </template>
@@ -152,11 +154,19 @@
           <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">％</span>
         </el-form-item>
         <el-form-item label="奖品数量" prop="giftNum">
+          <!-- 在这 -->
+          <el-input
+            v-show="ruleForm.giftType === 5"
+            value="无限"
+            disabled
+            style="width:400px"
+          />
           <el-input-number
+            v-show="ruleForm.giftType !== 5"
             v-model="ruleForm.giftNum"
             :precision="0"
             :step="1"
-            :min="1"
+            :min="minNum"
             :max="100000"
             :controls="false"
             style="width:400px"
@@ -193,7 +203,7 @@ export default {
   data() {
     var validategiftNum = (rule, value, callback) => {
       if (
-        (Number(value) === 0 ||
+        (
           ('' + value).trim() === '' ||
           Number(value) > 100000)
       ) {
@@ -203,16 +213,26 @@ export default {
       }
     }
     return {
+      minNum: 1, // 最小礼品数量
       uploadLoading: false,
       dialogVisible: false,
       formsGift: {
-        selectedGift: [] // 已选择的礼品券
+        selectedGift: [
+          {
+            giftContent: '谢谢参与',
+            giftImg: '',
+            giftName: '谢谢参与',
+            giftNum: -1,
+            giftType: 5,
+            winRandom: 1
+          }
+        ] // 已选择的礼品券
       },
       couponList: [],
       ruleForm: {
         giftId: null, // 选择优惠券时的id
         giftType: 1, // 礼品类型
-        giftNum: '', // 礼品数量
+        giftNum: 1, // 礼品数量
         giftName: '', // 礼品名称
         giftContent: '', // 礼品内容
         giftImg: '', // 礼品图片
@@ -224,7 +244,7 @@ export default {
         ],
         giftNum: [
           { required: true, message: '请设置奖品数量', trigger: 'blur' },
-          { validator: validategiftNum, trigger: 'change' }
+          { validator: validategiftNum, trigger: 'blur' }
         ]
       },
       rules: {
@@ -234,7 +254,6 @@ export default {
         giftNum: [
           { required: true, message: '请设置奖品数量', trigger: 'blur' },
           { validator: validategiftNum, trigger: 'change' }
-          // { required: true, message: '请设置奖品数量1~100000', trigger: 'blur' }
         ],
         giftContent: [
           { required: true, message: '请设置奖品内容', trigger: 'blur' }
@@ -348,15 +367,19 @@ export default {
             this.ruleForm.giftId = this.ruleForm.giftContent
             this.ruleForm.giftName = this.ruleForm.giftContent =
               this.ruleForm.giftContent + '海贝'
+          } else if (this.ruleForm.giftType === 5) {
+            this.ruleForm.giftNum = -1
+            this.ruleForm.giftName = this.ruleForm.giftContent
           } else {
             this.ruleForm.giftName = this.ruleForm.giftContent
           }
           this.ruleForm.winRandom = this.ruleForm.winRandom
+          console.log(this.ruleForm)
           that.formsGift.selectedGift.push(_.cloneDeep(that.ruleForm))
           this.ruleForm = {
             giftId: '', // 选择优惠券时的id
             giftType: 1, // 礼品类型
-            giftNum: '', // 礼品数量
+            giftNum: 1, // 礼品数量
             giftName: '', // 礼品名称
             giftContent: '', // 礼品内容
             giftImg: '', // 礼品图片
@@ -375,7 +398,10 @@ export default {
     },
     changeType() {
       var types = this.ruleForm.giftType
+      this.minNum = 1
       if (types === 5) {
+        console.log(this.ruleForm)
+        this.ruleForm.giftNum = 1
         this.ruleForm.giftContent = '谢谢参与'
       } else if (types === 4) {
         this.ruleForm.giftContent = '再来一次'
