@@ -345,7 +345,7 @@ export default {
     save() {
       if (this.checkedCities.length <= 0) {
         this.$message({
-          message: '请至少选择一个',
+          message: '请至少选择1个区域未配置，未配置区域将不支持快递发货！',
           type: 'error',
           duration: 5 * 1000
         })
@@ -498,13 +498,12 @@ export default {
       if (this.cities.length - this.selected.length > 0) {
         this.$message({
           message:
-            '有未配置的区域' +
+            '当前还有' +
             (this.cities.length - this.selected.length) +
-            '个',
+            '个区域未配置，未配置区域将不支持快递发货！',
           type: 'error',
           duration: 5 * 1000
         })
-        return
       }
       const patten = /^\d+(\.\d{0,2})?$/
       let vlidate = true

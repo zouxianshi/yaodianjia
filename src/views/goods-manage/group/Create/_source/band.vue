@@ -1,7 +1,14 @@
 <template>
   <div class="bandGoods">
     <el-tooltip class="item" effect="dark" content="绑定商品" placement="top">
-      <el-button type="primary" circle icon="el-icon-goods" class="band-btn" size="mini" @click="handleShow" />
+      <el-button
+        type="primary"
+        circle
+        icon="el-icon-goods"
+        class="band-btn"
+        size="mini"
+        @click="handleShow"
+      />
     </el-tooltip>
     <el-dialog
       title="分组绑定商品"
@@ -12,14 +19,14 @@
       :close-on-click-modal="false"
     >
       <div style="margin-bottom:10px">
-        <p style="margin-bottom:10px">分组名称：<span v-text="info.name" /></p>
+        <p style="margin-bottom:10px">
+          分组名称：
+          <span v-text="info.name" />
+        </p>
         <!-- <p>分类下面</p> -->
       </div>
       <section @keydown.enter="handleQuery">
-        <div
-          class="search-form"
-          style="margin-top:20px;margin-bottom:10px"
-        >
+        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品信息</span>
             <el-input
@@ -40,7 +47,7 @@
           </div>
           <div class="search-item">
             <el-button type="primary" size="mini" @click="handleQuery">查询</el-button>
-            <el-button type="" size="mini" @click="resetQuery">重置</el-button>
+            <el-button type size="mini" @click="resetQuery">重置</el-button>
           </div>
         </div>
       </section>
@@ -55,10 +62,7 @@
           @select-all="handleSelectionChange"
           @select="handleSelect"
         >
-          <el-table-column
-            type="selection"
-            width="55"
-          />
+          <el-table-column type="selection" width="55" />
           <el-table-column
             prop="orCode"
             align="left"
@@ -77,16 +81,11 @@
                 />
               </template>
               <template v-else>
-                <p class="">暂未上传</p>
+                <p class>暂未上传</p>
               </template>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="name"
-            align="left"
-            min-width="160"
-            label="商品名称"
-          />
+          <el-table-column prop="name" align="left" min-width="160" label="商品名称" />
           <el-table-column
             align="left"
             min-width="120"
@@ -150,8 +149,7 @@ export default {
   computed: {
     ...mapGetters(['name', 'merCode'])
   },
-  created() {
-  },
+  created() {},
   methods: {
     handleQuery() {
       this.listQuery.currentPage = 1
@@ -160,19 +158,21 @@ export default {
     getList() {
       this.loading = true
       this.listQuery.typeId = this.info.id
-      getGoodsList(this.listQuery).then(res => {
-        const { data, totalCount } = res.data
-        if (data) {
-          this.tableData = data
-          setTimeout(() => {
-            this.setChoose()
-          }, 500)
-          this.total = totalCount
-        }
-        this.loading = false
-      }).catch(_ => {
-        this.loading = false
-      })
+      getGoodsList(this.listQuery)
+        .then(res => {
+          const { data, totalCount } = res.data
+          if (data) {
+            this.tableData = data
+            setTimeout(() => {
+              this.setChoose()
+            }, 500)
+            this.total = totalCount
+          }
+          this.loading = false
+        })
+        .catch(_ => {
+          this.loading = false
+        })
     },
     setChoose() {
       this.tableData.forEach(v => {
@@ -181,7 +181,8 @@ export default {
           const findIndex = this.is_choose.findIndex(item => {
             return item.id === v.id
           })
-          if (findIndex === -1) { // 不存在的放入储存的数组中
+          if (findIndex === -1) {
+            // 不存在的放入储存的数组中
             this.is_choose.push(v)
             this.multipleSelection.push(v)
           }
@@ -196,7 +197,8 @@ export default {
         }
       })
     },
-    handleSelectionChange(allList) { // 全选事件
+    handleSelectionChange(allList) {
+      // 全选事件
       // 为了解决翻页之后全选不覆盖上次全选的数据
       this.tableData.map(item => {
         const index = this.multipleSelection.findIndex(mItem => {
@@ -214,7 +216,8 @@ export default {
         }
       })
     },
-    handleSelect(selection, row) { // 单个选择
+    handleSelect(selection, row) {
+      // 单个选择
       const index = this.multipleSelection.findIndex(v => {
         return v.id === row.id
       })
@@ -239,17 +242,17 @@ export default {
     },
     handleSubBand() {
       const data = {
-        'addIds': [],
-        'delIds': [],
-        'empty': true,
-        'merCode': this.merCode,
-        'typeId': this.info.id,
-        'userName': this.name
+        addIds: [],
+        delIds: [],
+        empty: true,
+        merCode: this.merCode,
+        typeId: this.info.id,
+        userName: this.name
       }
       this.multipleSelection.map(v => {
-        if (!v.currentType) {
-          data.addIds.push(v.id)
-        }
+        // if (!v.currentType) {
+        data.addIds.push(v.id)
+        // }
       })
       this.is_choose.map(v => {
         const findIndex = findArray(this.multipleSelection, { id: v.id })
@@ -262,16 +265,22 @@ export default {
         return
       }
       this.subLoading = true
-      bandGoods(data).then(res => {
-        this.$message({
-          message: '绑定商品成功',
-          type: 'success'
+      bandGoods(data)
+        .then(res => {
+          this.$message({
+            message: '绑定商品成功',
+            type: 'success'
+          })
+          this.dialogVisible = false
+          this.$store.dispatch('group/getGroupList', {
+            merCode: this.merCode,
+            id: this.$route.params.id
+          })
+          this.subLoading = false
         })
-        this.dialogVisible = false
-        this.subLoading = false
-      }).catch(_ => {
-        this.subLoading = false
-      })
+        .catch(_ => {
+          this.subLoading = false
+        })
     },
     handleCurrentChange(val) {
       this.listQuery.currentPage = val
@@ -281,13 +290,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.bandGoods{
-    display: inline-block;
-    .headers{
-        margin-bottom: 10px;
-    }
-    .band-btn{
-        margin-right: 10px;
-    }
+.bandGoods {
+  display: inline-block;
+  .headers {
+    margin-bottom: 10px;
+  }
+  .band-btn {
+    margin-right: 10px;
+  }
 }
 </style>

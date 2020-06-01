@@ -34,7 +34,6 @@
               clearable
               placeholder="选择商品分类"
               :show-all-levels="false"
-              @focus="_loadGoodTypeList()"
             />
           </div>
           <div class="search-item">
@@ -60,7 +59,7 @@
               v-model.trim="listQuery.erpOrName"
               size="small"
               style="width:200px"
-              placeholder="商品名称"
+              placeholder="商品名称/编码"
             />
           </div>
           <div class="search-item">
@@ -390,6 +389,7 @@ export default {
   created() {
     this.merCode = this.$store.state.user.merCode
     this.getList()
+    this._loadGoodTypeList()
     this._loadTypeList()
   },
   beforeRouteEnter(to, from, next) {
@@ -531,15 +531,15 @@ export default {
         this.treeData = JSON.parse(JSON.stringify(this.treeData))
         this.treeData.unshift({ name: '全部', id: '' })
         this.treeData.push({ name: '未分组', id: 'weifenzuflag' })
-        this.$nextTick(_ => {
-          $('.el-tree')
-            .find('.el-tree-node')
-            .each(function(i) {
-              $(this)
-                .find('.el-tree-node__content .el-tree-node__expand-icon')
-                .click()
-            })
-        })
+        // this.$nextTick(_ => {
+        //   $('.el-tree')
+        //     .find('.el-tree-node')
+        //     .each(function(i) {
+        //       $(this)
+        //         .find('.el-tree-node__content .el-tree-node__expand-icon')
+        //         .click()
+        //     })
+        // })
       })
       getTypeDimensionList(this.$store.state.user.merCode).then(res => {
         this.groupData = res.data

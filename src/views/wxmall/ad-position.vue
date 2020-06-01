@@ -181,10 +181,11 @@
                 v-model="xForm.linkUrl"
                 size="small"
                 autocomplete="off"
-                style="width: 350px"
+                style="width: 280px"
                 :maxlength="500"
                 placeholder="http:// 或 https://"
               />
+              <el-button icon="el-icon-link" size="small" @click="dialogUrlVisible = true">选择链接</el-button>
             </el-form-item>
             <el-form-item label="启用状态" :label-width="formLabelWidth">
               <el-switch v-model="xForm.status" />
@@ -227,6 +228,16 @@
         >确 定</el-button>
       </div>
     </el-dialog>
+    <el-drawer
+      :wrapper-closable="false"
+      destroy-on-close
+      append-to-body
+      size="600px"
+      :visible.sync="dialogUrlVisible"
+    >
+      <div slot="title">选择链接</div>
+      <m-links-table v-if="dialogUrlVisible" :url="xForm.linkUrl" @on-link="_onLink" />
+    </el-drawer>
   </div>
 </template>
 
@@ -243,6 +254,7 @@ import {
   getADClass
 } from '../../api/wxmall'
 import config from '../../utils/config'
+import mLinksTable from '../mall/homeSettings/_source/settingsArea/_source/linksTable'
 
 export default {
   name: 'ADPosition',
@@ -253,9 +265,9 @@ export default {
         // callback(new Error('请输入链接地址'))
         callback()
       }
-      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-        callback(new Error('链接格式不正确，例：http://111.com'))
-      }
+      // if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+      //   callback(new Error('链接格式不正确，例：http://111.com'))
+      // }
       callback()
     }
     const checkNum = (rule, value, callback) => {
@@ -265,6 +277,7 @@ export default {
       callback()
     }
     return {
+      dialogUrlVisible: false,
       saveLoading: false,
       currentRole: 'adminDashboard',
       // I-01	轮播图
@@ -330,10 +343,16 @@ export default {
       return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
     }
   },
+  components: {
+    mLinksTable
+  },
   created() {
     this.fetchData()
   },
   methods: {
+    _onLink({ url }) {
+      this.xForm.linkUrl = url
+    },
     fetchData() {
       this._queryCenterStore().then(res => {
         if (res.code === '10000' && res.data) {
