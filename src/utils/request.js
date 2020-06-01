@@ -57,6 +57,8 @@ service.interceptors.request.use(
   }
 )
 
+const inj = ['40027']
+
 // response interceptor
 service.interceptors.response.use(
   response => {
@@ -67,11 +69,13 @@ service.interceptors.response.use(
     }
     // 10000为所有接口成功码
     if (res.code !== '10000') {
-      Message({
-        message: res.msg,
-        type: 'error',
-        duration: 5 * 1000
-      })
+      if (!inj.includes(res.code)) {
+        Message({
+          message: res.msg,
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
       return Promise.reject(res || 'Error')
     }
     return Promise.resolve(res)
