@@ -22,6 +22,18 @@
             </div>
           </el-form-item>
         </div>
+        <div class="setting_item">
+          <div class="title">
+            自提订单自动取消时间设置
+          </div>
+          <el-form-item label="">
+            <div class="con">
+              到店支付订单 拍下后
+              <el-input v-model="settingData.deliveryCancelTime" :value="settingData.deliveryCancelTime" class="width80" maxlength="2" placeholder="请输入" size="mini" />
+              天内未到店提货，自动取消订单（设置0天则不自动取消该订单）
+            </div>
+          </el-form-item>
+        </div>
 
         <!-- <div class="setting_item">
           <div class="title">
@@ -60,7 +72,8 @@ export default {
     return {
       settingData: {
         // couponCost: 1,
-        orderCancelTime: 0
+        orderCancelTime: 0,
+        deliveryCancelTime: 0
       }
     }
   },
@@ -74,7 +87,7 @@ export default {
     getData() {
       getOrderSetUp(this.merCode).then(res => {
         if (res.data) {
-          this.settingData = res.data
+          this.settingData = { ...this.settingData, ...res.data }
         }
       })
     },
