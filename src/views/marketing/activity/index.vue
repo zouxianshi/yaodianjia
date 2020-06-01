@@ -34,7 +34,7 @@
             :lg="6"
             :xl="4"
           >
-            <card-item :item="o" />
+            <card-item-close :item="o" />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -45,6 +45,7 @@
 
 <script>
 import cardItem from '../components/card-item'
+import cardItemClose from '../components/card-item-close'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
@@ -55,7 +56,7 @@ import spellGroup from '@/assets/image/acvity/spell-group.png'
 import share from '@/assets/image/acvity/share.png'
 
 export default {
-  components: { cardItem },
+  components: { cardItem, cardItemClose },
   /**
    * value => key 这里建议跟后端的key保持一致
    * lable: '活动标题
@@ -132,10 +133,13 @@ export default {
       ], // 商品促销
       haibeiActivity: [
         {
+
           createText: '添加商品',
           name: 'ReduceGift',
-          lable: '兑换商城',
+          lable: '商品',
           desc: '',
+          titles: '兑换商城',
+          isclose: false,
           img: haibei,
           listUrl: '/activity/exchangeMallList',
           linkUrl: '/activity/exchangeMallAdd'
