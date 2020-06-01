@@ -38,6 +38,21 @@
           </el-col>
         </el-row>
       </el-tab-pane>
+      <el-tab-pane label="海贝营销" name="haibeiActivity">
+        <el-row :gutter="20">
+          <el-col
+            v-for="o in haibeiActivity"
+            :key="o.value"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            :xl="4"
+          >
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
       <!-- <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane> -->
     </el-tabs>
   </div>
@@ -48,6 +63,7 @@ import cardItem from '../components/card-item'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
+import haibei from '@/assets/image/acvity/haibei.png'
 import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
 import spellGroup from '@/assets/image/acvity/spell-group.png'
@@ -168,6 +184,17 @@ export default {
           linkUrl: '/marketings/activity-manage/turntable/add?code=TA003'
         }
       ],
+      haibeiActivity: [
+        {
+          createText: '添加商品',
+          name: 'ReduceGift',
+          lable: '兑换商城',
+          desc: '',
+          img: haibei,
+          listUrl: '/activity/exchangeMallList',
+          linkUrl: '/activity/exchangeMallAdd'
+        }
+      ], // 积分营销
       activity: [] // 精彩活动
     }
   },
