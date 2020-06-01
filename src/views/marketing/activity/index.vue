@@ -63,6 +63,7 @@ import cardItem from '../components/card-item'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
+import haibei from '@/assets/image/acvity/haibei.png'
 import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
 import spellGroup from '@/assets/image/acvity/spell-group.png'
@@ -189,7 +190,7 @@ export default {
           name: 'ReduceGift',
           lable: '兑换商城',
           desc: '',
-          img: reduceGift,
+          img: haibei,
           listUrl: '/activity/exchangeMallList',
           linkUrl: '/activity/exchangeMallAdd'
         }
