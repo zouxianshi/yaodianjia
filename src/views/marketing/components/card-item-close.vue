@@ -3,7 +3,16 @@
     <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item, 'list')" />
     <div class="activity-bottom">
       <div class="activity-header">
-        <div class="title">{{ item.lable }}</div>
+        <div class="title">
+          <span class="title-span">{{ item.titles }}</span>
+          <el-switch
+            v-model="item.isclose"
+            style="vertical-algin: middle"
+            active-color="#5677fc"
+            inactive-color="#a7a5a6"
+            @change="changeState"
+          />
+        </div>
         <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
           <div class="sub-title">{{ item.desc || '' }}</div>
         </el-tooltip>
@@ -61,6 +70,10 @@ export default {
     onShare(type) {
       console.log('我是分享页面---------')
       this.$refs.previewDialog.open(type)
+    },
+    // 关闭、开启活动
+    changeState() {
+      console.log(this.item)
     }
   }
 }
@@ -89,8 +102,11 @@ export default {
     padding-bottom: 6px;
     .activity-header {
       .title {
-        font-size: 16px;
+        font-size: 16px;text-align: center;line-height: 20px;
         color: rgba(0, 0, 0, 0.85);
+        .title-span{
+          line-height: 20px;vertical-align: bottom;margin-right: 10px;height: 20px;
+        }
       }
       .sub-title {
         color: rgba(0, 0, 0, 0.65);

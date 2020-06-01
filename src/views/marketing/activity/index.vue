@@ -49,7 +49,7 @@
             :lg="6"
             :xl="4"
           >
-            <card-item :item="o" />
+            <card-item-close :item="o" />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -60,6 +60,7 @@
 
 <script>
 import cardItem from '../components/card-item'
+import cardItemClose from '../components/card-item-close'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
@@ -74,7 +75,7 @@ import paymentCourtesy from '@/assets/image/marketings/pay.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
 export default {
-  components: { cardItem },
+  components: { cardItem, cardItemClose },
   /**
    * value => key 这里建议跟后端的key保持一致
    * lable: '活动标题
@@ -186,10 +187,13 @@ export default {
       ],
       haibeiActivity: [
         {
+
           createText: '添加商品',
           name: 'ReduceGift',
-          lable: '兑换商城',
+          lable: '商品',
           desc: '',
+          titles: '兑换商城',
+          isclose: false,
           img: haibei,
           listUrl: '/activity/exchangeMallList',
           linkUrl: '/activity/exchangeMallAdd'
