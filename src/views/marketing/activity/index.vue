@@ -38,6 +38,21 @@
           </el-col>
         </el-row>
       </el-tab-pane>
+      <el-tab-pane label="海贝营销" name="haibeiActivity">
+        <el-row :gutter="20">
+          <el-col
+            v-for="o in haibeiActivity"
+            :key="o.value"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            :xl="4"
+          >
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
       <!-- <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane> -->
     </el-tabs>
   </div>
@@ -168,6 +183,17 @@ export default {
           linkUrl: '/marketings/activity-manage/turntable/add?code=TA003'
         }
       ],
+      haibeiActivity: [
+        {
+          createText: '添加商品',
+          name: 'ReduceGift',
+          lable: '兑换商城',
+          desc: '',
+          img: reduceGift,
+          listUrl: '/activity/exchangeMallList',
+          linkUrl: '/activity/exchangeMallAdd'
+        }
+      ], // 积分营销
       activity: [] // 精彩活动
     }
   },
