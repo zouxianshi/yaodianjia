@@ -168,10 +168,9 @@ export default {
     },
     // 导出会员
     exportTabel() {
-      var params = {
-        pageSize: 100000,
-        currentPage: 1
-      }
+      var params = _.cloneDeep(this.paramsBac)
+      params.pageSize = 100000
+      params.currentPage = 1
       exportMembers(params).then(res => {
         if (res.code === '10000') {
           this.$alert(
