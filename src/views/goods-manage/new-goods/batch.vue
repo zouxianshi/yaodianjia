@@ -35,7 +35,7 @@
           <li class="zxy">
             <div class="m">
               <div class="name">中西医药模板.xls</div> <a
-                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BF.xls?times='+times"
+                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BFnew.xls?times='+times"
                 download="中西医药模板.xls"
               ><button
                 type="button"
