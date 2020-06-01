@@ -15,8 +15,8 @@
     <div class="search-form">
       <div class="search-item">
         <div class="search-item">
-          <span class="label-name" style="width:100px">优惠券状态：</span>
-          <el-select v-model="region" placeholder="优惠券状态">
+          <span class="label-name" style="width:100px">优惠券类型：</span>
+          <el-select v-model="region" placeholder="优惠券类型">
             <el-option label="全部" value />
             <el-option label="未开始" value="2" />
             <el-option label="进行中" value="1" />
@@ -96,7 +96,7 @@
           slot-scope="scope"
         >{{ scope.row.timeLimit? scope.row.timeLimit.replace(/,/," 到 ") : scope.row.timeLimit }}</template>
       </el-table-column>
-      <el-table-column key="11" prop="name" label="优惠券状态" min-width="100" align="center">
+      <el-table-column key="11" prop="name" label="优惠券类型" min-width="100" align="center">
         <template
           slot-scope="scope"
         >
