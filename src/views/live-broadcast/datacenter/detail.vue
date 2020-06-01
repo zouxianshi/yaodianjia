@@ -14,7 +14,7 @@
           </div>
           <div class="box-list">
             <p class="nums">{{ statistics.totalOrderAmount || 0 }}</p>
-            <p>总金额金额</p>
+            <p>总成交金额</p>
           </div>
         </el-card>
         <el-card class="box-card flex-center " style="width: 300px; height: 130px;">
