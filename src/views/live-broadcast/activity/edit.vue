@@ -319,7 +319,7 @@ export default {
       },
       ruleForm: {
         name: [{ required: true, message: '请输入直播主题', trigger: 'blur' }],
-        beginTime: [{ validator: _checkTime, trigger: 'change' }],
+        beginTime: [{ required: true, validator: _checkTime, trigger: 'change' }],
         // adLinkUrl: [
         //   { required: true, message: '请输入广告链接地址', trigger: 'blur' }
         // ],

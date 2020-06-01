@@ -11,7 +11,7 @@
     </el-card>
     <div class="live-titles">
       <h1> 套餐介绍</h1>
-      <p> <span class="el-icon-phone-outline" /> 咨询电话：13107318388 </p>
+      <p> <span class="el-icon-phone-outline" /> 咨询电话：13107318388 17608462178 18474138819</p>
     </div>
     <div class="live-package clearfix">
       <el-col v-for="(o, index) in 1" :key="o" :xs="1" :sm="5" :md="7" :lg="6" :xl="4" :offset="index > 0 ? 1 : 0">
