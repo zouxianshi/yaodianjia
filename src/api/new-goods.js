@@ -8,7 +8,22 @@ export function setGoodsAdd(params) {
     data: params
   })
 }
-
+// 新增单个商品信息（一键提交所有数据）
+export function setGoodsAddALL(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/create-one`,
+    method: 'post',
+    data: params
+  })
+}
+// 新增单个商品信息（一键提交所有数据）
+export function getGoodsAddALL(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/query-one`,
+    method: 'post',
+    data: params
+  })
+}
 // 更新商品基本信息
 export function updateBasicInfo(params) {
   return request({

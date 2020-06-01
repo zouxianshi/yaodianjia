@@ -191,6 +191,7 @@
                           :value="item.value"
                         />
                       </el-select>
+                      {{ basicForm.unit }}
                     </el-form-item>
                     <el-form-item label="关键字：" prop="keyWord">
                       <el-input
@@ -358,7 +359,7 @@
                           :false-label="0"
                         >含麻黄碱</el-checkbox>
                         <el-checkbox
-                          v-model="basicForm.hasEphedrine"
+                          v-model="basicForm.needId"
                           :true-label="1"
                           :false-label="0"
                         >需要身份证</el-checkbox>
@@ -379,7 +380,7 @@
             >商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
             <el-form>
               <el-form-item label="规格设置：">
-                <template>
+                <!-- <template>
                   <el-checkbox
                     v-for="(item,index) in specsList"
                     :key="index"
@@ -387,26 +388,29 @@
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.attributeName }}</el-checkbox>
-                </template>
-                <!-- <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0"> -->
-                <!-- <template v-if="dynamicProp.length>0">
+                </template> -->
+                {{ specsList }}1111111111222
+                {{ editSpecsData }}333333
+                {{ chooseSpecName }}
+                <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
+                  <template v-if="dynamicProp.length>0">
                     <el-checkbox
                       v-for="(item,index) in specsList"
                       :key="index"
-                      :checked="chooseSpecName.indexOf(item.attributeName)>-1"
+                      :checked="item.isCheck"
                       :disabled="is_query"
                       @change="handleSpecsChange(item)"
-                    >{{ item.attributeName }}</el-checkbox>
-                </template>-->
-                <!-- </template> -->
-                <!-- <template v-else-if="basicForm.origin===2&&basicForm.id">
+                    >{{ item.attributeName }}{{ item.isCheck }}</el-checkbox>
+                  </template>
+                </template>
+                <template v-else-if="basicForm.origin===2&&basicForm.id">
                   <el-checkbox
                     v-for="(item,index) in specsList"
                     :key="index"
                     v-model="item.isCheck"
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
-                  >{{ item.attributeName }}</el-checkbox>
+                  >{{ item.attributeName }}3</el-checkbox>
                 </template>
                 <template v-else>
                   <el-checkbox
@@ -416,7 +420,7 @@
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.name }}</el-checkbox>
-                </template>-->
+                </template>
               </el-form-item>
               <el-form-item label="规格信息：">
                 <template v-if="basicForm.origin===1">
@@ -1038,7 +1042,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button size="small" @click="typeVisible = false">取 消</el-button>
-          <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
+          <el-button v-loading="subLoading" type="primary" size="small" @click="handleSaveType">确 定</el-button>
         </span>
       </el-dialog>
       <edit-group
@@ -1061,37 +1065,91 @@
       >{{ step===3?'保存':"下一步" }}</el-button>
       </div>-->
       <div class="action-wapper">
+        <!-- :loading="subLoading" -->
         <el-button v-if="!is_query" size="small" @click="backStep">取 消</el-button>
         <el-button
-          v-if="!is_query"
-          :loading="subLoading"
+          v-if="!is_query && !is_state"
           size="small"
           type="primary"
           style="width:70px;margin-right: 10px;"
           @click="nextStep"
         >保 存</el-button>
+        <el-button
+          v-if="is_state"
+          size="small"
+          type="primary"
+          style="width:70px;margin-right: 10px;"
+          @click="handleAudit(1)"
+        >通 过</el-button>
+        <el-button
+          v-if="is_state"
+          size="small"
+          type="danger"
+          style="width:70px;margin-right: 10px;"
+          @click="handleAudit(0)"
+        >驳 回</el-button>
         <el-button v-if="is_query" size="small" @click="goBackUrl">关 闭</el-button>
       </div>
+      <el-dialog
+        title="选择驳回原因"
+        append-to-body
+        close-on-click-modal
+        :visible.sync="rejectVisible"
+        width="30%"
+      >
+        <div class="modal-body">
+          <el-form
+            ref="rejectForm"
+            :model="rejectForm"
+            :rules="rules"
+            label-width="100px"
+            size="small"
+          >
+            <el-form-item label="选择原因" prop="id">
+              <el-select v-model="rejectForm.id" placeholder>
+                <el-option label="该商品不适合销售" value="1" />
+                <el-option label="商品信息不够规范合格" value="2" />
+                <el-option label="其他原因" value="3" />
+              </el-select>
+            </el-form-item>
+            <div v-show="rejectForm.id==='3'">
+              <el-form-item label="驳回原因" prop="reason">
+                <el-input
+                  v-model="rejectForm.reason"
+                  maxlength="127"
+                  show-word-limit
+                  placeholder="输入原因"
+                  type="textarea"
+                  :rows="2"
+                />
+                <span v-show="is_err" class="tip">请填写驳回原因</span>
+              </el-form-item>
+            </div>
+          </el-form>
+        </div>
+        <span slot="footer">
+          <el-button type="primary" size="small" @click="handleReject">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
 <script>
 import Tinymce from '@/components/Tinymce'
 import vueUploadImg from '@/components/ImgUpload'
+import { setAuditGoods } from '@/api/examine'
 import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
 import config from '@/utils/config'
 import { mapGetters } from 'vuex'
 import {
   getUnit,
   getMetering,
-  setGoodsAdd,
+  setGoodsAddALL,
   updateBasicInfo,
   getBrandList,
   saveImg,
   saveGoodsDetails,
-  getBasicGoodsInfo,
-  getGoodsImgAry,
-  getGoodsDetails
+  getGoodsAddALL
 } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
@@ -1177,6 +1235,15 @@ export default {
       }
     }
     return {
+      rejectVisible: false, // 驳回弹框
+      rejectForm: {
+        id: '',
+        reason: ''
+      },
+      rules: {
+        id: [{ required: true, message: '请选择驳回原因', trigger: 'blur' }]
+      },
+      is_err: false,
       step: 1,
       chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组
@@ -1194,6 +1261,7 @@ export default {
       loading: false,
       basicLoading: false,
       basicForm: {
+        weight: '', // 商品总量，单位g
         approvalNumber: '', // 批准文号
         brandId: '', // 商品品牌id
         brandName: '', // 品牌名称
@@ -1201,6 +1269,7 @@ export default {
         drugType: '', // drugType 药品类型
         freightType: 0, // 运输属性运输属性（0常温，1冷藏，2冰冻）
         hasEphedrine: 0, // 包含麻黄碱，0-不包含，1-包含
+        needId: 0, // 是否需要身份证，0-不需要，1-需要
         intro: '', // 商品说明
         isEasyBreak: 0, // 是否易碎，0-否，1-是
         isInsurance: 0, // 是否医保支持,0-不支持，1-支持
@@ -1211,7 +1280,7 @@ export default {
         name: '', // 商品名
         produceOrigin: '', // 产地
         unit: '', // 规格
-        typeId: '',
+        typeId: '', // 所属分类ID
         long: '',
         height: '',
         width: '',
@@ -1263,6 +1332,7 @@ export default {
       drug: [], // 剂型
       uploadIndex: 0,
       is_query: false, // 是否为查看
+      is_state: false, // 是否为审批
       backUrl: '',
       subLoading: false,
       subLoading2: false,
@@ -1319,33 +1389,10 @@ export default {
     }
   },
   mounted() {
-    this.basicLoading = true
+    // this.basicLoading = true
   },
   created() {
-    if (!this.$route.query.id) {
-      // 如果是编辑
-      const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
-      this.chooseTypeList = JSON.parse(data)
-    } else {
-      this.basicForm.id = this.$route.query.id
-    }
-    this.is_query = this.$route.query.type === 'query'
-    this.backUrl = this.$route.query.backUrl
-    if (this.is_query) {
-      sessionStorage.setItem('editId', '')
-      sessionStorage.setItem('editIsQuery', this.is_query)
-    } else {
-      sessionStorage.setItem('editIsQuery', '')
-      sessionStorage.setItem('editId', this.$route.query.id)
-    }
-
-    this.getTypeListData()
-      .then(res => {
-        this._loadBasicInfo()
-      })
-      .catch(_ => {
-        this._loadBasicInfo()
-      })
+    this._loadSpces() // 获取规格
     this._loadTypeList() // 获取分组
     this._loadBrandList({
       pageSize: 30,
@@ -1354,23 +1401,40 @@ export default {
     this._loadUnit() // 加载单位
     // chooseTypeList不为空且第一个为中西药品才有必要加载
     this._loadMetering() // 加载剂型
-
-    setTimeout(() => {
-      this.$nextTick(() => {
-        this._loadGoodsDetails()
-        this._loadGoodsImgAry()
-      })
-    }, 1200)
-    setTimeout(() => {
-      this.$nextTick(() => {
-        // this.specsForm.specs = []
-        try {
-          this._loadSpces() // 获取规格
-        } catch (error) {
-          console.log('###########', error)
-        }
-      })
-    }, 1000)
+    if (!this.$route.query.id) {
+      // 新建
+      const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
+      this.chooseTypeList = JSON.parse(data)
+    } else {
+      this.basicForm.id = this.$route.query.id
+      this.getDataAll()
+      // 基本信息
+    //   this.getTypeListData()
+    //   .then(res => {
+    //     this._loadBasicInfo()
+    //   })
+    //   .catch(_ => {
+    //     this._loadBasicInfo()
+    //   })
+    //   setTimeout(() => {
+    //   this.$nextTick(() => {
+    //     // 加载商品说明
+    //     this._loadGoodsDetails()
+    //      // 加载商品图片
+    //     this._loadGoodsImgAry()
+    //   })
+    // }, 1200)
+    }
+    this.is_query = this.$route.query.type === 'query'
+    this.is_state = this.$route.query.state === 'check'
+    this.backUrl = this.$route.query.backUrl
+    // if (this.is_query) {
+    //   sessionStorage.setItem('editId', '')
+    //   sessionStorage.setItem('editIsQuery', this.is_query)
+    // } else {
+    //   sessionStorage.setItem('editIsQuery', '')
+    //   sessionStorage.setItem('editId', this.$route.query.id)
+    // }
     // this.pageLoading = this.$loading({
     //   lock: true,
     //   text: '数据初始化中...',
@@ -1379,6 +1443,90 @@ export default {
     // })
   },
   methods: {
+    // 一键获取信息
+    getDataAll() {
+      const params = {
+        commodityId: this.$route.query.id,
+        merCode: this.merCode
+      }
+      getGoodsAddALL(params)
+        .then(res => {
+          this._loadGoodsImgAry(res.data.imgList)
+          this._loadSpecs(res.data.specList)
+          this._loadBasicInfo(res.data.commDTO)
+          this._loadGoodsDetails(res.data.detailDTO.content)
+        })
+    },
+    // 驳回原因
+    handleReject() {
+      let reason = ''
+      if (!this.rejectForm.id) {
+        this.$message({
+          message: '请选择驳回原因',
+          type: 'error'
+        })
+        return
+      }
+      if (this.rejectForm.id === '1') {
+        reason = '该商品不适合销售'
+      } else if (this.rejectForm.id === '2') {
+        reason = '商品信息不够规范合格'
+      } else {
+        reason = this.rejectForm.reason
+      }
+      const data = {
+        auditReason: reason,
+        auditStatus: '0',
+        ids: [this.$route.query.id],
+        userName: this.name
+      }
+      if (this.rejectForm.id === '3') {
+        if (!data.auditReason) {
+          this.is_err = true
+          return
+        } else {
+          this.is_err = false
+          this._AuditRequest(data, false)
+        }
+      } else {
+        this.rejectForm.id = ''
+        this._AuditRequest(data, false)
+      }
+    },
+    // 通过 或 驳回
+    handleAudit(type) {
+      if (type === 1) {
+        const data = {
+          auditReason: '',
+          auditStatus: type,
+          ids: [this.$route.query.id],
+          userName: this.name
+        }
+        this._AuditRequest(data)
+      } else {
+        this.rejectVisible = true
+      }
+    },
+    // 审核
+    _AuditRequest(data, state) {
+      // 审核请求
+      this.subLoading = true
+      setAuditGoods(data)
+        .then(res => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.rejectVisible = false
+          this.rejectForm.id = ''
+          this.rejectForm.reason = ''
+          this.$router.go(-1)
+        })
+        .catch(_ => {
+          this.subLoading = false
+        })
+    },
+    // 定位
     onScroll() {
       const scrollTop = this.$refs.appContaniner.scrollTop
       if (scrollTop <= 1250) {
@@ -1389,17 +1537,20 @@ export default {
         this.step = 3
       }
     },
+    // 富文本渲染染成
     tinymceLoad() {
       // 富文本渲染染成
       if (this.pageLoading) {
         this.pageLoading.close()
       }
     },
+    // 锁定定位楼梯
     handleGoStep(val) {
       console.log('val', val)
       this.step = val
       this.jump('#step' + val)
     },
+    // 滚动到指定节点
     jump(domId) {
       this.$el.querySelector(domId).scrollIntoView({
         // 滚动到指定节点
@@ -1407,6 +1558,7 @@ export default {
         behavior: 'smooth' // 值有auto、instant,smooth，缓动动画（当前是慢速的）
       })
     },
+    // 请选择所属品牌
     handleBrandChange(val) {
       console.log('handleBrandChange-------', val)
       const index = this.brandList.findIndex(item => {
@@ -1417,6 +1569,7 @@ export default {
         this.basicForm.brandId = val
       }
     },
+    // 清楚选择所属品牌
     handleBrandClear(val) {
       console.log('handleBrandChange-------handleBrandClear', val)
       this.basicForm.brandName = ''
@@ -1426,8 +1579,8 @@ export default {
         currentPage: 1
       })
     },
+    // 加载单位
     _loadUnit() {
-      // 加载单位
       getUnit().then(res => {
         const { data } = res
         if (data) {
@@ -1440,8 +1593,8 @@ export default {
         }
       })
     },
+    // 加载剂型
     _loadMetering() {
-      // 加载剂型
       getMetering().then(res => {
         const { data } = res
         if (data) {
@@ -1454,8 +1607,8 @@ export default {
         }
       })
     },
+    // 查询分类和分组的父类
     _loadgroupGather(type, ids) {
-      // 查询分类和分组的父类
       const data = {
         ids: ids,
         type: type,
@@ -1499,127 +1652,115 @@ export default {
         console.log('chooseGroup', this.chooseGroup)
       })
     },
-    _loadBasicInfo() {
-      // 加载基本信息
-      if (!this.$route.query.id) {
-        this.basicLoading = false
-        return
-      }
+    // 加载基本信息
+    _loadBasicInfo(val) {
       // this.subLoading = true
-      getBasicGoodsInfo(this.$route.query.id, this.merCode)
-        .then(res => {
-          // 分组处理
-          this._loadgroupGather('1', [res.data.typeId])
-          if (res.data.groupIds && res.data.groupIds.length > 0) {
-            this._loadgroupGather('2', res.data.groupIds)
-          }
-          const { data } = res
-          if (!data.typeId) {
-            const findIndex = findArray(this.typeList, { id: data.firstTypeId })
-            if (findIndex > -1) {
-              this.chooseTypeList = [
-                {
-                  id: this.typeList[findIndex].id,
-                  name: this.typeList[findIndex].name
-                }
-              ]
-              if (data.secondTypeId) {
-                const row = this.typeList[findIndex].children
-                const findSecIndex = findArray(row, { id: data.secondTypeId })
-                if (findSecIndex > -1) {
-                  this.chooseTypeList.push({
-                    id: row[findSecIndex].id,
-                    name: row[findSecIndex].name
-                  })
-                }
-              }
+      // 分组处理
+      this._loadgroupGather('1', [val.typeId])
+      if (val.groupIds && val.groupIds.length > 0) {
+        this._loadgroupGather('2', val.groupIds)
+      }
+      const data = val
+      console.log('22222222222222222222222222222222')
+      console.log(val)
+      if (!data.typeId) {
+        const findIndex = findArray(this.typeList, { id: data.firstTypeId })
+        if (findIndex > -1) {
+          this.chooseTypeList = [
+            {
+              id: this.typeList[findIndex].id,
+              name: this.typeList[findIndex].name
+            }
+          ]
+          if (data.secondTypeId) {
+            const row = this.typeList[findIndex].children
+            const findSecIndex = findArray(row, { id: data.secondTypeId })
+            if (findSecIndex > -1) {
+              this.chooseTypeList.push({
+                id: row[findSecIndex].id,
+                name: row[findSecIndex].name
+              })
             }
           }
-          // // 药品类型处理 如果默认为3直接设置为空
-          // if (data.drugType && data.drugType > 2) {
-          //   data.drugType = ''
-          // }
-          // 有限期处理
-          if (data.expireDays === -1) {
-            this.expireDays = -1
-          } else {
-            this.expireDays = 1
-            data.days = data.expireDays
-            this.timeTypes = '3'
-          }
-          const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
-          const findDrugIndex = findArray(this.drug, { value: data.dosageForm })
-          if (this.basicForm.origin === 2) {
-            // 自建商品
-            // 处理批量自建的问题
-            if (findUnitIndex === -1) {
-              data.unit = ''
-            }
-            if (findDrugIndex === -1) {
-              data.dosageForm = ''
-            }
-          }
+        }
+      }
+      // // 药品类型处理 如果默认为3直接设置为空
+      // if (data.drugType && data.drugType > 2) {
+      //   data.drugType = ''
+      // }
+      // 有限期处理
+      if (data.expireDays === -1) {
+        this.expireDays = -1
+      } else {
+        this.expireDays = 1
+        data.days = data.expireDays
+        this.timeTypes = '3'
+      }
+      const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
+      const findDrugIndex = findArray(this.drug, { value: data.dosageForm })
+      if (this.basicForm.origin === 2) {
+        // 自建商品
+        // 处理批量自建的问题
+        if (findUnitIndex === -1) {
+          data.unit = ''
+        }
+        if (findDrugIndex === -1) {
+          data.dosageForm = ''
+        }
+      }
 
-          // 长宽高处理
-          if (data.packStandard) {
-            const packStandard = data.packStandard.split('*')
-            data.long = packStandard[0] === 'undefined' ? '' : packStandard[0]
-            data.width = packStandard[1] === 'undefined' ? '' : packStandard[1]
-            data.height = packStandard[2] === 'undefined' ? '' : packStandard[2]
-          }
-          // 赋值值
-          this.basicForm = data
-          this.$refs.editor.setContent(this.basicForm.intro)
-          this.basicLoading = false
-          // this.subLoading = false
-        })
-        .catch(_ => {
-          this.basicLoading = false
-          // this.subLoading = false
-        })
+      // 长宽高处理
+      if (data.packStandard) {
+        const packStandard = data.packStandard.split('*')
+        data.long = packStandard[0] === 'undefined' ? '' : packStandard[0]
+        data.width = packStandard[1] === 'undefined' ? '' : packStandard[1]
+        data.height = packStandard[2] === 'undefined' ? '' : packStandard[2]
+      }
+      // 赋值值
+      this.basicForm = data
+      this.$refs.editor.setContent(this.basicForm.intro)
+      this.basicLoading = false
+      // this.subLoading = false
     },
-    _loadGoodsImgAry() {
-      // 加载商品图片
-      const id = this.basicForm.id
-      if (id) {
-        getGoodsImgAry(id).then(res => {
-          if (res.data) {
-            const fileList = []
-            res.data.forEach((v, index) => {
-              const item = {
-                imgUrl: this.showImg(v.picUrl),
-                picUrl: v.picUrl
-              }
-              fileList.push(item)
-            })
-            this.fileList = fileList
-            this.isHasImg = fileList.length > 0
+    // 加载商品图片
+    _loadGoodsImgAry(val) {
+      if (val) {
+        const fileList = []
+        val.forEach((v, index) => {
+          const item = {
+            imgUrl: this.showImg(v.picUrl),
+            picUrl: v.picUrl
           }
+          fileList.push(item)
         })
+        this.fileList = fileList
+        this.isHasImg = fileList.length > 0
+        console.log(this.fileList)
       }
     },
-    _loadGoodsDetails() {
-      // 加载商品详情
-      const id = this.basicForm.id
-      this.$refs['details-ty'].destroyTinymce() // 先销毁
-      getGoodsDetails(id)
-        .then(res => {
-          if (res.data) {
-            this.goodsIntro.content = res.data.content
-          }
-          this.$refs['details-ty'].init() // 再初始化
-        })
-        .catch(_ => {
-          this.$refs['details-ty'].init()
-        })
+    // 加载商品详情
+    _loadGoodsDetails(val) {
+      this.goodsIntro.content = val
+      // this.$refs['details-ty'].destroyTinymce() // 先销毁
+      // getGoodsDetails(id)
+      //   .then(res => {
+      //     if (res.data) {
+      //       this.goodsIntro.content = res.data.content
+      //     }
+      //     this.$refs['details-ty'].init() // 再初始化
+      //   })
+      //   .catch(_ => {
+      //     this.$refs['details-ty'].init()
+      //   })
     },
+    // 图片排序
     handleSortEnd(val) {
-      // 图片排序
       this.fileList = val
       if (this.fileList.length > 0) {
         // console.log('1111')
       }
     },
+    // 上传橱窗图片
     handleImgSuccess(res, fileList, index) {
       if (res.code === '10000') {
         if (!this.fileList[index]) {
@@ -1639,6 +1780,7 @@ export default {
       }
       this.pageLoading.close()
     },
+    // 上传商品图片
     handleAvatarSuccessEdit(res, fileList, index) {
       if (res.code === '10000') {
         this.editSpecsData[this.uploadIndex].picUrl = res.data
@@ -1653,6 +1795,7 @@ export default {
       }
       this.pageLoading.close()
     },
+    // 上传失败
     handleImgError(row) {
       const data = JSON.parse(row.toString().replace('Error:', ''))
       if (data.code === 40301) {
@@ -1665,6 +1808,7 @@ export default {
         this.pageLoading.close()
       }
     },
+    // 删除图片
     handleRemove(index) {
       if (this.isHasImg && this.fileList.length === 1) {
         this.$message({
@@ -1675,10 +1819,12 @@ export default {
       }
       this.fileList.splice(index, 1)
     },
+    // 图片
     handlePreview(file) {
       this.dialogImageUrl = file.imgUrl
       this.dialogVisible = true
     },
+    // 图片
     beforeUpload(file) {
       const size = file.size / 1024
       const isImg =
@@ -1725,8 +1871,8 @@ export default {
       }
       this.pageLoading.close()
     },
+    // 获取分组
     _loadTypeList(isRefresh) {
-      // 获取分组
       getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
         console.log('获取分组----', res.data)
@@ -1737,6 +1883,7 @@ export default {
           })
         }
       })
+      // 获取分类
       getTypeDimensionList(this.$store.state.user.merCode).then(res => {
         this.groupDataDimens = res.data
       })
@@ -1828,7 +1975,7 @@ export default {
     },
     _CreateBasicInfo(data) {
       // 创建基本信息
-      setGoodsAdd(data)
+      setGoodsAddALL(data)
         .then(res => {
           //   this.$message({
           //     message: '保存成功',
@@ -1878,6 +2025,7 @@ export default {
         this.$router.replace('/goods-manage/' + this.backUrl)
       })
     },
+    // 保存
     handleSubmitForm() {
       // 保存基本信息操作
       this.$refs['basic'].validate(valid => {
@@ -1899,6 +2047,7 @@ export default {
                 this.chooseTypeList[0].name === '营养保健')
             ) {
               this.basicForm.hasEphedrine = 0
+              this.basicForm.needId = 0
             }
             const data = JSON.parse(JSON.stringify(this.basicForm))
             data.packStandard = `${data.long || ''}*${data.width ||
@@ -1942,10 +2091,11 @@ export default {
               data.drugType = ''
               data.dosageForm = ''
               data.hasEphedrine = ''
+              this.basicForm.needId = ''
             }
             if (this.fileList.length === 0) {
               this.$confirm(
-                '橱窗图为空，保存后无法上架。请确认是否返回编辑？',
+                '橱窗图为空，保存后无法上架。请确认是否返回编辑？返回编辑/继续保存',
                 '提示',
                 {
                   confirmButtonText: '继续保存',
@@ -1955,24 +2105,57 @@ export default {
               )
                 .then(() => {
                   this.subLoading = true
-                  if (this.basicForm.id) {
-                    data.firstTypeId = this.chooseTypeList[0].id
-                    data.secondTypeId = this.chooseTypeList[1].id
-                    data.commodityId = data.id
-                    this._UpdateBasicInfo(data)
-                  } else {
-                    data.firstTypeId = this.chooseTypeList[0].id
-                    data.secondTypeId = this.chooseTypeList[1].id
-
-                    this._CreateBasicInfo(data)
-                  }
-                  // 需修改
+                  // if (this.basicForm.id) {
+                  //   data.firstTypeId = this.chooseTypeList[0].id
+                  //   data.secondTypeId = this.chooseTypeList[1].id
+                  //   data.commodityId = data.id
+                  //   this._UpdateBasicInfo(data)
+                  // } else {
                   this.handleSubmitSpec()
-                  this.handleSubIntro()
+                  data.firstTypeId = this.chooseTypeList[0].id
+                  data.secondTypeId = this.chooseTypeList[1].id
+                  const params = {}
+                  params.commDTO = data
+                  params.specList = this.datalist
+                  params.imgList = this.fileList
+                  params.detailDTO = {
+                    content: this.goodsIntro.content,
+                    id: this.basicForm.id
+                  }
+                  this._CreateBasicInfo(params)
+                  // }
+                  // 需修改
+
+                  // this.handleSubIntro()
                 })
                 .catch(() => {
                   console.log('已取消')
                 })
+            } else {
+              this.subLoading = true
+              // if (this.basicForm.id) {
+              //   data.firstTypeId = this.chooseTypeList[0].id
+              //   data.secondTypeId = this.chooseTypeList[1].id
+              //   data.commodityId = data.id
+              //   this._UpdateBasicInfo(data)
+              // } else {
+              this.handleSubmitSpec()
+              data.firstTypeId = this.chooseTypeList[0].id
+              data.secondTypeId = this.chooseTypeList[1].id
+              const params = {}
+              // 基础信息
+              params.commDTO = data
+              // 规格
+              params.specList = this.datalist
+              console.log('1111111111+++++++333333333')
+              console.log(params)
+              params.imgList = this.fileList
+              params.detailDTO = {
+                content: this.goodsIntro.content,
+                id: this.basicForm.id
+              }
+              this._CreateBasicInfo(params)
+              // }
             }
           }
         } else {
@@ -2041,47 +2224,47 @@ export default {
         .catch(_ => {
           this.subLoading2 = false
         })
-    },
-    handleSubIntro() {
-      // 保存商品详情
-      this.subLoading = true
-      const data = {
-        content: this.goodsIntro.content,
-        id: this.basicForm.id
-      }
-      saveGoodsDetails(data)
-        .then(res => {
-          this.doSubmitInfo()
-          // this.$message({
-          //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
-          //   type: 'success'
-          // })
-        })
-        .catch(_ => {
-          this.subLoading = false
-        })
-    },
-    doSubmitInfo() {
-      this.subLoading = false
-      this.leaveAction = true
-
-      setTimeout(() => {
-        this.$confirm('请确认已保存橱窗图', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.$store.dispatch('tagsView/delView', this.$route).then(res => {
-              sessionStorage.setItem('isRefreshDepot', true)
-              this.$router.replace('/goods-manage/' + this.backUrl)
-            })
-          })
-          .catch(() => {
-            console.log('已取消')
-          })
-      }, 1000)
     }
+    // 保存商品详情
+    // handleSubIntro() {
+    //   const data = {
+    //     content: this.goodsIntro.content,
+    //     id: this.basicForm.id
+    //   }
+    //   console.log(data)
+    //   saveGoodsDetails(data)
+    //     .then(res => {
+    //       this.doSubmitInfo()
+    //       // this.$message({
+    //       //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
+    //       //   type: 'success'
+    //       // })
+    //     })
+    //     .catch(_ => {
+    //       this.subLoading = false
+    //     })
+    // },
+    // doSubmitInfo() {
+
+    //   this.leaveAction = true
+
+    //   setTimeout(() => {
+    //     this.$confirm('请确认已保存橱窗图', '提示', {
+    //       confirmButtonText: '确定',
+    //       cancelButtonText: '取消',
+    //       type: 'warning'
+    //     })
+    //       .then(() => {
+    //         this.$store.dispatch('tagsView/delView', this.$route).then(res => {
+    //           sessionStorage.setItem('isRefreshDepot', true)
+    //           this.$router.replace('/goods-manage/' + this.backUrl)
+    //         })
+    //       })
+    //       .catch(() => {
+    //         console.log('已取消')
+    //       })
+    //   }, 1000)
+    // }
   }
 }
 </script>
