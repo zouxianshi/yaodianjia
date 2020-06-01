@@ -88,7 +88,7 @@
             <span>本次批量创建结果如下：</span>
             <!-- <el-button type="primary" size="small" @click="_loadFileResultList">刷新</el-button> -->
           </p>
-          <exportHistory type="create" />
+          <!--<exportHistory type="create" />-->
           <!-- <el-table :data="tableData">
             <el-table-column label="品类">
               <template slot-scope="scope">
@@ -130,13 +130,13 @@
 </template>
 <script>
 import config from '@/utils/config'
-import exportHistory from '@/components/exportHistory'
+// import exportHistory from '@/components/exportHistory'
 import { getUploadFileList } from '@/api/new-goods'
 import { mapGetters } from 'vuex'
 // import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 export default {
-  components: { exportHistory },
+  components: { },
   mixins: [mixins],
   data() {
     return {
