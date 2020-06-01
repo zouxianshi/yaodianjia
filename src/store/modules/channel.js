@@ -49,6 +49,7 @@ const mutations = {
     state.loading = payload
   },
   addMenuLevel1(state, payload) {
+    console.log(payload)
     const { item } = payload
     state.menuData.push(item)
   },
@@ -88,7 +89,6 @@ const actions = {
     // handler available back-end data structures
     const { VUE_APP_MEMBER_CENTER, menuData } = state
     const button = _.cloneDeep(menuData)
-
     // handler request data
     _.map(button, v => {
       delete v.active
@@ -109,13 +109,13 @@ const actions = {
     })
 
     return new Promise((resolve, reject) => {
-      setMenuData({ button }, store.state.user.merCode).then(() => {
+      setMenuData({ button }, store.state.user.merCode).then((res) => {
         setTimeout(() => {
           commit('setLoading', false)
           resolve()
         }, 800)
-      }).catch(() => {
-        reject()
+      }).catch((err) => {
+        reject(err)
         commit('setLoading', false)
       })
     })

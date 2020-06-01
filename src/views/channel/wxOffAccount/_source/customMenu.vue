@@ -32,7 +32,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('channel', ['VUE_APP_MEMBER_CENTER'])
+    ...mapState('channel', ['VUE_APP_MEMBER_CENTER', 'menuData'])
   },
   watch: {},
   beforeCreate() {
