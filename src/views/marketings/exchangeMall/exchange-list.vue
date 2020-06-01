@@ -6,7 +6,7 @@
       </el-button>
       <div class="search">
         商品名称：
-        <el-input v-model="searchName" size="mini" placeholder="商品名称" style="width:220px" />
+        <el-input v-model="searchName" size="mini" placeholder="商品名称" style="width:220px" clearable />
         <el-button size="mini" type="primary" @click="searchList">查询</el-button>
       </div>
     </div>
