@@ -1,4 +1,3 @@
-fix:test 
 ## Getting started
 
 ```bash
