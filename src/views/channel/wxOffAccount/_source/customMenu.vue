@@ -64,8 +64,12 @@ export default {
       this.saveCustomMenu().then(() => {
         this.$message({ message: '保存成功', type: 'success' })
         this.loading = false
-      }).catch(async() => {
-        await this.getData()
+      }).catch(async(res) => {
+        if (res.code === '40027') {
+          this.$message({ message: '跳转地址不能为空', type: 'error' })
+        } else {
+          await this.getData()
+        }
         this.loading = false
       })
     },
