@@ -81,7 +81,7 @@ export default {
     verification() {
       const { nName, level2Index } = this
       this.errorText = ''
-      if (!nName) {
+      if (!nName || nName.trim() === '') {
         this.errorText = '菜单名称不能为空！'
         return false
       }
