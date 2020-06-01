@@ -103,9 +103,6 @@ export default {
         -webkit-box-orient: vertical;
       }
     }
-    .action {
-      // @extend .text-overflow-1;
-    }
   }
   .share {
     position: absolute;

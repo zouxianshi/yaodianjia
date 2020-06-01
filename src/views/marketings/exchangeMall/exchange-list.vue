@@ -154,6 +154,10 @@ export default {
       }
       deleteExchange(params).then(res => {
         if (res.code === '10000') {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
           this.getTabelData()
         }
       })
@@ -222,7 +226,6 @@ export default {
         count: this.stockCount
       }
       addStock(params).then(res => {
-        console.log(res)
         if (res.code === '10000') {
           this.$message({
             message: '增加成功！',
