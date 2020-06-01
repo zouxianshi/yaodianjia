@@ -59,23 +59,6 @@ export default {
       this.getData()
     },
     onSave() {
-      // // 先判断url不能为空
-      // _.map(this.menuData, v => {
-      //   console.log(v)
-      //   if (v.sub_button.length === 0) {
-      //     if (v.url.trim() === '') {
-      //       this.$message.error(v.name + ' 一级菜单URL不能为空')
-      //       return false
-      //     }
-      //   } else {
-      //     _.map(v.sub_button, v1 => {
-      //       if (v1.url.trim() === '') {
-      //         this.$message.error(v1.name + ' 二级菜单URL不能为空')
-      //         return false
-      //       }
-      //     })
-      //   }
-      // })
       this.loading = true
       // save all params
       this.saveCustomMenu().then(() => {
