@@ -10,7 +10,7 @@
       <div class="search-form">
         <div class="search-item">
           <div class="search-item">
-            <span class="label-name" style="width:100px">优惠券状态：</span>
+            <span class="label-name" style="width:100px">优惠券类型：</span>
             <el-select v-model="region" placeholder="活动区域">
               <el-option label="全部" value="0" />
               <el-option label="折扣券" value="1" />
