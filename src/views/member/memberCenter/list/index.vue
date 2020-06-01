@@ -79,7 +79,9 @@ export default {
       content: '',
       loading: false,
       isNoData: false,
-      paramsBac: {},
+      paramsBac: {
+
+      },
       pageInfo: {
         pageSize: 10,
         currentPage: 1,
@@ -166,7 +168,11 @@ export default {
     },
     // 导出会员
     exportTabel() {
-      exportMembers(this.paramsBac).then(res => {
+      var params = {
+        pageSize: 100000,
+        currentPage: 1
+      }
+      exportMembers(params).then(res => {
         if (res.code === '10000') {
           this.$alert(
             '会员列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
