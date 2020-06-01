@@ -380,7 +380,7 @@
             >商品来源：{{ chooseSpecName.length }}{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
             <el-form>
               <el-form-item label="规格设置：">
-                <!-- <template>
+                <template>
                   <el-checkbox
                     v-for="(item,index) in specsList"
                     :key="index"
@@ -389,10 +389,10 @@
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.attributeName }}</el-checkbox>
-                </template> -->
+                </template>
                 {{ editSpecsData }}
-                <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
-                  <template v-if="dynamicProp.length>0">
+                <template v-show="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
+                  <template v-show="dynamicProp.length>0">
                     <el-checkbox
                       v-for="(item,index) in specsList"
                       :key="index"
@@ -402,7 +402,7 @@
                     >{{ item.attributeName }}{{ chooseSpecName.indexOf(item.attributeName)>-1 }}</el-checkbox>
                   </template>
                 </template>
-                <template v-else-if="basicForm.origin===2">
+                <!-- <template v-else-if="basicForm.origin===2">
                   <el-checkbox
                     v-for="(item,index) in specsList"
                     :key="index"
@@ -419,7 +419,7 @@
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.name }}</el-checkbox>
-                </template>
+                </template> -->
               </el-form-item>
               <el-form-item label="规格信息：">
                 <template v-if="basicForm.origin===1">
