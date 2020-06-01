@@ -89,7 +89,7 @@
             <!-- <el-button type="primary" size="small" @click="_loadFileResultList">刷新</el-button> -->
           </p>
           <!--<exportHistory type="create" />-->
-          <!-- <el-table :data="tableData">
+          <el-table :data="tableData">
             <el-table-column label="品类">
               <template slot-scope="scope">
                 <span v-if="scope.row.firstTypeId==='1065279ca65a4a529109f82472f11053'">中西医药</span>
@@ -111,7 +111,7 @@
                 <template v-if="scope.row.failPath">
                   <el-button type="" size="mini" @click="handleDowload(scope.row)">失败结果下载</el-button>
                 </template>
-                 <template v-else>
+                <template v-else>
                   <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
                 </template>
               </template>
@@ -122,7 +122,7 @@
             :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize"
             @pagination="_loadFileResultList"
-          /> -->
+          />
         </div>
       </section>
     </div>
