@@ -1,4 +1,6 @@
 import {
+  // getSelfSpecsInfo,
+  // setSpecsData,
   getSpecsProductSKU,
   getSpecsKey
 } from '@/api/new-goods'
@@ -517,7 +519,7 @@ const mixin = {
          * 自建商品
          */
         if (this.basicForm.origin === 2) {
-          if (val && specList.length > 0) {
+          if (specList.length > 0) {
             if (specList) {
               this.specsForm.specs = []
             }
@@ -526,13 +528,9 @@ const mixin = {
               if (element.valueList) {
                 const data = []
                 element.valueList.map(v => {
-                  this.specsList.map((sp, item_index) => {
+                  this.specsList.map(sp => {
                     if (sp.attributeName === v.skuKeyName) {
-                      // v.skuKeyId = sp.id
                       sp.isCheck = true
-                      // console.log('item_index',item_index)
-                      // console.log('--index--',sp)
-                      // this.$set(this.specsList,item_index,sp)
                     }
                   })
                   if (this.dynamicProp.length !== this.specsList.length) {
@@ -549,15 +547,13 @@ const mixin = {
                   element[`index_${v.skuKeyId}_${v.skuKeyName}`] = v.skuValue
                 })
               }
-
               element.owner = element.owner || 0
               element.isSku = 0
             })
-            console.log('this.specList', this.specsList)
-            //  this.$set(this.specsList)
-
             this.editSpecsData = specList
           }
+          console.log('选择')
+          console.log(this.chooseSpec, this.chooseSpecName)
         } else {
           /** *
            * 标库商品

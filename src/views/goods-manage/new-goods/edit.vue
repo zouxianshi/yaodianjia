@@ -377,7 +377,7 @@
             <p
               class="text-right"
               style="font-size:13px"
-            >商品来源：{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
+            >商品来源：{{ chooseSpecName.length }}{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
             <el-form>
               <el-form-item label="规格设置：">
                 <!-- <template>
@@ -385,32 +385,31 @@
                     v-for="(item,index) in specsList"
                     :key="index"
                     v-model="item.isCheck"
+                    :checked="chooseSpecName.indexOf(item.attributeName)>-1"
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.attributeName }}</el-checkbox>
                 </template> -->
-                {{ specsList }}1111111111222
-                {{ editSpecsData }}333333
-                {{ chooseSpecName }}
+                {{ editSpecsData }}
                 <template v-if="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
                   <template v-if="dynamicProp.length>0">
                     <el-checkbox
                       v-for="(item,index) in specsList"
                       :key="index"
-                      :checked="item.isCheck"
+                      :checked="chooseSpecName.indexOf(item.attributeName)>-1"
                       :disabled="is_query"
                       @change="handleSpecsChange(item)"
-                    >{{ item.attributeName }}{{ item.isCheck }}</el-checkbox>
+                    >{{ item.attributeName }}{{ chooseSpecName.indexOf(item.attributeName)>-1 }}</el-checkbox>
                   </template>
                 </template>
-                <template v-else-if="basicForm.origin===2&&basicForm.id">
+                <template v-else-if="basicForm.origin===2">
                   <el-checkbox
                     v-for="(item,index) in specsList"
                     :key="index"
                     v-model="item.isCheck"
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
-                  >{{ item.attributeName }}3</el-checkbox>
+                  >{{ item.attributeName }}</el-checkbox>
                 </template>
                 <template v-else>
                   <el-checkbox
@@ -1149,6 +1148,9 @@ import {
   getBrandList,
   saveImg,
   saveGoodsDetails,
+  // getBasicGoodsInfo,
+  // getGoodsImgAry,
+  // getGoodsDetails,
   getGoodsAddALL
 } from '@/api/new-goods'
 import mixins from './_source/mixin'
@@ -1392,7 +1394,6 @@ export default {
     // this.basicLoading = true
   },
   created() {
-    this._loadSpces() // 获取规格
     this._loadTypeList() // 获取分组
     this._loadBrandList({
       pageSize: 30,
@@ -1401,6 +1402,7 @@ export default {
     this._loadUnit() // 加载单位
     // chooseTypeList不为空且第一个为中西药品才有必要加载
     this._loadMetering() // 加载剂型
+    this._loadSpces() // 获取规格
     if (!this.$route.query.id) {
       // 新建
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据

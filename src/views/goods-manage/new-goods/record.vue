@@ -154,7 +154,7 @@
                 </a>
               </template>
               <template
-                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.infoStatus<=13)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
+                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
               >
                 <a @click="handleEdit(scope.row.id)">
                   <el-button type size="mini">编辑</el-button>
@@ -333,7 +333,7 @@ export default {
     },
     handleCurrentChange(row) {
       sessionStorage.setItem('mate', JSON.stringify(row))
-      this.$router.push('/goods-manage/mate?id=' + row.id)
+      this.$router.push('/goods-manage/apply-record-edit?id=' + row.id + '&backUrl=apply-record' + '&type=query&state=check')
     },
     onLook(url) {
       this.srcList = [`${this.showImg(url)}?x-oss-process=style/w_800`]
