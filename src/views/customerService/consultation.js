@@ -683,10 +683,10 @@ export default {
         console.log('hass this.onlineConversationData.list')
         const firstConversation = this.onlineConversationData.list[0]
         this.setCurOnlineUserId({
-          userId: firstConversation.targetId,
+          userId: firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userId : '',
           setStorage: false
         })
-        this.targetId = firstConversation.targetId
+        this.targetId = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userId : ''
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''
         this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
