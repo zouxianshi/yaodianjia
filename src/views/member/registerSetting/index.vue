@@ -1,24 +1,22 @@
 <template>
-  <div class="rs-index-model">
-    <div class="app-container">
-      <el-card class="box-card">
-        <AppleRs />
-      </el-card>
-      <el-card v-if="showCode===1" class="box-card">
-        <NoactiveCard />
-      </el-card>
-      <el-card v-if="showCode===0" class="box-card">
-        <nobindingCard />
-      </el-card>
-      <el-card v-if="showCode===2 || showCode===3" class="box-card" :showcode="showCode">
-        <AemberCard :checkmemberlist="checkMemberList" :showcode="showCode" />
-      </el-card>
-    </div>
+  <div class="rs-index-model app-container">
+    <!-- <el-card class="box-card">
+      <AppleRs />
+    </el-card> -->
+    <el-card v-if="showCode===1" class="box-card">
+      <NoactiveCard />
+    </el-card>
+    <el-card v-if="showCode===0" class="box-card">
+      <nobindingCard />
+    </el-card>
+    <el-card v-if="showCode===2 || showCode===3" class="box-card" :showcode="showCode">
+      <AemberCard :checkmemberlist="checkMemberList" :showcode="showCode" />
+    </el-card>
   </div>
 </template>
 <script>
 // 微信小程序注册
-import AppleRs from './_source/appletRegister'
+// import AppleRs from './_source/appletRegister'
 // 微信会员卡
 import AemberCard from './_source/memberCard'
 // 未激活微信会员卡
@@ -31,7 +29,6 @@ import { checkMemberCard } from '@/api/memberService'
 export default {
   name: 'RsIndex',
   components: {
-    AppleRs,
     AemberCard,
     NoactiveCard,
     NobindingCard
@@ -75,14 +72,4 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .rs-index-model {
-    padding: 5px;
-    background: #F5F7FA;
-    .rs-header-model{
-      margin:5px;
-    }
-    .box-card{
-      margin-bottom: 5px;
-    }
-  }
 </style>
