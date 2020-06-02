@@ -13,7 +13,7 @@
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品信息</span>
-            <el-input v-model.trim="listQuery.name" size="small" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="商品名称" />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
@@ -221,8 +221,8 @@ export default {
         erpCode: '',
         manufacture: '',
         merCode: '',
-        name: '',
-        origin: 0,
+        erpOrName: '',
+        origin: 2,
         currentPage: 1
       },
       multipleSelection: [],
@@ -403,14 +403,15 @@ export default {
         // 待完善
         params.auditStatus = ''
         params.infoFlag = false
-        params.origin = 1
+        // params.origin = 1
       } else if (this.listQuery.auditStatus === 3) {
         // 待提交审核
         params.infoFlag = true
-        params.origin = 0
-      } else {
-        params.origin = 0
+        // params.origin = 0
       }
+      // else {
+      //   params.origin = 0
+      // }
       params.times = Date.parse(new Date())
       getNewGoodsRecord(params)
         .then(res => {

@@ -28,7 +28,6 @@ const mixin = {
       erpCode_err: false,
       barCode_err: false,
       limit_err: false,
-      specLoading: false,
       isLoadStep2: false
     }
   },
@@ -397,7 +396,6 @@ const mixin = {
       this.chooseSpecName = []
       this.chooseSpec = []
       this.dynamicProp = []
-      // this.specLoading = true
       // 根据一级分类加载规格
       // this.chooseTypeList[0].id
       // getSpecs('a99917a7c7254ac281e844acf1610657').then(res => {
@@ -409,12 +407,10 @@ const mixin = {
       //     this.specsList = res.data
       //     this.specsForm.specsData = []
       //     console.log('--根据一级分类查找规格----')
-      this.handleAddSpec()
+      // this.handleAddSpec()
       //   }
       if (this.basicForm.id) {
         this._loadSpecsInfo()
-      } else {
-        this.specLoading = false
       }
       // })
       getSpecsKey().then(res => {
@@ -441,7 +437,6 @@ const mixin = {
         // if (this.basicForm.id) {
         //   this._loadSpecsInfo()
         // } else {
-        //   this.specLoading = false
         // }
       })
     },
@@ -530,6 +525,7 @@ const mixin = {
                 element.valueList.map(v => {
                   this.specsList.map(sp => {
                     if (sp.attributeName === v.skuKeyName) {
+                      v.skuKeyId = sp.id
                       sp.isCheck = true
                     }
                   })

@@ -88,7 +88,7 @@ export default {
     getList() {
       this.loading = true
       this.tableData = []
-      this.listQuery.type = 'match'
+      this.listQuery.type = this.type
       getImportRecode(this.listQuery)
         .then(res => {
           if (res.data) {
@@ -104,7 +104,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.product {
-  color: #9999;
+.search-item {
+
 }
 </style>

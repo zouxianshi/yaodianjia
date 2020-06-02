@@ -85,7 +85,7 @@
         </ul>
         <div class="table-box">
           <p style="margin-bottom:12px;color:#333;display:flex;justify-content: space-between;">
-            <span>本次批量创建结果如下：</span>
+            <span>批量导入历史如下：</span>
             <!-- <el-button type="primary" size="small" @click="_loadFileResultList">刷新</el-button> -->
           </p>
           <exportHistory type="create" />
@@ -189,7 +189,7 @@ export default {
     handleFileSuccess(res) {
       if (res.code === '10000') {
         this.$message({
-          message: '上传成功',
+          message: '导入处理中，结果稍后见【导入历史】！',
           type: 'success'
         })
         this._loadFileResultList()

@@ -215,15 +215,16 @@ export default {
       row.loading = true
       setComAddGoods({ ids: [row.id], userName: this.name })
         .then(res => {
-          this.$message({
-            message:
-              '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
-            type: 'success',
-            duration: 4000
-          })
+          this.$router.push('/goods-manage/apply-record-edit?id=' + row.id + '&backUrl=apply-record')
+          // this.$message({
+          //   message:
+          //     '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
+          //   type: 'success',
+          //   duration: 4000
+          // })
 
-          this.getList(row.id)
-          row.loading = false
+          // this.getList(row.id)
+          // row.loading = false
         })
         .catch(() => {
           row.loading = false

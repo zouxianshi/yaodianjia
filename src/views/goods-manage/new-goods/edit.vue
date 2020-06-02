@@ -22,10 +22,10 @@
     </el-steps>
 
     <div ref="appContaniner" class="app-container" @scroll="onScroll">
-      <div class="edit-wrapper">
+      <div v-loading="basicLoading" class="edit-wrapper" element-loading-text="拼命加载中">
         <!-- 第一步 -->
         <div id="step1" class="basic-info-section">
-          <section v-loading="basicLoading" element-loading-text="拼命加载中">
+          <section element-loading-text="拼命加载中">
             <!-- 分类信息 -->
             <div class="edit-card">
               <div class="header">
@@ -380,7 +380,8 @@
             >商品来源：{{ chooseSpecName.length }}{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
             <el-form>
               <el-form-item label="规格设置：">
-                <template>
+                <!-- <template v-show="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
+                  <template v-show="dynamicProp.length>0">
                   <el-checkbox
                     v-for="(item,index) in specsList"
                     :key="index"
@@ -389,17 +390,18 @@
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.attributeName }}</el-checkbox>
-                </template>
-                {{ editSpecsData }}
+                  </template>
+                </template> -->
                 <template v-show="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
                   <template v-show="dynamicProp.length>0">
                     <el-checkbox
                       v-for="(item,index) in specsList"
                       :key="index"
+                      v-model="item.isCheck"
                       :checked="chooseSpecName.indexOf(item.attributeName)>-1"
                       :disabled="is_query"
                       @change="handleSpecsChange(item)"
-                    >{{ item.attributeName }}{{ chooseSpecName.indexOf(item.attributeName)>-1 }}</el-checkbox>
+                    >{{ item.attributeName }}</el-checkbox>
                   </template>
                 </template>
                 <!-- <template v-else-if="basicForm.origin===2">
@@ -1041,7 +1043,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button size="small" @click="typeVisible = false">取 消</el-button>
-          <el-button v-loading="subLoading" type="primary" size="small" @click="handleSaveType">确 定</el-button>
+          <el-button type="primary" size="small" @click="handleSaveType">确 定</el-button>
         </span>
       </el-dialog>
       <edit-group
@@ -1391,9 +1393,9 @@ export default {
     }
   },
   mounted() {
-    // this.basicLoading = true
   },
   created() {
+    this.basicLoading = true
     this._loadTypeList() // 获取分组
     this._loadBrandList({
       pageSize: 30,
@@ -1407,6 +1409,7 @@ export default {
       // 新建
       const data = sessionStorage.getItem('types') // 取出从选择分类存取的数据
       this.chooseTypeList = JSON.parse(data)
+      this.basicLoading = false
     } else {
       this.basicForm.id = this.$route.query.id
       this.getDataAll()
@@ -1430,6 +1433,7 @@ export default {
     this.is_query = this.$route.query.type === 'query'
     this.is_state = this.$route.query.state === 'check'
     this.backUrl = this.$route.query.backUrl
+    // this.basicLoading = false
     // if (this.is_query) {
     //   sessionStorage.setItem('editId', '')
     //   sessionStorage.setItem('editIsQuery', this.is_query)
@@ -1453,10 +1457,12 @@ export default {
       }
       getGoodsAddALL(params)
         .then(res => {
+          this.basicLoading = false
           this._loadGoodsImgAry(res.data.imgList)
           this._loadSpecs(res.data.specList)
           this._loadBasicInfo(res.data.commDTO)
           this._loadGoodsDetails(res.data.detailDTO.content)
+          this.basicLoading = false
         })
     },
     // 驳回原因
@@ -1512,7 +1518,6 @@ export default {
     // 审核
     _AuditRequest(data, state) {
       // 审核请求
-      this.subLoading = true
       setAuditGoods(data)
         .then(res => {
           this.$message({
@@ -1525,7 +1530,6 @@ export default {
           this.$router.go(-1)
         })
         .catch(_ => {
-          this.subLoading = false
         })
     },
     // 定位
@@ -1656,7 +1660,6 @@ export default {
     },
     // 加载基本信息
     _loadBasicInfo(val) {
-      // this.subLoading = true
       // 分组处理
       this._loadgroupGather('1', [val.typeId])
       if (val.groupIds && val.groupIds.length > 0) {
@@ -1721,8 +1724,6 @@ export default {
       // 赋值值
       this.basicForm = data
       this.$refs.editor.setContent(this.basicForm.intro)
-      this.basicLoading = false
-      // this.subLoading = false
     },
     // 加载商品图片
     _loadGoodsImgAry(val) {
@@ -1976,18 +1977,20 @@ export default {
       })
     },
     _CreateBasicInfo(data) {
+      // this.subLoading = true
       // 创建基本信息
       setGoodsAddALL(data)
         .then(res => {
-          //   this.$message({
-          //     message: '保存成功',
-          //     type: 'success'
-          //   })
+          this.$message({
+            message: '保存成功',
+            type: 'success'
+          })
           this.basicForm.id = res.data
-          this.subLoading = false
+          this.$router.push('/goods-manage/constitute-goods')
+          // this.subLoading = false
         })
         .catch(_ => {
-          this.subLoading = false
+          // this.subLoading = false
         })
     },
     _UpdateBasicInfo(data) {
@@ -1998,10 +2001,8 @@ export default {
           //   message: '保存成功',
           //   type: 'success'
           // })
-          this.subLoading = false
         })
         .catch(_ => {
-          this.subLoading = false
         })
     },
     nextStep() {
@@ -2106,7 +2107,6 @@ export default {
                 }
               )
                 .then(() => {
-                  this.subLoading = true
                   // if (this.basicForm.id) {
                   //   data.firstTypeId = this.chooseTypeList[0].id
                   //   data.secondTypeId = this.chooseTypeList[1].id
@@ -2134,7 +2134,6 @@ export default {
                   console.log('已取消')
                 })
             } else {
-              this.subLoading = true
               // if (this.basicForm.id) {
               //   data.firstTypeId = this.chooseTypeList[0].id
               //   data.secondTypeId = this.chooseTypeList[1].id
@@ -2149,8 +2148,6 @@ export default {
               params.commDTO = data
               // 规格
               params.specList = this.datalist
-              console.log('1111111111+++++++333333333')
-              console.log(params)
               params.imgList = this.fileList
               params.detailDTO = {
                 content: this.goodsIntro.content,
