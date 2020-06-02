@@ -1993,6 +1993,8 @@ export default {
 
           if (name === 'applyRecordEdit') {
             url = '/goods-manage/apply-record'
+          } else if (name === 'depot-edit') {
+            url = '/goods-manage/depot'
           }
           this.$router.push(url)
           // this.subLoading = false
