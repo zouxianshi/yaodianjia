@@ -27,13 +27,14 @@
           <div class="search-item">
             <span class="label-name">商品分类</span>
             <el-cascader
+              ref="cascType"
               v-model="listQuery.typeId"
+              :value="listQuery.level"
               size="small"
               :options="goodsTypeList"
               :props="defaultProps"
               clearable
               placeholder="选择商品分类"
-              :show-all-levels="false"
             />
           </div>
           <div class="search-item">
@@ -351,7 +352,8 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'name',
-        value: 'id'
+        value: 'id',
+        checkStrictly: true
       },
       editId: '',
       isToEdit: false,
@@ -381,7 +383,8 @@ export default {
         groupId: '', // 分组id
         currentPage: 1,
         owner: 0,
-        typeId: '' // 商品分类id
+        typeId: '', // 商品分类id
+        level: ''
       },
       goodsTypeList: []
     }
@@ -391,6 +394,7 @@ export default {
     this.getList()
     this._loadGoodTypeList()
     this._loadTypeList()
+    this._loadGoodTypeList()
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -484,7 +488,8 @@ export default {
         auditStatus: 1,
         groupId: '', // 分组id
         currentPage: 1,
-        typeId: ''
+        typeId: '',
+        level: ''
       }
       this.getList()
     },
@@ -499,7 +504,8 @@ export default {
           this.listQuery.typeId.length - 1
         ]
       }
-      console.log(this.listQuery)
+      const nodesObj = this.$refs['cascType'].getCheckedNodes()
+      this.listQuery.level = nodesObj.length > 0 ? nodesObj[0].level : ''
       this.getList()
     },
     getList() {
@@ -632,7 +638,7 @@ export default {
     handleEdit(id) {
       this.isToEdit = true
       this.editId = id
-      this.$router.push('/goods-manage/edit?id=' + id)
+      this.$router.push('/goods-manage/depot-edit?id=' + id + '&backUrl=depot')
     },
     //
     handleDel(row) {

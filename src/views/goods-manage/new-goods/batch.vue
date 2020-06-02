@@ -85,11 +85,11 @@
         </ul>
         <div class="table-box">
           <p style="margin-bottom:12px;color:#333;display:flex;justify-content: space-between;">
-            <span>本次批量创建结果如下：</span>
+            <span>批量导入历史如下：</span>
             <!-- <el-button type="primary" size="small" @click="_loadFileResultList">刷新</el-button> -->
           </p>
-          <!--<exportHistory type="create" />-->
-          <el-table :data="tableData">
+          <exportHistory type="create" />
+          <!-- <el-table :data="tableData">
             <el-table-column label="品类">
               <template slot-scope="scope">
                 <span v-if="scope.row.firstTypeId==='1065279ca65a4a529109f82472f11053'">中西医药</span>
@@ -111,7 +111,7 @@
                 <template v-if="scope.row.failPath">
                   <el-button type="" size="mini" @click="handleDowload(scope.row)">失败结果下载</el-button>
                 </template>
-                <template v-else>
+                 <template v-else>
                   <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
                 </template>
               </template>
@@ -122,7 +122,7 @@
             :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize"
             @pagination="_loadFileResultList"
-          />
+          /> -->
         </div>
       </section>
     </div>
@@ -130,13 +130,13 @@
 </template>
 <script>
 import config from '@/utils/config'
-// import exportHistory from '@/components/exportHistory'
+import exportHistory from '@/components/exportHistory'
 import { getUploadFileList } from '@/api/new-goods'
 import { mapGetters } from 'vuex'
 // import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 export default {
-  components: { },
+  components: { exportHistory },
   mixins: [mixins],
   data() {
     return {
@@ -189,7 +189,7 @@ export default {
     handleFileSuccess(res) {
       if (res.code === '10000') {
         this.$message({
-          message: '上传成功',
+          message: '导入处理中，结果稍后见【导入历史】！',
           type: 'success'
         })
         this._loadFileResultList()

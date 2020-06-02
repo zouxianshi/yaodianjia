@@ -8,7 +8,22 @@ export function setGoodsAdd(params) {
     data: params
   })
 }
-
+// 新增单个商品信息（一键提交所有数据）
+export function setGoodsAddALL(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/create-one`,
+    method: 'post',
+    data: params
+  })
+}
+// 新增单个商品信息（一键提交所有数据）
+export function getGoodsAddALL(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/query-one`,
+    method: 'post',
+    data: params
+  })
+}
 // 更新商品基本信息
 export function updateBasicInfo(params) {
   return request({
@@ -52,7 +67,13 @@ export function getSpecs(categoryId) {
     method: 'get'
   })
 }
-
+// 根据一级分类查询规格
+export function getSpecsKey() {
+  return request({
+    url: `${config.merchandise}/1.0/attr-key/list`,
+    method: 'get'
+  })
+}
 // 保存规格
 export function setSpecsData(params) {
   return request({
