@@ -42,6 +42,7 @@ export default {
           ryToken: this.ryToken,
           // 收到消息监听
           onReceived: message => {
+            console.log('进入页面Chat.init onReceived回调', message)
             this.newMsg = message
             // 通知在线咨询组件有新消息
             console.log('消息组件，收到消息', message)
