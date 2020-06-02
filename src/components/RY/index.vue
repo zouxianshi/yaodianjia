@@ -4,8 +4,7 @@
     <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
       <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
     </el-badge>
-    <audio id="audio" src="./_source/msg.wav" />
-    <div @click="onPaly">wwwww</div>
+    <audio ref="audio" :src="audioUrl" />
   </div>
 </template>
 
@@ -15,11 +14,14 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 
+import mp3MsgTip from '@/assets/mp3/msg.wav'
+
 export default {
   data() {
     return {
       // 收到的新消息体
-      newMsg: null
+      newMsg: null,
+      audioUrl: mp3MsgTip
     }
   },
   computed: {
@@ -204,6 +206,8 @@ export default {
         console.error('err', err)
       })
   },
+  mounted() {
+  },
   methods: {
     ...mapMutations({
       addMsgToOnlineCurUserMsgList:
@@ -217,27 +221,7 @@ export default {
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID'
     }),
     onPaly() {
-      // todo 未完成 要播放音频代码
-      // this.audio = new Audio()
-      // this.audio.src = mp3
-      // let playPromise
-      // playPromise = this.audio.play()
-      // if (playPromise) {
-      //   playPromise.then(() => {
-      //     // 音频加载成功
-      //     // 音频的播放需要耗时
-      //     that.tiemr = setInterval(() => {
-      //       second--
-      //       if (second <= 0) {
-      //         that.audio.pause()
-      //         clearInterval(that.tiemr)
-      //       }
-      //     }, 1000)
-      //   }).catch((e) => {
-      //     // 音频加载失败
-      //     console.error(e)
-      //   })
-      // }
+      this.$refs.audio.play()
     },
     // 通过token生成融云token
     querySupportStaffById() {
@@ -349,6 +333,8 @@ export default {
         ws.onmessage = function(evt) {
           var received_msg = evt.data
           console.log('接收消息', received_msg)
+          // sound tip
+          self.onPaly()
         }
 
         ws.onclose = function(e) {
