@@ -123,7 +123,6 @@ export default {
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
     },
     submitData() {
-      console.log(this.storeSelectGoods, this.params)
       if (this.storeSelectGoods.length === 0) {
         this.$message({
           type: 'error',
@@ -153,13 +152,7 @@ export default {
         pmtRule: pmtRule
       }
       if (this.$route.query.id) {
-        // var datas = this.paramsBack
         params.id = this.$route.query.id
-        // datas.activityDetail.ruleList[0].exchangePrice = this.params.exchangePrice
-        // datas.activityDetail.ruleList[0].exchangeHb = this.params.exchangeHb
-        // datas.activityDetail.ruleList[0].limitAmount = this.params.limitAmount
-        // datas.activityDetail.ruleList[0].purchaseLimit = this.params.purchaseLimit ? 1 : 0
-        // params = this.paramsBack
         editExchange(params).then(res => {
           if (res.code === '10000') {
             this.$message({
