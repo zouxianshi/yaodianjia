@@ -97,8 +97,14 @@ export default {
           : sub_button[level2Index].url
     },
     async onSave() {
-      const { level1Index, level2Index } = this
+      const { level1Index, level2Index, url } = this
       this.loading = true
+
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        this.$message({ message: '跳转地址必须http或https开头', type: 'error' })
+        return
+      }
+
       await this.editMenu({
         item: {
           type: 'view',
