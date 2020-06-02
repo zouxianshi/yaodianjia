@@ -39,25 +39,26 @@ export default {
     }
   },
   created() {
-    console.log('消息图标组件, created', this.hasNewMsg)
+    console.log('into 消息图标组件 created', this.hasNewMsg)
     const _this = this
     this.querySupportStaffById()
       .then(() => {
+        console.warn('ready to chat init')
         // 获取到融云token后 开始IMLib初始化
         Chat.init({
           ryToken: this.ryToken,
           // 收到消息监听
           onReceived: message => {
-            console.log('进入页面Chat.init onReceived回调', message)
+            console.warn('进入页面Chat.init onReceived回调', message)
             this.newMsg = message
             // 通知在线咨询组件有新消息
-            console.log('消息组件，收到消息', message)
-
+            console.warn('消息组件，收到消息', message)
+            // 在线咨询当前选中用户id
             const { userId } = _this.curOnlineUserData
 
             // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知
             if (_this.$route.path === '/customerService/consultation') {
-              console.log('当前在咨询页面:curOnlineUserData', _this.curOnlineUserData, message.senderUserId)
+              console.warn('当前在咨询页面:curOnlineUserData', _this.curOnlineUserData, message.senderUserId)
 
               // 判断接收的消息是否来自当前打开窗口的用户 是则直接追加消息 否则在左侧会话头像添加徽标
               if (userId.toString() === message.content.extra.userId.toString()) {
@@ -76,9 +77,9 @@ export default {
                   _this.scrollToBottom()
                 }, 100)
               } else {
-                console.log('不是来自当前窗口的用户', 'userId:', userId, 'messageUserId:', message.content.extra.userId)
+                console.warn('不是来自当前窗口的用户', 'userId:', userId, 'messageUserId:', message.content.extra.userId)
                 _this.addBadgeToOnlineUser({
-                  userId: message.senderUserId,
+                  userId: message.content.extra.userId,
                   message
                 })
               }
@@ -90,12 +91,12 @@ export default {
               }
               console.log('goto addBadgeToOnlineUser')
               _this.addBadgeToOnlineUser({
-                userId: message.senderUserId,
+                userId: message.content.extra.userId,
                 message
               })
               console.log('goto setCurOnlineUserId')
               _this.setCurOnlineUserId({
-                userId: message.senderUserId
+                userId: message.content.extra.userId
               })
               _this.addMsgToOnlineCurUserMsgList({
                 type: 'listener', // 类型 来自融云消息监听

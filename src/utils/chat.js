@@ -6,6 +6,20 @@ import store from './../store'
 const RongIMClient = window.RongIMClient
 const RongIMLib = window.RongIMLib
 
+// /**
+//  * 验证消息类型
+//  */
+// const validateMessageType = (message) => {
+//   console.error('进入validateMessageType', message)
+//   if ([this.MessageType.TextMessage, this.MessageType.ImageMessage, this.MessageType.GoodsMessage].indexOf(message.objectName) > -1) {
+//     console.log('是合法的消息类型', message.objectName)
+//     return true
+//   } else {
+//     console.log('非法消息类型')
+//     return false
+//   }
+// }
+
 class Chat {
   RYAppKey = process.env.VUE_APP_RY_KEY || 'lmxuhwagl5sad'
   RongIMLib = window.RongIMLib
@@ -30,7 +44,11 @@ class Chat {
   }
 
   // 初始化融云 IMLib
-  init({ ryToken, onReceived, onStatusChange }) {
+  init({
+    ryToken,
+    onReceived,
+    onStatusChange
+  }) {
     return new Promise((resolve, reject) => {
       this.ryToken = ryToken
       var RongIMLib = window.RongIMLib
@@ -50,6 +68,17 @@ class Chat {
         resolve()
       })
     })
+  }
+
+  validateMessageType(message) {
+    console.warn('进入validateMessageType', message)
+    if ([this.MessageType.TextMessage, this.MessageType.ImageMessage, this.MessageType.GoodsMessage].indexOf(message.objectName) > -1) {
+      console.warn('是合法的消息类型', message.objectName)
+      return true
+    } else {
+      console.error('非法消息类型')
+      return false
+    }
   }
 
   // 注册自定义消息类(商品消息)
@@ -74,20 +103,6 @@ class Chat {
     })
   }
 
-  /**
-   * 验证消息类型
-   */
-  validateMessageType(message) {
-    console.log('进入validateMessageType', message)
-    if ([this.MessageType.TextMessage, this.MessageType.ImageMessage, this.MessageType.GoodsMessage].indexOf(message.objectName) > -1) {
-      console.log('是合法的消息类型', message.objectName)
-      return true
-    } else {
-      console.log('非法消息类型')
-      return false
-    }
-  }
-
   // 设置消息监听器
   setOnReceiveMessageListener(receivedCb) {
     var _this = this
@@ -95,16 +110,18 @@ class Chat {
     RongIMClient.setOnReceiveMessageListener({
       // 接收到的消息
       onReceived: function(message) {
-        console.warn('融云消息监听, 收到消息：', message)
+        console.warn('into setOnReceiveMessageListener, 融云消息监听, 收到消息：', message, _this)
 
         const validateResult = _this.validateMessageType(message)
 
+        console.error('validateResult', validateResult)
+
         // 验证消息类型 只接收文本/图片/商品消息
         if (!validateResult) {
-          console.log('不用于展示的消息', message)
+          console.warn('不用于展示的消息', message)
           if (message.objectName === 'RC:ReadNtf') {
             // 已读通知则前往会话列表中减少一条消息数量
-            console.log('这是一条已读消息回执')
+            console.warn('这是一条已读消息回执')
             store.commit('customerService/readMessage', message)
           }
           if (message.objectName === 'RC:SRSMsg') {
@@ -113,22 +130,22 @@ class Chat {
           return
         }
 
-        console.log('message.objectName', message.objectName)
+        console.warn('message.objectName', message.objectName)
 
         if (message.objectName === _this.MessageType.ImageMessage) {
-          console.log('图片消息', message)
+          console.warn('图片消息', message)
           message.content.content = message.content.imageUri
         }
 
         if (message.content) {
-          console.log('message.content存在', message.content)
+          console.warn('message.content存在', message.content)
           message.content.content = message.content.content || ''
           if (typeof message.content.extra === 'string') {
             message.content.extra = JSON.parse(message.content.extra)
           }
         }
-        console.log('处理完之后的message体', message)
-        console.log('即将调用消息监听回调')
+        console.warn('处理完之后的message体', message)
+        console.warn('即将调用消息监听回调')
 
         // 调用消息监听回调
         receivedCb(message)
@@ -174,7 +191,7 @@ class Chat {
             // do something
             break
           default:
-          // do something
+            // do something
         }
       }
     })
@@ -241,33 +258,33 @@ class Chat {
     const count = 150
     const _self = this
     return new Promise((resolve, reject) => {
-      window.RongIMClient.getInstance().getConversationList(
-        {
-          onSuccess: function(list) {
-            console.warn('融云初始化的会话列表', list)
-            const tempList = []
-            list.forEach(element => {
-              if (element.latestMessage) {
-                if (element.latestMessage.content) {
-                  if (element.latestMessage.content.extra && typeof element.latestMessage.content.extra === 'string') {
-                    element.latestMessage.content.extra = JSON.parse(element.latestMessage.content.extra)
-                  }
+      window.RongIMClient.getInstance().getConversationList({
+        onSuccess: function(list) {
+          console.warn('融云初始化的会话列表', list)
+          const tempList = []
+          list.forEach(element => {
+            if (element.latestMessage) {
+              if (element.latestMessage.content) {
+                if (element.latestMessage.content.extra && typeof element.latestMessage.content.extra === 'string') {
+                  element.latestMessage.content.extra = JSON.parse(element.latestMessage.content.extra)
                 }
               }
-              // 验证消息类型
-              if (_self.validateMessageType(element.latestMessage)) {
-                tempList.push(element)
-              }
-            })
-            console.error('Chat.getConversationList返回的会话列表', tempList)
-            resolve(tempList)
-          },
-          onError: function(error) {
-            reject(error)
-          }
+            }
+            console.warn('getConversationList this', _self)
+            // 验证消息类型
+            if (_self.validateMessageType(element.latestMessage)) {
+              tempList.push(element)
+            }
+          })
+          console.error('Chat.getConversationList返回的会话列表', tempList)
+          resolve(tempList)
         },
-        conversationTypes,
-        count
+        onError: function(error) {
+          reject(error)
+        }
+      },
+      conversationTypes,
+      count
       )
     })
   }
@@ -330,7 +347,11 @@ class Chat {
     var type = '1' // 备用，默认赋值 1 即可
     // 以上 3 个属性在会话的最后一条消息中可以获得
 
-    var msg = new RongIMLib.ReadReceiptMessage({ messageUId: messageUId, lastMessageSendTime: lastMessageSendTime, type: type })
+    var msg = new RongIMLib.ReadReceiptMessage({
+      messageUId: messageUId,
+      lastMessageSendTime: lastMessageSendTime,
+      type: type
+    })
     var conversationType = RongIMLib.ConversationType.PRIVATE
     var targetId = message.content.extra.userId // 目标 Id
 

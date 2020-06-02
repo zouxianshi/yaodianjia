@@ -90,18 +90,16 @@
           :ref="member.customCells[index]"
           :model="member.customCells[index]"
           label-width="80px"
+          :rules="rules"
         >
-          <el-form-item label="引导菜单">
+          <el-form-item label="引导菜单" prop="name">
             <el-input v-model="item.name" class="right-input-model" />
           </el-form-item>
-          <el-form-item label="引导语">
+          <el-form-item label="引导语" prop="tips">
             <el-input v-model="item.tips" class="right-input-model" />
           </el-form-item>
-          <el-form-item label="连接跳转">
-            <div class="right-line-model">
-              <div class="right-link-model">{{ item.url }}</div>
-              <el-button size="mini" @click="modifyAdress(index)">修改地址</el-button>
-            </div>
+          <el-form-item label="连接跳转" prop="url">
+            <el-input v-model="item.url" class="right-input-model" />
           </el-form-item>
         </el-form>
       </div>
@@ -114,20 +112,6 @@
           @click="addmeun"
         >增加新引索菜单</el-button>
       </div>
-      <!-- 连接修改弹框 -->
-      <el-dialog append-to-body title="跳转连接地址" :visible.sync="dialog.dialogVisible" width="50%">
-        <template>
-          <el-form :model="ruleForm" size="mini" label-width="100">
-            <el-form-item label="自定义地址：">
-              <el-input v-model="ruleForm.linkUrl" type="text" />
-            </el-form-item>
-          </el-form>
-          <span slot="footer" class="dialog-footer">
-            <el-button size="mini" @click="dialog.dialogVisible = false">取 消</el-button>
-            <el-button size="mini" type="primary" @click="dialogSure">确 定</el-button>
-          </span>
-        </template>
-      </el-dialog>
       <div class="right-play-model">
         <h2 class="right-title-model">微信支付注册设置</h2>
         <el-form :ref="member" :model="member" label-width="80px">
@@ -168,12 +152,12 @@ export default {
       }
     },
     // 小程序地址
-    geturl: {
-      type: String,
-      default: function() {
-        return ''
-      }
-    },
+    // geturl: {
+    //   type: String,
+    //   default: function() {
+    //     return ''
+    //   }
+    // },
     // 商店列表
     storelist: {
       type: Array,
@@ -193,12 +177,6 @@ export default {
       }
     }
     return {
-      dialog: {
-        dialogVisible: false
-      },
-      ruleForm: {
-        linkUrl: ''
-      },
       form: {
         imgUrl: '',
         color: ''
@@ -206,12 +184,7 @@ export default {
       rules: {
         cardTitle: [
           { required: true, message: '请输会员卡标题', trigger: 'blur' },
-          {
-            min: 1,
-            max: 18,
-            message: '不能为空且长度不能超过9个汉字或18个英文字符',
-            trigger: 'blur'
-          }
+          { min: 1, max: 18, message: '不能为空且长度不能超过9个汉字或18个英文字符', trigger: 'blur' }
         ],
         organization: [
           { required: true, message: '请选择默认发卡机构', trigger: 'change' }
@@ -231,10 +204,17 @@ export default {
         ],
         cardBgType: [
           { required: true, message: '请选择卡片背景', trigger: 'change' }
+        ],
+        url: [
+          { required: true, message: '请输入连接跳转地址', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请填写引导菜单标题', trigger: 'blur' }
+        ],
+        tips: [
+          { required: true, message: '请填写引导语', trigger: 'blur' }
         ]
-      },
-      // 修改第几个菜单
-      modifyAdressnum: 0
+      }
     }
   },
   computed: {
@@ -246,18 +226,6 @@ export default {
       return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImgAny?merCode=${this.merCode}`
     }
   },
-  watch: {},
-  beforeCreate() {
-  },
-  created() {
-  },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {},
   methods: {
     beforeUpload(file) {
       const isImg =
@@ -296,10 +264,11 @@ export default {
         })
       }
     },
+    // 验证链接地址表单是否填写完整
     menulistReg(val) {
       let reg = true
       for (const i in val) {
-        if (val[i].name === '' || val[i].tips === '' || val[i].url === '') {
+        if (val[i].name.trim() === '' || val[i].tips.trim() === '' || val[i].url.trim() === '') {
           const j = parseInt(i) + 1
           this.$message({
             message: `引导菜单${j}有未填写值`,
@@ -334,7 +303,7 @@ export default {
           }
           const regcardBgContent = this.cardBgReg(this.member.cardBgContent)
           let menuList = ''
-          if (regcardBgContent) {
+          if (regcardBgContent) { // 验证url表单是否填写完整
             menuList = this.menulistReg(this.member.customCells)
           }
           if (
@@ -351,41 +320,22 @@ export default {
               this.$emit('getlist')
               this.$router.push({ path: '/member/register-setting' })
             }).catch(error => {
-              console.log(error, '111111')
+              console.log(error)
               this.$emit('getlist')
             })
           }
         } else {
           this.$message({
-            message: '填写错误',
+            message: '参数填写错误',
             type: 'warning'
           })
           return false
         }
       })
     },
-    // 确认对话框
-    dialogSure() {
-      this.member.customCells[this.modifyAdressnum].url = this.ruleForm.linkUrl
-      if (this.ruleForm.linkUrl.trim() === '') {
-        this.$message({
-          message: '自定地址不能为空！',
-          type: 'warning'
-        })
-      } else {
-        this.ruleForm.linkUrl = ''
-        this.dialog.dialogVisible = false
-      }
-    },
     // 删除菜单
     deletmenu(index) {
       this.member.customCells.splice(index, 1)
-    },
-    // 显示修改地址弹框
-    modifyAdress(index) {
-      this.modifyAdressnum = index
-      this.ruleForm.linkUrl = this.member.customCells[index].url
-      this.dialog.dialogVisible = true
     },
     // 新增菜单
     addmeun() {
@@ -396,7 +346,7 @@ export default {
         const dataele = {
           name: '',
           tips: '',
-          url: this.geturl
+          url: ''
         }
         if (this.member.customCells === null) {
           this.member.customCells = []

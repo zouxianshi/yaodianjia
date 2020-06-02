@@ -41,7 +41,7 @@
               <i class="el-icon-download el-icon--right" />
             </el-button>
             <exportTable />
-            <span class="tips">提示：批量导出功能最多一次导出100000条数据</span>
+            <span class="tips">提示：批量导出功能最多一次导出50000条数据</span>
           </el-form-item>
         </el-form>
       </div>
@@ -169,7 +169,7 @@ export default {
     // 导出会员
     exportTabel() {
       var params = _.cloneDeep(this.paramsBac)
-      params.pageSize = 100000
+      params.pageSize = 50000
       params.currentPage = 1
       exportMembers(params).then(res => {
         if (res.code === '10000') {
