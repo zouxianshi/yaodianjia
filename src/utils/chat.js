@@ -114,11 +114,14 @@ class Chat {
         }
 
         if (message.content) {
+          console.log('message.content存在', message.content)
           message.content.content = message.content.content || ''
           if (typeof message.content.extra === 'string') {
             message.content.extra = JSON.parse(message.content.extra)
           }
         }
+        console.log('处理完之后的message体', message)
+        console.log('即将调用消息监听回调')
 
         // 调用消息监听回调
         receivedCb(message)
