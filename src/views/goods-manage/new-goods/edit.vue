@@ -1239,6 +1239,7 @@ export default {
       }
     }
     return {
+      specLoading: false,
       rejectVisible: false, // 驳回弹框
       rejectForm: {
         id: '',
@@ -1986,7 +1987,14 @@ export default {
             type: 'success'
           })
           this.basicForm.id = res.data
-          this.$router.push('/goods-manage/constitute-goods')
+
+          const { name } = this.$route
+          let url = '/goods-manage/constitute-goods'
+
+          if (name === 'applyRecordEdit') {
+            url = '/goods-manage/apply-record'
+          }
+          this.$router.push(url)
           // this.subLoading = false
         })
         .catch(_ => {
