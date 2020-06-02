@@ -26,15 +26,15 @@
       <el-tab-pane label="海贝营销" name="haibeiActivity">
         <el-row :gutter="20">
           <el-col
-            v-for="o in haibeiActivity"
-            :key="o.value"
+            v-for="(o, index) in haibeiActivity"
+            :key="index"
             :xs="24"
             :sm="12"
             :md="8"
             :lg="6"
             :xl="4"
           >
-            <card-item-close :item="o" />
+            <card-item-close :item="o" @changeStatus="changeStatus" />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -54,6 +54,7 @@ import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
 import spellGroup from '@/assets/image/acvity/spell-group.png'
 import share from '@/assets/image/acvity/share.png'
+import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
 export default {
   components: { cardItem, cardItemClose },
@@ -133,13 +134,12 @@ export default {
       ], // 商品促销
       haibeiActivity: [
         {
-
           createText: '添加商品',
           name: 'ReduceGift',
           lable: '商品',
           desc: '',
           titles: '兑换商城',
-          isclose: false,
+          isclose: true,
           img: haibei,
           listUrl: '/activity/exchangeMallList',
           linkUrl: '/activity/exchangeMallAdd'
@@ -150,11 +150,29 @@ export default {
   },
   created() {
     this.activeName = this.$route.query.type || 'goodsActivity'
+    searchActivityStatus({ pmtType: 20 }).then(res => {
+      if (res.code === '10000') {
+        this.haibeiActivity[0].isclose = res.data
+      }
+    })
   },
   methods: {
     handleClick(val) {
-      console.log('点击tab切换', val)
       this.$router.replace(`/marketing/activity?type=${val.name}`)
+    },
+    changeStatus(status) {
+      const params = {
+        'pmtType': 20,
+        'status': status ? 1 : 0
+      }
+      activityOpenOrClose(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: res.msg,
+            type: 'success'
+          })
+        }
+      })
     }
   }
 }
