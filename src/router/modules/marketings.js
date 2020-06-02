@@ -195,6 +195,17 @@ export default [{
       noCache: true,
       activeMenu: '/marketing/activity'
     }
+  },
+  {
+    path: '/marketing/prize-use',
+    component: () => import('@/views/marketings/activitysManage/activeRecord/prizeWriteOff'),
+    name: 'winning-record',
+    meta: {
+      title: '奖品核销',
+      auth: false,
+      noCache: true,
+      activeMenu: '/marketing/activity'
+    }
   }
   ]
 }]

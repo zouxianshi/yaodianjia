@@ -5,6 +5,9 @@
       size="mini"
       @click="() => $router.push({path:'/marketings/activity-manage/turntable/add', query: {code: this.$route.query.code }})"
     >新建活动</el-button>
+    <el-button type="primary" size="mini" @click="$router.push('/marketing/prize-use')">
+      奖品核销
+    </el-button>
     <div class="explain">
       <!-- <el-alert
         title="领券中心可自由上架及下架优惠券，领券中心的优惠上架后用户可手工领取，您可根据活动营销方案定期上架以保持用户活跃"
@@ -87,7 +90,7 @@
               @click.native.prevent="handleCommand(composeValue(scope.$index, scope.row.options[0].value))"
             >{{ scope.row.options[0].label }}</el-button>
             <span style="padding: 0px 10px; color: rgb(153, 153, 153);">|</span>
-            <el-button type="text" size="medium" style="margin-right:5px">
+            <el-button type="text" size="medium" style="margin-right:5px" @click="checkWin(scope.row)">
               中奖记录
             </el-button>
             <span style="padding: 0px 10px; color: rgb(153, 153, 153);">|</span>
@@ -194,19 +197,15 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
-  watch: {},
-  beforeCreate() {},
   created() {
     this.getData()
     this.getStore()
   },
-  beforeMount() {},
-  mounted() {},
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
+    // 中奖纪录查看
+    checkWin(data) {
+      this.$router.push(`/marketing/winning-record?acid=${data.id}`)
+    },
     composeValue(index, val) {
       return {
         index: index,
