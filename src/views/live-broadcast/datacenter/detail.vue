@@ -5,24 +5,30 @@
         <!-- <el-card body-style="width:300px;height:130px">这是视频</el-card> -->
         <el-card class="box-card list-total">
           <div class="box-list">
-            <p class="nums">{{ statistics.totalOrderNum || 0 }}</p>
+            <p class="nums">
+              {{ statistics.totalOrderNum || 0 }}
+              <span>&nbsp;￥</span>
+            </p>
             <p>成交订单</p>
           </div>
           <div class="box-list">
-            <p class="nums">{{ statistics.totalVisitOrderRate || 0 }}</p>
+            <p class="nums">
+              {{ statistics.totalVisitOrderRate || 0 }}
+              <span>&nbsp;%</span>
+            </p>
             <p>用户成交率</p>
           </div>
           <div class="box-list">
-            <p class="nums">{{ statistics.totalOrderAmount || 0 }}</p>
+            <p class="nums">
+              {{ statistics.totalOrderAmount || 0 }}
+              <span>&nbsp;￥</span>
+            </p>
             <p>总成交金额</p>
           </div>
         </el-card>
-        <el-card class="box-card flex-center " style="width: 300px; height: 130px;">
-          <div class="box-list ">
-            <p class="nums">
-              {{ statistics.totalVisitNum || 0 }}
-              <span>&nbsp;</span>
-            </p>
+        <el-card class="box-card flex-center" style="width: 300px; height: 130px;">
+          <div class="box-list">
+            <p class="nums">{{ statistics.totalVisitNum || 0 }}</p>
             <p>累计观看人数</p>
           </div>
         </el-card>
@@ -56,11 +62,10 @@
                   :src=""
                 /> -->
               </el-form-item>
-            </el-form>
-          </div>
+              <!-- </el-form-></el-form> -->
+            </el-form></div>
           <!-- <p class="title-line">关联商品</p> -->
           <el-divider />
-
         </el-card>
       </div>
     </div>
