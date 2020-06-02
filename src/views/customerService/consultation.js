@@ -191,7 +191,7 @@ export default {
             // 同步阅读状态到其他端
             Chat.syncReadStatus(userItem.latestMessage)
             this.curLatestMessageInfo = userItem.latestMessage
-            this.targetId = userItem.targetId
+            this.targetId = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.userId : ''
             this.curUserName = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.nickName : ''
             this.curUserAvatar = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.userLogo : ''
             // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
@@ -213,7 +213,7 @@ export default {
           // 同步阅读状态到其他端
           Chat.syncReadStatus(list[0].latestMessage)
           this.curLatestMessageInfo = list[0].latestMessage
-          this.targetId = list[0].targetId
+          this.targetId = list[ 0 ].latestMessage.content.extra ? list[0].latestMessage.content.extra.userId : ''
           this.curUserName = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.nickName : ''
           this.curUserAvatar = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.userLogo : ''
           // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
@@ -486,9 +486,9 @@ export default {
     // 点击左边用户列表切换
     handleUserClick(data) {
       console.log('handleUserClick', data)
-      if (data.targetId === this.targetId) {
+      if (data.latestMessage.content.extra.userId === this.targetId) {
         this.setCurOnlineUserId({
-          userId: data.targetId
+          userId: data.latestMessage.content.extra.userId
         })
       } else {
         // 发送已读通知
@@ -498,12 +498,12 @@ export default {
         // 同步阅读状态到其他端
         Chat.syncReadStatus(data.latestMessage)
         // 重置所有数据并重新请求
-        this.targetId = data.targetId
+        this.targetId = data.latestMessage.content.extra ? data.latestMessage.content.extra.userId : ''
         this.curLatestMessageInfo = data.latestMessage
         this.curUserAvatar = data.latestMessage.content.extra ? data.latestMessage.content.extra.userLogo : ''
         this.curUserName = data.latestMessage.content.extra ? data.latestMessage.content.extra.nickName : ''
         this.setCurOnlineUserId({
-          userId: data.targetId
+          userId: data.latestMessage.content.extra ? data.latestMessage.content.extra.userId : ''
         })
         this.resetRightData()
       }
@@ -512,14 +512,14 @@ export default {
     // 删除确认弹窗确认按钮点击
     delDialogConfirmBtnClick() {
       this.delUserDialogVisible = false
-      this.delOnlineConversation(this.delUserRow.targetId)
+      this.delOnlineConversation(this.delUserRow.latestMessage.content.extra.userId)
       console.log('after delOnlineConversation', this.onlineConversationData.list)
       if (this.onlineConversationData.list.length > 0) {
         const firstConversation = this.onlineConversationData.list[0]
         this.setCurOnlineUserId({
-          userId: firstConversation.targetId
+          userId: firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userId : ''
         })
-        this.targetId = firstConversation.targetId
+        this.targetId = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userId : ''
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''
         this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
