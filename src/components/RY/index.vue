@@ -1,8 +1,11 @@
 <template>
-  <!-- 新消息图标 暂时用定位放在这里 -->
-  <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
-    <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
-  </el-badge>
+  <div>
+    <!-- 新消息图标 暂时用定位放在这里 -->
+    <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
+      <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
+    </el-badge>
+    <audio ref="audio" :src="audioUrl" />
+  </div>
 </template>
 
 <script>
@@ -11,11 +14,14 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 
+import mp3MsgTip from '@/assets/mp3/msg.wav'
+
 export default {
   data() {
     return {
       // 收到的新消息体
-      newMsg: null
+      newMsg: null,
+      audioUrl: mp3MsgTip
     }
   },
   computed: {
@@ -202,6 +208,8 @@ export default {
         console.error('err', err)
       })
   },
+  mounted() {
+  },
   methods: {
     ...mapMutations({
       addMsgToOnlineCurUserMsgList:
@@ -214,6 +222,9 @@ export default {
           'customerService/setWebSocketConnectionStatus',
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID'
     }),
+    onPaly() {
+      this.$refs.audio.play()
+    },
     // 通过token生成融云token
     querySupportStaffById() {
       return new Promise((resolve, reject) => {
@@ -324,6 +335,8 @@ export default {
         ws.onmessage = function(evt) {
           var received_msg = evt.data
           console.log('接收消息', received_msg)
+          // sound tip
+          self.onPaly()
         }
 
         ws.onclose = function(e) {
