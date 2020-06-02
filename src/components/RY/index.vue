@@ -52,6 +52,10 @@ export default {
             console.warn('进入页面Chat.init onReceived回调', message)
             this.newMsg = message
             // 通知在线咨询组件有新消息
+
+            // sound tip
+            this.onPaly()
+
             console.warn('消息组件，收到消息', message)
             // 在线咨询当前选中用户id
             const { userId } = _this.curOnlineUserData
@@ -335,8 +339,6 @@ export default {
         ws.onmessage = function(evt) {
           var received_msg = evt.data
           console.log('接收消息', received_msg)
-          // sound tip
-          self.onPaly()
         }
 
         ws.onclose = function(e) {
