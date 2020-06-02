@@ -1,8 +1,12 @@
 <template>
-  <!-- 新消息图标 暂时用定位放在这里 -->
-  <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
-    <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
-  </el-badge>
+  <div>
+    <!-- 新消息图标 暂时用定位放在这里 -->
+    <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
+      <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
+    </el-badge>
+    <audio id="audio" src="./_source/msg.wav" />
+    <div @click="onPaly">wwwww</div>
+  </div>
 </template>
 
 <script>
@@ -212,6 +216,29 @@ export default {
           'customerService/setWebSocketConnectionStatus',
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID'
     }),
+    onPaly() {
+      // todo 未完成 要播放音频代码
+      // this.audio = new Audio()
+      // this.audio.src = mp3
+      // let playPromise
+      // playPromise = this.audio.play()
+      // if (playPromise) {
+      //   playPromise.then(() => {
+      //     // 音频加载成功
+      //     // 音频的播放需要耗时
+      //     that.tiemr = setInterval(() => {
+      //       second--
+      //       if (second <= 0) {
+      //         that.audio.pause()
+      //         clearInterval(that.tiemr)
+      //       }
+      //     }, 1000)
+      //   }).catch((e) => {
+      //     // 音频加载失败
+      //     console.error(e)
+      //   })
+      // }
+    },
     // 通过token生成融云token
     querySupportStaffById() {
       return new Promise((resolve, reject) => {
