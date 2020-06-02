@@ -77,7 +77,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="150">
+      <el-table-column fixed="right" label="操作" width="220">
         <template slot-scope="scope">
           <div style="display:flex;font-size:16px;align-items: center">
             <el-button
@@ -86,6 +86,10 @@
               style="margin-right:5px"
               @click.native.prevent="handleCommand(composeValue(scope.$index, scope.row.options[0].value))"
             >{{ scope.row.options[0].label }}</el-button>
+            <span style="padding: 0px 10px; color: rgb(153, 153, 153);">|</span>
+            <el-button type="text" size="medium" style="margin-right:5px">
+              中奖记录
+            </el-button>
             <span style="padding: 0px 10px; color: rgb(153, 153, 153);">|</span>
             <el-dropdown v-if="scope.row.options.length>2" size="medium" @command="handleCommand">
               <span class="el-dropdown-link" style="color: #147de8">

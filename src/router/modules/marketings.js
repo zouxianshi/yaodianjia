@@ -184,6 +184,17 @@ export default [{
       noCache: true
       // activeMenu: '/marketing/gifts'
     }
+  },
+  {
+    path: '/marketing/winning-record',
+    component: () => import('@/views/marketings/activitysManage/activeRecord/winningRecord'),
+    name: 'winning-record',
+    meta: {
+      title: '中奖记录',
+      auth: false,
+      noCache: true,
+      activeMenu: '/marketing/activity'
+    }
   }
   ]
 }]
