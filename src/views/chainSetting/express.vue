@@ -501,7 +501,7 @@ export default {
             '当前还有' +
             (this.cities.length - this.selected.length) +
             '个区域未配置，未配置区域将不支持快递发货！',
-          type: 'error',
+          type: 'warning',
           duration: 5 * 1000
         })
       }
