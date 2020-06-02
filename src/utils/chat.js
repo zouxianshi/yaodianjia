@@ -95,7 +95,7 @@ class Chat {
     RongIMClient.setOnReceiveMessageListener({
       // 接收到的消息
       onReceived: function(message) {
-        console.warn('融云消息监听, 收到消息：', message)
+        console.warn('into setOnReceiveMessageListener, 融云消息监听, 收到消息：', message)
 
         const validateResult = _this.validateMessageType(message)
 
