@@ -33,10 +33,11 @@ export default {
     }
   },
   created() {
-    console.log('消息图标组件, created', this.hasNewMsg)
+    console.log('into 消息图标组件 created', this.hasNewMsg)
     const _this = this
     this.querySupportStaffById()
       .then(() => {
+        console.log('ready to chat init')
         // 获取到融云token后 开始IMLib初始化
         Chat.init({
           ryToken: this.ryToken,
