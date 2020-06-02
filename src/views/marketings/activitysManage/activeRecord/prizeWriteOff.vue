@@ -89,16 +89,19 @@ export default {
   },
   methods: {
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      this.pageInfo.pageSize = val
+      this.getList()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      this.pageInfo.currentPage = val
+      this.getList()
     },
     getList() {
       const params = Object.assign({}, this.pageInfo, { isHx: this.searchParams.isHx })
       prizeUseList(params).then(res => {
         if (res.data) {
           this.tableData = res.data.data
+          this.totalCount = res.data.totalCount
         }
       })
     },
