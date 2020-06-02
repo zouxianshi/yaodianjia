@@ -115,21 +115,16 @@
         >增加新引索菜单</el-button>
       </div>
       <!-- 连接修改弹框 -->
-      <el-dialog append-to-body title="跳转连接地址" :visible.sync="dialog.dialogVisible" width="70%">
+      <el-dialog append-to-body title="跳转连接地址" :visible.sync="dialog.dialogVisible" width="50%">
         <template>
-          <div style="display:flex;margin-bottom:20px">
-            <el-radio v-model="dialog.dialogRadio" label="1">小程序地址：</el-radio>
-            <div>{{ geturl }}</div>
-          </div>
-          <div style="display:flex;margin-bottom:20px;align-items: center;">
-            <el-radio v-model="dialog.dialogRadio" label="2">自定义地址：</el-radio>
-            <div>
-              <el-input v-model="dialog.dialogInput" placeholder="请输入内容" style="width:200%" />
-            </div>
-          </div>
+          <el-form :model="ruleForm" size="mini" label-width="100">
+            <el-form-item label="自定义地址：">
+              <el-input v-model="ruleForm.linkUrl" type="text" />
+            </el-form-item>
+          </el-form>
           <span slot="footer" class="dialog-footer">
-            <el-button @click="dialog.dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogSure">确 定</el-button>
+            <el-button size="mini" @click="dialog.dialogVisible = false">取 消</el-button>
+            <el-button size="mini" type="primary" @click="dialogSure">确 定</el-button>
           </span>
         </template>
       </el-dialog>
@@ -199,10 +194,10 @@ export default {
     }
     return {
       dialog: {
-        dialogVisible: false,
-        dialogRadio: '1',
-        dialogInput: '',
-        dialogUrl: ''
+        dialogVisible: false
+      },
+      ruleForm: {
+        linkUrl: ''
       },
       form: {
         imgUrl: '',
@@ -371,21 +366,14 @@ export default {
     },
     // 确认对话框
     dialogSure() {
-      if (this.dialog.dialogRadio === '1') {
-        this.member.customCells[this.modifyAdressnum].url = this.geturl
-      } else {
-        this.member.customCells[
-          this.modifyAdressnum
-        ].url = this.dialog.dialogInput
-      }
-      if (this.dialog.dialogInput === '' && this.dialog.dialogRadio === '2') {
+      this.member.customCells[this.modifyAdressnum].url = this.ruleForm.linkUrl
+      if (this.ruleForm.linkUrl.trim() === '') {
         this.$message({
-          message: '自定不能为空',
+          message: '自定地址不能为空！',
           type: 'warning'
         })
       } else {
-        // this.dialog.dialogUrl = ''
-        this.dialog.dialogInput = ''
+        this.ruleForm.linkUrl = ''
         this.dialog.dialogVisible = false
       }
     },
@@ -396,13 +384,8 @@ export default {
     // 显示修改地址弹框
     modifyAdress(index) {
       this.modifyAdressnum = index
+      this.ruleForm.linkUrl = this.member.customCells[index].url
       this.dialog.dialogVisible = true
-      if (this.geturl !== this.member.customCells[index].url) {
-        this.dialog.dialogRadio = '2'
-        this.dialog.dialogInput = this.member.customCells[index].url
-      } else {
-        this.dialog.dialogRadio = '1'
-      }
     },
     // 新增菜单
     addmeun() {
