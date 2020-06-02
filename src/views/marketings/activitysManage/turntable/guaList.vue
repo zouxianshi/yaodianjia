@@ -5,6 +5,9 @@
       size="mini"
       @click="() => $router.push({path:'/marketings/activity-manage/turntable/add', query: {code: this.$route.query.code }})"
     >新建活动</el-button>
+    <el-button type="primary" size="mini" @click="$router.push('/marketing/prize-use')">
+      奖品核销
+    </el-button>
     <div class="explain" />
     <div class="search-form">
       <div class="search-item">
@@ -71,7 +74,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="150">
+      <el-table-column fixed="right" label="操作" width="220">
         <template slot-scope="scope">
           <div style="display:flex;font-size:16px;align-items: center">
             <el-button
@@ -80,6 +83,10 @@
               style="margin-right:5px"
               @click.native.prevent="handleCommand(composeValue(scope.$index, scope.row.options[0].value))"
             >{{ scope.row.options[0].label }}</el-button>
+            <span style="padding: 0px 10px; color: rgb(153, 153, 153);">|</span>
+            <el-button type="text" size="medium" style="margin-right:5px" @click="checkWin(scope.row)">
+              中奖记录
+            </el-button>
             <span style="padding: 0px 10px; color: rgb(153, 153, 153);">|</span>
             <el-dropdown v-if="scope.row.options.length>2" size="medium" @command="handleCommand">
               <span class="el-dropdown-link">
@@ -174,6 +181,10 @@ export default {
     this.getStore()
   },
   methods: {
+    // 中奖纪录查看
+    checkWin(data) {
+      this.$router.push(`/marketing/winning-record?acid=${data.id}`)
+    },
     sweepstakes(countType, countRule) {
       if (Number(countType) === 1) {
         if (Number(countRule) === 0) {

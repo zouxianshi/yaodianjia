@@ -5,7 +5,12 @@ import userInfo from './components/userInfo'
 import chatRoom from './components/chatRoom'
 import noData from '@/components/NoData'
 import viewMore from './components/viewMore'
-import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
+import {
+  mapGetters,
+  mapActions,
+  mapMutations,
+  mapState
+} from 'vuex'
 import CustomerService from '@/api/customer-service'
 import {
   queryGoods
@@ -112,7 +117,7 @@ export default {
       handler(list) {
         console.log('into value', list)
         if (list.length === 1) {
-          this.curLatestMessageInfo = list[0].latestMessage
+          this.curLatestMessageInfo = list[ 0 ].latestMessage
         }
         console.log('onlineConversationData.list handler', list)
       },
@@ -191,7 +196,7 @@ export default {
             // 同步阅读状态到其他端
             Chat.syncReadStatus(userItem.latestMessage)
             this.curLatestMessageInfo = userItem.latestMessage
-            this.targetId = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.userId : ''
+            this.targetId = userItem.targetId
             this.curUserName = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.nickName : ''
             this.curUserAvatar = userItem.latestMessage.content.extra ? userItem.latestMessage.content.extra.userLogo : ''
             // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
@@ -206,16 +211,16 @@ export default {
           }
         } else if (list.length > 0) {
           this.setCurOnlineUserId({
-            userId: list[0].targetId
+            userId: list[ 0 ].targetId
           })
           // 清空指定会话未读数
-          Chat.clearUserUnreadMessage(list[0])
+          Chat.clearUserUnreadMessage(list[ 0 ])
           // 同步阅读状态到其他端
-          Chat.syncReadStatus(list[0].latestMessage)
-          this.curLatestMessageInfo = list[0].latestMessage
-          this.targetId = list[ 0 ].latestMessage.content.extra ? list[0].latestMessage.content.extra.userId : ''
-          this.curUserName = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.nickName : ''
-          this.curUserAvatar = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.userLogo : ''
+          Chat.syncReadStatus(list[ 0 ].latestMessage)
+          this.curLatestMessageInfo = list[ 0 ].latestMessage
+          this.targetId = list[ 0 ].targetId
+          this.curUserName = list[ 0 ].latestMessage.content.extra ? list[ 0 ].latestMessage.content.extra.nickName : ''
+          this.curUserAvatar = list[ 0 ].latestMessage.content.extra ? list[ 0 ].latestMessage.content.extra.userLogo : ''
           // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
           // 消息记录
           this.queryHistoryMessage()
@@ -261,7 +266,10 @@ export default {
         pageSize: this.orderListPageSize // 每页条数
       }).then(res => {
         this.orderListLoading = false
-        const { data, totalCount } = res.data
+        const {
+          data,
+          totalCount
+        } = res.data
         if (data && data.length > 0) {
           this.orderListCurPageNo = this.orderListCurPageNo + 1
           this.orderList = [
@@ -486,9 +494,9 @@ export default {
     // 点击左边用户列表切换
     handleUserClick(data) {
       console.log('handleUserClick', data)
-      if (data.latestMessage.content.extra.userId === this.targetId) {
+      if (data.targetId === this.targetId) {
         this.setCurOnlineUserId({
-          userId: data.latestMessage.content.extra.userId
+          userId: data.targetId
         })
       } else {
         // 发送已读通知
@@ -498,12 +506,12 @@ export default {
         // 同步阅读状态到其他端
         Chat.syncReadStatus(data.latestMessage)
         // 重置所有数据并重新请求
-        this.targetId = data.latestMessage.content.extra ? data.latestMessage.content.extra.userId : ''
+        this.targetId = data.targetId
         this.curLatestMessageInfo = data.latestMessage
         this.curUserAvatar = data.latestMessage.content.extra ? data.latestMessage.content.extra.userLogo : ''
         this.curUserName = data.latestMessage.content.extra ? data.latestMessage.content.extra.nickName : ''
         this.setCurOnlineUserId({
-          userId: data.latestMessage.content.extra ? data.latestMessage.content.extra.userId : ''
+          userId: data.targetId
         })
         this.resetRightData()
       }
@@ -512,14 +520,14 @@ export default {
     // 删除确认弹窗确认按钮点击
     delDialogConfirmBtnClick() {
       this.delUserDialogVisible = false
-      this.delOnlineConversation(this.delUserRow.latestMessage.content.extra.userId)
+      this.delOnlineConversation(this.delUserRow.targetId)
       console.log('after delOnlineConversation', this.onlineConversationData.list)
       if (this.onlineConversationData.list.length > 0) {
-        const firstConversation = this.onlineConversationData.list[0]
+        const firstConversation = this.onlineConversationData.list[ 0 ]
         this.setCurOnlineUserId({
-          userId: firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userId : ''
+          userId: firstConversation.targetId
         })
-        this.targetId = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userId : ''
+        this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''
         this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
@@ -608,14 +616,14 @@ export default {
       // 图片转base64作为缩略图
       let base64Url = ''
       var reader = new FileReader()
-      reader.readAsDataURL(file[0]) // 读取图片输入为base64
+      reader.readAsDataURL(file[ 0 ]) // 读取图片输入为base64
       reader.onloadend = function() {
         base64Url = reader.result
         console.log('base64图片', base64Url)
       }
 
       const formData = new FormData()
-      formData.append('file', file[0])
+      formData.append('file', file[ 0 ])
 
       // 上传图片
       CustomerService.fileUpload(formData).then(res => {
@@ -681,12 +689,12 @@ export default {
       console.log('changed this.onlineConversationData', this.onlineConversationData)
       if (this.onlineConversationData.list && this.onlineConversationData.list.length > 0) {
         console.log('hass this.onlineConversationData.list')
-        const firstConversation = this.onlineConversationData.list[0]
+        const firstConversation = this.onlineConversationData.list[ 0 ]
         this.setCurOnlineUserId({
-          userId: firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userId : '',
+          userId: firstConversation.targetId,
           setStorage: false
         })
-        this.targetId = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userId : ''
+        this.targetId = firstConversation.targetId
         this.curUserAvatar = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.userLogo : ''
         this.curUserName = firstConversation.latestMessage.content.extra ? firstConversation.latestMessage.content.extra.nickName : ''
         this.resetRightData()
