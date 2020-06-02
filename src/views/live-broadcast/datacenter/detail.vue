@@ -7,7 +7,7 @@
           <div class="box-list">
             <p class="nums">
               {{ statistics.totalOrderNum || 0 }}
-              <span>&nbsp;笔</span>
+              <span>&nbsp;￥</span>
             </p>
             <p>成交订单</p>
           </div>
@@ -54,8 +54,8 @@
               <el-form-item label="直播封面：">
                 <el-image style="width:100px;height:100px" :src="showImg(LiveDetails.coverPicUrl)" />
               </el-form-item>
-            </el-form>
-          </div>
+              <!-- </el-form-></el-form> -->
+            </el-form></div>
           <!-- <p class="title-line">关联商品</p> -->
           <el-divider />
         </el-card>
