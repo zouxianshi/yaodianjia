@@ -52,6 +52,9 @@ export default {
             // 通知在线咨询组件有新消息
             console.log('消息组件，收到消息', message)
 
+            // sound tip
+            this.onPaly()
+
             const { userId } = _this.curOnlineUserData
 
             // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知
@@ -333,8 +336,6 @@ export default {
         ws.onmessage = function(evt) {
           var received_msg = evt.data
           console.log('接收消息', received_msg)
-          // sound tip
-          self.onPaly()
         }
 
         ws.onclose = function(e) {
