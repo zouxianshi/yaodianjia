@@ -78,9 +78,12 @@ class Chat {
    * 验证消息类型
    */
   validateMessageType(message) {
+    console.log('进入validateMessageType', message)
     if ([this.MessageType.TextMessage, this.MessageType.ImageMessage, this.MessageType.GoodsMessage].indexOf(message.objectName) > -1) {
+      console.log('是合法的消息类型', message.objectName)
       return true
     } else {
+      console.log('非法消息类型')
       return false
     }
   }
@@ -94,8 +97,10 @@ class Chat {
       onReceived: function(message) {
         console.warn('融云消息监听, 收到消息：', message)
 
+        const validateResult = _this.validateMessageType(message)
+
         // 验证消息类型 只接收文本/图片/商品消息
-        if (!_this.validateMessageType(message)) {
+        if (!validateResult) {
           console.log('不用于展示的消息', message)
           if (message.objectName === 'RC:ReadNtf') {
             // 已读通知则前往会话列表中减少一条消息数量
@@ -107,6 +112,8 @@ class Chat {
           }
           return
         }
+
+        console.log('message.objectName', message.objectName)
 
         if (message.objectName === _this.MessageType.ImageMessage) {
           console.log('图片消息', message)
