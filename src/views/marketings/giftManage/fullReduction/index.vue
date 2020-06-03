@@ -93,11 +93,11 @@
                   选择商品 | 已选（{{ storeSelectGoods.length }}）
                 </el-button>
               </el-radio>
-              <el-radio :label="3">指定商品不可用&emsp;
+              <!-- <el-radio :label="3">指定商品不可用&emsp;
                 <el-button v-show="discountForm.productRule === 3" type="primary" plain size="mini" :disabled="isUpdate" @click="$refs.GoodsComponent.open()">
                   选择商品 | 已选（{{ storeSelectGoods.length }}）
                 </el-button>
-              </el-radio>
+              </el-radio> -->
             </el-radio-group>
           </el-form-item>
           <el-form-item v-show="storeSelectGoods.length > 0">
