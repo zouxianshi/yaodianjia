@@ -38,13 +38,22 @@
             <span size="small" type="info">{{ scope.row.limitCount===0?'不限次数':scope.row.limitCount }}</span>
           </template>
         </el-table-column>-->
-        <el-table-column label="操作" width="200" align="center">
+        <el-table-column label="操作" width="220" align="center">
           <template slot-scope="scope">
             <el-button type="text" @click="toLook(scope.row)">查看</el-button>
             <el-divider direction="vertical" />
             <el-button type="text" @click="toAdd(scope.row)">增加库存</el-button>
-            <!-- <el-divider direction="vertical" />
-            <el-button disabled type="text" @click="toEdit(scope.row)">清空库存</el-button>-->
+            <el-divider direction="vertical" />
+            <el-popconfirm
+              confirm_button_text="确定"
+              cancel_button_text="取消"
+              icon="el-icon-info"
+              icon_color="red"
+              title="确定移除该赠品嘛？"
+              @onConfirm="() => {deleteItem(scope.row)}"
+            >
+              <el-button slot="reference" type="text">删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
         <div slot="empty">
@@ -96,7 +105,7 @@
 </template>
 
 <script>
-import { getActGiftList, ActGiftAddStock } from '@/api/activity'
+import { getActGiftList, ActGiftAddStock, ActGiftDelItem } from '@/api/activity'
 import noData from '@/components/NoData'
 export default {
   components: {
@@ -216,6 +225,21 @@ export default {
             message: '库存增加成功'
           })
           this._getTableData()
+        }
+      })
+    },
+    deleteItem(item) {
+      console.log('1111111111111', item)
+      ActGiftDelItem(item.id).then(res => {
+        console.log('我删除了增哦i你条目', res)
+        const { data } = res
+        if (res.code === '10000') {
+          if (data && data.flag) {
+            this.$message.success('删除成功')
+            this._getTableData()
+          } else {
+            this.$message.error(`删除失败 ${data.desc}`)
+          }
         }
       })
     }
