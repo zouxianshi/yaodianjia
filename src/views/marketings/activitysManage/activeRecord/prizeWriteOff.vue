@@ -115,7 +115,11 @@ export default {
         })
         return
       }
-      var params = Object.assign({}, { prizeCode: this.searchParams.prizeCode }, this.pageInfo)
+      const params = {
+        prizeCode: this.searchParams.prizeCode,
+        pageSize: 10,
+        currentPage: 1
+      }
       prizeUseList(params).then(res => {
         if (res.data && res.data.data) {
           this.tabelDataPrice = res.data.data
