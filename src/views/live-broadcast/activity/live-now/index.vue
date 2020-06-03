@@ -42,7 +42,7 @@
         <div class="courseBox">
           <!-- <div class="live-state">直播中 ● ● ●</div> -->
           <div class="courseCenter">
-            <el-button round class="courseButtom">直播教程</el-button>
+            <el-button round class="courseButtom" @click="openCourse">直播教程</el-button>
             <a
               href="https://obsproject.com/download?spm=a2c4g.11186623.2.15.6aac1445JPlKR8"
               target="_blank"
@@ -226,6 +226,125 @@
               <el-button type="primary" @click="courseAgreement = false">确 定</el-button>
             </span>
           </el-dialog>
+          <el-dialog
+            title="直播教程"
+            :visible.sync="courseFlag"
+            width="50%"
+            append-to-body
+            :before-close="handleClose"
+          >
+            <p>
+              如果你是台式电脑，需要准备摄像头和音响（或者一个耳机）
+              1、返回列表后，列表操作栏，点击开播发起直播（只能在开播时间前30分钟之内发起），点击开播，进入直播页面。
+            </p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc1.png"
+              :preview-src-list="srcList"
+            />
+            <p>2、进入直播页面，左边是评论展示区。中间有三个按钮，分别是直播教程、下载软件、获取链接。首先点击直播教程，看一下教程如何操作。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc2.png"
+              :preview-src-list="srcList"
+            />
+            <p>3、点击下载软件，跳转到软件下载页面（https://obsproject.com/download?spm=a2c4g.11186623.2.15.6aac1445JPlKR8），跳转到下载页面后，选择相应的操作系统（windows、苹果、Linx），下载该软件。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc3.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc4.png"
+              :preview-src-list="srcList"
+            />
+            <p>4、软件下载好以后，在电脑中找到该软件下载保存的位置，安装该软件。点击该软件安装包（EXE格式），在弹出的面板中，一直选择next，然后选择install安装。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc5.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc6.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc7.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc8.png"
+              :preview-src-list="srcList"
+            />
+            <p>5、安装好软件之后，在桌面打开软件，进入软件界面，软件初始化弹出的弹窗都可以不管它。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc9.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc10.png"
+              :preview-src-list="srcList"
+            />
+            <p>6、打开软件后，点击来源下+号按钮，添加音频输入捕获、视频捕获设备。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc11.png"
+              :preview-src-list="srcList"
+            />
+            <p>7、然后点击右下角设置按钮，进入设置中心，进入设置中心后，点击推流设置，将服务选择为自定义。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc12.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc13.png"
+              :preview-src-list="srcList"
+            />
+            <p>8、然后回到直播页面，复制服务地址，将服务地址复制到软件设置中心-推流设置服务器一栏中，将串流密钥复制到软件设置中心-推流设置串流密钥中，然后点击确定。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc14.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc15.png"
+              :preview-src-list="srcList"
+            />
+            <p>9、然后回到软件主界面，点击右下角开始推流按钮，点击之后就开始推流了。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc16.png"
+              :preview-src-list="srcList"
+            />
+            <p>10、点击主界面，视频区，会出现红色线框，然后右击鼠标，选择调整输出大小（到源大小），选择后，弹出是否确定按钮，点击确定，视频区就会变大。</p>
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc17.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc18.png"
+              :preview-src-list="srcList"
+            />
+            <el-image
+              class="courseImg"
+              src="https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc19.png"
+              :preview-src-list="srcList"
+            />
+            <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="courseFlag = false">确 定</el-button>
+            </span>
+          </el-dialog>
         </div>
       </div>
     </div>
@@ -250,9 +369,31 @@ export default {
       LiveDetails: {},
       goodList: [],
       chatList: [],
+      courseFlag: false,
       url:
         'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       liveNumber: '',
+      srcList: [
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc1.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc2.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc3.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc4.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc5.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc6.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc7.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc8.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc9.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc10.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc11.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc12.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc13.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc14.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc15.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc16.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc17.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc18.png',
+        'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/ewx_hdsec/live_jc19.png'
+      ],
       shareList: [
         {
           name: '微博',
@@ -463,6 +604,10 @@ export default {
         type: 'success'
       })
     },
+    // 打开教程
+    openCourse() {
+      this.courseFlag = true
+    },
     // 关闭直播
     async closeLive() {
       try {
@@ -630,6 +775,9 @@ export default {
   color: #fff;
   background: rgba(73, 127, 254, 1);
   cursor: pointer;
+}
+.courseImg {
+  padding: 20px 0;
 }
 .live-now-wrapper {
   width: 100%;
