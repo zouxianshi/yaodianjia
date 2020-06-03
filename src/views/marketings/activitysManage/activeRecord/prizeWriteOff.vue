@@ -14,7 +14,7 @@
         </el-radio-group>
       </div>
     </div>
-    <el-table :data="tableData" style="height:calc(100vh - 350px); width: 100%">
+    <el-table :data="tableData" height="calc(100vh - 350px)" style="width: 100%">
       <el-table-column prop="activityType" label="活动类型">
         <template slot-scope="scope">
           {{ scope.row.activityType === 'TA003' ? '大转盘' : '刮刮乐' }}
@@ -58,8 +58,8 @@
         </el-table>
       </div>
       <span slot="footer" style="text-algin:center">
-        <el-button v-if="tabelDataPrice.length > 0 ? tabelDataPrice[0].isHx === 0 : false" size="mini" type="primary" @click="hexiao">确 定</el-button>
-        <el-button v-else size="mini" @click="dialogVisible=false">关闭</el-button>
+        <el-button size="mini" @click="dialogVisible=false">{{ tabelDataPrice.length > 0 ? '取消' : '返回' }}</el-button>
+        <el-button v-if="tabelDataPrice.length > 0 ? tabelDataPrice[0].isHx === 0 : false" size="mini" type="primary" @click="hexiao">确定核销</el-button>
       </span>
     </el-dialog>
   </div>
@@ -89,6 +89,7 @@ export default {
   },
   methods: {
     handleSizeChange(val) {
+      this.pageInfo.currentPage = 1
       this.pageInfo.pageSize = val
       this.getList()
     },
@@ -114,7 +115,11 @@ export default {
         })
         return
       }
-      var params = Object.assign({}, { prizeCode: this.searchParams.prizeCode }, this.pageInfo)
+      const params = {
+        prizeCode: this.searchParams.prizeCode,
+        pageSize: 10,
+        currentPage: 1
+      }
       prizeUseList(params).then(res => {
         if (res.data && res.data.data) {
           this.tabelDataPrice = res.data.data
