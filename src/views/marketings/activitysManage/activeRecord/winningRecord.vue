@@ -11,14 +11,14 @@
         {{ formatDate(activeBase.beginTime) }} ~ {{ formatDate(activeBase.endTime) }}
       </el-form-item>
     </el-form>
-    <el-table :data="tableData" style="height:calc(100vh - 350px); width: 100%" :loading="loading">
+    <el-table :data="tableData" height="calc(100vh - 350px)" style="width: 100%" :loading="loading">
       <el-table-column plabel="奖品类型">
         <template slot-scope="scope">
           {{ fomart(scope.row.prizeType) }}
         </template>
       </el-table-column>
       <el-table-column prop="prizeName" label="奖品名称" />
-      <el-table-column prop="userId" label="中奖人" />
+      <el-table-column prop="memberCardId" label="中奖人" />
       <el-table-column prop="prizeTime" label="中奖时间" />
       <el-table-column prop="hxTime" label="核销时间" />
     </el-table>
@@ -69,6 +69,7 @@ export default {
   methods: {
     handleSizeChange(val) {
       this.pageInfo.pageSize = val
+      this.pageInfo.currentPage = 1
       this.getList()
     },
     handleCurrentChange(val) {
