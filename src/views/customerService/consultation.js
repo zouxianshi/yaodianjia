@@ -5,7 +5,12 @@ import userInfo from './components/userInfo'
 import chatRoom from './components/chatRoom'
 import noData from '@/components/NoData'
 import viewMore from './components/viewMore'
-import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
+import {
+  mapGetters,
+  mapActions,
+  mapMutations,
+  mapState
+} from 'vuex'
 import CustomerService from '@/api/customer-service'
 import {
   queryGoods
@@ -71,7 +76,8 @@ export default {
     ...mapGetters([
       'merCode',
       'userId',
-      'name'
+      'name',
+      'h5Url'
     ]),
     ...mapState('customerService', [
       'curOnlineUserData',
@@ -112,7 +118,7 @@ export default {
       handler(list) {
         console.log('into value', list)
         if (list.length === 1) {
-          this.curLatestMessageInfo = list[0].latestMessage
+          this.curLatestMessageInfo = list[ 0 ].latestMessage
         }
         console.log('onlineConversationData.list handler', list)
       },
@@ -206,16 +212,16 @@ export default {
           }
         } else if (list.length > 0) {
           this.setCurOnlineUserId({
-            userId: list[0].targetId
+            userId: list[ 0 ].targetId
           })
           // 清空指定会话未读数
-          Chat.clearUserUnreadMessage(list[0])
+          Chat.clearUserUnreadMessage(list[ 0 ])
           // 同步阅读状态到其他端
-          Chat.syncReadStatus(list[0].latestMessage)
-          this.curLatestMessageInfo = list[0].latestMessage
-          this.targetId = list[0].targetId
-          this.curUserName = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.nickName : ''
-          this.curUserAvatar = list[0].latestMessage.content.extra ? list[0].latestMessage.content.extra.userLogo : ''
+          Chat.syncReadStatus(list[ 0 ].latestMessage)
+          this.curLatestMessageInfo = list[ 0 ].latestMessage
+          this.targetId = list[ 0 ].targetId
+          this.curUserName = list[ 0 ].latestMessage.content.extra ? list[ 0 ].latestMessage.content.extra.nickName : ''
+          this.curUserAvatar = list[ 0 ].latestMessage.content.extra ? list[ 0 ].latestMessage.content.extra.userLogo : ''
           // 查询会话列表中第一个用户的消息记录、个人资料、订单信息等
           // 消息记录
           this.queryHistoryMessage()
@@ -261,7 +267,10 @@ export default {
         pageSize: this.orderListPageSize // 每页条数
       }).then(res => {
         this.orderListLoading = false
-        const { data, totalCount } = res.data
+        const {
+          data,
+          totalCount
+        } = res.data
         if (data && data.length > 0) {
           this.orderListCurPageNo = this.orderListCurPageNo + 1
           this.orderList = [
@@ -457,7 +466,7 @@ export default {
           title: row.name,
           desc: row.keyWord,
           imageUri: this.showImg(row.mainPic),
-          url: `${this.h5Base}pages/details/index?productId=${row.id}`,
+          url: `${this.h5Url}pages/details/index?productId=${row.id}`,
           price: row.mprice.toFixed(2)
         },
         extra: this.extra
@@ -470,7 +479,7 @@ export default {
         msgInfo,
         messageType: Chat.MessageType.GoodsMessage
       }).then(res => {
-        console.log('h5Base', this.h5Base)
+        console.log('h5Url', this.h5Url)
         console.log('sendMessage successfully', res)
         this.addMsgToOnlineCurUserMsgList({
           merCode: this.merCode,
@@ -515,7 +524,7 @@ export default {
       this.delOnlineConversation(this.delUserRow.targetId)
       console.log('after delOnlineConversation', this.onlineConversationData.list)
       if (this.onlineConversationData.list.length > 0) {
-        const firstConversation = this.onlineConversationData.list[0]
+        const firstConversation = this.onlineConversationData.list[ 0 ]
         this.setCurOnlineUserId({
           userId: firstConversation.targetId
         })
@@ -608,14 +617,14 @@ export default {
       // 图片转base64作为缩略图
       let base64Url = ''
       var reader = new FileReader()
-      reader.readAsDataURL(file[0]) // 读取图片输入为base64
+      reader.readAsDataURL(file[ 0 ]) // 读取图片输入为base64
       reader.onloadend = function() {
         base64Url = reader.result
         console.log('base64图片', base64Url)
       }
 
       const formData = new FormData()
-      formData.append('file', file[0])
+      formData.append('file', file[ 0 ])
 
       // 上传图片
       CustomerService.fileUpload(formData).then(res => {
@@ -681,7 +690,7 @@ export default {
       console.log('changed this.onlineConversationData', this.onlineConversationData)
       if (this.onlineConversationData.list && this.onlineConversationData.list.length > 0) {
         console.log('hass this.onlineConversationData.list')
-        const firstConversation = this.onlineConversationData.list[0]
+        const firstConversation = this.onlineConversationData.list[ 0 ]
         this.setCurOnlineUserId({
           userId: firstConversation.targetId,
           setStorage: false

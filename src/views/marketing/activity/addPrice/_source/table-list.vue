@@ -81,12 +81,6 @@ import noData from '@/components/NoData'
 import { mapGetters } from 'vuex'
 export default {
   components: { noData },
-  computed: {
-    ...mapGetters(['roles', 'merCode', 'activity']),
-    tableData() {
-      return this.activity.tablist
-    }
-  },
   data() {
     return {
       cols: [
@@ -136,6 +130,12 @@ export default {
           render: true
         }
       ]
+    }
+  },
+  computed: {
+    ...mapGetters(['roles', 'merCode', 'activity']),
+    tableData() {
+      return this.activity.tablist
     }
   },
   methods: {

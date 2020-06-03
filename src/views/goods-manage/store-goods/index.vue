@@ -688,6 +688,10 @@ export default {
           return
         }
       }
+      console.log(!!this.listQuery.lockFlag)
+      // if (this.listQuery.lockFlag) {
+      //   this.listQuery.lockFlag = null
+      // }
       exportData({
         ...this.listQuery,
         storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []

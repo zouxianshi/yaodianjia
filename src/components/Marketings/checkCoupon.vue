@@ -10,7 +10,7 @@
       <div class="search-form">
         <div class="search-item">
           <div class="search-item">
-            <span class="label-name" style="width:100px">优惠券状态：</span>
+            <span class="label-name" style="width:100px">优惠券类型：</span>
             <el-select v-model="region" placeholder="活动区域">
               <el-option label="全部" value="0" />
               <el-option label="折扣券" value="1" />
@@ -52,7 +52,7 @@
         <el-table-column label="使用场景" width="90">
           <template
             slot-scope="scope"
-          >{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
+          >{{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
         </el-table-column>
         <el-table-column prop="productRule" label="适用门店" width="100">
           <template
@@ -106,12 +106,6 @@ export default {
   name: 'CheckCoupon',
   components: {},
   props: {
-    list: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    },
     // 起止时间
     timevalue: {
       type: Array,
@@ -124,6 +118,13 @@ export default {
       type: Boolean,
       default() {
         return false
+      }
+    },
+    // 支付：1 //领券：0
+    state: {
+      type: String,
+      default() {
+        return ''
       }
     }
   },
@@ -171,6 +172,11 @@ export default {
         this.pageSize = 10
         this.currentPage = 1
       }
+      // if (this.state === '领券中心') {
+      //   operatorType = 0
+      // } else if (this.state === '支付有礼') {
+      //   operatorType = 1
+      // }
       this.tableLoading = true
       const params = {
         beginTime: this.beforeTime,
@@ -180,7 +186,8 @@ export default {
         ctype: this.region,
         currentPage: this.currentPage,
         merCode: this.merCode,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        operatorType: this.state === '' ? '' : Number(this.state)
       }
       searchActivities(params).then(res => {
         this.tableData = res.data.records
@@ -220,15 +227,6 @@ export default {
       this.handlematching(row)
       this.changePageCoreRecordData()
     },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.multipleTable.clearSelection()
-      }
-    },
     // 商品折扣处理
     handleshopRule(ctype, useRule, denomination, giftName) {
       if (ctype === 1) {
@@ -267,7 +265,7 @@ export default {
     },
     //
     setSelectRow() {
-      if (!this.singlechoice && (!this.multipleSelectionAll || this.multipleSelectionAll.length <= 0)) {
+      if (!this.multipleSelectionAll || this.multipleSelectionAll.length <= 0) {
         return
       }
       // 标识当前行的唯一键的名称
@@ -283,23 +281,6 @@ export default {
             this.$refs.multipleTable.toggleRowSelection(row, true)
           }
         })
-        /** *
-       * 直播单选优惠券独享
-       */
-        if (this.singlechoice) {
-          const check = []
-          this.tableData.map(v => {
-            const findIndex = this.list.findIndex(item => {
-              console.log(v.id, item.couponId)
-              return v.id === item.couponId
-            })
-            console.log('findIndex', this.findIndex)
-            if (findIndex > -1) {
-              check.push(v)
-            }
-          })
-          this.toggleSelection(check)
-        }
       })
     },
     // 记忆选择核心方法

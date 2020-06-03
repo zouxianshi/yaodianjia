@@ -12,11 +12,15 @@ import permission from './directive/permission' // permission control
 import loadmore from './directive/loadmore' // permission control
 import * as filters from './filters' // global filters
 import './permission'
+import VueClipboard from 'vue-clipboard2'
+
 // import { setSystem } from './utils/auth'
 import utils from '@/utils/util'
 Vue.use(permission)
 Vue.use(utils)
 Vue.use(loadmore)
+Vue.use(VueClipboard)
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -31,6 +35,7 @@ Vue.use(Element, {
 })
 
 import { MC } from '@merchant/commons'
+// import { MC } from 'D:/vueWorkspace/merchant-commons/src'
 
 MC.setCookie('mc-system', 'medical')
 

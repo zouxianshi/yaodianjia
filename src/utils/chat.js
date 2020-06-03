@@ -30,7 +30,11 @@ class Chat {
   }
 
   // 初始化融云 IMLib
-  init({ ryToken, onReceived, onStatusChange }) {
+  init({
+    ryToken,
+    onReceived,
+    onStatusChange
+  }) {
     return new Promise((resolve, reject) => {
       this.ryToken = ryToken
       var RongIMLib = window.RongIMLib
@@ -164,7 +168,7 @@ class Chat {
             // do something
             break
           default:
-          // do something
+            // do something
         }
       }
     })
@@ -231,33 +235,32 @@ class Chat {
     const count = 150
     const _self = this
     return new Promise((resolve, reject) => {
-      window.RongIMClient.getInstance().getConversationList(
-        {
-          onSuccess: function(list) {
-            console.warn('融云初始化的会话列表', list)
-            const tempList = []
-            list.forEach(element => {
-              if (element.latestMessage) {
-                if (element.latestMessage.content) {
-                  if (element.latestMessage.content.extra && typeof element.latestMessage.content.extra === 'string') {
-                    element.latestMessage.content.extra = JSON.parse(element.latestMessage.content.extra)
-                  }
+      window.RongIMClient.getInstance().getConversationList({
+        onSuccess: function(list) {
+          console.warn('融云初始化的会话列表', list)
+          const tempList = []
+          list.forEach(element => {
+            if (element.latestMessage) {
+              if (element.latestMessage.content) {
+                if (element.latestMessage.content.extra && typeof element.latestMessage.content.extra === 'string') {
+                  element.latestMessage.content.extra = JSON.parse(element.latestMessage.content.extra)
                 }
               }
-              // 验证消息类型
-              if (_self.validateMessageType(element.latestMessage)) {
-                tempList.push(element)
-              }
-            })
-            console.error('Chat.getConversationList返回的会话列表', tempList)
-            resolve(tempList)
-          },
-          onError: function(error) {
-            reject(error)
-          }
+            }
+            // 验证消息类型
+            if (_self.validateMessageType(element.latestMessage)) {
+              tempList.push(element)
+            }
+          })
+          console.error('Chat.getConversationList返回的会话列表', tempList)
+          resolve(tempList)
         },
-        conversationTypes,
-        count
+        onError: function(error) {
+          reject(error)
+        }
+      },
+      conversationTypes,
+      count
       )
     })
   }
@@ -320,7 +323,11 @@ class Chat {
     var type = '1' // 备用，默认赋值 1 即可
     // 以上 3 个属性在会话的最后一条消息中可以获得
 
-    var msg = new RongIMLib.ReadReceiptMessage({ messageUId: messageUId, lastMessageSendTime: lastMessageSendTime, type: type })
+    var msg = new RongIMLib.ReadReceiptMessage({
+      messageUId: messageUId,
+      lastMessageSendTime: lastMessageSendTime,
+      type: type
+    })
     var conversationType = RongIMLib.ConversationType.PRIVATE
     var targetId = message.content.extra.userId // 目标 Id
 
