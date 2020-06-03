@@ -300,7 +300,8 @@ export default {
       })
     },
     onSetting(isWechat) {
-      this.form.payAutoConfig = this.payH5Base
+      console.log(this.$store.state.user.payH5Url)
+      this.form.payAutoConfig = this.$store.state.user.payH5Url
       this.isWechat = isWechat
       this.visable = true
     },

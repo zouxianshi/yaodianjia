@@ -37,6 +37,9 @@ router.beforeEach(async(to, from, next) => {
           // 获取用户信息
           // const { resList } = await store.dispatch('user/getInfo')
           const { resList } = await store.dispatch('user/getInfo')
+          // 区分新老商户支付链接和host   活动推广链接&支付配置
+          store.dispatch('user/getH5')
+          store.dispatch('user/getPayH5')
           if (resList.length) {
             if (to.meta.auth) {
               if (ps.get(to.meta.auth)) {
