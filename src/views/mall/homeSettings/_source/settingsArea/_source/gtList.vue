@@ -7,8 +7,8 @@
     </el-table-column>
     <el-table-column label="商品图片" width="70">
       <template slot-scope="scope">
-        <template v-if="scope.row.picUrl">
-          <el-image style="width: 40px; height: 40px;display: block" fit="contain" :src="`${showImg(scope.row.picUrl)}?x-oss-process=style/w_80`" />
+        <template v-if="scope.row.picUrl || scope.row.mainPic">
+          <el-image style="width: 40px; height: 40px;display: block" fit="contain" :src="`${showImg(scope.row.picUrl || scope.row.mainPic)}?x-oss-process=style/w_80`" />
         </template>
         <template v-else>-</template>
       </template>
@@ -65,12 +65,12 @@ export default {
       this.$emit('on-selects', _.reject(this.activesData, ['specId', '']))
     },
     handlerItem(item) {
-      const { specId, picUrl, price, mprice, name, storeId, storeName, merCode, id, keyFeature } = item
+      const { specId, picUrl, price, mprice, mainPic, name, storeId, storeName, merCode, commodityId, keyFeature } = item
       return {
         keyFeature,
-        commodityId: id,
+        commodityId,
         specId,
-        img: picUrl,
+        img: picUrl || mainPic,
         price,
         url: `${this.h5Base}pages/details/index?productId=${specId}&storeId=${storeId}&storeName=${storeName}&merCode=${merCode}`,
         mprice,

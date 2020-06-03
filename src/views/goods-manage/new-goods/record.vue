@@ -31,6 +31,12 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
             <el-button
+              v-if="listQuery.auditStatus===3"
+              type="warning"
+              size="small"
+              @click="handleSendCheck(null,true)"
+            >批量提交审核</el-button>
+            <el-button
               v-if="listQuery.auditStatus===3||listQuery.auditStatus===2||listQuery.auditStatus===0||listQuery.auditStatus===-1"
               type="danger"
               size="small"
@@ -119,30 +125,27 @@
           <el-table-column prop="address" align="left" fixed="right" label="操作" min-width="250">
             <template slot-scope="scope">
               <template
-                v-if="(scope.row.infoStatus===15||scope.row.infoStatus===13)&&scope.row.auditStatus===3&&(listQuery.auditStatus===''||listQuery.auditStatus===3)"
+                v-if="(scope.row.infoStatus >= 12)&&scope.row.auditStatus===3&&(listQuery.auditStatus===''||listQuery.auditStatus===3)"
               >
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">提交审核</el-button>
               </template>
-              <template v-else-if="(scope.row.infoStatus===15||scope.row.infoStatus===13)&&scope.row.auditStatus===0">
+              <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
               </template>
               <template v-else>
-                <a
-                  v-if="scope.row.commodityType!==2"
-                  @click="handleQuery(scope.row.id)"
-                >
+                <a v-if="scope.row.commodityType!==2" @click="handleQuery(scope.row.id)">
                   <el-button type size="mini">查看</el-button>
                 </a>
               </template>
               <template
-                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.infoStatus<=15)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
+                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.infoStatus<=13)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
               >
                 <a @click="handleEdit(scope.row.id)">
                   <el-button type size="mini">完善信息</el-button>
                 </a>
               </template>
               <template
-                v-if="scope.row.origin===1&&scope.row.origin!==2&&((scope.row.infoStatus<15)&&scope.row.auditStatus===1)||listQuery.auditStatus===-1"
+                v-if="scope.row.origin===1&&scope.row.origin!==2&&((scope.row.infoStatus<=13)&&scope.row.auditStatus===1)||listQuery.auditStatus===-1"
               >
                 <a @click="handleEdit(scope.row.id)">
                   <el-button type size="mini">完善信息</el-button>
@@ -219,8 +222,8 @@ export default {
   beforeRouteLeave(to, from, next) {
     if (
       to.name === 'GoodsEdit' &&
-        from.name === 'GoodsRecord' &&
-        this.isToEdit
+      from.name === 'GoodsRecord' &&
+      this.isToEdit
     ) {
       const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
         item => item.name === 'GoodsEdit'
@@ -284,11 +287,26 @@ export default {
       this.isToEdit = true
       this.$router.push('/goods-manage/edit?id=' + id)
     },
-    handleSendCheck(row, status) {
+    handleSendCheck(row, isAll) {
+      let ids = []
+      if (row === null && isAll) {
+        if (this.multipleSelection.length === 0) {
+          this.$message({
+            message: '请选择商品',
+            type: 'warning'
+          })
+          return
+        }
+        this.multipleSelection.map(v => {
+          ids.push(v.id)
+        })
+      } else {
+        ids = [row.id]
+      }
       // 提交审核
       const data = {
         auditStatus: 2,
-        ids: [row.id],
+        ids: ids,
         userName: this.name
       }
       setAuditGoods(data).then(res => {

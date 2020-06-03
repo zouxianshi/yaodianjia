@@ -54,7 +54,7 @@
                 <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
                 <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
               </span>
-              <p v-if="keys==='erpCode'&&err_show" class="tip">商品编码只能为纯数字</p>
+              <p v-if="keys==='erpCode'&&err_show" class="tip">只能输入数字、英文、字符</p>
               <p v-show="keys==='barCode'&&err_show" class="tip">只能输入数字、英文、字符</p>
               <p v-show="keys==='limitNum'&&err_show" class="tip">只能输入不能小于0的整数</p>
             </el-form-item>
@@ -161,7 +161,7 @@ export default {
       this.$refs['formData'].validate((valid) => {
         if (valid) {
           console.log(this.keys)
-          if (this.keys === 'erpCode' && !/^[0-9]+$/.test(this.infoData[this.keys])) {
+          if (this.keys === 'erpCode' && !checkZmSZ(this.infoData[this.keys])) {
             this.err_show = true
             return
           }

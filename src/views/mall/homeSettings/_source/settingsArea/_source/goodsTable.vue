@@ -43,18 +43,13 @@ export default {
       loading: false,
       activesData: [],
       searchParams: {
-        brandName: '',
-        currentPage: 1,
-        distinct: true,
-        firstTypeId: '',
-        groupType: true,
-        merCode: '',
-        pageSize: 10,
-        searchKeyWord: '',
-        secondTypeId: '',
-        skuIds: [],
-        storeIds: [],
-        threeTypeId: ''
+        'brandName:': '',
+        'groupId': '',
+        'status': 1,
+        'auditStatus': 1,
+        'currentPage': 1,
+        'pageSize': 10,
+        'erpOrName': ''
       }
     }
   },
@@ -138,8 +133,9 @@ export default {
   },
   created() {
     this.searchParams.merCode = this.$store.getters.merCode
-    this.searchParams.storeIds = []
-    this.activesData = _.cloneDeep(this.itemList)
+    console.log(this.itemList)
+    this.activesData = _.reject(_.cloneDeep(this.itemList), v => !v.commodityId)
+    console.log(this.activesData)
     this.getData()
   },
   beforeMount() {

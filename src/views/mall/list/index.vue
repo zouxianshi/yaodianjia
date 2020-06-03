@@ -2,7 +2,7 @@
   <div class="mall-list-model">
     <el-alert title="微页面新建上限为20个" type="warning" show-icon />
     <div style="margin: 16px 0;">
-      <el-button type="primary" size="small" :disabled="list.length > 19" @click="() => $router.push('/mall/home-settings')">新建首页</el-button>
+      <el-button type="primary" size="small" :disabled="list.length > 19" @click="onCreate">新建首页</el-button>
     </div>
     <div v-loading="loading" class="mlm-table-box">
       <el-table :data="list" style="width: 100%;" height="calc(100vh - 300px)">
@@ -52,12 +52,18 @@
     <el-dialog title="效果预览" append-to-body :visible.sync="isPreview" width="740px">
       <m-preview v-if="isPreview" :dimension-id="dimensionId" @on-close="() => isPreview = false" />
     </el-dialog>
+
+    <el-dialog title="选择模版" append-to-body :visible.sync="isHomeTpl" width="460px">
+      <m-home-tpl v-if="isHomeTpl" @on-close="() => isHomeTpl = false" />
+    </el-dialog>
   </div>
 </template>
 <script>
 import { delMallHome } from '@/api/mallService'
 import mPreview from './../homeSettings/_source/_source/preview'
 import { getMallList, setStatus, setHome, copyHome } from '@/api/mallService'
+import mHomeTpl from './_source/homeTpl'
+
 export default {
   name: 'Index',
   data() {
@@ -66,12 +72,16 @@ export default {
       visible: false,
       loading: false,
       isPreview: false,
-      dimensionId: null
+      dimensionId: null,
+      isHomeTpl: false
     }
   },
   props: {},
   methods: {
-
+    onCreate() {
+      this.isHomeTpl = true
+      // this.$router.push('/mall/home-settings')
+    },
     onDropdown(v, item) {
       switch (v) {
         case 'copy':
@@ -161,7 +171,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mPreview }
+  components: { mPreview, mHomeTpl }
 }
 </script>
 

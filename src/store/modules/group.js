@@ -1,4 +1,4 @@
-import { getTypeTree, setAddGroup, delGroup, updateGroup, updateSort } from '@/api/group'
+import { getTypeTree_2, setAddGroup, delGroup, updateGroup, updateSort } from '@/api/group'
 
 function mapData(data) {
   data.map(v => {
@@ -32,7 +32,7 @@ const mutations = {
 const actions = {
   getGroupList({ commit, state }, { merCode, id }) {
     // 根据分组维度获取该维度下的所有分类
-    getTypeTree({ merCode: merCode, type: 2, dimensionId: id }).then(res => {
+    getTypeTree_2({ merCode: merCode, type: 2, dimensionId: id }).then(res => {
       const { data } = res
       commit('SET_GROUP', mapData(data))
     })

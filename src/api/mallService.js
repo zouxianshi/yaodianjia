@@ -121,8 +121,22 @@ export function getRecommended(p) {
  */
 export function getActivityComm(data) {
   return request({
-    url: `${config.merGoods}/1.0/comm-spec/activityComm`,
+    url: `${config.merGoods}/1.0/comm-spec/_page`,
     method: 'post',
     data
+  })
+}
+
+export function getDefImg() {
+  return request({
+    url: `${config.merGoods}/1.0/cms-dim/_initImg`,
+    method: 'get'
+  })
+}
+
+export function createInitId() {
+  return request({
+    url: `${config.merGoods}/1.0/cms-dim/_init`,
+    method: 'post'
   })
 }

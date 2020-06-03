@@ -17,7 +17,7 @@
         </p>
       </el-alert>
       <p class="text-right " style="margin-top:10px">
-        <a href="#/goods-manage/paircode">
+        <a href="#/goods-manage/importRecode">
           <el-button type="primary" size="small">导入历史</el-button>
         </a>
       </p>
@@ -72,15 +72,28 @@
         </li>
       </ul>
     </div>
+    <importResult
+      :is-show="errorDialogVisible"
+      :error-text="errorText"
+      :error-result-url="errorResultUrl"
+      @close="errorDialogVisible=false"
+    />
   </div>
 </template>
 <script>
 import config from '@/utils/config'
+import importResult from './_source/importResult'
 import { mapGetters } from 'vuex'
 export default {
+  components: {
+    importResult
+  },
   data() {
     return {
-      is_file: false
+      is_file: false,
+      errorDialogVisible: false,
+      errorText: '',
+      errorResultUrl: ''
     }
   },
   computed: {
@@ -95,7 +108,7 @@ export default {
   methods: {
     beforeUpload(file) {
       const type = file.name.split('.')
-      if (type[1] !== 'xls') {
+      if (type[1] !== 'xls' && type[1] !== 'xlsx') {
         this.$message({
           message: '请上传正确的模板',
           type: 'warning'
@@ -126,10 +139,29 @@ export default {
     handleFileSuccess(res) {
       if (res.code === '10000') {
         this.$message({
-          message: res.msg,
+          message: res.msg + '，结果稍后见【导入历史】！',
           type: 'success'
         })
         this.$refs.file.clearFiles()
+        //  this.$message({
+        //     message: '导入处理中，结果稍后见【导入历史】！',
+        //     type: 'success',
+        //     duration: 5 * 1000
+        //   })
+        // this.errorDialogVisible = true
+        // console.log('上传结果', res)
+        // if (res.data.fail === 0) {
+        //   this.errorText = `上传${res.data.success +
+        //     res.data.fail}条数据：操作成功${
+        //     res.data.success
+        //   }条；可点击下载结果文件查看。`
+        // } else {
+        //   this.errorText = `上传${res.data.success +
+        //     res.data.fail}条数据：操作成功${res.data.success}条；操作失败${
+        //     res.data.fail
+        //   }条，失败原因可点击下载结果文件查看。`
+        // }
+        this.errorResultUrl = res.data.url
       } else {
         this.$message.close() // 关闭
         this.$message({
