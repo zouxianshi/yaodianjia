@@ -1,5 +1,5 @@
 <template>
-  <div class="discount-index-model">
+  <div class="discount-index-model app-container">
     <div class="content">
       <div class="discount-content-l">
         <mPhoneView :data="discountForm" :other-data="otherData" />
@@ -434,9 +434,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .discount-index-model {
-  padding: 20px;
-  height: calc(100vh - 180px);
-  overflow: auto;
   .content {
     display: flex;
     .discount-content-l {
