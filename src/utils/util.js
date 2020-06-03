@@ -11,6 +11,7 @@ const API_OSS_BASE =
 const VUE_APP_OSS_ORDER_BASE =
   process.env.VUE_APP_OSS_ORDER_BASE ||
   'https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/'
+
 export default {
   install(Vue, options) {
     Vue.prototype.showImg = function(url) {
