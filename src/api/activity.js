@@ -304,6 +304,16 @@ export function ActGiftAddStock(params) {
   })
 }
 /**
+ * 删除礼品
+ * @param {*} params
+ */
+export function ActGiftDelItem(id) {
+  return request({
+    url: `${config.merGoods}/1.0/act-gift/deleteGift/${id}`,
+    method: 'put'
+  })
+}
+/**
  * 清空活动下的商品库存
  * @param {*String} activityId
  * @param {*Array} specIds
