@@ -24,12 +24,16 @@
           </el-form-item>
           <m-counpon-name ref="cname" :discount-form="discountForm" @changeViews="changeView" />
           <el-form-item label="优惠内容：" prop="denomination">
-            <el-input
+            <el-input-number
               v-model="discountForm.denomination"
-              type="number"
-              :disabled="isUpdate"
               style="width:80px"
-            />折
+              :disabled="isUpdate"
+              :min="1"
+              :max="9.99"
+              :precision="2"
+              :controls="false"
+            >折
+            </el-input-number>
             <span class="zkTips">例：若折扣为8折，填8即可</span>
           </el-form-item>
           <!-- <el-form-item label prop="maxPrice">
@@ -107,11 +111,11 @@
                   选择商品 | 已选（{{ storeSelectGoods.length }}）
                 </el-button>
               </el-radio>
-              <el-radio :label="3">指定商品不可用&emsp;
+              <!-- <el-radio :label="3">指定商品不可用&emsp;
                 <el-button v-show="discountForm.productRule === 3" type="primary" plain size="mini" :disabled="isUpdate" @click="$refs.GoodsComponent.open()">
                   选择商品 | 已选（{{ storeSelectGoods.length }}）
                 </el-button>
-              </el-radio>
+              </el-radio> -->
             </el-radio-group>
           </el-form-item>
           <el-form-item v-show="storeSelectGoods.length > 0">
