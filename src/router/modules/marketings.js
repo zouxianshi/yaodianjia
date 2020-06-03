@@ -199,7 +199,7 @@ export default [{
   {
     path: '/marketing/prize-use',
     component: () => import('@/views/marketings/activitysManage/activeRecord/prizeWriteOff'),
-    name: 'winning-record',
+    name: 'prize-use',
     meta: {
       title: '奖品核销',
       auth: false,
