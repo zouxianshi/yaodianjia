@@ -18,7 +18,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="prizeName" label="奖品名称" />
-      <el-table-column prop="memberCardId" label="中奖人" />
+      <el-table-column prop="memberCardId" label="中奖人" min-width="140" />
       <el-table-column prop="prizeTime" label="中奖时间" />
       <el-table-column prop="hxTime" label="核销时间" />
     </el-table>
