@@ -1597,11 +1597,11 @@ export default {
       getUnit().then(res => {
         const { data } = res
         if (data) {
-          data.map(v => {
-            this.unit.push({
+          this.unit = data.map(v => {
+            return {
               label: v,
               value: v
-            })
+            }
           })
         }
       })
@@ -2041,8 +2041,7 @@ export default {
     },
     goBackUrl() {
       this.$store.dispatch('tagsView/delView', this.$route).then(res => {
-        console.log(this.backUrl)
-        // this.$router.replace('/goods-manage/' + this.backUrl)
+        this.$router.replace(`/goods-manage/${this.backUrl}?source=2`)
       })
     },
     // 保存

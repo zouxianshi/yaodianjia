@@ -203,6 +203,7 @@ import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import checkDialog from './_source/check-dialog'
+
 export default {
   name: 'GoodsRecord',
   components: { Pagination, ElImageViewer, checkDialog },
@@ -235,9 +236,9 @@ export default {
   },
   watch: {},
   created() {
-    console.log('++++1')
-    if (this.$route.query.type) {
-      this.listQuery.auditStatus = this.$route.query.type
+    const { query } = this.$route
+    if (!_.isEmpty(query) && query.source) {
+      this.listQuery.auditStatus = query.source
     }
     this.getList()
   },
