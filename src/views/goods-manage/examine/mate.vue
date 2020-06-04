@@ -285,7 +285,7 @@
         >
           <el-form-item label="选择原因" prop="id">
             <el-select v-model="rejectForm.id" placeholder>
-              <el-option label="药店加平台已存在改商品" value="1" />
+              <el-option label="该商品不适合销售" value="1" />
               <el-option label="商品信息不够规范合格" value="2" />
               <el-option label="其他原因" value="3" />
             </el-select>

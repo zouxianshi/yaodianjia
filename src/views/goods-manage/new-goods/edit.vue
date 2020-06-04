@@ -191,7 +191,7 @@
                           :value="item.value"
                         />
                       </el-select>
-                      {{ basicForm.unit }}
+                      <!-- {{ basicForm.unit }} -->
                     </el-form-item>
                     <el-form-item label="关键字：" prop="keyWord">
                       <el-input
@@ -374,10 +374,10 @@
         <!-- 规格信息 -->
         <div id="step2">
           <div v-loading="specLoading" class="specs-box" element-loading-text="拼命加载中">
-            <p
+            <!-- <p
               class="text-right"
               style="font-size:13px"
-            >商品来源：{{ chooseSpecName.length }}{{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>
+            >商品来源: {{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p> -->
             <el-form>
               <el-form-item label="规格设置：">
                 <!-- <template v-show="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
@@ -466,6 +466,7 @@
                         {{ propsf.name }}
                       </template>
                       <template slot-scope="scope">
+                        {{ scope.row }}
                         <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
                         <template v-if="!is_query">
                           <edit-table
@@ -1461,6 +1462,11 @@ export default {
           this.basicLoading = false
           this._loadGoodsImgAry(res.data.imgList)
           this._loadSpecs(res.data.specList)
+          console.log('++++++++++++++++')
+          console.log(res.data.commDTO)
+          if (res.data.commDTO && res.data.commDTO.drugType === 3) {
+            res.data.commDTO.drugType = ''
+          }
           this._loadBasicInfo(res.data.commDTO)
           this._loadGoodsDetails(res.data.detailDTO.content)
           this.basicLoading = false
@@ -2035,7 +2041,8 @@ export default {
     },
     goBackUrl() {
       this.$store.dispatch('tagsView/delView', this.$route).then(res => {
-        this.$router.replace('/goods-manage/' + this.backUrl)
+        console.log(this.backUrl)
+        // this.$router.replace('/goods-manage/' + this.backUrl)
       })
     },
     // 保存
