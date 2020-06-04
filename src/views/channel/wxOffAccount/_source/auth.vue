@@ -60,17 +60,18 @@ export default {
   beforeMount() {
   },
   mounted() {
-    window.addEventListener('message', () => {
-      this.dialogComplete = false
-      this.getAuthData()
-    })
+    // const self = this
+    // window.addEventListener('message', function(){
+    //   self.dialogComplete = false
+    //   self.getAuthData()
+    // })
   },
   beforeUpdate() {
   },
   updated() {
   },
   beforeDestroy() {
-    window.removeEventListener('message', () => {}, false)
+    // window.removeEventListener('message', () => {}, false)
   },
   destroyed() {
   },
