@@ -30,7 +30,7 @@
               <div v-for="items in chatList" :key="items.nick+1" class="flex-left discuss-box">
                 <div class="flex-left userMsg">
                   <!-- <el-image class="discuss_avatar" :src="url" :fit="contain" /> -->
-                  <img class="discuss_avatar" :src="url">
+                  <!-- <img class="discuss_avatar" :src="url"> -->
                   <strong class="ellipsis_one">{{ items.nick||'网友' }}</strong>
                   <span style="font-weight:700">:</span>
                 </div>
@@ -864,7 +864,7 @@ export default {
       overflow: hidden;
     }
     .userMsg {
-      width: 25%;
+      width: 30%;
     }
     .discussConten {
       margin-left: 10px;
