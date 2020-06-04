@@ -12,6 +12,11 @@ import routeR from './modules/router-r'
 import routeC from './modules/router-c'
 import routeF from './modules/router-f'
 import routeD from './modules/router-d'
+import marketings from './modules/marketings'
+import member from './modules/member'
+import channel from './modules/channel'
+import auth from './modules/auth'
+
 import mall from './modules/mall'
 import { mUsersModule } from '@merchant/commons'
 
@@ -83,7 +88,11 @@ export const asyncRoutes = [
   ...routeC,
   ...routeF,
   ...routeD,
-  ...mall
+  ...mall,
+  ...member,
+  ...channel,
+  ...auth,
+  ...marketings
 ]
 
 const createRouter = () => new Router({
