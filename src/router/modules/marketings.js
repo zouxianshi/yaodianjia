@@ -7,7 +7,7 @@ export default [{
   name: 'marketings',
   meta: {
     title: '营销中心',
-    auth: false
+    auth: 'marketing'
   },
   children: [{
     path: '/marketings/gift-manage',
@@ -16,7 +16,7 @@ export default [{
     name: 'gift-manage',
     meta: {
       title: '礼品管理',
-      auth: false,
+      auth: 'marketing.gift',
       noCache: true
     }
   },
@@ -26,7 +26,7 @@ export default [{
     name: 'gift-manage-list',
     meta: {
       title: '礼品管理列表',
-      auth: false,
+      auth: 'marketing.gift',
       noCache: true,
       activeMenu: '/marketing/gifts'
     }
@@ -37,7 +37,7 @@ export default [{
     name: 'discount',
     meta: {
       title: '折扣券',
-      auth: false,
+      auth: 'marketing.gift',
       noCache: true,
       activeMenu: '/marketing/gifts'
     }
@@ -48,7 +48,7 @@ export default [{
     name: 'discount',
     meta: {
       title: '满减券',
-      auth: false,
+      auth: 'marketing.gift',
       noCache: true,
       activeMenu: '/marketing/gifts'
     }
@@ -59,7 +59,7 @@ export default [{
     name: 'gift',
     meta: {
       title: '礼品券',
-      auth: false,
+      auth: 'marketing.gift',
       noCache: true,
       activeMenu: '/marketing/gifts'
     }
@@ -71,7 +71,7 @@ export default [{
     name: 'activitys-manage',
     meta: {
       title: '活动管理',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true
     }
   },
@@ -81,7 +81,7 @@ export default [{
     name: 'activitys-manage-list',
     meta: {
       title: '活动管理列表',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -92,7 +92,7 @@ export default [{
     name: 'activitys-manage-coupons-list',
     meta: {
       title: '领劵中心',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -103,7 +103,7 @@ export default [{
     name: 'edit-actives',
     meta: {
       title: '编辑优惠券',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -114,7 +114,7 @@ export default [{
     name: 'activitys-manage-coupons-add',
     meta: {
       title: '添加优惠券',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -125,7 +125,7 @@ export default [{
     name: 'activitys-manage-payment-gift-list',
     meta: {
       title: '支付有礼',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -136,7 +136,7 @@ export default [{
     name: 'activitys-manage-payment-gift-add',
     meta: {
       title: '新增-支付有礼',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -147,7 +147,7 @@ export default [{
     name: 'activitys-manage-turntable-list',
     meta: {
       title: '大转盘',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -158,7 +158,7 @@ export default [{
     name: 'activitys-manage-turntable-guaList',
     meta: {
       title: '刮刮乐',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -169,7 +169,7 @@ export default [{
     name: 'activitys-manage-turntable-add',
     meta: {
       title: '活动',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -191,7 +191,7 @@ export default [{
     name: 'winning-record',
     meta: {
       title: '中奖记录',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
@@ -202,7 +202,7 @@ export default [{
     name: 'prize-use',
     meta: {
       title: '奖品核销',
-      auth: false,
+      auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
     }
