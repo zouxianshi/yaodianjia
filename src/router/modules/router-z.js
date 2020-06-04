@@ -139,6 +139,18 @@ const router = [
         children: []
       },
       {
+        path: 'edit-apply',
+        component: () => import('@/views/goods-manage/new-goods/editApply'),
+        name: 'editApply',
+        meta: {
+          auth: 'commodity.commodity-new-record',
+          title: '自建新品',
+          noCache: true,
+          activeMenu: '/goods-manage/apply'
+        },
+        children: []
+      },
+      {
         path: 'group',
         component: () => import('@/views/goods-manage/group/list'),
         name: 'group',

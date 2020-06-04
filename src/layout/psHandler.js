@@ -69,7 +69,7 @@ class InnerCtor {
         disabled: this.get('commodity'),
         children: [
           {
-            name: '商品库',
+            name: '商品信息编辑',
             path: '/goods-manage/depot',
             disabled: this.get('commodity.commodity-lib')
           },
@@ -83,11 +83,11 @@ class InnerCtor {
             path: '/goods-manage/apply-record',
             disabled: this.get('commodity.commodity-new-record')
           },
-          {
-            name: '新品审核',
-            path: '/goods-manage/examine',
-            disabled: this.get('commodity.commodity-check')
-          },
+          // {
+          //   name: '新品审核',
+          //   path: '/goods-manage/examine',
+          //   disabled: this.get('commodity.commodity-check')
+          // },
           {
             name: `自定义分组`,
             path: '/goods-manage/group',

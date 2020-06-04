@@ -31,17 +31,17 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
             <el-button
-              v-if="listQuery.auditStatus===3"
-              type="warning"
-              size="small"
-              @click="handleSendCheck(null,true)"
-            >批量提交审核</el-button>
-            <el-button
               v-if="listQuery.auditStatus===3||listQuery.auditStatus===0||listQuery.auditStatus===-1"
               type="danger"
               size="small"
               @click="handleBatchDel"
             >删除</el-button>
+            <el-button
+              v-if="listQuery.auditStatus===3"
+              type="warning"
+              size="small"
+              @click="handleSendCheck(null,true)"
+            >批量提交审核</el-button>
             <el-button
               v-if="listQuery.auditStatus===2"
               type="warning"
@@ -203,6 +203,7 @@ import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import checkDialog from './_source/check-dialog'
+
 export default {
   name: 'GoodsRecord',
   components: { Pagination, ElImageViewer, checkDialog },
@@ -235,6 +236,10 @@ export default {
   },
   watch: {},
   created() {
+    const { query } = this.$route
+    if (!_.isEmpty(query) && query.source) {
+      this.listQuery.auditStatus = query.source
+    }
     this.getList()
   },
   beforeRouteLeave(to, from, next) {
@@ -283,9 +288,10 @@ export default {
       }
       setAuditGoods(data).then(res => {
         this.$message({
-          message: '操作成功',
+          message: '数据已撤回到【待提交审核】页面',
           type: 'success'
         })
+        this.listQuery.auditStatus = 3
         this.getList()
       })
     },
@@ -390,9 +396,10 @@ export default {
       }
       setAuditGoods(data).then(res => {
         this.$message({
-          message: '操作成功',
+          message: '提交审核完成，可在【审核中】页面查看',
           type: 'success'
         })
+        this.listQuery.auditStatus = 2
         this.getList()
       })
     },
@@ -457,7 +464,7 @@ export default {
       this._DelPost(data)
     },
     _DelPost(data) {
-      this.$confirm('是否确认删除', '提示', {
+      this.$confirm('删除后数据将无法恢复,确认删除?确认/取消', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
