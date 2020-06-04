@@ -3,7 +3,7 @@
     <div class="record-wrapper">
       <el-radio-group v-model="listQuery.auditStatus" size="small" @change="getList">
         <el-radio-button label>全部</el-radio-button>
-        <!-- <el-radio-button :label="-1">待完善</el-radio-button> -->
+        <el-radio-button :label="-1">待完善</el-radio-button>
         <el-radio-button :label="3">待提交审核</el-radio-button>
         <el-radio-button :label="2">审核中</el-radio-button>
         <el-radio-button :label="1">已通过</el-radio-button>
