@@ -86,10 +86,10 @@ export const asyncRoutes = [
   ...routeC,
   ...routeF,
   ...routeD,
-  ...marketings,
   ...member,
   ...channel,
-  ...auth
+  ...auth,
+  ...marketings
 ]
 
 const createRouter = () => new Router({
