@@ -23,7 +23,7 @@
       <el-table
         v-loading="loading"
         :data="tableData"
-        height="calc(100vh - 400px)"
+        height="calc(100vh - 360px)"
         style="width: 100%;"
         empty-text="您暂未创建任何优惠券"
       >
