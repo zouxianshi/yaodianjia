@@ -33,7 +33,7 @@ class InnerCtor {
         disabled: this.get('commodity'),
         children: [
           {
-            name: '商品信息编辑',
+            name: '商品库',
             path: '/goods-manage/depot',
             disabled: this.get('commodity.commodity-lib')
           },
