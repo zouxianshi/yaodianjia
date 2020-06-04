@@ -396,9 +396,10 @@ export default {
       }
       setAuditGoods(data).then(res => {
         this.$message({
-          message: '操作成功',
+          message: '提交审核完成，可在【审核中】页面查看',
           type: 'success'
         })
+        this.listQuery.auditStatus = 2
         this.getList()
       })
     },

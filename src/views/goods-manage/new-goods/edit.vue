@@ -182,7 +182,7 @@
                         <template slot="append">m*</template>
                       </el-input>
                     </el-form-item>
-                    <el-form-item label="单位：" prop="unit">
+                    <el-form-item v-if="unit.length" label="单位：" prop="unit">
                       <el-select v-model="basicForm.unit" placeholder="选择单位">
                         <el-option
                           v-for="item in unit"
@@ -768,7 +768,7 @@
                   style="margin-top:10px;"
                 >
                   <div class="header">
-                    <span>规格{{ editSpecsData.length+1 }}</span>
+                    <span>规格{{ (editSpecsData.length + index) + 1 }}</span>
                     <i class="el-icon-delete" @click="handleDeleteSpec(index)" />
                   </div>
                   <div class="spec-content">
@@ -1501,11 +1501,11 @@ export default {
           return
         } else {
           this.is_err = false
-          this._AuditRequest(data, false)
+          this._AuditRequest(data, false, 'reject')
         }
       } else {
         this.rejectForm.id = ''
-        this._AuditRequest(data, false)
+        this._AuditRequest(data, false, 'reject')
       }
     },
     // 通过 或 驳回
@@ -1523,7 +1523,7 @@ export default {
       }
     },
     // 审核
-    _AuditRequest(data, state) {
+    _AuditRequest(data, state, type) {
       // 审核请求
       setAuditGoods(data)
         .then(res => {
@@ -1534,7 +1534,8 @@ export default {
           this.rejectVisible = false
           this.rejectForm.id = ''
           this.rejectForm.reason = ''
-          this.$router.go(-1)
+          // this.$router.go(-1)
+          this.$router.replace(`/goods-manage/${this.backUrl}?source=${type === 'reject' ? 0 : 1}`)
         })
         .catch(_ => {
         })
@@ -1542,11 +1543,14 @@ export default {
     // 定位
     onScroll() {
       const scrollTop = this.$refs.appContaniner.scrollTop
-      if (scrollTop <= 1250) {
+      const s1 = $('#step1').height()
+      const s2 = $('#step2').height()
+      const s3 = $('#step3').height()
+      if (scrollTop < s1) {
         this.step = 1
-      } else if (scrollTop < 2050 && scrollTop > 1250) {
+      } else if (scrollTop < (s2 + s1)) {
         this.step = 2
-      } else if (scrollTop >= 2050) {
+      } else if (scrollTop < (s2 + s1 + s3)) {
         this.step = 3
       }
     },
@@ -2046,6 +2050,22 @@ export default {
     },
     // 保存
     handleSubmitForm() {
+      let flag = false
+      _.map(this.specsForm.specs, v => {
+        if (
+          _.isEmpty(v.erpCode) ||
+          _.isEmpty(v.mprice) ||
+          _.isEmpty(v['index_2_尺寸']) ||
+          _.isEmpty(v['index_4_颜色'])
+        ) {
+          flag = true
+        }
+      })
+      if (flag) {
+        this.$message({ message: '请完善规格信息', type: 'error' })
+        return
+      }
+
       // 保存基本信息操作
       this.$refs['basic'].validate(valid => {
         if (valid) {
