@@ -54,7 +54,7 @@ export function getNewGoodsRecord(params) {
 // 删除新品申请
 export function deleteGoods(params) {
   return request({
-    url: `${config.merGoods}/1.0/commodity`,
+    url: `${config.merGoods}/1.0/commodity/batch-del`,
     method: 'delete',
     data: params
   })
