@@ -9,14 +9,9 @@
       <div class="containerCenter">
         <div class="commentBox">
           <div class="flex-left coverbox">
-            <!-- <el-image
-              class="comment_avatar"
-              :src="showImg(LiveDetails.coverPicUrl)"
-              :fit="contain"
-            />-->
             <img class="comment_avatar" :src="showImg(LiveDetails.coverPicUrl)">
-            <p class="comment_Title ellipsis_one ">{{ LiveDetails.name }}</p>
           </div>
+          <div class="comment_Title ellipsis_one">{{ LiveDetails.name }}</div>
           <div class="now-people">
             <span>在线人数:</span>
             <span>{{ liveNumber|| '0' }}人</span>
@@ -79,7 +74,7 @@
               <div v-for="gitems in goodList" :key="gitems+21" class="flex-left goods">
                 <!-- <el-image class="good_avatar" :src="gitems.commodityPic" :fit="contain" /> -->
                 <img class="good_avatar" :src="showImg(gitems.commodityPic)">
-                <div class="c-flex-top goodsMsg">
+                <div class="c-flex-top goodsMsg flex-1">
                   <p>{{ gitems.commodityName }}</p>
                   <p>{{ gitems.specName }}</p>
                 </div>
@@ -102,7 +97,7 @@
             >
               <!-- <el-image class="share_avatar" :src="sitem.avatar" :fit="contain" /> -->
               <img class="share_avatar" :src="sitem.avatar">
-              <span style="margin-top:20px">{{ sitem.name }}</span>
+              <span class="ellipsis_one" style="margin-top:20px">{{ sitem.name }}</span>
             </div>
           </div>
 
@@ -155,7 +150,7 @@
             </span>
           </el-dialog>
           <el-dialog
-            title=""
+            title
             :visible.sync="courseAgreement"
             width="45%"
             center
@@ -183,8 +178,7 @@
                 <br>
               </p>
               <br>
-              <p class="bold">第二条 我方权利义务</p>
-              1、我方有权制定平台运营制度及对直播方的管理规则，并将其作为本协议的一部分，有权对你方进行管理和监督，有权根据运营情况对相应规则做出调整或变更，你方对此表示理解和同意。
+              <p class="bold">第二条 我方权利义务</p>1、我方有权制定平台运营制度及对直播方的管理规则，并将其作为本协议的一部分，有权对你方进行管理和监督，有权根据运营情况对相应规则做出调整或变更，你方对此表示理解和同意。
               <br>2、我方有权对你方进行考察、评判，以确立（取消）对你方的奖励或处罚，具体考察项目及标准由我方另行制定，无需额外征得你方同意。如我方要求与你方另行签订正式的解说合作协议的，你方不得拒绝或以其他形式变相拒绝签订【否则你方应一次性向我方支付违约金【50000】（大写：伍万）元】。
               <br>3、我方有权对你方的直播服务提出改进建议和意见，你方应在收到我方的建议和意见后【3】个工作日内进行相应的整改，否则我方有权限制、关闭、回收、或终止你方对海典直播间的使用，相应扣减应支付给你方的服务费用（若有）可能会给你方造成一定的损失，该损失由你方自行承担，我方不承担任何责任。
               <br>4、我方对你方进行的解说直播相关事宜拥有最终决定权。
@@ -201,15 +195,13 @@
               <br>8、您特此陈述并保证：(1）您当前并未在受美国制裁国家或地区（包括但不限于克里米亚、古巴、伊朗、北朝鲜、及叙利亚）居住或停留；(2）您并不属于美国政府禁止或限制主体名单（包括美国财政部海外资产办公室管理的《特别指定国民名单》Specially Designated Nationals and Blocked Persons List）的主体或人员；(3）您并不属于其他任何遭受美国或联合国经济制裁名单主体或人员，该等名单包括但不限于a）《行业制裁识别名单》Sectoral Sanctions Identifications List；b)《海外逃避制裁者名单》 Foreign Sanctions Evaders List；c)《巴勒斯坦立法会名单》NON-SDN Palestinian Legislative Council List；d)《非SDN涉伊朗制裁法案名单》Non-SDN Iran Sanctions Act List等。
               <br>
               <br>
-              <p class="bold">第四条 服务费用及结算</p>
-              1、以你方为平台用户提供解说直播服务为前提，用户可对你方进行赠送虚拟礼物的消费，你方可根据我方的结算要求及规则申请结算相应的服务费用（若有）。我方就你方收到的每笔虚拟礼物以数量为计价单位，且以一定的比例为价值基准进行兑换结算，作为支付给你方的服务费用。对于非正常手段获得的虚拟礼物消费，我方有权进行独立判断和处理。
+              <p class="bold">第四条 服务费用及结算</p>1、以你方为平台用户提供解说直播服务为前提，用户可对你方进行赠送虚拟礼物的消费，你方可根据我方的结算要求及规则申请结算相应的服务费用（若有）。我方就你方收到的每笔虚拟礼物以数量为计价单位，且以一定的比例为价值基准进行兑换结算，作为支付给你方的服务费用。对于非正常手段获得的虚拟礼物消费，我方有权进行独立判断和处理。
               <br>2、你方所获得的服务费用应当依据国家相关法律法规缴纳税金，我方将你方所获得的服务费用支付于你方在用户中心中填写的银行账户中，你方可在登陆我方平台后在个人中心-主播相关-收益记录中查询相关信息（结算数据为含税数据）。
               <br>3、若你方为自然人，并在我方平台注册并通过个人认证的，则我方有权将你方所获得的服务费用支付于你方在用户中心填写的个人银行账户中；若你方为法人或其他组织，并在我方平台注册且通过机构认证的，则我方有权将你方所获得服务费用支付于你方在机构认证页面填写的机构账户中，但你方应当在我方付款前5个工作日内向我方提供等额有效的增值税专用发票（发票名目为直播服务费），因你方延迟提供发票导致我方付款延迟的，不构成我方违约。我方按照你方填写的账户支付服务费用，即视为我方已经履行了本协议约定的付款义务。若你方为法人或其他组织的，你方工作人员或旗下主播因管理及运营该帐号及其直播房间产生的费用，由你方与你方工作人员或旗下主播之间自行结算。若你方因该费用结算而引起纠纷、诉讼或赔偿给我方造成损失的（包括但不限于你方拖欠你方工作人员或旗下主播薪资费用时我方先行垫付其薪资的款项），我方有权在应付服务费用中先行扣除，不足部分我方有权向你方追偿。
               <br>4、你方保证填写账户信息正确、真实、有效，如因账户信息造成我方的任何支付错误，由你方独自承担责任。同时，若你方需要变更帐户信息，需及时书面通知我方，新账户信息由你方提交申请且经我方审核通过后下一个结算月生效。
               <br>
               <br>
-              <p class="bold">第五条 保密制度</p>
-              1、你方应严格遵守我方的保密制度，承诺无限期保守我方的商业秘密。因你方违反约定使用或披露我方商业秘密和信息使我方遭受任何名誉、声誉或经济上的、直接或间接的损失，你方应赔偿我方人民币[ 100000 ]元违约金，不足以弥补我方损失的，你方还应赔偿我方损失。
+              <p class="bold">第五条 保密制度</p>1、你方应严格遵守我方的保密制度，承诺无限期保守我方的商业秘密。因你方违反约定使用或披露我方商业秘密和信息使我方遭受任何名誉、声誉或经济上的、直接或间接的损失，你方应赔偿我方人民币[ 100000 ]元违约金，不足以弥补我方损失的，你方还应赔偿我方损失。
               <br>2、商业秘密是指由我方提供的、或者你方在双方合作期间了解到的、或者我方对第三方承担保密义务的，与我方业务有关的，能为我方带来经济利益，具有实用性的、非公知的所有信息，包括（但不限于）：技术信息、经营信息和与我方行政管理有关的信息和文件（含本协议及相关协议内容）、你方从我方获得的服务费用的金额和结算方式、标准、权利归属方式、授权方式、客户名单、其他解说员的名单、联系方式、服务费用、我方工作人员名单等不为公众所知悉的信息。
               <br>3、你方应严格遵守本协议，未经我方书面授权或同意，对我方的商业秘密不得：
               （1）以任何方式向第三方或不特定的公众进行传播、泄露；
@@ -218,8 +210,7 @@
               <br>5、本条规定在本协议终止后仍然有效。
               <br>
               <br>
-              <p class="bold">第六条 协议的变更、解除、终止</p>
-              1、我方有权在必要时变更、中止、终止本协议，并在相关页面进行通知，变更后的协议一旦在相关的页面上公布即有效代替原来的协议。本协议条款变更后，如你方继续为我方平台用户提供解说等直播服务，即视为你方已知悉并接受变更后的协议。如你方不同意我方对本协议的所作的任何变更，你方应立即书面通知我方并停止在我方平台进行的任何直播服务。
+              <p class="bold">第六条 协议的变更、解除、终止</p>1、我方有权在必要时变更、中止、终止本协议，并在相关页面进行通知，变更后的协议一旦在相关的页面上公布即有效代替原来的协议。本协议条款变更后，如你方继续为我方平台用户提供解说等直播服务，即视为你方已知悉并接受变更后的协议。如你方不同意我方对本协议的所作的任何变更，你方应立即书面通知我方并停止在我方平台进行的任何直播服务。
               <br>2、双方就解除本协议协商一致即可终止协议。
               <br>3、你方有下列情形之一，我方可以立即解除本协议，不需要提前通知：
               （1）我方发现你方违反对本协议所做的声明与承诺的；
@@ -234,18 +225,19 @@
               <br>6、本协议终止后，不影响本协议约定的直播方成果的权利归属，我方仍为本协议所涉直播方成果的权利人；如果根据中国法律，上述之约定无法实际履行的，你方同意并承诺自本协议终止或双方后续合作中止、终止或解除之日起五年内不将直播方成果的全部或部分的发布、使用等相关的权利（包括但不限于《中华人民共和国著作权法》第十条第一款第（五）项至第（十七）项规定的著作权权利）自行行使、转让或授权许可于任何第三方。
               <br>
               <br>
-              <p class="bold">第七条 违约责任</p>
-              1、任何由于你方声明不实或违反其声明承诺事项导致他方向我方提起诉讼、索赔及/或导致我方声誉受损之后果，你方将承担我方因此产生的全部直接及间接费用、损失及赔偿，其中包括我方为诉讼支付的有关费用及律师费。
+              <p class="bold">第七条 违约责任</p>1、任何由于你方声明不实或违反其声明承诺事项导致他方向我方提起诉讼、索赔及/或导致我方声誉受损之后果，你方将承担我方因此产生的全部直接及间接费用、损失及赔偿，其中包括我方为诉讼支付的有关费用及律师费。
               <br>2、除本协议另有约定外，你方违反本协议下任何规定或你方提供的服务不符合我方的要求，我方有权单方面采取相应限制或处罚措施，包括但不限于：限制、关闭、回收、或终止你方对海典直播间的使用，限制或停止某项单独服务（如视频直播）并根据实际情况决定是否恢复使用，扣除你方帐号中尚未结算的服务费用。
               <br>
               <br>
               <p class="bold">第八条 争议处理</p>
-              <p>
-                因履行本协议而产生的任何争议，双方均应本着友好协商的原则加以解决。协商解决未果，任何一方均可以提请上海市东湖新技术开发区人民法院诉讼解决。
-              </p>
+              <p>因履行本协议而产生的任何争议，双方均应本着友好协商的原则加以解决。协商解决未果，任何一方均可以提请上海市东湖新技术开发区人民法院诉讼解决。</p>
             </div>
             <span slot="footer" class="dialog-footer">
-              <el-button type="primary" style="width:120px;font-size:15px" @click="courseAgreement = false">确 定</el-button>
+              <el-button
+                type="primary"
+                style="width:120px;font-size:15px"
+                @click="courseAgreement = false"
+              >确 定</el-button>
             </span>
           </el-dialog>
           <el-dialog
@@ -764,6 +756,11 @@ export default {
   justify-content: left;
   align-items: center;
 }
+.flex-left-top {
+  display: flex;
+  justify-content: left;
+  align-items: flex-start;
+}
 .flex-between {
   display: flex;
   justify-content: space-between;
@@ -848,22 +845,25 @@ export default {
       padding: 20px;
       background: rgba(0, 0, 0, 0.5);
       color: #fff;
+      overflow: hidden;
     }
     .coverbox {
       width: 100%;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #fff;
+      padding-bottom: 10px;
     }
     .comment_avatar {
-      width: 140px;
-      height: 80px;
+      width: 200px;
+      height: 100px;
     }
     .comment_Title {
-      font-size: 22px;
+      font-size: 16px;
       font-weight: 700;
-      margin-left: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #fff;
+      overflow: hidden;
     }
     .now-people {
+      font-size: 14px;
       margin-top: 10px;
       width: 100%;
       display: flex;
@@ -871,6 +871,7 @@ export default {
       align-items: center;
     }
     .tips {
+      font-size: 14px;
       margin-top: 10px;
       font-weight: 400;
       line-height: 25px;
@@ -1002,8 +1003,8 @@ export default {
       left: 0;
     }
     .share_avatar {
-      width: 60px;
-      height: 60px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
     }
     .share_colose {
