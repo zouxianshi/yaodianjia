@@ -2050,21 +2050,21 @@ export default {
     },
     // 保存
     handleSubmitForm() {
-      let flag = false
-      _.map(this.specsForm.specs, v => {
-        if (
-          _.isEmpty(v.erpCode) ||
-          _.isEmpty(v.mprice) ||
-          _.isEmpty(v['index_2_尺寸']) ||
-          _.isEmpty(v['index_4_颜色'])
-        ) {
-          flag = true
-        }
-      })
-      if (flag) {
-        this.$message({ message: '请完善规格信息', type: 'error' })
-        return
-      }
+      // let flag = false
+      // _.map(this.specsForm.specs, v => {
+      //   if (
+      //     _.isEmpty(v.erpCode) ||
+      //     _.isEmpty(v.mprice) ||
+      //     _.isEmpty(v['index_2_尺寸']) ||
+      //     _.isEmpty(v['index_4_颜色'])
+      //   ) {
+      //     flag = true
+      //   }
+      // })
+      // if (flag) {
+      //   this.$message({ message: '请完善规格信息', type: 'error' })
+      //   return
+      // }
 
       // 保存基本信息操作
       this.$refs['basic'].validate(valid => {
