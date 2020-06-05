@@ -90,6 +90,7 @@ const actions = {
     const { VUE_APP_MEMBER_CENTER, menuData } = state
     const button = _.cloneDeep(menuData)
     // handler request data
+    console.log(button, '1111111111111111111222222222222222222222')
     _.map(button, v => {
       delete v.active
       if (v.type === 'memberCard' || !v.sub_button.length) {
