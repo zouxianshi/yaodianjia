@@ -76,8 +76,7 @@ export default {
     ...mapGetters([
       'merCode',
       'userId',
-      'name',
-      'h5Url'
+      'name'
     ]),
     ...mapState('customerService', [
       'curOnlineUserData',
@@ -466,7 +465,7 @@ export default {
           title: row.name,
           desc: row.keyWord,
           imageUri: this.showImg(row.mainPic),
-          url: `${this.h5Url}pages/details/index?productId=${row.id}`,
+          url: `${this.h5Base}pages/details/index?productId=${row.id}`,
           price: row.mprice.toFixed(2)
         },
         extra: this.extra
@@ -479,7 +478,6 @@ export default {
         msgInfo,
         messageType: Chat.MessageType.GoodsMessage
       }).then(res => {
-        console.log('h5Url', this.h5Url)
         console.log('sendMessage successfully', res)
         this.addMsgToOnlineCurUserMsgList({
           merCode: this.merCode,

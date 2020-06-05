@@ -1,8 +1,5 @@
 import { getInfo } from '@/api/user'
 
-// 获取商户新、旧类型
-import { queryPlatformType } from '@/api/common'
-
 import { setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { MC } from '@merchant/commons'
@@ -16,12 +13,6 @@ const state = {
   roles: [],
   resList: []
 }
-// H5地址
-const h5Base = process.env.VUE_APP_H5_BASE || 'http://m.dev.ydjia.cn/h5/'
-const healthBase = process.env.VUE_APP_HEALTH_BASE || 'https://m.dev.ydjia.cn/health/'
-// 支付地址
-const payH5Base = process.env.VUE_APP_PAY_H5_BASE || 'm.dev.ydjia.cn/h5/pages/order/'
-const payHealthBase = process.env.VUE_APP_PAY_HEALTH_BASE || 'm.dev.ydjia.cn/health/pages/order/'
 
 const mutations = {
   SET_TOKEN: (state, token) => {
@@ -50,16 +41,10 @@ const mutations = {
   },
   SET_ACCOUNT: (state, id) => {
     state.account = id
-  },
+  }
   // SET_MERLOGO: (state, merLogo) => {
   //   state.merLogo = merLogo
   // }
-  SET_H5URL: (state, url) => {
-    state.h5Url = url
-  },
-  SET_PAYURL: (state, url) => {
-    state.payH5Url = url
-  }
 }
 
 const actions = {
@@ -86,31 +71,6 @@ const actions = {
       })
     })
   },
-  getH5({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      queryPlatformType({ merCode: state.merCode }).then(res => {
-        const { data } = res
-        const url = data === 1 ? h5Base : healthBase
-        commit('SET_H5URL', url)
-        resolve('111')
-      }).catch(() => {
-        reject('111')
-      })
-    })
-  },
-  getPayH5({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      queryPlatformType({ merCode: state.merCode }).then(res => {
-        const { data } = res
-        const url = data === 1 ? payH5Base : payHealthBase
-        commit('SET_PAYURL', url)
-        resolve('111')
-      }).catch(() => {
-        reject('111')
-      })
-    })
-  },
-
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve) => {
