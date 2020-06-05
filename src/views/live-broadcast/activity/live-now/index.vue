@@ -7,22 +7,24 @@
         <p class="shopTitle" :pp="showImg(LiveDetails.merLogoUrl)">{{ LiveDetails.merName }}</p>
       </div>
       <div class="containerCenter">
-        <div class="commentBox">
-          <div class="flex-left coverbox">
-            <img class="comment_avatar" :src="showImg(LiveDetails.coverPicUrl)">
+        <div ref="commentBox" class="commentBox">
+          <div ref="commentBox_top">
+            <div class="flex-left coverbox">
+              <img class="comment_avatar" :src="showImg(LiveDetails.coverPicUrl)">
+            </div>
+            <div class="comment_Title ellipsis_one">{{ LiveDetails.name }}</div>
+            <div class="now-people">
+              <span>在线人数:</span>
+              <span>{{ liveNumber|| '0' }}人</span>
+            </div>
+            <p class="tips">
+              平台公告：
+              {{ LiveDetails.businessNotice }}
+            </p>
           </div>
-          <div class="comment_Title ellipsis_one">{{ LiveDetails.name }}</div>
-          <div class="now-people">
-            <span>在线人数:</span>
-            <span>{{ liveNumber|| '0' }}人</span>
-          </div>
-          <p class="tips">
-            平台公告：
-            {{ LiveDetails.businessNotice }}
-          </p>
-          <div ref="box" class="discuss-plan">
+          <div ref="box" class="discuss-plan" :style="{height:discuss_plan+'px'}">
             <div>
-              <div v-for="items in chatList" :key="items.nick+1" class="flex-left discuss-box">
+              <div v-for="items in chatList" :key="items.nick+1" class="flex-left-top discuss-box">
                 <div class="flex-left userMsg">
                   <!-- <el-image class="discuss_avatar" :src="url" :fit="contain" /> -->
                   <!-- <img class="discuss_avatar" :src="url"> -->
@@ -380,6 +382,7 @@ export default {
   //   components:[ { storeGoods, checkCoupon }],
   data() {
     return {
+      discuss_planHeight: 350,
       LiveDetails: {},
       goodList: [],
       chatList: [],
@@ -444,6 +447,9 @@ export default {
     this.getLivegoods()
     this.getShareLivePage()
     this.timOpen()
+    const commentBoxHeight = this.$refs.commentBox.offsetHeight
+    const commentBox_topHeight = this.$refs.commentBox_top.offsetHeight
+    this.discuss_plan = commentBoxHeight - commentBox_topHeight
   },
   // beforeRouteLeave(to, from, next) {
   //   const answer = window.confirm('请问您是否确认下播?')
@@ -879,7 +885,7 @@ export default {
     .discuss-plan {
       width: 100%;
       margin-top: 20px;
-      height: 450px;
+      height: 350px;
       overflow-y: scroll;
     }
     ::-webkit-scrollbar {
