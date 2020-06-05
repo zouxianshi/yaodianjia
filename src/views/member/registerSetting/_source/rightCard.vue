@@ -255,8 +255,8 @@ export default {
     uploadSuccess(res, file, fileList) {
       // 图片上传成功
       if (res.code === '10000') {
-        this.member.cardBgContent = this.showImgHandler(res.data)
-        this.form.imgUrl = this.showImgHandler(res.data)
+        this.member.cardBgContent = this.showImg(res.data)
+        this.form.imgUrl = this.showImg(res.data)
       } else {
         this.$message({
           message: res.msg,

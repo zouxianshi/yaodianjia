@@ -115,7 +115,7 @@
             >
               <img
                 v-if="!!ruleForm.dmPath"
-                :src="showImgHandler(ruleForm.dmPath)"
+                :src="showImg(ruleForm.dmPath)"
                 class="avatar"
               >
               <div
@@ -146,7 +146,7 @@
             >
               <img
                 v-if="!!ruleForm.qrCodePath"
-                :src="showImgHandler(ruleForm.qrCodePath)"
+                :src="showImg(ruleForm.qrCodePath)"
                 class="avatar"
               >
               <div
@@ -172,7 +172,7 @@
             >
               <img
                 v-if="!!ruleForm.officialCodePath"
-                :src="showImgHandler(ruleForm.officialCodePath)"
+                :src="showImg(ruleForm.officialCodePath)"
                 class="avatar"
               >
               <div
