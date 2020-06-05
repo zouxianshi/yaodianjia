@@ -2,6 +2,14 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
 
+//  获取内部链接
+export function getSelfUrl(merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/internal-link/${merCode}`,
+    method: 'get'
+  })
+}
+
 export function jumpAuthUrl(merCode) {
   return request({
     url: `${config.merGoods}/1.0/weeChatOpen/jumpAuthUrl/${merCode}`,
