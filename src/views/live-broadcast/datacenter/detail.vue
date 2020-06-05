@@ -43,7 +43,7 @@
                 <span>{{ LiveDetails.name }}</span>
               </el-form-item>
               <el-form-item label="直播头像：">
-                <el-avatar size="medium" :src="showImg(LiveDetails.merLogoUrl)" />
+                <img :src="showImg(LiveDetails.merLogoUrl)" alt>
               </el-form-item>
               <el-form-item label="直播主题：">
                 <span>{{ statistics.name }}</span>
@@ -52,10 +52,11 @@
                 <span>{{ statistics.realBeginTime }}</span>
               </el-form-item>
               <el-form-item label="直播封面：">
-                <el-image style="width:100px;height:100px" :src="showImg(LiveDetails.coverPicUrl)" />
+                <img style="width:100px;height:100px" :src="showImg(LiveDetails.coverPicUrl)" alt>
               </el-form-item>
               <!-- </el-form-></el-form> -->
-            </el-form></div>
+            </el-form>
+          </div>
           <!-- <p class="title-line">关联商品</p> -->
           <el-divider />
         </el-card>
