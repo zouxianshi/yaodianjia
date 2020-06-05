@@ -423,9 +423,9 @@
                   >{{ item.name }}</el-checkbox>
                 </template> -->
               </el-form-item>
-              <el-form-item label="规格信息：">
+              <el-form-item v-if="isSpec" label="规格信息：">
                 <template v-if="basicForm.origin===1">
-                  <el-table ref="multipleTable" :data="editSpecsData" height="300">
+                  <el-table v-if="editSpecsData.length" ref="multipleTable" :data="editSpecsData" height="300">
                     <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
                     <el-table-column width="55">
                       <template slot-scope="scope">
@@ -1163,6 +1163,10 @@ import editGroup from '../components/grouping'
 import { findArray } from '@/utils/index'
 import { checkNumberdouble } from '@/utils/validate'
 // import { throttle } from '@/utils/throttle'
+import { handlerDays, handlerConsignorSpecVal } from './_source/utils'
+
+console.log(handlerDays())
+console.log('+++1111111111111')
 
 export default {
   name: 'GoodsEdit',
@@ -1240,6 +1244,7 @@ export default {
       }
     }
     return {
+      isSpec: true,
       specLoading: false,
       rejectVisible: false, // 驳回弹框
       rejectForm: {
@@ -1542,8 +1547,8 @@ export default {
     },
     // 定位
     onScroll() {
-      const { scrollTop = null } = this.$refs.appContaniner
-      if (scrollTop) {
+      if (this.$refs.appContaniner && this.$refs.appContaniner.scrollTop) {
+        const { scrollTop } = this.$refs.appContaniner
         const s1 = $('#step1').height()
         const s2 = $('#step2').height()
         const s3 = $('#step3').height()
@@ -1714,6 +1719,12 @@ export default {
         data.days = data.expireDays
         this.timeTypes = '3'
       }
+
+      // todo 处理回填日期
+      const { days, timeTypes } = handlerDays(data.days)
+      data.days = days
+      this.timeTypes = `${timeTypes}`
+
       const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
       const findDrugIndex = findArray(this.drug, { value: data.dosageForm })
       if (this.basicForm.origin === 2) {
@@ -2053,10 +2064,17 @@ export default {
     },
     // 保存
     handleSubmitForm() {
+      // todo submit
+
+      const { editSpecsData, specsForm: { specs }, dynamicProp } = this
       const selectArr = _.some(this.specsList, { isCheck: true })
 
       if (!selectArr) {
         this.$message({ message: '至少勾选一个规格项', type: 'warning' })
+        return
+      }
+
+      if (!handlerConsignorSpecVal(editSpecsData, specs, dynamicProp)) {
         return
       }
 

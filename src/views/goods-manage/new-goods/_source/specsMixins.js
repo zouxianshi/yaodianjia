@@ -464,6 +464,7 @@ const mixin = {
                       keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
                       isCheck: true
                     })
+
                     this.chooseSpecName.push(vs.skuKeyName)
                     this.chooseSpec.push(vs.skuKeyId) // 标库选中的规格存入chooseSpec  修改日期2020-03-25  标库需要添加规格使用
                   })
@@ -478,6 +479,10 @@ const mixin = {
           }
           console.log('------请求标库规格数据')
           this.editSpecsData = res.data || []
+
+          console.log(this.editSpecsData)
+
+          console.log('-------------------------------gongzjian')
           this.standardNoData = !res.data
           if (this.$route.query.type === 'query') {
             $('.el-table__header')
@@ -504,7 +509,7 @@ const mixin = {
       }
     },
     _loadSpecs(val) {
-      console.log(val)
+      this.isSpec = false
       // 请求回显数据
       if (val) {
         const specList = val
@@ -550,6 +555,12 @@ const mixin = {
           }
           console.log('选择')
           console.log(this.chooseSpec, this.chooseSpecName)
+
+          // this.chooseSpec = _.uniqWith(this.chooseSpec, _.isEqual)
+          // this.chooseSpecName = _.uniqWith(this.chooseSpecName, _.isEqual)
+
+          console.log(this.chooseSpec, this.chooseSpecName)
+          console.log('--------------------------------------dddddddd')
         } else {
           /** *
            * 标库商品
@@ -636,6 +647,17 @@ const mixin = {
           this.handleAddSpec()
         }
       }
+
+      console.log(this.editSpecsData)
+      console.log('------------------this.editSpecsData')
+      console.log(this.dynamicProp)
+      console.log('------------------------------------dynamicProp')
+
+      this.dynamicProp = _.uniqWith(this.dynamicProp, _.isEqual)
+
+      setTimeout(() => {
+        this.isSpec = true
+      }, 100)
     },
     shows(row) {
       const findIndex = findArray(this.dynamicProp, { id: row.id })

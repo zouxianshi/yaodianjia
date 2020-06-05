@@ -5,15 +5,15 @@
         <el-radio-button label>全部</el-radio-button>
         <el-radio-button :label="-1">待完善</el-radio-button>
         <el-radio-button :label="3">待提交审核</el-radio-button>
-        <el-radio-button :label="2">审核中</el-radio-button>
+        <el-radio-button :label="2">待审核</el-radio-button>
         <el-radio-button :label="1">已通过</el-radio-button>
-        <el-radio-button :label="0">已驳回</el-radio-button>
+        <el-radio-button :label="0">已拒绝</el-radio-button>
       </el-radio-group>
       <section @keydown.enter="getList">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品信息</span>
-            <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.name" size="small" placeholder="商品名称" />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
@@ -31,23 +31,17 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
             <el-button
-              v-if="listQuery.auditStatus===3||listQuery.auditStatus===0||listQuery.auditStatus===-1"
-              type="danger"
-              size="small"
-              @click="handleBatchDel"
-            >删除</el-button>
-            <el-button
               v-if="listQuery.auditStatus===3"
               type="warning"
               size="small"
               @click="handleSendCheck(null,true)"
             >批量提交审核</el-button>
             <el-button
-              v-if="listQuery.auditStatus===2"
-              type="warning"
+              v-if="listQuery.auditStatus===3||listQuery.auditStatus===2||listQuery.auditStatus===0||listQuery.auditStatus===-1"
+              type="danger"
               size="small"
-              @click="handleBatchCheck"
-            >批量审核</el-button>
+              @click="handleBatchDel"
+            >删除</el-button>
           </div>
         </div>
       </section>
@@ -138,33 +132,23 @@
               <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
               </template>
-              <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===1">
+              <template v-else>
                 <a v-if="scope.row.commodityType!==2" @click="handleQuery(scope.row.id)">
                   <el-button type size="mini">查看</el-button>
                 </a>
               </template>
-              <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===2">
-                <a v-if="scope.row.commodityType!==2" @click="handleCurrentChange(scope.row)">
-                  <el-button type="primary" size="mini">审核</el-button>
-                </a>
-              </template>
-              <template v-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===2">
-                <a v-if="scope.row.commodityType!==2" @click="handleGoback(scope.row.id)">
-                  <el-button type size="mini">撤回</el-button>
-                </a>
-              </template>
               <template
-                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
+                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.infoStatus<=13)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
               >
                 <a @click="handleEdit(scope.row.id)">
-                  <el-button type size="mini">编辑</el-button>
+                  <el-button type size="mini">完善信息</el-button>
                 </a>
               </template>
               <template
                 v-if="scope.row.origin===1&&scope.row.origin!==2&&((scope.row.infoStatus<=13)&&scope.row.auditStatus===1)||listQuery.auditStatus===-1"
               >
                 <a @click="handleEdit(scope.row.id)">
-                  <el-button type size="mini">编辑</el-button>
+                  <el-button type size="mini">完善信息</el-button>
                 </a>
               </template>
               <template v-if="listQuery.auditStatus!==-1&&scope.row.auditStatus===0">
@@ -173,7 +157,7 @@
                 </a>
               </template>
               <el-button
-                v-if=" scope.row.auditStatus === 0 || scope.row.auditStatus === 3"
+                v-if="scope.row.auditStatus!==1"
                 type="danger"
                 size="mini"
                 @click="handleDel(scope.row)"
@@ -192,7 +176,6 @@
         </div>
       </div>
     </div>
-    <checkDialog ref="checkDialog" @onSelect="onGetCheck" />
   </div>
 </template>
 <script>
@@ -202,11 +185,9 @@ import { getNewGoodsRecord, deleteGoods } from '@/api/new-goods'
 import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
-import checkDialog from './_source/check-dialog'
-
 export default {
   name: 'GoodsRecord',
-  components: { Pagination, ElImageViewer, checkDialog },
+  components: { Pagination, ElImageViewer },
   mixins: [mixins],
   data() {
     return {
@@ -222,8 +203,8 @@ export default {
         erpCode: '',
         manufacture: '',
         merCode: '',
-        erpOrName: '',
-        origin: 2,
+        name: '',
+        origin: 0,
         currentPage: 1
       },
       multipleSelection: [],
@@ -236,17 +217,13 @@ export default {
   },
   watch: {},
   created() {
-    const { query } = this.$route
-    if (!_.isEmpty(query) && query.source) {
-      this.listQuery.auditStatus = query.source
-    }
     this.getList()
   },
   beforeRouteLeave(to, from, next) {
     if (
       to.name === 'GoodsEdit' &&
-      from.name === 'GoodsRecord' &&
-      this.isToEdit
+        from.name === 'GoodsRecord' &&
+        this.isToEdit
     ) {
       const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
         item => item.name === 'GoodsEdit'
@@ -279,68 +256,6 @@ export default {
     }
   },
   methods: {
-    // 撤回
-    handleGoback(ids) {
-      const data = {
-        auditStatus: 3,
-        ids: [ids],
-        userName: this.name
-      }
-      setAuditGoods(data).then(res => {
-        this.$message({
-          message: '数据已撤回到【待提交审核】页面',
-          type: 'success'
-        })
-        this.listQuery.auditStatus = 3
-        this.getList()
-      })
-    },
-    onGetCheck(form) {
-      console.log(form)
-      const ids = []
-      this.multipleSelection.map(v => {
-        ids.push(v.id)
-      })
-
-      // 提交审核
-      const data = {
-        auditReason: '',
-        auditStatus: form.result === 1 ? 1 : 0,
-        ids: ids,
-        userName: this.name
-      }
-
-      if (form.result === 2) {
-        if (form.reason === 1) {
-          data.auditReason = '药店加平台已存在改商品'
-        } else if (form.reason === 2) {
-          data.auditReason = '商品信息不够规范合格'
-        } else if (form.reason === 3) {
-          data.auditReason = '其他原因'
-        }
-      }
-      setAuditGoods(data).then(res => {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
-        this.getList()
-      })
-    },
-    handleBatchCheck() {
-      if (this.multipleSelection.length === 0) {
-        this.$message({
-          message: '请选择要审核的数据',
-          type: 'warning'
-        })
-        return
-      }
-      this.$refs.checkDialog.show(true)
-    },
-    handleCurrentChange(row) {
-      sessionStorage.setItem('mate', JSON.stringify(row))
-      this.$router.push('/goods-manage/apply-record-edit?id=' + row.id + '&backUrl=apply-record' + '&type=query&state=check')
-    },
     onLook(url) {
       this.srcList = [`${this.showImg(url)}?x-oss-process=style/w_800`]
       this.isShowImg = true
@@ -399,6 +314,7 @@ export default {
           message: '提交审核完成，可在【审核中】页面查看',
           type: 'success'
         })
+
         this.listQuery.auditStatus = 2
         this.getList()
       })
@@ -410,15 +326,14 @@ export default {
         // 待完善
         params.auditStatus = ''
         params.infoFlag = false
-        // params.origin = 1
+        params.origin = 1
       } else if (this.listQuery.auditStatus === 3) {
         // 待提交审核
         params.infoFlag = true
-        // params.origin = 0
+        params.origin = 0
+      } else {
+        params.origin = 0
       }
-      // else {
-      //   params.origin = 0
-      // }
       params.times = Date.parse(new Date())
       getNewGoodsRecord(params)
         .then(res => {
@@ -464,7 +379,7 @@ export default {
       this._DelPost(data)
     },
     _DelPost(data) {
-      this.$confirm('删除后数据将无法恢复,确认删除?确认/取消', '提示', {
+      this.$confirm('是否确认删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
