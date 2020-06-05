@@ -1542,16 +1542,18 @@ export default {
     },
     // 定位
     onScroll() {
-      const scrollTop = this.$refs.appContaniner.scrollTop
-      const s1 = $('#step1').height()
-      const s2 = $('#step2').height()
-      const s3 = $('#step3').height()
-      if (scrollTop < s1) {
-        this.step = 1
-      } else if (scrollTop < (s2 + s1)) {
-        this.step = 2
-      } else if (scrollTop < (s2 + s1 + s3)) {
-        this.step = 3
+      const { scrollTop = null } = this.$refs.appContaniner
+      if (scrollTop) {
+        const s1 = $('#step1').height()
+        const s2 = $('#step2').height()
+        const s3 = $('#step3').height()
+        if (scrollTop < s1) {
+          this.step = 1
+        } else if (scrollTop < (s2 + s1 + 60)) {
+          this.step = 2
+        } else if (scrollTop < (s2 + s1 + s3)) {
+          this.step = 3
+        }
       }
     },
     // 富文本渲染染成
@@ -2001,11 +2003,12 @@ export default {
           const { name } = this.$route
           let url = '/goods-manage/constitute-goods'
 
-          if (name === 'applyRecordEdit') {
+          if (name === 'applyRecordEdit' || name === 'editApply') {
             url = '/goods-manage/apply-record'
-          } else if (name === 'depot-edit') {
+          } else if (name === 'depotEdit') {
             url = '/goods-manage/depot'
           }
+
           this.$router.push(url)
           // this.subLoading = false
         })
@@ -2050,21 +2053,12 @@ export default {
     },
     // 保存
     handleSubmitForm() {
-      // let flag = false
-      // _.map(this.specsForm.specs, v => {
-      //   if (
-      //     _.isEmpty(v.erpCode) ||
-      //     _.isEmpty(v.mprice) ||
-      //     _.isEmpty(v['index_2_尺寸']) ||
-      //     _.isEmpty(v['index_4_颜色'])
-      //   ) {
-      //     flag = true
-      //   }
-      // })
-      // if (flag) {
-      //   this.$message({ message: '请完善规格信息', type: 'error' })
-      //   return
-      // }
+      const selectArr = _.some(this.specsList, { isCheck: true })
+
+      if (!selectArr) {
+        this.$message({ message: '至少勾选一个规格项', type: 'warning' })
+        return
+      }
 
       // 保存基本信息操作
       this.$refs['basic'].validate(valid => {

@@ -690,6 +690,7 @@ export default {
       }
       exportData({
         ...this.listQuery,
+        lockFlag: this.listQuery.lockFlag ? [this.listQuery.lockFlag] : [],
         storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
       }).then(res => {
         if (res.code === '10000') {
