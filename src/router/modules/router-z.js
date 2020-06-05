@@ -25,7 +25,7 @@ const router = [
       {
         path: 'depot-edit',
         component: () => import('@/views/goods-manage/depot/editDepot'),
-        name: 'depot-edit',
+        name: 'depotEdit',
         meta: {
           title: '商品库',
           auth: 'commodity.commodity-lib',
