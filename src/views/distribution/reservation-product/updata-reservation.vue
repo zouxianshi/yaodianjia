@@ -94,7 +94,7 @@
       >
         <img
           v-if="form.imgUrl"
-          :src="showImgHandler(form.imgUrl)"
+          :src="showImg(form.imgUrl)"
           class="avatar"
         >
         <i v-else class="el-icon-plus" />

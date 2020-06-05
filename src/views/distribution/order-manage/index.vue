@@ -112,7 +112,7 @@
           >
             <img
               :src="
-                showImgHandler(
+                showImg(
                   dialogContent[0] && dialogContent[0].productImgUrl
                 )
               "
