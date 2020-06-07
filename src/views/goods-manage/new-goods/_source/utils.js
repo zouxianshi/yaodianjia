@@ -19,8 +19,9 @@ export const handlerDays = (daysVal) => {
   return { timeTypes, days }
 }
 
-export const handlerConsignorSpecVal = (editSpecsData, specs, dynamicProp) => {
-  const keyArr = _.map(dynamicProp, v => v.keys)
+export const handlerConsignorSpecVal = (editSpecsData, specs, specsList) => {
+  const isCheckArr = _.reject(specsList, v => !_.has(v, 'isCheck'))
+  const keyArr = _.map(isCheckArr, v => `index_${v.id}_${v.attributeName}`)
   const keysArr = ['owner', ...keyArr]
   const vfKeysArr = _.map(editSpecsData, v => _.pick(v, ['owner', ...keyArr]))
   const specsVf = _.map(specs, v => _.pick(v, ['owner', ...keyArr]))

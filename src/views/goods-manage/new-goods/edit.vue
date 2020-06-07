@@ -2066,7 +2066,7 @@ export default {
     handleSubmitForm() {
       // todo submit
 
-      const { editSpecsData, specsForm: { specs }, dynamicProp } = this
+      const { editSpecsData, specsForm: { specs }, specsList } = this
       const selectArr = _.some(this.specsList, { isCheck: true })
 
       if (!selectArr) {
@@ -2074,7 +2074,7 @@ export default {
         return
       }
 
-      if (!handlerConsignorSpecVal(editSpecsData, specs, dynamicProp)) {
+      if (!handlerConsignorSpecVal(editSpecsData, specs, specsList)) {
         return
       }
 
