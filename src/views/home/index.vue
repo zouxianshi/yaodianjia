@@ -40,8 +40,9 @@ export default {
       overflow-y: scroll;
       background: #F5F8FB;
       .dc-home {
-        width: 1000px;
+        width: 999px;
         margin: 0 auto;
+        overflow: hidden;
       }
     }
   }
