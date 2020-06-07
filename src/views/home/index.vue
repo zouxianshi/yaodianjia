@@ -25,7 +25,7 @@ export default {
       'roles'
     ]),
     isDcHome() {
-      return this.merCode === '888888'
+      return this.merCode === '123456'
     }
   },
   created() {
