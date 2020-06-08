@@ -19,9 +19,9 @@
             slot-scope="scope"
           >{{ scope.row.modelType.toString() ==='1'? '卡券提醒' : '' || scope.row.modelType.toString() ==='2'? '订单提醒' : '' || scope.row.modelType.toString() ==='3'? '模板消息' : '' }}</template>
         </el-table-column> -->
-        <el-table-column prop="modelTime" label="推送时间" />
         <el-table-column prop="modelCode" label="模板编号" />
-        <el-table-column prop="modelHead" label="消息标题" />
+        <el-table-column prop="modelName" label="消息标题" />
+        <el-table-column prop="modelTime" label="触发推送" />
         <el-table-column prop="modelUrl" label="页面跳转" />
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
