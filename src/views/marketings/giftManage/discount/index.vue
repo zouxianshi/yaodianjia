@@ -2,7 +2,7 @@
   <div class="discount-index-model app-container">
     <div class="content">
       <div class="discount-content-l">
-        <mPhoneView :data="discountForm" :other-data="otherData" />
+        <mPhoneView :datas="discountForm" :other-data="otherData" />
       </div>
       <div class="discount-content-r">
         <el-steps :active="active">
@@ -256,6 +256,13 @@ export default {
     }
   },
   mounted() {
+    // 查询商户信息
+    _searchByMercode({ merCode: this.merCode }).then(res => {
+      if (res.data) {
+        this.discountForm.logo = res.data.merLogo
+        this.otherData.merName = res.data.merName
+      }
+    })
     this.useRuleLimit = this.discountForm.useRule === 0 ? 0 : 1 // 是否有使用门槛
     if (this.$route.query.id) {
       // 编辑
@@ -303,13 +310,6 @@ export default {
         }
       })
     }
-    // 查询商户信息
-    _searchByMercode({ merCode: this.merCode }).then(res => {
-      if (res.data) {
-        this.discountForm.logo = res.data.merLogo
-        this.otherData.merName = res.data.merName
-      }
-    })
   },
   methods: {
     // 修改是否有最大优惠
