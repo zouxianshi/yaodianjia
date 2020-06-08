@@ -14,7 +14,7 @@
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品信息</span>
-            <el-input v-model.trim="listQuery.name" size="small" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="商品名称" />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
@@ -38,11 +38,17 @@
               @click="handleSendCheck(null,true)"
             >批量提交审核</el-button>
             <el-button
-              v-if="listQuery.auditStatus===3||listQuery.auditStatus===2||listQuery.auditStatus===0||listQuery.auditStatus===-1"
+              v-if="listQuery.auditStatus===3||listQuery.auditStatus===0||listQuery.auditStatus===-1"
               type="danger"
               size="small"
               @click="handleBatchDel"
             >删除</el-button>
+            <el-button
+              v-if="listQuery.auditStatus===2"
+              type="warning"
+              size="small"
+              @click="handleBatchCheck"
+            >批量审核</el-button>
           </div>
         </div>
       </section>
@@ -133,23 +139,33 @@
               <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===0">
                 <el-button type="primary" size="mini" @click="handleSendCheck(scope.row)">重新申请</el-button>
               </template>
-              <template v-else>
+              <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===1">
                 <a v-if="scope.row.commodityType!==2" @click="handleQuery(scope.row.id)">
                   <el-button type size="mini">查看</el-button>
                 </a>
               </template>
+              <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===2">
+                <a v-if="scope.row.commodityType!==2" @click="handleCurrentChange(scope.row)">
+                  <el-button type="primary" size="mini">审核</el-button>
+                </a>
+              </template>
+              <template v-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===2">
+                <a v-if="scope.row.commodityType!==2" @click="handleGoback(scope.row.id)">
+                  <el-button type size="mini">撤回</el-button>
+                </a>
+              </template>
               <template
-                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.infoStatus<=13)&&(scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
+                v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
               >
                 <a @click="handleEdit(scope.row.id)">
-                  <el-button type size="mini">完善信息</el-button>
+                  <el-button type size="mini">编辑</el-button>
                 </a>
               </template>
               <template
                 v-if="scope.row.origin===1&&scope.row.origin!==2&&((scope.row.infoStatus<=13)&&scope.row.auditStatus===1)||listQuery.auditStatus===-1"
               >
                 <a @click="handleEdit(scope.row.id)">
-                  <el-button type size="mini">完善信息</el-button>
+                  <el-button type size="mini">编辑</el-button>
                 </a>
               </template>
               <template v-if="listQuery.auditStatus!==-1&&scope.row.auditStatus===0">
@@ -158,7 +174,7 @@
                 </a>
               </template>
               <el-button
-                v-if="scope.row.auditStatus!==1"
+                v-if=" scope.row.auditStatus === 0 || scope.row.auditStatus === 3"
                 type="danger"
                 size="mini"
                 @click="handleDel(scope.row)"
@@ -204,7 +220,7 @@ export default {
         erpCode: '',
         manufacture: '',
         merCode: '',
-        name: '',
+        erpOrName: '',
         origin: 0,
         currentPage: 1
       },
@@ -257,6 +273,67 @@ export default {
     }
   },
   methods: {
+    // 撤回
+    handleGoback(ids) {
+      const data = {
+        auditStatus: 3,
+        ids: [ids],
+        userName: this.name
+      }
+      setAuditGoods(data).then(res => {
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+        this.getList()
+      })
+    },
+    onGetCheck(form) {
+      console.log(form)
+      const ids = []
+      this.multipleSelection.map(v => {
+        ids.push(v.id)
+      })
+
+      // 提交审核
+      const data = {
+        auditReason: '',
+        auditStatus: form.result === 1 ? 1 : 0,
+        ids: ids,
+        userName: this.name
+      }
+
+      if (form.result === 2) {
+        if (form.reason === 1) {
+          data.auditReason = '药店加平台已存在改商品'
+        } else if (form.reason === 2) {
+          data.auditReason = '商品信息不够规范合格'
+        } else if (form.reason === 3) {
+          data.auditReason = '其他原因'
+        }
+      }
+      setAuditGoods(data).then(res => {
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+        this.getList()
+      })
+    },
+    handleBatchCheck() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请选择要审核的数据',
+          type: 'warning'
+        })
+        return
+      }
+      this.$refs.checkDialog.show(true)
+    },
+    handleCurrentChange(row) {
+      sessionStorage.setItem('mate', JSON.stringify(row))
+      this.$router.push('/goods-manage/apply-record-edit?id=' + row.id + '&backUrl=apply-record' + '&type=query&state=check')
+    },
     onLook(url) {
       this.srcList = [`${this.showImg(url)}?x-oss-process=style/w_800`]
       this.isShowImg = true
@@ -272,7 +349,7 @@ export default {
         erpCode: '',
         manufacture: '',
         merCode: '',
-        name: '',
+        erpOrName: '',
         origin: this.listQuery.origin
       }
       this.getList()
