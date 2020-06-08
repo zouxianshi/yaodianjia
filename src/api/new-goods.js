@@ -108,7 +108,13 @@ export function getBasicGoodsInfo(commodityId, merCode) {
     method: 'get'
   })
 }
-
+// 获取商品所有信息
+export function commodityNew(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/new/${params.commodityId}/${params.merCode}`,
+    method: 'get'
+  })
+}
 // 获取海典标库sku规格管理
 export function getSpecsProductSKU(productId) {
   return request({

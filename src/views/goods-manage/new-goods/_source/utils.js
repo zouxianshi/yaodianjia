@@ -25,7 +25,9 @@ export const handlerConsignorSpecVal = (editSpecsData, specs, specsList) => {
   const keysArr = ['owner', ...keyArr]
   const vfKeysArr = _.map(editSpecsData, v => _.pick(v, ['owner', ...keyArr]))
   const specsVf = _.map(specs, v => _.pick(v, ['owner', ...keyArr]))
+
   const catVfArr = [...vfKeysArr, ...specsVf]
+
   let flag = false
 
   // complete key identification as a verification

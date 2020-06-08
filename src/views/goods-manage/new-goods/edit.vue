@@ -1154,7 +1154,8 @@ import {
   // getBasicGoodsInfo,
   // getGoodsImgAry,
   // getGoodsDetails,
-  getGoodsAddALL
+  getGoodsAddALL,
+  commodityNew
 } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
@@ -1296,7 +1297,7 @@ export default {
         height: '',
         width: '',
         days: '',
-        origin: 2, // 商品来源，1-海典标准库，2-商家自定义
+        origin: '', // 商品来源，1-海典标准库，2-商家自定义
         packStandard: '', // 长宽高
         groupIds: [], // 分组id
         brandNanme: '',
@@ -1462,20 +1463,37 @@ export default {
         commodityId: this.$route.query.id,
         merCode: this.merCode
       }
-      getGoodsAddALL(params)
-        .then(res => {
-          this.basicLoading = false
-          this._loadGoodsImgAry(res.data.imgList)
-          this._loadSpecs(res.data.specList)
-          console.log('++++++++++++++++')
-          console.log(res.data.commDTO)
-          if (res.data.commDTO && res.data.commDTO.drugType === 3) {
-            res.data.commDTO.drugType = ''
-          }
-          this._loadBasicInfo(res.data.commDTO)
-          this._loadGoodsDetails(res.data.detailDTO.content)
-          this.basicLoading = false
-        })
+      if (this.$route.query.type) {
+        commodityNew(params)
+          .then(res => {
+            this.basicLoading = false
+            this._loadGoodsImgAry(res.data.imgList)
+            this._loadSpecs(res.data.specList)
+            console.log('++++++++++++++++')
+            console.log(res.data.commDTO)
+            if (res.data.commDTO && res.data.commDTO.drugType === 3) {
+              res.data.commDTO.drugType = ''
+            }
+            this._loadBasicInfo(res.data.commDTO)
+            this._loadGoodsDetails(res.data.detailDTO.content)
+            this.basicLoading = false
+          })
+      } else {
+        getGoodsAddALL(params)
+          .then(res => {
+            this.basicLoading = false
+            this._loadGoodsImgAry(res.data.imgList)
+            this._loadSpecs(res.data.specList)
+            console.log('++++++++++++++++')
+            console.log(res.data.commDTO)
+            if (res.data.commDTO && res.data.commDTO.drugType === 3) {
+              res.data.commDTO.drugType = ''
+            }
+            this._loadBasicInfo(res.data.commDTO)
+            this._loadGoodsDetails(res.data.detailDTO.content)
+            this.basicLoading = false
+          })
+      }
     },
     // 驳回原因
     handleReject() {
