@@ -282,9 +282,10 @@ export default {
       }
       setAuditGoods(data).then(res => {
         this.$message({
-          message: '操作成功',
+          message: '数据已撤回到【待提交审核】页面',
           type: 'success'
         })
+        this.listQuery.auditStatus = 3
         this.getList()
       })
     },
@@ -457,7 +458,7 @@ export default {
       this._DelPost(data)
     },
     _DelPost(data) {
-      this.$confirm('是否确认删除', '提示', {
+      this.$confirm('删除后该数据将无法恢复，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
