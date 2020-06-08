@@ -11,7 +11,7 @@ const mixin = {
     return {
       datalist: [],
       editSpecsData: [], //  编辑时，用户储存规格回显的数据
-      specSkuList: [],
+      valueList: [],
       specsForm: {
         // 商家自建商品的规格表单
         specsData: [],
@@ -509,16 +509,15 @@ const mixin = {
       }
     },
     _loadSpecs(val) {
-      this.isSpec = false
       // 请求回显数据
       if (val) {
         const specList = val
-        console.log('+++++++++++++')
         console.log(specList)
         /**
          * 自建商品
          */
         if (this.basicForm.origin === 2) {
+          console.log('-----自建商品------')
           if (specList.length > 0) {
             if (specList) {
               this.specsForm.specs = []
@@ -580,11 +579,11 @@ const mixin = {
             const findIndex = findArray(this.editSpecsData, {
               barCode: v.barCode
             })
-            if (v.specSkuList) {
-              v.specSkuList.map(vs => {
+            if (v.valueList) {
+              v.valueList.map(vs => {
                 v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
               })
-              v.productSpecSkuDTOs = v.specSkuList
+              v.productSpecSkuDTOs = v.valueList
             }
             if (findIndex > -1) {
               this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
@@ -605,7 +604,7 @@ const mixin = {
 
               if (this.dynamicProp.length === 0 && this.standardNoData) {
                 const data = []
-                v.specSkuList.map(v => {
+                v.valueList.map(v => {
                   this.specsList.map(sp => {
                     if (sp.attributeName === v.skuKeyName && sp.id !== v.skuKeyId) {
                       v.skuKeyId = sp.id
@@ -624,6 +623,9 @@ const mixin = {
                 })
               }
               this.editSpecsData.push(v)
+              console.log('222222222')
+              console.log(this.dynamicProp)
+              console.log(this.editSpecsData)
             }
           })
           setTimeout(res => {

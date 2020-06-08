@@ -47,11 +47,11 @@ class InnerCtor {
             path: '/goods-manage/apply-record',
             disabled: this.get('commodity.commodity-new-record')
           },
-          // {
-          //   name: '新品审核',
-          //   path: '/goods-manage/examine',
-          //   disabled: this.get('commodity.commodity-check')
-          // },
+          {
+            name: '新品审核',
+            path: '/goods-manage/examine',
+            disabled: this.get('commodity.commodity-check')
+          },
           {
             name: `自定义分组`,
             path: '/goods-manage/group',
