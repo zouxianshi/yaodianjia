@@ -11,7 +11,7 @@ const mixin = {
     return {
       datalist: [],
       editSpecsData: [], //  编辑时，用户储存规格回显的数据
-      specSkuList: [],
+      valueList: [],
       specsForm: {
         // 商家自建商品的规格表单
         specsData: [],
@@ -464,6 +464,7 @@ const mixin = {
                       keys: `index_${vs.skuKeyId}_${vs.skuKeyName}`,
                       isCheck: true
                     })
+
                     this.chooseSpecName.push(vs.skuKeyName)
                     this.chooseSpec.push(vs.skuKeyId) // 标库选中的规格存入chooseSpec  修改日期2020-03-25  标库需要添加规格使用
                   })
@@ -478,6 +479,10 @@ const mixin = {
           }
           console.log('------请求标库规格数据')
           this.editSpecsData = res.data || []
+
+          console.log(this.editSpecsData)
+
+          console.log('-------------------------------gongzjian')
           this.standardNoData = !res.data
           if (this.$route.query.type === 'query') {
             $('.el-table__header')
@@ -504,16 +509,15 @@ const mixin = {
       }
     },
     _loadSpecs(val) {
-      console.log(val)
       // 请求回显数据
       if (val) {
         const specList = val
-        console.log('+++++++++++++')
         console.log(specList)
         /**
          * 自建商品
          */
         if (this.basicForm.origin === 2) {
+          console.log('-----自建商品------')
           if (specList.length > 0) {
             if (specList) {
               this.specsForm.specs = []
@@ -550,6 +554,12 @@ const mixin = {
           }
           console.log('选择')
           console.log(this.chooseSpec, this.chooseSpecName)
+
+          // this.chooseSpec = _.uniqWith(this.chooseSpec, _.isEqual)
+          // this.chooseSpecName = _.uniqWith(this.chooseSpecName, _.isEqual)
+
+          console.log(this.chooseSpec, this.chooseSpecName)
+          console.log('--------------------------------------dddddddd')
         } else {
           /** *
            * 标库商品
@@ -569,11 +579,11 @@ const mixin = {
             const findIndex = findArray(this.editSpecsData, {
               barCode: v.barCode
             })
-            if (v.specSkuList) {
-              v.specSkuList.map(vs => {
+            if (v.valueList) {
+              v.valueList.map(vs => {
                 v[`index_${vs.skuKeyId}_${vs.skuKeyName}`] = vs.skuValue
               })
-              v.productSpecSkuDTOs = v.specSkuList
+              v.productSpecSkuDTOs = v.valueList
             }
             if (findIndex > -1) {
               this.standardSpecs.push(v) // 把数据添加进标库历史数据数组中
@@ -594,7 +604,7 @@ const mixin = {
 
               if (this.dynamicProp.length === 0 && this.standardNoData) {
                 const data = []
-                v.specSkuList.map(v => {
+                v.valueList.map(v => {
                   this.specsList.map(sp => {
                     if (sp.attributeName === v.skuKeyName && sp.id !== v.skuKeyId) {
                       v.skuKeyId = sp.id
@@ -613,6 +623,9 @@ const mixin = {
                 })
               }
               this.editSpecsData.push(v)
+              console.log('222222222')
+              console.log(this.dynamicProp)
+              console.log(this.editSpecsData)
             }
           })
           setTimeout(res => {
@@ -636,6 +649,17 @@ const mixin = {
           this.handleAddSpec()
         }
       }
+
+      console.log(this.editSpecsData)
+      console.log('------------------this.editSpecsData')
+      console.log(this.dynamicProp)
+      console.log('------------------------------------dynamicProp')
+
+      this.dynamicProp = _.uniqWith(this.dynamicProp, _.isEqual)
+
+      setTimeout(() => {
+        this.isSpec = true
+      }, 100)
     },
     shows(row) {
       const findIndex = findArray(this.dynamicProp, { id: row.id })
