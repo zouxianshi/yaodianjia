@@ -27,7 +27,7 @@ const router = [
         component: () => import('@/views/goods-manage/depot/editDepot'),
         name: 'depotEdit',
         meta: {
-          title: '商品库',
+          title: '商品信息编辑',
           auth: 'commodity.commodity-lib',
           noCache: false, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
           activeMenu: '/goods-manage/depot'
