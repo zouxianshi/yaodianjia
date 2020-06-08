@@ -452,7 +452,7 @@ export default {
     handleDel(row) {
       // 单个删除
       const data = {
-        ids: [row.id],
+        commIds: [row.id],
         modifyName: this.name
       }
       this._DelPost(data)

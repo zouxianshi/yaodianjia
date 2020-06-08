@@ -55,7 +55,7 @@ export function getNewGoodsRecord(params) {
 export function deleteGoods(params) {
   return request({
     url: `${config.merGoods}/1.0/commodity/batch-del`,
-    method: 'delete',
+    method: 'post',
     data: params
   })
 }

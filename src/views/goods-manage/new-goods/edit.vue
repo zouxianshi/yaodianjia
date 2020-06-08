@@ -1154,8 +1154,8 @@ import {
   // getBasicGoodsInfo,
   // getGoodsImgAry,
   // getGoodsDetails,
-  getGoodsAddALL,
-  commodityNew
+  getGoodsAddALL
+  // commodityNew
 } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
@@ -1463,37 +1463,37 @@ export default {
         commodityId: this.$route.query.id,
         merCode: this.merCode
       }
-      if (this.$route.query.type) {
-        commodityNew(params)
-          .then(res => {
-            this.basicLoading = false
-            this._loadGoodsImgAry(res.data.imgList)
-            this._loadSpecs(res.data.specList)
-            console.log('++++++++++++++++')
-            console.log(res.data.commDTO)
-            if (res.data.commDTO && res.data.commDTO.drugType === 3) {
-              res.data.commDTO.drugType = ''
-            }
-            this._loadBasicInfo(res.data.commDTO)
-            this._loadGoodsDetails(res.data.detailDTO.content)
-            this.basicLoading = false
-          })
-      } else {
-        getGoodsAddALL(params)
-          .then(res => {
-            this.basicLoading = false
-            this._loadGoodsImgAry(res.data.imgList)
-            this._loadSpecs(res.data.specList)
-            console.log('++++++++++++++++')
-            console.log(res.data.commDTO)
-            if (res.data.commDTO && res.data.commDTO.drugType === 3) {
-              res.data.commDTO.drugType = ''
-            }
-            this._loadBasicInfo(res.data.commDTO)
-            this._loadGoodsDetails(res.data.detailDTO.content)
-            this.basicLoading = false
-          })
-      }
+      // if (this.$route.query.type) {
+      //   commodityNew(params)
+      //     .then(res => {
+      //       this.basicLoading = false
+      //       this._loadGoodsImgAry(res.data.imgList)
+      //       this._loadSpecs(res.data.specList)
+      //       console.log('++++++++++++++++')
+      //       console.log(res.data.commDTO)
+      //       if (res.data.commDTO && res.data.commDTO.drugType === 3) {
+      //         res.data.commDTO.drugType = ''
+      //       }
+      //       this._loadBasicInfo(res.data.commDTO)
+      //       this._loadGoodsDetails(res.data.detailDTO.content)
+      //       this.basicLoading = false
+      //     })
+      // } else {
+      getGoodsAddALL(params)
+        .then(res => {
+          this.basicLoading = false
+          this._loadGoodsImgAry(res.data.imgList)
+          this._loadSpecs(res.data.specList)
+          console.log('++++++++++++++++')
+          console.log(res.data.commDTO)
+          if (res.data.commDTO && res.data.commDTO.drugType === 3) {
+            res.data.commDTO.drugType = ''
+          }
+          this._loadBasicInfo(res.data.commDTO)
+          this._loadGoodsDetails(res.data.detailDTO.content)
+          this.basicLoading = false
+        })
+      // }
     },
     // 驳回原因
     handleReject() {
