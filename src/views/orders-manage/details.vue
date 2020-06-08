@@ -187,7 +187,13 @@
             <!-- {{ detailsData.deliveryType ?'门店员工配送':'快递配送' }} -->
           </div>
           <div class="con">订单来源：微商城</div>
-          <div class="con">订单类型：{{ detailsData.prescriptionSheetMark | orderType }}</div>
+          <div class="con">
+            订单类型：
+            <span v-if="detailsData.orderType === 'I'">
+              兑换订单
+            </span>
+            <span v-else>{{ detailsData.prescriptionSheetMark | orderType }} </span>
+          </div>
           <div v-if="detailsData.deliveryType!==2">
             <div
               v-if="detailsData.orderStatus!==6 && detailsData.deliveryType!==2"
@@ -199,6 +205,7 @@
           <div class="title">付款信息</div>
           <div class="con">付款方式：{{ detailsData.payMode ? '货到付款':'在线支付' }}</div>
           <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
+          <div v-if="detailsData.orderType === 'I'" class="con">海贝总额：{{ detailsData.totalActualHb }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
           <template
             v-if="detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont"
@@ -599,13 +606,19 @@
                     </div>
                     <div class="detail-item-middle">
                       <div class="item-cell cell-con">
-                        <div class="cell-text">￥{{ item.commodityPrice }}</div>
+                        <div class="cell-text">
+                          <span v-if="detailsData.orderType === 'I'">{{ item.totalHb }}海贝 + </span>
+                          <span>￥{{ item.commodityPrice }}</span>
+                        </div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">{{ item.commodityNumber }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div class="cell-text">￥{{ item.totalActualAmount }}</div>
+                        <div class="cell-text">
+                          <span v-if="detailsData.orderType === 'I'">{{ item.totalHb*item.commodityNumber }}海贝 + </span>
+                          ￥{{ item.totalActualAmount }}
+                        </div>
                       </div>
                       <div class="item-cell cell-con">
                         <div
