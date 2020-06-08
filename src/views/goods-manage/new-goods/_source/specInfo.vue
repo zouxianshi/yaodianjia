@@ -1,7 +1,7 @@
 <template>
   <div class="spec-info-model">
     {{ JSON.stringify(specSelectData) }}
-    <el-table :data="specInfoData" style="width: calc(100% - 82px);min-height:151px;">
+    <el-table :data="specListData" style="width: calc(100% - 82px);min-height:151px;">
       <!--<el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs">
         <template slot="header">
           <span class="tip">*</span>
@@ -108,7 +108,6 @@ export default {
   beforeCreate() {
   },
   created() {
-    debugger
     this.specListData = _.cloneDeep(this.specList)
     this.specSelectData = _.cloneDeep(this.specSelect)
   },

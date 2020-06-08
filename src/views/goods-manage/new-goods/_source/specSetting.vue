@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     getSpecData() {
-      this.isSpec = true
+      this.isSpec = false
       getSpecsKey().then((res) => {
         const { specList } = this
         const specs = _(specList).map('valueList').filter().flatMap().value()
