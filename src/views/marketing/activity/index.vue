@@ -41,15 +41,15 @@
       <el-tab-pane label="海贝营销" name="haibeiActivity">
         <el-row :gutter="20">
           <el-col
-            v-for="o in haibeiActivity"
-            :key="o.value"
+            v-for="(o, index) in haibeiActivity"
+            :key="index"
             :xs="24"
             :sm="12"
             :md="8"
             :lg="6"
             :xl="4"
           >
-            <card-item-close :item="o" />
+            <card-item-close :item="o" @changeStatus="changeStatus" />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -74,6 +74,8 @@ import paymentCourtesy from '@/assets/image/marketings/pay.png'
 // import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
+import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
+
 export default {
   components: { cardItem, cardItemClose },
   /**
@@ -187,13 +189,12 @@ export default {
       ],
       haibeiActivity: [
         {
-
           createText: '添加商品',
           name: 'ReduceGift',
           lable: '商品',
           desc: '',
           titles: '兑换商城',
-          isclose: false,
+          isclose: true,
           img: haibei,
           listUrl: '/activity/exchangeMallList',
           linkUrl: '/activity/exchangeMallAdd'
@@ -204,11 +205,29 @@ export default {
   },
   created() {
     this.activeName = this.$route.query.type || 'goodsActivity'
+    searchActivityStatus({ pmtType: 20 }).then(res => {
+      if (res.code === '10000') {
+        this.haibeiActivity[0].isclose = res.data
+      }
+    })
   },
   methods: {
     handleClick(val) {
-      console.log('点击tab切换', val)
       this.$router.replace(`/marketing/activity?type=${val.name}`)
+    },
+    changeStatus(status) {
+      const params = {
+        'pmtType': 20,
+        'status': status ? 1 : 0
+      }
+      activityOpenOrClose(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: res.msg,
+            type: 'success'
+          })
+        }
+      })
     }
   }
 }

@@ -1,16 +1,18 @@
 <template>
   <div class="app-container exchange-modal">
     <div class="conditions">
-      <el-button type="primary" size="small" @click="$router.push('/activity/exchangeMallAdd')">
-        <i class="el-icon-circle-plus-outline" /> 新增商品
-      </el-button>
+      <div class="add-goods">
+        <el-button type="primary" size="small" @click="$router.push('/activity/exchangeMallAdd')">
+          <i class="el-icon-circle-plus-outline" /> 新增商品
+        </el-button>
+      </div>
       <div class="search">
         商品名称：
         <el-input v-model="searchName" size="mini" placeholder="商品名称" style="width:220px" clearable />
         <el-button size="mini" type="primary" @click="searchList">查询</el-button>
       </div>
     </div>
-    <el-table :data="tableData" border style="width: 100%" empty-text="未添加积分商品">
+    <el-table :data="tableData" border style="width: 100%" empty-text="未添加积分商品" height="calc(100vh - 340px)">
       <el-table-column prop="activitySpecDTO.erpCode" label="商品编码" />
       <el-table-column label="商品图片" width="120" align="center">
         <template slot-scope="scope">
@@ -204,8 +206,7 @@ export default {
           })
           this.tableData = datas.data
         }
-      }).catch(err => {
-        console.log(err)
+      }).catch(() => {
       })
     },
     searchList() {
@@ -213,6 +214,7 @@ export default {
     },
     handleSizeChange(e) {
       this.pageInfo.pageSize = e
+      this.pageInfo.currentPage = 1
       this.getTabelData()
     },
     handleCurrentChange(e) {
@@ -249,8 +251,9 @@ export default {
     font-size: 12px;
   }
   .conditions {
-    .search {
-      margin: 20px 0;
+    padding-bottom: 10px; font-size: 16px;
+    .add-goods{
+      margin-bottom: 15px;
     }
   }
   .pagination{

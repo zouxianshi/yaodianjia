@@ -26,6 +26,7 @@
           <el-input-number v-model="params.exchangeHb" :controls="false" :precision="0" :min="1" :max="99999999" />
           <span style="font-size:18px;margin:0 20px;vertical-align: middle;">海贝</span>
           <span class="tips"> 当前兑换比例： 1 : 1</span>
+          <el-button type="text" style="margin-left: 20px" @click="$router.push('/marketing/settings-equity/list')">兑换比例设置</el-button>
         </el-form-item>
         <el-form-item label="限购数量" prop="limitAmount">
           <el-input-number v-model="params.limitAmount" :controls="false" :precision="0" :min="0" :max="99999" />
@@ -123,7 +124,6 @@ export default {
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
     },
     submitData() {
-      console.log(this.storeSelectGoods, this.params)
       if (this.storeSelectGoods.length === 0) {
         this.$message({
           type: 'error',
@@ -153,13 +153,7 @@ export default {
         pmtRule: pmtRule
       }
       if (this.$route.query.id) {
-        // var datas = this.paramsBack
         params.id = this.$route.query.id
-        // datas.activityDetail.ruleList[0].exchangePrice = this.params.exchangePrice
-        // datas.activityDetail.ruleList[0].exchangeHb = this.params.exchangeHb
-        // datas.activityDetail.ruleList[0].limitAmount = this.params.limitAmount
-        // datas.activityDetail.ruleList[0].purchaseLimit = this.params.purchaseLimit ? 1 : 0
-        // params = this.paramsBack
         editExchange(params).then(res => {
           if (res.code === '10000') {
             this.$message({
