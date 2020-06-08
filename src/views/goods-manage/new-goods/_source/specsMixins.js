@@ -750,6 +750,10 @@ const mixin = {
           this.specsForm.specsData.splice(findIndex, 1)
         }
       }
+
+      console.log(this.editSpecsData)
+      console.log(this.dynamicProp)
+      console.log('======================================this.editSpecsData')
     },
     handleLimitChange(row, index) {
       // 设置

@@ -373,6 +373,11 @@
         </div>
         <!-- 规格信息 -->
         <div id="step2">
+
+          <div v-if="isSpec" class="mss-box">
+            <m-spec-setting :spec-list="newSpecList" />
+          </div>
+
           <div v-loading="specLoading" class="specs-box" element-loading-text="拼命加载中">
             <!-- <p
               class="text-right"
@@ -1165,13 +1170,14 @@ import { findArray } from '@/utils/index'
 import { checkNumberdouble } from '@/utils/validate'
 // import { throttle } from '@/utils/throttle'
 import { handlerDays, handlerConsignorSpecVal } from './_source/utils'
+import mSpecSetting from './_source/specSetting'
 
 console.log(handlerDays())
 console.log('+++1111111111111')
 
 export default {
   name: 'GoodsEdit',
-  components: { Tinymce, vueUploadImg, editTable, editGroup },
+  components: { Tinymce, vueUploadImg, editTable, editGroup, mSpecSetting },
   mixins: [mixins, specsMixin],
   data() {
     const _checkName = (rule, value, callback) => {
@@ -1353,7 +1359,10 @@ export default {
       leaveAction: false, // 离开页面动作，true为保存离开  false异常离开
       isHasImg: false,
       isLoadStep3: false,
-      isLoadStep2: false
+      isLoadStep2: false,
+
+      // todo
+      newSpecList: []
     }
   },
   computed: {
