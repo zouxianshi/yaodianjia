@@ -26,6 +26,7 @@
           <el-input-number v-model="params.exchangeHb" :controls="false" :precision="0" :min="1" :max="99999999" />
           <span style="font-size:18px;margin:0 20px;vertical-align: middle;">海贝</span>
           <span class="tips"> 当前兑换比例： 1 : 1</span>
+          <el-button type="text" style="margin-left: 20px" @click="$router.push('/marketing/settings-equity/list')">兑换比例设置</el-button>
         </el-form-item>
         <el-form-item label="限购数量" prop="limitAmount">
           <el-input-number v-model="params.limitAmount" :controls="false" :precision="0" :min="0" :max="99999" />
