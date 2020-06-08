@@ -24,7 +24,7 @@
         <div class="row">
           <div class="table-column content-container flex-3">
             <div class="image-box">
-              <img :src="showImgHandler(item.productImgUrl)" class="pic">
+              <img :src="showImg(item.productImgUrl)" class="pic">
               <div class="box">暂无图片</div>
             </div>
             <div class="content-box">

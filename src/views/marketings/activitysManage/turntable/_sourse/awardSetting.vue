@@ -314,7 +314,7 @@ export default {
     },
     showImgs() {
       if (this.ruleForm.giftImg) {
-        return this.showImgHandler(this.ruleForm.giftImg)
+        return this.showImg(this.ruleForm.giftImg)
       } else {
         if (this.ruleForm.giftType === 2) {
           return require('../img/discountpng.png')
@@ -335,7 +335,7 @@ export default {
           return require('../img/giftpng.png')
         }
       } else {
-        return this.showImgHandler(data.giftImg)
+        return this.showImg(data.giftImg)
       }
     },
     deleteRow(index, table) {
