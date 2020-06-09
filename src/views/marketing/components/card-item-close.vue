@@ -67,7 +67,6 @@ export default {
   },
   methods: {
     handleJump(itemUrl, jumpType) {
-      console.log('1111111---handleJump', itemUrl)
       // 跳转列表
       if (jumpType === 'list') {
         this.$router.push(itemUrl.listUrl)
@@ -82,12 +81,15 @@ export default {
       }
     },
     onShare(type) {
-      console.log('我是分享页面---------')
       this.$refs.previewDialog.open(type)
     },
     // 关闭、开启活动
     changeState() {
       this.$emit('changeStatus', this.closeOrOpen)
+    },
+    // 开启活动失败时
+    closeStatus(status) {
+      this.closeOrOpen = status
     }
   }
 }

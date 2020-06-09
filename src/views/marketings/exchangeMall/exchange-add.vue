@@ -8,7 +8,7 @@
           <el-button type="text" :disabled="isEdit" @click="$refs.GoodsComponent.open()">选择商品</el-button>
         </el-form-item>
         <el-form-item>
-          <select-goods ref="storeGods" :disabled="isEdit" @del-item="delSelectGoods" />
+          <select-goods v-show="storeSelectGoods.length>0" ref="storeGods" :disabled="isEdit" @del-item="delSelectGoods" />
         </el-form-item>
       </el-form>
     </div>
