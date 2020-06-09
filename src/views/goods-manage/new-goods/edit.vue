@@ -1591,7 +1591,11 @@ export default {
           this.rejectForm.id = ''
           this.rejectForm.reason = ''
           // this.$router.go(-1)
-          this.$router.replace(`/goods-manage/${this.backUrl}?source=${type === 'reject' ? 0 : 1}`)
+          if (!data.auditReason) {
+            this.$router.replace(`/goods-manage/${this.backUrl}?source=${type === 'reject' ? 0 : 1}&type=1`)
+          } else {
+            this.$router.replace(`/goods-manage/${this.backUrl}?source=${type === 'reject' ? 0 : 1}&type=0`)
+          }
         })
         .catch(_ => {
         })

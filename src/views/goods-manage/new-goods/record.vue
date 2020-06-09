@@ -234,6 +234,9 @@ export default {
   },
   watch: {},
   created() {
+    if (this.$route.query.type) {
+      this.listQuery.auditStatus = this.$route.query.type
+    }
     this.getList()
   },
   beforeRouteLeave(to, from, next) {
