@@ -46,10 +46,6 @@ export const handlerSaveSpecList = (data, specSelect) => {
     }
   })
 
-  console.log(specArr)
-
-  console.log('------------------specArr')
-
   // add increase key-value team
   _.map(specArr, v => {
     const key = `index_${v.skuKeyId}_${v.skuKeyName}`

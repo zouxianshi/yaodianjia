@@ -99,11 +99,20 @@ export default {
       deep: true,
       immediate: true,
       handler(v) {
-        this.isSpecSelectData = false
         this.specListData = v
-        setTimeout(() => {
-          this.isSpecSelectData = true
-        })
+      }
+    },
+    'specSelect':{
+      deep:true,
+      immediate: true,
+      handler(v){
+        const selectedArr = _.reject(v,['selected',true])
+        if (selectedArr.length !== v.length) {
+          this.isSpecSelectData = false
+          setTimeout(() => {
+            this.isSpecSelectData = true
+          },1)
+        }
       }
     }
   },
