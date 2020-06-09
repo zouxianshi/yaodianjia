@@ -89,8 +89,8 @@ export const handlerSaveSpecList = (data, specSelect) => {
   console.log(data)
   console.log('----------------')
 
-  if (!flag) {
-    Message({ message: '规格不能为空', type: 'error', duration: 3000 })
+  if (!flag || !data.length) {
+    Message({ message: '请完善规格信息', type: 'error', duration: 3000 })
     return false
   }
 

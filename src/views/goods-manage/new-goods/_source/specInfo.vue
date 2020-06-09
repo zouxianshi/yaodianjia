@@ -1,6 +1,6 @@
 <template>
-  <div class="spec-info-model">
-    <div class="sim-table">
+  <div v-loading="!isSpecSelectData" class="spec-info-model">
+    <div v-if="isSpecSelectData" class="sim-table">
       <el-table :data="specListData" style="width: calc(100% - 82px);min-height:151px;">
         <!--规格列表-->
         <template v-for="(item,$index) in specSelectData">
@@ -78,7 +78,8 @@ export default {
   data() {
     return {
       specListData: [],
-      specSelectData: []
+      specSelectData: [],
+      isSpecSelectData:true
     }
   },
   props: {
@@ -98,7 +99,11 @@ export default {
       deep: true,
       immediate: true,
       handler(v) {
+        this.isSpecSelectData = false
         this.specListData = v
+        setTimeout(() => {
+          this.isSpecSelectData = true
+        })
       }
     }
   },
@@ -126,6 +131,8 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .spec-info-model {
-
+    min-height:151px;
+    .sim-table {
+    }
   }
 </style>

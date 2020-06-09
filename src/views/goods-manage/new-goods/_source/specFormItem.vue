@@ -187,6 +187,7 @@ export default {
     border-radius: 5px;
     border: 1px solid #c9c9cc;
     margin-bottom: 10px;
+    background: #fff;
     .header {
       height: 40px;
       display: flex;

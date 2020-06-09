@@ -61,6 +61,7 @@ export default {
       const { specData } = this
       const createData = []
       let flag = true
+
       _.map(specData, (v, i) => {
         const itemParams = this.$refs[`specFormItem_${i}`][0].$verification()
         if (_.isObject(itemParams)) {
@@ -135,6 +136,7 @@ export default {
     padding-left: 82px;
     padding-top: 8px;
     .scm-add {
+      margin-top: -8px;
       span {
         font-size: 14px;
         color: #147de8;
