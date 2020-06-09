@@ -59,7 +59,7 @@ export const handlerSaveSpecList = (data, specSelect) => {
         v1[key] = skuValue
       }
 
-      if (!_.some(v1.valueList, { 'skuKeyName': v.skuKeyName })) {
+      if (v1.valueList && !_.some(v1.valueList, { 'skuKeyName': v.skuKeyName })) {
         v1.valueList.push(v)
       }
 
