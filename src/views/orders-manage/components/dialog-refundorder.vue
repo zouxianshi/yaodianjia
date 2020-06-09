@@ -33,6 +33,12 @@
             >（含运费{{ returnrespDto.freightAmount || 0 }}元）</span>
           </span>
         </li>
+        <li v-if="orderType === 'I'">
+          <span class="item-lable">海贝退回：</span>
+          <span class="item-value">
+            <span>{{ returnrespDto && returnrespDto.actualRefundHb || 0 }}</span>
+          </span>
+        </li>
         <li>
           <span class="item-lable">实退金额：</span>
           <span class="item-value">
@@ -137,6 +143,10 @@ export default {
       default() {
         return {}
       }
+    },
+    orderType: {
+      type: String,
+      default: ''
     }
   },
   data() {

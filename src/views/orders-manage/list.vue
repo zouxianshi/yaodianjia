@@ -235,9 +235,7 @@
                           <span
                             v-if="item.orderType !== 'G' && item.orderType !== 'I'"
                           >{{ item.prescriptionSheetMark | orderType }}</span>
-                          <span
-                            v-if="item.orderType === 'I'"
-                          >(兑换订单)</span>
+                          <span v-if="item.orderType === 'I'">(兑换订单)</span>
                         </div>
                         <template v-if="item.orderType === 'G'">
                           <div class="header-cell">拼团订单：</div>
@@ -306,7 +304,7 @@
                             </div>
                             <div class="goods-info padding10">
                               <div class="goods-price">
-                                <span v-if="item.orderType === 'I'">{{ list.totalHb }}海贝 +</span>
+                                <span v-if="item.orderType === 'I'">{{ list.exchangeHb }}海贝 +</span>
                                 <span>￥{{ list.commodityPrice }}</span>
                               </div>
                               <div class="goods-num">({{ list.commodityNumber }}件)</div>
@@ -458,8 +456,9 @@
                         <div class="header-cell" style="margin-right: 8px">
                           {{ item.serialNumber }}
                           <span
-                            v-if="item.orderType !== 'G'"
+                            v-if="item.orderType !== 'G' && item.orderType !== 'I'"
                           >{{ item.prescriptionSheetMark | orderType }}</span>
+                          <span v-if="item.orderType === 'I'">(兑换订单)</span>
                         </div>
                         <template v-if="item.orderType === 'G'">
                           <div class="header-cell">拼团订单：</div>
@@ -472,6 +471,7 @@
                           <dialog-refund-order
                             :id="item.returnQuestId"
                             :returnresp-dto="item.returnQuestRespDTO"
+                            :order-type="item.orderType"
                           />
                         </div>
                       </div>
@@ -520,7 +520,10 @@
                               <div class="goods-number marginTop20">{{ list.commodityCode }}</div>
                             </div>
                             <div class="goods-info padding10">
-                              <div class="goods-price">￥{{ list.commodityPrice }}</div>
+                              <div class="goods-price">
+                                <span v-if="item.orderType === 'I'">{{ list.exchangeHb }}海贝 +</span>
+                                <span>￥{{ list.commodityPrice }}</span>
+                              </div>
                               <div class="goods-num">({{ list.commodityNumber }}件)</div>
                               <!-- <template v-if="!(refundStatus.includes(listQuery.orderStatus))">
                             <template v-if="list.status===8||list.status===10">
