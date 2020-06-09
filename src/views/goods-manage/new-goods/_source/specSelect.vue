@@ -21,9 +21,10 @@ export default {
   },
   methods: {
     onChange(event, { id, attributeName }) {
-      if (!event) {
-        this.$emit('on-spec-hide', `index_${id}_${attributeName}`)
-      }
+      this.$emit('on-spec', {
+        key: `index_${id}_${attributeName}`,
+        selected: event
+      })
     }
   },
   watch: {},

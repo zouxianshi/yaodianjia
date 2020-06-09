@@ -62,18 +62,14 @@ export default {
       const createData = []
       let flag = true
 
-      if (specData.length) {
-        _.map(specData, (v, i) => {
-          const itemParams = this.$refs[`specFormItem_${i}`][0].$verification()
-          if (_.isObject(itemParams)) {
-            createData.push(itemParams)
-          } else {
-            flag = false
-          }
-        })
-      } else {
-        flag = false
-      }
+      _.map(specData, (v, i) => {
+        const itemParams = this.$refs[`specFormItem_${i}`][0].$verification()
+        if (_.isObject(itemParams)) {
+          createData.push(itemParams)
+        } else {
+          flag = false
+        }
+      })
 
       console.log(flag ? createData : false)
       console.log('-------------------------specCreate.vue')

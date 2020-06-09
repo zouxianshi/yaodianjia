@@ -2,7 +2,7 @@
   <div class="spec-setting-model">
     <el-form>
       <el-form-item label="规格设置：">
-        <m-spec-select v-if="isSpec" :spec-select="specSelect" @on-spec-hide="onSpecHide" />
+        <m-spec-select v-if="isSpec" :spec-select="specSelect" @on-spec="onSpec" />
       </el-form-item>
     </el-form>
     <el-form v-if="cpdIsSpec">
@@ -49,9 +49,18 @@ export default {
     }
   },
   methods: {
-    onSpecHide(specVal) {
-      this.specListData = _.map(_.cloneDeep(this.specListData), v => _.omit(v, [specVal]))
-      this.$refs['specCreate'].delSpecData(specVal)
+    onSpec({ key, selected }) {
+      if (!selected) {
+        this.specListData = _.map(_.cloneDeep(this.specListData), v => _.omit(v, [key]))
+        this.$refs['specCreate'].delSpecData(key)
+      } else {
+        this.specListData = _.map(this.specListData, v => {
+          return {
+            ...v,
+            [key]: ''
+          }
+        })
+      }
     },
     getSpecData() {
       this.isSpec = false
@@ -74,7 +83,8 @@ export default {
     $verification() {
       const specCreateInstance = this.$refs['specCreate']
 
-      if (!specCreateInstance) {
+      if (specCreateInstance === undefined) {
+        this.$message({ message: '至少勾选一个规格项', type: 'warning' })
         return false
       }
       // specListData

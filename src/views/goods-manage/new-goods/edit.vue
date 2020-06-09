@@ -77,7 +77,6 @@
               </div>
             </div>
             <!-- 商品信息 -->
-            ++++++++++++{{ basicForm.origin }}+++++++++++++++++++
             <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicForm.origin === 2 ? basicRules : {}" :disabled="is_query">
               <div class="edit-card">
                 <div class="header">
@@ -368,7 +367,17 @@
         <!-- 规格信息 -->
         <div id="step2">
           <div v-if="isSpec" class="mss-box">
-            <m-spec-setting ref="specSetting" :is-disabled="is_query" :spec-list="newSpecList" />
+            <div class="edit-card">
+              <div class="header">
+                <span>规格设置</span>
+              </div>
+              <div class="edit-card-cnt">
+                <div class="content">
+                  <m-spec-setting ref="specSetting" :is-disabled="is_query" :spec-list="newSpecList" />
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
         <!-- 图文详情 -->
@@ -1585,11 +1594,6 @@ export default {
 
             // todo 规格
             const valueList = this.$refs['specSetting'].$verification()
-
-            // if (!valueList.length) {
-            //   this.$message({ message: '至少勾选一个规格项', type: 'warning' })
-            //   return
-            // }
 
             if (!_.isObject(valueList)) {
               console.log('有错误')
