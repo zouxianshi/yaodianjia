@@ -34,7 +34,7 @@
             :lg="6"
             :xl="4"
           >
-            <card-item-close :item="o" @changeStatus="changeStatus" />
+            <card-item-close ref="HB" :item="o" @changeStatus="changeStatus" />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -171,6 +171,8 @@ export default {
             message: res.msg,
             type: 'success'
           })
+        } else {
+          this.$refs.HB.closeStatus(status)
         }
       })
     }
