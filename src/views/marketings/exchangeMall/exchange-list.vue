@@ -12,7 +12,7 @@
         <el-button size="mini" type="primary" @click="searchList">查询</el-button>
       </div>
     </div>
-    <el-table :data="tableData" border style="width: 100%" empty-text="未添加积分商品" height="calc(100vh - 340px)">
+    <el-table :data="tableData" border style="width: 100%" empty-text="未添加海贝商品" height="calc(100vh - 340px)">
       <el-table-column prop="activitySpecDTO.erpCode" label="商品编码" />
       <el-table-column label="商品图片" width="120" align="center">
         <template slot-scope="scope">
