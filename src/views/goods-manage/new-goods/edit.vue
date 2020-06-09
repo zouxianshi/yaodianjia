@@ -77,14 +77,8 @@
               </div>
             </div>
             <!-- 商品信息 -->
-            <el-form
-              ref="basic"
-              :model="basicForm"
-              status-icon
-              label-width="130px"
-              :rules="basicForm.origin===2?basicRules:{}"
-              :disabled="is_query"
-            >
+            ++++++++++++{{ basicForm.origin }}+++++++++++++++++++
+            <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicForm.origin === 2 ? basicRules : {}" :disabled="is_query">
               <div class="edit-card">
                 <div class="header">
                   <span>商品信息</span>
@@ -723,7 +717,7 @@ export default {
         height: '',
         width: '',
         days: '',
-        origin: '', // 商品来源，1-海典标准库，2-商家自定义
+        origin: 2, // 商品来源，1-海典标准库，2-商家自定义
         packStandard: '', // 长宽高
         groupIds: [], // 分组id
         brandNanme: '',
@@ -1202,6 +1196,10 @@ export default {
       }
       // 赋值值
       this.basicForm = data
+
+      console.log(this.basicForm)
+      console.log('----------------------this.basicForm')
+
       this.$refs.editor.setContent(this.basicForm.intro)
     },
     // 加载商品图片
@@ -1266,9 +1264,6 @@ export default {
     handleAvatarSuccessEdit(res, fileList, index) {
       if (res.code === '10000') {
         this.editSpecsData[this.uploadIndex].picUrl = res.data
-
-        console.log(this.editSpecsData)
-        console.log('+++this.editSpecsData')
       } else {
         this.$message({
           message: res.msg,
@@ -1521,18 +1516,6 @@ export default {
     handleSubmitForm() {
       // todo submit
 
-      const valueList = this.$refs['specSetting'].$verification()
-
-      if (!_.isObject(valueList)) {
-        console.log('有错误')
-        return
-      }
-
-      if (!valueList.length) {
-        this.$message({ message: '至少勾选一个规格项', type: 'warning' })
-        return
-      }
-
       // 保存基本信息操作
       this.$refs['basic'].validate(valid => {
         if (valid) {
@@ -1599,6 +1582,20 @@ export default {
               data.hasEphedrine = ''
               this.basicForm.needId = ''
             }
+
+            // todo 规格
+            const valueList = this.$refs['specSetting'].$verification()
+
+            // if (!valueList.length) {
+            //   this.$message({ message: '至少勾选一个规格项', type: 'warning' })
+            //   return
+            // }
+
+            if (!_.isObject(valueList)) {
+              console.log('有错误')
+              return
+            }
+
             if (this.fileList.length === 0) {
               this.$confirm(
                 '橱窗图为空，保存后无法上架。请确认是否返回编辑？返回编辑/继续保存',

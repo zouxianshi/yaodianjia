@@ -624,9 +624,6 @@ const mixin = {
                 })
               }
               this.editSpecsData.push(v)
-              console.log('222222222')
-              console.log(this.dynamicProp)
-              console.log(this.editSpecsData)
             }
           })
           setTimeout(res => {

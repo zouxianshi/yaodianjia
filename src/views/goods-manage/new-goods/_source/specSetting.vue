@@ -5,11 +5,11 @@
         <m-spec-select v-if="isSpec" :spec-select="specSelect" @on-spec-hide="onSpecHide" />
       </el-form-item>
     </el-form>
-    <el-form>
+    <el-form v-if="cpdIsSpec">
       <el-form-item label="规格信息：">
         <div>
           <!--规格列表-->
-          <m-spec-info v-if="isSpec" :spec-select="specSelect" :spec-list="specListData" />
+          <m-spec-info v-if="isSpec && specListData.length" :spec-select="specSelect" :spec-list="specListData" />
           <!--添加规格-->
           <m-spec-create v-if="!isDisabled" ref="specCreate" :spec-select="specSelect" :spec-list="specListData" />
         </div>
@@ -72,8 +72,13 @@ export default {
       })
     },
     $verification() {
+      const specCreateInstance = this.$refs['specCreate']
+
+      if (!specCreateInstance) {
+        return false
+      }
       // specListData
-      const createData = this.$refs['specCreate'].$verification()
+      const createData = specCreateInstance.$verification()
       const { specListData, specSelect } = this
 
       if (_.isObject(createData)) {
@@ -102,7 +107,11 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    cpdIsSpec() {
+      return _.some(this.specSelect, ['selected', true])
+    }
+  },
   components: { mSpecSelect, mSpecInfo, mSpecCreate }
 }
 </script>
