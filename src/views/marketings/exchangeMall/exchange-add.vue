@@ -65,7 +65,7 @@ export default {
     return {
       yhRule: true,
       storeSelectGoods: [], // 已选择商品
-      changeBl: 1, // 兑换比例
+      changeBl: '-', // 兑换比例
       params: {
         totalAmount: '', // 兑换库存
         exchangePrice: 0, // 兑换金额
@@ -85,7 +85,7 @@ export default {
   },
   created() {
     _searchBlByMerCode({ merCode: this.$store.state.user.merCode }).then(res => {
-      if (res.code === '10000') {
+      if (res.code === '10000' && res.data) {
         this.changeBl = res.data.sysValue
       }
     })
