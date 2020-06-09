@@ -107,6 +107,7 @@
 <script>
 import { getActGiftList, ActGiftAddStock, ActGiftDelItem } from '@/api/activity'
 import noData from '@/components/NoData'
+import { throttle } from '@/utils/throttle'
 export default {
   components: {
     noData
@@ -211,7 +212,7 @@ export default {
         count: 0
       }
     },
-    toAddSubmit() {
+    toAddSubmit: throttle(function() {
       ActGiftAddStock({
         count: this.dialogForm.count,
         id: this.dialogForm.id
@@ -227,7 +228,7 @@ export default {
           this._getTableData()
         }
       })
-    },
+    }, 1000),
     deleteItem(item) {
       console.log('1111111111111', item)
       ActGiftDelItem(item.id).then(res => {
