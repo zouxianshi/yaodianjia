@@ -6,7 +6,7 @@
         <div class="title">
           <span class="title-span">{{ item.titles }}</span>
           <el-switch
-            v-model="item.isclose"
+            v-model="closeOrOpen"
             style="vertical-algin: middle"
             active-color="#5677fc"
             inactive-color="#a7a5a6"
@@ -51,6 +51,20 @@ export default {
       default: () => {}
     }
   },
+  data() {
+    return {
+      closeOrOpen: true
+    }
+  },
+  watch: {
+    item: {
+      immediate: true,
+      handler(v) {
+        this.closeOrOpen = v.isclose
+      },
+      deep: true
+    }
+  },
   methods: {
     handleJump(itemUrl, jumpType) {
       console.log('1111111---handleJump', itemUrl)
@@ -73,7 +87,7 @@ export default {
     },
     // 关闭、开启活动
     changeState() {
-      console.log(this.item)
+      this.$emit('changeStatus', this.closeOrOpen)
     }
   }
 }

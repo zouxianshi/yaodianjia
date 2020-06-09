@@ -394,7 +394,6 @@ export default {
     this.getList()
     this._loadGoodTypeList()
     this._loadTypeList()
-    this._loadGoodTypeList()
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {

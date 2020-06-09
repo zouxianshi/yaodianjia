@@ -377,7 +377,7 @@
             <!-- <p
               class="text-right"
               style="font-size:13px"
-            >商品来源: {{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p> -->
+            >商品来源: {{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>-->
             <el-form>
               <el-form-item label="规格设置：">
                 <!-- <template v-show="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
@@ -391,7 +391,7 @@
                     @change="handleSpecsChange(item)"
                   >{{ item.attributeName }}</el-checkbox>
                   </template>
-                </template> -->
+                </template>-->
                 <template v-show="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
                   <template v-show="dynamicProp.length>0">
                     <el-checkbox
@@ -421,11 +421,16 @@
                     :disabled="is_query"
                     @change="handleSpecsChange(item)"
                   >{{ item.name }}</el-checkbox>
-                </template> -->
+                </template>-->
               </el-form-item>
               <el-form-item v-if="isSpec" label="规格信息：">
                 <template v-if="basicForm.origin===1">
-                  <el-table v-if="editSpecsData.length" ref="multipleTable" :data="editSpecsData" height="300">
+                  <el-table
+                    v-if="editSpecsData.length"
+                    ref="multipleTable"
+                    :data="editSpecsData"
+                    height="300"
+                  >
                     <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
                     <el-table-column width="55">
                       <template slot-scope="scope">
@@ -467,7 +472,10 @@
                       </template>
                       <template slot-scope="scope">
                         {{ scope.row }}
-                        <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
+                        <span
+                          v-if="scope.row[propsf.keys]"
+                          v-text="scope.row[propsf.keys]"
+                        />
                         <template v-if="!is_query">
                           <edit-table
                             :title="propsf.name"
@@ -1154,8 +1162,8 @@ import {
   // getBasicGoodsInfo,
   // getGoodsImgAry,
   // getGoodsDetails,
-  getGoodsAddALL,
-  commodityNew
+  getGoodsAddALL
+  // commodityNew
 } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
@@ -1399,6 +1407,22 @@ export default {
     if (this.is_query && this.pageLoading) {
       this.pageLoading.close()
     }
+    // } else {
+    // if (!this.leaveAction) {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // } else {
+    //   next()
+    // }
+    // }
   },
   mounted() {
   },
@@ -1463,37 +1487,37 @@ export default {
         commodityId: this.$route.query.id,
         merCode: this.merCode
       }
-      if (this.$route.query.type) {
-        commodityNew(params)
-          .then(res => {
-            this.basicLoading = false
-            this._loadGoodsImgAry(res.data.imgList)
-            this._loadSpecs(res.data.specList)
-            console.log('++++++++++++++++')
-            console.log(res.data.commDTO)
-            if (res.data.commDTO && res.data.commDTO.drugType === 3) {
-              res.data.commDTO.drugType = ''
-            }
-            this._loadBasicInfo(res.data.commDTO)
-            this._loadGoodsDetails(res.data.detailDTO.content)
-            this.basicLoading = false
-          })
-      } else {
-        getGoodsAddALL(params)
-          .then(res => {
-            this.basicLoading = false
-            this._loadGoodsImgAry(res.data.imgList)
-            this._loadSpecs(res.data.specList)
-            console.log('++++++++++++++++')
-            console.log(res.data.commDTO)
-            if (res.data.commDTO && res.data.commDTO.drugType === 3) {
-              res.data.commDTO.drugType = ''
-            }
-            this._loadBasicInfo(res.data.commDTO)
-            this._loadGoodsDetails(res.data.detailDTO.content)
-            this.basicLoading = false
-          })
-      }
+      // if (this.$route.query.type) {
+      //   commodityNew(params)
+      //     .then(res => {
+      //       this.basicLoading = false
+      //       this._loadGoodsImgAry(res.data.imgList)
+      //       this._loadSpecs(res.data.specList)
+      //       console.log('++++++++++++++++')
+      //       console.log(res.data.commDTO)
+      //       if (res.data.commDTO && res.data.commDTO.drugType === 3) {
+      //         res.data.commDTO.drugType = ''
+      //       }
+      //       this._loadBasicInfo(res.data.commDTO)
+      //       this._loadGoodsDetails(res.data.detailDTO.content)
+      //       this.basicLoading = false
+      //     })
+      // } else {
+      getGoodsAddALL(params)
+        .then(res => {
+          this.basicLoading = false
+          this._loadGoodsImgAry(res.data.imgList)
+          this._loadSpecs(res.data.specList)
+          console.log('++++++++++++++++')
+          console.log(res.data.commDTO)
+          if (res.data.commDTO && res.data.commDTO.drugType === 3) {
+            res.data.commDTO.drugType = ''
+          }
+          this._loadBasicInfo(res.data.commDTO)
+          this._loadGoodsDetails(res.data.detailDTO.content)
+          this.basicLoading = false
+        })
+      // }
     },
     // 驳回原因
     handleReject() {
@@ -2289,29 +2313,29 @@ export default {
         .catch(_ => {
           this.subLoading2 = false
         })
-    }
-    // 保存商品详情
-    // handleSubIntro() {
-    //   const data = {
-    //     content: this.goodsIntro.content,
-    //     id: this.basicForm.id
-    //   }
-    //   console.log(data)
-    //   saveGoodsDetails(data)
-    //     .then(res => {
-    //       this.doSubmitInfo()
-    //       // this.$message({
-    //       //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
-    //       //   type: 'success'
-    //       // })
-    //     })
-    //     .catch(_ => {
-    //       this.subLoading = false
-    //     })
-    // },
-    // doSubmitInfo() {
-
-    //   this.leaveAction = true
+    },
+    handleSubIntro() {
+      // 保存商品详情
+      this.subLoading = true
+      const data = {
+        content: this.goodsIntro.content,
+        id: this.basicForm.id
+      }
+      saveGoodsDetails(data)
+        .then(res => {
+          this.doSubmitInfo()
+          // this.$message({
+          //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
+          //   type: 'success'
+          // })
+        })
+        .catch(_ => {
+          this.subLoading = false
+        })
+    },
+    doSubmitInfo() {
+      this.subLoading = false
+      this.leaveAction = true
 
     //   setTimeout(() => {
     //     this.$confirm('请确认已保存橱窗图', '提示', {
@@ -2330,225 +2354,226 @@ export default {
     //       })
     //   }, 1000)
     // }
+    }
   }
 }
 </script>
 <style lang="scss">
-  .specs-img-table {
-    .avatar-uploader-icon {
-      width: 60px;
-      height: 60px;
-      line-height: 60px !important;
-    }
-    .avatar {
-      width: 60px;
-      height: 60px;
-    }
+.specs-img-table {
+  .avatar-uploader-icon {
+    width: 60px;
+    height: 60px;
+    line-height: 60px !important;
   }
-  .tox .tox-statusbar {
-    display: none !important;
+  .avatar {
+    width: 60px;
+    height: 60px;
   }
-  .basic-info-section {
-    .el-loading-spinner {
-      top: 10%;
-    }
+}
+.tox .tox-statusbar {
+  display: none !important;
+}
+.basic-info-section {
+  .el-loading-spinner {
+    top: 10%;
   }
+}
 </style>
 <style lang="scss" scoped>
-  .app-container {
-    height: calc(100vh - 204px);
+.app-container {
+  height: calc(100vh - 204px);
+}
+.edit-wrapper {
+  color: #333;
+  padding-bottom: 50px;
+
+  .img-tips {
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color: #e6a23c;
+    li {
+      margin-bottom: 5px;
+    }
   }
-  .edit-wrapper {
-    color: #333;
-    padding-bottom: 50px;
+  .img-tipe-noImg {
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color: red;
+  }
+  .specs-box {
+    margin-top: 20px;
+    .el-table {
+      width: auto;
+    }
+  }
 
-    .img-tips {
-      font-size: 12px;
-      margin-bottom: 10px;
-      margin-top: 10px;
-      color: #e6a23c;
-      li {
-        margin-bottom: 5px;
-      }
+  .edit-card {
+    margin-top: 10px;
+    .el-input {
+      width: 300px;
     }
-    .img-tipe-noImg {
-      font-size: 12px;
-      margin-bottom: 10px;
-      margin-top: 10px;
-      color: red;
+    .el-textarea {
+      @extend .el-input;
     }
-    .specs-box {
-      margin-top: 20px;
-      .el-table {
-        width: auto;
-      }
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    .header {
+      height: 40px;
+      line-height: 40px;
+      padding: 0 10px;
+      font-size: 16px;
     }
-
-    .edit-card {
-      margin-top: 10px;
-      .el-input {
-        width: 300px;
+    .edit-card-cnt {
+      padding: 10px;
+      color: #333;
+      .content {
+        padding: 20px 30px;
+        background: #f6f7fb;
       }
-      .el-textarea {
-        @extend .el-input;
-      }
-      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-      .header {
-        height: 40px;
-        line-height: 40px;
-        padding: 0 10px;
-        font-size: 16px;
-      }
-      .edit-card-cnt {
-        padding: 10px;
-        color: #333;
-        .content {
-          padding: 20px 30px;
-          background: #f6f7fb;
+      .type-list {
+        margin-bottom: 10px;
+        &:last-child {
+          margin: 0;
         }
-        .type-list {
-          margin-bottom: 10px;
-          &:last-child {
-            margin: 0;
-          }
-          &.groups {
-            display: flex;
-            align-items: center;
-          }
-          .group-list {
-            display: inline-block;
-            // max-width: 600px;
-            margin-right: 5px;
-            .tag {
-              margin-right: 10px;
-            }
-          }
-          .link {
-            cursor: pointer;
+        &.groups {
+          display: flex;
+          align-items: center;
+        }
+        .group-list {
+          display: inline-block;
+          // max-width: 600px;
+          margin-right: 5px;
+          .tag {
+            margin-right: 10px;
           }
         }
-      }
-      .editorWrap {
-        position: relative;
-        .wordcount {
-          position: absolute;
-          // bottom: -5px;
-          height: 18px;
-          line-height: 18px;
-          // right: 10px;
-          text-align: right;
-          font-size: 12px;
-          width: 100%;
-          background: #fff;
-          border: 1px solid #ccc;
-          border-top: 0 none;
-          padding-right: 10px;
-          color: rgba(34, 47, 62, 0.7);
-        }
-      }
-    }
-    .next-btn {
-      margin-top: 20px;
-    }
-    .goods-details {
-      display: flex;
-      margin-bottom: 10px;
-      .left-show {
-        width: 320px;
-        height: auto;
-        border: 1px solid #e0e0e0;
-        .img {
-          width: 320px;
-          height: 64px;
-          background: url('../../../assets/image/sprite_dm.png') -2px -86px;
-        }
-        .basicMsgs {
-          width: 100%;
-          height: 100px;
-          color: #666;
-          line-height: 25px;
-          text-align: center;
-          padding-top: 20px;
-          background: #f2f2f2;
-        }
-        .editSqu {
-          height: 376px;
-          border: 1px dashed red;
-          img {
-            max-width: 100% !important;
-          }
-        }
-        .w-e-text {
-          padding: 5px 10px;
-          overflow-y: scroll;
-        }
-      }
-      .edit-box {
-        margin-left: 20px;
-        padding: 10px;
-        background: #f8f8f8;
-        border: 1px solid #d1d1d1;
-        position: relative;
-      }
-    }
-    .spec-list {
-      width: 550px;
-      border-radius: 5px;
-      border: 1px solid #c9c9cc;
-      margin-left: 80px;
-      margin-bottom: 10px;
-      .header {
-        height: 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 12px;
-        border-bottom: 1px solid #c9c9cc;
-        i {
+        .link {
           cursor: pointer;
         }
       }
-      .spec-content {
-        padding: 12px;
-        .el-input {
-          width: 250px;
-        }
-        .specs-img {
-          .avatar-uploader-icon {
-            width: 100px;
-            height: 100px;
-            line-height: 100px !important;
-          }
-          .avatar {
-            width: 100px;
-            height: 100px;
-          }
-        }
+    }
+    .editorWrap {
+      position: relative;
+      .wordcount {
+        position: absolute;
+        // bottom: -5px;
+        height: 18px;
+        line-height: 18px;
+        // right: 10px;
+        text-align: right;
+        font-size: 12px;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-top: 0 none;
+        padding-right: 10px;
+        color: rgba(34, 47, 62, 0.7);
       }
     }
-    .add-spec {
-      margin-left: 80px;
+  }
+  .next-btn {
+    margin-top: 20px;
+  }
+  .goods-details {
+    display: flex;
+    margin-bottom: 10px;
+    .left-show {
+      width: 320px;
+      height: auto;
+      border: 1px solid #e0e0e0;
+      .img {
+        width: 320px;
+        height: 64px;
+        background: url('../../../assets/image/sprite_dm.png') -2px -86px;
+      }
+      .basicMsgs {
+        width: 100%;
+        height: 100px;
+        color: #666;
+        line-height: 25px;
+        text-align: center;
+        padding-top: 20px;
+        background: #f2f2f2;
+      }
+      .editSqu {
+        height: 376px;
+        border: 1px dashed red;
+        img {
+          max-width: 100% !important;
+        }
+      }
+      .w-e-text {
+        padding: 5px 10px;
+        overflow-y: scroll;
+      }
+    }
+    .edit-box {
+      margin-left: 20px;
+      padding: 10px;
+      background: #f8f8f8;
+      border: 1px solid #d1d1d1;
+      position: relative;
     }
   }
-  .action-wapper {
-    position: absolute;
-    padding: 12px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 3000;
-    background: #fff;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    text-align: right;
-  }
-  .link-btn {
-    font-size: 14px;
-  }
-  .modal-body {
-    .cascader {
+  .spec-list {
+    width: 550px;
+    border-radius: 5px;
+    border: 1px solid #c9c9cc;
+    margin-left: 80px;
+    margin-bottom: 10px;
+    .header {
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid #c9c9cc;
+      i {
+        cursor: pointer;
+      }
+    }
+    .spec-content {
+      padding: 12px;
       .el-input {
-        width: 300px !important;
+        width: 250px;
+      }
+      .specs-img {
+        .avatar-uploader-icon {
+          width: 100px;
+          height: 100px;
+          line-height: 100px !important;
+        }
+        .avatar {
+          width: 100px;
+          height: 100px;
+        }
       }
     }
   }
+  .add-spec {
+    margin-left: 80px;
+  }
+}
+.action-wapper {
+  position: absolute;
+  padding: 12px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3000;
+  background: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  text-align: right;
+}
+.link-btn {
+  font-size: 14px;
+}
+.modal-body {
+  .cascader {
+    .el-input {
+      width: 300px !important;
+    }
+  }
+}
 </style>

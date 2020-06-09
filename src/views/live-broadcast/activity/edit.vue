@@ -39,7 +39,7 @@
           {{ formData.merName }}
         </el-form-item>
         <el-form-item label="直播主题：" prop="name">
-          <el-input v-model="formData.name" maxlength="50" placeholder="请输入直播主题" />
+          <el-input v-model="formData.name" maxlength="20" show-word-limit placeholder="请输入直播主题" />
         </el-form-item>
         <el-form-item label="公告" prop="activityNotice">
           <el-input
@@ -72,7 +72,7 @@
               <img v-if="formData.coverPicUrl" :src="showImg(formData.coverPicUrl)" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
-            <span class="tip">建议上传16：9的图片</span>
+            <span class="tip">建议上传16：9的图片，图片大小不能超过2M，图片格式（png、jpg）</span>
           </div>
         </el-form-item>
         <el-form-item label="直播介绍" prop="liveIntroduce">
@@ -194,6 +194,7 @@
         <el-form-item label="广告位：" prop="adPicUrl">
           <div class="ad-cover">
             <el-upload
+              :disabled="ad_disabled"
               class="avatar-uploader"
               :action="upLoadUrl"
               :show-file-list="false"
@@ -204,11 +205,11 @@
               <img v-if="formData.adPicUrl" :src="showImg(formData.adPicUrl)" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
-            <span class="tip">建议上传750*80</span>
+            <span class="tip">{{ ad_disabled?'禁止编辑':'建议上传750*80，图片大小不能超过2M，图片格式（png、jpg）' }}</span>
           </div>
         </el-form-item>
         <el-form-item label="链接地址：" prop="adLinkUrl">
-          <el-input v-model="formData.adLinkUrl" placeholder="链接地址" />
+          <el-input v-model="formData.adLinkUrl" placeholder="链接地址" :disabled="ad_disabled" />
         </el-form-item>
         <el-form-item label="直播背景色：">
           <!-- <colorPicker v-model="formData.bgColor" /> -->
@@ -347,7 +348,8 @@ export default {
         ]
       },
       titles: '',
-      editIndex: 0
+      editIndex: 0,
+      ad_disabled: false
     }
   },
   computed: {
@@ -361,8 +363,10 @@ export default {
   },
   created() {
     if (this.$route.query.id) {
+      this.ad_disabled = true
       this._loadLiveInfo()
     } else {
+      this.ad_disabled = false
       this._loadMerchantInfo()
     }
   },

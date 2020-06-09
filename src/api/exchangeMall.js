@@ -72,3 +72,20 @@ export function addStock(params) {
     data: params
   })
 }
+
+// 查询兑换商城是否开启
+export function searchActivityStatus(params) {
+  return request({
+    url: `${config.merGoods}/1.0/pmtMerchantConfiguration/searchActivityStatus`,
+    method: 'post',
+    data: params
+  })
+}
+// 修改兑换商城开启/关闭
+export function activityOpenOrClose(params) {
+  return request({
+    url: `${config.merGoods}/1.0/pmtMerchantConfiguration/activityOpenOrClose`,
+    method: 'post',
+    data: params
+  })
+}
