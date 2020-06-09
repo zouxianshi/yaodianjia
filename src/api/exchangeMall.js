@@ -89,3 +89,12 @@ export function activityOpenOrClose(params) {
     data: params
   })
 }
+
+// 查询当前兑换比例
+export function _searchBlByMerCode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/merSet/_searchByMerCode?mercode=${params.merCode}&sysKey=integral_exchange_proportion`,
+    method: 'post',
+    data: {}
+  })
+}

@@ -18,14 +18,14 @@
       <el-form ref="formRule" size="mini" label-width="100px" :model="params" :rules="rules" :disabled="isDisabled">
         <el-form-item label="可兑换库存" prop="totalAmount">
           <el-input-number v-model="params.totalAmount" :controls="false" :precision="0" :min="1" :max="999999" :disabled="isEdit" />
-          <span class="tips"> 设置该积分商品在每个门店可兑换库存</span>
+          <span class="tips"> 设置该海贝商品在每个门店可兑换库存</span>
         </el-form-item>
         <el-form-item label="换购价格" required>
           <el-input-number v-model="params.exchangePrice" :controls="false" :precision="2" :min="0" :max="99999999" />
           <span style="font-size:18px;margin:0 20px;vertical-align: middle;">元 +</span>
           <el-input-number v-model="params.exchangeHb" :controls="false" :precision="0" :min="1" :max="99999999" />
           <span style="font-size:18px;margin:0 20px;vertical-align: middle;">海贝</span>
-          <span class="tips"> 当前兑换比例： 1 : 1</span>
+          <span class="tips"> 当前兑换比例： 1 : {{ changeBl }}</span>
           <el-button type="text" style="margin-left: 20px" @click="$router.push('/marketing/settings-equity/list')">兑换比例设置</el-button>
         </el-form-item>
         <el-form-item label="限购数量" prop="limitAmount">
@@ -33,20 +33,15 @@
           <span class="tips"> 0代表不限购</span>
         </el-form-item>
         <el-form-item label="下单规则">
-          不可使用优惠券
+          <el-checkbox v-model="yhRule" disabled>不可使用优惠券</el-checkbox>
+          <span class="tips"> 兑换商品默认不可使用优惠券</span>
         </el-form-item>
-        <!-- <el-form-item label="购买限制" required>
-          <el-checkbox v-model="params.purchaseLimit">该商品不允许直接购买</el-checkbox>
-          <p class="tips">如果设置了不允许直接购买，该商品在微商城查看商品详情时立即购买和加入购物车置灰不能下单，只能在兑换商城下单
-            ，如果未勾选说明可以分别在微商城和兑换商城下单
-          </p>
-        </el-form-item> -->
       </el-form>
-      <div v-if="!isDisabled">
+      <div v-if="!isDisabled" class="submit-btn">
         <el-button size="mini" @click="returnList">取消</el-button>
-        <el-button size="mini" type="primary" @click="submitData">确定</el-button>
+        <el-button size="mini" type="primary" @click="onSubmitData">确定</el-button>
       </div>
-      <div v-else>
+      <div v-else class="submit-btn">
         <el-button size="mini" @click="$router.push('/activity/exchangeMallList')">返回</el-button>
       </div>
     </div>
@@ -62,12 +57,15 @@
 <script>
 import storeGoods from '../../marketing/components/store-gods'
 import selectGoods from '../../marketing/components/select-goods'
-import { cerateExchange, getExchangeInfo, editExchange } from '@/api/exchangeMall'
+import _ from 'lodash'
+import { cerateExchange, getExchangeInfo, editExchange, _searchBlByMerCode } from '@/api/exchangeMall'
 export default {
   components: { storeGoods, selectGoods },
   data() {
     return {
+      yhRule: true,
       storeSelectGoods: [], // 已选择商品
+      changeBl: 1, // 兑换比例
       params: {
         totalAmount: '', // 兑换库存
         exchangePrice: 0, // 兑换金额
@@ -86,6 +84,11 @@ export default {
     }
   },
   created() {
+    _searchBlByMerCode({ merCode: this.$store.state.user.merCode }).then(res => {
+      if (res.code === '10000') {
+        this.changeBl = res.data.sysValue
+      }
+    })
     if (this.$route.query.id) {
       const params = {
         id: this.$route.query.id
@@ -123,12 +126,25 @@ export default {
       this.storeSelectGoods.splice(index, 1)
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
     },
+    onSubmitData: _.throttle(function() {
+      this.$confirm('确定添加当前商品到兑换商城?', '操作提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.submitData()
+      })
+    }, 5000, {
+      leading: true,
+      trailing: false
+    }),
     submitData() {
       if (this.storeSelectGoods.length === 0) {
         this.$message({
           type: 'error',
           message: '请选择商品！'
         })
+        return
       }
       const pmtCommList = [{
         name: this.storeSelectGoods[0].name,
@@ -189,7 +205,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .exchange-add{
-  padding-top: 20px;
+  padding-top: 20px;position: relative;
   .items-title{
     font-size: 18px;font-weight: 600;
   }
@@ -197,6 +213,10 @@ export default {
     .tips{
       color: #999;
     }
+  }
+  .submit-btn{
+    position: absolute;
+    bottom: 20px;
   }
 }
 </style>
