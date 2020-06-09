@@ -165,6 +165,7 @@ export default {
         'pmtType': 20,
         'status': status ? 1 : 0
       }
+      var _self = this
       activityOpenOrClose(params).then(res => {
         if (res.code === '10000') {
           this.$message({
@@ -172,8 +173,10 @@ export default {
             type: 'success'
           })
         } else {
-          this.$refs.HB.closeStatus(status)
+          _self.$refs.HB.closeStatus(status)
         }
+      }).catch(() => {
+        _self.$refs.HB[0].closeStatus(status)
       })
     }
   }
