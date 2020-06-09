@@ -1,28 +1,55 @@
 <template>
   <div class="column-spec-list-model">
-    column-spec-list
+    <span v-text="item[key] || '-'" />
+    <span v-if="!isDisabled">
+      <edit-table :title="item.attributeName" :keys="key" :info="item" max-length="50" :index="index" @saveInfo="handleEditTabSpecs" />
+    </span>
   </div>
 </template>
 <script>
+import editTable from './edit-table'
 export default {
   name: 'ColumnSpecList',
   data() {
-    return {}
+    return {
+      specObj: {}
+    }
   },
+  inject: ['isDisabled'],
   props: {
     item: {
       type: Object,
       default: () => {}
+    },
+    index: {
+      type: Number,
+      default: null
+    },
+    attributeName: {
+      type: String,
+      default: ''
+    },
+    specSelectData: {
+      type: Array,
+      default: () => []
     }
   },
-  methods: {},
+  methods: {
+    handleEditTabSpecs(row, keys, index) {
+      this.item = _.assign(this.item, row)
+      this.$forceUpdate()
+    }
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
-    debugger
-    console.log(this.item)
-    console.log('------------------------------this.item')
+    const { specSelectData, attributeName } = this
+    const { id } = _.find(specSelectData, { 'attributeName': attributeName })
+    this.key = `index_${id}_${attributeName}`
+    if (!_.has(this.item, this.key)) {
+      this.item[this.key] = ''
+    }
   },
   beforeMount() {
   },
@@ -37,7 +64,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { editTable }
 }
 </script>
 

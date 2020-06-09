@@ -1,7 +1,9 @@
 <template>
   <div class="column-bar-code-model">
     <span v-text="item.barCode" />
-    <edit-table title="条形码" keys="barCode" :info="item" max-length="30" :index="index" @saveInfo="handleEditTabSpecs" />
+    <span v-if="!isDisabled">
+      <edit-table title="条形码" keys="barCode" :info="item" max-length="30" :index="index" @saveInfo="handleEditTabSpecs" />
+    </span>
   </div>
 </template>
 <script>
@@ -11,6 +13,7 @@ export default {
   data() {
     return {}
   },
+  inject: ['isDisabled'],
   props: {
     item: {
       type: Object,

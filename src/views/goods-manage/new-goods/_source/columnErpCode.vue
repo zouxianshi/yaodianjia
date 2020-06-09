@@ -1,7 +1,9 @@
 <template>
   <div class="column-erp-code-model">
     <span v-text="item.erpCode" />
-    <edit-table title="商品编码" keys="erpCode" max-length="16" :info="item" :index="index" @saveInfo="handleEditTabSpecs" />
+    <span v-if="!isDisabled">
+      <edit-table title="商品编码" keys="erpCode" max-length="16" :info="item" :index="index" @saveInfo="handleEditTabSpecs" />
+    </span>
   </div>
 </template>
 <script>
@@ -11,6 +13,7 @@ export default {
   data() {
     return {}
   },
+  inject: ['isDisabled'],
   props: {
     item: {
       type: Object,

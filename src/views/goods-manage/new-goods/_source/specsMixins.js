@@ -6,6 +6,7 @@ import {
 } from '@/api/new-goods'
 import { checkNumberdouble, checkZmSZ } from '@/utils/validate'
 import { findArray } from '@/utils/index'
+/* eslint-disable */
 const mixin = {
   data() {
     return {
@@ -66,7 +67,7 @@ const mixin = {
         if (findIndex) {
           if (row.isCheck || row.disabled) {
             console.log('选择选择')
-            this.$refs.multipleTable.toggleRowSelection(row)
+            // this.$refs.multipleTable.toggleRowSelection(row)
           }
         }
       } else {
@@ -191,13 +192,13 @@ const mixin = {
         }
       })
 
-      if (checkNum === 0 && this.dynamicProp.length === 0) {
-        this.$message({
-          message: '请勾选规格参数',
-          type: 'warning'
-        })
-        return
-      }
+      // if (checkNum === 0 && this.dynamicProp.length === 0) {
+      //   this.$message({
+      //     message: '请勾选规格参数',
+      //     type: 'warning'
+      //   })
+      //   return
+      // }
       data = this.specsForm.specs
       let index = this.editSpecsData ? this.editSpecsData.length : 0
       let flag = true
@@ -632,7 +633,7 @@ const mixin = {
             this.editSpecsData.map((v, index) => {
               if (v.disabled) {
                 // this.chooseTableSpec.push(v)
-                this.$refs.multipleTable.toggleRowSelection(v)
+                // this.$refs.multipleTable.toggleRowSelection(v)
                 $('.el-table__body')
                   .find('tbody tr')
                   .eq(index)

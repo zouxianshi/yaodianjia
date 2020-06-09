@@ -373,587 +373,8 @@
         </div>
         <!-- 规格信息 -->
         <div id="step2">
-
           <div v-if="isSpec" class="mss-box">
-            <m-spec-setting :spec-list="newSpecList" />
-          </div>
-
-          <div v-loading="specLoading" class="specs-box" element-loading-text="拼命加载中">
-            <!-- <p
-              class="text-right"
-              style="font-size:13px"
-            >商品来源: {{ basicForm.origin===2?'商家自定义':'海典商品标准库' }}</p>-->
-            <el-form>
-              <el-form-item label="规格设置：">
-                <!-- <template v-show="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
-                  <template v-show="dynamicProp.length>0">
-                  <el-checkbox
-                    v-for="(item,index) in specsList"
-                    :key="index"
-                    v-model="item.isCheck"
-                    :checked="chooseSpecName.indexOf(item.attributeName)>-1"
-                    :disabled="is_query"
-                    @change="handleSpecsChange(item)"
-                  >{{ item.attributeName }}</el-checkbox>
-                  </template>
-                </template>-->
-                <template v-show="basicForm.origin===2&&basicForm.id&&editSpecsData.length>0">
-                  <template v-show="dynamicProp.length>0">
-                    <el-checkbox
-                      v-for="(item,index) in specsList"
-                      :key="index"
-                      v-model="item.isCheck"
-                      :checked="chooseSpecName.indexOf(item.attributeName)>-1"
-                      :disabled="is_query"
-                      @change="handleSpecsChange(item)"
-                    >{{ item.attributeName }}</el-checkbox>
-                  </template>
-                </template>
-                <!-- <template v-else-if="basicForm.origin===2">
-                  <el-checkbox
-                    v-for="(item,index) in specsList"
-                    :key="index"
-                    v-model="item.isCheck"
-                    :disabled="is_query"
-                    @change="handleSpecsChange(item)"
-                  >{{ item.attributeName }}</el-checkbox>
-                </template>
-                <template v-else>
-                  <el-checkbox
-                    v-for="(item,index) in dynamicProp"
-                    :key="index"
-                    v-model="item.checked"
-                    :disabled="is_query"
-                    @change="handleSpecsChange(item)"
-                  >{{ item.name }}</el-checkbox>
-                </template>-->
-              </el-form-item>
-              <el-form-item v-if="isSpec" label="规格信息：">
-                <template v-if="basicForm.origin===1">
-                  <el-table
-                    v-if="editSpecsData.length"
-                    ref="multipleTable"
-                    :data="editSpecsData"
-                    height="300"
-                  >
-                    <!-- <el-table-column type="selection" :selectable="selectable" width="55" /> -->
-                    <el-table-column width="55">
-                      <template slot-scope="scope">
-                        <el-checkbox
-                          v-if="scope.row.isShowSelect"
-                          v-model="scope.row.isCheck"
-                          :disabled="scope.row.disabled||is_query"
-                        />
-                      </template>
-                    </el-table-column>
-                    <!-- <el-table-column
-                    v-for="(items,index1) in dynamicProp"
-                    :key="index1"
-                    :label="items.name"
-                  >
-                    <template slot-scope="scope">
-                      <template v-if="scope.row[items.keys]">
-                        <span v-text="scope.row[items.keys] || scope.row.specSkuList[0].skuValue" />
-                      </template>
-                      <template v-else>
-                        <span v-text="scope.row.specSkuList[0].skuValue" />
-                      </template>
-                      <template v-if="!is_query">
-                        <edit-table
-                          :title="items.name"
-                          :keys="items.keys"
-                          :info="items.row"
-                          max-length="50"
-                          :index="scope.$index"
-                          @saveInfo="handleEditTabSpecs"
-                        />
-                      </template>
-                    </template>
-                    </el-table-column>-->
-                    <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs">
-                      <template slot="header">
-                        <span class="tip">*</span>
-                        {{ propsf.name }}
-                      </template>
-                      <template slot-scope="scope">
-                        {{ scope.row }}
-                        <span
-                          v-if="scope.row[propsf.keys]"
-                          v-text="scope.row[propsf.keys]"
-                        />
-                        <template v-if="!is_query">
-                          <edit-table
-                            :title="propsf.name"
-                            :keys="propsf.keys"
-                            :info="scope.row"
-                            max-length="50"
-                            :index="scope.$index"
-                            @saveInfo="handleEditTabSpecs"
-                          />
-                        </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column>
-                      <template slot="header">
-                        <span class="tip">*</span> 商品编码
-                      </template>
-                      <template slot-scope="scope">
-                        <span v-text="scope.row.erpCode" />
-                        <template v-if="!is_query">
-                          <edit-table
-                            title="商品编码"
-                            keys="erpCode"
-                            max-length="16"
-                            :info="scope.row"
-                            :index="scope.$index"
-                            @saveInfo="handleEditTabSpecs"
-                          />
-                        </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="条形码" prop="barCode">
-                      <template slot-scope="scope">
-                        <span v-text="scope.row.barCode" />
-                        <template v-if="!is_query&&basicForm.origin===2">
-                          <edit-table
-                            title="条形码"
-                            keys="barCode"
-                            :info="scope.row"
-                            max-length="30"
-                            :index="scope.$index"
-                            @saveInfo="handleEditTabSpecs"
-                          />
-                        </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="货主" min-width="100">
-                      <template slot-scope="scope">
-                        <template>
-                          <el-select
-                            v-model="scope.row.owner"
-                            size="small"
-                            clearable
-                            :disabled="scope.row.isSku===0"
-                          >
-                            <el-option label="自营" :value="0" />
-                            <el-option label="平安" :value="1" />
-                          </el-select>
-                        </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column>
-                      <template slot="header">
-                        <span class="tip">*</span> 参考价格
-                      </template>
-                      <template slot-scope="scope">
-                        <span v-text="scope.row.mprice" />
-                        <template v-if="!is_query">
-                          <edit-table
-                            title="参考价格"
-                            keys="mprice"
-                            :info="scope.row"
-                            :index="scope.$index"
-                            @saveInfo="handleEditTabSpecs"
-                          />
-                        </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="限购数量">
-                      <template slot-scope="scope">
-                        <template v-if="scope.row.limitType===1">
-                          <span>每笔订单限购{{ scope.row.limitNum }}件</span>
-                        </template>
-                        <template v-else-if="scope.row.limitType===2">
-                          <span>
-                            按周期每
-                            <span v-if="scope.row.type===2">天</span>
-                            <span v-else-if="scope.row.type===3">周</span>
-                            <span v-else>月</span>
-                            限购数量
-                            {{ scope.row.limitNum }}件
-                          </span>
-                        </template>
-                        <template v-else>
-                          <span>不限购</span>
-                        </template>
-                        <template v-if="!is_query">
-                          <edit-table
-                            title="限购数量"
-                            keys="limitNum"
-                            max-length="8"
-                            :info="scope.row"
-                            :index="scope.$index"
-                            @saveInfo="handleEditTabSpecs"
-                          />
-                        </template>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="商品图片">
-                      <template slot-scope="scope">
-                        <el-upload
-                          class="avatar-uploader specs-img-table"
-                          :action="upLoadUrl"
-                          :headers="headers"
-                          :disabled="is_query"
-                          :show-file-list="false"
-                          :on-success="handleAvatarSuccessEdit"
-                          :on-error="handleImgError"
-                          :before-upload="beforeUpload"
-                        >
-                          <el-image
-                            v-if="scope.row.picUrl"
-                            class="avatar"
-                            style="width:60px;height:60px"
-                            :src="showImg(scope.row.picUrl)"
-                            @click="handleUploadIndex(scope.$index)"
-                          >
-                            <div slot="placeholder" class="image-slot">
-                              加载中
-                              <span class="dot">...</span>
-                            </div>
-                          </el-image>
-                          <i
-                            v-else
-                            class="el-icon-plus avatar-uploader-icon"
-                            @click="handleUploadIndex(scope.$index)"
-                          />
-                        </el-upload>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </template>
-                <template v-else>
-                  <template v-if="basicForm.id&&editSpecsData.length>0">
-                    <div class="spec-content">
-                      <el-table :data="editSpecsData" @selection-change="handleSelectionChange">
-                        <el-table-column v-for="(propsf,indexs) in dynamicProp" :key="indexs">
-                          <template slot="header">
-                            <span class="tip">*</span>
-                            {{ propsf.name }}
-                          </template>
-                          <template slot-scope="scope">
-                            <span v-if="scope.row[propsf.keys]" v-text="scope.row[propsf.keys]" />
-                            <template v-if="!is_query">
-                              <edit-table
-                                :title="propsf.name"
-                                :keys="propsf.keys"
-                                :info="scope.row"
-                                max-length="50"
-                                :index="scope.$index"
-                                @saveInfo="handleEditTabSpecs"
-                              />
-                            </template>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="erpCode">
-                          <template slot="header">
-                            <span class="tip">*</span> 商品编码
-                          </template>
-                          <template slot-scope="scope">
-                            <span v-text="scope.row.erpCode" />
-                            <template v-if="!is_query">
-                              <edit-table
-                                title="商品编码"
-                                keys="erpCode"
-                                :info="scope.row"
-                                max-length="16"
-                                :index="scope.$index"
-                                @saveInfo="handleEditTabSpecs"
-                              />
-                            </template>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="条形码" prop="barCode">
-                          <template slot-scope="scope">
-                            <span v-text="scope.row.barCode" />
-                            <template v-if="!is_query&&basicForm.origin===2">
-                              <edit-table
-                                title="条形码"
-                                keys="barCode"
-                                :info="scope.row"
-                                max-length="30"
-                                :index="scope.$index"
-                                @saveInfo="handleEditTabSpecs"
-                              />
-                            </template>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="货主" min-width="100">
-                          <template slot-scope="scope">
-                            <template>
-                              <el-select
-                                v-model="scope.row.owner"
-                                size="small"
-                                clearable
-                                :disabled="scope.row.isSku===0"
-                              >
-                                <el-option label="自营" :value="0" />
-                                <el-option label="平安" :value="1" />
-                              </el-select>
-                            </template>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="mprice">
-                          <template slot="header">
-                            <span class="tip">*</span> 参考价格
-                          </template>
-                          <template slot-scope="scope">
-                            <span v-text="scope.row.mprice" />
-                            <template v-if="!is_query">
-                              <edit-table
-                                title="参考价格"
-                                keys="mprice"
-                                :info="scope.row"
-                                :index="scope.$index"
-                                @saveInfo="handleEditTabSpecs"
-                              />
-                            </template>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="限购数量" min-width="120">
-                          <template slot-scope="scope">
-                            <template v-if="scope.row.limitType===1">
-                              <span>每笔订单限购{{ scope.row.limitNum }}件</span>
-                            </template>
-                            <template v-else-if="scope.row.limitType===2">
-                              <span>
-                                按周期每
-                                <span v-if="scope.row.type===2">天</span>
-                                <span v-else-if="scope.row.type===3">周</span>
-                                <span v-else>月</span>
-                                限购数量
-                                {{ scope.row.limitNum }}件
-                              </span>
-                            </template>
-                            <template v-else>不限购</template>
-                            <template v-if="!is_query">
-                              <edit-table
-                                title="限购数量"
-                                keys="limitNum"
-                                max-length="8"
-                                :info="scope.row"
-                                :index="scope.$index"
-                                @saveInfo="handleEditTabSpecs"
-                              />
-                            </template>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="商品图片">
-                          <template slot-scope="scope">
-                            <el-upload
-                              class="avatar-uploader specs-img-table"
-                              :action="upLoadUrl"
-                              :headers="headers"
-                              :disabled="is_query"
-                              :show-file-list="false"
-                              :on-success="handleAvatarSuccessEdit"
-                              :on-error="handleImgError"
-                              :before-upload="beforeUpload"
-                            >
-                              <el-image
-                                v-if="scope.row.picUrl"
-                                class="avatar"
-                                style="width:60px;height:60px"
-                                :src="showImg(scope.row.picUrl)"
-                                @click="handleUploadIndex(scope.$index)"
-                              >
-                                <div slot="placeholder" class="image-slot">
-                                  加载中
-                                  <span class="dot">...</span>
-                                </div>
-                              </el-image>
-                              <i
-                                v-else
-                                class="el-icon-plus avatar-uploader-icon"
-                                @click="handleUploadIndex(scope.$index)"
-                              />
-                            </el-upload>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                    </div>
-                  </template>
-                </template>
-                <div
-                  v-for="(item,index) in specsForm.specs"
-                  :key="index"
-                  class="spec-list"
-                  style="margin-top:10px;"
-                >
-                  <div class="header">
-                    <span>规格{{ (editSpecsData.length + index) + 1 }}</span>
-                    <i class="el-icon-delete" @click="handleDeleteSpec(index)" />
-                  </div>
-                  <div class="spec-content">
-                    <el-form
-                      :ref="'specsForm'+index"
-                      :model="item"
-                      size="small"
-                      label-width="80px"
-                      :status-icon="true"
-                    >
-                      <el-form-item v-for="(items,index1) in specsForm.specsData" :key="index1">
-                        <span slot="label">
-                          <span class="tip">*</span>
-                          {{ items.attributeName }}
-                        </span>
-                        <el-input
-                          v-model.trim="item['index_'+items.id+'_'+items.attributeName]"
-                          maxlength="50"
-                          :disabled="is_query"
-                          :placeholder="'输入'+items.attributeName"
-                        />
-                      </el-form-item>
-                      <el-form-item>
-                        <span slot="label">
-                          <span class="tip">*</span> 商品编码
-                        </span>
-                        <el-input
-                          v-model.trim="item.erpCode"
-                          placeholder="输入商品编码"
-                          maxlength="16"
-                          @blur="input_checkErpcode(item,item.erpCode)"
-                        />
-                      </el-form-item>
-                      <el-form-item label>
-                        <span slot="label">条形码</span>
-                        <el-input
-                          v-model.trim="item.barCode"
-                          maxlength="30"
-                          placeholder="若有条形码请务必填写"
-                          @blur="input_checkBarCode(item,item.barCode)"
-                        />
-                      </el-form-item>
-                      <el-form-item label>
-                        <span slot="label">货主</span>
-                        <el-select v-model="item.owner" size="small" clearable>
-                          <el-option label="自营" :value="0" />
-                          <el-option label="平安" :value="1" />
-                        </el-select>
-                      </el-form-item>
-                      <el-form-item>
-                        <span slot="label">
-                          <span class="tip">*</span> 参考价格
-                        </span>
-                        <el-input
-                          v-model.trim="item.mprice"
-                          placeholder="输入参考价格"
-                          @blur="input_checkMprice(item,index)"
-                        />
-                      </el-form-item>
-                      <el-form-item label="限购数量">
-                        <div style="padding-top:10px;">
-                          <el-radio-group
-                            v-model="item.limitType"
-                            @change="handleLimitChange(item,index)"
-                          >
-                            <el-radio :label="0" style="display:block">不限购</el-radio>
-                            <el-radio :label="1" style="margin-top:10px">
-                              <span style="color:#333">
-                                每笔订单限购&nbsp;
-                                <template v-if="item.limitType===1">
-                                  <el-input
-                                    v-model="item.limitNum"
-                                    size="mini"
-                                    maxlength="8"
-                                    :disabled="item.limitType===2||item.limitType===0"
-                                    style="width:100px"
-                                    @blur="input_checkLimit(item,index)"
-                                  />&nbsp;件
-                                </template>
-                                <template v-else>
-                                  <el-input
-                                    maxlength="8"
-                                    :disabled="item.limitType===2||item.limitType===0"
-                                    size="mini"
-                                    style="width:100px"
-                                    @blur="input_checkLimit(item,index)"
-                                  />&nbsp;件
-                                </template>
-                              </span>
-                            </el-radio>
-                            <el-radio :label="2" style="margin-top:10px">
-                              <span style="color:#333">
-                                按周期每&nbsp;
-                                <el-select
-                                  v-model="item.type"
-                                  :disabled="item.limitType===1||item.limitType===0"
-                                  size="mini"
-                                  style="width:80px"
-                                  placeholder="选择类型"
-                                >
-                                  <el-option :value="2" label="天" />
-                                  <el-option :value="3" label="周" />
-                                  <el-option :value="4" label="月" />
-                                </el-select>&nbsp;限购&nbsp;
-                                <template v-if="item.limitType===2">
-                                  <el-input
-                                    v-model="item.limit"
-                                    maxlength="8"
-                                    :disabled="item.limitType===1||item.limitType===0"
-                                    size="mini"
-                                    style="width:100px"
-                                    @blur="input_checkLimit(item,index)"
-                                  />
-                                </template>
-                                <template v-else>
-                                  <el-input
-                                    maxlength="8"
-                                    :disabled="item.limitType===1||item.limitType===0"
-                                    size="mini"
-                                    style="width:100px"
-                                    @blur="input_checkLimit(item,index)"
-                                  />
-                                </template>
-                              </span>
-                            </el-radio>
-                          </el-radio-group>
-                        </div>
-                      </el-form-item>
-                      <el-form-item label="商品图片">
-                        <el-upload
-                          class="avatar-uploader specs-img-table"
-                          :action="upLoadUrl"
-                          :headers="headers"
-                          :disabled="is_query"
-                          :show-file-list="false"
-                          :upload-index="index"
-                          :on-success="handleAvatarSuccess"
-                          :on-error="handleImgError"
-                          :before-upload="beforeUpload"
-                        >
-                          <el-image
-                            v-if="item.picUrl"
-                            class="avatar"
-                            style="width:80px;height:80px"
-                            :src="showImg(item.picUrl)"
-                            @click="handleUploadIndex(index)"
-                          >
-                            <div slot="placeholder" class="image-slot">
-                              加载中
-                              <span class="dot">...</span>
-                            </div>
-                          </el-image>
-                          <i
-                            v-else
-                            class="el-icon-plus avatar-uploader-icon"
-                            @click="handleUploadIndex(index)"
-                          />
-                        </el-upload>
-                      </el-form-item>
-                    </el-form>
-                  </div>
-                </div>
-                <p v-if="!is_query" class="add-spec">
-                  <el-button
-                    type="text"
-                    icon="el-icon-plus"
-                    size="small"
-                    @click="handleAddSpec"
-                  >添加规格</el-button>
-                </p>
-              </el-form-item>
-            </el-form>
+            <m-spec-setting ref="specSetting" :is-disabled="is_query" :spec-list="newSpecList" />
           </div>
         </div>
         <!-- 图文详情 -->
@@ -1164,28 +585,19 @@ import {
   getBrandList,
   saveImg,
   saveGoodsDetails,
-  // getBasicGoodsInfo,
-  // getGoodsImgAry,
-  // getGoodsDetails,
   getGoodsAddALL
-  // commodityNew
 } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
-import editTable from './_source/edit-table'
 import editGroup from '../components/grouping'
 import { findArray } from '@/utils/index'
 import { checkNumberdouble } from '@/utils/validate'
-// import { throttle } from '@/utils/throttle'
-import { handlerDays, handlerConsignorSpecVal } from './_source/utils'
+import { handlerDays } from './_source/utils'
 import mSpecSetting from './_source/specSetting'
-
-console.log(handlerDays())
-console.log('+++1111111111111')
 
 export default {
   name: 'GoodsEdit',
-  components: { Tinymce, vueUploadImg, editTable, editGroup, mSpecSetting },
+  components: { Tinymce, vueUploadImg, editGroup, mSpecSetting },
   mixins: [mixins, specsMixin],
   data() {
     const _checkName = (rule, value, callback) => {
@@ -1512,11 +924,14 @@ export default {
       //       this.basicLoading = false
       //     })
       // } else {
+
+      this.isSpec = false
       getGoodsAddALL(params)
         .then(res => {
           this.basicLoading = false
           this._loadGoodsImgAry(res.data.imgList)
           this._loadSpecs(res.data.specList)
+          this.newSpecList = res.data.specList
           console.log('++++++++++++++++')
           console.log(res.data.commDTO)
           if (res.data.commDTO && res.data.commDTO.drugType === 3) {
@@ -1525,6 +940,7 @@ export default {
           this._loadBasicInfo(res.data.commDTO)
           this._loadGoodsDetails(res.data.detailDTO.content)
           this.basicLoading = false
+          this.isSpec = true
         })
       // }
     },
@@ -2121,15 +1537,15 @@ export default {
     handleSubmitForm() {
       // todo submit
 
-      const { editSpecsData, specsForm: { specs }, specsList } = this
-      const selectArr = _.some(this.specsList, { isCheck: true })
+      const valueList = this.$refs['specSetting'].$verification()
 
-      if (!selectArr) {
-        this.$message({ message: '至少勾选一个规格项', type: 'warning' })
+      if (!_.isObject(valueList)) {
+        console.log('有错误')
         return
       }
 
-      if (!handlerConsignorSpecVal(editSpecsData, specs, specsList)) {
+      if (!valueList.length) {
+        this.$message({ message: '至少勾选一个规格项', type: 'warning' })
         return
       }
 
@@ -2221,7 +1637,8 @@ export default {
                   data.secondTypeId = this.chooseTypeList[1].id
                   const params = {}
                   params.commDTO = data
-                  params.specList = this.datalist
+                  // todo new valueList save
+                  params.specList = valueList
                   params.imgList = this.fileList
                   params.detailDTO = {
                     content: this.goodsIntro.content,
@@ -2250,7 +1667,8 @@ export default {
               // 基础信息
               params.commDTO = data
               // 规格
-              params.specList = this.datalist
+              // todo new valueList save
+              params.specList = valueList
               params.imgList = this.fileList
               params.detailDTO = {
                 content: this.goodsIntro.content,

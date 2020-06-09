@@ -2,12 +2,17 @@
   <div class="spec-setting-model">
     <el-form>
       <el-form-item label="规格设置：">
-        <m-spec-select v-if="isSpec" :spec-select="specSelect" />
+        <m-spec-select v-if="isSpec" :spec-select="specSelect" @on-spec-hide="onSpecHide" />
       </el-form-item>
     </el-form>
     <el-form>
       <el-form-item label="规格信息：">
-        <m-spec-info v-if="isSpec" :spec-list="specList" :spec-select="specSelect" />
+        <div>
+          <!--规格列表-->
+          <m-spec-info v-if="isSpec" :spec-select="specSelect" :spec-list="specListData" />
+          <!--添加规格-->
+          <m-spec-create v-if="!isDisabled" ref="specCreate" :spec-select="specSelect" :spec-list="specListData" />
+        </div>
       </el-form-item>
     </el-form>
   </div>
@@ -15,28 +20,44 @@
 <script>
 import mSpecSelect from './specSelect'
 import mSpecInfo from './specInfo'
+import mSpecCreate from './specCreate'
 import { getSpecsKey } from '@/api/new-goods'
+import { handlerSaveSpecList } from './utils'
 
 export default {
   name: 'SpecSetting',
   data() {
     return {
       isSpec: false,
-      specSelect: []
+      specSelect: [],
+      specListData: []
+    }
+  },
+  provide() {
+    return {
+      isDisabled: this.isDisabled
     }
   },
   props: {
+    isDisabled: {
+      type: Boolean,
+      default: false
+    },
     specList: {
       type: Array,
       default: () => []
     }
   },
   methods: {
+    onSpecHide(specVal) {
+      this.specListData = _.map(_.cloneDeep(this.specListData), v => _.omit(v, [specVal]))
+      this.$refs['specCreate'].delSpecData(specVal)
+    },
     getSpecData() {
       this.isSpec = false
       getSpecsKey().then((res) => {
-        const { specList } = this
-        const specs = _(specList).map('valueList').filter().flatMap().value()
+        const { specListData } = this
+        const specs = _(specListData).map('valueList').filter().flatMap().value()
         const skuKeyNameArr = _.map(specs, 'skuKeyName')
 
         // handler selected spec
@@ -49,12 +70,24 @@ export default {
 
         this.isSpec = true
       })
+    },
+    $verification() {
+      // specListData
+      const createData = this.$refs['specCreate'].$verification()
+      const { specListData, specSelect } = this
+
+      if (_.isObject(createData)) {
+        return handlerSaveSpecList([...specListData, ...createData], specSelect)
+      } else {
+        return false
+      }
     }
   },
   watch: {},
   beforeCreate() {
   },
   created() {
+    this.specListData = this.specList
     this.getSpecData()
   },
   beforeMount() {
@@ -70,7 +103,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mSpecSelect, mSpecInfo }
+  components: { mSpecSelect, mSpecInfo, mSpecCreate }
 }
 </script>
 

@@ -1,7 +1,9 @@
 <template>
   <div class="spec-mprice-model">
     <span v-text="item.mprice" />
-    <edit-table title="参考价格" keys="mprice" :info="item" :index="index" @saveInfo="handleEditTabSpecs" />
+    <span v-if="!isDisabled">
+      <edit-table title="参考价格" keys="mprice" :info="item" :index="index" @saveInfo="handleEditTabSpecs" />
+    </span>
   </div>
 </template>
 <script>
@@ -11,6 +13,7 @@ export default {
   data() {
     return {}
   },
+  inject: ['isDisabled'],
   props: {
     item: {
       type: Object,
