@@ -136,7 +136,7 @@
                         />
                       </el-select>
                     </el-form-item>
-                    <el-form-item label="重量" prop="weight">
+                    <el-form-item label="重量：" prop="weight">
                       <el-input
                         v-model="basicForm.weight"
                         maxlength="6"
