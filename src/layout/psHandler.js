@@ -286,7 +286,30 @@ class InnerCtor {
           }
         ]
       },
-
+      {
+        name: '直播中心',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('living_center'),
+        children: [
+          {
+            name: '直播介绍',
+            path: '/live-manage/introduce',
+            disabled: this.get('living_center.living_introduce'),
+            children: []
+          },
+          {
+            name: '直播活动',
+            path: '/live-manage/activity',
+            disabled: this.get('living_center.living_active')
+          },
+          {
+            name: '数据中心',
+            path: '/live-manage/datacenter',
+            disabled: this.get('living_center.living_data_center')
+          }
+        ]
+      },
       {
         name: '预约商品',
         icon: 'icongoods',

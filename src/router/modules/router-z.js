@@ -178,6 +178,72 @@ const router = [
       }
     ]
   },
+  {
+    path: '/live-manage',
+    component: Layout,
+    redirect: '/live-manage/activity',
+    name: 'live-manage',
+    meta: {
+      title: '直播中心',
+      icon: 'live',
+      auth: 'live'
+    },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'activity',
+        component: () => import('@/views/live-broadcast/activity/list'),
+        name: 'live-activity',
+        meta: {
+          // auth: 'commodity.commodity-combine',
+          title: '直播活动',
+          noCache: true
+        }
+      },
+      {
+        path: 'activity-edit',
+        component: () => import('@/views/live-broadcast/activity/edit'),
+        name: 'live-activity-edit',
+        meta: {
+          // auth: 'commodity.commodity-combine',
+          title: '直播活动',
+          noCache: true
+        }
+      },
+      {
+        path: 'live-now',
+        component: () => import('@/views/live-broadcast/activity/live-now/index'),
+        name: 'live-now',
+        meta: {
+          title: '直播'
+        }
+      }, {
+        path: 'introduce',
+        component: () => import('@/views/live-broadcast/introduce'),
+        name: 'introduce',
+        meta: {
+          title: '直播介绍',
+          noCache: true
+        }
+      }, {
+        path: 'datacenter',
+        component: () => import('@/views/live-broadcast/datacenter'),
+        name: 'datacenter',
+        meta: {
+          title: '数据中心',
+          noCache: true
+        }
+      }, {
+        path: 'data-details',
+        component: () => import('@/views/live-broadcast/datacenter/detail'),
+        name: 'data-details',
+        meta: {
+          title: '数据详情',
+          noCache: true
+        }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true, meta: { title: '404' }}
 ]
 
