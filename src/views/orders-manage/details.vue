@@ -607,7 +607,7 @@
                     <div class="detail-item-middle">
                       <div class="item-cell cell-con">
                         <div class="cell-text">
-                          <span v-if="detailsData.orderType === 'I'">{{ item.totalHb }}海贝 + </span>
+                          <span v-if="detailsData.orderType === 'I'">{{ item.exchangeHb || 0 }}海贝 + </span>
                           <span>￥{{ item.commodityPrice }}</span>
                         </div>
                       </div>
@@ -616,7 +616,7 @@
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">
-                          <span v-if="detailsData.orderType === 'I'">{{ item.totalHb*item.commodityNumber }}海贝 + </span>
+                          <span v-if="detailsData.orderType === 'I'"> {{ item.totalHb }}海贝 + </span>
                           ￥{{ item.totalActualAmount }}
                         </div>
                       </div>
