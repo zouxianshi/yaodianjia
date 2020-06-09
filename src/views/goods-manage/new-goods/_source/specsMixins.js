@@ -178,10 +178,10 @@ const mixin = {
         this.editSpecsData.length === 0
       ) {
         if (data.length === 0) {
-          this.$message({
-            message: '请设置规格',
-            type: 'warning'
-          })
+          // this.$message({
+          //   message: '请设置规格',
+          //   type: 'warning'
+          // })
           return
         }
       }
