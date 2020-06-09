@@ -35,12 +35,12 @@
         <el-form-item label="下单规则">
           不可使用优惠券
         </el-form-item>
-        <el-form-item label="购买限制" required>
+        <!-- <el-form-item label="购买限制" required>
           <el-checkbox v-model="params.purchaseLimit">该商品不允许直接购买</el-checkbox>
           <p class="tips">如果设置了不允许直接购买，该商品在微商城查看商品详情时立即购买和加入购物车置灰不能下单，只能在兑换商城下单
             ，如果未勾选说明可以分别在微商城和兑换商城下单
           </p>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div v-if="!isDisabled">
         <el-button size="mini" @click="returnList">取消</el-button>
@@ -72,8 +72,8 @@ export default {
         totalAmount: '', // 兑换库存
         exchangePrice: 0, // 兑换金额
         exchangeHb: 0, // 兑换海贝
-        limitAmount: 0,
-        purchaseLimit: true
+        limitAmount: 0
+        // purchaseLimit: true
       },
       rules: {
         totalAmount: [
@@ -99,8 +99,8 @@ export default {
             totalAmount: ruleData.totalAmount, // 兑换库存
             exchangePrice: ruleData.exchangePrice, // 兑换金额
             exchangeHb: ruleData.exchangeHb, // 兑换海贝
-            limitAmount: ruleData.limitAmount,
-            purchaseLimit: ruleData.purchaseLimit === 1 // 购买限制
+            limitAmount: ruleData.limitAmount
+            // purchaseLimit: ruleData.purchaseLimit === 1 // 购买限制
           }
         }
       })
@@ -142,7 +142,7 @@ export default {
           exchangeHb: this.params.exchangeHb,
           exchangePrice: this.params.exchangePrice,
           totalAmount: this.params.totalAmount,
-          purchaseLimit: this.params.purchaseLimit ? 1 : 0,
+          // purchaseLimit: this.params.purchaseLimit ? 1 : 0,
           prodSpecId: this.storeSelectGoods[0].specId // 规格id
         }]
       }
