@@ -1,6 +1,6 @@
 <template>
   <div class="spec-upload-model">
-    <el-upload class="avatar-uploader specs-img-table" :action="upLoadUrl" :headers="{ Authorization: token }" :show-file-list="false" :on-success="handleAvatarSuccessEdit" :on-error="handleImgError" :before-upload="beforeUpload">
+    <el-upload class="avatar-uploader specs-img-table" :disabled="isDisabled" :action="upLoadUrl" :headers="{ Authorization: token }" :show-file-list="false" :on-success="handleAvatarSuccessEdit" :on-error="handleImgError" :before-upload="beforeUpload">
       <el-image v-if="item.picUrl" class="avatar" style="width:60px;height:60px" :src="showImg(item.picUrl)">
         <div slot="placeholder" class="image-slot">加载中<span class="dot">...</span></div>
       </el-image>
@@ -17,6 +17,7 @@ export default {
     return {
     }
   },
+  inject: ['isDisabled'],
   props: {
     item: {
       type: Object,

@@ -16,7 +16,7 @@
     <template v-else>
       <span>不限购</span>
     </template>
-    <template>
+    <template v-if="!isDisabled">
       <edit-table title="限购数量" keys="limitNum" max-length="8" :info="item" :index="index" @saveInfo="handleEditTabSpecs" />
     </template>
   </div>
@@ -28,6 +28,7 @@ export default {
   data() {
     return {}
   },
+  inject: ['isDisabled'],
   props: {
     item: {
       type: Object,

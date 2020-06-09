@@ -19,43 +19,63 @@ export const handlerDays = (daysVal) => {
   return { timeTypes, days }
 }
 
-export const handlerConsignorSpecVal = (editSpecsData, specs, specsList) => {
-  const isCheckArr = _.reject(specsList, v => !_.has(v, 'isCheck'))
-  const keyArr = _.map(isCheckArr, v => `index_${v.id}_${v.attributeName}`)
-  const keysArr = ['owner', ...keyArr]
-  const vfKeysArr = _.map(editSpecsData, v => _.pick(v, ['owner', ...keyArr]))
-  const specsVf = _.map(specs, v => _.pick(v, ['owner', ...keyArr]))
+export const handlerVfErpCode = (specList, specData, erpCode) => {
+  const erpCodes = _.compact(_.map([...specList, ...specData], 'erpCode'))
+  return !erpCodes.includes(erpCode)
+}
 
-  const catVfArr = [...vfKeysArr, ...specsVf]
+export const handlerVfOwner = ({ data, key, keyVal, owner }) => {
+  const hData = _.map(data, v => _.pick(v, ['owner', key]))
+  return !_.some(hData, v => v.owner === owner && v[key] === keyVal)
+}
 
-  let flag = false
+export const handlerSaveSpecList = (data, specSelect) => {
+  const specSelectArr = _.reject(specSelect, ['selected', false])
+  const vfData = []
 
-  // complete key identification as a verification
-  _.map(keysArr, v => {
-    _.map(catVfArr, v1 => {
-      if (!_.has(v1, v)) {
-        v1[v] = ''
+  // reset handler spec data
+  const specArr = _.map(specSelectArr, v => {
+    return {
+      'id': '',
+      'specId': '',
+      'skuKeyId': v.id,
+      'skuKeyName': v.attributeName,
+      'skuValueCode': null,
+      'skuValue': ''
+    }
+  })
+
+  // add increase key-value team
+  _.map(specArr, v => {
+    const key = `index_${v.skuKeyId}_${v.skuKeyName}`
+    _.map(data, v1 => {
+      if (!_.has(v1, key)) {
+        const { skuValue } = _.find(v1.valueList, { 'skuKeyName': v.skuKeyName })
+        v1[key] = skuValue
       }
+      vfData.push({
+        owner: v1.owner,
+        [key]: v1[key]
+      })
     })
   })
 
-  _.map(catVfArr, v => {
-    _.map(keyArr, v1 => {
-      if (_.has(v, v1) && _.isEmpty(v[v1])) {
-        flag = true
+  _.map(data, v => {
+    v.valueList = _.compact(_.map(!v.valueList ? specArr : v.valueList, v1 => {
+      const key = `index_${v1.skuKeyId}_${v1.skuKeyName}`
+      if (_.has(v, key)) {
+        return {
+          ...v1,
+          skuValue: v[key]
+        }
       }
-    })
+    }))
   })
 
-  if (flag) {
-    Message({ message: '请完善规格信息', type: 'error', duration: 3000 })
-    return false
-  }
-
-  if (catVfArr.length !== _.uniqWith(catVfArr, _.isEqual).length) {
+  if (vfData.length !== _.uniqWith(vfData, _.isEqual).length) {
     Message({ message: '货主和规格值不能重复', type: 'error', duration: 3000 })
     return false
   }
 
-  return true
+  return data
 }
