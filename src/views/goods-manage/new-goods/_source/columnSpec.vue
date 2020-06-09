@@ -1,6 +1,6 @@
 <template>
   <div class="column-spec-list-model">
-    <span v-text="item[key] || '-'" />
+    <span v-text="item[key]" />
     <span v-if="!isDisabled">
       <edit-table :title="item.attributeName" :keys="key" :info="item" max-length="50" :index="index" @saveInfo="handleEditTabSpecs" />
     </span>

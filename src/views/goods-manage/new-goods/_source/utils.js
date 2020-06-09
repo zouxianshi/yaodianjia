@@ -32,6 +32,7 @@ export const handlerVfOwner = ({ data, key, keyVal, owner }) => {
 export const handlerSaveSpecList = (data, specSelect) => {
   const specSelectArr = _.reject(specSelect, ['selected', false])
   const vfData = []
+  let flag = true
 
   // reset handler spec data
   const specArr = _.map(specSelectArr, v => {
@@ -45,6 +46,10 @@ export const handlerSaveSpecList = (data, specSelect) => {
     }
   })
 
+  console.log(specArr)
+
+  console.log('------------------specArr')
+
   // add increase key-value team
   _.map(specArr, v => {
     const key = `index_${v.skuKeyId}_${v.skuKeyName}`
@@ -53,10 +58,19 @@ export const handlerSaveSpecList = (data, specSelect) => {
         const { skuValue } = _.find(v1.valueList, { 'skuKeyName': v.skuKeyName })
         v1[key] = skuValue
       }
+
+      if (!_.some(v1.valueList, { 'skuKeyName': v.skuKeyName })) {
+        v1.valueList.push(v)
+      }
+
       vfData.push({
         owner: v1.owner,
         [key]: v1[key]
       })
+
+      if (!v1[key]) {
+        flag = false
+      }
     })
   })
 
@@ -71,6 +85,14 @@ export const handlerSaveSpecList = (data, specSelect) => {
       }
     }))
   })
+
+  console.log(data)
+  console.log('----------------')
+
+  if (!flag) {
+    Message({ message: '规格不能为空', type: 'error', duration: 3000 })
+    return false
+  }
 
   if (vfData.length !== _.uniqWith(vfData, _.isEqual).length) {
     Message({ message: '货主和规格值不能重复', type: 'error', duration: 3000 })
