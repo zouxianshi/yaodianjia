@@ -85,6 +85,9 @@ export default {
       'ryConnected',
       'merLogo'
     ]),
+    ...mapState('mall', [
+      'centerStoreId'
+    ]),
     goodsPagination() {
       return {
         pageSizes: [
@@ -136,7 +139,8 @@ export default {
     ...mapActions({
       querySupportHistoryRecord: 'customerService/querySupportHistoryRecord',
       queryOnlineCurUserMsgList: 'customerService/queryOnlineCurUserMsgList',
-      queryOnlineConversationList: 'customerService/queryOnlineConversationList'
+      queryOnlineConversationList: 'customerService/queryOnlineConversationList',
+      getCenterStoreId: 'mall/getCenterStoreId'
     }),
     ...mapMutations({
       addMsgToOnlineCurUserMsgList: 'customerService/ADD_MSG_TO_ONLINE_MSG_LIST',
@@ -465,7 +469,7 @@ export default {
           title: row.name,
           desc: row.keyWord,
           imageUri: this.showImg(row.mainPic),
-          url: `${this.h5Base}pages/details/index?productId=${row.id}`,
+          url: `${this.h5Base}pages/details/index?productId=${row.id}&merCode=${this.merCode}&storeId=${this.centerStoreId}`,
           price: row.mprice.toFixed(2)
         },
         extra: this.extra
@@ -760,9 +764,11 @@ export default {
   },
   created() {
     this.emojiList = Chat.getEmojiList()
+    const {
+      merCode
+    } = this.$store.state.user
+    this.getCenterStoreId({ merCode })
 
-    // // 获取商品列表
-    // this.queryGoods()
     // 获取快捷回复列表
     this.queryCannedRepliesList()
     // 获取融云会话列表
