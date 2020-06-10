@@ -35,13 +35,18 @@
         </el-table-column>
       </el-table>
     </div>
+    <m-edit-rules />
   </div>
 </template>
 <script>
+import mEditRules from './editRules'
 import { searchWxTemp, setTemplate } from '@/api/channelService'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Message',
+  components: {
+    mEditRules
+  },
   props: {},
   data() {
     return {
@@ -53,17 +58,9 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
-  watch: {},
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
   mounted() {
     this.getDate()
   },
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
     handleChange(val) {
       this.getDate()

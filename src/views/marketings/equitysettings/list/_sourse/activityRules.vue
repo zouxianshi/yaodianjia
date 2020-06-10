@@ -1,6 +1,6 @@
 <template>
   <div class="activityRules-model">
-    <el-form ref="forms" :model="forms" :rules="rules">
+    <el-form ref="forms" :model="forms" :rules="rules" style="height: calc(100vh - 350px); overflow: auto">
       <el-form-item label="兑换对象">
         积分&nbsp;
         <img src="@/assets/icon/exchange.png" alt style="width:15px;height:15px"> &nbsp;海贝&nbsp;
@@ -34,7 +34,7 @@
         </el-form-item>
       </div>
     </el-form>
-    <div style="margin:200px 0px 0px 300px">
+    <div style="text-algin: center">
       <el-button type="primary" size="small" @click="onSubmit">保存</el-button>
     </div>
   </div>
@@ -72,17 +72,9 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
-  watch: {},
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
   mounted() {
     this.getData()
   },
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
     getData() {
       const params = `mercode=${this.merCode}&sysKey=integral_exchange_proportion`
