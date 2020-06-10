@@ -77,6 +77,7 @@
               </div>
             </div>
             <!-- 商品信息 -->
+            ++++++++++++++{{ basicForm.origin }}+++++++++++++++
             <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicForm.origin === 2 ? basicRules : {}" :disabled="is_query">
               <div class="edit-card">
                 <div class="header">
@@ -904,7 +905,7 @@ export default {
   },
   methods: {
     // 一键获取信息
-    getDataAll() {
+    async getDataAll() {
       const params = {
         commodityId: this.$route.query.id,
         merCode: this.merCode
@@ -942,12 +943,11 @@ export default {
       }
 
       if (this.$route.query.type === '添加该商品') {
+        await getGoodsInfo(params).then(handlerInit)
         this.basicForm.origin = 2
-        getGoodsInfo(params).then(handlerInit)
       } else {
         getGoodsAddALL(params).then(handlerInit)
       }
-
       // }
     },
     // 驳回原因
