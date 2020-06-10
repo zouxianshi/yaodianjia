@@ -157,7 +157,7 @@
               <template
                 v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
               >
-                <a @click="handleEdit(scope.row.id)">
+                <a @click="handleEdit(scope.row.id,scope.row.auditStatus)">
                   <el-button type size="mini">编辑</el-button>
                 </a>
               </template>
@@ -370,9 +370,9 @@ export default {
       this.isToEdit = true
       this.$router.push('/goods-manage/apply-record-edit?id=' + id + '&backUrl=apply-record' + '&type=query')
     },
-    handleEdit(id) {
+    handleEdit(id, auditStatus) {
       this.isToEdit = true
-      this.$router.push(`/goods-manage/apply-record-edit?id=${id}&backUrl=apply-record&source=1`)
+      this.$router.push(`/goods-manage/apply-record-edit?id=${id}&backUrl=apply-record&source=1&type=${auditStatus}`)
     },
     handleSendCheck(row, isAll) {
       let ids = []

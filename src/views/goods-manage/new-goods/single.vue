@@ -136,7 +136,7 @@ export default {
       this.$store.dispatch('tagsView/delView', this.$route).then(res => {
         const { name } = this.$route
         if (name === 'SingleCreate') {
-          this.$router.replace('/goods-manage/edit-apply')
+          this.$router.replace('/goods-manage/edit-apply?source=create')
         } else {
           this.$router.replace('/goods-manage/apply-record-edit')
         }
