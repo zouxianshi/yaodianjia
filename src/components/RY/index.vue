@@ -56,7 +56,7 @@ export default {
             console.log('消息组件，收到消息', message)
 
             // sound tip
-            this.onPaly()
+            this.playAudio()
 
             const { userId } = _this.curOnlineUserData
 
@@ -226,7 +226,7 @@ export default {
           'customerService/setWebSocketConnectionStatus',
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID'
     }),
-    onPaly() {
+    playAudio() {
       this.$refs.audio.play()
     },
     // 通过token生成融云token
