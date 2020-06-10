@@ -215,7 +215,7 @@ export default {
       row.loading = true
       setComAddGoods({ ids: [row.id], userName: this.name })
         .then(res => {
-          this.$router.push('/goods-manage/apply-record-edit?id=' + row.id + '&backUrl=apply-record&type=添加该商品')
+          this.$router.push('/goods-manage/addition-edit?id=' + row.id + '&backUrl=apply-record&type=添加该商品')
           // this.$message({
           //   message:
           //     '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',

@@ -1491,7 +1491,9 @@ export default {
           const { name } = this.$route
           let url = '/goods-manage/constitute-goods'
 
-          if (name === 'applyRecordEdit' || name === 'editApply') {
+          if (name === 'additionEdit') {
+            url = '/goods-manage/depot'
+          } else if (name === 'applyRecordEdit' || name === 'editApply') {
             url = '/goods-manage/apply-record'
           } else if (name === 'depotEdit') {
             url = '/goods-manage/depot'
@@ -1620,7 +1622,7 @@ export default {
 
             if (this.fileList.length === 0) {
               this.$confirm(
-                '橱窗图为空，保存后无法上架。请确认是否返回编辑？返回编辑/继续保存',
+                '橱窗图为空，保存后无法上架。请确认是否返回编辑？',
                 '提示',
                 {
                   confirmButtonText: '继续保存',
@@ -1748,46 +1750,6 @@ export default {
           this.subLoading2 = false
         })
     }
-    // 保存商品详情
-    // handleSubIntro() {
-    //   const data = {
-    //     content: this.goodsIntro.content,
-    //     id: this.basicForm.id
-    //   }
-    //   console.log(data)
-    //   saveGoodsDetails(data)
-    //     .then(res => {
-    //       this.doSubmitInfo()
-    //       // this.$message({
-    //       //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
-    //       //   type: 'success'
-    //       // })
-    //     })
-    //     .catch(_ => {
-    //       this.subLoading = false
-    //     })
-    // },
-    // doSubmitInfo() {
-
-    //   this.leaveAction = true
-
-    //   setTimeout(() => {
-    //     this.$confirm('请确认已保存橱窗图', '提示', {
-    //       confirmButtonText: '确定',
-    //       cancelButtonText: '取消',
-    //       type: 'warning'
-    //     })
-    //       .then(() => {
-    //         this.$store.dispatch('tagsView/delView', this.$route).then(res => {
-    //           sessionStorage.setItem('isRefreshDepot', true)
-    //           this.$router.replace('/goods-manage/' + this.backUrl)
-    //         })
-    //       })
-    //       .catch(() => {
-    //         console.log('已取消')
-    //       })
-    //   }, 1000)
-    // }
   }
 }
 </script>
