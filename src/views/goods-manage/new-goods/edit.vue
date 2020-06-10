@@ -516,7 +516,7 @@
           style="width:70px;margin-right: 10px;"
           @click="handleAudit(0)"
         >驳 回</el-button>
-        <el-button v-if="is_query" size="small" @click="goBackUrl">关 闭</el-button>
+        <el-button v-if="is_query" size="small" @click="goBackUrl()">关 闭</el-button>
       </div>
       <el-dialog
         title="选择驳回原因"
@@ -1451,7 +1451,7 @@ export default {
 
       let msgText = '保存成功'
       if (this.$route.name === 'editApply') {
-        msgText = '已提交审核，可在「新品申请记录」-「待提交审核」页面查看'
+        msgText = `已提交审核，可在「新品申请记录」-${this.$route.query.source === 'create' ? '「全部」' : '「待提交审核」'}页面查看`
       }
 
       setGoodsAddALL(data)
@@ -1462,13 +1462,13 @@ export default {
           })
           this.basicForm.id = res.data
 
-          const { name } = this.$route
+          const { name, query } = this.$route
           let url = '/goods-manage/constitute-goods'
 
           if (name === 'additionEdit') {
             url = '/goods-manage/depot'
           } else if (name === 'applyRecordEdit' || name === 'editApply') {
-            url = '/goods-manage/apply-record'
+            url = `/goods-manage/apply-record?type=${query.type}`
           } else if (name === 'depotEdit') {
             url = '/goods-manage/depot'
           }
@@ -1503,15 +1503,15 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            this.goBackUrl()
+            this.goBackUrl(3)
           })
           .catch(() => {
           })
       }, 1000)
     },
-    goBackUrl() {
+    goBackUrl(type = 2) {
       this.$store.dispatch('tagsView/delView', this.$route).then(res => {
-        this.$router.replace(`/goods-manage/${this.backUrl}?source=2`)
+        this.$router.replace(`/goods-manage/${this.backUrl}?source=2&type=${type}`)
       })
     },
     // 保存
