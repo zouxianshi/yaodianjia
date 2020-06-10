@@ -54,7 +54,7 @@ export default {
             // 通知在线咨询组件有新消息
 
             // sound tip
-            this.onPaly()
+            this.playAudio()
 
             console.warn('消息组件，收到消息', message)
             // 在线咨询当前选中用户id
@@ -226,7 +226,7 @@ export default {
           'customerService/setWebSocketConnectionStatus',
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID'
     }),
-    onPaly() {
+    playAudio() {
       this.$refs.audio.play()
     },
     // 通过token生成融云token
