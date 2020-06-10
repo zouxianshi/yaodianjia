@@ -77,7 +77,6 @@
               </div>
             </div>
             <!-- 商品信息 -->
-            ++++++++++++++{{ basicForm.origin }}+++++++++++++++
             <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="basicForm.origin === 2 ? basicRules : {}" :disabled="is_query">
               <div class="edit-card">
                 <div class="header">
