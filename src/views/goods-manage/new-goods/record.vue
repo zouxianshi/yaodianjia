@@ -8,7 +8,7 @@
         <!--<el-radio-button :label="2">待审核</el-radio-button>-->
         <el-radio-button :label="2">审核中</el-radio-button>
         <el-radio-button :label="1">已通过</el-radio-button>
-        <el-radio-button :label="0">已拒绝</el-radio-button>
+        <el-radio-button :label="0">已驳回</el-radio-button>
       </el-radio-group>
       <section @keydown.enter="getList">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">

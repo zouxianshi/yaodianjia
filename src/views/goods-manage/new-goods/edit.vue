@@ -1507,7 +1507,9 @@ export default {
           const { name } = this.$route
           let url = '/goods-manage/constitute-goods'
 
-          if (name === 'applyRecordEdit' || name === 'editApply') {
+          if (name === 'additionEdit') {
+            url = '/goods-manage/depot'
+          } else if (name === 'applyRecordEdit' || name === 'editApply') {
             url = '/goods-manage/apply-record'
           } else if (name === 'depotEdit') {
             url = '/goods-manage/depot'
@@ -1636,7 +1638,7 @@ export default {
 
             if (this.fileList.length === 0) {
               this.$confirm(
-                '橱窗图为空，保存后无法上架。请确认是否返回编辑？返回编辑/继续保存',
+                '橱窗图为空，保存后无法上架。请确认是否返回编辑？',
                 '提示',
                 {
                   confirmButtonText: '继续保存',

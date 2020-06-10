@@ -34,6 +34,17 @@ const router = [
         }
       },
       {
+        path: 'addition-edit',
+        component: () => import('@/views/goods-manage/depot/editAddition'),
+        name: 'additionEdit',
+        meta: {
+          title: '标库商品信息编辑',
+          auth: 'commodity.commodity-lib',
+          noCache: false, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          activeMenu: '/goods-manage/depot'
+        }
+      },
+      {
         path: 'addition',
         component: () => import('@/views/goods-manage/depot/addition'),
         name: 'addition',

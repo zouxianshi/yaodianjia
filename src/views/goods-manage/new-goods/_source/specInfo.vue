@@ -33,7 +33,7 @@
           <template slot-scope="scope">
             <!--货主-->
             <template>
-              <el-select v-model="scope.row.owner" size="small" clearable :disabled="scope.row.isSku===0">
+              <el-select v-model="scope.row.owner" size="small" clearable :disabled="$route.name === 'depotEdit'">
                 <el-option label="自营" :value="0" />
                 <el-option label="平安" :value="1" />
               </el-select>
@@ -120,6 +120,8 @@ export default {
   },
   created() {
     this.specSelectData = this.specSelect
+
+    console.log(this.$route)
   },
   beforeMount() {
   },
