@@ -1,49 +1,51 @@
 <template>
   <div class="app-container exchange-add">
-    <div class="base-info">
-      <div class="items-title">基本信息</div>
-      <el-divider style="margin-top:5px" />
-      <el-form ref="formBase">
-        <el-form-item label="选择商品" required>
-          <el-button type="text" :disabled="isEdit" @click="$refs.GoodsComponent.open()">选择商品</el-button>
-        </el-form-item>
-        <el-form-item>
-          <select-goods v-show="storeSelectGoods.length>0" ref="storeGods" :disabled="isEdit" @del-item="delSelectGoods" />
-        </el-form-item>
-      </el-form>
+    <div style="height: calc(100vh - 250px); overflow: auto">
+      <div class="base-info">
+        <div class="items-title">基本信息</div>
+        <el-divider style="margin-top:5px" />
+        <el-form ref="formBase">
+          <el-form-item label="选择商品" required>
+            <el-button type="text" :disabled="isEdit" @click="$refs.GoodsComponent.open()">选择商品</el-button>
+          </el-form-item>
+          <el-form-item>
+            <select-goods v-show="storeSelectGoods.length>0" ref="storeGods" :disabled="isEdit" @del-item="delSelectGoods" />
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="rule-info">
+        <div class="items-title">规则设置</div>
+        <el-divider style="margin-top:5px" />
+        <el-form ref="formRule" size="mini" label-width="100px" :model="params" :rules="rules" :disabled="isDisabled">
+          <el-form-item label="可兑换库存" prop="totalAmount">
+            <el-input-number v-model="params.totalAmount" :controls="false" :precision="0" :min="1" :max="999999" :disabled="isEdit" />
+            <span class="tips"> 设置该海贝商品在每个门店可兑换库存</span>
+          </el-form-item>
+          <el-form-item label="换购价格" required>
+            <el-input-number v-model="params.exchangePrice" :controls="false" :precision="2" :min="0" :max="99999999" />
+            <span style="font-size:18px;margin:0 20px;vertical-align: middle;">元 +</span>
+            <el-input-number v-model="params.exchangeHb" :controls="false" :precision="0" :min="1" :max="99999999" />
+            <span style="font-size:18px;margin:0 20px;vertical-align: middle;">海贝</span>
+            <span class="tips"> 当前兑换比例： 1 : {{ changeBl }}</span>
+            <el-button type="text" style="margin-left: 20px" @click="$router.push('/marketing/settings-equity/list')">兑换比例设置</el-button>
+          </el-form-item>
+          <el-form-item label="限购数量" prop="limitAmount">
+            <el-input-number v-model="params.limitAmount" :controls="false" :precision="0" :min="0" :max="99999" />
+            <span class="tips"> 0代表不限购</span>
+          </el-form-item>
+          <el-form-item label="下单规则">
+            <el-checkbox v-model="yhRule" disabled>不可使用优惠券</el-checkbox>
+            <span class="tips"> 兑换商品默认不可使用优惠券</span>
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
-    <div class="rule-info">
-      <div class="items-title">规则设置</div>
-      <el-divider style="margin-top:5px" />
-      <el-form ref="formRule" size="mini" label-width="100px" :model="params" :rules="rules" :disabled="isDisabled">
-        <el-form-item label="可兑换库存" prop="totalAmount">
-          <el-input-number v-model="params.totalAmount" :controls="false" :precision="0" :min="1" :max="999999" :disabled="isEdit" />
-          <span class="tips"> 设置该海贝商品在每个门店可兑换库存</span>
-        </el-form-item>
-        <el-form-item label="换购价格" required>
-          <el-input-number v-model="params.exchangePrice" :controls="false" :precision="2" :min="0" :max="99999999" />
-          <span style="font-size:18px;margin:0 20px;vertical-align: middle;">元 +</span>
-          <el-input-number v-model="params.exchangeHb" :controls="false" :precision="0" :min="1" :max="99999999" />
-          <span style="font-size:18px;margin:0 20px;vertical-align: middle;">海贝</span>
-          <span class="tips"> 当前兑换比例： 1 : {{ changeBl }}</span>
-          <el-button type="text" style="margin-left: 20px" @click="$router.push('/marketing/settings-equity/list')">兑换比例设置</el-button>
-        </el-form-item>
-        <el-form-item label="限购数量" prop="limitAmount">
-          <el-input-number v-model="params.limitAmount" :controls="false" :precision="0" :min="0" :max="99999" />
-          <span class="tips"> 0代表不限购</span>
-        </el-form-item>
-        <el-form-item label="下单规则">
-          <el-checkbox v-model="yhRule" disabled>不可使用优惠券</el-checkbox>
-          <span class="tips"> 兑换商品默认不可使用优惠券</span>
-        </el-form-item>
-      </el-form>
-      <div v-if="!isDisabled" class="submit-btn">
-        <el-button size="mini" @click="returnList">取消</el-button>
-        <el-button size="mini" type="primary" @click="onSubmitData">确定</el-button>
-      </div>
-      <div v-else class="submit-btn">
-        <el-button size="mini" @click="$router.push('/activity/exchangeMallList')">返回</el-button>
-      </div>
+    <div v-if="!isDisabled" class="submit-btn">
+      <el-button size="mini" @click="returnList">取消</el-button>
+      <el-button size="mini" type="primary" @click="onSubmitData">确定</el-button>
+    </div>
+    <div v-else class="submit-btn">
+      <el-button size="mini" @click="$router.push('/activity/exchangeMallList')">返回</el-button>
     </div>
     <!-- 选择主商品组件 -->
     <store-goods
@@ -215,8 +217,7 @@ export default {
     }
   }
   .submit-btn{
-    position: absolute;
-    bottom: 20px;
+    padding-top: 20px;
   }
 }
 </style>
