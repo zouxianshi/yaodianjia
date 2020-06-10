@@ -193,6 +193,8 @@
         </div>
       </div>
     </div>
+
+    <checkDialog ref="checkDialog" @onSelect="onGetCheck" />
   </div>
 </template>
 <script>
@@ -202,9 +204,10 @@ import { getNewGoodsRecord, deleteGoods } from '@/api/new-goods'
 import { setAuditGoods } from '@/api/examine'
 import { mapGetters } from 'vuex'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
+import checkDialog from './_source/check-dialog'
 export default {
   name: 'GoodsRecord',
-  components: { Pagination, ElImageViewer },
+  components: { Pagination, ElImageViewer, checkDialog },
   mixins: [mixins],
   data() {
     return {
