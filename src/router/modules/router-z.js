@@ -133,7 +133,7 @@ const router = [
         meta: {
           auth: 'commodity.commodity-new-record',
           title: '新品申请记录',
-          noCache: false
+          noCache: true
         },
         children: []
       },

@@ -14,7 +14,7 @@
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品信息</span>
-            <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="商品名称/编码" />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
@@ -241,6 +241,8 @@ export default {
       this.listQuery.auditStatus = this.$route.query.type
     }
     this.getList()
+
+    console.log(this.listQuery.auditStatus + '__________________________')
   },
   beforeRouteLeave(to, from, next) {
     if (
@@ -370,7 +372,7 @@ export default {
     },
     handleEdit(id) {
       this.isToEdit = true
-      this.$router.push('/goods-manage/apply-record-edit?id=' + id + '&backUrl=apply-record')
+      this.$router.push(`/goods-manage/apply-record-edit?id=${id}&backUrl=apply-record&source=1`)
     },
     handleSendCheck(row, isAll) {
       let ids = []
