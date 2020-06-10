@@ -49,14 +49,21 @@ export default {
     }
   },
   methods: {
-    onSpec({ key, selected }) {
+    onSpec({ key, selected, attributeName }) {
+      const specListData = _.cloneDeep(this.specListData)
       if (!selected) {
-        this.specListData = _.map(_.cloneDeep(this.specListData), v => _.omit(v, [key]))
+        this.specListData = _.map(specListData, v => _.omit(v, [key]))
         this.$refs['specCreate'].delSpecData(key)
       } else {
-        const valueList = _(_.cloneDeep(this.specListData)).map('valueList').filter().flatMap().value()
-        const transfKey = valueList.reduce((p, c, currentIndex) => { return { ...p, [`${currentIndex}_index_${c.skuKeyId}_${c.skuKeyName}`]: c } }, {})
+        // flatten data
+        const valueList = _(specListData).map('valueList').filter().flatMap().value()
+        // filter no key value
+        const vlData = _.filter(valueList, ['skuKeyName', attributeName])
+        // key-value transformation
+        const transfKey = vlData.reduce((p, c, currentIndex) => { return { ...p, [`${currentIndex}_index_${c.skuKeyId}_${c.skuKeyName}`]: c } }, {})
+
         this.specListData = _.map(this.specListData, (v, i) => {
+          console.log(`${i}_${key}`)
           const k = transfKey[`${i}_${key}`]
           return {
             ...v,
@@ -73,10 +80,11 @@ export default {
         const skuKeyNameArr = _.map(specs, 'skuKeyName')
 
         // handler selected spec
+
         this.specSelect = _.map(res.data, v => {
           return {
             ...v,
-            selected: skuKeyNameArr.includes(v.attributeName)
+            selected: _.size(res.data) === 1 ? true : skuKeyNameArr.includes(v.attributeName)
           }
         })
 

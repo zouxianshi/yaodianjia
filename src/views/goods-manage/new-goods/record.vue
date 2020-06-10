@@ -408,13 +408,13 @@ export default {
         // 待完善
         params.auditStatus = ''
         params.infoFlag = false
-        params.origin = 1
+        params.origin = 2
       } else if (this.listQuery.auditStatus === 3) {
         // 待提交审核
         params.infoFlag = true
-        params.origin = 0
+        params.origin = 2
       } else {
-        params.origin = 0
+        params.origin = 2
       }
       params.times = Date.parse(new Date())
       getNewGoodsRecord(params)

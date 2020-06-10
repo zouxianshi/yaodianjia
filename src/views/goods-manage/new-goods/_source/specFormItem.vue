@@ -65,6 +65,8 @@
 <script>
 import mItemLimitNum from './itemLimitNum'
 import mColumnUpload from './columnUpload'
+import { checkNumberdouble, checkZmSZ } from '@/utils/validate'
+
 /* eslint-disable */
 export default {
   name: 'SpecFormItem',
@@ -125,15 +127,29 @@ export default {
         flag = false
       }
 
-      // todo 验证方法解除双向绑定
+      if (!checkZmSZ(erpCode)) {
+        this.error.errorErpCode = '商品编码只能输入数字、英文、字符'
+        flag = false
+      }
 
+      // todo 验证方法解除双向绑定
       if (!$parent.vfErpCode(erpCode, idx)) {
         this.error.errorErpCode = '商品编码已重复'
         flag = false
       }
 
+      if (!checkNumberdouble(mprice)) {
+        this.error.errorMprice = '价格只能设置最多两位小数的正数'
+        flag = false
+      }
+
+      if (mprice > 99999999) {
+        this.error.errorMprice = '价格最多只能输入8位数'
+        flag = false
+      }
+
       if (!mprice) {
-        this.error.errorMprice = '金额不能为空'
+        this.error.errorMprice = '价格不能为空'
         flag = false
       }
 

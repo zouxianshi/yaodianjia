@@ -1,5 +1,6 @@
 
 import { Message } from 'element-ui'
+import { checkNumberdouble, checkZmSZ } from '@/utils/validate'
 
 export const handlerDays = (daysVal) => {
   let days = 0
@@ -32,7 +33,9 @@ export const handlerVfOwner = ({ data, key, keyVal, owner }) => {
 export const handlerSaveSpecList = (data, specSelect) => {
   const specSelectArr = _.reject(specSelect, ['selected', false])
   const vfData = []
-  let flag = true
+  let isPerfect = true
+  let isErpCode = true
+  let isMprice = true
 
   // reset handler spec data
   const specArr = _.map(specSelectArr, v => {
@@ -65,7 +68,7 @@ export const handlerSaveSpecList = (data, specSelect) => {
       })
 
       if (!v1[key]) {
-        flag = false
+        isPerfect = false
       }
     })
   })
@@ -80,13 +83,35 @@ export const handlerSaveSpecList = (data, specSelect) => {
         }
       }
     }))
+
+    if (!checkZmSZ(v.erpCode)) {
+      isErpCode = false
+    }
+
+    if (v.mprice > 99999999) {
+      isMprice = '价格最多只能输入8位数'
+    }
+
+    if (!checkNumberdouble(v.mprice)) {
+      isMprice = '价格只能设置最多两位小数的正数'
+    }
   })
 
   console.log(data)
   console.log('----------------')
 
-  if (!flag || !data.length) {
+  if (!isPerfect || !data.length) {
     Message({ message: '请完善规格信息', type: 'error', duration: 3000 })
+    return false
+  }
+
+  if (!isErpCode) {
+    Message({ message: '商品编码只能输入数字、英文、字符', type: 'error', duration: 3000 })
+    return false
+  }
+
+  if (typeof isMprice === 'string') {
+    Message({ message: isMprice, type: 'error', duration: 3000 })
     return false
   }
 
