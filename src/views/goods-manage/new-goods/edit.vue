@@ -492,17 +492,6 @@
         @back="handleSaveGroup"
         @close="groupVisible=false"
       />
-      <!-- <div class="action-wapper">
-      <el-button v-if="step !== 1" type size="small" @click="backStep">上一步</el-button>
-      <el-button
-        v-if="setp3show"
-        :loading="subLoading"
-        size="small"
-        type="primary"
-        style="width:70px;margin-right: 10px;"
-        @click="nextStep"
-      >{{ step===3?'保存':"下一步" }}</el-button>
-      </div>-->
       <div class="action-wapper">
         <!-- :loading="subLoading" -->
         <el-button v-if="!is_query" size="small" @click="backStep">取 消</el-button>
@@ -656,13 +645,11 @@ export default {
           callback(new Error('请输入大于0的整数'))
         } else {
           if (value <= 0) {
-            console.log('value', value)
             return callback(new Error('请输入大于0的整数'))
           }
           callback()
         }
       } else {
-        console.log(value)
         callback()
       }
     }
@@ -831,7 +818,9 @@ export default {
     // 路由离开关闭标签
     if (this.is_query && this.pageLoading) {
       this.pageLoading.close()
-    } else if (!this.leaveAction) {
+    }
+
+    if (!this.leaveAction) {
       const answer = window.confirm('你还有数据没有保存，是否确认退出')
       if (answer) {
         if (this.pageLoading) {
@@ -1062,7 +1051,6 @@ export default {
     },
     // 锁定定位楼梯
     handleGoStep(val) {
-      console.log('val', val)
       this.step = val
       this.jump('#step' + val)
     },
@@ -1076,7 +1064,6 @@ export default {
     },
     // 请选择所属品牌
     handleBrandChange(val) {
-      console.log('handleBrandChange-------', val)
       const index = this.brandList.findIndex(item => {
         return item.id === val
       })
@@ -1087,7 +1074,6 @@ export default {
     },
     // 清楚选择所属品牌
     handleBrandClear(val) {
-      console.log('handleBrandChange-------handleBrandClear', val)
       this.basicForm.brandName = ''
       this.basicForm.brandId = ''
       this._loadBrandList({
@@ -1165,7 +1151,6 @@ export default {
             }
           })
         }
-        console.log('chooseGroup', this.chooseGroup)
       })
     },
     // 加载基本信息
@@ -1176,8 +1161,6 @@ export default {
         this._loadgroupGather('2', val.groupIds)
       }
       const data = val
-      console.log('22222222222222222222222222222222')
-      console.log(val)
       if (!data.typeId) {
         const findIndex = findArray(this.typeList, { id: data.firstTypeId })
         if (findIndex > -1) {
@@ -1239,10 +1222,6 @@ export default {
       }
       // 赋值值
       this.basicForm = data
-
-      console.log(this.basicForm)
-      console.log('----------------------this.basicForm')
-
       this.$refs.editor.setContent(this.basicForm.intro)
     },
     // 加载商品图片
@@ -1258,7 +1237,6 @@ export default {
         })
         this.fileList = fileList
         this.isHasImg = fileList.length > 0
-        console.log(this.fileList)
       }
     },
     // 加载商品详情
@@ -1279,9 +1257,6 @@ export default {
     // 图片排序
     handleSortEnd(val) {
       this.fileList = val
-      if (this.fileList.length > 0) {
-        // console.log('1111')
-      }
     },
     // 上传橱窗图片
     handleImgSuccess(res, fileList, index) {
@@ -1376,7 +1351,6 @@ export default {
       return true
     },
     handleUploadIndex(index) {
-      console.log('index:---', index)
       this.uploadIndex = index
     },
     handleAvatarSuccess(res, file) {
@@ -1395,7 +1369,6 @@ export default {
     _loadTypeList(isRefresh) {
       getTypeTree({ merCode: this.merCode, type: 2 }).then(res => {
         this.groupData = res.data
-        console.log('获取分组----', res.data)
         if (isRefresh) {
           this.$message({
             message: '刷新成功',
@@ -1409,7 +1382,6 @@ export default {
       })
     },
     handleSaveGroup(row) {
-      console.log('传递过来的数据-----', row)
       // 保存数据
       this.chooseArray = row
       this.chooseGroup = []
@@ -1425,7 +1397,6 @@ export default {
       this.chooseGroup.splice(index, 1)
     },
     loadMore: function() {
-      // console.log(1111)
       this._loadBrandList({
         brandName: this.brandNanme,
         pageSize: 30,
@@ -1441,7 +1412,6 @@ export default {
       })
     },
     _loadBrandList(params) {
-      console.log('触发了-------')
       // 获取品牌
       // this.brandLoading = true
       getBrandList(params).then(res => {
@@ -1459,10 +1429,8 @@ export default {
     _filters(data) {
       data.forEach((val, index1) => {
         const findIndex = findArray(this.groupData, { id: val[0] })
-        console.log('0------', findIndex)
         if (findIndex > -1) {
           // console.table(this.groupData)
-          console.log('0------data', this.groupData[findIndex])
           // 找一级
           if (!this.chooseGroup[index1]) {
             this.chooseGroup.push([])
@@ -1496,10 +1464,16 @@ export default {
     _CreateBasicInfo(data) {
       // this.subLoading = true
       // 创建基本信息
+
+      let msgText = '保存成功'
+      if (this.$route.name === 'editApply') {
+        msgText = '已提交审核，可在「新品申请记录」-「待提交审核」页面查看'
+      }
+
       setGoodsAddALL(data)
         .then(res => {
           this.$message({
-            message: '保存成功',
+            message: msgText,
             type: 'success'
           })
           this.basicForm.id = res.data
@@ -1548,7 +1522,6 @@ export default {
             this.goBackUrl()
           })
           .catch(() => {
-            console.log('已取消')
           })
       }, 1000)
     },
@@ -1672,7 +1645,6 @@ export default {
                   // this.handleSubIntro()
                 })
                 .catch(() => {
-                  console.log('已取消')
                 })
             } else {
               // if (this.basicForm.id) {
