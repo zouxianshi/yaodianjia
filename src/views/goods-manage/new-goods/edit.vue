@@ -588,7 +588,8 @@ import {
   getBrandList,
   saveImg,
   saveGoodsDetails,
-  getGoodsAddALL
+  getGoodsAddALL,
+  getGoodsInfo
 } from '@/api/new-goods'
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
@@ -830,6 +831,19 @@ export default {
     // 路由离开关闭标签
     if (this.is_query && this.pageLoading) {
       this.pageLoading.close()
+    } else if (!this.leaveAction) {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        if (this.pageLoading) {
+          this.pageLoading.close()
+        }
+        this.$store.dispatch('tagsView/delView', from)
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
     }
     // } else {
     // if (!this.leaveAction) {
@@ -927,24 +941,29 @@ export default {
       //       this.basicLoading = false
       //     })
       // } else {
-
       this.isSpec = false
-      getGoodsAddALL(params)
-        .then(res => {
-          this.basicLoading = false
-          this._loadGoodsImgAry(res.data.imgList)
-          this._loadSpecs(res.data.specList)
-          this.newSpecList = res.data.specList
-          console.log('++++++++++++++++')
-          console.log(res.data.commDTO)
-          if (res.data.commDTO && res.data.commDTO.drugType === 3) {
-            res.data.commDTO.drugType = ''
-          }
-          this._loadBasicInfo(res.data.commDTO)
-          this._loadGoodsDetails(res.data.detailDTO.content)
-          this.basicLoading = false
-          this.isSpec = true
-        })
+
+      const handlerInit = res => {
+        this.basicLoading = false
+        this._loadGoodsImgAry(res.data.imgList)
+        this._loadSpecs(res.data.specList)
+        this.newSpecList = res.data.specList
+        if (res.data.commDTO && res.data.commDTO.drugType === 3) {
+          res.data.commDTO.drugType = ''
+        }
+        this._loadBasicInfo(res.data.commDTO)
+        this._loadGoodsDetails(res.data.detailDTO && res.data.detailDTO.content || '')
+        this.basicLoading = false
+        this.isSpec = true
+      }
+
+      if (this.$route.query.type === '添加该商品') {
+        this.basicForm.origin = 2
+        getGoodsInfo(params).then(handlerInit)
+      } else {
+        getGoodsAddALL(params).then(handlerInit)
+      }
+
       // }
     },
     // 驳回原因

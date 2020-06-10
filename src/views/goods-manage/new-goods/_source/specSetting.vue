@@ -54,10 +54,13 @@ export default {
         this.specListData = _.map(_.cloneDeep(this.specListData), v => _.omit(v, [key]))
         this.$refs['specCreate'].delSpecData(key)
       } else {
-        this.specListData = _.map(this.specListData, v => {
+        const valueList = _(_.cloneDeep(this.specListData)).map('valueList').filter().flatMap().value()
+        const transfKey = valueList.reduce((p, c, currentIndex) => { return { ...p, [`${currentIndex}_index_${c.skuKeyId}_${c.skuKeyName}`]: c } }, {})
+        this.specListData = _.map(this.specListData, (v, i) => {
+          const k = transfKey[`${i}_${key}`]
           return {
             ...v,
-            [key]: ''
+            [key]: _.isEmpty(k) ? '' : k.skuValue
           }
         })
       }
