@@ -6,7 +6,7 @@ const router = [
     redirect: '/goods-manage/depot',
     name: 'goods-manage',
     meta: {
-      title: '商品管理',
+      title: '商品中心',
       icon: 'goods',
       auth: 'commodity'
     },
@@ -84,7 +84,7 @@ const router = [
         name: 'apply',
         meta: {
           auth: 'commodity.commodity-self',
-          title: '新品申请',
+          title: '自建新品',
           noCache: true
         }
       }, {

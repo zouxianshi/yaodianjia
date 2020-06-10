@@ -17,6 +17,13 @@ export function setGoodsAddALL(params) {
   })
 }
 // 新增单个商品信息（一键提交所有数据）
+export function getGoodsInfo({ commodityId, merCode }) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/new/${commodityId}/${merCode}`,
+    method: 'get'
+  })
+}
+// 新增单个商品信息（一键提交所有数据）
 export function getGoodsAddALL(params) {
   return request({
     url: `${config.merGoods}/1.0/commodity/query-one`,
@@ -24,6 +31,7 @@ export function getGoodsAddALL(params) {
     data: params
   })
 }
+
 // 更新商品基本信息
 export function updateBasicInfo(params) {
   return request({
