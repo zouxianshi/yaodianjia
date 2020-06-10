@@ -38,6 +38,18 @@
           </div>
         </template>
       </el-form-item>
+      <el-form-item label="活动描述：">
+        <el-input
+          v-model="form.description"
+          :disabled="disabled"
+          type="textarea"
+          :placeholder="disabled ? '':'不超过200字'"
+          maxlength="200"
+          :rows="4"
+          show-word-limit
+          style="width: 380px;"
+        />
+      </el-form-item>
       <el-form-item ref="activitTime" label="活动时间：" prop="activitTime">
         <el-date-picker
           v-model="form.activitTime"
@@ -341,6 +353,7 @@ export default {
         allStore: false,
         allSpec: false,
         imgUrl: '',
+        description: '',
         ruleType: 1, // 循环0/阶梯1
         img: '1',
         uint: 0, // 满减门槛元/件 0元1件
@@ -460,6 +473,7 @@ export default {
               allSpec: !!data.allSpec,
               type: data.userCoupons === 3 ? ['1'] : [],
               img: data.imgUrl ? '2' : '1',
+              description: data.description,
               imgUrl: data.imgUrl,
               ruleType,
               uint,
@@ -767,7 +781,8 @@ export default {
             'endTime',
             'startTime',
             'name',
-            'imgUrl'
+            'imgUrl',
+            'description'
           ])
           // 需要增加组装的参数    userCoupons  pmtRule:{ruleList, ruleType} activitySpecList storeIds merCode: this.merCode,
           if (Array.isArray(this.form.type)) {
