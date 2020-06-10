@@ -147,3 +147,11 @@ export function updateOrderSetUp(data) {
     data
   })
 }
+
+// 获取待审方数量
+export function getPendingOrder(mercode) {
+  return request({
+    url: `${config.merGoods}/1.0/order-info/countCheckPending/${mercode}`,
+    method: 'get'
+  })
+}
