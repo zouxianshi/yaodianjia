@@ -1,7 +1,7 @@
 <template>
   <div class="spec-select-model">
     <span v-for="(item,$index) in specSelect" :key="$index" class="ssm-sp">
-      <el-checkbox v-model="item.selected" :disabled="isDisabled" @change="onChange($event,item)">{{ item.attributeName }}</el-checkbox>
+      <el-checkbox v-model="item.selected" :disabled="selectDis || isDisabled" @change="onChange($event,item)">{{ item.attributeName }}</el-checkbox>
     </span>
   </div>
 </template>
@@ -10,6 +10,7 @@ export default {
   name: 'SpecSelect',
   data() {
     return {
+      selectDis: false
     }
   },
   inject: ['isDisabled'],
@@ -22,6 +23,7 @@ export default {
   methods: {
     onChange(event, { id, attributeName }) {
       this.$emit('on-spec', {
+        attributeName,
         key: `index_${id}_${attributeName}`,
         selected: event
       })
@@ -31,6 +33,9 @@ export default {
   beforeCreate() {
   },
   created() {
+    if (_.size(this.specSelect) === 1) {
+      this.selectDis = true
+    }
   },
   beforeMount() {
   },
