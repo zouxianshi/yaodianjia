@@ -77,7 +77,7 @@
               </div>
             </div>
             <!-- 商品信息 -->
-            <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="(basicForm.origin === 2 || $route.name === 'depotEdit') ? basicRules : {}" :disabled="is_query">
+            <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="(basicForm.origin === 2 || $route.name === 'depotEdit' || $route.query.source === 'create') ? basicRules : {}" :disabled="is_query">
               <div class="edit-card">
                 <div class="header">
                   <span>商品信息</span>
@@ -715,7 +715,7 @@ export default {
         height: '',
         width: '',
         days: '',
-        origin: 2, // 商品来源，1-海典标准库，2-商家自定义
+        origin: '', // 商品来源，1-海典标准库，2-商家自定义
         packStandard: '', // 长宽高
         groupIds: [], // 分组id
         brandNanme: '',
@@ -1458,6 +1458,10 @@ export default {
         msgText = `已提交审核，可在「新品申请记录」-${this.$route.query.source === 'create' ? '「待提交审核」' : '「全部」'}页面查看`
       }
 
+      if (this.$route.query.type === '添加该商品') {
+        data.origin = 1
+      }
+
       setGoodsAddALL(data)
         .then(res => {
           this.isSaveBtn = false
@@ -1638,6 +1642,10 @@ export default {
                     params.commDTO.origin = parseInt(query.origin)
                   }
 
+                  if (this.$route.query.source === 'create') {
+                    params.commDTO.origin = 2
+                  }
+
                   this._CreateBasicInfo(params)
                   // }
                   // 需修改
@@ -1672,6 +1680,10 @@ export default {
               const { query } = this.$route
               if (query.origin) {
                 params.commDTO.origin = parseInt(query.origin)
+              }
+
+              if (this.$route.query.source === 'create') {
+                params.commDTO.origin = 2
               }
 
               this._CreateBasicInfo(params)
