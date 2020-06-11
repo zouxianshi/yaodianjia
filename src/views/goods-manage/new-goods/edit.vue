@@ -77,7 +77,7 @@
               </div>
             </div>
             <!-- 商品信息 -->
-            <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="(basicForm.origin === 2 || $route.name === 'depotEdit') ? basicRules : {}" :disabled="is_query">
+            <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="(basicForm.origin === 2 || $route.name === 'depotEdit' || $route.query.source === 'create') ? basicRules : {}" :disabled="is_query">
               <div class="edit-card">
                 <div class="header">
                   <span>商品信息</span>
@@ -1658,6 +1658,10 @@ export default {
                     params.commDTO.origin = parseInt(query.origin)
                   }
 
+                  if (this.$route.query.source === 'create') {
+                    params.commDTO.origin = 2
+                  }
+
                   this._CreateBasicInfo(params)
                   // }
                   // 需修改
@@ -1692,6 +1696,10 @@ export default {
               const { query } = this.$route
               if (query.origin) {
                 params.commDTO.origin = parseInt(query.origin)
+              }
+
+              if (this.$route.query.source === 'create') {
+                params.commDTO.origin = 2
               }
 
               this._CreateBasicInfo(params)
