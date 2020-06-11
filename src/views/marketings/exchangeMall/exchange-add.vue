@@ -42,7 +42,7 @@
     </div>
     <div v-if="!isDisabled" class="submit-btn">
       <el-button size="mini" @click="returnList">取消</el-button>
-      <el-button size="mini" type="primary" @click="onSubmitData">确定</el-button>
+      <el-button size="mini" type="primary" :disabled="btnDisabled" @click="onSubmitData">确定</el-button>
     </div>
     <div v-else class="submit-btn">
       <el-button size="mini" @click="$router.push('/activity/exchangeMallList')">返回</el-button>
@@ -68,6 +68,7 @@ export default {
       yhRule: true,
       storeSelectGoods: [], // 已选择商品
       changeBl: '-', // 兑换比例
+      btnDisabled: false,
       params: {
         totalAmount: '', // 兑换库存
         exchangePrice: 0, // 兑换金额
@@ -134,6 +135,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.btnDisabled = true // 防止重复提交
         this.submitData()
       })
     }, 5000, {
@@ -173,6 +175,7 @@ export default {
       if (this.$route.query.id) {
         params.id = this.$route.query.id
         editExchange(params).then(res => {
+          this.btnDisabled = false
           if (res.code === '10000') {
             this.$message({
               type: 'success',
@@ -180,9 +183,12 @@ export default {
             })
             this.$router.push('/activity/exchangeMallList')
           }
+        }).catch(() => {
+          this.btnDisabled = false
         })
       } else {
         cerateExchange(params).then(res => {
+          this.btnDisabled = true
           if (res.code === '10000') {
             this.$message({
               type: 'success',
@@ -190,6 +196,8 @@ export default {
             })
             this.$router.push('/activity/exchangeMallList')
           }
+        }).catch(() => {
+          this.btnDisabled = false
         })
       }
     },
