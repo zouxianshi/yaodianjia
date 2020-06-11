@@ -245,35 +245,16 @@ export default {
     console.log(this.listQuery.auditStatus + '__________________________')
   },
   beforeRouteLeave(to, from, next) {
-    if (
-      to.name === 'GoodsEdit' &&
-        from.name === 'GoodsRecord' &&
-        this.isToEdit
-    ) {
-      const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
-        item => item.name === 'GoodsEdit'
-      )
-      const isComEditId = this.editId === sessionStorage.getItem('editId')
-      if (hasGoodsEdit) {
-        if (!isComEditId && !sessionStorage.getItem('editIsQuery')) {
-          const answer = window.confirm('你还有数据没有保存，是否确认退出')
-          if (answer) {
-            this.$store.dispatch('tagsView/delView', to).then(res => {
-              this.isToEdit = false
-              next()
-            })
-          } else {
-            next()
-          }
-        } else {
-          this.$store.dispatch('tagsView/delView', to).then(res => {
-            this.isToEdit = false
-            next()
-          })
-        }
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === 'applyRecordEdit')
+    if (hasGoodsEdit) {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        this.$store.dispatch('tagsView/delView', to).then(res => {
+          this.isToEdit = false
+          next()
+        })
       } else {
         this.isToEdit = false
-        next()
       }
     } else {
       this.isToEdit = false
