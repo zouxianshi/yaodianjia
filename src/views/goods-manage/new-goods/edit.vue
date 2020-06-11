@@ -814,6 +814,7 @@ export default {
     // }
   },
   beforeRouteLeave(to, from, next) {
+    debugger
     next()
     // 路由离开关闭标签
     if (this.is_query && this.pageLoading) {
