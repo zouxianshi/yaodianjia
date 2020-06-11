@@ -295,6 +295,7 @@ export default {
       }
 
       if (form.result === 2) {
+        this.listQuery.auditStatus = 0
         if (form.reason === 1) {
           data.auditReason = '药店加平台已存在改商品'
         } else if (form.reason === 2) {
@@ -302,13 +303,15 @@ export default {
         } else if (form.reason === 3) {
           data.auditReason = '其他原因'
         }
+      } else {
+        this.listQuery.auditStatus = 3
       }
       setAuditGoods(data).then(res => {
         this.$message({
           message: '操作成功',
           type: 'success'
         })
-        this.listQuery.auditStatus = 3
+
         this.getList()
       })
     },

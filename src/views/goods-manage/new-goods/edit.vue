@@ -1474,6 +1474,10 @@ export default {
         msgText = `已提交审核，可在「新品申请记录」-${this.$route.query.source === 'create' ? '「待提交审核」' : '「全部」'}页面查看`
       }
 
+      if (this.$route.query.type === '添加该商品') {
+        data.origin = 1
+      }
+
       setGoodsAddALL(data)
         .then(res => {
           this.isSaveBtn = false
