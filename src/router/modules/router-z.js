@@ -96,7 +96,7 @@ const router = [
         meta: {
           auth: 'commodity.commodity-self',
           title: '自建新品',
-          noCache: true
+          noCache: false
         }
       }, {
         path: 'single-create',
@@ -104,7 +104,7 @@ const router = [
         name: 'SingleCreate',
         meta: {
           title: '单品创建',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/apply'
         }
       }, {
