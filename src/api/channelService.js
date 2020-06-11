@@ -46,7 +46,7 @@ export function searchWxTemp(merCode) {
   })
 }
 // 查询微信模板列表
-export function setTemplate(params, merCode) {
+export function setTemplate(params) {
   return request({
     url: `${config.merGoods}/1.0/wxTemplate/setTemplate`,
     method: 'post',
@@ -54,3 +54,11 @@ export function setTemplate(params, merCode) {
   })
 }
 
+// 修改微信模板消息
+export function setMerchantHN(params) {
+  return request({
+    url: `${config.merGoods}/1.0/wxTemplate/setMerchantHN?merCode=${params.merCode}&modelCode=${params.modelCode}&modelHead=${params.modelHead}&modelNote=${params.modelNote}`,
+    method: 'post',
+    data: {}
+  })
+}

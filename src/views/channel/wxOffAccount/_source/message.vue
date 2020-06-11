@@ -31,11 +31,12 @@
               inactive-color="#dcdfe6"
               @change="switchChange(scope.row)"
             />
+            <el-button type="text" size="mini" @click="editMessage(scope.row)">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <m-edit-rules />
+    <m-edit-rules ref="messageEdit" @frushData="getDate" />
   </div>
 </template>
 <script>
@@ -110,6 +111,9 @@ export default {
         this.tableData = tableData
         this.loading = false
       })
+    },
+    editMessage(data) {
+      this.$refs.messageEdit.open(data)
     }
   }
 }
