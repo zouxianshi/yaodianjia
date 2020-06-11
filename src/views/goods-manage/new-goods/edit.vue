@@ -814,7 +814,6 @@ export default {
     // }
   },
   beforeRouteLeave(to, from, next) {
-    debugger
     next()
     // 路由离开关闭标签
     if (this.is_query && this.pageLoading) {
@@ -1463,6 +1462,7 @@ export default {
       })
     },
     _CreateBasicInfo(data) {
+      this.leaveAction = true
       // this.subLoading = true
       // 创建基本信息
 
@@ -1639,6 +1639,13 @@ export default {
                     content: this.goodsIntro.content,
                     id: this.basicForm.id
                   }
+
+                  // todo handler params
+                  const { query } = this.$route
+                  if (query.origin) {
+                    params.commDTO.origin = parseInt(query.origin)
+                  }
+
                   this._CreateBasicInfo(params)
                   // }
                   // 需修改
@@ -1668,6 +1675,13 @@ export default {
                 content: this.goodsIntro.content,
                 id: this.basicForm.id
               }
+
+              // todo handler params
+              const { query } = this.$route
+              if (query.origin) {
+                params.commDTO.origin = parseInt(query.origin)
+              }
+
               this._CreateBasicInfo(params)
               // }
             }
