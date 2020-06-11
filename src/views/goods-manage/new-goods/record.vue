@@ -32,17 +32,17 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
             <el-button
-              v-if="listQuery.auditStatus===3"
-              type="warning"
-              size="small"
-              @click="handleSendCheck(null,true)"
-            >批量提交审核</el-button>
-            <el-button
               v-if="listQuery.auditStatus===3||listQuery.auditStatus===0||listQuery.auditStatus===-1"
               type="danger"
               size="small"
               @click="handleBatchDel"
             >删除</el-button>
+            <el-button
+              v-if="listQuery.auditStatus===3"
+              type="warning"
+              size="small"
+              @click="handleSendCheck(null,true)"
+            >批量提交审核</el-button>
             <el-button
               v-if="listQuery.auditStatus===2"
               type="warning"
