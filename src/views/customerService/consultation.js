@@ -407,6 +407,8 @@ export default {
      */
     handleCannedMsgSendClick() {
       console.log('handleCannedMsgSendClick')
+      this.sendCannedMsgDialogVisible = false
+      this.selectedCannedMsg = null
 
       // 发送文字消息
       var textMsgInfo = {
