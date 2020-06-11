@@ -16,7 +16,7 @@
                 <el-radio :label="1" style="margin-top:10px">
                   <span style="color:#333">每笔订单限购&nbsp;
                     <template v-if="infoData.limitType===1">
-                      <el-input v-model="infoData.limitNum" size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" @input.native="handleInputNum" />&nbsp;<span style="color:#999">件</span>
+                      <el-input v-model.trim="infoData.limitNum" size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" @input.native="handleInputNum" />&nbsp;<span style="color:#999">件</span>
                     </template>
                     <template v-else>
                       <el-input size="mini" maxlength="8" :disabled="infoData.limitType===0||infoData.limitType===2" style="width:100px" />&nbsp;<span style="color:#999">件</span>
@@ -32,7 +32,7 @@
                     </el-select>
                     &nbsp;限购&nbsp;
                     <template v-if="infoData.limitType===2">
-                      <el-input v-model="infoData.limit" maxlength="8" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" @focus="handleInput" />
+                      <el-input v-model.trim="infoData.limit" maxlength="8" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" @focus="handleInput" />
                     </template>
                     <template v-else>
                       <el-input maxlength="8" :disabled="infoData.limitType===1||infoData.limitType===0" size="mini" style="width:100px" />
@@ -49,7 +49,7 @@
           </template>
           <template v-else>
             <el-form-item v-if="keys!=='mprice'&&keys!=='barCode'" label="" :prop="keys" :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]">
-              <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
+              <el-input v-model.trim="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
               <span>
                 <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
                 <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
@@ -59,7 +59,7 @@
               <p v-show="keys==='limitNum'&&err_show" class="tip">只能输入不能小于0的整数</p>
             </el-form-item>
             <el-form-item v-else-if="keys==='barCode'" label="" :prop="keys">
-              <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
+              <el-input v-model.trim="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
               <span>
                 <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
                 <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
@@ -67,7 +67,7 @@
               <p v-show="err_show" class="tip">只能输入数字、英文、字符</p>
             </el-form-item>
             <el-form-item v-else label="" :prop="keys">
-              <el-input v-model="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
+              <el-input v-model.trim="infoData[keys]" size="mini" placeholder="" :maxlength="maxLength" style="width:200px" @focus="handleInput" />
               <span>
                 <el-button type="danger" icon="el-icon-close" circle size="mini" @click="isShow=false" />
                 <el-button type="success" icon="el-icon-check" circle size="mini" @click="handleSubSave" />
