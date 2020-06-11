@@ -245,8 +245,9 @@ export default {
     console.log(this.listQuery.auditStatus + '__________________________')
   },
   beforeRouteLeave(to, from, next) {
-    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === 'applyRecordEdit')
-    if (hasGoodsEdit) {
+    const name = `applyRecordEdit`
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === name)
+    if (hasGoodsEdit && to.name === name) {
       const answer = window.confirm('你还有数据没有保存，是否确认退出')
       if (answer) {
         this.$store.dispatch('tagsView/delView', to).then(res => {
