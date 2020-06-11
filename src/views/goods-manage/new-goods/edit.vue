@@ -243,7 +243,7 @@
                     <el-form-item label="批准文号：" prop="approvalNumber">
                       <el-input
                         v-model.trim="basicForm.approvalNumber"
-                        :disabled="basicForm.origin===1"
+                        :disabled="$route.name === 'additionEdit'"
                         maxlength="24"
                         placeholder="请输入批准文号"
                         size="small"
@@ -1517,8 +1517,10 @@ export default {
       }, 1000)
     },
     goBackUrl(type = 2) {
+      let t = this.$route.query.type === 'query' ? 1 : type
+      t = this.$route.query.state === 'check' ? 2 : t
       this.$store.dispatch('tagsView/delView', this.$route).then(res => {
-        this.$router.replace(`/goods-manage/${this.backUrl}?source=2&type=${type}`)
+        this.$router.replace(`/goods-manage/${this.backUrl}?source=2&type=${t}`)
       })
     },
     // 保存
