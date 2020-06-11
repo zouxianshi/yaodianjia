@@ -109,7 +109,7 @@
             controls-position="right"
             step-strictly
             :min="form.exchangeRuleSelection === 0?0.01:1"
-            :max="99999999"
+            :max="form.exchangeRuleSelection === 0?99999999:999"
             :disabled="disabled"
             style="width: 150px; margin-right: 8px"
           />
