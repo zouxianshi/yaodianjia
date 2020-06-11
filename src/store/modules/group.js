@@ -8,7 +8,7 @@ function mapData(data) {
     if (v.children) {
       mapData(v.children)
     }
-    v.show = true
+    v.show = false
   })
   return data
 }

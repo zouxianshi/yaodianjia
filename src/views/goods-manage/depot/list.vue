@@ -27,13 +27,14 @@
           <div class="search-item">
             <span class="label-name">商品分类</span>
             <el-cascader
+              ref="cascType"
               v-model="listQuery.typeId"
+              :value="listQuery.level"
               size="small"
               :options="goodsTypeList"
               :props="defaultProps"
               clearable
               placeholder="选择商品分类"
-              :show-all-levels="false"
             />
           </div>
           <div class="search-item">
@@ -48,9 +49,9 @@
             <el-select v-model="listQuery.drugType" size="small" placeholder="请选择药品类型">
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
-              <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
               <el-option label="OTC" value="4" />
+              <el-option label="处方药" value="1" />
             </el-select>
           </div>
           <div class="search-item">
@@ -351,7 +352,8 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'name',
-        value: 'id'
+        value: 'id',
+        checkStrictly: true
       },
       editId: '',
       isToEdit: false,
@@ -381,7 +383,8 @@ export default {
         groupId: '', // 分组id
         currentPage: 1,
         owner: 0,
-        typeId: '' // 商品分类id
+        typeId: '', // 商品分类id
+        level: ''
       },
       goodsTypeList: []
     }
@@ -391,6 +394,7 @@ export default {
     this.getList()
     this._loadGoodTypeList()
     this._loadTypeList()
+    this._loadGoodTypeList()
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -402,31 +406,17 @@ export default {
     })
   },
   beforeRouteLeave(to, from, next) {
-    if (to.name === 'GoodsEdit' && from.name === 'Depot' && this.isToEdit) {
-      const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
-        item => item.name === 'GoodsEdit'
-      )
-      const isComEditId = this.editId === sessionStorage.getItem('editId')
-      if (!isComEditId) {
-        if (hasGoodsEdit && !sessionStorage.getItem('editIsQuery')) {
-          const answer = window.confirm('你还有数据没有保存，是否确认退出')
-          if (answer) {
-            this.$store.dispatch('tagsView/delView', to).then(res => {
-              this.isToEdit = false
-              next()
-            })
-          } else {
-            next()
-          }
-        } else {
-          this.$store.dispatch('tagsView/delView', to).then(res => {
-            this.isToEdit = false
-            next()
-          })
-        }
+    const name = `depotEdit`
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === name)
+    if (hasGoodsEdit && to.name === name) {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        this.$store.dispatch('tagsView/delView', to).then(res => {
+          this.isToEdit = false
+          next()
+        })
       } else {
         this.isToEdit = false
-        next()
       }
     } else {
       this.isToEdit = false
@@ -484,7 +474,8 @@ export default {
         auditStatus: 1,
         groupId: '', // 分组id
         currentPage: 1,
-        typeId: ''
+        typeId: '',
+        level: ''
       }
       this.getList()
     },
@@ -492,14 +483,15 @@ export default {
       this.listQuery.currentPage = 1
       if (
         this.listQuery.typeId &&
-          Array.isArray(this.listQuery.typeId) &&
-          this.listQuery.typeId.length
+        Array.isArray(this.listQuery.typeId) &&
+        this.listQuery.typeId.length
       ) {
         this.listQuery.typeId = this.listQuery.typeId[
           this.listQuery.typeId.length - 1
         ]
       }
-      console.log(this.listQuery)
+      const nodesObj = this.$refs['cascType'].getCheckedNodes()
+      this.listQuery.level = nodesObj.length > 0 ? nodesObj[0].level : ''
       this.getList()
     },
     getList() {
@@ -632,7 +624,7 @@ export default {
     handleEdit(id) {
       this.isToEdit = true
       this.editId = id
-      this.$router.push('/goods-manage/edit?id=' + id)
+      this.$router.push('/goods-manage/depot-edit?id=' + id + '&backUrl=depot&origin=1')
     },
     //
     handleDel(row) {
@@ -718,70 +710,70 @@ export default {
 }
 </script>
 <style lang="scss">
-  .custom-tree-node {
-    display: -webkit-box;
-    display: flex;
-    display: -ms-flexbox;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    font-size: 14px;
-    padding-right: 8px;
-    width: 100%;
-    &.active {
-      color: #2d8cf0;
-    }
-    i {
-      display: inline-block;
-      margin-left: 10px;
-    }
-    .ellipsis {
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 9px;
-    }
+.custom-tree-node {
+  display: -webkit-box;
+  display: flex;
+  display: -ms-flexbox;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+  width: 100%;
+  &.active {
+    color: #2d8cf0;
   }
+  i {
+    display: inline-block;
+    margin-left: 10px;
+  }
+  .ellipsis {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 9px;
+  }
+}
 </style>
 <style lang="scss">
-  .el-tree-node__content {
-    margin-top: 5px;
-  }
+.el-tree-node__content {
+  margin-top: 5px;
+}
 </style>
 <style lang="scss" scoped>
-  .el-divider--vertical {
-    margin: 0 4px;
-  }
-  .el-button + .el-button {
-    margin-left: 0;
-  }
-  .depot-wrappe {
-    margin-bottom: 30px;
-    .search-item {
-      .label-name {
-        text-align: center;
-        width: 60px;
-      }
+.el-divider--vertical {
+  margin: 0 4px;
+}
+.el-button + .el-button {
+  margin-left: 0;
+}
+.depot-wrappe {
+  margin-bottom: 30px;
+  .search-item {
+    .label-name {
+      text-align: center;
+      width: 60px;
     }
   }
-  .table-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+}
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.depot-list {
+  float: left;
+  width: 210px;
+  .search-form {
+    margin: 10px 0;
   }
-  .depot-list {
-    float: left;
-    width: 210px;
-    .search-form {
-      margin: 10px 0;
-    }
-  }
+}
 
-  .depot-table {
-    margin-left: 230px;
-  }
+.depot-table {
+  margin-left: 230px;
+}
 </style>
 
