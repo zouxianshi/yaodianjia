@@ -66,7 +66,7 @@
             <div class="more-items">
               <el-button type="text" size="mini" @click="editBeans(scope.row.userId)">海贝管理</el-button>
             </div>
-            <div v-if="env !== 'production'" class="more-items">
+            <div class="more-items">
               <el-button type="text" size="mini" @click="handleUnbound(scope.row.userId)">解绑</el-button>
             </div>
             <el-button slot="reference" size="mini" type="text">更多</el-button>
@@ -97,7 +97,7 @@ export default {
   props: {},
   data() {
     return {
-      env: process.env.VUE_APP_ENV,
+      // env: process.env.VUE_APP_ENV,
       tabelDatas: [],
       loading: false,
       beanTotalNum: 0 // 海贝总数量
