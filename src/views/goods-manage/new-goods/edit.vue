@@ -103,7 +103,7 @@
                       <el-input
                         v-model.trim="basicForm.commonName"
                         maxlength="20"
-                        :disabled="basicForm.origin===1"
+                        :disabled="$route.name === 'additionEdit'"
                         placeholder="请输入通用名"
                         size="small"
                       />
