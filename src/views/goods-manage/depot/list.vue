@@ -406,36 +406,55 @@ export default {
     })
   },
   beforeRouteLeave(to, from, next) {
-    if (to.name === 'GoodsEdit' && from.name === 'Depot' && this.isToEdit) {
-      const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
-        item => item.name === 'GoodsEdit'
-      )
-      const isComEditId = this.editId === sessionStorage.getItem('editId')
-      if (!isComEditId) {
-        if (hasGoodsEdit && !sessionStorage.getItem('editIsQuery')) {
-          const answer = window.confirm('你还有数据没有保存，是否确认退出')
-          if (answer) {
-            this.$store.dispatch('tagsView/delView', to).then(res => {
-              this.isToEdit = false
-              next()
-            })
-          } else {
-            next()
-          }
-        } else {
-          this.$store.dispatch('tagsView/delView', to).then(res => {
-            this.isToEdit = false
-            next()
-          })
-        }
+    console.log(to)
+    console.log('---------------to')
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === 'depotEdit')
+
+    if (hasGoodsEdit) {
+      const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      if (answer) {
+        this.$store.dispatch('tagsView/delView', to).then(res => {
+          this.isToEdit = false
+          next()
+        })
       } else {
         this.isToEdit = false
-        next()
       }
     } else {
       this.isToEdit = false
       next()
     }
+
+    // if (to.name === 'GoodsEdit' && from.name === 'Depot' && this.isToEdit) {
+    //   const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+    //     item => item.name === 'GoodsEdit'
+    //   )
+    //   const isComEditId = this.editId === sessionStorage.getItem('editId')
+    //   if (!isComEditId) {
+    //     if (hasGoodsEdit && !sessionStorage.getItem('editIsQuery')) {
+    //       const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //       if (answer) {
+    //         this.$store.dispatch('tagsView/delView', to).then(res => {
+    //           this.isToEdit = false
+    //           next()
+    //         })
+    //       } else {
+    //         next()
+    //       }
+    //     } else {
+    //       this.$store.dispatch('tagsView/delView', to).then(res => {
+    //         this.isToEdit = false
+    //         next()
+    //       })
+    //     }
+    //   } else {
+    //     this.isToEdit = false
+    //     next()
+    //   }
+    // } else {
+    //   this.isToEdit = false
+    //   next()
+    // }
   },
   methods: {
     onLook(url) {
