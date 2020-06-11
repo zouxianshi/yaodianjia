@@ -308,6 +308,7 @@ export default {
           message: '操作成功',
           type: 'success'
         })
+        this.listQuery.auditStatus = 3
         this.getList()
       })
     },
@@ -434,7 +435,7 @@ export default {
         ids.push(v.id)
       })
       const data = {
-        ids: ids,
+        commIds: ids,
         modifyName: this.name
       }
       this._DelPost(data)
