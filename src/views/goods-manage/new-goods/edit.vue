@@ -499,6 +499,7 @@
           v-if="!is_query && !is_state"
           size="small"
           type="primary"
+          :loading="isSaveBtn"
           style="width:70px;margin-right: 10px;"
           @click="nextStep"
         >保 存</el-button>
@@ -773,7 +774,8 @@ export default {
       isLoadStep2: false,
 
       // todo
-      newSpecList: []
+      newSpecList: [],
+      isSaveBtn: false
     }
   },
   computed: {
@@ -1447,6 +1449,7 @@ export default {
     },
     _CreateBasicInfo(data) {
       this.leaveAction = true
+      this.isSaveBtn = true
       // this.subLoading = true
       // 创建基本信息
 
@@ -1457,6 +1460,7 @@ export default {
 
       setGoodsAddALL(data)
         .then(res => {
+          this.isSaveBtn = false
           this.$message({
             message: msgText,
             type: 'success'
@@ -1479,6 +1483,7 @@ export default {
           // this.subLoading = false
         })
         .catch(_ => {
+          this.isSaveBtn = false
           // this.subLoading = false
         })
     },
