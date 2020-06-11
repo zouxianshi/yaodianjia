@@ -1021,7 +1021,7 @@ export default {
         const s3 = $('#step3').height()
         if (scrollTop < s1) {
           this.step = 1
-        } else if (scrollTop < (s2 + s1 + 60)) {
+        } else if (scrollTop < (s2 + s1 + 40)) {
           this.step = 2
         } else if (scrollTop < (s2 + s1 + s3)) {
           this.step = 3
