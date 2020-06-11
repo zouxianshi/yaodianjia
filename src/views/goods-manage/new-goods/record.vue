@@ -14,7 +14,7 @@
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">商品信息</span>
-            <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="商品名称" />
+            <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="商品名称/编码" />
           </div>
           <div class="search-item">
             <span class="label-name">生产企业</span>
@@ -32,17 +32,17 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
             <el-button type size="small" @click="resetQuery">重置</el-button>
             <el-button
-              v-if="listQuery.auditStatus===3"
-              type="warning"
-              size="small"
-              @click="handleSendCheck(null,true)"
-            >批量提交审核</el-button>
-            <el-button
               v-if="listQuery.auditStatus===3||listQuery.auditStatus===0||listQuery.auditStatus===-1"
               type="danger"
               size="small"
               @click="handleBatchDel"
             >删除</el-button>
+            <el-button
+              v-if="listQuery.auditStatus===3"
+              type="warning"
+              size="small"
+              @click="handleSendCheck(null,true)"
+            >批量提交审核</el-button>
             <el-button
               v-if="listQuery.auditStatus===2"
               type="warning"
@@ -157,7 +157,7 @@
               <template
                 v-if="scope.row.origin===2&&scope.row.origin!==1&&listQuery.auditStatus!==-1&&((scope.row.auditStatus!==1&&scope.row.auditStatus!==2&&scope.row.auditStatus!==0))"
               >
-                <a @click="handleEdit(scope.row.id)">
+                <a @click="handleEdit(scope.row.id,scope.row.auditStatus)">
                   <el-button type size="mini">编辑</el-button>
                 </a>
               </template>
@@ -238,9 +238,11 @@ export default {
   watch: {},
   created() {
     if (this.$route.query.type) {
-      this.listQuery.auditStatus = this.$route.query.type
+      this.listQuery.auditStatus = parseInt(this.$route.query.type)
     }
     this.getList()
+
+    console.log(this.listQuery.auditStatus + '__________________________')
   },
   beforeRouteLeave(to, from, next) {
     if (
@@ -368,9 +370,9 @@ export default {
       this.isToEdit = true
       this.$router.push('/goods-manage/apply-record-edit?id=' + id + '&backUrl=apply-record' + '&type=query')
     },
-    handleEdit(id) {
+    handleEdit(id, auditStatus) {
       this.isToEdit = true
-      this.$router.push('/goods-manage/apply-record-edit?id=' + id + '&backUrl=apply-record')
+      this.$router.push(`/goods-manage/apply-record-edit?id=${id}&backUrl=apply-record&source=1&type=${auditStatus}`)
     },
     handleSendCheck(row, isAll) {
       let ids = []

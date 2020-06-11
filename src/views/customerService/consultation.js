@@ -69,7 +69,9 @@ export default {
         currentPage: 1,
         pageSize: 10,
         name: '' // 商品名称
-      }
+      },
+      sendCannedMsgDialogVisible: false,
+      selectedCannedMsg: null
     }
   },
   computed: {
@@ -389,13 +391,79 @@ export default {
     },
     // 快捷回复点击
     msgItemClick(item) {
-      this.textMsgValue = item.msg
+      // this.textMsgValue = item.msg
       this.cannedRepliesVisible = false
+      this.sendCannedMsgDialogVisible = true
+      this.selectedCannedMsg = item
+      console.log('this.sendCannedMsgDialogVisible', this.sendCannedMsgDialogVisible)
+      console.log('this.selectedCannedMsg', this.selectedCannedMsg)
     },
     // 商品名称输入框
     handleGoodsNameInput(val) {
       console.log('val', val)
       this.goodsQuery.name = val
+    },
+    /**
+     * 快捷消息确认回复
+     */
+    handleCannedMsgSendClick() {
+      console.log('handleCannedMsgSendClick')
+      this.sendCannedMsgDialogVisible = false
+
+      // 发送文字消息
+      var textMsgInfo = {
+        content: this.selectedCannedMsg.msg,
+        extra: this.extra
+      }
+      console.log('msgInfo', textMsgInfo)
+      Chat.sendMessage({
+        targetId: this.targetId, // 目标用户id,
+        msgInfo: {
+          content: textMsgInfo.content,
+          extra: this.extra
+        }
+      }).then(res => {
+        console.log('发送消息成功', res)
+        // 发送成功清空消息内容
+        this.textMsgValue = ''
+        this.addMsgToOnlineCurUserMsgList({
+          merCode: this.merCode,
+          msgInfo: {
+            ...textMsgInfo,
+            content: Chat.symbolToEmoji(textMsgInfo.content)
+          },
+          msgResult: res
+        })
+        this.scrollToBottom()
+      }).catch((err, msg) => {
+        console.error('send message error', err, msg)
+      })
+
+      // 发送图片消息
+      if (this.selectedCannedMsg.picture) {
+        const msgInfo = {
+          content: this.selectedCannedMsg.picture,
+          extra: this.extra,
+          imageUri: this.selectedCannedMsg.picture
+        }
+        Chat.sendMessage({
+          targetId: this.targetId,
+          msgInfo,
+          messageType: Chat.MessageType.ImageMessage
+        }).then(res => {
+          this.addMsgToOnlineCurUserMsgList({
+            merCode: this.merCode,
+            msgInfo: msgInfo,
+            msgResult: res
+          })
+          setTimeout(() => {
+            this.selectedCannedMsg = null
+          }, 200)
+          // 这里
+        }).catch((errCode, errMessage) => {
+          console.error('err', errCode, errMessage)
+        })
+      }
     },
     queryGoods() {
       return new Promise((resolve, reject) => {

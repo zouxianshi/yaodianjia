@@ -50,7 +50,7 @@ const router = [
         name: 'addition',
         meta: {
           title: '标库添加商品',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/depot'
         }
       }, {
@@ -59,7 +59,7 @@ const router = [
         name: 'import',
         meta: {
           title: '导入商品',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/depot'
         }
       }, {
@@ -68,7 +68,7 @@ const router = [
         name: 'importRecode',
         meta: {
           title: '导入历史',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/depot'
         }
       }, {
@@ -96,7 +96,7 @@ const router = [
         meta: {
           auth: 'commodity.commodity-self',
           title: '自建新品',
-          noCache: true
+          noCache: false
         }
       }, {
         path: 'single-create',
@@ -104,7 +104,7 @@ const router = [
         name: 'SingleCreate',
         meta: {
           title: '单品创建',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/apply'
         }
       }, {
@@ -144,7 +144,7 @@ const router = [
         meta: {
           auth: 'commodity.commodity-new-record',
           title: '编辑新品申请记录',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/apply-record'
         },
         children: []
@@ -156,7 +156,7 @@ const router = [
         meta: {
           auth: 'commodity.commodity-new-record',
           title: '自建新品',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/apply'
         },
         children: []
