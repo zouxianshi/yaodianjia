@@ -258,11 +258,11 @@
               <template slot-scope="scope">
                 <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
                   <el-button type="primary" size="mini" plain @click="handleUpDown(1,scope.row)">上架</el-button>
-                  <el-button type="danger" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
+                  <el-button type="warning" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template>
                 <template v-if="scope.row.commodityType!==2">
                   <a @click="handleEdit(scope.row.id)">
-                    <el-button plain size="mini">编辑</el-button>
+                    <el-button type="success" plain size="mini">编辑</el-button>
                   </a>
                 </template>
                 <template>
