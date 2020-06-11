@@ -35,6 +35,16 @@
             <div style="margin-top: 7px">
               <el-link type="primary" :href="batchEditUrl">点击下载导入模板</el-link>
             </div>
+            <div style="margin-top: 7px">
+              <el-checkbox v-model="isLock">同时锁定编辑项</el-checkbox>
+              <el-tooltip class="item" effect="dark" placement="bottom-start">
+                <div slot="content">
+                  勾选后，则同时将导入修改成功的项锁定。比如在模板中将价
+                  <br>格修改为1，则修改后锁定为1，不被系统自动更新。
+                </div>
+                <i class="el-icon-info" />
+              </el-tooltip>
+            </div>
           </div>
         </el-upload>
       </div>
@@ -67,6 +77,7 @@ export default {
   },
   data() {
     return {
+      isLock: true,
       is_file: false,
       errorDialogVisible: false,
       errorText: '',
@@ -93,7 +104,7 @@ export default {
         merCode: this.merCode,
         userName: this.name,
         isYdj: 1,
-        isLock: 1
+        isLock: this.isLock ? 1 : 0
       }
     }
   },
@@ -192,6 +203,11 @@ export default {
     .el-upload__tip {
       width: 360px;
       line-height: 20px;
+    }
+
+    .el-icon-info:hover {
+      color: #147de8;
+      cursor: pointer;
     }
   }
 }
