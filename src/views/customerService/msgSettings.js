@@ -45,9 +45,11 @@ export default {
         merCode: '', // 商户编码
         msg: '', // 消息内容
         status: 1, // 是否默认启用 1-启用 0-不启用
-        type: '' // 消息类型 1-不在线推送 2-首次进入推送 3-快捷消息
+        type: '', // 消息类型 1-不在线推送 2-首次进入推送 3-快捷消息
+        picture: ''
       },
-      msgContent: ''
+      msgContent: '',
+      picture: ''
     }
   },
   computed: {
@@ -58,6 +60,41 @@ export default {
     }
   },
   methods: {
+    /**
+     * 图片上传
+     */
+    handleImgAdd(e) {
+      const file = e.target.files
+      console.error('file', file)
+      if (!file || (file && file.length <= 0)) {
+        return
+      }
+      const loading = this.$loading({
+        lock: true,
+        text: '正在上传图片...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+
+      // 图片转base64作为缩略图
+      // let base64Url = ''
+      var reader = new FileReader()
+      reader.readAsDataURL(file[ 0 ]) // 读取图片输入为base64
+      // reader.onloadend = function() {
+      //   base64Url = reader.result
+      // }
+
+      const formData = new FormData()
+      formData.append('file', file[ 0 ])
+
+      // 上传图片
+      CustomerService.fileUpload(formData).then(res => {
+        const image = res.data
+        console.log('image', image)
+        loading.close()
+        this.editMsgQuery.picture = this.showImg(image)
+      })
+    },
     // 清空编辑弹窗数据
     clearEditDialogData() {
       this.selectedMsgType = ''
@@ -66,6 +103,7 @@ export default {
         msg: '',
         status: 1,
         type: '',
+        picture: '',
         merCode: this.merCode
       }
       this.editDialogVisible = false
@@ -168,6 +206,13 @@ export default {
     },
     // 确认添加按钮点击
     handleMsgConfirm() {
+      if (!this.editMsgQuery.msg) {
+        this.$message({
+          type: 'fail',
+          message: '快捷消息内容不能为空'
+        })
+        return
+      }
       const loading = this.$loading({
         lock: true,
         text: '加载中...',
@@ -178,7 +223,8 @@ export default {
         CustomerService.addSupportMsg({
           ...this.editMsgQuery,
           type: 3, // 快捷消息
-          msg: this.editMsgQuery.msg.replace(/\s*/g, '')
+          msg: this.editMsgQuery.msg.replace(/\s*/g, ''),
+          picture: this.picture
         }).then(res => {
           loading.close()
           this.$message({
@@ -215,15 +261,18 @@ export default {
         msg: row.msg,
         id: row.id,
         type: row.type,
-        status: row.status
+        status: row.status,
+        picture: row.picture
       }
       this.selectedMsgType = row.type
     },
-    // // 消息类型切换
-    // handleMsgTypeToggle(command) {
-    //   this.selectedMsgType = command
-    //   this.editMsgQuery.type = command
-    // },
+    /**
+     * 图片删除点击
+     */
+    handleDelIconClick() {
+      console.log('handleDelIconClick')
+      this.editMsgQuery.picture = ''
+    },
     // 消息开关切换
     handleDialogSwitchToggle(e) {
       this.dialogSwitch = e

@@ -67,20 +67,6 @@
         :before-close="clearEditDialogData"
         width="45%"
       >
-        <!-- 暂时不展示了 -->
-        <!-- <el-dropdown @command="handleMsgTypeToggle">
-          <span class="el-dropdown-link">
-            消息类型：{{ msgTypeMap[selectedMsgType] || '请选择' }}
-            <i
-              class="el-icon-arrow-down el-icon--right"
-            />
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item :command="1">不在线推送</el-dropdown-item>
-            <el-dropdown-item :command="2">首次进入推送</el-dropdown-item>
-            <el-dropdown-item :command="3">快捷回复</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown> -->
         <el-input
           v-model="editMsgQuery.msg"
           class="msg-input"
@@ -90,15 +76,36 @@
           :autosize="true"
           @input="handleMsgInput"
         />
-        <!-- <div v-if="showSwitch" class="edit-dialog-switch">
-          是否开启：
-          <el-switch
-            :value="dialogSwitch"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            @change="handleDialogSwitchToggle"
-          />
-        </div> -->
+        <div class="select-image">
+          <div v-if="!editMsgQuery.picture" class="select-image-box">
+            <el-button @click="handleImgAdd()">添加图片</el-button>
+            <input
+              id="select-image-input"
+              type="file"
+              name="pic"
+              accept="image/gif, image/jpeg, image/png, image/webp"
+              @change="handleImgAdd"
+            >
+          </div>
+        </div>
+        <div
+          v-if="editMsgQuery.picture"
+          class="uploaded-image-box"
+        >
+          <el-image :src="editMsgQuery.picture" />
+          <div class="delete-icon">
+            <div
+              class="delete-icon-text"
+              @click="handleDelIconClick()"
+            >删除</div>
+          </div>
+        </div>
+        <div class="reminder-text-size">
+          图片大小不超过500kb
+        </div>
+        <div class="reminder-text-content">
+          建议上传客服微信、企业微信二维码作为不在线快捷回复方便用户及时沟通，快速建立客情关系
+        </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="handleMsgConfirm">确 定</el-button>
