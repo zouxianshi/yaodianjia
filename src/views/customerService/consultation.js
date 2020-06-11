@@ -394,8 +394,9 @@ export default {
       // this.textMsgValue = item.msg
       this.cannedRepliesVisible = false
       this.sendCannedMsgDialogVisible = true
-      console.log('this.sendCannedMsgDialogVisible', this.sendCannedMsgDialogVisible)
       this.selectedCannedMsg = item
+      console.log('this.sendCannedMsgDialogVisible', this.sendCannedMsgDialogVisible)
+      console.log('this.selectedCannedMsg', this.selectedCannedMsg)
     },
     // 商品名称输入框
     handleGoodsNameInput(val) {
@@ -408,7 +409,6 @@ export default {
     handleCannedMsgSendClick() {
       console.log('handleCannedMsgSendClick')
       this.sendCannedMsgDialogVisible = false
-      this.selectedCannedMsg = null
 
       // 发送文字消息
       var textMsgInfo = {
@@ -456,6 +456,9 @@ export default {
             msgInfo: msgInfo,
             msgResult: res
           })
+          setTimeout(() => {
+            this.selectedCannedMsg = null
+          }, 200)
           // 这里
         }).catch((errCode, errMessage) => {
           console.error('err', errCode, errMessage)
