@@ -715,7 +715,7 @@ export default {
         height: '',
         width: '',
         days: '',
-        origin: 2, // 商品来源，1-海典标准库，2-商家自定义
+        origin: '', // 商品来源，1-海典标准库，2-商家自定义
         packStandard: '', // 长宽高
         groupIds: [], // 分组id
         brandNanme: '',
