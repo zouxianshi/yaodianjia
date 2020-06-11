@@ -252,23 +252,20 @@
               align="left"
               fixed="right"
               label="操作"
-              :min-width="!listQuery.infoFlag?'100':'180'"
+              :min-width="!listQuery.infoFlag?'120':'200'"
             >
               <template slot-scope="scope">
                 <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
-                  <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
-                  <el-divider direction="vertical" />
-                  <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
+                  <el-button type="primary" size="mini" plain @click="handleUpDown(1,scope.row)">上架</el-button>
+                  <el-button type="danger" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template>
                 <template v-if="scope.row.commodityType!==2">
-                  <el-divider direction="vertical" />
                   <a @click="handleEdit(scope.row.id)">
-                    <el-button type="text" size="mini">编辑</el-button>
+                    <el-button plain size="mini">编辑</el-button>
                   </a>
                 </template>
                 <template>
-                  <el-divider direction="vertical" />
-                  <el-button type="text" size="mini" @click="handleDel(scope.row)">删除</el-button>
+                  <el-button type="danger" plain size="mini" @click="handleDel(scope.row)">删除</el-button>
                 </template>
               </template>
             </el-table-column>
@@ -492,8 +489,8 @@ export default {
       this.listQuery.currentPage = 1
       if (
         this.listQuery.typeId &&
-          Array.isArray(this.listQuery.typeId) &&
-          this.listQuery.typeId.length
+        Array.isArray(this.listQuery.typeId) &&
+        this.listQuery.typeId.length
       ) {
         this.listQuery.typeId = this.listQuery.typeId[
           this.listQuery.typeId.length - 1
@@ -718,70 +715,70 @@ export default {
 }
 </script>
 <style lang="scss">
-  .custom-tree-node {
-    display: -webkit-box;
-    display: flex;
-    display: -ms-flexbox;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    font-size: 14px;
-    padding-right: 8px;
-    width: 100%;
-    &.active {
-      color: #2d8cf0;
-    }
-    i {
-      display: inline-block;
-      margin-left: 10px;
-    }
-    .ellipsis {
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 9px;
-    }
+.custom-tree-node {
+  display: -webkit-box;
+  display: flex;
+  display: -ms-flexbox;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+  width: 100%;
+  &.active {
+    color: #2d8cf0;
   }
+  i {
+    display: inline-block;
+    margin-left: 10px;
+  }
+  .ellipsis {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 9px;
+  }
+}
 </style>
 <style lang="scss">
-  .el-tree-node__content {
-    margin-top: 5px;
-  }
+.el-tree-node__content {
+  margin-top: 5px;
+}
 </style>
 <style lang="scss" scoped>
-  .el-divider--vertical {
-    margin: 0 4px;
-  }
-  .el-button + .el-button {
-    margin-left: 0;
-  }
-  .depot-wrappe {
-    margin-bottom: 30px;
-    .search-item {
-      .label-name {
-        text-align: center;
-        width: 60px;
-      }
+.el-divider--vertical {
+  margin: 0 4px;
+}
+.el-button + .el-button {
+  margin-left: 0;
+}
+.depot-wrappe {
+  margin-bottom: 30px;
+  .search-item {
+    .label-name {
+      text-align: center;
+      width: 60px;
     }
   }
-  .table-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+}
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.depot-list {
+  float: left;
+  width: 210px;
+  .search-form {
+    margin: 10px 0;
   }
-  .depot-list {
-    float: left;
-    width: 210px;
-    .search-form {
-      margin: 10px 0;
-    }
-  }
+}
 
-  .depot-table {
-    margin-left: 230px;
-  }
+.depot-table {
+  margin-left: 230px;
+}
 </style>
 
