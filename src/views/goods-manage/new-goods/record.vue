@@ -238,7 +238,7 @@ export default {
   watch: {},
   created() {
     if (this.$route.query.type) {
-      this.listQuery.auditStatus = this.$route.query.type
+      this.listQuery.auditStatus = parseInt(this.$route.query.type)
     }
     this.getList()
 

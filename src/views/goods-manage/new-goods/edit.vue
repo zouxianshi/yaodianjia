@@ -1485,7 +1485,8 @@ export default {
           if (name === 'additionEdit') {
             url = '/goods-manage/depot'
           } else if (name === 'applyRecordEdit' || name === 'editApply') {
-            url = `/goods-manage/apply-record?type=${query.type}`
+            const type = query.source === 'create' ? 3 : query.type
+            url = `/goods-manage/apply-record?type=${type}`
           } else if (name === 'depotEdit') {
             url = '/goods-manage/depot'
           }
