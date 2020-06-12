@@ -41,6 +41,9 @@
               :underline="false"
               :href="configOrderOss(scope.row.errorPath)"
             >下载导入结果</el-link>
+            <span v-if="scope.row.status===3">
+              导入失败
+            </span>
           </template>
         </el-table-column>
       </el-table>
