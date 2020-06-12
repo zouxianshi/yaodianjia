@@ -236,10 +236,10 @@
                         <div class="header-cell">订单编号：</div>
                         <div class="header-cell" style="margin-right: 8px">
                           {{ item.serialNumber }}
-                          <span
-                            v-if="item.orderType !== 'G' && item.orderType !== 'I'"
-                          >{{ item.prescriptionSheetMark | orderType }}</span>
-                          <span v-if="item.orderType === 'I'">(兑换订单)</span>
+                          <span v-if="item.orderType !== 'G'">
+                            <span v-if="item.prescriptionSheetMark === '1'">(处方药订单)</span>
+                            <span v-else>{{ item.orderType | orderType }}</span>
+                          </span>
                         </div>
                         <template v-if="item.orderType === 'G'">
                           <div class="header-cell">拼团订单：</div>
@@ -461,8 +461,8 @@
                           {{ item.serialNumber }}
                           <span
                             v-if="item.orderType !== 'G' && item.orderType !== 'I'"
-                          >{{ item.prescriptionSheetMark | orderType }}</span>
-                          <span v-if="item.orderType === 'I'">(兑换订单)</span>
+                          >{{ item.orderType | orderType }}</span>
+                          <span v-if="item.orderType === 'I'">(海贝商城订单)</span>
                         </div>
                         <template v-if="item.orderType === 'G'">
                           <div class="header-cell">拼团订单：</div>
@@ -906,11 +906,23 @@ export default {
   filters: {
     orderType: function(value) {
       // 订单类型
-      if (value === '0') {
+      // if (value === '0') {
+      //   return '(普通订单)'
+      // }
+      // if (value === '1') {
+      //   return '(处方药订单)'
+      // }
+      if (value === 'R') {
+        return '(处方药订单)'
+      }
+      if (value === 'N') {
         return '(普通订单)'
       }
-      if (value === '1') {
-        return '(处方药订单)'
+      if (value === 'G') {
+        return '(拼团订单)'
+      }
+      if (value === 'I') {
+        return '(海贝商城订单)'
       }
       return ''
     },

@@ -189,10 +189,10 @@
           <div class="con">订单来源：微商城</div>
           <div class="con">
             订单类型：
-            <span v-if="detailsData.orderType === 'I'">
-              兑换订单
+            <span>
+              <span v-if="detailsData.prescriptionSheetMark === '1'">处方药订单</span>
+              <span v-else>{{ detailsData.orderType | orderType }}</span>
             </span>
-            <span v-else>{{ detailsData.prescriptionSheetMark | orderType }} </span>
           </div>
           <div v-if="detailsData.deliveryType!==2">
             <div
@@ -607,7 +607,7 @@
                     <div class="detail-item-middle">
                       <div class="item-cell cell-con">
                         <div class="cell-text">
-                          <span v-if="detailsData.orderType === 'I'">{{ item.exchangeHb || 0 }}海贝 + </span>
+                          <span v-if="detailsData.orderType === 'I'">{{ item.exchangeHb || 0 }}海贝 +</span>
                           <span>￥{{ item.commodityPrice }}</span>
                         </div>
                       </div>
@@ -616,7 +616,7 @@
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">
-                          <span v-if="detailsData.orderType === 'I'"> {{ item.totalHb }}海贝 + </span>
+                          <span v-if="detailsData.orderType === 'I'">{{ item.totalHb }}海贝 +</span>
                           ￥{{ item.totalActualAmount }}
                         </div>
                       </div>
@@ -678,9 +678,18 @@ export default {
       if (value === '1') {
         return '处方药订单'
       }
-      // if (value === 'V') {
-      //   return '积分订单'
-      // }
+      if (value === 'R') {
+        return '处方药订单'
+      }
+      if (value === 'N') {
+        return '普通订单'
+      }
+      if (value === 'G') {
+        return '拼团订单'
+      }
+      if (value === 'I') {
+        return '海贝商城订单'
+      }
     },
     orderStatus: function(value) {
       // 订单状态
