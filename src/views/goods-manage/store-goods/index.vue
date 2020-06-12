@@ -6,10 +6,11 @@
         <el-radio-button :label="0">下架</el-radio-button>
         <el-radio-button :label="2">售馨</el-radio-button>
         <el-radio-button :label="3">锁定</el-radio-button>
+        <el-radio-button :label="4">统计</el-radio-button>
       </el-radio-group>
       <section @keydown.enter="_loadList">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-          <div class="search-item">
+          <div v-if="listQuery.status !== 4" class="search-item">
             <span class="label-name">选择门店</span>
             <el-select
               v-model="listQuery.storeId"
@@ -71,7 +72,13 @@
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择" @change="_loadList">
+            <el-select
+              v-model="listQuery.drugType"
+              filterable
+              size="small"
+              placeholder="请选择"
+              @change="_loadList"
+            >
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
@@ -92,7 +99,7 @@
               <el-option label="组合商品" value="2" />
             </el-select>
           </div>
-          <div class="search-item">
+          <div v-if="listQuery.status !== 4" class="search-item">
             <span class="label-name">锁定状态</span>
             <el-select
               v-model="listQuery.lockFlag"
@@ -118,13 +125,25 @@
                 导出
                 <i class="el-icon-download el-icon--right" />
               </el-button>
-              <export-table />
+              <export-table :is-statistic="listQuery.status === 4" />
             </span>
+          </div>
+        </div>
+        <div v-if="listQuery.status === 4" class="search-form">
+          <div class="search-item" style="padding-left:75px;">
+            <p class="tips-txt">
+              商品库总商品：{{ statisticData && statisticData.totalNum }} 未同步到的商品：
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleShowNotAsyncDialog"
+              >{{ statisticData && statisticData.notSyncNum }}</el-button>
+            </p>
           </div>
         </div>
       </section>
       <div class="table-box">
-        <div class="choose-num">
+        <div v-if="listQuery.status !== 4" class="choose-num">
           <div>
             <el-button
               v-if="listQuery.status!==1&&listQuery.status!==2"
@@ -157,6 +176,8 @@
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
         <el-table
+          v-if="listQuery.status !== 4"
+          key="1"
           v-loading="loading"
           :data="tableData"
           stripe
@@ -262,6 +283,120 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <el-table
+          v-else
+          key="2"
+          v-loading="loading"
+          :data="tableData"
+          stripe
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          @sort-change="handleSortChange"
+        >
+          <el-table-column type="selection" width="55" />
+          <el-table-column
+            prop="orCode"
+            align="left"
+            min-width="120"
+            label="商品图片"
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <template v-if="scope.row.mainPic">
+                <el-image
+                  style="width: 70px; height: 70px"
+                  :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
+                  lazy
+                  fit="contain"
+                  @click="onLook(scope.row.mainPic)"
+                />
+              </template>
+              <template v-else>
+                <p class>暂未上传</p>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column align="left" min-width="150" show-overflow-tooltip label="商品信息">
+            <template slot-scope="scope">
+              <div>
+                <p>{{ scope.row.name }}</p>
+                <p class="ellipsis">
+                  <span
+                    v-for="(item,index) in scope.row.specSkuList"
+                    :key="index"
+                  >{{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}</span>
+                </p>
+                <p v-if="scope.row.barCode" class="ellipsis" v-text="'条码：'+scope.row.barCode" />
+                <p class="ellipsis">{{ scope.row.approvalNumber }}</p>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="erpCode" label="商品编码" align="left" />
+          <el-table-column prop="mprice" label="参考价格" align="left" />
+          <el-table-column
+            prop="saleStoreNum"
+            min-width="90"
+            sortable="custom"
+            label="在售门店数"
+            align="left"
+          >
+            <template slot-scope="scope">
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleStoreNumClick(1, scope.row.erpCode)"
+              >{{ scope.row.saleStoreNum }}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="notSaleStoreNum"
+            min-width="90"
+            sortable="custom"
+            label="下架门店数"
+            align="left"
+          >
+            <template slot-scope="scope">
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleStoreNumClick(0, scope.row.erpCode)"
+              >{{ scope.row.notSaleStoreNum }}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalStock" sortable="custom" label="总库存" align="left" />
+          <el-table-column
+            prop="soldOutStoreNum"
+            min-width="90"
+            sortable="custom"
+            label="售罄门店数"
+            align="left"
+          >
+            <template slot-scope="scope">
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleStoreNumClick(2, scope.row.erpCode)"
+              >{{ scope.row.soldOutStoreNum }}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="lockStoreNum"
+            min-width="90"
+            sortable="custom"
+            label="锁定门店数"
+            align="left"
+          >
+            <template slot-scope="scope">
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleStoreNumClick(3, scope.row.erpCode)"
+              >{{ scope.row.lockStoreNum }}</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
         <div class="table-footer">
           <pagination
             :total="total"
@@ -303,6 +438,7 @@
         >确 定</el-button>
       </span>
     </el-dialog>
+    <not-async-dialog :is-show="isShowNotAsyncDialog" @closed="isShowNotAsyncDialog=false" />
     <el-backtop target=".app-container" :bottom="100" />
   </div>
 </template>
@@ -312,18 +448,22 @@ import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import exportTable from './export-table'
 import { mapGetters } from 'vuex'
-import { getTypeTree, exportData } from '@/api/group'
+import { getTypeTree, exportData, exportStatisticData } from '@/api/group'
 import lock from './_source/lock'
+import notAsyncDialog from './_source/not-async-dialog'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import {
   getStoreGoodsList,
+  getStoreGoodsStatisticsList,
+  getStoreGoodsStatisticsSyncNumber,
   setUpdatePriceStock,
   setUpdateStoreData,
   getMyStoreList,
   setSynchro
 } from '@/api/store-goods'
+
 export default {
-  components: { Pagination, exportTable, ElImageViewer, lock },
+  components: { Pagination, exportTable, ElImageViewer, lock, notAsyncDialog },
   mixins: [mixins],
   data() {
     const _checkFloat = (rule, value, callback) => {
@@ -393,7 +533,9 @@ export default {
         storeId: '',
         status: 1,
         auditStatus: 1,
-        currentPage: 1
+        currentPage: 1,
+        sortMethod: null,
+        sortType: null
       },
       storeList: [],
       groupId: [],
@@ -402,7 +544,9 @@ export default {
       type: 'price',
       isShow: false,
       srcList: [],
-      isShowImg: false
+      isShowImg: false,
+      statisticData: null,
+      isShowNotAsyncDialog: false
     }
   },
   computed: {
@@ -458,7 +602,9 @@ export default {
       }
       this._loadList()
     },
-    _loadList() {
+    async _loadList() {
+      const { sortMethod, sortType } = this.listQuery
+
       if (this.listQuery.storeId === '') {
         if (
           this.listQuery.name === '' &&
@@ -472,24 +618,40 @@ export default {
           return
         }
       }
-      this.loading = true
-      getStoreGoodsList(this.listQuery)
-        .then(res => {
-          this.loading = false
-          const { data, totalCount } = res.data
-          if (data.length === 0 && this.listQuery.currentPage !== 1) {
-            console.log(this.listQuery)
-            this.listQuery.currentPage--
-            this._loadList()
-          }
-          if (data) {
-            this.tableData = data
-            this.total = totalCount
-          }
-        })
-        .catch(() => {
-          this.loading = false
-        })
+      try {
+        this.loading = true
+        let res = null
+        // 如果是统计页签则调用统计数据查询接口
+        if (this.listQuery.status === 4) {
+          res = await getStoreGoodsStatisticsList({
+            ...this.listQuery,
+            ...(sortMethod ? { sortMethod } : {}),
+            ...(sortType ? { sortType } : {})
+          })
+          const numRes = await getStoreGoodsStatisticsSyncNumber({
+            merCode: this.merCode
+          })
+          this.statisticData = numRes.data
+        } else {
+          res = await getStoreGoodsList(this.listQuery)
+        }
+        this.loading = false
+        const { data, totalCount } = res.data
+        if (data.length === 0 && this.listQuery.currentPage !== 1) {
+          console.log(this.listQuery)
+          this.listQuery.currentPage--
+          this._loadList()
+        }
+        if (data) {
+          this.tableData = data
+          this.total = totalCount
+        }
+      } catch (error) {
+        console.log(error)
+        this.tableData = []
+        this.total = 0
+        this.loading = false
+      }
     },
     _loadTypeList() {
       // 获取分组
@@ -674,7 +836,7 @@ export default {
       this._loadList()
     },
     // 处理商品数据导出
-    handleExport() {
+    async handleExport() {
       if (this.listQuery.storeId === '') {
         if (
           this.listQuery.name === '' &&
@@ -692,11 +854,20 @@ export default {
       // if (this.listQuery.lockFlag) {
       //   this.listQuery.lockFlag = null
       // }
-      exportData({
-        ...this.listQuery,
-        lockFlag: this.listQuery.lockFlag ? [this.listQuery.lockFlag] : [],
-        storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
-      }).then(res => {
+      try {
+        let res = null
+        if (this.listQuery.status === 4) {
+          res = await exportStatisticData({
+            ...this.listQuery,
+            specIds: (this.multipleSelection || []).map(item => item.specId)
+          })
+        } else {
+          res = await exportData({
+            ...this.listQuery,
+            lockFlag: this.listQuery.lockFlag ? [this.listQuery.lockFlag] : [],
+            storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
+          })
+        }
         if (res.code === '10000') {
           this.$alert(
             '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
@@ -709,7 +880,9 @@ export default {
             }
           )
         }
-      })
+      } catch (error) {
+        console.log('error', error)
+      }
     },
     handleLock(lockType) {
       if (this.multipleSelection.length === 0) {
@@ -821,8 +994,53 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    handleSortChange(val) {
+      const { order, prop } = val
+      let sortMethod = null
+      let sortType = null
+      switch (order) {
+        case 'ascending':
+          sortMethod = 1
+          break
+        case 'descending':
+          sortMethod = 2
+          break
+      }
+      switch (prop) {
+        case 'saleStoreNum':
+          sortType = 1
+          break
+        case 'notSaleStoreNum':
+          sortType = 2
+          break
+        case 'totalStock':
+          sortType = 3
+          break
+        case 'soldOutStoreNum':
+          sortType = 4
+          break
+        case 'lockStoreNum':
+          sortType = 5
+          break
+      }
+
+      this.$set(this.listQuery, 'sortMethod', sortMethod)
+      this.$set(this.listQuery, 'sortType', sortType)
+      this._loadList()
+    },
+    handleStoreNumClick(type, erpCode) {
+      this.$set(this.listQuery, 'status', type)
+      this.$set(this.listQuery, 'storeId', '')
+      this.$set(this.listQuery, 'erpOrName', erpCode)
+      this.$nextTick(() => {
+        this._loadList()
+      })
+    },
     handleClick() {
       this.$router.push('/goods-manage/mate')
+    },
+    handleShowNotAsyncDialog() {
+      this.isShowNotAsyncDialog = true
     }
   }
 }
@@ -852,6 +1070,10 @@ export default {
       .el-input {
         width: 180px;
       }
+      .tips-txt {
+        color: #999999;
+        font-size: 14px;
+      }
     }
   }
 
@@ -872,6 +1094,13 @@ export default {
         color: #409eff;
       }
     }
+  }
+  .hover-underline {
+    color: #409eff;
+    cursor: pointer;
+  }
+  .hover-underline:hover {
+    text-decoration-line: underline;
   }
 }
 </style>
