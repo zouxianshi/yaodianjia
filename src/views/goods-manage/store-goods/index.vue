@@ -634,6 +634,7 @@ export default {
         if (this.listQuery.status === 4) {
           res = await getStoreGoodsStatisticsList({
             ...this.listQuery,
+            erpCodeOrName: this.listQuery.erpOrName,
             ...(sortMethod ? { sortMethod } : {}),
             ...(sortType ? { sortType } : {})
           })
