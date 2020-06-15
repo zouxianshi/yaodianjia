@@ -56,9 +56,9 @@ export default {
       this.dialogVisible = true
       let activityUrl = ''
       if (type === 'reduceGift') {
-        activityUrl = `${this.$store.state.user.h5Url}activity/discount/index?merCode=${this.merCode}&actFrom=plantform`
+        activityUrl = `${this.h5Base}activity/discount/index?merCode=${this.merCode}&actFrom=plantform`
       } else if (type === 'spellGroup') {
-        activityUrl = `${this.$store.state.user.h5Url}assemble/home/index?merCode=${this.merCode}&actFrom=plantform`
+        activityUrl = `${this.h5Base}assemble/home/index?merCode=${this.merCode}&actFrom=plantform`
       }
       this.activityUrl = activityUrl
       QRCode.toDataURL(activityUrl)

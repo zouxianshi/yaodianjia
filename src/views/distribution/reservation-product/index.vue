@@ -24,7 +24,7 @@
           <template slot-scope="scope" style="text-align:center">
             <img
               class="goods-logo"
-              :src="showImgHandler(scope.row.imgUrl)"
+              :src="showImg(scope.row.imgUrl)"
               alt=""
             >
           </template>

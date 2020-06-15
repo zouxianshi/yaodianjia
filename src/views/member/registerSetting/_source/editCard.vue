@@ -65,18 +65,21 @@ export default {
       })
       getMemberInfo(this.merCode)
         .then(res => {
-          if (res.data) {
-            console.log(res.data)
+          console.log(res)
+          if (res.data && res.data.customCells) {
             var data = res.data.customCells
-            for (var i = 0, len = data.length; i < len; i++) {
-              if (data[i].name === '' && data[i].tips === '' && data[i].url === '' && i > 0) {
-                data.splice(i, 1)
-                len--
-                i--
+            if (data) {
+              for (var i = 0, len = data.length; i < len; i++) {
+                if (data[i].name === '' && data[i].tips === '' && data[i].url === '' && i > 0) {
+                  data.splice(i, 1)
+                  len--
+                  i--
+                }
               }
+              this.memberList = res.data
             }
-            this.memberList = res.data
           }
+          this.memberList = res.data
           if (this.$route.query.edit === '1') {
             this.memberList.cardBgType = 1
             this.memberList.cardBgContent = 'Color102'

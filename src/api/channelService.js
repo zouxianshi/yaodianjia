@@ -2,6 +2,14 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
 
+//  获取内部链接
+export function getSelfUrl(merCode) {
+  return request({
+    url: `${config.merGoods}/1.0/internal-link/${merCode}`,
+    method: 'get'
+  })
+}
+
 export function jumpAuthUrl(merCode) {
   return request({
     url: `${config.merGoods}/1.0/weeChatOpen/jumpAuthUrl/${merCode}`,
@@ -38,7 +46,7 @@ export function searchWxTemp(merCode) {
   })
 }
 // 查询微信模板列表
-export function setTemplate(params, merCode) {
+export function setTemplate(params) {
   return request({
     url: `${config.merGoods}/1.0/wxTemplate/setTemplate`,
     method: 'post',
@@ -46,3 +54,11 @@ export function setTemplate(params, merCode) {
   })
 }
 
+// 修改微信模板消息
+export function setMerchantHN(params) {
+  return request({
+    url: `${config.merGoods}/1.0/wxTemplate/setMerchantHN?merCode=${params.merCode}&modelCode=${params.modelCode}&modelHead=${params.modelHead}&modelNote=${params.modelNote}`,
+    method: 'post',
+    data: {}
+  })
+}

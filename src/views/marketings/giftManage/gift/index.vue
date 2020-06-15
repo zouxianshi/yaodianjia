@@ -2,7 +2,7 @@
   <div class="discount-index-model app-container">
     <div class="content">
       <div class="discount-content-l">
-        <mPhoneView :data="discountForm" :other-data="otherData" />
+        <mPhoneView :datas="discountForm" :other-data="otherData" />
       </div>
       <div class="discount-content-r">
         <el-steps :active="active">
