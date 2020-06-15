@@ -683,7 +683,7 @@ export default {
       // 修改分组
       this.goodsData = []
       this.multiselect.map(res => {
-        this.goodsData.push(res.id)
+        this.goodsData.push(res.specId)
       })
       // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
