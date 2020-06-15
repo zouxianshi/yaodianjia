@@ -90,6 +90,15 @@ export default {
           listUrl:
             '/marketings/activity-manage/payment-gift/list?code=TC002&name=支付有礼',
           linkUrl: '/marketings/activity-manage/payment-gift/add'
+        },
+        {
+          value: '',
+          lable: '新人礼包',
+          img: paymentCourtesy,
+          desc: '',
+          listUrl:
+            '/activity/newcomer-pack',
+          linkUrl: '/activity/newcomer-pack'
         }
       ], // 会员营销
       goodsActivity: [

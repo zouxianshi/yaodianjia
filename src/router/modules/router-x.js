@@ -209,6 +209,26 @@ const router = [
           auth: 'marketing.gift',
           noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
+      },
+      {
+        path: '/activity/newcomer-pack',
+        component: () => import('@/views/marketings/newcomer/newcomerGift'),
+        name: 'newcomerPack',
+        meta: {
+          title: '新人礼包',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/newcomer-create',
+        component: () => import('@/views/marketings/newcomer/newcomerCreate'),
+        name: 'newcomer-create',
+        meta: {
+          title: '新人礼包',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
       }
     ]
   },
