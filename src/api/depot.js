@@ -33,7 +33,9 @@ export function exportDataNew(params) {
   return request({
     url: `${config.merchandise}/1.0/ds/op/file/template/product/export`,
     method: 'post',
-    data: params
+    data: params,
+    isExport: true,
+    responseType: 'blob'
   })
 }
 // 获取标库商品列表
