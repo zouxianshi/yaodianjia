@@ -283,7 +283,13 @@ class InnerCtor {
             path: '/storeSetting/weapp',
             disabled: this.get('set.wx-mini'),
             children: []
-          }
+          },
+          {
+            name: '评论设置',
+            path: '/storeSetting/comment-settings',
+            // disabled: this.get('set.comment-settings'),
+            children: []
+          },
         ]
       },
       {
