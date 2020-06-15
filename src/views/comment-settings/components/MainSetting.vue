@@ -4,12 +4,11 @@
       img="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
       lable="商品评价"
       desc="商品评论开启后用户可在商品后添加评论，同时商户也可以维护评论。"
-      create-text="评论管理"
     >
-      <bottom class="action">
-        <el-switch v-model="isTurnOn" inactive-text="评论管理" />
-        <el-button type="text" class="button" @click="handleJump(item)">{{ createText }}</el-button>
-      </bottom>
+      <div class="card-action">
+        <el-switch v-model="isTurnOn" :active-text="isTurnOn ? '已开启' : '已关闭'" />
+        <el-button type="text" class="button" @click="handleManagerClick">评论管理</el-button>
+      </div>
     </card-item>
   </div>
 </template>
@@ -20,16 +19,15 @@ export default {
   name: 'MainSetting',
   data() {
     return {
-      cachedViews() {
-        return this.$store.state.tagsView.cachedViews
-      },
-      key() {
-        return this.$route.path
-      }
+      isTurnOn: true
     }
   },
   props: {},
-  methods: {},
+  methods: {
+    handleManagerClick() {
+      this.$router.push('/storeSetting/comment-settings/manager')
+    }
+  },
   watch: {},
   beforeCreate() {},
   created() {},
@@ -47,5 +45,10 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss">
 .comment-settings-model {
+  .card-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
 </style>

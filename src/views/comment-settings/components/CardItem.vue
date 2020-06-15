@@ -1,6 +1,6 @@
 <template>
   <el-card class="activity-card" shadow="hover">
-    <el-image class="image" fit="cover" :src="img" @click="handleJump(item, 'list')" />
+    <el-image class="image" fit="cover" :src="img" />
     <div class="activity-bottom">
       <div class="activity-header">
         <div class="title">{{ lable }}</div>
@@ -15,7 +15,7 @@
           <div class="sub-title">{{ desc || '' }}</div>
         </el-tooltip>
       </div>
-      <slot name="bottom" />
+      <slot />
     </div>
   </el-card>
 </template>
@@ -33,10 +33,6 @@ export default {
       default: ''
     },
     desc: {
-      type: String,
-      default: ''
-    },
-    createText: {
       type: String,
       default: ''
     }
@@ -80,7 +76,6 @@ export default {
   width: 250px;
   margin-bottom: 10px;
   position: relative;
-  cursor: pointer;
   .el-card__body {
     padding: 0;
   }
@@ -107,11 +102,6 @@ export default {
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
       }
-    }
-    .action {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
   }
   .share {
