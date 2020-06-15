@@ -38,6 +38,21 @@
           </el-col>
         </el-row>
       </el-tab-pane>
+      <el-tab-pane label="海贝营销" name="haibeiActivity">
+        <el-row :gutter="20">
+          <el-col
+            v-for="(o, index) in haibeiActivity"
+            :key="index"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            :xl="4"
+          >
+            <card-item-close ref="HB" :item="o" @changeStatus="changeStatus" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
       <!-- <el-tab-pane label="精彩活动" :disabled="true" name="activity">精彩活动</el-tab-pane> -->
     </el-tabs>
   </div>
@@ -45,9 +60,11 @@
 
 <script>
 import cardItem from '../components/card-item'
+import cardItemClose from '../components/card-item-close'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
+import haibei from '@/assets/image/acvity/haibei.png'
 import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
 import spellGroup from '@/assets/image/acvity/spell-group.png'
@@ -57,8 +74,10 @@ import paymentCourtesy from '@/assets/image/marketings/pay.png'
 // import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
+import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
+
 export default {
-  components: { cardItem },
+  components: { cardItem, cardItemClose },
   /**
    * value => key 这里建议跟后端的key保持一致
    * lable: '活动标题
@@ -168,16 +187,52 @@ export default {
           linkUrl: '/marketings/activity-manage/turntable/add?code=TA003'
         }
       ],
+      haibeiActivity: [
+        {
+          createText: '添加商品',
+          name: 'ReduceGift',
+          lable: '商品',
+          desc: '',
+          titles: '兑换商城',
+          isclose: true,
+          img: haibei,
+          listUrl: '/activity/exchangeMallList',
+          linkUrl: '/activity/exchangeMallAdd'
+        }
+      ], // 积分营销
       activity: [] // 精彩活动
     }
   },
   created() {
     this.activeName = this.$route.query.type || 'goodsActivity'
+    searchActivityStatus({ pmtType: 20 }).then(res => {
+      if (res.code === '10000') {
+        this.haibeiActivity[0].isclose = res.data
+      }
+    })
   },
   methods: {
     handleClick(val) {
-      console.log('点击tab切换', val)
       this.$router.replace(`/marketing/activity?type=${val.name}`)
+    },
+    changeStatus(status) {
+      const params = {
+        'pmtType': 20,
+        'status': status ? 1 : 0
+      }
+      var _self = this
+      activityOpenOrClose(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: res.msg,
+            type: 'success'
+          })
+        } else {
+          _self.$refs.HB.closeStatus(status)
+        }
+      }).catch(() => {
+        _self.$refs.HB[0].closeStatus(status)
+      })
     }
   }
 }
