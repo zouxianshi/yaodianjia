@@ -681,10 +681,10 @@ export default {
       this.multiselect.map(res => {
         this.goodsData.push(res.id)
       })
-      const param = { ids: this.goodsData, merCode: this.merCode }
+      // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew(param)
+      exportDataNew({ ...this.listQuery, skuIds: this.goodsData })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {
