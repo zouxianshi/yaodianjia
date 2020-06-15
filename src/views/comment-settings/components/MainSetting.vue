@@ -5,7 +5,12 @@
       lable="商品评价"
       desc="商品评论开启后用户可在商品后添加评论，同时商户也可以维护评论。"
       create-text="评论管理"
-    />
+    >
+      <bottom class="action">
+        <el-switch v-model="isTurnOn" inactive-text="评论管理" />
+        <el-button type="text" class="button" @click="handleJump(item)">{{ createText }}</el-button>
+      </bottom>
+    </card-item>
   </div>
 </template>
 <script>

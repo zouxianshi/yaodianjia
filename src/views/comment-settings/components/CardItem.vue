@@ -15,14 +15,7 @@
           <div class="sub-title">{{ desc || '' }}</div>
         </el-tooltip>
       </div>
-      <div class="action">
-        <el-switch v-model="isTurnOn" inactive-text="评论管理" />
-        <el-button
-          type="text"
-          class="button"
-          @click="handleJump(item)"
-        >{{ createText }}</el-button>
-      </div>
+      <slot name="bottom" />
     </div>
   </el-card>
 </template>
