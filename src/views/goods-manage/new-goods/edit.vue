@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="edit-wrapper">
-      <el-steps :active="step" simple style="margin-top: 20px">
+      <el-steps :active="step" simple>
         <el-step title="基本信息" icon="el-icon-edit-outline" @click="handleGoStep(1)" />
         <el-step title="规格信息" icon="el-icon-set-up" @click="handleGoStep(2)" />
         <el-step title="图文信息" icon="el-icon-picture-outline-round" @click="handleGoStep(3)" />

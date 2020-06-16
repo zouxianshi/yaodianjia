@@ -7,8 +7,7 @@ const router = [
     name: 'orders-manage',
     meta: {
       title: '订单中心',
-      icon: 'goods',
-      auth: 'order'
+      icon: 'goods'
     },
     alwaysShow: true,
     children: [
@@ -18,8 +17,7 @@ const router = [
         name: 'orders-manage-list',
         meta: {
           title: '所有订单',
-          noCache: true,
-          auth: 'order.order-all'
+          noCache: true
         }
       }, {
         path: 'spell-group',
@@ -27,8 +25,7 @@ const router = [
         name: 'orders-manage-spell_group',
         meta: {
           title: '拼团订单',
-          noCache: true,
-          auth: 'order.order-group'
+          noCache: true
         }
       }, {
         path: `details`,
@@ -45,8 +42,7 @@ const router = [
         name: 'orders-manage-settings',
         meta: {
           title: '订单设置',
-          noCache: true,
-          auth: 'order.order-set'
+          noCache: true
         }
       }
     ]
