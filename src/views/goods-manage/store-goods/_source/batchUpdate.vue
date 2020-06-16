@@ -130,12 +130,12 @@ export default {
           this.errorText = `上传${res.data.success +
             res.data.fail}条数据：操作成功${
             res.data.success
-          }条；可点击下载结果文件查看。`
+          }条；可点击下载查看。`
         } else {
           this.errorText = `上传${res.data.success +
             res.data.fail}条数据：操作成功${res.data.success}条；操作失败${
             res.data.fail
-          }条，失败原因可点击下载结果文件查看。`
+          }条，失败原因可点击下载查看。`
         }
         this.errorResultUrl = res.data.url
       } else {
