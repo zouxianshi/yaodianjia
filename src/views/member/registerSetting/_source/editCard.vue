@@ -66,7 +66,7 @@ export default {
       getMemberInfo(this.merCode)
         .then(res => {
           console.log(res)
-          if (res.data && res.data.customCells) {
+          if (res.data && !!res.data.customCells) {
             var data = res.data.customCells
             if (data) {
               for (var i = 0, len = data.length; i < len; i++) {
