@@ -12,12 +12,13 @@ import routeR from './modules/router-r'
 import routeC from './modules/router-c'
 import routeF from './modules/router-f'
 import routeD from './modules/router-d'
-import mall from './modules/mall'
 import marketings from './modules/marketings'
 import member from './modules/member'
 import channel from './modules/channel'
 import auth from './modules/auth'
-import { mUsersModule, mHomeModule } from '@merchant/commons'
+
+import mall from './modules/mall'
+import { mUsersModule } from '@merchant/commons'
 
 // merge component layout module
 const userModule = _.assign(mUsersModule, {
@@ -64,7 +65,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/home',
     children: [
-      mHomeModule
+      // mHomeModule
     ]
   },
   userModule

@@ -62,7 +62,7 @@ export default {
     })
   },
   computed: {
-    ...mapState('channel', ['menuData', 'VUE_APP_MEMBER_CENTER']),
+    ...mapState('channel', ['menuData']),
     isDisabled() {
       const { level1Index, level2Index } = this
       return level2Index === -1 && !!this.menuData[level1Index].sub_button.length

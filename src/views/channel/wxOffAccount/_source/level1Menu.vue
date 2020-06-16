@@ -73,8 +73,10 @@ export default {
   },
   computed: {
     ...mapState('channel', ['menuData', 'VUE_APP_MEMBER_CENTER']),
+    ...mapState('user', ['merCode']),
     cpdUrl() {
-      const { activeElIndex, item: { url, sub_button, type }, VUE_APP_MEMBER_CENTER } = this
+      const { activeElIndex, item: { url, sub_button, type }} = this
+      const VUE_APP_MEMBER_CENTER = this.VUE_APP_MEMBER_CENTER + this.merCode
       return activeElIndex === -1
         ? type === 'memberCard'
           ? VUE_APP_MEMBER_CENTER

@@ -739,6 +739,8 @@ export default {
         mprice: '',
         erpCode: ''
       })
+      console.log(this.specsForm.specs)
+      console.log('=================')
     },
     handleDeleteSpec(index) {
       // 删除规格

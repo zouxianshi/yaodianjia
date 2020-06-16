@@ -221,7 +221,6 @@ export default {
           this.showCities = _.map(_.cloneDeep(res.data), v => {
             return _.assign(v, { checked: false })
           })
-          console.log('showCities', this.showCities)
           getDelivery(this.merCode)
             .then(res => {
               if (res.code === '10000') {
@@ -232,7 +231,6 @@ export default {
                     this.selected.push(v.rangeId)
                   })
                 })
-                console.log('selected', this.selected)
               } else {
                 this.$message({
                   message: res.msg,
@@ -252,7 +250,6 @@ export default {
             duration: 5 * 1000
           })
         }
-        console.log('res-1', this.cities)
       })
     },
     onEdit(index) {
@@ -262,7 +259,6 @@ export default {
         this.isIndeterminate = false
         this.visable = true
         this.selectableCount = this.cities.length - this.selected.length
-        console.log('selectableCount', this.selectableCount)
         return
       } else {
         const selectedRangid = []
@@ -275,7 +271,6 @@ export default {
         })
         this.selectableCount =
           this.cities.length - this.selected.length + selectedRangid.length
-        console.log('selectableCount', this.selectableCount)
       }
       const arr = []
       _.map(this.form.list[this.editPosition].rangeResDTOList, v => {
@@ -292,12 +287,6 @@ export default {
         } else {
           this.isIndeterminate = true
         }
-        /* this.isIndeterminate = true
-        if (this.selected.length === this.cities.length) {
-          this.checkAll = true
-        } else {
-          this.checkAll = false
-        }*/
       } else {
         this.isIndeterminate = false
         this.checkAll = false
@@ -495,16 +484,16 @@ export default {
       console.log('checkAll', this.checkAll)
     },
     submit() {
-      if (this.cities.length - this.selected.length > 0) {
-        this.$message({
-          message:
-            '当前还有' +
-            (this.cities.length - this.selected.length) +
-            '个区域未配置，未配置区域将不支持快递发货！',
-          type: 'warning',
-          duration: 5 * 1000
-        })
-      }
+      // if (this.cities.length - this.selected.length > 0) {
+      //   this.$message({
+      //     message:
+      //       '当前还有' +
+      //       (this.cities.length - this.selected.length) +
+      //       '个区域未配置，未配置区域将不支持快递发货！',
+      //     type: 'warning',
+      //     duration: 5 * 1000
+      //   })
+      // }
       const patten = /^\d+(\.\d{0,2})?$/
       let vlidate = true
       _.map(_.cloneDeep(this.form.list), o => {

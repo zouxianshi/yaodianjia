@@ -35,7 +35,7 @@
           <li class="zxy">
             <div class="m">
               <div class="name">中西医药模板.xls</div> <a
-                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BF.xls?times='+times"
+                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E4%B8%AD%E8%A5%BF%E5%8C%BB%E8%8D%AF%E6%A8%A1%E6%9D%BFnew.xls?times='+times"
                 download="中西医药模板.xls"
               ><button
                 type="button"
@@ -44,7 +44,7 @@
                 <span>点击下载</span></button></a>
             </div>
           </li>
-          <li class="yxbj">
+          <!-- <li class="yxbj">
             <div class="m">
               <div class="name">营养保健模板.xls</div>
               <a
@@ -69,12 +69,12 @@
               >
                 <span>点击下载</span></button></a>
             </div>
-          </li>
+          </li> -->
           <li class="qt">
             <div class="m">
-              <div class="name">其它模板.xls</div> <a
-                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%85%B6%E4%BB%96%E6%A8%A1%E6%9D%BF.xls?times='+times"
-                download="其它模板.xls"
+              <div class="name">非药品模板.xls</div> <a
+                :href="'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E9%9D%9E%E8%8D%AF%E5%93%81%E6%A8%A1%E6%9D%BF.xls?times='+times"
+                download="非药品模板.xls"
               ><button
                 type="button"
                 class="el-button el-button--default el-button--small"
@@ -85,10 +85,11 @@
         </ul>
         <div class="table-box">
           <p style="margin-bottom:12px;color:#333;display:flex;justify-content: space-between;">
-            <span>本次批量创建结果如下：</span>
-            <el-button type="primary" size="small" @click="_loadFileResultList">刷新</el-button>
+            <span>批量导入历史如下：</span>
+            <!-- <el-button type="primary" size="small" @click="_loadFileResultList">刷新</el-button> -->
           </p>
-          <el-table :data="tableData">
+          <exportHistory type="create" />
+          <!-- <el-table :data="tableData">
             <el-table-column label="品类">
               <template slot-scope="scope">
                 <span v-if="scope.row.firstTypeId==='1065279ca65a4a529109f82472f11053'">中西医药</span>
@@ -104,15 +105,15 @@
               </template>
             </el-table-column>
             <el-table-column label="导入时间" prop="createTime" />
-            <!-- <el-table-column label="失败原因" prop="reason" /> -->
+            <el-table-column label="失败原因" prop="reason" />
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <template v-if="scope.row.failPath">
                   <el-button type="" size="mini" @click="handleDowload(scope.row)">失败结果下载</el-button>
                 </template>
-                <!-- <template v-else>
+                 <template v-else>
                   <a :href="'#/goods-manage/apply-record'"><el-button type="primary" size="mini">去完善信息</el-button></a>
-                </template> -->
+                </template>
               </template>
             </el-table-column>
           </el-table>
@@ -121,7 +122,7 @@
             :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize"
             @pagination="_loadFileResultList"
-          />
+          /> -->
         </div>
       </section>
     </div>
@@ -129,12 +130,13 @@
 </template>
 <script>
 import config from '@/utils/config'
+import exportHistory from '@/components/exportHistory'
 import { getUploadFileList } from '@/api/new-goods'
 import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
+// import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 export default {
-  components: { Pagination },
+  components: { exportHistory },
   mixins: [mixins],
   data() {
     return {
@@ -177,9 +179,9 @@ export default {
         this.is_file = false
         return false
       }
-      const isLt2M = file.size / 1024 / 1024 < 2
+      const isLt2M = file.size / 1024 / 1024 < 10
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2MB!')
+        this.$message.error('上传文件大小不能超过 10MB!')
         return false
       }
       return true
@@ -187,7 +189,7 @@ export default {
     handleFileSuccess(res) {
       if (res.code === '10000') {
         this.$message({
-          message: '上传成功',
+          message: '导入处理中，结果稍后见【导入历史】！',
           type: 'success'
         })
         this._loadFileResultList()

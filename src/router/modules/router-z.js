@@ -6,26 +6,50 @@ const router = [
     redirect: '/goods-manage/depot',
     name: 'goods-manage',
     meta: {
-      title: '商品管理',
-      icon: 'goods'
+      title: '商品中心',
+      icon: 'goods',
+      auth: 'commodity'
     },
     alwaysShow: true,
     children: [
       {
-        path: 'Depot',
+        path: 'depot',
         component: () => import('@/views/goods-manage/depot/list'),
-        name: 'Depot',
+        name: 'depot',
         meta: {
           title: '商品库',
           noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
-      }, {
+      },
+      {
+        path: 'depot-edit',
+        component: () => import('@/views/goods-manage/depot/editDepot'),
+        name: 'depotEdit',
+        meta: {
+          title: '商品信息编辑',
+          auth: 'commodity.commodity-lib',
+          noCache: false, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          activeMenu: '/goods-manage/depot'
+        }
+      },
+      {
+        path: 'addition-edit',
+        component: () => import('@/views/goods-manage/depot/editAddition'),
+        name: 'additionEdit',
+        meta: {
+          title: '标库商品信息编辑',
+          auth: 'commodity.commodity-lib',
+          noCache: false, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+          activeMenu: '/goods-manage/depot'
+        }
+      },
+      {
         path: 'addition',
         component: () => import('@/views/goods-manage/depot/addition'),
         name: 'addition',
         meta: {
           title: '标库添加商品',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/depot'
         }
       }, {
@@ -34,7 +58,7 @@ const router = [
         name: 'import',
         meta: {
           title: '导入商品',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/depot'
         }
       }, {
@@ -43,7 +67,7 @@ const router = [
         name: 'importRecode',
         meta: {
           title: '导入历史',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/depot'
         }
       }, {
@@ -69,8 +93,9 @@ const router = [
         component: () => import('@/views/goods-manage/new-goods/apply'),
         name: 'apply',
         meta: {
-          title: '新品申请',
-          noCache: true
+          auth: 'commodity.commodity-self',
+          title: '自建新品',
+          noCache: false
         }
       }, {
         path: 'single-create',
@@ -78,7 +103,7 @@ const router = [
         name: 'SingleCreate',
         meta: {
           title: '单品创建',
-          noCache: true,
+          noCache: false,
           activeMenu: '/goods-manage/apply'
         }
       }, {
@@ -99,15 +124,42 @@ const router = [
           noCache: false,
           activeMenu: '/goods-manage/apply'
         }
-      }, {
+      },
+      {
         path: 'apply-record',
         component: () => import('@/views/goods-manage/new-goods/record'),
         name: 'GoodsRecord',
         meta: {
           title: '新品申请记录',
           noCache: true
-        }
-      }, {
+        },
+        children: []
+      },
+      {
+        path: 'apply-record-edit',
+        component: () => import('@/views/goods-manage/new-goods/editRecord'),
+        name: 'applyRecordEdit',
+        meta: {
+          auth: 'commodity.commodity-new-record',
+          title: '编辑新品申请记录',
+          noCache: false,
+          activeMenu: '/goods-manage/apply-record'
+        },
+        children: []
+      },
+      {
+        path: 'edit-apply',
+        component: () => import('@/views/goods-manage/new-goods/editApply'),
+        name: 'editApply',
+        meta: {
+          auth: 'commodity.commodity-new-record',
+          title: '自建新品',
+          noCache: false,
+          activeMenu: '/goods-manage/apply'
+        },
+        children: []
+      },
+      {
         path: 'group',
         component: () => import('@/views/goods-manage/group/list'),
         name: 'group',
@@ -139,7 +191,7 @@ const router = [
         name: 'mate',
         meta: {
           title: '匹配列表',
-          activeMenu: '/goods-manage/examine',
+          activeMenu: '/goods-manage/apply-record',
           noCache: true
         }
       }, {

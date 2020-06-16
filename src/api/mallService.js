@@ -110,7 +110,7 @@ export function getRecommended(p) {
     ...p
   }
   return request({
-    url: `${config.customer}/1.0/commodity-search/_search`,
+    url: `${config.merGoods}/1.0/commodity-search/_search`,
     method: 'post',
     data
   })

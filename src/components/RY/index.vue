@@ -52,8 +52,12 @@ export default {
             console.warn('进入页面Chat.init onReceived回调', message)
             this.newMsg = message
             // 通知在线咨询组件有新消息
-            console.warn('消息组件，收到消息', message)
             // 在线咨询当前选中用户id
+            console.log('消息组件，收到消息', message)
+
+            // sound tip
+            this.playAudio()
+
             const { userId } = _this.curOnlineUserData
 
             // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知
@@ -222,7 +226,7 @@ export default {
           'customerService/setWebSocketConnectionStatus',
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID'
     }),
-    onPaly() {
+    playAudio() {
       this.$refs.audio.play()
     },
     // 通过token生成融云token
@@ -335,8 +339,6 @@ export default {
         ws.onmessage = function(evt) {
           var received_msg = evt.data
           console.log('接收消息', received_msg)
-          // sound tip
-          self.onPaly()
         }
 
         ws.onclose = function(e) {

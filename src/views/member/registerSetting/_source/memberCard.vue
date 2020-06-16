@@ -67,11 +67,11 @@
     <div class="AemberCard-contain-model">
       <div class="AemberCard-url-model">
         <div class="AemberCard-contain-adress">会员卡领卡地址:</div>
-        <div class="AemberCard-link-model">{{ VUE_APP_MEMBER_CENTER }}</div>
+        <div class="AemberCard-link-model">{{ linkUrl }}</div>
         <div>
           <el-button
             v-clipboard:error="onError"
-            v-clipboard:copy="VUE_APP_MEMBER_CENTER"
+            v-clipboard:copy="linkUrl"
             v-clipboard:success="onCopy"
             type="primary"
             plain
@@ -138,7 +138,12 @@ export default {
   },
   computed: {
     ...mapGetters(['merCode']),
-    ...mapState('channel', ['VUE_APP_MEMBER_CENTER'])
+    ...mapState('channel', ['VUE_APP_MEMBER_CENTER']),
+    ...mapState('user', ['merCode']),
+    linkUrl() {
+      console.log('zc+....', this.merCode)
+      return this.VUE_APP_MEMBER_CENTER + this.merCode
+    }
   },
   watch: {},
   beforeCreate() {},

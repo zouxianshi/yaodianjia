@@ -15,7 +15,7 @@
             <el-checkbox :label="2">库存</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item v-if="lockType===0&&formData.lockFlag.length>0" label="定时解锁设置：">
+        <!--<el-form-item v-if="lockType===0&&formData.lockFlag.length>0" label="定时解锁设置：">
           <el-checkbox
             v-model="formData.unlockType"
             :true-label="1"
@@ -31,7 +31,7 @@
             class="custom-class"
             placeholder="选择日期时间"
           />
-        </el-form-item>
+        </el-form-item>-->
       </el-form>
       <!-- <p class="lock-tip">
         <span>说明：</span>锁定之后将不再接受ERP库存或价格的更新，除非解锁。

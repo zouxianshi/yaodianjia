@@ -29,7 +29,8 @@
           <el-form-item label="">
             <div class="con">
               到店支付订单，拍下后
-              <el-input v-model="settingData.deliveryCancelTime" :value="settingData.deliveryCancelTime" class="width80" maxlength="2" placeholder="请输入" size="mini" />
+              <el-input-number v-model="settingData.deliveryCancelTime" :precision="0" :min="0" :max="99" :controls="false" class="width80" size="mini" />
+              <!-- <el-input v-model="settingData.deliveryCancelTime" :value="settingData.deliveryCancelTime" class="width80" maxlength="2" placeholder="请输入" size="mini" /> -->
               天内未到店提货，自动取消订单（设置0天则不自动取消该订单）
             </div>
           </el-form-item>
@@ -92,14 +93,6 @@ export default {
       })
     },
     handleSaveSetting() {
-      // console.log('this.settingData.couponCost:', this.settingData.couponCost)
-      // if (this.settingData.couponCost === null) {
-      //   this.$message({
-      //     message: '请完成现金购买类型优惠券是否计入成本的设置',
-      //     type: 'error'
-      //   })
-      // }
-
       const reg = /[^0-9]/
       if (!this.settingData.orderCancelTime) {
         this.$message({
@@ -117,14 +110,14 @@ export default {
       }
       if (this.settingData.orderCancelTime < 5) {
         this.$message({
-          message: '最小值不能小于5',
+          message: '在线支付订单，设置分钟数最小值不能小于5',
           type: 'error'
         })
         return
       }
       if (this.settingData.orderCancelTime > 30) {
         this.$message({
-          message: '最大值不能超过30',
+          message: '在线支付订单，设置分钟数最大值不能超过30',
           type: 'error'
         })
         return

@@ -19,6 +19,18 @@
           :disabled="disabled"
         />
       </el-form-item>
+      <el-form-item label="活动描述：">
+        <el-input
+          v-model="form.description"
+          :disabled="disabled"
+          type="textarea"
+          :placeholder="disabled ? '':'不超过200字'"
+          maxlength="200"
+          :rows="4"
+          show-word-limit
+          style="width: 380px;"
+        />
+      </el-form-item>
       <el-form-item ref="activitTime" label="活动时间：" prop="activitTime">
         <el-date-picker
           v-model="form.activitTime"
@@ -80,7 +92,11 @@
       </el-form-item>
       <div class="form-title">换购规则</div>
       <el-form-item label="活动规则：" required>
-        <el-radio-group v-model="form.exchangeRuleSelection" :disabled="disabled" @change="exchangeRuleSelectionChange">
+        <el-radio-group
+          v-model="form.exchangeRuleSelection"
+          :disabled="disabled"
+          @change="exchangeRuleSelectionChange"
+        >
           <el-radio :label="0">订单金额（元）</el-radio>
           <el-radio :label="1">商品数量（件）</el-radio>
         </el-radio-group>
@@ -93,13 +109,14 @@
             controls-position="right"
             step-strictly
             :min="form.exchangeRuleSelection === 0?0.01:1"
-            :max="99999999"
+            :max="form.exchangeRuleSelection === 0?99999999:999"
             :disabled="disabled"
             style="width: 150px; margin-right: 8px"
-          />{{ form.exchangeRuleSelection === 0?'元' : '件' }}
-          <span class="info">
-            {{ form.exchangeRuleSelection === 0?'以最终下单支付的金额计算' : '以最终下单支付的件数计算' }}
-          </span>
+          />
+          {{ form.exchangeRuleSelection === 0?'元' : '件' }}
+          <span
+            class="info"
+          >{{ form.exchangeRuleSelection === 0?'以最终下单支付的金额计算' : '以最终下单支付的件数计算' }}</span>
         </template>
       </el-form-item>
       <el-form-item label="换购商品：" required>
@@ -242,6 +259,7 @@ export default {
         allStore: false,
         allSpec: false,
         threshold: '',
+        description: '',
         exchangeRuleSelection: 0 // 换购规则选择：0-订单金额（元），1-商品数量（件）
       },
       rules: {
@@ -310,6 +328,7 @@ export default {
             this.form = {
               name: data.pmtName,
               activitTime: [data.startTime, data.endTime],
+              description: data.description,
               allStore: !!data.allStore,
               allSpec: !!data.allSpec,
               type: data.userCoupons === 3 ? ['1'] : [],
@@ -318,7 +337,8 @@ export default {
               ruleList: data.activityDetail.ruleList,
               startTime: data.startTime,
               endTime: data.endTime,
-              exchangeRuleSelection: data.activityDetail.exchangeRuleSelection || 0
+              exchangeRuleSelection:
+                data.activityDetail.exchangeRuleSelection || 0
             }
             this.chooseStore = Array.isArray(data.storeResDTOList)
               ? data.storeResDTOList
@@ -409,7 +429,8 @@ export default {
                 'allStore',
                 'endTime',
                 'startTime',
-                'name'
+                'name',
+                'description'
               ])
               let userCoupons = ''
               // 需要增加组装的参数    userCoupons  pmtRule:{ruleList, confineNum, threshold, userCoupons} activitySpecList storeIds merCode: this.merCode,

@@ -53,7 +53,7 @@
                     @change="handleCheckClk(item)"
                   >{{ item.name }}</el-checkbox>
                   <el-checkbox
-                    v-for="(items,index1) in item.children"
+                    v-for="(items,index1) in rtSort(item.children)"
                     v-else
                     :key="index1"
                     :label="items.id"
@@ -162,6 +162,9 @@ export default {
     }
   },
   methods: {
+    rtSort(arr) {
+      return _.sortBy(arr, ['name'])
+    },
     compare(property) {
       return function(a, b) {
         var value1 = a[property]
@@ -178,17 +181,25 @@ export default {
       this.groupData.map(res => {
         if (res.id === val) {
           this.groups1 = res.children.sort(this.compare('sort'))
+          // this.groups1 = _.sortBy(res.children, v => v.name)
           if (res.children && res.children.length > 0) {
             this.active_row = res.children[0]
             this.groups2 = res.children[0].children.sort(this.compare('sort'))
+            // this.groups2 = _.sortBy(res.children[0].children, v => v.name)
             this.groups2.map(item => {
               item.children = item.children
                 ? item.children.sort(this.compare('sort'))
+                // ? _.sortBy(item.children, v => v.name)
                 : null
+
+              console.log(item.children)
             })
           }
         }
       })
+
+      console.log(this.groupData)
+      console.log('-----this.groupData')
     },
     handleLeftGroup(row) {
       // 左侧分组点击事件

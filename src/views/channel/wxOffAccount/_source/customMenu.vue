@@ -32,7 +32,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('channel', ['VUE_APP_MEMBER_CENTER', 'menuData'])
+    ...mapState('channel', ['VUE_APP_MEMBER_CENTER', 'menuData']),
+    ...mapState('user', ['merCode'])
   },
   watch: {},
   beforeCreate() {
@@ -77,7 +78,7 @@ export default {
       this.setLoading(true)
       getMenuData(this.$store.state.user.merCode).then(async res => {
         const { button } = res.data || { button: [] }
-        const { VUE_APP_MEMBER_CENTER } = this
+        const VUE_APP_MEMBER_CENTER = this.VUE_APP_MEMBER_CENTER + this.merCode
         if (button.length) {
           const newMenuData = button
           _.map(newMenuData, v => {

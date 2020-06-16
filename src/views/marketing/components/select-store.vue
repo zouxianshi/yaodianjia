@@ -1,6 +1,19 @@
 <template>
   <div class="select-store">
-    <el-table :data="cutData" size="small" show-overflow-tooltip style="width: 100%" max-height="500">
+    <el-form v-if="Array.isArray(tableData) && tableData.length" :inline="true" :model="formInline" class="form-inline">
+      <el-form-item label="门店名称">
+        <el-input v-model="formInline.name" clearable placeholder="门店编码/门店名称" />
+      </el-form-item>
+      <el-button type="primary" @click="onSubmit">查询</el-button>
+      <el-form-item><div style="color: rgb(191, 191, 191)">(说明：该查询仅支持下列列表的数据查询)</div></el-form-item>
+    </el-form>
+    <el-table
+      :data="cutData"
+      size="small"
+      show-overflow-tooltip
+      style="width: 100%"
+      max-height="500"
+    >
       <template v-for="col in cols">
         <el-table-column
           v-if="!col.render"
@@ -64,6 +77,9 @@ export default {
         current: 1,
         size: 10,
         total: 0
+      },
+      formInline: {
+        name: ''
       }
     }
   },
@@ -83,12 +99,27 @@ export default {
     // 获取数据源
     handleCutData() {
       const { current, size } = this.pager
-      console.log(
-        '1111111111',
-        this.pager,
-        this.tableData.slice((current - 1) * size, size)
-      )
-      this.cutData = this.tableData.slice((current - 1) * size, size * current)
+      const { name } = this.formInline
+      if (name) {
+        this.cutData = this.tableData.filter(
+          data =>
+            data.stName
+              .toLowerCase()
+              .includes(this.formInline.name.toLowerCase()) ||
+            data.stCode
+              .toLowerCase()
+              .includes(this.formInline.name.toLowerCase())
+        )
+        this.pager.total = this.cutData.length || 0
+      } else {
+        this.cutData = this.tableData.slice((current - 1) * size, size * current)
+        this.pager.total = this.tableData.length || 0
+      }
+      // console.log(
+      //   '1111111111',
+      //   this.pager,
+      //   this.tableData.slice((current - 1) * size, size)
+      // )
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -106,6 +137,15 @@ export default {
         current: val
       }
       this.handleCutData()
+    },
+    onSubmit() {
+      console.log('submit!')
+      this.pager = {
+        ...this.pager,
+        current: 1
+        // total: this.cutData.length
+      }
+      this.handleCutData()
     }
   }
 }
@@ -115,6 +155,9 @@ export default {
   .c-footer {
     margin-top: 20px;
     text-align: right;
+  }
+  .form-inline {
+    margin-bottom: 20px;
   }
 }
 </style>

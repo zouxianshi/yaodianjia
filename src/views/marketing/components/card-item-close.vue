@@ -85,11 +85,23 @@ export default {
     },
     // 关闭、开启活动
     changeState() {
-      this.$emit('changeStatus', this.closeOrOpen)
+      let text = ''
+      if (this.closeOrOpen) {
+        text = '开启'
+      } else {
+        text = '关闭'
+      }
+      this.$confirm(`确定${text}兑换商城?`, '操作提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$emit('changeStatus', this.closeOrOpen)
+      })
     },
     // 开启活动失败时
     closeStatus(status) {
-      this.closeOrOpen = status
+      this.closeOrOpen = !status
     }
   }
 }

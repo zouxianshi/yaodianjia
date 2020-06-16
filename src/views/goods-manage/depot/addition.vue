@@ -68,43 +68,6 @@
               <p class="text-center">自主创建的商品由运营人员自行审核上架</p>
             </div>
           </template>
-          <el-table-column label="序号" type="index" min-width="60" />
-          <el-table-column
-            prop="orCode"
-            align="left"
-            min-width="100"
-            label="商品图片"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">
-              <template v-if="scope.row.mainPic">
-                <el-image
-                  style="width: 70px; height: 70px"
-                  :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
-                  lazy
-                  fit="contain"
-                  :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
-                />
-              </template>
-              <template v-else>
-                <p class>暂未上传</p>
-              </template>
-            </template>
-          </el-table-column>
-          <el-table-column label="商品信息" min-width="120" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <div>
-                <p class="ellipsis" v-text="scope.row.name" />
-                <p class="ellipsis">
-                  <span
-                    v-for="(item,index) in scope.row.specSkuList"
-                    :key="index"
-                  >{{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}</span>
-                </p>
-                <p class="ellipsis" v-text="scope.row.approvalNumber" />
-              </div>
-            </template>
-          </el-table-column>
           <el-table-column label="条码" prop="barCode" />
           <el-table-column label="生产企业" prop="manufacture" show-overflow-tooltip />
           <el-table-column label="品牌" prop="brandName" />
@@ -145,8 +108,7 @@
         </span>
       </el-dialog>
     </div>
-  </div>
-</template>
+  </div></template>
 <script>
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
@@ -217,14 +179,15 @@ export default {
       row.loading = true
       setComAddGoods({ ids: [row.id], userName: this.name })
         .then(res => {
-          this.$message({
-            message:
-              '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
-            type: 'success',
-            duration: 4000
-          })
-
-          this.getList(row.id)
+          this.$router.push('/goods-manage/addition-edit?id=' + row.id + '&backUrl=apply-record&type=添加该商品&origin=1')
+          // this.$message({
+          //   message:
+          //     '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
+          //   type: 'success',
+          //   duration: 4000
+          // })
+          //
+          // this.getList(row.id)
           row.loading = false
         })
         .catch(() => {
