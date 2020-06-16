@@ -693,7 +693,7 @@ export default {
               type: 'error'
             })
           } else {
-            download.blob(res)
+            download.blob(res, '导出结果文件')
             this.$message({
               message: '数据导出成功',
               type: 'success'
