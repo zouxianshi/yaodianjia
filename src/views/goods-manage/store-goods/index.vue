@@ -71,7 +71,13 @@
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择" @change="_loadList">
+            <el-select
+              v-model="listQuery.drugType"
+              filterable
+              size="small"
+              placeholder="请选择"
+              @change="_loadList"
+            >
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
@@ -153,6 +159,7 @@
               size="small"
               @click="handleSynchroBefore"
             >批量同步库存价格</el-button>-->
+            <el-button type="warning" size="small" @click="handleBatchUpdate">批量修改价格</el-button>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -281,6 +288,12 @@
       @complete="lockDialogVisible=false;_loadList()"
       @close="lockDialogVisible=false"
     />
+    <batchUpdate
+      :is-show="importAllVisible"
+      :spec-data="specData"
+      @complete="importAllVisible=false;getList()"
+      @close="importAllVisible=false"
+    />
     <el-dialog
       :title="`修改${type=='price'?'价格':'库存'}`"
       :visible.sync="isShow"
@@ -314,6 +327,7 @@ import exportTable from './export-table'
 import { mapGetters } from 'vuex'
 import { getTypeTree, exportData } from '@/api/group'
 import lock from './_source/lock'
+import batchUpdate from './_source/batchUpdate'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import {
   getStoreGoodsList,
@@ -323,7 +337,7 @@ import {
   setSynchro
 } from '@/api/store-goods'
 export default {
-  components: { Pagination, exportTable, ElImageViewer, lock },
+  components: { Pagination, exportTable, ElImageViewer, lock, batchUpdate },
   mixins: [mixins],
   data() {
     const _checkFloat = (rule, value, callback) => {
@@ -368,6 +382,7 @@ export default {
       tableData: [],
       multipleSelection: [],
       lockDialogVisible: false,
+      importAllVisible: false,
       defaultProps: {
         children: 'children',
         label: 'name',
@@ -723,6 +738,9 @@ export default {
       }
       this.lockType = lockType
       this.lockDialogVisible = true
+    },
+    handleBatchUpdate() {
+      this.importAllVisible = true
     },
     handleSetPriceStock() {
       this.$refs['editData'].validate(valid => {
