@@ -7,6 +7,7 @@
       <div class="app-main-box" :style="_styleToggle">
         <div class="flx" :style="_styleToggle">
           <m-header>
+            <tags-view slot="tags" />
             <breadcrumb slot="breadcrumb" />
             <div slot="consultation">
               <r-y v-auth:staff.online-ask />
@@ -132,8 +133,9 @@ const {McCopyright} = mCommon
       width: calc(100% - 255px);
       z-index: 1;
       .app-main-model {
-        margin-top: 110px;
+        margin-top: 152px;
         background: #F5F7FA;
+        padding-top: 20px;
         .copyright {
           height: 20px;
           line-height: 20px;

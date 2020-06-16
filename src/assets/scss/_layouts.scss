@@ -119,7 +119,7 @@ aside {
 }
 
 .app-main-model {
-  height: calc(100vh - 110px);
+  height: calc(100vh - 147px);
   overflow-y: scroll;
   padding: 0px 20px 6px 20px;
   .mc-home-model {
@@ -152,9 +152,8 @@ aside {
     padding: 20px;
     background: #fff !important;
     border-radius: 4px;
-    box-shadow: 0 1px 9px 0 rgba(0,0,0,.1);
     margin-bottom: 8px;
-    min-height: calc(100vh - 144px);
+    min-height: calc(100vh - 206px);
   }
 }
 .webkit-scroll {
