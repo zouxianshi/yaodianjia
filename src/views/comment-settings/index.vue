@@ -4,8 +4,8 @@
       <MainSetting />
     </div>
     <transition name="fade-transform" mode="out-in">
-      <keep-alive :include="cachedViews">
-        <router-view :key="key" />
+      <keep-alive>
+        <router-view />
       </keep-alive>
     </transition>
   </section>
@@ -42,7 +42,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" rel="stylesheet/scss">
+<style lang="scss" scoped rel="stylesheet/scss">
 .comment-settings-model {
 }
 </style>

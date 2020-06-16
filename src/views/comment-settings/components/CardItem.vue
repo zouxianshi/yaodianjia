@@ -57,10 +57,6 @@ export default {
           this.$router.push(itemUrl.linkUrl)
         }, 0)
       }
-    },
-    onShare(type) {
-      console.log('我是分享页面---------')
-      this.$refs.previewDialog.open(type)
     }
   }
 }
@@ -103,15 +99,6 @@ export default {
         -webkit-box-orient: vertical;
       }
     }
-  }
-  .share {
-    position: absolute;
-    padding: 5px;
-    box-sizing: content-box;
-    right: 0;
-    top: 0;
-    width: 35px;
-    height: 35px;
   }
 }
 </style>

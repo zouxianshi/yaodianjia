@@ -1,12 +1,18 @@
 <template>
   <div class="depot-wrappe clearfix">
     <div style="margin-top:20px">
-      <a href="#/goods-manage/addition">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">添加标库商品</el-button>
-      </a>
-      <a href="#/goods-manage/import">
-        <el-button type="primary" size="small" icon="el-icon-upload2">商品导入</el-button>
-      </a>
+      <el-button
+        type="primary"
+        size="small"
+        icon="el-icon-setting"
+        @click="isShowSettingDialog = true"
+      >评论设置</el-button>
+      <el-button
+        type="primary"
+        size="small"
+        icon="el-icon-upload2"
+        @click="handleImportComment"
+      >批量导入评论</el-button>
     </div>
 
     <section @keydown.enter="handleQuery">
@@ -165,29 +171,10 @@
             min-width="120"
           />
           <el-table-column prop="modifyTime" align="left" min-width="155" label="修改时间" />
-          <el-table-column
-            prop="address"
-            align="left"
-            fixed="right"
-            label="操作"
-            :min-width="!listQuery.infoFlag?'100':'180'"
-          >
+          <el-table-column prop="address" align="left" fixed="right" label="操作" :min-width="200">
             <template slot-scope="scope">
-              <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
-                <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
-                <el-divider direction="vertical" />
-                <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
-              </template>
-              <template v-if="scope.row.commodityType!==2">
-                <el-divider direction="vertical" />
-                <a @click="handleEdit(scope.row.id)">
-                  <el-button type="text" size="mini">编辑</el-button>
-                </a>
-              </template>
-              <template v-if="!scope.row.specId">
-                <el-divider direction="vertical" />
-                <el-button type="text" size="mini" @click="handleDel(scope.row)">删除</el-button>
-              </template>
+              <el-button type="primary" size="mini" @click="handleViewCommentClick(scope.row)">管理评论</el-button>
+              <el-button type="primary" size="mini" @click="handleAddCommentClick(scope.row)">新增评论</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -202,6 +189,22 @@
     </section>
 
     <el-backtop target=".app-container" :bottom="100" />
+
+    <view-comment-dialog
+      :visible="isShowViewCommentDialog"
+      :commodity-id="commodityId"
+      @closed="isShowViewCommentDialog = false"
+    />
+    <add-comment-dialog
+      :visible="isShowAddCommentDialog"
+      :commodity-id="commodityId"
+      @closed="isShowAddCommentDialog = false"
+    />
+    <setting-dialog
+      :visible="isShowSettingDialog"
+      :commodity-id="commodityId"
+      @closed="isShowSettingDialog = false"
+    />
   </div>
 </template>
 <script>
@@ -210,21 +213,27 @@ import { getGoodsList, delGoods } from '@/api/depot'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
+import ViewCommentDialog from '@/views/comment-settings/components/ViewCommentDialog'
+import AddCommentDialog from '@/views/comment-settings/components/AddCommentDialog'
+import SettingDialog from '@/views/comment-settings/components/SettingDialog'
 
 export default {
   name: 'Manager',
   components: {
     Pagination,
-    ElImageViewer
+    ElImageViewer,
+    ViewCommentDialog,
+    AddCommentDialog,
+    SettingDialog
   },
   mixins: [mixins],
   data() {
     return {
       isShowImg: false,
+      isShowViewCommentDialog: false,
+      isShowAddCommentDialog: false,
+      isShowSettingDialog: false,
       srcList: [],
-      keyword: '',
-      goodStatus: 1,
-      chooseNum: 0,
       status: 0,
       multiselect: [],
       treeData: [],
@@ -237,11 +246,9 @@ export default {
       },
       editId: '',
       isToEdit: false,
-      goodsData: [],
       merCode: '',
       specData: [],
       loading: false,
-      exportLoading: false,
       tableData: [],
       dialogVisible: false,
       importAllVisible: false,
@@ -266,7 +273,8 @@ export default {
         typeId: '', // 商品分类id
         level: ''
       },
-      goodsTypeList: []
+      goodsTypeList: [],
+      commodityId: ''
     }
   },
   created() {
@@ -460,6 +468,17 @@ export default {
     },
     handleSelectionChange(rows) {
       this.multiselect = rows
+    },
+    handleViewCommentClick(rows) {
+      this.commodityId = rows.id
+      this.isShowViewCommentDialog = true
+    },
+    handleAddCommentClick(rows) {
+      this.commodityId = rows.id
+      this.isShowAddCommentDialog = true
+    },
+    handleImportComment() {
+      this.$router.push('/storeSetting/comment-settings/import')
     }
   }
 }
