@@ -11,6 +11,7 @@
           style="width: 80px"
           max="999"
           min="0"
+          @input="handleCountInput"
         />
         <span>条评论</span>
       </el-form-item>
@@ -49,6 +50,7 @@ export default {
   data() {
     return {
       formData: {
+        countLimit: 0,
         imtStatus: '1'
       },
       rules: {
@@ -87,6 +89,13 @@ export default {
           return false
         }
       })
+    },
+    handleCountInput(val) {
+      if (parseInt(val) < 0) {
+        this.$set(this.formData, 'countLimit', 0)
+      } else if (parseInt(val) > 999) {
+        this.$set(this.formData, 'countLimit', 999)
+      }
     }
   }
 }
