@@ -111,6 +111,12 @@
             />元，可参与活动
           </span>
         </el-form-item>
+        <el-form-item>
+          <el-radio-group v-model="form.useType">
+            <el-radio :label="1">商品金额触发</el-radio>
+            <el-radio :label="2">订单金额触发</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
     </div>
     <div class="payment-gift-rules">
@@ -316,8 +322,9 @@ export default {
         // sceneRule: 0,
         sendRule: 1,
         shopRule: 1,
-        useRule: '',
-        giftType: 1
+        useRule: '', // 权益触发金额
+        giftType: 1,
+        useType: 1 // 权益触发方式
       },
       rules: {
         activityDetailName: [
