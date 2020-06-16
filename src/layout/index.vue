@@ -132,7 +132,7 @@ const {McCopyright} = mCommon
       width: calc(100% - 255px);
       z-index: 1;
       .app-main-model {
-        margin-top: 130px;
+        margin-top: 110px;
         background: #F5F7FA;
         .copyright {
           height: 20px;
