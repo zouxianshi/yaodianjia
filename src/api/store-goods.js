@@ -10,6 +10,24 @@ export function getStoreGoodsList(params) {
   })
 }
 
+// 获取门店商品统计数据
+export function getStoreGoodsStatisticsList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/store-spec/statistic`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 获取统计指定商家的商品数据同步门店数量
+export function getStoreGoodsStatisticsSyncNumber(params) {
+  return request({
+    url: `${config.merGoods}/1.0/store-spec/statistic-sync/${params.merCode}`,
+    method: 'get',
+    data: params
+  })
+}
+
 // 锁定价格
 export function setLockPrice(params) {
   return request({

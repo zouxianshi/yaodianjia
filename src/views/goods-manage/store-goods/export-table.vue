@@ -40,7 +40,10 @@
                 />
               </el-tag>
             </el-tooltip>
-            <el-tag v-else :type="currentStatus(scope.row.status) && currentStatus(scope.row.status).type">{{ currentStatus(scope.row.status) && currentStatus(scope.row.status).value }}</el-tag>
+            <el-tag
+              v-else
+              :type="currentStatus(scope.row.status) && currentStatus(scope.row.status).type"
+            >{{ currentStatus(scope.row.status) && currentStatus(scope.row.status).value }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="action" label="操作" width="100">
@@ -73,6 +76,12 @@ export default {
   name: 'ExportTable',
   components: { Pagination },
   mixins: [mixins],
+  props: {
+    isStatistic: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       dialogExportVisible: false,
@@ -120,7 +129,7 @@ export default {
       this.loadingList = true
       getExportRecord({
         merCode: this.merCode,
-        exportType: 'STORESPEC_EXPORT',
+        exportType: this.isStatistic ? 'SPEC_STATISTIC' : 'STORESPEC_EXPORT',
         ...this.listQuery
       })
         .then(res => {
