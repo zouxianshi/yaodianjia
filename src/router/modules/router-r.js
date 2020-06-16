@@ -55,6 +55,41 @@ const router = [
           title: '微信小程序',
           icon: 'internalLink'
         }
+      },
+      {
+        path: 'comment-settings',
+        component: () => import('@/views/comment-settings/index'),
+        name: 'commentSettings',
+        hidden: true,
+        meta: {
+          title: '评论设置',
+          icon: 'commentSettings'
+          // auth: 'set.comment-settings'
+        },
+        children: [
+          {
+            path: 'manager',
+            component: () => import('@/views/comment-settings/manager'),
+            name: 'manager',
+            hidden: true,
+            meta: {
+              title: '评论管理',
+              icon: 'manager'
+              // auth: 'set.comment-settings'
+            }
+          },
+          {
+            path: 'import',
+            component: () => import('@/views/comment-settings/import'),
+            name: 'import',
+            hidden: true,
+            meta: {
+              title: '导入评论',
+              icon: 'import'
+              // auth: 'set.comment-settings'
+            }
+          }
+        ]
       }
     ]
   },
