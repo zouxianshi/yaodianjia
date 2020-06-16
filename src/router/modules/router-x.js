@@ -229,6 +229,26 @@ const router = [
           noCache: false,
           activeMenu: '/marketing/activity'
         }
+      },
+      {
+        path: '/activity/sign-list',
+        component: () => import('@/views/marketings/signGift/signList'),
+        name: 'sign-list',
+        meta: {
+          title: '签到奖励',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/sign-create',
+        component: () => import('@/views/marketings/signGift/signCreate'),
+        name: 'sign-create',
+        meta: {
+          title: '签到奖励',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
       }
     ]
   },
