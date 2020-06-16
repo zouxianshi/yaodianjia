@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="pageLoading" class="add" element-loading-text="加载中">
+  <div v-loading="pageLoading" class="add app-container" element-loading-text="加载中">
     <div class="payment-gift-rules">
       <h4>活动信息</h4>
       <el-form ref="form" :rules="rules" :model="form" label-width="100px" :disabled="disabled">
@@ -162,19 +162,19 @@
           />
         </el-form-item>
         <el-form-item label="参与次数：" prop="countRule" required>
-          <el-tooltip class="item" effect="light" placement="top-start">
-            <i class="el-icon-question" style="position: relative;top:-20px;color:#606266" />
-            <div slot="content" style="width:500px;line-height:24px">
-              <p>为活动的参与的限制次数，如用户多次满足条件将根据此限制来判断给用户推送几次活动权益</p>
-              <p>如设置不限制，那么用户每次消费到达条件后即送对应的优惠券和抽奖机会</p>
-              <p>如设置为限制次数，那么用户参与活动达到条件后可获得权益的总次数，抽奖次数活动以抽奖设置的次数为准</p>
-              <p>例子：设置消费门槛满100元，活动次数设置为2，抽奖次数设置为3，那么用户可最多可参与2次活动，且每次活动可抽奖2次</p>
-            </div>
-          </el-tooltip>
           <el-radio-group v-model="countRuleReal">
             <el-radio :label="0">
               不限次数
               <span class="zkTips">用户每次消费达到条件后即送</span>
+              <el-tooltip class="item" effect="light" placement="top-start">
+                <i class="el-icon-question" style="color:#606266" />
+                <div slot="content" style="width:500px;line-height:24px">
+                  <p>为活动的参与的限制次数，如用户多次满足条件将根据此限制来判断给用户推送几次活动权益</p>
+                  <p>如设置不限制，那么用户每次消费到达条件后即送对应的优惠券和抽奖机会</p>
+                  <p>如设置为限制次数，那么用户参与活动达到条件后可获得权益的总次数，抽奖次数活动以抽奖设置的次数为准</p>
+                  <p>例子：设置消费门槛满100元，活动次数设置为2，抽奖次数设置为3，那么用户可最多可参与2次活动，且每次活动可抽奖2次</p>
+                </div>
+              </el-tooltip>
             </el-radio>
             <el-radio :label="1">
               <span class="amTips">
@@ -725,9 +725,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .add {
-  padding: 10px 61px;
-  height: calc(100vh - 158px);
-  overflow-y: scroll;
+  // padding: 10px 61px;
+  // height: calc(100vh - 158px);
+  // overflow-y: scroll;
   .payment-gift-info,
   .payment-gift-rules {
     // padding: 20px 0;
@@ -749,11 +749,15 @@ export default {
       }
       .el-radio-group {
         display: inline-block;
-        line-height: inherit;
-        /* vertical-align: text-top; */
+        // line-height: inherit;
+        vertical-align: text-top;
         font-size: 0;
         width: 100px;
-        margin-top: 3px;
+        // margin-top: 3px;
+        .el-radio{
+          line-height: 0;
+          margin-bottom: 20px;
+        }
       }
     }
     h4 {
@@ -776,10 +780,6 @@ export default {
       line-height: 14px;
     }
   }
-  // .payment-gift-rules {
-  //   border-top: 1px solid #eee;
-  //   border-bottom: 1px solid #eee;
-  // }
   .submit-box {
     text-align: center;
     margin-top: 20px;
