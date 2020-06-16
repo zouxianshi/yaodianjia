@@ -438,7 +438,11 @@
         >确 定</el-button>
       </span>
     </el-dialog>
-    <not-async-dialog :is-show="isShowNotAsyncDialog" @closed="isShowNotAsyncDialog=false" />
+    <not-async-dialog
+      :is-show="isShowNotAsyncDialog"
+      :content="erpCodes"
+      @closed="isShowNotAsyncDialog=false"
+    />
     <el-backtop target=".app-container" :bottom="100" />
   </div>
 </template>
@@ -550,7 +554,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'name'])
+    ...mapGetters(['merCode', 'name']),
+    erpCodes() {
+      return ((this.statisticData && this.statisticData.erpCodes) || []).join(',')
+    }
   },
   created() {
     this.getList()
