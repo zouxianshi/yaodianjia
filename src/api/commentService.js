@@ -27,13 +27,25 @@ export function addComment(params) {
 }
 
 /**
- * 增加商品评价接口
+ * 增加商品评价设置接口
  * @param {} params 入参
  */
 export function postCommentSetting(params) {
   return request({
     url: `${config.merGoods}/1.0/commodityCommentSet/_set`,
     method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 查询商品评价设置接口
+ * @param {} params 入参
+ */
+export function queryCommentSetting(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodityCommentSet/searchByMerCode/${params.merCode}`,
+    method: 'get',
     data: params
   })
 }
@@ -81,6 +93,18 @@ export function updateActivity(params) {
 export function queryActivity(params) {
   return request({
     url: `${config.merGoods}/1.0/merchantSwitch/searchActivityStatus`,
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 查询商品列表
+ * @param {} params 入参
+ */
+export function queryCommodityList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity-comment/_search`,
     method: 'post',
     data: params
   })

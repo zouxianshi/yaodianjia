@@ -150,13 +150,6 @@
             </template>
           </el-table-column>
           <el-table-column
-            align="left"
-            min-width="120"
-            label="生产企业"
-            show-overflow-tooltip
-            prop="manufacture"
-          />
-          <el-table-column
             prop="mprice"
             align="left"
             label="参考价"
@@ -170,7 +163,7 @@
             :show-overflow-tooltip="true"
             min-width="120"
           />
-          <el-table-column prop="modifyTime" align="left" min-width="155" label="修改时间" />
+          <el-table-column prop="commentCount" align="left" min-width="155" label="评论数量" sortable />
           <el-table-column prop="address" align="left" fixed="right" label="操作" :min-width="200">
             <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="handleViewCommentClick(scope.row)">管理评论</el-button>
@@ -209,7 +202,8 @@
 </template>
 <script>
 import ElImageViewer from '@/components/imageViewer/imageViewer'
-import { getGoodsList, delGoods } from '@/api/depot'
+import { delGoods } from '@/api/depot'
+import { queryCommodityList } from '@/api/commentService'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
@@ -357,7 +351,7 @@ export default {
     },
     getList() {
       this.loading = true
-      getGoodsList(this.listQuery)
+      queryCommodityList(this.listQuery)
         .then(res => {
           const { data, totalCount } = res.data
 

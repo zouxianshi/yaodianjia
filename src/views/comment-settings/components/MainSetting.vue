@@ -1,7 +1,7 @@
 <template>
   <div class="comment-settings-model">
     <card-item
-      img="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+      :img="bannerImage"
       lable="商品评价"
       desc="商品评论开启后用户可在商品后添加评论，同时商户也可以维护评论。"
     >
@@ -20,12 +20,14 @@
 import CardItem from './CardItem'
 import { queryActivity, updateActivity } from '@/api/commentService'
 import { mapGetters } from 'vuex'
+import bannerImage from '@/assets/image/commentSetting/comment-banner-image.png'
 
 export default {
   name: 'MainSetting',
   data() {
     return {
-      isTurnOn: true
+      isTurnOn: true,
+      bannerImage
     }
   },
   props: {},
