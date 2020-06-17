@@ -460,7 +460,9 @@ export default {
                   ...item,
                   checkOrNot: !!item.checkOrNot,
                   giftOrNot: !!item.giftOrNot,
-                  giftList: Array.isArray(item.giftSpecDTO) ? item.giftSpecDTO : [],
+                  giftList: Array.isArray(item.giftSpecDTO)
+                    ? item.giftSpecDTO
+                    : [],
                   discountType: item.discountType,
                   [`discount${item.discountType}`]: item.discount
                 }
@@ -974,7 +976,10 @@ export default {
 }
 .app-container {
   // position: relative;
-  margin-bottom: 80px;
+  // margin-bottom: 80px;
+  .el-form {
+    margin-bottom: 80px;
+  }
   .form-title {
     line-height: 14px;
     font-size: 14px;
