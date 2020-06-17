@@ -97,6 +97,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$emit('changeStatus', this.closeOrOpen)
+      }).catch(() => {
+        this.closeOrOpen = !this.closeOrOpen
       })
     },
     // 开启活动失败时
