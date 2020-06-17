@@ -12,9 +12,9 @@ const router = [
     alwaysShow: true,
     children: [
       {
-        path: 'Depot',
+        path: 'depot',
         component: () => import('@/views/goods-manage/depot/list'),
-        name: 'Depot',
+        name: 'depot',
         meta: {
           title: '商品库',
           noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
