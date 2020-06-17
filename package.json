@@ -40,8 +40,8 @@
   ],
   "dependencies": {
     "@fedor/utils": "^1.0.2",
-    "@hydee/download": "^1.0.5",
     "@merchant/commons": "^2.0.1-beta.40",
+    "@hydee/download": "^1.0.9",
     "@vue/utils": "^1.0.1",
     "area-data": "^5.0.6",
     "axios": "0.18.1",
