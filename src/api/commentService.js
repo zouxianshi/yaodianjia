@@ -27,13 +27,25 @@ export function addComment(params) {
 }
 
 /**
- * 增加商品评价接口
+ * 增加商品评价设置接口
  * @param {} params 入参
  */
 export function postCommentSetting(params) {
   return request({
     url: `${config.merGoods}/1.0/commodityCommentSet/_set`,
     method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 查询商品评价设置接口
+ * @param {} params 入参
+ */
+export function queryCommentSetting(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodityCommentSet/searchByMerCode/${params.merCode}`,
+    method: 'get',
     data: params
   })
 }

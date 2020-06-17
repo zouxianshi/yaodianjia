@@ -94,6 +94,8 @@ export default {
           })
           this.isSubmitLoading = false
           this.$message.success('添加成功！')
+          this.$refs['formData'].resetFields()
+          this.$emit('closed')
         } else {
           console.log('error submit!!')
           this.isSubmitLoading = false

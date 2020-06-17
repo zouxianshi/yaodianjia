@@ -163,7 +163,7 @@
             :show-overflow-tooltip="true"
             min-width="120"
           />
-          <el-table-column prop="commentCount" align="left" min-width="155" label="评论数量" />
+          <el-table-column prop="commentCount" align="left" min-width="155" label="评论数量" sortable />
           <el-table-column prop="address" align="left" fixed="right" label="操作" :min-width="200">
             <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="handleViewCommentClick(scope.row)">管理评论</el-button>
