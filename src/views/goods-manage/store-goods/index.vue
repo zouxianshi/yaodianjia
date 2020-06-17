@@ -641,11 +641,10 @@ export default {
       if (this.listQuery.storeId === '') {
         if (
           this.listQuery.name === '' &&
-          this.listQuery.erpCode === '' &&
-          this.listQuery.barCode === ''
+          this.listQuery.erpCode === ''
         ) {
           this.$message({
-            message: '选择全部门店时，请输入商品名称或商品编码、条形码',
+            message: '选择全部门店时，请输入商品名称或商品编码',
             type: 'warning'
           })
           return
@@ -874,11 +873,10 @@ export default {
       if (this.listQuery.storeId === '') {
         if (
           this.listQuery.name === '' &&
-          this.listQuery.erpCode === '' &&
-          this.listQuery.barCode === ''
+          this.listQuery.erpCode === ''
         ) {
           this.$message({
-            message: '选择全部门店时，请输入商品名称或商品编码、条形码',
+            message: '选择全部门店时，请输入商品名称或商品编码',
             type: 'warning'
           })
           return
