@@ -974,12 +974,7 @@ export default {
 }
 .app-container {
   // position: relative;
-  padding-bottom: 80px;
-    //    -moz-box-sizing: border-box;
-    //  -webkit-box-sizing: border-box;
-    //  -o-box-sizing: border-box;
-    //  -ms-box-sizing: border-box;
-    //  box-sizing: border-box;
+  margin-bottom: 80px;
   .form-title {
     line-height: 14px;
     font-size: 14px;
