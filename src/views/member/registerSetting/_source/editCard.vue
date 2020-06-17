@@ -79,6 +79,9 @@ export default {
               this.memberList = res.data
             }
           }
+
+          this.uploadLoading = false
+
           this.memberList = res.data
           if (this.$route.query.edit === '1') {
             this.memberList.cardBgType = 1
