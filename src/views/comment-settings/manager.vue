@@ -202,7 +202,8 @@
 </template>
 <script>
 import ElImageViewer from '@/components/imageViewer/imageViewer'
-import { getGoodsList, delGoods } from '@/api/depot'
+import { delGoods } from '@/api/depot'
+import { queryCommodityList } from '@/api/commentService'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
@@ -350,7 +351,7 @@ export default {
     },
     getList() {
       this.loading = true
-      getGoodsList(this.listQuery)
+      queryCommodityList(this.listQuery)
         .then(res => {
           const { data, totalCount } = res.data
 

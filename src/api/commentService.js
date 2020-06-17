@@ -85,3 +85,15 @@ export function queryActivity(params) {
     data: params
   })
 }
+
+/**
+ * 查询商品列表
+ * @param {} params 入参
+ */
+export function queryCommodityList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity-comment/_search`,
+    method: 'post',
+    data: params
+  })
+}
