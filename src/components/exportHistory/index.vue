@@ -15,6 +15,7 @@
         <el-table-column prop="modifyTime" align="center" min-width="120" label="完成时间">
           <template slot-scope="scope">
             <span v-if="scope.row.status===2">{{ scope.row.modifyTime }}</span>
+            <span v-if="scope.row.status===3">{{ scope.row.modifyTime }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="status" align="center" min-width="120" label="进度">
