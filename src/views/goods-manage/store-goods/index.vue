@@ -159,7 +159,7 @@
               size="small"
               @click="handleSynchroBefore"
             >批量同步库存价格</el-button>-->
-            <el-button type="warning" size="small" @click="handleBatchUpdate">批量修改价格</el-button>
+            <el-button type="warning" size="small" @click="handleBatchUpdate">批量编辑价格</el-button>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
