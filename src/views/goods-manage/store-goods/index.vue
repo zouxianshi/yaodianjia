@@ -71,7 +71,13 @@
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
-            <el-select v-model="listQuery.drugType" filterable size="small" placeholder="请选择" @change="_loadList">
+            <el-select
+              v-model="listQuery.drugType"
+              filterable
+              size="small"
+              placeholder="请选择"
+              @change="_loadList"
+            >
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
@@ -303,6 +309,20 @@
         >确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="下架提醒"
+      :visible.sync="isShowTipsDialog"
+      append-to-body
+      @closed="handleTipsDialogCancel"
+    >
+      <p>{{ tipsDialogContent }}</p>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="handleTipsDialogCancel">取 消</el-button>
+        <el-button type="primary" size="small" @click="handleTipsDialogDefinite">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-backtop target=".app-container" :bottom="100" />
   </div>
 </template>
@@ -402,7 +422,10 @@ export default {
       type: 'price',
       isShow: false,
       srcList: [],
-      isShowImg: false
+      isShowImg: false,
+      isShowTipsDialog: false,
+      tipsDialogContent: '',
+      cacheSetUpDownParams: {}
     }
   },
   computed: {
@@ -756,6 +779,13 @@ export default {
         }
       })
     },
+    handleTipsDialogCancel() {
+      this.isShowTipsDialog = false
+      this.cacheSetUpDownParams = {}
+    },
+    handleTipsDialogDefinite() {
+      this._SetUpDown({ ...this.cacheSetUpDownParams, isDelete: true })
+    },
     handleUpDown(row) {
       // 单个上下级
       const status = row.status === 0 ? 1 : 0
@@ -776,11 +806,19 @@ export default {
     _SetUpDown(data) {
       // 执行上下架请求
       setUpdateStoreData(data).then(res => {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
-        this._loadList()
+        if (res.code === '22001' || res.code === '22002') {
+          // 校验不通过
+          this.isShowTipsDialog = true
+          this.tipsDialogContent = res.msg
+          this.cacheSetUpDownParams = data
+        } else {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.isShowTipsDialog = false
+          this._loadList()
+        }
       })
     },
     handleBatchUpDown(status) {
