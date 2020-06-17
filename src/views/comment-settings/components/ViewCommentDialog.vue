@@ -14,7 +14,7 @@
 
     <el-table v-loading="loadingList" :data="tableData" height="300">
       <el-table-column prop="createTime" label="序号" width="50">
-        <template slot-scope="scope">{{ scope.$index }}</template>
+        <template slot-scope="scope">{{ scope.$index + 1 }}</template>
       </el-table-column>
       <el-table-column prop="nickName" label="评论用户" width="100" />
       <el-table-column prop="origin" label="评论来源" width="80">
