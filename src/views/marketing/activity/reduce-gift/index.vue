@@ -460,7 +460,7 @@ export default {
                   ...item,
                   checkOrNot: !!item.checkOrNot,
                   giftOrNot: !!item.giftOrNot,
-                  giftList: item.giftSpecDTO ? [item.giftSpecDTO] : [],
+                  giftList: Array.isArray(item.giftSpecDTO) ? item.giftSpecDTO : [],
                   discountType: item.discountType,
                   [`discount${item.discountType}`]: item.discount
                 }
