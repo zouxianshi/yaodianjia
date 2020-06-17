@@ -165,10 +165,10 @@
             </el-radio-group>
           </div>-->
           <div>
-            <template v-if="listQuery.infoFlag">
+            <!-- <template v-if="listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
               <el-button type="danger" size="mini" @click="handleChangeUpdown(0)">批量下架</el-button>
-            </template>
+            </template> -->
             <el-button type size="mini" @click="handleUpGroup">批量修改分组</el-button>
             <el-button type="info" size="mini" @click="handleSettingLimitBuy">批量设置限购</el-button>
             <el-button type="warning" size="mini" @click="handleImportUpdate">导入修改分组</el-button>
@@ -256,13 +256,13 @@
               :min-width="!listQuery.infoFlag?'100':'180'"
             >
               <template slot-scope="scope">
-                <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
+                <!-- <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
                   <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-divider direction="vertical" />
                   <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
-                </template>
+                </template> -->
                 <template v-if="scope.row.commodityType!==2">
-                  <el-divider direction="vertical" />
+                  <!-- <el-divider direction="vertical" /> -->
                   <a @click="handleEdit(scope.row.id)">
                     <el-button type="text" size="mini">编辑</el-button>
                   </a>
