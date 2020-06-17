@@ -92,6 +92,7 @@ export default {
               message: res.msg
             })
           }
+          this.getList()
         })
       }).catch(() => {
         this.$message('取消操作！')

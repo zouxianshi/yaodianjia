@@ -145,7 +145,6 @@ export default {
     },
     // 查询商品
     queryData() {
-      console.log(this.beginendtime, 'zcssssssssssssssssssssssssssssssss')
       if (this.beginendtime.length === 0) {
         this.$message({
           message: '请选择活动时间',
