@@ -123,7 +123,7 @@ export default {
                 _this.$notify({
                   type: 'info',
                   title: '您有新的消息',
-                  message: Chat.symbolToEmoji(message.content.content),
+                  message: message.messageType === 'GoodsMessage' ? '【商品消息】' : message.messageType === 'ImageMessage' ? '【图片消息】' : Chat.symbolToEmoji(message.content.content),
                   duration: 5000,
                   onClick: e => {
                     console.log('click e', e)
