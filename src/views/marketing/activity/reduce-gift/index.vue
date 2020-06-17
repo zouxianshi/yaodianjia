@@ -305,7 +305,7 @@
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!-- 选择赠品组件 -->
-    <store-goods-gifts ref="storeGiftsComponent" @commit="handleGiftList" />
+    <store-goods-gifts ref="storeGiftsComponent" :limit-max="5" @commit="handleGiftList" />
   </div>
 </template>
 
