@@ -36,55 +36,104 @@
         </el-form-item>
         <el-form-item>
           <el-checkbox v-model="hasActive">相关活动</el-checkbox>
-          <el-button type="primary" style="margin-left: 24px">选择活动</el-button>
-          <mSelectedCoupon
-            v-show="selectedCoupons.length>0"
-            ref="selectedCouponView"
+          <el-button type="primary" style="margin-left: 24px" @click="selectActivity">选择活动</el-button>
+          <mSelectedActivity
+            v-show="selectedActivity.length>0"
+            ref="selectedActivityView"
             style="margin-top: 24px"
-            @onDel="onGetSelectCoupon"
+            @onDel="onGetSelectActivity"
           />
         </el-form-item>
       </el-form>
       <div style="margin-top: 50px;text-align: center;">
-        <el-button type="primary" size="mini">保存</el-button>
+        <el-button type="primary" size="mini" @click="submitData">保存</el-button>
       </div>
     </div>
     <!-- 选择优惠券弹窗 -->
     <mCouponModel ref="checkCoupons" :timevalue="activeTimer" state="1" @confincheck="onGetSelectCoupon" />
+    <!-- 选择活动弹窗 -->
+    <mPopSelectActivity ref="selectActivity" :beginendtime="activeTimerFomart" @onSelect="onGetSelectActivity" />
   </div>
 </template>
 <script>
 import mCouponModel from './_source/coupon-model'
 import mSelectedCoupon from './_source/SelectedCoupon'
+// , normalActivityAddedCouponList, normalAddedActivityList
+import { ActivityDetail } from '@/api/coupon'
+import mSelectedActivity from './_source/SelectedActivity'
+import mPopSelectActivity from '@/components/Marketings/popSelectActivity'
+import { formatDate } from '@/utils/timer'
 export default {
   components: {
-    mCouponModel, mSelectedCoupon
+    mCouponModel, mSelectedCoupon, mPopSelectActivity, mSelectedActivity
   },
   data() {
     return {
+      updataParams: {},
       activeTimer: [], // 活动有效时间
       hasCoupon: false, // 是否赠送优惠券
       selectedCoupons: [], // 已选择的优惠券
       hasHb: false,
       hbNum: 0,
       hasActive: false, // 是否有相关活动
-      selectActive: []
+      selectActive: [],
+      selectedActivity: [] // 已选择活动
+    }
+  },
+  created() {
+    if (this.$route.query.id) {
+      this.tailActive(this.$route.query.id)
+    }
+    // tailActive(id)
+  },
+  computed: {
+    activeTimerFomart() {
+      var timer = [...this.activeTimer]
+      timer.map(item => {
+        formatDate(item)
+        console.log(item)
+      })
+      return timer
     }
   },
   methods: {
     // 选择优惠券(打开弹窗)
     selectCoupon() {
-      if (this.activeTimer.length > 0) {
-        this.$refs.checkCoupons.handleGetlist()
-        this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
-      } else {
-        this.$message.error('请先选择活动时间')
-      }
+      this.$refs.checkCoupons.handleGetlist()
+      this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
     },
     // 获取已选择的优惠券
     onGetSelectCoupon(selectedCoupons) {
       this.selectedCoupons = selectedCoupons
       this.$refs.selectedCouponView.showPage(selectedCoupons, 1)
+    },
+    // 选择活动
+    selectActivity() {
+      this.$refs.selectActivity.show(this.selectedActivity)
+    },
+    // 获取已经选择活动
+    onGetSelectActivity(selectedActivity) {
+      this.selectedActivity = selectedActivity
+      this.$refs.selectedActivityView.showPage(
+        selectedActivity
+      )
+    },
+    // 查询单个活动详情
+    tailActive(id) {
+      const params = { id: id }
+      ActivityDetail(params).then(res => {
+        console.log(res)
+        if (res.code === '10000') {
+          const data = res.data
+          this.updataParams = data
+          this.activeTimer = [data.beginTime, data.endTime]
+          this.hbNum = data.hb
+        }
+      })
+    },
+    // 提交活动数据
+    submitData() {
+      console.log(this.selectedCoupons[0].giftNum)
     }
   }
 }

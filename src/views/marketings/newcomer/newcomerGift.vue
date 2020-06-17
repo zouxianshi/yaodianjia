@@ -1,7 +1,7 @@
 <template>
   <div class="newcommer-modal app-container">
     <div class="nav-tool">
-      <el-button type="primary" :disabled="tableData.length>=2" @click="$router.push('/activity/newcomer-create')">新增新人礼包活动</el-button>
+      <el-button type="primary" :disabled="tableData.length>=3" @click="$router.push('/activity/newcomer-create')">新增新人礼包活动</el-button>
     </div>
     <el-table v-loading="loading" height="calc(100vh - 300px)" :data="tableData" style="width: 100%">
       <el-table-column prop="id" label="活动编号" width="180" />
@@ -22,8 +22,8 @@
       </el-table-column>
       <el-table-column label="操作" width="220">
         <template slot-scope="scope">
-          <el-button size="mini">查看</el-button>
-          <el-button v-if="scope.row.state===2" size="mini">编辑</el-button>
+          <el-button size="mini" @click="toDetail(scope.row, 'ck')">查看</el-button>
+          <el-button v-if="scope.row.state===2" size="mini" @click="toDetail(scope.row, 'ed')">编辑</el-button>
           <el-button v-if="scope.row.status===1" size="mini" @click="setActivity(scope.row, 2)">失效</el-button>
           <el-button v-if="scope.row.status===0" size="mini" @click="setActivity(scope.row, 1)">删除</el-button>
         </template>
@@ -79,9 +79,27 @@ export default {
         id: rows.id,
         state: state
       }
-      setNormalActivity(params).then(res => {
-        console.log(res)
+      const str = state === 1 ? '删除' : '失效'
+      this.$confirm(`是否${str}此活动？`, '确认提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        setNormalActivity(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              type: 'success',
+              message: res.msg
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message('取消操作！')
       })
+    },
+    // 查看或编辑活动
+    toDetail(rows, type) {
+      this.$router.push(`/activity/newcomer-create?id=${rows.id}&type=${type}`)
     }
   }
 }

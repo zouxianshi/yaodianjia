@@ -80,6 +80,7 @@
 </template>
 <script>
 import { normalAddActivityList } from '@/api/coupon'
+import { formatDate } from '@/utils/timer'
 export default {
   props: {
     // 活动开始时间
@@ -144,15 +145,14 @@ export default {
     },
     // 查询商品
     queryData() {
+      console.log(this.beginendtime, 'zcssssssssssssssssssssssssssssssss')
       if (this.beginendtime.length === 0) {
         this.$message({
           message: '请选择活动时间',
           type: 'warning'
         })
       } else {
-        this.searchParams.beginTime = this.beginendtime[0]
-          .replace(/T/g, ' ')
-          .replace(/Z/g, '')
+        this.searchParams.beginTime = formatDate(this.beginendtime[0])
         this.tableLoading = true
         var params = Object.assign({}, this.pageInfo, this.searchParams)
         normalAddActivityList(params).then(res => {
