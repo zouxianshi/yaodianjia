@@ -601,7 +601,8 @@ export default {
 </script>
 <style lang='scss' scoped>
 .app-container {
-  padding-bottom: 80px;
+  // padding-bottom: 80px;
+  margin-bottom: 80px;
   .form-title {
     line-height: 14px;
     font-size: 14px;
