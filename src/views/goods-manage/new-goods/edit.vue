@@ -1787,6 +1787,7 @@ export default {
 }
 .edit-wrapper {
   color: #333;
+  margin-bottom: 80px;
   padding-bottom: 50px;
 
   .img-tips {
