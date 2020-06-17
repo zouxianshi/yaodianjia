@@ -18,7 +18,7 @@
       <!-- <el-form-item label="是否支持评论上传图片" prop="imtStatus">
         <el-radio v-model="formData.imtStatus" label="1">是</el-radio>
         <el-radio v-model="formData.imtStatus" label="0">否</el-radio>
-      </el-form-item> -->
+      </el-form-item>-->
     </el-form>
     <div class="bottom-bar">
       <el-button @click="$emit('closed')">取消</el-button>
@@ -31,7 +31,7 @@
 // 设置弹框
 import mixins from '@/utils/mixin'
 import { mapGetters } from 'vuex'
-import { postCommentSetting } from '@/api/commentService'
+import { postCommentSetting, queryCommentSetting } from '@/api/commentService'
 
 export default {
   name: 'SettingDialog',
@@ -65,11 +65,27 @@ export default {
           // }
         ]
       },
-      isSubmitLoading: false
+      isSubmitLoading: false,
+      id: null
     }
   },
   computed: {
     ...mapGetters(['merCode', 'token'])
+  },
+  watch: {
+    async visible(val) {
+      if (val) {
+        const res = await queryCommentSetting({ merCode: this.merCode })
+        this.$set(
+          this.formData,
+          'countLimit',
+          res.data ? res.data.countLimit : 1
+        )
+        if (res.data && res.data.id) {
+          this.id = res.data.id
+        }
+      }
+    }
   },
   methods: {
     onSubmit() {
@@ -79,10 +95,12 @@ export default {
           this.isSubmitLoading = true
           await postCommentSetting({
             ...formData,
-            merCode
+            merCode,
+            ...(this.id !== null ? { id: this.id } : {})
           })
           this.isSubmitLoading = false
           this.$message.success('修改成功！')
+          this.$emit('closed')
         } else {
           console.log('error submit!!')
           this.isSubmitLoading = false

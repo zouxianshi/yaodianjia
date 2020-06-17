@@ -13,7 +13,9 @@
     </div>
 
     <el-table v-loading="loadingList" :data="tableData" height="300">
-      <el-table-column prop="createTime" label="序号" width="50" />
+      <el-table-column prop="createTime" label="序号" width="50">
+        <template slot-scope="scope">{{ scope.$index }}</template>
+      </el-table-column>
       <el-table-column prop="nickName" label="评论用户" width="100" />
       <el-table-column prop="origin" label="评论来源" width="80">
         <template slot-scope="scope">
@@ -76,7 +78,9 @@ export default {
   },
   watch: {
     visible(val) {
-      this._loadList()
+      if (val) {
+        this._loadList()
+      }
     }
   },
   methods: {
