@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data.userId" :class="`user-comp ${selected?'selected':''}`" @click="handleClick">
+  <div v-if="nickName" :class="`user-comp ${selected?'selected':''}`" @click="handleClick">
     <el-badge :max="99" :hidden="data.unreadMessageCount<=0" :value="data.unreadMessageCount" class="item">
       <div class="user-avatar">
         <el-image fit="cover" :src="avatar" />
