@@ -132,7 +132,7 @@
         <div v-if="listQuery.status === 4" class="search-form">
           <div class="search-item" style="padding-left:75px;">
             <p class="tips-txt">
-              商品库总商品：{{ statisticData && statisticData.totalNum }} 未同步到的商品：
+              商品库(自营)商品数：{{ statisticData && statisticData.totalNum }} 未同步到的商品：
               <el-button
                 class="hover-underline"
                 type="text"
