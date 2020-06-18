@@ -52,7 +52,7 @@
           placeholder="解释说明，最多20字"
         />
       </el-form-item>
-      <el-form-item label="奖品图片" prop="cover">
+      <el-form-item label="封面上传" prop="cover">
         <el-upload
           v-loading="uploadLoading"
           class="avatar-uploader x-uploader"
