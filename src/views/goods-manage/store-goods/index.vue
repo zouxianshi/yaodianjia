@@ -115,6 +115,18 @@
               <el-option v-if="listQuery.status!==3" label="未锁定" :value="0" />
             </el-select>
           </div>
+          <div class="search-item">
+            <span class="label-name">橱窗图</span>
+            <el-select
+              v-model="listQuery.hasMainPic"
+              placeholder="选择橱窗图"
+              size="small"
+              @change="_loadList"
+            >
+              <el-option label="有" :value="true" />
+              <el-option label="无" :value="false" />
+            </el-select>
+          </div>
         </div>
         <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
@@ -443,6 +455,20 @@
       :content="erpCodes"
       @closed="isShowNotAsyncDialog=false"
     />
+
+    <el-dialog
+      title="下架提醒"
+      :visible.sync="isShowTipsDialog"
+      append-to-body
+      @closed="handleTipsDialogCancel"
+    >
+      <p style="line-height: 1.5; text-align: center;" v-html="tipsDialogContent" />
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="handleTipsDialogCancel">取 消</el-button>
+        <el-button type="primary" size="small" @click="handleTipsDialogDefinite">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-backtop target=".app-container" :bottom="100" />
   </div>
 </template>
@@ -550,7 +576,10 @@ export default {
       srcList: [],
       isShowImg: false,
       statisticData: null,
-      isShowNotAsyncDialog: false
+      isShowNotAsyncDialog: false,
+      isShowTipsDialog: false,
+      tipsDialogContent: '',
+      cacheSetUpDownParams: {}
     }
   },
   computed: {
@@ -931,6 +960,13 @@ export default {
         }
       })
     },
+    handleTipsDialogCancel() {
+      this.isShowTipsDialog = false
+      this.cacheSetUpDownParams = {}
+    },
+    handleTipsDialogDefinite() {
+      this._SetUpDown({ ...this.cacheSetUpDownParams, isDelete: true })
+    },
     handleUpDown(row) {
       // 单个上下级
       const status = row.status === 0 ? 1 : 0
@@ -951,11 +987,28 @@ export default {
     _SetUpDown(data) {
       // 执行上下架请求
       setUpdateStoreData(data).then(res => {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
-        this._loadList()
+        if (
+          res.code === '10000' &&
+          res.data &&
+          (res.data.code === 1 || res.data.code === 2)
+        ) {
+          // 校验不通过
+          this.isShowTipsDialog = true
+          this.tipsDialogContent =
+            res.data.code === 1
+              ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？'
+              : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(
+                res.data.erpList || []
+              ).join('、')}</p>`
+          this.cacheSetUpDownParams = data
+        } else {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.isShowTipsDialog = false
+          this._loadList()
+        }
       })
     },
     handleBatchUpDown(status) {
