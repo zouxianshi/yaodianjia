@@ -31,8 +31,9 @@ export function exportData(params) {
 // 导出商品--新
 export function exportDataNew(params) {
   return request({
-    url: `${config.merchandise}/1.0/ds/op/file/template/product/export?ids=${params.ids}`,
-    method: 'get',
+    url: `${config.merchandise}/1.0/ds/op/file/template/product/export`,
+    method: 'post',
+    data: params,
     isExport: true,
     responseType: 'blob'
   })
