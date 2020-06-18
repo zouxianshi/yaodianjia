@@ -217,8 +217,10 @@ export default {
     },
     scrollToBottom: function() {
       this.$nextTick(() => {
-        var container = this.$el.querySelector('#chat-detail-list')
-        container.scrollTop = container.scrollHeight
+        setTimeout(() => {
+          var container = this.$el.querySelector('#chat-detail-list')
+          container.scrollTop = container.scrollHeight
+        }, 200)
       })
     },
     scrolltoTop: function() {
