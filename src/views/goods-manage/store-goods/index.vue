@@ -184,6 +184,7 @@
               size="small"
               @click="handleSynchroBefore"
             >批量同步库存价格</el-button>-->
+            <el-button type="warning" size="small" @click="handleBatchUpdate">批量编辑价格</el-button>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -428,6 +429,12 @@
       @complete="lockDialogVisible=false;_loadList()"
       @close="lockDialogVisible=false"
     />
+    <batchUpdate
+      :is-show="importAllVisible"
+      :spec-data="specData"
+      @complete="importAllVisible=false;getList()"
+      @close="importAllVisible=false"
+    />
     <el-dialog
       :title="`修改${type=='price'?'价格':'库存'}`"
       :visible.sync="isShow"
@@ -481,6 +488,7 @@ import { mapGetters } from 'vuex'
 import { getTypeTree, exportData, exportStatisticData } from '@/api/group'
 import lock from './_source/lock'
 import notAsyncDialog from './_source/not-async-dialog'
+import batchUpdate from './_source/batchUpdate'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import {
   getStoreGoodsList,
@@ -493,7 +501,7 @@ import {
 } from '@/api/store-goods'
 
 export default {
-  components: { Pagination, exportTable, ElImageViewer, lock, notAsyncDialog },
+  components: { Pagination, exportTable, ElImageViewer, lock, notAsyncDialog, batchUpdate },
   mixins: [mixins],
   data() {
     const _checkFloat = (rule, value, callback) => {
@@ -538,6 +546,7 @@ export default {
       tableData: [],
       multipleSelection: [],
       lockDialogVisible: false,
+      importAllVisible: false,
       defaultProps: {
         children: 'children',
         label: 'name',
@@ -927,6 +936,9 @@ export default {
       }
       this.lockType = lockType
       this.lockDialogVisible = true
+    },
+    handleBatchUpdate() {
+      this.importAllVisible = true
     },
     handleSetPriceStock() {
       this.$refs['editData'].validate(valid => {

@@ -265,23 +265,20 @@
               align="left"
               fixed="right"
               label="操作"
-              :min-width="!listQuery.infoFlag?'100':'180'"
+              :min-width="!listQuery.infoFlag?'120':'200'"
             >
               <template slot-scope="scope">
                 <!-- <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
-                  <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
-                  <el-divider direction="vertical" />
-                  <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
+                  <el-button type="primary" size="mini" plain @click="handleUpDown(1,scope.row)">上架</el-button>
+                  <el-button type="warning" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
                 </template> -->
                 <template v-if="scope.row.commodityType!==2">
-                  <!-- <el-divider direction="vertical" /> -->
                   <a @click="handleEdit(scope.row.id)">
-                    <el-button type="text" size="mini">编辑</el-button>
+                    <el-button type="success" plain size="mini">编辑</el-button>
                   </a>
                 </template>
                 <template v-if="!scope.row.specId">
-                  <el-divider direction="vertical" />
-                  <el-button type="text" size="mini" @click="handleDel(scope.row)">删除</el-button>
+                  <el-button type="danger" plain size="mini" @click="handleDel(scope.row)">删除</el-button>
                 </template>
               </template>
             </el-table-column>
