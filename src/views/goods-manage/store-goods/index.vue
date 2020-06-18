@@ -556,7 +556,9 @@ export default {
   computed: {
     ...mapGetters(['merCode', 'name']),
     erpCodes() {
-      return ((this.statisticData && this.statisticData.erpCodes) || []).join(',')
+      return ((this.statisticData && this.statisticData.erpCodes) || []).join(
+        ','
+      )
     }
   },
   created() {
@@ -612,15 +614,13 @@ export default {
     async _loadList() {
       const { sortMethod, sortType } = this.listQuery
 
-      if (this.listQuery.storeId === '') {
-        if (
-          this.listQuery.name === '' &&
-          this.listQuery.erpCode === ''
-        ) {
+      if (this.listQuery.storeId === '' && this.listQuery.status !== 4) {
+        if (this.listQuery.erpOrName === '') {
           this.$message({
             message: '选择全部门店时，请输入商品名称或商品编码',
             type: 'warning'
           })
+          this.tableData = []
           return
         }
       }
@@ -631,7 +631,6 @@ export default {
         if (this.listQuery.status === 4) {
           res = await getStoreGoodsStatisticsList({
             ...this.listQuery,
-            erpCodeOrName: this.listQuery.erpOrName,
             ...(sortMethod ? { sortMethod } : {}),
             ...(sortType ? { sortType } : {})
           })
@@ -845,10 +844,7 @@ export default {
     // 处理商品数据导出
     async handleExport() {
       if (this.listQuery.storeId === '') {
-        if (
-          this.listQuery.name === '' &&
-          this.listQuery.erpCode === ''
-        ) {
+        if (this.listQuery.name === '' && this.listQuery.erpCode === '') {
           this.$message({
             message: '选择全部门店时，请输入商品名称或商品编码',
             type: 'warning'
