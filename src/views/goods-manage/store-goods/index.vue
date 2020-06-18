@@ -114,6 +114,18 @@
               <el-option v-if="listQuery.status!==3" label="未锁定" :value="0" />
             </el-select>
           </div>
+          <div class="search-item">
+            <span class="label-name">橱窗图</span>
+            <el-select
+              v-model="listQuery.hasMainPic"
+              placeholder="选择橱窗图"
+              size="small"
+              @change="handleQuery"
+            >
+              <el-option label="是" :value="true" />
+              <el-option label="否" :value="false" />
+            </el-select>
+          </div>
         </div>
         <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
