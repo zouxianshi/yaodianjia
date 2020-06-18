@@ -191,7 +191,7 @@
     <add-comment-dialog
       :visible="isShowAddCommentDialog"
       :commodity-id="commodityId"
-      @closed="isShowAddCommentDialog = false"
+      @closed="handleAddCommentDialogClosed"
     />
     <setting-dialog
       :visible="isShowSettingDialog"
@@ -200,7 +200,6 @@
     />
     <import-dialog
       :visible="isShowImportDialog"
-      :commodity-id="commodityId"
       @closed="isShowImportDialog = false"
     />
   </div>
@@ -481,6 +480,10 @@ export default {
     },
     handleImportComment() {
       this.isShowImportDialog = true
+    },
+    handleAddCommentDialogClosed() {
+      this.isShowAddCommentDialog = false
+      this.getList()
     }
   }
 }
