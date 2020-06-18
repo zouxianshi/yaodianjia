@@ -264,7 +264,7 @@
                     <el-button type="success" plain size="mini">编辑</el-button>
                   </a>
                 </template>
-                <template>
+                <template v-if="!scope.row.specId">
                   <el-button type="danger" plain size="mini" @click="handleDel(scope.row)">删除</el-button>
                 </template>
               </template>
