@@ -123,8 +123,8 @@
               size="small"
               @change="handleQuery"
             >
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
+              <el-option label="有" :value="true" />
+              <el-option label="无" :value="false" />
             </el-select>
           </div>
         </div>
