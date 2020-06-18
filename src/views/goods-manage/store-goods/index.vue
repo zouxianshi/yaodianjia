@@ -469,7 +469,7 @@
       append-to-body
       @closed="handleTipsDialogCancel"
     >
-      <p style="line-height: 1.5;" v-html="tipsDialogContent" />
+      <p style="line-height: 1.5; text-align: center;" v-html="tipsDialogContent" />
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="handleTipsDialogCancel">取 消</el-button>
         <el-button type="primary" size="small" @click="handleTipsDialogDefinite">确 定</el-button>
