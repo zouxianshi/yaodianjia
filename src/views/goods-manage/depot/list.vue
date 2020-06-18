@@ -695,12 +695,12 @@ export default {
       // 修改分组
       this.goodsData = []
       this.multiselect.map(res => {
-        this.goodsData.push(res.id)
+        this.goodsData.push(res.specId)
       })
-      const param = { ids: this.goodsData, merCode: this.merCode }
+      // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew(param)
+      exportDataNew({ ...this.listQuery, skuIds: this.goodsData, hasLimit: true })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {
@@ -709,7 +709,7 @@ export default {
               type: 'error'
             })
           } else {
-            download.blob(res)
+            download.blob(res, '导出结果文件', 'xlsx')
             this.$message({
               message: '数据导出成功',
               type: 'success'
