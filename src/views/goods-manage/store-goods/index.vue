@@ -121,7 +121,7 @@
               v-model="listQuery.hasMainPic"
               placeholder="选择橱窗图"
               size="small"
-              @change="handleQuery"
+              @change="_loadList"
             >
               <el-option label="有" :value="true" />
               <el-option label="无" :value="false" />
