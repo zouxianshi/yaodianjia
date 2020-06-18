@@ -50,7 +50,7 @@ export default {
   data() {
     return {
       formData: {
-        countLimit: 0,
+        countLimit: '',
         imtStatus: '1'
       },
       rules: {
@@ -79,7 +79,7 @@ export default {
         this.$set(
           this.formData,
           'countLimit',
-          res.data ? res.data.countLimit : 1
+          res.data ? res.data.countLimit : ''
         )
         if (res.data && res.data.id) {
           this.id = res.data.id
