@@ -696,7 +696,7 @@ export default {
       // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew({ ...this.listQuery, skuIds: this.goodsData })
+      exportDataNew({ ...this.listQuery, skuIds: this.goodsData, hasLimit: true })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {
