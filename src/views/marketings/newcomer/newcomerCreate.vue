@@ -13,8 +13,9 @@
         type="datetimerange"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-        :default-time="['12:00:00']"
+        :default-time="['00:00:00', '20:59:59']"
         :disabled="isDisabled"
+        :picker-options="pickerOptions"
         @change="changeTimes"
       />
     </div>
@@ -67,7 +68,7 @@ import { ActivityDetail, normalActivityAddedCouponList, normalAddedActivityList 
 import mSelectedActivity from './_source/SelectedActivity'
 import mPopSelectActivity from '@/components/Marketings/popSelectActivity'
 import { formatDate } from '@/utils/timer'
-import { createNewGiftBag, updateGiftBag } from '@/api/marketing'
+import { createNewGiftBag, updateGiftBag, newUserGiftList } from '@/api/marketing'
 export default {
   components: {
     mCouponModel, mSelectedCoupon, mPopSelectActivity, mSelectedActivity
@@ -82,13 +83,17 @@ export default {
       hbNum: 0,
       hasActive: false, // 是否有相关活动
       selectActive: [],
-      selectedActivity: [] // 已选择活动
+      selectedActivity: [], // 已选择活动
+      hasSelectTime: []
     }
   },
   created() {
     if (this.$route.query.id) {
       this.tailActive(this.$route.query.id)
     }
+    newUserGiftList().then(res => {
+      this.hasSelectTime = res.data || []
+    })
   },
   computed: {
     activeTimerFomart() {
@@ -100,6 +105,21 @@ export default {
     },
     isDisabled() {
       return this.$route.query.type === 'ck'
+    },
+    pickerOptions() {
+      var _self = this
+      var bgTime = null; var endTime = null
+      if (_self.hasSelectTime.length > 0) {
+        bgTime = new Date(_self.hasSelectTime[0].beginTime).getTime() - 864000
+        endTime = new Date(_self.hasSelectTime[0].endTime).getTime() + 864000
+      }
+      return {
+        disabledDate(time) {
+          const tims = time.getTime()
+
+          return tims < new Date(new Date().getTime() - 86400000) || (endTime && (tims > bgTime && tims < endTime))
+        }
+      }
     }
   },
   methods: {

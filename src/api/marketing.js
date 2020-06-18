@@ -96,6 +96,14 @@ export function delAssembleActivity(params) {
 // 新人礼包 && 签到奖励相关接口
 
 // 创建新人礼包/
+export function newUserGiftList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/newUserGiftList`,
+    method: 'get'
+  })
+}
+
+// 创建新人礼包/
 export function createNewGiftBag(params) {
   return request({
     url: `${config.merGoods}/1.0/market/createNewGiftBag`,
