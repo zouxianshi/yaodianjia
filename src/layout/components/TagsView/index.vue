@@ -377,8 +377,7 @@ export default {
     right: 61px;
     top: 0;
     bottom: 0;
-    -webkit-box-shadow: 0px 0 3px 2px rgba(100, 100, 100, 0.1) inset;
-    box-shadow: 0px 0 3px 2px rgba(100, 100, 100, 0.1) inset;
+    background: #fff;
     .scroll-body {
       height: calc(100% - 1px);
       display: inline-block;

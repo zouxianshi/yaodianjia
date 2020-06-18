@@ -975,6 +975,7 @@ export default {
   white-space: nowrap;
 }
 .app-container {
+  background: #fff;
   // position: relative;
   // margin-bottom: 80px;
   .el-form {

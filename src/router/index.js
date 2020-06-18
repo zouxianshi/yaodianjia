@@ -18,7 +18,7 @@ import channel from './modules/channel'
 import auth from './modules/auth'
 
 import mall from './modules/mall'
-import { mUsersModule } from '@merchant/commons'
+import { mUsersModule, mHomeModule } from '@merchant/commons'
 
 // merge component layout module
 const userModule = _.assign(mUsersModule, {
@@ -65,13 +65,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/home',
     children: [
-      {
-        path: 'home',
-        component: () => import('@/views/home/index'),
-        name: 'home',
-        hidden: true,
-        meta: { title: '首页', icon: 'home', affix: true }
-      }
+      mHomeModule
     ]
   },
   userModule

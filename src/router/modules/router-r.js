@@ -6,8 +6,7 @@ const router = [
     redirect: '/chainSetting',
     meta: {
       title: '设置中心',
-      icon: 'goods',
-      auth: 'set'
+      icon: 'goods'
     },
     children: [
       {
@@ -17,8 +16,7 @@ const router = [
         hidden: true,
         meta: {
           title: '连锁设置',
-          icon: 'chainSetting',
-          auth: 'set.merchant-set'
+          icon: 'chainSetting'
         }
       },
       {
@@ -26,7 +24,7 @@ const router = [
         component: () => import('@/views/storeSetting/setting'),
         name: 'setting',
         hidden: true,
-        meta: { title: '上线门店', icon: 'storeSetting', auth: 'set.store-up' }
+        meta: { title: '上线门店', icon: 'storeSetting' }
       },
       {
         path: 'deliverySetting',
@@ -35,8 +33,7 @@ const router = [
         hidden: true,
         meta: {
           title: '门店配送',
-          icon: 'storeSetting',
-          auth: 'set.store-deliver'
+          icon: 'storeSetting'
         }
       },
       {
@@ -46,8 +43,7 @@ const router = [
         hidden: true,
         meta: {
           title: '内部链接',
-          icon: 'internalLink',
-          auth: 'set.inner-link'
+          icon: 'internalLink'
         }
       },
       {
@@ -57,8 +53,7 @@ const router = [
         hidden: true,
         meta: {
           title: '微信小程序',
-          icon: 'internalLink',
-          auth: 'set.inner-link'
+          icon: 'internalLink'
         }
       },
       {

@@ -1,40 +1,42 @@
 <template>
-  <div v-loading="isLoading" class="weapp-container">
-    <div class="panel">
-      <div class="left">
-        <div class="title">小程序码物料 :</div>
-        <img class="_image" :src="QR_CODE">
+  <div class="app-container">
+    <div v-loading="isLoading" class="weapp-container">
+      <div class="panel">
+        <div class="left">
+          <div class="title">小程序码物料 :</div>
+          <img class="_image" :src="QR_CODE">
+        </div>
+        <div class="right">
+          <a class="download" :href="QR_CODE" download>下载小程序二维码</a>
+        </div>
       </div>
-      <div class="right">
-        <a class="download" :href="QR_CODE" download>下载小程序二维码</a>
+      <div class="panel">
+        <div class="left">
+          <div class="title">小程序appid :</div>
+          <div class="content">{{ APP_ID }}</div>
+        </div>
+        <div class="right">
+          <el-button
+            type="primary"
+            class="appid"
+            :data-clipboard-text="APP_ID"
+            @click="onCopyHandler('.appid')"
+          >一键复制</el-button>
+        </div>
       </div>
-    </div>
-    <div class="panel">
-      <div class="left">
-        <div class="title">小程序appid :</div>
-        <div class="content">{{ APP_ID }}</div>
-      </div>
-      <div class="right">
-        <el-button
-          type="primary"
-          class="appid"
-          :data-clipboard-text="APP_ID"
-          @click="onCopyHandler('.appid')"
-        >一键复制</el-button>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="left">
-        <div class="title">参考路径 :</div>
-        <div class="content">{{ PAGE_LINK }}</div>
-      </div>
-      <div class="right">
-        <el-button
-          type="primary"
-          class="pagelink"
-          :data-clipboard-text="PAGE_LINK"
-          @click="onCopyHandler('.pagelink')"
-        >一键复制</el-button>
+      <div class="panel">
+        <div class="left">
+          <div class="title">参考路径 :</div>
+          <div class="content">{{ PAGE_LINK }}</div>
+        </div>
+        <div class="right">
+          <el-button
+            type="primary"
+            class="pagelink"
+            :data-clipboard-text="PAGE_LINK"
+            @click="onCopyHandler('.pagelink')"
+          >一键复制</el-button>
+        </div>
       </div>
     </div>
   </div>

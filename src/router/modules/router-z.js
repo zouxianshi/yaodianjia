@@ -6,9 +6,9 @@ const router = [
     redirect: '/goods-manage/depot',
     name: 'goods-manage',
     meta: {
-      title: '商品中心',
-      icon: 'goods',
-      auth: 'commodity'
+      auth: 'commodity',
+      title: '商品管理',
+      icon: 'goods'
     },
     alwaysShow: true,
     children: [
@@ -18,7 +18,6 @@ const router = [
         name: 'depot',
         meta: {
           title: '商品库',
-          auth: 'commodity.commodity-lib',
           noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
@@ -131,7 +130,6 @@ const router = [
         component: () => import('@/views/goods-manage/new-goods/record'),
         name: 'GoodsRecord',
         meta: {
-          auth: 'commodity.commodity-new-record',
           title: '新品申请记录',
           noCache: true
         },
@@ -166,7 +164,6 @@ const router = [
         component: () => import('@/views/goods-manage/group/list'),
         name: 'group',
         meta: {
-          auth: 'commodity.commodity-group',
           title: '自定义分组',
           noCache: true
         }
@@ -185,7 +182,6 @@ const router = [
         component: () => import('@/views/goods-manage/examine/list'),
         name: 'examine',
         meta: {
-          auth: 'commodity.commodity-check',
           title: '新品审核',
           noCache: true
         }
@@ -203,7 +199,6 @@ const router = [
         component: () => import('@/views/goods-manage/store-goods'),
         name: 'storeGoods',
         meta: {
-          auth: 'commodity.commodity-store',
           title: '门店商品管理',
           noCache: true
         }
@@ -212,7 +207,6 @@ const router = [
         component: () => import('@/views/goods-manage/constitute-goods/list'),
         name: 'constituteGoods-list',
         meta: {
-          auth: 'commodity.commodity-combine',
           title: '组合商品',
           noCache: true
         }
