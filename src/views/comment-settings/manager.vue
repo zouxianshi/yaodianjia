@@ -198,6 +198,11 @@
       :commodity-id="commodityId"
       @closed="isShowSettingDialog = false"
     />
+    <import-dialog
+      :visible="isShowImportDialog"
+      :commodity-id="commodityId"
+      @closed="isShowImportDialog = false"
+    />
   </div>
 </template>
 <script>
@@ -210,6 +215,7 @@ import mixins from '@/utils/mixin'
 import ViewCommentDialog from '@/views/comment-settings/components/ViewCommentDialog'
 import AddCommentDialog from '@/views/comment-settings/components/AddCommentDialog'
 import SettingDialog from '@/views/comment-settings/components/SettingDialog'
+import ImportDialog from '@/views/comment-settings/components/ImportDialog'
 
 export default {
   name: 'Manager',
@@ -218,7 +224,8 @@ export default {
     ElImageViewer,
     ViewCommentDialog,
     AddCommentDialog,
-    SettingDialog
+    SettingDialog,
+    ImportDialog
   },
   mixins: [mixins],
   data() {
@@ -227,6 +234,7 @@ export default {
       isShowViewCommentDialog: false,
       isShowAddCommentDialog: false,
       isShowSettingDialog: false,
+      isShowImportDialog: false,
       srcList: [],
       status: 0,
       multiselect: [],
@@ -472,7 +480,7 @@ export default {
       this.isShowAddCommentDialog = true
     },
     handleImportComment() {
-      this.$router.push('/storeSetting/comment-settings/import')
+      this.isShowImportDialog = true
     }
   }
 }
