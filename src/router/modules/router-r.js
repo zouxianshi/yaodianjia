@@ -77,17 +77,6 @@ const router = [
               icon: 'manager'
               // auth: 'set.comment-settings'
             }
-          },
-          {
-            path: 'import',
-            component: () => import('@/views/comment-settings/import'),
-            name: 'import',
-            hidden: true,
-            meta: {
-              title: '导入评论',
-              icon: 'import'
-              // auth: 'set.comment-settings'
-            }
           }
         ]
       }
