@@ -469,7 +469,7 @@
       append-to-body
       @closed="handleTipsDialogCancel"
     >
-      <p>{{ tipsDialogContent }}</p>
+      <p style="line-height: 1.5;" v-html="tipsDialogContent" />
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="handleTipsDialogCancel">取 消</el-button>
         <el-button type="primary" size="small" @click="handleTipsDialogDefinite">确 定</el-button>
@@ -1003,10 +1003,19 @@ export default {
     _SetUpDown(data) {
       // 执行上下架请求
       setUpdateStoreData(data).then(res => {
-        if (res.code === '22001' || res.code === '22002') {
+        if (
+          res.code === '10000' &&
+          res.data &&
+          (res.data.code === 1 || res.data.code === 2)
+        ) {
           // 校验不通过
           this.isShowTipsDialog = true
-          this.tipsDialogContent = res.msg
+          this.tipsDialogContent =
+            res.data.code === 1
+              ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？'
+              : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(
+                res.data.erpList || []
+              ).join('、')}</p>`
           this.cacheSetUpDownParams = data
         } else {
           this.$message({
