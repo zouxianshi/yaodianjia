@@ -92,3 +92,55 @@ export function delAssembleActivity(params) {
     noMerCode: true
   })
 }
+
+// 新人礼包 && 签到奖励相关接口
+
+// 创建新人礼包/
+export function newUserGiftList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/newUserGiftList`,
+    method: 'get'
+  })
+}
+
+// 创建新人礼包/
+export function createNewGiftBag(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/createNewGiftBag`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 修改新人礼包/
+export function updateGiftBag(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/updateActivity`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 查询海贝签到
+export function _searchMemberSignIn(params) {
+  return request({
+    url: `${config.merGoods}/1.0/signIn/_searchMemberSignIn`,
+    method: 'get'
+  })
+}
+// 海贝签到规则设置
+export function sigenInSavaAndEdit(params) {
+  return request({
+    url: `${config.merGoods}/1.0/signIn/sigenInSavaAndEdit`,
+    method: 'post',
+    data: params
+  })
+}
+// 海贝签到活动开关
+export function modifyStatus(params) {
+  return request({
+    url: `${config.merGoods}/1.0/signIn/modifyStatus?isValid=${params.isValid}&merCode=${params.merCode}`,
+    method: 'post',
+    data: {}
+  })
+}
