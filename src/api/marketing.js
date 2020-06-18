@@ -112,3 +112,19 @@ export function updateGiftBag(params) {
     data: params
   })
 }
+
+// 查询海贝签到
+export function _searchMemberSignIn(params) {
+  return request({
+    url: `${config.merGoods}/1.0/signIn/_searchMemberSignIn`,
+    method: 'get'
+  })
+}
+// 海贝签到规则设置
+export function sigenInSavaAndEdit(params) {
+  return request({
+    url: `${config.merGoods}/1.0/signIn/sigenInSavaAndEdit`,
+    method: 'post',
+    data: params
+  })
+}

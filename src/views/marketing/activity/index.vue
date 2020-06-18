@@ -57,6 +57,7 @@ import paymentCourtesy from '@/assets/image/marketings/pay.png'
 // import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
+import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
 export default {
   components: { cardItem },
   /**
@@ -94,11 +95,11 @@ export default {
         {
           value: '',
           lable: '新人礼包',
-          img: paymentCourtesy,
-          desc: '',
+          img: newComer,
+          desc: '每个新注册微商城的用户都可以获取新人礼包一份，包含优惠券、海贝、抽奖福利等',
           listUrl:
             '/activity/newcomer-pack',
-          linkUrl: '/activity/newcomer-pack'
+          linkUrl: '/activity/newcomer-create'
         }
       ], // 会员营销
       goodsActivity: [
