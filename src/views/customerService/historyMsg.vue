@@ -24,7 +24,7 @@
             :data="item"
             :selected="curChatUserId===item.userId"
             :avatar="item.headImgUrl"
-            :nick-name="item.nickName"
+            :nick-name="item.memberName?item.memberName:item.nickName?item.nickName:`用户${item.userId}`"
             :date="`${formatTime(item.updateTime, 'MM-DD')}`"
             @handleClick="handleUserClick(item)"
           />
