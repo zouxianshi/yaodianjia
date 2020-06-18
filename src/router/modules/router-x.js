@@ -167,17 +167,6 @@ const router = [
           activeMenu: '/marketing/activity'
         }
       },
-      // {
-      //   path: 'activity/limit-sec-edit',
-      //   component: () => import('@/views/marketing/activity/limit/limit_seckill_edit'),
-      //   name: 'limitSecEdit',
-      //   meta: {
-      //     title: '创建限时秒杀',
-      //     noCache: true,
-      //     activeMenu: '/marketing/activity'
-      //   }
-      // },
-      // 礼品管理模块
       {
         path: 'gifts',
         component: () => import('@/views/marketing/gift-manage/index'),
@@ -215,7 +204,15 @@ const router = [
         component: () => import('@/views/marketings/newcomer/newcomerGift'),
         name: 'newcomerPack',
         meta: {
-          title: '新人礼包',
+          title: '新人礼包'
+        }
+      },
+      {
+        path: '/activity/exchangeMallList',
+        component: () => import('@/views/marketings/exchangeMall/exchange-list'),
+        name: 'exchangeMallList',
+        meta: {
+          title: '兑换商城',
           noCache: false,
           activeMenu: '/marketing/activity'
         }
@@ -231,21 +228,18 @@ const router = [
         }
       },
       {
-        path: '/activity/sign-list',
-        component: () => import('@/views/marketings/signGift/signList'),
-        name: 'sign-list',
-        meta: {
-          title: '签到奖励',
-          noCache: false,
-          activeMenu: '/marketing/activity'
-        }
-      },
-      {
         path: '/activity/sign-create',
         component: () => import('@/views/marketings/signGift/signCreate'),
         name: 'sign-create',
         meta: {
-          title: '签到奖励',
+          title: '签到奖励'
+        }
+      }, {
+        path: '/activity/exchangeMallAdd',
+        component: () => import('@/views/marketings/exchangeMall/exchange-add'),
+        name: 'exchangeMallAdd',
+        meta: {
+          title: '兑换商城',
           noCache: false,
           activeMenu: '/marketing/activity'
         }

@@ -128,3 +128,11 @@ export function sigenInSavaAndEdit(params) {
     data: params
   })
 }
+// 海贝签到活动开关
+export function modifyStatus(params) {
+  return request({
+    url: `${config.merGoods}/1.0/signIn/modifyStatus?isValid=${params.isValid}&merCode=${params.merCode}`,
+    method: 'post',
+    data: {}
+  })
+}

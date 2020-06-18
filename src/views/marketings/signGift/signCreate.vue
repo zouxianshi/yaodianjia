@@ -53,7 +53,7 @@
       </el-form-item>
     </el-form>
     <div class="submit-box">
-      <el-button size="mini">取消</el-button>
+      <el-button size="mini" @click="onCancel">取消</el-button>
       <el-button type="primary" size="mini" @click="_onSubmit">确定</el-button>
     </div>
   </div>
@@ -98,7 +98,17 @@ export default {
             type: 'success',
             message: '操作成功！'
           })
+          this.$router.push('/marketing/activity?type=haibeiActivity')
         }
+      })
+    },
+    onCancel() {
+      this.$confirm(`数据尚未保存，确定退出?`, '操作提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push('/marketing/activity?type=haibeiActivity')
       })
     }
   }

@@ -15,12 +15,16 @@
         <el-table-column prop="modifyTime" align="center" min-width="120" label="完成时间">
           <template slot-scope="scope">
             <span v-if="scope.row.status===2">{{ scope.row.modifyTime }}</span>
+            <span v-if="scope.row.status===3">{{ scope.row.modifyTime }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="status" align="center" min-width="120" label="进度">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status===1" type="warning">进行中</el-tag>
             <el-tag v-if="scope.row.status===2" type="success">已完成</el-tag>
+            <span v-if="scope.row.status === 3">
+              <el-tag type="danger">处理失败（请重试）</el-tag>
+            </span>
           </template>
         </el-table-column>
         <el-table-column prop="success" align="center" min-width="120" label="成功条数">
@@ -41,6 +45,9 @@
               :underline="false"
               :href="configOrderOss(scope.row.errorPath)"
             >下载导入结果</el-link>
+            <span v-if="scope.row.status===3">
+              -
+            </span>
           </template>
         </el-table-column>
       </el-table>
