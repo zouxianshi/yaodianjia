@@ -70,6 +70,7 @@ const actions = {
           userInfo: data || {},
           merCode
         })
+
         resolve(superAdmin ? { resList: ['admin'] } : { resList: resList })
       }).catch(error => {
         reject(error)
