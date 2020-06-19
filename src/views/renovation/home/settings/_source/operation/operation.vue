@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     ...mapState('renovation', ['stepVal']),
-    mod() { // eslint-disable-line 
+    mod() { // eslint-disable-line
       switch (this.stepVal) {
         case 1:
           return mBasics
