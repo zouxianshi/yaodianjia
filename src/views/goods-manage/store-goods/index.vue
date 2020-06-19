@@ -487,8 +487,8 @@ import exportTable from './export-table'
 import { mapGetters } from 'vuex'
 import { getTypeTree, exportData, exportStatisticData } from '@/api/group'
 import lock from './_source/lock'
-import batchUpdate from './_source/batchUpdate'
 import notAsyncDialog from './_source/not-async-dialog'
+import batchUpdate from './_source/batchUpdate'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import {
   getStoreGoodsList,
@@ -501,7 +501,7 @@ import {
 } from '@/api/store-goods'
 
 export default {
-  components: { Pagination, exportTable, ElImageViewer, lock, batchUpdate, notAsyncDialog },
+  components: { Pagination, exportTable, ElImageViewer, lock, notAsyncDialog, batchUpdate },
   mixins: [mixins],
   data() {
     const _checkFloat = (rule, value, callback) => {

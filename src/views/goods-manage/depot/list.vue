@@ -637,8 +637,8 @@ export default {
     //
     handleDel(row) {
       console.log('当前删除的id', row)
-      this.$confirm('确定要删除当前商品嘛？', '', {
-        confirmButtonText: '确定',
+      this.$confirm('请谨慎操作，删除后商品无法恢复，且顾客购物车的该商品信息一并消失。继续删除吗？', '', {
+        confirmButtonText: '继续删除',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
