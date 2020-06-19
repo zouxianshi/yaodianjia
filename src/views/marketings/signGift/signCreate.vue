@@ -76,7 +76,7 @@ export default {
   },
   created() {
     _searchMemberSignIn().then(res => {
-      if (res.code === '10000') {
+      if (res.code === '10000' && !!res.data) {
         this.paramsForm = res.data
       }
     })
