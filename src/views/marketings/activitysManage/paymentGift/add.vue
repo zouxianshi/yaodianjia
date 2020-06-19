@@ -617,9 +617,6 @@ export default {
     },
     _getDetailData(id) {
       this.pageLoading = true
-      // 先给个长度解决编辑时数据未加载完成前的表单验证显示bug（选择活动和选择优惠券）
-      this.selectedCoupons.length = 1
-      this.selectedActivity.length = 1
       const params = {
         id: id
       }
@@ -677,48 +674,31 @@ export default {
               }
             )
             this.onGetSelectProduct(this.selectedProducts)
-
-            // 编辑状态时，更新页面当前状态
-            // if (this.pageStatus === 2) {
-            //   this.updateActivityStatus(data)
-            // }
           }
-
           this.pageLoading = false
-        })
-        .catch(err => {
+        }).catch(() => {
           this.pageLoading = false
-          console.log('err', err)
         })
       this._getAddedCouponList(id)
       this._getAddedActivityList(id)
     },
     _getAddedCouponList(id) {
       const params = { currentPage: 1, id: id, pageSize: 9999 }
-      normalActivityAddedCouponList(params)
-        .then(res => {
-          if (res.code === '10000' && res.data.records.length > 0) {
-            this.selectedCoupons = _.cloneDeep(res.data.records)
-            this.onGetSelectCoupon(this.selectedCoupons)
-          }
-        })
-        .catch(err => {
-          console.log('err', err)
-        })
+      normalActivityAddedCouponList(params).then(res => {
+        if (res.code === '10000' && res.data.records.length > 0) {
+          this.selectedCoupons = _.cloneDeep(res.data.records)
+          this.onGetSelectCoupon(this.selectedCoupons)
+        }
+      })
     },
     _getAddedActivityList(id) {
       const params = { currentPage: 1, id: id, pageSize: 9999 }
-      console.log('normalAddedActivityList', JSON.stringify(params))
-      normalAddedActivityList(params)
-        .then(res => {
-          if (res.code === '10000' && res.data.records.length > 0) {
-            this.selectedActivity = _.cloneDeep(res.data.records)
-            this.onGetSelectActivity(this.selectedActivity)
-          }
-        })
-        .catch(err => {
-          console.log('err', err)
-        })
+      normalAddedActivityList(params).then(res => {
+        if (res.code === '10000' && res.data.records.length > 0) {
+          this.selectedActivity = _.cloneDeep(res.data.records)
+          this.onGetSelectActivity(this.selectedActivity)
+        }
+      })
     }
   }
 }
