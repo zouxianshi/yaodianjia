@@ -65,6 +65,12 @@ export default {
       default: () => {
         return []
       }
+    },
+    commodityIds: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
@@ -105,6 +111,7 @@ export default {
         limitNum: 0,
         merCode: this.merCode,
         specIds: this.specData,
+        commIds: this.commodityIds,
         limitType: this.modalForm.limitType,
         type: this.modalForm.type
       }
