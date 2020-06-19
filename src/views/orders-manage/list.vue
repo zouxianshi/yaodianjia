@@ -349,7 +349,7 @@
                               <div class="order_btn btn_normal" style="text-align:right">
                                 <!-- 立即发货 -->
                                 <dialog-delivery-order
-                                  v-auth:order.private-order.order-all.immediate-delivery
+                                  v-auth:order.order-all.immediate-delivery
                                   :employee-data="employeeData"
                                   :p-item="item"
                                   @sendOrder="sendOrder"
