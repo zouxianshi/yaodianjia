@@ -124,8 +124,8 @@
               size="small"
               @change="handleQuery"
             >
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
+              <el-option label="有" :value="true" />
+              <el-option label="无" :value="false" />
             </el-select>
           </div>
         </div>
@@ -277,7 +277,7 @@
                     <el-button type="success" plain size="mini">编辑</el-button>
                   </a>
                 </template>
-                <template>
+                <template v-if="!scope.row.specId">
                   <el-button type="danger" plain size="mini" @click="handleDel(scope.row)">删除</el-button>
                 </template>
               </template>
@@ -697,7 +697,7 @@ export default {
       // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew({ ...this.listQuery, skuIds: this.goodsData })
+      exportDataNew({ ...this.listQuery, skuIds: this.goodsData, hasLimit: true })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {

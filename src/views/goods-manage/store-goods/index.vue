@@ -115,6 +115,18 @@
               <el-option v-if="listQuery.status!==3" label="未锁定" :value="0" />
             </el-select>
           </div>
+          <div class="search-item">
+            <span class="label-name">橱窗图</span>
+            <el-select
+              v-model="listQuery.hasMainPic"
+              placeholder="选择橱窗图"
+              size="small"
+              @change="_loadList"
+            >
+              <el-option label="有" :value="true" />
+              <el-option label="无" :value="false" />
+            </el-select>
+          </div>
         </div>
         <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
@@ -132,7 +144,7 @@
         <div v-if="listQuery.status === 4" class="search-form">
           <div class="search-item" style="padding-left:75px;">
             <p class="tips-txt">
-              商品库总商品：{{ statisticData && statisticData.totalNum }} 未同步到的商品：
+              商品库(自营)商品数：{{ statisticData && statisticData.totalNum }} 未同步到的商品：
               <el-button
                 class="hover-underline"
                 type="text"
@@ -172,7 +184,7 @@
               size="small"
               @click="handleSynchroBefore"
             >批量同步库存价格</el-button>-->
-            <el-button type="warning" size="small" @click="handleBatchUpdate">批量修改价格</el-button>
+            <el-button type="warning" size="small" @click="handleBatchUpdate">批量编辑价格</el-button>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
@@ -457,7 +469,7 @@
       append-to-body
       @closed="handleTipsDialogCancel"
     >
-      <p>{{ tipsDialogContent }}</p>
+      <p style="line-height: 1.5; text-align: center;" v-html="tipsDialogContent" />
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="handleTipsDialogCancel">取 消</el-button>
         <el-button type="primary" size="small" @click="handleTipsDialogDefinite">确 定</el-button>
@@ -582,7 +594,9 @@ export default {
   computed: {
     ...mapGetters(['merCode', 'name']),
     erpCodes() {
-      return ((this.statisticData && this.statisticData.erpCodes) || []).join(',')
+      return ((this.statisticData && this.statisticData.erpCodes) || []).join(
+        ','
+      )
     }
   },
   created() {
@@ -638,16 +652,13 @@ export default {
     async _loadList() {
       const { sortMethod, sortType } = this.listQuery
 
-      if (this.listQuery.storeId === '') {
-        if (
-          this.listQuery.name === '' &&
-          this.listQuery.erpCode === '' &&
-          this.listQuery.barCode === ''
-        ) {
+      if (this.listQuery.storeId === '' && this.listQuery.status !== 4) {
+        if (this.listQuery.erpOrName === '') {
           this.$message({
-            message: '选择全部门店时，请输入商品名称或商品编码、条形码',
+            message: '选择全部门店时，请输入商品名称或商品编码',
             type: 'warning'
           })
+          this.tableData = []
           return
         }
       }
@@ -658,7 +669,6 @@ export default {
         if (this.listQuery.status === 4) {
           res = await getStoreGoodsStatisticsList({
             ...this.listQuery,
-            erpCodeOrName: this.listQuery.erpOrName,
             ...(sortMethod ? { sortMethod } : {}),
             ...(sortType ? { sortType } : {})
           })
@@ -872,13 +882,9 @@ export default {
     // 处理商品数据导出
     async handleExport() {
       if (this.listQuery.storeId === '') {
-        if (
-          this.listQuery.name === '' &&
-          this.listQuery.erpCode === '' &&
-          this.listQuery.barCode === ''
-        ) {
+        if (this.listQuery.name === '' && this.listQuery.erpCode === '') {
           this.$message({
-            message: '选择全部门店时，请输入商品名称或商品编码、条形码',
+            message: '选择全部门店时，请输入商品名称或商品编码',
             type: 'warning'
           })
           return
@@ -993,10 +999,19 @@ export default {
     _SetUpDown(data) {
       // 执行上下架请求
       setUpdateStoreData(data).then(res => {
-        if (res.code === '22001' || res.code === '22002') {
+        if (
+          res.code === '10000' &&
+          res.data &&
+          (res.data.code === 1 || res.data.code === 2)
+        ) {
           // 校验不通过
           this.isShowTipsDialog = true
-          this.tipsDialogContent = res.msg
+          this.tipsDialogContent =
+            res.data.code === 1
+              ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？'
+              : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(
+                res.data.erpList || []
+              ).join('、')}</p>`
           this.cacheSetUpDownParams = data
         } else {
           this.$message({

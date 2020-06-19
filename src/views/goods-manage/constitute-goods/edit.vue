@@ -901,6 +901,7 @@ export default {
 <style lang="scss" scoped>
 .edit-wrapper {
   color: #333;
+  margin-bottom: 80px;
   .img-tips {
     font-size: 12px;
   }
