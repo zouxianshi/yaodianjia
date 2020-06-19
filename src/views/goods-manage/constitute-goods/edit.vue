@@ -541,7 +541,9 @@ export default {
           const datas = res.data
           ids.map(v => {
             const dat = datas[v]
-            this.chooseGroup.push([{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }, { name: dat.child.child.name, id: dat.child.child.id }])
+            const arr = [{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }]
+            dat.child.child && arr.push({ name: dat.child.child.name, id: dat.child.child.id })
+            this.chooseGroup.push(arr)
           })
         }
       })
@@ -877,7 +879,7 @@ export default {
           ].id // 第一级分类id
           const data = JSON.parse(JSON.stringify(this.basicForm))
 
-          data.groupId = this.chooseGroup[0][2].id // 第三级分组的id
+          data.groupId = this.chooseGroup[0][2] ? this.chooseGroup[0][2].id : this.chooseGroup[0][1].id // 第三级分组的id
 
           data.merCode = this.merCode
           this.subLoading = true
