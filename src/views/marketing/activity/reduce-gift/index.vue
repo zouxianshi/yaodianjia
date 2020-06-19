@@ -305,7 +305,7 @@
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!-- 选择赠品组件 -->
-    <store-goods-gifts ref="storeGiftsComponent" :limit-max="1" @commit="handleGiftList" />
+    <store-goods-gifts ref="storeGiftsComponent" :limit-max="5" @commit="handleGiftList" />
   </div>
 </template>
 
@@ -460,7 +460,9 @@ export default {
                   ...item,
                   checkOrNot: !!item.checkOrNot,
                   giftOrNot: !!item.giftOrNot,
-                  giftList: item.giftSpecDTO ? [item.giftSpecDTO] : [],
+                  giftList: Array.isArray(item.giftSpecDTO)
+                    ? item.giftSpecDTO
+                    : [],
                   discountType: item.discountType,
                   [`discount${item.discountType}`]: item.discount
                 }
@@ -974,7 +976,10 @@ export default {
 }
 .app-container {
   // position: relative;
-  padding-bottom: 80px;
+  // margin-bottom: 80px;
+  .el-form {
+    margin-bottom: 80px;
+  }
   .form-title {
     line-height: 14px;
     font-size: 14px;

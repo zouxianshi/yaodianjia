@@ -859,6 +859,7 @@ export default {
 </style>
 <style lang="scss" scoped>
 .assemble-wrapper {
+  margin-bottom: 80px;
   .page-box {
     margin-top: 12px;
     text-align: right;

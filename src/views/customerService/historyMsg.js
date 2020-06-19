@@ -144,6 +144,7 @@ export default {
         userId: this.supporterId,
         name: this.searchText.replace(/\s*/g, '') // 搜索框中输入的用户名字
       }).then(res => {
+        console.log('this.historyCSList', this.historyCSList)
         if (this.historyCSList.length > 0) {
           this.curChatUserId = this.historyCSList[0].userId
           this.currentUser = this.historyCSList[0].nickName
@@ -217,8 +218,10 @@ export default {
     },
     scrollToBottom: function() {
       this.$nextTick(() => {
-        var container = this.$el.querySelector('#chat-detail-list')
-        container.scrollTop = container.scrollHeight
+        setTimeout(() => {
+          var container = this.$el.querySelector('#chat-detail-list')
+          container.scrollTop = container.scrollHeight
+        }, 200)
       })
     },
     scrolltoTop: function() {

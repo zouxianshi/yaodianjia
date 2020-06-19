@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      title="批量导入修改商品分组"
+      title="批量导入修改门店价格"
       class="import-update-dialog"
       :visible.sync="isShow"
       append-to-body
@@ -16,7 +16,7 @@
           drag
           :action="uploadUlr"
           :headers="headers"
-          name="file"
+          :data="uploadParam"
           :limit="1"
           :on-success="handleFileSuccess"
           :on-error="handleFileErr"
@@ -35,6 +35,16 @@
             <div style="margin-top: 7px">
               <el-link type="primary" :href="batchEditUrl">点击下载导入模板</el-link>
             </div>
+            <div style="margin-top: 7px">
+              <el-checkbox v-model="isLock">同时锁定编辑项</el-checkbox>
+              <el-tooltip class="item" effect="dark" placement="bottom-start">
+                <div slot="content">
+                  勾选后，则同时将导入修改成功的项锁定。比如在模板中将价
+                  <br>格修改为1，则修改后锁定为1，不被系统自动更新。
+                </div>
+                <i class="el-icon-info" />
+              </el-tooltip>
+            </div>
           </div>
         </el-upload>
       </div>
@@ -43,7 +53,7 @@
         <el-button type="primary" size="small" @click="handleSubmit">立即上传</el-button>
       </span>
     </el-dialog>
-    <importResult
+    <batchResult
       :is-show="errorDialogVisible"
       :error-text="errorText"
       :error-result-url="errorResultUrl"
@@ -53,11 +63,11 @@
 </template>
 <script>
 import config from '@/utils/config'
-import importResult from './importResult'
+import batchResult from './batchResult'
 import { mapGetters } from 'vuex'
 export default {
   components: {
-    importResult
+    batchResult
   },
   props: {
     isShow: {
@@ -67,6 +77,7 @@ export default {
   },
   data() {
     return {
+      isLock: true,
       is_file: false,
       errorDialogVisible: false,
       errorText: '',
@@ -76,10 +87,10 @@ export default {
   computed: {
     ...mapGetters(['merCode', 'token', 'name']),
     batchEditUrl() {
-      return `${this.uploadFileURL}${config.merchandise}/1.0/ds/op/file/template/batchEdit?merCode=${this.merCode}`
+      return `https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%BE%AE%E5%95%86%E5%9F%8E%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E4%BB%B7%E6%A0%BC%E6%A8%A1%E6%9D%BF.xlsx`
     },
     uploadUlr() {
-      return `${this.uploadFileURL}${config.merchandise}/1.0/comm-relate/excel/batchEdit`
+      return `${this.uploadFileURL}${config.merchandise}/1.0/ds/batchEdit/price`
     },
     headers() {
       return {
@@ -89,7 +100,12 @@ export default {
       }
     },
     uploadParam() {
-      return { merCode: this.merCode, userName: this.name }
+      return {
+        merCode: this.merCode,
+        userName: this.name,
+        isYdj: 1,
+        isLock: this.isLock ? 1 : 0
+      }
     }
   },
   watch: {
@@ -104,6 +120,7 @@ export default {
       this.is_file = true
     },
     handleFileSuccess(res) {
+      console.log('res', res)
       if (res.code === '10000' && res.data) {
         this.$refs.file.clearFiles()
         this.handleColse()
@@ -174,20 +191,24 @@ export default {
 }
 </script>
 <style lang="scss">
-  .el-dialog {
-    width: 35%;
-  }
-  .import-update-dialog {
-    .upload-demo {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+.el-dialog {
+  width: 35%;
+}
+.import-update-dialog {
+  .upload-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-      .el-upload__tip {
-        width: 360px;
-        line-height: 20px;
-      }
+    .el-upload__tip {
+      width: 360px;
+      line-height: 20px;
+    }
+
+    .el-icon-info:hover {
+      color: #147de8;
+      cursor: pointer;
     }
   }
-
+}
 </style>

@@ -116,6 +116,18 @@
               <el-option label="自建商品库" value="2" />
             </el-select>
           </div>
+          <div class="search-item">
+            <span class="label-name">橱窗图</span>
+            <el-select
+              v-model="listQuery.hasMainPic"
+              placeholder="选择橱窗图"
+              size="small"
+              @change="handleQuery"
+            >
+              <el-option label="有" :value="true" />
+              <el-option label="无" :value="false" />
+            </el-select>
+          </div>
         </div>
         <div class="search-form">
           <div class="search-item">
@@ -165,10 +177,10 @@
             </el-radio-group>
           </div>-->
           <div>
-            <template v-if="listQuery.infoFlag">
+            <!-- <template v-if="listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
               <el-button type="danger" size="mini" @click="handleChangeUpdown(0)">批量下架</el-button>
-            </template>
+            </template> -->
             <el-button type size="mini" @click="handleUpGroup">批量修改分组</el-button>
             <el-button type="info" size="mini" @click="handleSettingLimitBuy">批量设置限购</el-button>
             <el-button type="warning" size="mini" @click="handleImportUpdate">导入修改分组</el-button>
@@ -253,23 +265,20 @@
               align="left"
               fixed="right"
               label="操作"
-              :min-width="!listQuery.infoFlag?'100':'180'"
+              :min-width="!listQuery.infoFlag?'120':'200'"
             >
               <template slot-scope="scope">
-                <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
-                  <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
-                  <el-divider direction="vertical" />
-                  <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
-                </template>
+                <!-- <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
+                  <el-button type="primary" size="mini" plain @click="handleUpDown(1,scope.row)">上架</el-button>
+                  <el-button type="warning" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
+                </template> -->
                 <template v-if="scope.row.commodityType!==2">
-                  <el-divider direction="vertical" />
                   <a @click="handleEdit(scope.row.id)">
-                    <el-button type="text" size="mini">编辑</el-button>
+                    <el-button type="success" plain size="mini">编辑</el-button>
                   </a>
                 </template>
                 <template v-if="!scope.row.specId">
-                  <el-divider direction="vertical" />
-                  <el-button type="text" size="mini" @click="handleDel(scope.row)">删除</el-button>
+                  <el-button type="danger" plain size="mini" @click="handleDel(scope.row)">删除</el-button>
                 </template>
               </template>
             </el-table-column>
@@ -683,12 +692,12 @@ export default {
       // 修改分组
       this.goodsData = []
       this.multiselect.map(res => {
-        this.goodsData.push(res.id)
+        this.goodsData.push(res.specId)
       })
-      const param = { ids: this.goodsData, merCode: this.merCode }
+      // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew(param)
+      exportDataNew({ ...this.listQuery, skuIds: this.goodsData, hasLimit: true })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {
@@ -697,7 +706,7 @@ export default {
               type: 'error'
             })
           } else {
-            download.blob(res)
+            download.blob(res, '导出结果文件', 'xlsx')
             this.$message({
               message: '数据导出成功',
               type: 'success'

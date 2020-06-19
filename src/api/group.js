@@ -142,3 +142,12 @@ export function exportData(params) {
     data: params
   })
 }
+
+// 导出商品统计
+export function exportStatisticData(params) {
+  return request({
+    url: `${config.merGoods}/1.0/task/exportSpecStatisticTask`,
+    method: 'post',
+    data: params
+  })
+}
