@@ -257,7 +257,7 @@ export default {
           return
         }
       }
-      if (view.name === 'depotEdit') {
+      if (view.name === 'depotEdit' || view.name === 'applyRecordEdit' || view.name === 'editApply') {
         const answer = window.confirm('你还有数据没有保存，是否确认退出')
         if (!answer) {
           return
