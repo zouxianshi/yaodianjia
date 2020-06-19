@@ -180,7 +180,7 @@
             <!-- <template v-if="listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
               <el-button type="danger" size="mini" @click="handleChangeUpdown(0)">批量下架</el-button>
-            </template> -->
+            </template>-->
             <el-button type size="mini" @click="handleUpGroup">批量修改分组</el-button>
             <el-button type="info" size="mini" @click="handleSettingLimitBuy">批量设置限购</el-button>
             <el-button type="warning" size="mini" @click="handleImportUpdate">导入修改分组</el-button>
@@ -271,7 +271,7 @@
                 <!-- <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
                   <el-button type="primary" size="mini" plain @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-button type="warning" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
-                </template> -->
+                </template>-->
                 <template v-if="scope.row.commodityType!==2">
                   <a @click="handleEdit(scope.row.id)">
                     <el-button type="success" plain size="mini">编辑</el-button>
@@ -312,6 +312,7 @@
     <limit-buy
       :is-show="limitVisible"
       :spec-data="specData"
+      :commodity-ids="commodityIds"
       @complete="limitVisible=false;getList()"
       @close="limitVisible=false"
     />
@@ -369,6 +370,7 @@ export default {
       goodsData: [],
       merCode: '',
       specData: [],
+      commodityIds: [],
       loading: false,
       exportLoading: false,
       tableData: [],
@@ -416,7 +418,9 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     const name = `depotEdit`
-    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === name)
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+      item => item.name === name
+    )
     if (hasGoodsEdit && to.name === name) {
       const answer = window.confirm('你还有数据没有保存，是否确认退出')
       if (answer) {
@@ -443,6 +447,7 @@ export default {
     handleSettingLimitBuy() {
       // 设置限购
       this.specData = []
+      this.commodityIds = []
       if (this.multiselect.length === 0) {
         this.$message({
           message: '请选择商品',
@@ -456,6 +461,7 @@ export default {
           flag = false
         }
         this.specData.push(`${res.specId}`)
+        this.commodityIds.push(`${res.id}`)
       })
       if (!flag) {
         this.$message({
@@ -697,7 +703,11 @@ export default {
       // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew({ ...this.listQuery, skuIds: this.goodsData, hasLimit: true })
+      exportDataNew({
+        ...this.listQuery,
+        skuIds: this.goodsData,
+        hasLimit: true
+      })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {
