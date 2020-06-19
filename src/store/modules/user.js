@@ -70,8 +70,6 @@ const actions = {
           merCode
         })
 
-        MC.directive()
-
         resolve(superAdmin ? { resList: ['admin'] } : { resList: resList })
       }).catch(error => {
         reject(error)
