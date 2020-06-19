@@ -257,6 +257,12 @@ export default {
           return
         }
       }
+      if (view.name === 'depotEdit') {
+        const answer = window.confirm('你还有数据没有保存，是否确认退出')
+        if (!answer) {
+          return
+        }
+      }
       this.$store
         .dispatch('tagsView/delView', view)
         .then(({ visitedViews }) => {
