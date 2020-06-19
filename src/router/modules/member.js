@@ -30,7 +30,7 @@ export default [
               title: '会员列表',
               auth: false,
               noCache: true,
-              activeMenu: '/member/member-center'
+              activeMenu: '/member/member-center/list'
             }
           },
           {
@@ -73,8 +73,7 @@ export default [
         name: 'FeedbackList',
         meta: {
           title: '会员反馈',
-          noCache: true,
-          activeMenu: '/member/member-feedback'
+          noCache: true
         }
       }
     ]
