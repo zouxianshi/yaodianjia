@@ -232,9 +232,11 @@ export default {
       }
     })
     _searchMemberSignIn().then(res => { // 海贝签到开启还是关闭状态
-      if (res.code === '10000' && res.data) {
+      if (res.code === '10000' && !!res.data) {
         this.haibeiActivity[1].isclose = !!res.data.isValid
         this.singIsSet = true
+      } else {
+        this.haibeiActivity[1].isclose = false
       }
     })
   },
@@ -266,7 +268,6 @@ export default {
         this.$message.error('请完成签到设置后再操作')
         this.$refs.sign.closeStatus(status)
       } else {
-        console.log(status)
         const params = {
           isValid: status ? 1 : 0,
           merCode: this.$store.state.user.merCode

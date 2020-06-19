@@ -62,7 +62,7 @@
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
         >
-          <span v-if="ruleForm.cover === ''" style="width: 178px; height: 178px; display:block; line-height: 178px; font-weight: bold">
+          <span v-if="!ruleForm.cover || ruleForm.cover === ''" style="width: 178px; height: 178px; display:block; line-height: 178px; font-weight: bold">
             <i slot="default" class="el-icon-plus" />
           </span>
           <img v-else :src="showImg(ruleForm.cover)" class="avatar">
