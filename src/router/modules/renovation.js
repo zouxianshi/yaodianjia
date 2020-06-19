@@ -7,7 +7,7 @@ export default [
     redirect: '/renovation/home',
     name: 'renovation',
     meta: {
-      title: '主页设置-商城装修',
+      title: '商城装修',
       auth: false
     },
     children: [
