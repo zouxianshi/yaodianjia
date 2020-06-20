@@ -30,7 +30,7 @@ export default [
               title: '会员列表',
               auth: false,
               noCache: true,
-              activeMenu: '/member/member-center'
+              activeMenu: '/member/member-center/list'
             }
           },
           {

@@ -17,6 +17,7 @@
       </el-tab-pane>
     </el-tabs>
   </div>
+
 </template>
 <script>
 // import discountCoupons from '@/assets/image/acvity/discount-coupons.png'
@@ -122,19 +123,17 @@ export default {
 }
 </script>
 <style lang="scss">
-.app-container.activity {
-  background: #f7f7f7;
-  padding: 0;
-  .el-tabs__header {
-    background: #fff;
-    padding: 0 20px;
-    padding-top: 40px;
+  .app-container {
+    .activity {
+      padding: 0;
+      .el-tabs__header {
+      }
+      .el-tabs__nav-wrap::after {
+        height: 0;
+      }
+      .el-tabs__content {
+      }
+    }
   }
-  .el-tabs__nav-wrap::after {
-    height: 0;
-  }
-  .el-tabs__content {
-    padding: 0 20px;
-  }
-}
+
 </style>

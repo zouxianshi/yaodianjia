@@ -7,7 +7,8 @@ import getPageTitle from '@/utils/get-page-title'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 import { MC } from '@merchant/commons'
 const whiteList = ['/login', '/check'] // no redirect whitelist
-import ps from '@/layout/psHandler'
+// import ps from '@/layout/psHandler'
+
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
@@ -35,12 +36,11 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // 获取用户信息
-          // const { resList } = await store.dispatch('user/getInfo')
           const { resList } = await store.dispatch('user/getInfo')
           // 区分新老商户支付链接和host   活动推广链接&支付配置
           if (resList.length) {
-            if (to.meta.auth) {
-              if (ps.get(to.meta.auth)) {
+            if (to.path) {
+              if (MC.isAuth(to.path, resList)) {
                 next({ ...to, replace: true })
               } else {
                 next('/403')

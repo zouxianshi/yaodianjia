@@ -7,8 +7,7 @@ export default [
     redirect: '/mall/home',
     name: 'mall',
     meta: {
-      title: '商城',
-      auth: false
+      title: '商城'
     },
     children: [
       {
@@ -17,7 +16,6 @@ export default [
         name: 'home-list',
         meta: {
           title: '首页设置列表',
-          auth: false,
           noCache: true
         },
         children: []
@@ -28,7 +26,6 @@ export default [
         name: 'home-settings',
         meta: {
           title: '首页设置',
-          auth: false,
           noCache: false,
           activeMenu: '/mall/home'
         },
@@ -40,7 +37,6 @@ export default [
         name: 'home-settings',
         meta: {
           title: '首页设置',
-          auth: false,
           noCache: false,
           activeMenu: '/mall/home'
         },
