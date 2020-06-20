@@ -1,9 +1,18 @@
 <template>
   <div class="basics-model">
-    basics
+    <div class="bm-basics-setting">
+      <div class="bm-title"><string>页面基础设置</string></div>
+      <m-basics-setting />
+    </div>
+    <div class="bm-style-setting">
+      <div class="bm-title"><string>页面风格设置</string></div>
+      <m-style-setting />
+    </div>
   </div>
 </template>
 <script>
+import mBasicsSetting from './_source/basicsSetting'
+import mStyleSetting from './_source/styleSetting'
 export default {
   name: 'Basics',
   data() {
@@ -29,7 +38,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { mBasicsSetting, mStyleSetting }
 }
 </script>
 
