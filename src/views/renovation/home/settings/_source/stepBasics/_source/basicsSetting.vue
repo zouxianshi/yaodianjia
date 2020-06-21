@@ -1,11 +1,11 @@
 <template>
-  <div class="operation-state-model">
-    <el-button type="primary" plain size="small">返回首页设置</el-button>
+  <div class="basics-setting-model">
+    basics-setting
   </div>
 </template>
 <script>
 export default {
-  name: 'State',
+  name: 'BasicsSetting',
   data() {
     return {}
   },
@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .state-model {
+  .basics-setting-model {
 
   }
 </style>
