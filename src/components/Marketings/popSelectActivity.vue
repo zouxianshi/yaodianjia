@@ -147,8 +147,8 @@ export default {
     queryData() {
       if (this.beginendtime.length === 0) {
         this.$message({
-          message: '请选择活动时间',
-          type: 'warning'
+          message: '请先选择活动时间',
+          type: 'error'
         })
       } else {
         this.searchParams.beginTime = formatDate(this.beginendtime[0])
