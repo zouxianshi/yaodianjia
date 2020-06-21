@@ -1,27 +1,30 @@
 <template>
   <div class="newcommer-create-modal app-container">
     <div class="params-items">
-      <div class="title">参与对象</div>
-      <p style="margin-bottom: 20px;text-indent:2rem">新注册微商城的会员</p>
-    </div>
-    <div class="params-items">
-      <div class="title">活动时间</div>
-      <el-date-picker
-        v-model="activeTimer"
-        style="margin-left:2rem"
-        size="mini"
-        type="datetimerange"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        :default-time="['00:00:00', '20:59:59']"
-        :disabled="isDisabled"
-        :picker-options="pickerOptions"
-        @change="changeTimes"
-      />
+      <div class="title">基本信息</div>
+      <el-form label-width="120px" label-position="right">
+        <el-form-item label="参与对象">
+          <p style="text-indent:2rem">新注册微商城的会员</p>
+        </el-form-item>
+        <el-form-item label="活动时间" required>
+          <el-date-picker
+            v-model="activeTimer"
+            style="margin-left:2rem"
+            size="mini"
+            type="datetimerange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :default-time="['00:00:00', '20:59:59']"
+            :disabled="isDisabled"
+            :picker-options="pickerOptions"
+            @change="changeTimes"
+          />
+        </el-form-item>
+      </el-form>
     </div>
     <div class="params-items">
       <div class="title">礼包内容</div>
-      <el-form label-position="top" style="margin-left: 2rem" size="mini" :disabled="isDisabled">
+      <el-form label-position="top" style="margin-left: 4rem" size="mini" :disabled="isDisabled">
         <el-form-item>
           <el-checkbox v-model="hasCoupon" @change="selectedCoupons=[]">优惠券</el-checkbox>
           <el-button type="primary" style="margin-left: 24px" :disabled="isDisabled || !hasCoupon" @click="selectCoupon">选择优惠券</el-button>
@@ -33,8 +36,8 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="hasHb" @change="hbNum=0">赠送海贝</el-checkbox>
-          <el-input-number v-model="hbNum" :disabled="isDisabled || !hasHb" style="margin-left: 9px; width:92px" :precision="0" :max="100000" :min="0" :controls="false" />
+          <el-checkbox v-model="hasHb" @change="hbNum=1">赠送海贝</el-checkbox>
+          <el-input-number v-model="hbNum" :disabled="isDisabled || !hasHb" style="margin-left: 9px; width:92px" :precision="0" :max="9999" :min="1" :controls="false" />
           海贝
         </el-form-item>
         <el-form-item>
@@ -80,7 +83,7 @@ export default {
       hasCoupon: false, // 是否赠送优惠券
       selectedCoupons: [], // 已选择的优惠券
       hasHb: false,
-      hbNum: 0,
+      hbNum: 1,
       hasActive: false, // 是否有相关活动
       selectActive: [],
       selectedActivity: [], // 已选择活动
@@ -116,7 +119,6 @@ export default {
       return {
         disabledDate(time) {
           const tims = time.getTime()
-
           return tims < new Date(new Date().getTime() - 86400000) || (endTime && (tims > bgTime && tims < endTime))
         }
       }
@@ -186,11 +188,19 @@ export default {
     },
     // 验证优惠券、活动、海贝不为空
     voildParams() {
+      if (this.activeTimer.length < 2) {
+        this.$message.error('请选择活动时间！')
+        return false
+      }
+      if (!this.hasHb && !this.hasCoupon && !this.hasActive) {
+        this.$message.error('请至少选择一个礼包内容。')
+        return false
+      }
       if (this.hasHb && this.hbNum <= 0) {
         this.$message.error('请输入大于0的海贝数量')
         return false
       } else if (this.hasCoupon && this.selectedCoupons.length === 0) {
-        this.$message('请选择优惠券或取消优惠券选项')
+        this.$message.error('请选择优惠券或取消优惠券选项')
         return false
       } else if (this.hasActive && this.selectedActivity.length === 0) {
         this.$message.error('请选择活动或取消活动选项')
@@ -226,7 +236,7 @@ export default {
           activityPayReqDTO.push(obj)
         })
       }
-      if (this.hbNum > 0) { // 活动数据
+      if (this.hasHb && this.hbNum > 0) { // 活动数据
         const obj = {
           giftId: null,
           giftNum: this.hbNum,
@@ -289,6 +299,7 @@ export default {
       height: 40px;
       line-height: 40px;
       margin-bottom: 20px;
+      border-bottom: 1px solid #ccc
     }
     .selected-coupon-view{
       width: 80%;
