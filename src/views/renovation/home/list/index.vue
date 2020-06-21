@@ -5,7 +5,7 @@
         <el-button type="primary" plain="" size="small" @click="handleBatchDel">批量删除</el-button>
         <el-button type="primary" plain size="small">批量修改分享信息</el-button>
       </div>
-      <el-button type="primary" size="small">新建首页</el-button>
+      <el-button type="primary" size="small" @click="handleEdit('')">新建首页</el-button>
     </section>
     <section class="table-box webkit-scroll">
       <el-table
@@ -20,7 +20,7 @@
         <el-table-column label="页面标题" min-width="180" align="center">
           <template slot-scope="scope">
             <span v-text="scope.row.title" />
-            <el-tag v-if="scope.row.isUse===1" type="warning"><span class="el-icon-s-home" /> 当前页</el-tag>
+            <el-tag v-if="scope.row.isUse===1" size="mini" type="warning"><span class="el-icon-s-home" /> 当前页</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="模板名称" min-width="180" align="center" />
@@ -44,25 +44,19 @@
         </el-table-column>
       </el-table>
     </section>
-    <el-dialog title="效果预览" append-to-body="" :close-on-click-modal="false" width="400px" :visible.sync="previewShow">
-      <preview />
+    <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="previewShow">
+      <preview v-if="previewShow" :dimension-id="dimensionId" />
     </el-dialog>
-    <el-dialog title="页面设置" append-to-body="" :close-on-click-modal="false" width="500px" :visible.sync="visible">
-      <Form ref="baseform" :info="formData" />
-      <span slot="footer">
-        <el-button size="small">取消</el-button>
-        <el-button size="small" type="primary">确定</el-button>
-      </span>
-    </el-dialog>
+    <base-form ref="baseform" @success="getList" />
   </div>
 </template>
 <script>
 import Preview from './_source/preview'
 import RenovationService from '@/api/renovation'
-import Form from './_source/form'
+import BaseForm from './_source/baseForm'
 export default {
   name: 'HomeListIndex',
-  components: { Preview, Form },
+  components: { Preview, BaseForm },
   data() {
     return {
       loading: false,
@@ -70,7 +64,7 @@ export default {
       previewShow: false,
       visible: false,
       multipleSelection: [],
-      formData: {}
+      dimensionId: ''
     }
   },
   created() {
@@ -94,29 +88,29 @@ export default {
     handleCommand({ type, data }) {
       switch (type) {
         case 'home':
-
+          this._SetHome(data)
           break
         case 'set':
+          this.$refs.baseform.openDialog(data)
           break
         case 'copy':
+
           break
         default:
           this._Delete([data.id])
           break
       }
     },
-    handleEdit(row) {
-      this.visible = true
-      this.$nextTick(_ => {
-        this.$refs.baseform.initData(row)
-      })
+    handlePreview(row) {
+      this.dimensionId = row.id
+      this.previewShow = true
     },
-    handlePreview() {
-
+    handleEdit(id) {
+      this.$router.push(`/renovation/home/settings?id=${id}`)
     },
     // 设置为首页模板
-    async _SetHome() {
-      await RenovationService.setHomeTem()
+    async _SetHome({ id }) {
+      await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
       this.$message({
         message: '设置成功',
         type: 'success'

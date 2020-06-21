@@ -50,13 +50,15 @@ class RenovationService {
 
   /** *
    *
+   * @param {String} params.id  首页维度ID
+   * @param {Number} params.isNew 是否新模板 0-否 1-是
    * @description 设置当前模板为首页模板
    *
    */
   setHomeTem(params) {
     return request({
-      url: `${this.serve}//1.0/homepage/use`,
-      method: 'pust',
+      url: `${this.serve}/1.0/homepage/use`,
+      method: 'put',
       data: params
     })
   }

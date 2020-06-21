@@ -1,8 +1,12 @@
 <template>
   <div class="preview-box">
-    <el-form size="small">
+    <el-form size="small" label-width="80px">
       <el-form-item label="预览链接">
-        <el-input v-model="previewInfo.url" placeholder="" />
+        <input id="path" class="" hidden type="text">
+        <div class="share-path">
+          <p id="url" class="link-txt" v-text="link" />
+          <span class="copy" @click="handleCopy">复制</span>
+        </div>
       </el-form-item>
       <el-form-item label="二维码">
         <div id="qrCode" ref="qrCodeDiv" />
@@ -16,32 +20,67 @@ import QRCode from 'qrcodejs2'
 export default {
   name: 'Perview',
   props: {
-    previewInfo: {
-      type: Object,
-      default: () => {
-        return {}
-      }
+    dimensionId: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
-
+      link: ''
     }
   },
   mounted() {
-    this.createQrCode()
+    const { $store, dimensionId } = this
+    this.link = `${this.h5Base}pages/home/preview?dimensionId=${dimensionId}&merCode=${$store.getters.merCode}`
+    this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
+      text: this.link,
+      width: 200,
+      height: 200,
+      colorDark: '#333333', // 二维码颜色
+      colorLight: '#ffffff', // 二维码背景色
+      correctLevel: QRCode.CorrectLevel.L// 容错率，L/M/H
+    })
   },
   methods: {
-    createQrCode() {
-      this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
-        // text: this.link,
-        width: 200,
-        height: 200,
-        colorDark: '#333333', // 二维码颜色
-        colorLight: '#ffffff', // 二维码背景色
-        correctLevel: QRCode.CorrectLevel.L// 容错率，L/M/H
+    handleCopy() {
+      const txt = document.querySelector('#url').innerHTML
+      var input = document.querySelector('#path')
+      input.value = txt
+      input.select()
+      document.execCommand('Copy')
+      this.$message({
+        message: '复制成功',
+        type: 'success'
       })
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.share-path{
+  width:320px;
+  height:40px;
+  background:#F0F0F0;
+  border-radius:4px;
+  border:1px solid #E0E0E0;
+  color: #909399;
+  font-size: 14px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  .link-txt{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+    word-break: break-all;
+    flex: 1;
+    overflow: hidden;
+  }
+  .copy{
+    color: #4F88FF;
+    flex:  0 0 30px;
+    cursor: pointer;
+  }
+}
+</style>
