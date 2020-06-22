@@ -177,10 +177,10 @@
             </el-radio-group>
           </div>-->
           <div>
-            <!-- <template v-if="listQuery.infoFlag">
+            <template v-if="listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
               <el-button type="danger" size="mini" @click="handleChangeUpdown(0)">批量下架</el-button>
-            </template>-->
+            </template>
             <el-button type size="mini" @click="handleUpGroup">批量修改分组</el-button>
             <el-button type="info" size="mini" @click="handleSettingLimitBuy">批量设置限购</el-button>
             <el-button type="warning" size="mini" @click="handleImportUpdate">导入修改分组</el-button>
