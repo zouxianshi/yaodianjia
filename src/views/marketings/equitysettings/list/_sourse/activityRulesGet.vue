@@ -252,14 +252,15 @@ export default {
       if (value === null || value === '') {
         return callback(new Error('不可为空'))
       }
+      console.log('validAmountPrice--- this.forms.amountChange[index].maxAmount', this.forms.amountChange[index].maxAmount)
       if (
-        this.forms.amountChange[index].maxAmount !== null &&
+        this.forms.amountChange[index].maxAmount !== null && this.forms.amountChange[index].maxAmount !== '' &&
         value > Number(this.forms.amountChange[index].maxAmount || 0)
       ) {
-        return callback(new Error('最低消费不可高于最高消费'))
+        return callback(new Error('最小区间不可高于最大区间'))
       }
       if (value > 99999999) {
-        return callback(new Error('最低消费金额不可大于99999999'))
+        return callback(new Error('金额不可大于99999999'))
       }
       if (!checkNumberdouble(value)) {
         return callback(new Error('请输入最多2位小数的正数'))
@@ -274,13 +275,13 @@ export default {
         return callback(new Error('不可为空'))
       }
       if (
-        this.forms.amountChange[index].minAmount !== null &&
-        value > Number(this.forms.amountChange[index].maxAmount || 0)
+        this.forms.amountChange[index].minAmount !== null && this.forms.amountChange[index].minAmount !== '' &&
+        value < Number(this.forms.amountChange[index].minAmount || 0)
       ) {
-        return callback(new Error('最高消费不可低于最低消费'))
+        return callback(new Error('最大区间不可低于最小区间'))
       }
       if (value > 99999999) {
-        return callback(new Error('最低消费金额不可大于99999999'))
+        return callback(new Error('金额不可大于99999999'))
       }
       if (!checkNumberdouble(value)) {
         return callback(new Error('请输入最多2位小数的正数'))
