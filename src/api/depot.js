@@ -93,7 +93,7 @@ export function setBatchGroup(params) {
 // 批量设置限购
 export function setLimitBuyNum(params) {
   return request({
-    url: `${config.merchandise}/1.0/commodity/_limit`,
+    url: `${config.merGoods}/1.0/commodity/_limit`,
     method: 'post',
     data: params
   })
