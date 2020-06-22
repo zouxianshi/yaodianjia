@@ -211,11 +211,11 @@ export default {
           const { data } = res
           this.forms = {
             numberChange:
-              data && Array.isArray(data.numberChange) ? data.numberChange : [],
+              data && Array.isArray(data.numberExchangeRules) ? data.numberExchangeRules : [],
             amountChange:
-              data && Array.isArray(data.amountChange) ? data.amountChange : []
+              data && Array.isArray(data.amountExchangeRules) ? data.amountExchangeRules : []
           }
-          this.leftTimes = data && data.leftTimes
+          this.leftTimes = data && data.limitModifyTimes
         }
       })
     },
@@ -306,14 +306,16 @@ export default {
       callback()
     },
     onSubmit: throttle(function() {
-      const params = []
+      let params = {}
+      const numberExchangeRules = []
+      const amountExchangeRules = []
       this.$refs['forms'].validate((valid, object) => {
         console.log('forms-----', object, this.forms)
         if (valid) {
           if (this.forms.numberChange.length) {
             this.forms.numberChange.forEach(element => {
               console.log('element---', element)
-              params.push({
+              numberExchangeRules.push({
                 ...element,
                 ruleType: 0,
                 merCode: this.merCode
@@ -322,12 +324,17 @@ export default {
           }
           if (this.forms.amountChange.length) {
             this.forms.amountChange.forEach(element => {
-              params.push({
+              amountExchangeRules.push({
                 ...element,
                 ruleType: 1,
                 merCode: this.merCode
               })
             })
+          }
+          params = {
+            amountExchangeRules,
+            merCode: this.merCode,
+            numberExchangeRules
           }
           console.log('要上传的参数---', params)
           saveExchangeHb(params).then(res => {
