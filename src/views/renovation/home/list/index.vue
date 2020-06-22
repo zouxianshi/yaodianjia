@@ -44,6 +44,7 @@
         </el-table-column>
       </el-table>
     </section>
+    <input id="copyPath" class="" style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;" type="text">
     <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="previewShow">
       <preview v-if="previewShow" :dimension-id="dimensionId" />
     </el-dialog>
@@ -54,6 +55,7 @@
 import Preview from './_source/preview'
 import RenovationService from '@/api/renovation'
 import BaseForm from './_source/baseForm'
+import { mapGetters } from 'vuex'
 export default {
   name: 'HomeListIndex',
   components: { Preview, BaseForm },
@@ -69,6 +71,9 @@ export default {
   },
   created() {
     this.getList()
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   methods: {
     /**
@@ -87,16 +92,16 @@ export default {
     //  点击更多 点击菜单项触发的事件回调
     handleCommand({ type, data }) {
       switch (type) {
-        case 'home':
+        case 'home': // set home
           this._SetHome(data)
           break
-        case 'set':
+        case 'set': //  page setting
           this.$refs.baseform.openDialog(data)
           break
-        case 'copy':
-
+        case 'copy': // copy
+          this.copyPath(data)
           break
-        default:
+        default: // delete
           this._Delete([data.id])
           break
       }
@@ -116,6 +121,17 @@ export default {
         type: 'success'
       })
       this.getList()
+    },
+    copyPath(row) { //  复制
+      var input = document.querySelector('#copyPath')
+      const path = `${this.h5Base}pages/home/preview?dimensionId=${row.id}&merCode=${this.merCode}`
+      input.value = path
+      input.select()
+      document.execCommand('Copy')
+      this.$message({
+        message: '复制成功',
+        type: 'success'
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
