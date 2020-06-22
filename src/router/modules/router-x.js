@@ -56,7 +56,7 @@ const router = [
     redirect: '/marketing/activity',
     name: 'marketing',
     meta: {
-      title: '营销活动',
+      title: '营销中心',
       icon: 'goods'
     },
     alwaysShow: true,
