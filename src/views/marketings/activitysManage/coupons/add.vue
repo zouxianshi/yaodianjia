@@ -456,6 +456,10 @@ export default {
     },
     // 提交
     handleSumbit() {
+      if (this.value.length === 0) { //  阻止为选择时间直接提交（优化提示）
+        this.$message.error('请先选择领取时间！')
+        return
+      }
       this.$refs['forms'].validate(valid => {
         let val = true
         for (const j in this.forms.selectlist) {

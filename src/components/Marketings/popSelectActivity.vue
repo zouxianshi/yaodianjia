@@ -96,7 +96,6 @@ export default {
       tableLoading: false,
       gridData: [],
       selectedArr: [],
-      hasSelectList: [],
       searchParams: {
         activityTemplateCode: '',
         activityName: '',
@@ -115,10 +114,7 @@ export default {
   methods: {
     show(activity) {
       this.selectedArr = [...activity]
-      this.hasSelectList = []
-      activity.forEach(item => {
-        this.hasSelectList.push(item.name)
-      })
+      this.currentRow = activity[0]
       this.queryData()
     },
     // 使用日期
@@ -152,6 +148,7 @@ export default {
         })
       } else {
         this.searchParams.beginTime = formatDate(this.beginendtime[0])
+        this.searchParams.endTime = formatDate(this.beginendtime[1])
         this.tableLoading = true
         var params = Object.assign({}, this.pageInfo, this.searchParams)
         normalAddActivityList(params).then(res => {
@@ -160,7 +157,6 @@ export default {
             this.gridData = res.data.records
             this.totalCount = res.data.total
             this.$nextTick(() => {
-              // this.selectedArr.splice(0)
               if (this.gridData.length > 0 && this.currentRow) {
                 const index = this.gridData.findIndex(
                   item => item.id === this.currentRow.id
@@ -168,8 +164,9 @@ export default {
                 if (index > -1) {
                   this.radio = index
                   this.selectedArr.splice(0)
-                  console.log(this.selectedArr)
                   this.selectedArr.push(this.currentRow)
+                } else {
+                  this.radio = null
                 }
               }
             })
@@ -199,8 +196,9 @@ export default {
         if (index > -1) {
           this.radio = index
           this.selectedArr.splice(0)
-          console.log(this.selectedArr)
           this.selectedArr.push(this.currentRow)
+        } else {
+          this.radio = null
         }
       }
     },
