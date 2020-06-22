@@ -15,7 +15,7 @@ export default [
         component: () => import('@/views/mall/list'),
         name: 'home-list',
         meta: {
-          title: '首页设置列表',
+          title: '主页设置列表',
           noCache: true
         },
         children: []
