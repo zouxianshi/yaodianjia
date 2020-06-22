@@ -2,7 +2,7 @@ import { getInfo } from '@/api/user'
 
 import { setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-import { MC } from '@merchant/commons'
+import { MC } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
 const state = {
   token: MC.getAuth(),
   name: '',

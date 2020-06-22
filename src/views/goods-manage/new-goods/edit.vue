@@ -1788,7 +1788,6 @@ export default {
 .edit-wrapper {
   color: #333;
   margin-bottom: 80px;
-  padding-bottom: 50px;
 
   .img-tips {
     font-size: 12px;
@@ -1959,15 +1958,16 @@ export default {
   }
 }
 .action-wapper {
-  position: absolute;
+  position: fixed !important;
   padding: 12px;
   bottom: 0;
-  left: 0;
+  left: 255px;
   right: 0;
   z-index: 3000;
   background: #fff;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   text-align: right;
+  width:calc(100% - 255px);
 }
 .link-btn {
   font-size: 14px;
