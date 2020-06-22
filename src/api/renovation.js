@@ -62,6 +62,31 @@ class RenovationService {
       data: params
     })
   }
+  /** *
+   *
+   *@param {String} params.id  id
+   *@param {}
+   * @description 复制当前模板
+   */
+  copyCurrentHome(params) {
+    return request({
+      url: `${this.serve}/1.0/homepage/copy`,
+      method: 'post',
+      data: params
+    })
+  }
+
+  /**
+   *
+   *  @description 批量修改分享信息
+   */
+  updateShareInfo(params) {
+    return request({
+      url: `${this.serve}/1.0/homepage/setShareInfo`,
+      method: 'post',
+      data: params
+    })
+  }
 }
 
 export default new RenovationService()

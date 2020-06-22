@@ -3,7 +3,7 @@
     <section class="list-operate">
       <div>
         <el-button type="primary" plain="" size="small" @click="handleBatchDel">批量删除</el-button>
-        <el-button type="primary" plain size="small">批量修改分享信息</el-button>
+        <el-button type="primary" plain size="small" @click="handleSetShareinfo">批量修改分享信息</el-button>
       </div>
       <el-button type="primary" size="small" @click="handleEdit('')">新建首页</el-button>
     </section>
@@ -49,16 +49,18 @@
       <preview v-if="previewShow" :dimension-id="dimensionId" />
     </el-dialog>
     <base-form ref="baseform" @success="getList" />
+    <share-info ref="setShare" :ids="chooseAry" @success="getList" />
   </div>
 </template>
 <script>
 import Preview from './_source/preview'
 import RenovationService from '@/api/renovation'
 import BaseForm from './_source/baseForm'
+import ShareInfo from './_source/shareInfo'
 import { mapGetters } from 'vuex'
 export default {
   name: 'HomeListIndex',
-  components: { Preview, BaseForm },
+  components: { Preview, BaseForm, ShareInfo },
   data() {
     return {
       loading: false,
@@ -66,7 +68,8 @@ export default {
       previewShow: false,
       visible: false,
       multipleSelection: [],
-      dimensionId: ''
+      dimensionId: '',
+      chooseAry: []
     }
   },
   created() {
@@ -122,16 +125,26 @@ export default {
       })
       this.getList()
     },
-    copyPath(row) { //  复制
-      var input = document.querySelector('#copyPath')
-      const path = `${this.h5Base}pages/home/preview?dimensionId=${row.id}&merCode=${this.merCode}`
-      input.value = path
-      input.select()
-      document.execCommand('Copy')
+    async _Setcopy(row) { //  复制
+      await RenovationService.copyCurrentHome({ id: row.id, isNew: row.isNew })
       this.$message({
         message: '复制成功',
         type: 'success'
       })
+      this.getList()
+    },
+    handleSetShareinfo() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请选择你要设置的分享信息的数据',
+          type: 'warning'
+        })
+        return
+      }
+      this.multipleSelection.map(v => {
+        this.chooseAry.push(v.id)
+      })
+      this.$refs.setShare.openDialog()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
