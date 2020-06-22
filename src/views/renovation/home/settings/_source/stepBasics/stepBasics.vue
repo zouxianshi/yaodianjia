@@ -44,6 +44,13 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .basics-model {
-
+    padding: 20px;
+    .bm-title {
+      padding-left: 140px;
+      padding-bottom: 20px;
+      strong {
+        font-size: 16px;
+      }
+    }
   }
 </style>
