@@ -26,9 +26,9 @@
         </div>
         <div class="jl-items">
           连续签到
-          <el-input-number v-model="paramsForm.incrLimitRuleValue" :precision="0" :min="2" :max="365" :controls="false" size="mini" style="width: 120px" />
-          天后，不在赠送额外海贝，以第
-          <el-input-number v-model="paramsForm.incrLimitValue" :precision="0" :min="2" :max="365" :controls="false" size="mini" style="width: 120px" />
+          <el-input-number v-model="paramsForm.incrLimitRuleValue" :precision="0" :min="2" :max="365" :controls="false" size="mini" style="width: 120px" @change="changeDay" />
+          天后，不再赠送额外海贝，以第
+          <el-input-number v-model="paramsForm.incrLimitValue" disabled :precision="0" :min="2" :max="365" :controls="false" size="mini" style="width: 120px" />
           天的赠送额度继续赠送
         </div>
       </el-form-item>
@@ -82,6 +82,9 @@ export default {
     })
   },
   methods: {
+    changeDay() {
+      this.paramsForm.incrLimitValue = this.paramsForm.incrLimitRuleValue
+    },
     _onSubmit() {
       var params = _.cloneDeep(this.paramsForm)
       if (params.fixedValue === '' || !params.fixedValue) {
