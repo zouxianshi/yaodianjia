@@ -275,7 +275,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { MC } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
+import { MC } from '@merchant/commons'
 import config from '@/utils/config'
 import storeGoods from '@/views/marketing/components/store-gods'
 import checkCoupon from '@/components/Marketings/checkCoupon'

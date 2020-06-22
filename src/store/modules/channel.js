@@ -6,7 +6,7 @@
 
 import _ from 'lodash'
 import store from '@/store'
-// import { MC } from '/Users/gongzijian/WebstormProjects/hydee-perject/merchant-commons/src'
+// import { MC } from '@merchant/commons'
 import { setMenuData } from '@/api/channelService'
 
 const handlerActive = (data, index) => {
