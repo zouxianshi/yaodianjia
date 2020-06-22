@@ -7,7 +7,7 @@ export default [
     redirect: '/mall/home',
     name: 'mall',
     meta: {
-      title: '商城'
+      title: '商城装修'
     },
     children: [
       {
