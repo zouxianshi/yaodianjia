@@ -66,7 +66,7 @@ const router = [
         component: () => import('@/views/marketing/activity/index'),
         name: 'activity',
         meta: {
-          title: '活动管理',
+          title: '精彩活动',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
@@ -105,7 +105,7 @@ const router = [
         component: () => import('@/views/marketing/activity/list'),
         name: 'activityList',
         meta: {
-          title: '活动管理列表',
+          title: '精彩活动列表',
           activeMenu: '/marketing/activity',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }

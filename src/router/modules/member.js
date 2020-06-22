@@ -27,7 +27,7 @@ export default [
             component: () => import('@/views/member/memberCenter/list'),
             name: 'mc-list',
             meta: {
-              title: '会员列表',
+              title: '会员管理',
               auth: false,
               noCache: true,
               activeMenu: '/member/member-center/list'

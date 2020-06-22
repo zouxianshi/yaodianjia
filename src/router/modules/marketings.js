@@ -70,7 +70,7 @@ export default [{
     redirect: '/marketings/activity-manage/list',
     name: 'activitys-manage',
     meta: {
-      title: '活动管理',
+      title: '精彩活动',
       auth: 'marketing.marketing-manager',
       noCache: true
     }
@@ -80,7 +80,7 @@ export default [{
     component: () => import('@/views/marketings/activitysManage/list'),
     name: 'activitys-manage-list',
     meta: {
-      title: '活动管理列表',
+      title: '精彩活动列表',
       auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
@@ -179,7 +179,7 @@ export default [{
     component: () => import('@/views/marketings/equitysettings/list'),
     name: 'equity-exchange-list',
     meta: {
-      title: '兑换海贝',
+      title: '权益设置',
       auth: false,
       noCache: true
       // activeMenu: '/marketing/gifts'
