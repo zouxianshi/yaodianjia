@@ -95,7 +95,7 @@
           />
         </div>
       </el-form-item>
-      <el-form-item label>
+      <el-form-item label="">
         <div class="btn-add-rule" @click="addRule('numberChange')">+ 添加规则</div>
         <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexNum" />
@@ -161,7 +161,7 @@
           />
         </div>
       </el-form-item>
-      <el-form-item label>
+      <el-form-item label="">
         <div class="btn-add-rule" @click="addRule('amountChange')">+ 添加规则</div>
         <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexAmount" />
