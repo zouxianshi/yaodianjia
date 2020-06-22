@@ -6,7 +6,7 @@ const router = [
     redirect: '/goods-manage/depot',
     name: 'goods-manage',
     meta: {
-      title: '商品管理',
+      title: '商品中心',
       icon: 'goods',
       auth: 'commodity'
     },
