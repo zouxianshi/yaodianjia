@@ -977,10 +977,8 @@ export default {
 .app-container {
   background: #fff;
   // position: relative;
-  // margin-bottom: 80px;
-  .el-form {
-    margin-bottom: 80px;
-  }
+  padding-bottom: 80px;
+  padding-top: 20px;
   .form-title {
     line-height: 14px;
     font-size: 14px;
