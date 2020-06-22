@@ -1,34 +1,59 @@
 <template>
-  <div class="exchange-model">
-    <el-row>
-      <el-col :span="4">
-        <div style="height: 200px;margin:30px 0px 0px 20px">
-          <el-steps direction="vertical" :active="active">
-            <el-step title="活动规则" />
-            <el-step title="提交保存" />
-          </el-steps>
-        </div>
-      </el-col>
-      <el-col :span="20" style="background:#fff">
-        <el-card class="box-card">
-          <activityRules v-if="active.toString()==='1'" @submitactivit="submitActivit" />
-          <equitySubmit v-if="active.toString()==='2'" />
-        </el-card>
-      </el-col>
-    </el-row>
+  <div class="app-container">
+    <el-tabs v-model="activeName">
+      <el-tab-pane label="海贝成长" name="complimentary">
+        <el-row :gutter="20">
+          <el-col
+            v-for="o in complimentary"
+            :key="o.value"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            :xl="4"
+          >
+            <card-item :item="o" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
-import activityRules from './_sourse/activityRules'
-import equitySubmit from './_sourse/equitySubmit'
+import cardItem from './_sourse/card-item'
 import { mapGetters } from 'vuex'
+import exChange from '@/assets/image/acvity/ex-change.png'
+import exGet from '@/assets/image/acvity/ex-get.png'
+
 export default {
   name: 'Exchange',
-  components: { activityRules, equitySubmit },
   props: {},
+  components: { cardItem },
   data() {
     return {
-      active: 1
+      activeName: 'complimentary',
+      complimentary: [
+        {
+          value: 'haibeiExchangeSetting',
+          lable: '积分兑换',
+          name: 'haibeiExchangeSetting',
+          img: exChange,
+          createText: '规则设置',
+          linkUrl: '/marketing/settings-equity/ex-set',
+          desc:
+            '线下积分可以兑换成海贝，海贝可以在兑换商城用来兑换商品，商品多多，权益多多'
+        },
+        {
+          value: 'getHaibeiSetting',
+          lable: '消费兑换',
+          name: 'getHaibeiSetting',
+          img: exGet,
+          createText: '规则设置',
+          linkUrl: '/marketing/settings-equity/ex-get',
+          desc:
+            '在商城购物可以赠送海贝，海贝可以用来兑换商品，激励用户在上商城消费'
+        }
+      ]
     }
   },
   computed: {
