@@ -7,7 +7,7 @@ export default [
     redirect: '/member/member-center',
     name: 'member',
     meta: {
-      title: '会员管理',
+      title: '会员中心',
       auth: false
     },
     children: [
@@ -17,7 +17,7 @@ export default [
         name: 'memberCenter',
         redirect: '/member/member-center/list',
         meta: {
-          title: '会员中心',
+          title: '会员管理',
           auth: false,
           noCache: true
         },
