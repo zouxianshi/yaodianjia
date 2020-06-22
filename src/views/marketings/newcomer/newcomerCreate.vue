@@ -11,10 +11,9 @@
             v-model="activeTimer"
             style="margin-left:2rem"
             size="mini"
-            type="datetimerange"
+            type="daterange"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            :default-time="['00:00:00', '20:59:59']"
             :disabled="isDisabled"
             :picker-options="pickerOptions"
             @change="changeTimes"
@@ -113,13 +112,13 @@ export default {
       var _self = this
       var bgTime = null; var endTime = null
       if (_self.hasSelectTime.length > 0) {
-        bgTime = new Date(_self.hasSelectTime[0].beginTime).getTime() - 864000
-        endTime = new Date(_self.hasSelectTime[0].endTime).getTime() + 864000
+        bgTime = new Date(_self.hasSelectTime[0].beginTime).getTime()
+        endTime = new Date(_self.hasSelectTime[0].endTime).getTime()
       }
       return {
         disabledDate(time) {
           const tims = time.getTime()
-          return tims < new Date(new Date().getTime() - 86400000) || (endTime && (tims > bgTime && tims < endTime))
+          return tims < new Date(new Date().getTime()) || (endTime && (tims > bgTime && tims < endTime))
         }
       }
     }
@@ -146,10 +145,14 @@ export default {
         selectedActivity
       )
     },
-    // 选择时间后，清空已选择优惠券和活动
-    changeTimes() {
-      this.selectedCoupons = []
-      this.selectedActivity = []
+    // 选择时间后，判断活动
+    changeTimes(e) {
+      const endTimer = new Date(e[1]).getTime()
+      const timer = this.selectedActivity
+      if (timer.length > 0 && new Date(timer[0].endTime).getTime() < endTimer) {
+        this.$message.error('当前选择的活动结束时间早于新人礼包结束时间，请重新选择活动！')
+        this.selectedActivity = []
+      }
     },
     // 查询单个活动详情
     tailActive(id) {
@@ -269,17 +272,18 @@ export default {
         updateGiftBag(params).then(res => {
           if (res.code === '10000') {
             this.$message({
-              message: '操作成功',
+              message: '修改成功',
               type: 'success'
             })
             this.$router.push('/activity/newcomer-pack')
           }
         })
       } else {
+        params.endTime = formatDate(new Date(this.activeTimer[1]).getTime() + 86399900)
         createNewGiftBag(params).then(res => {
           if (res.code === '10000') {
             this.$message({
-              message: '操作成功',
+              message: '新增成功',
               type: 'success'
             })
             this.$router.push('/activity/newcomer-pack')
