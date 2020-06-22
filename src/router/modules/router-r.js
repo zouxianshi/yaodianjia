@@ -5,7 +5,7 @@ const router = [
     component: Layout,
     redirect: '/chainSetting',
     meta: {
-      title: '设置中心',
+      title: '渠道设置',
       icon: 'goods'
     },
     children: [
