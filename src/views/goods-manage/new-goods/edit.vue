@@ -1244,6 +1244,7 @@ export default {
     // 加载商品详情
     _loadGoodsDetails(val) {
       this.goodsIntro.content = val
+      this.$refs['details-ty'].setContent(val)
       // this.$refs['details-ty'].destroyTinymce() // 先销毁
       // getGoodsDetails(id)
       //   .then(res => {
