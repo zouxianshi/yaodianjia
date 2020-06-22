@@ -107,6 +107,7 @@ export default {
         pageSize: 5
       },
       currentRow: null,
+      currentId: null,
       radio: false,
       dialogTableVisible: false
     }
@@ -115,6 +116,9 @@ export default {
     show(activity) {
       this.selectedArr = [...activity]
       this.currentRow = activity[0]
+      if (activity.length > 0) {
+        this.currentId = activity[0].id
+      }
       this.queryData()
     },
     // 使用日期
@@ -157,9 +161,9 @@ export default {
             this.gridData = res.data.records
             this.totalCount = res.data.total
             this.$nextTick(() => {
-              if (this.gridData.length > 0 && this.currentRow) {
+              if (this.gridData.length > 0 && this.currentId) {
                 const index = this.gridData.findIndex(
-                  item => item.id === this.currentRow.id
+                  item => item.id === this.currentId
                 )
                 if (index > -1) {
                   this.radio = index
@@ -168,6 +172,8 @@ export default {
                 } else {
                   this.radio = null
                 }
+              } else {
+                this.radio = null
               }
             })
           }
@@ -188,17 +194,18 @@ export default {
       this.queryData()
     },
     handleCurrentChange(val) {
-      this.currentRow = val
-      if (this.gridData.length > 0 && this.currentRow) {
-        const index = this.gridData.findIndex(
-          item => item.id === this.currentRow.id
-        )
-        if (index > -1) {
-          this.radio = index
-          this.selectedArr.splice(0)
-          this.selectedArr.push(this.currentRow)
-        } else {
-          this.radio = null
+      if (val) {
+        this.currentRow = val
+        this.currentId = val.id
+        if (this.gridData.length > 0 && this.currentId) {
+          const index = this.gridData.findIndex(
+            item => item.id === this.currentId
+          )
+          if (index > -1) {
+            this.radio = index
+            this.selectedArr.splice(0)
+            this.selectedArr.push(this.currentRow)
+          }
         }
       }
     },
@@ -214,14 +221,6 @@ export default {
 
     // 单选
     select(e, rows) {
-      this.selectedArr = e
-    },
-    // 全选
-    selectAll(e) {
-      this.selectedArr = e
-    },
-    // 预设选中（下面tag标签）
-    selectAuto(e) {
       this.selectedArr = e
     }
   }
