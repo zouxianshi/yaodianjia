@@ -163,6 +163,16 @@ export default {
           linkUrl: '/marketing/activity/limit-edit?l_type=12',
           desc:
             '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。'
+        },
+        {
+          value: 'constituteGoods',
+          lable: '组合商品',
+          name: 'constituteGoods',
+          img: limitSecKill,
+          listUrl: '/marketing/activity/constitute-goods',
+          linkUrl: '/marketing/activity/constitute-goods/edit',
+          desc:
+            '合商品之前在商品中心，新建后的组合商品组合越来越多，客户不易维护。组合商品实质为一种促销方式，所以现决定将组合商品迁移至营销中心的促销活动中，后期也可以更好维护数据。组合商品现在商品中心已经跑通，现在需要将该功能移植到营销中心，将功能复制到营销中心，有极少部分需要改动'
         }
       ], // 商品促销
       gamesFun: [
