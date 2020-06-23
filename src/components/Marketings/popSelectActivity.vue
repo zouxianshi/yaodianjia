@@ -89,6 +89,10 @@ export default {
       default() {
         return []
       }
+    },
+    apiModelProperty: {
+      type: String,
+      default: '0'
     }
   },
   data() {
@@ -97,13 +101,14 @@ export default {
       gridData: [],
       selectedArr: [],
       searchParams: {
+        busType: 0,
         activityTemplateCode: '',
         activityName: '',
         beginTime: ''
       },
       totalCount: 0,
       pageInfo: {
-        currentPage: 0,
+        currentPage: 1,
         pageSize: 5
       },
       currentRow: null,
@@ -153,6 +158,7 @@ export default {
       } else {
         this.searchParams.beginTime = formatDate(this.beginendtime[0])
         this.searchParams.endTime = formatDate(this.beginendtime[1])
+        this.searchParams.busType = this.ApiModelProperty
         this.tableLoading = true
         var params = Object.assign({}, this.pageInfo, this.searchParams)
         normalAddActivityList(params).then(res => {

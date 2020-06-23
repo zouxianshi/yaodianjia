@@ -60,7 +60,7 @@
     <!-- 选择优惠券弹窗 -->
     <mCouponModel ref="checkCoupons" :timevalue="activeTimer" state="1" @confincheck="onGetSelectCoupon" />
     <!-- 选择活动弹窗 -->
-    <mPopSelectActivity ref="selectActivity" :beginendtime="activeTimerFomart" @onSelect="onGetSelectActivity" />
+    <mPopSelectActivity ref="selectActivity" api-model-property="1" :beginendtime="activeTimerFomart" @onSelect="onGetSelectActivity" />
   </div>
 </template>
 <script>
@@ -86,12 +86,14 @@ export default {
       hasActive: false, // 是否有相关活动
       selectActive: [],
       selectedActivity: [], // 已选择活动
-      hasSelectTime: []
+      hasSelectTime: [],
+      hasChangeTime: true
     }
   },
   created() {
     if (this.$route.query.id) {
       this.tailActive(this.$route.query.id)
+      this.hasChangeTime = false
     }
     newUserGiftList().then(res => {
       this.hasSelectTime = res.data || []
@@ -118,7 +120,7 @@ export default {
       return {
         disabledDate(time) {
           const tims = time.getTime()
-          return tims < new Date(new Date().getTime()) || (endTime && (tims > bgTime && tims < endTime))
+          return tims < new Date(new Date().getTime() - 86400000) || (endTime && (tims > bgTime && tims < endTime))
         }
       }
     }
@@ -147,6 +149,7 @@ export default {
     },
     // 选择时间后，判断活动
     changeTimes(e) {
+      this.hasChangeTime = true
       const endTimer = new Date(e[1]).getTime()
       const timer = this.selectedActivity
       if (timer.length > 0 && new Date(timer[0].endTime).getTime() < endTimer) {
@@ -261,6 +264,10 @@ export default {
         'sendRule': 1,
         'shopRule': 1
       }
+      if (this.hasChangeTime) { // 如果是新添加或者修改过日期，需将结束时间改为 23:59:59
+        params.endTime = formatDate(new Date(this.activeTimer[1]).getTime() + 86399900)
+        this.hasChangeTime = false
+      }
       if (this.$route.query.id) { // 删除旧的优惠券等数据
         const data = this.updataParams.listActivityPayEntity
         const removedList = []
@@ -279,7 +286,6 @@ export default {
           }
         })
       } else {
-        params.endTime = formatDate(new Date(this.activeTimer[1]).getTime() + 86399900)
         createNewGiftBag(params).then(res => {
           if (res.code === '10000') {
             this.$message({

@@ -210,7 +210,7 @@
       <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
     </div>
     <store-dialog ref="storeComponent" :list="selectedStores" @complete="onGetSelectStore" />
-    <mPopSelectActivity ref="selectActivity" :beginendtime="beginEndTime" @onSelect="onGetSelectActivity" />
+    <mPopSelectActivity ref="selectActivity" api-model-property="0" :beginendtime="beginEndTime" @onSelect="onGetSelectActivity" />
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
