@@ -297,7 +297,7 @@ export default {
         return callback(new Error('请输入最多2位小数的正数'))
       }
       // 这里要判断跟最小区间的合理性
-      if (!_.toNumber(this.forms.amountChange[index].minAmount)) {
+      if (this.forms.amountChange[index].minAmount * 1) {
         this.$refs['forms'].clearValidate(_.replace(rule.field, 'maxAmount', 'minAmount'))
       }
       callback()
