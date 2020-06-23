@@ -1,8 +1,13 @@
 <template>
-  <div class="activityRules-model">
+  <div
+    v-loading="pageLoading"
+    class="activityRules-model"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+  >
     <div class="header">
       消费兑换
-      <span style="color: #faad14">（一年内可申请12次修改，本年还可修改{{ leftTimes }}次）</span>
+      <span style="color: #faad14">（一年内可申请12次修改，本年还可修改{{ leftTimes || 0 }}次）</span>
     </div>
     <el-form
       ref="forms"
@@ -12,7 +17,6 @@
       label-position="right"
       style="height: calc(100vh - 350px); overflow: auto"
     >
-      <!-- <div class="form-title">按次数兑换:</div> -->
       <el-form-item label="按次数兑换：" />
       <el-form-item
         v-for="(domain, $Index) in forms.numberChange"
@@ -20,25 +24,7 @@
         :label="'规则'+($Index+1)+'：'"
       >
         <div class="form-line">
-          <el-form-item
-            :ref="'numberChange.'+ $Index + '.day'"
-            :prop="'numberChange.'+ $Index + '.day'"
-            :rules="{
-              validator:validDays, trigger: 'change'
-            }"
-          >
-            <el-input
-              v-model.number="domain.day"
-              placeholder="不限制"
-              style="width:110px"
-              size="small"
-            >
-              <template slot="append">天</template>
-            </el-input>
-          </el-form-item>
-
-          <!-- <span class="tips-text">天</span> -->
-          <span style="margin-left: 16px; margin-right: 8px">消费</span>
+          <span style="margin-right: 8px">每消费</span>
           <el-form-item
             :ref="'numberChange.'+ $Index + '.number'"
             :prop="'numberChange.'+ $Index + '.number'"
@@ -50,8 +36,6 @@
               <template slot="append">次</template>
             </el-input>
           </el-form-item>
-
-          <!-- <span class="tips-text">次</span> -->
           <span class="send">送</span>
           <el-form-item
             :ref="'numberChange.'+ $Index + '.exchangeHb'"
@@ -70,8 +54,6 @@
               <template slot="append">个海贝</template>
             </el-input>
           </el-form-item>
-          <!-- <span class="tips-text">个</span> -->
-          <!-- <span>海贝</span> -->
           <span style="margin-left: 16px; margin-right: 8px">次数是否累计</span>
           <el-form-item
             :ref="'numberChange.'+ $Index + '.cumulative'"
@@ -87,17 +69,10 @@
               <el-option :key="0" label="否" :value="0" />
             </el-select>
           </el-form-item>
-
-          <el-divider v-if="forms.numberChange.length >= 1" direction="vertical" />
-          <i
-            v-if="forms.numberChange.length >= 1"
-            class="el-icon-delete"
-            @click="deleteRule('numberChange', $Index)"
-          />
         </div>
       </el-form-item>
-      <el-form-item label>
-        <div class="btn-add-rule" @click="addRule('numberChange')">+ 添加规则</div>
+      <el-form-item v-if="!forms.numberChange.length" label>
+        <el-button class="btn-add-rule" @click="addRule('numberChange')">+ 添加规则</el-button>
         <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexNum" />
           <span slot="reference" class="example-btn">示例演示</span>
@@ -163,16 +138,23 @@
         </div>
       </el-form-item>
       <el-form-item label>
-        <div class="btn-add-rule" @click="addRule('amountChange')">+ 添加规则</div>
+        <el-button class="btn-add-rule" @click="addRule('amountChange')">+ 添加规则</el-button>
         <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexAmount" />
-          <!-- <img :src="ImgexAmounturl" /> -->
           <span slot="reference" class="example-btn">示例演示</span>
         </el-popover>
       </el-form-item>
     </el-form>
     <div style="text-algin: center">
-      <el-button type="primary" size="small" @click="onSubmit">保存</el-button>
+      <el-popconfirm
+        placement="top"
+        icon="el-icon-info"
+        icon-color="red"
+        :title="'本年度剩余可修改次数为' + leftTimes + '次, 确定修改吗？'"
+        @onConfirm="onSubmit"
+      >
+        <el-button slot="reference" :disabled="!leftTimes" :loading="loading" type="primary" size="small">保存</el-button>
+      </el-popconfirm>
     </div>
   </div>
 </template>
@@ -195,7 +177,9 @@ export default {
       },
       ImgexAmount,
       ImgexNum,
-      leftTimes: ''
+      leftTimes: '',
+      loading: false,
+      pageLoading: false
     }
   },
   computed: {
@@ -206,8 +190,10 @@ export default {
   },
   methods: {
     getData() {
+      this.pageLoading = true
       queryExchangeHb().then(res => {
         console.log('queryExchangeHb----', res)
+        this.pageLoading = false
         if (res.code === '10000') {
           const { data } = res
           this.forms = {
@@ -222,12 +208,13 @@ export default {
           }
           this.leftTimes = data && data.limitModifyTimes
         }
+      }).catch(() => {
+        this.pageLoading = false
       })
     },
     // addRule
     addRule(type) {
       const numberChangeInit = {
-        day: '',
         number: '',
         exchangeHb: '',
         cumulative: 0,
@@ -298,7 +285,9 @@ export default {
       }
       // 这里要判断跟最小区间的合理性
       if (this.forms.amountChange[index].minAmount * 1) {
-        this.$refs['forms'].clearValidate(_.replace(rule.field, 'maxAmount', 'minAmount'))
+        this.$refs['forms'].clearValidate(
+          _.replace(rule.field, 'maxAmount', 'minAmount')
+        )
       }
       callback()
     },
@@ -319,24 +308,6 @@ export default {
       }
       callback()
     },
-    // selfValidate(prop, isvalid, msg) {
-    //   console.log('我是自定义校验，被出发了', prop, isvalid, msg)
-    //   if (
-    //     prop.split('.').length > 2 &&
-    //     (prop.split('.')[2] === 'maxAmount' ||
-    //       prop.split('.')[2] === 'minAmount')
-    //   ) {
-    //     let prop_af = prop
-    //     if (prop.split('.')[2] === 'maxAmount') {
-    //       prop_af = _.replace(prop, 'maxAmount', 'minAmount')
-    //     } else {
-    //       prop_af = _.replace(prop, 'minAmount', 'maxAmount')
-    //     }
-    //     this.$refs['forms'].validateField(prop_af, errorMessage => {
-    //       console.log('11111', errorMessage)
-    //     })
-    //   }
-    // },
     onSubmit: throttle(function() {
       let params = {}
       const numberExchangeRules = []
@@ -344,6 +315,7 @@ export default {
       this.$refs['forms'].validate((valid, object) => {
         console.log('forms-----', object, this.forms)
         if (valid) {
+          this.loading = true
           if (this.forms.numberChange.length) {
             this.forms.numberChange.forEach(element => {
               console.log('element---', element)
@@ -371,6 +343,7 @@ export default {
           console.log('要上传的参数---', params)
           saveExchangeHb(params).then(res => {
             if (res.code === '10000') {
+              this.loading = false
               this.$message({
                 message: '保存成功',
                 type: 'success'
@@ -380,6 +353,7 @@ export default {
           })
         } else {
           console.log('error submit!!')
+          this.loading = false
           return false
         }
       })
