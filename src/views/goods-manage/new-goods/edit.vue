@@ -309,19 +309,27 @@
                     <el-form-item label="有效期：" prop="days">
                       <el-radio v-model="expireDays" :label="-1" size="small">无</el-radio>
                       <el-radio v-model="expireDays" :label="1" size="small">
-                        <el-input
-                          v-model="basicForm.days"
-                          maxlength="8"
-                          style="width:80px"
-                          size="small"
-                          placeholder
-                        />
-                        <el-select v-model="timeTypes" style="width:100px" size="small" placeholder>
-                          <el-option value="1" label="年" />
-                          <el-option value="2" label="月" />
-                          <el-option value="3" label="天" />
-                        </el-select>
-                        <span style="color:#999">30天为一个月，365天为一年</span>
+                        有
+                        <template v-if="expireDays === 1">
+                          <el-input
+                            v-model="basicForm.days"
+                            maxlength="8"
+                            style="width:80px"
+                            size="small"
+                            placeholder
+                          />
+                          <el-select
+                            v-model="timeTypes"
+                            style="width:100px"
+                            size="small"
+                            placeholder
+                          >
+                            <el-option value="1" label="年" />
+                            <el-option value="2" label="月" />
+                            <el-option value="3" label="天" />
+                          </el-select>
+                          <span style="color:#999">30天为一个月，365天为一年</span>
+                        </template>
                       </el-radio>
                     </el-form-item>
                   </div>
