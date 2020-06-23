@@ -15,7 +15,6 @@
       label-width="150px"
       validate-on-rule-change
       label-position="right"
-      :disabled="!leftTimes"
       style="height: calc(100vh - 350px); overflow: auto"
     >
       <el-form-item label="按次数兑换：" />
@@ -25,24 +24,7 @@
         :label="'规则'+($Index+1)+'：'"
       >
         <div class="form-line">
-          <el-form-item
-            :ref="'numberChange.'+ $Index + '.day'"
-            :prop="'numberChange.'+ $Index + '.day'"
-            :rules="{
-              validator:validDays, trigger: 'change'
-            }"
-          >
-            <el-input
-              v-model.number="domain.day"
-              placeholder="不限制"
-              style="width:110px"
-              size="small"
-            >
-              <template slot="append">天</template>
-            </el-input>
-          </el-form-item>
-
-          <span style="margin-left: 16px; margin-right: 8px">消费</span>
+          <span style="margin-right: 8px">每消费</span>
           <el-form-item
             :ref="'numberChange.'+ $Index + '.number'"
             :prop="'numberChange.'+ $Index + '.number'"
@@ -87,21 +69,19 @@
               <el-option :key="0" label="否" :value="0" />
             </el-select>
           </el-form-item>
-
-          <el-divider v-if="forms.numberChange.length >= 1" direction="vertical" />
+          <el-divider direction="vertical" />
           <i
-            v-if="forms.numberChange.length >= 1"
             class="el-icon-delete"
             @click="deleteRule('numberChange', $Index)"
           />
         </div>
       </el-form-item>
-      <el-form-item label>
-        <el-button class="btn-add-rule" :disabled="!leftTimes" @click="addRule('numberChange')">+ 添加规则</el-button>
-        <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+      <el-form-item v-if="!forms.numberChange.length" label=" ">
+        <el-button class="btn-add-rule" @click="addRule('numberChange')">+ 添加规则</el-button>
+        <!-- <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexNum" />
           <span slot="reference" class="example-btn">示例演示</span>
-        </el-popover>
+        </el-popover> -->
       </el-form-item>
 
       <el-form-item label="按金额兑换：" />
@@ -162,8 +142,8 @@
           />
         </div>
       </el-form-item>
-      <el-form-item label>
-        <el-button class="btn-add-rule" :disabled="!leftTimes" @click="addRule('amountChange')">+ 添加规则</el-button>
+      <el-form-item label=" ">
+        <el-button class="btn-add-rule" @click="addRule('amountChange')">+ 添加规则</el-button>
         <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexAmount" />
           <span slot="reference" class="example-btn">示例演示</span>
@@ -178,7 +158,13 @@
         :title="'本年度剩余可修改次数为' + leftTimes + '次, 确定修改吗？'"
         @onConfirm="onSubmit"
       >
-        <el-button slot="reference" :disabled="!leftTimes" :loading="loading" type="primary" size="small">保存</el-button>
+        <el-button
+          slot="reference"
+          :disabled="!leftTimes"
+          :loading="loading"
+          type="primary"
+          size="small"
+        >保存</el-button>
       </el-popconfirm>
     </div>
   </div>
@@ -216,31 +202,32 @@ export default {
   methods: {
     getData() {
       this.pageLoading = true
-      queryExchangeHb().then(res => {
-        console.log('queryExchangeHb----', res)
-        this.pageLoading = false
-        if (res.code === '10000') {
-          const { data } = res
-          this.forms = {
-            numberChange:
-              data && Array.isArray(data.numberExchangeRules)
-                ? data.numberExchangeRules
-                : [],
-            amountChange:
-              data && Array.isArray(data.amountExchangeRules)
-                ? data.amountExchangeRules
-                : []
+      queryExchangeHb()
+        .then(res => {
+          console.log('queryExchangeHb----', res)
+          this.pageLoading = false
+          if (res.code === '10000') {
+            const { data } = res
+            this.forms = {
+              numberChange:
+                data && Array.isArray(data.numberExchangeRules)
+                  ? data.numberExchangeRules
+                  : [],
+              amountChange:
+                data && Array.isArray(data.amountExchangeRules)
+                  ? data.amountExchangeRules
+                  : []
+            }
+            this.leftTimes = data && data.limitModifyTimes
           }
-          this.leftTimes = data && data.limitModifyTimes
-        }
-      }).catch(() => {
-        this.pageLoading = false
-      })
+        })
+        .catch(() => {
+          this.pageLoading = false
+        })
     },
     // addRule
     addRule(type) {
       const numberChangeInit = {
-        day: '',
         number: '',
         exchangeHb: '',
         cumulative: 0,
