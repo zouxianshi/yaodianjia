@@ -179,7 +179,29 @@ export default [{
     component: () => import('@/views/marketings/equitysettings/list'),
     name: 'equity-exchange-list',
     meta: {
-      title: '权益设置',
+      title: '海贝成长',
+      auth: false,
+      noCache: true
+      // activeMenu: '/marketing/gifts'
+    }
+  },
+  {
+    path: '/marketing/settings-equity/ex-set',
+    component: () => import('@/views/marketings/equitysettings/list/exchangeSetting'),
+    name: 'equity-exchange-setting',
+    meta: {
+      title: '积分兑换',
+      auth: false,
+      noCache: true
+      // activeMenu: '/marketing/gifts'
+    }
+  },
+  {
+    path: '/marketing/settings-equity/ex-get',
+    component: () => import('@/views/marketings/equitysettings/list/exchangeGet'),
+    name: 'equity-exchange-get',
+    meta: {
+      title: '消费兑换',
       auth: false,
       noCache: true
       // activeMenu: '/marketing/gifts'
