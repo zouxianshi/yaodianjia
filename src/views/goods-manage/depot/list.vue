@@ -271,7 +271,7 @@
                 <!-- <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
                   <el-button type="primary" size="mini" plain @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-button type="warning" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
-                </template> -->
+                </template>-->
                 <template v-if="scope.row.commodityType!==2">
                   <a @click="handleEdit(scope.row.id)">
                     <el-button type="success" plain size="mini">编辑</el-button>
@@ -287,6 +287,7 @@
         </div>
         <pagination
           :total="total"
+          :page-sizes="[20, 30, 50, 100]"
           :page.sync="listQuery.currentPage"
           :limit.sync="listQuery.pageSize"
           @pagination="getList"
@@ -416,7 +417,9 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     const name = `depotEdit`
-    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === name)
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+      item => item.name === name
+    )
     if (hasGoodsEdit && to.name === name) {
       const answer = window.confirm('你还有数据没有保存，是否确认退出')
       if (answer) {
@@ -638,11 +641,15 @@ export default {
     //
     handleDel(row) {
       console.log('当前删除的id', row)
-      this.$confirm('请谨慎操作，删除后商品无法恢复，且顾客购物车的该商品信息一并消失。继续删除吗？', '', {
-        confirmButtonText: '继续删除',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        '请谨慎操作，删除后商品无法恢复，且顾客购物车的该商品信息一并消失。继续删除吗？',
+        '',
+        {
+          confirmButtonText: '继续删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
         delGoods({
           merCode: this.merCode, // 商品编码不可为空
           id: row.id, // 商品id不可为空
@@ -697,7 +704,11 @@ export default {
       // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew({ ...this.listQuery, skuIds: this.goodsData, hasLimit: true })
+      exportDataNew({
+        ...this.listQuery,
+        skuIds: this.goodsData,
+        hasLimit: true
+      })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {
