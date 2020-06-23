@@ -55,7 +55,7 @@
           没有想要商品，去
           <router-link tag="span" class="link" to="/goods-manage/apply">创建自有新品</router-link>
         </p>
-      </el-alert> -->
+      </el-alert>-->
       <el-table v-loading="loading" :data="tableData" stripe>
         <template slot="empty">
           <div v-show="!loading" class="table-nodata">
@@ -118,6 +118,7 @@
               type="primary"
               :loading="scope.row.loading"
               size="mini"
+              :disabled="scope.row.hasAddComm"
               @click="handleSetStore(scope.row)"
             >添加该商品</el-button>
           </template>
@@ -215,7 +216,11 @@ export default {
       row.loading = true
       setComAddGoods({ ids: [row.id], userName: this.name })
         .then(res => {
-          this.$router.push('/goods-manage/addition-edit?id=' + row.id + '&backUrl=apply-record&type=添加该商品&origin=1')
+          this.$router.push(
+            '/goods-manage/addition-edit?id=' +
+              row.id +
+              '&backUrl=apply-record&type=添加该商品&origin=1'
+          )
           // this.$message({
           //   message:
           //     '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
