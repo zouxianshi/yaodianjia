@@ -8,6 +8,7 @@
       ref="forms"
       :model="forms"
       label-width="150px"
+      validate-on-rule-change
       label-position="right"
       style="height: calc(100vh - 350px); overflow: auto"
     >
@@ -91,7 +92,7 @@
           <i
             v-if="forms.numberChange.length >= 1"
             class="el-icon-delete"
-            @click="deleteRule('numberChange', $index)"
+            @click="deleteRule('numberChange', $Index)"
           />
         </div>
       </el-form-item>
@@ -157,7 +158,7 @@
           <i
             v-if="forms.amountChange.length >= 1"
             class="el-icon-delete"
-            @click="deleteRule('amountChange', $index)"
+            @click="deleteRule('amountChange', $Index)"
           />
         </div>
       </el-form-item>
@@ -211,9 +212,13 @@ export default {
           const { data } = res
           this.forms = {
             numberChange:
-              data && Array.isArray(data.numberExchangeRules) ? data.numberExchangeRules : [],
+              data && Array.isArray(data.numberExchangeRules)
+                ? data.numberExchangeRules
+                : [],
             amountChange:
-              data && Array.isArray(data.amountExchangeRules) ? data.amountExchangeRules : []
+              data && Array.isArray(data.amountExchangeRules)
+                ? data.amountExchangeRules
+                : []
           }
           this.leftTimes = data && data.limitModifyTimes
         }
@@ -234,7 +239,8 @@ export default {
         exchangeHb: '',
         keyId: `amountChange-${new Date().getTime()}`
       }
-      const initRuleFull = type === 'numberChange' ? numberChangeInit : amountChangeInit
+      const initRuleFull =
+        type === 'numberChange' ? numberChangeInit : amountChangeInit
       this.forms[type] = this.forms[type].concat({
         ...initRuleFull
       })
@@ -242,19 +248,22 @@ export default {
     deleteRule(type, index) {
       const data = JSON.parse(JSON.stringify(this.forms[type]))
       data.splice(index, 1)
-      console.log('data-------------', data)
       this.forms[type] = data
     },
     // 按金额兑换消费最小值校验
     validAmountPrice(rule, value, callback) {
       const index = rule.field.split('.')[1]
       console.log('validAmountPrice---', rule, value, index)
-      if (value === null || value === '') {
-        return callback(new Error('不可为空'))
+      if (!_.toNumber(value)) {
+        return callback(new Error('不可为空且大于0'))
       }
-      console.log('validAmountPrice--- this.forms.amountChange[index].maxAmount', this.forms.amountChange[index].maxAmount)
+      console.log(
+        'validAmountPrice--- this.forms.amountChange[index].maxAmount',
+        this.forms.amountChange[index].maxAmount
+      )
       if (
-        this.forms.amountChange[index].maxAmount !== null && this.forms.amountChange[index].maxAmount !== '' &&
+        this.forms.amountChange[index].maxAmount !== null &&
+        this.forms.amountChange[index].maxAmount !== '' &&
         value > Number(this.forms.amountChange[index].maxAmount || 0)
       ) {
         return callback(new Error('最小区间不可高于最大区间'))
@@ -271,11 +280,12 @@ export default {
     validMaxAmountPrice(rule, value, callback) {
       console.log('validMaxAmountPrice---', rule, value)
       const index = rule.field.split('.')[1]
-      if (value === null || value === '') {
-        return callback(new Error('不可为空'))
+      if (!_.toNumber(value)) {
+        return callback(new Error('不可为空且大于0'))
       }
       if (
-        this.forms.amountChange[index].minAmount !== null && this.forms.amountChange[index].minAmount !== '' &&
+        this.forms.amountChange[index].minAmount !== null &&
+        this.forms.amountChange[index].minAmount !== '' &&
         value < Number(this.forms.amountChange[index].minAmount || 0)
       ) {
         return callback(new Error('最大区间不可低于最小区间'))
@@ -286,11 +296,13 @@ export default {
       if (!checkNumberdouble(value)) {
         return callback(new Error('请输入最多2位小数的正数'))
       }
+      // 这里要判断跟最小区间的合理性
+      this.$refs['forms'].clearValidate(_.replace(rule.field, 'maxAmount', 'minAmount'))
       callback()
     },
     validExchangeHb(rule, value, callback) {
-      if (value === null || value === '') {
-        return callback(new Error('不可为空'))
+      if (!_.toNumber(value)) {
+        return callback(new Error('不可为空且大于0'))
       }
       if (!checkNumber(value)) {
         return callback(new Error('请输入正确的正整数'))
@@ -305,6 +317,24 @@ export default {
       }
       callback()
     },
+    // selfValidate(prop, isvalid, msg) {
+    //   console.log('我是自定义校验，被出发了', prop, isvalid, msg)
+    //   if (
+    //     prop.split('.').length > 2 &&
+    //     (prop.split('.')[2] === 'maxAmount' ||
+    //       prop.split('.')[2] === 'minAmount')
+    //   ) {
+    //     let prop_af = prop
+    //     if (prop.split('.')[2] === 'maxAmount') {
+    //       prop_af = _.replace(prop, 'maxAmount', 'minAmount')
+    //     } else {
+    //       prop_af = _.replace(prop, 'minAmount', 'maxAmount')
+    //     }
+    //     this.$refs['forms'].validateField(prop_af, errorMessage => {
+    //       console.log('11111', errorMessage)
+    //     })
+    //   }
+    // },
     onSubmit: throttle(function() {
       let params = {}
       const numberExchangeRules = []
@@ -359,6 +389,8 @@ export default {
 <style lang="scss" scoped>
 .activityRules-model {
   height: calc(100vh - 250px);
+  min-width: 700px;
+  overflow: auto;
   .header {
     padding: 15px 0;
     border-bottom: 1px solid rgba(231, 231, 231, 1);

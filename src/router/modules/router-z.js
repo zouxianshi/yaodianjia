@@ -94,8 +94,8 @@ const router = [
         name: 'apply',
         meta: {
           auth: 'commodity.commodity-self',
-          title: '自建新品',
-          noCache: false
+          noCache: true,
+          title: '自建新品'
         }
       }, {
         path: 'single-create',

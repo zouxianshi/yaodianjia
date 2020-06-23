@@ -16,7 +16,7 @@ const router = [
         component: () => import('@/views/orders-manage/list'),
         name: 'orders-manage-list',
         meta: {
-          title: '所有订单',
+          title: '微商城订单',
           noCache: true
         }
       }, {

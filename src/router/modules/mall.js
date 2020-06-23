@@ -7,7 +7,7 @@ export default [
     redirect: '/mall/home',
     name: 'mall',
     meta: {
-      title: '商城'
+      title: '商城装修'
     },
     children: [
       {
@@ -15,7 +15,7 @@ export default [
         component: () => import('@/views/mall/list'),
         name: 'home-list',
         meta: {
-          title: '首页设置列表',
+          title: '主页设置',
           noCache: true
         },
         children: []

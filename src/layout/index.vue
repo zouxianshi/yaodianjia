@@ -2,7 +2,7 @@
   <div class="app-wrapper">
     <div class="layout-wary">
       <div class="sidebar-box" :style="{width:!isOpen ? ' 255px' : '64px'}">
-        <m-sidebar v-model="isOpen" :res-list="resList" :nav-list="navList" :sys-router="$router" :def-page="$route.path" />
+        <m-sidebar v-model="isOpen" :res-list="resList" :def-page="$route.path" />
       </div>
       <div class="app-main-box" :style="_styleToggle">
         <div class="flx" :style="_styleToggle">
