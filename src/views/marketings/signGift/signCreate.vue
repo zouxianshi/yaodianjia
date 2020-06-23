@@ -12,23 +12,23 @@
       </el-form-item>
       <el-form-item v-if="paramsForm.modelType === 1" label="奖励设置" required>
         每人每天签到赠送
-        <el-input-number v-model="paramsForm.fixedValue" :precision="2" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
+        <el-input-number v-model="paramsForm.fixedValue" :precision="0" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
         <span class="tips">会员每日签到获得海贝奖励，无连续签到也可获得此奖励</span>
       </el-form-item>
       <el-form-item v-if="paramsForm.modelType === 2" label="奖励设置" required>
         <div class="jl-items">
           首次签到赠送
-          <el-input-number v-model="paramsForm.fixedValue" :precision="2" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
+          <el-input-number v-model="paramsForm.fixedValue" :precision="0" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
         </div>
         <div class="jl-items">
           连续签到，在前一天赠送数量的基础上多赠送
-          <el-input-number v-model="paramsForm.incrValue" :precision="2" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
+          <el-input-number v-model="paramsForm.incrValue" :precision="0" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
         </div>
         <div class="jl-items">
           连续签到
-          <el-input-number v-model="paramsForm.incrLimitRuleValue" :precision="0" :min="2" :max="365" :controls="false" size="mini" style="width: 120px" />
-          天后，不在赠送额外海贝，以第
-          <el-input-number v-model="paramsForm.incrLimitValue" :precision="0" :min="2" :max="365" :controls="false" size="mini" style="width: 120px" />
+          <el-input-number v-model="paramsForm.incrLimitRuleValue" :precision="0" :min="2" :max="365" :controls="false" size="mini" style="width: 120px" @change="changeDay" />
+          天后，不再赠送额外海贝，以第
+          <el-input-number v-model="paramsForm.incrLimitValue" disabled :precision="0" :min="2" :max="365" :controls="false" size="mini" style="width: 120px" />
           天的赠送额度继续赠送
         </div>
       </el-form-item>
@@ -76,12 +76,15 @@ export default {
   },
   created() {
     _searchMemberSignIn().then(res => {
-      if (res.code === '10000') {
+      if (res.code === '10000' && !!res.data) {
         this.paramsForm = res.data
       }
     })
   },
   methods: {
+    changeDay() {
+      this.paramsForm.incrLimitValue = this.paramsForm.incrLimitRuleValue
+    },
     _onSubmit() {
       var params = _.cloneDeep(this.paramsForm)
       if (params.fixedValue === '' || !params.fixedValue) {

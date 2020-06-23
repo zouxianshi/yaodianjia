@@ -1,27 +1,29 @@
 <template>
   <div class="newcommer-create-modal app-container">
     <div class="params-items">
-      <div class="title">参与对象</div>
-      <p style="margin-bottom: 20px;text-indent:2rem">新注册微商城的会员</p>
-    </div>
-    <div class="params-items">
-      <div class="title">活动时间</div>
-      <el-date-picker
-        v-model="activeTimer"
-        style="margin-left:2rem"
-        size="mini"
-        type="datetimerange"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        :default-time="['00:00:00', '20:59:59']"
-        :disabled="isDisabled"
-        :picker-options="pickerOptions"
-        @change="changeTimes"
-      />
+      <div class="title">基本信息</div>
+      <el-form label-width="120px" label-position="right">
+        <el-form-item label="参与对象">
+          <p style="text-indent:2rem">新注册微商城的会员</p>
+        </el-form-item>
+        <el-form-item label="活动时间" required>
+          <el-date-picker
+            v-model="activeTimer"
+            style="margin-left:2rem"
+            size="mini"
+            type="daterange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :disabled="isDisabled"
+            :picker-options="pickerOptions"
+            @change="changeTimes"
+          />
+        </el-form-item>
+      </el-form>
     </div>
     <div class="params-items">
       <div class="title">礼包内容</div>
-      <el-form label-position="top" style="margin-left: 2rem" size="mini" :disabled="isDisabled">
+      <el-form label-position="top" style="margin-left: 4rem" size="mini" :disabled="isDisabled">
         <el-form-item>
           <el-checkbox v-model="hasCoupon" @change="selectedCoupons=[]">优惠券</el-checkbox>
           <el-button type="primary" style="margin-left: 24px" :disabled="isDisabled || !hasCoupon" @click="selectCoupon">选择优惠券</el-button>
@@ -33,8 +35,8 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="hasHb" @change="hbNum=0">赠送海贝</el-checkbox>
-          <el-input-number v-model="hbNum" :disabled="isDisabled || !hasHb" style="margin-left: 9px; width:92px" :precision="0" :max="100000" :min="0" :controls="false" />
+          <el-checkbox v-model="hasHb" @change="hbNum=1">赠送海贝</el-checkbox>
+          <el-input-number v-model="hbNum" :disabled="isDisabled || !hasHb" style="margin-left: 9px; width:92px" :precision="0" :max="9999" :min="1" :controls="false" />
           海贝
         </el-form-item>
         <el-form-item>
@@ -58,7 +60,7 @@
     <!-- 选择优惠券弹窗 -->
     <mCouponModel ref="checkCoupons" :timevalue="activeTimer" state="1" @confincheck="onGetSelectCoupon" />
     <!-- 选择活动弹窗 -->
-    <mPopSelectActivity ref="selectActivity" :beginendtime="activeTimerFomart" @onSelect="onGetSelectActivity" />
+    <mPopSelectActivity ref="selectActivity" api-model-property="1" :beginendtime="activeTimerFomart" @onSelect="onGetSelectActivity" />
   </div>
 </template>
 <script>
@@ -80,16 +82,18 @@ export default {
       hasCoupon: false, // 是否赠送优惠券
       selectedCoupons: [], // 已选择的优惠券
       hasHb: false,
-      hbNum: 0,
+      hbNum: 1,
       hasActive: false, // 是否有相关活动
       selectActive: [],
       selectedActivity: [], // 已选择活动
-      hasSelectTime: []
+      hasSelectTime: [],
+      hasChangeTime: true
     }
   },
   created() {
     if (this.$route.query.id) {
       this.tailActive(this.$route.query.id)
+      this.hasChangeTime = false
     }
     newUserGiftList().then(res => {
       this.hasSelectTime = res.data || []
@@ -110,13 +114,12 @@ export default {
       var _self = this
       var bgTime = null; var endTime = null
       if (_self.hasSelectTime.length > 0) {
-        bgTime = new Date(_self.hasSelectTime[0].beginTime).getTime() - 864000
-        endTime = new Date(_self.hasSelectTime[0].endTime).getTime() + 864000
+        bgTime = new Date(_self.hasSelectTime[0].beginTime).getTime()
+        endTime = new Date(_self.hasSelectTime[0].endTime).getTime()
       }
       return {
         disabledDate(time) {
           const tims = time.getTime()
-
           return tims < new Date(new Date().getTime() - 86400000) || (endTime && (tims > bgTime && tims < endTime))
         }
       }
@@ -144,10 +147,15 @@ export default {
         selectedActivity
       )
     },
-    // 选择时间后，清空已选择优惠券和活动
-    changeTimes() {
-      this.selectedCoupons = []
-      this.selectedActivity = []
+    // 选择时间后，判断活动
+    changeTimes(e) {
+      this.hasChangeTime = true
+      const endTimer = new Date(e[1]).getTime()
+      const timer = this.selectedActivity
+      if (timer.length > 0 && new Date(timer[0].endTime).getTime() < endTimer) {
+        this.$message.error('当前选择的活动结束时间早于新人礼包结束时间，请重新选择活动！')
+        this.selectedActivity = []
+      }
     },
     // 查询单个活动详情
     tailActive(id) {
@@ -186,11 +194,19 @@ export default {
     },
     // 验证优惠券、活动、海贝不为空
     voildParams() {
+      if (this.activeTimer.length < 2) {
+        this.$message.error('请选择活动时间！')
+        return false
+      }
+      if (!this.hasHb && !this.hasCoupon && !this.hasActive) {
+        this.$message.error('请至少选择一个礼包内容。')
+        return false
+      }
       if (this.hasHb && this.hbNum <= 0) {
         this.$message.error('请输入大于0的海贝数量')
         return false
       } else if (this.hasCoupon && this.selectedCoupons.length === 0) {
-        this.$message('请选择优惠券或取消优惠券选项')
+        this.$message.error('请选择优惠券或取消优惠券选项')
         return false
       } else if (this.hasActive && this.selectedActivity.length === 0) {
         this.$message.error('请选择活动或取消活动选项')
@@ -226,7 +242,7 @@ export default {
           activityPayReqDTO.push(obj)
         })
       }
-      if (this.hbNum > 0) { // 活动数据
+      if (this.hasHb && this.hbNum > 0) { // 活动数据
         const obj = {
           giftId: null,
           giftNum: this.hbNum,
@@ -248,6 +264,10 @@ export default {
         'sendRule': 1,
         'shopRule': 1
       }
+      if (this.hasChangeTime) { // 如果是新添加或者修改过日期，需将结束时间改为 23:59:59
+        params.endTime = formatDate(new Date(this.activeTimer[1]).getTime() + 86399900)
+        this.hasChangeTime = false
+      }
       if (this.$route.query.id) { // 删除旧的优惠券等数据
         const data = this.updataParams.listActivityPayEntity
         const removedList = []
@@ -259,7 +279,7 @@ export default {
         updateGiftBag(params).then(res => {
           if (res.code === '10000') {
             this.$message({
-              message: '操作成功',
+              message: '修改成功',
               type: 'success'
             })
             this.$router.push('/activity/newcomer-pack')
@@ -269,7 +289,7 @@ export default {
         createNewGiftBag(params).then(res => {
           if (res.code === '10000') {
             this.$message({
-              message: '操作成功',
+              message: '新增成功',
               type: 'success'
             })
             this.$router.push('/activity/newcomer-pack')
@@ -289,6 +309,7 @@ export default {
       height: 40px;
       line-height: 40px;
       margin-bottom: 20px;
+      border-bottom: 1px solid #ccc
     }
     .selected-coupon-view{
       width: 80%;

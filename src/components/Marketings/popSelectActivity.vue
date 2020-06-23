@@ -89,6 +89,10 @@ export default {
       default() {
         return []
       }
+    },
+    apiModelProperty: {
+      type: String,
+      default: '0'
     }
   },
   data() {
@@ -96,18 +100,19 @@ export default {
       tableLoading: false,
       gridData: [],
       selectedArr: [],
-      hasSelectList: [],
       searchParams: {
+        busType: 0,
         activityTemplateCode: '',
         activityName: '',
         beginTime: ''
       },
       totalCount: 0,
       pageInfo: {
-        currentPage: 0,
+        currentPage: 1,
         pageSize: 5
       },
       currentRow: null,
+      currentId: null,
       radio: false,
       dialogTableVisible: false
     }
@@ -115,10 +120,10 @@ export default {
   methods: {
     show(activity) {
       this.selectedArr = [...activity]
-      this.hasSelectList = []
-      activity.forEach(item => {
-        this.hasSelectList.push(item.name)
-      })
+      this.currentRow = activity[0]
+      if (activity.length > 0) {
+        this.currentId = activity[0].id
+      }
       this.queryData()
     },
     // 使用日期
@@ -147,11 +152,13 @@ export default {
     queryData() {
       if (this.beginendtime.length === 0) {
         this.$message({
-          message: '请选择活动时间',
-          type: 'warning'
+          message: '请先选择活动时间',
+          type: 'error'
         })
       } else {
         this.searchParams.beginTime = formatDate(this.beginendtime[0])
+        this.searchParams.endTime = formatDate(this.beginendtime[1])
+        this.searchParams.busType = this.ApiModelProperty
         this.tableLoading = true
         var params = Object.assign({}, this.pageInfo, this.searchParams)
         normalAddActivityList(params).then(res => {
@@ -160,17 +167,19 @@ export default {
             this.gridData = res.data.records
             this.totalCount = res.data.total
             this.$nextTick(() => {
-              // this.selectedArr.splice(0)
-              if (this.gridData.length > 0 && this.currentRow) {
+              if (this.gridData.length > 0 && this.currentId) {
                 const index = this.gridData.findIndex(
-                  item => item.id === this.currentRow.id
+                  item => item.id === this.currentId
                 )
                 if (index > -1) {
                   this.radio = index
                   this.selectedArr.splice(0)
-                  console.log(this.selectedArr)
                   this.selectedArr.push(this.currentRow)
+                } else {
+                  this.radio = null
                 }
+              } else {
+                this.radio = null
               }
             })
           }
@@ -191,16 +200,18 @@ export default {
       this.queryData()
     },
     handleCurrentChange(val) {
-      this.currentRow = val
-      if (this.gridData.length > 0 && this.currentRow) {
-        const index = this.gridData.findIndex(
-          item => item.id === this.currentRow.id
-        )
-        if (index > -1) {
-          this.radio = index
-          this.selectedArr.splice(0)
-          console.log(this.selectedArr)
-          this.selectedArr.push(this.currentRow)
+      if (val) {
+        this.currentRow = val
+        this.currentId = val.id
+        if (this.gridData.length > 0 && this.currentId) {
+          const index = this.gridData.findIndex(
+            item => item.id === this.currentId
+          )
+          if (index > -1) {
+            this.radio = index
+            this.selectedArr.splice(0)
+            this.selectedArr.push(this.currentRow)
+          }
         }
       }
     },
@@ -216,14 +227,6 @@ export default {
 
     // 单选
     select(e, rows) {
-      this.selectedArr = e
-    },
-    // 全选
-    selectAll(e) {
-      this.selectedArr = e
-    },
-    // 预设选中（下面tag标签）
-    selectAuto(e) {
       this.selectedArr = e
     }
   }
