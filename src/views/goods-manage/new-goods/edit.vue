@@ -77,7 +77,14 @@
               </div>
             </div>
             <!-- 商品信息 -->
-            <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="(basicForm.origin === 2 || $route.name === 'depotEdit' || $route.query.source === 'create') ? basicRules : {}" :disabled="is_query">
+            <el-form
+              ref="basic"
+              :model="basicForm"
+              status-icon
+              label-width="130px"
+              :rules="(basicForm.origin === 2 || $route.name === 'depotEdit' || $route.query.source === 'create') ? basicRules : {}"
+              :disabled="is_query"
+            >
               <div class="edit-card">
                 <div class="header">
                   <span>商品信息</span>
@@ -302,19 +309,27 @@
                     <el-form-item label="有效期：" prop="days">
                       <el-radio v-model="expireDays" :label="-1" size="small">无</el-radio>
                       <el-radio v-model="expireDays" :label="1" size="small">
-                        <el-input
-                          v-model="basicForm.days"
-                          maxlength="8"
-                          style="width:80px"
-                          size="small"
-                          placeholder
-                        />
-                        <el-select v-model="timeTypes" style="width:100px" size="small" placeholder>
-                          <el-option value="1" label="年" />
-                          <el-option value="2" label="月" />
-                          <el-option value="3" label="天" />
-                        </el-select>
-                        <span style="color:#999">30天为一个月，365天为一年</span>
+                        有
+                        <template v-if="expireDays === 1">
+                          <el-input
+                            v-model="basicForm.days"
+                            maxlength="8"
+                            style="width:80px"
+                            size="small"
+                            placeholder
+                          />
+                          <el-select
+                            v-model="timeTypes"
+                            style="width:100px"
+                            size="small"
+                            placeholder
+                          >
+                            <el-option value="1" label="年" />
+                            <el-option value="2" label="月" />
+                            <el-option value="3" label="天" />
+                          </el-select>
+                          <span style="color:#999">30天为一个月，365天为一年</span>
+                        </template>
                       </el-radio>
                     </el-form-item>
                   </div>
@@ -373,11 +388,14 @@
               </div>
               <div class="edit-card-cnt">
                 <div class="content">
-                  <m-spec-setting ref="specSetting" :is-disabled="is_query" :spec-list="newSpecList" />
+                  <m-spec-setting
+                    ref="specSetting"
+                    :is-disabled="is_query"
+                    :spec-list="newSpecList"
+                  />
                 </div>
               </div>
             </div>
-
           </div>
         </div>
         <!-- 图文详情 -->
@@ -837,8 +855,7 @@ export default {
       next()
     }
   },
-  mounted() {
-  },
+  mounted() {},
   created() {
     this.basicLoading = true
     this._loadTypeList() // 获取分组
@@ -859,21 +876,21 @@ export default {
       this.basicForm.id = this.$route.query.id
       this.getDataAll()
       // 基本信息
-    //   this.getTypeListData()
-    //   .then(res => {
-    //     this._loadBasicInfo()
-    //   })
-    //   .catch(_ => {
-    //     this._loadBasicInfo()
-    //   })
-    //   setTimeout(() => {
-    //   this.$nextTick(() => {
-    //     // 加载商品说明
-    //     this._loadGoodsDetails()
-    //      // 加载商品图片
-    //     this._loadGoodsImgAry()
-    //   })
-    // }, 1200)
+      //   this.getTypeListData()
+      //   .then(res => {
+      //     this._loadBasicInfo()
+      //   })
+      //   .catch(_ => {
+      //     this._loadBasicInfo()
+      //   })
+      //   setTimeout(() => {
+      //   this.$nextTick(() => {
+      //     // 加载商品说明
+      //     this._loadGoodsDetails()
+      //      // 加载商品图片
+      //     this._loadGoodsImgAry()
+      //   })
+      // }, 1200)
     }
     this.is_query = this.$route.query.type === 'query'
     this.is_state = this.$route.query.state === 'check'
@@ -927,7 +944,9 @@ export default {
           res.data.commDTO.drugType = ''
         }
         this._loadBasicInfo(res.data.commDTO)
-        this._loadGoodsDetails(res.data.detailDTO && res.data.detailDTO.content || '')
+        this._loadGoodsDetails(
+          (res.data.detailDTO && res.data.detailDTO.content) || ''
+        )
         this.basicLoading = false
         this.isSpec = true
       }
@@ -1004,13 +1023,20 @@ export default {
           this.rejectForm.reason = ''
           // this.$router.go(-1)
           if (!data.auditReason) {
-            this.$router.replace(`/goods-manage/${this.backUrl}?source=${type === 'reject' ? 0 : 1}&type=1`)
+            this.$router.replace(
+              `/goods-manage/${this.backUrl}?source=${
+                type === 'reject' ? 0 : 1
+              }&type=1`
+            )
           } else {
-            this.$router.replace(`/goods-manage/${this.backUrl}?source=${type === 'reject' ? 0 : 1}&type=0`)
+            this.$router.replace(
+              `/goods-manage/${this.backUrl}?source=${
+                type === 'reject' ? 0 : 1
+              }&type=0`
+            )
           }
         })
-        .catch(_ => {
-        })
+        .catch(_ => {})
     },
     // 定位
     onScroll() {
@@ -1021,9 +1047,9 @@ export default {
         const s3 = $('#step3').height()
         if (scrollTop < s1) {
           this.step = 1
-        } else if (scrollTop < (s2 + s1 + 40)) {
+        } else if (scrollTop < s2 + s1 + 40) {
           this.step = 2
-        } else if (scrollTop < (s2 + s1 + s3)) {
+        } else if (scrollTop < s2 + s1 + s3) {
           this.step = 3
         }
       }
@@ -1182,9 +1208,11 @@ export default {
       }
 
       // todo 处理回填日期
-      const { days, timeTypes } = handlerDays(data.days)
-      data.days = days
-      this.timeTypes = `${timeTypes}`
+      if (data.days) {
+        const { days, timeTypes } = handlerDays(data.days)
+        data.days = days
+        this.timeTypes = `${timeTypes}`
+      }
 
       const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
       const findDrugIndex = findArray(this.drug, { value: data.dosageForm })
@@ -1228,6 +1256,7 @@ export default {
     // 加载商品详情
     _loadGoodsDetails(val) {
       this.goodsIntro.content = val
+      this.$refs['details-ty'].setContent(val)
       // this.$refs['details-ty'].destroyTinymce() // 先销毁
       // getGoodsDetails(id)
       //   .then(res => {
@@ -1455,7 +1484,9 @@ export default {
 
       let msgText = '保存成功'
       if (this.$route.name === 'editApply') {
-        msgText = `已提交审核，可在「新品申请记录」-${this.$route.query.source === 'create' ? '「待提交审核」' : '「全部」'}页面查看`
+        msgText = `已提交审核，可在「新品申请记录」-${
+          this.$route.query.source === 'create' ? '「待提交审核」' : '「全部」'
+        }页面查看`
       }
 
       if (this.$route.query.type === '添加该商品') {
@@ -1483,7 +1514,11 @@ export default {
             url = '/goods-manage/depot'
           }
 
-          this.$router.push(url)
+          this.$store
+            .dispatch('tagsView/delView', this.$route)
+            .then(({ visitedViews }) => {
+              this.$router.push(url)
+            })
           // this.subLoading = false
         })
         .catch(_ => {
@@ -1500,8 +1535,7 @@ export default {
           //   type: 'success'
           // })
         })
-        .catch(_ => {
-        })
+        .catch(_ => {})
     },
     nextStep() {
       this.handleSubmitForm()
@@ -1516,8 +1550,7 @@ export default {
           .then(() => {
             this.goBackUrl(3)
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       }, 1000)
     },
     goBackUrl(type = 2) {
@@ -1652,8 +1685,7 @@ export default {
 
                   // this.handleSubIntro()
                 })
-                .catch(() => {
-                })
+                .catch(() => {})
             } else {
               // if (this.basicForm.id) {
               //   data.firstTypeId = this.chooseTypeList[0].id
