@@ -69,14 +69,19 @@
               <el-option :key="0" label="否" :value="0" />
             </el-select>
           </el-form-item>
+          <el-divider direction="vertical" />
+          <i
+            class="el-icon-delete"
+            @click="deleteRule('numberChange', $Index)"
+          />
         </div>
       </el-form-item>
-      <el-form-item v-if="!forms.numberChange.length" label>
+      <el-form-item v-if="!forms.numberChange.length" label=" ">
         <el-button class="btn-add-rule" @click="addRule('numberChange')">+ 添加规则</el-button>
-        <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+        <!-- <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexNum" />
           <span slot="reference" class="example-btn">示例演示</span>
-        </el-popover>
+        </el-popover> -->
       </el-form-item>
 
       <el-form-item label="按金额兑换：" />
@@ -137,7 +142,7 @@
           />
         </div>
       </el-form-item>
-      <el-form-item label>
+      <el-form-item label=" ">
         <el-button class="btn-add-rule" @click="addRule('amountChange')">+ 添加规则</el-button>
         <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexAmount" />
@@ -153,7 +158,13 @@
         :title="'本年度剩余可修改次数为' + leftTimes + '次, 确定修改吗？'"
         @onConfirm="onSubmit"
       >
-        <el-button slot="reference" :disabled="!leftTimes" :loading="loading" type="primary" size="small">保存</el-button>
+        <el-button
+          slot="reference"
+          :disabled="!leftTimes"
+          :loading="loading"
+          type="primary"
+          size="small"
+        >保存</el-button>
       </el-popconfirm>
     </div>
   </div>
@@ -191,26 +202,28 @@ export default {
   methods: {
     getData() {
       this.pageLoading = true
-      queryExchangeHb().then(res => {
-        console.log('queryExchangeHb----', res)
-        this.pageLoading = false
-        if (res.code === '10000') {
-          const { data } = res
-          this.forms = {
-            numberChange:
-              data && Array.isArray(data.numberExchangeRules)
-                ? data.numberExchangeRules
-                : [],
-            amountChange:
-              data && Array.isArray(data.amountExchangeRules)
-                ? data.amountExchangeRules
-                : []
+      queryExchangeHb()
+        .then(res => {
+          console.log('queryExchangeHb----', res)
+          this.pageLoading = false
+          if (res.code === '10000') {
+            const { data } = res
+            this.forms = {
+              numberChange:
+                data && Array.isArray(data.numberExchangeRules)
+                  ? data.numberExchangeRules
+                  : [],
+              amountChange:
+                data && Array.isArray(data.amountExchangeRules)
+                  ? data.amountExchangeRules
+                  : []
+            }
+            this.leftTimes = data && data.limitModifyTimes
           }
-          this.leftTimes = data && data.limitModifyTimes
-        }
-      }).catch(() => {
-        this.pageLoading = false
-      })
+        })
+        .catch(() => {
+          this.pageLoading = false
+        })
     },
     // addRule
     addRule(type) {
