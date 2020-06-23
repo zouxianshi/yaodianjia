@@ -15,7 +15,7 @@
       label-width="150px"
       validate-on-rule-change
       label-position="right"
-      disabled
+      :disabled="!leftTimes"
       style="height: calc(100vh - 350px); overflow: auto"
     >
       <el-form-item label="按次数兑换：" />
