@@ -1208,9 +1208,11 @@ export default {
       }
 
       // todo 处理回填日期
-      const { days, timeTypes } = handlerDays(data.days)
-      data.days = days
-      this.timeTypes = `${timeTypes}`
+      if (data.days) {
+        const { days, timeTypes } = handlerDays(data.days)
+        data.days = days
+        this.timeTypes = `${timeTypes}`
+      }
 
       const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
       const findDrugIndex = findArray(this.drug, { value: data.dosageForm })
