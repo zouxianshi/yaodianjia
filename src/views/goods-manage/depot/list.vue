@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <div class="depot-wrappe clearfix">
-      <el-alert type="warning" :closable="false">
+      <!-- <el-alert type="warning" :closable="false">
         <p slot="title" class="alret-title">
           为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您
           <router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
         </p>
-      </el-alert>
+      </el-alert> -->
       <div style="margin-top:20px">
         <a href="#/goods-manage/addition">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">添加标库商品</el-button>
