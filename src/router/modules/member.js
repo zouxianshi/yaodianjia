@@ -73,8 +73,7 @@ export default [
         name: 'FeedbackList',
         meta: {
           title: '会员反馈',
-          noCache: true,
-          activeMenu: '/member/member-feedback'
+          noCache: true
         }
       }
     ]
