@@ -350,6 +350,7 @@
                               </template>
                               <span v-else v-text="orderStatusText(item)" />
                             </template>
+
                             <!-- 立即发货出现时机，当前订单状态为代发货且配送方式不为自提；当为处方单时，必须要保证需求单审核状态为通过 -->
                             <template
                               v-if="item.orderStatus===4 && item.deliveryType!==2 && (item.prescriptionSheetMark === '0'|| (item.prescriptionSheetMark === '1'&& item.prescriptionStatus === 2 ))"
@@ -357,7 +358,7 @@
                               <div class="order_btn btn_normal" style="text-align:right">
                                 <!-- 立即发货 -->
                                 <dialog-delivery-order
-                                  v-if="showSendBtn"
+                                  v-auth:order.order-all.immediate-delivery
                                   :employee-data="employeeData"
                                   :p-item="item"
                                   @sendOrder="sendOrder"
@@ -871,7 +872,7 @@
   </div>
 </template>
 <script>
-import ps from '@/layout/psHandler'
+// import ps from '@/layout/psHandler'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import dialogRefundOrder from './components/dialog-refundorder'
@@ -1070,7 +1071,6 @@ export default {
           // }
         ]
       },
-      showSendBtn: ps.showSendGoodsBtn() || false, // 立即发货鉴权
       // value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
       dateSelect: [], // 选择下单时间
       keyword: '',

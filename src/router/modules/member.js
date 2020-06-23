@@ -7,7 +7,7 @@ export default [
     redirect: '/member/member-center',
     name: 'member',
     meta: {
-      title: '会员管理',
+      title: '会员中心',
       auth: false
     },
     children: [
@@ -17,7 +17,7 @@ export default [
         name: 'memberCenter',
         redirect: '/member/member-center/list',
         meta: {
-          title: '会员中心',
+          title: '会员管理',
           auth: false,
           noCache: true
         },
@@ -27,10 +27,10 @@ export default [
             component: () => import('@/views/member/memberCenter/list'),
             name: 'mc-list',
             meta: {
-              title: '会员列表',
+              title: '会员管理',
               auth: false,
               noCache: true,
-              activeMenu: '/member/member-center'
+              activeMenu: '/member/member-center/list'
             }
           },
           {
@@ -73,8 +73,7 @@ export default [
         name: 'FeedbackList',
         meta: {
           title: '会员反馈',
-          noCache: true,
-          activeMenu: '/member/member-feedback'
+          noCache: true
         }
       }
     ]

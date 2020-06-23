@@ -109,12 +109,12 @@ class InnerCtor {
         name: '商城装修',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('yaodianjia-wxmall'),
+        disabled: true,
         children: [
           {
             name: '主页设置',
             path: '/mall/home',
-            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-home-set')
+            disabled: true
           },
           // {
           //   name: '主页设置（旧）',
@@ -124,19 +124,17 @@ class InnerCtor {
           {
             name: '首页轮播图',
             path: '/wxmall/banner',
-            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-banner')
+            disabled: true
           },
           {
             name: '首页公告栏',
             path: '/wxmall/notice',
-            disabled: this.get('yaodianjia-wxmall.yaodianjia-wxmall-notice')
+            disabled: true
           },
           {
             name: '分类广告位',
             path: '/wxmall/ad-position',
-            disabled: this.get(
-              'yaodianjia-wxmall.yaodianjia-wxmall-ad-position'
-            )
+            disabled: true
           }
         ]
       },
@@ -149,12 +147,12 @@ class InnerCtor {
           {
             name: `所有订单`,
             path: '/orders-manage/list',
-            disabled: this.get('order.order-all')
+            disabled: true
           },
           {
             name: `拼团订单`,
             path: '/orders-manage/spell-group',
-            disabled: this.get('order.order-group')
+            disabled: true
           },
           // {
           //   name: `订单详情`,
@@ -164,7 +162,7 @@ class InnerCtor {
           {
             name: `订单设置`,
             path: '/orders-manage/settings',
-            disabled: this.get('order.order-set')
+            disabled: true
           }
         ]
       },
@@ -173,7 +171,7 @@ class InnerCtor {
         name: '营销中心',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('marketing'),
+        disabled: true,
         children: [
           // {
           //   name: '新建活动',
@@ -198,12 +196,12 @@ class InnerCtor {
           {
             name: '精彩活动',
             path: '/marketing/activity',
-            disabled: this.get('marketing.marketing-manager')
+            disabled: true
           },
           {
             name: '礼品管理',
             path: '/marketing/gifts',
-            disabled: this.get('marketing.gift')
+            disabled: true
           },
           {
             name: '权益设置',
@@ -221,27 +219,27 @@ class InnerCtor {
         name: '客服中心',
         icon: 'icongoods',
         path: '/customerService',
-        disabled: this.get('staff'),
+        disabled: true,
         children: [
           {
             name: '客服列表',
             path: '/customerService/list',
-            disabled: this.get('staff.staff-list')
+            disabled: true
           },
           {
             name: '快捷消息',
             path: '/customerService/msgSettings',
-            disabled: this.get('staff.quick-message-set')
+            disabled: true
           },
           {
             name: '在线咨询',
             path: '/customerService/consultation',
-            disabled: this.get('staff.online-ask')
+            disabled: true
           },
           {
             name: '消息记录',
             path: '/customerService/historyMsg',
-            disabled: this.get('staff.message-record')
+            disabled: true
           }
         ]
       },
@@ -249,7 +247,7 @@ class InnerCtor {
         name: '设置中心',
         icon: 'icongoods',
         path: '',
-        disabled: this.get('set'),
+        disabled: true,
         children: [
           /*{
             name: '所有门店',
@@ -259,29 +257,29 @@ class InnerCtor {
           {
             name: '连锁设置',
             path: '/storeSetting/chainSetting',
-            disabled: this.get('set.merchant-set'),
+            disabled: true,
             children: []
           },
           {
             name: '上线门店',
             path: '/storeSetting/setting',
-            disabled: this.get('set.store-up')
+            disabled: true
           },
           {
             name: '门店配送',
             path: '/storeSetting/deliverySetting',
-            disabled: this.get('set.store-deliver')
+            disabled: true
           },
           {
             name: '内部链接',
             path: '/storeSetting/internalLink',
-            disabled: this.get('set.inner-link'),
+            disabled: true,
             children: []
           },
           {
             name: '微信小程序',
             path: '/storeSetting/weapp',
-            disabled: this.get('set.wx-mini'),
+            disabled: true,
             children: []
           },
           {
@@ -322,7 +320,7 @@ class InnerCtor {
         icon: 'icongoods',
         path: '',
         // disabled: this.get("distribution"),
-        disabled: this.get('appointment'),
+        disabled: true,
         children: [
           /*{
             name: '所有门店',
@@ -339,24 +337,24 @@ class InnerCtor {
           {
             name: '预约商品管理',
             path: '/distribution/reservation-product',
-            disabled: this.get('appointment.epidemic'),
+            disabled: true,
             children: []
           },
           {
             name: '门店需求商品统计',
             path: '/distribution/store-statistics',
-            disabled: this.get('appointment.need-statistic'),
+            disabled: true,
             children: []
           },
           {
             name: '预约单管理',
             path: '/distribution/order-manage',
-            disabled: this.get('appointment.order'),
+            disabled: true,
             children: [
               {
                 name: '预约单详情',
                 path: '/distribution/order-details',
-                disabled: this.get('appointment.order')
+                disabled: true
               }
             ]
           },
@@ -369,14 +367,14 @@ class InnerCtor {
           {
             name: '小程序设置',
             path: '/distribution/weapp-setting',
-            disabled: this.get('appointment.mini'),
+            disabled: true,
             children: []
           },
 
           {
             name: '提货点管理',
             path: '/distribution/pickup-point',
-            disabled: this.get('appointment.pick-set'),
+            disabled: true,
             children: []
           }
           // {
