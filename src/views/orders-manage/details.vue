@@ -562,7 +562,7 @@
                 <div class="header-cell">单价（元）</div>
                 <div class="header-cell">数量</div>
                 <div class="header-cell">小计（元）</div>
-                <div class="header-cell">药店加优惠</div>
+                <div class="header-cell">海典健康微商城优惠</div>
                 <div class="header-cell">状态</div>
               </div>
               <div class="header-right">
