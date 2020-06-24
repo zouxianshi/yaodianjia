@@ -507,9 +507,20 @@
           </div>
         </div>
       </template>
-
+      <!-- 特效药用药人信息 -->
+      <template v-if="detailsData.medicalUserEntity">
+        <div class="info">
+          <div class="info-item line">
+            <div class="title">用药人</div>
+            <div class="line-content">
+              <div class="con">姓名：{{ detailsData.medicalUserEntity.buyer }}</div>
+              <div class="con">身份证：{{ detailsData.medicalUserEntity.idcard }}</div>
+              <div class="con">手机号码：{{ detailsData.medicalUserEntity.buyerMobile }}</div>
+            </div>
+          </div>
+        </div>
+      </template>
       <!-- 物流信息 --退货物流-->
-      <!-- <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)"> -->
       <template v-if="detailsData.retRecordList">
         <div
           v-for="(item,indexReturn) in detailsData.retRecordList"
@@ -1155,6 +1166,16 @@ export default {
     }
     &:nth-last-child(1) {
       border: none;
+    }
+    &.line {
+      width: 100%;
+      .line-content {
+        display: flex;
+        flex-direction: row;
+        .con {
+          margin-right: 20px;
+        }
+      }
     }
     .title {
       line-height: 16px;
