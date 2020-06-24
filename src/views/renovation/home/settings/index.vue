@@ -3,7 +3,7 @@
     <div class="hsm-step">
       <m-step />
     </div>
-    <div class="hsm-main">
+    <div class="scrollbar hsm-main">
       <component :is="mod" />
     </div>
     <div class="hsm-operation">
@@ -67,6 +67,10 @@ export default {
     border-radius: 4px;
     height: calc(100vh - 200px);
     position: relative;
+    .hsm-main {
+      overflow-y: scroll;
+      height: calc(100vh - 326px);
+    }
     .hsm-operation {
       position: absolute;
       bottom: -20px;

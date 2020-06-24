@@ -5,7 +5,7 @@
  */
 
 const state = {
-  stepVal: 1
+  stepVal: 2
 }
 
 const mutations = {
