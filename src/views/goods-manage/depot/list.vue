@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <div class="depot-wrappe clearfix">
-      <el-alert type="warning" :closable="false">
+      <!-- <el-alert type="warning" :closable="false">
         <p slot="title" class="alret-title">
           为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您
           <router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
         </p>
-      </el-alert>
+      </el-alert> -->
       <div style="margin-top:20px">
         <a href="#/goods-manage/addition">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">添加标库商品</el-button>
@@ -287,6 +287,7 @@
         </div>
         <pagination
           :total="total"
+          :page-sizes="[20, 30, 50, 100]"
           :page.sync="listQuery.currentPage"
           :limit.sync="listQuery.pageSize"
           @pagination="getList"
@@ -644,11 +645,15 @@ export default {
     //
     handleDel(row) {
       console.log('当前删除的id', row)
-      this.$confirm('请谨慎操作，删除后商品无法恢复，且顾客购物车的该商品信息一并消失。继续删除吗？', '', {
-        confirmButtonText: '继续删除',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        '请谨慎操作，删除后商品无法恢复，且顾客购物车的该商品信息一并消失。继续删除吗？',
+        '',
+        {
+          confirmButtonText: '继续删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
         delGoods({
           merCode: this.merCode, // 商品编码不可为空
           id: row.id, // 商品id不可为空

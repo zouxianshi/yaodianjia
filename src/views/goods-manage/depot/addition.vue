@@ -25,6 +25,18 @@
                 placeholder="生产企业"
               />
             </div>
+            <div class="search-item">
+              <span class="label-name">是否添加</span>
+              <el-select
+                v-model="listQuery.hasAddComm"
+                placeholder="请选择"
+                size="small"
+                @change="handleQuery"
+              >
+                <el-option label="是" :value="true" />
+                <el-option label="否" :value="false" />
+              </el-select>
+            </div>
           </div>
           <div class="search-form">
             <div class="search-item">
@@ -108,7 +120,8 @@
         </span>
       </el-dialog>
     </div>
-  </div></template>
+  </div>
+</template>
 <script>
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
@@ -179,7 +192,11 @@ export default {
       row.loading = true
       setComAddGoods({ ids: [row.id], userName: this.name })
         .then(res => {
-          this.$router.push('/goods-manage/addition-edit?id=' + row.id + '&backUrl=apply-record&type=添加该商品&origin=1')
+          this.$router.push(
+            '/goods-manage/addition-edit?id=' +
+              row.id +
+              '&backUrl=apply-record&type=添加该商品&origin=1'
+          )
           // this.$message({
           //   message:
           //     '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
