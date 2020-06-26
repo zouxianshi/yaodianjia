@@ -12,19 +12,10 @@
       <div class="scrollbar scm-comps-list ">
         <div class="scm-item-box">
           <v-draggable v-model="dragData" draggable=".scm-item" v-bind="dragOptions" @start="onStart">
-            <!-- <el-button v-for="(el,i) in cpdComponentItem" :key="i" style="padding: 1px 10px;position: relative;top:-2px;" size="small" :disabled="isDisabled(el.type)">
-              <img style="vertical-align: middle;width: 28px;" :src="rtImg(el.type,i)" alt="">
-              <span style="vertical-align: middle">{{ el.name }}</span>
-            </el-button>-->
-
             <div v-for="(item,$index) in dragData" :key="$index" class="scm-item">
               <m-comps-item :item="item" />
             </div>
           </v-draggable>
-
-          <!--<div class="scm-item" v-for="(item,$index) in cpdComponentItem" :key="$index">
-            <m-comps-item :item="item"/>
-          </div>-->
         </div>
       </div>
     </div>
@@ -41,8 +32,8 @@ export default {
   name: 'SaComponents',
   data() {
     return {
-      defaultData,
-      tabVal: 'basics',
+      defaultData: defaultData,
+      tabVal: 'marketing',
       selectVal: 'navigation',
       dragData: []
     }
@@ -53,7 +44,9 @@ export default {
       this.selectVal = v
       this.handlerDragData()
     },
-    onStart() {},
+    onStart() {
+
+    },
     handlerDragData() {
       this.dragData = _.find(this.defaultData[this.tabVal], ['type', this.selectVal]).component
     }
@@ -62,7 +55,7 @@ export default {
     'tabVal': {
       immediate: true,
       handler(v) {
-        this.selectVal = v === 'basics' ? 'navigation' : 'adFrame'
+        this.selectVal = v === 'basics' ? 'navigation' : 'coupon'
         this.handlerDragData()
       }
     }
@@ -104,7 +97,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .sa-components-model {
     width: 246px;
-    height: calc(100vh - 374px);
+    height:calc(100vh - 265px);
     background: #F2F2F6;
     .scm-comps {
       overflow: hidden;
@@ -113,7 +106,7 @@ export default {
       }
       .scm-comps-class {
         width: 82px;
-        height: calc(100vh - 428px);
+        height: calc(100vh - 318px);
         background: #E3E3EA;
         ul {
           li {
@@ -137,7 +130,7 @@ export default {
       }
       .scm-comps-list {
         width: 164px;
-        height: calc(100vh - 428px);
+        height: calc(100vh - 224px);
         .scm-item-box {
           margin-left: 12px;
           .scm-item {

@@ -1,15 +1,26 @@
 <template>
-  <div class="index-model">
-    index
+  <div class="announcement-index-model" :style="stylees">
+    <component :is="mod" :item="item" />
   </div>
 </template>
 <script>
+import mFirst from './first'
+import mSecond from './second'
+import mThird from './third'
+import mFour from './four'
+import { globalBinding } from './../../../../mixins'
 export default {
   name: 'AnnouncementIndex',
   data() {
     return {}
   },
-  props: {},
+  mixins: [globalBinding],
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -28,13 +39,31 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    mod() {
+      switch (this.item.subType) {
+        case 'first':
+          return mFirst
+        case 'second':
+          return mSecond
+        case 'third':
+          return mThird
+        case 'four':
+          return mFour
+      }
+    }
+  },
   components: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .index-model {
-
+  .announcement-index-model {
+    margin-bottom: 10px;
+    .aim-title-bg {
+      width: 354px;
+      height: 36px;
+      line-height: 33px;
+    }
   }
 </style>

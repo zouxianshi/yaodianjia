@@ -2,15 +2,19 @@
   <div class="step-assembly-model">
     <div class="sam-components">
       <m-sa-title text-name="组件库" text-desc="拖拽组件至预览页" />
-      <m-components />
+      <div class="sam-ass">
+        <m-components />
+      </div>
     </div>
-    <div class="sam-preview">
-      <m-sa-title text-name="预览页" text-desc="点击组件可设置组件" />
-      <m-preview />
-    </div>
-    <div class="sam-set">
-      <m-sa-title text-name="设置组件" text-desc="点击组件样式可设置组件" />
-      <m-set />
+    <div class="sam-content">
+      <div class="sam-preview">
+        <m-sa-title text-name="预览页" text-desc="点击组件可设置组件" />
+        <m-preview />
+      </div>
+      <div class="sam-set">
+        <m-sa-title text-name="设置组件" text-desc="点击组件样式可设置组件" />
+        <m-set />
+      </div>
     </div>
   </div>
 </template>
@@ -52,18 +56,29 @@ export default {
   .step-assembly-model {
     overflow: hidden;
     padding: 20px 20px 0px 20px;
-    .sam-components,.sam-preview,.sam-set {
-      float: left;
-    }
     .sam-components {
       width: 246px;
+      position: absolute;
+      left: 20px;
+      top: 20px;
     }
-    .sam-preview {
-      width: 360px;
-      margin: 0 30px;
+    .sam-content {
+      width: calc(100% - 304px);
+      position: absolute;
+      left: 288px;
+      top: 20px;
+      .sam-preview {
+        width: 360px;
+      }
     }
     .sam-set {
-      width: calc(100% - 666px);
+      width: calc(100% - 386px);
+      position: absolute;
+      left: 382px;
+      top: 0;
+      .sam-preview {
+        width: 360px;
+      }
     }
   }
 </style>

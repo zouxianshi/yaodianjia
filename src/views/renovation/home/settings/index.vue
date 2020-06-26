@@ -1,8 +1,5 @@
 <template>
   <div class="home-settings-model">
-    <div class="hsm-step">
-      <m-step />
-    </div>
     <div class="scrollbar hsm-main">
       <component :is="mod" />
     </div>
@@ -35,6 +32,10 @@ export default {
   beforeMount() {
   },
   mounted() {
+    $('.header-model').css({
+      height: '98px'
+    })
+    $('.app-main-model').find('.copyright').hide()
   },
   beforeUpdate() {
   },
@@ -69,11 +70,11 @@ export default {
     position: relative;
     .hsm-main {
       overflow-y: scroll;
-      height: calc(100vh - 326px);
+      height: calc(100vh - 218px);
     }
     .hsm-operation {
       position: absolute;
-      bottom: -20px;
+      bottom: -40px;
       left: -20px;
       width:calc(100% + 40px);
       padding: 12px;

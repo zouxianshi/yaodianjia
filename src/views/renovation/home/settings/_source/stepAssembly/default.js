@@ -1,7 +1,7 @@
 
 import { uuid } from '@/utils'
 
-const itemParams = {
+export const itemParams = {
   'className': '',
   'cname': '',
   'commodityId': '',
@@ -21,7 +21,7 @@ const itemParams = {
   'value': ''
 }
 
-const items = (n = 1) => _.times(n, () => itemParams)
+export const items = (n = 1) => _.times(n, () => itemParams)
 
 export default {
   basics: [
@@ -127,7 +127,7 @@ export default {
           subType: 'four',
           name: '一排多个',
           error: false,
-          itemList: items(6) // todo 不确定最大长度
+          itemList: items(8) // todo 不确定最大长度
         }
       ]
     },
@@ -265,7 +265,7 @@ export default {
           subType: 'first',
           name: '默认样式',
           error: false,
-          itemList: items(1) // todo 不确定数量
+          itemList: items(8) // todo 不确定数量
         }
       ]
     },
@@ -306,7 +306,7 @@ export default {
         {
           uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'timeLimitedActivity',
-          subType: 'second',
+          subType: 'third',
           name: '一排多个',
           error: false,
           itemList: items(6) // todo 不确定数量

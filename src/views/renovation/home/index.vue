@@ -12,5 +12,6 @@ export default {
   .renovation-home-model {
     background:#F5F8FB;
     padding: 20px;
+    height: calc(100vh - 100px);
   }
 </style>

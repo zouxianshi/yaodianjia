@@ -1,9 +1,9 @@
 <template>
-  <div class="sap-banner-model">
+  <div class="sap-banner-model" :style="stylees">
     <div class="swiper-container">
       <div class="swiper-wrapper">
         <div v-for="(item,i) in list" :key="i" class="swiper-slide">
-          <img v-if="item.img" :src="showImg(item.img)" width="358" height="116">
+          <img v-if="item.img" :src="showImg(item.img)" width="100%" height="116">
         </div>
       </div>
       <div class="swiper-pagination" />
@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 import Swiper from 'swiper'
 export default {
   name: 'SapBanner',
@@ -56,7 +57,16 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('renovation', ['borderFlag']),
+    stylees() {
+      return [
+        {
+          padding: `0 ${this.borderFlag}px`
+        }
+      ]
+    }
+  },
   components: {}
 }
 </script>

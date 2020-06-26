@@ -36,6 +36,6 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .sa-set-model {
     background: blue;
-    height: calc(100vh - 374px);
+    height: calc(100vh - 264px);
   }
 </style>

@@ -1,15 +1,26 @@
 <template>
-  <div class="index-model">
-    index
+  <div class="tla-index-model" :style="stylees">
+    <component :is="mod" :item="item" />
   </div>
 </template>
 <script>
+import mFirst from './first'
+import mSecond from './second'
+import mThird from './third'
+import { globalBinding } from './../../../../mixins'
+
 export default {
   name: 'TimeLimitedActivityIndex',
   data() {
     return {}
   },
-  props: {},
+  mixins: [globalBinding],
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -28,13 +39,24 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    mod() {
+      switch (this.item.subType) {
+        case 'first':
+          return mFirst
+        case 'second':
+          return mSecond
+        case 'third':
+          return mThird
+      }
+    }
+  },
   components: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .index-model {
-
+  .tla-index-model {
+    margin-bottom: 10px;
   }
 </style>
