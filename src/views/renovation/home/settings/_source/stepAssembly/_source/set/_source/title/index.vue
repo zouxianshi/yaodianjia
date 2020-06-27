@@ -5,7 +5,7 @@
     </div>
     <div class="snm-view">
       <m-item-card title="商品选择" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
-        <el-form label-width="80px" size="mini">
+        <el-form label-width="90px" size="mini">
           <el-form-item label="标题名称">
             <el-input v-model="name" />
           </el-form-item>

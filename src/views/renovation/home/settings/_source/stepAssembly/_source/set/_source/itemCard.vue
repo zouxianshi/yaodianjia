@@ -3,6 +3,7 @@
     <div class="sicm-item-box">
       <div class="sicm-title">
         <strong>{{ title }}</strong>
+        <span class="sicm-desc">{{ desc }}</span>
         <div v-if="isDelete" class="sicm-delete" @click="$emit('on-ass-delete')">删除</div>
       </div>
       <div class="sicm-content">
@@ -24,6 +25,10 @@ export default {
     title: {
       type: String,
       default: '标题'
+    },
+    desc: {
+      type: String,
+      default: ''
     },
     isDelete: {
       type: Boolean,
@@ -72,6 +77,12 @@ export default {
           font-size: 14px;
           color: #4A4A4A;
           padding-left: 12px;
+        }
+        .sicm-desc {
+          font-size: 12px;
+          color: #9B9B9B;
+          margin-left: 16px;
+          display: inline-block;
         }
         .sicm-delete {
           font-size: 12px;

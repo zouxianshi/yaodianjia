@@ -7,7 +7,7 @@
       <m-item-card title="限时活动设置" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
         <el-divider content-position="left">活动选择</el-divider>
         <el-button size="mini" style="margin-bottom: 20px;">选择活动</el-button>
-        <el-form label-width="80px" size="mini">
+        <el-form label-width="90px" size="mini">
           <el-form-item label="活动名称">
             双11秒杀活动
           </el-form-item>

@@ -62,6 +62,33 @@ export default {
     return {
       dragData: [
         {
+          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'coupon',
+          typeName: '优惠券',
+          subType: 'first',
+          name: '一排单个',
+          error: false,
+          itemList: items(1)
+        },
+        {
+          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'coupon',
+          typeName: '优惠券',
+          subType: 'second',
+          name: '一排两个',
+          error: false,
+          itemList: items(2)
+        },
+        {
+          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'coupon',
+          typeName: '优惠券',
+          subType: 'third',
+          name: '一排多个',
+          error: false,
+          itemList: items(6) // todo 不确定数量
+        },
+        {
           uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'timeLimitedActivity',
           typeName: '限时活动',

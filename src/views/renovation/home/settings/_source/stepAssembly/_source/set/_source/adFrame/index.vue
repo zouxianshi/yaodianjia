@@ -6,7 +6,7 @@
     <div class="snm-view">
       <m-item-card title="广告框设置" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
         <el-divider content-position="left">标题设置</el-divider>
-        <el-form label-width="80px" size="mini">
+        <el-form label-width="90px" size="mini">
           <el-form-item label="主标题">
             <el-input v-model="name" />
           </el-form-item>

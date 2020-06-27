@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="nfim-form">
-      <el-form label-width="80px" size="mini">
+      <el-form label-width="90px" size="mini">
         <el-form-item label="导航名称">
           <el-input v-model="name" />
         </el-form-item>

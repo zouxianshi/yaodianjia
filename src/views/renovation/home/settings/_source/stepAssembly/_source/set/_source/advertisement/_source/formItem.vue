@@ -11,7 +11,7 @@
       </span>
     </div>
     <div class="afim-form">
-      <el-form label-width="80px" size="mini">
+      <el-form label-width="90px" size="mini">
         <el-form-item label="导航链接">
           <el-input v-model="name" style="width: calc(100% - 101px)" />
           <el-button icon="el-icon-link">选择链接</el-button>
