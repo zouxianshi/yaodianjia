@@ -60,6 +60,5 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .advertisement-index-model {
-    margin-bottom: 10px;
   }
 </style>

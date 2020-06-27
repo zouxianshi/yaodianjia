@@ -1,17 +1,20 @@
 <template>
-  <div class="sap-first-item-model">
+  <div :class="classes">
     <div v-if="false" class="sfim-icon">
       <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width: 58px;height: 58px;">
     </div>
-    <m-item-no-data border-radius="100%" height="58px" />
-
+    <m-item-no-data border-radius="100%" height="58px" :is-border="active" />
     <div class="sfim-text">
       导航一
     </div>
   </div>
 </template>
 <script>
+
 import mItemNoData from './../../../itemNoData'
+
+const prefixCls = 'sap-first-item-model'
+
 export default {
   name: 'SapFirstItem',
   data() {
@@ -20,6 +23,10 @@ export default {
     }
   },
   props: {
+    active: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {},
   watch: {},
@@ -39,17 +46,29 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    classes() {
+      return [
+        `${prefixCls}`,
+        {
+          [`${prefixCls}-active`]: !!this.active
+        }
+      ]
+    }
+  },
   components: { mItemNoData }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   $w:58px;
-  .sap-first-item-model {
+  $-prefix-cls: "sap-first-item-model";
+
+  .#{$-prefix-cls} {
     width: $w;
     text-align: center;
     margin: 0 auto 8px auto;
+    cursor: pointer;
     .sfim-icon,.sfim-no-data {
       width: $w;
       height: $w;
@@ -58,6 +77,12 @@ export default {
       font-size: 12px;
       color: #4A4A4A;
       margin-top: 8px;
+    }
+    &-active {
+      .sfim-text {
+        color: #4F88FF;
+        font-weight: bold;
+      }
     }
   }
 </style>

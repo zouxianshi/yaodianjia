@@ -1,15 +1,17 @@
 
 <template>
-  <div class="tim-title-bg sap-title-four-model">
+  <div class="tim-title-bg sap-title-four-model" :style="stylees">
     <strong class="tim-text">热销商品</strong>
   </div>
 </template>
 <script>
+import { globalBinding } from './../../../../mixins'
 export default {
   name: 'SapTitleFour',
   data() {
     return {}
   },
+  mixins: [globalBinding],
   props: {},
   methods: {},
   watch: {},

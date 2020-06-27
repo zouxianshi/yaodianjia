@@ -59,7 +59,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .announcement-index-model {
-    margin-bottom: 10px;
     .aim-title-bg {
       width: 354px;
       height: 36px;

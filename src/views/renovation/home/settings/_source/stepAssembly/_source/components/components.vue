@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       defaultData: defaultData,
-      tabVal: 'marketing',
+      tabVal: 'basics',
       selectVal: 'navigation',
       dragData: []
     }
@@ -55,7 +55,7 @@ export default {
     'tabVal': {
       immediate: true,
       handler(v) {
-        this.selectVal = v === 'basics' ? 'navigation' : 'coupon'
+        this.selectVal = v === 'basics' ? 'navigation' : 'adFrame'
         this.handlerDragData()
       }
     }

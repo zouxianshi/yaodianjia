@@ -66,11 +66,11 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .title-index-model {
-    margin-bottom: 10px;
     .tim-title-bg {
-      width: 354px;
+      width: 352px;
       height: 36px;
       line-height: 33px;
+      overflow: hidden;
       .tim-text {
         display: block;
         text-align: center;

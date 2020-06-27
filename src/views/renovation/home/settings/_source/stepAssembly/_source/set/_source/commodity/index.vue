@@ -1,19 +1,15 @@
 <template>
-  <div class="sap-coupon-first-model">
-    <m-first-item size="medium" />
+  <div class="index-model">
+    index
   </div>
 </template>
 <script>
-
-import mFirstItem from './firstItem'
 export default {
-  name: 'SapCouponFirst',
+  name: 'Index',
   data() {
     return {}
   },
-  props: {
-
-  },
+  props: {},
   methods: {},
   watch: {},
   beforeCreate() {
@@ -33,11 +29,12 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mFirstItem }
+  components: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .sap-coupon-first-model {
+  .index-model {
+
   }
 </style>

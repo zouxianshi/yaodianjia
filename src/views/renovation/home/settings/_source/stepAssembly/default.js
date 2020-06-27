@@ -32,6 +32,7 @@ export default {
         {
           uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
           type: 'navigation',
+          typeName: '导航栏',
           subType: 'first',
           name: '一排四个',
           error: false,
@@ -40,6 +41,7 @@ export default {
         {
           uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
           type: 'navigation',
+          typeName: '导航栏',
           subType: 'second',
           name: '一排五个',
           error: false,
@@ -54,6 +56,7 @@ export default {
         {
           uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'advertisement',
+          typeName: '广告图',
           subType: 'first',
           name: '单图样式',
           error: false,
@@ -62,6 +65,7 @@ export default {
         {
           uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'advertisement',
+          typeName: '广告图',
           subType: 'second',
           name: '多图样式1',
           error: false,
@@ -70,6 +74,7 @@ export default {
         {
           uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'advertisement',
+          typeName: '广告图',
           subType: 'third',
           name: '多图样式2',
           error: false,
@@ -78,6 +83,7 @@ export default {
         {
           uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'advertisement',
+          typeName: '广告图',
           subType: 'four',
           name: '单图不限高',
           error: false,
@@ -86,6 +92,7 @@ export default {
         {
           uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'advertisement',
+          typeName: '广告图',
           subType: 'five',
           name: '多图轮播',
           error: false,
@@ -100,6 +107,7 @@ export default {
         {
           uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'commodity',
+          typeName: '商品',
           subType: 'first',
           name: '一排单个',
           error: false,
@@ -108,6 +116,7 @@ export default {
         {
           uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'commodity',
+          typeName: '商品',
           subType: 'second',
           name: '一排两个',
           error: false,
@@ -116,6 +125,7 @@ export default {
         {
           uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'commodity',
+          typeName: '商品',
           subType: 'third',
           name: '一排三个',
           error: false,
@@ -124,6 +134,7 @@ export default {
         {
           uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'commodity',
+          typeName: '商品',
           subType: 'four',
           name: '一排多个',
           error: false,
@@ -138,6 +149,7 @@ export default {
         {
           uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
           type: 'title',
+          typeName: '标题',
           subType: 'first',
           name: '默认样式',
           error: false,
@@ -146,6 +158,7 @@ export default {
         {
           uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
           type: 'title',
+          typeName: '标题',
           subType: 'second',
           name: '样式风格1',
           error: false,
@@ -154,6 +167,7 @@ export default {
         {
           uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
           type: 'title',
+          typeName: '标题',
           subType: 'third',
           name: '样式风格2',
           error: false,
@@ -162,6 +176,7 @@ export default {
         {
           uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
           type: 'title',
+          typeName: '标题',
           subType: 'four',
           name: '样式风格3',
           error: false,
@@ -170,6 +185,7 @@ export default {
         {
           uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
           type: 'title',
+          typeName: '标题',
           subType: 'five',
           name: '样式风格4',
           error: false,
@@ -178,6 +194,7 @@ export default {
         {
           uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
           type: 'title',
+          typeName: '标题',
           subType: 'six',
           name: '样式风格5',
           error: false,
@@ -186,6 +203,7 @@ export default {
         {
           uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
           type: 'title',
+          typeName: '标题',
           subType: 'seven',
           name: '样式风格6',
           error: false,
@@ -200,6 +218,7 @@ export default {
         {
           uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'announcement',
+          typeName: '公告',
           subType: 'first',
           name: '默认样式',
           error: false,
@@ -208,6 +227,7 @@ export default {
         {
           uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'announcement',
+          typeName: '公告',
           subType: 'second',
           name: '样式风格1',
           error: false,
@@ -216,6 +236,7 @@ export default {
         {
           uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'announcement',
+          typeName: '公告',
           subType: 'third',
           name: '样式风格2',
           error: false,
@@ -224,6 +245,7 @@ export default {
         {
           uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'announcement',
+          typeName: '公告',
           subType: 'four',
           name: '样式风格3',
           error: false,
@@ -238,6 +260,7 @@ export default {
         {
           uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
           type: 'recommend',
+          typeName: '为你推荐',
           subType: 'first',
           name: '一排两个',
           error: false,
@@ -246,6 +269,7 @@ export default {
         {
           uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
           type: 'recommend',
+          typeName: '为你推荐',
           subType: 'second',
           name: '一排三个',
           error: false,
@@ -262,6 +286,7 @@ export default {
         {
           uuid: `${uuid('adFrame-')}${uuid()}${uuid()}${uuid()}`,
           type: 'adFrame',
+          typeName: '广告框',
           subType: 'first',
           name: '默认样式',
           error: false,
@@ -276,6 +301,7 @@ export default {
         {
           uuid: `${uuid('activityAggregate-')}${uuid()}${uuid()}${uuid()}`,
           type: 'activityAggregate',
+          typeName: '活动商品',
           subType: 'first',
           name: '默认样式',
           error: false,
@@ -290,6 +316,7 @@ export default {
         {
           uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'timeLimitedActivity',
+          typeName: '限时活动',
           subType: 'first',
           name: '一排单个',
           error: false,
@@ -298,6 +325,7 @@ export default {
         {
           uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'timeLimitedActivity',
+          typeName: '限时活动',
           subType: 'second',
           name: '一排两个',
           error: false,
@@ -306,6 +334,7 @@ export default {
         {
           uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
           type: 'timeLimitedActivity',
+          typeName: '限时活动',
           subType: 'third',
           name: '一排多个',
           error: false,
@@ -320,6 +349,7 @@ export default {
         {
           uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
           type: 'coupon',
+          typeName: '优惠券',
           subType: 'first',
           name: '一排单个',
           error: false,
@@ -328,6 +358,7 @@ export default {
         {
           uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
           type: 'coupon',
+          typeName: '优惠券',
           subType: 'second',
           name: '一排两个',
           error: false,
@@ -336,7 +367,8 @@ export default {
         {
           uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
           type: 'coupon',
-          subType: 'second',
+          typeName: '优惠券',
+          subType: 'third',
           name: '一排多个',
           error: false,
           itemList: items(6) // todo 不确定数量

@@ -57,6 +57,5 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .tla-index-model {
-    margin-bottom: 10px;
   }
 </style>

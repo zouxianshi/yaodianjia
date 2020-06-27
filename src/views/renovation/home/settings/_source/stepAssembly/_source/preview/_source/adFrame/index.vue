@@ -59,7 +59,6 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .ad-frame-index-model {
     min-height: 180px;
-    margin-bottom: 10px;
     .afim-box {
       height: 180px;
       border-radius:8px 8px 0 0;

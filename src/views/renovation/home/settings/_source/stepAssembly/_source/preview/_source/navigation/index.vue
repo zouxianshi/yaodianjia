@@ -52,6 +52,5 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .navigation-index-model {
-    margin-bottom: 10px;
   }
 </style>

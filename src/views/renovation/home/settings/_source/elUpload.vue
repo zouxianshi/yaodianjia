@@ -2,7 +2,14 @@
   <span class="el-upload-model">
     <el-upload :headers="headers" :action="upLoadUrl" :show-file-list="false" :on-error="handleUploadError" :on-success="handleUploadSuccess" :before-upload="beforeUpload">
       <img v-if="imageUrl" :src="imageUrl" class="avatar">
-      <i v-else class="el-icon-plus avatar-uploader-icon" />
+      <template v-else>
+        <div v-if="isSlots">
+          <slot />
+        </div>
+        <div v-else>
+          <i class="el-icon-plus avatar-uploader-icon" />
+        </div>
+      </template>
     </el-upload>
   </span>
 </template>
@@ -64,6 +71,9 @@ export default {
     },
     upLoadUrl() {
       return `${this.uploadFileURL}/${config.merGoods}/1.0/file/_upload?merCode=${this.$store.getters.merCode}`
+    },
+    isSlots() {
+      return !_.isEmpty(this.$slots.default)
     }
   },
   components: {}

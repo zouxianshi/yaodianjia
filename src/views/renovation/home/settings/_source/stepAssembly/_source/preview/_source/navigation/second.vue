@@ -3,15 +3,19 @@
     <el-row>
       <template v-for="(el,$index) in item.itemList">
         <el-col :key="$index" :span="7" class="snsm-item">
-          <m-second-item :el="el" />
+          <m-first-item :el="el" :active="`navigation_${$index}` === active" @click.native="active && onSelect(el,$index)" />
         </el-col>
       </template>
+      <el-col v-if="active && item.itemList.length < 10" :span="7">
+        <m-item-create-entry @click.native="onCreate" />
+      </el-col>
     </el-row>
   </div>
 </template>
 <script>
 import { globalBinding } from './../../../../mixins'
-import mSecondItem from './secondItem'
+import mFirstItem from './firstItem'
+import mItemCreateEntry from './itemCreateEntry'
 export default {
   name: 'SapNavigationSecond',
   data() {
@@ -22,9 +26,20 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    active: {
+      type: String,
+      default: ''
     }
   },
-  methods: {},
+  methods: {
+    onSelect(el, i) {
+      this.$emit('on-select', { el, i })
+    },
+    onCreate() {
+      this.$emit('on-create')
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -44,7 +59,7 @@ export default {
   },
   computed: {
   },
-  components: { mSecondItem }
+  components: { mFirstItem, mItemCreateEntry }
 }
 </script>
 

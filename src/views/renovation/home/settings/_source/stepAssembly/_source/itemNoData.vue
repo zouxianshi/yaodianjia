@@ -1,19 +1,16 @@
 <template>
-  <div class="item-no-data-model" :style="stylees" :class="prefixCls">
+  <div :style="stylees" :class="classes">
     <img class="indm-img" :style="imgStylees" src="./img/icons_no_data.svg" alt="">
   </div>
 </template>
 <script>
+const prefixCls = 'item-no-data-model'
 export default {
   name: 'ItemNoData',
   data() {
     return {}
   },
   props: {
-    prefixCls: {
-      type: String,
-      default: ''
-    },
     size: {
       type: Number,
       default: 30
@@ -25,6 +22,10 @@ export default {
     borderRadius: {
       type: String,
       default: '0px'
+    },
+    isBorder: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {},
@@ -46,6 +47,14 @@ export default {
   destroyed() {
   },
   computed: {
+    classes() {
+      return [
+        `${prefixCls}`,
+        {
+          [`${prefixCls}-is-border`]: !!this.isBorder
+        }
+      ]
+    },
     stylees() {
       const { height, borderRadius } = this
       return [
@@ -72,13 +81,17 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .item-no-data-model {
+  $-prefix-cls: "item-no-data-model";
+  .#{$-prefix-cls} {
     background: #F1F1F1;
     position: relative;
     .indm-img {
       position: absolute;
       left: 50%;
       top: 50%;
+    }
+    &-is-border {
+      border: 1px solid #4F88FF;
     }
   }
 </style>

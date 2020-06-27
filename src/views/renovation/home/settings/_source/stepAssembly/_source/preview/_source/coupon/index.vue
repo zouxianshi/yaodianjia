@@ -1,5 +1,5 @@
 <template>
-  <div class="coupon-index-model">
+  <div class="coupon-index-model" :style="stylees">
     <component :is="mod" :item="item" />
   </div>
 </template>
@@ -7,11 +7,13 @@
 import mFirst from './first'
 import mSecond from './second'
 import mThird from './third'
+import { globalBinding } from './../../../../mixins'
 export default {
   name: 'CouponIndex',
   data() {
     return {}
   },
+  mixins: [globalBinding],
   props: {
     item: {
       type: Object,
@@ -54,6 +56,5 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .coupon-index-model {
-    margin-bottom: 10px;
   }
 </style>

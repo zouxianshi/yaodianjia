@@ -9,6 +9,11 @@
       </div>
       <v-draggable ref="draggable" v-model="dragData" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onDragAdd">
         <div v-for="(item) in dragData" :id="rtUUid(item.type)" :key="rtUUid(item.type)" class="item-component">
+          <div class="item-hover" @click="onDragSet(item)">
+            <el-popconfirm title="确定要删除组件吗？" placement="top-start">
+              <div slot="reference" class="item-delete">删除</div>
+            </el-popconfirm>
+          </div>
           <!--导航栏-->
           <m-navigation v-if="item.type === 'navigation'" :item="item" />
           <!--广告图-->
@@ -35,7 +40,7 @@
   </div>
 </template>
 <script>
-import { uuid } from '@/utils'
+import { uuid, findComponentsDownward } from '@/utils'
 import { items } from './../../default'
 import vDraggable from 'vuedraggable'
 import mHeader from './_source/header/header'
@@ -56,209 +61,28 @@ export default {
   data() {
     return {
       dragData: [
-        {
+        /* {
           uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'advertisement',
+          typeName: '广告图',
           subType: 'first',
           name: '单图样式',
           error: false,
           itemList: items(1)
         },
         {
-          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'coupon',
-          subType: 'first',
-          name: '一排单个',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'timeLimitedActivity',
-          subType: 'third',
-          name: '一排多个',
-          error: false,
-          itemList: items(6) // todo 不确定数量
-        },
-        {
-          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'timeLimitedActivity',
+          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'advertisement',
+          typeName: '广告图',
           subType: 'second',
-          name: '一排两个',
-          error: false,
-          itemList: items(2)
-        },
-        {
-          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'timeLimitedActivity',
-          subType: 'first',
-          name: '一排单个',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('adFrame-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'adFrame',
-          subType: 'first',
-          name: '默认样式',
-          error: false,
-          itemList: items(8) // todo 不确定数量
-        },
-        {
-          uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'recommend',
-          subType: 'second',
-          name: '一排三个',
-          error: false,
-          itemList: items(10) // todo 不确定长度
-        },
-        {
-          uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'recommend',
-          subType: 'first',
-          name: '一排两个',
-          error: false,
-          itemList: items(10) // todo 不确定长度
-        },
-        /* {
-            uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'announcement',
-            subType: 'first',
-            name: '默认样式',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'announcement',
-            subType: 'second',
-            name: '样式风格1',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'announcement',
-            subType: 'third',
-            name: '样式风格2',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'announcement',
-            subType: 'four',
-            name: '样式风格3',
-            error: false,
-            itemList: items(1)
-          },*/
-        {
-          uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'title',
-          subType: 'second',
-          name: '样式风格1',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'title',
-          subType: 'third',
-          name: '样式风格2',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'title',
-          subType: 'four',
-          name: '样式风格3',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'title',
-          subType: 'five',
-          name: '样式风格4',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'title',
-          subType: 'six',
-          name: '样式风格5',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'title',
-          subType: 'seven',
-          name: '样式风格6',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'title',
-          subType: 'first',
-          name: '默认样式',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'commodity',
-          subType: 'four',
-          name: '一排多个',
-          error: false,
-          itemList: items(8) // todo 不确定最大长度
-        },
-        {
-          uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'commodity',
-          subType: 'third',
-          name: '一排三个',
+          name: '多图样式1',
           error: false,
           itemList: items(3)
         },
         {
-          uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'commodity',
-          subType: 'second',
-          name: '一排两个',
-          error: false,
-          itemList: items(2)
-        },
-        {
-          uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'commodity',
-          subType: 'first',
-          name: '一排单个',
-          error: false,
-          itemList: items(1)
-        },
-        {
           uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'advertisement',
-          subType: 'five',
-          name: '多图轮播',
-          error: false,
-          itemList: items(1) // todo 不确定最大长度
-        },
-        {
-          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'advertisement',
-          subType: 'four',
-          name: '单图不限高',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'advertisement',
+          typeName: '广告图',
           subType: 'third',
           name: '多图样式2',
           error: false,
@@ -267,26 +91,38 @@ export default {
         {
           uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
           type: 'advertisement',
-          subType: 'second',
-          name: '多图样式1',
+          typeName: '广告图',
+          subType: 'four',
+          name: '单图不限高',
           error: false,
-          itemList: items(3)
+          itemList: items(1)
         },
+        {
+          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'advertisement',
+          typeName: '广告图',
+          subType: 'five',
+          name: '多图轮播',
+          error: false,
+          itemList: items(1) // todo 不确定最大长度
+        },*/
         {
           uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
           type: 'navigation',
+          typeName: '导航栏',
           subType: 'first',
           name: '一排四个',
           error: false,
-          itemList: items(7)
+          itemList: items(4)
         },
         {
           uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
           type: 'navigation',
+          typeName: '导航栏',
           subType: 'second',
           name: '一排五个',
           error: false,
-          itemList: items(9)
+          itemList: items(5)
         }
       ]
     }
@@ -298,6 +134,10 @@ export default {
       console.log('------')
     },
     onDragChange() {},
+    onDragSet(item) {
+      const instance = findComponentsDownward(this.$root, 'SaSet')[0]
+      instance.selectAss(item)
+    },
     rtUUid(type) {
       return `${uuid(`${type}-`)}${uuid()}${uuid()}${uuid()}`
     }
@@ -347,9 +187,40 @@ export default {
     }
     .apm-drag-area {
       height: calc(100vh - 400px);
-      background: blue;
       .item-component {
         cursor: pointer;
+        position: relative;
+        padding: 8px 0;
+        margin: 4px 0;
+        .item-hover {
+          width: 100%;
+          height: 100%;
+          border: 2px dotted #4F88FF;
+          position: absolute;
+          left: 0;
+          top: 0;
+          z-index: 10;
+          display: none;
+          box-shadow: 0px 2px 18px 0 rgba(0,0,0,0.2);
+          .item-delete {
+            width:48px;
+            height:26px;
+            line-height: 26px;
+            font-size: 14px;
+            background:rgba(79,136,255,1);
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+          }
+        }
+        &:hover {
+          .item-hover {
+            display: block;
+          }
+        }
       }
       .apm-banner {
         margin-bottom: 10px

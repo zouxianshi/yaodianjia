@@ -60,7 +60,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .recommend-index-model {
-    margin-bottom: 10px;
     min-height: 180px;
     .rim-bg {
       overflow: hidden;
