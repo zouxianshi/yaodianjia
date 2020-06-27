@@ -80,8 +80,5 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .set-navigation-model {
-    .snm-view {
-      padding-top: 20px;
-    }
   }
 </style>

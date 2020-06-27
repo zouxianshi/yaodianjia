@@ -9,7 +9,7 @@
         <slot />
       </div>
     </div>
-    <div class="sicm-item-submit">
+    <div v-if="isSubmit" class="sicm-item-submit">
       <el-button type="primary" plain @click="$emit('on-ass-submit')">提交</el-button>
     </div>
   </div>
@@ -28,6 +28,10 @@ export default {
     isDelete: {
       type: Boolean,
       default: false
+    },
+    isSubmit: {
+      type: Boolean,
+      default: true
     }
   },
   methods: {},
@@ -55,6 +59,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .set-item-card-model {
+    margin-top: 20px;
     .sicm-item-box {
       border: 1px solid #F0F0F0;
       border-radius:2px;

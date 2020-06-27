@@ -85,13 +85,14 @@ export default {
   .#{$-prefix-cls} {
     background: #F1F1F1;
     position: relative;
+    cursor: pointer;
     .indm-img {
       position: absolute;
       left: 50%;
       top: 50%;
     }
     &-is-border {
-      border: 1px solid #4F88FF;
+      box-shadow: #4F88FF 0px 0px 0px 1px inset;
     }
   }
 </style>

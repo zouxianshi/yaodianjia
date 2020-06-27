@@ -2,8 +2,8 @@
   <div class="scrollbar sa-set-model">
     <div class="ssm-comp-box">
       <div class="ssm-comp-title">
-        <strong>导航栏</strong>
-        <span>一排4个</span>
+        <strong>{{ item.typeName }}组件</strong>
+        <span>{{ item.name }}</span>
       </div>
       <component :is="mod" v-if="isComponent" :item="item" />
     </div>
@@ -112,6 +112,7 @@ export default {
       }
     }
     .set-view-ass {
+      margin: 0 auto;
       padding: 20px 0 0px 0;
     }
   }

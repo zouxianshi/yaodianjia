@@ -1,5 +1,5 @@
 <template>
-  <div class="sap-advertisement-five-model">
+  <div :class="classes">
     <div v-if="false" class="safm-banner">
       <m-banner />
     </div>
@@ -13,13 +13,20 @@ import mItemNoData from './../../../itemNoData'
 import mBanner from './../banner/banner'
 import { globalBinding } from './../../../../mixins'
 
+const prefixCls = 'sap-advertisement-five-model'
+
 export default {
   name: 'Five',
   data() {
     return {}
   },
   mixins: [globalBinding],
-  props: {},
+  props: {
+    active: {
+      type: String,
+      default: ''
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {
@@ -38,13 +45,24 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    classes() {
+      return [
+        `${prefixCls}`,
+        {
+          [`${prefixCls}-active`]: this.active === 'advertisement_0'
+        }
+      ]
+    }
+  },
   components: { mItemNoData, mBanner }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .sap-advertisement-five-model {
+  $-prefix-cls: "sap-advertisement-five-model";
+
+  .#{$-prefix-cls} {
 
   }
 </style>

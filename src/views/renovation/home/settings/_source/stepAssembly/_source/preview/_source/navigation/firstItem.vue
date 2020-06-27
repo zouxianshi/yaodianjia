@@ -3,7 +3,7 @@
     <div v-if="false" class="sfim-icon">
       <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width: 58px;height: 58px;">
     </div>
-    <m-item-no-data border-radius="100%" height="58px" :is-border="active" />
+    <m-item-no-data v-else border-radius="100%" height="58px" :is-border="active" />
     <div class="sfim-text">
       导航一
     </div>
@@ -69,6 +69,11 @@ export default {
     text-align: center;
     margin: 0 auto 8px auto;
     cursor: pointer;
+    .sfim-icon {
+      >img {
+        display: block;
+      }
+    }
     .sfim-icon,.sfim-no-data {
       width: $w;
       height: $w;
@@ -79,6 +84,9 @@ export default {
       margin-top: 8px;
     }
     &-active {
+      .sfim-icon {
+        box-shadow: #4F88FF 0px 0px 0px 1px inset;
+      }
       .sfim-text {
         color: #4F88FF;
         font-weight: bold;
