@@ -421,15 +421,15 @@ export default {
       item => item.name === name
     )
     if (hasGoodsEdit && to.name === name) {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        this.$store.dispatch('tagsView/delView', to).then(res => {
-          this.isToEdit = false
-          next()
-        })
-      } else {
-        this.isToEdit = false
-      }
+      // const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      // if (answer) {
+      //   this.$store.dispatch('tagsView/delView', to).then(res => {
+      //     this.isToEdit = false
+      next()
+      //   })
+      // } else {
+      //   this.isToEdit = false
+      // }
     } else {
       this.isToEdit = false
       next()

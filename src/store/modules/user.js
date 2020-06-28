@@ -11,10 +11,14 @@ const state = {
   merCode: '',
   introduction: '',
   roles: [],
-  resList: []
+  resList: [],
+  authResList: []
 }
 
 const mutations = {
+  SET_AUTH_RESLIST: (state, authResList) => {
+    state.authResList = authResList
+  },
   SET_TOKEN: (state, token) => {
     state.token = token
   },
@@ -56,6 +60,7 @@ const actions = {
         const { account, avatarPath, merCode, resList, superAdmin, id } = data
         commit('SET_ROLES', superAdmin ? ['admin'] : resList)
         commit('SET_RESLIST', resList)
+        commit('SET_AUTH_RESLIST', resList)
         commit('SET_NAME', account)
         commit('SET_AVATAR', avatarPath)
         commit('SET_MERCODE', merCode)
@@ -65,6 +70,7 @@ const actions = {
           userInfo: data || {},
           merCode
         })
+
         resolve(superAdmin ? { resList: ['admin'] } : { resList: resList })
       }).catch(error => {
         reject(error)
