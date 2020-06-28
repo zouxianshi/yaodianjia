@@ -24,7 +24,7 @@
               placeholder="生产企业"
             />
           </div>
-          <div class="search-item">
+          <!-- <div class="search-item">
             <span class="label-name">是否添加</span>
             <el-select
               v-model="listQuery.hasAddComm"
@@ -35,7 +35,7 @@
               <el-option label="是" :value="true" />
               <el-option label="否" :value="false" />
             </el-select>
-          </div>
+          </div> -->
         </div>
         <div class="search-form">
           <div class="search-item">
