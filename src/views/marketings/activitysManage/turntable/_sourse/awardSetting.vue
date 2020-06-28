@@ -24,12 +24,12 @@
                 v-model="scope.row.winRandom"
                 :disabled="isPageUpdateOrView || isRuning"
                 size="mini"
-                :precision="0"
+                :precision="2"
                 :step="1"
                 :min="1"
                 :max="100"
                 :controls="false"
-                style="width:60px"
+                style="width:70px"
               />
               <span style="font-size:16px">%</span>
             </template>
@@ -144,7 +144,7 @@
         <el-form-item label="中奖几率" prop="winRandom">
           <el-input-number
             v-model="ruleForm.winRandom"
-            :precision="0"
+            :precision="2"
             :step="1"
             :min="1"
             :max="100"
