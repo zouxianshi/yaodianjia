@@ -119,6 +119,7 @@
                 type="primary"
                 :loading="scope.row.loading"
                 size="mini"
+                :disabled="scope.row.hasAddComm"
                 @click="handleSetStore(scope.row)"
               >添加该商品</el-button>
             </template>
@@ -215,9 +216,17 @@ export default {
     },
     handleSetStore(row) {
       row.loading = true
-      checkComGoods({ ids: [row.id], userName: this.name, merCode: this.merCode })
+      checkComGoods({
+        ids: [row.id],
+        userName: this.name,
+        merCode: this.merCode
+      })
         .then(res => {
-          this.$router.push('/goods-manage/addition-edit?id=' + row.id + '&backUrl=apply-record&type=添加该商品&origin=1')
+          this.$router.push(
+            '/goods-manage/addition-edit?id=' +
+              row.id +
+              '&backUrl=apply-record&type=添加该商品&origin=1'
+          )
           // this.$message({
           //   message:
           //     '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',
