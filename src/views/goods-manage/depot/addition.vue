@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <!-- <el-link type="warning" @click="dialogVisible=true">从标库新建商品规范说明?</el-link> -->
+
     <section class="addition-wrapper">
       <p class="title">从商品库新建商品</p>
       <el-divider />
@@ -62,12 +62,7 @@
           </div>
         </div>
       </section>
-      <!-- <el-alert type="warning" style="margin-bottom:10px" :closable="false">
-        <p slot="title" class="alret-title">
-          没有想要商品，去
-          <router-link tag="span" class="link" to="/goods-manage/apply">创建自有新品</router-link>
-        </p>
-      </el-alert>-->
+
       <el-table v-loading="loading" :data="tableData" stripe>
         <template slot="empty">
           <div v-show="!loading" class="table-nodata">
