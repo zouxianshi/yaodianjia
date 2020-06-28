@@ -200,6 +200,7 @@
             :total="total"
             :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize"
+            :page-sizes="[10, 20, 50, 200]"
             @pagination="getList"
           />
         </div>
