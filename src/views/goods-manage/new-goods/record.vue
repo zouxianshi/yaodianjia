@@ -211,8 +211,8 @@
 
     <base-dialog
       :is-visible="isShowCheckDialog"
+      :on-ok="handleCheckDialog"
       @close="isShowCheckDialog = false"
-      @ok="handleCheckDialog"
     >
       <span slot="content">确定要提交审核全部数据吗？</span>
     </base-dialog>
@@ -300,11 +300,11 @@ export default {
     async _updateSendCheck(ids) {
       // 提交审核
       const data = {
-        auditStatus: 2,
+        ...this.listQuery,
         ids: ids,
         userName: this.name,
-        ...this.listQuery,
-        updateAuditStatus: 1
+        updateAuditStatus: this.listQuery.auditStatus - 1,
+        origin: 2
       }
       await setAuditGoods(data)
       this.$message({
@@ -312,7 +312,7 @@ export default {
         type: 'success'
       })
 
-      this.listQuery.auditStatus = 2
+      this.listQuery.auditStatus = this.listQuery.auditStatus - 1
       this.getList()
       this.isShowCheckDialog = false
     },
@@ -428,11 +428,9 @@ export default {
       )
     },
     async handleCheckDialog() {
-      const sleep = async t => new Promise(resolve => setTimeout(resolve, t))
-      await sleep(2000)
-      // await this._updateSendCheck([])
+      await this._updateSendCheck([])
     },
-    handleSendCheck(row, isAll) {
+    async handleSendCheck(row, isAll) {
       let ids = []
       if (row === null && isAll) {
         if (this.multipleSelection.length === 0) {
@@ -445,7 +443,22 @@ export default {
       } else {
         ids = [row.id]
       }
-      this._updateSendCheck(ids)
+      // 提交审核
+      const data = {
+        ...this.listQuery,
+        auditStatus: 2,
+        ids: ids,
+        userName: this.name,
+        updateAuditStatus: 1
+      }
+      await setAuditGoods(data)
+      this.$message({
+        message: '提交审核完成，可在【审核中】页面查看',
+        type: 'success'
+      })
+
+      this.listQuery.auditStatus = 2
+      this.getList()
     },
     getList() {
       this.loading = true

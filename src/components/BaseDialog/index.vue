@@ -16,6 +16,7 @@
   </div>
 </template>
 <script>
+// 基础弹框组件
 export default {
   name: 'BaseDialog',
   data() {
@@ -43,6 +44,10 @@ export default {
     okText: {
       type: String,
       default: '确 定'
+    },
+    onOk: {
+      type: Function,
+      default: () => {}
     }
   },
   methods: {
@@ -51,7 +56,13 @@ export default {
     },
     async handleOk() {
       this.isLoading = true
-      await this.$emit('ok')
+      try {
+        await this.onOk()
+      } catch (error) {
+        console.error(error)
+        this.isLoading = false
+      }
+      this.$emit('ok')
       this.isLoading = false
     }
   },
