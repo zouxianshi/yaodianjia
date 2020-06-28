@@ -208,6 +208,14 @@
     </div>
 
     <checkDialog ref="checkDialog" @onSelect="onGetCheck" />
+
+    <base-dialog
+      :is-visible="isShowCheckDialog"
+      @close="isShowCheckDialog = false"
+      @ok="handleCheckDialog"
+    >
+      <span slot="content">确定要提交审核全部数据吗？</span>
+    </base-dialog>
   </div>
 </template>
 <script>
@@ -219,9 +227,10 @@ import { getTypeTree } from '@/api/group'
 import { mapGetters } from 'vuex'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import checkDialog from './_source/check-dialog'
+import BaseDialog from '@/components/BaseDialog'
 export default {
   name: 'GoodsRecord',
-  components: { Pagination, ElImageViewer, checkDialog },
+  components: { Pagination, ElImageViewer, checkDialog, BaseDialog },
   mixins: [mixins],
   data() {
     return {
@@ -230,6 +239,7 @@ export default {
       tableData: [],
       total: 0,
       loading: false,
+      isShowCheckDialog: false,
       groupData: [],
       groupId: [],
       defaultProps: {
@@ -287,6 +297,25 @@ export default {
     }
   },
   methods: {
+    async _updateSendCheck(ids) {
+      // 提交审核
+      const data = {
+        auditStatus: 2,
+        ids: ids,
+        userName: this.name,
+        ...this.listQuery,
+        updateAuditStatus: 1
+      }
+      await setAuditGoods(data)
+      this.$message({
+        message: '提交审核完成，可在【审核中】页面查看',
+        type: 'success'
+      })
+
+      this.listQuery.auditStatus = 2
+      this.getList()
+      this.isShowCheckDialog = false
+    },
     // 撤回
     handleGoback(ids) {
       const data = {
@@ -398,14 +427,16 @@ export default {
         `/goods-manage/apply-record-edit?id=${id}&backUrl=apply-record&source=1&type=${auditStatus}`
       )
     },
+    async handleCheckDialog() {
+      const sleep = async t => new Promise(resolve => setTimeout(resolve, t))
+      await sleep(2000)
+      // await this._updateSendCheck([])
+    },
     handleSendCheck(row, isAll) {
       let ids = []
       if (row === null && isAll) {
         if (this.multipleSelection.length === 0) {
-          this.$message({
-            message: '请选择商品',
-            type: 'warning'
-          })
+          this.isShowCheckDialog = true
           return
         }
         this.multipleSelection.map(v => {
@@ -414,21 +445,7 @@ export default {
       } else {
         ids = [row.id]
       }
-      // 提交审核
-      const data = {
-        auditStatus: 2,
-        ids: ids,
-        userName: this.name
-      }
-      setAuditGoods(data).then(res => {
-        this.$message({
-          message: '提交审核完成，可在【审核中】页面查看',
-          type: 'success'
-        })
-
-        this.listQuery.auditStatus = 2
-        this.getList()
-      })
+      this._updateSendCheck(ids)
     },
     getList() {
       this.loading = true
