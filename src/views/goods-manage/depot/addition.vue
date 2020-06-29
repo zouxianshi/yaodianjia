@@ -125,7 +125,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
-import { getProductList, setComAddGoods } from '@/api/depot'
+import { getProductList, checkComGoods } from '@/api/depot'
 import { mapGetters } from 'vuex'
 export default {
   components: { Pagination },
@@ -190,7 +190,7 @@ export default {
     },
     handleSetStore(row) {
       row.loading = true
-      setComAddGoods({ ids: [row.id], userName: this.name })
+      checkComGoods({ ids: [row.id], userName: this.name, merCode: this.merCode })
         .then(res => {
           this.$router.push(
             '/goods-manage/addition-edit?id=' +

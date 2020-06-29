@@ -200,6 +200,7 @@
             :total="total"
             :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize"
+            :page-sizes="[10, 20, 50, 200]"
             @pagination="getList"
           />
         </div>
@@ -207,6 +208,14 @@
     </div>
 
     <checkDialog ref="checkDialog" @onSelect="onGetCheck" />
+
+    <base-dialog
+      :is-visible="isShowCheckDialog"
+      :on-ok="handleCheckDialog"
+      @close="isShowCheckDialog = false"
+    >
+      <span slot="content">确定要提交审核全部数据吗？</span>
+    </base-dialog>
   </div>
 </template>
 <script>
@@ -218,9 +227,10 @@ import { getTypeTree } from '@/api/group'
 import { mapGetters } from 'vuex'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import checkDialog from './_source/check-dialog'
+import BaseDialog from '@/components/BaseDialog'
 export default {
   name: 'GoodsRecord',
-  components: { Pagination, ElImageViewer, checkDialog },
+  components: { Pagination, ElImageViewer, checkDialog, BaseDialog },
   mixins: [mixins],
   data() {
     return {
@@ -229,6 +239,7 @@ export default {
       tableData: [],
       total: 0,
       loading: false,
+      isShowCheckDialog: false,
       groupData: [],
       groupId: [],
       defaultProps: {
@@ -314,7 +325,11 @@ export default {
         auditReason: '',
         auditStatus: form.result === 1 ? 1 : 0,
         ids: ids,
-        userName: this.name
+        userName: this.name,
+        queryDTO: {
+          ...this.listQuery,
+          origin: 2
+        }
       }
 
       if (form.result === 2) {
@@ -327,7 +342,7 @@ export default {
           data.auditReason = '其他原因'
         }
       } else {
-        this.listQuery.auditStatus = 3
+        this.listQuery.auditStatus = 1
       }
       setAuditGoods(data).then(res => {
         this.$message({
@@ -340,13 +355,9 @@ export default {
     },
     handleBatchCheck() {
       if (this.multipleSelection.length === 0) {
-        this.$message({
-          message: '请选择要审核的数据',
-          type: 'warning'
-        })
+        this.isShowCheckDialog = true
         return
       }
-      this.$refs.checkDialog.show(true)
     },
     handleCurrentChange(row) {
       sessionStorage.setItem('mate', JSON.stringify(row))
@@ -397,14 +408,36 @@ export default {
         `/goods-manage/apply-record-edit?id=${id}&backUrl=apply-record&source=1&type=${auditStatus}`
       )
     },
-    handleSendCheck(row, isAll) {
+    async handleCheckDialog() {
+      if (this.listQuery.auditStatus === 2) {
+        this.$refs.checkDialog.show(true)
+      } else {
+        // 提交审核
+        const data = {
+          ids: [],
+          userName: this.name,
+          auditStatus: 2,
+          queryDTO: {
+            ...this.listQuery,
+            origin: 2
+          }
+        }
+        await setAuditGoods(data)
+        this.$message({
+          message: '提交审核完成，可在【审核中】页面查看',
+          type: 'success'
+        })
+
+        this.listQuery.auditStatus = 2
+        this.getList()
+        this.isShowCheckDialog = false
+      }
+    },
+    async handleSendCheck(row, isAll) {
       let ids = []
       if (row === null && isAll) {
         if (this.multipleSelection.length === 0) {
-          this.$message({
-            message: '请选择商品',
-            type: 'warning'
-          })
+          this.isShowCheckDialog = true
           return
         }
         this.multipleSelection.map(v => {
@@ -415,19 +448,19 @@ export default {
       }
       // 提交审核
       const data = {
+        ...this.listQuery,
         auditStatus: 2,
         ids: ids,
         userName: this.name
       }
-      setAuditGoods(data).then(res => {
-        this.$message({
-          message: '提交审核完成，可在【审核中】页面查看',
-          type: 'success'
-        })
-
-        this.listQuery.auditStatus = 2
-        this.getList()
+      await setAuditGoods(data)
+      this.$message({
+        message: '提交审核完成，可在【审核中】页面查看',
+        type: 'success'
       })
+
+      this.listQuery.auditStatus = 2
+      this.getList()
     },
     getList() {
       this.loading = true

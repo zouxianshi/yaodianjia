@@ -56,6 +56,15 @@ export function setComAddGoods(params) {
   })
 }
 
+// 校验海典标库商品是否已导入
+export function checkComGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/check`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 获取门店列表
 export function getStoreList(params) {
   return request({
