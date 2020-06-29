@@ -190,6 +190,26 @@ const router = [
         }
       },
       {
+        path: '/activity/birthday-gift',
+        component: () => import('@/views/marketings/activitysManage/birthdayGift/index'),
+        name: 'birthday-gift',
+        meta: {
+          title: '生日礼包',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/index'),
+        name: 'birthday-gift',
+        meta: {
+          title: '会员发券',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
         path: '/activity/exchangeMallList',
         component: () => import('@/views/marketings/exchangeMall/exchange-list'),
         name: 'exchangeMallList',
