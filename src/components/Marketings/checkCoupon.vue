@@ -158,25 +158,12 @@ export default {
       this.endTime = formatDate(newName[1])
     }
   },
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
-  mounted() {},
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
     handleGetlist(val) {
       if (val === '查询') {
         this.pageSize = 10
         this.currentPage = 1
       }
-      // if (this.state === '领券中心') {
-      //   operatorType = 0
-      // } else if (this.state === '支付有礼') {
-      //   operatorType = 1
-      // }
       this.tableLoading = true
       const params = {
         beginTime: this.beforeTime,
@@ -204,7 +191,7 @@ export default {
     },
     checkSure() {
       if (this.singlechoice && this.multipleSelectionAll.length > 1) {
-        this.$message.error('请单选')
+        this.$message.error('只能选择一张优惠券！')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
@@ -350,13 +337,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .checkCoupon-model {
-  .el-table--medium th,
-  // .el-table--medium td {
-  //   padding: 2px;
-  // }
-  // .el-table thead th {
-  //   height: 50px;
-  // }
   .creatcoucops:hover {
     cursor: pointer;
   }

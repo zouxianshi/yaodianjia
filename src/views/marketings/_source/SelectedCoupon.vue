@@ -69,10 +69,8 @@ export default {
   methods: {
     show(selectedCoupons) {
       this.selectedCoupons = selectedCoupons
-      console.log('应该要显示了')
     },
     showPage(selectedCoupons, pageStatus) {
-      console.log('应该要显示了')
       this.pageStatus = pageStatus
       this.selectedCoupons = selectedCoupons
       this.selectedCoupons.forEach(item => {

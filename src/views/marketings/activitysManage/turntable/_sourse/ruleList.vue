@@ -25,15 +25,6 @@
           :disabled="isRuning"
           @input="daterangeChange"
         />
-        <!-- <el-date-picker
-          v-model="ruleForm.activeTime"
-          :disabled="isRuning"
-          type="datetimerange"
-          range-separator="至"
-          :picker-options="pickerOptions"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        /> -->
       </el-form-item>
       <el-form-item label="活动说明" prop="activityNote">
         <el-input
@@ -219,11 +210,6 @@ export default {
     }
     return {
       intrShow: false,
-      // pickerOptions: {
-      //   disabledDate(time) {
-      //     return time.getTime() < new Date(new Date().getTime() - 86400000)
-      //   }
-      // },
       // activeTime: [], // 活动有效期
       ruleForm: {
         activeTime: [], // 活动有效期
@@ -356,7 +342,6 @@ export default {
             return false
           }
           this.$emit('handleNext', 2, this.ruleForm)
-          this.$emit('getcouponList', this.ruleForm)
         } else {
           return false
         }

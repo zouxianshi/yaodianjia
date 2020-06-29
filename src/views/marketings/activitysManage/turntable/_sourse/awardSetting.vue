@@ -93,12 +93,15 @@
           </el-select>
         </el-form-item>
         <el-form-item v-show="ruleForm.giftType===2" label="奖品内容" prop="giftContent">
+          <el-button size="mini" @click="selectCoupon">选择优惠券</el-button>
+          <mSelectedCoupon ref="selectedCouponView" @onDel="onGetSelectCoupon" />
+        </el-form-item>
+        <!-- <el-form-item v-show="ruleForm.giftType===2" label="奖品内容" prop="giftContent">
           <el-select
             ref="giftIds"
             v-model="ruleForm.giftId"
             filterable
             placeholder="请选择"
-            @change="changeGift"
           >
             <el-option
               v-for="item in couponList"
@@ -107,7 +110,7 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="奖品图片" prop="giftImg">
           <el-upload
             v-loading="uploadLoading"
@@ -174,6 +177,7 @@
           <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">份</span>
         </el-form-item>
       </el-form>
+      <mCheckCoupon ref="checkCoupons" state="1" :singlechoice="true" @confincheck="onGetSelectCoupon" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
@@ -182,16 +186,16 @@
   </div>
 </template>
 <script>
-import { getCouponList } from '@/api/coupon'
 import { mapGetters } from 'vuex'
-import { formatDate } from '@/utils/timer'
 import config from '@/utils/config'
 import _ from 'lodash'
-// import discountpng from '@/assets/image/marketings/discountpng.png'
-// import coinpng from '@/assets/image/marketings/coin.png'
-// import giftpng from '@/assets/image/marketings/giftpng.png'
+import mCheckCoupon from '@/components/Marketings/checkCoupon'
+import mSelectedCoupon from '../../../_source/SelectedCoupon'
 export default {
   name: 'AwardSetting',
+  components: {
+    mCheckCoupon, mSelectedCoupon
+  },
   props: {
     params: {
       type: Object,
@@ -216,6 +220,7 @@ export default {
       minNum: 1, // 最小礼品数量
       uploadLoading: false,
       dialogVisible: false,
+      selectedCoupons: [], // 已选择的优惠券列表
       formsGift: {
         selectedGift: [
           {
@@ -297,10 +302,19 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getcouponList()
-  },
   methods: {
+    selectCoupon() { // 选择优惠券
+      this.$refs.checkCoupons.handleGetlist()
+      this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
+    },
+    onGetSelectCoupon(selectedCoupons) {
+      if (selectedCoupons.length > 0) {
+        this.ruleForm.giftId = selectedCoupons[0].id
+        this.ruleForm.giftContent = selectedCoupons[0].cname
+      }
+      this.selectedCoupons = selectedCoupons
+      this.$refs.selectedCouponView.showPage(selectedCoupons, 1)
+    },
     goBack() {
       if (this.$route.query.code === 'TA003') {
         this.$router.push(
@@ -374,7 +388,6 @@ export default {
             this.ruleForm.giftName = this.ruleForm.giftContent
           }
           this.ruleForm.winRandom = this.ruleForm.winRandom
-          console.log(this.ruleForm)
           that.formsGift.selectedGift.push(_.cloneDeep(that.ruleForm))
           this.ruleForm = {
             giftId: '', // 选择优惠券时的id
@@ -391,16 +404,10 @@ export default {
         }
       })
     },
-    changeGift() {
-      this.$nextTick(() => {
-        this.ruleForm.giftContent = this.$refs.giftIds.selectedLabel
-      })
-    },
     changeType() {
       var types = this.ruleForm.giftType
       this.minNum = 1
       if (types === 5) {
-        console.log(this.ruleForm)
         this.ruleForm.giftNum = 1
         this.ruleForm.giftContent = '谢谢参与'
       } else if (types === 4) {
@@ -417,22 +424,6 @@ export default {
       form.giftName = ''
       form.giftImg = ''
       form.winRandom = ''
-    },
-    getcouponList() {
-      const searchParams = {
-        cname: '',
-        ctype: 0,
-        busType: 1,
-        currentPage: 1,
-        pageSize: 999,
-        beginTime: formatDate(new Date()),
-        operatorType: 1
-      }
-      getCouponList(searchParams).then(res => {
-        if (res.data && res.data.records) {
-          this.couponList = res.data.records
-        }
-      })
     },
     // 格式化表格数据：礼品类型
     formatType(type) {
