@@ -71,7 +71,15 @@
             </el-select>
           </el-form-item>
           <el-divider direction="vertical" />
-          <i class="el-icon-delete" @click="deleteRule('numberChange', $Index)" />
+          <el-popconfirm
+            placement="top"
+            icon="el-icon-info"
+            icon-color="red"
+            title="确定移除此条规则吗？"
+            @onConfirm="deleteRule('numberChange', $Index)"
+          >
+            <i slot="reference" class="el-icon-delete" />
+          </el-popconfirm>
         </div>
       </el-form-item>
       <el-form-item v-if="!forms.numberChange.length" label=" ">
@@ -133,11 +141,16 @@
           </el-form-item>
 
           <el-divider v-if="forms.amountChange.length >= 1" direction="vertical" />
-          <i
+          <el-popconfirm
             v-if="forms.amountChange.length >= 1"
-            class="el-icon-delete"
-            @click="deleteRule('amountChange', $Index)"
-          />
+            placement="top"
+            icon="el-icon-info"
+            icon-color="red"
+            title="确定移除此条规则吗？"
+            @onConfirm="deleteRule('amountChange', $Index)"
+          >
+            <i slot="reference" class="el-icon-delete" />
+          </el-popconfirm>
         </div>
       </el-form-item>
       <el-form-item label=" ">
