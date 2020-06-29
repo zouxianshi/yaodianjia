@@ -214,7 +214,7 @@
       :on-ok="handleCheckDialog"
       @close="isShowCheckDialog = false"
     >
-      <p slot="content">确定要提交审核全部数据吗？</p>
+      <p slot="content">{{ checkDialogTips }}</p>
     </base-dialog>
   </div>
 </template>
@@ -261,7 +261,8 @@ export default {
       },
       multipleSelection: [],
       srcList: [],
-      isShowImg: false
+      isShowImg: false,
+      checkDialogTips: '确定要提交审核全部数据吗？'
     }
   },
   computed: {
@@ -355,6 +356,7 @@ export default {
     },
     handleBatchCheck() {
       if (this.multipleSelection.length === 0) {
+        this.checkDialogTips = '确定要批量审核全部数据吗？'
         this.isShowCheckDialog = true
         return
       } else {
@@ -439,6 +441,7 @@ export default {
       let ids = []
       if (row === null && isAll) {
         if (this.multipleSelection.length === 0) {
+          this.checkDialogTips = '确定要提交审核全部数据吗？'
           this.isShowCheckDialog = true
           return
         }
