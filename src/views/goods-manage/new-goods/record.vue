@@ -214,7 +214,7 @@
       :on-ok="handleCheckDialog"
       @close="isShowCheckDialog = false"
     >
-      <span slot="content">确定要提交审核全部数据吗？</span>
+      <p slot="content">确定要提交审核全部数据吗？</p>
     </base-dialog>
   </div>
 </template>
