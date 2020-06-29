@@ -64,6 +64,8 @@ import cardItemClose from '../components/card-item-close'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
+import groupGoods from '@/assets/image/acvity/group-goods.png'
+
 import haibei from '@/assets/image/acvity/haibei.png'
 import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
@@ -168,11 +170,11 @@ export default {
           value: 'constituteGoods',
           lable: '组合商品',
           name: 'constituteGoods',
-          img: limitSecKill,
+          img: groupGoods,
           listUrl: '/marketing/activity/constitute-goods',
           linkUrl: '/marketing/activity/constitute-goods/edit',
           desc:
-            '合商品之前在商品中心，新建后的组合商品组合越来越多，客户不易维护。组合商品实质为一种促销方式，所以现决定将组合商品迁移至营销中心的促销活动中，后期也可以更好维护数据。组合商品现在商品中心已经跑通，现在需要将该功能移植到营销中心，将功能复制到营销中心，有极少部分需要改动'
+            '组合商品可打包多件商品一起售卖，可以提供商品销售量，也可给到客户一定优惠.....'
         }
       ], // 商品促销
       gamesFun: [

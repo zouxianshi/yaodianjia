@@ -161,7 +161,7 @@ const router = [
         }
       },
       {
-        path: '/activity/constitute-goods/edit',
+        path: 'activity/constitute-goods/edit',
         component: () => import('@/views/marketing/activity/constitute-goods/edit'),
         name: 'constituteGoodsEdit',
         meta: {
