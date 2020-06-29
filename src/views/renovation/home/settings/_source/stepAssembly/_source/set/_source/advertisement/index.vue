@@ -6,16 +6,19 @@
     <div class="snm-view">
       <!--多条循环-->
       <template v-if="itemParams.subType === 'five'">
-        <template v-for="(eel,$index) in itemParams.itemList">
-          <m-item-card :key="$index" title="导航1" :is-submit="$index === 4" :is-delete="true" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
-            <m-form-item ref="formItem" :el="eel" @on-el-update="onElUpdate" />
+        <template v-for="(eel,i) in itemParams.itemList">
+          <m-item-card :key="i" :title="eel.name ? eel.name : `导航${i + 1}`" :is-submit="i === itemParams.itemList.length - 1" :is-delete="(itemParams.itemList.length - 1) > 0" @on-ass-submit="onManyAssSubmit" @on-ass-delete="onManyAssDelete">
+            <m-form-item :ref="`formItem_${i}`" :el="eel" @on-el-update="onElUpdate($event,i)" />
+            <div v-if="(i === itemParams.itemList.length - 1) && itemParams.itemList.length < itemParams.max" slot="create" style="margin-top: 16px">
+              <el-button size="mini" @click="onAddBanner">添加轮播图</el-button>
+            </div>
           </m-item-card>
         </template>
       </template>
 
       <!--单条切换-->
       <template v-else>
-        <m-item-card title="广告图" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
+        <m-item-card title="广告图" @on-ass-submit="onAssSubmit">
           <m-form-item v-if="isItem" ref="formItem" :el="el" @on-el-update="onElUpdate" />
         </m-item-card>
       </template>
@@ -49,6 +52,9 @@ export default {
     }
   },
   methods: {
+    onAddBanner() {
+      this.itemParams.itemList.push(_.cloneDeep(itemParams))
+    },
     onSelect({ el, i }) {
       return new Promise((resolve, reject) => {
         this.isItem = false
@@ -63,6 +69,19 @@ export default {
     onCreate() {
       this.itemParams.itemList.push(_.cloneDeep(itemParams))
       this.onSelect({ el: {}, i: _.size(this.itemParams.itemList) - 1 })
+    },
+    onManyAssSubmit() {
+      let flag = true
+      _.forEach(this.itemParams.itemList, (v, i) => {
+        const formItem = this.$refs[`formItem_${i}`][0].$verification()
+        if (!formItem) {
+          flag = false
+        }
+      })
+      if (flag) {
+        // todo 提交
+        saveDragItem(this.$root, this.itemParams)
+      }
     },
     onAssSubmit() {
       let index = null
@@ -82,12 +101,12 @@ export default {
         saveDragItem(this.$root, this.itemParams)
       }
     },
-    onAssDelete() {
+    onManyAssDelete() {
       this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== this.selectIndex)
       this.onSelect({ el: {}, i: _.size(this.itemParams.itemList) - 1 })
     },
-    onElUpdate(item) {
-      this.$set(this.itemParams.itemList, this.selectIndex, item)
+    onElUpdate(el, i = this.selectIndex) {
+      this.$set(this.itemParams.itemList, i, el)
     }
   },
   watch: {},

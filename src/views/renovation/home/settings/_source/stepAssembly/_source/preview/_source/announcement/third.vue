@@ -3,7 +3,7 @@
     <div class="satm-left-bg" />
     <div class="satm-right-bg" />
     <div class="satm-box">
-      <m-notice text-color="#FF8C2F" />
+      <m-notice text-color="#FF8C2F" :item-list="itemList" />
     </div>
   </div>
 </template>
@@ -12,11 +12,26 @@ import mNotice from './_source/notice'
 export default {
   name: 'SapAnnouncementThird',
   data() {
-    return {}
+    return {
+      itemList: []
+    }
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
-  watch: {},
+  watch: {
+    'item.itemList': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.itemList = _.cloneDeep(v)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {

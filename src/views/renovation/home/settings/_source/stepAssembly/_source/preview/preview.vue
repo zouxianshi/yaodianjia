@@ -46,7 +46,7 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { uuid } from '@/utils'
-import { items, bannerItem } from './../../default'
+import { bannerItem } from './../../default'
 import vDraggable from 'vuedraggable'
 import mHeader from './_source/header/header'
 import mBanner from './_source/banner/banner'
@@ -70,113 +70,37 @@ export default {
       bannerItem,
       dragData: [
         {
-          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'advertisement',
-          typeName: '广告图',
+          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'coupon',
+          typeName: '优惠券',
           subType: 'first',
-          name: '单图样式',
+          name: '一排单个',
           error: false,
-          itemList: items(1)
+          itemList: [],
+          max: 10
         },
         {
-          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'advertisement',
-          typeName: '广告图',
+          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'coupon',
+          typeName: '优惠券',
           subType: 'second',
-          name: '多图样式1',
+          name: '一排两个',
           error: false,
-          itemList: items(3)
+          itemList: [],
+          max: 10
         },
         {
-          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'advertisement',
-          typeName: '广告图',
+          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'coupon',
+          typeName: '优惠券',
           subType: 'third',
-          name: '多图样式2',
+          name: '一排多个',
           error: false,
-          itemList: items(4)
-        },
-        {
-          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'advertisement',
-          typeName: '广告图',
-          subType: 'four',
-          name: '单图不限高',
-          error: false,
-          itemList: items(1)
-        },
-        {
-          uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'advertisement',
-          typeName: '广告图',
-          subType: 'five',
-          name: '多图轮播',
-          error: false,
-          itemList: items(1) // todo 不确定最大长度
+          itemList: [],
+          max: 10
         }
-        /* {
-            uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'announcement',
-            typeName: '公告',
-            subType: 'first',
-            name: '默认样式',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'announcement',
-            typeName: '公告',
-            subType: 'second',
-            name: '样式风格1',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'announcement',
-            typeName: '公告',
-            subType: 'third',
-            name: '样式风格2',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'announcement',
-            typeName: '公告',
-            subType: 'four',
-            name: '样式风格3',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'coupon',
-            typeName: '优惠券',
-            subType: 'first',
-            name: '一排单个',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'coupon',
-            typeName: '优惠券',
-            subType: 'second',
-            name: '一排两个',
-            error: false,
-            itemList: items(2)
-          },
-          {
-            uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'coupon',
-            typeName: '优惠券',
-            subType: 'third',
-            name: '一排多个',
-            error: false,
-            itemList: items(6) // todo 不确定数量
-          },
+        /*
+
           {
             uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'timeLimitedActivity',
@@ -213,69 +137,7 @@ export default {
             error: false,
             itemList: items(8) // todo 不确定数量
           },
-          {
-            uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'title',
-            typeName: '标题',
-            subType: 'first',
-            name: '默认样式',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'title',
-            typeName: '标题',
-            subType: 'second',
-            name: '样式风格1',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'title',
-            typeName: '标题',
-            subType: 'third',
-            name: '样式风格2',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'title',
-            typeName: '标题',
-            subType: 'four',
-            name: '样式风格3',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'title',
-            typeName: '标题',
-            subType: 'five',
-            name: '样式风格4',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'title',
-            typeName: '标题',
-            subType: 'six',
-            name: '样式风格5',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'title',
-            typeName: '标题',
-            subType: 'seven',
-            name: '样式风格6',
-            error: false,
-            itemList: items(1)
-          },
+
           {
             uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'commodity',
@@ -336,6 +198,7 @@ export default {
     $saveDragItem(item) {
       const i = _.findIndex(this.dragData, ['uuid', item.uuid])
       this.$set(this.dragData, i, item)
+
       this.onDragAdd()
       setTimeout(() => {
         this.saveHomeSetting()

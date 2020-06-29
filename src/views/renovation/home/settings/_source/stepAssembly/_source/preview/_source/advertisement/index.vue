@@ -60,5 +60,7 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .advertisement-index-model {
+    position: relative;
+    z-index: 0;
   }
 </style>

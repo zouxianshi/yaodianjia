@@ -2,30 +2,30 @@
   <div class="sap-advertisement-third-model" :class="classes">
     <div class="satm-item-box" :style="{width:`calc((100% / 2) - 4px)`}">
       <div class="satm-ads" @click="active && onSelect({},0)">
-        <div v-if="false" class="satm-img-0">
-          <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 56px;">
+        <div v-if="itemList[0].img" class="satm-img-0">
+          <img :src="itemList[0].img" alt="" style="width:100%;height: 56px;">
         </div>
-        <m-item-no-data height="56px" :is-border="active === 'advertisement_0'" />
+        <m-item-no-data v-else height="56px" :is-border="active === 'advertisement_0'" />
       </div>
       <div class="satm-ads" @click="active && onSelect({},1)">
-        <div v-if="false" class="satm-img-1">
-          <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 56px;">
+        <div v-if="itemList[1].img" class="satm-img-1">
+          <img :src="itemList[1].img" alt="" style="width:100%;height: 56px;">
         </div>
-        <m-item-no-data height="56px" :is-border="active === 'advertisement_1'" />
+        <m-item-no-data v-else height="56px" :is-border="active === 'advertisement_1'" />
       </div>
     </div>
     <div class="satm-item-box" :style="{width:`calc((100% / 2) - 4px)`}">
       <div class="satm-ads" @click="active && onSelect({},2)">
-        <div v-if="false" class="satm-img-2">
-          <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 56px;">
+        <div v-if="itemList[2].img" class="satm-img-2">
+          <img :src="itemList[2].img" alt="" style="width:100%;height: 56px;">
         </div>
-        <m-item-no-data height="56px" :is-border="active === 'advertisement_2'" />
+        <m-item-no-data v-else height="56px" :is-border="active === 'advertisement_2'" />
       </div>
       <div class="satm-ads" @click="active && onSelect({},3)">
-        <div v-if="false" class="satm-img-3">
-          <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 56px;">
+        <div v-if="itemList[3].img" class="satm-img-3">
+          <img :src="itemList[3].img" alt="" style="width:100%;height: 56px;">
         </div>
-        <m-item-no-data height="56px" :is-border="active === 'advertisement_3'" />
+        <m-item-no-data v-else height="56px" :is-border="active === 'advertisement_3'" />
       </div>
     </div>
   </div>
@@ -37,9 +37,15 @@ const prefixCls = 'sap-advertisement-third-model'
 export default {
   name: 'Third',
   data() {
-    return {}
+    return {
+      itemList: []
+    }
   },
   props: {
+    item: {
+      type: Object,
+      default: () => {}
+    },
     active: {
       type: String,
       default: ''
@@ -50,7 +56,15 @@ export default {
       this.$emit('on-select', { el, i })
     }
   },
-  watch: {},
+  watch: {
+    'item.itemList': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.itemList = _.cloneDeep(v)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
@@ -69,10 +83,15 @@ export default {
   },
   computed: {
     classes() {
+      const { active } = this
       return [
         `${prefixCls}`,
         {
-          [`${prefixCls}-active`]: !!this.active
+          [`${prefixCls}-active`]: !!active,
+          [`${prefixCls}-active-0`]: active === 'advertisement_0',
+          [`${prefixCls}-active-1`]: active === 'advertisement_1',
+          [`${prefixCls}-active-2`]: active === 'advertisement_2',
+          [`${prefixCls}-active-3`]: active === 'advertisement_3'
         }
       ]
     }
@@ -91,6 +110,7 @@ export default {
         margin-left: 8px;
       }
       .satm-ads {
+        height: 56px;
         &:last-child {
           margin-top: 8px;
         }
@@ -98,6 +118,16 @@ export default {
     }
     &-active {
       padding: 0 !important;
+    }
+    @for $i from 0 through 3 {
+      &-active-#{$i} {
+        .satm-img-#{$i} {
+          img {
+            border: 1px solid #4F88FF;
+            box-sizing: border-box;
+          }
+        }
+      }
     }
   }
 </style>

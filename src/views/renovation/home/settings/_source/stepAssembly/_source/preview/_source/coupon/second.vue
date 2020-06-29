@@ -1,10 +1,17 @@
 <template>
   <div class="sap-coupon-second-model">
     <div class="scsm-item-box">
-      <el-row :gutter="8">
+      <el-row v-if="item.itemList.length" :gutter="8">
         <template v-for="(el,$index) in item.itemList">
           <el-col :key="$index" :span="12" class="scsm-item">
             <m-first-item :el="el" size="small" />
+          </el-col>
+        </template>
+      </el-row>
+      <el-row v-else :gutter="8">
+        <template v-for="(el,$index) in 2">
+          <el-col :key="$index" :span="12" class="scsm-item">
+            <m-first-item :el="itemParams" size="small" />
           </el-col>
         </template>
       </el-row>
@@ -12,11 +19,14 @@
   </div>
 </template>
 <script>
+import { itemParams } from './.././../../../default'
 import mFirstItem from './firstItem'
 export default {
   name: 'SapCouponSecond',
   data() {
-    return {}
+    return {
+      itemParams
+    }
   },
   props: {
     item: {
@@ -51,6 +61,16 @@ export default {
   .sap-coupon-second-model {
     .scsm-item-box {
       overflow: hidden;
+      .scsm-item {
+        .vi-coupon-first-item {
+          margin-bottom: 8px;
+        }
+        &:nth-last-child(2),&:nth-last-child(1){
+          .vi-coupon-first-item {
+            margin-bottom: 0;
+          }
+        }
+      }
     }
   }
 </style>

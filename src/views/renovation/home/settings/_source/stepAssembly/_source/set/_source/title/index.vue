@@ -1,13 +1,14 @@
 <template>
   <div class="set-title-model">
     <div class="set-view-ass" style="width: 340px">
-      <component :is="mod" :item="itemParams" @on-select="onSelect" @on-create="onCreate" />
+      <component :is="mod" :item="itemParams" />
     </div>
     <div class="snm-view">
-      <m-item-card title="商品选择" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
+      <m-item-card title="商品选择" @on-ass-submit="onAssSubmit">
         <el-form label-width="90px" size="mini">
           <el-form-item label="标题名称">
-            <el-input v-model="name" />
+            <el-input v-model="el.name" maxlength="6" />
+            <div v-if="error.isName" class="sa-assembly-error">{{ error.isName }}</div>
           </el-form-item>
         </el-form>
       </m-item-card>
@@ -15,7 +16,7 @@
   </div>
 </template>
 <script>
-import { itemParams } from './../../../../default'
+import { saveDragItem } from './../../../../default'
 import mFirst from './../../../preview/_source/title/first'
 import mSecond from './../../../preview/_source/title/second'
 import mThird from './../../../preview/_source/title/third'
@@ -29,9 +30,11 @@ export default {
   name: 'SetTitle',
   data() {
     return {
-      selectIndex: 0,
       itemParams: {},
-      name: ''
+      el: {},
+      error: {
+        isName: false
+      }
     }
   },
   props: {
@@ -41,18 +44,28 @@ export default {
     }
   },
   methods: {
-    onSelect({ el, i }) {
-      this.selectIndex = i
-      console.log(i)
+    $verification() {
+      const { name } = this.el
+      let flag = true
+
+      this.reset()
+
+      if (!name) {
+        this.error.isName = '请输入标题名称'
+        flag = false
+      }
+      return flag
     },
-    onCreate() {
-      this.itemParams.itemList.push(_.cloneDeep(itemParams))
-      this.selectIndex = this.itemParams.itemList.length - 1
+    reset() {
+      this.error = _.assign(this.error, {
+        isName: false
+      })
     },
-    onAssSubmit() {},
-    onAssDelete() {
-      this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== this.selectIndex)
-      this.selectIndex = 0
+    onAssSubmit() {
+      if (this.$verification()) {
+        // todo 提交
+        saveDragItem(this.$root, this.itemParams)
+      }
     }
   },
   watch: {},
@@ -60,7 +73,7 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
-    console.log(this.itemParams)
+    this.el = this.itemParams.itemList[0]
   },
   beforeMount() {
   },

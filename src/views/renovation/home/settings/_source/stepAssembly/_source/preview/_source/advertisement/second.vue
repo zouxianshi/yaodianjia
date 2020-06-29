@@ -30,7 +30,7 @@ const prefixCls = 'sap-advertisement-second-model'
 export default {
   data() {
     return {
-      itemList: {}
+      itemList: []
     }
   },
   props: {

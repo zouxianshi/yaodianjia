@@ -1,14 +1,14 @@
 <template>
   <div class="set-announcement-model">
     <div class="set-view-ass" style="width: 340px">
-      <component :is="mod" :item="itemParams" :active="`announcement_${selectIndex}`" @on-select="onSelect" @on-create="onCreate" />
+      <component :is="mod" :item="itemParams" @on-create="onCreate" />
     </div>
     <div class="snm-view">
-      <template v-for="(item,$index) in 5">
-        <m-item-card :key="$index" title="导航1" :is-submit="$index === 4" :is-delete="true" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
-          <m-Form-item />
-          <div v-if="$index === 4" slot="create" style="margin-top: 16px">
-            <el-button size="mini">添加公告</el-button>
+      <template v-for="(el,i) in itemParams.itemList">
+        <m-item-card :key="i" :title="`公告${i + 1}`" :is-submit="i === itemParams.itemList.length - 1" :is-delete="(itemParams.itemList.length - 1) > 0" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete(i)">
+          <m-form-item :ref="`formItem_${i}`" :el="el" @on-el-update="onElUpdate($event,i)" />
+          <div v-if="(i === itemParams.itemList.length - 1) && itemParams.itemList.length < itemParams.max" slot="create" style="margin-top: 16px">
+            <el-button size="mini" @click="onAddBanner">添加公告</el-button>
           </div>
         </m-item-card>
       </template>
@@ -16,7 +16,7 @@
   </div>
 </template>
 <script>
-import { itemParams } from './../../../../default'
+import { itemParams, saveDragItem } from './../../../../default'
 import mFirst from './../../../preview/_source/announcement/first'
 import mSecond from './../../../preview/_source/announcement/second'
 import mThird from './../../../preview/_source/announcement/third'
@@ -28,7 +28,6 @@ export default {
   name: 'SetAnnouncement',
   data() {
     return {
-      selectIndex: 0,
       itemParams: {}
     }
   },
@@ -39,18 +38,30 @@ export default {
     }
   },
   methods: {
-    onSelect({ el, i }) {
-      this.selectIndex = i
-      console.log(i)
+    onAddBanner() {
+      this.itemParams.itemList.push(_.cloneDeep(itemParams))
     },
     onCreate() {
       this.itemParams.itemList.push(_.cloneDeep(itemParams))
-      this.selectIndex = this.itemParams.itemList.length - 1
     },
-    onAssSubmit() {},
-    onAssDelete() {
-      this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== this.selectIndex)
-      this.selectIndex = 0
+    onElUpdate(el, i) {
+      this.$set(this.itemParams.itemList, i, el)
+    },
+    onAssSubmit() {
+      let flag = true
+      _.forEach(this.itemParams.itemList, (v, i) => {
+        const formItem = this.$refs[`formItem_${i}`][0].$verification()
+        if (!formItem) {
+          flag = false
+        }
+      })
+      if (flag) {
+        // todo 提交
+        saveDragItem(this.$root, this.itemParams)
+      }
+    },
+    onAssDelete(index) {
+      this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)
     }
   },
   watch: {},
@@ -58,7 +69,6 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
-    console.log(this.itemParams)
   },
   beforeMount() {
   },

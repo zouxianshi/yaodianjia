@@ -1,23 +1,91 @@
 <template>
   <div class="announcement-form-item-model">
-    <div class="afim-name">
-      <el-input size="mini" placeholder="请输入内容" />
-    </div>
-    <div class="afim-st">
-      <el-button size="mini">重新选择</el-button>
-      <span class="afim-text-1">已选：商城首页</span>
-    </div>
+    <el-form label-width="90px" size="mini">
+      <el-form-item label="公告内容">
+        <el-input v-model="item.name" @change="onUploadItem" />
+        <div v-if="error.isName" class="sa-assembly-error">
+          {{ error.isName }}
+        </div>
+      </el-form-item>
+      <el-form-item label="链接地址">
+        <el-input v-model="item.url" style="width: calc(100% - 101px)" readonly />
+        <el-button icon="el-icon-link" @click="dialogVisible = true">选择链接</el-button>
+        <div v-if="error.isUrl" class="sa-assembly-error">
+          {{ error.isUrl }}
+        </div>
+      </el-form-item>
+    </el-form>
+    <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body size="600px" :visible.sync="dialogVisible">
+      <div slot="title">
+        选择链接
+      </div>
+      <m-links-table v-if="dialogVisible" :url="item.url" @on-link="onLink" />
+    </el-drawer>
   </div>
 </template>
 <script>
+import mLinksTable from '@/views/mall/homeSettings/_source/settingsArea/_source/linksTable'
 export default {
   name: 'AnnouncementFormItem',
   data() {
-    return {}
+    return {
+      dialogVisible: false,
+      item: {},
+      error: {
+        isName: false,
+        isUrl: false
+      }
+    }
   },
-  props: {},
-  methods: {},
-  watch: {},
+  props: {
+    el: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    $verification() {
+      const { name, url } = this.item
+      let flag = true
+
+      this.reset()
+
+      if (!name) {
+        this.error.isName = '请输入公告内容'
+        flag = false
+      }
+
+      if (!url) {
+        this.error.isUrl = '请选择公告链接'
+        flag = false
+      }
+
+      return flag
+    },
+    reset() {
+      this.error = _.assign(this.error, {
+        isName: false,
+        isUrl: false
+      })
+    },
+    onLink({ url }) {
+      this.$set(this.item, 'url', url)
+      this.onUploadItem()
+    },
+    onUploadItem() {
+      this.$emit('on-el-update', this.item)
+      this.$verification()
+    }
+  },
+  watch: {
+    'el': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.item = _.cloneDeep(v)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
@@ -35,7 +103,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { mLinksTable }
 }
 </script>
 

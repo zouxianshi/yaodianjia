@@ -1,9 +1,9 @@
 <template>
   <div :class="classes">
-    <div v-if="false" class="safm-banner">
-      <m-banner />
+    <div v-if="item.itemList.length" class="safm-banner">
+      <m-banner :item-list="item.itemList" />
     </div>
-    <div>
+    <div v-else>
       <m-item-no-data height="120px" :size="50" />
     </div>
   </div>
@@ -20,6 +20,10 @@ export default {
     return {}
   },
   props: {
+    item: {
+      type: Object,
+      default: () => {}
+    },
     active: {
       type: String,
       default: ''

@@ -1,20 +1,28 @@
 <template>
   <div class="sap-coupon-third-model">
     <div class="sctm-item-scroll">
-      <div class="sctm-item-box" :style="{width:`${140 * item.itemList.length}px`}">
+      <div v-if="item.itemList.length" class="sctm-item-box" :style="{width:`${140 * item.itemList.length}px`}">
         <template v-for="(el,$index) in item.itemList">
           <m-first-item :key="$index" class="sctm-item" :el="el" size="mini" />
+        </template>
+      </div>
+      <div v-else class="sctm-item-box" :style="{width:`${140 * 6}px`}">
+        <template v-for="(el,$index) in 6">
+          <m-first-item :key="$index" class="sctm-item" :el="itemParams" size="mini" />
         </template>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { itemParams } from './.././../../../default'
 import mFirstItem from './firstItem'
 export default {
   name: 'SapCouponThird',
   data() {
-    return {}
+    return {
+      itemParams
+    }
   },
   props: {
     item: {

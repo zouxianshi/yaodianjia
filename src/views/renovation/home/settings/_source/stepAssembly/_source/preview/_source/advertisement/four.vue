@@ -1,9 +1,9 @@
 <template>
   <div :class="classes">
-    <div v-if="false" class="safm-img">
-      <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 280px;">
+    <div v-if="itemList[0].img" class="safm-img">
+      <img :src="itemList[0].img" alt="" style="width:100%;height: 280px;">
     </div>
-    <m-item-no-data height="280px" :size="50" />
+    <m-item-no-data v-else height="280px" :size="50" />
   </div>
 </template>
 <script>
@@ -14,16 +14,30 @@ const prefixCls = 'sap-advertisement-four-model'
 export default {
   name: 'Four',
   data() {
-    return {}
+    return {
+      itemList: []
+    }
   },
   props: {
+    item: {
+      type: Object,
+      default: () => {}
+    },
     active: {
       type: String,
       default: ''
     }
   },
   methods: {},
-  watch: {},
+  watch: {
+    'item.itemList': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.itemList = _.cloneDeep(v)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {

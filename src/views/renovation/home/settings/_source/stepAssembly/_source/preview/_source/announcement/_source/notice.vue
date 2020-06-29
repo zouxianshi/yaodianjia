@@ -2,9 +2,7 @@
   <div class="sap-notice-model">
     <div class="swiper-notice-container">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" :style="{color:textColor}">中台需求与微商城对应说明</div>
-        <div class="swiper-slide" :style="{color:textColor}">功能模块对应开发人员说明</div>
-        <div class="swiper-slide" :style="{color:textColor}">Git版本管理说明与职责分配</div>
+        <div v-for="(item,$index) in itemList" :key="$index" class="swiper-slide" :style="{color:textColor}">{{ item.name || '' }}</div>
       </div>
     </div>
   </div>
@@ -17,6 +15,10 @@ export default {
     return {}
   },
   props: {
+    itemList: {
+      type: Array,
+      default: () => []
+    },
     textColor: {
       type: String,
       default: '#3E3E3E'
@@ -33,6 +35,7 @@ export default {
   mounted() {
     new Swiper('.swiper-notice-container', {
       direction: 'vertical',
+      observer: true,
       autoplay: {
         delay: 5000
       }

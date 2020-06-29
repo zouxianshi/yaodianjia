@@ -7,7 +7,9 @@
       <div class="cfim-type" />
     </div>
     <div class="cfim-item-right">
-      <div class="cfim-name" />
+      <div class="cfim-name" :class="el.cname ? 'no' : ''">
+        {{ el.cname }}
+      </div>
       <div class="cfim-btn">
         <el-button round size="mini">立即领取</el-button>
       </div>
@@ -25,6 +27,10 @@ export default {
     return {}
   },
   props: {
+    el: {
+      type: Object,
+      default: () => {}
+    },
     size: {
       type: String,
       default: 'medium'
@@ -112,6 +118,11 @@ export default {
         line-height: 18px;
         border-radius:2px;
         background:rgba(255,255,255,.8);
+        font-size: 14px;
+        color: #fff;
+        &.no {
+           background: none;
+        }
       }
       .cfim-btn {
         position: absolute;
@@ -175,6 +186,7 @@ export default {
         .cfim-name {
           margin: 8px 0 0 8px;
           width: calc(100% - 16px);
+          font-size: 14px;
         }
         .cfim-btn {
           right: 8px;
@@ -213,6 +225,7 @@ export default {
         .cfim-name {
           margin: 6px 0 0 6px;
           width: calc(100% - 12px);
+          font-size: 12px;
         }
         .cfim-btn {
           right: 6px;

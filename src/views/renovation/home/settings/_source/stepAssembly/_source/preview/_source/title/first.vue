@@ -1,6 +1,6 @@
 <template>
   <div class="tim-title-bg sap-title-first-model">
-    <strong class="tim-text">热销商品</strong>
+    <strong class="tim-text">{{ item.itemList[0].name }}</strong>
   </div>
 </template>
 <script>
@@ -9,7 +9,12 @@ export default {
   data() {
     return {}
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {},
   watch: {},
   beforeCreate() {

@@ -21,6 +21,14 @@ class RenovationService {
     })
   }
 
+  getHomeCoupon(data) {
+    return request({
+      url: `${this.serve}/1.0/home-coupon/_search`,
+      method: 'post',
+      data
+    })
+  }
+
   /**
      *
      * @description  获取首页商城设置的列表

@@ -19,7 +19,7 @@ export const itemParams = {
   'id': '',
   'img': '',
   'indications': '',
-  'itemId': '',
+  'itemId': '', // 优惠券id
   'keyFeature': '',
   'mprice': 0,
   'name': '',
@@ -29,7 +29,7 @@ export const itemParams = {
   'setId': '',
   'sort': null,
   'url': '',
-  'value': ''
+  'value': ''// 优惠券数量
 }
 
 export const items = (n = 1) => _.times(n, () => itemParams)
@@ -193,7 +193,7 @@ export default () => {
             subType: 'first',
             name: '默认样式',
             error: false,
-            itemList: items(1),
+            itemList: [{ ...items(1)[0], name: '热销商品' }],
             max: 1
           },
           {
@@ -203,7 +203,7 @@ export default () => {
             subType: 'second',
             name: '样式风格1',
             error: false,
-            itemList: items(1),
+            itemList: [{ ...items(1)[0], name: '热销商品' }],
             max: 1
           },
           {
@@ -213,7 +213,7 @@ export default () => {
             subType: 'third',
             name: '样式风格2',
             error: false,
-            itemList: items(1),
+            itemList: [{ ...items(1)[0], name: '热销商品' }],
             max: 1
           },
           {
@@ -223,7 +223,7 @@ export default () => {
             subType: 'four',
             name: '样式风格3',
             error: false,
-            itemList: items(1),
+            itemList: [{ ...items(1)[0], name: '热销商品' }],
             max: 1
           },
           {
@@ -233,7 +233,7 @@ export default () => {
             subType: 'five',
             name: '样式风格4',
             error: false,
-            itemList: items(1),
+            itemList: [{ ...items(1)[0], name: '热销商品' }],
             max: 1
           },
           {
@@ -243,7 +243,7 @@ export default () => {
             subType: 'six',
             name: '样式风格5',
             error: false,
-            itemList: items(1),
+            itemList: [{ ...items(1)[0], name: '热销商品' }],
             max: 1
           },
           {
@@ -253,7 +253,7 @@ export default () => {
             subType: 'seven',
             name: '样式风格6',
             error: false,
-            itemList: items(1),
+            itemList: [{ ...items(1)[0], name: '热销商品' }],
             max: 1
           }
         ]
@@ -269,7 +269,8 @@ export default () => {
             subType: 'first',
             name: '默认样式',
             error: false,
-            itemList: items(1)
+            itemList: items(1),
+            max: 10
           },
           {
             uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
@@ -278,7 +279,8 @@ export default () => {
             subType: 'second',
             name: '样式风格1',
             error: false,
-            itemList: items(1)
+            itemList: items(1),
+            max: 10
           },
           {
             uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
@@ -287,7 +289,8 @@ export default () => {
             subType: 'third',
             name: '样式风格2',
             error: false,
-            itemList: items(1)
+            itemList: items(1),
+            max: 10
           },
           {
             uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
@@ -296,7 +299,8 @@ export default () => {
             subType: 'four',
             name: '样式风格3',
             error: false,
-            itemList: items(1)
+            itemList: items(1),
+            max: 10
           }
         ]
       },
@@ -400,7 +404,8 @@ export default () => {
             subType: 'first',
             name: '一排单个',
             error: false,
-            itemList: items(1)
+            itemList: items(1),
+            max: 10
           },
           {
             uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
@@ -409,7 +414,8 @@ export default () => {
             subType: 'second',
             name: '一排两个',
             error: false,
-            itemList: items(2)
+            itemList: items(2),
+            max: 10
           },
           {
             uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
@@ -418,7 +424,8 @@ export default () => {
             subType: 'third',
             name: '一排多个',
             error: false,
-            itemList: items(6) // todo 不确定数量
+            itemList: items(6),
+            max: 10
           }
         ]
       }
