@@ -297,25 +297,6 @@ export default {
     }
   },
   methods: {
-    async _updateSendCheck(ids) {
-      // 提交审核
-      const data = {
-        ...this.listQuery,
-        ids: ids,
-        userName: this.name,
-        updateAuditStatus: this.listQuery.auditStatus - 1,
-        origin: 2
-      }
-      await setAuditGoods(data)
-      this.$message({
-        message: '提交审核完成，可在【审核中】页面查看',
-        type: 'success'
-      })
-
-      this.listQuery.auditStatus = this.listQuery.auditStatus - 1
-      this.getList()
-      this.isShowCheckDialog = false
-    },
     // 撤回
     handleGoback(ids) {
       const data = {
@@ -344,7 +325,11 @@ export default {
         auditReason: '',
         auditStatus: form.result === 1 ? 1 : 0,
         ids: ids,
-        userName: this.name
+        userName: this.name,
+        queryDTO: {
+          ...this.listQuery,
+          origin: 2
+        }
       }
 
       if (form.result === 2) {
@@ -370,13 +355,9 @@ export default {
     },
     handleBatchCheck() {
       if (this.multipleSelection.length === 0) {
-        this.$message({
-          message: '请选择要审核的数据',
-          type: 'warning'
-        })
+        this.isShowCheckDialog = true
         return
       }
-      this.$refs.checkDialog.show(true)
     },
     handleCurrentChange(row) {
       sessionStorage.setItem('mate', JSON.stringify(row))
@@ -428,7 +409,29 @@ export default {
       )
     },
     async handleCheckDialog() {
-      await this._updateSendCheck([])
+      if (this.listQuery.auditStatus === 2) {
+        this.$refs.checkDialog.show(true)
+      } else {
+        // 提交审核
+        const data = {
+          ids: [],
+          userName: this.name,
+          auditStatus: 2,
+          queryDTO: {
+            ...this.listQuery,
+            origin: 2
+          }
+        }
+        await setAuditGoods(data)
+        this.$message({
+          message: '提交审核完成，可在【审核中】页面查看',
+          type: 'success'
+        })
+
+        this.listQuery.auditStatus = 2
+        this.getList()
+        this.isShowCheckDialog = false
+      }
     },
     async handleSendCheck(row, isAll) {
       let ids = []
@@ -448,8 +451,7 @@ export default {
         ...this.listQuery,
         auditStatus: 2,
         ids: ids,
-        userName: this.name,
-        updateAuditStatus: 1
+        userName: this.name
       }
       await setAuditGoods(data)
       this.$message({

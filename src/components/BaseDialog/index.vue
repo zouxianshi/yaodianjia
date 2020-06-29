@@ -63,6 +63,7 @@ export default {
         this.isLoading = false
       }
       this.$emit('ok')
+      this.$emit('close')
       this.isLoading = false
     }
   },
