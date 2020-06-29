@@ -5,7 +5,7 @@
     </div>
     <el-form :model="paramsForm">
       <el-form-item label="签到模式">
-        <el-radio-group v-model="paramsForm.modelType" required>
+        <el-radio-group v-model="paramsForm.modelType" required @change="changeType">
           <el-radio :label="1">固定模式</el-radio>
           <el-radio :label="2">激励模式</el-radio>
         </el-radio-group>
@@ -71,6 +71,13 @@ export default {
         incrLimitRuleValue: 2, // 连续签到X天后
         incrLimitValue: 2, // 以第X天的为准
         incrValue: 0 // 多赠送的海贝
+      },
+      defaultForm: {
+        fixedValue: 1,
+        remark: '', // 规则说明
+        incrLimitRuleValue: 2, // 连续签到X天后
+        incrLimitValue: 2, // 以第X天的为准
+        incrValue: 0 // 多赠送的海贝
       }
     }
   },
@@ -84,6 +91,9 @@ export default {
   methods: {
     changeDay() {
       this.paramsForm.incrLimitValue = this.paramsForm.incrLimitRuleValue
+    },
+    changeType() {
+      Object.assign(this.paramsForm, this.defaultForm)
     },
     _onSubmit() {
       var params = _.cloneDeep(this.paramsForm)
