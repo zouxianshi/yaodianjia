@@ -357,6 +357,8 @@ export default {
       if (this.multipleSelection.length === 0) {
         this.isShowCheckDialog = true
         return
+      } else {
+        this.$refs.checkDialog.show(true)
       }
     },
     handleCurrentChange(row) {
