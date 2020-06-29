@@ -1,9 +1,9 @@
 <template>
-  <div class="sap-navigation-first-model" :style="stylees">
+  <div class="sap-navigation-first-model">
     <el-row>
       <template v-for="(el,$index) in item.itemList">
         <el-col :key="$index" :span="6" class="snfm-item">
-          <m-first-item :el="el" :active="`navigation_${$index}` === active" @click.native="active && onSelect(el,$index)" />
+          <m-first-item :el="el" :active="`navigation_${$index}` === active" :index="$index" @click.native="active && onSelect(el,$index)" />
         </el-col>
       </template>
       <el-col v-if="active && item.itemList.length < 8" :span="6">
@@ -13,7 +13,6 @@
   </div>
 </template>
 <script>
-import { globalBinding } from './../../../../mixins'
 import mFirstItem from './firstItem'
 import mItemCreateEntry from './itemCreateEntry'
 
@@ -22,7 +21,6 @@ export default {
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     item: {
       type: Object,

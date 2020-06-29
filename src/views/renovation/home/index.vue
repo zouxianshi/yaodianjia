@@ -13,5 +13,6 @@ export default {
     background:#F5F8FB;
     padding: 20px;
     height: calc(100vh - 100px);
+    padding-top: 30px;
   }
 </style>

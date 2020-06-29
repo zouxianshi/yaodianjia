@@ -1,5 +1,5 @@
 <template>
-  <div class="sap-advertisement-third-model" :class="classes" :style="stylees">
+  <div class="sap-advertisement-third-model" :class="classes">
     <div class="satm-item-box" :style="{width:`calc((100% / 2) - 4px)`}">
       <div class="satm-ads" @click="active && onSelect({},0)">
         <div v-if="false" class="satm-img-0">
@@ -32,7 +32,6 @@
 </template>
 <script>
 import mItemNoData from './../../../itemNoData'
-import { globalBinding } from './../../../../mixins'
 const prefixCls = 'sap-advertisement-third-model'
 
 export default {
@@ -40,7 +39,6 @@ export default {
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     active: {
       type: String,

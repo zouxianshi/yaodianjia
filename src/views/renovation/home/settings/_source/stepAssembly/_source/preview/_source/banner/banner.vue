@@ -1,9 +1,10 @@
 <template>
-  <div class="sap-banner-model" :style="stylees">
+  <div class="sap-banner-model">
     <div class="swiper-container">
       <div class="swiper-wrapper">
-        <div v-for="(item,i) in list" :key="i" class="swiper-slide">
+        <div v-for="(item,i) in bannerList" :key="i" class="swiper-slide">
           <img v-if="item.img" :src="showImg(item.img)" width="100%" height="116">
+          <m-item-no-data v-else height="116px" />
         </div>
       </div>
       <div class="swiper-pagination" />
@@ -13,26 +14,32 @@
 <script>
 import { mapState } from 'vuex'
 import Swiper from 'swiper'
+import mItemNoData from './../../../itemNoData'
+
 export default {
   name: 'SapBanner',
   data() {
     return {
-      list: [
-        {
-          img: 'https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg'
-        },
-        {
-          img: 'https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg'
-        },
-        {
-          img: 'https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg'
-        }
-      ]
+      bannerList: []
     }
   },
-  props: {},
-  methods: {},
-  watch: {},
+  props: {
+    itemList: {
+      type: Array,
+      default: () => []
+    }
+  },
+  methods: {
+
+  },
+  watch: {
+    'itemList': {
+      deep: true,
+      handler(v) {
+        this.bannerList = v
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
@@ -40,10 +47,12 @@ export default {
   beforeMount() {
   },
   mounted() {
+    this.bannerList = this.itemList
     new Swiper('.swiper-container', {
       autoplay: {
-        delay: 1000
+        delay: 3000
       },
+      observer: true,
       pagination: {
         el: '.swiper-pagination'
       }
@@ -58,21 +67,19 @@ export default {
   destroyed() {
   },
   computed: {
-    ...mapState('renovation', ['borderFlag']),
-    stylees() {
-      return [
-        {
-          padding: `0 ${this.borderFlag}px`
-        }
-      ]
-    }
+    ...mapState('renovation', ['borderFlag'])
   },
-  components: {}
+  components: { mItemNoData }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .sap-banner-model {
-
+    height: 116px;
+    .swiper-slide {
+      >img {
+        display: block;
+      }
+    }
   }
 </style>

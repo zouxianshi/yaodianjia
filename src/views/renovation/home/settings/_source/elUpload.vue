@@ -1,15 +1,13 @@
 <template>
   <span class="el-upload-model">
     <el-upload :headers="headers" :action="upLoadUrl" :show-file-list="false" :on-error="handleUploadError" :on-success="handleUploadSuccess" :before-upload="beforeUpload">
-      <img v-if="imageUrl" :src="imageUrl" class="avatar">
-      <template v-else>
-        <div v-if="isSlots">
-          <slot />
-        </div>
-        <div v-else>
-          <i class="el-icon-plus avatar-uploader-icon" />
-        </div>
-      </template>
+      <div v-if="isSlots">
+        <slot />
+      </div>
+      <div v-else>
+        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+        <i v-else class="el-icon-plus avatar-uploader-icon" />
+      </div>
     </el-upload>
   </span>
 </template>
@@ -22,11 +20,17 @@ export default {
       imageUrl: ''
     }
   },
-  props: {},
+  props: {
+    imgUrl: {
+      type: String,
+      default: ''
+    }
+  },
   methods: {
     handleUploadSuccess(res, file) {
       this.$message.success('上传成功！')
-      this.$emit('on-upload', { img: this.showImg(res.data), file })
+      this.imageUrl = this.showImg(res.data)
+      this.$emit('on-upload', { img: this.imageUrl, file })
     },
     handleUploadError() {
       this.$message.error('图片上传失败')
@@ -48,10 +52,12 @@ export default {
     }
 
   },
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {
+    this.imageUrl = _.cloneDeep(this.imgUrl)
   },
   beforeMount() {
   },

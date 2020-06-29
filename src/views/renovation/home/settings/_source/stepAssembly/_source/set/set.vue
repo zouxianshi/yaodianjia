@@ -20,11 +20,15 @@ import mAdFrame from './_source/adFrame'
 import mActivityAggregate from './_source/activityAggregate'
 import mTimeLimitedActivity from './_source/timeLimitedActivity'
 import mCoupon from './_source/coupon'
+import mBanner from './_source/banner'
+import mSearchHint from './_source/searchHint'
+import { searchHintItem } from './../../default'
+
 export default {
   name: 'SaSet',
   data() {
     return {
-      item: {},
+      item: _.cloneDeep(searchHintItem),
       isComponent: true
     }
   },
@@ -59,6 +63,10 @@ export default {
   computed: {
     mod() {
       switch (this.item.type) {
+        case 'banner':
+          return mBanner
+        case 'searchHint':
+          return mSearchHint
         case 'navigation':
           return mNavigation
         case 'advertisement':

@@ -1,21 +1,21 @@
 <template>
-  <div :class="classes" :style="stylees">
+  <div :class="classes">
     <div class="sasm-left" :style="{width:`calc((100% / 2) - 4px)`}" @click="active && onSelect({},0)">
-      <div v-if="false" class="sasm-img-0">
-        <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 120px;">
+      <div v-if="itemList[0].img" class="sasm-img-0">
+        <img :src="itemList[0].img" alt="" style="width:100%;height: 120px;">
       </div>
       <m-item-no-data v-else height="120px" :size="50" :is-border="active === 'advertisement_0'" />
     </div>
     <div class="sasm-right" :style="{width:`calc((100% / 2) - 4px)`}">
       <div class="asam-ads" @click="active && onSelect({},1)">
-        <div v-if="false" class="sasm-img-1">
-          <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 56px;">
+        <div v-if="itemList[1].img" class="sasm-img-1">
+          <img :src="itemList[1].img" alt="" style="width:100%;height: 56px;">
         </div>
         <m-item-no-data v-else height="56px" :is-border="active === 'advertisement_1'" />
       </div>
       <div class="asam-ads" @click="active && onSelect({},2)">
-        <div v-if="false" class="sasm-img-2">
-          <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 56px;">
+        <div v-if="itemList[2].img" class="sasm-img-2">
+          <img :src="itemList[2].img" alt="" style="width:100%;height: 56px;">
         </div>
         <m-item-no-data v-else height="56px" :is-border="active === 'advertisement_2'" />
       </div>
@@ -24,16 +24,20 @@
 </template>
 <script>
 import mItemNoData from './../../../itemNoData'
-import { globalBinding } from './../../../../mixins'
 
 const prefixCls = 'sap-advertisement-second-model'
 
 export default {
   data() {
-    return {}
+    return {
+      itemList: {}
+    }
   },
-  mixins: [globalBinding],
   props: {
+    item: {
+      type: Object,
+      default: () => {}
+    },
     active: {
       type: String,
       default: ''
@@ -44,7 +48,15 @@ export default {
       this.$emit('on-select', { el, i })
     }
   },
-  watch: {},
+  watch: {
+    'item.itemList': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.itemList = _.cloneDeep(v)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
@@ -90,13 +102,15 @@ export default {
     }
     .sasm-left {
       margin-right: 4px;
-      background: blue;
     }
     .sasm-right {
       margin-left: 4px;
       .asam-ads{
         &:last-child {
           margin-top: 8px;
+        }
+        .sasm-img-1,.sasm-img-2 {
+          height: 56px;
         }
       }
     }

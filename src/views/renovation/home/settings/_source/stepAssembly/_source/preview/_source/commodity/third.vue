@@ -1,5 +1,5 @@
 <template>
-  <div class="sap-commodity-third-model" :style="stylees">
+  <div class="sap-commodity-third-model">
     <el-row :gutter="8">
       <template v-for="(el,$index) in item.itemList">
         <el-col :key="$index" :span="8" class="sctm-item">
@@ -10,14 +10,12 @@
   </div>
 </template>
 <script>
-import { globalBinding } from './../../../../mixins'
 import mSecondItem from './secondItem'
 export default {
   name: 'SapCommodityThird',
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     item: {
       type: Object,

@@ -67,10 +67,12 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .title-index-model {
     .tim-title-bg {
-      width: 352px;
+      width: calc(100% - -8px);
       height: 36px;
       line-height: 33px;
       overflow: hidden;
+      position: relative;
+      z-index: 1;
       .tim-text {
         display: block;
         text-align: center;

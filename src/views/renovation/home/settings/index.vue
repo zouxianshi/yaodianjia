@@ -1,6 +1,9 @@
 <template>
   <div class="home-settings-model">
-    <div class="scrollbar hsm-main">
+    <div v-if="stepVal !== 2" class="hsm-step">
+      <m-step />
+    </div>
+    <div class="scrollbar hsm-main" :style="{height: stepVal === 2 ? 'calc(100vh - 218px)' : 'calc(100vh - 300px)'}">
       <component :is="mod" />
     </div>
     <div class="hsm-operation">

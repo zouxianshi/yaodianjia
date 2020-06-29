@@ -12,6 +12,15 @@ class RenovationService {
   constructor() {
     this.serve = config.merGoods
   }
+
+  homePageAdd(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage/add`,
+      method: 'post',
+      data
+    })
+  }
+
   /**
      *
      * @description  获取首页商城设置的列表

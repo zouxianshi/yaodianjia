@@ -1,5 +1,5 @@
 <template>
-  <div class="sap-commodity-first-model" :style="stylees">
+  <div class="sap-commodity-first-model">
     <div class="scfm-item-box">
       <m-first-item />
     </div>
@@ -7,13 +7,11 @@
 </template>
 <script>
 import mFirstItem from './firstItem'
-import { globalBinding } from './../../../../mixins'
 export default {
   name: 'SapCommodityFirst',
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {},
   methods: {},
   watch: {},

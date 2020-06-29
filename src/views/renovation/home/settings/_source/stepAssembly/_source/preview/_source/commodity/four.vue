@@ -1,5 +1,5 @@
 <template>
-  <div class="sap-commodity-four-model" :style="stylees">
+  <div class="sap-commodity-four-model">
     <div class="scfm-item-scroll">
       <div class="scfm-item-box" :style="{width:`${106 * item.itemList.length}px`}">
         <template v-for="(el,$index) in item.itemList">
@@ -10,14 +10,12 @@
   </div>
 </template>
 <script>
-import { globalBinding } from './../../../../mixins'
 import mSecondItem from './secondItem'
 export default {
   name: 'Four',
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     item: {
       type: Object,

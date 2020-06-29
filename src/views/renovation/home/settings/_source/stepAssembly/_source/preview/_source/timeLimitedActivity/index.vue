@@ -1,5 +1,5 @@
 <template>
-  <div class="tla-index-model" :style="stylees">
+  <div class="tla-index-model">
     <component :is="mod" :item="item" />
   </div>
 </template>
@@ -7,14 +7,12 @@
 import mFirst from './first'
 import mSecond from './second'
 import mThird from './third'
-import { globalBinding } from './../../../../mixins'
 
 export default {
   name: 'TimeLimitedActivityIndex',
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     item: {
       type: Object,

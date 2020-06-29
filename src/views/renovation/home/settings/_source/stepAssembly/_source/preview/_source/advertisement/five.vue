@@ -3,7 +3,7 @@
     <div v-if="false" class="safm-banner">
       <m-banner />
     </div>
-    <div :style="stylees">
+    <div>
       <m-item-no-data height="120px" :size="50" />
     </div>
   </div>
@@ -11,7 +11,6 @@
 <script>
 import mItemNoData from './../../../itemNoData'
 import mBanner from './../banner/banner'
-import { globalBinding } from './../../../../mixins'
 
 const prefixCls = 'sap-advertisement-five-model'
 
@@ -20,7 +19,6 @@ export default {
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     active: {
       type: String,

@@ -1,5 +1,5 @@
 <template>
-  <div class="ad-frame-index-model" :style="stylees">
+  <div class="ad-frame-index-model">
     <div class="afim-box">
       <div class="afim-title">
         <strong>主标题</strong>
@@ -13,13 +13,11 @@
 </template>
 <script>
 import mFirst from './first'
-import { globalBinding } from './../../../../mixins'
 export default {
   name: 'AdFrameIndex',
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     item: {
       type: Object,

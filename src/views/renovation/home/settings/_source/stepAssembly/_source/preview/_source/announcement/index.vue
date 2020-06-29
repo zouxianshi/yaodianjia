@@ -1,5 +1,5 @@
 <template>
-  <div class="announcement-index-model" :style="stylees">
+  <div class="announcement-index-model">
     <component :is="mod" :item="item" />
   </div>
 </template>
@@ -8,13 +8,11 @@ import mFirst from './first'
 import mSecond from './second'
 import mThird from './third'
 import mFour from './four'
-import { globalBinding } from './../../../../mixins'
 export default {
   name: 'AnnouncementIndex',
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     item: {
       type: Object,
@@ -59,10 +57,5 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .announcement-index-model {
-    .aim-title-bg {
-      width: 354px;
-      height: 36px;
-      line-height: 33px;
-    }
   }
 </style>

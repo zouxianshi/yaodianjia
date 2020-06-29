@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend-index-model" :style="stylees">
+  <div class="recommend-index-model">
     <div class="rim-bg">
       <div class="rim-left-bg" />
       <div class="rim-center-bg" :style="{width:`${93 - (borderFlag * 2)}px`}" />
@@ -13,13 +13,11 @@
 <script>
 import mFirst from './first'
 import mSecond from './second'
-import { globalBinding } from './../../../../mixins'
 export default {
   name: 'RecommendIndex',
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     item: {
       type: Object,

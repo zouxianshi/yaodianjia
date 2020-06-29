@@ -389,7 +389,6 @@ class InnerCtor {
   }
   handlerPs() {
     let p = {}
-    console.warn('resList _____________________ : ', store.state.user.resList)
     _.map(store.state.user.resList, v => {
       _.map(v.children, v1 => {
         p[v.rePath] = _.assign(p[v.rePath], {

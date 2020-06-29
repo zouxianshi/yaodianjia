@@ -1,15 +1,14 @@
 <template>
-  <div :class="classes" :style="stylees">
+  <div :class="classes">
     <div class="safm-box">
-      <div v-if="false" class="safm-img-0">
-        <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 120px;">
+      <div v-if="el.img" class="safm-img-0">
+        <img :src="el.img" alt="" style="width:100%;height: 120px;">
       </div>
-      <m-item-no-data height="120px" :size="50" />
+      <m-item-no-data v-else height="120px" :size="50" />
     </div>
   </div>
 </template>
 <script>
-import { globalBinding } from './../../../../mixins'
 import mItemNoData from './../../../itemNoData'
 
 const prefixCls = 'sap-advertisement-first-model'
@@ -17,17 +16,30 @@ const prefixCls = 'sap-advertisement-first-model'
 export default {
   name: 'First',
   data() {
-    return {}
+    return {
+      el: {}
+    }
   },
-  mixins: [globalBinding],
   props: {
+    item: {
+      type: Object,
+      default: () => {}
+    },
     active: {
       type: String,
       default: ''
     }
   },
   methods: {},
-  watch: {},
+  watch: {
+    'item.itemList': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.el = _.cloneDeep(v[0])
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {

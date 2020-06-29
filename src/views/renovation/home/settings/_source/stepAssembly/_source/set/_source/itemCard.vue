@@ -10,6 +10,7 @@
         <slot />
       </div>
     </div>
+    <slot name="create" />
     <div v-if="isSubmit" class="sicm-item-submit">
       <el-button type="primary" plain @click="$emit('on-ass-submit')">提交</el-button>
     </div>

@@ -32,7 +32,7 @@ export default {
   name: 'SaComponents',
   data() {
     return {
-      defaultData: defaultData,
+      defaultData: defaultData(),
       tabVal: 'basics',
       selectVal: 'navigation',
       dragData: []
@@ -45,7 +45,8 @@ export default {
       this.handlerDragData()
     },
     onStart() {
-
+      this.defaultData = defaultData()
+      this.handlerDragData()
     },
     handlerDragData() {
       this.dragData = _.find(this.defaultData[this.tabVal], ['type', this.selectVal]).component

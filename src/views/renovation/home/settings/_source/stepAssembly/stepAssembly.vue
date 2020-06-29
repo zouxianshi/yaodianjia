@@ -80,5 +80,10 @@ export default {
         width: 360px;
       }
     }
+    .sa-assembly-error {
+      font-size: 12px;
+      color: #ff0000;
+      text-align: left;
+    }
   }
 </style>

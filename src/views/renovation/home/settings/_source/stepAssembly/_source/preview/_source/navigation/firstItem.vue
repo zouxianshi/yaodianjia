@@ -1,11 +1,11 @@
 <template>
   <div :class="classes">
-    <div v-if="false" class="sfim-icon">
-      <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width: 58px;height: 58px;">
+    <div v-if="el.img" class="sfim-icon">
+      <img :src="rtImg()" alt="" style="width: 58px;height: 58px;">
     </div>
     <m-item-no-data v-else border-radius="100%" height="58px" :is-border="active" />
     <div class="sfim-text">
-      导航一
+      {{ el.name ? el.name : `导航${index + 1}` }}
     </div>
   </div>
 </template>
@@ -23,12 +23,27 @@ export default {
     }
   },
   props: {
+    el: {
+      type: Object,
+      default: () => {}
+    },
     active: {
       type: Boolean,
       default: false
+    },
+    index: {
+      type: Number,
+      default: null
     }
   },
-  methods: {},
+  methods: {
+    rtImg() {
+      const { img } = this.el
+      return img.startsWith('http')
+        ? img
+        : require(`@/views/mall/homeSettings/_source/_source/img/${img}.png`)
+    }
+  },
   watch: {},
   beforeCreate() {
   },

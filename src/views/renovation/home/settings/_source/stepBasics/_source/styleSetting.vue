@@ -2,48 +2,50 @@
   <div class="style-setting-model">
     <div class="ssm-box">
       <div class="ssm-item">
-        <el-radio v-model="radio" label="0">
+        <el-radio v-model="basics.styleType" label="blue">
           <span class="ssm-item-text">气质蓝</span>
           <div class="ssm-item-img"><img src="./../img/renovation_tpl_0.png" alt="" width="180"></div>
         </el-radio>
       </div>
       <div class="ssm-item">
-        <el-radio v-model="radio" label="1">
+        <el-radio v-model="basics.styleType" label="red">
           <span class="ssm-item-text">中国红</span>
           <div class="ssm-item-img"><img src="./../img/renovation_tpl_1.png" alt="" width="180"></div>
         </el-radio>
       </div>
       <div class="ssm-item">
-        <el-radio v-model="radio" label="2">
+        <el-radio v-model="basics.styleType" label="gold">
           <span class="ssm-item-text">淡雅金</span>
           <div class="ssm-item-img"><img src="./../img/renovation_tpl_2.png" alt="" width="180"></div>
         </el-radio>
       </div>
       <div class="ssm-item">
-        <el-radio v-model="radio" label="3">
+        <el-radio v-model="basics.styleType" label="custome">
           <span class="ssm-item-text">自定义</span>
           <div class="ssm-item-img"><img src="./../img/renovation_tpl_3.png" alt="" width="180"></div>
         </el-radio>
       </div>
     </div>
-    <m-custom-setting v-if="radio === '3'" />
+    <m-custom-setting v-if="basics.styleType === 'custome'" />
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 import mCustomSetting from './customSetting'
 export default {
   name: 'StyleSetting',
   data() {
     return {
-      radio: '0'
     }
   },
-  props: {},
-  methods: {},
-  watch: {
-    radio(v) {
-      this.$emit('on-toggle-style', v)
+  props: {
+  },
+  methods: {
+    $verification() {
+      return true
     }
+  },
+  watch: {
   },
   beforeCreate() {
   },
@@ -61,7 +63,9 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('renovation', ['basics'])
+  },
   components: { mCustomSetting }
 }
 </script>

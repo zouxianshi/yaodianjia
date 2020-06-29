@@ -1,5 +1,5 @@
 <template>
-  <div :class="classes" :style="stylees">
+  <div :class="classes">
     <div v-if="false" class="safm-img">
       <img src="https://images.ydjia.cn/ydjia-merchant-manager/888888/20200617/8491500185354981adb819e77d0f9521.jpg" alt="" style="width:100%;height: 280px;">
     </div>
@@ -8,7 +8,6 @@
 </template>
 <script>
 import mItemNoData from './../../../itemNoData'
-import { globalBinding } from './../../../../mixins'
 
 const prefixCls = 'sap-advertisement-four-model'
 
@@ -17,7 +16,6 @@ export default {
   data() {
     return {}
   },
-  mixins: [globalBinding],
   props: {
     active: {
       type: String,
