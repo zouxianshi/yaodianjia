@@ -3,31 +3,65 @@
     <div class="stfm-title-box">
       <span class="stfm-text-1">据活动结束还剩</span>
       <span class="stfm-cd">
-        <v-countdown :current-time="1593163904" :start-time="1593163904" :end-time="1601112681" />
+        <template v-if="item.startTime">
+          <v-countdown :current-time="currentTime" :start-time="rtTimeStamp(itemParams.startTime)" :end-time="rtTimeStamp(itemParams.endTime)" />
+        </template>
       </span>
     </div>
     <div class="stfm-content">
       <div class="cfim-no-data">
-        <m-item-no-data height="140px" />
-        <div style="padding: 10px">
-          <m-line-bar margin-top="24px" enter-type="button" />
-        </div>
+        <template v-if="itemParams.itemList.length">
+          <m-item-no-data height="140px" />
+          <div style="padding: 10px 0">
+            <m-line-bar margin-top="24px" enter-type="button" :el="itemParams.itemList[0]" />
+          </div>
+        </template>
+        <template v-else>
+          <m-item-no-data height="140px" />
+          <div style="padding: 10px 0">
+            <m-line-bar margin-top="24px" enter-type="button" :el="elParams" />
+          </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
 <script>
+import dayjs from 'dayjs'
 import vCountdown from './countdown'
 import mLineBar from './../../../lineBar'
 import mItemNoData from './../../../itemNoData'
+import { itemParams } from './.././../../../default'
 export default {
   name: 'SapTlaFirst',
   data() {
-    return {}
+    return {
+      elParams: itemParams,
+      itemParams: {},
+      currentTime: dayjs().valueOf()
+    }
   },
-  props: {},
-  methods: {},
-  watch: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    rtTimeStamp(v) {
+      return dayjs(v).valueOf()
+    }
+  },
+  watch: {
+    'item': {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.itemParams = v
+        console.log(this.itemParams)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {

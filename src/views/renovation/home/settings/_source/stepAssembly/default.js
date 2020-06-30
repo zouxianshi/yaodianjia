@@ -4,12 +4,32 @@
  * @description   default params and assembly uitls
  */
 
+/**
+ * 前列谴责需求周期太短，怼一个文件处理。
+ */
+
 import _ from 'lodash'
+import { mapState } from 'vuex'
 import { uuid, findComponentsDownward } from '@/utils'
 
 export const saveDragItem = ($root, item) => {
+  const $item = item
+  $item.error = false
   const instance = findComponentsDownward($root, 'SaPreview')[0]
-  instance.$saveDragItem(_.cloneDeep(item))
+  instance.$saveDragItem(_.cloneDeep($item))
+}
+
+export const minxisCommonStyle = {
+  computed: {
+    ...mapState('renovation', ['basics']),
+    commonStyleEs() {
+      const { borderStyle, borderSize, borderColor } = this.basics
+      return {
+        borderRadius: `${borderStyle === 0 ? 0 : 4}px`,
+        border: `${borderSize}px solid ${borderColor}`
+      }
+    }
+  }
 }
 
 export const itemParams = {
@@ -147,8 +167,8 @@ export default () => {
             subType: 'first',
             name: '一排单个',
             error: false,
-            itemList: items(1),
-            max: 1
+            itemList: [],
+            max: 10
           },
           {
             uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
@@ -157,8 +177,8 @@ export default () => {
             subType: 'second',
             name: '一排两个',
             error: false,
-            itemList: items(2),
-            max: 2
+            itemList: [],
+            max: 10
           },
           {
             uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
@@ -167,8 +187,8 @@ export default () => {
             subType: 'third',
             name: '一排三个',
             error: false,
-            itemList: items(3),
-            max: 3
+            itemList: [],
+            max: 10
           },
           {
             uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
@@ -177,8 +197,8 @@ export default () => {
             subType: 'four',
             name: '一排多个',
             error: false,
-            itemList: items(8), // todo 不确定最大长度
-            max: 8
+            itemList: [], // todo 不确定最大长度
+            max: 10
           }
         ]
       },
@@ -315,7 +335,7 @@ export default () => {
             subType: 'first',
             name: '一排两个',
             error: false,
-            itemList: items(10) // todo 不确定长度
+            itemList: []
           },
           {
             uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
@@ -324,7 +344,7 @@ export default () => {
             subType: 'second',
             name: '一排三个',
             error: false,
-            itemList: items(10) // todo 不确定长度
+            itemList: []
           }
         ]
       }
@@ -339,9 +359,11 @@ export default () => {
             type: 'adFrame',
             typeName: '广告框',
             subType: 'first',
+            subTitle: '',
+            title: '',
             name: '默认样式',
             error: false,
-            itemList: items(8) // todo 不确定数量
+            itemList: [] // todo 不确定数量
           }
         ]
       },
@@ -371,7 +393,10 @@ export default () => {
             subType: 'first',
             name: '一排单个',
             error: false,
-            itemList: items(1)
+            chooseFlag: 0,
+            startTime: '',
+            endTime: '',
+            itemList: []
           },
           {
             uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
@@ -380,6 +405,7 @@ export default () => {
             subType: 'second',
             name: '一排两个',
             error: false,
+            chooseFlag: 0,
             itemList: items(2)
           },
           {
@@ -389,6 +415,7 @@ export default () => {
             subType: 'third',
             name: '一排多个',
             error: false,
+            chooseFlag: 0,
             itemList: items(6) // todo 不确定数量
           }
         ]

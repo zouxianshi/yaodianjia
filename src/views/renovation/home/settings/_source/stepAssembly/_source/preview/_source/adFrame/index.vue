@@ -2,8 +2,8 @@
   <div class="ad-frame-index-model">
     <div class="afim-box">
       <div class="afim-title">
-        <strong>主标题</strong>
-        <span>副标题</span>
+        <strong>{{ item.subTitle || '主标题' }}</strong>
+        <span>{{ item.title || '副标题' }}</span>
       </div>
     </div>
     <div class="afim-comp-box">
@@ -78,6 +78,7 @@ export default {
     }
     .afim-comp-box {
       margin-top: -128px;
+      padding: 0 8px;
     }
   }
 </style>

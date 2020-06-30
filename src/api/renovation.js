@@ -21,6 +21,22 @@ class RenovationService {
     })
   }
 
+  getHomePageAct(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage-act/time-limited/list`,
+      method: 'post',
+      data
+    })
+  }
+
+  getHomepageActItemList(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage-act/time-limited/queryItemList`,
+      method: 'post',
+      data
+    })
+  }
+
   getHomeCoupon(data) {
     return request({
       url: `${this.serve}/1.0/home-coupon/_search`,

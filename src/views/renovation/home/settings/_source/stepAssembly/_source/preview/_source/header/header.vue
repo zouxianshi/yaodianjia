@@ -53,7 +53,7 @@ export default {
   .sap-header-model {
     width: 358px;
     height: 124px;
-    background: url('./../../img/header.png') no-repeat #FBFBFB;
+    background: url('./../../img/header.png') no-repeat;
     .shm-page-title {
       text-align: center;
       padding-top: 48px;

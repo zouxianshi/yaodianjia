@@ -13,14 +13,17 @@
         </tr>
       </table>
     </div>
-    <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body size="700px" :visible.sync="dialogVisible">
-      <div slot="title">选择商品</div>
-      <m-goods-table v-if="dialogVisible" ref="gt" :item-list="itemList" :sub-type="cpdSubType" @on-update="_onUpdate" />
-    </el-drawer>
+    <el-dialog title="选择活动" append-to-body	:visible.sync="dialogVisible" width="800">
+      <m-select-goods v-if="dialogVisible" ref="selectActivity" :item="item" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onCouponSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-import mGoodsTable from '@/views/mall/homeSettings/_source/settingsArea/_source/goodsTable'
+import mSelectGoods from './selectGoods'
 export default {
   name: 'CommodityFormItem',
   data() {
@@ -87,7 +90,7 @@ export default {
       }
     }
   },
-  components: { mGoodsTable }
+  components: { mSelectGoods }
 }
 </script>
 

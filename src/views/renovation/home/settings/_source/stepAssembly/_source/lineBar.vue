@@ -1,8 +1,12 @@
 <template>
-  <div class="line-bar-model">
-    <div class="lbm-sp1" />
+  <div :class="classes">
+    <div class="lbm-sp1">
+      {{ el.name }}
+    </div>
     <div class="lbm-sp2" />
-    <div class="lbm-sp3" :style="stylees" />
+    <div class="lbm-sp3" :style="stylees">
+      <span class="lbm-jsymbol">{{ el.price }}</span>
+    </div>
     <div v-if="enterType === 'icon'" class="lbm-cart" />
     <div v-if="enterType === 'button'" class="lbm-buttom">
       <el-button type="danger" size="mini" round>立即抢购</el-button>
@@ -13,12 +17,17 @@
   </div>
 </template>
 <script>
+const prefixCls = 'line-bar-model'
 export default {
   name: 'LineBar',
   data() {
     return {}
   },
   props: {
+    el: {
+      type: Object,
+      default: () => {}
+    },
     width: {
       type: String,
       default: '100%'
@@ -33,10 +42,18 @@ export default {
     }
   },
   computed: {
+    classes() {
+      return [
+        `${prefixCls}`,
+        {
+          [`${prefixCls}-is-el`]: !_.isEmpty(this.el.name)
+        }
+      ]
+    },
     stylees() {
       return [
         {
-          marginTop: this.marginTop
+          marginTop: this.marginTop - 8
         }
       ]
     }
@@ -47,6 +64,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .line-bar-model {
     position: relative;
+    height: 82px;
     .lbm-sp1,.lbm-sp2,.lbm-sp3 {
       height: 18px;
       background: #F1F1F1;
@@ -54,6 +72,9 @@ export default {
     }
     .lbm-sp1 {
       width: 100%;
+      font-size: 14px;
+      color: #000;
+      line-height: 22px;
     }
     .lbm-sp2 {
       width: 60%;
@@ -62,6 +83,11 @@ export default {
     .lbm-sp3 {
       width: 25%;
       margin-top: 8px;
+      .lbm-jsymbol {
+        display: none;
+        color: #ff0000;
+        font-size: 14px;
+      }
     }
     .lbm-cart {
       width: 28px;
@@ -90,6 +116,23 @@ export default {
         font-weight: bold;
         font-size: 15px;
         color: #fff;
+      }
+    }
+
+    &-is-el {
+      .lbm-sp1 {
+        height: 56px;
+      }
+      .lbm-sp1,.lbm-sp3 {
+        background: transparent;
+      }
+      .lbm-sp2 {
+        display: none;
+      }
+      .lbm-sp3 {
+        .lbm-jsymbol {
+          display: block;
+        }
       }
     }
   }

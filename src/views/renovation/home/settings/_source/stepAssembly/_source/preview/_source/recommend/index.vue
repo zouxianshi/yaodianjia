@@ -6,17 +6,21 @@
       <div class="rim-right-bg" />
     </div>
     <div class="rim-comp-box">
-      <component :is="mod" :item="item" />
+      <component :is="mod" :item="{...item,itemList}" />
     </div>
   </div>
 </template>
 <script>
 import mFirst from './first'
 import mSecond from './second'
+
+import { getRecommendedFormat } from '@/views/mall/homeSettings/_source/viewArea/_source/utils'
 export default {
   name: 'RecommendIndex',
   data() {
-    return {}
+    return {
+      itemList: []
+    }
   },
   props: {
     item: {
@@ -29,6 +33,12 @@ export default {
   beforeCreate() {
   },
   created() {
+    getRecommendedFormat(this).then(itemList => {
+      this.itemList = itemList
+      this.loading = false
+    }).catch(() => {
+      this.loading = false
+    })
   },
   beforeMount() {
   },

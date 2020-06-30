@@ -26,7 +26,7 @@ const state = {
   basics: {
     'name': 'name',
     'title': 'title',
-    'backgroundColor': '#F80404',
+    'backgroundColor': '#ffffff',
     'borderFlag': 1,
     'borderStyle': 1,
     'borderSize': 4,

@@ -1,20 +1,33 @@
 <template>
   <div class="sap-commodity-four-model">
     <div class="scfm-item-scroll">
-      <div class="scfm-item-box" :style="{width:`${106 * item.itemList.length}px`}">
-        <template v-for="(el,$index) in item.itemList">
-          <m-second-item :key="$index" class="scfm-item" :el="el" img-height="86px" :enter-type="enterType" />
-        </template>
-      </div>
+      <template v-if="item.itemList.length">
+        <div class="scfm-item-box" :style="{width:`${(106 * item.itemList.length) + (basics.borderSize * item.itemList.length)}px`}">
+          <template v-for="(el,$index) in item.itemList">
+            <m-second-item :key="$index" class="scfm-item" :el="el" img-height="86px" :enter-type="enterType" />
+          </template>
+        </div>
+      </template>
+      <template v-else>
+        <div class="scfm-item-box" :style="{width:`${(106 * 6) + (basics.borderSize * 6)}px`}">
+          <template v-for="(el,$index) in 6">
+            <m-second-item :key="$index" class="scfm-item" :el="itemParams" img-height="86px" :enter-type="enterType" />
+          </template>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+import { itemParams } from './.././../../../default'
 import mSecondItem from './secondItem'
 export default {
   name: 'Four',
   data() {
-    return {}
+    return {
+      itemParams
+    }
   },
   props: {
     item: {
@@ -44,7 +57,9 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('renovation', ['basics'])
+  },
   components: { mSecondItem }
 }
 </script>

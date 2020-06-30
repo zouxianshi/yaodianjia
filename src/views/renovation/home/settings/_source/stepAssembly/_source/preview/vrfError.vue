@@ -42,11 +42,11 @@ export default {
   .vrf-error-model {
     position: absolute;
     left: 8px;
-    top: 2px;
+    top: 8px;
     background: rgba(255,4,2,.3);
     width: calc(100% - 16px);
-    height: calc(100% - 4px);
-    line-height: calc(100% - 4px);;
+    height: calc(100% - 16px);
+    line-height: calc(100% - 16px);
     z-index: 1;
     .vem-p1 {
       width: 180px;

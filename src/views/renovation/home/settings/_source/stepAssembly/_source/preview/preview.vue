@@ -1,5 +1,5 @@
 <template>
-  <div class="sa-preview-model">
+  <div class="sa-preview-model" :style="{'background':`${basics.backgroundColor}`}">
     <div class="apm-header">
       <m-header />
     </div>
@@ -14,7 +14,7 @@
             <div slot="reference" class="ic-item-delete">删除</div>
           </el-popconfirm>
           <div @click="onDragSet(item)">
-            <!--错误提示-->
+            <!--错误提示 -->
             <m-vrf-error v-if="item.error" :item="item" />
 
             <!--导航栏-->
@@ -46,7 +46,7 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { uuid } from '@/utils'
-import { bannerItem } from './../../default'
+import { items, bannerItem } from './../../default'
 import vDraggable from 'vuedraggable'
 import mHeader from './_source/header/header'
 import mBanner from './_source/banner/banner'
@@ -70,35 +70,55 @@ export default {
       bannerItem,
       dragData: [
         {
-          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'coupon',
-          typeName: '优惠券',
+          uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'navigation',
+          typeName: '导航栏',
+          subType: 'first',
+          name: '一排四个',
+          error: false,
+          itemList: items(4),
+          max: 8
+        },
+        {
+          uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'navigation',
+          typeName: '导航栏',
+          subType: 'second',
+          name: '一排五个',
+          error: false,
+          itemList: items(5),
+          max: 10
+        }
+        /* {
+          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'timeLimitedActivity',
+          typeName: '限时活动',
           subType: 'first',
           name: '一排单个',
           error: false,
-          itemList: [],
-          max: 10
+          chooseFlag:0,
+          itemList: []
         },
         {
-          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'coupon',
-          typeName: '优惠券',
+          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'timeLimitedActivity',
+          typeName: '限时活动',
           subType: 'second',
           name: '一排两个',
           error: false,
-          itemList: [],
-          max: 10
+          chooseFlag:0,
+          itemList: items(2)
         },
         {
-          uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'coupon',
-          typeName: '优惠券',
+          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'timeLimitedActivity',
+          typeName: '限时活动',
           subType: 'third',
           name: '一排多个',
           error: false,
-          itemList: [],
-          max: 10
-        }
+          chooseFlag:0,
+          itemList: items(6) // todo 不确定数量
+        }*/
         /*
 
           {
@@ -138,42 +158,6 @@ export default {
             itemList: items(8) // todo 不确定数量
           },
 
-          {
-            uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'commodity',
-            typeName: '商品',
-            subType: 'first',
-            name: '一排单个',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'commodity',
-            typeName: '商品',
-            subType: 'second',
-            name: '一排两个',
-            error: false,
-            itemList: items(2)
-          },
-          {
-            uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'commodity',
-            typeName: '商品',
-            subType: 'third',
-            name: '一排三个',
-            error: false,
-            itemList: items(3)
-          },
-          {
-            uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'commodity',
-            typeName: '商品',
-            subType: 'four',
-            name: '一排多个',
-            error: false,
-            itemList: items(8) // todo 不确定最大长度
-          },
          */
       ]
     }
@@ -182,6 +166,10 @@ export default {
   methods: {
     ...mapActions('renovation', ['saveHomeSetting']),
     ...mapMutations('renovation', ['setDragList']),
+    $setVifDragData(dragData) {
+      this.dragData = dragData
+    },
+
     onDragAdd() {
       this.setDragList(this.dragData)
     },
@@ -198,17 +186,14 @@ export default {
     $saveDragItem(item) {
       const i = _.findIndex(this.dragData, ['uuid', item.uuid])
       this.$set(this.dragData, i, item)
-
       this.onDragAdd()
-      setTimeout(() => {
-        this.saveHomeSetting()
-      })
     }
   },
   watch: {},
   beforeCreate() {
   },
   created() {
+    this.onDragAdd()
   },
   beforeMount() {
   },
@@ -223,7 +208,7 @@ export default {
   destroyed() {
   },
   computed: {
-    ...mapState('renovation', ['staticDragData', 'dragList']),
+    ...mapState('renovation', ['staticDragData', 'dragList', 'basics']),
     dragOptions() {
       return {
         sort: true,

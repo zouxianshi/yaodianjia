@@ -6,7 +6,10 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
+import { verifRequired } from './utils'
+import { findComponentsDownward } from '@/utils'
+
 export default {
   name: 'Assembly',
   data() {
@@ -14,9 +17,17 @@ export default {
   },
   props: {},
   methods: {
+    ...mapMutations('renovation', ['setStepVal']),
     ...mapActions('renovation', ['saveHomeSetting']),
     onSave() {
-      this.saveHomeSetting()
+      const dragList = _.map(this.dragList, v => { return { ...v, error: verifRequired[v.type](v.itemList) } })
+
+      if (_.some(dragList, { error: true })) {
+        const instance = findComponentsDownward(this.$root, 'SaPreview')[0]
+        instance.$setVifDragData(dragList)
+      }
+
+      // this.saveHomeSetting()
     },
     onPreviousStep() {
       this.setStepVal(1)
@@ -39,7 +50,9 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('renovation', ['staticDragData', 'dragList'])
+  },
   components: {}
 }
 </script>

@@ -4,7 +4,7 @@
       <m-step />
     </div>
     <div class="scrollbar hsm-main" :style="{height: stepVal === 2 ? 'calc(100vh - 218px)' : 'calc(100vh - 300px)'}">
-      <component :is="mod" />
+      <component :is="mod" v-if="isComponent" />
     </div>
     <div class="hsm-operation">
       <m-operation />
@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import mStep from './_source/step'
 import mStepBasics from './_source/stepBasics/stepBasics'
 import mStepAssembly from './_source/stepAssembly/stepAssembly'
@@ -23,14 +23,23 @@ export default {
   name: 'HomeSettingsIndex',
   data() {
     return {
+      isComponent: false
     }
   },
   props: {},
-  methods: {},
+  methods: {
+    ...mapActions('mall', ['getCenterStoreId'])
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
+    const { merCode } = this.$store.state.user
+    this.getCenterStoreId({ merCode }).then(() => {
+      this.isComponent = true
+    }).catch(() => {
+      this.isComponent = true
+    })
   },
   beforeMount() {
   },

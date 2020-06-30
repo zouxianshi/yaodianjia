@@ -1,17 +1,20 @@
 <template>
   <div class="set-commodity-model">
     <div class="set-view-ass" style="width: 340px">
-      <component :is="mod" :item="itemParams" @on-select="onSelect" @on-create="onCreate" />
+      <component :is="mod" :item="itemParams" />
     </div>
     <div class="snm-view">
-      <m-item-card title="商品选择" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
-        <m-form-item />
+      <m-item-card title="商品选择" @on-ass-submit="onAssSubmit">
+        <m-form-item :item="itemParams" @on-el-delete="onElDelete" @on-update="onUpdate" />
+        <div v-if="error.isGoods" class="sa-assembly-error">
+          {{ error.isGoods }}
+        </div>
       </m-item-card>
     </div>
   </div>
 </template>
 <script>
-import { itemParams } from './../../../../default'
+import { saveDragItem } from './../../../../default'
 import mFirst from './../../../preview/_source/commodity/first'
 import mSecond from './../../../preview/_source/commodity/second'
 import mThird from './../../../preview/_source/commodity/third'
@@ -23,8 +26,10 @@ export default {
   name: 'SetCommodity',
   data() {
     return {
-      selectIndex: 0,
-      itemParams: {}
+      itemParams: {},
+      error: {
+        isGoods: false
+      }
     }
   },
   props: {
@@ -34,18 +39,24 @@ export default {
     }
   },
   methods: {
-    onSelect({ el, i }) {
-      this.selectIndex = i
-      console.log(i)
+    onAssSubmit() {
+      const { itemList } = this.itemParams
+      let flag = true
+      if (!itemList.length) {
+        this.error.isGoods = '请选择商品'
+        flag = false
+      }
+
+      if (flag) {
+        saveDragItem(this.$root, this.itemParams)
+      }
     },
-    onCreate() {
-      this.itemParams.itemList.push(_.cloneDeep(itemParams))
-      this.selectIndex = this.itemParams.itemList.length - 1
+    onUpdate(itemList) {
+      this.itemParams.itemList = itemList
+      this.error.isGoods = false
     },
-    onAssSubmit() {},
-    onAssDelete() {
-      this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== this.selectIndex)
-      this.selectIndex = 0
+    onElDelete(index) {
+      this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)
     }
   },
   watch: {},
@@ -53,7 +64,6 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
-    console.log(this.itemParams)
   },
   beforeMount() {
   },
@@ -88,12 +98,15 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .set-commodity-model {
     .set-view-ass {
-      .commodity-first-item-model,
       .commodity-second-item-model,
       .commodity-third-item-model,
       .commodity-four-item-model {
         border: 1px solid #F0F0F0;
-        box-sizing: border-box
+        box-sizing: border-box;
+      }
+      .commodity-first-item-model {
+        border: 1px solid #F0F0F0;
+        box-sizing: content-box;
       }
     }
   }
