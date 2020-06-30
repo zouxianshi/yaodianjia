@@ -24,7 +24,7 @@ const basics = {
 }
 
 const state = {
-  stepVal: 1,
+  stepVal: 2,
   basics: _.cloneDeep(basics),
   /* basics: {
     'name': 'name',
