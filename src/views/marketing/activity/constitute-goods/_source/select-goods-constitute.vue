@@ -40,7 +40,45 @@
             </template>
           </el-table-column>
         </template>
-        <slot :pager="pager" />
+        <!-- <slot :pager="pager" /> -->
+        <el-table-column width="160">
+          <template slot="header">
+            <span>组合数量</span>
+          </template>
+          <template slot-scope="scope">
+            <el-form-item
+              :ref="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addNum'"
+              :prop="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addNum'"
+              :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
+            >
+              <el-input
+                v-model="scope.row.addNum"
+                style="width:80px;text-align:center"
+                maxlength="8"
+                size="mini"
+              />
+            </el-form-item>
+          </template>
+        </el-table-column>
+        <el-table-column width="160">
+          <template slot="header">
+            <span>组合单价</span>
+          </template>
+          <template slot-scope="scope">
+            <el-form-item
+              :ref="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addPrice'"
+              :prop="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addPrice'"
+              :rules="[{ required: true, validator: check_price, trigger: 'blur' }]"
+            >
+              <el-input
+                v-model="scope.row.addPrice"
+                style="width:80px;text-align:center"
+                maxlength="8"
+                size="mini"
+              />
+            </el-form-item>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="60">
           <template slot-scope="scope">
             <el-button
@@ -68,6 +106,7 @@
 </template>
 <script>
 // import noData from '@/components/NoData'
+import { checkNumberdouble } from '@/utils/validate'
 export default {
   // components: { noData },
   props: {
@@ -86,7 +125,44 @@ export default {
     }
   },
   data() {
+    const _check_price = (rule, value, callback) => {
+      console.log('111check_price0------', rule, value, callback)
+      console.log(
+        '111check_price0------storeSelectGoods',
+        this.storeSelectGoods
+      )
+      if (rule.required && value <= 0) {
+        callback(new Error('请输入最多2位小数的正数'))
+      }
+      if (value !== '') {
+        if (!checkNumberdouble(value)) {
+          callback(new Error('请输入最多2位小数的正数'))
+        }
+      }
+      if (value < 0) {
+        callback(new Error('最小值必须大于等于0'))
+      }
+      if (value > 99999) {
+        callback(new Error('最大值不能超过99999'))
+      }
+      callback()
+    }
+    const _check_num = (rule, value, callback) => {
+      const reg = /[^0-9]/
+      if (rule.required && !value) {
+        callback(new Error('请输入数值'))
+      }
+      if ((value !== '' && reg.test(value)) || value === '0') {
+        callback(new Error('请输入正整数'))
+      }
+      if (value > 99) {
+        callback(new Error('最大值不能超过99'))
+      }
+      callback()
+    }
     return {
+      check_price: _check_price,
+      check_num: _check_num,
       tableForm: {
         tableData: [], // 数据源table
         cutData: []
@@ -171,7 +247,7 @@ export default {
       let weight = 0
       newVal.forEach(item => {
         mprice += item.mprice * (item.addNum * 1 || 0) // 参考价
-        soulePrice += item.addPrice * (item.addNum * 1 || 0)// 组合单价
+        soulePrice += item.addPrice * (item.addNum * 1 || 0) // 组合单价
         weight += (item.weight || 0) * (item.addNum * 1 || 0)
       })
       this.$store.commit('activity/SET_TABLE_FORM_VALUE', {
@@ -222,7 +298,7 @@ export default {
               resolve(this.tableForm.tableData)
             } else {
               this.$message({
-                message: '请选择换购商品',
+                message: '请选择相关商品',
                 type: 'warning'
               })
               reject()
@@ -230,7 +306,12 @@ export default {
           } else {
             console.log('error tableForm submit!!', valid, object)
             for (const i in object) {
-              console.log('error tableForm submit!!----this.$refs', this, this.$refs, i)
+              console.log(
+                'error tableForm submit!!----this.$refs',
+                this,
+                this.$refs,
+                i
+              )
               let dom = this.$refs[i]
               console.log('error tableForm submit!!----dom', dom)
               if (Object.prototype.toString.call(dom) !== '[object Object]') {

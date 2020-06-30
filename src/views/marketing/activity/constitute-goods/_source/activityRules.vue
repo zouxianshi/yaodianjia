@@ -17,7 +17,8 @@
             <el-form-item label="组合商品名称：" prop="name" required>
               <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
             </el-form-item>
-            <el-form-item label="组合商品分组：" required>
+            <el-form-item label="组合商品分组：" prop="groupId" required>
+              <el-input v-model="basicForm.groupId" style="display: none" />
               <el-button size="small" @click="groupVisible=true">选择分组</el-button>
               <div v-if="chooseGroup.length" class="group-list">
                 <el-tag
@@ -33,128 +34,87 @@
                 </el-tag>
               </div>
             </el-form-item>
-            <div class="content">
-              <el-form-item label="组合商品图片：" prop="image" required>
-                <el-upload
-                  v-loading="uploadLoading"
-                  class="avatar-uploader x-uploader"
-                  :action="upLoadUrl"
-                  :headers="headers"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  :before-upload="beforeUpload"
-                  @preview="handlePreview"
-                >
-                  <div v-if="basicForm.image" class="el-img-box">
-                    <img
-                      style="width:120px;height:120px"
-                      :src="showImg(basicForm.image)"
-                      class="avatar"
-                    >
-                    <div class="img-actions" @click.stop>
-                      <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
-                      <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
-                    </div>
+            <el-form-item label="组合商品图片：" prop="image" required>
+              <el-upload
+                v-loading="uploadLoading"
+                class="avatar-uploader x-uploader"
+                :action="upLoadUrl"
+                :headers="headers"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+              >
+                <div v-if="basicForm.image" class="el-img-box">
+                  <img
+                    style="width:120px;height:120px"
+                    :src="showImg(basicForm.image)"
+                    class="avatar"
+                  >
+                  <div class="img-actions" @click.stop>
+                    <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
+                    <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
                   </div>
-                  <i v-else class="el-icon-plus avatar-uploader-icon" />
-                </el-upload>
-              </el-form-item>
-              <el-form-item label="相关商品：" required>
-                <div style="margin-bottom: 8px">
-                  <el-button
-                    type="primary"
-                    plain
-                    size="small"
-                    @click="$refs.GoodsComponent.open()"
-                  >选择商品 | 已选（{{ storeSelectGoods.length }}）</el-button>
                 </div>
-                <select-goods-constitute ref="storeGods" @del-item="delSelectGoods">
-                  <template v-slot:default="slotProps">
-                    <el-table-column width="160">
-                      <template slot="header">
-                        <span>组合数量</span>
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item
-                          :ref="'tableData.' + (((slotProps.pager.current - 1) * slotProps.pager.size) + scope.$index) + '.addNum'"
-                          :prop="'tableData.' + (((slotProps.pager.current - 1) * slotProps.pager.size) + scope.$index) + '.addNum'"
-                          :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
-                        >
-                          <el-input
-                            v-model="scope.row.addNum"
-                            style="width:80px;text-align:center"
-                            maxlength="8"
-                            size="mini"
-                          />
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column width="160">
-                      <template slot="header">
-                        <span>组合单价</span>
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item
-                          :ref="'tableData.' + (((slotProps.pager.current - 1) * slotProps.pager.size) + scope.$index) + '.addPrice'"
-                          :prop="'tableData.' + (((slotProps.pager.current - 1) * slotProps.pager.size) + scope.$index) + '.addPrice'"
-                          :rules="[{ required: true, validator: check_price, trigger: 'blur' }]"
-                        >
-                          <el-input
-                            v-model="scope.row.addPrice"
-                            style="width:80px;text-align:center"
-                            maxlength="8"
-                            size="mini"
-                          />
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                  </template>
-                </select-goods-constitute>
-              </el-form-item>
-              <el-form-item label="相关门店：" required>
+                <i v-else class="el-icon-plus avatar-uploader-icon" />
+              </el-upload>
+            </el-form-item>
+            <el-form-item label="相关商品：" prop="goodsIds" required>
+              <el-input v-model="basicForm.goodsIds" style="display: none" />
+              <div style="margin-bottom: 8px">
                 <el-button
                   type="primary"
                   plain
-                  @click="$refs.storeComponent.open()"
-                >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
-              </el-form-item>
-              <el-form-item>
-                <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
-              </el-form-item>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="售卖价¥：" required>
-                    <el-input v-model="basicForm.price" style="width: 160px;" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="参考价¥：" required>
-                    <el-input v-model="basicForm.mprice" style="width: 160px;" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="商品重量(克)：" required>
-                    <el-input v-model="basicForm.weight" style="width: 160px;" disabled />
-                    <!-- <span>{{ basicForm.weight }}</span> -->
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="限购量：" prop="limitNum">
-                    <el-input
-                      v-model="basicForm.limitNum"
-                      size="small"
-                      style="width: 160px;"
-                      placeholder="不限制"
-                      controls-position="right"
-                      :max="999999"
-                    />
-                    <el-tooltip content="每个用户限购数量" placement="top">
-                      <i style="color: #147de8" class="el-icon-warning-outline" />
-                    </el-tooltip>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
+                  size="small"
+                  @click="$refs.GoodsComponent.open()"
+                >选择商品 | 已选（{{ storeSelectGoods.length }}）</el-button>
+              </div>
+              <select-goods-constitute ref="storeGods" @del-item="delSelectGoods" />
+            </el-form-item>
+            <el-form-item label="相关门店：" prop="storeIds">
+              <el-input v-model="basicForm.storeIds" style="display: none" />
+              <el-button
+                type="primary"
+                plain
+                @click="$refs.storeComponent.open()"
+              >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
+            </el-form-item>
+            <el-form-item>
+              <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
+            </el-form-item>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="售卖价¥：" required>
+                  <el-input v-model="basicForm.price" style="width: 160px;" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="参考价¥：" required>
+                  <el-input v-model="basicForm.mprice" style="width: 160px;" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="商品重量(克)：" required>
+                  <el-input v-model="basicForm.weight" style="width: 160px;" disabled />
+                  <!-- <span>{{ basicForm.weight }}</span> -->
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="限购量：" prop="limitNum">
+                  <el-input
+                    v-model="basicForm.limitNum"
+                    size="small"
+                    style="width: 160px;"
+                    placeholder="不限制"
+                    controls-position="right"
+                    :max="999999"
+                  />
+                  <el-tooltip content="每个用户限购数量" placement="top">
+                    <i style="color: #147de8" class="el-icon-warning-outline" />
+                  </el-tooltip>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
         </div>
       </div>
@@ -218,6 +178,7 @@
 import Tinymce from '@/components/Tinymce'
 import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
 import config from '@/utils/config'
+import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import { saveImg } from '@/api/new-goods'
 import mixins from './mixin'
@@ -298,7 +259,6 @@ export default {
       // goodsData: [],
       check_price: _check_price,
       check_num: _check_num,
-      chooseTypeList: [], // 选中的分类
       chooseGroup: [], // 选中的分组(id+name)
       groupVisible: false,
       chooseArray: [], // 选中的分组(只有id)
@@ -311,9 +271,6 @@ export default {
       subLoading: false,
       loading: false, // 加载分类
       basicForm: {
-        firstTypeId: '', // 一级分类
-        secondTypeId: '', // 二级分类
-        typeId: '', // 三级分类
         detail: '', // 富文本内容
         image: '', // 组合图片
         price: 0, // 组合商品价格
@@ -322,18 +279,25 @@ export default {
         weight: 0, // 商品总重量
         keyWord: '', // 关键字
         name: '', // 商品名
-        childCommodities: [], // 子商品信息
         // groupIds: [], // 分组的ids
-        groupId: '' // 分组id
+        groupId: '', // 分组id
+        desc: '',
+        goodsIds: '', // 商品信息
+        storeIds: '' // 门店信息
       },
-      // childCommodities: [], // 子商品信息
       basicRules: {
         name: [
           { required: true, message: '请输入商品名称', trigger: 'blur' },
           { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
         ],
-        typeId: [{ required: true, message: '请选择分类', trigger: 'blur' }],
-        image: [{ required: true, message: '请上传图片', trigger: 'blur' }],
+        groupId: [{ required: true, message: '请选择分组', trigger: 'change' }],
+        goodsIds: [
+          { required: true, message: '请选择商品', trigger: 'change' }
+        ],
+        storeIds: [
+          { required: true, message: '请选择门店', trigger: 'change' }
+        ],
+        image: [{ required: true, message: '请上传图片', trigger: 'change' }],
         keyWord: [
           { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
         ],
@@ -341,10 +305,6 @@ export default {
         price: [{ required: true, trigger: 'blur' }],
         limitNum: [{ validator: _checklimitNum, trigger: 'blur' }]
       },
-      // childCommoditiesRules: {
-      //   number: [{ required: true, trigger: 'blur' }],
-      //   price: [{ required: true, trigger: 'blur' }]
-      // },
       dialogVisible: false,
       // value: '',
       // dialogImageUrl: '',
@@ -411,56 +371,39 @@ export default {
       const data = {
         ids: ids,
         type: type,
-        merCode: type === '1' ? 'hydee' : this.merCode
+        merCode: this.merCode
       }
 
       getPreGroupList(data).then(res => {
-        if (type === '1') {
-          // 分类
-          const datas = res.data[ids[0]]
-          if (datas) {
-            this.chooseTypeList = [
-              { name: datas.name, id: datas.id },
-              { name: datas.child.name, id: datas.child.id },
-              { name: datas.child.child.name, id: datas.child.child.id }
-            ]
-          }
-        } else {
-          // 分组
-          const datas = res.data
-          ids.map(v => {
-            const dat = datas[v]
-            const arr = [
-              { name: dat.name, id: dat.id },
-              { name: dat.child.name, id: dat.child.id }
-            ]
-            dat.child.child &&
-              arr.push({ name: dat.child.child.name, id: dat.child.child.id })
-            this.chooseGroup.push(arr)
-          })
-        }
+        // 分组
+        const datas = res.data
+        ids.map(v => {
+          const dat = datas[v]
+          const arr = [
+            { name: dat.name, id: dat.id },
+            { name: dat.child.name, id: dat.child.id }
+          ]
+          dat.child.child &&
+            arr.push({ name: dat.child.child.name, id: dat.child.child.id })
+          this.chooseGroup.push(arr)
+        })
       })
     },
     _loadInfo() {
       // 加载商品信息
       getConstituteGoodsInfo(this.$route.query.id, this.merCode).then(res => {
         // 分组处理
-        this._loadgroupGather('1', [res.data.typeId])
         if (res.data.groupId && res.data.groupId.length > 0) {
           this._loadgroupGather('2', [res.data.groupId])
         }
-        // this._loadgroupGather('2', [res.data.groupId])
         const { data } = res
-
         // 赋值
         console.log('data=====', data)
         this.basicForm = data
-        this.basicForm.childCommodities = data.childCommodities
+        // this.basicForm.childCommodities = data.childCommodities
         if (this.basicForm.detail) {
           this.$refs.editor.setContent(this.basicForm.detail)
         }
-
-        // console.log('this.basicForm:', this.basicForm)
       })
     },
     handleSelectionChange(row) {
@@ -530,7 +473,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.basicForm.childCommodities.splice(index, 1)
+        // this.basicForm.childCommodities.splice(index, 1)
       })
     },
     _loadTypeList(isRefresh) {
@@ -550,9 +493,18 @@ export default {
     },
     handleSaveGroup(row) {
       // 保存数据
+      console.log('111111111-handleSaveGroup', row)
       this.chooseArray = row
       this.chooseGroup = []
       this._filters(this.chooseArray)
+      if (row.length > 1) {
+        this.$message({
+          type: 'warning',
+          message: '组合商品分组有且只能选择一个'
+        })
+        return false
+      }
+      this.basicForm.groupId = row[0][row[0].length - 1]
       this.groupVisible = false
     },
     handleRemoveGroup(index) {
@@ -685,6 +637,7 @@ export default {
             .onsubmit()
             .then(res => {
               console.log('二次验证也通过了----------------------', res)
+              console.log(this.basicForm)
             })
             .catch(res => {
               console.log('二次验证失败----------------------')
@@ -713,27 +666,27 @@ export default {
       console.log('item, index', item, index)
       console.log('this.storeSelectGoods', this.storeSelectGoods)
       this.storeSelectGoods.splice(index, 1)
+      this.basicForm.storeIds = _.map(this.storeSelectGoods, 'specId').join(',')
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
       // this.storeSelectGoods = this.storeSelectGoods
     },
     delSelectStore(item, index) {
       console.log('item, index', item, index, this.chooseStore)
       this.chooseStore.splice(index, 1)
+      this.basicForm.storeIds = _.map(this.chooseStore, 'id').join(',')
       this.$refs.selectStoreComponent.dataFrom(this.chooseStore)
       // this.chooseStore = this.chooseStore
     },
     handleSelectGoods(val) {
       this.storeSelectGoods = val
-
+      this.basicForm.goodsIds = _.map(val, 'specId').join(',')
       this.$refs.storeGods.dataFrom(val)
     },
     handleSelectStore(val) {
       console.log('门店结果页出来了-------', val)
       this.chooseStore = val
+      this.basicForm.storeIds = _.map(val, 'id').join(',')
       this.$refs.selectStoreComponent.dataFrom(val)
-    },
-    handleEdit(params, scope) {
-      console.log('门店结果页出来了-------params', params, scope)
     }
   }
 }
