@@ -1,5 +1,5 @@
 <template>
-  <div v-clickoutside="moreImghide">
+  <div>
     <el-steps simple>
       <el-step
         title="基本信息"
@@ -405,16 +405,18 @@
               商品橱窗图
               <span class="img-tips">最多6张。</span>
               <span class="img-tipe-noImg">注意：无图片则无法上架到商城！</span>
-              <span class="img-tipe-moreBtn" @click="moreImg">更多规则>></span>
-              <ol v-if="ismoreImg === true" class="img-tips-more">
-                <li />
-                <li>图片上传规则</li>
-                <li>1、药品图片应体现：主商品+商品外包装（包装正面须包括：[药品名称]、 [OTC标识]及[包装详情] ，包装侧面须包括：[成份]、[性状]、[适应症]、[规格]、[用法用量]、[不良反应]、[禁忌]、[注意事项]、[执行标准]、[批准文号]、[生产企业]、[UPC码]）。</li>
-                <li>2、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</li>
-                <li>3、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。</li>
-                <li>4、图片内容展示方向，应始终保持文字正向。</li>
-                <li>5、请上传商品正面、侧面、背面不少于3张图片，药品需上传药品说明书图片，器械需上传器械注册证图片</li>
-              </ol>
+              <div v-clickoutside="moreImghide" class="img-tipe-moreBtnbox">
+                <span class="img-tipe-moreBtn link" @click="moreImg">更多规则>></span>
+                <ol v-if="ismoreImg === true" class="img-tips-more">
+                  <li>&nbsp;</li>
+                  <li>图片上传规则</li>
+                  <li>1、药品图片应体现：主商品+商品外包装（包装正面须包括：[药品名称]、 [OTC标识]及[包装详情] ，包装侧面须包括：[成份]、[性状]、[适应症]、[规格]、[用法用量]、[不良反应]、[禁忌]、[注意事项]、[执行标准]、[批准文号]、[生产企业]、[UPC码]）。</li>
+                  <li>2、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</li>
+                  <li>3、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。</li>
+                  <li>4、图片内容展示方向，应始终保持文字正向。</li>
+                  <li>5、请上传商品正面、侧面、背面不少于3张图片，药品需上传药品说明书图片，器械需上传器械注册证图片</li>
+                </ol>
+              </div>
             </div>
             <div class="edit-card-cnt">
               <div class="content">
@@ -1859,8 +1861,7 @@ export default {
     box-sizing: border-box;
     position: absolute;
     top: 0px;
-    left: 420px;
-    z-index: 110;
+    left: 82px;
     li {
       line-height: normal;
       margin-bottom: 5px;
@@ -1880,11 +1881,22 @@ export default {
       font-size: 16px;
     }
   }
+  .img-tipe-moreBtnbox {
+    position: absolute;
+    top: 0px;
+    left: 335px;
+    z-index: 110;
+  }
   .img-tipe-moreBtn {
     font-size: 12px;
     margin-bottom: 10px;
     margin-top: 10px;
     color: #147de8;
+    -ms-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    user-select:none;
   }
   .specs-box {
     margin-top: 20px;
@@ -1986,6 +1998,9 @@ export default {
         border: 1px dashed red;
         img {
           max-width: 100% !important;
+        }
+        >>> img {
+          display: block;
         }
       }
       .w-e-text {
