@@ -26,7 +26,7 @@
                 size="mini"
                 :precision="2"
                 :step="1"
-                :min="1"
+                :min="0.01"
                 :max="100"
                 :controls="false"
                 style="width:70px"
@@ -146,7 +146,7 @@
             v-model="ruleForm.winRandom"
             :precision="2"
             :step="1"
-            :min="1"
+            :min="0.01"
             :max="100"
             :controls="false"
             style="width:400px"
@@ -522,9 +522,10 @@ export default {
       }
       var num = 0
       _.map(selected, item => {
-        num += item.winRandom * 100
+        num += item.winRandom * 10000
+        console.log(num)
       })
-      if (num !== 100) {
+      if (num !== 10000) {
         this.$message({
           message: '奖品总中奖几率需等于100%',
           type: 'error'
