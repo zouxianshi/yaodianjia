@@ -1,14 +1,12 @@
 <template>
-  <div>
-    <el-form ref="tableForm" class="table-form" :model="tableForm" size="small">
+  <div class="select-goods">
+    <el-form ref="tableForm" :model="tableForm" size="small">
       <el-table
-        ref="activityTable"
-        :data="tableForm.tableData"
+        :data="tableForm.tableData.slice((pager.current - 1) * pager.size, pager.size * pager.current)"
         size="small"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
+        max-height="500"
       >
-        <el-table-column type="selection" width="55" />
         <template v-for="col in cols">
           <el-table-column
             v-if="!col.render"
@@ -42,79 +40,60 @@
             </template>
           </el-table-column>
         </template>
-        <el-table-column label="换购价" min-width="120px">
-          <template slot-scope="scope">
-            <el-form-item
-              :ref="'tableData.' + scope.$index + '.addPrice'"
-              :prop="'tableData.' + scope.$index + '.addPrice'"
-              :rules="[{ required: true, validator: check_limit, trigger: 'blur' }]"
-            >
-              <el-input
-                v-model="scope.row.addPrice"
-                style="width:92px;text-align:center"
-                :disabled="disabled"
-                maxlength="8"
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
+        <slot :pager="pager" />
         <el-table-column label="操作" width="60">
           <template slot-scope="scope">
             <el-button
               type="text"
               :disabled="disabled"
-              @click.stop="handleDel(scope.row, scope.$index)"
+              @click.stop="handleDel(scope.row, (pager.size * (pager.current-1))+scope.$index)"
             >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div style="margin-top: 20px">
-        <el-button
-          :disabled="!(tableForm && Array.isArray(tableForm.tableData) && tableForm.tableData.length) || disabled"
-          @click="selectAllSelection"
-        >全选商品</el-button>
-        <el-button
-          :disabled="!(Array.isArray(multipleSelection) && multipleSelection.length) || disabled"
-          @click="handleSetPrice"
-        >批量设置换购价</el-button>
-      </div>
     </el-form>
-    <dialog-set ref="diaglogPriceSet" @on-change="onSetChange" />
+    <section class="c-footer">
+      <el-pagination
+        background
+        :current-page="pager.current"
+        :page-sizes="[10, 20, 30, 50]"
+        :page-size="pager.size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pager.total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </section>
   </div>
 </template>
 <script>
-import dialogSet from './dialog-set'
+// import noData from '@/components/NoData'
 export default {
-  components: { dialogSet },
+  // components: { noData },
   props: {
     disabled: {
       type: Boolean,
       default: false
     }
   },
-  data() {
-    const check_limit = (rule, value, callback) => {
-      console.log('rule', rule, value)
-      const reg = /^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/
-      if (rule.required && (!value || value === '0')) {
-        callback(new Error('请输入数值'))
-      }
-      if (!reg.test(value)) {
-        callback(new Error('必须为大于0.01的正数'))
-      }
-      if (value > 99999999) {
-        callback(new Error('最大值不能超过99999999'))
-      }
-      callback()
+  watch: {
+    'tableForm.tableData': {
+      handler(newVal) {
+        console.log('watch---tableForm.tableData', newVal)
+        this.handleComputer(newVal)
+      },
+      deep: true
     }
+  },
+  data() {
     return {
       tableForm: {
-        tableData: []
+        tableData: [], // 数据源table
+        cutData: []
       },
-      multipleSelection: [], // 勾选的列表项
       cols: [
         {
-          prop: 'mainPic',
+          prop: 'picUrl',
           label: '商品图片',
           type: 'img',
           render: true // 交给后续逻辑渲染
@@ -127,6 +106,7 @@ export default {
           prop: 'name',
           label: '商品名称'
         },
+
         {
           prop: 'mprice',
           label: '参考价(元)'
@@ -136,12 +116,16 @@ export default {
           label: '商品规格'
         }
       ],
-      check_limit: check_limit
+      pager: {
+        current: 1,
+        size: 10,
+        total: 0
+      }
     }
   },
   methods: {
     dataFrom(data) {
-      console.log('select-activity-goods-------', data)
+      console.log('111111111111111111111', data)
       const dataFromSource = []
       if (Array.isArray(data) && data.length) {
         data.forEach(good => {
@@ -157,47 +141,19 @@ export default {
           } else {
             dataFromSource.push({
               ...good,
-              addPrice: this.tableForm.tableData[inIndex].addPrice,
+              ...this.tableForm.tableData[inIndex],
               productName: this.formatSkuInfo(good.specSkus || '')
             })
           }
         })
       }
       this.tableForm.tableData = dataFromSource
-      this.multipleSelection = dataFromSource
-      this.$refs.activityTable.toggleAllSelection()
+      this.pager = {
+        ...this.pager,
+        total: this.tableForm.tableData.length
+      }
     },
-    handleSelectionChange(val) {
-      console.log('handleSelectionChange----------', val)
-      this.multipleSelection = val
-    },
-    handleSetPrice() {
-      this.$refs.diaglogPriceSet.open()
-    },
-    onSetChange(value) {
-      const dataMap = this.tableForm.tableData.map(good => {
-        this.multipleSelection.map(item => {
-          if (good.id === item.id) {
-            good.addPrice = value.value
-          }
-        })
-        return {
-          ...good
-        }
-      })
-      this.tableForm.tableData = dataMap
-      this.$refs.diaglogPriceSet.close()
-    },
-    selectAllSelection() {
-      console.log('selectAllSelection----------', this.multipleSelection)
-      // this.multipleSelection = []
-      this.$refs.activityTable.toggleAllSelection()
-    },
-    handleDel(item, index) {
-      // this.tableForm.tableData.splice(index, 1)
-      this.$emit('del-item', item, index)
-      // this.$set(this.tableForm.tableData)
-    },
+    // 格式化规格信息
     formatSkuInfo(skuList) {
       let skuStr = ''
       if (skuList && skuList.length > 0) {
@@ -206,9 +162,51 @@ export default {
         })
         skuStr = skuStr.substr(0, skuStr.length - 1)
       }
-      console.log('skuStr', skuStr)
       return skuStr
     },
+    // 计算组合计算值
+    handleComputer(newVal) {
+      let mprice = 0
+      let soulePrice = 0
+      let weight = 0
+      newVal.forEach(item => {
+        mprice += item.mprice * (item.addNum * 1 || 0) // 参考价
+        soulePrice += item.addPrice * (item.addNum * 1 || 0)// 组合单价
+        weight += (item.weight || 0) * (item.addNum * 1 || 0)
+      })
+      this.$store.commit('activity/SET_TABLE_FORM_VALUE', {
+        mprice,
+        soulePrice,
+        weight
+      })
+    },
+    handleDel(item, index) {
+      this.$emit('del-item', item, index)
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+      this.pager = {
+        ...this.pager,
+        size: val,
+        current: 1
+      }
+      // this.handleCutData()
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.pager = {
+        ...this.pager,
+        current: val
+      }
+      // 清除页面的校验结果重新校验
+      this.$refs.tableForm.clearValidate()
+      this.$nextTick(function() {
+        this.$refs.tableForm.validate().then(res => {
+          console.log('22222222222', res)
+        })
+      })
+    },
+    // 父容器调用此方法校验此表格的表单
     onsubmit() {
       return new Promise((resolve, reject) => {
         this.$refs.tableForm.validate((valid, object) => {
@@ -230,9 +228,11 @@ export default {
               reject()
             }
           } else {
-            console.log('error tableForm submit!!', valid)
+            console.log('error tableForm submit!!', valid, object)
             for (const i in object) {
+              console.log('error tableForm submit!!----this.$refs', this, this.$refs, i)
               let dom = this.$refs[i]
+              console.log('error tableForm submit!!----dom', dom)
               if (Object.prototype.toString.call(dom) !== '[object Object]') {
                 // 这里是针对遍历的情况（多个输入框），取值为数组
                 dom = dom[0]
@@ -255,9 +255,10 @@ export default {
 </script>
 
 <style lang="scss">
-.table-form {
-  .el-form-item--small.el-form-item {
-    margin: 16px 0;
+.select-goods {
+  .c-footer {
+    margin-top: 20px;
+    text-align: right;
   }
 }
 </style>
