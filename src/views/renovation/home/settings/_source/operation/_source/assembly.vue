@@ -1,7 +1,7 @@
 <template>
   <div class="operation-assembly-model">
     <el-button type="primary" size="small" :loading="isLoading" @click="onSubmit('save')">保存</el-button>
-    <el-button type="primary" plain size="small" @click="onPreviousStep">上一步</el-button>
+    <el-button v-if="isEdit" type="primary" plain size="small" @click="onPreviousStep">上一步</el-button>
     <el-button type="primary" plain size="small" @click="onSubmit('preview')">预览</el-button>
     <div>
       <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="isPreview">
@@ -28,7 +28,7 @@ export default {
   props: {},
   methods: {
     ...mapMutations('renovation', ['setStepVal', 'setStaticDragData']),
-    ...mapActions('renovation', ['saveHomeSetting']),
+    ...mapActions('renovation', ['saveHomeSetting', 'saveHomePage']),
     onSubmit(type) {
       const { banner } = this.staticDragData
 
@@ -52,23 +52,40 @@ export default {
       if (_.some(dragList, { error: true })) {
         const instance = findComponentsDownward(this.$root, 'SaPreview')[0]
         instance.$setVifDragData(dragList)
-        this.onSave(type)
+        return
       }
+
+      this.onSave(type)
     },
     onSave(type) {
       this.isLoading = true
-      this.saveHomeSetting().then(res => {
+
+      const handlerCk = (dimensionId) => {
         if (type === 'save') {
           setTimeout(() => {
             this.setStepVal(3)
             this.isLoading = false
           }, 1200)
         } else {
-          this.dimensionId = res.data
+          this.dimensionId = dimensionId
           this.isPreview = true
           this.isLoading = false
         }
-      })
+      }
+
+      if (!this.isEdit) {
+        this.saveHomePage().then(() => {
+          handlerCk(this.$route.query.id)
+        }).catch(() => {
+          this.isLoading = false
+        })
+      } else {
+        this.saveHomeSetting().then(res => {
+          handlerCk(res.data)
+        }).catch(() => {
+          this.isLoading = false
+        })
+      }
     },
     onPreviousStep() {
       this.setStepVal(1)
@@ -78,6 +95,8 @@ export default {
   beforeCreate() {
   },
   created() {
+    console.log(this.$route.query.id)
+    console.log('1111')
   },
   beforeMount() {
   },
@@ -92,7 +111,10 @@ export default {
   destroyed() {
   },
   computed: {
-    ...mapState('renovation', ['staticDragData', 'dragList'])
+    ...mapState('renovation', ['staticDragData', 'dragList']),
+    isEdit() {
+      return _.isEmpty(this.$route.query.id)
+    }
   },
   components: { mPreview }
 }

@@ -37,7 +37,6 @@ export default {
     selectAss(item) {
       this.isComponent = false
       this.item = item
-      console.log(item)
       setTimeout(() => {
         this.isComponent = true
       }, 1)

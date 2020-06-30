@@ -106,6 +106,8 @@ export default {
       }
     },
     onUpdateItemList(itemList) {
+      console.log(itemList)
+      console.log('-------------itemList')
       this.itemParams.itemList = itemList
     },
     getActivityGoods(p) {
@@ -116,13 +118,14 @@ export default {
       }
       renovationService.getHomepageActItemList(params).then(res => {
         this.itemParams.itemList = _.map(res.data.data, v => {
-          const { price, mprice, name, picUrl, specId } = v
+          const { price, mprice, name, picUrl, specId, id } = v
           return {
             ...itemParams,
             price,
             mprice,
             name,
             itemId: specId,
+            commodityId: id,
             img: this.showImg(picUrl)
           }
         }).splice(0, this.getItemCount())
@@ -139,6 +142,7 @@ export default {
         this.$set(this.itemParams, 'startTime', startTime)
         this.$set(this.itemParams, 'endTime', endTime)
         this.$set(this.itemParams, 'currentTime', currentTime)
+        this.$set(this.itemParams, 'value', activityId)
         this.dialogVisible = false
 
         if (this.itemParams.chooseFlag === 0) {
@@ -157,6 +161,7 @@ export default {
   beforeCreate() {
   },
   created() {
+    this.selectActivity = _.cloneDeep(this.item)
     this.itemParams = _.cloneDeep(this.item)
   },
   beforeMount() {

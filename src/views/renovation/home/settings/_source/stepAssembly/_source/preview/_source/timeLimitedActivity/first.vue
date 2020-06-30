@@ -76,6 +76,8 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .sap-tla-first-model {
+    position: relative;
+    z-index: 1;
     .stfm-title-box {
       height: 36px;
       background:#F32525;

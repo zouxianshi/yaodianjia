@@ -66,6 +66,8 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .sap-commodity-four-model {
+    position: relative;
+    z-index: 1;
     .scfm-item-scroll {
       width: 100%;
       overflow-x: scroll;

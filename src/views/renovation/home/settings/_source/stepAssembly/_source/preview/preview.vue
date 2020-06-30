@@ -8,10 +8,10 @@
         <m-vrf-error v-if="staticDragData.banner.error" :item="staticDragData.banner" />
         <m-banner :item-list="staticDragData.banner.itemList" />
       </div>
+      <div v-if="!dragData.length" style="height: 280px;line-height:90px;margin:0 6px;background: #ECF5FF;">
+        <p style="font-size: 14px;color: #4F88FF;text-align: center">请拖拽组件到此区域</p>
+      </div>
       <v-draggable ref="draggable" v-model="dragData" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onDragAdd">
-        <div v-if="!dragData.length" style="height: 280px;line-height:90px;margin:0 6px;background: #ECF5FF;">
-          <p style="font-size: 14px;color: #4F88FF;text-align: center">请拖拽组件到此区域</p>
-        </div>
         <div v-for="(item,$index) in dragData" :id="rtUUid(item.type)" :key="rtUUid(item.type)" class="item-component">
           <div class="ic-item-hover" />
           <el-popconfirm title="确定要删除组件吗？" placement="top-start" @onConfirm="onConfirm($index)">
@@ -72,8 +72,7 @@ export default {
   data() {
     return {
       bannerItem,
-      dragData: [
-      ]
+      dragData: []
     }
   },
   props: {},
@@ -81,14 +80,14 @@ export default {
     ...mapMutations('renovation', ['setDragList']),
     onConfirm(index) {
       this.dragData = _.filter(this.dragData, (v, i) => i !== index)
+      this.onDragAdd()
     },
     $setVifDragData(dragData) {
       this.dragData = dragData
     },
     onDragAdd() {
-      console.log(this.dragData)
-      console.log('=====')
       this.setDragList(this.dragData)
+      console.log(this.dragData)
     },
     onDragChange() {},
     onDragSet(item) {
@@ -106,11 +105,18 @@ export default {
       this.onDragAdd()
     }
   },
-  watch: {},
+  watch: {
+    'dragList': {
+      immediate: true,
+      handler(v) {
+        this.dragData = _.cloneDeep(v)
+      }
+    }
+  },
   beforeCreate() {
   },
   created() {
-    this.onDragAdd()
+
   },
   beforeMount() {
   },
@@ -153,6 +159,7 @@ export default {
     }
     .apm-drag-area {
       height: calc(100vh - 400px);
+      padding-bottom: 30px;
       .item-component {
         cursor: pointer;
         position: relative;
@@ -183,7 +190,7 @@ export default {
           position: absolute;
           right: 0;
           top: 0;
-          z-index: 2;
+          z-index: 10;
           text-align: center;
           color: #fff;
           display: none;

@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import mStep from './_source/step'
 import mStepBasics from './_source/stepBasics/stepBasics'
 import mStepAssembly from './_source/stepAssembly/stepAssembly'
@@ -28,6 +28,7 @@ export default {
   },
   props: {},
   methods: {
+    ...mapMutations('renovation', ['setStepVal', 'reset']),
     ...mapActions('renovation', ['getHomePage']),
     ...mapActions('mall', ['getCenterStoreId'])
   },
@@ -35,10 +36,12 @@ export default {
   beforeCreate() {
   },
   created() {
+    this.reset()
     const { query } = this.$route
     const { merCode } = this.$store.state.user
     this.getCenterStoreId({ merCode }).then(() => {
       if (!_.isEmpty(query)) {
+        this.setStepVal(2)
         this.getHomePage({ id: query.id }).then(() => {
           this.isComponent = true
         })

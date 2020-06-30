@@ -10,9 +10,6 @@
       <el-form-item label="链接地址">
         <el-input v-model="item.url" style="width: calc(100% - 101px)" readonly />
         <el-button icon="el-icon-link" @click="dialogVisible = true">选择链接</el-button>
-        <div v-if="error.isUrl" class="sa-assembly-error">
-          {{ error.isUrl }}
-        </div>
       </el-form-item>
     </el-form>
     <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body size="600px" :visible.sync="dialogVisible">
@@ -45,18 +42,13 @@ export default {
   },
   methods: {
     $verification() {
-      const { name, url } = this.item
+      const { name } = this.item
       let flag = true
 
       this.reset()
 
       if (!name) {
         this.error.isName = '请输入公告内容'
-        flag = false
-      }
-
-      if (!url) {
-        this.error.isUrl = '请选择公告链接'
         flag = false
       }
 

@@ -44,6 +44,15 @@ class RenovationService {
     })
   }
 
+  updateSetInfo(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage/updateSetInfo
+`,
+      method: 'post',
+      data
+    })
+  }
+
   getHomeCoupon(data) {
     return request({
       url: `${this.serve}/1.0/home-coupon/_search`,

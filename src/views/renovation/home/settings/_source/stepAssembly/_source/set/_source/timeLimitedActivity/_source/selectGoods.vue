@@ -123,7 +123,7 @@ export default {
       renovationService.getHomepageActItemList({ ...this.searchParams, ...p }).then(res => {
         this.total = res.data.totalCount
         this.list = _.map(res.data.data, v => {
-          const { price, mprice, name, picUrl, specId, erpCode, specStr, commodityId } = v
+          const { price, mprice, name, picUrl, specId, erpCode, specStr, id } = v
           return {
             ...itemParams,
             price,
@@ -134,7 +134,7 @@ export default {
             selected: is(specId),
             erpCode,
             specStr,
-            commodityId
+            commodityId: id
           }
         })
       })

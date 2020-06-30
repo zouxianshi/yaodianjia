@@ -5,7 +5,7 @@
     </div>
     <div class="lbm-sp2" />
     <div class="lbm-sp3" :style="stylees">
-      <span class="lbm-jsymbol">{{ el.price }}</span>
+      <span class="lbm-jsymbol">¥{{ el.price || el.mprice }}</span>
     </div>
     <div v-if="enterType === 'icon'" class="lbm-cart" />
     <div v-if="enterType === 'button'" class="lbm-buttom">

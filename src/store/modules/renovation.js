@@ -5,6 +5,7 @@
  */
 
 import _ from 'lodash'
+import { uuid } from '@/utils'
 import renovationService from '@/api/renovation'
 import { bannerItem } from '@/views/renovation/home/settings/_source/stepAssembly/default'
 
@@ -61,7 +62,8 @@ const mutations = {
   setDragList: (state, payload) => {
     state.dragList = payload
   },
-  reset() {
+  reset: (state, payload) => {
+    state.stepVal = 1
     state.basics = _.cloneDeep(basics)
     state.dragList = []
     state.staticDragData.banner = _.cloneDeep(bannerItem)
@@ -85,9 +87,40 @@ const actions = {
   getHomePage({ commit, state }, payload) {
     const { id } = payload
     renovationService.getHomePage(id).then(res => {
-      const { list } = res.data
+      const arr = []
+      _.map(_.reject(res.data.list, ['type', 'banner']), v => {
+        let vv = {
+          ...v,
+          uuid: `${uuid(`${v.type}-`)}${uuid()}${uuid()}${uuid()}`
+        }
+        if (v.type === 'timeLimitedActivity') {
+          vv = {
+            ...vv,
+            ...vv.limitedAct
+          }
+        }
+        arr.push(vv)
+      })
+
       commit('setBasics', _.omit(res.data, ['list']))
-      commit('setDragList', list)
+      commit('setDragList', arr)
+      commit('setStaticDragData', {
+        banner: _.find(res.data.list, ['type', 'banner'])
+      })
+    })
+  },
+  saveHomePage({ commit, state }, payload) {
+    const p = {
+      list: [state.staticDragData.banner, ...state.dragList],
+      ...state.basics
+    }
+
+    return new Promise((resolve, reject) => {
+      renovationService.updateSetInfo(p).then(res => {
+        resolve(res)
+      }).catch(e => {
+        reject(e)
+      })
     })
   }
 }
