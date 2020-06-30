@@ -1,11 +1,17 @@
 <template>
   <div class="operation-assembly-model">
-    <el-button type="primary" size="small" @click="onSave('save')">保存</el-button>
+    <el-button type="primary" size="small" @click="onSubmit('save')">保存</el-button>
     <el-button type="primary" plain size="small" @click="onPreviousStep">上一步</el-button>
-    <el-button type="primary" plain size="small" @click="onSave('preview')">预览</el-button>
+    <el-button type="primary" plain size="small" @click="onSubmit('preview')">预览</el-button>
+    <div>
+      <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="isPreview">
+        <m-preview v-if="isPreview" :dimension-id="dimensionId" />
+      </el-dialog>
+    </div>
   </div>
 </template>
 <script>
+import mPreview from './../../../../list/_source/preview'
 import { mapState, mapActions, mapMutations } from 'vuex'
 import { verifRequired } from './utils'
 import { findComponentsDownward } from '@/utils'
@@ -13,16 +19,17 @@ import { findComponentsDownward } from '@/utils'
 export default {
   name: 'Assembly',
   data() {
-    return {}
+    return {
+      isPreview: false,
+      dimensionId: ''
+    }
   },
   props: {},
   methods: {
     ...mapMutations('renovation', ['setStepVal', 'setStaticDragData']),
     ...mapActions('renovation', ['saveHomeSetting']),
-    onSave(type) {
+    onSubmit(type) {
       const { banner } = this.staticDragData
-      const dragList = _.map(this.dragList, v => { return { ...v, error: verifRequired[v.type](v) } })
-
       if (verifRequired.banner(this.staticDragData.banner)) {
         this.setStaticDragData({
           banner: {
@@ -33,18 +40,26 @@ export default {
         return
       }
 
-      if (_.some(dragList, { error: true })) {
-        const instance = findComponentsDownward(this.$root, 'SaPreview')[0]
-        instance.$setVifDragData(dragList)
-
-        this.saveHomeSetting().then(() => {
-          if (type === 'save') {
-            this.setStepVal(3)
-          } else {
-            alert('预览')
-          }
-        })
+      if (this.dragList.length) {
+        const dragList = _.map(this.dragList, v => { return { ...v, error: verifRequired[v.type](v) } })
+        if (_.some(dragList, { error: true })) {
+          const instance = findComponentsDownward(this.$root, 'SaPreview')[0]
+          instance.$setVifDragData(dragList)
+          this.onSave(type)
+        }
+      } else {
+        this.onSave(type)
       }
+    },
+    onSave(type) {
+      this.saveHomeSetting().then(res => {
+        if (type === 'save') {
+          this.setStepVal(3)
+        } else {
+          this.dimensionId = res.data
+          this.isPreview = true
+        }
+      })
     },
     onPreviousStep() {
       this.setStepVal(1)
@@ -70,7 +85,7 @@ export default {
   computed: {
     ...mapState('renovation', ['staticDragData', 'dragList'])
   },
-  components: {}
+  components: { mPreview }
 }
 </script>
 

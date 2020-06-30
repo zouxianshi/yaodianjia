@@ -73,15 +73,6 @@ export default {
     return {
       bannerItem,
       dragData: [
-        {
-          uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'recommend',
-          typeName: '为你推荐',
-          subType: 'first',
-          name: '一排两个',
-          error: false,
-          itemList: []
-        }
       ]
     }
   },
