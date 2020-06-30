@@ -403,8 +403,20 @@
           <div class="edit-card">
             <div class="header">
               商品橱窗图
-              <span class="img-tips">最多6张，图片800*800</span>
-              <span class="img-tipe-noImg">(无图片则无法上架到商城)</span>
+              <span class="img-tips">最多6张。</span>
+              <span class="img-tipe-noImg">注意：无图片则无法上架到商城！</span>
+              <div v-clickoutside="moreImghide" class="img-tipe-moreBtnbox">
+                <span class="img-tipe-moreBtn link" @click="moreImg">更多规则>></span>
+                <ol v-if="ismoreImg === true" class="img-tips-more">
+                  <li>&nbsp;</li>
+                  <li>图片上传规则</li>
+                  <li>1、药品图片应体现：主商品+商品外包装（包装正面须包括：[药品名称]、 [OTC标识]及[包装详情] ，包装侧面须包括：[成份]、[性状]、[适应症]、[规格]、[用法用量]、[不良反应]、[禁忌]、[注意事项]、[执行标准]、[批准文号]、[生产企业]、[UPC码]）。</li>
+                  <li>2、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</li>
+                  <li>3、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。</li>
+                  <li>4、图片内容展示方向，应始终保持文字正向。</li>
+                  <li>5、请上传商品正面、侧面、背面不少于3张图片，药品需上传药品说明书图片，器械需上传器械注册证图片</li>
+                </ol>
+              </div>
             </div>
             <div class="edit-card-cnt">
               <div class="content">
@@ -424,13 +436,6 @@
                 <el-dialog append-to-body :visible.sync="dialogVisible">
                   <img width="100%" :src="dialogImageUrl" alt>
                 </el-dialog>
-                <ol class="img-tips">
-                  <li>1、药品图片应体现：主商品+商品外包装（包装正面须包括：[药品名称]、 [OTC标识]及[包装详情] ，包装侧面须包括：[成份]、[性状]、[适应症]、[规格]、[用法用量]、[不良反应]、[禁忌]、[注意事项]、[执行标准]、[批准文号]、[生产企业]、[UPC码]）。</li>
-                  <li>2、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</li>
-                  <li>3、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。</li>
-                  <li>4、图片内容展示方向，应始终保持文字正向。</li>
-                  <li>5、请上传商品正面、侧面、背面不少于3张图片，药品需上传药品说明书图片，器械需上传器械注册证图片</li>
-                </ol>
                 <!-- <div class="text-center">
                 <el-button type size="small" @click="step=2">上一步</el-button>
                 <el-button
@@ -602,7 +607,7 @@ import {
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
 import editGroup from '../components/grouping'
-import { findArray } from '@/utils/index'
+import { findArray, directives } from '@/utils/index'
 import { checkNumberdouble } from '@/utils/validate'
 import { handlerDays } from './_source/utils'
 import mSpecSetting from './_source/specSetting'
@@ -611,6 +616,7 @@ export default {
   name: 'GoodsEdit',
   components: { Tinymce, vueUploadImg, editGroup, mSpecSetting },
   mixins: [mixins, specsMixin],
+  directives: { Clickoutside: directives.Clickoutside },
   data() {
     const _checkName = (rule, value, callback) => {
       if (!value) {
@@ -682,6 +688,7 @@ export default {
     }
     return {
       isSpec: true,
+      ismoreImg: false, // 判断是否显示图片上传规则
       specLoading: false,
       rejectVisible: false, // 驳回弹框
       rejectForm: {
@@ -1747,7 +1754,16 @@ export default {
         }
       })
     },
-
+    moreImg() {
+      if (this.ismoreImg === true) {
+        this.ismoreImg = false
+      } else {
+        this.ismoreImg = true
+      }
+    },
+    moreImghide() {
+      this.ismoreImg = false
+    },
     handleSubImg() {
       // 保存图片
       if (this.fileList.length === 0) {
@@ -1773,6 +1789,7 @@ export default {
       // this.fileList.map(v => {
       //   data.imgs.push({ picUrl: v.imgUrl })
       // })
+
       saveImg(data)
         .then(_ => {
           this.$message({
@@ -1893,6 +1910,51 @@ export default {
     margin-top: 10px;
     color: red;
   }
+  .img-tips-more {
+    width: 500px;
+    font-size: 12px;
+    background-color: #ffffdd;
+    padding: 5px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0px;
+    left: 82px;
+    li {
+      line-height: normal;
+      margin-bottom: 5px;
+    }
+    li:nth-child(1) {
+      width: 0;
+      height: 0;
+      border-width: 15px;
+      border-style: solid;
+      border-color:transparent #ffffdd transparent transparent;
+      position: absolute;
+      left: -30px;
+      top: 5px;
+    }
+    li:nth-child(2) {
+      color: red;
+      font-size: 16px;
+    }
+  }
+  .img-tipe-moreBtnbox {
+    position: absolute;
+    top: 0px;
+    left: 335px;
+    z-index: 110;
+  }
+  .img-tipe-moreBtn {
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color: #147de8;
+    -ms-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    user-select:none;
+  }
   .specs-box {
     margin-top: 20px;
     .el-table {
@@ -1914,6 +1976,7 @@ export default {
       line-height: 40px;
       padding: 0 10px;
       font-size: 16px;
+      position: relative;
     }
     .edit-card-cnt {
       padding: 10px;
@@ -1992,6 +2055,9 @@ export default {
         border: 1px dashed red;
         img {
           max-width: 100% !important;
+        }
+        >>> img {
+          display: block;
         }
       }
       .w-e-text {
