@@ -28,15 +28,23 @@ export default {
   },
   props: {},
   methods: {
+    ...mapActions('renovation', ['getHomePage']),
     ...mapActions('mall', ['getCenterStoreId'])
   },
   watch: {},
   beforeCreate() {
   },
   created() {
+    const { query } = this.$route
     const { merCode } = this.$store.state.user
     this.getCenterStoreId({ merCode }).then(() => {
-      this.isComponent = true
+      if (!_.isEmpty(query)) {
+        this.getHomePage({ id: query.id }).then(() => {
+          this.isComponent = true
+        })
+      } else {
+        this.isComponent = true
+      }
     }).catch(() => {
       this.isComponent = true
     })

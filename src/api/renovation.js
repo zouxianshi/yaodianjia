@@ -37,6 +37,13 @@ class RenovationService {
     })
   }
 
+  getHomePage(id) {
+    return request({
+      url: `${this.serve}/1.0/homepage/set/${id}`,
+      method: 'get'
+    })
+  }
+
   getHomeCoupon(data) {
     return request({
       url: `${this.serve}/1.0/home-coupon/_search`,

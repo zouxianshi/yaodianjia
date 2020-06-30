@@ -8,21 +8,23 @@ import _ from 'lodash'
 import renovationService from '@/api/renovation'
 import { bannerItem } from '@/views/renovation/home/settings/_source/stepAssembly/default'
 
+const basics = {
+  name: '', // 商家首页模板名称
+  title: '', // 页面标题
+  backgroundColor: '#FFFFFF', // 背景颜色
+  borderFlag: 0, // 有无边框：0-无，1-有
+  borderStyle: 0, // 边框样式：0-直角，1-圆角
+  borderSize: 0, // 边框大小，单位px
+  borderColor: '#FFFFFF', // 边框颜色，16进制值
+  searchHint: '', // 搜索预显
+  styleType: 'blue', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
+  shareDesc: '', // 分享描述
+  shareImg: '' // 分享图片url
+}
+
 const state = {
   stepVal: 1,
-  basics: {
-    name: '', // 商家首页模板名称
-    title: '', // 页面标题
-    backgroundColor: '#FFFFFF', // 背景颜色
-    borderFlag: 0, // 有无边框：0-无，1-有
-    borderStyle: 0, // 边框样式：0-直角，1-圆角
-    borderSize: 0, // 边框大小，单位px
-    borderColor: '#FFFFFF', // 边框颜色，16进制值
-    searchHint: '', // 搜索预显
-    styleType: 'blue', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
-    shareDesc: '', // 分享描述
-    shareImg: '' // 分享图片url
-  },
+  basics: _.cloneDeep(basics),
   /* basics: {
     'name': 'name',
     'title': 'title',
@@ -38,7 +40,7 @@ const state = {
   },*/
   dragList: [],
   staticDragData: {
-    banner: bannerItem
+    banner: _.cloneDeep(bannerItem)
   }
 }
 
@@ -58,6 +60,11 @@ const mutations = {
   },
   setDragList: (state, payload) => {
     state.dragList = payload
+  },
+  reset() {
+    state.basics = _.cloneDeep(basics)
+    state.dragList = []
+    state.staticDragData.banner = _.cloneDeep(bannerItem)
   }
 }
 
@@ -68,12 +75,19 @@ const actions = {
         list: [state.staticDragData.banner, ...state.dragList],
         ...state.basics
       }
-
       renovationService.homePageAdd(p).then(res => {
         resolve(res)
       }).catch(e => {
         reject(e)
       })
+    })
+  },
+  getHomePage({ commit, state }, payload) {
+    const { id } = payload
+    renovationService.getHomePage(id).then(res => {
+      const { list } = res.data
+      commit('setBasics', _.omit(res.data, ['list']))
+      commit('setDragList', list)
     })
   }
 }

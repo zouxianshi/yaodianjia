@@ -9,9 +9,12 @@
         <m-banner :item-list="staticDragData.banner.itemList" />
       </div>
       <v-draggable ref="draggable" v-model="dragData" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onDragAdd">
-        <div v-for="(item) in dragData" :id="rtUUid(item.type)" :key="rtUUid(item.type)" class="item-component">
+        <div v-if="!dragData.length" style="height: 280px;line-height:90px;margin:0 6px;background: #ECF5FF;">
+          <p style="font-size: 14px;color: #4F88FF;text-align: center">请拖拽组件到此区域</p>
+        </div>
+        <div v-for="(item,$index) in dragData" :id="rtUUid(item.type)" :key="rtUUid(item.type)" class="item-component">
           <div class="ic-item-hover" />
-          <el-popconfirm title="确定要删除组件吗？" placement="top-start">
+          <el-popconfirm title="确定要删除组件吗？" placement="top-start" @onConfirm="onConfirm($index)">
             <div slot="reference" class="ic-item-delete">删除</div>
           </el-popconfirm>
           <div @click="onDragSet(item)">
@@ -41,16 +44,13 @@
           </div>
         </div>
       </v-draggable>
-      <div v-if="!dragData.length" style="height: 90px;line-height:90px;margin:0 6px;background: #ECF5FF;">
-        <p style="font-size: 14px;color: #4F88FF;text-align: center">请拖拽组件到此区域</p>
-      </div>
     </div>
   </div>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
 import { uuid } from '@/utils'
-import { bannerItem } from './../../default'
+import { items,bannerItem } from './../../default' // eslint-disable-line
 import vDraggable from 'vuedraggable'
 import mHeader from './_source/header/header'
 import mBanner from './_source/banner/banner'
@@ -79,10 +79,15 @@ export default {
   props: {},
   methods: {
     ...mapMutations('renovation', ['setDragList']),
+    onConfirm(index) {
+      this.dragData = _.filter(this.dragData, (v, i) => i !== index)
+    },
     $setVifDragData(dragData) {
       this.dragData = dragData
     },
     onDragAdd() {
+      console.log(this.dragData)
+      console.log('=====')
       this.setDragList(this.dragData)
     },
     onDragChange() {},

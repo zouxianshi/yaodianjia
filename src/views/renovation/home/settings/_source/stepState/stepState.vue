@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 export default {
   name: 'StepState',
   data() {
@@ -20,6 +21,7 @@ export default {
   },
   props: {},
   methods: {
+    ...mapMutations('renovation', ['reset'])
   },
   watch: {},
   beforeCreate() {
@@ -32,6 +34,7 @@ export default {
     this.timeName = setInterval(() => {
       this.timer--
       if (this.timer === 0) {
+        this.reset()
         this.$router.push(`/renovation/home/list`)
         return
       }
