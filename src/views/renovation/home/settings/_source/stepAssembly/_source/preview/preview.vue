@@ -8,40 +8,43 @@
         <m-vrf-error v-if="staticDragData.banner.error" :item="staticDragData.banner" />
         <m-banner :item-list="staticDragData.banner.itemList" />
       </div>
-      <div v-if="!dragData.length" style="height: 280px;line-height:90px;margin:0 6px;background: #ECF5FF;">
-        <p style="font-size: 14px;color: #4F88FF;text-align: center">请拖拽组件到此区域</p>
-      </div>
-      <v-draggable ref="draggable" v-model="dragData" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onDragAdd">
-        <div v-for="(item,$index) in dragData" :id="rtUUid(item.type)" :key="rtUUid(item.type)" class="item-component">
-          <div class="ic-item-hover" />
-          <el-popconfirm title="确定要删除组件吗？" placement="top-start" @onConfirm="onConfirm($index)">
-            <div slot="reference" class="ic-item-delete">删除</div>
-          </el-popconfirm>
-          <div @click="onDragSet(item)">
-            <!--错误提示 -->
-            <m-vrf-error v-if="item.error" :item="item" />
 
-            <!--导航栏-->
-            <m-navigation v-if="item.type === 'navigation'" :item="item" />
-            <!--广告图-->
-            <m-advertisement v-if="item.type === 'advertisement'" :item="item" />
-            <!--商品-->
-            <m-commodity v-if="item.type === 'commodity'" :item="item" />
-            <!--标题-->
-            <m-title v-if="item.type === 'title'" :item="item" />
-            <!--公告-->
-            <m-announcement v-if="item.type === 'announcement'" :item="item" />
-            <!--为你推荐-->
-            <m-recommend v-if="item.type === 'recommend'" :item="item" />
-            <!--广告框-->
-            <m-ad-frame v-if="item.type === 'adFrame'" :item="item" />
-            <!--活动商品-->
-            <m-activity-aggregate v-if="item.type === 'activityAggregate'" :item="item" />
-            <!--限时活动-->
-            <m-time-limited-activity v-if="item.type === 'timeLimitedActivity'" :item="item" />
-            <!--优惠券-->
-            <m-coupon v-if="item.type === 'coupon'" :item="item" />
+      <v-draggable ref="draggable" v-model="dragData" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onDragAdd">
+        <template v-if="dragData.length">
+          <div v-for="(item,$index) in dragData" :id="rtUUid(item.type)" :key="rtUUid(item.type)" class="item-component">
+            <div class="ic-item-hover" />
+            <el-popconfirm title="确定要删除组件吗？" placement="top-start" @onConfirm="onConfirm($index)">
+              <div slot="reference" class="ic-item-delete">删除</div>
+            </el-popconfirm>
+            <div @click="onDragSet(item)">
+              <!--错误提示 -->
+              <m-vrf-error v-if="item.error" :item="item" />
+
+              <!--导航栏-->
+              <m-navigation v-if="item.type === 'navigation'" :item="item" />
+              <!--广告图-->
+              <m-advertisement v-if="item.type === 'advertisement'" :item="item" />
+              <!--商品-->
+              <m-commodity v-if="item.type === 'commodity'" :item="item" />
+              <!--标题-->
+              <m-title v-if="item.type === 'title'" :item="item" />
+              <!--公告-->
+              <m-announcement v-if="item.type === 'announcement'" :item="item" />
+              <!--为你推荐-->
+              <m-recommend v-if="item.type === 'recommend'" :item="item" />
+              <!--广告框-->
+              <m-ad-frame v-if="item.type === 'adFrame'" :item="item" />
+              <!--活动商品-->
+              <m-activity-aggregate v-if="item.type === 'activityAggregate'" :item="item" />
+              <!--限时活动-->
+              <m-time-limited-activity v-if="item.type === 'timeLimitedActivity'" :item="item" />
+              <!--优惠券-->
+              <m-coupon v-if="item.type === 'coupon'" :item="item" />
+            </div>
           </div>
+        </template>
+        <div v-else style="height: 280px;line-height:90px;margin:0 6px;background: #ECF5FF;">
+          <p style="font-size: 14px;color: #4F88FF;text-align: center">请拖拽组件到此区域</p>
         </div>
       </v-draggable>
     </div>

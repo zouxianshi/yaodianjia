@@ -20,6 +20,7 @@
   </div>
 </template>
 <script>
+import { itemParams } from './../../../../../default'
 import mGoodsTable from '@/views/mall/homeSettings/_source/settingsArea/_source/goodsTable'
 export default {
   name: 'CommodityFormItem',
@@ -42,7 +43,11 @@ export default {
     _onUpdate(itemList) {
       this.itemList = _.map(itemList, v => {
         const { mprice, price, commodityId, specId } = v
-        return { ...v, mprice, price, commodityId, specId }
+        return {
+          ...itemParams,
+          ...v, mprice, price, commodityId, specId,
+          itemId: specId
+        }
       })
       this.$emit('on-update', this.itemList)
     }
