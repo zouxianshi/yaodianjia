@@ -6,7 +6,7 @@
     element-loading-spinner="el-icon-loading"
   >
     <div class="header">
-      消费兑换
+      消费奖励
       <span style="color: #faad14">（一年内可申请12次修改，本年还可修改{{ leftTimes || 0 }}次）</span>
     </div>
     <el-form

@@ -201,7 +201,7 @@ export default [{
     component: () => import('@/views/marketings/equitysettings/list/exchangeGet'),
     name: 'equity-exchange-get',
     meta: {
-      title: '消费兑换',
+      title: '消费奖励',
       auth: false,
       noCache: true
       // activeMenu: '/marketing/gifts'
