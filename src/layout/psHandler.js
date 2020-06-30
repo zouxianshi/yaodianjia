@@ -283,7 +283,7 @@ class InnerCtor {
             children: []
           },
           {
-            name: '评论设置',
+            name: '商城设置',
             path: '/storeSetting/comment-settings',
             // disabled: this.get('set.comment-settings'),
             disabled: true,
