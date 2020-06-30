@@ -47,13 +47,13 @@ export default {
     width: calc(100% - 16px);
     height: calc(100% - 16px);
     line-height: calc(100% - 16px);
-    z-index: 1;
+    z-index: 2;
     .vem-p1 {
       width: 180px;
       height: 60px;
       line-height: 60px;
-      color: #ff0000;
-      font-size: 13px;
+      color: #fff;
+      font-size: 14px;
       position: absolute;
       left: 50%;
       top: 50%;

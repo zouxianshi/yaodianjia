@@ -3,22 +3,33 @@
     <div class="sttm-title-box">
       <span class="sttm-text-1">据活动结束还剩</span>
       <span class="sttm-cd">
-        <v-countdown :current-time="1593163904" :start-time="1593163904" :end-time="1601112681" />
+        <template v-if="item.startTime">
+          <v-countdown :current-time="rtTimeStamp(itemParams.currentTime)" :start-time="rtTimeStamp(itemParams.endTime)" :end-time="rtTimeStamp(itemParams.endTime)" />
+        </template>
       </span>
     </div>
     <div class="sttm-content">
-      <m-four :item="item" enter-type="rob" />
+      <template v-if="item.itemList.length">
+        <m-four :item="item" enter-type="rob" />
+      </template>
+      <template v-else>
+        <m-four :item="{...item,itemList:[itemParams,itemParams,itemParams,itemParams,itemParams,itemParams]}" enter-type="rob" />
+      </template>
     </div>
   </div>
 </template>
 <script>
+import dayjs from 'dayjs'
+import { itemParams } from './.././../../../default'
 import vCountdown from './countdown'
 import mFour from './../commodity/four'
 
 export default {
   name: 'SapTlaThird',
   data() {
-    return {}
+    return {
+      itemParams
+    }
   },
   props: {
     item: {
@@ -26,7 +37,11 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+    rtTimeStamp(v) {
+      return dayjs(v).valueOf()
+    }
+  },
   watch: {},
   beforeCreate() {
   },

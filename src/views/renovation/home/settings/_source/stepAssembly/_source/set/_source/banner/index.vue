@@ -57,7 +57,10 @@ export default {
 
       if (flag) {
         this.setStaticDragData({
-          banner: _.cloneDeep(this.itemParams)
+          banner: {
+            ..._.cloneDeep(this.itemParams),
+            error: false
+          }
         })
       }
     },

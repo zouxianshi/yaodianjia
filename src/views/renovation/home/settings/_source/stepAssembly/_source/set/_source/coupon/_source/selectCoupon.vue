@@ -16,7 +16,7 @@
       </span>
       <span class="sscm-coupon-name">
         <span class="sscm-text-1">活动名称 </span>
-        <el-input v-model="searchParams.ctype.cname" size="mini" placeholder="请输入名称" style="width: 200px;" />
+        <el-input v-model="searchParams.cname" size="mini" placeholder="请输入名称" style="width: 200px;" />
       </span>
       <el-button type="primary" size="mini" style="margin-left: 8px;" @click="onQuery">查询</el-button>
     </div>

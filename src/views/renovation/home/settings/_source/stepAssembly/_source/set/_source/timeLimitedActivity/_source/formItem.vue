@@ -13,8 +13,8 @@
         </tr>
       </table>
     </div>
-    <el-dialog title="选择活动" append-to-body	:visible.sync="dialogVisible" width="800">
-      <m-select-goods v-if="dialogVisible" ref="selectActivity" :item="item" />
+    <el-dialog title="选择商品" append-to-body	:visible.sync="dialogVisible" width="800">
+      <m-select-goods v-if="dialogVisible" ref="selectGoods" :item="item" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="onCouponSubmit">确 定</el-button>
@@ -39,6 +39,14 @@ export default {
     }
   },
   methods: {
+    onCouponSubmit() {
+      const selectGoods = this.$refs.selectGoods.$verification()
+      if (typeof selectGoods === 'object') {
+        this.itemList = selectGoods
+        this.$emit('on-update', this.itemList)
+        this.dialogVisible = false
+      }
+    },
     onItemDelete(i) {
       this.$emit('on-el-delete', i)
     },

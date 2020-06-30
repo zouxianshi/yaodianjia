@@ -3,44 +3,41 @@
     <div class="scrollbar sscm-select-box">
       <el-form label-width="80px">
         <el-form-item label="已选">
-          <el-tag v-for="(item,$index) in selectList" :key="$index">{{ item.cname }}</el-tag>
+          <el-tag v-for="(item,$index) in selectList" :key="$index">{{ item.name }}</el-tag>
         </el-form-item>
       </el-form>
     </div>
     <div class="sscm-condition-box">
-      <span class="sscm-coupon-type">
+      <!--<span class="sscm-coupon-type">
         <span class="sscm-text-1">活动类型 </span>
-        <el-select v-model="searchParams.ctype" size="mini" placeholder="请选择" style="width: 200px;">
-          <el-option v-for="item in [{value:0,label:'全部'},{value:1,label:'折扣券'},{value:2,label:'抵价劵'},{value:3,label:'礼品券'},]" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </span>
+      </span>-->
       <span class="sscm-coupon-name">
-        <span class="sscm-text-1">活动名称 </span>
-        <el-input v-model="searchParams.ctype.cname" size="mini" placeholder="请输入名称" style="width: 200px;" />
+        <span class="sscm-text-1">当前活动：{{ item.pmtName }} </span>
+        <el-input v-model="searchParams.itemName" size="mini" placeholder="请输入名称" style="width: 200px;" />
       </span>
       <el-button type="primary" size="mini" style="margin-left: 8px;" @click="onQuery">查询</el-button>
     </div>
     <div class="sscm-list-box">
-      <!--<el-table size="mini" :data="list" style="width: 100%" height="250" class="hdv-table">
+      <el-table size="mini" :data="list" style="width: 100%" height="250" class="hdv-table">
         <el-table-column width="46">
           <template slot-scope="scope">
             <el-checkbox v-model="scope.row.selected" @change="onSelect($event,scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
-        <el-table-column label="优惠内容" width="120" show-overflow-tooltip>
-          <template slot-scope="scope">{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
+        <el-table-column label="商品图片" width="80">
+          <template slot-scope="scope">
+            <img :src="showImg(scope.row.img)" alt="" class="sscm-table-img">
+          </template>
         </el-table-column>
-        <el-table-column label="使用时间" show-overflow-tooltip>
-          <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
+        <el-table-column label="商品名称" prop="name" />
+        <el-table-column label="商品编码" prop="erpCode" />
+        <el-table-column label="规格" prop="specStr" />
+        <el-table-column label="参考价(元)">
+          <template slot-scope="scope">
+            <span style="color:#ff0000;font-size: 12px;">¥{{ scope.row.mprice }}</span>
+          </template>
         </el-table-column>
-        <el-table-column label="使用场景" width="80">
-          <template slot-scope="scope">{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>
-        </el-table-column>
-        <el-table-column label="适用门店" width="100">
-          <template slot-scope="scope">{{ scope.row.productRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
-        </el-table-column>
-      </el-table>-->
+      </el-table>
     </div>
     <div class="sscm-page">
       <el-pagination background layout="prev, pager, next" :total="total" @current-change="currentChange" />
@@ -53,7 +50,8 @@
    * Hurry to seek output, not to split !!!
    * Google translate
    */
-
+import { mapState } from 'vuex'
+import { itemParams } from './../../../../../default'
 import renovationService from '@/api/renovation'
 
 export default {
@@ -67,7 +65,7 @@ export default {
         currentPage: 1,
         itemName: '',
         pageSize: 20,
-        storeId: ''
+        origin: 0
       }
     }
   },
@@ -79,7 +77,29 @@ export default {
   },
   methods: {
     $verification() {
+      const { selectList, list } = this
 
+      if (list.length && !selectList.length) {
+        this.$message.error('请选择商品')
+        return false
+      }
+
+      /* if (subType === 'first' && _.size(selectList) !== 1) {
+        this.$message.error('只允许添加1个商品')
+        return false
+      }
+
+      if (subType === 'second' && _.size(selectList) !== 2 ) {
+        this.$message.error('只允许添加2个商品')
+        return false
+      }
+
+      if (subType === '2' && _.size(selectList) !== 6 ) {
+        this.$message.error('只允许添加5个商品')
+        return false
+      }*/
+
+      return selectList
     },
     currentChange(v) {
       this.searchParams.currentPage = v
@@ -97,11 +117,26 @@ export default {
       }
     },
     getData() {
-      console.log(this.item)
       const { activityId, chooseFlag } = this.item
-      const p = { activityId, chooseFlag, storeId: '31e24df01e984451ab445c587e9487df', origin: 0 }
+      const p = { activityId, chooseFlag, storeId: this.centerStoreId }
+      const is = specId => _.some(this.item.itemList, ['itemId', specId])
       renovationService.getHomepageActItemList({ ...this.searchParams, ...p }).then(res => {
-        console.log(res)
+        this.total = res.data.totalCount
+        this.list = _.map(res.data.data, v => {
+          const { price, mprice, name, picUrl, specId, erpCode, specStr, commodityId } = v
+          return {
+            ...itemParams,
+            price,
+            mprice,
+            name,
+            itemId: specId,
+            img: this.showImg(picUrl),
+            selected: is(specId),
+            erpCode,
+            specStr,
+            commodityId
+          }
+        })
       })
     }
   },
@@ -124,6 +159,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('mall', ['centerStoreId'])
   },
   components: {}
 }
@@ -169,6 +205,14 @@ export default {
               }
             }
           }
+        }
+        .sscm-table-img{
+          width:40px;
+          height: 40px;
+          padding:3px;
+          border: 1px solid #ccc;
+          border-radius:4px;
+          display: block;
         }
       }
     }

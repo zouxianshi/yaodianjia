@@ -2,7 +2,7 @@
   <div class="recommend-index-model">
     <div class="rim-bg">
       <div class="rim-left-bg" />
-      <div class="rim-center-bg" :style="{width:`${93 - (borderFlag * 2)}px`}" />
+      <div class="rim-center-bg" />
       <div class="rim-right-bg" />
     </div>
     <div class="rim-comp-box">
@@ -80,7 +80,7 @@ export default {
         background: url('./img/rim_left_bg.png') no-repeat;
       }
       .rim-center-bg {
-        width: 20px;
+        width: calc(100% - 260px);
         background: url('./img/rim_center_bg.png') repeat-x;
       }
       .rim-right-bg {

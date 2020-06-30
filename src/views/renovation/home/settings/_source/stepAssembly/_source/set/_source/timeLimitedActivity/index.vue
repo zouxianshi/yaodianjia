@@ -30,12 +30,12 @@
           </el-form-item>
         </el-form>
         <el-divider content-position="left">商品选择</el-divider>
-        <el-radio-group v-model="itemParams.chooseFlag" :disabled="isSelectGoods">
+        <el-radio-group v-model="itemParams.chooseFlag" :disabled="isSelectGoods" @change="onChooseFlag">
           <el-radio :label="0">自动展示</el-radio>
           <el-radio :label="1">手动选择</el-radio>
         </el-radio-group>
         <div v-if="itemParams.chooseFlag === 1" style="margin-top: 20px;">
-          <m-form-item :item="itemParams" @on-update="onUpdateItemList" />
+          <m-form-item :item="itemParams" @on-update="onUpdateItemList" @on-el-delete="onElDelete" />
         </div>
       </m-item-card>
     </div>
@@ -49,9 +49,10 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 import renovationService from '@/api/renovation'
 import mSelectActivity from './_source/selectActivity'
-// import { itemParams } from './../../../../default'
+import { itemParams, saveDragItem } from './../../../../default'
 import mFirst from './../../../preview/_source/timeLimitedActivity/first'
 import mSecond from './../../../preview/_source/timeLimitedActivity/second'
 import mThird from './../../../preview/_source/timeLimitedActivity/third'
@@ -77,19 +78,35 @@ export default {
     }
   },
   methods: {
+    onElDelete(index) {
+      this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)
+    },
+    getItemCount() {
+      switch (this.item.subType) {
+        case 'first':
+          return 1
+        case 'second':
+          return 2
+        case 'third':
+          return 6
+      }
+    },
+    onChooseFlag() {
+      this.itemParams.itemList = []
+    },
     onAssSubmit() {
-      // let flag = true
+      let flag = true
       if (_.isEmpty(this.selectActivity)) {
-        // flag = false
+        flag = false
         this.error.isActivity = '请选择活动'
       }
 
-      // if (flag) {
-      //
-      // }
+      if (flag) {
+        saveDragItem(this.$root, this.itemParams)
+      }
     },
-    onUpdateItemList(v) {
-      console.log(v)
+    onUpdateItemList(itemList) {
+      this.itemParams.itemList = itemList
     },
     getActivityGoods(p) {
       const params = {
@@ -98,7 +115,17 @@ export default {
         ...p
       }
       renovationService.getHomepageActItemList(params).then(res => {
-        console.log(res)
+        this.itemParams.itemList = _.map(res.data.data, v => {
+          const { price, mprice, name, picUrl, specId } = v
+          return {
+            ...itemParams,
+            price,
+            mprice,
+            name,
+            itemId: specId,
+            img: this.showImg(picUrl)
+          }
+        }).splice(0, this.getItemCount())
       })
     },
     onCouponSubmit() {
@@ -106,11 +133,12 @@ export default {
       if (typeof selectActivity === 'object') {
         this.selectActivity = selectActivity
 
-        const { activityId, startTime, endTime } = selectActivity
+        const { activityId, startTime, endTime, currentTime } = selectActivity
 
         this.$set(this.itemParams, 'activityId', activityId)
         this.$set(this.itemParams, 'startTime', startTime)
         this.$set(this.itemParams, 'endTime', endTime)
+        this.$set(this.itemParams, 'currentTime', currentTime)
         this.dialogVisible = false
 
         if (this.itemParams.chooseFlag === 0) {
@@ -118,8 +146,8 @@ export default {
             activityId,
             chooseFlag: this.itemParams.chooseFlag,
             origin: 1,
-            itemCount: 1,
-            storeId: '31e24df01e984451ab445c587e9487df'
+            itemCount: this.getItemCount(),
+            storeId: this.centerStoreId
           })
         }
       }
@@ -144,6 +172,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('mall', ['centerStoreId']),
     isSelectGoods() {
       return _.isEmpty(this.selectActivity)
     },

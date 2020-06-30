@@ -4,22 +4,23 @@
       <span class="stfm-text-1">据活动结束还剩</span>
       <span class="stfm-cd">
         <template v-if="item.startTime">
-          <v-countdown :current-time="currentTime" :start-time="rtTimeStamp(itemParams.startTime)" :end-time="rtTimeStamp(itemParams.endTime)" />
+          <v-countdown :current-time="rtTimeStamp(item.currentTime)" :start-time="rtTimeStamp(item.endTime)" :end-time="rtTimeStamp(item.endTime)" />
         </template>
       </span>
     </div>
     <div class="stfm-content">
       <div class="cfim-no-data">
-        <template v-if="itemParams.itemList.length">
-          <m-item-no-data height="140px" />
+        <template v-if="item.itemList.length">
+          <img v-if="item.itemList[0].img" class="cfim-img" :src="showImg(item.itemList[0].img)" alt="" style="width: 140px;height:140px;margin: 0 auto;display: block;">
+          <m-item-no-data v-else height="140px" />
           <div style="padding: 10px 0">
-            <m-line-bar margin-top="24px" enter-type="button" :el="itemParams.itemList[0]" />
+            <m-line-bar margin-top="24px" enter-type="button" :el="item.itemList[0]" />
           </div>
         </template>
         <template v-else>
           <m-item-no-data height="140px" />
           <div style="padding: 10px 0">
-            <m-line-bar margin-top="24px" enter-type="button" :el="elParams" />
+            <m-line-bar margin-top="24px" enter-type="button" :el="itemParams" />
           </div>
         </template>
       </div>
@@ -36,9 +37,7 @@ export default {
   name: 'SapTlaFirst',
   data() {
     return {
-      elParams: itemParams,
-      itemParams: {},
-      currentTime: dayjs().valueOf()
+      itemParams
     }
   },
   props: {
@@ -53,14 +52,6 @@ export default {
     }
   },
   watch: {
-    'item': {
-      deep: true,
-      immediate: true,
-      handler(v) {
-        this.itemParams = v
-        console.log(this.itemParams)
-      }
-    }
   },
   beforeCreate() {
   },

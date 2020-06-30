@@ -3,27 +3,42 @@
     <div class="stsm-title-box">
       <span class="stsm-text-1">据活动结束还剩</span>
       <span class="stsm-cd">
-        <v-countdown :current-time="1593163904" :start-time="1593163904" :end-time="1601112681" />
+        <template v-if="item.startTime">
+          <v-countdown :current-time="rtTimeStamp(itemParams.currentTime)" :start-time="rtTimeStamp(itemParams.endTime)" :end-time="rtTimeStamp(itemParams.endTime)" />
+        </template>
       </span>
     </div>
     <div class="stsm-content">
       <el-row :gutter="8">
-        <template v-for="(el,$index) in item.itemList">
-          <el-col :key="$index" :span="12" class="stsm-item">
-            <m-second-item :el="el" enter-type="rob" />
-          </el-col>
+        <template v-if="item.itemList.length">
+          <template v-for="(el,$index) in item.itemList">
+            <el-col :key="$index" :span="12" class="stsm-item">
+              <m-second-item :el="el" enter-type="rob" />
+            </el-col>
+          </template>
+        </template>
+        <template v-else>
+          <template v-for="(el,$index) in 2">
+            <el-col :key="$index" :span="12" class="stsm-item">
+              <m-second-item :el="itemParams" enter-type="rob" />
+            </el-col>
+          </template>
         </template>
       </el-row>
     </div>
   </div>
 </template>
 <script>
+import dayjs from 'dayjs'
+import { itemParams } from './.././../../../default'
 import vCountdown from './countdown'
 import mSecondItem from './../commodity/secondItem'
 export default {
   name: 'SapTlaSecond',
   data() {
-    return {}
+    return {
+      itemParams
+    }
   },
   props: {
     item: {
@@ -31,7 +46,11 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+    rtTimeStamp(v) {
+      return dayjs(v).valueOf()
+    }
+  },
   watch: {},
   beforeCreate() {
   },

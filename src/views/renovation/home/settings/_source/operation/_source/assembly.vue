@@ -1,8 +1,8 @@
 <template>
   <div class="operation-assembly-model">
-    <el-button type="primary" size="small" @click="onSave">保存</el-button>
+    <el-button type="primary" size="small" @click="onSave('save')">保存</el-button>
     <el-button type="primary" plain size="small" @click="onPreviousStep">上一步</el-button>
-    <el-button type="primary" plain size="small">预览</el-button>
+    <el-button type="primary" plain size="small" @click="onSave('preview')">预览</el-button>
   </div>
 </template>
 <script>
@@ -17,17 +17,34 @@ export default {
   },
   props: {},
   methods: {
-    ...mapMutations('renovation', ['setStepVal']),
+    ...mapMutations('renovation', ['setStepVal', 'setStaticDragData']),
     ...mapActions('renovation', ['saveHomeSetting']),
-    onSave() {
-      const dragList = _.map(this.dragList, v => { return { ...v, error: verifRequired[v.type](v.itemList) } })
+    onSave(type) {
+      const { banner } = this.staticDragData
+      const dragList = _.map(this.dragList, v => { return { ...v, error: verifRequired[v.type](v) } })
+
+      if (verifRequired.banner(this.staticDragData.banner)) {
+        this.setStaticDragData({
+          banner: {
+            ...banner,
+            error: true
+          }
+        })
+        return
+      }
 
       if (_.some(dragList, { error: true })) {
         const instance = findComponentsDownward(this.$root, 'SaPreview')[0]
         instance.$setVifDragData(dragList)
-      }
 
-      // this.saveHomeSetting()
+        this.saveHomeSetting().then(() => {
+          if (type === 'save') {
+            this.setStepVal(3)
+          } else {
+            alert('预览')
+          }
+        })
+      }
     },
     onPreviousStep() {
       this.setStepVal(1)

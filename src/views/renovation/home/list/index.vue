@@ -27,7 +27,7 @@
         <el-table-column label="最后修改时间" prop="modifyTime" min-width="120" align="center" />
         <el-table-column label="操作" fixed="right" align="center" min-width="190">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" plain @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button size="mini" type="primary" plain @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-button size="mini" type="primary" plain @click="handlePreview(scope.row)">预览</el-button>
             <el-dropdown @command="handleCommand">
               <el-button type="primary" size="mini" plain>
@@ -106,7 +106,8 @@ export default {
       this.previewShow = true
     },
     handleEdit(id) {
-      this.$router.push(`/renovation/home/settings?id=${id}`)
+      const url = `/renovation/home/settings${id ? `?id=${id}` : ''}`
+      this.$router.push(url)
     },
     // 设置为首页模板
     async _SetHome({ id }) {

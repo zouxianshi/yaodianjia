@@ -6,7 +6,7 @@
       </div>
       <div class="ssm-text-1">操作成功</div>
       <div class="ssm-text-2">首页创建成功，已保存至首页列表</div>
-      <div class="ssm-text-3"><span>5</span>秒后跳转至首页列表</div>
+      <div class="ssm-text-3"><span>{{ timer }}</span>秒后跳转至首页列表</div>
     </div>
   </div>
 </template>
@@ -14,10 +14,13 @@
 export default {
   name: 'StepState',
   data() {
-    return {}
+    return {
+      timer: 5
+    }
   },
   props: {},
-  methods: {},
+  methods: {
+  },
   watch: {},
   beforeCreate() {
   },
@@ -26,12 +29,20 @@ export default {
   beforeMount() {
   },
   mounted() {
+    this.timeName = setInterval(() => {
+      this.timer--
+      if (this.timer === 0) {
+        this.$router.push(`/renovation/home/list`)
+        return
+      }
+    }, 1000)
   },
   beforeUpdate() {
   },
   updated() {
   },
   beforeDestroy() {
+    clearInterval(this.timeName)
   },
   destroyed() {
   },

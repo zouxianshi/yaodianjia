@@ -97,8 +97,7 @@ export default {
     getData() {
       renovationService.getHomePageAct({
         ...this.searchParams,
-        // storeId:this.centerStoreId,
-        storeId: '31e24df01e984451ab445c587e9487df'
+        storeId: this.centerStoreId
       }).then(res => {
         const { data, totalCount } = res.data
         this.list = data

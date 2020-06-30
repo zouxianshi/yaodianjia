@@ -396,6 +396,7 @@ export default () => {
             chooseFlag: 0,
             startTime: '',
             endTime: '',
+            itemCount: 1,
             itemList: []
           },
           {
@@ -406,7 +407,10 @@ export default () => {
             name: '一排两个',
             error: false,
             chooseFlag: 0,
-            itemList: items(2)
+            startTime: '',
+            endTime: '',
+            itemCount: 2,
+            itemList: []
           },
           {
             uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
@@ -416,7 +420,10 @@ export default () => {
             name: '一排多个',
             error: false,
             chooseFlag: 0,
-            itemList: items(6) // todo 不确定数量
+            startTime: '',
+            endTime: '',
+            itemCount: 6,
+            itemList: []
           }
         ]
       },

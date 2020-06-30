@@ -5,6 +5,7 @@
     </div>
     <div class="scrollbar apm-drag-area">
       <div class="apm-banner" @click="onBannerSet()">
+        <m-vrf-error v-if="staticDragData.banner.error" :item="staticDragData.banner" />
         <m-banner :item-list="staticDragData.banner.itemList" />
       </div>
       <v-draggable ref="draggable" v-model="dragData" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onDragAdd">
@@ -40,13 +41,16 @@
           </div>
         </div>
       </v-draggable>
+      <div v-if="!dragData.length" style="height: 90px;line-height:90px;margin:0 6px;background: #ECF5FF;">
+        <p style="font-size: 14px;color: #4F88FF;text-align: center">请拖拽组件到此区域</p>
+      </div>
     </div>
   </div>
 </template>
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { uuid } from '@/utils'
-import { items, bannerItem } from './../../default'
+import { bannerItem } from './../../default'
 import vDraggable from 'vuedraggable'
 import mHeader from './_source/header/header'
 import mBanner from './_source/banner/banner'
@@ -70,106 +74,23 @@ export default {
       bannerItem,
       dragData: [
         {
-          uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'navigation',
-          typeName: '导航栏',
+          uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
+          type: 'recommend',
+          typeName: '为你推荐',
           subType: 'first',
-          name: '一排四个',
-          error: false,
-          itemList: items(4),
-          max: 8
-        },
-        {
-          uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'navigation',
-          typeName: '导航栏',
-          subType: 'second',
-          name: '一排五个',
-          error: false,
-          itemList: items(5),
-          max: 10
-        }
-        /* {
-          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'timeLimitedActivity',
-          typeName: '限时活动',
-          subType: 'first',
-          name: '一排单个',
-          error: false,
-          chooseFlag:0,
-          itemList: []
-        },
-        {
-          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'timeLimitedActivity',
-          typeName: '限时活动',
-          subType: 'second',
           name: '一排两个',
           error: false,
-          chooseFlag:0,
-          itemList: items(2)
-        },
-        {
-          uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-          type: 'timeLimitedActivity',
-          typeName: '限时活动',
-          subType: 'third',
-          name: '一排多个',
-          error: false,
-          chooseFlag:0,
-          itemList: items(6) // todo 不确定数量
-        }*/
-        /*
-
-          {
-            uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'timeLimitedActivity',
-            typeName: '限时活动',
-            subType: 'first',
-            name: '一排单个',
-            error: false,
-            itemList: items(1)
-          },
-          {
-            uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'timeLimitedActivity',
-            typeName: '限时活动',
-            subType: 'second',
-            name: '一排两个',
-            error: false,
-            itemList: items(2)
-          },
-          {
-            uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'timeLimitedActivity',
-            typeName: '限时活动',
-            subType: 'third',
-            name: '一排多个',
-            error: false,
-            itemList: items(6) // todo 不确定数量
-          },
-          {
-            uuid: `${uuid('adFrame-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'adFrame',
-            typeName: '广告框',
-            subType: 'first',
-            name: '默认样式',
-            error: false,
-            itemList: items(8) // todo 不确定数量
-          },
-
-         */
+          itemList: []
+        }
       ]
     }
   },
   props: {},
   methods: {
-    ...mapActions('renovation', ['saveHomeSetting']),
     ...mapMutations('renovation', ['setDragList']),
     $setVifDragData(dragData) {
       this.dragData = dragData
     },
-
     onDragAdd() {
       this.setDragList(this.dragData)
     },
@@ -274,6 +195,7 @@ export default {
 
       }
       .apm-banner {
+        position: relative;
         margin-bottom: 10px;
         border: 2px dotted transparent;
         padding: 0 4px;
