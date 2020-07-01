@@ -1,7 +1,7 @@
 <template>
   <div class="sap-header-model">
     <div class="shm-page-title">
-      <span>海典微商城</span>
+      <span>{{ basics.title }}</span>
     </div>
     <div class="shm-search-name" @click="onSearchHint">
       <div class="shm-search-value">{{ basics.searchHint }}</div>

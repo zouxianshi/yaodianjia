@@ -1,6 +1,7 @@
 <template>
   <div class="operation-basics-model">
     <el-button type="primary" size="small" @click="onNextStep">下一步</el-button>
+    <el-button type="primary" plain size="small" @click="$router.push(`/renovation/home/list`)">返回列表</el-button>
   </div>
 </template>
 <script>

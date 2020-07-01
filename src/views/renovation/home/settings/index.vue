@@ -1,5 +1,5 @@
 <template>
-  <div class="home-settings-model">
+  <div v-loading="homeLoading" class="home-settings-model">
     <div v-if="stepVal !== 2" class="hsm-step">
       <m-step />
     </div>
@@ -28,7 +28,7 @@ export default {
   },
   props: {},
   methods: {
-    ...mapMutations('renovation', ['setStepVal', 'reset']),
+    ...mapMutations('renovation', ['setStepVal', 'reset', 'setHomeLoading']),
     ...mapActions('renovation', ['getHomePage']),
     ...mapActions('mall', ['getCenterStoreId'])
   },
@@ -36,7 +36,9 @@ export default {
   beforeCreate() {
   },
   created() {
+    // todo 防止数据未清除 创建再次清空
     this.reset()
+    this.setHomeLoading(true)
     const { query } = this.$route
     const { merCode } = this.$store.state.user
     this.getCenterStoreId({ merCode }).then(() => {
@@ -44,12 +46,19 @@ export default {
         this.setStepVal(2)
         this.getHomePage({ id: query.id }).then(() => {
           this.isComponent = true
+          setTimeout(() => {
+            this.setHomeLoading(false)
+          }, 800)
         })
       } else {
         this.isComponent = true
+        setTimeout(() => {
+          this.setHomeLoading(false)
+        }, 800)
       }
     }).catch(() => {
       this.isComponent = true
+      this.setHomeLoading(false)
     })
   },
   beforeMount() {
@@ -65,11 +74,12 @@ export default {
   updated() {
   },
   beforeDestroy() {
+    this.reset()
   },
   destroyed() {
   },
   computed: {
-    ...mapState('renovation', ['stepVal']),
+    ...mapState('renovation', ['stepVal', 'homeLoading']),
     mod() { // eslint-disable-line
       switch (this.stepVal) {
         case 1:
@@ -99,6 +109,7 @@ export default {
       position: absolute;
       bottom: -40px;
       left: -20px;
+      z-index: 9999;
       width:calc(100% + 40px);
       padding: 12px;
       text-align: center;

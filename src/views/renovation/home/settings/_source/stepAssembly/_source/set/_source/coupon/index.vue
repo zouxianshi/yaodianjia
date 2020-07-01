@@ -81,7 +81,9 @@ export default {
           this.itemParams.itemList.push({
             ..._.cloneDeep(itemParams),
             cname: v.cname,
-            itemId: v.id
+            itemId: v.id,
+            denomination: v.denomination,
+            ctype: v.ctype
           })
         })
         this.dialogVisible = false

@@ -51,6 +51,9 @@ export default {
     background: #fff;
     border:1px solid rgba(207,207,207,1);
     cursor: pointer;
+    &:hover {
+      border:1px solid #4F88FF;
+    }
     .cim-img {
       width: 140px;
       height: 50px;

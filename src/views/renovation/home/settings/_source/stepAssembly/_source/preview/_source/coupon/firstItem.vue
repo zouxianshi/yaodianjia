@@ -3,8 +3,13 @@
     <div class="cfim-item-left">
       <div class="cfim-line-1" />
       <div class="cfim-line-2" />
-      <div class="cfim-text-num">Aa</div>
-      <div class="cfim-type" />
+      <div class="cfim-text-num">{{ el.denomination || '-' }}</div>
+
+      <div class="cfim-type" :style="{background: el.ctype ? 'transparent' : 'rgba(255,255,255,1)'}">
+        <span v-if="el.ctype === 1">折扣券</span>
+        <span v-if="el.ctype === 2">抵价券</span>
+        <span v-if="el.ctype === 3">礼品券</span>
+      </div>
     </div>
     <div class="cfim-item-right">
       <div class="cfim-name" :class="el.cname ? 'no' : ''">
@@ -98,10 +103,14 @@ export default {
         color: #fff;
       }
       .cfim-type {
+        margin: 0 10px;
         background:rgba(255,255,255,1);
         border-radius:2px;
         opacity:0.8;
-        margin: 0 auto;
+        font-size: 12px;
+        color: #fff;
+        -webkit-transform: scale(0.8);
+        display: inline-block;
       }
     }
     .cfim-item-right {
@@ -146,9 +155,10 @@ export default {
           margin-top: 26px;
         }
         .cfim-type {
-          width:42px;
           height:15px;
           margin-top: 10px;
+          font-size: 14px;
+          background: transparent;
         }
       }
       .cfim-item-right {
@@ -176,9 +186,9 @@ export default {
           margin-top: 16px;
         }
         .cfim-type {
-          width:24px;
           height:8px;
           margin-top: 6px;
+          font-size: 12px;
         }
       }
       .cfim-item-right {
@@ -218,6 +228,7 @@ export default {
           width:24px;
           height:8px;
           margin-top: 6px;
+          font-size: 12px;
         }
       }
       .cfim-item-right {
