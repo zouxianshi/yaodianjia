@@ -12,6 +12,36 @@ import _ from 'lodash'
 import { mapState } from 'vuex'
 import { uuid, findComponentsDownward } from '@/utils'
 
+export const handlerBackfill = data => {
+  const newList = []
+  _.map(_.reject(data.list, ['type', 'banner']), v => {
+    let v1 = {
+      ...v,
+      uuid: `${uuid(`${v.type}-`)}${uuid()}${uuid()}${uuid()}`
+    }
+    if (v.type === 'timeLimitedActivity') {
+      v1 = {
+        ...v1,
+        ...v1.limitedAct
+      }
+    }
+    if (v.type === 'coupon') {
+      v1 = {
+        ...v1,
+        itemList: _.map(v1.itemList, v2 => {
+          return {
+            ...v2,
+            ..._.pick(v2.couponDetail, ['cname', 'ctype', 'denomination'])
+          }
+        })
+      }
+    }
+    newList.push(v1)
+  })
+
+  return newList
+}
+
 export const saveDragItem = ($root, item) => {
   const $item = item
   $item.error = false

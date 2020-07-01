@@ -5,9 +5,8 @@
  */
 
 import _ from 'lodash'
-import { uuid } from '@/utils'
 import renovationService from '@/api/renovation'
-import { bannerItem } from '@/views/renovation/home/settings/_source/stepAssembly/default'
+import { bannerItem, handlerBackfill } from '@/views/renovation/home/settings/_source/stepAssembly/default'
 
 const basics = {
   name: '', // 商家首页模板名称
@@ -91,23 +90,8 @@ const actions = {
   getHomePage({ commit, state }, payload) {
     const { id } = payload
     renovationService.getHomePage(id).then(res => {
-      const arr = []
-      _.map(_.reject(res.data.list, ['type', 'banner']), v => {
-        let vv = {
-          ...v,
-          uuid: `${uuid(`${v.type}-`)}${uuid()}${uuid()}${uuid()}`
-        }
-        if (v.type === 'timeLimitedActivity') {
-          vv = {
-            ...vv,
-            ...vv.limitedAct
-          }
-        }
-        arr.push(vv)
-      })
-
       commit('setBasics', _.omit(res.data, ['list']))
-      commit('setDragList', arr)
+      commit('setDragList', handlerBackfill(res.data))
       commit('setStaticDragData', {
         banner: _.find(res.data.list, ['type', 'banner'])
       })

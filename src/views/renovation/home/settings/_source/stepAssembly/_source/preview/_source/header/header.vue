@@ -56,9 +56,9 @@ export default {
     background: url('./../../img/header.png') no-repeat;
     .shm-page-title {
       text-align: center;
-      padding-top: 48px;
+      padding-top: 50px;
       span {
-        font-size: 20px;
+        font-size: 18px;
       }
     }
     .shm-search-name {

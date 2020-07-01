@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'BasicsSetting',
   data() {
@@ -33,6 +33,7 @@ export default {
   props: {
   },
   methods: {
+    ...mapMutations('renovation', ['setBasics']),
     $verification() {
       const { name, title } = this.basics
       let flag = true
@@ -47,6 +48,13 @@ export default {
       if (!title) {
         this.error.isTitle = '请输入页面标题'
         flag = false
+      }
+
+      if (flag) {
+        this.setBasics({
+          title,
+          name
+        })
       }
 
       return flag
