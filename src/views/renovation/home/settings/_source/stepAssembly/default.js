@@ -17,6 +17,7 @@ export const handlerBackfill = data => {
   _.map(_.reject(data.list, ['type', 'banner']), v => {
     let v1 = {
       ...v,
+      error: false,
       uuid: `${uuid(`${v.type}-`)}${uuid()}${uuid()}${uuid()}`
     }
     if (v.type === 'timeLimitedActivity') {
