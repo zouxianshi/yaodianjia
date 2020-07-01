@@ -5,10 +5,11 @@
       <el-step title="选择优惠券" />
       <el-step title="发放成功" />
     </el-steps>
-    <mMemberList v-if="stepActive === 1" />
-    <mCouponList v-if="stepActive === 2" />
-    <mVoucherSuccess v-if="stepActive === 3" />
-    <el-button @click="nextStep">下一步</el-button>
+    <mMemberList v-show="stepActive === 1" />
+    <mCouponList v-show="stepActive === 2" />
+    <mVoucherSuccess v-show="stepActive === 3" ref="success" />
+    <el-button v-if="stepActive === 2" @click="prev">上一步</el-button>
+    <el-button v-if="stepActive < 3" @click="nextStep">下一步</el-button>
   </div>
 </template>
 <script>
@@ -27,11 +28,16 @@ export default {
   },
   methods: {
     nextStep() {
-      if (this.stepActive < 3) {
+      console.log(this.stepActive)
+      if (this.stepActive < 2) {
         this.stepActive++
       } else {
-        this.stepActive = 1
+        this.stepActive++
+        this.$refs.success.countDown()
       }
+    },
+    prev() {
+      this.stepActive = 1
     }
   }
 }

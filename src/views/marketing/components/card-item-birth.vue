@@ -10,33 +10,14 @@
         </el-tooltip>
       </div>
       <div class="action">
-        <el-button
-          type="text"
-          icon="el-icon-takeaway-box"
-          class="button"
-          @click="handleJump(item, 'list')"
-        >{{ item.lable }}列表</el-button>
-        <el-divider direction="vertical" />
-        <el-button
-          type="text"
-          icon="el-icon-document-add"
-          class="button"
-          @click="handleJump(item)"
-        >{{ item.createText || '新建活动' }}</el-button>
+        <el-button size="mini" type="primary" @click="handleJump(item.linkUrl)">礼包设置</el-button>
       </div>
     </div>
-    <!-- 右上角的事件 -->
-    <el-image v-if="item.extra" class="share" :src="item.extra" alt @click="onShare(item.value)" />
-    <preview-dialog ref="previewDialog" />
   </el-card>
 </template>
 
 <script>
-import previewDialog from '../activity/reduce-gift/_source/preview-dialog'
 export default {
-  components: {
-    previewDialog
-  },
   props: {
     item: {
       type: Object,
@@ -44,30 +25,13 @@ export default {
     }
   },
   methods: {
-    handleJump(itemUrl, jumpType) {
-      console.log('1111111---handleJump', itemUrl)
-      // 跳转列表
-      if (jumpType === 'list') {
-        this.$router.push(itemUrl.listUrl)
-      } else {
-        // 跳转新增页面，并清除之前得缓存数据；
-        this.$store.dispatch('tagsView/delCachedView', {
-          name: itemUrl.name
-        })
-        setTimeout(() => {
-          this.$router.push(itemUrl.linkUrl)
-        }, 0)
-      }
-    },
-    onShare(type) {
-      console.log('我是分享页面---------')
-      this.$refs.previewDialog.open(type)
+    handleJump(itemUrl) {
+      this.$router.push(itemUrl)
     }
   }
 }
 </script>
-
-<style lang="scss">
+<style lang="scss" scoped>
 .text-overflow-1 {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -108,6 +72,11 @@ export default {
     .action {
       // @extend .text-overflow-1;
       white-space: nowrap;
+      height: 36px;
+      line-height: 36px;
+      .el-button{
+        width: 100%;
+      }
     }
   }
   .share {
