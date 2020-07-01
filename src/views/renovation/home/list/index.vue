@@ -3,7 +3,7 @@
     <section class="list-operate">
       <div>
         <el-button type="primary" plain="" size="small" @click="handleBatchDel">批量删除</el-button>
-        <el-button type="primary" plain size="small">批量修改分享信息</el-button>
+        <el-button type="primary" plain size="small" @click="handleSetShareinfo">批量修改分享信息</el-button>
       </div>
       <el-button type="primary" size="small" @click="handleEdit('')">新建首页</el-button>
     </section>
@@ -50,19 +50,23 @@
         </el-table-column>
       </el-table>
     </section>
+    <input id="copyPath" class="" style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;" type="text">
     <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="previewShow">
       <preview v-if="previewShow" :dimension-id="dimensionId" />
     </el-dialog>
     <base-form ref="baseform" @success="getList" />
+    <share-info ref="setShare" :ids="chooseAry" @success="getList" />
   </div>
 </template>
 <script>
 import Preview from './_source/preview'
 import RenovationService from '@/api/renovation'
 import BaseForm from './_source/baseForm'
+import ShareInfo from './_source/shareInfo'
+import { mapGetters } from 'vuex'
 export default {
   name: 'HomeListIndex',
-  components: { Preview, BaseForm },
+  components: { Preview, BaseForm, ShareInfo },
   data() {
     return {
       loading: false,
@@ -70,11 +74,15 @@ export default {
       previewShow: false,
       visible: false,
       multipleSelection: [],
-      dimensionId: ''
+      dimensionId: '',
+      chooseAry: []
     }
   },
   created() {
     this.getList()
+  },
+  computed: {
+    ...mapGetters(['merCode'])
   },
   methods: {
     /**
@@ -93,16 +101,16 @@ export default {
     //  点击更多 点击菜单项触发的事件回调
     handleCommand({ type, data }) {
       switch (type) {
-        case 'home':
+        case 'home': // set home
           this._SetHome(data)
           break
-        case 'set':
+        case 'set': //  page setting
           this.$refs.baseform.openDialog(data)
           break
-        case 'copy':
-
+        case 'copy': // copy
+          this.copyPath(data)
           break
-        default:
+        default: // delete
           this._Delete([data.id])
           break
       }
@@ -130,6 +138,27 @@ export default {
         type: 'success'
       })
       this.getList()
+    },
+    async _Setcopy(row) { //  复制
+      await RenovationService.copyCurrentHome({ id: row.id, isNew: row.isNew })
+      this.$message({
+        message: '复制成功',
+        type: 'success'
+      })
+      this.getList()
+    },
+    handleSetShareinfo() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请选择你要设置的分享信息的数据',
+          type: 'warning'
+        })
+        return
+      }
+      this.multipleSelection.map(v => {
+        this.chooseAry.push(v.id)
+      })
+      this.$refs.setShare.openDialog()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
