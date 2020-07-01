@@ -69,7 +69,7 @@ export default {
     })
     $('.app-main-model').find('.mc-copyright-model').hide()
     $('.app-main-model').css({
-      height: 'calc(100vh - 102px)'
+      height: 'calc(100vh - 88px)'
     })
   },
   beforeUpdate() {
