@@ -40,6 +40,7 @@ export default {
             error: true
           }
         })
+        this.$message.error('请上传banner图')
         return
       }
 
@@ -53,6 +54,7 @@ export default {
       if (_.some(dragList, { error: true })) {
         const instance = findComponentsDownward(this.$root, 'SaPreview')[0]
         instance.$setVifDragData(dragList)
+        this.$message.error('请完善组件信息')
         return
       }
 

@@ -8,7 +8,7 @@
       <div class="bm-title"><strong>页面风格设置</strong></div>
       <m-style-setting ref="styleSetting" />
     </div>
-    <div v-if="basics.styleType === 'custom'" class="bm-style-setting">
+    <div class="bm-style-setting">
       <div class="bm-title"><strong>首页分享设置</strong></div>
       <m-share-setting ref="shareSetting" />
     </div>
@@ -39,9 +39,10 @@ export default {
         if (!styleSetting.$verification()) {
           return
         }
-        if (!shareSetting.$verification()) {
-          return
-        }
+      }
+
+      if (!shareSetting.$verification()) {
+        return
       }
       return true
     }
@@ -81,7 +82,7 @@ export default {
       }
     }
     .bm-style-setting {
-      margin-top: 40px;
+      margin-top: 20px;
     }
     .bm-basics-error {
       font-size: 12px;
