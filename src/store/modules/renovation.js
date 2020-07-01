@@ -17,7 +17,7 @@ const basics = {
   borderSize: 0, // 边框大小，单位px
   borderColor: '#FFFFFF', // 边框颜色，16进制值
   searchHint: '', // 搜索预显
-  styleType: 'blue', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
+  styleType: '', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
   shareDesc: '', // 分享描述
   shareImg: '' // 分享图片url
 }
