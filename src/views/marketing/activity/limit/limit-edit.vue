@@ -966,6 +966,9 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+.form-box {
+  margin-bottom: 80px;
+}
 .btn-select-store {
   display: inline-block;
   line-height: 1;

@@ -69,6 +69,7 @@
               <el-option label="普通订单" value="N" />
               <el-option label="拼团订单" value="G" />
               <!-- <el-option label="积分订单" value="V" /> -->
+              <el-option label="海贝商城订单" value="I" />
             </el-select>
             <!-- R处方药/N正常订单/V虚拟商品订单/G拼团订单 -->
             <!-- prescriptionSheetMark -->
@@ -235,9 +236,10 @@
                         <div class="header-cell">订单编号：</div>
                         <div class="header-cell" style="margin-right: 8px">
                           {{ item.serialNumber }}
-                          <span
-                            v-if="item.orderType !== 'G'"
-                          >{{ item.prescriptionSheetMark | orderType }}</span>
+                          <span v-if="item.orderType !== 'G'">
+                            <span v-if="item.prescriptionSheetMark === '1'">(处方药订单)</span>
+                            <span v-else>{{ item.orderType | orderType }}</span>
+                          </span>
                         </div>
                         <template v-if="item.orderType === 'G'">
                           <div class="header-cell">拼团订单：</div>
@@ -305,7 +307,10 @@
                               <div class="goods-number marginTop20">{{ list.commodityCode }}</div>
                             </div>
                             <div class="goods-info padding10">
-                              <div class="goods-price">￥{{ list.commodityPrice }}</div>
+                              <div class="goods-price">
+                                <span v-if="item.orderType === 'I'">{{ list.exchangeHb }}海贝 +</span>
+                                <span>￥{{ list.commodityPrice }}</span>
+                              </div>
                               <div class="goods-num">({{ list.commodityNumber }}件)</div>
                             </div>
                           </div>
@@ -345,6 +350,7 @@
                               </template>
                               <span v-else v-text="orderStatusText(item)" />
                             </template>
+
                             <!-- 立即发货出现时机，当前订单状态为代发货且配送方式不为自提；当为处方单时，必须要保证需求单审核状态为通过 -->
                             <template
                               v-if="item.orderStatus===4 && item.deliveryType!==2 && (item.prescriptionSheetMark === '0'|| (item.prescriptionSheetMark === '1'&& item.prescriptionStatus === 2 ))"
@@ -352,7 +358,7 @@
                               <div class="order_btn btn_normal" style="text-align:right">
                                 <!-- 立即发货 -->
                                 <dialog-delivery-order
-                                  v-if="showSendBtn"
+                                  v-auth:order.order-all.immediate-delivery
                                   :employee-data="employeeData"
                                   :p-item="item"
                                   @sendOrder="sendOrder"
@@ -455,8 +461,9 @@
                         <div class="header-cell" style="margin-right: 8px">
                           {{ item.serialNumber }}
                           <span
-                            v-if="item.orderType !== 'G'"
-                          >{{ item.prescriptionSheetMark | orderType }}</span>
+                            v-if="item.orderType !== 'G' && item.orderType !== 'I'"
+                          >{{ item.orderType | orderType }}</span>
+                          <span v-if="item.orderType === 'I'">(海贝商城订单)</span>
                         </div>
                         <template v-if="item.orderType === 'G'">
                           <div class="header-cell">拼团订单：</div>
@@ -469,6 +476,7 @@
                           <dialog-refund-order
                             :id="item.returnQuestId"
                             :returnresp-dto="item.returnQuestRespDTO"
+                            :order-type="item.orderType"
                           />
                         </div>
                       </div>
@@ -517,7 +525,10 @@
                               <div class="goods-number marginTop20">{{ list.commodityCode }}</div>
                             </div>
                             <div class="goods-info padding10">
-                              <div class="goods-price">￥{{ list.commodityPrice }}</div>
+                              <div class="goods-price">
+                                <span v-if="item.orderType === 'I'">{{ list.exchangeHb }}海贝 +</span>
+                                <span>￥{{ list.commodityPrice }}</span>
+                              </div>
                               <div class="goods-num">({{ list.commodityNumber }}件)</div>
                               <!-- <template v-if="!(refundStatus.includes(listQuery.orderStatus))">
                             <template v-if="list.status===8||list.status===10">
@@ -861,7 +872,7 @@
   </div>
 </template>
 <script>
-import ps from '@/layout/psHandler'
+// import ps from '@/layout/psHandler'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import dialogRefundOrder from './components/dialog-refundorder'
@@ -896,11 +907,23 @@ export default {
   filters: {
     orderType: function(value) {
       // 订单类型
-      if (value === '0') {
+      // if (value === '0') {
+      //   return '(普通订单)'
+      // }
+      // if (value === '1') {
+      //   return '(处方药订单)'
+      // }
+      if (value === 'R') {
+        return '(处方药订单)'
+      }
+      if (value === 'N') {
         return '(普通订单)'
       }
-      if (value === '1') {
-        return '(处方药订单)'
+      if (value === 'G') {
+        return '(拼团订单)'
+      }
+      if (value === 'I') {
+        return '(海贝商城订单)'
       }
       return ''
     },
@@ -1048,7 +1071,6 @@ export default {
           // }
         ]
       },
-      showSendBtn: ps.showSendGoodsBtn() || false, // 立即发货鉴权
       // value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
       dateSelect: [], // 选择下单时间
       keyword: '',

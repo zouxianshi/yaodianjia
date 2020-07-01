@@ -12,6 +12,61 @@ class RenovationService {
   constructor() {
     this.serve = config.merGoods
   }
+
+  homePageAdd(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage/add`,
+      method: 'post',
+      data
+    })
+  }
+
+  getHomePageAct(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage-act/time-limited/list`,
+      method: 'post',
+      data
+    })
+  }
+
+  getHomepageActItemList(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage-act/time-limited/queryItemList`,
+      method: 'post',
+      data
+    })
+  }
+
+  getHomePage(id) {
+    return request({
+      url: `${this.serve}/1.0/homepage/set/${id}`,
+      method: 'get'
+    })
+  }
+
+  updateSetInfo(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage/updateSetInfo`,
+      method: 'post',
+      data
+    })
+  }
+
+  getDefaultTpl() {
+    return request({
+      url: `${this.serve}/1.0/homepage/queryDefault`,
+      method: 'get'
+    })
+  }
+
+  getHomeCoupon(data) {
+    return request({
+      url: `${this.serve}/1.0/home-coupon/_search`,
+      method: 'post',
+      data
+    })
+  }
+
   /**
      *
      * @description  获取首页商城设置的列表

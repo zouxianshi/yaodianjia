@@ -1,16 +1,22 @@
 <template>
   <div class="operation-state-model">
-    <el-button type="primary" plain size="small">返回首页设置</el-button>
+    <el-button type="primary" plain size="small" @click="onGoHome">返回列表</el-button>
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 export default {
   name: 'State',
   data() {
     return {}
   },
   props: {},
-  methods: {},
+  methods: {
+    ...mapMutations('renovation', ['setStepVal']),
+    onGoHome() {
+      this.$router.push(`/renovation/home/list`)
+    }
+  },
   watch: {},
   beforeCreate() {
   },
