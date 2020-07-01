@@ -91,7 +91,7 @@ const actions = {
     const { id } = payload
     renovationService.getHomePage(id).then(res => {
       commit('setBasics', _.omit(res.data, ['list']))
-      commit('setDragList', handlerBackfill(res.data.list))
+      commit('setDragList', handlerBackfill(res.data))
       commit('setStaticDragData', {
         banner: _.find(res.data.list, ['type', 'banner'])
       })
