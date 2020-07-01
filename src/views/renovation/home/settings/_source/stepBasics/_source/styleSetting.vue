@@ -33,7 +33,7 @@
 import { mapState, mapMutations } from 'vuex'
 import renovationService from '@/api/renovation'
 import mCustomSetting from './customSetting'
-import { handlerBackfill } from './../../stepAssembly/default'
+import { handlerBackfill, bannerItem } from './../../stepAssembly/default'
 
 export default {
   name: 'StyleSetting',
@@ -75,25 +75,37 @@ export default {
       this.setDragList(dragList)
 
       this.setStaticDragData({
-        banner: _.find(data.list, ['type', 'banner'])
+        banner: {
+          ..._.find(data.list, ['type', 'banner']),
+          error: false
+        }
       })
     },
-    onChange(tplType) {
+    async onChange(tplType) {
       if (tplType !== 'custom') {
+        if (_.isEmpty(this.tplData)) {
+          await this.getDefaultTpl(tplType)
+        }
         this.handlerStyle(tplType)
       } else {
         this.setBasics({
           borderColor: '#ffffff',
           backgroundColor: '#ffffff'
         })
+        this.setDragList([])
+        this.setStaticDragData({
+          banner: _.cloneDeep(bannerItem)
+        })
       }
     },
-    getDefaultTpl() {
+    getDefaultTpl(tplType) {
       renovationService.getDefaultTpl().then(res => {
-        this.tplData = {
-          ..._.omit(res.data, ['id', 'name', 'title', 'shareDesc', 'shareImg'])
+        if (res.data) {
+          this.tplData = {
+            ..._.omit(res.data, ['id', 'name', 'title', 'shareDesc', 'shareImg'])
+          }
+          this.handlerStyle(tplType)
         }
-        this.handlerStyle('blue')
       })
     }
   },
@@ -102,7 +114,7 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.getDefaultTpl()
+
   },
   beforeMount() {
   },

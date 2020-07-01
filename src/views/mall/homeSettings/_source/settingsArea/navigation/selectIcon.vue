@@ -22,11 +22,7 @@ export default {
     return {
       visible: false,
       activeIcon: '',
-      defaultIcons: _.times(12, v => {
-        return {
-          icon: `sa_default_icons_${v}`
-        }
-      })
+      defaultIcons: []
     }
   },
   props: {
@@ -60,6 +56,8 @@ export default {
   beforeCreate() {
   },
   created() {
+    const chunkList = _.chunk(_.times(20, v => { return { icon: `sa_default_icons_${v}` } }), 4)
+    this.defaultIcons = [...chunkList[4], ...chunkList[3], ...chunkList[0], ...chunkList[1], ...chunkList[2]]
   },
   beforeMount() {
   },
