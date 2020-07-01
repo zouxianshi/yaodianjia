@@ -43,7 +43,7 @@
             </div>
           </div>
         </template>
-        <div v-else style="height: 280px;line-height:90px;margin:0 6px;background: #ECF5FF;">
+        <div v-else style="height: 120px;line-height: 120px;margin: 0px 6px;background: rgb(236, 245, 255);border: 2px dotted #4F88FF;">
           <p style="font-size: 14px;color: #4F88FF;text-align: center">请拖拽组件到此区域</p>
         </div>
       </v-draggable>

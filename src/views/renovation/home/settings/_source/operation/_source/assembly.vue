@@ -3,6 +3,7 @@
     <el-button type="primary" size="small" :loading="isLoading" @click="onSubmit('save')">保存</el-button>
     <el-button v-if="isEdit" type="primary" plain size="small" @click="onPreviousStep">上一步</el-button>
     <el-button type="primary" plain size="small" @click="onSubmit('preview')">预览</el-button>
+    <el-button type="primary" plain size="small" @click="$router.push(`/renovation/home/list`)">返回列表</el-button>
     <div>
       <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="isPreview">
         <m-preview v-if="isPreview" :dimension-id="dimensionId" />
