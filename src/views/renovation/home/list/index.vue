@@ -26,7 +26,7 @@
         <el-table-column prop="name" label="模板名称" min-width="180" align="left" />
         <el-table-column prop="name" label="新旧主页" align="center">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.isNew">新首页</el-tag>
+            <el-tag v-if="scope.row.isNew" type="success">新首页</el-tag>
             <el-tag v-else type="info">旧首页</el-tag>
           </template>
         </el-table-column>
