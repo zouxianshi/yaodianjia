@@ -108,7 +108,7 @@ export default {
           this.$refs.baseform.openDialog(data)
           break
         case 'copy': // copy
-          this.copyPath(data)
+          this._Setcopy(data)
           break
         default: // delete
           this._Delete([data.id])
@@ -139,7 +139,7 @@ export default {
       })
       this.getList()
     },
-    async _Setcopy(row) { //  复制
+    async _Setcopy(row) { //  复制一条数据
       await RenovationService.copyCurrentHome({ id: row.id, isNew: row.isNew })
       this.$message({
         message: '复制成功',
