@@ -631,12 +631,12 @@
                           ￥{{ item.totalActualAmount }}
                         </div>
                       </div>
-                      <div class="item-cell cell-con">
+                      <div class="item-cell cell-con preferential">
                         <div
                           v-if="item.isPromotion === 1"
                           class="cell-text"
-                        >立减：{{ item.activityDiscountAmont }}</div>
-                        <div class="cell-text">优惠：{{ item.couponAmount }}</div>
+                        >{{ item.pmtType | activityType }}：{{ item.activityDiscountAmont }}</div>
+                        <div class="cell-text">优惠券抵扣：{{ item.couponAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">
@@ -751,6 +751,24 @@ export default {
       }
       if (value === 2) {
         return '门店自提'
+      }
+    },
+    activityType: function(value) {
+      // 活动优惠类型
+      if (value === 11) {
+        return '特惠优惠'
+      }
+      if (value === 12) {
+        return '秒杀优惠'
+      }
+      if (value === 13) {
+        return '拼团优惠'
+      }
+      if (value === 14) {
+        return '立减'
+      }
+      if (value === 15) {
+        return '加价优惠'
       }
     }
   },
@@ -1240,6 +1258,9 @@ export default {
         flex: 1;
         text-align: center;
         width: 8vw;
+        &.preferential {
+          flex: 0 0 200px;
+        }
       }
     }
     .header-right {
@@ -1367,6 +1388,9 @@ export default {
               display: flex;
               align-items: center;
               justify-content: center;
+            }
+            .preferential {
+              flex: 0 0 200px;
             }
           }
         }
