@@ -112,11 +112,15 @@ export default {
       this.previewShow = true
     },
     handleEdit(id, isNew) {
-      let url = `/renovation/home/settings${id ? `?id=${id}` : ''}`
-      if (!isNew) {
-        url = `/mall/home-settings/${id}`
+      if (!id) {
+        this.$router.push(`/renovation/home/settings`)
+      } else {
+        let url = `/renovation/home/settings${id ? `?id=${id}` : ''}`
+        if (!isNew) {
+          url = `/mall/home-settings/${id}`
+        }
+        this.$router.push(url)
       }
-      this.$router.push(url)
     },
     // 设置为首页模板
     async _SetHome({ id }) {
