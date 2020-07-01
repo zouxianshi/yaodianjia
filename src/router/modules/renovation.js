@@ -40,7 +40,8 @@ export default [
             meta: {
               title: '主页设置',
               auth: false,
-              noCache: true
+              noCache: true,
+              activeMenu: '/renovation/home/list'
             },
             children: []
           }

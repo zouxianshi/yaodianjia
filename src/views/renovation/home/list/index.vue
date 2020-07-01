@@ -17,17 +17,23 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column label="页面标题" min-width="180" align="center">
+        <el-table-column label="页面标题" min-width="180" align="left">
           <template slot-scope="scope">
             <span v-text="scope.row.title" />
             <el-tag v-if="scope.row.isUse===1" size="mini" type="warning"><span class="el-icon-s-home" /> 当前页</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="模板名称" min-width="180" align="center" />
+        <el-table-column prop="name" label="模板名称" min-width="180" align="left" />
+        <el-table-column prop="name" label="新旧主页" align="center">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.isNew">新首页</el-tag>
+            <el-tag v-else type="info">旧首页</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="最后修改时间" prop="modifyTime" min-width="120" align="center" />
         <el-table-column label="操作" fixed="right" align="center" min-width="190">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" plain @click="handleEdit(scope.row.id)">编辑</el-button>
+            <el-button size="mini" type="primary" plain @click="handleEdit(scope.row.id,scope.row.isNew)">编辑</el-button>
             <el-button size="mini" type="primary" plain @click="handlePreview(scope.row)">预览</el-button>
             <el-dropdown @command="handleCommand">
               <el-button type="primary" size="mini" plain>
@@ -105,8 +111,11 @@ export default {
       this.dimensionId = row.id
       this.previewShow = true
     },
-    handleEdit(id) {
-      const url = `/renovation/home/settings${id ? `?id=${id}` : ''}`
+    handleEdit(id, isNew) {
+      let url = `/renovation/home/settings${id ? `?id=${id}` : ''}`
+      if (!isNew) {
+        url = `/mall/home-settings/${id}`
+      }
       this.$router.push(url)
     },
     // 设置为首页模板
