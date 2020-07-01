@@ -17,6 +17,18 @@
             <el-input v-model.trim="listQuery.erpOrName" size="small" placeholder="商品名称/编码" />
           </div>
           <div class="search-item">
+            <span class="label-name">商品分组</span>
+            <el-cascader
+              ref="groupRef"
+              v-model="groupId"
+              class="cascader"
+              :props="defaultProps"
+              :options="groupData"
+              size="small"
+              @change="handleChangeGroup"
+            />
+          </div>
+          <div class="search-item">
             <span class="label-name">生产企业</span>
             <el-input v-model.trim="listQuery.manufacture" size="small" placeholder="生产企业" />
           </div>
@@ -202,6 +214,7 @@ import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 import { getNewGoodsRecord, deleteGoods } from '@/api/new-goods'
 import { setAuditGoods } from '@/api/examine'
+import { getTypeTree } from '@/api/group'
 import { mapGetters } from 'vuex'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import checkDialog from './_source/check-dialog'
@@ -216,6 +229,13 @@ export default {
       tableData: [],
       total: 0,
       loading: false,
+      groupData: [],
+      groupId: [],
+      defaultProps: {
+        children: 'children',
+        label: 'name',
+        value: 'id'
+      },
       listQuery: {
         approvalNumber: '',
         auditStatus: '',
@@ -225,7 +245,8 @@ export default {
         merCode: '',
         erpOrName: '',
         origin: 0,
-        currentPage: 1
+        currentPage: 1,
+        groupId: ''
       },
       multipleSelection: [],
       srcList: [],
@@ -233,7 +254,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['name'])
+    ...mapGetters(['merCode', 'name'])
   },
   watch: {},
   created() {
@@ -241,12 +262,14 @@ export default {
       this.listQuery.auditStatus = parseInt(this.$route.query.type)
     }
     this.getList()
-
+    this._loadTypeList()
     console.log(this.listQuery.auditStatus + '__________________________')
   },
   beforeRouteLeave(to, from, next) {
     const name = `applyRecordEdit`
-    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === name)
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+      item => item.name === name
+    )
     if (hasGoodsEdit && to.name === name) {
       const answer = window.confirm('你还有数据没有保存，是否确认退出')
       if (answer) {
@@ -304,7 +327,7 @@ export default {
           data.auditReason = '其他原因'
         }
       } else {
-        this.listQuery.auditStatus = 3
+        this.listQuery.auditStatus = 1
       }
       setAuditGoods(data).then(res => {
         this.$message({
@@ -327,7 +350,12 @@ export default {
     },
     handleCurrentChange(row) {
       sessionStorage.setItem('mate', JSON.stringify(row))
-      this.$router.push('/goods-manage/apply-record-edit?id=' + row.id + '&backUrl=apply-record' + '&type=query&state=check')
+      this.$router.push(
+        '/goods-manage/apply-record-edit?id=' +
+          row.id +
+          '&backUrl=apply-record' +
+          '&type=query&state=check'
+      )
     },
     onLook(url) {
       this.srcList = [`${this.showImg(url)}?x-oss-process=style/w_800`]
@@ -345,8 +373,10 @@ export default {
         manufacture: '',
         merCode: '',
         erpOrName: '',
-        origin: this.listQuery.origin
+        origin: this.listQuery.origin,
+        groupId: ''
       }
+      this.groupId = ['']
       this.getList()
     },
     handleSelectionChange(rows) {
@@ -354,11 +384,18 @@ export default {
     },
     handleQuery(id) {
       this.isToEdit = true
-      this.$router.push('/goods-manage/apply-record-edit?id=' + id + '&backUrl=apply-record' + '&type=query')
+      this.$router.push(
+        '/goods-manage/apply-record-edit?id=' +
+          id +
+          '&backUrl=apply-record' +
+          '&type=query'
+      )
     },
     handleEdit(id, auditStatus) {
       this.isToEdit = true
-      this.$router.push(`/goods-manage/apply-record-edit?id=${id}&backUrl=apply-record&source=1&type=${auditStatus}`)
+      this.$router.push(
+        `/goods-manage/apply-record-edit?id=${id}&backUrl=apply-record&source=1&type=${auditStatus}`
+      )
     },
     handleSendCheck(row, isAll) {
       let ids = []
@@ -408,7 +445,7 @@ export default {
         params.origin = 2
       }
       params.times = Date.parse(new Date())
-      getNewGoodsRecord(params)
+      getNewGoodsRecord({ ...params, level: 3 })
         .then(res => {
           this.loading = false
           const { data, totalCount } = res.data
@@ -451,6 +488,10 @@ export default {
       }
       this._DelPost(data)
     },
+    handleChangeGroup(val) {
+      this.listQuery.groupId = val[val.length - 1]
+      this.getList()
+    },
     _DelPost(data) {
       this.$confirm('删除后该数据将无法恢复，确认删除？', '提示', {
         confirmButtonText: '确定',
@@ -467,6 +508,13 @@ export default {
           })
         })
         .catch(() => {})
+    },
+    _loadTypeList() {
+      // 获取分组
+      getTypeTree({ merCode: this.merCode, type: 2, use: true }).then(res => {
+        this.groupData = res.data
+        this.groupData.unshift({ name: '全部', id: '' })
+      })
     }
   }
 }

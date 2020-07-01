@@ -1,6 +1,9 @@
 
 import { uuid } from '@/utils'
 
+/**
+ * No data parameter structure
+ */
 export const noDragData = [
   {
     uuid: `${uuid('no-data-')}${uuid()}${uuid()}${uuid()}`,
@@ -11,6 +14,9 @@ export const noDragData = [
   }
 ]
 
+/**
+ * Global parameter configuration
+ */
 export const noDragGlobal = {
   id: '',
   name: '',
@@ -20,6 +26,9 @@ export const noDragGlobal = {
   searchHint: '请输入关键词'
 }
 
+/**
+ * item parameter
+ */
 export const itemParams = {
   className: '',
   id: '',
@@ -37,19 +46,31 @@ export const itemParams = {
   keyFeature: ''
 }
 
+/**
+ * item number
+ */
 const items = (n = 1) => {
   return _.times(n, () => { return itemParams })
 }
 
+/**
+ * Navigation default data structure
+ */
 export const navigation = {
   first: items(4),
   second: items(5)
 }
 
+/**
+ * Title default data structure
+ */
 export const title = [
   ...items()
 ]
 
+/**
+ * Advertise default data structure
+ */
 export const advertise = {
   first: items(1),
   second: items(3),
@@ -58,6 +79,9 @@ export const advertise = {
   five: items(1)
 }
 
+/**
+ * Commodity default data structure
+ */
 export const commodity = {
   first: items(2),
   second: items(3),
@@ -65,6 +89,9 @@ export const commodity = {
   four: items(1)
 }
 
+/**
+ * All data default structure
+ */
 export const handlerDragComp = () => {
   return [
     {

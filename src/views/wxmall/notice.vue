@@ -125,16 +125,12 @@
             </el-form-item>
             <!-- <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
               <el-date-picker
-                v-model="xForm.dateRange"
-                style="width: 350px"
+                v-model="searchForm.timeEnd"
                 size="small"
-                type="datetimerange"
+                type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
-                range-separator="至"
-                :default-time="['00:00:00','23:59:59']"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                @change="handleTimeChange($event, 3)"
+                placeholder="结束时间"
+                @change="handleTimeChange($event, 2)"
               />
             </el-form-item> -->
             <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">

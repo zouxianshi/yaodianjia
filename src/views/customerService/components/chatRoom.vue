@@ -34,11 +34,11 @@ export default {
   .chat-room-component {
     padding: 0;
     width: 100%;
-    border-bottom: 1px solid #eff0f5;
     background: #fff;
     display: flex;
     align-items: center;
     overflow: hidden;
+    height: calc(100vh - 204px);
 
     .chat-list {
       height: 100%;

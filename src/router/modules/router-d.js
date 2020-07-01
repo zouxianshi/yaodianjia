@@ -7,7 +7,7 @@ const router = [
     redirect: '/distribution/order-manage',
     name: 'distribution',
     meta: {
-      title: '预约商品',
+      title: '预约管理',
       icon: 'goods'
     },
     // alwaysShow: true,
