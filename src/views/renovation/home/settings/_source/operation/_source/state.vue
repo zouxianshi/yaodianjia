@@ -1,6 +1,6 @@
 <template>
   <div class="operation-state-model">
-    <el-button type="primary" plain size="small" @click="onGoHome">返回首页设置</el-button>
+    <el-button type="primary" plain size="small" @click="onGoHome">返回列表</el-button>
   </div>
 </template>
 <script>
@@ -14,7 +14,6 @@ export default {
   methods: {
     ...mapMutations('renovation', ['setStepVal']),
     onGoHome() {
-      this.setStepVal(1)
       this.$router.push(`/renovation/home/list`)
     }
   },

@@ -34,7 +34,6 @@ export default {
     this.timeName = setInterval(() => {
       this.timer--
       if (this.timer === 0) {
-        this.reset()
         this.$router.push(`/renovation/home/list`)
         return
       }

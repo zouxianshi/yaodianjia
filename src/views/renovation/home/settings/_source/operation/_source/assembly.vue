@@ -96,8 +96,6 @@ export default {
   beforeCreate() {
   },
   created() {
-    console.log(this.$route.query.id)
-    console.log('1111')
   },
   beforeMount() {
   },

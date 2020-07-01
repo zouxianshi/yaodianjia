@@ -9,7 +9,7 @@
         <m-banner :item-list="staticDragData.banner.itemList" />
       </div>
 
-      <v-draggable ref="draggable" v-model="dragData" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onDragAdd">
+      <v-draggable ref="draggable" v-model="dragData" draggable=".item-component" v-bind="dragOptions" @change="onDragChange" @add="onDragAdd" @move="onDragMove">
         <template v-if="dragData.length">
           <div v-for="(item,$index) in dragData" :id="rtUUid(item.type)" :key="rtUUid(item.type)" class="item-component">
             <div class="ic-item-hover" />
@@ -53,7 +53,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import { uuid } from '@/utils'
-import { items,bannerItem } from './../../default' // eslint-disable-line
+import { items,bannerItem,searchHintItem } from './../../default' // eslint-disable-line
 import vDraggable from 'vuedraggable'
 import mHeader from './_source/header/header'
 import mBanner from './_source/banner/banner'
@@ -81,18 +81,23 @@ export default {
   props: {},
   methods: {
     ...mapMutations('renovation', ['setDragList']),
+    onDragMove(v) {
+      console.log(v)
+    },
     onConfirm(index) {
       this.dragData = _.filter(this.dragData, (v, i) => i !== index)
       this.onDragAdd()
+      jumpSelectAss(this.$root, searchHintItem)
     },
     $setVifDragData(dragData) {
       this.dragData = dragData
     },
     onDragAdd() {
       this.setDragList(this.dragData)
-      console.log(this.dragData)
     },
-    onDragChange() {},
+    onDragChange() {
+      this.onDragAdd()
+    },
     onDragSet(item) {
       jumpSelectAss(this.$root, item)
     },

@@ -47,7 +47,8 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+  },
   components: { mComponents, mPreview, mSet, mSaTitle }
 }
 </script>

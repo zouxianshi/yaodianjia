@@ -25,6 +25,7 @@ const basics = {
 
 const state = {
   stepVal: 2,
+  homeLoading: false,
   basics: _.cloneDeep(basics),
   /* basics: {
     'name': 'name',
@@ -61,6 +62,9 @@ const mutations = {
   },
   setDragList: (state, payload) => {
     state.dragList = payload
+  },
+  setHomeLoading: (state, payload) => {
+    state.homeLoading = payload
   },
   reset: (state, payload) => {
     state.stepVal = 1
@@ -107,12 +111,15 @@ const actions = {
       commit('setStaticDragData', {
         banner: _.find(res.data.list, ['type', 'banner'])
       })
+    }).catch(() => {
     })
   },
   saveHomePage({ commit, state }, payload) {
+    console.log([state.staticDragData.banner.id, ..._.map(state.dragList, 'id')])
     const p = {
       list: [state.staticDragData.banner, ...state.dragList],
-      ...state.basics
+      ...state.basics,
+      setIds: [state.staticDragData.banner.id, ..._.map(state.dragList, 'id')]
     }
 
     return new Promise((resolve, reject) => {
