@@ -10,7 +10,7 @@
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
       <el-button type="primary" size="mini" @click="onSubmit">确定</el-button>
     </div>
-    <el-button slot="reference" icon="el-icon-caret-bottom">选择图标</el-button>
+    <el-button slot="reference" icon="el-icon-caret-bottom" :size="btnSize">选择图标</el-button>
   </el-popover>
 </template>
 <script>
@@ -33,6 +33,10 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    btnSize: {
+      type: String,
+      default: 'mini'
     }
   },
   methods: {
