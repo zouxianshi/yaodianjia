@@ -67,7 +67,10 @@ export default {
     $('.header-model').css({
       height: '98px'
     })
-    $('.app-main-model').find('.copyright').hide()
+    $('.app-main-model').find('.mc-copyright-model').hide()
+    $('.app-main-model').css({
+      height: 'calc(100vh - 102px)'
+    })
   },
   beforeUpdate() {
   },
@@ -99,7 +102,7 @@ export default {
   .home-settings-model {
     background: #fff;
     border-radius: 4px;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 207px);
     position: relative;
     .hsm-main {
       overflow-y: scroll;
