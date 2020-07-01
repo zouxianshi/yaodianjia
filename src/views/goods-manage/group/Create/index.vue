@@ -44,9 +44,9 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .gt-create-model {
     .content {
+      margin-top: 20px;
       // border: 1px solid #e8eaec;
       border-radius: 3px;
-      padding: 16px;
       margin-bottom: 90px;
       .list {
         min-height: calc(100vh - 248px);

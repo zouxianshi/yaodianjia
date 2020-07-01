@@ -1,297 +1,299 @@
 <template>
   <div class="app-container">
-    <el-alert
-      v-if="offlineStore - onlineStore > 0"
-      type="warning"
-      :closable="false"
-    >
-      <template slot="title">
-        当前上线{{ onlineStore }}家门店，还能上线{{ offlineStore-onlineStore }}家门店
-      </template>
-    </el-alert>
-    <el-alert
-      v-if="offlineStore === 0"
-      type="warning"
-      :closable="false"
-    >
-      <template slot="title">
-        没有订购任何门店
-      </template>
-    </el-alert>
-    <el-alert
-      v-if="offlineStore == null"
-      type="warning"
-      :closable="false"
-    >
-      <template slot="title">
-        不限制门店上线数量
-      </template>
-    </el-alert>
-    <el-alert
-      v-else-if="offlineStore-onlineStore < 0"
-      type="warning"
-      :closable="false"
-    >
-      <template slot="title">
-        需尽快下线 {{ onlineStore - offlineStore }} 数量门店
-      </template>
-    </el-alert>
     <div>
-      <el-button type="primary" size="small" style="margin-top: 20px" @click="showDialog">添加上线门店</el-button>
-      <div style="float: right">
-        <el-input v-model="searchParams.searchKey" size="small" style="width: 200px;margin-top: 20px;margin-left: 80px;" placeholder="门店编码/门店名称" />
-        <el-button type="primary" size="small" style="margin-left: 10px" @click="onSearch">查询</el-button>
-        <el-button type="primary" size="small" @click="handleExport">导出<i class="el-icon-download el-icon--right" /></el-button>
+      <el-alert
+        v-if="offlineStore - onlineStore > 0"
+        type="warning"
+        :closable="false"
+      >
+        <template slot="title">
+          当前上线{{ onlineStore }}家门店，还能上线{{ offlineStore-onlineStore }}家门店
+        </template>
+      </el-alert>
+      <el-alert
+        v-if="offlineStore === 0"
+        type="warning"
+        :closable="false"
+      >
+        <template slot="title">
+          没有订购任何门店
+        </template>
+      </el-alert>
+      <el-alert
+        v-if="offlineStore == null"
+        type="warning"
+        :closable="false"
+      >
+        <template slot="title">
+          不限制门店上线数量
+        </template>
+      </el-alert>
+      <el-alert
+        v-else-if="offlineStore-onlineStore < 0"
+        type="warning"
+        :closable="false"
+      >
+        <template slot="title">
+          需尽快下线 {{ onlineStore - offlineStore }} 数量门店
+        </template>
+      </el-alert>
+      <div>
+        <el-button type="primary" size="small" style="margin-top: 20px" @click="showDialog">添加上线门店</el-button>
+        <div style="float: right">
+          <el-input v-model="searchParams.searchKey" size="small" style="width: 200px;margin-top: 20px;margin-left: 80px;" placeholder="门店编码/门店名称" />
+          <el-button type="primary" size="small" style="margin-left: 10px" @click="onSearch">查询</el-button>
+          <el-button type="primary" size="small" @click="handleExport">导出<i class="el-icon-download el-icon--right" /></el-button>
+        </div>
       </div>
-    </div>
 
-    <section class="table-box">
-      <el-table
-        ref="multipleTable"
-        v-loading="loading"
-        :data="list"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-      >
-        <!--        @select="handleSelectChange"-->
-        <!--        @select-all="handleSelectAllChange"-->
-        <div slot="empty">
-          当前无上线门店，上线商城需添加<el-button type="text" @click="showDialog">上线门店</el-button>
-        </div>
-        <el-table-column
-          type="selection"
-          width="55"
-        />
-        <el-table-column label="门店图片">
-          <template slot-scope="scope">
-            <el-image
-              style="width: 70px; height: 70px"
-              :src="showImg(scope.row.stPath)"
-              :preview-src-list="[`${showImg(scope.row.stPath)}`]"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="门店名称">
-          <template slot-scope="scope">
-            <span v-if="scope.row.stName">
-              {{ scope.row.stName }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="门店编码">
-          <template slot-scope="scope">
-            <span v-if="scope.row.stCode">
-              {{ scope.row.stCode }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="门店地址">
-          <template slot-scope="scope">
-            <span v-if="scope.row.address">
-              {{ scope.row.province }}
-              {{ scope.row.city }}
-              {{ scope.row.area }}
-              {{ scope.row.address }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="电话">
-          <template slot-scope="scope">
-            <span v-if="scope.row.mobile">
-              {{ scope.row.mobile }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="配送支持">
-          <template slot-scope="scope">
-            <span v-if="scope.row.isself === 1 || scope.row.isdelivery === 1 || scope.row.isdistribution === 1">
-              {{ getDeliveryFun(scope.row) }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100px">
-          <template slot-scope="scope">
-            <!--            <el-button size="small" type="text">编辑</el-button>-->
-            <el-button type="text" @click="onEdit(scope.row.id)">编辑</el-button>
-            <el-button type="text" :disabled="scope.row.centerStore === 1" @click="offline(scope.row.stCode)">下线</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pages">
-        <el-pagination
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalCount"
-          :current-page="searchParams.currentPage"
-          :page-size="searchParams.pageSize"
-          @size-change="pageSizeChange"
-          @current-change="pageChange"
-        />
-      </div>
-      <!--<div class="result-section">
-        <div class="blank-line" />
-        <div class="title">
-          <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
-          <span v-else style="color: red">请选取门店</span>
-        </div>
-        <div class="label-line">
-          <span v-for="(mItem, index2) in mySelectList" :key="index2" class="label" style="margin-right: 15px">
-            <span v-text="mItem.stName" />
-            <el-button type="text" size="mini" class="icon el-icon-close" @click="removeMyselectItem(mItem, index2)" />
-            &lt;!&ndash;<i
-                class="icon el-icon-close"
-                @click.stop="removeDialogMyselectItem(mItem, index2)"
-              />&ndash;&gt;
-          </span>
-        </div>
-      </div>-->
-    </section>
-    <div style="margin-top: 10px">
-      <span style="font-size: 14px">已选{{ multipleSelection.length }}家门店</span>
-      <el-button type="primary" size="mini" @click="offline(null)">下线</el-button>
-    </div>
-    <!--<div style="margin-top: 10px;font-size: 14px;font-weight: 400;color:#99a9bf;line-height: 20px">
-      添加上线门店时，如在购买范围内的上线门店数量，提示：操作成功；如超出门店购买范围<br>
-      提示:您上线的门店已超出上限，如需上线更多门店，请进行购买
-    </div>-->
-    <el-dialog
-      v-if="visable"
-      lock-scroll
-      title="添加上线门店"
-      :modal-append-to-body="false"
-      :visible.sync="visable"
-      width="800px"
-      :close-on-click-modal="false"
-      @close="dismiss"
-    >
-      <div
-        style=" font-size: 14px;
-    font-weight: 400;
-    color: #99a9bf"
-      >
-        上线门店需配置门店地址、门店电话、配送方式，未配置的门店无法上线门店商城
-      </div>
-      <div style="margin-top: 10px">
-        <span>选择门店：</span>
-        <el-input v-model="diaLogSearchParams.searchKey" size="small" placeholder="门店编码/名称" style="width: 180px" />
-        <el-button size="small" type="primary" style="margin-left: 5px" @click="onDialogSearch">查询</el-button>
-      </div>
-      <el-table
-        ref="multipleDialogTable"
-        v-loading="dialogLoading"
-        :data="dialogList"
-        border
-        height="200px"
-        style="margin-top: 10px"
-        @select="handleDialogSelectChange"
-        @select-all="handleDialogSelectAllChange"
-      >
-        <!-- @selection-change="handleDialogSelectionChange" -->
-        <el-table-column
-          type="selection"
-          width="55"
-          :selectable="checkDialogSelectable"
-        />
-        <el-table-column label="门店编码" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <span v-if="scope.row.stCode">
-              {{ scope.row.stCode }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="门店名称" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <span v-if="scope.row.stName">
-              {{ scope.row.stName }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="门店地址" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <span v-if="scope.row.address">
-              {{ scope.row.province }}
-              {{ scope.row.city }}
-              {{ scope.row.area }}
-              {{ scope.row.address }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="门店电话" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <span v-if="scope.row.mobile">
-              {{ scope.row.mobile }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="配送方式" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <span v-if="scope.row.isself === 1 || scope.row.isdelivery === 1 || scope.row.isdistribution === 1">
-              {{ getDeliveryFun(scope.row) }}
-            </span>
-            <span v-else style="color: red">未配置</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div style="position: relative">
-        <!--<span
-          v-if="dialogSelectedStore"
-          style="
-        position: absolute;
-        margin-top: 25px;
-        width: 250px;
-        display: block;
-        overflow: hidden;
-        height:16px;
-        line-height: 16px;
-        text-overflow: ellipsis;
-        -ms-text-overflow: ellipsis;
-        white-space:nowrap;"
+      <section class="table-box">
+        <el-table
+          ref="multipleTable"
+          v-loading="loading"
+          :data="list"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
         >
-          已选门店：{{ dialogSelectedStore }}
-        </span>-->
+          <!--        @select="handleSelectChange"-->
+          <!--        @select-all="handleSelectAllChange"-->
+          <div slot="empty">
+            当前无上线门店，上线商城需添加<el-button type="text" @click="showDialog">上线门店</el-button>
+          </div>
+          <el-table-column
+            type="selection"
+            width="55"
+          />
+          <el-table-column label="门店图片">
+            <template slot-scope="scope">
+              <el-image
+                style="width: 70px; height: 70px"
+                :src="showImg(scope.row.stPath)"
+                :preview-src-list="[`${showImg(scope.row.stPath)}`]"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="门店名称">
+            <template slot-scope="scope">
+              <span v-if="scope.row.stName">
+                {{ scope.row.stName }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="门店编码">
+            <template slot-scope="scope">
+              <span v-if="scope.row.stCode">
+                {{ scope.row.stCode }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="门店地址">
+            <template slot-scope="scope">
+              <span v-if="scope.row.address">
+                {{ scope.row.province }}
+                {{ scope.row.city }}
+                {{ scope.row.area }}
+                {{ scope.row.address }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="电话">
+            <template slot-scope="scope">
+              <span v-if="scope.row.mobile">
+                {{ scope.row.mobile }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="配送支持">
+            <template slot-scope="scope">
+              <span v-if="scope.row.isself === 1 || scope.row.isdelivery === 1 || scope.row.isdistribution === 1">
+                {{ getDeliveryFun(scope.row) }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100px">
+            <template slot-scope="scope">
+              <!--            <el-button size="small" type="text">编辑</el-button>-->
+              <el-button type="text" @click="onEdit(scope.row.id)">编辑</el-button>
+              <el-button type="text" :disabled="scope.row.centerStore === 1" @click="offline(scope.row.stCode)">下线</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
         <div class="pages">
           <el-pagination
             background
             layout="total, sizes, prev, pager, next, jumper"
-            :total="diaLogTotalCount"
-            :current-page="diaLogSearchParams.currentPage"
-            :page-size="diaLogSearchParams.pageSize"
-            @size-change="dialogPageSizeChange"
-            @current-change="dialogPageChange"
+            :total="totalCount"
+            :current-page="searchParams.currentPage"
+            :page-size="searchParams.pageSize"
+            @size-change="pageSizeChange"
+            @current-change="pageChange"
           />
         </div>
-        <div class="result-section">
+        <!--<div class="result-section">
           <div class="blank-line" />
           <div class="title">
-            <span v-if="myDialogSelectList && myDialogSelectList.length>0">已选门店：</span>
+            <span v-if="mySelectList && mySelectList.length>0">已选门店：</span>
             <span v-else style="color: red">请选取门店</span>
           </div>
           <div class="label-line">
-            <span v-for="(mItem, index2) in myDialogSelectList" :key="index2" class="label" style="margin-right: 15px">
+            <span v-for="(mItem, index2) in mySelectList" :key="index2" class="label" style="margin-right: 15px">
               <span v-text="mItem.stName" />
-              <el-button type="text" size="mini" class="icon el-icon-close" @click="removeDialogMyselectItem(mItem, index2)" />
+              <el-button type="text" size="mini" class="icon el-icon-close" @click="removeMyselectItem(mItem, index2)" />
+              &lt;!&ndash;<i
+                  class="icon el-icon-close"
+                  @click.stop="removeDialogMyselectItem(mItem, index2)"
+                />&ndash;&gt;
+            </span>
+          </div>
+        </div>-->
+      </section>
+      <div style="margin-top: 10px">
+        <span style="font-size: 14px">已选{{ multipleSelection.length }}家门店</span>
+        <el-button type="primary" size="mini" @click="offline(null)">下线</el-button>
+      </div>
+      <!--<div style="margin-top: 10px;font-size: 14px;font-weight: 400;color:#99a9bf;line-height: 20px">
+        添加上线门店时，如在购买范围内的上线门店数量，提示：操作成功；如超出门店购买范围<br>
+        提示:您上线的门店已超出上限，如需上线更多门店，请进行购买
+      </div>-->
+      <el-dialog
+        v-if="visable"
+        lock-scroll
+        title="添加上线门店"
+        :modal-append-to-body="false"
+        :visible.sync="visable"
+        width="800px"
+        :close-on-click-modal="false"
+        @close="dismiss"
+      >
+        <div
+          style=" font-size: 14px;
+    font-weight: 400;
+    color: #99a9bf"
+        >
+          上线门店需配置门店地址、门店电话、配送方式，未配置的门店无法上线门店商城
+        </div>
+        <div style="margin-top: 10px">
+          <span>选择门店：</span>
+          <el-input v-model="diaLogSearchParams.searchKey" size="small" placeholder="门店编码/名称" style="width: 180px" />
+          <el-button size="small" type="primary" style="margin-left: 5px" @click="onDialogSearch">查询</el-button>
+        </div>
+        <el-table
+          ref="multipleDialogTable"
+          v-loading="dialogLoading"
+          :data="dialogList"
+          border
+          height="200px"
+          style="margin-top: 10px"
+          @select="handleDialogSelectChange"
+          @select-all="handleDialogSelectAllChange"
+        >
+          <!-- @selection-change="handleDialogSelectionChange" -->
+          <el-table-column
+            type="selection"
+            width="55"
+            :selectable="checkDialogSelectable"
+          />
+          <el-table-column label="门店编码" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <span v-if="scope.row.stCode">
+                {{ scope.row.stCode }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="门店名称" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <span v-if="scope.row.stName">
+                {{ scope.row.stName }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="门店地址" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <span v-if="scope.row.address">
+                {{ scope.row.province }}
+                {{ scope.row.city }}
+                {{ scope.row.area }}
+                {{ scope.row.address }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="门店电话" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <span v-if="scope.row.mobile">
+                {{ scope.row.mobile }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="配送方式" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <span v-if="scope.row.isself === 1 || scope.row.isdelivery === 1 || scope.row.isdistribution === 1">
+                {{ getDeliveryFun(scope.row) }}
+              </span>
+              <span v-else style="color: red">未配置</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div style="position: relative">
+          <!--<span
+            v-if="dialogSelectedStore"
+            style="
+          position: absolute;
+          margin-top: 25px;
+          width: 250px;
+          display: block;
+          overflow: hidden;
+          height:16px;
+          line-height: 16px;
+          text-overflow: ellipsis;
+          -ms-text-overflow: ellipsis;
+          white-space:nowrap;"
+          >
+            已选门店：{{ dialogSelectedStore }}
+          </span>-->
+          <div class="pages">
+            <el-pagination
+              background
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="diaLogTotalCount"
+              :current-page="diaLogSearchParams.currentPage"
+              :page-size="diaLogSearchParams.pageSize"
+              @size-change="dialogPageSizeChange"
+              @current-change="dialogPageChange"
+            />
+          </div>
+          <div class="result-section">
+            <div class="blank-line" />
+            <div class="title">
+              <span v-if="myDialogSelectList && myDialogSelectList.length>0">已选门店：</span>
+              <span v-else style="color: red">请选取门店</span>
+            </div>
+            <div class="label-line">
+              <span v-for="(mItem, index2) in myDialogSelectList" :key="index2" class="label" style="margin-right: 15px">
+                <span v-text="mItem.stName" />
+                <el-button type="text" size="mini" class="icon el-icon-close" @click="removeDialogMyselectItem(mItem, index2)" />
               <!--<i
                 class="icon el-icon-close"
                 @click.stop="removeDialogMyselectItem(mItem, index2)"
               />-->
-            </span>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dismiss">取 消</el-button>
-        <el-button type="primary" size="small" @click="online">确定</el-button>
-      </div>
-    </el-dialog>
+        <div slot="footer" class="dialog-footer">
+          <el-button size="small" @click="dismiss">取 消</el-button>
+          <el-button type="primary" size="small" @click="online">确定</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 
 </template>

@@ -46,7 +46,7 @@
                     </span>
                   </el-tag> -->
                   <el-tag v-for="(item,index) in chooseGroup" :key="index" style="margin-right:10px" closable @close="handleRemoveGroup(index)">
-                    <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}&nbsp;>&nbsp;{{ item[2].name }}</span>
+                    <span class="tag">{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}{{ item[2] && "&nbsp;>&nbsp;" + item[2].name }}</span>
                   </el-tag>
                 </p>
                 <span class="opreate">
@@ -541,7 +541,9 @@ export default {
           const datas = res.data
           ids.map(v => {
             const dat = datas[v]
-            this.chooseGroup.push([{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }, { name: dat.child.child.name, id: dat.child.child.id }])
+            const arr = [{ name: dat.name, id: dat.id }, { name: dat.child.name, id: dat.child.id }]
+            dat.child.child && arr.push({ name: dat.child.child.name, id: dat.child.child.id })
+            this.chooseGroup.push(arr)
           })
         }
       })
@@ -764,7 +766,11 @@ export default {
             type: 'success'
           })
           this.basicForm.id = res.data
-          this.$router.push('/goods-manage/constitute-goods')
+          this.$store
+            .dispatch('tagsView/delView', this.$route)
+            .then(({ visitedViews }) => {
+              this.$router.push('/goods-manage/constitute-goods')
+            })
           this.subLoading = false
         })
         .catch(_ => {
@@ -780,7 +786,12 @@ export default {
             message: '保存成功',
             type: 'success'
           })
-          this.$router.push('/goods-manage/constitute-goods')
+
+          this.$store
+            .dispatch('tagsView/delView', this.$route)
+            .then(({ visitedViews }) => {
+              this.$router.push('/goods-manage/constitute-goods')
+            })
           this.subLoading = false
         })
         .catch(_ => {
@@ -877,7 +888,7 @@ export default {
           ].id // 第一级分类id
           const data = JSON.parse(JSON.stringify(this.basicForm))
 
-          data.groupId = this.chooseGroup[0][2].id // 第三级分组的id
+          data.groupId = this.chooseGroup[0][2] ? this.chooseGroup[0][2].id : this.chooseGroup[0][1].id // 第三级分组的id
 
           data.merCode = this.merCode
           this.subLoading = true

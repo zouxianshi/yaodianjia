@@ -327,7 +327,7 @@ export default {
           data.auditReason = '其他原因'
         }
       } else {
-        this.listQuery.auditStatus = 3
+        this.listQuery.auditStatus = 1
       }
       setAuditGoods(data).then(res => {
         this.$message({

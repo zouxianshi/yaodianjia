@@ -367,11 +367,6 @@ export default {
 
 <style scoped lang="scss">
   .msg-notice-btn {
-    position: fixed;
-    top: 16px;
-    right: 330px;
-    z-index: 200;
-    color: #fff;
 
     @keyframes fade {
       from {
@@ -397,6 +392,10 @@ export default {
       }
     }
     i {
+      width: 100px;
+      height: 32px;
+      cursor: pointer;
+      opacity: 0;
       &.shaking {
         animation: fade 1000ms infinite;
       }

@@ -7,8 +7,7 @@ const router = [
     name: 'wxmall',
     meta: {
       title: '商城装修',
-      icon: 'goods',
-      auth: 'yaodianjia-wxmall'
+      icon: 'goods'
     },
     alwaysShow: true,
     children: [
@@ -19,8 +18,7 @@ const router = [
         meta: {
           title: '主页设置',
           noCache: true,
-          activeMenu: '/wxmall/home-set',
-          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-home-set'
+          activeMenu: '/wxmall/home-set'
         }
       },
       {
@@ -29,8 +27,7 @@ const router = [
         name: 'banner',
         meta: {
           title: '首页轮播图',
-          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-banner'
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       }, {
         path: 'notice',
@@ -39,8 +36,7 @@ const router = [
         meta: {
           title: '首页公告栏',
           noCache: true,
-          activeMenu: '/wxmall/notice',
-          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-notice'
+          activeMenu: '/wxmall/notice'
         }
       }, {
         path: 'ad-position',
@@ -49,8 +45,7 @@ const router = [
         meta: {
           title: '分类广告位',
           noCache: true,
-          activeMenu: '/wxmall/ad-position',
-          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-ad-position'
+          activeMenu: '/wxmall/ad-position'
         }
       }
     ]
@@ -61,9 +56,8 @@ const router = [
     redirect: '/marketing/activity',
     name: 'marketing',
     meta: {
-      title: '营销活动',
-      icon: 'goods',
-      auth: 'marketing'
+      title: '营销中心',
+      icon: 'goods'
     },
     alwaysShow: true,
     children: [
@@ -72,8 +66,7 @@ const router = [
         component: () => import('@/views/marketing/activity/index'),
         name: 'activity',
         meta: {
-          title: '活动管理',
-          auth: 'marketing.marketing-manager',
+          title: '精彩活动',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
@@ -112,7 +105,7 @@ const router = [
         component: () => import('@/views/marketing/activity/list'),
         name: 'activityList',
         meta: {
-          title: '活动管理列表',
+          title: '精彩活动列表',
           activeMenu: '/marketing/activity',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
@@ -174,8 +167,7 @@ const router = [
         meta: {
           title: '礼品管理',
           auth: 'marketing.gift',
-          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-          activeMenu: '/marketing/gifts'
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
       {
@@ -185,8 +177,7 @@ const router = [
         meta: {
           title: '赠品管理',
           auth: 'marketing.gift',
-          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-          activeMenu: '/marketing/gifts'
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
       {
@@ -195,7 +186,6 @@ const router = [
         name: 'GiftsComplimentaryCreate',
         meta: {
           title: '创建赠品',
-          auth: 'marketing.gift',
           noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },

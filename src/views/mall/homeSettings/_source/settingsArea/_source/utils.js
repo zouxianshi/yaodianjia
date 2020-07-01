@@ -1,4 +1,6 @@
-
+/**
+ * get link addr type Array
+ */
 export const pageTypeList = [
   {
     name: '商城页面',
@@ -18,5 +20,10 @@ export const pageTypeList = [
   // }
 ]
 
+/**
+ * handler specId is array
+ * @param {data} array
+ * @param {specId} string
+ */
 export const saIsId = (data, specId) => _.map(data, v => v.specId).includes(specId)
 
