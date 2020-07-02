@@ -390,7 +390,7 @@ export default () => {
             type: 'adFrame',
             typeName: '广告框',
             subType: 'first',
-            subTitle: '',
+            subtitle: '',
             title: '',
             name: '默认样式',
             error: false,
