@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div>
-      <el-link type="warning" @click="dialogVisible=true">从标库新建商品规范说明?</el-link>
+      <!-- <el-link type="warning" @click="dialogVisible=true">从标库新建商品规范说明?</el-link> -->
       <section class="addition-wrapper">
         <p class="title">从商品库新建商品</p>
         <el-divider />
@@ -51,12 +51,12 @@
             </div>
           </div>
         </section>
-        <el-alert type="warning" style="margin-bottom:10px" :closable="false">
+        <!-- <el-alert type="warning" style="margin-bottom:10px" :closable="false">
           <p slot="title" class="alret-title">
             没有想要商品，去
             <router-link tag="span" class="link" to="/goods-manage/apply">创建自有新品</router-link>
           </p>
-        </el-alert>
+        </el-alert> -->
         <el-table v-loading="loading" :data="tableData" stripe>
           <template slot="empty">
             <div v-show="!loading" class="table-nodata">
@@ -217,7 +217,11 @@ export default {
       row.loading = true
       checkComGoods({ ids: [row.id], userName: this.name, merCode: this.merCode })
         .then(res => {
-          this.$router.push('/goods-manage/addition-edit?id=' + row.id + '&backUrl=apply-record&type=添加该商品&origin=1')
+          this.$router.push(
+            '/goods-manage/addition-edit?id=' +
+              row.id +
+              '&backUrl=apply-record&type=添加该商品&origin=1'
+          )
           // this.$message({
           //   message:
           //     '添加商品成功，请至自建新品/新品申请记录/“待完善”页面补充商品信息',

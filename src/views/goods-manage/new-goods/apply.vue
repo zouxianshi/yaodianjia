@@ -39,7 +39,7 @@
             </p>
           </div>
         </li>
-        <li class="xpc">
+        <!-- <li class="xpc">
           <div class="m">
             <div class="bg"><i class="el-icon-tickets" /></div>
             <div class="name">新品申请记录</div>
@@ -52,7 +52,7 @@
                 >立即查看</button>
               </a></p>
           </div>
-        </li>
+        </li> -->
       </div>
     </div>
   </div>
