@@ -70,7 +70,8 @@ const mutations = {
   reset: (state, payload) => {
     state.stepVal = 1
     state.basics = _.cloneDeep(basics)
-    state.dragList = []
+    state.dragList = [
+    ]
     state.staticDragData.banner = _.cloneDeep(bannerItem)
   }
 }
