@@ -70,16 +70,6 @@ const router = [
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
-      // {
-      //   path: 'activity/create',
-      //   component: () => import('@/views/marketing/activity/create'),
-      //   name: 'create',
-      //   meta: {
-      //     title: '新建活动',
-      //     auth: 'marketing.marketing-manager',
-      //     noCache: true
-      //   }
-      // },
       {
         path: 'activity/dm-template',
         component: () => import('@/views/marketing/activity/DM/template'),
@@ -156,6 +146,26 @@ const router = [
         name: 'LimitEdit',
         meta: {
           title: '创建限时活动',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/constitute-goods',
+        component: () => import('@/views/marketing/activity/constitute-goods/list'),
+        name: 'constituteGoods',
+        meta: {
+          title: '组合商品',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/constitute-goods/edit',
+        component: () => import('@/views/marketing/activity/constitute-goods/edit'),
+        name: 'constituteGoodsEdit',
+        meta: {
+          title: '组合商品',
           noCache: false,
           activeMenu: '/marketing/activity'
         }
