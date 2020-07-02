@@ -5,7 +5,7 @@
  */
 
 import _ from 'lodash'
-import { uuid } from '@/utils'/* eslint-disable */
+import { uuid } from '@/utils' // eslint-disable-line 
 import renovationService from '@/api/renovation'
 import { bannerItem, handlerBackfill,items } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
 
@@ -68,19 +68,9 @@ const mutations = {
     state.homeLoading = payload
   },
   reset: (state, payload) => {
-    state.stepVal = 2
+    state.stepVal = 1
     state.basics = _.cloneDeep(basics)
-    state.dragList = [
-      {
-        uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
-        type: 'navigation',
-        typeName: '导航栏',
-        subType: 'first',
-        name: '一排四个',
-        error: false,
-        itemList: items(4),
-        max: 8
-      }]
+    state.dragList = []
     state.staticDragData.banner = _.cloneDeep(bannerItem)
   }
 }
