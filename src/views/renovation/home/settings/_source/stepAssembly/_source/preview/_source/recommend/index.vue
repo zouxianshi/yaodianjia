@@ -1,9 +1,8 @@
 <template>
   <div class="recommend-index-model">
-    <div class="rim-bg">
-      <div class="rim-left-bg" />
-      <div class="rim-center-bg" />
-      <div class="rim-right-bg" />
+    <div class="rim-title">
+      <i class="rim-icon" />
+      <span>为你推荐</span>
     </div>
     <div class="rim-comp-box">
       <component :is="mod" :item="{...item,itemList}" />
@@ -69,27 +68,21 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .recommend-index-model {
     min-height: 180px;
-    .rim-bg {
-      overflow: hidden;
-      .rim-left-bg,.rim-center-bg,.rim-right-bg {
-        height: 180px;
-        float: left;
+    .rim-title {
+      text-align: center;
+      margin-bottom: 8px;
+      .rim-icon {
+        width: 18px;
+        height: 18px;
+        background: url('./img/icon_recommend.png') no-repeat;
+        display: inline-block;
       }
-      .rim-left-bg {
-        width: 160px;
-        background: url('./img/rim_left_bg.png') no-repeat;
+      >span {
+        font-size: 18px;
+        color: #3E3E3E;
+        vertical-align: 2px;
+        margin-left: 8px;
       }
-      .rim-center-bg {
-        width: calc(100% - 260px);
-        background: url('./img/rim_center_bg.png') repeat-x;
-      }
-      .rim-right-bg {
-        width: 100px;
-        background: url('./img/rim_right_bg.png') no-repeat;
-      }
-    }
-    .rim-comp-box {
-      margin: -128px 8px 0 8px;
     }
   }
 </style>
