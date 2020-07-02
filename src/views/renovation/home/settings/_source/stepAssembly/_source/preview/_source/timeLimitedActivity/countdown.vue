@@ -8,6 +8,11 @@
       <span class="tla-tbox-block">{{ msTime.minutes }}</span><b>:</b>
       <span class="tla-tbox-block">{{ msTime.seconds }}</span><b>S</b>
     </p>
+    <p v-else>
+      <span class="tla-tbox-block">00</span><b>:</b>
+      <span class="tla-tbox-block">00</span><b>:</b>
+      <span class="tla-tbox-block">00</span><b>S</b>
+    </p>
   </div>
 </template>
 <script>
