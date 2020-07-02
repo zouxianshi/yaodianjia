@@ -320,7 +320,7 @@ export default {
       if (form.result === 2) {
         this.listQuery.auditStatus = 0
         if (form.reason === 1) {
-          data.auditReason = '药店加平台已存在改商品'
+          data.auditReason = '海典健康微商城平台已存在改商品'
         } else if (form.reason === 2) {
           data.auditReason = '商品信息不够规范合格'
         } else if (form.reason === 3) {
