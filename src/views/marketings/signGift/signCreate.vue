@@ -12,13 +12,13 @@
       </el-form-item>
       <el-form-item v-if="paramsForm.modelType === 1" label="奖励设置" required>
         每人每天签到赠送
-        <el-input-number v-model="paramsForm.fixedValue" :precision="0" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
+        <el-input-number v-model="gdfixedValue" :precision="0" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
         <span class="tips">会员每日签到获得海贝奖励，无连续签到也可获得此奖励</span>
       </el-form-item>
       <el-form-item v-if="paramsForm.modelType === 2" label="奖励设置" required>
         <div class="jl-items">
           首次签到赠送
-          <el-input-number v-model="paramsForm.fixedValue" :precision="0" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
+          <el-input-number v-model="jlfixedValue" :precision="0" :min="1" :max="99999" :controls="false" size="mini" style="width: 120px" />海贝
         </div>
         <div class="jl-items">
           连续签到，在前一天赠送数量的基础上多赠送
@@ -64,6 +64,8 @@ import _ from 'lodash'
 export default {
   data() {
     return {
+      gdfixedValue: 1,
+      jlfixedValue: 1,
       paramsForm: {
         modelType: 1, // 1 固定模式 2 激励模式
         fixedValue: 1,
@@ -78,6 +80,11 @@ export default {
     _searchMemberSignIn().then(res => {
       if (res.code === '10000' && !!res.data) {
         this.paramsForm = res.data
+        if (res.data.modelType === 1) {
+          this.gdfixedValue = res.data.fixedValue
+        } else {
+          this.jlfixedValue = res.data.fixedValue
+        }
       }
     })
   },
@@ -87,6 +94,11 @@ export default {
     },
     _onSubmit() {
       var params = _.cloneDeep(this.paramsForm)
+      if (params.modelType === 1) {
+        params.fixedValue = this.gdfixedValue
+      } else {
+        params.fixedValue = this.jlfixedValue
+      }
       if (params.fixedValue === '' || !params.fixedValue) {
         this.$message.error('奖励设置不能为空！')
         return false

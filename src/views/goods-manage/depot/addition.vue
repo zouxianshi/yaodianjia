@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div>
-      <el-link type="warning" @click="dialogVisible=true">从标库新建商品规范说明?</el-link>
+      <!-- <el-link type="warning" @click="dialogVisible=true">从标库新建商品规范说明?</el-link> -->
       <section class="addition-wrapper">
         <p class="title">从商品库新建商品</p>
         <el-divider />
@@ -24,18 +24,6 @@
                 style="width:200px"
                 placeholder="生产企业"
               />
-            </div>
-            <div class="search-item">
-              <span class="label-name">是否添加</span>
-              <el-select
-                v-model="listQuery.hasAddComm"
-                placeholder="请选择"
-                size="small"
-                @change="handleQuery"
-              >
-                <el-option label="是" :value="true" />
-                <el-option label="否" :value="false" />
-              </el-select>
             </div>
           </div>
           <div class="search-form">
@@ -63,12 +51,12 @@
             </div>
           </div>
         </section>
-        <el-alert type="warning" style="margin-bottom:10px" :closable="false">
+        <!-- <el-alert type="warning" style="margin-bottom:10px" :closable="false">
           <p slot="title" class="alret-title">
             没有想要商品，去
             <router-link tag="span" class="link" to="/goods-manage/apply">创建自有新品</router-link>
           </p>
-        </el-alert>
+        </el-alert> -->
         <el-table v-loading="loading" :data="tableData" stripe>
           <template slot="empty">
             <div v-show="!loading" class="table-nodata">
@@ -80,6 +68,43 @@
               <p class="text-center">自主创建的商品由运营人员自行审核上架</p>
             </div>
           </template>
+          <el-table-column label="序号" type="index" min-width="60" />
+          <el-table-column
+            prop="orCode"
+            align="left"
+            min-width="100"
+            label="商品图片"
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <template v-if="scope.row.mainPic">
+                <el-image
+                  style="width: 70px; height: 70px"
+                  :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
+                  lazy
+                  fit="contain"
+                  :preview-src-list="[`${showImg(scope.row.mainPic)}?x-oss-process=style/w_800`]"
+                />
+              </template>
+              <template v-else>
+                <p class>暂未上传</p>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column label="商品信息" min-width="120" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <div>
+                <p class="ellipsis" v-text="scope.row.name" />
+                <p class="ellipsis">
+                  <span
+                    v-for="(item,index) in scope.row.specSkuList"
+                    :key="index"
+                  >{{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}</span>
+                </p>
+                <p class="ellipsis" v-text="scope.row.approvalNumber" />
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="条码" prop="barCode" />
           <el-table-column label="生产企业" prop="manufacture" show-overflow-tooltip />
           <el-table-column label="品牌" prop="brandName" />

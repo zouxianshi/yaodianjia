@@ -6,7 +6,7 @@
         <el-form :inline="true" :model="searchParams" class="demo-form-inline">
           <el-form-item label="活动类型">
             <el-select v-model="searchParams.activityTemplateCode" placeholder="请选择" size="mini">
-              <el-option label="全部" value="0" />
+              <el-option label="全部" :value="null" />
               <el-option label="大转盘" value="TA003" />
               <el-option label="刮刮乐" value="TA004" />
             </el-select>
