@@ -1,5 +1,6 @@
 <template>
-  <div class="sa-preview-model" :style="{'background':`${basics.backgroundColor}`}">
+  <div class="sa-preview-model">
+    <div class="apm-header-bg" :style="{'background':`${basics.backgroundColor}`}" />
     <div class="apm-header">
       <m-header />
     </div>
@@ -167,19 +168,31 @@ export default {
   .sa-preview-model {
     height: calc(100vh - 264px);
     border:1px solid #CFCFCF;
-    background: #FBFBFB;
+    background: #F5F7F8;
     overflow: hidden;
+    position: relative;
+    .apm-header-bg {
+      width: 358px;
+      height: 358px;
+      background: #F5F7F8;
+      border-radius: 34px;
+      position: absolute;
+      left: 0;
+      top: -155px;
+    }
     .apm-header {
       margin-bottom: 10px;
     }
     .apm-drag-area {
       height: calc(100vh - 400px);
       padding-bottom: 30px;
+      position: relative;
       .item-component {
         cursor: pointer;
         position: relative;
         padding: 8px 8px;
         margin: 4px 0;
+        background: #F5F7F8;
         &:hover {
           .ic-item-hover,.ic-item-delete {
             display: block;

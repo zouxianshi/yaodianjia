@@ -54,6 +54,7 @@ export default {
     width: 358px;
     height: 124px;
     background: url('./../../img/header.png') no-repeat;
+    position: relative;
     .shm-page-title {
       text-align: center;
       padding-top: 50px;
