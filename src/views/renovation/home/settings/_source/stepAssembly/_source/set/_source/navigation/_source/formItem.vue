@@ -16,7 +16,7 @@
     <div class="nfim-form">
       <el-form label-width="90px" size="mini">
         <el-form-item label="导航名称">
-          <el-input v-model="item.name" placeholder="导航名称" @change="onUploadItem" />
+          <el-input v-model="item.name" placeholder="导航名称" maxlength="4" @change="onUploadItem" />
           <div v-if="error.isName" class="sa-assembly-error">{{ error.isName }}</div>
         </el-form-item>
         <el-form-item label="导航链接">
