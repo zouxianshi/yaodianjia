@@ -125,8 +125,6 @@ export default {
       immediate: true,
       handler(v) {
         this.dragData = _.cloneDeep(v)
-        console.log(this.dragData)
-        console.log('------------------')
       }
     }
   },

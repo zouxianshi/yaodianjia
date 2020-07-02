@@ -5,7 +5,7 @@
  */
 
 import _ from 'lodash'
-import { uuid } from '@/utils' // eslint-disable-line 
+import { uuid } from '@/utils' // eslint-disable-line
 import renovationService from '@/api/renovation'
 import { bannerItem, handlerBackfill,items } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
 

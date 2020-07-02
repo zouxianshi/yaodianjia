@@ -3,18 +3,29 @@
     <div class="cfim-item-left">
       <div class="cfim-line-1" />
       <div class="cfim-line-2" />
-      <div class="cfim-text-num">{{ el.denomination || '-' }}</div>
+      <div class="cfim-text-num">
+        <el-tooltip class="item" effect="dark" :content="`¥ ${el.denomination}`" placement="top">
+          <span>{{ truDenomination(`${el.denomination}`) || '' }}</span>
+        </el-tooltip>
+      </div>
 
       <div class="cfim-type" :style="{background: el.ctype ? 'transparent' : 'rgba(255,255,255,1)'}">
         <span v-if="el.ctype === 1">折扣券</span>
         <span v-if="el.ctype === 2">抵价券</span>
         <span v-if="el.ctype === 3">礼品券</span>
+        <!--礼品卷只显示3字符-->
       </div>
     </div>
     <div class="cfim-item-right">
-      <div class="cfim-name" :class="el.cname ? 'no' : ''">
-        {{ el.cname }}
-      </div>
+      <el-tooltip class="item" effect="dark" :content="el.cname" placement="top">
+        <div class="cfim-name" :class="el.cname ? 'no' : ''">
+          {{ truCname(el.cname) }}
+        </div>
+      </el-tooltip>
+
+      <!--<el-tooltip class="item" effect="dark" :content="el.cname" placement="top">
+          {{truCname(el.cname)}}
+        </el-tooltip>-->
       <div class="cfim-btn">
         <el-button round size="mini">立即领取</el-button>
       </div>
@@ -23,7 +34,7 @@
 </template>
 <script>
 /**
-   * 设计的大小没一点规律，搞得前端作死的写乱七八糟的样式，严重谴责设计人员不专业！！！
+   * 设计的大小没一点规律，搞得前端作死的写乱七八糟的样式！！！
    */
 const prefixCls = 'vi-coupon-first-item'
 export default {
@@ -41,7 +52,38 @@ export default {
       default: 'medium'
     }
   },
-  methods: {},
+  methods: {
+    truDenomination(v) {
+      return _.truncate(v, { 'length': (() => {
+        switch (this.size) {
+          case 'medium':
+            return 7
+          case 'small':
+            return 4
+          case 'mini':
+            return 3
+        }
+      })(),
+      'omission': '',
+      'separator': /,? +/
+      })
+    },
+    truCname(v) {
+      if (!v) {
+        return ''
+      }
+      return _.truncate(v, { 'length': (() => {
+        switch (this.size) {
+          case 'medium':
+            return 7
+          case 'small':
+            return 9
+          case 'mini':
+            return 7
+        }
+      })(), 'omission': '' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -103,7 +145,6 @@ export default {
         color: #fff;
       }
       .cfim-type {
-        margin: 0 10px;
         background:rgba(255,255,255,1);
         border-radius:2px;
         opacity:0.8;
@@ -182,7 +223,7 @@ export default {
           left: 39px;
         }
         .cfim-text-num {
-          font-size: 20px;
+          font-size: 18px;
           margin-top: 16px;
         }
         .cfim-type {
@@ -221,12 +262,13 @@ export default {
           left: 28px;
         }
         .cfim-text-num {
-          font-size: 20px;
           margin-top: 10px;
+          font-size: 18px;
         }
         .cfim-type {
-          width:24px;
+          width:36px;
           height:8px;
+          margin: 0;
           margin-top: 6px;
           font-size: 12px;
         }
@@ -241,6 +283,7 @@ export default {
         .cfim-btn {
           right: 6px;
           bottom: 6px;
+          -webkit-transform: scale(0.8);
           .el-button {
             height: 20px;
             line-height: 20px;
