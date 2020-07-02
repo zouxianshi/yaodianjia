@@ -41,7 +41,7 @@
           </el-table-column>
         </template>
         <!-- <slot :pager="pager" /> -->
-        <el-table-column width="160">
+        <el-table-column>
           <template slot="header">
             <span>组合数量</span>
           </template>
@@ -53,14 +53,14 @@
             >
               <el-input
                 v-model="scope.row.addNum"
-                style="width:80px;text-align:center"
+                style="width:60px;text-align:center"
                 maxlength="8"
                 size="mini"
               />
             </el-form-item>
           </template>
         </el-table-column>
-        <el-table-column width="160">
+        <el-table-column>
           <template slot="header">
             <span>组合单价</span>
           </template>
@@ -72,7 +72,7 @@
             >
               <el-input
                 v-model="scope.row.addPrice"
-                style="width:80px;text-align:center"
+                style="width:60px;text-align:center"
                 maxlength="8"
                 size="mini"
               />
@@ -211,7 +211,9 @@ export default {
           if (inIndex === -1) {
             const item = {
               ...good,
-              productName: this.formatSkuInfo(good.specSkus || '')
+              productName: this.formatSkuInfo(good.specSkus || ''),
+              addNum: 1,
+              addPrice: good.mprice
             }
             dataFromSource.push(item)
           } else {

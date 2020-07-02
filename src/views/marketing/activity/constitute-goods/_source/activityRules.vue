@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container_activity">
     <el-form
       ref="basic"
       :model="basicForm"
@@ -70,17 +70,6 @@
                 >选择商品 | 已选（{{ storeSelectGoods.length }}）</el-button>
               </div>
               <select-goods-constitute ref="storeGods" @del-item="delSelectGoods" />
-            </el-form-item>
-            <el-form-item label="相关门店：" prop="storeIds">
-              <el-input v-model="basicForm.storeIds" style="display: none" />
-              <el-button
-                type="primary"
-                plain
-                @click="$refs.storeComponent.open()"
-              >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
-            </el-form-item>
-            <el-form-item>
-              <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
             </el-form-item>
             <el-row>
               <el-col :span="12">
@@ -162,8 +151,6 @@
       :list="storeSelectGoods"
       @on-change="handleSelectGoods"
     />
-    <!-- 门店列表 -->
-    <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!--弹窗--选择分组-->
     <edit-group
       :is-show="groupVisible"
@@ -190,8 +177,8 @@ import {
 } from '@/api/constitute-goods'
 import selectGoodsConstitute from './select-goods-constitute'
 import storeGoods from '../../../components/store-gods'
-import storeDialog from '../../../components/store'
-import selectStore from '../../../components/select-store'
+// import storeDialog from '../../../components/store'
+// import selectStore from '../../../components/select-store'
 import { checkNumberdouble } from '@/utils/validate'
 import editGroup from './grouping'
 import { findArray } from '@/utils/index'
@@ -200,9 +187,9 @@ export default {
     Tinymce,
     editGroup,
     selectGoodsConstitute,
-    storeGoods,
-    storeDialog,
-    selectStore
+    storeGoods
+    // storeDialog,
+    // selectStore
   },
   mixins: [mixins, specsMixin],
   data() {
@@ -320,7 +307,6 @@ export default {
       chooseTableSpec: [],
       uploadLoading: false,
       leaveAction: false, // 离开页面动作，true为保存离开  false异常离开
-      chooseStore: [],
       storeSelectGoods: []
     }
   },
@@ -670,28 +656,24 @@ export default {
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
       // this.storeSelectGoods = this.storeSelectGoods
     },
-    delSelectStore(item, index) {
-      console.log('item, index', item, index, this.chooseStore)
-      this.chooseStore.splice(index, 1)
-      this.basicForm.storeIds = _.map(this.chooseStore, 'id').join(',')
-      this.$refs.selectStoreComponent.dataFrom(this.chooseStore)
-      // this.chooseStore = this.chooseStore
-    },
     handleSelectGoods(val) {
       this.storeSelectGoods = val
       this.basicForm.goodsIds = _.map(val, 'specId').join(',')
       this.$refs.storeGods.dataFrom(val)
-    },
-    handleSelectStore(val) {
-      console.log('门店结果页出来了-------', val)
-      this.chooseStore = val
-      this.basicForm.storeIds = _.map(val, 'id').join(',')
-      this.$refs.selectStoreComponent.dataFrom(val)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+.app-container_activity {
+  .footer {
+    text-align: center;
+    margin: 50px auto;
+  }
+  .color_gray {
+  color: #999;
+}
+}
 .edit-wrapper {
   color: #333;
   margin-bottom: 80px;
@@ -738,147 +720,46 @@ export default {
   .next-btn {
     margin-top: 20px;
   }
-  .goods-details {
-    display: flex;
-    margin-bottom: 10px;
-    .left-show {
-      width: 320px;
-      height: auto;
-      border: 1px solid #e0e0e0;
-      .img {
-        width: 320px;
-        height: 64px;
-        background: url('../../../../../assets/image/sprite_dm.png') -2px -86px;
-      }
-      .basicMsgs {
-        width: 100%;
-        height: 100px;
-        color: #666;
-        line-height: 25px;
-        text-align: center;
-        padding-top: 20px;
-        background: #f2f2f2;
-      }
-      .editSqu {
-        height: 376px;
-        border: 1px dashed red;
-      }
-      .w-e-text {
-        padding: 0 10px;
-        overflow-y: scroll;
-      }
-    }
-    .edit-box {
-      margin-left: 20px;
-      padding: 10px;
-      background: #f8f8f8;
-      border: 1px solid #d1d1d1;
-      position: relative;
-    }
-  }
-  .spec-list {
-    width: 500px;
-    border-radius: 5px;
-    border: 1px solid #c9c9cc;
-    margin-left: 80px;
-    margin-bottom: 10px;
-    .header {
-      height: 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 12px;
-      border-bottom: 1px solid #c9c9cc;
-      i {
-        cursor: pointer;
-      }
-    }
-    .spec-content {
-      padding: 12px;
-      .el-input {
-        width: 250px;
-      }
-      .specs-img-table {
-        .avatar-uploader-icon {
-          width: 80px;
-          height: 80px;
-          line-height: 80px !important;
-        }
-        .avatar {
-          width: 80px;
-          height: 80px;
-        }
-      }
-      .specs-img {
-        .avatar-uploader-icon {
-          width: 100px;
-          height: 100px;
-          line-height: 100px !important;
-        }
-        .avatar {
-          width: 100px;
-          height: 100px;
-        }
-      }
-    }
-  }
   .add-spec {
     margin-left: 80px;
   }
 }
-.link-btn {
-  font-size: 14px;
-}
-.modal-body {
-  .cascader {
-    .el-input {
-      width: 300px !important;
-    }
-  }
-}
-.color_gray {
-  color: #999;
-}
-</style>
-<style>
-.edit-wrapper .edit-card .el-input.inp_mini {
-  width: 90px;
-  min-width: 90px;
-  padding: 0 5px;
-}
-.icon_items {
-  width: 160px;
-  text-align: right;
-  padding-right: 20px;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-.footer {
-  text-align: center;
-  margin: 50px auto;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 120px;
-  height: 120px;
-  line-height: 120px !important;
-  text-align: center;
-}
+
+// .link-btn {
+//   font-size: 14px;
+// }
+// .modal-body {
+//   .cascader {
+//     .el-input {
+//       width: 300px !important;
+//     }
+//   }
+// }
+
 </style>
 <style lang="scss">
-.table-form {
-  .el-form-item {
-    margin: 15px 0;
-  }
-  .el-input {
-    input {
-      text-align: center;
-    }
-  }
-}
-.edit-wrapper .edit-card .el-input.inp_mini {
-  width: 110px;
-}
+// .table-form {
+//   .el-form-item {
+//     margin: 15px 0;
+//   }
+//   .el-input {
+//     input {
+//       text-align: center;
+//     }
+//   }
+// }
+// .edit-wrapper .edit-card .el-input.inp_mini {
+//   width: 110px;
+// }
+// .container_activity {
+//   .avatar-uploader-icon {
+//     font-size: 28px;
+//     color: #8c939d;
+//     width: 120px;
+//     height: 120px;
+//     line-height: 120px !important;
+//     text-align: center;
+//   }
+// }
 </style>
 
