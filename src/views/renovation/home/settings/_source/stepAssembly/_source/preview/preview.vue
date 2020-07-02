@@ -75,7 +75,8 @@ export default {
   data() {
     return {
       bannerItem,
-      dragData: []
+      dragData: [
+      ]
     }
   },
   props: {},
@@ -93,7 +94,13 @@ export default {
       this.dragData = dragData
     },
     onDragAdd() {
-      this.setDragList(this.dragData)
+      let dragData = this.dragData
+      const itemRecommend = _.find(dragData, ['type', 'recommend'])
+      if (!_.isEmpty(itemRecommend)) {
+        dragData = _.reject(dragData, ['type', 'recommend'])
+        dragData.push(itemRecommend)
+      }
+      this.setDragList(dragData)
     },
     onDragChange() {
       this.onDragAdd()
@@ -118,6 +125,8 @@ export default {
       immediate: true,
       handler(v) {
         this.dragData = _.cloneDeep(v)
+        console.log(this.dragData)
+        console.log('------------------')
       }
     }
   },
