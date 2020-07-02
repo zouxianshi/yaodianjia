@@ -42,6 +42,8 @@ export default {
     onCouponSubmit() {
       const selectGoods = this.$refs.selectGoods.$verification()
       if (typeof selectGoods === 'object') {
+        console.log(selectGoods)
+        console.log('-----selectGoods')
         this.itemList = selectGoods
         this.$emit('on-update', this.itemList)
         this.dialogVisible = false

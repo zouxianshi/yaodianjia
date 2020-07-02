@@ -6,6 +6,7 @@
 
 /**
  * 前列谴责需求周期太短，怼一个文件处理。
+ * 极度愤怒！
  */
 
 import _ from 'lodash'
@@ -182,7 +183,7 @@ export default () => {
             subType: 'five',
             name: '多图轮播',
             error: false,
-            itemList: items(1), // todo 不确定最大长度,
+            itemList: items(1),
             max: 10
           }
         ]
