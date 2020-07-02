@@ -103,7 +103,11 @@ export default {
         this.list = data
         this.totalCount = totalCount
         if (this.list.length) {
-          this.selectActivityId = _.head(this.list).activityId
+          if (_.isEmpty(this.item.activityId)) {
+            this.selectActivityId = _.head(this.list).activityId
+          } else {
+            this.selectActivityId = this.item.activityId
+          }
         }
       })
     }
