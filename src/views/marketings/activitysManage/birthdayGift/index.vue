@@ -18,6 +18,7 @@
   </div>
 </template>
 <script>
+// import { createActivity } from '@/api/coupon'
 export default {
   name: 'BirthdayGift',
   data() {

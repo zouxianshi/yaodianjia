@@ -3,7 +3,10 @@
     <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item, 'list')" />
     <div class="activity-bottom">
       <div class="activity-header">
-        <div class="title">{{ item.lable }}</div>
+        <div class="title">
+          {{ item.lable }}
+          <el-switch v-model="isClose" style="float: right" @change="updataActive" />
+        </div>
         <div v-if="item.desc===''" style="height:48px">{{ item.desc || '' }}</div>
         <el-tooltip v-if="item.desc!==''" class="item" effect="dark" :content="item.desc" placement="top-start">
           <div class="sub-title">{{ item.desc || '' }}</div>
@@ -17,6 +20,7 @@
 </template>
 
 <script>
+import { birthdayOperate } from '@/api/birthday'
 export default {
   props: {
     item: {
@@ -24,9 +28,36 @@ export default {
       default: () => {}
     }
   },
+  data() {
+    return {
+      isClose: false
+    }
+  },
   methods: {
     handleJump(itemUrl) {
       this.$router.push(itemUrl)
+    },
+    updataActive(e) {
+      const params = {
+        status: e ? 1 : 0,
+        merCode: this.$store.state.user.merCode
+      }
+      birthdayOperate(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '操作成功！',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '操作失败！',
+            type: 'error'
+          })
+          this.isClose = !e
+        }
+      }).catch(() => {
+        this.isClose = !e
+      })
     }
   }
 }
