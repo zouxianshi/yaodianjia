@@ -394,7 +394,8 @@ export default {
         currentPage: 1,
         owner: 0,
         typeId: '', // 商品分类id
-        level: ''
+        level: '',
+        groupLevel: ''
       },
       goodsTypeList: []
     }
@@ -496,11 +497,13 @@ export default {
       if (
         this.listQuery.typeId &&
         Array.isArray(this.listQuery.typeId) &&
-        this.listQuery.typeId.length
+        this.listQuery.typeId.length > 0
       ) {
         this.listQuery.typeId = this.listQuery.typeId[
           this.listQuery.typeId.length - 1
         ]
+      } else if (Array.isArray(this.listQuery.typeId) && this.listQuery.typeId.length === 0) {
+        this.listQuery.typeId = ''
       }
       const nodesObj = this.$refs['cascType'].getCheckedNodes()
       this.listQuery.level = nodesObj.length > 0 ? nodesObj[0].level : ''
@@ -564,7 +567,7 @@ export default {
     handleTreeClick(row, node) {
       // 节点被点击时
       this.listQuery.groupId = row.id
-      this.listQuery.level = row.level
+      this.listQuery.groupLevel = row.level
       this.getList()
     },
     handleChangeUpdown(status) {
