@@ -190,7 +190,7 @@ import { mapGetters } from 'vuex'
 import config from '@/utils/config'
 import _ from 'lodash'
 import mCheckCoupon from '@/components/Marketings/checkCoupon'
-import mSelectedCoupon from '../../../_source/SelectedCoupon'
+import mSelectedCoupon from '../../../_source/selectedCouNonum'
 export default {
   name: 'AwardSetting',
   components: {

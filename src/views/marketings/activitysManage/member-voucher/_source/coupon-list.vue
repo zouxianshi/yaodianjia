@@ -1,12 +1,16 @@
 <template>
   <div class="coupon-list-modal">
     <div class="select-coupon">
-      <el-button style="margin-bottom: 24px" @click="selectCoupon">选择优惠券</el-button>
+      <el-button style="margin-bottom: 24px" size="mini" @click="selectCoupon">选择优惠券</el-button>
       <mSelectedCoupon
         v-show="selectedCoupons.length>0"
         ref="selectedCouponView"
         @onDel="onGetSelectCoupon"
       />
+    </div>
+    <div>
+      <el-button @click="onStep(true)">上一步</el-button>
+      <el-button @click="onStep(false)">确定</el-button>
     </div>
     <checkCoupon ref="checkCoupons" state="1" @confincheck="onGetSelectCoupon" />
   </div>
@@ -14,6 +18,7 @@
 <script>
 import checkCoupon from '@/components/Marketings/checkCoupon'
 import mSelectedCoupon from '../../../_source/SelectedCoupon'
+import _ from 'lodash'
 export default {
   components: {
     checkCoupon, mSelectedCoupon
@@ -25,12 +30,34 @@ export default {
   },
   methods: {
     selectCoupon() {
-      this.$refs.checkCoupons.handleGetlist('支付有礼')
+      this.$refs.checkCoupons.handleGetlist()
       this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
     },
     onGetSelectCoupon(selectedCoupons) {
       this.selectedCoupons = selectedCoupons
       this.$refs.selectedCouponView.showPage(selectedCoupons, this.pageStatus)
+    },
+    // 上一步或下一步
+    onStep(type) {
+      if (type) {
+        this.$emit('prevstep')
+      } else {
+        console.log(this.selectedCoupons)
+        if (this.selectedCoupons.length === 0) {
+          this.$message.error('请至少选择一张优惠券')
+        } else {
+          const arr = []
+          _.map(this.selectedCoupons, items => {
+            console.log(items)
+            const obj = {
+              id: items.id,
+              num: items.giftNum
+            }
+            arr.push(obj)
+          })
+          this.$emit('nextstep', arr)
+        }
+      }
     }
   }
 }

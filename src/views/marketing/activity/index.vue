@@ -78,6 +78,8 @@ import paymentCourtesy from '@/assets/image/marketings/pay.png'
 // import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
+import birthdayImg from '@/assets/image/marketings/birthdayGift.png'
+import memberVouch from '@/assets/image/marketings/memberVouch.png'
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
 export default {
@@ -96,7 +98,7 @@ export default {
       birth: {
         value: 'birthGift',
         lable: '生日礼包',
-        img: paymentCourtesy,
+        img: birthdayImg,
         desc: '定向给会员用户生日当天发放优惠券、海贝等优惠券礼包，精准营销，激励消费',
         listUrl: '',
         linkUrl: '/activity/birthday-gift'
@@ -126,7 +128,7 @@ export default {
           value: '',
           lable: '会员发券',
           createText: '发放优惠券',
-          img: paymentCourtesy,
+          img: memberVouch,
           desc: '发优惠券给到会员，可以精细化精准营销，满足会员购物需求，给到实际的优惠',
           listUrl: '/activity/member-voucher-list',
           linkUrl: '/activity/member-voucher'
