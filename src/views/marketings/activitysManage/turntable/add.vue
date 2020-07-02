@@ -10,13 +10,11 @@
       ref="ruleList"
       :params="params"
       @handleNext="handleNext"
-      @getcouponList="getcouponList"
     />
     <awardSetting
       v-show="stepActive === 2"
       ref="awardSetting"
       :params="params"
-      :couponlist="couponList"
       @handleNext="handleNext"
       @submitAjax="submitAjax"
     />
@@ -24,7 +22,6 @@
   </div>
 </template>
 <script>
-import { searchActivities } from '@/api/coupon'
 import { createLuckDraw, ActivityDetail, updateActivity } from '@/api/coupon'
 import ruleList from './_sourse/ruleList'
 import awardSetting from './_sourse/awardSetting'
@@ -41,7 +38,6 @@ export default {
     return {
       stepActive: 1, // 显示第几步
       removedList: [],
-      couponList: [],
       params: {
         activityDetailName: '',
         activityGiftReqDTO: [],
@@ -104,21 +100,6 @@ export default {
     }
   },
   methods: {
-    getcouponList(ruleForm) {
-      const params = {
-        beginTime: ruleForm.beginTime,
-        busType: 1,
-        endTime: ruleForm.endTime,
-        ctype: '0',
-        currentPage: 1,
-        pageSize: 999,
-        merCode: this.merCode,
-        operatorType: 1
-      }
-      searchActivities(params).then(res => {
-        this.couponList = res.data.records
-      })
-    },
     handleNext(stepActive, obj = {}) {
       this.stepActive = stepActive
       Object.assign(this.params, obj)
@@ -150,8 +131,7 @@ export default {
                 })
               }
             })
-            .catch(err => {
-              console.log(err)
+            .catch(() => {
               this.$message({
                 message: '修改失败！',
                 type: 'error'
@@ -170,8 +150,7 @@ export default {
                 })
               }
             })
-            .catch(err => {
-              console.log(err)
+            .catch(() => {
               this.$message({
                 message: '添加失败！',
                 type: 'error'
