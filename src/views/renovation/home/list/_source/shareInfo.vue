@@ -12,7 +12,7 @@
             :headers="headers"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
+            :before-upload="beforeUpload"
             :on-error="handleAvatarErr"
           >
             <img v-if="formData.shareImg" :src="showImg(formData.shareImg)" class="avatar">
@@ -31,7 +31,19 @@
 </template>
 <script>
 import mixins from './mixins'
+import { checkName } from '@/utils/validate'
 import RenovationService from '@/api/renovation'
+
+const vefDesc = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请输入分享描述'))
+  } else if (checkName(value)) {
+    callback(new Error('特殊字符串有限制不可输入，仅可输入最多不超过16个汉字'))
+  } else {
+    callback()
+  }
+}
+
 export default {
   name: 'ShareInfo',
   mixins: [mixins],
@@ -52,7 +64,9 @@ export default {
         shareImg: ''
       },
       rules: {
-        shareDesc: [{ required: true, message: '请输入分享描述', trigger: 'blur' }],
+        shareDesc: [
+          { validator: vefDesc, trigger: 'blur' }
+        ],
         shareImg: [{ required: true, message: '请上传分享图片', trigger: 'change' }]
       }
     }
@@ -63,6 +77,19 @@ export default {
       this.$nextTick(_ => {
         this.$refs.formData.resetFields()
       })
+    },
+    beforeUpload(file) {
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isType) {
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.warning('请上传不超过 2M 的图片！')
+        return false
+      }
+      return isType && isLt2M
     },
     handleSubmit() {
       this.$refs['formData'].validate(async(valid) => {
