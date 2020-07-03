@@ -85,6 +85,7 @@
         </el-table>
         <div class="table-footer">
           <el-pagination
+            v-if="goodsType === 1"
             background
             style="text-align: right;margin-top: 20px"
             :current-page="pager.current"
@@ -247,13 +248,12 @@ export default {
     },
     onTypeChange(typeid) {
       // 分类切换
-      console.log('searchForm------', typeid)
       this.forSearch()
     },
     // 调用打开方法；
     open() {
       this.dialog.visible = true
-      console.log('this.list-----', this.list)
+      this.goodsType = 1
       if (Array.isArray(this.list) && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
@@ -288,7 +288,6 @@ export default {
         })
         return false
       }
-      console.log('confirm', this.mySelectList)
       this.$emit('on-change', this.mySelectList)
       this.close()
     },
