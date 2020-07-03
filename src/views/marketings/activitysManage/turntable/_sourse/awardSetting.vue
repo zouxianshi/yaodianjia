@@ -24,9 +24,9 @@
                 v-model="scope.row.winRandom"
                 :disabled="isPageUpdateOrView || isRuning"
                 size="mini"
-                :precision="0"
+                :precision="2"
                 :step="1"
-                :min="1"
+                :min="0.01"
                 :max="100"
                 :controls="false"
                 style="width:60px"
@@ -133,9 +133,9 @@
         <el-form-item label="中奖几率" prop="winRandom">
           <el-input-number
             v-model="ruleForm.winRandom"
-            :precision="0"
+            :precision="2"
             :step="1"
-            :min="1"
+            :min="0.01"
             :max="100"
             :controls="false"
             style="width:400px"
@@ -261,7 +261,7 @@ export default {
         _.map(newVal.selectedGift, v => {
           glTotal += v.winRandom
         })
-        this.totalGl = glTotal
+        this.totalGl = parseInt(glTotal*100)/100
       },
       deep: true,
       immediate: true
