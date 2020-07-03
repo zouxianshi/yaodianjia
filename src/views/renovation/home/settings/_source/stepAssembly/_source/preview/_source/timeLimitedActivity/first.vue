@@ -3,8 +3,11 @@
     <div class="stfm-title-box">
       <span class="stfm-text-1">据活动结束还剩</span>
       <span class="stfm-cd">
-        <template v-if="item.startTime">
+        <template v-if="item.validStatus === 1">
           <v-countdown :current-time="rtTimeStamp(item.currentTime)" :start-time="rtTimeStamp(item.endTime)" :end-time="rtTimeStamp(item.endTime)" />
+        </template>
+        <template v-else>
+          <v-countdown :current-time="1593678334" :start-time="1593678334" :end-time="1593678334" />
         </template>
       </span>
     </div>
@@ -13,13 +16,13 @@
         <template v-if="item.itemList.length">
           <img v-if="item.itemList[0].img" class="cfim-img" :src="showImg(item.itemList[0].img)" alt="" style="width: 140px;height:140px;margin: 0 auto;display: block;">
           <m-item-no-data v-else height="140px" />
-          <div style="padding: 10px 0">
+          <div style="padding: 10px">
             <m-line-bar margin-top="24px" enter-type="button" :el="item.itemList[0]" />
           </div>
         </template>
         <template v-else>
           <m-item-no-data height="140px" />
-          <div style="padding: 10px 0">
+          <div style="padding: 10px">
             <m-line-bar margin-top="24px" enter-type="button" :el="itemParams" />
           </div>
         </template>

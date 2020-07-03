@@ -8,15 +8,15 @@
         <el-divider content-position="left">标题设置</el-divider>
         <el-form label-width="90px" size="mini">
           <el-form-item label="主标题">
-            <el-input v-model="itemParams.subTitle" maxlength="10" @change="onUploadItem" />
-            <div v-if="error.isSubTitle" class="sa-assembly-error">
-              {{ error.isSubTitle }}
-            </div>
-          </el-form-item>
-          <el-form-item label="副标题">
             <el-input v-model="itemParams.title" maxlength="8" @change="onUploadItem" />
             <div v-if="error.isTitle" class="sa-assembly-error">
               {{ error.isTitle }}
+            </div>
+          </el-form-item>
+          <el-form-item label="副标题">
+            <el-input v-model="itemParams.subtitle" maxlength="10" @change="onUploadItem" />
+            <div v-if="error.isSubtitle" class="sa-assembly-error">
+              {{ error.isSubtitle }}
             </div>
           </el-form-item>
         </el-form>
@@ -43,7 +43,7 @@ export default {
       dialogVisible: false,
       itemParams: {},
       error: {
-        isSubTitle: false,
+        isSubtitle: false,
         isTitle: false,
         isGoods: false
       }
@@ -57,19 +57,19 @@ export default {
   },
   methods: {
     onUploadItem() {
-      const { subTitle, title, itemList } = this.itemParams
+      const { subtitle, title, itemList } = this.itemParams
 
       this.reset()
 
       let flag = true
 
-      if (!subTitle) {
-        this.error.isSubTitle = '请输入主标题'
+      if (!title) {
+        this.error.isTitle = '请输入主标题'
         flag = false
       }
 
-      if (!title) {
-        this.error.isTitle = '请输入副标题'
+      if (!subtitle) {
+        this.error.isSubtitle = '请输入副标题'
         flag = false
       }
 
@@ -88,7 +88,7 @@ export default {
     },
     reset() {
       this.error = _.assign(this.error, {
-        isSubTitle: false,
+        isSubtitle: false,
         isTitle: false,
         isGoods: false
       })
@@ -101,6 +101,7 @@ export default {
           itemId: v.specId
         }
       })
+      this.error.isGoods = false
     },
     onElDelete(index) {
       this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)

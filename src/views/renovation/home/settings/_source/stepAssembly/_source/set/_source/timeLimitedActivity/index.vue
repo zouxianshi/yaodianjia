@@ -136,12 +136,13 @@ export default {
       if (typeof selectActivity === 'object') {
         this.selectActivity = selectActivity
 
-        const { activityId, startTime, endTime, currentTime } = selectActivity
+        const { activityId, startTime, endTime, currentTime, validStatus } = selectActivity
 
         this.$set(this.itemParams, 'activityId', activityId)
         this.$set(this.itemParams, 'startTime', startTime)
         this.$set(this.itemParams, 'endTime', endTime)
         this.$set(this.itemParams, 'currentTime', currentTime)
+        this.$set(this.itemParams, 'validStatus', validStatus)
         this.$set(this.itemParams, 'value', activityId)
         this.dialogVisible = false
 

@@ -75,7 +75,7 @@ export default {
   .basics-model {
     padding: 20px;
     .bm-title {
-      padding-left: 140px;
+      padding-left: 46px;
       padding-bottom: 20px;
       strong {
         font-size: 16px;
