@@ -159,7 +159,7 @@ export default {
     handleSetShareinfo() {
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: '请选择你要设置的分享信息的数据',
+          message: '请先选中页面',
           type: 'warning'
         })
         return
