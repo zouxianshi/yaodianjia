@@ -184,7 +184,7 @@
               :disabled="!goodsList.length || disabled"
               type="danger"
               @click="handleBatchDel"
-            >批量删除</el-button> -->
+            >批量删除</el-button>-->
           </p>
           <!-- <el-table :data="goodsList" border size="small" @selection-change="handleSelectionChange"> -->
           <el-table :data="goodsList" border size="small">
@@ -241,7 +241,7 @@
               :total="total"
               @current-change="handleCurrentChange"
             />
-          </div> -->
+          </div>-->
         </el-form-item>
       </el-form>
     </div>
@@ -272,7 +272,12 @@
       @on-change="onSelectedGoods"
     />
     <!-- 编辑商品 -->
-    <edit-goods-modals ref="editGoodsModals" :disabled="disabled" :info="editGoods" @complete="handleSuccessSelectGood" />
+    <edit-goods-modals
+      ref="editGoodsModals"
+      :disabled="disabled"
+      :info="editGoods"
+      @complete="handleSuccessSelectGood"
+    />
   </div>
 </template>
 <script>
@@ -958,15 +963,26 @@ export default {
 .app-container {
   padding-bottom: 100px;
   .action-wapper {
-    position: absolute;
+    // position: absolute;
+    // padding: 12px;
+    // bottom: 0;
+    // left: 0;
+    // right: 0;
+    // background: #fff;
+    // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    // text-align: center;
+    // z-index: 1;
+
+    position: fixed !important;
     padding: 12px;
     bottom: 0;
-    left: 0;
+    left: 255px;
     right: 0;
+    z-index: 3000;
     background: #fff;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    text-align: center;
-    z-index: 1;
+    text-align: right;
+    width: calc(100% - 255px);
   }
 }
 </style>
