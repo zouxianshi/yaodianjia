@@ -247,13 +247,12 @@ export default {
     },
     onTypeChange(typeid) {
       // 分类切换
-      console.log('searchForm------', typeid)
       this.forSearch()
     },
     // 调用打开方法；
     open() {
       this.dialog.visible = true
-      console.log('this.list-----', this.list)
+      this.goodsType = 1
       if (Array.isArray(this.list) && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
