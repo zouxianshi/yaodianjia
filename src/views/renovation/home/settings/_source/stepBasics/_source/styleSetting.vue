@@ -33,7 +33,7 @@
 import { mapState, mapMutations } from 'vuex'
 import renovationService from '@/api/renovation'
 import mCustomSetting from './customSetting'
-import { handlerBackfill, bannerItem } from './../../stepAssembly/default'
+import { handlerBackfill, bannerItem, defaultParams } from './../../stepAssembly/default'
 
 export default {
   name: 'StyleSetting',
@@ -77,7 +77,7 @@ export default {
       this.setStaticDragData({
         banner: {
           ..._.find(data.list, ['type', 'banner']),
-          error: false
+          ..._.cloneDeep(defaultParams[`banner_first`])
         }
       })
     },

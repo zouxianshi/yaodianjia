@@ -15,6 +15,7 @@
 import mPreview from './../../../../list/_source/preview'
 import { mapState, mapActions, mapMutations } from 'vuex'
 import { verifRequired } from './utils'
+import { defaultParams } from './../../stepAssembly/default'
 import { findComponentsDownward } from '@/utils'
 
 export default {
@@ -37,7 +38,7 @@ export default {
         this.setStaticDragData({
           banner: {
             ...banner,
-            error: true
+            ..._.cloneDeep(defaultParams[`banner_first`])
           }
         })
         this.$message.error('请上传banner图')

@@ -14,12 +14,12 @@
             </div>
           </el-form-item>
           <el-form-item label="副标题">
-            <el-input v-model="itemParams.title" maxlength="6" placeholder="请输入最多不超过6个汉字" @change="onUploadItem" />
+            <el-input v-model="itemParams.subtitle" maxlength="6" placeholder="请输入最多不超过6个汉字" @change="onUploadItem" />
           </el-form-item>
         </el-form>
         <el-divider content-position="left">商品选择</el-divider>
         <div>
-          <m-form-item :item="itemParams" @on-el-delete="onElDelete" @on-update="onUpdate" />
+          <m-form-item :item="itemParams" source="adFrame" @on-el-delete="onElDelete" @on-update="onUpdate" />
         </div>
         <div v-if="error.isGoods" class="sa-assembly-error">
           {{ error.isGoods }}
