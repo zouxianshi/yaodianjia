@@ -70,6 +70,7 @@
       :disabled="formsGift.selectedGift.length>= 10 || isPageUpdateOrView || isRuning"
       @click="dialogVisible = true;$refs.ruleForm && $refs.ruleForm.clearValidate()"
     >添加奖品</el-button>
+    <span style="margin-left: 20%;color:#F56C6C">概率总计: {{totalGl}}%</span>
     <div style="margin-top:40px">
       <el-button type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
       <el-button v-if="params.pageState!==2" type="primary" @click="submitData">保存并提交</el-button>
@@ -96,21 +97,6 @@
           <el-button size="mini" @click="selectCoupon">选择优惠券</el-button>
           <mSelectedCoupon ref="selectedCouponView" @onDel="onGetSelectCoupon" />
         </el-form-item>
-        <!-- <el-form-item v-show="ruleForm.giftType===2" label="奖品内容" prop="giftContent">
-          <el-select
-            ref="giftIds"
-            v-model="ruleForm.giftId"
-            filterable
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in couponList"
-              :key="item.id"
-              :label="item.cname"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item> -->
         <el-form-item label="奖品图片" prop="giftImg">
           <el-upload
             v-loading="uploadLoading"
@@ -155,6 +141,7 @@
             style="width:400px"
           />
           <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">％</span>
+          <span style="margin-left: 24px;color: #F56C6C">剩余概率：{{(10000 - (totalGl*100))/100}}%</span>
         </el-form-item>
         <el-form-item label="奖品数量" prop="giftNum">
           <!-- 在这 -->
@@ -217,6 +204,7 @@ export default {
       }
     }
     return {
+      totalGl: 0,
       minNum: 1, // 最小礼品数量
       uploadLoading: false,
       dialogVisible: false,
@@ -264,6 +252,19 @@ export default {
           { required: true, message: '请设置奖品内容', trigger: 'blur' }
         ]
       }
+    }
+  },
+  watch: {
+    formsGift: {
+      handler(newVal) {
+        let glTotal = 0
+        _.map(newVal.selectedGift, v => {
+          glTotal += v.winRandom
+        })
+        this.totalGl = glTotal
+      },
+      deep: true,
+      immediate: true
     }
   },
   computed: {

@@ -13,9 +13,6 @@
             @change="changeState"
           />
         </div>
-        <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
-          <div class="sub-title">{{ item.desc || '' }}</div>
-        </el-tooltip>
       </div>
       <div class="action">
         <el-button

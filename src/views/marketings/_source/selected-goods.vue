@@ -10,26 +10,6 @@
           :prop="col.prop"
           :min-width="col.width"
         />
-        <el-table-column
-          v-else-if="col.type==='img'"
-          :key="col.prop"
-          :label="col.label"
-          :prop="col.prop"
-        >
-          <template slot-scope="scope">
-            <div v-if="scope.row.picUrl && scope.row.picUrl!==''" style="width: 60px; height: 60px">
-              <div class="x-image__preview">
-                <el-image
-                  style="width: 60px; height: 60px"
-                  fit="contain"
-                  :src="showImg(scope.row.picUrl)"
-                  :preview-src-list="[showImg(scope.row.picUrl)]"
-                />
-              </div>
-            </div>
-            <div v-else style="line-height: 32px">暂无上传</div>
-          </template>
-        </el-table-column>
       </template>
       <el-table-column label="操作" width="60">
         <template slot-scope="scope">
@@ -71,27 +51,12 @@ export default {
       cutData: [],
       cols: [
         {
-          prop: 'picUrl',
-          label: '商品图片',
-          type: 'img',
-          render: true // 交给后续逻辑渲染
-        },
-        {
           prop: 'erpCode',
           label: '商品编码'
         },
         {
           prop: 'name',
           label: '商品名称'
-        },
-
-        {
-          prop: 'mprice',
-          label: '参考价(元)'
-        },
-        {
-          prop: 'productName',
-          label: '商品规格'
         }
       ],
       pager: {
@@ -103,7 +68,6 @@ export default {
   },
   methods: {
     dataFrom(data) {
-      console.log('111111111111111111111', data)
       this.tableData = Array.isArray(data)
         ? data.map(item => {
           return {
@@ -121,11 +85,6 @@ export default {
     // 获取数据源
     handleCutData() {
       const { current, size } = this.pager
-      console.log(
-        '1111111111',
-        this.pager,
-        this.tableData.slice((current - 1) * size, size)
-      )
       this.cutData = this.tableData.slice((current - 1) * size, size * current)
     },
     // 格式化规格信息
@@ -143,7 +102,6 @@ export default {
       this.$emit('del-item', item, index)
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
       this.pager = {
         ...this.pager,
         size: val,
@@ -152,7 +110,6 @@ export default {
       this.handleCutData()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
       this.pager = {
         ...this.pager,
         current: val

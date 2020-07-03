@@ -1,9 +1,26 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
+
+// 获取生日礼包活动
+export function queryBirthday(params) {
+  return request({
+    url: `${config.merGoods}/1.0/birthdayGiftBag/queryBirthday?templateCode=TC006`,
+    method: 'get'
+  })
+}
+
+// 编辑活动
+export function updateNormalActivityNoTime(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/updateNormalActivityNoTime`,
+    method: 'post',
+    data: params
+  })
+}
 // 开启关闭生日礼包
 export function birthdayOperate(params) {
   return request({
-    url: `${config.merGoods}/1.0/market/birthdayOperate?status=${params.status}&templateCode=TC006&merCode=${params.merCode}`,
+    url: `${config.merGoods}/1.0/birthdayGiftBag/birthdayOperate?status=${params.status}&templateCode=TC006&merCode=${params.merCode}`,
     method: 'post',
     data: {}
   })

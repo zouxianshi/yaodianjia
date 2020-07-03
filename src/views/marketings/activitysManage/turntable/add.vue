@@ -66,6 +66,7 @@ export default {
         _.map(data.listActivityGiftEntity, item => {
           this.removedList.push(item.id)
         })
+        data.isShare = this.isShare === 1? true: false
         this.$refs.ruleList.ruleForm = data
         this.$refs.ruleList.ruleForm.activeTime = [
           new Date(data.beginTime),
