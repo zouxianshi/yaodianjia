@@ -3,7 +3,7 @@
     <div class="sttm-title-box">
       <span class="sttm-text-1">据活动结束还剩</span>
       <span class="sttm-cd">
-        <template v-if="item.validStatus === 1 || item.validStatus === 2">
+        <template v-if="item.validStatus === 0 || item.validStatus === 1">
           <v-countdown :current-time="rtTimeStamp(item.currentTime)" :start-time="rtTimeStamp(item.endTime)" :end-time="rtTimeStamp(item.endTime)" />
         </template>
         <template v-else>

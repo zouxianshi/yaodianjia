@@ -70,7 +70,12 @@ export default {
       deep: true,
       immediate: true,
       handler(v) {
-        this.itemList = v
+        this.itemList = _.map(v, v1 => {
+          return {
+            ...v1,
+            specId: v1.itemId
+          }
+        })
       }
     }
   },
