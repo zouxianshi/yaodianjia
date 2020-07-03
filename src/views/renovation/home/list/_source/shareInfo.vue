@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="页面设置" append-to-body="" :close-on-click-modal="false" width="500px" :visible.sync="visible">
+  <el-dialog title="批量修改分享信息" append-to-body="" :close-on-click-modal="false" width="500px" :visible.sync="visible">
     <div class="share-info-box">
       <el-form ref="formData" :model="formData" :rules="rules" size="small" label-width="100px">
         <el-form-item label="分享描述：" prop="shareDesc">
