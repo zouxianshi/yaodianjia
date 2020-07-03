@@ -3,7 +3,7 @@
     <div class="custom-model">
       <el-form label-width="142px">
         <el-form-item label="分享描述">
-          <el-input v-model="basics.shareDesc" style="width: 320px;" placeholder="请填写最多不超过16个汉字" @change="onChange" />
+          <el-input v-model="basics.shareDesc" style="width: 320px;" maxlength="16" placeholder="请填写最多不超过16个汉字" @change="onChange" />
           <span class="cm-text">设置当前页面微信分享的描述</span>
           <div v-if="error.isShareDesc" class="bm-basics-error">
             {{ error.isShareDesc }}
@@ -23,6 +23,9 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import mElUpload from './../../elUpload'
+
+import { checkName } from '@/utils/validate'
+
 export default {
   name: 'ShareSetting',
   data() {
@@ -41,6 +44,11 @@ export default {
       let flag = true
 
       this.reset()
+
+      if (checkName(shareDesc)) {
+        this.error.isShareDesc = '特殊字符串有限制不可输入，仅可输入最多不超过16个汉字'
+        flag = false
+      }
 
       if (!shareDesc) {
         this.error.isShareDesc = '请输入分享描述信息'

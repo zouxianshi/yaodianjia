@@ -15,7 +15,7 @@
       </el-form-item>
       <el-form-item label="二维码">
         <div id="qrCode" ref="qrCodeDiv" />
-        <p>预览页面仅供样式查看，请勿对外开放</p>
+        <p>预览页面仅供样式查看，请勿对外投放</p>
       </el-form-item>
     </el-form>
   </div>
