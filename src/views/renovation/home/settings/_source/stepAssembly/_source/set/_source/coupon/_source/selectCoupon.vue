@@ -86,24 +86,27 @@ export default {
     $verification() {
       const { item: { subType, max }, selectList } = this
 
-      let flag = false
+      if (!selectList.length) {
+        this.$message.error(`请选择优惠券`)
+        return false
+      }
 
       if (subType === 'first' && _.size(selectList) > max) {
-        flag = true
         this.$message.error(`优惠券最大限制${max}条`)
+        return false
       }
 
       if (subType === 'second' && _.size(selectList) < 2 || _.size(selectList) > max) {
-        flag = true
         this.$message.error(`优惠券最少2条，最大限制${max}条`)
+        return false
       }
 
       if (subType === 'third' && _.size(selectList) < 6 || _.size(selectList) > max) {
-        flag = true
         this.$message.error(`优惠券最少6条，最大限制${max}条`)
+        return false
       }
 
-      return flag || selectList
+      return selectList
     },
     currentChange(v) {
       this.searchParams.currentPage = v

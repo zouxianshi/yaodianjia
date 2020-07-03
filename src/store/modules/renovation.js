@@ -95,8 +95,10 @@ const actions = {
       commit('setBasics', _.omit(res.data, ['list']))
       commit('setDragList', handlerBackfill(res.data))
       commit('setStaticDragData', {
-        banner: _.find(res.data.list, ['type', 'banner']),
-        ..._.cloneDeep(defaultParams[`banner_first`])
+        banner: {
+          ..._.find(res.data.list, ['type', 'banner']),
+          ..._.cloneDeep(defaultParams[`banner_first`])
+        }
       })
     }).catch(() => {
     })
