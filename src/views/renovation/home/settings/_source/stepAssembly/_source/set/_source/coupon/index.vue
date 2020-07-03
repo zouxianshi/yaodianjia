@@ -124,7 +124,7 @@ export default {
         return _.size(itemList) > 2 && _.size(itemList) < 10
       }
       if (subType === 'third') {
-        return _.size(itemList) > 6 && _.size(itemList) < 10
+        return _.size(itemList) > 3 && _.size(itemList) < 10
       }
     },
     mod() {

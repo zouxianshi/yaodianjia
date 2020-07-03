@@ -101,8 +101,8 @@ export default {
         return false
       }
 
-      if (subType === 'third' && _.size(selectList) < 6 || _.size(selectList) > max) {
-        this.$message.error(`优惠券最少6条，最大限制${max}条`)
+      if (subType === 'third' && _.size(selectList) < 3 || _.size(selectList) > max) {
+        this.$message.error(`优惠券最少3条，最大限制${max}条`)
         return false
       }
 
