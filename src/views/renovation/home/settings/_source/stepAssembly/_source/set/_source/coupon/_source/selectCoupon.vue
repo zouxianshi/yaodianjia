@@ -122,6 +122,8 @@ export default {
       } else {
         this.selectList = _.reject(this.selectList, ['id', item.id])
       }
+
+      console.log(this.selectList)
     },
     handleshopRule(ctype, useRule, denomination, giftName) {
       return handleshopRule(ctype, useRule, denomination, giftName)
@@ -132,12 +134,24 @@ export default {
     },
     getData() {
       renovationService.getHomeCoupon(this.searchParams).then(res => {
+        const is = id => _.some(this.item.itemList, ['itemId', `${id}`])
         this.list = _.map(res.data.records, v => {
           return {
             ...v,
-            selected: false
+            selected: is(v.id)
           }
         })
+
+        const f = id => _.find(this.item.itemList, ['itemId', `${id}`])
+
+        this.selectList = _.compact(_.map(res.data.records, v => {
+          if (is(v.id)) {
+            return {
+              ...v,
+              value: f(v.id)['value']
+            }
+          }
+        }))
 
         this.total = res.data.total
       })

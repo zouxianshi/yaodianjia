@@ -56,6 +56,7 @@ export default {
     },
     onCouponDelete(index) {
       this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)
+      console.log(this.itemParams.itemList)
     },
     onAssSubmit() {
       const { itemList } = this.itemParams
@@ -81,11 +82,14 @@ export default {
           this.itemParams.itemList.push({
             ..._.cloneDeep(itemParams),
             cname: v.cname,
-            itemId: v.id,
+            itemId: `${v.id}`,
             denomination: v.denomination,
-            ctype: v.ctype
+            ctype: v.ctype,
+            value: v.value
           })
         })
+
+        console.log(this.itemParams.itemList)
         this.dialogVisible = false
       }
     }
@@ -95,6 +99,8 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
+    console.log(this.itemParams)
+    console.log('-----this.itemParams')
   },
   beforeMount() {
   },
