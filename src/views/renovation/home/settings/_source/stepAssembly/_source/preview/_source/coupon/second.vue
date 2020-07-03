@@ -61,11 +61,9 @@ export default {
   .sap-coupon-second-model {
     .scsm-item-box {
       overflow: hidden;
+      margin-bottom: -8px;
       .scsm-item {
         margin-bottom: 8px;
-        &:nth-last-child(2),&:nth-last-child(1){
-          margin-bottom: 0;
-        }
       }
     }
   }
