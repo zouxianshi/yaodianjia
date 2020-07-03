@@ -9,13 +9,13 @@
         <tr v-for="(el,$index) in itemList" :key="$index">
           <td width="60"><img class="cfim-good-img" :src="showImg(el.img)"></td>
           <td><span class="cfim-good-name">{{ el.name }}</span></td>
-          <td width="50"><span class="cfim-good-delete" @click="onItemDelete($index)">删除</span></td>
+          <td width="50"><el-button type="text" :disabled="itemList.length <= 3" @click="onItemDelete($index)">删除</el-button></td>
         </tr>
       </table>
     </div>
     <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body size="700px" :visible.sync="dialogVisible">
       <div slot="title">选择商品</div>
-      <m-goods-table v-if="dialogVisible" ref="gt" :item-list="itemList" :sub-type="cpdSubType" @on-update="_onUpdate" />
+      <m-goods-table v-if="dialogVisible" ref="gt" :g-source="source === 'adFrame' ? 'new-home' : 'home'" :item-list="itemList" :sub-type="cpdSubType" @on-update="_onUpdate" />
     </el-drawer>
   </div>
 </template>
@@ -34,13 +34,17 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    source: {
+      type: String,
+      default: 'commodity'
     }
   },
   methods: {
     onItemDelete(i) {
       this.$emit('on-el-delete', i)
     },
-    _onUpdate(itemList) {
+    _onUpdate(itemList, fn) {
       this.itemList = _.map(itemList, v => {
         const { mprice, price, commodityId, specId } = v
         return {
@@ -49,6 +53,15 @@ export default {
           itemId: specId
         }
       })
+
+      if (this.source === 'adFrame' && _.size(this.itemList) < 3) {
+        this.$message.error('最少限制3个商品')
+        fn(false)
+        return
+      }
+
+      fn(true)
+
       this.$emit('on-update', this.itemList)
     }
   },

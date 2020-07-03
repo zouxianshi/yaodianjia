@@ -7,7 +7,7 @@
 import _ from 'lodash'
 import { uuid } from '@/utils' // eslint-disable-line
 import renovationService from '@/api/renovation'
-import { bannerItem, handlerBackfill,items } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
+import { bannerItem, handlerBackfill,items,defaultParams } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
 
 const basics = {
   name: '', // 商家首页模板名称
@@ -95,7 +95,8 @@ const actions = {
       commit('setBasics', _.omit(res.data, ['list']))
       commit('setDragList', handlerBackfill(res.data))
       commit('setStaticDragData', {
-        banner: _.find(res.data.list, ['type', 'banner'])
+        banner: _.find(res.data.list, ['type', 'banner']),
+        ..._.cloneDeep(defaultParams[`banner_first`])
       })
     }).catch(() => {
     })

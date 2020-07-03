@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <template v-if="formData.borderFlag===1">
-          <el-form-item label="边框样式" prop="borderStyle">
+          <el-form-item label="边框样式：" prop="borderStyle">
             <el-select v-model="formData.borderStyle">
               <el-option :value="0" label="直角" />
               <el-option :value="1" label="圆角" />
