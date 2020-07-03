@@ -24,7 +24,7 @@
     </div>
 
     <span slot="footer">
-      <el-button size="mini">取消</el-button>
+      <el-button size="mini" @click="visible = false">取消</el-button>
       <el-button type="primary" :loading="saveLoading" size="mini" @click="handleSubmit">确定</el-button>
     </span>
   </el-dialog>
