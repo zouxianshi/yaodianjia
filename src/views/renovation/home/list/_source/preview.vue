@@ -28,6 +28,10 @@ export default {
     dimensionId: {
       type: String,
       default: null
+    },
+    isNew: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -36,8 +40,8 @@ export default {
     }
   },
   mounted() {
-    const { $store, dimensionId } = this
-    this.link = `${this.h5Base}pages/home/preview?dimensionId=${dimensionId}&merCode=${$store.getters.merCode}`
+    const { $store, dimensionId, isNew } = this
+    this.link = `${this.h5Base}pages/home/preview?dimensionId=${dimensionId}&merCode=${$store.getters.merCode}&isNew=${isNew}`
     this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
       text: this.link,
       width: 200,
