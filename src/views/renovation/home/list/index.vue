@@ -175,7 +175,7 @@ export default {
     handleBatchDel() { // 批量删除
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: '请选择你要删除的数据',
+          message: '请先选中页面',
           type: 'warning'
         })
         return
