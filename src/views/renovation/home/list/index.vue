@@ -64,6 +64,9 @@ import RenovationService from '@/api/renovation'
 import BaseForm from './_source/baseForm'
 import ShareInfo from './_source/shareInfo'
 import { mapGetters } from 'vuex'
+
+import { setHome } from '@/api/mallService'
+
 export default {
   name: 'HomeListIndex',
   components: { Preview, BaseForm, ShareInfo },
@@ -131,8 +134,12 @@ export default {
       }
     },
     // 设置为首页模板
-    async _SetHome({ id }) {
-      await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
+    async _SetHome({ id, isNews }) {
+      if (isNews) {
+        await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
+      } else {
+        await setHome({ id })
+      }
       this.$message({
         message: '设置成功',
         type: 'success'
