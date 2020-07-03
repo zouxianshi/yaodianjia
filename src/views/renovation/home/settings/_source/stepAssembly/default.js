@@ -14,7 +14,7 @@ import { mapState } from 'vuex'
 import { uuid, findComponentsDownward } from '@/utils'
 
 // front-end custom parameters
-const defaultParams = {
+export const defaultParams = {
   'banner_first': {
     error: false,
     max: 10
