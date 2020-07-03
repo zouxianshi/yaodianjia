@@ -8,13 +8,13 @@
         <el-divider content-position="left">标题设置</el-divider>
         <el-form label-width="90px" size="mini">
           <el-form-item label="主标题">
-            <el-input v-model="itemParams.title" maxlength="8" @change="onUploadItem" />
+            <el-input v-model="itemParams.title" maxlength="6" placeholder="请输入最多不超过6个汉字" @change="onUploadItem" />
             <div v-if="error.isTitle" class="sa-assembly-error">
               {{ error.isTitle }}
             </div>
           </el-form-item>
           <el-form-item label="副标题">
-            <el-input v-model="itemParams.title" maxlength="8" @change="onUploadItem" />
+            <el-input v-model="itemParams.title" maxlength="6" placeholder="请输入最多不超过6个汉字" @change="onUploadItem" />
           </el-form-item>
         </el-form>
         <el-divider content-position="left">商品选择</el-divider>
