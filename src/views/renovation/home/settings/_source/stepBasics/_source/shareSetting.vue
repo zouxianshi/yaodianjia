@@ -3,6 +3,7 @@
     <div class="custom-model">
       <el-form label-width="142px">
         <el-form-item label="分享描述">
+          <span class="bsm-xx">*</span>
           <el-input v-model="basics.shareDesc" style="width: 320px;" maxlength="16" placeholder="请填写最多不超过16个汉字" @change="onChange" />
           <span class="cm-text">设置当前页面微信分享的描述</span>
           <div v-if="error.isShareDesc" class="bm-basics-error">
@@ -10,6 +11,7 @@
           </div>
         </el-form-item>
         <el-form-item label="分享图片">
+          <span class="bsm-xx" style="position: relative;top: -62px;">*</span>
           <m-el-upload :img-url="basics.shareImg" @on-upload="_onUpload" />
           <span class="cm-text">设置当前页面微信分享的展示图片，请上传jpg、png格式图片，建议尺寸5:4</span>
           <div v-if="error.isShareImg" class="bm-basics-error">
@@ -104,6 +106,11 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .share-setting-model {
-
+    .bsm-xx {
+      font-size: 16px;
+      color: #ff0000;
+      margin-left: -8px;
+      margin-right: 10px;
+    }
   }
 </style>

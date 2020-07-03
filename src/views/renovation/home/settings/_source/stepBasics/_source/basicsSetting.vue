@@ -2,6 +2,7 @@
   <div class="basics-setting-model">
     <el-form ref="basics" :model="basics" label-width="142px">
       <el-form-item label="模板名称">
+        <span class="bsm-xx">*</span>
         <el-input v-model="basics.name" style="width: 320px;" maxlength="12" placeholder="请输入最多不超过12个汉字" @change="onChange" />
         <span class="bsm-text">当前模板名称用于辨识此模板</span>
         <div v-if="error.isName" class="bm-basics-error">
@@ -9,6 +10,7 @@
         </div>
       </el-form-item>
       <el-form-item label="页面标题">
+        <span class="bsm-xx">*</span>
         <el-input v-model="basics.title" style="width: 320px;" maxlength="12" placeholder="请输入最多不超过12个汉字" @change="onChange" />
         <span class="bsm-text">当前页面标题用于页面展示及页面微信分享标题</span>
         <div v-if="error.isTitle" class="bm-basics-error">
@@ -97,6 +99,12 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .basics-setting-model {
+    .bsm-xx {
+      font-size: 16px;
+      color: #ff0000;
+      margin-left: -8px;
+      margin-right: 10px;
+    }
     .bsm-text {
       font-size: 14px;
       color: #9B9B9B;
