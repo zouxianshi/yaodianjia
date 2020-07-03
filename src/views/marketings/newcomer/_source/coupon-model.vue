@@ -44,7 +44,7 @@
         <el-table-column prop="address" label="优惠内容">
           <template
             slot-scope="scope"
-          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName, scope.row.cname) }}</template>
+          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName,scope.row.cname) }}</template>
         </el-table-column>
         <el-table-column label="使用时间" width="160">
           <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
@@ -192,6 +192,8 @@ export default {
     checkSure() {
       if (this.singlechoice && this.multipleSelectionAll.length > 1) {
         this.$message.error('请单选')
+      } else if (this.multipleSelectionAll.length > 5) {
+        this.$message.error('最多选择5张优惠券！')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
@@ -242,7 +244,7 @@ export default {
     handletimeRule(timeRule, effectTime) {
       if (timeRule) {
         if (timeRule === 1) {
-          return `自领取起${effectTime}天有效`
+          return `自领取起${effectTime}天内有效`
         } else if (timeRule === 2) {
           return `自领取起${effectTime.split(',')[0]}天后生效,生效后${
             effectTime.split(',')[1]

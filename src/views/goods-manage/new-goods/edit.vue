@@ -77,7 +77,14 @@
               </div>
             </div>
             <!-- 商品信息 -->
-            <el-form ref="basic" :model="basicForm" status-icon label-width="130px" :rules="(basicForm.origin === 2 || $route.name === 'depotEdit' || $route.query.source === 'create') ? basicRules : {}" :disabled="is_query">
+            <el-form
+              ref="basic"
+              :model="basicForm"
+              status-icon
+              label-width="130px"
+              :rules="(basicForm.origin === 2 || $route.name === 'depotEdit' || $route.query.source === 'create') ? basicRules : {}"
+              :disabled="is_query"
+            >
               <div class="edit-card">
                 <div class="header">
                   <span>商品信息</span>
@@ -302,19 +309,27 @@
                     <el-form-item label="有效期：" prop="days">
                       <el-radio v-model="expireDays" :label="-1" size="small">无</el-radio>
                       <el-radio v-model="expireDays" :label="1" size="small">
-                        <el-input
-                          v-model="basicForm.days"
-                          maxlength="8"
-                          style="width:80px"
-                          size="small"
-                          placeholder
-                        />
-                        <el-select v-model="timeTypes" style="width:100px" size="small" placeholder>
-                          <el-option value="1" label="年" />
-                          <el-option value="2" label="月" />
-                          <el-option value="3" label="天" />
-                        </el-select>
-                        <span style="color:#999">30天为一个月，365天为一年</span>
+                        有
+                        <template v-if="expireDays === 1">
+                          <el-input
+                            v-model="basicForm.days"
+                            maxlength="8"
+                            style="width:80px"
+                            size="small"
+                            placeholder
+                          />
+                          <el-select
+                            v-model="timeTypes"
+                            style="width:100px"
+                            size="small"
+                            placeholder
+                          >
+                            <el-option value="1" label="年" />
+                            <el-option value="2" label="月" />
+                            <el-option value="3" label="天" />
+                          </el-select>
+                          <span style="color:#999">30天为一个月，365天为一年</span>
+                        </template>
                       </el-radio>
                     </el-form-item>
                   </div>
@@ -373,11 +388,14 @@
               </div>
               <div class="edit-card-cnt">
                 <div class="content">
-                  <m-spec-setting ref="specSetting" :is-disabled="is_query" :spec-list="newSpecList" />
+                  <m-spec-setting
+                    ref="specSetting"
+                    :is-disabled="is_query"
+                    :spec-list="newSpecList"
+                  />
                 </div>
               </div>
             </div>
-
           </div>
         </div>
         <!-- 图文详情 -->
@@ -385,8 +403,20 @@
           <div class="edit-card">
             <div class="header">
               商品橱窗图
-              <span class="img-tips">最多6张，图片800*800</span>
-              <span class="img-tipe-noImg">(无图片则无法上架到商城)</span>
+              <span class="img-tips">最多6张。</span>
+              <span class="img-tipe-noImg">注意：无图片则无法上架到商城！</span>
+              <div v-clickoutside="moreImghide" class="img-tipe-moreBtnbox">
+                <span class="img-tipe-moreBtn link" @click="moreImg">更多规则>></span>
+                <ol v-if="ismoreImg === true" class="img-tips-more">
+                  <li>&nbsp;</li>
+                  <li>图片上传规则</li>
+                  <li>1、药品图片应体现：主商品+商品外包装（包装正面须包括：[药品名称]、 [OTC标识]及[包装详情] ，包装侧面须包括：[成份]、[性状]、[适应症]、[规格]、[用法用量]、[不良反应]、[禁忌]、[注意事项]、[执行标准]、[批准文号]、[生产企业]、[UPC码]）。</li>
+                  <li>2、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</li>
+                  <li>3、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。</li>
+                  <li>4、图片内容展示方向，应始终保持文字正向。</li>
+                  <li>5、请上传商品正面、侧面、背面不少于3张图片，药品需上传药品说明书图片，器械需上传器械注册证图片</li>
+                </ol>
+              </div>
             </div>
             <div class="edit-card-cnt">
               <div class="content">
@@ -406,13 +436,6 @@
                 <el-dialog append-to-body :visible.sync="dialogVisible">
                   <img width="100%" :src="dialogImageUrl" alt>
                 </el-dialog>
-                <ol class="img-tips">
-                  <li>1、药品图片应体现：主商品+商品外包装（包装正面须包括：[药品名称]、 [OTC标识]及[包装详情] ，包装侧面须包括：[成份]、[性状]、[适应症]、[规格]、[用法用量]、[不良反应]、[禁忌]、[注意事项]、[执行标准]、[批准文号]、[生产企业]、[UPC码]）。</li>
-                  <li>2、图片单张大小不超过 1M。仅支持 jpg，jpeg，png格式。</li>
-                  <li>3、图片质量要聚焦清晰，不能虚化。商品图片必须为白色或无色背景。</li>
-                  <li>4、图片内容展示方向，应始终保持文字正向。</li>
-                  <li>5、请上传商品正面、侧面、背面不少于3张图片，药品需上传药品说明书图片，器械需上传器械注册证图片</li>
-                </ol>
                 <!-- <div class="text-center">
                 <el-button type size="small" @click="step=2">上一步</el-button>
                 <el-button
@@ -584,7 +607,7 @@ import {
 import mixins from './_source/mixin'
 import specsMixin from './_source/specsMixins'
 import editGroup from '../components/grouping'
-import { findArray } from '@/utils/index'
+import { findArray, directives } from '@/utils/index'
 import { checkNumberdouble } from '@/utils/validate'
 import { handlerDays } from './_source/utils'
 import mSpecSetting from './_source/specSetting'
@@ -593,6 +616,7 @@ export default {
   name: 'GoodsEdit',
   components: { Tinymce, vueUploadImg, editGroup, mSpecSetting },
   mixins: [mixins, specsMixin],
+  directives: { Clickoutside: directives.Clickoutside },
   data() {
     const _checkName = (rule, value, callback) => {
       if (!value) {
@@ -664,6 +688,7 @@ export default {
     }
     return {
       isSpec: true,
+      ismoreImg: false, // 判断是否显示图片上传规则
       specLoading: false,
       rejectVisible: false, // 驳回弹框
       rejectForm: {
@@ -837,8 +862,7 @@ export default {
       next()
     }
   },
-  mounted() {
-  },
+  mounted() {},
   created() {
     this.basicLoading = true
     this._loadTypeList() // 获取分组
@@ -859,21 +883,21 @@ export default {
       this.basicForm.id = this.$route.query.id
       this.getDataAll()
       // 基本信息
-    //   this.getTypeListData()
-    //   .then(res => {
-    //     this._loadBasicInfo()
-    //   })
-    //   .catch(_ => {
-    //     this._loadBasicInfo()
-    //   })
-    //   setTimeout(() => {
-    //   this.$nextTick(() => {
-    //     // 加载商品说明
-    //     this._loadGoodsDetails()
-    //      // 加载商品图片
-    //     this._loadGoodsImgAry()
-    //   })
-    // }, 1200)
+      //   this.getTypeListData()
+      //   .then(res => {
+      //     this._loadBasicInfo()
+      //   })
+      //   .catch(_ => {
+      //     this._loadBasicInfo()
+      //   })
+      //   setTimeout(() => {
+      //   this.$nextTick(() => {
+      //     // 加载商品说明
+      //     this._loadGoodsDetails()
+      //      // 加载商品图片
+      //     this._loadGoodsImgAry()
+      //   })
+      // }, 1200)
     }
     this.is_query = this.$route.query.type === 'query'
     this.is_state = this.$route.query.state === 'check'
@@ -927,7 +951,9 @@ export default {
           res.data.commDTO.drugType = ''
         }
         this._loadBasicInfo(res.data.commDTO)
-        this._loadGoodsDetails(res.data.detailDTO && res.data.detailDTO.content || '')
+        this._loadGoodsDetails(
+          (res.data.detailDTO && res.data.detailDTO.content) || ''
+        )
         this.basicLoading = false
         this.isSpec = true
       }
@@ -1004,13 +1030,20 @@ export default {
           this.rejectForm.reason = ''
           // this.$router.go(-1)
           if (!data.auditReason) {
-            this.$router.replace(`/goods-manage/${this.backUrl}?source=${type === 'reject' ? 0 : 1}&type=1`)
+            this.$router.replace(
+              `/goods-manage/${this.backUrl}?source=${
+                type === 'reject' ? 0 : 1
+              }&type=1`
+            )
           } else {
-            this.$router.replace(`/goods-manage/${this.backUrl}?source=${type === 'reject' ? 0 : 1}&type=0`)
+            this.$router.replace(
+              `/goods-manage/${this.backUrl}?source=${
+                type === 'reject' ? 0 : 1
+              }&type=0`
+            )
           }
         })
-        .catch(_ => {
-        })
+        .catch(_ => {})
     },
     // 定位
     onScroll() {
@@ -1021,9 +1054,9 @@ export default {
         const s3 = $('#step3').height()
         if (scrollTop < s1) {
           this.step = 1
-        } else if (scrollTop < (s2 + s1 + 40)) {
+        } else if (scrollTop < s2 + s1 + 40) {
           this.step = 2
-        } else if (scrollTop < (s2 + s1 + s3)) {
+        } else if (scrollTop < s2 + s1 + s3) {
           this.step = 3
         }
       }
@@ -1182,9 +1215,11 @@ export default {
       }
 
       // todo 处理回填日期
-      const { days, timeTypes } = handlerDays(data.days)
-      data.days = days
-      this.timeTypes = `${timeTypes}`
+      if (data.days) {
+        const { days, timeTypes } = handlerDays(data.days)
+        data.days = days
+        this.timeTypes = `${timeTypes}`
+      }
 
       const findUnitIndex = findArray(this.unit, { value: data.unit }) // 查找数组里面有咩有
       const findDrugIndex = findArray(this.drug, { value: data.dosageForm })
@@ -1228,6 +1263,7 @@ export default {
     // 加载商品详情
     _loadGoodsDetails(val) {
       this.goodsIntro.content = val
+      this.$refs['details-ty'].setContent(val)
       // this.$refs['details-ty'].destroyTinymce() // 先销毁
       // getGoodsDetails(id)
       //   .then(res => {
@@ -1455,7 +1491,9 @@ export default {
 
       let msgText = '保存成功'
       if (this.$route.name === 'editApply') {
-        msgText = `已提交审核，可在「新品申请记录」-${this.$route.query.source === 'create' ? '「待提交审核」' : '「全部」'}页面查看`
+        msgText = `已提交审核，可在「新品申请记录」-${
+          this.$route.query.source === 'create' ? '「待提交审核」' : '「全部」'
+        }页面查看`
       }
 
       if (this.$route.query.type === '添加该商品') {
@@ -1483,7 +1521,11 @@ export default {
             url = '/goods-manage/depot'
           }
 
-          this.$router.push(url)
+          this.$store
+            .dispatch('tagsView/delView', this.$route)
+            .then(({ visitedViews }) => {
+              this.$router.push(url)
+            })
           // this.subLoading = false
         })
         .catch(_ => {
@@ -1500,8 +1542,7 @@ export default {
           //   type: 'success'
           // })
         })
-        .catch(_ => {
-        })
+        .catch(_ => {})
     },
     nextStep() {
       this.handleSubmitForm()
@@ -1516,8 +1557,7 @@ export default {
           .then(() => {
             this.goBackUrl(3)
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       }, 1000)
     },
     goBackUrl(type = 2) {
@@ -1652,8 +1692,7 @@ export default {
 
                   // this.handleSubIntro()
                 })
-                .catch(() => {
-                })
+                .catch(() => {})
             } else {
               // if (this.basicForm.id) {
               //   data.firstTypeId = this.chooseTypeList[0].id
@@ -1699,7 +1738,16 @@ export default {
         }
       })
     },
-
+    moreImg() {
+      if (this.ismoreImg === true) {
+        this.ismoreImg = false
+      } else {
+        this.ismoreImg = true
+      }
+    },
+    moreImghide() {
+      this.ismoreImg = false
+    },
     handleSubImg() {
       // 保存图片
       if (this.fileList.length === 0) {
@@ -1725,6 +1773,7 @@ export default {
       // this.fileList.map(v => {
       //   data.imgs.push({ picUrl: v.imgUrl })
       // })
+
       saveImg(data)
         .then(_ => {
           this.$message({
@@ -1804,6 +1853,51 @@ export default {
     margin-top: 10px;
     color: red;
   }
+  .img-tips-more {
+    width: 500px;
+    font-size: 12px;
+    background-color: #ffffdd;
+    padding: 5px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0px;
+    left: 82px;
+    li {
+      line-height: normal;
+      margin-bottom: 5px;
+    }
+    li:nth-child(1) {
+      width: 0;
+      height: 0;
+      border-width: 15px;
+      border-style: solid;
+      border-color:transparent #ffffdd transparent transparent;
+      position: absolute;
+      left: -30px;
+      top: 5px;
+    }
+    li:nth-child(2) {
+      color: red;
+      font-size: 16px;
+    }
+  }
+  .img-tipe-moreBtnbox {
+    position: absolute;
+    top: 0px;
+    left: 335px;
+    z-index: 110;
+  }
+  .img-tipe-moreBtn {
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color: #147de8;
+    -ms-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    user-select:none;
+  }
   .specs-box {
     margin-top: 20px;
     .el-table {
@@ -1825,6 +1919,7 @@ export default {
       line-height: 40px;
       padding: 0 10px;
       font-size: 16px;
+      position: relative;
     }
     .edit-card-cnt {
       padding: 10px;
@@ -1903,6 +1998,9 @@ export default {
         border: 1px dashed red;
         img {
           max-width: 100% !important;
+        }
+        >>> img {
+          display: block;
         }
       }
       .w-e-text {

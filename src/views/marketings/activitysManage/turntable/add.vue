@@ -83,6 +83,7 @@ export default {
           this.$refs.ruleList.ruleForm.dayLimit = data.countRule
         }
         data.listActivityGiftEntity.map(item => {
+          console.log(item.winRandom)
           item.winRandom = item.winRandom * 100
         })
         this.$refs.awardSetting.formsGift.selectedGift =

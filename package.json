@@ -41,7 +41,7 @@
   "dependencies": {
     "@fedor/utils": "^1.0.2",
     "@hydee/download": "^1.0.9",
-    "@merchant/commons": "^2.0.1-beta.56",
+    "@merchant/commons": "^2.0.1-beta.61",
     "@vue/utils": "^1.0.1",
     "area-data": "^5.0.6",
     "axios": "0.18.1",
@@ -59,6 +59,7 @@
     "qrcode": "^1.4.4",
     "qrcodejs2": "^0.0.2",
     "screenfull": "4.2.0",
+    "swiper": "^5.4.5",
     "tim-js-sdk": "^2.6.5",
     "vue-area-linkage": "^5.1.0",
     "vue-awesome-swiper": "^3.1.3",

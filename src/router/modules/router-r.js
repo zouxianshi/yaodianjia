@@ -62,7 +62,7 @@ const router = [
         name: 'commentSettings',
         hidden: true,
         meta: {
-          title: '评论设置',
+          title: '商城设置',
           icon: 'commentSettings'
           // auth: 'set.comment-settings'
         },

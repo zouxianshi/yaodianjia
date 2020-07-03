@@ -146,114 +146,11 @@
             <img src="../../assets/image/h5/priview_2.png" style="width:100%;height:100%">
           </div>
         </div>
-        <section class="table-box" style="height: calc(100% - 180px);overflow: auto">
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column label="序号" width="60" align="center">
-              <template slot-scope="scope">
-                <span>{{ scope.row.sortNumber || '' }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="announcement" label="展示内容" min-width="150" />
-            <el-table-column prop="url" label="链接地址" min-width="240">
-              <template v-if="scope.row.url && scope.row.url!==''" slot-scope="scope">
-                <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
-              </template>
-            </el-table-column>
-            <el-table-column prop="startTime" label="开始时间" min-width="150" align="center" />
-            <el-table-column prop="endTime" label="结束时间" min-width="150" align="center" />
-            <el-table-column label="状态" min-width="80" align="center">
-              >
-              <template slot-scope="scope">
-                <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
-                <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" align="center" min-width="240">
-              <template slot-scope="scope">
-                <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-                <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
-                <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
-                <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </section>
-        <section class="c-footer">
-          <el-pagination
-            background
-            :current-page="pager.current"
-            :page-sizes="[10, 20, 30, 50]"
-            :page-size="pager.size"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="pager.total"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
-        </section>
       </div>
-      <el-dialog
-        :title="`${xForm.id==''? '添加':'修改'}公告`"
-        append-to-body
-        :visible.sync="dialogFormVisible"
-        width="800px"
-        :close-on-click-modal="false"
-        @closed="dialogClose('xForm')"
-      >
-        <div class="x-dialog-body">
-          <div class="form-box">
-            <el-form ref="xForm" :model="xForm" :rules="xRules">
-              <el-form-item label="公告文字" :label-width="formLabelWidth" prop="notice">
-                <el-input
-                  v-model="xForm.notice"
-                  autocomplete="off"
-                  style="width: 350px"
-                  :maxlength="15"
-                  placeholder="最多输入15字"
-                />
-              </el-form-item>
-              <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
-                <el-input
-                  v-model="xForm.linkUrl"
-                  size="small"
-                  autocomplete="off"
-                  style="width: 350px"
-                  :maxlength="500"
-                  placeholder="http:// 或 https://"
-                />
-              </el-form-item>
-              <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
-                <el-date-picker
-                  v-model="xForm.dateRange"
-                  style="width: 350px"
-                  size="small"
-                  type="datetimerange"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  range-separator="至"
-                  :default-time="['00:00:00','23:59:59']"
-                  start-placeholder="开始时间"
-                  end-placeholder="结束时间"
-                  @change="handleTimeChange($event, 3)"
-                />
-              </el-form-item>
-              <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
-                <el-input v-model="xForm.sort" autocomplete="off" style="width: 350px" :maxlength="5" placeholder="正整数" />
-              </el-form-item>
-            </el-form>
-          </div>
-          <div class="preview-box">
-            <p class="title">
-              <label style="font-weight: bold">内容位置：</label> 首页-公告
-            </p>
-            <div class="prview-pic">
-              <img src="../../assets/image/h5/priview_2.png" style="width:100%;height:100%">
-            </div>
-          </div>
-        </div>
-        <div slot="footer" class="dialog-footer">
-          <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
-        </div>
-      </el-dialog>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
+      </div>
     </el-dialog>
     <el-drawer
       :wrapper-closable="false"

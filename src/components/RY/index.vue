@@ -297,7 +297,7 @@ export default {
             msgtype: 1, // 消息类型,1-请求，2-应答
             platform: 3, // 平台,1-android,2-ios,3-web
             platformVersion: 'v1', // 平台版本
-            systemType: 2, //  1-小蜜，2-药店加
+            systemType: 2, //  1-小蜜，2-海典健康微商城
             token: cToken, // 	中台用户登录的token
             version: 1 // 协议版本
           }

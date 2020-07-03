@@ -105,7 +105,6 @@ export default {
           type: 'view',
           url: ''
         }
-
         if (_.isNull(level1Index) && _.isNull(level2Index)) {
           await this.addMenuLevel1({
             item

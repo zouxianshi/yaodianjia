@@ -40,16 +40,11 @@
       </el-tab-pane>
       <el-tab-pane label="海贝营销" name="haibeiActivity">
         <el-row :gutter="20">
-          <el-col
-            v-for="(o, index) in haibeiActivity"
-            :key="index"
-            :xs="24"
-            :sm="12"
-            :md="8"
-            :lg="6"
-            :xl="4"
-          >
-            <card-item-close ref="HB" :item="o" @changeStatus="changeStatus" />
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+            <card-item-close ref="HB" :item="haibeiActivity[0]" @changeStatus="changeStatus" />
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+            <card-item-sign ref="sign" :item="haibeiActivity[1]" @changeStatus="changeStatusSign" />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -61,6 +56,7 @@
 <script>
 import cardItem from '../components/card-item'
 import cardItemClose from '../components/card-item-close'
+import cardItemSign from '../components/card-item-sign' // 签到功能
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
@@ -74,10 +70,14 @@ import paymentCourtesy from '@/assets/image/marketings/pay.png'
 // import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
+// import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
+// import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
+import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'// eslint-disable-line 
+
 export default {
-  components: { cardItem, cardItemClose },
+  components: { cardItem, cardItemClose, cardItemSign },
   /**
    * value => key 这里建议跟后端的key保持一致
    * lable: '活动标题
@@ -110,6 +110,15 @@ export default {
             '/marketings/activity-manage/payment-gift/list?code=TC002&name=支付有礼',
           linkUrl: '/marketings/activity-manage/payment-gift/add'
         }
+        /* {
+          value: '',
+          lable: '新人礼包',
+          img: newComer,
+          desc: '每个新注册微商城的用户都可以获取新人礼包一份，包含优惠券、海贝、抽奖福利等',
+          listUrl:
+            '/activity/newcomer-pack',
+          linkUrl: '/activity/newcomer-create'
+        }*/
       ], // 会员营销
       goodsActivity: [
         {
@@ -199,17 +208,37 @@ export default {
           listUrl: '/activity/exchangeMallList',
           linkUrl: '/activity/exchangeMallAdd'
         }
+        /* {
+          createText: '',
+          name: 'signGift',
+          lable: '签到设置',
+          desc: '',
+          titles: '签到奖励',
+          isclose: true,
+          img: signGift,
+          listUrl: '/activity/sign-create',
+          linkUrl: ''
+        }*/
       ], // 积分营销
-      activity: [] // 精彩活动
+      activity: [], // 精彩活动
+      singIsSet: false
     }
   },
   created() {
     this.activeName = this.$route.query.type || 'goodsActivity'
-    searchActivityStatus({ pmtType: 20 }).then(res => {
+    searchActivityStatus({ pmtType: 20 }).then(res => { // 海贝营销开启还是关闭状态
       if (res.code === '10000') {
         this.haibeiActivity[0].isclose = res.data
       }
     })
+    /* _searchMemberSignIn().then(res => { // 海贝签到开启还是关闭状态
+      if (res.code === '10000' && !!res.data) {
+        this.haibeiActivity[1].isclose = !!res.data.isValid
+        this.singIsSet = true
+      } else {
+        this.haibeiActivity[1].isclose = false
+      }
+    })*/
   },
   methods: {
     handleClick(val) {
@@ -231,8 +260,27 @@ export default {
           _self.$refs.HB.closeStatus(status)
         }
       }).catch(() => {
-        _self.$refs.HB[0].closeStatus(status)
+        _self.$refs.HB.closeStatus(status)
       })
+    },
+    changeStatusSign(status) {
+      if (!this.singIsSet) {
+        this.$message.error('请完成签到设置后再操作')
+        this.$refs.sign.closeStatus(status)
+      } else {
+        const params = {
+          isValid: status ? 1 : 0,
+          merCode: this.$store.state.user.merCode
+        }
+        modifyStatus(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              type: 'success',
+              message: '操作成功'
+            })
+          }
+        })
+      }
     }
   }
 }

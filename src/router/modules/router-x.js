@@ -190,6 +190,14 @@ const router = [
         }
       },
       {
+        path: '/activity/newcomer-pack',
+        component: () => import('@/views/marketings/newcomer/newcomerGift'),
+        name: 'newcomerPack',
+        meta: {
+          title: '新人礼包'
+        }
+      },
+      {
         path: '/activity/exchangeMallList',
         component: () => import('@/views/marketings/exchangeMall/exchange-list'),
         name: 'exchangeMallList',
@@ -200,6 +208,23 @@ const router = [
         }
       },
       {
+        path: '/activity/newcomer-create',
+        component: () => import('@/views/marketings/newcomer/newcomerCreate'),
+        name: 'newcomer-create',
+        meta: {
+          title: '新人礼包',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/sign-create',
+        component: () => import('@/views/marketings/signGift/signCreate'),
+        name: 'sign-create',
+        meta: {
+          title: '签到奖励'
+        }
+      }, {
         path: '/activity/exchangeMallAdd',
         component: () => import('@/views/marketings/exchangeMall/exchange-add'),
         name: 'exchangeMallAdd',
