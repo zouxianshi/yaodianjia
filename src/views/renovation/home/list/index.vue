@@ -41,7 +41,7 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设置为主页</el-dropdown-item>
-                <el-dropdown-item :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
+                <el-dropdown-item :disabled="scope.row.isNew === 0" :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
                 <el-dropdown-item :command="{type:'copy',data:scope.row}">复制</el-dropdown-item>
                 <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'dele',data:scope.row}">删除</el-dropdown-item>
               </el-dropdown-menu>
@@ -64,6 +64,9 @@ import RenovationService from '@/api/renovation'
 import BaseForm from './_source/baseForm'
 import ShareInfo from './_source/shareInfo'
 import { mapGetters } from 'vuex'
+
+import { setHome } from '@/api/mallService'
+
 export default {
   name: 'HomeListIndex',
   components: { Preview, BaseForm, ShareInfo },
@@ -131,8 +134,12 @@ export default {
       }
     },
     // 设置为首页模板
-    async _SetHome({ id }) {
-      await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
+    async _SetHome({ id, isNews }) {
+      if (isNews) {
+        await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
+      } else {
+        await setHome({ id })
+      }
       this.$message({
         message: '设置成功',
         type: 'success'

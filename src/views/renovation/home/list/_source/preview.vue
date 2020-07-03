@@ -5,7 +5,12 @@
         <input id="path" class="" hidden type="text">
         <div class="share-path">
           <p id="url" class="link-txt" v-text="link" />
-          <span class="copy" @click="handleCopy">复制</span>
+          <span
+            v-clipboard:error="onError"
+            v-clipboard:copy="link"
+            v-clipboard:success="onCopy"
+            class="copy"
+          >复制</span>
         </div>
       </el-form-item>
       <el-form-item label="二维码">
@@ -43,12 +48,10 @@ export default {
     })
   },
   methods: {
-    handleCopy() {
-      const txt = document.querySelector('#url').innerHTML
-      var input = document.querySelector('#path')
-      input.value = txt
-      input.select()
-      document.execCommand('Copy')
+    onError() {
+      this.$message.error('复制失败')
+    },
+    onCopy() {
       this.$message({
         message: '复制成功',
         type: 'success'
