@@ -9,7 +9,7 @@
         <tr v-for="(el,$index) in itemList" :key="$index">
           <td width="60"><img class="cfim-good-img" :src="showImg(el.img)"></td>
           <td><span class="cfim-good-name">{{ el.name }}</span></td>
-          <td width="50"><el-button type="text" :disabled="itemList.length <= 3" @click="onItemDelete($index)">删除</el-button></td>
+          <td width="50"><el-button type="text" :disabled="source === 'adFrame' ? itemList.length <= 3 : false" @click="onItemDelete($index)">删除</el-button></td>
         </tr>
       </table>
     </div>
