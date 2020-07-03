@@ -60,7 +60,7 @@ export default {
         return
       }
 
-      fn(true)
+      fn && fn(true)
 
       this.$emit('on-update', this.itemList)
     }
