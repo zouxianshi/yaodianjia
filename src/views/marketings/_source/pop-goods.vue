@@ -85,6 +85,7 @@
         </el-table>
         <div class="table-footer">
           <el-pagination
+            v-if="goodsType === 1"
             background
             style="text-align: right;margin-top: 20px"
             :current-page="pager.current"

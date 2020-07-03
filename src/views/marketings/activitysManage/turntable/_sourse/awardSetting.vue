@@ -261,7 +261,7 @@ export default {
         _.map(newVal.selectedGift, v => {
           glTotal += v.winRandom
         })
-        this.totalGl = glTotal
+        this.totalGl = parseInt(glTotal*100)/100
       },
       deep: true,
       immediate: true
