@@ -119,3 +119,12 @@ export function checkZmSZ(value) {
   const reg = /^[0-9a-zA-Z]*$/g
   return reg.test(value)
 }
+
+export function checkName(newName) {
+  var regEn = /[`!@#$%^&*()_+<>?:"{}.\/;'[\]]/im
+  var regCn = /[·！#￥（——）：；“”‘、|《。》？、【】[\]]/im
+  if (regEn.test(newName) || regCn.test(newName)) {
+    return true
+  }
+  return false
+}

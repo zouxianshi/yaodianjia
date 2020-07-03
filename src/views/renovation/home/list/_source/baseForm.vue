@@ -73,8 +73,20 @@
 
 </template>
 <script>
+import { checkName } from '@/utils/validate'
 import RenovationService from '@/api/renovation'
 import mixins from './mixins'
+
+const vefDesc = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请输入分享描述'))
+  } else if (checkName(value)) {
+    callback(new Error('特殊字符串有限制不可输入，仅可输入最多不超过16个汉字'))
+  } else {
+    callback()
+  }
+}
+
 export default {
   name: 'BaseForm',
   mixins: [mixins],
@@ -114,7 +126,9 @@ export default {
         borderStyle: [{ required: true, message: '请选择边框样式', trigger: 'change' }],
         borderSize: [{ required: true, message: '请输入边框大小', trigger: 'blur' }],
         borderColor: [{ required: true, message: '请边框颜色', trigger: 'change' }],
-        shareDesc: [{ required: true, message: '请输入分享描述', trigger: 'blur' }],
+        shareDesc: [
+          { validator: vefDesc, trigger: 'blur' }
+        ],
         shareImg: [{ required: true, message: '请上传分享图片', trigger: 'change' }]
       },
       pageLoading: null,
