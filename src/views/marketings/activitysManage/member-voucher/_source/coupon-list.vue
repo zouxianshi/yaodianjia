@@ -8,7 +8,7 @@
         @onDel="onGetSelectCoupon"
       />
     </div>
-    <div>
+    <div style="position: absolute;bottom: 24px">
       <el-button @click="onStep(true)">上一步</el-button>
       <el-button @click="onStep(false)">确定</el-button>
     </div>
@@ -17,7 +17,7 @@
 </template>
 <script>
 import checkCoupon from '@/components/Marketings/checkCoupon'
-import mSelectedCoupon from '../../../_source/SelectedCoupon'
+import mSelectedCoupon from '../../../_source/selectedCouNonum'
 import _ from 'lodash'
 export default {
   components: {
@@ -48,10 +48,9 @@ export default {
         } else {
           const arr = []
           _.map(this.selectedCoupons, items => {
-            console.log(items)
             const obj = {
               id: items.id,
-              num: items.giftNum
+              num: 1
             }
             arr.push(obj)
           })
