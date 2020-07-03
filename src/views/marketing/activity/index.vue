@@ -99,7 +99,7 @@ export default {
         value: 'birthGift',
         lable: '生日礼包',
         img: birthdayImg,
-        desc: '定向给会员用户生日当天发放优惠券、海贝等优惠券礼包，精准营销，激励消费',
+        desc: '定向给会员用户生日当天发放优惠券、海贝礼包，精准营销，激励消费',
         listUrl: '',
         linkUrl: '/activity/birthday-gift'
       },
