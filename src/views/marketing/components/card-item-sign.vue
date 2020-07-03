@@ -5,13 +5,6 @@
       <div class="activity-header">
         <div class="title">
           <span class="title-span">{{ item.titles }}</span>
-          <el-switch
-            v-model="closeOrOpen"
-            style="vertical-algin: middle"
-            active-color="#5677fc"
-            inactive-color="#a7a5a6"
-            @change="changeState"
-          />
         </div>
         <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
           <div class="sub-title">{{ item.desc || '' }}</div>
@@ -20,17 +13,18 @@
       <div class="action">
         <el-button
           type="text"
-          icon="el-icon-takeaway-box"
+          icon="el-icon-menu"
           class="button"
           @click="handleJump(item, 'list')"
-        >{{ item.lable }}列表</el-button>
+        >{{ item.lable }}</el-button>
         <el-divider direction="vertical" />
-        <el-button
-          type="text"
-          icon="el-icon-document-add"
-          class="button"
-          @click="handleJump(item)"
-        >{{ item.createText || '新建活动' }}</el-button>
+        <el-switch
+          v-model="closeOrOpen"
+          style="vertical-algin: middle"
+          active-color="#5677fc"
+          inactive-color="#a7a5a6"
+          @change="changeState"
+        />
       </div>
     </div>
     <!-- 右上角的事件 -->
@@ -91,7 +85,7 @@ export default {
       } else {
         text = '关闭'
       }
-      this.$confirm(`确定${text}兑换商城?`, '操作提示', {
+      this.$confirm(`确定${text}签到奖励 ?`, '操作提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

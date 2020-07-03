@@ -17,7 +17,7 @@
             </div>
             <div class="caption-box">
               <div class="title">新春模板</div>
-              <div class="desc">药店加为商家提供不同节日氛围的药店加为商家提供不同节日氛围的..</div>
+              <div class="desc">海典健康微商城为商家提供不同节日氛围的海典健康微商城为商家提供不同节日氛围的..</div>
             </div>
           </li>
           <li class="li-item li-add">

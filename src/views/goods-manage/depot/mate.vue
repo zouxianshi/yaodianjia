@@ -17,7 +17,7 @@
           </li>
           <li class="product-list">
             <p class="title">
-              当前所选药店加平台库产品</p>
+              当前所选海典健康微商城平台库产品</p>
             <p class="title">&nbsp;</p>
             <span class="line-status" />
             <div class="info">
@@ -101,7 +101,7 @@
         </div>
       </div>
       <div class="table-box">
-        <p class="title">为您匹配到的药店加平台产品库中与之匹配的产品：</p>
+        <p class="title">为您匹配到的海典健康微商城平台产品库中与之匹配的产品：</p>
         <el-table
           ref="singleTable"
           v-loading="loading"
@@ -426,7 +426,7 @@ export default {
     handleReject() {
       let reason = ''
       if (this.rejectForm.id === '1') {
-        reason = '药店加平台已存在改商品'
+        reason = '海典健康微商城平台已存在改商品'
       } else if (this.rejectForm.id === '2') {
         reason = '商品信息不够规范合格'
       } else {

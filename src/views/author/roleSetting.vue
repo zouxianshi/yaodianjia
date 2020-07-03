@@ -15,7 +15,7 @@
         <el-card>
           <div class="role-setting_header">
             <p class="role-name">某某管理员</p>
-            <span>药店加管理员预设所有菜单的查看和修改权限</span>
+            <span>海典健康微商城管理员预设所有菜单的查看和修改权限</span>
           </div>
           <p class="lin-title">菜单权限</p>
           <div class="role-setting_content">

@@ -4,7 +4,7 @@
     <div class="activity-bottom">
       <div class="activity-header">
         <div class="title">{{ item.lable }}</div>
-        <div v-if="item.desc===''" style="height:25px">{{ item.desc || '' }}</div>
+        <div v-if="item.desc===''" style="height:48px">{{ item.desc || '' }}</div>
         <el-tooltip v-if="item.desc!==''" class="item" effect="dark" :content="item.desc" placement="top-start">
           <div class="sub-title">{{ item.desc || '' }}</div>
         </el-tooltip>
