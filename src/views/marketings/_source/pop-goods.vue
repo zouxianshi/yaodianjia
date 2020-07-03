@@ -287,7 +287,6 @@ export default {
         })
         return false
       }
-      console.log('confirm', this.mySelectList)
       this.$emit('on-change', this.mySelectList)
       this.close()
     },
