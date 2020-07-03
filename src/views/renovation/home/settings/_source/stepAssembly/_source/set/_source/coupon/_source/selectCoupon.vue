@@ -11,7 +11,7 @@
       <span class="sscm-coupon-type">
         <span class="sscm-text-1">活动类型 </span>
         <el-select v-model="searchParams.ctype" size="mini" placeholder="请选择" style="width: 200px;">
-          <el-option v-for="item in [{value:0,label:'全部'},{value:1,label:'折扣券'},{value:2,label:'抵价劵'},{value:3,label:'礼品券'},]" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in [{value:0,label:'全部'},{value:1,label:'折扣券'},{value:2,label:'满减劵'},{value:3,label:'礼品券'},]" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </span>
       <span class="sscm-coupon-name">

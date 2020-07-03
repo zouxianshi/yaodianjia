@@ -9,7 +9,7 @@
       </span>
       <span class="sscm-coupon-name">
         <span class="sscm-text-1">活动名称 </span>
-        <el-input v-model="searchParams.itemName" size="mini" placeholder="请输入商品名称/编码查询" style="width: 200px;" />
+        <el-input v-model="searchParams.pmtName" size="mini" placeholder="请输入商品名称/编码查询" style="width: 200px;" />
       </span>
       <el-button type="primary" size="mini" style="margin-left: 8px;" @click="onQuery">查询</el-button>
     </div>
@@ -61,7 +61,7 @@ export default {
         actType: null,
         currentPage: 1,
         pageSize: 10,
-        itemName: '',
+        pmtName: '',
         storeId: ''
       }
     }
