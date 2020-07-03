@@ -10,7 +10,7 @@
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
       <el-button type="primary" size="mini" @click="onSubmit">确定</el-button>
     </div>
-    <el-button slot="reference" icon="el-icon-caret-bottom">选择图标</el-button>
+    <el-button slot="reference" icon="el-icon-caret-bottom" :size="btnSize">选择图标</el-button>
   </el-popover>
 </template>
 <script>
@@ -22,17 +22,17 @@ export default {
     return {
       visible: false,
       activeIcon: '',
-      defaultIcons: _.times(12, v => {
-        return {
-          icon: `sa_default_icons_${v}`
-        }
-      })
+      defaultIcons: []
     }
   },
   props: {
     item: {
       type: Object,
       default: () => {}
+    },
+    btnSize: {
+      type: String,
+      default: 'mini'
     }
   },
   methods: {
@@ -56,6 +56,8 @@ export default {
   beforeCreate() {
   },
   created() {
+    const chunkList = _.chunk(_.times(20, v => { return { icon: `sa_default_icons_${v}` } }), 4)
+    this.defaultIcons = [...chunkList[4], ...chunkList[3], ...chunkList[0], ...chunkList[1], ...chunkList[2]]
   },
   beforeMount() {
   },
