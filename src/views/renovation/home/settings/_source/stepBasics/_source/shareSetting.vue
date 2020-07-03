@@ -3,7 +3,7 @@
     <div class="custom-model">
       <el-form label-width="142px">
         <el-form-item label="分享描述">
-          <el-input v-model="basics.shareDesc" style="width: 320px;" placeholder="请填写最多不超过16个汉字" @change="onChange" />
+          <el-input v-model="basics.shareDesc" style="width: 320px;" maxlength="16" placeholder="请填写最多不超过16个汉字" @change="onChange" />
           <span class="cm-text">设置当前页面微信分享的描述</span>
           <div v-if="error.isShareDesc" class="bm-basics-error">
             {{ error.isShareDesc }}
