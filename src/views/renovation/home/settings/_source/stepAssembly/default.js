@@ -597,7 +597,7 @@ export default () => {
             typeName: '优惠券',
             subType: 'third',
             name: '一排多个',
-            itemList: items(6),
+            itemList: items(3),
             ..._.cloneDeep(defaultParams[`coupon_third`])
           }
         ]
