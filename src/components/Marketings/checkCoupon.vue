@@ -191,7 +191,7 @@ export default {
     },
     checkSure() {
       if (this.singlechoice && this.multipleSelectionAll.length > 1) {
-        this.$message.error('请单选')
+        this.$message.error('只能选择一张优惠券！')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
@@ -339,13 +339,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .checkCoupon-model {
-  .el-table--medium th,
-  // .el-table--medium td {
-  //   padding: 2px;
-  // }
-  // .el-table thead th {
-  //   height: 50px;
-  // }
   .creatcoucops:hover {
     cursor: pointer;
   }

@@ -41,7 +41,7 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设置为主页</el-dropdown-item>
-                <el-dropdown-item :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
+                <el-dropdown-item :disabled="scope.row.isNew === 0" :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
                 <el-dropdown-item :command="{type:'copy',data:scope.row}">复制</el-dropdown-item>
                 <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'dele',data:scope.row}">删除</el-dropdown-item>
               </el-dropdown-menu>
@@ -64,6 +64,9 @@ import RenovationService from '@/api/renovation'
 import BaseForm from './_source/baseForm'
 import ShareInfo from './_source/shareInfo'
 import { mapGetters } from 'vuex'
+
+import { setHome } from '@/api/mallService'
+
 export default {
   name: 'HomeListIndex',
   components: { Preview, BaseForm, ShareInfo },
@@ -100,6 +103,8 @@ export default {
     },
     //  点击更多 点击菜单项触发的事件回调
     handleCommand({ type, data }) {
+      console.log(data)
+      console.log('----data')
       switch (type) {
         case 'home': // set home
           this._SetHome(data)
@@ -131,8 +136,12 @@ export default {
       }
     },
     // 设置为首页模板
-    async _SetHome({ id }) {
-      await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
+    async _SetHome({ id, isNew }) {
+      if (isNew) {
+        await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
+      } else {
+        await setHome({ id })
+      }
       this.$message({
         message: '设置成功',
         type: 'success'
@@ -150,7 +159,7 @@ export default {
     handleSetShareinfo() {
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: '请选择你要设置的分享信息的数据',
+          message: '请先选中页面',
           type: 'warning'
         })
         return
@@ -166,7 +175,7 @@ export default {
     handleBatchDel() { // 批量删除
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: '请选择你要删除的数据',
+          message: '请先选中页面',
           type: 'warning'
         })
         return

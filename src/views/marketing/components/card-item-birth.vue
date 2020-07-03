@@ -3,71 +3,78 @@
     <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item, 'list')" />
     <div class="activity-bottom">
       <div class="activity-header">
-        <div class="title">{{ item.lable }}</div>
+        <div class="title">
+          {{ item.lable }}
+          <el-switch v-model="isClose" style="float: right" @change="updataActive" />
+        </div>
         <div v-if="item.desc===''" style="height:48px">{{ item.desc || '' }}</div>
         <el-tooltip v-if="item.desc!==''" class="item" effect="dark" :content="item.desc" placement="top-start">
           <div class="sub-title">{{ item.desc || '' }}</div>
         </el-tooltip>
       </div>
       <div class="action">
-        <el-button
-          type="text"
-          icon="el-icon-takeaway-box"
-          class="button"
-          @click="handleJump(item, 'list')"
-        >{{ item.lable }}列表</el-button>
-        <el-divider direction="vertical" />
-        <el-button
-          type="text"
-          icon="el-icon-document-add"
-          class="button"
-          @click="handleJump(item)"
-        >{{ item.createText || '新建活动' }}</el-button>
+        <el-button size="mini" type="primary" @click="handleJump(item.linkUrl)">礼包设置</el-button>
       </div>
     </div>
-    <!-- 右上角的事件 -->
-    <el-image v-if="item.extra" class="share" :src="item.extra" alt @click="onShare(item.value)" />
-    <preview-dialog ref="previewDialog" />
   </el-card>
 </template>
 
 <script>
-import previewDialog from '../activity/reduce-gift/_source/preview-dialog'
+import { birthdayOperate, queryBirthday } from '@/api/birthday'
 export default {
-  components: {
-    previewDialog
-  },
   props: {
     item: {
       type: Object,
       default: () => {}
     }
   },
-  methods: {
-    handleJump(itemUrl, jumpType) {
-      console.log('1111111---handleJump', itemUrl)
-      // 跳转列表
-      if (jumpType === 'list') {
-        this.$router.push(itemUrl.listUrl)
-      } else {
-        // 跳转新增页面，并清除之前得缓存数据；
-        this.$store.dispatch('tagsView/delCachedView', {
-          name: itemUrl.name
-        })
-        setTimeout(() => {
-          this.$router.push(itemUrl.linkUrl)
-        }, 0)
+  data() {
+    return {
+      isClose: false
+    }
+  },
+  created() {
+    const params = {
+      pageSize: 100,
+      currentPage: 1
+    }
+    queryBirthday().then(res => {
+      if (res.code === '10000' && !!res.data) {
+        console.log(res.data.status)
+        this.isClose = res.data.status ? true: false
       }
+    })
+  },
+  methods: {
+    handleJump(itemUrl) {
+      this.$router.push(itemUrl)
     },
-    onShare(type) {
-      console.log('我是分享页面---------')
-      this.$refs.previewDialog.open(type)
+    updataActive(e) {
+      const params = {
+        status: e ? 1 : 0,
+        merCode: this.$store.state.user.merCode
+      }
+      birthdayOperate(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '操作成功！',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '操作失败！',
+            type: 'error'
+          })
+          this.isClose = !e
+        }
+      }).catch(() => {
+        this.isClose = !e
+      })
     }
   }
 }
 </script>
-
-<style lang="scss">
+<style lang="scss" scoped>
 .text-overflow-1 {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -108,6 +115,11 @@ export default {
     .action {
       // @extend .text-overflow-1;
       white-space: nowrap;
+      height: 36px;
+      line-height: 36px;
+      .el-button{
+        width: 100%;
+      }
     }
   }
   .share {

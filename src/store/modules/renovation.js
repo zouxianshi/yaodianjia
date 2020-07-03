@@ -5,8 +5,9 @@
  */
 
 import _ from 'lodash'
+import { uuid } from '@/utils' // eslint-disable-line
 import renovationService from '@/api/renovation'
-import { bannerItem, handlerBackfill } from '@/views/renovation/home/settings/_source/stepAssembly/default'
+import { bannerItem, handlerBackfill,items } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
 
 const basics = {
   name: '', // 商家首页模板名称
@@ -39,7 +40,8 @@ const state = {
     'shareDesc': '分享描述',
     'shareImg': 'https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/ydjia-merchant-manager/666666/20200628/31c8d2d82575494ca2d88348c68e9785.png'
   },*/
-  dragList: [],
+  dragList: [
+  ],
   staticDragData: {
     banner: _.cloneDeep(bannerItem)
   }

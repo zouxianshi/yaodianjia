@@ -21,6 +21,9 @@
           <el-col v-for="o in members" :key="o.value" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
             <card-item :item="o" />
           </el-col>
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+            <cardItemBirth :item="birth" />
+          </el-col>
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="趣味游戏" name="gamesfun">
@@ -57,6 +60,7 @@
 import cardItem from '../components/card-item'
 import cardItemClose from '../components/card-item-close'
 import cardItemSign from '../components/card-item-sign' // 签到功能
+import cardItemBirth from '../components/card-item-birth'
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
@@ -72,12 +76,14 @@ import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
 import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
 import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
+import birthdayImg from '@/assets/image/marketings/birthdayGift.png'
+import memberVouch from '@/assets/image/marketings/memberVouch.png'
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
 import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'
 
 export default {
-  components: { cardItem, cardItemClose, cardItemSign },
+  components: { cardItem, cardItemClose, cardItemSign, cardItemBirth },
   /**
    * value => key 这里建议跟后端的key保持一致
    * lable: '活动标题
@@ -89,6 +95,14 @@ export default {
   data() {
     return {
       activeName: 'goodsActivity',
+      birth: {
+        value: 'birthGift',
+        lable: '生日礼包',
+        img: birthdayImg,
+        desc: '定向给会员用户生日当天发放优惠券、海贝等优惠券礼包，精准营销，激励消费',
+        listUrl: '',
+        linkUrl: '/activity/birthday-gift'
+      },
       members: [
         {
           value: 'counpCenter',
@@ -118,6 +132,13 @@ export default {
           listUrl:
             '/activity/newcomer-pack',
           linkUrl: '/activity/newcomer-create'
+        },{
+          lable: '会员发券',
+          createText: '发放优惠券',
+          img: memberVouch,
+          desc: '发优惠券给到会员，可以精细化精准营销，满足会员购物需求，给到实际的优惠',
+          listUrl: '/activity/member-voucher-list',
+          linkUrl: '/activity/member-voucher'
         }
       ], // 会员营销
       goodsActivity: [

@@ -3,18 +3,30 @@
     <div class="cfim-item-left">
       <div class="cfim-line-1" />
       <div class="cfim-line-2" />
-      <div class="cfim-text-num">{{ el.denomination || '-' }}</div>
+      <div class="cfim-text-num">
+        <el-tooltip class="item" effect="dark" :content="` ${el.denomination || '-'}`" placement="top">
+          <div v-if="el.denomination">
+            <span v-if="el.ctype === 2" class="cfim-discount">¥</span>
+            <span style="display: inline-block;margin:0 -4px;">{{ truDenomination(`${el.denomination}`) }}</span>
+            <span v-if="el.ctype === 1" class="cfim-discount">折</span>
+          </div>
+          <div v-else>¥</div>
+        </el-tooltip>
+      </div>
 
-      <div class="cfim-type" :style="{background: el.ctype ? 'transparent' : 'rgba(255,255,255,1)'}">
+      <div class="cfim-type" :style="{background: (typeof el.ctype === 'undefined') ? 'rgba(255,255,255,1)' : 'transparent'}">
         <span v-if="el.ctype === 1">折扣券</span>
         <span v-if="el.ctype === 2">抵价券</span>
         <span v-if="el.ctype === 3">礼品券</span>
+        <!--礼品卷只显示3字符-->
       </div>
     </div>
     <div class="cfim-item-right">
-      <div class="cfim-name" :class="el.cname ? 'no' : ''">
-        {{ el.cname }}
-      </div>
+      <el-tooltip class="item" effect="dark" :content="el.cname" placement="top">
+        <div class="cfim-name" :class="el.cname ? 'no' : ''">
+          {{ truCname(el.cname) }}
+        </div>
+      </el-tooltip>
       <div class="cfim-btn">
         <el-button round size="mini">立即领取</el-button>
       </div>
@@ -23,7 +35,7 @@
 </template>
 <script>
 /**
-   * 设计的大小没一点规律，搞得前端作死的写乱七八糟的样式，严重谴责设计人员不专业！！！
+   * 设计的大小没一点规律，搞得前端作死的写乱七八糟的样式！！！
    */
 const prefixCls = 'vi-coupon-first-item'
 export default {
@@ -41,7 +53,41 @@ export default {
       default: 'medium'
     }
   },
-  methods: {},
+  methods: {
+    truDenomination(v) {
+      if (!v || v === 'undefined') {
+        return ''
+      }
+      return _.truncate(v, { 'length': (() => {
+        switch (this.size) {
+          case 'medium':
+            return 4
+          case 'small':
+            return 4
+          case 'mini':
+            return 3
+        }
+      })(),
+      'omission': '',
+      'separator': /,? +/
+      })
+    },
+    truCname(v) {
+      if (!v || v === 'undefined') {
+        return ''
+      }
+      return _.truncate(v, { 'length': (() => {
+        switch (this.size) {
+          case 'medium':
+            return 22
+          case 'small':
+            return 9
+          case 'mini':
+            return 7
+        }
+      })(), 'omission': '' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -101,9 +147,15 @@ export default {
       }
       .cfim-text-num {
         color: #fff;
+        .cfim-discount {
+          font-size: 12px;
+          transform: scale(0.8);
+          display: inline-block;
+          color: #fff;
+        }
       }
       .cfim-type {
-        margin: 0 10px;
+        width: 100%;
         background:rgba(255,255,255,1);
         border-radius:2px;
         opacity:0.8;
@@ -151,10 +203,11 @@ export default {
           left: 78px;
         }
         .cfim-text-num {
-          font-size: 28px;
+          font-size: 24px;
           margin-top: 26px;
         }
         .cfim-type {
+          width: 80%;
           height:15px;
           margin-top: 10px;
           font-size: 14px;
@@ -182,7 +235,7 @@ export default {
           left: 39px;
         }
         .cfim-text-num {
-          font-size: 20px;
+          font-size: 14px;
           margin-top: 16px;
         }
         .cfim-type {
@@ -221,13 +274,13 @@ export default {
           left: 28px;
         }
         .cfim-text-num {
-          font-size: 20px;
           margin-top: 10px;
+          font-size: 12px;
         }
         .cfim-type {
-          width:24px;
+          width:36px;
           height:8px;
-          margin-top: 6px;
+          margin: 6px 0 0 0;
           font-size: 12px;
         }
       }
@@ -241,6 +294,7 @@ export default {
         .cfim-btn {
           right: 6px;
           bottom: 6px;
+          -webkit-transform: scale(0.8);
           .el-button {
             height: 20px;
             line-height: 20px;
