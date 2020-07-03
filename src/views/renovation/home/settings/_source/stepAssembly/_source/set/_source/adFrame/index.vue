@@ -13,6 +13,9 @@
               {{ error.isTitle }}
             </div>
           </el-form-item>
+          <el-form-item label="副标题">
+            <el-input v-model="itemParams.title" maxlength="8" @change="onUploadItem" />
+          </el-form-item>
         </el-form>
         <el-divider content-position="left">商品选择</el-divider>
         <div>
@@ -99,6 +102,7 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
+    console.log(this.itemParams)
   },
   beforeMount() {
   },
