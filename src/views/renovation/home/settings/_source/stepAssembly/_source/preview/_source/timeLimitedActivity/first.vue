@@ -1,7 +1,11 @@
 <template>
   <div class="sap-tla-first-model">
     <div class="stfm-title-box">
-      <span class="stfm-text-1">据活动结束还剩</span>
+      <span class="stfm-text-1">
+        <span v-if="item.validStatus === 0">据活动开始还剩</span>
+        <span v-if="item.validStatus === 1">据活动结束还剩</span>
+        <span v-if="item.validStatus === 2">据活动结束还剩</span>
+      </span>
       <span class="stfm-cd">
         <template v-if="item.validStatus === 0 || item.validStatus === 1">
           <v-countdown :current-time="rtTimeStamp(item.currentTime)" :start-time="rtTimeStamp(item.endTime)" :end-time="rtTimeStamp(item.endTime)" />
