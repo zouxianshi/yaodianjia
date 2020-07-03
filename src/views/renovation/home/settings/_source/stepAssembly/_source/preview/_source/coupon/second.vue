@@ -62,13 +62,9 @@ export default {
     .scsm-item-box {
       overflow: hidden;
       .scsm-item {
-        .vi-coupon-first-item {
-          margin-bottom: 8px;
-        }
+        margin-bottom: 8px;
         &:nth-last-child(2),&:nth-last-child(1){
-          .vi-coupon-first-item {
-            margin-bottom: 0;
-          }
+          margin-bottom: 0;
         }
       }
     }
