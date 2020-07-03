@@ -43,21 +43,23 @@
         <!-- <slot :pager="pager" /> -->
         <el-table-column>
           <template slot="header">
-            <span>组合数量</span>
+            <span>数量</span>
           </template>
           <template slot-scope="scope">
-            <el-form-item
-              :ref="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addNum'"
-              :prop="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addNum'"
-              :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
-            >
-              <el-input
-                v-model="scope.row.addNum"
-                style="width:60px;text-align:center"
-                maxlength="8"
-                size="mini"
-              />
-            </el-form-item>
+            <t-colument-form title="数量" :item="scope.row" item-key="addNum" :index="scope.$index" :is-disabled="disabled" />
+            <!-- <el-popover title="数量" width="200" trigger="click" placement="left" v-model="show">
+              <el-form-item
+                :ref="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addNum'"
+                :prop="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addNum'"
+                :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
+              >
+                <el-input v-model="scope.row.addNum" maxlength="8" size="mini" />
+              </el-form-item>
+              <el-button slot="reference" type="text">
+                {{scope.row.addNum}}
+                <i class="el-icon-edit"></i>
+              </el-button>
+            </el-popover> -->
           </template>
         </el-table-column>
         <el-table-column>
@@ -65,7 +67,8 @@
             <span>组合单价</span>
           </template>
           <template slot-scope="scope">
-            <el-form-item
+            <t-colument-form title="组合单价" :item="scope.row" item-key="addPrice" :index="scope.$index" :is-disabled="disabled" />
+            <!-- <el-form-item
               :ref="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addPrice'"
               :prop="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addPrice'"
               :rules="[{ required: true, validator: check_price, trigger: 'blur' }]"
@@ -76,7 +79,7 @@
                 maxlength="8"
                 size="mini"
               />
-            </el-form-item>
+            </el-form-item> -->
           </template>
         </el-table-column>
         <el-table-column label="操作" width="60">
@@ -107,8 +110,9 @@
 <script>
 // import noData from '@/components/NoData'
 import { checkNumberdouble } from '@/utils/validate'
+import tColumentForm from './columenFrom'
 export default {
-  // components: { noData },
+  components: { tColumentForm },
   props: {
     disabled: {
       type: Boolean,
@@ -196,7 +200,8 @@ export default {
         current: 1,
         size: 10,
         total: 0
-      }
+      },
+      show: false
     }
   },
   methods: {

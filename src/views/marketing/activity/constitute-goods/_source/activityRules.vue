@@ -68,6 +68,7 @@
                   size="small"
                   @click="$refs.GoodsComponent.open()"
                 >选择商品 | 已选（{{ storeSelectGoods.length }}）</el-button>
+                <span class="color_gray">最多选择5个子商品</span>
               </div>
               <select-goods-constitute ref="storeGods" @del-item="delSelectGoods" />
             </el-form-item>
@@ -98,7 +99,7 @@
                     controls-position="right"
                     :max="999999"
                   />
-                  <el-tooltip content="每个用户限购数量" placement="top">
+                  <el-tooltip content="每个用户限购数量，0或不填都为不限制" placement="top">
                     <i style="color: #147de8" class="el-icon-warning-outline" />
                   </el-tooltip>
                 </el-form-item>
@@ -147,6 +148,7 @@
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
+      :limit-max="5"
       :store-ids="[]"
       :list="storeSelectGoods"
       @on-change="handleSelectGoods"
