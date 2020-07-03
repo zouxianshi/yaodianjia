@@ -7,7 +7,7 @@
       <!--多条循环-->
       <template v-if="itemParams.subType === 'five'">
         <template v-for="(eel,i) in itemParams.itemList">
-          <m-item-card :key="i" :title="eel.name ? eel.name : `导航${i + 1}`" :is-submit="i === itemParams.itemList.length - 1" :is-delete="(itemParams.itemList.length - 1) > 0" @on-ass-submit="onManyAssSubmit" @on-ass-delete="onManyAssDelete">
+          <m-item-card :key="i" :title="eel.name ? eel.name : `轮播图${i + 1}`" :is-submit="i === itemParams.itemList.length - 1" :is-delete="(itemParams.itemList.length - 1) > 0" @on-ass-submit="onManyAssSubmit" @on-ass-delete="onManyAssDelete">
             <m-form-item :ref="`formItem_${i}`" :el="eel" @on-el-update="onElUpdate($event,i)" />
             <div v-if="(i === itemParams.itemList.length - 1) && itemParams.itemList.length < itemParams.max" slot="create" style="margin-top: 16px">
               <el-button size="mini" @click="onAddBanner">添加轮播图</el-button>

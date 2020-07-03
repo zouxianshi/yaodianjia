@@ -13,12 +13,6 @@
               {{ error.isTitle }}
             </div>
           </el-form-item>
-          <el-form-item label="副标题">
-            <el-input v-model="itemParams.subtitle" maxlength="10" @change="onUploadItem" />
-            <div v-if="error.isSubtitle" class="sa-assembly-error">
-              {{ error.isSubtitle }}
-            </div>
-          </el-form-item>
         </el-form>
         <el-divider content-position="left">商品选择</el-divider>
         <div>
@@ -43,7 +37,6 @@ export default {
       dialogVisible: false,
       itemParams: {},
       error: {
-        isSubtitle: false,
         isTitle: false,
         isGoods: false
       }
@@ -57,7 +50,7 @@ export default {
   },
   methods: {
     onUploadItem() {
-      const { subtitle, title, itemList } = this.itemParams
+      const { title, itemList } = this.itemParams
 
       this.reset()
 
@@ -65,11 +58,6 @@ export default {
 
       if (!title) {
         this.error.isTitle = '请输入主标题'
-        flag = false
-      }
-
-      if (!subtitle) {
-        this.error.isSubtitle = '请输入副标题'
         flag = false
       }
 
@@ -88,7 +76,6 @@ export default {
     },
     reset() {
       this.error = _.assign(this.error, {
-        isSubtitle: false,
         isTitle: false,
         isGoods: false
       })
@@ -112,7 +99,6 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
-    console.log(this.itemParams)
   },
   beforeMount() {
   },
