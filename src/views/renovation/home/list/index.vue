@@ -52,7 +52,7 @@
     </section>
     <input id="copyPath" class="" style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;" type="text">
     <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="previewShow">
-      <preview v-if="previewShow" :dimension-id="dimensionId" />
+      <preview v-if="previewShow" :dimension-id="dimensionId" :is-new="isNew" />
     </el-dialog>
     <base-form ref="baseform" @success="getList" />
     <share-info ref="setShare" :ids="chooseAry" @success="getList" />
@@ -78,7 +78,8 @@ export default {
       visible: false,
       multipleSelection: [],
       dimensionId: '',
-      chooseAry: []
+      chooseAry: [],
+      isNew: true
     }
   },
   created() {
@@ -103,8 +104,6 @@ export default {
     },
     //  点击更多 点击菜单项触发的事件回调
     handleCommand({ type, data }) {
-      console.log(data)
-      console.log('----data')
       switch (type) {
         case 'home': // set home
           this._SetHome(data)
@@ -122,6 +121,7 @@ export default {
     },
     handlePreview(row) {
       this.dimensionId = row.id
+      this.isNew = row.isNew
       this.previewShow = true
     },
     handleEdit(id, isNew) {
