@@ -160,6 +160,17 @@ export const handlerBackfill = data => {
         ...v1.limitedAct
       }
     }
+    if (v.type === 'commodity') {
+      v1 = {
+        ...v1,
+        itemList: _.map(v1.itemList, v2 => {
+          return {
+            ...v2,
+            price: v2.mprice
+          }
+        })
+      }
+    }
     if (v.type === 'coupon') {
       v1 = {
         ...v1,
