@@ -54,8 +54,8 @@
             :action="upLoadUrl"
             :headers="headers"
             :show-file-list="false"
+            :before-upload="beforeUpload"
             :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
             :on-error="handleAvatarErr"
           >
             <img v-if="formData.shareImg" :src="showImg(formData.shareImg)" class="avatar">
@@ -135,6 +135,19 @@ export default {
           return false
         }
       })
+    },
+    beforeUpload(file) {
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isType) {
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.warning('请上传不超过 2M 的图片！')
+        return false
+      }
+      return isType && isLt2M
     },
     //  更新基本信息
     async _updateBase() {

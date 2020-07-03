@@ -103,6 +103,8 @@ export default {
     },
     //  点击更多 点击菜单项触发的事件回调
     handleCommand({ type, data }) {
+      console.log(data)
+      console.log('----data')
       switch (type) {
         case 'home': // set home
           this._SetHome(data)
@@ -134,8 +136,8 @@ export default {
       }
     },
     // 设置为首页模板
-    async _SetHome({ id, isNews }) {
-      if (isNews) {
+    async _SetHome({ id, isNew }) {
+      if (isNew) {
         await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
       } else {
         await setHome({ id })
