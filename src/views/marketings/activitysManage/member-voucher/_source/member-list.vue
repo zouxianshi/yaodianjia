@@ -319,8 +319,8 @@ export default {
       queryMembersNew(params).then(res => {
         this.tabelLoading = false
         if (res.code === '10000') {
-          this.tabelData = res.data.data
-          this.totalCount = res.data.totalCount
+          this.tabelData = res.data ? res.data.data : []
+          this.totalCount = res.data ? res.data.totalCount : 0
         }
       })
     },

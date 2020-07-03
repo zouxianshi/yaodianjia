@@ -159,6 +159,9 @@
           />次
         </span>
       </el-form-item>
+      <el-form-item label="是否推荐到员工分享" label-width="200">
+        <el-switch v-model="ruleForm.isShare"></el-switch>
+      </el-form-item>
     </el-form>
     <div style="margin-left:30px">
       <el-button type="primary" @click="submitForm('ruleForm')">下一步</el-button>
@@ -234,6 +237,7 @@ export default {
       intrShow: false,
       // activeTime: [], // 活动有效期
       ruleForm: {
+        isShare: false, // 是否推荐到员工分享
         activeTime: [], // 活动有效期
         activityDetailName: '', // 活动名称
         bottomNote: '', // 底部文案
@@ -408,6 +412,7 @@ export default {
             })
             return false
           }
+          this.ruleForm.isShare = this.ruleForm.isShare? 1: 0
           this.$emit('handleNext', 2, this.ruleForm)
         } else {
           return false

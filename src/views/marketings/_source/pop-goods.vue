@@ -9,8 +9,31 @@
       width="1100px"
       @close="handlerClose"
     >
+      <el-radio-group
+        v-model="goodsType"
+        size="mini"
+        style="margin: 0 120px 20px 0"
+        @change="changegoodsType"
+      >
+        <el-radio-button :label="1">线上商品</el-radio-button>
+        <el-radio-button :label="2">线下商品</el-radio-button>
+      </el-radio-group>
+      <el-upload
+        style="display: inline-block;vertical-align: top;"
+        v-show="goodsType === 2"
+        class="upload"
+        action
+        :multiple="false"
+        :show-file-list="false"
+        accept="csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        :http-request="httpRequest"
+      >
+        <el-button size="mini" type="primary" style="vertical-align: top;">下载模板</el-button>
+        <el-button size="mini" type="primary">批量导入</el-button>
+      </el-upload>
       <div class="modal-body">
         <el-form
+          v-if="goodsType === 1"
           :inline="true"
           :model="searchForm"
           size="small"
@@ -57,55 +80,8 @@
           @select="handleSelect"
         >
           <el-table-column type="selection" align="center" width="50" />
-          <el-table-column align="center" label="商品图片" min-width="60">
-            <template slot-scope="scope">
-              <div
-                v-if="scope.row.picUrl && scope.row.picUrl!==''"
-                class="x-img-mini"
-                style="width: 60px; height: 60px"
-              >
-                <div class="x-image__preview">
-                  <el-image
-                    style="width: 60px; height: 60px"
-                    fit="contain"
-                    :src="showImg(scope.row.picUrl)"
-                    :preview-src-list="[showImg(scope.row.picUrl)]"
-                  />
-                </div>
-              </div>
-              <div v-else style="line-height: 32px">暂无上传</div>
-            </template>
-            <!-- <template slot-scope="scope">
-            <div class="img-wrap">
-              <img :src="showImg(scope.row.mainPic)">
-            </div>
-            </template>-->
-          </el-table-column>
-          <el-table-column prop="name" label="商品名称" :show-overflow-tooltip="true" />
           <el-table-column prop="erpCode" label="商品编码" :show-overflow-tooltip="true" />
-          <el-table-column
-            prop="brandName"
-            label="品牌"
-            min-width="80"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column label="规格信息" min-width="100" :show-overflow-tooltip="true">
-            <template slot-scope="scope" :show-overflow-tooltip="true">
-              <div v-html="formatSkuInfo(scope.row.specSkus)" />
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="mprice"
-            label="参考价格(元)"
-            min-width="60"
-            align="center"
-            :show-overflow-tooltip="true"
-          />
-          <!-- <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
-          </template>
-          </el-table-column>-->
+          <el-table-column prop="name" label="商品名称" :show-overflow-tooltip="true" />
         </el-table>
         <div class="table-footer">
           <el-pagination
@@ -153,6 +129,7 @@
 </template>
 
 <script>
+import XLSX from 'xlsx'
 import { getTypeTree } from '@/api/common'
 import { queryActivityCommGoods } from '@/api/activity'
 export default {
@@ -189,6 +166,7 @@ export default {
   },
   data() {
     return {
+      goodsType: 1, // 商品类型
       loading: false,
       dialog: {
         visible: false
@@ -223,6 +201,45 @@ export default {
     }
   },
   methods: {
+    httpRequest(e) {
+      let file = e.file // 文件信息
+      if (!file) {
+        return false
+      } else if (!/\.(xls|xlsx)$/.test(file.name.toLowerCase())) {
+        this.$message.error('上传格式不正确，请上传xls或者xlsx格式')
+        return false
+      }
+      const fileReader = new FileReader()
+      fileReader.onload = ev => {
+        try {
+          const data = ev.target.result
+          const workbook = XLSX.read(data, {
+            type: 'binary' // 以字符编码的方式解析
+          })
+          const exlname = workbook.SheetNames[0] // 取第一张表
+          const exl = XLSX.utils.sheet_to_json(workbook.Sheets[exlname]) // 生成json表格内容
+          // 将 JSON 数据挂到 data 里
+          this.tableData = exl
+          this.$nextTick(() => {
+            this.updateChecked()
+          })
+          // document.getElementsByName('file')[0].value = '' // 根据自己需求，可重置上传value为空，允许重复上传同一文件
+        } catch (e) {
+          this.$message.error('导入错误！')
+          return false
+        }
+      }
+      fileReader.readAsBinaryString(file)
+    },
+    // 改变线上线下
+    changegoodsType(e) {
+      if (e === 2) {
+        this.tableData = []
+      } else {
+        this.tableData = []
+        this.fetchData()
+      }
+    },
     // 获取数据
     fetchData() {
       this._getTableData() // 统计列表
@@ -312,11 +329,11 @@ export default {
       // console.log('勾选列表------', allList, this.mySelectList)
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.specId === item.specId
+          return mItem.erpCode === item.erpCode
         })
         if (index > -1) {
           if (allList.length > 0) {
-            console.log('已存在' + item.specId + ':' + item.name)
+            console.log('已存在' + item.erpCode + ':' + item.name)
           } else {
             // 反选
             this.mySelectList.splice(index, 1)
@@ -328,10 +345,8 @@ export default {
     },
     // 选取store-2.表格选取（单选/取消），更新 mySelectList
     handleSelect(val, row) {
-      // console.log('单独勾选了------', val, row)
-      // console.log('单独勾选了------this.mySelectList', this.mySelectList)
       const index = this.mySelectList.findIndex(mItem => {
-        return mItem.specId === row.specId
+        return mItem.erpCode === row.erpCode
       })
       if (index > -1) {
         this.mySelectList.splice(index, 1)
@@ -342,7 +357,7 @@ export default {
     // 选取store-3. 移除mySelectList的 item, 更新table的列表选中
     removeMyselectItem(myItem, index2) {
       const index = this.tableData.findIndex(item => {
-        return item.specId === myItem.specId
+        return item.erpCode === myItem.erpCode
       })
       if (index > -1) {
         this.toggleSelection([this.tableData[index]])
@@ -351,17 +366,15 @@ export default {
     },
     // 选取store-4. table数据更新时(初次,切页面等), 根据 mySelectList 更新table的列表选中
     updateChecked() {
-      console.log('我准备回显数据------')
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.specId === item.specId
+          return mItem.erpCode === item.erpCode
         })
         if (index > -1) {
           currentCheckedList.push(item)
         }
       })
-      console.log('我准备回显数据------++++++++', currentCheckedList)
       this.toggleSelection(currentCheckedList)
     },
     forSearch() {

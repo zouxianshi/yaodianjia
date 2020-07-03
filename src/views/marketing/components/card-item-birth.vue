@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { birthdayOperate } from '@/api/birthday'
+import { birthdayOperate, queryBirthday } from '@/api/birthday'
 export default {
   props: {
     item: {
@@ -32,6 +32,18 @@ export default {
     return {
       isClose: false
     }
+  },
+  created() {
+    const params = {
+      pageSize: 100,
+      currentPage: 1
+    }
+    queryBirthday().then(res => {
+      if (res.code === '10000' && !!res.data) {
+        console.log(res.data.status)
+        this.isClose = res.data.status ? true: false
+      }
+    })
   },
   methods: {
     handleJump(itemUrl) {
