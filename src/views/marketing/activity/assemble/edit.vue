@@ -220,9 +220,8 @@
                 <el-button
                   type
                   size="mini"
-                  :disabled="disabled"
                   @click="handleEditSetting(scope.row)"
-                >设置</el-button>
+                >{{ disabled?'查看':'设置' }}</el-button>
                 <el-button
                   v-if="!activityId"
                   type="danger"
@@ -273,7 +272,7 @@
       @on-change="onSelectedGoods"
     />
     <!-- 编辑商品 -->
-    <edit-goods-modals ref="editGoodsModals" :info="editGoods" @complete="handleSuccessSelectGood" />
+    <edit-goods-modals ref="editGoodsModals" :disabled="disabled" :info="editGoods" @complete="handleSuccessSelectGood" />
   </div>
 </template>
 <script>
