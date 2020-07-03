@@ -2,7 +2,7 @@
   <div class="sap-notice-model">
     <div class="swiper-notice-container">
       <div class="swiper-wrapper">
-        <div v-for="(item,$index) in itemList" :key="$index" class="swiper-slide" :style="{color:textColor}">{{ item.name || '' }}</div>
+        <div v-for="(item,$index) in itemList" :key="$index" class="swiper-slide" :style="{color:textColor}">{{ truName(item.name) }}</div>
       </div>
     </div>
   </div>
@@ -24,7 +24,14 @@ export default {
       default: '#3E3E3E'
     }
   },
-  methods: {},
+  methods: {
+    truName(v) {
+      if (!v) {
+        return ''
+      }
+      return _.truncate(v, { 'length': 12, 'omission': '' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
