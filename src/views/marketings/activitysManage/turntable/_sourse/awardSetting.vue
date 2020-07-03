@@ -515,9 +515,9 @@ export default {
       var num = 0
       _.map(selected, item => {
         num += item.winRandom * 10000
-        console.log(num)
       })
-      if (parseFloat(num) !== 10000) {
+      console.log(parseInt(num))
+      if (parseInt(num) !== 10000) {
         this.$message({
           message: '奖品总中奖几率需等于100%',
           type: 'error'
