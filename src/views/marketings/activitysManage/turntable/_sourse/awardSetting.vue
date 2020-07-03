@@ -517,7 +517,7 @@ export default {
         num += item.winRandom * 10000
         console.log(num)
       })
-      if (num !== 10000) {
+      if (parseFloat(num) !== 10000) {
         this.$message({
           message: '奖品总中奖几率需等于100%',
           type: 'error'
