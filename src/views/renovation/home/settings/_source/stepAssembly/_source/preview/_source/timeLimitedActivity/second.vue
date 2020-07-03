@@ -7,10 +7,13 @@
         <span v-if="item.validStatus === 2">距活动结束还剩</span>
       </span>
       <span class="stsm-cd">
-        <template v-if="item.validStatus === 0 || item.validStatus === 1">
-          <v-countdown :current-time="rtTimeStamp(item.currentTime)" :start-time="rtTimeStamp(item.endTime)" :end-time="rtTimeStamp(item.endTime)" />
+        <template v-if="item.validStatus === 0">
+          <v-countdown :current-time="rtTimeStamp(item.currentTime)" :start-time="rtTimeStamp(item.currentTime)" :end-time="rtTimeStamp(item.startTime)" />
         </template>
-        <template v-else>
+        <template v-if="item.validStatus === 1">
+          <v-countdown :current-time="rtTimeStamp(item.startTime)" :start-time="rtTimeStamp(item.startTime)" :end-time="rtTimeStamp(item.endTime)" />
+        </template>
+        <template v-if="item.validStatus === 2">
           <v-countdown :current-time="1593678334" :start-time="1593678334" :end-time="1593678334" />
         </template>
       </span>
