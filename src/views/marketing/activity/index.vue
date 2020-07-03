@@ -317,8 +317,6 @@ export default {
       .el-tabs__nav-wrap::after {
         height: 0;
       }
-      .el-tabs__content {
-      }
     }
   }
 
