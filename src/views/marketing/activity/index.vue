@@ -74,13 +74,11 @@ import paymentCourtesy from '@/assets/image/marketings/pay.png'
 // import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
-import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
-import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
-import birthdayImg from '@/assets/image/marketings/birthdayGift.png'
-import memberVouch from '@/assets/image/marketings/memberVouch.png'
+// import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
+// import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
-import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'
+import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'// eslint-disable-line 
 
 export default {
   components: { cardItem, cardItemClose, cardItemSign, cardItemBirth },
@@ -95,14 +93,6 @@ export default {
   data() {
     return {
       activeName: 'goodsActivity',
-      birth: {
-        value: 'birthGift',
-        lable: '生日礼包',
-        img: birthdayImg,
-        desc: '定向给会员用户生日当天发放优惠券、海贝礼包，精准营销，激励消费',
-        listUrl: '',
-        linkUrl: '/activity/birthday-gift'
-      },
       members: [
         {
           value: 'counpCenter',
@@ -123,8 +113,8 @@ export default {
           listUrl:
             '/marketings/activity-manage/payment-gift/list?code=TC002&name=支付有礼',
           linkUrl: '/marketings/activity-manage/payment-gift/add'
-        },
-        {
+        }
+        /* {
           value: '',
           lable: '新人礼包',
           img: newComer,
@@ -132,14 +122,7 @@ export default {
           listUrl:
             '/activity/newcomer-pack',
           linkUrl: '/activity/newcomer-create'
-        },{
-          lable: '会员发券',
-          createText: '发放优惠券',
-          img: memberVouch,
-          desc: '发优惠券给到会员，可以精细化精准营销，满足会员购物需求，给到实际的优惠',
-          listUrl: '/activity/member-voucher-list',
-          linkUrl: '/activity/member-voucher'
-        }
+        }*/
       ], // 会员营销
       goodsActivity: [
         {
@@ -228,8 +211,8 @@ export default {
           img: haibei,
           listUrl: '/activity/exchangeMallList',
           linkUrl: '/activity/exchangeMallAdd'
-        },
-        {
+        }
+        /* {
           createText: '',
           name: 'signGift',
           lable: '签到设置',
@@ -239,7 +222,7 @@ export default {
           img: signGift,
           listUrl: '/activity/sign-create',
           linkUrl: ''
-        }
+        }*/
       ], // 积分营销
       activity: [], // 精彩活动
       singIsSet: false
@@ -252,14 +235,14 @@ export default {
         this.haibeiActivity[0].isclose = res.data
       }
     })
-    _searchMemberSignIn().then(res => { // 海贝签到开启还是关闭状态
+    /* _searchMemberSignIn().then(res => { // 海贝签到开启还是关闭状态
       if (res.code === '10000' && !!res.data) {
         this.haibeiActivity[1].isclose = !!res.data.isValid
         this.singIsSet = true
       } else {
         this.haibeiActivity[1].isclose = false
       }
-    })
+    })*/
   },
   methods: {
     handleClick(val) {
