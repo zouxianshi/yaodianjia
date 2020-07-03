@@ -6,9 +6,7 @@
         <div class="title">
           <span class="title-span">{{ item.titles }}</span>
         </div>
-        <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
-          <div class="sub-title">{{ item.desc || '' }}</div>
-        </el-tooltip>
+        <div v-if="item.desc===''" style="height:48px">{{ item.desc || '' }}</div>
       </div>
       <div class="action">
         <el-button
