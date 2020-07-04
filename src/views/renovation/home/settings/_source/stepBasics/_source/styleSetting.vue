@@ -83,10 +83,7 @@ export default {
     },
     async onChange(tplType) {
       if (tplType !== 'custom') {
-        if (_.isEmpty(this.tplData)) {
-          await this.getDefaultTpl(tplType)
-        }
-        this.handlerStyle(tplType)
+        this.getDefaultTpl(tplType)
       } else {
         this.setBasics({
           borderColor: '#ffffff',
@@ -99,7 +96,7 @@ export default {
       }
     },
     getDefaultTpl(tplType) {
-      renovationService.getDefaultTpl().then(res => {
+      renovationService.getDefaultTpl(tplType).then(res => {
         if (res.data) {
           this.tplData = {
             ..._.omit(res.data, ['id', 'name', 'title', 'shareDesc', 'shareImg'])
