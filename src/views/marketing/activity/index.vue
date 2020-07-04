@@ -111,7 +111,6 @@ export default {
           linkUrl: '/marketings/activity-manage/payment-gift/add'
         },
         {
-          value: '',
           lable: '新人礼包',
           img: newComer,
           desc: '每个新注册微商城的用户都可以获取新人礼包一份，包含优惠券、海贝、抽奖福利等',
@@ -209,7 +208,6 @@ export default {
           linkUrl: '/activity/exchangeMallAdd'
         },
         {
-          createText: '',
           name: 'signGift',
           lable: '签到设置',
           desc: '',
