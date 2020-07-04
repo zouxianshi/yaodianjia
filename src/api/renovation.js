@@ -52,9 +52,9 @@ class RenovationService {
     })
   }
 
-  getDefaultTpl() {
+  getDefaultTpl(type) {
     return request({
-      url: `${this.serve}/1.0/homepage/queryDefault`,
+      url: `${this.serve}/1.0/homepage/queryDefault?type=${type}`,
       method: 'get'
     })
   }

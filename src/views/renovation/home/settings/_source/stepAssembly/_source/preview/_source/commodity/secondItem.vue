@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-import { minxisCommonStyle } from './../../../../default'
+import { mixinsCommonStyle } from './../../../../default'
 import mLineBar from './../../../lineBar'
 import mItemNoData from './../../../itemNoData'
 export default {
@@ -22,7 +22,7 @@ export default {
       isNoData: false
     }
   },
-  mixins: [minxisCommonStyle],
+  mixins: [mixinsCommonStyle],
   props: {
     el: {
       type: Object,

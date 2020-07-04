@@ -10,6 +10,7 @@
  */
 
 import _ from 'lodash'
+import Vue from 'vue'
 import { mapState } from 'vuex'
 import { uuid, findComponentsDownward } from '@/utils'
 
@@ -192,10 +193,11 @@ export const saveDragItem = ($root, item) => {
   const $item = item
   $item.error = false
   const instance = findComponentsDownward($root, 'SaPreview')[0]
+  Vue.prototype.$message.success('设置成功')
   instance.$saveDragItem(_.cloneDeep($item))
 }
 
-export const minxisCommonStyle = {
+export const mixinsCommonStyle = {
   computed: {
     ...mapState('renovation', ['basics']),
     commonStyleEs() {
@@ -203,6 +205,12 @@ export const minxisCommonStyle = {
       return {
         borderRadius: `${borderStyle === 0 ? 0 : 4}px`,
         border: `${borderSize}px solid ${borderColor}`
+      }
+    },
+    commonStyleBackgr() {
+      const { backgroundColor } = this.basics
+      return {
+        background: `${backgroundColor}`
       }
     }
   }
