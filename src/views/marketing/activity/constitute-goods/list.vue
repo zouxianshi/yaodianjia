@@ -67,7 +67,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="modifyTime" align="left" min-width="110" label="修改时间" />
-          <el-table-column align="left" min-width="180" label="操作" fixed="right">
+          <el-table-column align="left" min-width="150" label="操作" fixed="right">
             <template slot-scope="scope">
               <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
               <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
