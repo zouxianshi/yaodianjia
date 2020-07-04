@@ -39,8 +39,8 @@
               <el-button type="primary" size="mini" plain>
                 更多<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设置为主页</el-dropdown-item>
+              <el-dropdown-menu slot="dropdown" style="text-align: center;">
+                <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设为主页</el-dropdown-item>
                 <el-dropdown-item :disabled="scope.row.isNew === 0" :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
                 <el-dropdown-item :command="{type:'copy',data:scope.row}">复制</el-dropdown-item>
                 <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'dele',data:scope.row}">删除</el-dropdown-item>
