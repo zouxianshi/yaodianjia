@@ -157,7 +157,7 @@ export default {
         giftId: '',
         useRule: 0, // 门槛金额
         shopRule: 1, // 适用门店
-        productRule: 2, // 使用商品(2.部分商品可用)
+        productRule: 1, // 使用商品(2.部分商品可用)
         timeRule: 3,
         logo: '' // 预览图片
       }
