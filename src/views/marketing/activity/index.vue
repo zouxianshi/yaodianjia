@@ -70,8 +70,8 @@ import paymentCourtesy from '@/assets/image/marketings/pay.png'
 // import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
-// import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
-// import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
+import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
+import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
 import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'// eslint-disable-line 
