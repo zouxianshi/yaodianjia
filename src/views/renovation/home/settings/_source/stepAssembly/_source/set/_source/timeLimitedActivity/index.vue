@@ -37,6 +37,9 @@
         </el-radio-group>
         <div v-if="itemParams.chooseFlag === 1" style="margin-top: 20px;">
           <m-form-item :item="itemParams" @on-update="onUpdateItemList" @on-el-delete="onElDelete" />
+          <div v-if="error.isGoods" class="sa-assembly-error" style="margin-bottom: 10px;">
+            {{ error.isGoods }}
+          </div>
         </div>
       </m-item-card>
     </div>
@@ -68,7 +71,8 @@ export default {
       itemParams: {},
       selectActivity: {},
       error: {
-        isActivity: false
+        isActivity: false,
+        isGoods: false
       }
     }
   },
@@ -96,10 +100,20 @@ export default {
       this.itemParams.itemList = []
     },
     onAssSubmit() {
+      const { itemParams: { chooseFlag, itemList }} = this
       let flag = true
+
+      this.error.isActivity = false
+      this.error.isGoods = false
+
       if (_.isEmpty(this.selectActivity)) {
         flag = false
         this.error.isActivity = '请选择活动'
+      }
+
+      if (chooseFlag === 1 && !itemList.length) {
+        flag = false
+        this.error.isGoods = '请选择活动商品'
       }
 
       if (flag) {
@@ -107,9 +121,8 @@ export default {
       }
     },
     onUpdateItemList(itemList) {
-      console.log(itemList)
-      console.log('-------------itemList')
       this.itemParams.itemList = itemList
+      this.error.isGoods = false
     },
     getActivityGoods(p) {
       const params = {
@@ -145,6 +158,9 @@ export default {
         this.$set(this.itemParams, 'currentTime', currentTime)
         this.$set(this.itemParams, 'validStatus', validStatus)
         this.$set(this.itemParams, 'value', activityId)
+
+        this.itemParams.itemList = []
+
         this.dialogVisible = false
 
         if (this.itemParams.chooseFlag === 0) {

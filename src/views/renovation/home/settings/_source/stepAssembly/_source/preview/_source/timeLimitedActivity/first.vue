@@ -21,10 +21,13 @@
     <div class="stfm-content">
       <div class="cfim-no-data">
         <template v-if="item.itemList.length">
-          <img v-if="item.itemList[0].img" class="cfim-img" :src="showImg(item.itemList[0].img)" alt="" style="width: 140px;height:140px;margin: 0 auto;display: block;">
-          <m-item-no-data v-else height="140px" />
-          <div style="padding: 10px">
-            <m-line-bar margin-top="24px" enter-type="button" :el="item.itemList[0]" />
+          <div v-for="(el,$index) in item.itemList" :key="$index">
+            <img v-if="el.img" class="cfim-img" :src="showImg(el.img)" alt="" style="width: 140px;height:140px;margin: 0 auto;display: block;">
+            <m-item-no-data v-else height="140px" />
+            <div style="padding: 10px">
+              <m-line-bar margin-top="24px" enter-type="button" :el="el" />
+            </div>
+            <div v-if="$index < item.itemList.length - 1" style="height:8px;background: #F5F7F8;margin: 0 -8px;" />
           </div>
         </template>
         <template v-else>

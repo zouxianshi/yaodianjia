@@ -53,23 +53,10 @@ export default {
       const data = _.cloneDeep(this.tplData)
       const dragList = handlerBackfill(data)
 
-      const color = () => {
-        switch (tplType) {
-          case 'red':
-            return '#F32525'
-          case 'blue':
-            return '#4B61FF'
-          case 'gold':
-            return '#F1B96B'
-        }
-      }
-
       this.setBasics({
         ..._.omit(data, ['list']),
         ..._.pick(this.basics, ['id', 'name', 'title', 'shareDesc', 'shareImg']),
-        styleType: tplType,
-        borderColor: color(),
-        backgroundColor: color()
+        styleType: tplType
       })
 
       this.setDragList(dragList)
