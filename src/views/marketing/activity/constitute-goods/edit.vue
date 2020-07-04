@@ -12,7 +12,11 @@
       <el-col :span="20" style="background:#fff">
         <el-card class="box-card">
           <activityRules v-if="active.toString()==='1'" @submitactivit="submitActivit" />
-          <successSubmit v-if="active.toString()==='2'" />
+          <successSubmit
+            v-if="active.toString()==='2'"
+            back
+            success-text="新增成功"
+          />
         </el-card>
       </el-col>
     </el-row>
@@ -52,13 +56,13 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-.exchange-model {
-  padding: 20px;
-  background: #f5f7fa;
-  .box-card {
-    .el-card__body {
-      padding: 0 20px;
-    }
-  }
-}
+// .exchange-model {
+  // padding: 20px;
+  // background: #f5f7fa;
+  // .box-card {
+  //   .el-card__body {
+  //     padding: 0 20px;
+  //   }
+  // }
+// }
 </style>

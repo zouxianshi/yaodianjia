@@ -11,7 +11,7 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
           </div>
         </div>
-        <a href="#/goods-manage/constitute-goods/edit">
+        <a href="#/marketing/activity/constitute-goods/edit">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">新增组合商品</el-button>
         </a>
       </div>
@@ -69,11 +69,9 @@
           <el-table-column prop="modifyTime" align="left" min-width="110" label="修改时间" />
           <el-table-column align="left" min-width="180" label="操作" fixed="right">
             <template slot-scope="scope">
-              <!-- <el-button type="primary" size="mini" @click.stop="toSelectShops">上下架</el-button> -->
               <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
               <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
               <el-button type="text" size="mini" @click="createSon(scope.row.id)">编辑</el-button>
-              <el-button type="text" size="mini" @click="createSon(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -156,7 +154,7 @@ export default {
     },
     createSon(rowData) {
       this.$router.push({
-        path: `/goods-manage/constitute-goods/edit`,
+        path: `/marketing/activity/constitute-goods/edit`,
         query: { mercode: this.merCode, id: rowData }
       })
     },
