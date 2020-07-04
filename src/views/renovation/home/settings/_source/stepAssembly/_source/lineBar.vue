@@ -9,7 +9,7 @@
     </div>
     <div v-if="enterType === 'icon'" class="lbm-cart" />
     <div v-if="enterType === 'button'" class="lbm-buttom">
-      <el-button type="danger" size="mini" round>立即抢购</el-button>
+      <el-button type="danger" size="mini" round :style="{...commonStyleBackgr,borderColor:basics.backgroundColor}">立即抢购</el-button>
     </div>
     <div v-if="enterType === 'rob'" class="lbm-text">
       <em>抢</em>
@@ -18,11 +18,14 @@
 </template>
 <script>
 const prefixCls = 'line-bar-model'
+
+import { mixinsCommonStyle } from './../default'
 export default {
   name: 'LineBar',
   data() {
     return {}
   },
+  mixins: [mixinsCommonStyle],
   props: {
     el: {
       type: Object,

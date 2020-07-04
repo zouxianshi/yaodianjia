@@ -1,6 +1,6 @@
 <template>
   <div class="sap-tla-first-model">
-    <div class="stfm-title-box">
+    <div class="stfm-title-box" :style="commonStyleBackgr">
       <span class="stfm-text-1">
         <span v-if="item.validStatus === 0">距活动开始还剩</span>
         <span v-if="item.validStatus === 1">距活动结束还剩</span>
@@ -42,7 +42,7 @@ import dayjs from 'dayjs'
 import vCountdown from './countdown'
 import mLineBar from './../../../lineBar'
 import mItemNoData from './../../../itemNoData'
-import { itemParams } from './.././../../../default'
+import { itemParams, mixinsCommonStyle } from './.././../../../default'
 export default {
   name: 'SapTlaFirst',
   data() {
@@ -50,6 +50,7 @@ export default {
       itemParams
     }
   },
+  mixins: [mixinsCommonStyle],
   props: {
     item: {
       type: Object,
