@@ -7,7 +7,7 @@
       <m-item-card title="广告框设置" @on-ass-submit="onAssSubmit">
         <el-divider content-position="left">标题设置</el-divider>
         <el-form label-width="90px" size="mini">
-          <el-form-item label="主标题">
+          <el-form-item label="主标题" :rules="[{ required: true}]">
             <el-input v-model="itemParams.title" maxlength="6" placeholder="请输入最多不超过6个汉字" @change="onUploadItem" />
             <div v-if="error.isTitle" class="sa-assembly-error">
               {{ error.isTitle }}

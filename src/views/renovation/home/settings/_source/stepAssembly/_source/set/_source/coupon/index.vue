@@ -7,6 +7,7 @@
       <m-item-card title="优惠券" desc="单个组件最多选10张" @on-ass-submit="onAssSubmit">
         <div class="snm-btn-goods">
           <el-button size="mini" @click="dialogVisible = true">选择优惠劵</el-button>
+          <span class="sa-mandatory-asterisk">*</span>
           <span class="snm-text-1">已选：{{ itemParams.itemList.length }}</span>
         </div>
         <template v-for="(el,i) in itemParams.itemList">
