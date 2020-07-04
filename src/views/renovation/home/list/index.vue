@@ -16,7 +16,7 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" />
+        <el-table-column type="selection" width="55" :selectable="isSelection" />
         <el-table-column label="页面标题" min-width="180" align="left">
           <template slot-scope="scope">
             <span v-text="scope.row.title" />
@@ -89,6 +89,9 @@ export default {
     ...mapGetters(['merCode'])
   },
   methods: {
+    isSelection(row) {
+      return row.isNew
+    },
     /**
      *
      * @description  获取首页列表数据
@@ -98,6 +101,12 @@ export default {
       try {
         const { data } = await RenovationService.getHomeList()
         this.tableData = data
+
+        /* _.map(this.tableData, (v,i) => {
+          if (!v.isNew) {
+            this.$refs.elTable.toggleRowSelection(this.tableData[i],true)
+          }
+        })*/
       } catch (error) {
         console.log(error)
       }
