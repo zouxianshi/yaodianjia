@@ -109,16 +109,15 @@ export default {
           listUrl:
             '/marketings/activity-manage/payment-gift/list?code=TC002&name=支付有礼',
           linkUrl: '/marketings/activity-manage/payment-gift/add'
-        }
-        /* {
-          value: '',
+        },
+        {
           lable: '新人礼包',
           img: newComer,
           desc: '每个新注册微商城的用户都可以获取新人礼包一份，包含优惠券、海贝、抽奖福利等',
           listUrl:
             '/activity/newcomer-pack',
           linkUrl: '/activity/newcomer-create'
-        }*/
+        }
       ], // 会员营销
       goodsActivity: [
         {
@@ -207,9 +206,8 @@ export default {
           img: haibei,
           listUrl: '/activity/exchangeMallList',
           linkUrl: '/activity/exchangeMallAdd'
-        }
-        /* {
-          createText: '',
+        },
+        {
           name: 'signGift',
           lable: '签到设置',
           desc: '',
@@ -218,7 +216,7 @@ export default {
           img: signGift,
           listUrl: '/activity/sign-create',
           linkUrl: ''
-        }*/
+        }
       ], // 积分营销
       activity: [], // 精彩活动
       singIsSet: false
