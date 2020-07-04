@@ -1,7 +1,7 @@
 <template>
   <div class="commodity-form-item-model">
     <div class="cfim-btn-goods">
-      <el-button size="mini" @click="dialogVisible = true">选择商品</el-button>
+      <el-button size="mini" @click="dialogVisible = true">选择商品</el-button><span class="sa-mandatory-asterisk">*</span>
       <span class="cfim-text-1">已选：{{ itemList.length }}</span>
     </div>
     <div class="cfim-item-box">
@@ -14,7 +14,7 @@
       </table>
     </div>
     <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body size="700px" :visible.sync="dialogVisible">
-      <div slot="title">选择商品</div>
+      <div slot="title">选择商品 <span class="sa-mandatory-asterisk">*</span></div>
       <m-goods-table v-if="dialogVisible" ref="gt" :g-source="source === 'adFrame' ? 'new-home' : 'home'" :item-list="itemList" :sub-type="cpdSubType" @on-update="_onUpdate" />
     </el-drawer>
   </div>

@@ -16,7 +16,7 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" />
+        <el-table-column type="selection" width="55" :selectable="isSelection" />
         <el-table-column label="页面标题" min-width="180" align="left">
           <template slot-scope="scope">
             <span v-text="scope.row.title" />
@@ -39,8 +39,8 @@
               <el-button type="primary" size="mini" plain>
                 更多<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设置为主页</el-dropdown-item>
+              <el-dropdown-menu slot="dropdown" style="text-align: center;">
+                <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设为主页</el-dropdown-item>
                 <el-dropdown-item :disabled="scope.row.isNew === 0" :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
                 <el-dropdown-item :command="{type:'copy',data:scope.row}">复制</el-dropdown-item>
                 <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'dele',data:scope.row}">删除</el-dropdown-item>
@@ -89,6 +89,9 @@ export default {
     ...mapGetters(['merCode'])
   },
   methods: {
+    isSelection(row) {
+      return row.isNew
+    },
     /**
      *
      * @description  获取首页列表数据
@@ -98,6 +101,12 @@ export default {
       try {
         const { data } = await RenovationService.getHomeList()
         this.tableData = data
+
+        /* _.map(this.tableData, (v,i) => {
+          if (!v.isNew) {
+            this.$refs.elTable.toggleRowSelection(this.tableData[i],true)
+          }
+        })*/
       } catch (error) {
         console.log(error)
       }

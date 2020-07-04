@@ -10,6 +10,7 @@
  */
 
 import _ from 'lodash'
+import Vue from 'vue'
 import { mapState } from 'vuex'
 import { uuid, findComponentsDownward } from '@/utils'
 
@@ -192,6 +193,7 @@ export const saveDragItem = ($root, item) => {
   const $item = item
   $item.error = false
   const instance = findComponentsDownward($root, 'SaPreview')[0]
+  Vue.prototype.$message.success('设置成功')
   instance.$saveDragItem(_.cloneDeep($item))
 }
 
