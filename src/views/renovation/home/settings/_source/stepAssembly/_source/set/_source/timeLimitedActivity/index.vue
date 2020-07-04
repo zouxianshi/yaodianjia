@@ -7,6 +7,7 @@
       <m-item-card title="限时活动设置" @on-ass-submit="onAssSubmit">
         <el-divider content-position="left">活动选择</el-divider>
         <el-button size="mini" style="margin-bottom: 20px;" @click="dialogVisible = true">选择活动</el-button>
+        <span class="sa-mandatory-asterisk">*</span>
         <div v-if="error.isActivity" class="sa-assembly-error" style="margin-bottom: 10px;">
           {{ error.isActivity }}
         </div>
