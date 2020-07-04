@@ -229,14 +229,14 @@ export default {
         this.haibeiActivity[0].isclose = res.data
       }
     })
-    /* _searchMemberSignIn().then(res => { // 海贝签到开启还是关闭状态
+     _searchMemberSignIn().then(res => { // 海贝签到开启还是关闭状态
       if (res.code === '10000' && !!res.data) {
         this.haibeiActivity[1].isclose = !!res.data.isValid
         this.singIsSet = true
       } else {
         this.haibeiActivity[1].isclose = false
       }
-    })*/
+    })
   },
   methods: {
     handleClick(val) {
