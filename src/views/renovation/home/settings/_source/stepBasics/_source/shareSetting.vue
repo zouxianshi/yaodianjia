@@ -11,11 +11,13 @@
           </div>
         </el-form-item>
         <el-form-item label="分享图片">
-          <span class="bsm-xx" style="position: relative;top: -62px;">*</span>
-          <m-el-upload :img-url="basics.shareImg" @on-upload="_onUpload" />
-          <span class="cm-text">设置当前页面微信分享的展示图片，请上传jpg、png格式图片，建议尺寸5:4</span>
-          <div v-if="error.isShareImg" class="bm-basics-error">
-            {{ error.isShareImg }}
+          <div style="height:148px;position: relative; ">
+            <span class="bsm-xx">*</span>
+            <m-el-upload :img-url="basics.shareImg" @on-upload="_onUpload" />
+            <span class="cm-text">设置当前页面微信分享的展示图片，请上传jpg、png格式图片，建议尺寸5:4</span>
+            <div v-if="error.isShareImg" class="bm-basics-error">
+              {{ error.isShareImg }}
+            </div>
           </div>
         </el-form-item>
       </el-form>
@@ -111,6 +113,7 @@ export default {
       color: #ff0000;
       margin-left: -8px;
       margin-right: 10px;
+      vertical-align: top;
     }
   }
 </style>
