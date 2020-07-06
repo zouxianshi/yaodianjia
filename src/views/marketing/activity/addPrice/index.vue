@@ -393,6 +393,7 @@ export default {
     delActivityGoods(item, index) {
       console.log('item, index', item, index)
       this.storeActivityGoods.splice(index, 1)
+      console.log('this.storeActivityGoods-----', this.storeActivityGoods)
       this.$refs.activityGod.dataFrom(this.storeActivityGoods)
       // this.storeActivityGoods = this.storeActivityGoods
     },
