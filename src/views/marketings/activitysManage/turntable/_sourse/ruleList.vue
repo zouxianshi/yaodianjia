@@ -326,8 +326,6 @@ export default {
       // 监听按人限制变化
     }
   },
-  mounted() {
-  },
   methods: {
     beforeAvatarUpload(file) { // 图片上传之前
       const isImg =
