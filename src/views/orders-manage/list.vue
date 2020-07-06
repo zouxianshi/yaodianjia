@@ -221,6 +221,7 @@
                 <div class="header-cell">下单时间</div>
                 <div class="header-cell">订单状态</div>
                 <div class="header-cell">订单来源</div>
+                <div class="header-cell">所属门店</div>
                 <div class="header-cell">优惠金额</div>
                 <div class="header-cell">实付金额</div>
               </div>
@@ -371,6 +372,9 @@
                         <div class="body-cell cell-right padding10">
                           <div class="cell-text">微商城</div>
                         </div>
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">{{ item.storeName }}</div>
+                        </div>
                         <!-- 优惠金额 -->
                         <div class="body-cell cell-right padding10">
                           <div class="cell-text">
@@ -446,6 +450,7 @@
                 <!-- 带退款/待退货/退款完成 显示 -->
                 <div class="header-cell">退款退货状态</div>
                 <div class="header-cell">订单来源</div>
+                <div class="header-cell">所属门店</div>
                 <div class="header-cell">退款金额</div>
               </div>
               <div class="order-table-body-box">
@@ -616,6 +621,9 @@
                         <!-- 订单来源 -->
                         <div class="body-cell cell-right padding10">
                           <div class="cell-text">微商城</div>
+                        </div>
+                        <div class="body-cell cell-right padding10">
+                          <div class="cell-text">{{ item.storeName }}</div>
                         </div>
                         <!-- 退款金额 -->
                         <div class="body-cell cell-right padding10">
@@ -1898,16 +1906,18 @@ export default {
   }
 }
 // 马上去审批处方单
-.message-tips{
+.message-tips {
   position: absolute;
   z-index: 200;
   right: 0;
   width: 500px;
   color: #f52a2a;
-  height: 34px;line-height: 34px;padding: 0 20px;
+  height: 34px;
+  line-height: 34px;
+  padding: 0 20px;
   border: 1px solid #f52a2a;
   background-color: #f5c9c9;
-  .sp-btn{
+  .sp-btn {
     float: right;
   }
 }
