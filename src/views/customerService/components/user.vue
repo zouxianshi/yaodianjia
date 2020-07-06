@@ -94,7 +94,7 @@ export default {
     }
   },
   created() {
-    console.log('this', this, this.getEmojiList)
+    console.log('this-cusyomerService', this, this.getEmojiList)
   },
   methods: {
     handleClick() {
