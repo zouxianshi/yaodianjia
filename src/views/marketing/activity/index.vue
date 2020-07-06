@@ -125,7 +125,6 @@ export default {
           linkUrl: '/marketings/activity-manage/payment-gift/add'
         },
         {
-          value: '',
           lable: '会员发券',
           createText: '发放优惠券',
           img: memberVouch,
