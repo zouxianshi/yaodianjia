@@ -74,8 +74,6 @@ import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
 import spellGroup from '@/assets/image/acvity/spell-group.png'
 import share from '@/assets/image/acvity/share.png'
 import paymentCourtesy from '@/assets/image/marketings/pay.png'
-// import payImage from '@/assets/image/marketings/pay.png'
-// import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
 import birthdayImg from '@/assets/image/marketings/birthdayGift.png'
@@ -96,7 +94,6 @@ export default {
     return {
       activeName: 'goodsActivity',
       birth: {
-        value: 'birthGift',
         lable: '生日礼包',
         img: birthdayImg,
         desc: '定向给会员用户生日当天发放优惠券、海贝礼包，精准营销，激励消费',
