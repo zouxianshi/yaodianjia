@@ -8,30 +8,34 @@
     </el-form>
     <div class="items-title" style="margin-top: 40px">礼包内容</div>
     <el-form label-width="100px" label-position="right" :model="paramsForm">
-      <el-form-item label="优惠券：">
-        <el-button style="margin-bottom: 24px" size="mini" @click="selectCoupon">选择优惠券</el-button>
+      <el-form-item label-width="0" style="margin: 0">
+        <el-checkbox v-model="isSelectCoupon" style="width: 95px;" @change="changeCouponType">优惠券：</el-checkbox>
+        <el-button style="margin-bottom: 24px" size="mini" @click="selectCoupon" :disabled="!isSelectCoupon">选择优惠券</el-button>
+      </el-form-item>
+      <el-form-item label-width="0" style="margin: 0">
         <mSelectedCoupon
           v-show="selectedCoupons.length>0"
           ref="selectedCouponView"
           @onDel="onGetSelectCoupon"
         />
       </el-form-item>
-      <el-form-item label="赠送海贝：">
-        <el-input-number v-model="paramsForm.HB" :min="0" :max="999999" :step="1" :controls="false" style="width: 120px" size="mini" /> 海贝
+      <el-form-item label-width="0" style="margin: 0">
+        <el-checkbox v-model="isSelectHb" @change="paramsForm.HB = 1">赠送海贝：</el-checkbox>
+        <el-input-number :disabled="!isSelectHb" v-model="paramsForm.HB" :min="1" :max="10000" :step="1" :controls="false" style="width: 120px" size="mini" /> 海贝
       </el-form-item>
     </el-form>
     <div class="btn-box">
       <el-button size="mini" @click="$router.push('/marketing/activity?type=members')">取消</el-button>
       <el-button size="mini" type="primary" @click="_onSubmit">确定</el-button>
     </div>
-    <checkCoupon ref="checkCoupons" state="1" @confincheck="onGetSelectCoupon" />
+    <checkCoupon ref="checkCoupons" :maxLength="5" state="1" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
 <script>
 import _ from 'lodash'
 import { createActivity, normalActivityAddedCouponList } from '@/api/coupon'
 import { queryBirthday, updateNormalActivityNoTime } from '@/api/birthday'
-import checkCoupon from '@/components/Marketings/checkCoupon'
+import checkCoupon from '../../_source/pop-coupon'
 import mSelectedCoupon from '../../_source/SelectedCoupon'
 export default {
   name: 'BirthdayGift',
@@ -43,9 +47,11 @@ export default {
       birthInfo: {},
       paramsForm: {
         couponList: '',
-        HB: 0
+        HB: 1
       },
-      selectedCoupons: []
+      selectedCoupons: [],
+      isSelectCoupon: false,
+      isSelectHb: false
     }
   },
   created() {
@@ -59,7 +65,13 @@ export default {
           this.birthInfo = res.data
           params.id = res.data.id
           this.paramsForm.HB = res.data.hb
+          if (res.data.hb > 0) {
+            this.isSelectHb = true
+          }
           normalActivityAddedCouponList(params).then(res => {
+            if (res.data.records.length>0) {
+              this.isSelectCoupon = true
+            }
             this.selectedCoupons = res.data.records
             this.$refs.selectedCouponView.showPage(this.selectedCoupons, this.pageStatus)
           })
@@ -68,6 +80,12 @@ export default {
     })
   },
   methods: {
+    // 选择或不选择优惠券
+    changeCouponType() {
+      console.log('yes')
+      this.selectedCoupons = []
+      this.$refs.selectedCouponView.showPage(this.selectedCoupons, this.pageStatus)
+    },
     _onSubmit() {
       let params = {
         activityDetailName: "新人礼包",
@@ -81,7 +99,7 @@ export default {
         sendRule: 1,
         shopRule: 1
       }
-      if (this.paramsForm.HB > 0) {
+      if (this.paramsForm.HB > 0 && this.isSelectHb) {
         var obj = {
           giftId: null,
           giftNum: this.paramsForm.HB,
@@ -89,14 +107,20 @@ export default {
         }
         params.activityPayReqDTO.push(obj)
       }
-      _.map(this.selectedCoupons, item => {
-        var obj = {
-          giftNum: item.giftNum,
-          giftType: 1,
-          giftId: item.id
-        }
-        params.activityPayReqDTO.push(obj)
-      })
+      if (this.isSelectCoupon) {
+        _.map(this.selectedCoupons, item => {
+          var obj = {
+            giftNum: item.giftNum,
+            giftType: 1,
+            giftId: item.id
+          }
+          params.activityPayReqDTO.push(obj)
+        })
+      }
+      if (params.activityPayReqDTO.length === 0) {
+        this.$message.error('请至少设置一个礼包内容')
+        return false
+      }
       if (this.birthInfo.id) {
         let removeList = []
         _.map(this.birthInfo.listActivityPayEntity, item => {
@@ -145,6 +169,10 @@ export default {
   }
   .el-form{
     margin-top: 20px;
+  }
+  .btn-box{
+    margin-top: 50px;
+    text-align: center;
   }
 }
 </style>
