@@ -74,6 +74,8 @@ import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
 import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
 import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
+import birthdayCover from '@/assets/image/marketings/birthdayGift.png'
+import memberVouchCover from '@/assets/image/marketings/memberVouch.png'
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
 import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'// eslint-disable-line 
@@ -93,7 +95,7 @@ export default {
       activeName: 'goodsActivity',
       birth: {
         lable: '生日礼包',
-        img: birthdayImg,
+        img: birthdayCover,
         desc: '定向给会员用户生日当天发放优惠券、海贝礼包，精准营销，激励消费',
         listUrl: '',
         linkUrl: '/activity/birthday-gift'
@@ -122,7 +124,7 @@ export default {
         {
           lable: '会员发券',
           createText: '发放优惠券',
-          img: memberVouch,
+          img: memberVouchCover,
           desc: '发优惠券给到会员，可以精细化精准营销，满足会员购物需求，给到实际的优惠',
           listUrl: '/activity/member-voucher-list',
           linkUrl: '/activity/member-voucher'
