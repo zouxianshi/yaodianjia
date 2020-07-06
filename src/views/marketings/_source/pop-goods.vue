@@ -18,6 +18,9 @@
         <el-radio-button :label="1">线上商品</el-radio-button>
         <el-radio-button :label="2">线下商品</el-radio-button>
       </el-radio-group>
+      <el-button size="mini" type="primary" style="vertical-align: top;" v-if="goodsType === 2">
+        <a :href="downUrl">下载模板</a>
+      </el-button>
       <el-upload
         style="display: inline-block;vertical-align: top;"
         v-show="goodsType === 2"
@@ -28,7 +31,6 @@
         accept="csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         :http-request="httpRequest"
       >
-        <el-button size="mini" type="primary" style="vertical-align: top;">下载模板</el-button>
         <el-button size="mini" type="primary">批量导入</el-button>
       </el-upload>
       <div class="modal-body">
@@ -165,8 +167,16 @@ export default {
       default: true
     }
   },
+  created() {
+    if (process.env.NODE_ENV === 'production') {
+      this.downUrl = 'https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E5%95%86%E5%93%81%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx'
+    } else {
+      this.downUrl = 'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%95%86%E5%93%81%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx'
+    }
+  },
   data() {
     return {
+      downUrl: '',
       goodsType: 1, // 商品类型
       loading: false,
       dialog: {
