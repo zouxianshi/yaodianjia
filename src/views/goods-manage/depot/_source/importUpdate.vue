@@ -30,7 +30,7 @@
             <em>点击上传</em>
           </div>
           <div slot="tip" class="el-upload__tip">
-            仅支持XLS/XLSX文件格式。每次最多导入500条。导入后将替换原值。
+            仅支持XLS/XLSX文件格式。每次最多导入500条。导入后将<i>替换原分组，只保留新导入的分组。</i>
             <!-- <span class="tip">一次只允许上传1个文件</span> -->
             <div style="margin-top: 7px">
               <el-link type="primary" :href="batchEditUrl">点击下载导入模板</el-link>
@@ -186,6 +186,10 @@ export default {
       .el-upload__tip {
         width: 360px;
         line-height: 20px;
+        i {
+            font-style:normal;
+            color: #DC143C;
+        }
       }
     }
   }
