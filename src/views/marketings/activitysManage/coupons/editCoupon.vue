@@ -25,28 +25,28 @@
       </el-form-item>
       <el-form-item label="领取方式：">
         <el-table :data="couponInfo">
-          <el-table-column prop="cname" label="优惠券名称" />
-          <el-table-column prop="denomination" label="优惠内容">
+          <el-table-column prop="cname" label="优惠券名称" width="100" show-overflow-tooltip/>
+          <el-table-column prop="denomination" label="优惠内容" show-overflow-tooltip>
             <template
               slot-scope="scope"
-            >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
+            >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName,scope.row.cname) }}</template>
           </el-table-column>
-          <el-table-column prop="effectTime" label="使用时间">
+          <el-table-column prop="effectTime" label="使用时间" show-overflow-tooltip>
             <template
               slot-scope="scope"
             >{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
           </el-table-column>
-          <el-table-column prop="sceneRule" label="使用场景">
+          <el-table-column prop="sceneRule" label="使用场景" show-overflow-tooltip>
             <template
               slot-scope="scope"
             >{{ scope.row.sceneRule ===1 ? '仅商城' : scope.row.sceneRule === 2 ? '仅门店' : '线上线下通用' }}</template>
           </el-table-column>
-          <el-table-column prop="shopRule" label="适用门店">
+          <el-table-column prop="shopRule" label="适用门店" show-overflow-tooltip>
             <template
               slot-scope="scope"
             >{{ scope.row.shopRule ===1?'所有门店':'' || scope.row.shopRule ===2?'部分门店':'' }}</template>
           </el-table-column>
-          <el-table-column prop="productRule" label="适用商品">
+          <el-table-column prop="productRule" label="适用商品" show-overflow-tooltip>
             <template
               slot-scope="scope"
             >{{ scope.row.productRule ===1?'所有商品可用': scope.row.productRule ===2?'部分商品可用':'部分商品不可用' }}</template>
@@ -61,7 +61,7 @@
               />
             </template>
           </el-table-column>
-          <el-table-column prop="perCount" label="每人限领（张）" width="120">
+          <el-table-column prop="perCount" label="每人限领" width="110">
             <template slot-scope="scope">
               <el-input
                 v-model="scope.row.perCount"
@@ -160,7 +160,7 @@ export default {
       }
     },
     // 商品折扣处理
-    handleshopRule(ctype, useRule, denomination, giftName) {
+    handleshopRule(ctype, useRule, denomination, giftName, cname) {
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -174,8 +174,8 @@ export default {
           return `满${useRule}可用,减${denomination}元`
         }
       } else {
-        if (giftName === 'null' || null) {
-          return ''
+        if (giftName === 'null' || giftName === null) {
+          return cname
         } else {
           return giftName
         }
