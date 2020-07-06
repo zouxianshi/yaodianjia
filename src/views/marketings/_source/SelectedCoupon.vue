@@ -18,7 +18,12 @@
       <el-table-column label="适用门店" width="100">
         <template
           slot-scope="scope"
-        >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
+        >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':''}}</template>
+      </el-table-column>
+      <el-table-column label="适用商品" width="100">
+        <template
+          slot-scope="scope"
+        >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':''}}</template>
       </el-table-column>
       <el-table-column label="发放张数" width="100">
         <template slot-scope="scope">
@@ -30,7 +35,7 @@
               :precision="0"
               size="mini"
               :min="1"
-              :max="10000"
+              :max="20"
               label="请输入发放张数"
               @change="onChangeLimit($event, scope.row)"
             />
@@ -140,7 +145,7 @@ export default {
 </script>
 <style lang="scss">
 .selected-coupon-view {
-  width: 700px;
+  width: 80%;
   .el-pagination {
     text-align: right;
     margin-top: 15px;
