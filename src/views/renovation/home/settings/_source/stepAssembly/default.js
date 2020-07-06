@@ -197,7 +197,7 @@ export const saveDragItem = ($root, item) => {
   instance.$saveDragItem(_.cloneDeep($item))
 }
 
-export const minxisCommonStyle = {
+export const mixinsCommonStyle = {
   computed: {
     ...mapState('renovation', ['basics']),
     commonStyleEs() {
@@ -205,6 +205,12 @@ export const minxisCommonStyle = {
       return {
         borderRadius: `${borderStyle === 0 ? 0 : 4}px`,
         border: `${borderSize}px solid ${borderColor}`
+      }
+    },
+    commonStyleBackgr() {
+      const { backgroundColor } = this.basics
+      return {
+        background: `${backgroundColor}`
       }
     }
   }

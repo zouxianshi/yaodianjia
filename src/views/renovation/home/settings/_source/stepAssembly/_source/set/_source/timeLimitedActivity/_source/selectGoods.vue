@@ -77,28 +77,15 @@ export default {
   },
   methods: {
     $verification() {
-      const { selectList, list } = this
-
+      const { selectList, list, item: { max }} = this
       if (list.length && !selectList.length) {
         this.$message.error('请选择商品')
         return false
       }
-
-      /* if (subType === 'first' && _.size(selectList) !== 1) {
-        this.$message.error('只允许添加1个商品')
+      if (_.size(selectList) > max) {
+        this.$message.error(`当前组件可展示${max}个商品`)
         return false
       }
-
-      if (subType === 'second' && _.size(selectList) !== 2 ) {
-        this.$message.error('只允许添加2个商品')
-        return false
-      }
-
-      if (subType === '2' && _.size(selectList) !== 6 ) {
-        this.$message.error('只允许添加5个商品')
-        return false
-      }*/
-
       return selectList
     },
     currentChange(v) {

@@ -1,6 +1,6 @@
 <template>
   <div class="sap-tla-third-model">
-    <div class="sttm-title-box">
+    <div class="sttm-title-box" :style="commonStyleBackgr">
       <span class="sttm-text-1">
         <span v-if="item.validStatus === 0">距活动开始还剩</span>
         <span v-if="item.validStatus === 1">距活动结束还剩</span>
@@ -30,7 +30,7 @@
 </template>
 <script>
 import dayjs from 'dayjs'
-import { itemParams } from './.././../../../default'
+import { itemParams, mixinsCommonStyle } from './.././../../../default'
 import vCountdown from './countdown'
 import mFour from './../commodity/four'
 
@@ -41,6 +41,7 @@ export default {
       itemParams
     }
   },
+  mixins: [mixinsCommonStyle],
   props: {
     item: {
       type: Object,

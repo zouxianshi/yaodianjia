@@ -1,6 +1,6 @@
 <template>
   <div class="sap-tla-first-model">
-    <div class="stfm-title-box">
+    <div class="stfm-title-box" :style="commonStyleBackgr">
       <span class="stfm-text-1">
         <span v-if="item.validStatus === 0">距活动开始还剩</span>
         <span v-if="item.validStatus === 1">距活动结束还剩</span>
@@ -21,10 +21,13 @@
     <div class="stfm-content">
       <div class="cfim-no-data">
         <template v-if="item.itemList.length">
-          <img v-if="item.itemList[0].img" class="cfim-img" :src="showImg(item.itemList[0].img)" alt="" style="width: 140px;height:140px;margin: 0 auto;display: block;">
-          <m-item-no-data v-else height="140px" />
-          <div style="padding: 10px">
-            <m-line-bar margin-top="24px" enter-type="button" :el="item.itemList[0]" />
+          <div v-for="(el,$index) in item.itemList" :key="$index">
+            <img v-if="el.img" class="cfim-img" :src="showImg(el.img)" alt="" style="width: 140px;height:140px;margin: 0 auto;display: block;">
+            <m-item-no-data v-else height="140px" />
+            <div style="padding: 10px">
+              <m-line-bar margin-top="24px" enter-type="button" :el="el" />
+            </div>
+            <div v-if="$index < item.itemList.length - 1" style="height:8px;background: #F5F7F8;margin: 0 -8px;" />
           </div>
         </template>
         <template v-else>
@@ -42,7 +45,7 @@ import dayjs from 'dayjs'
 import vCountdown from './countdown'
 import mLineBar from './../../../lineBar'
 import mItemNoData from './../../../itemNoData'
-import { itemParams } from './.././../../../default'
+import { itemParams, mixinsCommonStyle } from './.././../../../default'
 export default {
   name: 'SapTlaFirst',
   data() {
@@ -50,6 +53,7 @@ export default {
       itemParams
     }
   },
+  mixins: [mixinsCommonStyle],
   props: {
     item: {
       type: Object,
