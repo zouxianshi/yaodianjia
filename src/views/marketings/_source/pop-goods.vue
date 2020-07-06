@@ -12,27 +12,12 @@
       <el-radio-group
         v-model="goodsType"
         size="mini"
-        style="margin: 0 120px 20px 0"
+        style="margin: 0 0 20px 0"
         @change="changegoodsType"
       >
         <el-radio-button :label="1">线上商品</el-radio-button>
         <el-radio-button :label="2">线下商品</el-radio-button>
       </el-radio-group>
-      <el-button size="mini" type="primary" style="vertical-align: top;" v-if="goodsType === 2">
-        <a :href="downUrl">下载模板</a>
-      </el-button>
-      <el-upload
-        style="display: inline-block;vertical-align: top;"
-        v-show="goodsType === 2"
-        class="upload"
-        action
-        :multiple="false"
-        :show-file-list="false"
-        accept="csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        :http-request="httpRequest"
-      >
-        <el-button size="mini" type="primary">批量导入</el-button>
-      </el-upload>
       <div class="modal-body">
         <el-form
           v-if="goodsType === 1"
@@ -69,6 +54,22 @@
             <el-button size="small" @click.stop="forReset()">重 置</el-button>
           </el-form-item>
         </el-form>
+        <span class="set-goods-title" v-show="goodsType === 2">批量设置指定商品</span>
+        <el-button size="mini" type="primary" style="vertical-align: top;" v-if="goodsType === 2">
+          <a :href="downUrl">下载模板</a>
+        </el-button>
+        <el-upload
+          style="display: inline-block;vertical-align: top;"
+          v-show="goodsType === 2"
+          class="upload"
+          action
+          :multiple="false"
+          :show-file-list="false"
+          accept="csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          :http-request="httpRequest"
+        >
+          <el-button size="mini" type="primary">批量导入</el-button>
+        </el-upload>
         <el-table
           ref="multipleTable"
           v-loading="loading"
@@ -513,6 +514,14 @@ export default {
   }
   .table-footer {
     justify-content: flex-end;
+  }
+  .set-goods-title{
+    font-size: 18px;
+    margin-right: 150px;
+    height: 29px;
+    line-height: 29px;
+    font-weight: 600;
+    display: inline-block;
   }
 }
 </style>

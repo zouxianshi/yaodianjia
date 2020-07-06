@@ -97,6 +97,10 @@ export default {
         }
         params.activityPayReqDTO.push(obj)
       })
+      if (params.activityPayReqDTO.length === 0) {
+        this.$message.error('请至少设置一个礼包内容')
+        return false
+      }
       if (this.birthInfo.id) {
         let removeList = []
         _.map(this.birthInfo.listActivityPayEntity, item => {
@@ -145,6 +149,10 @@ export default {
   }
   .el-form{
     margin-top: 20px;
+  }
+  .btn-box{
+    margin-top: 50px;
+    text-align: center;
   }
 }
 </style>
