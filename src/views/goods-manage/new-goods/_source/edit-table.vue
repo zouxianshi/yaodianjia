@@ -12,7 +12,7 @@
           <template v-if="keys==='limitNum'">
             <el-form-item label="">
               <el-radio-group v-model="infoData.limitType" @change="handleRadioChange">
-                <el-radio :label="0" style="margin-top:10px;display:block">不限购</el-radio>
+                <el-radio :label="0" style="margin-top:10px;display:block; line-height: 28px">不限购</el-radio>
                 <el-radio :label="1" style="margin-top:10px">
                   <span style="color:#333">每笔订单限购&nbsp;
                     <template v-if="infoData.limitType===1">
