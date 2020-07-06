@@ -297,8 +297,6 @@ export default {
       // 监听按人限制变化
     }
   },
-  mounted() {
-  },
   methods: {
     daterangeChange(e) {
       const _this = this

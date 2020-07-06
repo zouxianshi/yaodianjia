@@ -164,7 +164,7 @@
           <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">份</span>
         </el-form-item>
       </el-form>
-      <mCheckCoupon ref="checkCoupons" state="1" :singlechoice="true" @confincheck="onGetSelectCoupon" />
+      <mCheckCoupon ref="checkCoupons" state="1" :timevalue="timevalue" :singlechoice="true" @confincheck="onGetSelectCoupon" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
@@ -191,6 +191,9 @@ export default {
       }
     }
   },
+  created() {
+    console.log(this.params, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+  },
   data() {
     var validategiftNum = (rule, value, callback) => {
       if (
@@ -208,6 +211,7 @@ export default {
       minNum: 1, // 最小礼品数量
       uploadLoading: false,
       dialogVisible: false,
+      timevalue: [new Date(), new Date()],
       selectedCoupons: [], // 已选择的优惠券列表
       formsGift: {
         selectedGift: [
@@ -256,12 +260,20 @@ export default {
   },
   watch: {
     formsGift: {
-      handler(newVal) {
+      handler(newVal) { // 计算剩余中奖概率
         let glTotal = 0
         _.map(newVal.selectedGift, v => {
           glTotal += v.winRandom
         })
         this.totalGl = parseInt(glTotal*100)/100
+      },
+      deep: true,
+      immediate: true
+    },
+    params: { // 将时间传给选择优惠券组件、筛选符合时间要求的优惠券
+      handler(newVal) {
+        this.timevalue = [newVal.beginTime, newVal.endTime]
+        console.log(this.timevalue)
       },
       deep: true,
       immediate: true
