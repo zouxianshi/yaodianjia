@@ -102,7 +102,7 @@
       <el-button size="mini" type="primary" @click="getMemberData">查询</el-button>
     </el-form>
     <storeDialog />
-    <el-table :data="tabelData" v-loading="tabelLoading" @selection-change="changeSelect">
+    <el-table v-loading="tabelLoading" :data="tabelData" @selection-change="changeSelect">
       <el-table-column type="selection" width="55" />
       <el-table-column prop="img" label="头像">
         <template slot-scope="scope">

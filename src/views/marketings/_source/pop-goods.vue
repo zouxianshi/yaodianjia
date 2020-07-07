@@ -11,10 +11,10 @@
     >
       <el-radio-group
         v-model="goodsType"
+        v-loading="loading"
         size="mini"
         style="margin: 0 0 20px 0"
         @change="changegoodsType"
-        v-loading="loading"
       >
         <el-radio-button :label="1">线上商品</el-radio-button>
         <el-radio-button :label="2">线下商品</el-radio-button>
@@ -55,13 +55,13 @@
             <el-button size="small" @click.stop="forReset()">重 置</el-button>
           </el-form-item>
         </el-form>
-        <span class="set-goods-title" v-show="goodsType === 2">批量设置指定商品</span>
-        <el-button size="mini" type="primary" style="vertical-align: top;" v-if="goodsType === 2">
+        <span v-show="goodsType === 2" class="set-goods-title">批量设置指定商品</span>
+        <el-button v-if="goodsType === 2" size="mini" type="primary" style="vertical-align: top;">
           <a :href="downUrl">下载模板</a>
         </el-button>
         <el-upload
-          style="display: inline-block;vertical-align: top;"
           v-show="goodsType === 2"
+          style="display: inline-block;vertical-align: top;"
           class="upload"
           action
           :multiple="false"
@@ -83,7 +83,7 @@
           @select-all="handleSelectAllChange"
           @select="handleSelect"
         >
-          <el-table-column type="selection" align="left" width="50"  />
+          <el-table-column type="selection" align="left" width="50" />
           <el-table-column prop="erpCode" label="商品编码" :show-overflow-tooltip="true" />
           <el-table-column prop="name" label="商品名称" :show-overflow-tooltip="true" />
         </el-table>
@@ -215,7 +215,7 @@ export default {
   },
   methods: {
     httpRequest(e) {
-      let file = e.file // 文件信息
+      const file = e.file // 文件信息
       if (!file) {
         return false
       } else if (!/\.(xls|xlsx)$/.test(file.name.toLowerCase())) {
@@ -236,13 +236,13 @@ export default {
             this.$message.error('导入商品数量不能超过500条，当前导入数量' + exl.length + '条')
             return
           }
-          let erpCodeArr = []
+          const erpCodeArr = []
           _.map(exl, item => {
             erpCodeArr.push(item.erpCode)
           })
-          let lengths = erpCodeArr.length - Array.from(new Set(erpCodeArr)).length  
+          const lengths = erpCodeArr.length - Array.from(new Set(erpCodeArr)).length
           if (lengths > 0) {
-            this.$message.error('导入商品erpCode不能重复，当前有' +lengths+ '条重复数据')
+            this.$message.error('导入商品erpCode不能重复，当前有' + lengths + '条重复数据')
             return
           }
           this.tableData = exl
