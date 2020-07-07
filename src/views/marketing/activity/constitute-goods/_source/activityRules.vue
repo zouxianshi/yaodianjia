@@ -625,7 +625,19 @@ export default {
               // 过滤子商品信息传给后台
               if (Array.isArray(res)) {
                 childCommodities = _.map(res, n => {
-                  return _.pick(n, ['specId', 'mprice', 'addNum'])
+                  const { id, name, erpCode, mainPic, specStr, specId, addPrice, addNum, weight } = _.pick(n, ['id', 'name', 'erpCode', 'mainPic', 'specStr', 'specId', 'addPrice', 'addNum', 'weight'])
+                  return {
+                    commodityId: id,
+                    commodityName: name,
+                    erpCode,
+                    mainPic,
+                    number: addNum,
+                    price: addPrice,
+                    specId,
+                    standard: specStr,
+                    weight,
+                    merCode: this.merCode
+                  }
                 })
                 console.log('childCommodities', childCommodities)
               }
