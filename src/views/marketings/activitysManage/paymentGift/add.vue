@@ -141,6 +141,7 @@
               >选择优惠券</div>
             </el-radio>
             <mSelectedCoupon
+              style="width: 740px"
               v-show="form.giftType===1&&selectedCoupons.length>0"
               ref="selectedCouponView"
               @onDel="onGetSelectCoupon"

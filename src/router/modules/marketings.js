@@ -135,7 +135,7 @@ export default [{
     component: () => import('@/views/marketings/activitysManage/paymentGift/add'),
     name: 'activitys-manage-payment-gift-add',
     meta: {
-      title: '新增-支付有礼',
+      title: '支付有礼',
       auth: 'marketing.marketing-manager',
       noCache: true,
       activeMenu: '/marketing/activity'
