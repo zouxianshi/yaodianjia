@@ -34,13 +34,8 @@ export default {
     }
   },
   created() {
-    const params = {
-      pageSize: 100,
-      currentPage: 1
-    }
     queryBirthday().then(res => {
       if (res.code === '10000' && !!res.data) {
-        console.log(res.data.status)
         this.isClose = !!res.data.status
       }
     })
