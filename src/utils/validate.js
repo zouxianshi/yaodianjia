@@ -114,8 +114,23 @@ export function checkNumberdouble(value) {
   const reg = /^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$/
   return reg.test(value)
 }
+// 校验正整数
+export function checkNumber(value) {
+  // const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
+  const reg = /^([1-9]\d{0,9}|0)$/
+  return reg.test(value)
+}
 //  只能输入 字母数字 字符
 export function checkZmSZ(value) {
   const reg = /^[0-9a-zA-Z]*$/g
   return reg.test(value)
+}
+
+export function checkName(newName) {
+  var regEn = /[`!@#$%^&*()_+<>?:"{}.\/;'[\]]/im
+  var regCn = /[·！#￥（——）：；“”‘、|《。》？、【】[\]]/im
+  if (regEn.test(newName) || regCn.test(newName)) {
+    return true
+  }
+  return false
 }

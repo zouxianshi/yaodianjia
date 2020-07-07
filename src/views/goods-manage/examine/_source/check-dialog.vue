@@ -7,7 +7,7 @@
       </el-form-item>
       <el-form-item v-if="form.result===2" label="拒绝原因：" label-width="120px" prop="reason">
         <el-select v-model="form.reason" size="small">
-          <el-option label="药店加平台已存在改商品" :value="1" />
+          <el-option label="海典健康微商城平台已存在改商品" :value="1" />
           <el-option label="商品信息不够规范合格" :value="2" />
           <el-option label="其他原因" :value="3" />
         </el-select>

@@ -26,6 +26,7 @@ module.exports = {
       }
     }],
     "vue/singleline-html-element-content-newline": "off",
+    "vue/return-in-computed-property": "off",
     "vue/order-in-components": "off",
     "vue/multiline-html-element-content-newline":"off",
     "vue/name-property-casing": ["error", "PascalCase"],

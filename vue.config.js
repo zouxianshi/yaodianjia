@@ -112,6 +112,7 @@ module.exports = {
       vuex: 'Vuex',
       'vue-router': 'VueRouter',
       jquery: '$',
+      swiper: 'Swiper',
       lodash: '_',
       'element': 'ELEMENT',
       'vuedraggable': 'vuedraggable',

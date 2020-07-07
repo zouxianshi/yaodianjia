@@ -75,6 +75,7 @@ export default {
   created() {
     this.uploadLoading = true
     getQrcode({ merCode: this.merCode }).then(res => {
+      console.log(res)
       this.programData.programUrl = res.data[0]
       this.programData.programImg = res.data[1]
       this.programData.showImg = true

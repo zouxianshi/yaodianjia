@@ -766,7 +766,11 @@ export default {
             type: 'success'
           })
           this.basicForm.id = res.data
-          this.$router.push('/goods-manage/constitute-goods')
+          this.$store
+            .dispatch('tagsView/delView', this.$route)
+            .then(({ visitedViews }) => {
+              this.$router.push('/goods-manage/constitute-goods')
+            })
           this.subLoading = false
         })
         .catch(_ => {
@@ -782,7 +786,12 @@ export default {
             message: '保存成功',
             type: 'success'
           })
-          this.$router.push('/goods-manage/constitute-goods')
+
+          this.$store
+            .dispatch('tagsView/delView', this.$route)
+            .then(({ visitedViews }) => {
+              this.$router.push('/goods-manage/constitute-goods')
+            })
           this.subLoading = false
         })
         .catch(_ => {

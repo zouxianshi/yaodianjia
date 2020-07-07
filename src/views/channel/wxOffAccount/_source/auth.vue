@@ -16,7 +16,7 @@
       </el-form-item>
     </el-form>
     <br>
-    <el-divider content-position="left">药店加商户中心已获得该公众号以下接口权限</el-divider>
+    <el-divider content-position="left">海典健康微商城商户中心已获得该公众号以下接口权限</el-divider>
     <div>
       <el-tag v-for="(item,$index) in authInfo.funcInfo" :key="$index" style="margin-right: 8px" :type="color()">{{ item }}</el-tag>
     </div>

@@ -13,9 +13,7 @@
             @change="changeState"
           />
         </div>
-        <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
-          <div class="sub-title">{{ item.desc || '' }}</div>
-        </el-tooltip>
+        <div v-if="item.desc===''" style="height:48px">{{ item.desc || '' }}</div>
       </div>
       <div class="action">
         <el-button
@@ -132,7 +130,7 @@ export default {
     padding-bottom: 6px;
     .activity-header {
       .title {
-        font-size: 16px;text-align: center;line-height: 20px;
+        font-size: 16px;text-align: center;line-height: 20px;margin: 10px 0;
         color: rgba(0, 0, 0, 0.85);
         .title-span{
           line-height: 20px;vertical-align: bottom;margin-right: 10px;height: 20px;
@@ -148,6 +146,11 @@ export default {
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
       }
+    }
+    .action{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   }
   .share {

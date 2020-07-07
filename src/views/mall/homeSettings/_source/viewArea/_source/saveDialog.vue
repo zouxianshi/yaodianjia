@@ -48,7 +48,7 @@ export default {
             this.saveStructure().then(() => {
               this.$message.success('保存成功！')
               setTimeout(() => {
-                this.$router.push(`/mall/home`)
+                this.$router.push(`/renovation/home/list`)
                 this.loading = false
               }, 1200)
             }).catch(() => {

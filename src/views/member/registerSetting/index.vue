@@ -1,8 +1,8 @@
 <template>
   <div class="rs-index-model app-container">
-    <!-- <el-card class="box-card">
+    <el-card class="box-card">
       <AppleRs />
-    </el-card> -->
+    </el-card>
     <el-card v-if="showCode===1" class="box-card">
       <NoactiveCard />
     </el-card>
@@ -16,7 +16,7 @@
 </template>
 <script>
 // 微信小程序注册
-// import AppleRs from './_source/appletRegister'
+import AppleRs from './_source/appletRegister'
 // 微信会员卡
 import AemberCard from './_source/memberCard'
 // 未激活微信会员卡
@@ -31,7 +31,8 @@ export default {
   components: {
     AemberCard,
     NoactiveCard,
-    NobindingCard
+    NobindingCard,
+    AppleRs
   },
   props: {},
   data() {

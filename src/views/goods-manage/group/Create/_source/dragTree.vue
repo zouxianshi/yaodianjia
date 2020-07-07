@@ -238,6 +238,7 @@ import vDraggable from 'vuedraggable'
 import mSubgrouping from './subgrouping'
 import mDelete from './delete'
 import band from './band'
+import { mapGetters } from 'vuex'
 export default {
   name: 'DragTree',
   components: { vDraggable, mItemInfo, mSubgrouping, mDelete, band },
@@ -274,6 +275,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   methods: {
     _onStartLevel1() {},
     handleSort(row, level) {
@@ -290,6 +294,7 @@ export default {
           message: '修改成功',
           type: 'success'
         })
+        this.$store.dispatch('group/getGroupList', { merCode: this.merCode, id: this.$route.params.id })
       })
     },
     _onEndLevel1() {

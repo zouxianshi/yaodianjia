@@ -60,6 +60,7 @@ const mutations = {
     const { item, level1Index, level2Index } = payload
     if (level2Index === -1) {
       state.menuData[level1Index] = _.assign(state.menuData[level1Index], item)
+      console.log(state.menuData)
     } else {
       state.menuData[level1Index].sub_button[level2Index] = _.assign(state.menuData[level1Index].sub_button[level2Index], item)
     }
@@ -67,6 +68,7 @@ const mutations = {
       v.active = i === level1Index
       return v
     })
+    console.log(state.menuData)
   },
   delMenu(state, payload) {
     const { level1Index, level2Index } = payload
@@ -86,12 +88,12 @@ const actions = {
     commit('setLoading', true)
     // handler available back-end data structures
     const { VUE_APP_MEMBER_CENTER, menuData } = state
+    console.log(state.menuData)
     const button = _.cloneDeep(menuData)
     // handler request data
-    console.log(button, '1111111111111111111222222222222222222222')
     _.map(button, v => {
       delete v.active
-      if (v.type === 'memberCard' || !v.sub_button.length) {
+      if (v.type === 'memberCard') {
         v.url = VUE_APP_MEMBER_CENTER
         v.type = 'view'
       }

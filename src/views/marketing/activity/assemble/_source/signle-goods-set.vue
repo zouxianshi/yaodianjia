@@ -37,6 +37,7 @@
           size="small"
           :rules="rules"
           label-width="100px"
+          :disabled="disabled"
         >
           <el-form-item label="成团人数" prop="activityNumber">
             <div class="custom-input">
@@ -136,7 +137,7 @@
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button size="small" @click="isShow=false">取 消</el-button>
-      <el-button type="primary" size="small" @click="handleSubmit">确 定</el-button>
+      <el-button type="primary" :disabled="disabled" size="small" @click="handleSubmit">确 定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -150,6 +151,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

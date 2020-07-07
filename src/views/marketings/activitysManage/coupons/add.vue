@@ -45,32 +45,32 @@
       </div>
     </div>
     <div v-show="checkedit" class="add-addItem-model">
-      <span class="add-addLeft-model">选择优惠券:</span>
+      <span class="add-addLeft-model" style="margin-bottom: 10px">已选择优惠券:</span>
       <div class="add-addRight-model">
         <el-form ref="forms" :model="forms" :rules="rules">
           <el-table :data="forms.selectlist" height="450" style="width: 100%">
-            <el-table-column prop="cname" label="优惠券名称" />
-            <el-table-column label="优惠内容">
+            <el-table-column prop="cname" label="优惠券名称" width="100" show-overflow-tooltip />
+            <el-table-column label="优惠内容" show-overflow-tooltip>
               <template
                 slot-scope="scope"
-              >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
+              >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName,scope.row.cname) }}</template>
             </el-table-column>
-            <el-table-column label="使用时间" width="160">
+            <el-table-column label="使用时间" width="140" show-overflow-tooltip>
               <template
                 slot-scope="scope"
               >{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
             </el-table-column>
-            <el-table-column label="使用场景" width="80">
+            <el-table-column label="使用场景" width="80" show-overflow-tooltip>
               <template
                 slot-scope="scope"
               >{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
             </el-table-column>
-            <el-table-column label="适用门店" width="100">
+            <el-table-column label="适用门店" width="100" show-overflow-tooltip>
               <template
                 slot-scope="scope"
               >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
             </el-table-column>
-            <el-table-column label="券总数" width="150">
+            <el-table-column label="券总数" width="120">
               <template slot-scope="scope">
                 <div style="display:flex;align-items: center;padding-top:15px">
                   <el-form-item
@@ -79,7 +79,7 @@
                   >
                     <el-input-number
                       v-model="scope.row.totalCoupons"
-                      style="width: 110px"
+                      style="width: 80px"
                       :controls="false"
                       :precision="0"
                       size="mini"
@@ -97,7 +97,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="每人限领（张）" width="110">
+            <el-table-column label="每人限领" width="110">
               <template slot-scope="scope">
                 <div style="display:flex;align-items: center;padding-top:15px">
                   <el-form-item
@@ -158,7 +158,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="100">
+            <el-table-column label="操作" width="60">
               <template slot-scope="scope">
                 <el-button
                   type="text"
@@ -419,7 +419,7 @@ export default {
         })
     },
     // 商品折扣处理
-    handleshopRule(ctype, useRule, denomination, giftName) {
+    handleshopRule(ctype, useRule, denomination, giftName, cname) {
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -433,8 +433,8 @@ export default {
           return `满${useRule}可用,减${denomination}元`
         }
       } else {
-        if (giftName === 'null' || null) {
-          return ''
+        if (giftName === 'null' || giftName === null) {
+          return cname
         } else {
           return giftName
         }
@@ -456,6 +456,10 @@ export default {
     },
     // 提交
     handleSumbit() {
+      if (this.value.length === 0) { //  阻止为选择时间直接提交（优化提示）
+        this.$message.error('请先选择领取时间！')
+        return
+      }
       this.$refs['forms'].validate(valid => {
         let val = true
         for (const j in this.forms.selectlist) {
@@ -524,7 +528,7 @@ export default {
     .add-addLeft-model {
       display: inline-block;
       vertical-align: top;
-      width: 80px;
+      width: 120px;
       margin: 0px 40px 0px 0px;
     }
     .add-addRight-model {
