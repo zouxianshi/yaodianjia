@@ -14,6 +14,7 @@
         size="mini"
         style="margin: 0 0 20px 0"
         @change="changegoodsType"
+        v-loading="loading"
       >
         <el-radio-button :label="1">线上商品</el-radio-button>
         <el-radio-button :label="2">线下商品</el-radio-button>
@@ -239,7 +240,6 @@ export default {
           _.map(exl, item => {
             erpCodeArr.push(item.erpCode)
           })
-          console.log(erpCodeArr, Array.from(new Set(erpCodeArr)))
           let lengths = erpCodeArr.length - Array.from(new Set(erpCodeArr)).length  
           if (lengths > 0) {
             this.$message.error('导入商品erpCode不能重复，当前有' +lengths+ '条重复数据')
