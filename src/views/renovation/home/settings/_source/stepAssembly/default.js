@@ -219,7 +219,7 @@ export const handlerBackfill = data => {
         itemList: _.map(v1.itemList, v2 => {
           return {
             ...v2,
-            ..._.pick(v2.couponDetail, ['cname', 'ctype', 'denomination'])
+            ..._.pick(v2.couponDetail, ['cname', 'ctype', 'denomination', 'timeRule', 'effectTime', 'sceneRule', 'productRule', 'shopRule'])
           }
         })
       }

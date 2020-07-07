@@ -18,10 +18,22 @@
           <span class="cfim-price" style="display: inline-block;margin:0 -4px;">礼品券</span>
         </div>
         <div class="cfim-text-1">
-          线上微商城，全场通用，金额不限
+          <template v-if="el.sceneRule === 1">线上门店可用,</template>
+          <template v-if="el.sceneRule === 2">线下门店可用,</template>
+          <template v-if="el.sceneRule === 3">线上线下通用,</template>
+          <template v-if="el.productRule === 1">所有商品可用,</template>
+          <template v-if="el.productRule === 2">部分商品可用,</template>
+          <template v-if="el.productRule === 3">部分商品不可用,</template>
+          <template v-if="el.shopRule === 1">全部门店可用</template>
+          <template v-if="el.shopRule === 2">部分门店可用</template>
         </div>
-        <div class="cfim-text-2">
-          有效期：2020-02-03至2020-03-14
+        <div v-if="el.timeRule" class="cfim-text-2">
+          <span v-if="el.timeRule === 1">领取后{{ el.effectTime }}天内有效</span>
+          <span v-if="el.timeRule === 2">领取{{ el.effectTime.split(',')[0] }}天后生效，生效后{{ el.effectTime.split(',')[1] }}天失效</span>
+          <span v-if="el.timeRule === 3">{{ el.effectTime.split(',')[0] }} <br>到<br> {{ el.effectTime.split(',')[1] }}</span>
+        </div>
+        <div v-else class="cfim-text-2">
+          有效期：xxxx-xx-xx至xxxx-xx-xx
         </div>
       </template>
     </div>
@@ -154,7 +166,7 @@ export default {
         }
       }
       .cfim-text-1 {
-        font-size: 14px;
+        font-size: 13px;
         color: #fff;
         padding: 6px 0 ;
       }
