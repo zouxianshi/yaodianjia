@@ -6,7 +6,7 @@
     >{{ numTips }}</el-alert>
     <div style="margin:20px 0">
       <el-form ref="formsGift" :model="formsGift" :rules="rulesGift">
-        <el-table :data="formsGift.selectedGift" style="width: 100%" height="calc(100vh - 430px)">
+        <el-table :data="formsGift.selectedGift" style="width: 100%" height="calc(100vh - 448px)">
           <el-table-column label="奖品顺序" type="index" width="100" />
           <el-table-column label="奖品类型">
             <template slot-scope="scope">{{ formatType(scope.row.giftType) }}</template>
@@ -66,15 +66,16 @@
     </div>
     <el-button
       type="primary"
+      size="mini"
       plain
       :disabled="formsGift.selectedGift.length>= 10 || isPageUpdateOrView || isRuning"
       @click="dialogVisible = true;$refs.ruleForm && $refs.ruleForm.clearValidate()"
     >添加奖品</el-button>
-    <span style="margin-left: 20%;color:#F56C6C">概率总计: {{totalGl}}%</span>
-    <div style="margin-top:40px">
-      <el-button type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
-      <el-button v-if="params.pageState!==2" type="primary" @click="submitData">保存并提交</el-button>
-      <el-button v-if="params.pageState===2" type="primary" @click="goBack">返回</el-button>
+    <span style="margin-left: 20%;color:#F56C6C">概率总计: {{ totalGl }}%</span>
+    <div style="margin-top:30px">
+      <el-button size="mini" type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
+      <el-button size="mini" v-if="params.pageState!==2" type="primary" @click="submitData">保存并提交</el-button>
+      <el-button size="mini" v-if="params.pageState===2" type="primary" @click="goBack">返回</el-button>
     </div>
     <el-dialog title="添加奖品" :visible.sync="dialogVisible" width="70%" append-to-body>
       <el-form
@@ -141,7 +142,7 @@
             style="width:400px"
           />
           <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">％</span>
-          <span style="margin-left: 24px;color: #F56C6C">剩余概率：{{(10000 - (totalGl*100))/100}}%</span>
+          <span style="margin-left: 24px;color: #F56C6C">剩余概率：{{ (10000 - (totalGl*100))/100 }}%</span>
         </el-form-item>
         <el-form-item label="奖品数量" prop="giftNum">
           <!-- 在这 -->
@@ -164,12 +165,12 @@
           <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">份</span>
         </el-form-item>
       </el-form>
-      <mCheckCoupon ref="checkCoupons" state="1" :timevalue="timevalue" :singlechoice="true" @confincheck="onGetSelectCoupon" />
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </span>
     </el-dialog>
+    <mCheckCoupon ref="checkCoupons" state="1" :timevalue="timevalue" :singlechoice="true" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
 <script>
@@ -265,7 +266,7 @@ export default {
         _.map(newVal.selectedGift, v => {
           glTotal += v.winRandom
         })
-        this.totalGl = parseInt(glTotal*100)/100
+        this.totalGl = parseInt(glTotal * 100) / 100
       },
       deep: true,
       immediate: true
@@ -543,7 +544,6 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss">
 .rule-awardSetting-modal {
-  padding-top: 10px;
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

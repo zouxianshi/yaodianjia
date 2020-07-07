@@ -41,7 +41,7 @@ export default {
     queryBirthday().then(res => {
       if (res.code === '10000' && !!res.data) {
         console.log(res.data.status)
-        this.isClose = res.data.status ? true: false
+        this.isClose = !!res.data.status
       }
     })
   },
@@ -80,9 +80,8 @@ export default {
           type: 'info',
           message: '已取消操作！'
         })
-        this.isClose = !e        
+        this.isClose = !e
       })
-      
     }
   }
 }

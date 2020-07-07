@@ -197,7 +197,7 @@ export default {
       if (this.singlechoice && this.multipleSelectionAll.length > 1) {
         this.$message.error('请单选')
       } else if (this.multipleSelectionAll.length > this.maxLength) {
-        this.$message.error('最多选择'+ this.maxLength +'张优惠券！')
+        this.$message.error('最多选择' + this.maxLength + '张优惠券！')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
