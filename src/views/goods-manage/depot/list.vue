@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <div class="depot-wrappe clearfix">
-      <el-alert type="warning" :closable="false">
+      <!-- <el-alert type="warning" :closable="false">
         <p slot="title" class="alret-title">
           为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您
           <router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
         </p>
-      </el-alert>
+      </el-alert> -->
       <div style="margin-top:20px">
         <a href="#/goods-manage/addition">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">添加标库商品</el-button>
@@ -177,10 +177,10 @@
             </el-radio-group>
           </div>-->
           <div>
-            <!-- <template v-if="listQuery.infoFlag">
+            <template v-if="listQuery.infoFlag">
               <el-button type="primary" size="mini" @click="handleChangeUpdown(1)">批量上架</el-button>
               <el-button type="danger" size="mini" @click="handleChangeUpdown(0)">批量下架</el-button>
-            </template> -->
+            </template>
             <el-button type size="mini" @click="handleUpGroup">批量修改分组</el-button>
             <el-button type="info" size="mini" @click="handleSettingLimitBuy">批量设置限购</el-button>
             <el-button type="warning" size="mini" @click="handleImportUpdate">导入修改分组</el-button>
@@ -271,7 +271,7 @@
                 <!-- <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
                   <el-button type="primary" size="mini" plain @click="handleUpDown(1,scope.row)">上架</el-button>
                   <el-button type="warning" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
-                </template> -->
+                </template>-->
                 <template v-if="scope.row.commodityType!==2">
                   <a @click="handleEdit(scope.row.id)">
                     <el-button type="success" plain size="mini">编辑</el-button>
@@ -287,6 +287,7 @@
         </div>
         <pagination
           :total="total"
+          :page-sizes="[20, 30, 50, 100]"
           :page.sync="listQuery.currentPage"
           :limit.sync="listQuery.pageSize"
           @pagination="getList"
@@ -393,7 +394,8 @@ export default {
         currentPage: 1,
         owner: 0,
         typeId: '', // 商品分类id
-        level: ''
+        level: '',
+        groupLevel: ''
       },
       goodsTypeList: []
     }
@@ -416,17 +418,19 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     const name = `depotEdit`
-    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(item => item.name === name)
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+      item => item.name === name
+    )
     if (hasGoodsEdit && to.name === name) {
-      const answer = window.confirm('你还有数据没有保存，是否确认退出')
-      if (answer) {
-        this.$store.dispatch('tagsView/delView', to).then(res => {
-          this.isToEdit = false
-          next()
-        })
-      } else {
-        this.isToEdit = false
-      }
+      // const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      // if (answer) {
+      //   this.$store.dispatch('tagsView/delView', to).then(res => {
+      //     this.isToEdit = false
+      next()
+      //   })
+      // } else {
+      //   this.isToEdit = false
+      // }
     } else {
       this.isToEdit = false
       next()
@@ -493,11 +497,13 @@ export default {
       if (
         this.listQuery.typeId &&
         Array.isArray(this.listQuery.typeId) &&
-        this.listQuery.typeId.length
+        this.listQuery.typeId.length > 0
       ) {
         this.listQuery.typeId = this.listQuery.typeId[
           this.listQuery.typeId.length - 1
         ]
+      } else if (Array.isArray(this.listQuery.typeId) && this.listQuery.typeId.length === 0) {
+        this.listQuery.typeId = ''
       }
       const nodesObj = this.$refs['cascType'].getCheckedNodes()
       this.listQuery.level = nodesObj.length > 0 ? nodesObj[0].level : ''
@@ -561,7 +567,7 @@ export default {
     handleTreeClick(row, node) {
       // 节点被点击时
       this.listQuery.groupId = row.id
-      this.listQuery.level = row.level
+      this.listQuery.groupLevel = row.level
       this.getList()
     },
     handleChangeUpdown(status) {
@@ -638,11 +644,15 @@ export default {
     //
     handleDel(row) {
       console.log('当前删除的id', row)
-      this.$confirm('请谨慎操作，删除后商品无法恢复，且顾客购物车的该商品信息一并消失。继续删除吗？', '', {
-        confirmButtonText: '继续删除',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        '请谨慎操作，删除后商品无法恢复，且顾客购物车的该商品信息一并消失。继续删除吗？',
+        '',
+        {
+          confirmButtonText: '继续删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
         delGoods({
           merCode: this.merCode, // 商品编码不可为空
           id: row.id, // 商品id不可为空
@@ -697,7 +707,11 @@ export default {
       // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew({ ...this.listQuery, skuIds: this.goodsData, hasLimit: true })
+      exportDataNew({
+        ...this.listQuery,
+        skuIds: this.goodsData,
+        hasLimit: true
+      })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {

@@ -17,7 +17,8 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
 export default {
   name: 'VaNotice',
   components: { swiper, swiperSlide },
-  props: {},
+  props: {
+  },
   data() {
     return {
       list: []

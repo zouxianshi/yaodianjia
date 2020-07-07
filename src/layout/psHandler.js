@@ -283,7 +283,7 @@ class InnerCtor {
             children: []
           },
           {
-            name: '评论设置',
+            name: '商城设置',
             path: '/storeSetting/comment-settings',
             // disabled: this.get('set.comment-settings'),
             disabled: true,
@@ -394,7 +394,6 @@ class InnerCtor {
   }
   handlerPs() {
     let p = {}
-    console.warn('resList _____________________ : ', store.state.user.resList)
     _.map(store.state.user.resList, v => {
       _.map(v.children, v1 => {
         p[v.rePath] = _.assign(p[v.rePath], {

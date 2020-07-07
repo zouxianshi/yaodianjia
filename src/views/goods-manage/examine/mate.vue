@@ -477,7 +477,7 @@ export default {
         return
       }
       if (this.rejectForm.id === '1') {
-        reason = '药店加平台已存在改商品'
+        reason = '海典健康微商城平台已存在改商品'
       } else if (this.rejectForm.id === '2') {
         reason = '商品信息不够规范合格'
       } else {

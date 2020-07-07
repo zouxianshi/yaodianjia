@@ -44,7 +44,7 @@
         <el-table-column prop="address" label="优惠内容">
           <template
             slot-scope="scope"
-          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
+          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName, scope.row.cname) }}</template>
         </el-table-column>
         <el-table-column label="使用时间" width="160">
           <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
@@ -158,25 +158,12 @@ export default {
       this.endTime = formatDate(newName[1])
     }
   },
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
-  mounted() {},
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
     handleGetlist(val) {
       if (val === '查询') {
         this.pageSize = 10
         this.currentPage = 1
       }
-      // if (this.state === '领券中心') {
-      //   operatorType = 0
-      // } else if (this.state === '支付有礼') {
-      //   operatorType = 1
-      // }
       this.tableLoading = true
       const params = {
         beginTime: this.beforeTime,
@@ -228,7 +215,7 @@ export default {
       this.changePageCoreRecordData()
     },
     // 商品折扣处理
-    handleshopRule(ctype, useRule, denomination, giftName) {
+    handleshopRule(ctype, useRule, denomination, giftName, cname) {
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -241,6 +228,8 @@ export default {
         } else {
           return `满${useRule}可用,减${denomination}元`
         }
+      } else if (ctype === 3) {
+        return `${cname}`
       } else {
         if (giftName === 'null' || null) {
           return ''
@@ -255,7 +244,7 @@ export default {
         if (timeRule === 1) {
           return `自领取起${effectTime}天有效`
         } else if (timeRule === 2) {
-          return `自领取起${effectTime.split(',')[0]}天有效,${
+          return `自领取起${effectTime.split(',')[0]}天后生效,生效后${
             effectTime.split(',')[1]
           }天失效`
         } else {
