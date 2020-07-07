@@ -1,8 +1,16 @@
 import axios from 'axios'
+import Vue from 'vue'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 // import { Loading } from 'element-ui'
+
+const tipMsg = _.debounce(function(msg) {
+  Vue.$message({ type: 'error', message: msg })
+}, 1200, {
+  'leading': false,
+  'trailing': true
+})
 
 const API_BASE = process.env.VUE_APP_API_BASE || '/api'
 
@@ -150,11 +158,7 @@ service.interceptors.response.use(
           msg = '请求资源失败，请检查网络状况，稍后重试'
         }
     }
-    Message({
-      message: msg,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    tipMsg(msg)
     return Promise.reject(error)
   }
 )

@@ -7,7 +7,10 @@
       </span>
       <span class="afim-upload">
         <m-el-upload @on-upload="onUpload">
-          <el-button icon="el-icon-position" size="mini">本地上传</el-button><span class="sa-mandatory-asterisk">*</span>
+          <div style="text-align: left;">
+            <el-button icon="el-icon-position" size="mini">本地上传</el-button><span class="sa-mandatory-asterisk">*</span>
+            <div class="sa-upload-size">建议上传{{ rtSizeText }}图片</div>
+          </div>
           <div v-if="error.isImg" class="sa-assembly-error">
             {{ error.isImg }}
           </div>
@@ -36,6 +39,7 @@
 <script>
 import mItemNoData from './../../../../itemNoData'
 import mElUpload from './../../../../../../elUpload'
+import { defaultParams } from './../../../../../default'
 import mLinksTable from '@/views/mall/homeSettings/_source/settingsArea/_source/linksTable'
 
 export default {
@@ -56,6 +60,10 @@ export default {
       default: '87px'
     },
     el: {
+      type: Object,
+      default: () => {}
+    },
+    ips: {
       type: Object,
       default: () => {}
     }
@@ -123,7 +131,12 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    rtSizeText() {
+      const { type, subType, index } = this.ips
+      return defaultParams[`${type}_${subType}`]['imgSize'][index]
+    }
+  },
   components: { mItemNoData, mElUpload, mLinksTable }
 }
 </script>
