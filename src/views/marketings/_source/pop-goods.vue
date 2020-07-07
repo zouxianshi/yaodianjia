@@ -69,7 +69,7 @@
           accept="csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           :http-request="httpRequest"
         >
-          <el-button size="mini" type="primary">批量导入</el-button>
+          <el-button size="mini" type="primary" :disabled="exportLoading" :loading="exportLoading">批量导入</el-button>
         </el-upload>
         <el-table
           ref="multipleTable"
@@ -181,6 +181,7 @@ export default {
       downUrl: '',
       goodsType: 1, // 商品类型
       loading: false,
+      exportLoading: false,
       dialog: {
         visible: false
       },
@@ -215,6 +216,7 @@ export default {
   },
   methods: {
     httpRequest(e) {
+      this.exportLoading = true
       const file = e.file // 文件信息
       if (!file) {
         return false
@@ -231,27 +233,52 @@ export default {
           })
           const exlname = workbook.SheetNames[0] // 取第一张表
           const exl = XLSX.utils.sheet_to_json(workbook.Sheets[exlname]) // 生成json表格内容
-          // 将 JSON 数据挂到 data 里
-          if (exl.length > 500) {
-            this.$message.error('导入商品数量不能超过500条，当前导入数量' + exl.length + '条')
+          console.log(exl)
+          if (exl.length === 0) {
+            this.$message.error('导入商品不能为空，请重新导入！')
+            this.exportLoading = false
             return
           }
-          const erpCodeArr = []
+          if (!exl[0].erpCode || !exl[0].name || exl[0].length > 2) {
+            this.$message.error('导入模板格式错误，请查看导入模板！')
+            this.exportLoading = false
+            return
+          }
+          
+          if (exl.length > 500) {
+            this.$message.error('导入商品数据不能超过500条，当前导入数量' + exl.length + '条')
+            this.exportLoading = false
+            return
+          }
+          let isPass = true // 检测每一项不为空数据
+          let erpCodeArr = []
           _.map(exl, item => {
+            if (!item.erpCode || !item.name) {
+              this.$message.error('导入商品有空数据，请检查导入文件！')
+              this.exportLoading = false
+              isPass = false
+              return
+            }
             erpCodeArr.push(item.erpCode)
           })
           const lengths = erpCodeArr.length - Array.from(new Set(erpCodeArr)).length
           if (lengths > 0) {
             this.$message.error('导入商品erpCode不能重复，当前有' + lengths + '条重复数据')
+            this.exportLoading = false
             return
           }
+          if (!isPass) {
+            return false
+          }
           this.tableData = exl
+          this.exportLoading = false
           this.$nextTick(() => {
             this.updateChecked()
           })
           // document.getElementsByName('file')[0].value = '' // 根据自己需求，可重置上传value为空，允许重复上传同一文件
         } catch (e) {
-          this.$message.error('导入错误！')
+          this.$message.error('导入失败，请检查导入文件！')
+          this.exportLoading = false
           return false
         }
       }

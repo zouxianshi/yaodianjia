@@ -74,8 +74,8 @@
     <span style="margin-left: 20%;color:#F56C6C">概率总计: {{ totalGl }}%</span>
     <div style="margin-top:30px">
       <el-button size="mini" type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
-      <el-button size="mini" v-if="params.pageState!==2" type="primary" @click="submitData">保存并提交</el-button>
-      <el-button size="mini" v-if="params.pageState===2" type="primary" @click="goBack">返回</el-button>
+      <el-button v-if="params.pageState!==2" size="mini" type="primary" @click="submitData">保存并提交</el-button>
+      <el-button v-if="params.pageState===2" size="mini" type="primary" @click="goBack">返回</el-button>
     </div>
     <el-dialog title="添加奖品" :visible.sync="dialogVisible" width="70%" append-to-body>
       <el-form
