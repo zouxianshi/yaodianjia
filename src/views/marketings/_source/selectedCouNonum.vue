@@ -104,7 +104,7 @@ export default {
 </script>
 <style lang="scss">
 .selected-coupon-view {
-  width: 700px;
+  width: 80%; min-width: 600px;
   .el-pagination {
     text-align: right;
     margin-top: 15px;

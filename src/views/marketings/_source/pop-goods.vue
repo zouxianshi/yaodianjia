@@ -82,7 +82,7 @@
           @select-all="handleSelectAllChange"
           @select="handleSelect"
         >
-          <el-table-column type="selection" align="center" width="50" />
+          <el-table-column type="selection" align="left" width="50"  />
           <el-table-column prop="erpCode" label="商品编码" :show-overflow-tooltip="true" />
           <el-table-column prop="name" label="商品名称" :show-overflow-tooltip="true" />
         </el-table>
@@ -231,6 +231,20 @@ export default {
           const exlname = workbook.SheetNames[0] // 取第一张表
           const exl = XLSX.utils.sheet_to_json(workbook.Sheets[exlname]) // 生成json表格内容
           // 将 JSON 数据挂到 data 里
+          if (exl.length > 500) {
+            this.$message.error('导入商品数量不能超过500条，当前导入数量' + exl.length + '条')
+            return
+          }
+          let erpCodeArr = []
+          _.map(exl, item => {
+            erpCodeArr.push(item.erpCode)
+          })
+          console.log(erpCodeArr, Array.from(new Set(erpCodeArr)))
+          let lengths = erpCodeArr.length - Array.from(new Set(erpCodeArr)).length  
+          if (lengths > 0) {
+            this.$message.error('导入商品erpCode不能重复，当前有' +lengths+ '条重复数据')
+            return
+          }
           this.tableData = exl
           this.$nextTick(() => {
             this.updateChecked()
