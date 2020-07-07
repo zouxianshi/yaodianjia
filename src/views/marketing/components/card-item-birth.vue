@@ -54,22 +54,35 @@ export default {
         status: e ? 1 : 0,
         merCode: this.$store.state.user.merCode
       }
-      birthdayOperate(params).then(res => {
-        if (res.code === '10000') {
-          this.$message({
-            message: '操作成功！',
-            type: 'success'
-          })
-        } else {
-          this.$message({
-            message: '操作失败！',
-            type: 'error'
-          })
+      this.$confirm('改变生日礼包状态?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        birthdayOperate(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              message: '操作成功！',
+              type: 'success'
+            })
+          } else {
+            this.$message({
+              message: '操作失败！',
+              type: 'error'
+            })
+            this.isClose = !e
+          }
+        }).catch(() => {
           this.isClose = !e
-        }
+        })
       }).catch(() => {
-        this.isClose = !e
+        this.$message({
+          type: 'info',
+          message: '已取消操作！'
+        })
+        this.isClose = !e        
       })
+      
     }
   }
 }

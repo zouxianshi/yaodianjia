@@ -34,7 +34,7 @@
         height="350"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" align="left" />
+        <el-table-column type="selection" width="55" align="left" style="" />
         <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
         <el-table-column label="适用商品" show-overflow-tooltip>
           <template
