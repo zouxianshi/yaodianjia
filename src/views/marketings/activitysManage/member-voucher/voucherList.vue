@@ -13,7 +13,6 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" @click="detail(scope.row)">查看</el-button>
-          <!-- <el-button type="text">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -60,7 +59,6 @@ export default {
     getData() {
       const params = Object.assign({}, this.pageInfo)
       couponHistoryList(params).then(res => {
-        console.log(res)
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.records
         }

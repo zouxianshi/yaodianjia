@@ -62,7 +62,7 @@
             end-placeholder="结束日期"
           />
         </el-form-item>
-        <el-form-item label="会员积分：">
+        <el-form-item label="会员海贝：">
           <el-select v-model="infoForm.pointsType" placeholder="请选择">
             <el-option
               v-for="(item, index) in pointsType"
@@ -229,9 +229,7 @@ export default {
       ],
       pointsType: [
         { label: '不限', value: 1 },
-        { label: '1-100', value: [1, 100] },
-        { label: '101-200', value: [101, 200] },
-        { label: '选择积分区间', value: null }
+        { label: '选择海贝区间', value: null }
       ]
     }
   },
@@ -275,12 +273,13 @@ export default {
         } else {
           var data = []
           if (formData.ageInterval === 1) {
-            data = formatAge(0, 120)
+            params.startBirthdayDay = '1900-01-01 00:00:00'
+            params.endBirthdayDay = formatDate(new Date(formData.agePicker[1]).getTime() + 86399990)
           } else {
             data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
-          }
-          params.startBirthdayDay = data[0]
-          params.endBirthdayDay = data[1]
+            params.startBirthdayDay = data[0]
+            params.endBirthdayDay = data[1]
+          } 
         }
         if (formData.lkTime === null) { // 领卡时间段
           params.startDate = formatDate(formData.lkTimeQj[0])
@@ -295,17 +294,12 @@ export default {
           params.startDate = data1[0]
           params.endDate = data1[1]
         }
-        if (formData.pointsType === null) {
+        if (formData.pointsType === null) { // 积分
           params.minIntegral = formData.pointsMin
           params.maxIntegral = formData.pointsMax
         } else {
-          if (formData.pointsType === 1) {
-            params.minIntegral = 0
-            params.maxIntegral = 999999999
-          } else {
-            params.minIntegral = formData.pointsType[0]
-            params.maxIntegral = formData.pointsType[1]
-          }
+          params.minIntegral = 0
+          params.maxIntegral = 999999999
         }
         params.gender = formData.sex
         params.month = formData.month ? formData.month > 10 ? '' + formData.month : '0' + formData.month : null
