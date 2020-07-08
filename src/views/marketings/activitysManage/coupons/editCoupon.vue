@@ -25,7 +25,7 @@
       </el-form-item>
       <el-form-item label="领取方式：">
         <el-table :data="couponInfo">
-          <el-table-column prop="cname" label="优惠券名称" width="100" show-overflow-tooltip/>
+          <el-table-column prop="cname" label="优惠券名称" width="100" show-overflow-tooltip />
           <el-table-column prop="denomination" label="优惠内容" show-overflow-tooltip>
             <template
               slot-scope="scope"

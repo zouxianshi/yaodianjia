@@ -1,13 +1,11 @@
 <template>
-  <div class="aga-first-model">
-    <!--拼团-->
-    <m-together />
+  <div class="spike-model">
+    spike
   </div>
 </template>
 <script>
-import mTogether from './_source/together'
 export default {
-  name: 'AgaFirst',
+  name: 'Spike',
   data() {
     return {}
   },
@@ -31,12 +29,12 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mTogether }
+  components: {}
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .aga-first-model {
+  .spike-model {
 
   }
 </style>

@@ -77,6 +77,7 @@ export default {
     return {
       bannerItem,
       dragData: [
+
       ]
     }
   },
@@ -125,7 +126,17 @@ export default {
     'dragList': {
       immediate: true,
       handler(v) {
-        this.dragData = _.cloneDeep(v)
+        // this.dragData = _.cloneDeep(v)
+        this.dragData = [
+          {
+            uuid: `${uuid('activityAggregate-')}${uuid()}${uuid()}${uuid()}`,
+            type: 'activityAggregate',
+            typeName: '活动商品',
+            subType: 'first',
+            name: '默认样式',
+            itemList: items(1)
+          }
+        ]
       }
     }
   },
