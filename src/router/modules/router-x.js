@@ -210,6 +210,16 @@ const router = [
         }
       },
       {
+        path: '/activity/member-voucher-detail',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/detail'),
+        name: 'member-voucher-detail',
+        meta: {
+          title: '发券详情',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
         path: '/activity/member-voucher',
         component: () => import('@/views/marketings/activitysManage/member-voucher/index'),
         name: 'member-voucher',
