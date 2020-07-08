@@ -205,6 +205,7 @@ export default {
         {
           value: 'constituteGoods',
           lable: '组合商品',
+          listLabel: '组合商品列表',
           name: 'constituteGoods',
           img: groupGoods,
           pass: ps.showGroupGoods(), // 是否有权限

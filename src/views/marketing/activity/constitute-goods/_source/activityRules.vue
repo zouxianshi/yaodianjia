@@ -125,9 +125,9 @@
                 placeholder="请输入关键字,用、隔开"
               />
             </el-form-item>
-            <el-form-item label="活动购买须知：" prop="desc" @submit.native.prevent>
+            <!-- <el-form-item label="活动购买须知：" prop="desc" @submit.native.prevent>
               <el-input v-model="basicForm.desc" :rows="4" type="textarea" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="商品说明书：">
               <p class="color_gray">填写商品说明书，详细介绍文字</p>
               <Tinymce ref="editor" v-model="basicForm.detail" :height="400" />
@@ -269,7 +269,6 @@ export default {
         name: '', // 商品名
         // groupIds: [], // 分组的ids
         groupId: '', // 分组id
-        desc: '',
         goodsIds: '' // 商品信息
       },
       basicRules: {
