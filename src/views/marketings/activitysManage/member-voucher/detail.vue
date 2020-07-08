@@ -7,7 +7,7 @@
       <el-form-item label="性别：" style="width: 30%">{{ detailParams.sex }}</el-form-item>
       <el-form-item label="领卡时间：" style="width: 30%">{{ detailParams.lkTime }}</el-form-item>
       <el-form-item label="年龄区间：" style="width: 30%">{{ detailParams.ageQj }}</el-form-item>
-      <el-form-item label="会员积分：" style="width: 30%">{{ detailParams.memberIntiger }}</el-form-item>
+      <el-form-item label="会员海贝：" style="width: 30%">{{ detailParams.memberIntiger }}</el-form-item>
       <el-form-item label="所属门店：">{{ detailParams.org }}</el-form-item>
     </el-form>
     <div v-if="detailParams.org === '部分门店'" class="tabel-items">
@@ -84,27 +84,30 @@ export default {
     var condition = sessionStorage.getItem('conditionJson')
     if (condition !== null && !!condition) {
       const conditions = JSON.parse(condition)
-      if (conditions.endBirthdayDay && conditions.startBirthdayDay) {
+      // 处理生日
+      if (conditions.endBirthdayDay && conditions.startBirthdayDay && condition.startBirthdayDay !== '1900-01-01 00:00:00') {
         this.detailParams.ageQj =
           conditions.startBirthdayDay.slice(0, 10) +
           ' - ' +
           conditions.endBirthdayDay.slice(0, 10)
       }
-      if (conditions.endDate && conditions.startDate) {
+      // 处理领卡日期
+      if (conditions.endDate && conditions.startDate && condition.startDate !== '1900-01-01 00:00:00') {
         this.detailParams.lkTime =
           conditions.startDate.slice(0, 10) +
           ' - ' +
           conditions.endDate.slice(0, 10)
       }
+      // 处理出生月份
       if (conditions.month) {
         this.detailParams.birthMonth = conditions.month + '月'
       }
+      // 处理海贝范围
       if (conditions.minIntegral !== null && conditions.maxIntegral !== 999999999) {
         this.detailParams.memberIntiger =
           conditions.minIntegral + ' - ' + conditions.maxIntegral
       }
-      this.detailParams.sex =
-        conditions.sex === null || conditions.sex === undefined ? '不限' : conditions.sex === 1 ? '男' : '女'
+      this.detailParams.sex = conditions.sex === null || conditions.sex === undefined ? '不限' : conditions.sex === 1 ? '男' : '女'
       if (conditions.organizations !== null) {
         this.detailParams.org = '部分门店'
         this.organization = conditions.organizations

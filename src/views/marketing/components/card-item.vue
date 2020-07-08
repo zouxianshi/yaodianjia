@@ -15,7 +15,7 @@
           icon="el-icon-takeaway-box"
           class="button"
           @click="handleJump(item, 'list')"
-        >{{ item.lable }}列表</el-button>
+        >{{ item.listLabel }}</el-button>
         <el-divider direction="vertical" />
         <el-button
           type="text"
@@ -45,7 +45,6 @@ export default {
   },
   methods: {
     handleJump(itemUrl, jumpType) {
-      console.log('1111111---handleJump', itemUrl)
       // 跳转列表
       if (jumpType === 'list') {
         this.$router.push(itemUrl.listUrl)

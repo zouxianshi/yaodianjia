@@ -192,9 +192,6 @@ export default {
       }
     }
   },
-  created() {
-    console.log(this.params, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-  },
   data() {
     var validategiftNum = (rule, value, callback) => {
       if (
