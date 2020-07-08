@@ -1,11 +1,14 @@
 <template>
   <div class="aga-first-model">
+    <!--加价购-->
+    <m-markup />
     <!--拼团-->
     <m-together />
   </div>
 </template>
 <script>
 import mTogether from './_source/together'
+import mMarkup from './_source/markup'
 export default {
   name: 'AgaFirst',
   data() {
@@ -31,7 +34,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mTogether }
+  components: { mTogether, mMarkup }
 }
 </script>
 

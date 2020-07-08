@@ -6,7 +6,7 @@
         <v-countdown :current-time="rtTimeStamp(`2020-06-29 00:00:00`)" :start-time="rtTimeStamp('2020-06-29 00:00:00')" :end-time="rtTimeStamp('2020-07-31 23:59:59')" />
       </div>
     </div>
-    <div>
+    <div class="acm-content">
       <slot />
     </div>
     <div class="acm-more">
@@ -71,6 +71,9 @@ export default {
         &.acm-icon-together {
           background: url('./../img/title_together.png') no-repeat;
         }
+        &.acm-icon-markup {
+          background: url('./../img/title_markup.png') no-repeat;
+        }
       }
       .acm-time {
         position: absolute;
@@ -83,6 +86,9 @@ export default {
       color: #808086;
       font-size: 12px;
       padding: 16px 0;
+    }
+    .acm-content {
+      padding: 8px;
     }
   }
 </style>

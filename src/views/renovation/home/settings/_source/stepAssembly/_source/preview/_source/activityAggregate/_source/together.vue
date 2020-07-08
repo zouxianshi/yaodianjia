@@ -1,9 +1,9 @@
 <template>
   <m-aga-card type="together">
     <div class="together-model">
-      <el-row :gutter="0">
+      <el-row :gutter="8">
         <el-col v-for="(item,$index) in 2" :key="$index" :span="12">
-          <m-two-item />
+          <m-together-item />
         </el-col>
       </el-row>
     </div>
@@ -11,7 +11,7 @@
 </template>
 <script>
 import mAgaCard from './agaCard'
-import mTwoItem from './twoItem'
+import mTogetherItem from './togetherItem'
 
 export default {
   name: 'Together',
@@ -38,12 +38,11 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mAgaCard, mTwoItem }
+  components: { mAgaCard, mTogetherItem }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
   .together-model {
-
   }
 </style>
