@@ -65,7 +65,7 @@ import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
 import groupGoods from '@/assets/image/acvity/group-goods.png'
-
+import ps from '@/layout/psHandler'
 import haibei from '@/assets/image/acvity/haibei.png'
 import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
@@ -199,6 +199,7 @@ export default {
           lable: '组合商品',
           name: 'constituteGoods',
           img: groupGoods,
+          pass: ps.showGroupGoods(), // 是否有权限
           listUrl: '/marketing/activity/constitute-goods',
           linkUrl: '/marketing/activity/constitute-goods/edit',
           desc:

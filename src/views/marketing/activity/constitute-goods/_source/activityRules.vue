@@ -235,7 +235,7 @@ export default {
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
-      if (value !== '' && reg.test(value)) {
+      if (!!value && reg.test(value)) {
         callback(new Error('请输入非负整数'))
       }
       if (value > 99999999) {
@@ -383,7 +383,9 @@ export default {
         // 赋值
         console.log('data=====', data)
         this.basicForm = data
-        // this.basicForm.childCommodities = data.childCommodities
+        this.$refs.storeGods.dataFrom(data.childCommodities)
+        this.basicForm.goodsIds = _.map(data.childCommodities, 'specId').join(',')
+        this.storeSelectGoods = data.childCommodities
         if (this.basicForm.detail) {
           this.$refs.editor.setContent(this.basicForm.detail)
         }
@@ -559,7 +561,7 @@ export default {
             type: 'success'
           })
           this.basicForm.id = res.data
-          this.$router.push('/goods-manage/constitute-goods')
+          this.$router.push('/marketing/activity/constitute-goods')
           this.subLoading = false
         })
         .catch(_ => {
@@ -575,7 +577,7 @@ export default {
             message: '保存成功',
             type: 'success'
           })
-          this.$router.push('/goods-manage/constitute-goods')
+          this.$router.push('/marketing/activity/constitute-goods')
           this.subLoading = false
         })
         .catch(_ => {
@@ -625,17 +627,8 @@ export default {
               // 过滤子商品信息传给后台
               if (Array.isArray(res)) {
                 childCommodities = _.map(res, n => {
-                  const { id, name, erpCode, mainPic, specStr, specId, addPrice, addNum, weight } = _.pick(n, ['id', 'name', 'erpCode', 'mainPic', 'specStr', 'specId', 'addPrice', 'addNum', 'weight'])
                   return {
-                    commodityId: id,
-                    commodityName: name,
-                    erpCode,
-                    mainPic,
-                    number: addNum,
-                    price: addPrice,
-                    specId,
-                    standard: specStr,
-                    weight,
+                    ..._.pick(n, ['commodityId', 'commodityName', 'erpCode', 'mainPic', 'standard', 'mprice', 'specId', 'price', 'number', 'weight']),
                     merCode: this.merCode
                   }
                 })

@@ -18,7 +18,7 @@
               size="mini"
               placeholder
               :maxlength="maxLength"
-              style="width:200px"
+              style="width:150px; margin-right: 10px"
             />
             <span>
               <el-button
@@ -89,6 +89,7 @@ export default {
       }
     }
     const _check_num = (rule, value, callback) => {
+      console.log('检查数量------', rule, value)
       const reg = /[^0-9]/
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
@@ -106,8 +107,8 @@ export default {
       isShow: false,
       err_show: false,
       rules: {
-        addPrice: [{ validator: _checkMprice, trigger: 'blur' }],
-        addNum: [{ validator: _check_num, trigger: 'blur' }]
+        price: [{ validator: _checkMprice, trigger: 'blur', required: true }],
+        number: [{ validator: _check_num, trigger: 'blur', required: true }]
       }
     }
   },
@@ -176,8 +177,17 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 .tip {
   font-size: 12px;
 }
+.content {
+  .el-form {
+    .el-form-item__content {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+}
+
 </style>
