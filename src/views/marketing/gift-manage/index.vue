@@ -43,6 +43,7 @@ export default {
         {
           value: 'discount-coupons',
           lable: '折扣券',
+          listLabel: '折扣券列表',
           img: discountImg,
           desc:
             '',
@@ -53,9 +54,9 @@ export default {
         {
           value: 'full-cut-coupons',
           lable: '满减券',
+          listLabel: '满减券列表',
           img: fullReductionImg,
-          desc:
-            '',
+          desc: '',
           listUrl: '/marketings/gift-manage/list?id=2',
           linkUrl: '/marketings/gift-manage/full-reduction',
           createText: '新建满减券'
@@ -63,28 +64,19 @@ export default {
         {
           value: 'gift-certificate',
           lable: '礼品券',
+          listLabel: '礼品券列表',
           img: giftImg,
-          desc:
-            '',
+          desc: '',
           listUrl: '/marketings/gift-manage/list?id=3',
           linkUrl: '/marketings/gift-manage/gift',
           createText: '新建礼品券'
         }
-        // ,
-        // {
-        //   value: 'discount-code',
-        //   lable: '优惠码',
-        //   img: zengpinImg,
-        //   desc:
-        //     '',
-        //   listUrl: '',
-        //   linkUrl: ''
-        // }
       ],
       complimentary: [
         {
           value: 'complimentary',
           lable: '赠品',
+          listLabel: '赠品列表',
           name: 'GiftsComplimentaryCreate',
           img: complimentary,
           createText: '新增赠品',
@@ -97,17 +89,10 @@ export default {
     }
   },
   watch: {
-    // deep: true,
-    // immediate: true,
-    // $route(newRoute) {
-    //   console.log(newRoute, '新路由')
-    //   this.activeName = newRoute.query.type // 这里就是新的query
-    // }
     '$route': {
       deep: true,
       immediate: true,
       handler(newRoute) {
-        console.log(newRoute, '新路由')
         this.activeName = newRoute.query.type // 这里就是新的query
       }
     }
@@ -126,12 +111,8 @@ export default {
   .app-container {
     .activity {
       padding: 0;
-      .el-tabs__header {
-      }
       .el-tabs__nav-wrap::after {
         height: 0;
-      }
-      .el-tabs__content {
       }
     }
   }
