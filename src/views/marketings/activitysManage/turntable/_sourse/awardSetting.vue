@@ -69,7 +69,7 @@
       size="mini"
       plain
       :disabled="formsGift.selectedGift.length>= 10 || isPageUpdateOrView || isRuning"
-      @click="dialogVisible = true;$refs.ruleForm && $refs.ruleForm.clearValidate()"
+      @click="addGifts"
     >添加奖品</el-button>
     <span style="margin-left: 20%;color:#F56C6C">概率总计: {{ totalGl }}%</span>
     <div style="margin-top:30px">
@@ -317,6 +317,22 @@ export default {
     }
   },
   methods: {
+    // 打开添加奖品弹窗
+    addGifts() {
+      this.dialogVisible = true;
+      this.ruleForm = {
+        giftId: null, // 选择优惠券时的id
+        giftType: 1, // 礼品类型
+        giftNum: 1, // 礼品数量
+        giftName: '', // 礼品名称
+        giftContent: '', // 礼品内容
+        giftImg: '', // 礼品图片
+        winRandom: '' // 中
+      }
+      this.selectedCoupons = []
+      this.$refs.ruleForm && this.$refs.ruleForm.clearValidate()
+      this.onGetSelectCoupon(this.selectedCoupons)
+    },
     selectCoupon() { // 选择优惠券
       this.$refs.checkCoupons.handleGetlist()
       this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
