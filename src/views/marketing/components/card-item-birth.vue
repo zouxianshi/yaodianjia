@@ -34,14 +34,9 @@ export default {
     }
   },
   created() {
-    const params = {
-      pageSize: 100,
-      currentPage: 1
-    }
     queryBirthday().then(res => {
       if (res.code === '10000' && !!res.data) {
-        console.log(res.data.status)
-        this.isClose = res.data.status ? true: false
+        this.isClose = !!res.data.status
       }
     })
   },
@@ -50,24 +45,38 @@ export default {
       this.$router.push(itemUrl)
     },
     updataActive(e) {
+      console.log(e)
+      const closeOrOpen = e ? '开启' : '关闭'
       const params = {
         status: e ? 1 : 0,
         merCode: this.$store.state.user.merCode
       }
-      birthdayOperate(params).then(res => {
-        if (res.code === '10000') {
-          this.$message({
-            message: '操作成功！',
-            type: 'success'
-          })
-        } else {
-          this.$message({
-            message: '操作失败！',
-            type: 'error'
-          })
+      this.$confirm(`确定${closeOrOpen}生日礼包?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        birthdayOperate(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              message: `${closeOrOpen}生日礼包成功！`,
+              type: 'success'
+            })
+          } else {
+            this.$message({
+              message: `${closeOrOpen}生日礼包失败！`,
+              type: 'error'
+            })
+            this.isClose = !e
+          }
+        }).catch(() => {
           this.isClose = !e
-        }
+        })
       }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作！'
+        })
         this.isClose = !e
       })
     }

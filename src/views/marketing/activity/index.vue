@@ -72,14 +72,14 @@ import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
 import spellGroup from '@/assets/image/acvity/spell-group.png'
 import share from '@/assets/image/acvity/share.png'
 import paymentCourtesy from '@/assets/image/marketings/pay.png'
-// import payImage from '@/assets/image/marketings/pay.png'
-// import getcoupon from '@/assets/image/marketings/getcoupon.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
 import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
 import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
 import birthdayImg from '@/assets/image/marketings/birthdayGift.png'
 import memberVouch from '@/assets/image/marketings/memberVouch.png'
+import birthdayCover from '@/assets/image/marketings/birthdayGift.png'
+import memberVouchCover from '@/assets/image/marketings/memberVouch.png'
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
 import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'
@@ -98,9 +98,8 @@ export default {
     return {
       activeName: 'goodsActivity',
       birth: {
-        value: 'birthGift',
         lable: '生日礼包',
-        img: birthdayImg,
+        img: birthdayCover,
         desc: '定向给会员用户生日当天发放优惠券、海贝礼包，精准营销，激励消费',
         listUrl: '',
         linkUrl: '/activity/birthday-gift'
@@ -108,6 +107,7 @@ export default {
       members: [
         {
           value: 'counpCenter',
+          listLabel: '领券中心列表',
           lable: '领券中心',
           img: counpCenter,
           createText: '新建优惠券',
@@ -120,6 +120,7 @@ export default {
         {
           value: 'paymentCourtesy',
           lable: '支付有礼',
+          listLabel: '支付有礼列表',
           img: paymentCourtesy,
           desc: '',
           listUrl:
@@ -136,8 +137,9 @@ export default {
           linkUrl: '/activity/newcomer-create'
         }, {
           lable: '会员发券',
+          listLabel: '会员发券记录',
           createText: '发放优惠券',
-          img: memberVouch,
+          img: memberVouchCover,
           desc: '发优惠券给到会员，可以精细化精准营销，满足会员购物需求，给到实际的优惠',
           listUrl: '/activity/member-voucher-list',
           linkUrl: '/activity/member-voucher'
@@ -148,6 +150,7 @@ export default {
           value: 'reduceGift',
           name: 'ReduceGift',
           lable: '满减满赠',
+          listLabel: '满减满赠列表',
           desc:
             '会员消费达到某一条件后可以享受减价或折扣优惠，也可以通过添加赠送赠品的促销手段来提高客单价，提高销售额。',
           img: reduceGift,
@@ -159,6 +162,7 @@ export default {
           value: 'addPrice',
           name: 'AddPriceCreate',
           lable: '加价购',
+          listLabel: '加价购列表',
           img: addPrice,
           listUrl: '/marketing/activity/list/15',
           linkUrl: '/marketing/activity/aprice-edit',
@@ -169,6 +173,7 @@ export default {
           value: 'limitPreferential',
           name: 'LimitEdit',
           lable: '限时特惠',
+          listLabel: '限时特惠列表',
           img: limitPreferential,
           listUrl: '/marketing/activity/list/11',
           linkUrl: '/marketing/activity/limit-edit?l_type=11',
@@ -179,6 +184,7 @@ export default {
           value: 'spellGroup',
           name: 'AssembleEdit',
           lable: '拼团',
+          listLabel: '拼团列表',
           img: spellGroup,
           listUrl: '/marketing/activity/list/13',
           linkUrl: '/marketing/activity/assemble-edit',
@@ -189,6 +195,7 @@ export default {
         {
           value: 'limitSecKill',
           lable: '限时秒杀',
+          listLabel: '限时秒杀列表',
           name: 'LimitEdit',
           img: limitSecKill,
           listUrl: '/marketing/activity/list/12',
@@ -212,6 +219,7 @@ export default {
           value: 'Squeegee',
           name: 'SqueeGee',
           lable: '刮刮乐',
+          listLabel: '刮刮乐列表',
           desc:
             '',
           img: SqueeGee,
@@ -222,6 +230,7 @@ export default {
           value: 'turntable',
           name: 'TurnTable',
           lable: '大转盘',
+          listLabel: '大转盘列表',
           desc:
             '',
           img: TurnTable,

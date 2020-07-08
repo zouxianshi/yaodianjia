@@ -49,6 +49,9 @@
             <div class="more-items">
               <el-button type="text" size="mini" @click="handleUnbound(scope.row.userId)">解绑</el-button>
             </div>
+            <div class="more-items">
+              <el-button type="text" size="mini" @click="syncMemberToErp(scope.row)">同步至ERP</el-button>
+            </div>
             <el-button slot="reference" size="mini" type="text">更多</el-button>
           </el-popover>
         </template>
@@ -65,7 +68,8 @@ import mPopEditBeans from './popEditBeans' // 海贝编辑
 import {
   queryOnlineIntegra,
   menberBaseInfo,
-  delMerMember
+  delMerMember,
+  syncMemberToErp
 } from '@/api/memberService'
 export default {
   name: 'List',
@@ -89,6 +93,18 @@ export default {
     }
   },
   methods: {
+    syncMemberToErp(data) {
+      const params = {
+        'memberCards': [data.memberCard],
+        'userIds': [data.userId]
+      }
+      syncMemberToErp(params).then(res => {
+        if (res.code === '10000') {
+          this.$message.success(res.msg)
+          this.$emit('getData')
+        }
+      })
+    },
     handleUnbound(userId) {
       this.$confirm('确认解绑吗, 是否继续?', '提示', {
         confirmButtonText: '确定',

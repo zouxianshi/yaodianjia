@@ -143,6 +143,7 @@
             <mSelectedCoupon
               v-show="form.giftType===1&&selectedCoupons.length>0"
               ref="selectedCouponView"
+              style="width: 740px"
               @onDel="onGetSelectCoupon"
             />
             <el-radio :label="2">
@@ -391,15 +392,11 @@ export default {
     if (id) {
       if (op === '1') {
         this.pageStatus = 3
-        this.pageTitle = this.pageTitle + '详情'
         this.disabled = true
       } else {
         this.pageStatus = 2
-        this.pageTitle = this.pageTitle + '编辑'
       }
       this._getDetailData(id)
-    } else {
-      this.pageTitle = this.pageTitle + '新增'
     }
     this.$route.meta.title = this.pageTitle
     // document.title = pageTitle

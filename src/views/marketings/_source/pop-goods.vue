@@ -12,25 +12,12 @@
       <el-radio-group
         v-model="goodsType"
         size="mini"
-        style="margin: 0 120px 20px 0"
+        style="margin: 0 0 20px 0"
         @change="changegoodsType"
       >
         <el-radio-button :label="1">线上商品</el-radio-button>
         <el-radio-button :label="2">线下商品</el-radio-button>
       </el-radio-group>
-      <el-upload
-        style="display: inline-block;vertical-align: top;"
-        v-show="goodsType === 2"
-        class="upload"
-        action
-        :multiple="false"
-        :show-file-list="false"
-        accept="csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        :http-request="httpRequest"
-      >
-        <el-button size="mini" type="primary" style="vertical-align: top;">下载模板</el-button>
-        <el-button size="mini" type="primary">批量导入</el-button>
-      </el-upload>
       <div class="modal-body">
         <el-form
           v-if="goodsType === 1"
@@ -67,6 +54,22 @@
             <el-button size="small" @click.stop="forReset()">重 置</el-button>
           </el-form-item>
         </el-form>
+        <span v-show="goodsType === 2" class="set-goods-title">批量设置指定商品</span>
+        <el-button v-if="goodsType === 2" size="mini" type="primary" style="vertical-align: top;">
+          <a :href="downUrl">下载模板</a>
+        </el-button>
+        <el-upload
+          v-show="goodsType === 2"
+          style="display: inline-block;vertical-align: top;"
+          class="upload"
+          action
+          :multiple="false"
+          :show-file-list="false"
+          accept="csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          :http-request="httpRequest"
+        >
+          <el-button size="mini" type="primary" :disabled="exportLoading" :loading="exportLoading">批量导入</el-button>
+        </el-upload>
         <el-table
           ref="multipleTable"
           v-loading="loading"
@@ -79,7 +82,7 @@
           @select-all="handleSelectAllChange"
           @select="handleSelect"
         >
-          <el-table-column type="selection" align="center" width="50" />
+          <el-table-column type="selection" align="left" width="50" />
           <el-table-column prop="erpCode" label="商品编码" :show-overflow-tooltip="true" />
           <el-table-column prop="name" label="商品名称" :show-overflow-tooltip="true" />
         </el-table>
@@ -165,10 +168,19 @@ export default {
       default: true
     }
   },
+  created() {
+    if (process.env.NODE_ENV === 'production') {
+      this.downUrl = 'https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/template/%E5%95%86%E5%93%81%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx'
+    } else {
+      this.downUrl = 'https://centermerchant-prod.oss-cn-shanghai.aliyuncs.com/template/%E5%95%86%E5%93%81%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx'
+    }
+  },
   data() {
     return {
+      downUrl: '',
       goodsType: 1, // 商品类型
       loading: false,
+      exportLoading: false,
       dialog: {
         visible: false
       },
@@ -203,7 +215,8 @@ export default {
   },
   methods: {
     httpRequest(e) {
-      let file = e.file // 文件信息
+      this.exportLoading = true
+      const file = e.file // 文件信息
       if (!file) {
         return false
       } else if (!/\.(xls|xlsx)$/.test(file.name.toLowerCase())) {
@@ -219,14 +232,50 @@ export default {
           })
           const exlname = workbook.SheetNames[0] // 取第一张表
           const exl = XLSX.utils.sheet_to_json(workbook.Sheets[exlname]) // 生成json表格内容
-          // 将 JSON 数据挂到 data 里
+          if (exl.length === 0) {
+            this.$message.error('导入商品不能为空，请重新导入！')
+            this.exportLoading = false
+            return
+          }
+          if (!exl[0].erpCode || !exl[0].name || exl[0].length > 2) {
+            this.$message.error('导入模板格式错误，请查看导入模板！')
+            this.exportLoading = false
+            return
+          }
+          if (exl.length > 500) {
+            this.$message.error('导入商品数据不能超过500条，当前导入数量' + exl.length + '条')
+            this.exportLoading = false
+            return
+          }
+          let isPass = true // 检测每一项不为空数据
+          const erpCodeArr = []
+          _.map(exl, item => {
+            if (!item.erpCode || !item.name) {
+              this.$message.error('导入商品有空数据，请检查导入文件！')
+              this.exportLoading = false
+              isPass = false
+              return
+            }
+            erpCodeArr.push(item.erpCode)
+          })
+          const lengths = erpCodeArr.length - Array.from(new Set(erpCodeArr)).length
+          if (lengths > 0) {
+            this.$message.error('导入商品erpCode不能重复，当前有' + lengths + '条重复数据')
+            this.exportLoading = false
+            return
+          }
+          if (!isPass) {
+            return false
+          }
           this.tableData = exl
+          this.exportLoading = false
           this.$nextTick(() => {
             this.updateChecked()
           })
           // document.getElementsByName('file')[0].value = '' // 根据自己需求，可重置上传value为空，允许重复上传同一文件
         } catch (e) {
-          this.$message.error('导入错误！')
+          this.$message.error('导入失败，请检查导入文件！')
+          this.exportLoading = false
           return false
         }
       }
@@ -305,12 +354,10 @@ export default {
       this.reset()
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
       this.pager.size = val
       this._getTableData()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
       this.pager.current = val
       this._getTableData()
     },
@@ -405,9 +452,10 @@ export default {
       queryActivityCommGoods(params)
         .then(res => {
           if (res.code === '10000' && res.data) {
-            this.tableData = res.data.data || []
+            if (this.goodsType === 1) {
+              this.tableData = res.data.data || []
+            }
             this.pager.total = res.data.totalCount
-            console.log('我获取玩列表了--------')
             this.$nextTick(() => {
               this.updateChecked()
             })
@@ -503,6 +551,14 @@ export default {
   }
   .table-footer {
     justify-content: flex-end;
+  }
+  .set-goods-title{
+    font-size: 18px;
+    margin-right: 150px;
+    height: 29px;
+    line-height: 29px;
+    font-weight: 600;
+    display: inline-block;
   }
 }
 </style>

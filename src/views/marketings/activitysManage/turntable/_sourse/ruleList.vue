@@ -160,7 +160,7 @@
         </span>
       </el-form-item>
       <el-form-item label="是否推荐到员工分享" label-width="200">
-        <el-switch v-model="ruleForm.isShare"></el-switch>
+        <el-switch v-model="ruleForm.isShare" />
       </el-form-item>
     </el-form>
     <div style="margin-left:30px">
@@ -327,8 +327,6 @@ export default {
       // 监听按人限制变化
     }
   },
-  mounted() {
-  },
   methods: {
     beforeAvatarUpload(file) { // 图片上传之前
       const isImg =
@@ -412,7 +410,7 @@ export default {
             })
             return false
           }
-          this.ruleForm.isShare = this.ruleForm.isShare? 1: 0
+          this.ruleForm.isShare = this.ruleForm.isShare ? 1 : 0
           this.$emit('handleNext', 2, this.ruleForm)
         } else {
           return false
