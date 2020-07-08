@@ -45,11 +45,13 @@ export default {
       this.$router.push(itemUrl)
     },
     updataActive(e) {
+      console.log(e)
+      const closeOrOpen = e ? '开启' : '关闭'
       const params = {
         status: e ? 1 : 0,
         merCode: this.$store.state.user.merCode
       }
-      this.$confirm('改变生日礼包状态?', '提示', {
+      this.$confirm(`确定${closeOrOpen}生日礼包?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -57,12 +59,12 @@ export default {
         birthdayOperate(params).then(res => {
           if (res.code === '10000') {
             this.$message({
-              message: '操作成功！',
+              message: `${closeOrOpen}生日礼包成功！`,
               type: 'success'
             })
           } else {
             this.$message({
-              message: '操作失败！',
+              message: `${closeOrOpen}生日礼包失败！`,
               type: 'error'
             })
             this.isClose = !e

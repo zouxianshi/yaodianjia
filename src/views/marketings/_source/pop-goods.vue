@@ -11,7 +11,6 @@
     >
       <el-radio-group
         v-model="goodsType"
-        v-loading="loading"
         size="mini"
         style="margin: 0 0 20px 0"
         @change="changegoodsType"
@@ -233,7 +232,6 @@ export default {
           })
           const exlname = workbook.SheetNames[0] // 取第一张表
           const exl = XLSX.utils.sheet_to_json(workbook.Sheets[exlname]) // 生成json表格内容
-          console.log(exl)
           if (exl.length === 0) {
             this.$message.error('导入商品不能为空，请重新导入！')
             this.exportLoading = false
@@ -356,12 +354,10 @@ export default {
       this.reset()
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
       this.pager.size = val
       this._getTableData()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
       this.pager.current = val
       this._getTableData()
     },
@@ -456,9 +452,10 @@ export default {
       queryActivityCommGoods(params)
         .then(res => {
           if (res.code === '10000' && res.data) {
-            this.tableData = res.data.data || []
+            if (this.goodsType === 1) {
+              this.tableData = res.data.data || []
+            }
             this.pager.total = res.data.totalCount
-            console.log('我获取玩列表了--------')
             this.$nextTick(() => {
               this.updateChecked()
             })
