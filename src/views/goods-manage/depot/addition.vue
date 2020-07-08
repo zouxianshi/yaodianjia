@@ -119,6 +119,7 @@
                 type="primary"
                 :loading="scope.row.loading"
                 size="mini"
+                :disabled="scope.row.hasAddComm"
                 @click="handleSetStore(scope.row)"
               >添加该商品</el-button>
             </template>

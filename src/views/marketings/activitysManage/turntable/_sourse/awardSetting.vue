@@ -316,7 +316,7 @@ export default {
   methods: {
     // 打开添加奖品弹窗
     addGifts() {
-      this.dialogVisible = true;
+      this.dialogVisible = true
       this.ruleForm = {
         giftId: null, // 选择优惠券时的id
         giftType: 1, // 礼品类型

@@ -6,7 +6,7 @@
     element-loading-spinner="el-icon-loading"
   >
     <div class="header">
-      消费兑换
+      消费奖励
       <span style="color: #faad14">（一年内可申请12次修改，本年还可修改{{ leftTimes || 0 }}次）</span>
     </div>
     <el-form
@@ -14,6 +14,7 @@
       :model="forms"
       label-width="150px"
       validate-on-rule-change
+      :disable="!leftTimes"
       label-position="right"
       style="height: calc(100vh - 350px); overflow: auto"
     >
@@ -70,10 +71,15 @@
             </el-select>
           </el-form-item>
           <el-divider direction="vertical" />
-          <i
-            class="el-icon-delete"
-            @click="deleteRule('numberChange', $Index)"
-          />
+          <el-popconfirm
+            placement="top"
+            icon="el-icon-info"
+            icon-color="red"
+            title="确定移除此条规则吗？"
+            @onConfirm="deleteRule('numberChange', $Index)"
+          >
+            <i slot="reference" class="el-icon-delete" />
+          </el-popconfirm>
         </div>
       </el-form-item>
       <el-form-item v-if="!forms.numberChange.length" label=" ">
@@ -81,7 +87,7 @@
         <!-- <el-popover placement="top-start" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
           <el-image style="width: 400px;" :src="ImgexNum" />
           <span slot="reference" class="example-btn">示例演示</span>
-        </el-popover> -->
+        </el-popover>-->
       </el-form-item>
 
       <el-form-item label="按金额兑换：" />
@@ -135,11 +141,16 @@
           </el-form-item>
 
           <el-divider v-if="forms.amountChange.length >= 1" direction="vertical" />
-          <i
+          <el-popconfirm
             v-if="forms.amountChange.length >= 1"
-            class="el-icon-delete"
-            @click="deleteRule('amountChange', $Index)"
-          />
+            placement="top"
+            icon="el-icon-info"
+            icon-color="red"
+            title="确定移除此条规则吗？"
+            @onConfirm="deleteRule('amountChange', $Index)"
+          >
+            <i slot="reference" class="el-icon-delete" />
+          </el-popconfirm>
         </div>
       </el-form-item>
       <el-form-item label=" ">
@@ -160,7 +171,7 @@
       >
         <el-button
           slot="reference"
-          :disabled="!leftTimes"
+          :disabled="!leftTimes || !(forms.numberChange.length || forms.amountChange.length)"
           :loading="loading"
           type="primary"
           size="small"

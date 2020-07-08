@@ -33,7 +33,7 @@
 import { mapState, mapMutations } from 'vuex'
 import renovationService from '@/api/renovation'
 import mCustomSetting from './customSetting'
-import { handlerBackfill, bannerItem } from './../../stepAssembly/default'
+import { handlerBackfill, bannerItem, defaultParams } from './../../stepAssembly/default'
 
 export default {
   name: 'StyleSetting',
@@ -53,23 +53,10 @@ export default {
       const data = _.cloneDeep(this.tplData)
       const dragList = handlerBackfill(data)
 
-      const color = () => {
-        switch (tplType) {
-          case 'red':
-            return '#F32525'
-          case 'blue':
-            return '#4B61FF'
-          case 'gold':
-            return '#F1B96B'
-        }
-      }
-
       this.setBasics({
         ..._.omit(data, ['list']),
         ..._.pick(this.basics, ['id', 'name', 'title', 'shareDesc', 'shareImg']),
-        styleType: tplType,
-        borderColor: color(),
-        backgroundColor: color()
+        styleType: tplType
       })
 
       this.setDragList(dragList)
@@ -77,16 +64,13 @@ export default {
       this.setStaticDragData({
         banner: {
           ..._.find(data.list, ['type', 'banner']),
-          error: false
+          ..._.cloneDeep(defaultParams[`banner_first`])
         }
       })
     },
     async onChange(tplType) {
       if (tplType !== 'custom') {
-        if (_.isEmpty(this.tplData)) {
-          await this.getDefaultTpl(tplType)
-        }
-        this.handlerStyle(tplType)
+        this.getDefaultTpl(tplType)
       } else {
         this.setBasics({
           borderColor: '#ffffff',
@@ -99,7 +83,7 @@ export default {
       }
     },
     getDefaultTpl(tplType) {
-      renovationService.getDefaultTpl().then(res => {
+      renovationService.getDefaultTpl(tplType).then(res => {
         if (res.data) {
           this.tplData = {
             ..._.omit(res.data, ['id', 'name', 'title', 'shareDesc', 'shareImg'])

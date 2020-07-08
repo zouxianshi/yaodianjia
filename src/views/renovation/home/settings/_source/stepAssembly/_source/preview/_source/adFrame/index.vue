@@ -2,8 +2,8 @@
   <div class="ad-frame-index-model">
     <div class="afim-box">
       <div class="afim-title">
-        <strong>{{ item.subTitle || '主标题' }}</strong>
-        <span>{{ item.title || '副标题' }}</span>
+        <strong>{{ item.title || '主标题' }}</strong>
+        <span>{{ item.subtitle || '副标题' }}</span>
       </div>
     </div>
     <div class="afim-comp-box">

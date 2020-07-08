@@ -7,6 +7,7 @@
       <m-item-card title="优惠券" desc="单个组件最多选10张" @on-ass-submit="onAssSubmit">
         <div class="snm-btn-goods">
           <el-button size="mini" @click="dialogVisible = true">选择优惠劵</el-button>
+          <span class="sa-mandatory-asterisk">*</span>
           <span class="snm-text-1">已选：{{ itemParams.itemList.length }}</span>
         </div>
         <template v-for="(el,i) in itemParams.itemList">
@@ -56,6 +57,7 @@ export default {
     },
     onCouponDelete(index) {
       this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)
+      console.log(this.itemParams.itemList)
     },
     onAssSubmit() {
       const { itemList } = this.itemParams
@@ -81,11 +83,14 @@ export default {
           this.itemParams.itemList.push({
             ..._.cloneDeep(itemParams),
             cname: v.cname,
-            itemId: v.id,
+            itemId: `${v.id}`,
             denomination: v.denomination,
-            ctype: v.ctype
+            ctype: v.ctype,
+            value: v.value
           })
         })
+
+        console.log(this.itemParams.itemList)
         this.dialogVisible = false
       }
     }
@@ -95,6 +100,8 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
+    console.log(this.itemParams)
+    console.log('-----this.itemParams')
   },
   beforeMount() {
   },
@@ -118,7 +125,7 @@ export default {
         return _.size(itemList) > 2 && _.size(itemList) < 10
       }
       if (subType === 'third') {
-        return _.size(itemList) > 6 && _.size(itemList) < 10
+        return _.size(itemList) > 3 && _.size(itemList) < 10
       }
     },
     mod() {

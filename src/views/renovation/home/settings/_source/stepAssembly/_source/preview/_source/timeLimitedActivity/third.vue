@@ -1,10 +1,20 @@
 <template>
   <div class="sap-tla-third-model">
-    <div class="sttm-title-box">
-      <span class="sttm-text-1">据活动结束还剩</span>
+    <div class="sttm-title-box" :style="commonStyleBackgr">
+      <span class="sttm-text-1">
+        <span v-if="item.validStatus === 0">距活动开始还剩</span>
+        <span v-if="item.validStatus === 1">距活动结束还剩</span>
+        <span v-if="item.validStatus === 2">距活动结束还剩</span>
+      </span>
       <span class="sttm-cd">
-        <template v-if="item.startTime">
-          <v-countdown :current-time="rtTimeStamp(itemParams.currentTime)" :start-time="rtTimeStamp(itemParams.endTime)" :end-time="rtTimeStamp(itemParams.endTime)" />
+        <template v-if="item.validStatus === 0">
+          <v-countdown :current-time="rtTimeStamp(item.currentTime)" :start-time="rtTimeStamp(item.currentTime)" :end-time="rtTimeStamp(item.startTime)" />
+        </template>
+        <template v-if="item.validStatus === 1">
+          <v-countdown :current-time="rtTimeStamp(item.startTime)" :start-time="rtTimeStamp(item.startTime)" :end-time="rtTimeStamp(item.endTime)" />
+        </template>
+        <template v-if="item.validStatus === 2">
+          <v-countdown :current-time="1593678334" :start-time="1593678334" :end-time="1593678334" />
         </template>
       </span>
     </div>
@@ -20,7 +30,7 @@
 </template>
 <script>
 import dayjs from 'dayjs'
-import { itemParams } from './.././../../../default'
+import { itemParams, mixinsCommonStyle } from './.././../../../default'
 import vCountdown from './countdown'
 import mFour from './../commodity/four'
 
@@ -31,6 +41,7 @@ export default {
       itemParams
     }
   },
+  mixins: [mixinsCommonStyle],
   props: {
     item: {
       type: Object,

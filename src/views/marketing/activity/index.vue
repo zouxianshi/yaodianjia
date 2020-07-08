@@ -76,13 +76,13 @@ import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
 import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
 import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
-import birthdayImg from '@/assets/image/marketings/birthdayGift.png'
-import memberVouch from '@/assets/image/marketings/memberVouch.png'
+// import birthdayImg from '@/assets/image/marketings/birthdayGift.png'
+// import memberVouch from '@/assets/image/marketings/memberVouch.png'
 import birthdayCover from '@/assets/image/marketings/birthdayGift.png'
 import memberVouchCover from '@/assets/image/marketings/memberVouch.png'
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
-import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'
+import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'// eslint-disable-line 
 
 export default {
   components: { cardItem, cardItemClose, cardItemSign, cardItemBirth },
@@ -128,7 +128,6 @@ export default {
           linkUrl: '/marketings/activity-manage/payment-gift/add'
         },
         {
-          value: '',
           lable: '新人礼包',
           img: newComer,
           desc: '每个新注册微商城的用户都可以获取新人礼包一份，包含优惠券、海贝、抽奖福利等',
@@ -251,7 +250,6 @@ export default {
           linkUrl: '/activity/exchangeMallAdd'
         },
         {
-          createText: '',
           name: 'signGift',
           lable: '签到设置',
           desc: '',

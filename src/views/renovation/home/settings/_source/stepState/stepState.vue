@@ -6,7 +6,7 @@
       </div>
       <div class="ssm-text-1">操作成功</div>
       <div class="ssm-text-2">首页创建成功，已保存至首页列表</div>
-      <div class="ssm-text-3"><span>{{ timer }}</span>秒后跳转至首页列表</div>
+      <div class="ssm-text-3"><span>{{ timer }}</span>秒后跳转至主页列表</div>
     </div>
   </div>
 </template>

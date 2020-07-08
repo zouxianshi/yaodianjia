@@ -52,9 +52,9 @@ class RenovationService {
     })
   }
 
-  getDefaultTpl() {
+  getDefaultTpl(type) {
     return request({
-      url: `${this.serve}/1.0/homepage/queryDefault`,
+      url: `${this.serve}/1.0/homepage/queryDefault?type=${type}`,
       method: 'get'
     })
   }
@@ -114,6 +114,31 @@ class RenovationService {
     return request({
       url: `${this.serve}/1.0/homepage/use`,
       method: 'put',
+      data: params
+    })
+  }
+  /** *
+   *
+   *@param {String} params.id  id
+   *@param {}
+   * @description 复制当前模板
+   */
+  copyCurrentHome(params) {
+    return request({
+      url: `${this.serve}/1.0/homepage/copy`,
+      method: 'post',
+      data: params
+    })
+  }
+
+  /**
+   *
+   *  @description 批量修改分享信息
+   */
+  updateShareInfo(params) {
+    return request({
+      url: `${this.serve}/1.0/homepage/setShareInfo`,
+      method: 'post',
       data: params
     })
   }

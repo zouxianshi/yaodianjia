@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <template v-if="formData.borderFlag===1">
-          <el-form-item label="边框样式" prop="borderStyle">
+          <el-form-item label="边框样式：" prop="borderStyle">
             <el-select v-model="formData.borderStyle">
               <el-option :value="0" label="直角" />
               <el-option :value="1" label="圆角" />
@@ -54,8 +54,8 @@
             :action="upLoadUrl"
             :headers="headers"
             :show-file-list="false"
+            :before-upload="beforeUpload"
             :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
             :on-error="handleAvatarErr"
           >
             <img v-if="formData.shareImg" :src="showImg(formData.shareImg)" class="avatar">
@@ -73,20 +73,21 @@
 
 </template>
 <script>
-import config from '@/utils/config'
-import { mapGetters } from 'vuex'
+import { checkName } from '@/utils/validate'
 import RenovationService from '@/api/renovation'
+import mixins from './mixins'
+
+const vefDesc = (rule, value, callback) => {
+  if (checkName(value)) {
+    callback(new Error('特殊字符串有限制不可输入，仅可输入最多不超过16个汉字'))
+  } else {
+    callback()
+  }
+}
+
 export default {
   name: 'BaseForm',
-  computed: {
-    ...mapGetters(['token']),
-    upLoadUrl() {
-      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImgAny?merCode=${this.merCode}`
-    },
-    headers() {
-      return { Authorization: this.token }
-    }
-  },
+  mixins: [mixins],
   data() {
     return {
       visible: false,
@@ -123,7 +124,10 @@ export default {
         borderStyle: [{ required: true, message: '请选择边框样式', trigger: 'change' }],
         borderSize: [{ required: true, message: '请输入边框大小', trigger: 'blur' }],
         borderColor: [{ required: true, message: '请边框颜色', trigger: 'change' }],
-        shareDesc: [{ required: true, message: '请输入分享描述', trigger: 'blur' }],
+        shareDesc: [
+          { required: true, message: '请输入分享描述', trigger: 'blur' },
+          { validator: vefDesc, trigger: 'blur' }
+        ],
         shareImg: [{ required: true, message: '请上传分享图片', trigger: 'change' }]
       },
       pageLoading: null,
@@ -145,6 +149,19 @@ export default {
         }
       })
     },
+    beforeUpload(file) {
+      const isType = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isType) {
+        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.warning('请上传不超过 2M 的图片！')
+        return false
+      }
+      return isType && isLt2M
+    },
     //  更新基本信息
     async _updateBase() {
       this.saveLoaiding = true
@@ -161,42 +178,6 @@ export default {
         this.saveLoaiding = false
         console.log(error)
       }
-    },
-    handleAvatarSuccess(res, file) {
-      if (res.code === '10000') {
-        this.formData.shareImg = res.data
-      } else {
-        this.$message({
-          message: '图片上传失败',
-          type: 'error'
-        })
-      }
-      this.pageLoading.close()
-    },
-    handleAvatarErr() {
-      this.pageLoading.close()
-    },
-    beforeAvatarUpload(file) {
-      const isImg =
-        file.type === 'image/jpeg' ||
-        file.type === 'image/png' ||
-        file.type === 'image/jpg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isImg) {
-        this.$message({
-          message: '只能上传格式为 jpg、jpeg、png的图片',
-          type: 'warning'
-        })
-        return
-      }
-      this.pageLoading = this.$loading({
-        lock: true,
-        text: '图片上传中...',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
-      return isImg && isLt2M
     }
   }
 }

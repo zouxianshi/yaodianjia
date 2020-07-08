@@ -6,8 +6,8 @@
           <m-first-item :key="$index" class="sctm-item" :el="el" size="mini" />
         </template>
       </div>
-      <div v-else class="sctm-item-box" :style="{width:`${140 * 6}px`}">
-        <template v-for="(el,$index) in 6">
+      <div v-else class="sctm-item-box" :style="{width:`${140 * 3}px`}">
+        <template v-for="(el,$index) in 3">
           <m-first-item :key="$index" class="sctm-item" :el="itemParams" size="mini" />
         </template>
       </div>

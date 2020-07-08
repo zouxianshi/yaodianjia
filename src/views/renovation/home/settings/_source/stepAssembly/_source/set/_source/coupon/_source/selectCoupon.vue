@@ -11,7 +11,7 @@
       <span class="sscm-coupon-type">
         <span class="sscm-text-1">活动类型 </span>
         <el-select v-model="searchParams.ctype" size="mini" placeholder="请选择" style="width: 200px;">
-          <el-option v-for="item in [{value:0,label:'全部'},{value:1,label:'折扣券'},{value:2,label:'抵价劵'},{value:3,label:'礼品券'},]" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in [{value:0,label:'全部'},{value:1,label:'折扣券'},{value:2,label:'满减劵'},{value:3,label:'礼品券'},]" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </span>
       <span class="sscm-coupon-name">
@@ -86,24 +86,27 @@ export default {
     $verification() {
       const { item: { subType, max }, selectList } = this
 
-      let flag = false
+      if (!selectList.length) {
+        this.$message.error(`请选择优惠券`)
+        return false
+      }
 
       if (subType === 'first' && _.size(selectList) > max) {
-        flag = true
         this.$message.error(`优惠券最大限制${max}条`)
+        return false
       }
 
       if (subType === 'second' && _.size(selectList) < 2 || _.size(selectList) > max) {
-        flag = true
         this.$message.error(`优惠券最少2条，最大限制${max}条`)
+        return false
       }
 
-      if (subType === 'third' && _.size(selectList) < 6 || _.size(selectList) > max) {
-        flag = true
-        this.$message.error(`优惠券最少6条，最大限制${max}条`)
+      if (subType === 'third' && _.size(selectList) < 3 || _.size(selectList) > max) {
+        this.$message.error(`优惠券最少3条，最大限制${max}条`)
+        return false
       }
 
-      return flag || selectList
+      return selectList
     },
     currentChange(v) {
       this.searchParams.currentPage = v
@@ -119,6 +122,8 @@ export default {
       } else {
         this.selectList = _.reject(this.selectList, ['id', item.id])
       }
+
+      console.log(this.selectList)
     },
     handleshopRule(ctype, useRule, denomination, giftName) {
       return handleshopRule(ctype, useRule, denomination, giftName)
@@ -129,12 +134,24 @@ export default {
     },
     getData() {
       renovationService.getHomeCoupon(this.searchParams).then(res => {
+        const is = id => _.some(this.item.itemList, ['itemId', `${id}`])
         this.list = _.map(res.data.records, v => {
           return {
             ...v,
-            selected: false
+            selected: is(v.id)
           }
         })
+
+        const f = id => _.find(this.item.itemList, ['itemId', `${id}`])
+
+        this.selectList = _.compact(_.map(res.data.records, v => {
+          if (is(v.id)) {
+            return {
+              ...v,
+              value: f(v.id)['value']
+            }
+          }
+        }))
 
         this.total = res.data.total
       })

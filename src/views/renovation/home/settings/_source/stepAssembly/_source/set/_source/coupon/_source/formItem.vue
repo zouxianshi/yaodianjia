@@ -3,10 +3,12 @@
     <el-form label-width="90px" size="mini">
       <el-form-item label="优惠券名称">
         <strong>{{ item.cname }}</strong>
-        <span v-if="isDelete" class="cfim-delete" @click="$emit('on-coupon-delete')">删除</span>
+        <div class="cfim-delete">
+          <el-button type="text" :disabled="!isDelete" @click="$emit('on-coupon-delete')">删除</el-button>
+        </div>
       </el-form-item>
       <el-form-item label="发放量">
-        <el-input v-model.number="item.value" placeholder="请输入数字" @change="onUploadItem" />
+        <el-input v-model.number="item.value" maxlength="5" placeholder="请输入数字" @change="onUploadItem" />
         <div v-if="error.isValue" class="sa-assembly-error">
           {{ error.isValue }}
         </div>
@@ -89,12 +91,9 @@ export default {
     .el-form-item {
       position: relative;
       .cfim-delete {
-        font-size: 12px;
-        color: #4F88FF;
         position: absolute;
         right: 0;
         top: 0;
-        cursor: pointer;
       }
     }
   }

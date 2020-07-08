@@ -15,8 +15,7 @@ export default [
         component: () => import('@/views/mall/list'),
         name: 'home-list',
         meta: {
-          title: '首页设置',
-          auth: false,
+          title: '主页设置',
           noCache: true
         },
         children: []
@@ -28,7 +27,7 @@ export default [
         meta: {
           title: '首页设置',
           noCache: false,
-          activeMenu: '/mall/home'
+          activeMenu: '/renovation/home/list'
         },
         children: []
       },
@@ -39,7 +38,7 @@ export default [
         meta: {
           title: '首页设置',
           noCache: false,
-          activeMenu: '/mall/home'
+          activeMenu: '/renovation/home/list'
         },
         children: []
       }

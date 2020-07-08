@@ -23,12 +23,12 @@
       <el-table-column label="适用门店" show-overflow-tooltip>
         <template
           slot-scope="scope"
-        >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' }}</template>
+        >{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
       </el-table-column>
       <el-table-column label="适用商品" show-overflow-tooltip>
         <template
           slot-scope="scope"
-        >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' }}</template>
+        >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
       </el-table-column>
       <el-table-column label="发放张数" width="100">
         <template slot-scope="scope">

@@ -12,7 +12,7 @@
       <el-button @click="onStep(true)">上一步</el-button>
       <el-button @click="onStep(false)">确定</el-button>
     </div>
-    <checkCoupon ref="checkCoupons" :maxLength="5" state="1" @confincheck="onGetSelectCoupon" />
+    <checkCoupon ref="checkCoupons" :max-length="5" state="1" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
 <script>
