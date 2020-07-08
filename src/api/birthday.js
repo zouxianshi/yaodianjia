@@ -42,3 +42,21 @@ export function batchSendCoupon(params) {
     data: params
   })
 }
+
+// 获取发券记录
+export function couponHistoryList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/couponHistoryList`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 发券详情
+export function listCouponHistoryDetail(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/listCouponHistoryDetail`,
+    method: 'post',
+    data: params
+  })
+}

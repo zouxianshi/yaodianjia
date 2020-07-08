@@ -1,6 +1,6 @@
 <template>
   <div class="selected-coupon-view">
-    <el-table height="128" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
+    <el-table max-height="250" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
       <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
       <el-table-column label="优惠内容" width="120" show-overflow-tooltip>
         <template

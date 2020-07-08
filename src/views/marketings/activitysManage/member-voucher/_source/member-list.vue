@@ -172,6 +172,7 @@ export default {
       tabelLoading: false,
       tabelData: [],
       listUserCouponBaseInfo: [],
+      jsonParams: '', // 搜索条件json
       infoForm: {
         allMember: 1,
         month: null, // 生日月份
@@ -236,6 +237,7 @@ export default {
   },
   created() {
     this.getMemberData()
+    this.jsonParams = `{"sex":null,"content":"","currentPage":1,"pageSize":10,"empCodes":null,"startBirthdayDay":"1900-07-08 0:00:00","endBirthdayDay":"2020-07-08 23:59:59","startDate":"1900-01-01 00:00:00","endDate":"2200-01-01 00:00:00","minIntegral":null,"maxIntegral":null,"gender":null,"month":null,"organizations":null}`
   },
   methods: {
     handleSizeChange(e) {
@@ -316,6 +318,9 @@ export default {
         }
       }
       this.tabelLoading = true
+      // 保存搜索条件
+      this.jsonParams = JSON.stringify(params)
+      this.$emit('submitParams', JSON.stringify(params))
       queryMembersNew(params).then(res => {
         this.tabelLoading = false
         if (res.code === '10000') {
@@ -340,6 +345,7 @@ export default {
       if (this.listUserCouponBaseInfo.length === 0) {
         this.$message.error('请至少选择一个会员')
       } else {
+        this.$emit('submitParams', this.jsonParams)
         this.$emit('nextstep', this.listUserCouponBaseInfo)
       }
     }

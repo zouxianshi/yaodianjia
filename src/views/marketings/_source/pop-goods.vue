@@ -244,14 +244,13 @@ export default {
             this.exportLoading = false
             return
           }
-          
           if (exl.length > 500) {
             this.$message.error('导入商品数据不能超过500条，当前导入数量' + exl.length + '条')
             this.exportLoading = false
             return
           }
           let isPass = true // 检测每一项不为空数据
-          let erpCodeArr = []
+          const erpCodeArr = []
           _.map(exl, item => {
             if (!item.erpCode || !item.name) {
               this.$message.error('导入商品有空数据，请检查导入文件！')

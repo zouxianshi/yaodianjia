@@ -12,11 +12,11 @@
       <el-button @click="onStep(true)">上一步</el-button>
       <el-button @click="onStep(false)">确定</el-button>
     </div>
-    <checkCoupon ref="checkCoupons" state="1" @confincheck="onGetSelectCoupon" />
+    <checkCoupon ref="checkCoupons" :maxLength="5" state="1" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
 <script>
-import checkCoupon from '@/components/Marketings/checkCoupon'
+import checkCoupon from '../../../_source/pop-coupon'
 import mSelectedCoupon from '../../../_source/selectedCouNonum'
 import _ from 'lodash'
 export default {
