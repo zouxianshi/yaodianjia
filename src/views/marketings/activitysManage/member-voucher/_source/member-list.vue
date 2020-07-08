@@ -235,7 +235,7 @@ export default {
   },
   created() {
     this.getMemberData()
-    this.jsonParams = `{"sex":null,"content":"","currentPage":1,"pageSize":10,"empCodes":null,"startBirthdayDay":"1900-07-08 0:00:00","endBirthdayDay":"2020-07-08 23:59:59","startDate":"1900-01-01 00:00:00","endDate":"2200-01-01 00:00:00","minIntegral":null,"maxIntegral":null,"gender":null,"month":null,"organizations":null}`
+    this.jsonParams = `{"gender":null,"content":"","currentPage":1,"pageSize":10,"empCodes":null,"startBirthdayDay":"1900-07-08 0:00:00","endBirthdayDay":"2020-07-08 23:59:59","startDate":"1900-01-01 00:00:00","endDate":"2200-01-01 00:00:00","minIntegral":null,"maxIntegral":null,"gender":null,"month":null,"organizations":null}`
   },
   methods: {
     handleSizeChange(e) {

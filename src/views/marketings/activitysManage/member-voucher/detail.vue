@@ -85,14 +85,14 @@ export default {
     if (condition !== null && !!condition) {
       const conditions = JSON.parse(condition)
       // 处理生日
-      if (conditions.endBirthdayDay && conditions.startBirthdayDay && condition.startBirthdayDay !== '1900-01-01 00:00:00') {
+      if (conditions.endBirthdayDay && conditions.startBirthdayDay && conditions.startBirthdayDay !== '1900-01-01 00:00:00') {
         this.detailParams.ageQj =
           conditions.startBirthdayDay.slice(0, 10) +
           ' - ' +
           conditions.endBirthdayDay.slice(0, 10)
       }
       // 处理领卡日期
-      if (conditions.endDate && conditions.startDate && condition.startDate !== '1900-01-01 00:00:00') {
+      if (conditions.endDate && conditions.startDate && conditions.startDate !== '1900-01-01 00:00:00') {
         this.detailParams.lkTime =
           conditions.startDate.slice(0, 10) +
           ' - ' +
@@ -107,7 +107,7 @@ export default {
         this.detailParams.memberIntiger =
           conditions.minIntegral + ' - ' + conditions.maxIntegral
       }
-      this.detailParams.sex = conditions.sex === null || conditions.sex === undefined ? '不限' : conditions.sex === 1 ? '男' : '女'
+      this.detailParams.sex = (conditions.gender === null || conditions.gender === undefined) ? '不限' : conditions.gender === 1 ? '男' : '女'
       if (conditions.organizations !== null) {
         this.detailParams.org = '部分门店'
         this.organization = conditions.organizations
