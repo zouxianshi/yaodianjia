@@ -196,8 +196,8 @@ export default {
         {
           value: 'Squeegee',
           name: 'SqueeGee',
-          lable: '刮刮乐',
           listLabel: '刮刮乐列表',
+          lable: '刮刮乐',
           desc:
             '',
           img: SqueeGee,
