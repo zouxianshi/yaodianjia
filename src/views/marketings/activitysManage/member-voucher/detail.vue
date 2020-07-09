@@ -13,11 +13,13 @@
     <div v-if="detailParams.org === '部分门店'" class="tabel-items">
       <el-table :data="organization">
         <el-table-column label="门店编码">
-          <template slot-scope="scope">{{ scope.row.stCode || scope.row.storeCode }}</template>
+          <template slot-scope="scope">{{ scope.row.stCode }}</template>
         </el-table-column>
         <el-table-column label="门店名称">
-          <template slot-scope="scope">{{ scope.row.stName || scope.row.storeName }}</template>
+          <template slot-scope="scope">{{ scope.row.stName }}</template>
         </el-table-column>
+        <el-table-column label="门店地址" prop="address" />
+        <el-table-column label="门店电话" prop="mobile" />
       </el-table>
     </div>
     <div class="tabel-items">
@@ -110,7 +112,7 @@ export default {
       this.detailParams.sex = (conditions.gender === null || conditions.gender === undefined) ? '不限' : conditions.gender === 1 ? '男' : '女'
       if (conditions.organizations !== null) {
         this.detailParams.org = '部分门店'
-        this.organization = conditions.organizations
+        this.organization = conditions.organizationsArr
       } else {
         this.detailParams.org = '全部门店'
       }
