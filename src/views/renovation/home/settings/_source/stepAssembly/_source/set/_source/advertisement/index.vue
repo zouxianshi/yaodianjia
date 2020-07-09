@@ -86,7 +86,7 @@ export default {
     onAssSubmit() {
       let index = null
       _.forEach(this.itemParams.itemList, (v, i) => {
-        if (_.isEmpty(v.img) || _.isEmpty(v.url)) {
+        if (_.isEmpty(v.img)) {
           index = i
           return false
         }
