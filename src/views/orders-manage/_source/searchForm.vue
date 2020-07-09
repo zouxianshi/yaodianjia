@@ -25,7 +25,7 @@
             v-model.trim="listQuery.searchValue"
             size="small"
             placeholder
-            @keyup.enter.native="listQuery.currentPage=1;searchList()"
+            @keyup.enter.native="searchList()"
           />
         </div>
       </div>
@@ -172,7 +172,7 @@
       </div>
       <div class="search-form" style="margin-bottom:20px;margin-left:80px">
         <div class="search-item">
-          <el-button type="primary" size="small" @click="listQuery.currentPage=1;searchList()">查询</el-button>
+          <el-button type="primary" size="small" @click="searchList()">查询</el-button>
           <el-button type size="small" @click="resetQuery">重置</el-button>
           <el-button type="primary" size="small" @click="exportFunc">
             导出
@@ -231,7 +231,6 @@ export default {
   data() {
     return {
       listQuery: {
-        currentPage: 2,
         // 'distribution': '', // 配送方式
         empId: '', // 接单员工
         endDate: '', // 下单结束时间
@@ -363,24 +362,43 @@ export default {
         this.listQuery.orderStatus = '10'
       }
       this.$emit('changeTab', val.name)
-      this.listQuery.currentPage = 1
+      this.searchList()
+    },
+    // 父组件更改了表单项，修改表单并触发搜索
+    fatherSearchForm(params) {
+      this.listQuery = {
+        ...this.listQuery,
+        ...params
+      }
       this.searchList()
     },
     orderStatusChange(val) {
       console.log('val', val)
-      this.listQuery.currentPage = 1
       this.searchList()
     },
     // 搜索回调了
     searchList() {
       console.log('this.listQuery', this.listQuery)
+      // 特殊处理退款单的状态需要改为传递returnStatus  售后状态 0:待退货 1 待退款 2 退款完成
+      const dataParam = Object.assign({}, this.listQuery)
+      dataParam.isSuper = this.roles.includes('admin') ? 1 : 0
+      switch (this.listQuery.orderStatus) {
+        case '10':
+          dataParam.returnStatus = 1
+          break
+        case '8':
+          dataParam.returnStatus = 0
+          break
+        case '30':
+          dataParam.returnStatus = 2
+          break
+        default:
+          break
+      }
       this.getpreSendNum()
-      this.$emit('search', 'searchForm', this.listQuery)
+      this.$emit('search', 'searchForm', dataParam)
     },
     getpreSendNum() {
-      // if (this.showListLoading) {
-      //   this.loadingCountReceived = true
-      // }
       this.loadingCountReceived = true
       getCountReceived(this.listQuery).then(res => {
         this.loadingCountReceived = false
@@ -413,7 +431,6 @@ export default {
           this.chooseStore = v
         }
       })
-      this.listQuery.currentPage = 1
       this.searchList()
     },
     resetQuery() {
@@ -425,7 +442,6 @@ export default {
         isSuper = 0
       }
       this.listQuery = {
-        currentPage: 1,
         // 'distribution': '', // 配送方式
         empId: '', // 接单员工
         endDate: '', // 下单结束时间
@@ -443,6 +459,8 @@ export default {
         storeId: '' // 下单门店id
       }
       this.dateSelect = '' // 下单时间置空
+      this.activeName = 'first'
+      this.$emit('changeTab', 'first')
       this.searchList()
     },
     _loadStoreList(val = '') {
@@ -452,8 +470,6 @@ export default {
           pageSize: 10000,
           currentPage: 1,
           storeName: val
-          // onlineStatus: 1,
-          // status: 1
         })
           .then(res => {
             const { data } = res.data
@@ -478,15 +494,17 @@ export default {
           merCode: this.merCode,
           pageSize: 10000,
           status: 1
-        }).then(res => {
-          // 获取门店员工
-          if (res.data) {
-            this.employeeData = res.data.data
-            resolve(res.data.data)
-          }
-        }).catch(error => {
-          reject(error)
         })
+          .then(res => {
+            // 获取门店员工
+            if (res.data) {
+              this.employeeData = res.data.data
+              resolve(res.data.data)
+            }
+          })
+          .catch(error => {
+            reject(error)
+          })
       })
     },
     handleChangeOrderStatus(val) {
@@ -503,7 +521,6 @@ export default {
         activeName = 'first'
       }
       this.$emit('changeTab', activeName)
-      this.listQuery.currentPage = 1
       this.searchList()
     },
     handleChangeStore(val) {
@@ -513,7 +530,6 @@ export default {
       //     this.chooseStore = v
       //   }
       // })
-      this.listQuery.currentPage = 1
       this.searchList()
     },
     exportFunc: throttle(async function() {

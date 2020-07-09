@@ -45,7 +45,7 @@
                       v-if="item.orderType === 'G'"
                       :underline="false"
                       type="primary"
-                      @click="listQuery.prescriptionSheetMark = ''; listQuery.orderSearchType = 5;listQuery.currentPage=1;listQuery.searchValue=item.groupCode;_loadList()"
+                      @click="changeSubSearchForm(item)"
                     >查看同团订单</el-link>
                     <a
                       :href="`#/orders-manage/details?id=${item.id}`+`&state=${item.orderStatus}`"
@@ -391,9 +391,7 @@ import dialogDeliveryOrder from './components/dialog-delivery'
 import { mapGetters } from 'vuex'
 import searchForm from './_source/searchForm'
 
-import {
-  getOrderList
-} from '@/api/order'
+import { getOrderList } from '@/api/order'
 
 export default {
   components: {
@@ -494,22 +492,7 @@ export default {
       },
       loading: false,
       listQuery: {
-        currentPage: 1,
-        // 'distribution': '', // 配送方式
-        empId: '', // 接单员工
-        endDate: '', // 下单结束时间
-        merCode: '',
-        orderSearchType: 1, // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
-        // 'orderSource': '', // 订单来源 1.微商城
-        orderStatus: '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=待提货7) ===已发货 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-        // prescriptionSheetMark: '', // 订单类型 是不是处方单1、0
-        payment: '', // 支付方式
-        proName: '', // 商品名称
-        receive: '', // 收货方式
-        searchValue: '', // 搜索内容
-        startDate: '', // 下单开始时间
-        isSuper: 0, // 是否是超级管理员
-        storeId: '' // 下单门店id
+        currentPage: 1
       },
       employeeData: [], // 员工
       type: 'price',
@@ -555,6 +538,16 @@ export default {
     changeTabName(val) {
       console.log('0000000---changeTabName', val)
       this.activeName = val
+    },
+    // 通知更改子元素的表单项，并触发查询
+    changeSubSearchForm(item) {
+      const data = {
+        prescriptionSheetMark: '',
+        orderSearchType: 5,
+        currentPage: 1,
+        searchValue: item.groupCode
+      }
+      this.$refs.searchForm.fatherSearchForm(data)
     },
     orderStatusText(row) {
       let msg = ''
@@ -622,41 +615,18 @@ export default {
       // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
       return [2, 6, 8, 10, 12, 20, 30].indexOf(value) === -1
     },
-    // getList() {
-    //   this._loadList()
-    // },
     _loadList(origin, data) {
       console.log('_loadList----', origin, data)
       if (origin === 'searchForm') {
+        // 这里不能覆盖掉页面的pageSize
         this.listQuery = {
+          ...this.listQuery,
+          currentPage: 1,
           ...data
         }
       }
       this.loadingList = true
-      let isSuper = 0
-      if (this.roles.includes('admin')) {
-        isSuper = 1
-      } else {
-        isSuper = 0
-      }
-      this.listQuery.isSuper = isSuper
-      // 特殊处理退款单的状态需要改为传递returnStatus  售后状态 0:待退货 1 待退款 2 退款完成
-      console.log('_loadList_____', this.listQuery)
-      const dataParam = Object.assign({}, this.listQuery)
-      switch (this.listQuery.orderStatus) {
-        case '10':
-          dataParam.returnStatus = 1
-          break
-        case '8':
-          dataParam.returnStatus = 0
-          break
-        case '30':
-          dataParam.returnStatus = 2
-          break
-        default:
-          break
-      }
-      getOrderList(dataParam)
+      getOrderList(this.listQuery)
         .then(res => {
           this.loadingList = false
           const { data, totalCount } = res.data
