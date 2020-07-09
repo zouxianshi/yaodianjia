@@ -10,7 +10,7 @@
       <el-form-item label="会员海贝：" style="width: 30%">{{ detailParams.memberIntiger }}</el-form-item>
       <el-form-item label="所属门店：">{{ detailParams.org }}</el-form-item>
     </el-form>
-    <div v-if="detailParams.org === '部分门店'" class="tabel-items">
+    <div v-if="detailParams.org === '部分门店' && organization.length > 0" class="tabel-items">
       <el-table :data="organization">
         <el-table-column label="门店编码">
           <template slot-scope="scope">{{ scope.row.stCode }}</template>
