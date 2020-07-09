@@ -24,15 +24,15 @@
           >
             <template slot-scope="scope">
               <div
-                v-if="scope.row.picUrl && scope.row.picUrl!==''"
+                v-if="scope.row.mainPic && scope.row.mainPic!==''"
                 style="width: 60px; height: 60px"
               >
                 <div class="x-image__preview">
                   <el-image
                     style="width: 60px; height: 60px"
                     fit="contain"
-                    :src="showImg(scope.row.picUrl)"
-                    :preview-src-list="[showImg(scope.row.picUrl)]"
+                    :src="showImg(scope.row.mainPic)"
+                    :preview-src-list="[showImg(scope.row.mainPic)]"
                   />
                 </div>
               </div>
@@ -46,20 +46,7 @@
             <span>数量</span>
           </template>
           <template slot-scope="scope">
-            <t-colument-form title="数量" :item="scope.row" item-key="addNum" :index="scope.$index" :is-disabled="disabled" />
-            <!-- <el-popover title="数量" width="200" trigger="click" placement="left" v-model="show">
-              <el-form-item
-                :ref="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addNum'"
-                :prop="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addNum'"
-                :rules="[{ required: true, validator: check_num, trigger: 'blur' }]"
-              >
-                <el-input v-model="scope.row.addNum" maxlength="8" size="mini" />
-              </el-form-item>
-              <el-button slot="reference" type="text">
-                {{scope.row.addNum}}
-                <i class="el-icon-edit"></i>
-              </el-button>
-            </el-popover> -->
+            <t-colument-form title="数量" :item="scope.row" item-key="number" :index="scope.$index" :is-disabled="disabled" />
           </template>
         </el-table-column>
         <el-table-column>
@@ -67,19 +54,7 @@
             <span>组合单价</span>
           </template>
           <template slot-scope="scope">
-            <t-colument-form title="组合单价" :item="scope.row" item-key="addPrice" :index="scope.$index" :is-disabled="disabled" />
-            <!-- <el-form-item
-              :ref="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addPrice'"
-              :prop="'tableData.' + (((pager.current - 1) * pager.size) + scope.$index) + '.addPrice'"
-              :rules="[{ required: true, validator: check_price, trigger: 'blur' }]"
-            >
-              <el-input
-                v-model="scope.row.addPrice"
-                style="width:60px;text-align:center"
-                maxlength="8"
-                size="mini"
-              />
-            </el-form-item> -->
+            <t-colument-form title="组合单价" :item="scope.row" item-key="price" :index="scope.$index" :is-disabled="disabled" />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="60">
@@ -173,7 +148,7 @@ export default {
       },
       cols: [
         {
-          prop: 'picUrl',
+          prop: 'mainPic',
           label: '商品图片',
           type: 'img',
           render: true // 交给后续逻辑渲染
@@ -183,7 +158,7 @@ export default {
           label: '商品编码'
         },
         {
-          prop: 'name',
+          prop: 'commodityName',
           label: '商品名称'
         },
 
@@ -192,7 +167,7 @@ export default {
           label: '参考价(元)'
         },
         {
-          prop: 'productName',
+          prop: 'standard',
           label: '商品规格'
         }
       ],
@@ -216,16 +191,17 @@ export default {
           if (inIndex === -1) {
             const item = {
               ...good,
-              productName: this.formatSkuInfo(good.specSkus || ''),
-              addNum: 1,
-              addPrice: good.mprice
+              standard: good.standard || good.specStr,
+              commodityId: good.commodityId || good.id,
+              commodityName: good.commodityName || good.name,
+              number: good.number || 1,
+              price: good.price || good.mprice
             }
             dataFromSource.push(item)
           } else {
             dataFromSource.push({
               ...good,
-              ...this.tableForm.tableData[inIndex],
-              productName: this.formatSkuInfo(good.specSkus || '')
+              ...this.tableForm.tableData[inIndex]
             })
           }
         })
@@ -253,9 +229,9 @@ export default {
       let soulePrice = 0
       let weight = 0
       newVal.forEach(item => {
-        mprice += item.mprice * (item.addNum * 1 || 0) // 参考价
-        soulePrice += item.addPrice * (item.addNum * 1 || 0) // 组合单价
-        weight += (item.weight || 0) * (item.addNum * 1 || 0)
+        mprice += item.mprice * (item.number * 1 || 0) // 参考价
+        soulePrice += item.price * (item.number * 1 || 0) // 组合单价
+        weight += (item.weight || 0) * (item.number * 1 || 0)
       })
       this.$store.commit('activity/SET_TABLE_FORM_VALUE', {
         mprice,

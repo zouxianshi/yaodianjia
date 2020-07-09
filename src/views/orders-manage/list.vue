@@ -159,7 +159,7 @@
                   </div>
                   <!-- 门店信息 -->
                   <div class="body-cell cell-right padding10">
-                    <div class="cell-text">门店001</div>
+                    <div class="cell-text">{{ item.storeName }}</div>
                   </div>
                   <!-- 优惠金额 -->
                   <div class="body-cell cell-right padding10">
@@ -343,7 +343,7 @@
                     <div class="cell-text">微商城</div>
                   </div>
                   <div class="body-cell cell-right padding10">
-                    <div class="cell-text">代替换门店001</div>
+                    <div class="cell-text">{{ item.storeName }}</div>
                   </div>
                   <!-- 退款金额 -->
                   <div class="body-cell cell-right padding10">

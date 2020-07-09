@@ -135,7 +135,8 @@
                 closable
                 @close="removeMyselectItem(mItem, index2)"
               >
-                <span :title="mItem.name">{{ mItem.name }}</span>
+                <!-- commodityName是为了兼容组合商品返回的数据没有name -->
+                <span :title="mItem.name">{{ mItem.name || mItem.commodityName }}</span>
               </el-tag>
             </div>
           </div>

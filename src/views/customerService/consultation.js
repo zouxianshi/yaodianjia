@@ -840,6 +840,7 @@ export default {
     // 获取快捷回复列表
     this.queryCannedRepliesList()
     // 获取融云会话列表
+    console.log('获取融云会话列表----created')
     this.resetCurOnlineUserData()
 
     setTimeout(() => {

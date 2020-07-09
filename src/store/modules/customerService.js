@@ -280,7 +280,7 @@ const mutations = {
     }
     console.log('tempList', tempList)
     let hasItem = false
-    tempList.forEach(element => {
+    tempList.forEach((element, index) => {
       console.log('element.targetid', element.targetId, userId)
       if (Chat.isUserEqual(element.latestMessage, message)) {
       // if (element.latestMessage.content.extra.userId === message.latestMessage.content.extra.userId) {
@@ -290,13 +290,14 @@ const mutations = {
         if (message.messageDirection === 2) {
           element.newMsgNum = element.newMsgNum + 1
           element.unreadMessageCount = element.unreadMessageCount + 1
+          tempList.unshift(tempList.splice(index, 1)[0])
         }
       }
     })
     // 如果是新来的用户 则往会话列表中添加一条数据
     if (!hasItem) {
       console.error('新来的用户 则往会话列表中添加一条数据')
-      tempList.push({
+      tempList.unshift({
         conversationTitle: '',
         conversationType: message.conversationType,
         latestMessage: {
