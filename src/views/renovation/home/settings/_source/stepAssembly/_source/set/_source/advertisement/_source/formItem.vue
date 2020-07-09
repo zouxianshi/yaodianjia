@@ -19,7 +19,7 @@
     </div>
     <div class="afim-form">
       <el-form label-width="90px" size="mini">
-        <el-form-item label="链接地址" :rules="[{ required: true}]">
+        <el-form-item label="链接地址">
           <el-input v-model="item.url" style="width: calc(100% - 101px)" readonly />
           <el-button icon="el-icon-link" @click="dialogVisible = true">选择链接 </el-button>
         </el-form-item>
