@@ -30,7 +30,6 @@
           <el-form-item label="商品分组">
             <el-cascader
               v-model="searchForm.typeid"
-              v-loading="typeTreeLoading"
               :options="typeTree"
               :props="merchantOption"
               clearable
@@ -204,8 +203,7 @@ export default {
         label: 'name',
         value: 'id',
         checkStrictly: true // 是否可以选择任一级
-      },
-      typeTreeLoading: false
+      }
     }
   },
   computed: {
@@ -475,7 +473,6 @@ export default {
         type: 2, //	integer($int32)类型，1-分类，2-分组
         use: true
       }
-      this.typeTreeLoading = true
       getTypeTree(params)
         .then(res => {
           if (res.code === '10000' && res.data) {
@@ -483,10 +480,8 @@ export default {
           } else {
             this.typeTree = []
           }
-          this.typeTreeLoading = false
         })
         .catch(res => {
-          this.typeTreeLoading = false
         })
     },
     handleOpenStore() {}
