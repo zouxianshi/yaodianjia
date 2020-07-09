@@ -235,7 +235,7 @@ export default {
   },
   created() {
     this.getMemberData()
-    this.jsonParams = `{"gender":null,"content":"","currentPage":1,"pageSize":10,"empCodes":null,"startBirthdayDay":"1900-07-08 0:00:00","endBirthdayDay":"2020-07-08 23:59:59","startDate":"1900-01-01 00:00:00","endDate":"2200-01-01 00:00:00","minIntegral":null,"maxIntegral":null,"gender":null,"month":null,"organizations":null}`
+    this.jsonParams = `{"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":null,"maxIntegral":null,"gender":null,"month":null,"organizations":null}`
   },
   methods: {
     handleSizeChange(e) {
@@ -267,27 +267,27 @@ export default {
       } else {
         params = Object.assign({}, this.params, this.pageInfo)
         params.empCodes = formData.cardArr.trim() ? formData.cardArr.trim().split(',') : null
-        if (formData.ageInterval === null) { // 年龄段
+        if (formData.ageInterval === null) { // 自行选择年龄段
           params.startBirthdayDay = formatDate(formData.agePicker[0])
           params.endBirthdayDay = formatDate(new Date(formData.agePicker[1]).getTime() + 86399990)
         } else {
           var data = []
-          if (formData.ageInterval === 1) {
-            params.startBirthdayDay = '1900-01-01 00:00:00'
-            params.endBirthdayDay = formatDate(new Date(formData.agePicker[1]).getTime() + 86399990)
+          if (formData.ageInterval === 1) { // 不限年龄
+            params.startBirthdayDay = ""
+            params.endBirthdayDay = ""
           } else {
             data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
             params.startBirthdayDay = data[0]
             params.endBirthdayDay = data[1]
           } 
         }
-        if (formData.lkTime === null) { // 领卡时间段
+        if (formData.lkTime === null) { // 自行选择领卡时间段
           params.startDate = formatDate(formData.lkTimeQj[0])
           params.endDate = formatDate(new Date(formData.lkTimeQj[1]).getTime() + 86399990)
         } else {
           var data1 = []
-          if (formData.lkTime === 1) {
-            data1 = ['1900-01-01 00:00:00', '2200-01-01 00:00:00']
+          if (formData.lkTime === 1) { // 不限领卡时间段
+            data1 = ["", ""]
           } else {
             data1 = formatLkTime(formData.lkTime[0], formData.lkTime[1])
           }
@@ -298,8 +298,8 @@ export default {
           params.minIntegral = formData.pointsMin
           params.maxIntegral = formData.pointsMax
         } else {
-          params.minIntegral = 0
-          params.maxIntegral = 999999999
+          params.minIntegral = ""
+          params.maxIntegral = ""
         }
         params.gender = formData.sex
         params.month = formData.month ? formData.month > 10 ? '' + formData.month : '0' + formData.month : null

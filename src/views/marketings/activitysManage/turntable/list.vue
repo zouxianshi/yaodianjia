@@ -8,13 +8,6 @@
     <el-button type="primary" size="mini" @click="$router.push('/marketing/prize-use')">
       奖品核销
     </el-button>
-    <div class="explain">
-      <!-- <el-alert
-        title="领券中心可自由上架及下架优惠券，领券中心的优惠上架后用户可手工领取，您可根据活动营销方案定期上架以保持用户活跃"
-        type="warning"
-        :closable="false"
-      />-->
-    </div>
     <div class="search-form">
       <div class="search-item">
         <div class="search-item">
@@ -50,7 +43,7 @@
         </el-button>-->
       </div>
     </div>
-    <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="大转盘暂未上架任何活动">
+    <el-table v-loading="show" :data="tableData" style="width: 100%" height="calc(100vh - 400px)" empty-text="大转盘暂未上架任何活动">
       <el-table-column prop="date" label="活动类型" width="120">
         <template>
           <div>大转盘</div>
@@ -470,24 +463,13 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .turntable-index-model {
-  .explain {
-    margin: 20px 0;
-    font-size: 13px;
-  }
   .el-dropdown{
     font-size: 14px;
     color: #147de8;
   }
   .el-table--medium th,
-  // .el-table--medium td {
-  //   padding: 2px;
-  // }
-  // .el-table thead th {
-  //   height: 50px;
-  // }
   .el-dropdown-link {
     cursor: pointer;
-    // color: #147de8;
   }
   .el-icon-arrow-down {
     font-size: 12px;
@@ -495,13 +477,14 @@ export default {
   .search-form {
     margin-top: 10px;
     .search-item {
+      margin-bottom: 0;
       .el-input {
         width: 180px;
       }
     }
   }
   .block {
-    margin-top: 30px;
+    margin-top: 20px;
   }
   .el-pagination {
     text-align: right;

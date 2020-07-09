@@ -8,7 +8,6 @@
     <el-button type="primary" size="mini" @click="$router.push('/marketing/prize-use')">
       奖品核销
     </el-button>
-    <div class="explain" />
     <div class="search-form">
       <div class="search-item">
         <div class="search-item">
@@ -39,7 +38,7 @@
       </div>
       <div class="search-item" />
     </div>
-    <el-table v-loading="show" :data="tableData" style="width: 100%" empty-text="刮刮乐暂未上架任何活动">
+    <el-table v-loading="show" :data="tableData" style="width: 100%" height="calc(100vh - 400px)" empty-text="刮刮乐暂未上架任何活动">
       <el-table-column prop="date" label="活动类型" width="120">
         <template>
           <div>刮刮乐</div>
@@ -463,10 +462,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .turntable-guagua-model {
-  .explain {
-    margin: 20px 0;
-    font-size: 13px;
-  }
   .el-dropdown {
     font-size: 14px;
     color: #147de8;
@@ -481,13 +476,14 @@ export default {
   .search-form {
     margin-top: 10px;
     .search-item {
+      margin-bottom: 0;
       .el-input {
         width: 180px;
       }
     }
   }
   .block {
-    margin-top: 30px;
+    margin-top: 20px;
   }
   .el-pagination {
     text-align: right;
