@@ -508,6 +508,7 @@ export default {
     handleRemoveGroup(index) {
       // 删除选择的分组
       this.chooseGroup.splice(index, 1)
+      this.basicForm.groupIds.splice(index, 1)
     },
     _filters(data) {
       const groupIdsList = []
