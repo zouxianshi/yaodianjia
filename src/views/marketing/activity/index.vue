@@ -112,6 +112,7 @@ export default {
         },
         {
           lable: '新人礼包',
+          listLabel: '新人礼包列表',
           img: newComer,
           desc: '每个新注册微商城的用户都可以获取新人礼包一份，包含优惠券、海贝、抽奖福利等',
           listUrl:
