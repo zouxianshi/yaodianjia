@@ -109,7 +109,7 @@ export default {
           lable: '领券中心',
           img: counpCenter,
           createText: '新建优惠券',
-          desc: '',
+          desc: '聚合多场优惠券领取活动，用户直达领券中心领取最劲爆的优惠券，消费购物更实惠',
           listUrl:
             '/marketings/activity-manage/coupons/list?code=TA001&name=领券中心',
           linkUrl:
@@ -120,7 +120,7 @@ export default {
           lable: '支付有礼',
           listLabel: '支付有礼列表',
           img: paymentCourtesy,
-          desc: '',
+          desc: '支付下单，满足一定条件门槛后，便可获得优惠券、海贝、抽奖活动等大礼包',
           listUrl:
             '/marketings/activity-manage/payment-gift/list?code=TC002&name=支付有礼',
           linkUrl: '/marketings/activity-manage/payment-gift/add'
@@ -221,9 +221,7 @@ export default {
           value: 'Squeegee',
           name: 'SqueeGee',
           lable: '刮刮乐',
-          listLabel: '刮刮乐列表',
-          desc:
-            '',
+          desc: '刮刮刮，商户可以建立多场刮刮乐活动，用户满足一定条件门槛后便可参与刮奖活动，简单又好玩',
           img: SqueeGee,
           listUrl: '/marketings/activity-manage/turntable/guaList?code=TA004&name=刮刮乐',
           linkUrl: '/marketings/activity-manage/turntable/add?code=TA004'
@@ -234,7 +232,7 @@ export default {
           lable: '大转盘',
           listLabel: '大转盘列表',
           desc:
-            '',
+            '转转转，商户可以建立多场大转盘活动，用户满足一定条件门槛后便可参与抽奖活动，奖品丰富新颖',
           img: TurnTable,
           listUrl: '/marketings/activity-manage/turntable/list?code=TA003&name=大转盘',
           linkUrl: '/marketings/activity-manage/turntable/add?code=TA003'
@@ -245,7 +243,7 @@ export default {
           createText: '添加商品',
           name: 'ReduceGift',
           lable: '商品',
-          desc: '',
+          desc: '用户在商城积累的海贝，可以在兑换商城兑换商品和购买商品',
           titles: '兑换商城',
           isclose: true,
           img: haibei,
@@ -256,7 +254,7 @@ export default {
           createText: '',
           name: 'signGift',
           lable: '签到设置',
-          desc: '',
+          desc: '设置不同模式签到奖励，激励用户每天签到，获取海贝，增加用户粘性，鼓励海贝兑换商品，增进销售。',
           titles: '签到奖励',
           isclose: true,
           img: signGift,
