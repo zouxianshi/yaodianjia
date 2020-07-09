@@ -905,7 +905,7 @@ export default {
           res = await exportData({
             ...this.listQuery,
             lockFlag: this.listQuery.lockFlag ? [this.listQuery.lockFlag] : [],
-            storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
+            storeIds: this.listQuery.storeId ? [this.listQuery.storeId] : []
           })
         }
         if (res.code === '10000') {
