@@ -82,17 +82,17 @@ export default {
   },
   created() {
     var condition = sessionStorage.getItem('conditionJson')
-    if (condition !== null && !!condition) {
+    if (condition !== "null" && !!condition) {
       const conditions = JSON.parse(condition)
       // 处理生日
-      if (conditions.endBirthdayDay && conditions.startBirthdayDay && conditions.startBirthdayDay !== '1900-01-01 00:00:00') {
+      if (!!(conditions.endBirthdayDay) && !!(conditions.startBirthdayDay) ) {
         this.detailParams.ageQj =
           conditions.startBirthdayDay.slice(0, 10) +
           ' - ' +
           conditions.endBirthdayDay.slice(0, 10)
       }
       // 处理领卡日期
-      if (conditions.endDate && conditions.startDate && conditions.startDate !== '1900-01-01 00:00:00') {
+      if (!!(conditions.startDate) && !!(conditions.endDate) ) {
         this.detailParams.lkTime =
           conditions.startDate.slice(0, 10) +
           ' - ' +
@@ -103,7 +103,7 @@ export default {
         this.detailParams.birthMonth = conditions.month + '月'
       }
       // 处理海贝范围
-      if (conditions.minIntegral !== null && conditions.maxIntegral !== 999999999) {
+      if (!!(conditions.minIntegral) && !!(conditions.maxIntegral) ) {
         this.detailParams.memberIntiger =
           conditions.minIntegral + ' - ' + conditions.maxIntegral
       }
