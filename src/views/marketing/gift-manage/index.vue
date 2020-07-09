@@ -45,7 +45,7 @@ export default {
           lable: '折扣券',
           img: discountImg,
           desc:
-            '',
+            '建立直接打折的优惠券，直观优惠',
           listUrl: '/marketings/gift-manage/list?id=1',
           linkUrl: '/marketings/gift-manage/discount',
           createText: '新建折扣券'
@@ -55,7 +55,7 @@ export default {
           lable: '满减券',
           img: fullReductionImg,
           desc:
-            '',
+            '建立满多少直接减优惠的券，冲击力强',
           listUrl: '/marketings/gift-manage/list?id=2',
           linkUrl: '/marketings/gift-manage/full-reduction',
           createText: '新建满减券'
@@ -65,7 +65,7 @@ export default {
           lable: '礼品券',
           img: giftImg,
           desc:
-            '',
+            '建立礼品券，给用户直接发放礼品',
           listUrl: '/marketings/gift-manage/list?id=3',
           linkUrl: '/marketings/gift-manage/gift',
           createText: '新建礼品券'
@@ -126,12 +126,8 @@ export default {
   .app-container {
     .activity {
       padding: 0;
-      .el-tabs__header {
-      }
       .el-tabs__nav-wrap::after {
         height: 0;
-      }
-      .el-tabs__content {
       }
     }
   }
