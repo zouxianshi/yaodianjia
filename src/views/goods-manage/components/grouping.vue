@@ -244,7 +244,6 @@ export default {
       this.chooseGroup.splice(index, 1)
     },
     handleSubmit() {
-      console.log('1111111')
       if (this.type === '0') {
         // 商品库批量修改商品
         const params = {
