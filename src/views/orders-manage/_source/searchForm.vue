@@ -1,78 +1,79 @@
 <template>
-  <section class="order-manage" style="position:relative" @keydown.enter="searchList()">
-    <div class="search-form order-form">
-      <div class="search-item">
-        <span class="label-name">订单搜索</span>
-        <el-select
-          v-model="listQuery.orderSearchType"
-          filterable
-          placeholder="请输入关键词"
-          :remote-method="remoteMethod"
-          :loading="selectloading"
-          @change="searchSelectChange"
-        >
-          <el-option
-            v-for="itemOp in options"
-            :key="itemOp.value"
-            :value="itemOp.value"
-            :label="itemOp.label"
-          />
-        </el-select>
-      </div>
-      <div class="search-item">
-        <el-input
-          v-model.trim="listQuery.searchValue"
-          size="small"
-          placeholder
-          @keyup.enter.native="listQuery.currentPage=1;searchList()"
-        />
-      </div>
-    </div>
-    <div class="search-form">
-      <div class="search-item">
-        <div class="block">
-          <span class="label-name">下单时间</span>
-          <el-date-picker
-            v-model="dateSelect"
-            type="datetimerange"
-            :picker-options="pickerOptions"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            align="right"
-            format="yyyy-MM-dd HH:mm:ss"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            popper-class="order_dataTimepicker"
-            :default-time="['00:00:00', '23:59:59']"
-            @change="chooseTimeRange"
+  <div>
+    <section class="order-manage" style="position:relative" @keydown.enter="searchList()">
+      <div class="search-form order-form">
+        <div class="search-item">
+          <span class="label-name">订单搜索</span>
+          <el-select
+            v-model="listQuery.orderSearchType"
+            filterable
+            placeholder="请输入关键词"
+            :remote-method="remoteMethod"
+            :loading="selectloading"
+            @change="searchSelectChange"
+          >
+            <el-option
+              v-for="itemOp in options"
+              :key="itemOp.value"
+              :value="itemOp.value"
+              :label="itemOp.label"
+            />
+          </el-select>
+        </div>
+        <div class="search-item">
+          <el-input
+            v-model.trim="listQuery.searchValue"
+            size="small"
+            placeholder
+            @keyup.enter.native="listQuery.currentPage=1;searchList()"
           />
         </div>
       </div>
-    </div>
-    <div class="search-form">
-      <div class="search-item">
-        <span class="label-name">商品名称</span>
-        <el-input v-model.trim="listQuery.proName" size="small" placeholder="商品名称" />
+      <div class="search-form">
+        <div class="search-item">
+          <div class="block">
+            <span class="label-name">下单时间</span>
+            <el-date-picker
+              v-model="dateSelect"
+              type="datetimerange"
+              :picker-options="pickerOptions"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              align="right"
+              format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              popper-class="order_dataTimepicker"
+              :default-time="['00:00:00', '23:59:59']"
+              @change="chooseTimeRange"
+            />
+          </div>
+        </div>
       </div>
-      <div class="search-item">
-        <span class="label-name">订单类型</span>
-        <el-select
-          v-model="listQuery.orderType"
-          filterable
-          placeholder="订单类型"
-          @change="handleChangeCommodityType"
-        >
-          <el-option label="全部" value />
-          <el-option label="处方药订单" value="R" />
-          <el-option label="普通订单" value="N" />
-          <el-option label="拼团订单" value="G" />
-          <!-- <el-option label="积分订单" value="V" /> -->
-          <el-option label="海贝商城订单" value="I" />
-        </el-select>
-        <!-- R处方药/N正常订单/V虚拟商品订单/G拼团订单 -->
-        <!-- prescriptionSheetMark -->
-      </div>
-      <!-- <div class="search-item">
+      <div class="search-form">
+        <div class="search-item">
+          <span class="label-name">商品名称</span>
+          <el-input v-model.trim="listQuery.proName" size="small" placeholder="商品名称" />
+        </div>
+        <div class="search-item">
+          <span class="label-name">订单类型</span>
+          <el-select
+            v-model="listQuery.orderType"
+            filterable
+            placeholder="订单类型"
+            @change="handleChangeCommodityType"
+          >
+            <el-option label="全部" value />
+            <el-option label="处方药订单" value="R" />
+            <el-option label="普通订单" value="N" />
+            <el-option label="拼团订单" value="G" />
+            <!-- <el-option label="积分订单" value="V" /> -->
+            <el-option label="海贝商城订单" value="I" />
+          </el-select>
+          <!-- R处方药/N正常订单/V虚拟商品订单/G拼团订单 -->
+          <!-- prescriptionSheetMark -->
+        </div>
+        <!-- <div class="search-item">
             <span class="label-name">订单来源</span>
             <el-select
               v-model="listQuery.orderSource"
@@ -82,114 +83,145 @@
             >
               <el-option label="微商城" value="1" />
             </el-select>
-      </div>-->
-      <div class="search-item">
-        <span class="label-name">订单状态</span>
-        <el-select
-          v-model="listQuery.orderStatus"
-          filterable
-          placeholder="订单状态"
-          @change="handleChangeOrderStatus"
-        >
-          <el-option label="全部" value />
-          <el-option label="待付款" value="2" />
-          <el-option label="待发货" value="4" />
-          <el-option label="已发货" value="6" />
-          <el-option label="待提货" value="7" />
-          <el-option label="已完成" value="12" />
-          <el-option label="待退款" value="10" />
-          <!-- <el-option label="待退货" value="10" /> -->
-          <el-option label="待退货" value="8" />
-          <!--待退货  == 待退货-->
-          <el-option label="退款完成" value="30" />
-          <el-option label="已取消" value="20" />
-        </el-select>
+        </div>-->
+        <div class="search-item">
+          <span class="label-name">订单状态</span>
+          <el-select
+            v-model="listQuery.orderStatus"
+            filterable
+            placeholder="订单状态"
+            @change="handleChangeOrderStatus"
+          >
+            <el-option label="全部" value />
+            <el-option label="待付款" value="2" />
+            <el-option label="待发货" value="4" />
+            <el-option label="已发货" value="6" />
+            <el-option label="待提货" value="7" />
+            <el-option label="已完成" value="12" />
+            <el-option label="待退款" value="10" />
+            <!-- <el-option label="待退货" value="10" /> -->
+            <el-option label="待退货" value="8" />
+            <!--待退货  == 待退货-->
+            <el-option label="退款完成" value="30" />
+            <el-option label="已取消" value="20" />
+          </el-select>
+        </div>
+        <div class="search-item">
+          <span class="label-name">收货方式</span>
+          <el-select
+            v-model="listQuery.receive"
+            filterable
+            placeholder="收货方式"
+            @change="handleChangeCommodityType"
+          >
+            <el-option label="全部" value />
+            <el-option label="普通快递" value="0" />
+            <el-option label="配送上门" value="1" />
+            <el-option label="门店自提" value="2" />
+          </el-select>
+        </div>
+        <div class="search-item">
+          <span class="label-name">所在门店</span>
+          <el-select
+            v-model="listQuery.storeId"
+            filterable
+            placeholder="请输入关键词"
+            :remote-method="remoteMethod"
+            :loading="selectloading"
+            @change="handleChangeStore"
+          >
+            <el-option label="全部" value />
+            <el-option
+              v-for="(item,index) in storeList"
+              :key="index"
+              :label="item.stName+'('+item.stCode+')'"
+              :value="item.id"
+            />
+          </el-select>
+        </div>
+        <div class="search-item">
+          <span class="label-name">接单员工</span>
+          <el-select
+            v-model="listQuery.empId"
+            filterable
+            placeholder="请输入关键词"
+            @change="handleChangeStore"
+          >
+            <el-option label="全部" value />
+            <el-option
+              v-for="(item,indexEmp) in employeeData"
+              :key="indexEmp"
+              :label="item.empName+'('+item.empCode+')'"
+              :value="item.id"
+            />
+          </el-select>
+        </div>
+        <div class="search-item">
+          <span class="label-name">支付方式</span>
+          <el-select
+            v-model="listQuery.payment"
+            filterable
+            placeholder="支付方式"
+            @change="handleChangeCommodityType"
+          >
+            <el-option label="全部" value />
+            <el-option label="在线支付" value="0" />
+            <el-option label="货到付款" value="1" />
+          </el-select>
+        </div>
       </div>
-      <div class="search-item">
-        <span class="label-name">收货方式</span>
-        <el-select
-          v-model="listQuery.receive"
-          filterable
-          placeholder="收货方式"
-          @change="handleChangeCommodityType"
-        >
-          <el-option label="全部" value />
-          <el-option label="普通快递" value="0" />
-          <el-option label="配送上门" value="1" />
-          <el-option label="门店自提" value="2" />
-        </el-select>
+      <div class="search-form" style="margin-bottom:20px;margin-left:80px">
+        <div class="search-item">
+          <el-button type="primary" size="small" @click="listQuery.currentPage=1;searchList()">查询</el-button>
+          <el-button type size="small" @click="resetQuery">重置</el-button>
+          <el-button type="primary" size="small" @click="exportFunc">
+            导出
+            <i class="el-icon-download el-icon--right" />
+          </el-button>
+          <export-table />
+        </div>
       </div>
-      <div class="search-item">
-        <span class="label-name">所在门店</span>
-        <el-select
-          v-model="listQuery.storeId"
-          filterable
-          placeholder="请输入关键词"
-          :remote-method="remoteMethod"
-          :loading="selectloading"
-          @change="handleChangeStore"
-        >
-          <el-option label="全部" value />
-          <el-option
-            v-for="(item,index) in storeList"
-            :key="index"
-            :label="item.stName+'('+item.stCode+')'"
-            :value="item.id"
-          />
-        </el-select>
+      <div v-if="approvalNums > 0" class="message-tips">
+        您有{{ approvalNums }}个处方药订单审批，请及时处理！
+        <el-button class="sp-btn" type="text" @click="toMerchant">马上去审批 >></el-button>
       </div>
-      <div class="search-item">
-        <span class="label-name">接单员工</span>
-        <el-select
-          v-model="listQuery.empId"
-          filterable
-          placeholder="请输入关键词"
-        >
-          <el-option label="全部" value />
-          <el-option
-            v-for="(item,indexEmp) in employeeData"
-            :key="indexEmp"
-            :label="item.empName+'('+item.empCode+')'"
-            :value="item.id"
-          />
-        </el-select>
-      </div>
-      <div class="search-item">
-        <span class="label-name">支付方式</span>
-        <el-select
-          v-model="listQuery.payment"
-          filterable
-          placeholder="支付方式"
-          @change="handleChangeCommodityType"
-        >
-          <el-option label="全部" value />
-          <el-option label="在线支付" value="0" />
-          <el-option label="货到付款" value="1" />
-        </el-select>
-      </div>
-    </div>
-    <div class="search-form" style="margin-bottom:20px;margin-left:80px">
-      <div class="search-item">
-        <el-button type="primary" size="small" @click="listQuery.currentPage=1;searchList()">查询</el-button>
-        <el-button type size="small" @click="resetQuery">重置</el-button>
-        <el-button type="primary" size="small" @click="exportFunc">
-          导出
-          <i class="el-icon-download el-icon--right" />
-        </el-button>
-        <export-table />
-      </div>
-    </div>
-    <div v-if="approvalNums > 0" class="message-tips">
-      您有{{ approvalNums }}个处方药订单审批，请及时处理！
-      <el-button class="sp-btn" type="text" @click="toMerchant">马上去审批 >></el-button>
-    </div>
-  </section>
+    </section>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+      <el-tab-pane label="主状态订单" name="first">
+        <div class="order_tab">
+          <el-radio-group v-model="listQuery.orderStatus" size="small" @change="orderStatusChange">
+            <el-radio-button label>全部</el-radio-button>
+            <el-radio-button label="2">待付款</el-radio-button>
+            <el-radio-button v-loading="loadingCountReceived" label="4">
+              待发货
+              <template v-if="preSendNum>0">
+                <span class="badge">{{ preSendNum }}</span>
+              </template>
+            </el-radio-button>
+            <el-radio-button label="6">已发货</el-radio-button>
+            <el-radio-button label="7">待提货</el-radio-button>
+            <el-radio-button label="12">已完成</el-radio-button>
+            <el-radio-button label="20">已取消</el-radio-button>
+          </el-radio-group>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="售后订单" name="second">
+        <div class="order_tab">
+          <el-radio-group v-model="listQuery.orderStatus" size="small" @change="orderStatusChange">
+            <el-radio-button label="10">待退款</el-radio-button>
+            <el-radio-button label="8">待退货</el-radio-button>
+            <el-radio-button label="30">退款完成</el-radio-button>
+          </el-radio-group>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import { throttle } from '@/utils/throttle'
 import exportTable from '../export-table'
-import { getPendingOrder, employeeSearch } from '@/api/order'
+import { getPendingOrder, employeeSearch, getCountReceived } from '@/api/order'
 import { getMyStoreList } from '@/api/store-goods'
 import { exportData } from '@/api/task'
 export default {
@@ -297,7 +329,10 @@ export default {
       employeeData: [], // 员工
       dateSelect: [], // 选择下单时间
       approvalNum: 0,
-      refundStatus: ['10', '8', '30'] // 退款三子
+      activeName: 'first',
+      loadingCountReceived: false, // 加载待发货数量
+      refundStatus: ['10', '8', '30'], // 退款三子
+      preSendNum: 0 // 待发货的数量
     }
   },
 
@@ -310,7 +345,8 @@ export default {
   created() {
     this.getApprovalNum()
     this._loadStoreList()
-    this._employeeSearch()
+    // this._employeeSearch()
+    this.getpreSendNum()
   },
   mounted() {
     const that = this
@@ -319,10 +355,39 @@ export default {
     })
   },
   methods: {
+    handleClick(val) {
+      console.log('tab切换了-------', val)
+      if (val.name === 'first') {
+        this.listQuery.orderStatus = ''
+      } else {
+        this.listQuery.orderStatus = '10'
+      }
+      this.$emit('changeTab', val.name)
+      this.listQuery.currentPage = 1
+      this.searchList()
+    },
+    orderStatusChange(val) {
+      console.log('val', val)
+      this.listQuery.currentPage = 1
+      this.searchList()
+    },
     // 搜索回调了
     searchList() {
       console.log('this.listQuery', this.listQuery)
+      this.getpreSendNum()
       this.$emit('search', 'searchForm', this.listQuery)
+    },
+    getpreSendNum() {
+      // if (this.showListLoading) {
+      //   this.loadingCountReceived = true
+      // }
+      this.loadingCountReceived = true
+      getCountReceived(this.listQuery).then(res => {
+        this.loadingCountReceived = false
+        if (res.data >= 0) {
+          this.preSendNum = res.data
+        }
+      })
     },
     remoteMethod(val) {
       this.selectloading = true
@@ -404,15 +469,24 @@ export default {
       })
     },
     _employeeSearch() {
-      employeeSearch({
-        merCode: this.merCode,
-        pageSize: 10000,
-        status: 1
-      }).then(res => {
-        // 获取门店员工
-        if (res.data) {
-          this.employeeData = res.data.data
+      console.log('1111111----_employeeSearch')
+      return new Promise((resolve, reject) => {
+        if (Array.isArray(this.employeeData) && this.employeeData.length) {
+          return resolve(this.employeeData)
         }
+        employeeSearch({
+          merCode: this.merCode,
+          pageSize: 10000,
+          status: 1
+        }).then(res => {
+          // 获取门店员工
+          if (res.data) {
+            this.employeeData = res.data.data
+            resolve(res.data.data)
+          }
+        }).catch(error => {
+          reject(error)
+        })
       })
     },
     handleChangeOrderStatus(val) {
@@ -442,17 +516,6 @@ export default {
       this.listQuery.currentPage = 1
       this.searchList()
     },
-    //  handleChangeEmpId(val) {
-    //   // 接单员工选择改变时触发
-    //   this.storeList.map(v => {
-    //     if (v.id === val) {
-    //       this.chooseStore = v
-    //     }
-    //   })
-    //   this.listQuery.currentPage = 1
-    //   this._loadList()
-    //   this.getpreSendNum() // 获取待发货商品数量
-    // },
     exportFunc: throttle(async function() {
       console.log('导出')
       exportData(this.listQuery)
