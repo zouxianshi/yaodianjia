@@ -1,6 +1,6 @@
 <template>
   <div class="win-record-modal app-container">
-    <el-form :model="activeBase" label-width="100">
+    <el-form :model="activeBase" label-width="100" style="position: relative">
       <el-form-item style="margin-bottom: 0;" label="活动类型：">
         {{ activeBase.activityTemplateCode === "TA003" ? '大转盘' : activeBase.activityTemplateCode === "TA004" ? '刮刮乐' : '' }}
       </el-form-item>
@@ -10,8 +10,13 @@
       <el-form-item style="margin-bottom: 0;" label="活动时间：">
         {{ formatDate(activeBase.beginTime) }} ~ {{ formatDate(activeBase.endTime) }}
       </el-form-item>
+      <div class="exportRecord">
+        <el-button type="primary" size="mini" style="margin-right: 24px" @click="exportTabel">批量导出</el-button>
+        <exportRecordTabel />
+        <span class="tips">提示：批量导出功能最多一次导出50000条数据</span>
+      </div>
     </el-form>
-    <el-table :data="tableData" height="calc(100vh - 350px)" style="width: 100%" :loading="loading">
+    <el-table :data="tableData" height="calc(100vh - 400px)" style="width: 100%" :loading="loading">
       <el-table-column plabel="奖品类型">
         <template slot-scope="scope">
           {{ fomart(scope.row.prizeType) }}
@@ -36,10 +41,14 @@
   </div>
 </template>
 <script>
-import { queryWinningList } from '@/api/winning-use'
+import { queryWinningList, exportPrizeList } from '@/api/winning-use'
 import { ActivityDetail } from '@/api/coupon'
 import { formatDate } from '@/utils/timer'
+import exportRecordTabel from './_source/exportRecord'
 export default {
+  components: {
+    exportRecordTabel
+  },
   data() {
     return {
       loading: false,
@@ -96,6 +105,14 @@ export default {
     },
     formatDate(val) {
       return formatDate(val)
+    },
+    // 导出记录
+    exportTabel() {
+      const params = Object.assign({}, this.pageInfo, this.searchParams)
+      params.pageSize = 50000
+      exportPrizeList(params).then(res => {
+        console.log(res)
+      })
     }
   }
 }
@@ -104,8 +121,15 @@ export default {
 .win-record-modal{
   .page-info{
     text-align: right;
-    margin-top: 10px;
     width: 100%;
+  }
+  .exportRecord{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+  .tips{
+    color: #aaa; font-size: 14px;
   }
 }
 </style>
