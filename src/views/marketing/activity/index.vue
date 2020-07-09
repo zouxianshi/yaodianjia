@@ -129,6 +129,7 @@ export default {
         },
         {
           lable: '新人礼包',
+          listLabel: '新人礼包列表',
           img: newComer,
           desc: '每个新注册微商城的用户都可以获取新人礼包一份，包含优惠券、海贝、抽奖福利等',
           listUrl:
@@ -205,6 +206,7 @@ export default {
         {
           value: 'constituteGoods',
           lable: '组合商品',
+          listLabel: '组合商品列表',
           name: 'constituteGoods',
           img: groupGoods,
           listUrl: '/marketing/activity/constitute-goods',
@@ -218,6 +220,7 @@ export default {
           value: 'Squeegee',
           name: 'SqueeGee',
           lable: '刮刮乐',
+          listLabel: '刮刮乐列表',
           desc: '刮刮刮，商户可以建立多场刮刮乐活动，用户满足一定条件门槛后便可参与刮奖活动，简单又好玩',
           img: SqueeGee,
           listUrl: '/marketings/activity-manage/turntable/guaList?code=TA004&name=刮刮乐',
