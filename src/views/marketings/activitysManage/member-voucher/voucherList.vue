@@ -27,7 +27,7 @@
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="100"
+        :total="totalCount"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -43,7 +43,8 @@ export default {
       pageInfo: {
         currentPage: 1,
         pageSize: 10
-      }
+      },
+      totalCount: 0
     }
   },
   created() {
@@ -54,13 +55,21 @@ export default {
       sessionStorage.setItem('conditionJson', rows.conditionJson)
       this.$router.push('/activity/member-voucher-detail?id=' + rows.id)
     },
-    handleSizeChange(e) {},
-    handleCurrentChange(e) {},
+    handleSizeChange(e) {
+      this.pageInfo.pageSize = e
+      this.getData()
+    },
+    handleCurrentChange(e) {
+      this.pageInfo.currentPage = e
+      this.pageInfo.pageSize = 1
+      this.getData()
+    },
     getData() {
       const params = Object.assign({}, this.pageInfo)
       couponHistoryList(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.records
+          this.totalCount = res.data.total
         }
       })
     }
