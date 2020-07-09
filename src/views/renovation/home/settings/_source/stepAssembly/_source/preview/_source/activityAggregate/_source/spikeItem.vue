@@ -1,21 +1,21 @@
 <template>
-  <div class="markup-item-model">
-    <div class="mim-img">
+  <div class="spike-item-model">
+    <div class="sim-img">
       <m-item-no-data height="158px" :size="50" />
     </div>
-    <div class="mim-name">
+    <div class="sim-name">
       <span>999三九感冒灵颗感999三九感冒灵颗感</span>
     </div>
-    <div class="mim-price">
-      <span class="mim-t1">秒杀价</span>
-      <span class="mim-t2">¥2999</span>
-      <span class="mim-t3">立省 ¥29</span>
+    <div class="sim-price">
+      <span class="sim-t1">秒杀价</span>
+      <span class="sim-t2">¥2999</span>
+      <span class="sim-t3">立省 ¥29</span>
     </div>
-    <div class="mim-qg-num">
+    <div class="sim-qg-num">
       <div class="min-bar"><div class="bar" /></div>
       <div class="min-text-1">已抢购20%</div>
     </div>
-    <div class="mim-btn">
+    <div class="sim-btn">
       <el-button type="danger" round size="mini">去抢购</el-button>
     </div>
   </div>
@@ -23,7 +23,7 @@
 <script>
 import mItemNoData from './../../../../itemNoData'
 export default {
-  name: 'AgaTwoItem',
+  name: 'MarkupItem',
   data() {
     return {}
   },
@@ -52,16 +52,16 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .markup-item-model {
+  .spike-item-model {
     width: 100%;
     background: #fff;
     border-radius: 4px;
     position: relative;
     padding-bottom: 10px;
-    .mim-img {
+    .sim-img {
       height: 158px;
     }
-    .mim-name {
+    .sim-name {
       >span {
         padding: 8px 8px 2px 8px;
         display: inline-block;
@@ -70,19 +70,19 @@ export default {
         line-height: 18px;
       }
     }
-    .mim-price {
+    .sim-price {
       padding:2px 8px;
       position: relative;
-      .mim-t1 {
+      .sim-t1 {
         font-size: 12px;
         color: #3E3E3E;
       }
-      .mim-t2 {
+      .sim-t2 {
         font-size: 13px;
         color: #F32525;
         padding: 0 2px;
       }
-      .mim-t3 {
+      .sim-t3 {
         font-size: 12px;
         color: #C3C3C3;
         position: absolute;
@@ -90,7 +90,7 @@ export default {
         top: 6px;
       }
     }
-    .mim-qg-num {
+    .sim-qg-num {
       padding: 12px 8px;
       position: relative;
       .min-bar {
@@ -114,7 +114,7 @@ export default {
         transform: scale(0.8);
       }
     }
-    .mim-btn {
+    .sim-btn {
       text-align: center;
       .el-button {
         padding:4px 10px;

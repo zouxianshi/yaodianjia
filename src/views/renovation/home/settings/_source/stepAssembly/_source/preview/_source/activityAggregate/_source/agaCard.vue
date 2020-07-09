@@ -9,7 +9,7 @@
     <div class="acm-content">
       <slot />
     </div>
-    <div class="acm-more">
+    <div v-if="type === 'together' || type === 'fullReduction'" class="acm-more">
       <span>查看更多 >></span>
     </div>
   </div>
@@ -70,6 +70,15 @@ export default {
         top: 6px;
         &.acm-icon-together {
           background: url('./../img/title_together.png') no-repeat;
+        }
+        &.acm-icon-spike {
+          background: url('./../img/title_spike.png') no-repeat;
+        }
+        &.acm-icon-special {
+          background: url('./../img/title_special.png') no-repeat;
+        }
+        &.acm-icon-fullReduction {
+          background: url('./../img/title_fullReduction.png') no-repeat;
         }
         &.acm-icon-markup {
           background: url('./../img/title_markup.png') no-repeat;

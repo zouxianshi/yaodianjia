@@ -535,9 +535,9 @@ export default () => {
           {
             uuid: `${uuid('activityAggregate-')}${uuid()}${uuid()}${uuid()}`,
             type: 'activityAggregate',
-            typeName: '活动商品',
+            typeName: '活动集合',
             subType: 'first',
-            name: '默认样式',
+            name: '默认显示全部活动',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`activityAggregate_first`])
           }

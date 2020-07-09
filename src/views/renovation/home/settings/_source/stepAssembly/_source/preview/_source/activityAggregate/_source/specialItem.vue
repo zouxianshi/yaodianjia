@@ -1,29 +1,25 @@
 <template>
-  <div class="together-item-model">
-    <div class="tim-img">
+  <div class="special-item-model">
+    <div class="mim-img">
       <m-item-no-data height="158px" :size="50" />
     </div>
-    <div class="tim-name">
+    <div class="mim-name">
       <span>999三九感冒灵颗感999三九感冒灵颗感</span>
     </div>
-    <div class="tim-price">
-      <span class="tim-t1">团购价</span>
-      <span class="tim-t2">¥2999</span>
-      <span class="tim-t3">¥3999</span>
+    <div class="mim-price">
+      <span class="mim-t1">秒杀价</span>
+      <span class="mim-t2">¥2999</span>
+      <span class="mim-t3">立省 ¥29</span>
     </div>
-    <div class="tim-groups">
-      <m-avatar />
-    </div>
-    <div class="tim-btn">
-      <el-button type="danger" round size="mini">立即拼单</el-button>
+    <div class="mim-btn">
+      <el-button type="danger" round size="mini">立即抢购</el-button>
     </div>
   </div>
 </template>
 <script>
-import mAvatar from './avatar'
 import mItemNoData from './../../../../itemNoData'
 export default {
-  name: 'TogetherItem',
+  name: 'SpecialItem',
   data() {
     return {}
   },
@@ -47,20 +43,21 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: { mItemNoData, mAvatar }
+  components: { mItemNoData }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  .together-item-model {
+  .special-item-model {
     width: 100%;
     background: #fff;
     border-radius: 4px;
     position: relative;
-    .tim-img {
+    padding-bottom: 10px;
+    .mim-img {
       height: 158px;
     }
-    .tim-name {
+    .mim-name {
       >span {
         padding: 8px 8px 2px 8px;
         display: inline-block;
@@ -69,32 +66,31 @@ export default {
         line-height: 18px;
       }
     }
-    .tim-price {
+    .mim-price {
       padding:2px 8px;
-      .tim-t1 {
+      position: relative;
+      .mim-t1 {
         font-size: 12px;
         color: #3E3E3E;
       }
-      .tim-t2 {
+      .mim-t2 {
         font-size: 13px;
         color: #F32525;
         padding: 0 2px;
       }
-      .tim-t3 {
+      .mim-t3 {
         font-size: 12px;
         color: #C3C3C3;
-        text-decoration:line-through;
+        position: absolute;
+        right: 6px;
+        top: 6px;
       }
     }
-    .tim-groups {
-      padding: 8px 8px;
-    }
-    .tim-btn {
-      position: absolute;
-      right: 6px;
-      bottom: 11px;
+    .mim-btn {
+      text-align: center;
+      padding-top: 8px;
       .el-button {
-        padding:4px 6px;
+        padding:4px 10px;
       }
     }
   }
