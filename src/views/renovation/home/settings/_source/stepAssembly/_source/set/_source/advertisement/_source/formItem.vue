@@ -22,9 +22,6 @@
         <el-form-item label="链接地址" :rules="[{ required: true}]">
           <el-input v-model="item.url" style="width: calc(100% - 101px)" readonly />
           <el-button icon="el-icon-link" @click="dialogVisible = true">选择链接 </el-button>
-          <div v-if="error.isUrl" class="sa-assembly-error">
-            {{ error.isUrl }}
-          </div>
         </el-form-item>
       </el-form>
     </div>
@@ -49,8 +46,7 @@ export default {
       dialogVisible: false,
       item: {},
       error: {
-        isImg: false,
-        isUrl: false
+        isImg: false
       }
     }
   },
@@ -70,7 +66,7 @@ export default {
   },
   methods: {
     $verification() {
-      const { img, url } = this.item
+      const { img } = this.item
       let flag = true
 
       this.reset()
@@ -80,17 +76,11 @@ export default {
         flag = false
       }
 
-      if (!url) {
-        this.error.isUrl = '请选择轮播图链接'
-        flag = false
-      }
-
       return flag
     },
     reset() {
       this.error = _.assign(this.error, {
-        isImg: false,
-        isUrl: false
+        isImg: false
       })
     },
     onLink({ url }) {
