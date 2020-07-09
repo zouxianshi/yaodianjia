@@ -1,6 +1,15 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
 
+// 查询商户营销平台类型,type=1 进入老微商城,type=2 进入新海典商城
+export function queryPlatformType(params) {
+  return request({
+    url: `${config.merGoods}/1.0/merPlatformInfo/queryPlatformType/${params.merCode}`,
+    method: 'post',
+    data: {}
+  })
+}
+
 // 查询中心店
 export function queryCenterStore(params) {
   return request({

@@ -31,8 +31,9 @@ export function exportData(params) {
 // 导出商品--新
 export function exportDataNew(params) {
   return request({
-    url: `${config.merchandise}/1.0/ds/op/file/template/product/export?ids=${params.ids}`,
-    method: 'get',
+    url: `${config.merchandise}/1.0/ds/op/file/template/product/export`,
+    method: 'post',
+    data: params,
     isExport: true,
     responseType: 'blob'
   })
@@ -50,6 +51,15 @@ export function getProductList(params) {
 export function setComAddGoods(params) {
   return request({
     url: `${config.merGoods}/1.0/commodity`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 校验海典标库商品是否已导入
+export function checkComGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/check`,
     method: 'post',
     data: params
   })
@@ -92,7 +102,7 @@ export function setBatchGroup(params) {
 // 批量设置限购
 export function setLimitBuyNum(params) {
   return request({
-    url: `${config.merchandise}/1.0/comm-spec/_limit`,
+    url: `${config.merGoods}/1.0/commodity/_limit`,
     method: 'post',
     data: params
   })
@@ -106,7 +116,14 @@ export function getImportList(params) {
     data: params
   })
 }
-
+// 导入历史
+export function getImportRecode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/excel/_search`,
+    method: 'post',
+    data: params
+  })
+}
 // 删除匹配
 export function deletePair(params) {
   return request({

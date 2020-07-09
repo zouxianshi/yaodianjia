@@ -1,8 +1,11 @@
 <template>
-  <!-- 新消息图标 暂时用定位放在这里 -->
-  <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
-    <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
-  </el-badge>
+  <div>
+    <!-- 新消息图标 暂时用定位放在这里 -->
+    <el-badge class="msg-notice-btn" :is-dot="hasNewMsg">
+      <i :class="`el-icon-chat-dot-round ${hasNewMsg&&'shaking'}`" @click="msgBtnClick" />
+    </el-badge>
+    <audio ref="audio" :src="audioUrl" />
+  </div>
 </template>
 
 <script>
@@ -11,11 +14,14 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import Chat from '@/utils/chat'
 import { getToken } from '@/utils/auth'
 
+import mp3MsgTip from '@/assets/mp3/msg.wav'
+
 export default {
   data() {
     return {
       // 收到的新消息体
-      newMsg: null
+      newMsg: null,
+      audioUrl: mp3MsgTip
     }
   },
   computed: {
@@ -33,24 +39,30 @@ export default {
     }
   },
   created() {
-    console.log('消息图标组件, created', this.hasNewMsg)
+    console.log('into 消息图标组件 created', this.hasNewMsg)
     const _this = this
     this.querySupportStaffById()
       .then(() => {
+        console.warn('ready to chat init')
         // 获取到融云token后 开始IMLib初始化
         Chat.init({
           ryToken: this.ryToken,
           // 收到消息监听
           onReceived: message => {
+            console.warn('进入页面Chat.init onReceived回调', message)
             this.newMsg = message
             // 通知在线咨询组件有新消息
+            // 在线咨询当前选中用户id
             console.log('消息组件，收到消息', message)
+
+            // sound tip
+            this.playAudio()
 
             const { userId } = _this.curOnlineUserData
 
             // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知
             if (_this.$route.path === '/customerService/consultation') {
-              console.log('当前在咨询页面:curOnlineUserData', _this.curOnlineUserData, message.senderUserId)
+              console.warn('当前在咨询页面:curOnlineUserData', _this.curOnlineUserData, message.senderUserId)
 
               // 判断接收的消息是否来自当前打开窗口的用户 是则直接追加消息 否则在左侧会话头像添加徽标
               if (userId.toString() === message.content.extra.userId.toString()) {
@@ -69,9 +81,9 @@ export default {
                   _this.scrollToBottom()
                 }, 100)
               } else {
-                console.log('不是来自当前窗口的用户', 'userId:', userId, 'messageUserId:', message.content.extra.userId)
+                console.warn('不是来自当前窗口的用户', 'userId:', userId, 'messageUserId:', message.content.extra.userId)
                 _this.addBadgeToOnlineUser({
-                  userId: message.senderUserId,
+                  userId: message.content.extra.userId,
                   message
                 })
               }
@@ -83,12 +95,12 @@ export default {
               }
               console.log('goto addBadgeToOnlineUser')
               _this.addBadgeToOnlineUser({
-                userId: message.senderUserId,
+                userId: message.content.extra.userId,
                 message
               })
               console.log('goto setCurOnlineUserId')
               _this.setCurOnlineUserId({
-                userId: message.senderUserId
+                userId: message.content.extra.userId
               })
               _this.addMsgToOnlineCurUserMsgList({
                 type: 'listener', // 类型 来自融云消息监听
@@ -111,7 +123,7 @@ export default {
                 _this.$notify({
                   type: 'info',
                   title: '您有新的消息',
-                  message: Chat.symbolToEmoji(message.content.content),
+                  message: message.messageType === 'GoodsMessage' ? '【商品消息】' : message.messageType === 'ImageMessage' ? '【图片消息】' : Chat.symbolToEmoji(message.content.content),
                   duration: 5000,
                   onClick: e => {
                     console.log('click e', e)
@@ -200,6 +212,8 @@ export default {
         console.error('err', err)
       })
   },
+  mounted() {
+  },
   methods: {
     ...mapMutations({
       addMsgToOnlineCurUserMsgList:
@@ -212,6 +226,9 @@ export default {
           'customerService/setWebSocketConnectionStatus',
       setCurOnlineUserId: 'customerService/SET_CUR_ONLINE_USERID'
     }),
+    playAudio() {
+      this.$refs.audio.play()
+    },
     // 通过token生成融云token
     querySupportStaffById() {
       return new Promise((resolve, reject) => {
@@ -280,7 +297,7 @@ export default {
             msgtype: 1, // 消息类型,1-请求，2-应答
             platform: 3, // 平台,1-android,2-ios,3-web
             platformVersion: 'v1', // 平台版本
-            systemType: 2, //  1-小蜜，2-药店加
+            systemType: 2, //  1-小蜜，2-海典健康微商城
             token: cToken, // 	中台用户登录的token
             version: 1 // 协议版本
           }
@@ -350,11 +367,6 @@ export default {
 
 <style scoped lang="scss">
   .msg-notice-btn {
-    position: fixed;
-    top: 16px;
-    right: 330px;
-    z-index: 200;
-    color: #fff;
 
     @keyframes fade {
       from {
@@ -380,6 +392,10 @@ export default {
       }
     }
     i {
+      width: 100px;
+      height: 32px;
+      cursor: pointer;
+      opacity: 0;
       &.shaking {
         animation: fade 1000ms infinite;
       }

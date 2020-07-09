@@ -2,13 +2,16 @@
   <div class="app-wrapper">
     <div class="layout-wary">
       <div class="sidebar-box" :style="{width:!isOpen ? ' 255px' : '64px'}">
-        <m-sidebar v-model="isOpen" :res-list="resList" :nav-list="navList" :sys-router="$router" :def-page="$route.path" />
+        <m-sidebar v-model="isOpen" :res-list="resList" :def-page="$route.path" />
       </div>
       <div class="app-main-box" :style="_styleToggle">
         <div class="flx" :style="_styleToggle">
-          <r-y v-if="showMsgBtn" />
           <m-header>
+            <tags-view slot="tags" />
             <breadcrumb slot="breadcrumb" />
+            <div slot="consultation">
+              <r-y v-auth:staff.online-ask />
+            </div>
           </m-header>
         </div>
         <div class="app-main-model">
@@ -130,8 +133,9 @@ const {McCopyright} = mCommon
       width: calc(100% - 255px);
       z-index: 1;
       .app-main-model {
-        margin-top: 130px;
+        margin-top: 152px;
         background: #F5F7FA;
+        padding-top: 20px;
         .copyright {
           height: 20px;
           line-height: 20px;

@@ -39,10 +39,13 @@
             <el-checkbox v-model="form.isfloatingFreight" :true-label="1" :false-label="0">浮动费用：</el-checkbox>
           </template>
           <span style="float: left">超出</span>
-          <div :class="{'el-form-item is-error':form.isfloatingFreight && form.floatOverKilometers <= 0}" style="float: left;margin-left: 5px;margin-right: 5px">
+          <div :class="{'el-form-item is-error':form.isfloatingFreight && !/^\d+(\.\d{0,1})?$/.test(form.floatOverKilometers)}" style="float: left;margin-left: 5px;margin-right: 5px">
             <div class="el-form-item__content">
-              <el-input v-model.number="form.floatOverKilometers" style="width: 100px" size="mini" maxlength="5" :disabled="!form.isfloatingFreight" />
-              <div v-if="form.isfloatingFreight && form.floatOverKilometers <= 0" class="el-form-item__error"> 请输入大于0的值 </div>
+              <el-input v-model="form.floatOverKilometers" style="width: 100px" size="mini" maxlength="5" :disabled="!form.isfloatingFreight" />
+              <div v-if="form.isfloatingFreight">
+                <div v-if="form.floatOverKilometers <= 0" class="el-form-item__error"> 请输入大于0的值 </div>
+                <div v-else-if="!/^\d+(\.\d{0,1})?$/.test(form.floatOverKilometers)" class="el-form-item__error"> 最多1位小数 </div>
+              </div>
             </div>
           </div>
 
@@ -282,12 +285,17 @@ export default {
       this.visable = true
     },
     submit() {
-      if (this.form.isfloatingFreight === 1 && (!this.form.floatOverKilometers ||
-        this.form.floatOverKilometers === '' ||
-        this.form.floatOverKilometers <= 0 ||
-        !this.form.cashOnDelivery ||
-        !/^\d+(\.\d{0,2})?$/.test(this.form.cashOnDelivery) ||
-        this.form.cashOnDelivery <= 0)) {
+      if (
+        this.form.isfloatingFreight === 1 &&
+        (
+          !this.form.floatOverKilometers ||
+          !/^\d+(\.\d{0,1})?$/.test(this.form.floatOverKilometers) ||
+          this.form.floatOverKilometers <= 0 ||
+          !this.form.cashOnDelivery ||
+          !/^\d+(\.\d{0,2})?$/.test(this.form.cashOnDelivery) ||
+          this.form.cashOnDelivery <= 0
+        )
+      ) {
         console.log('dddd')
         return
       }
@@ -295,8 +303,11 @@ export default {
         this.form.freeEntryThreshold = null
       }
       console.log(this.form)
+
+      const p = { ...this.form, floatOverKilometers: Number(this.form.floatOverKilometers) }
+
       this.loading = true
-      saveDeliverySettings(this.form).then(res => {
+      saveDeliverySettings(p).then(res => {
         if (res.code === '10000') {
           this.loading = false
           this.dismiss()

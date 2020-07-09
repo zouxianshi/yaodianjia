@@ -17,6 +17,7 @@
       </el-tab-pane>
     </el-tabs>
   </div>
+
 </template>
 <script>
 // import discountCoupons from '@/assets/image/acvity/discount-coupons.png'
@@ -42,9 +43,10 @@ export default {
         {
           value: 'discount-coupons',
           lable: '折扣券',
+          listLabel: '折扣券列表',
           img: discountImg,
           desc:
-            '',
+            '建立直接打折的优惠券，直观优惠',
           listUrl: '/marketings/gift-manage/list?id=1',
           linkUrl: '/marketings/gift-manage/discount',
           createText: '新建折扣券'
@@ -52,9 +54,10 @@ export default {
         {
           value: 'full-cut-coupons',
           lable: '满减券',
+          listLabel: '满减券列表',
           img: fullReductionImg,
           desc:
-            '',
+            '建立满多少直接减优惠的券，冲击力强',
           listUrl: '/marketings/gift-manage/list?id=2',
           linkUrl: '/marketings/gift-manage/full-reduction',
           createText: '新建满减券'
@@ -62,28 +65,20 @@ export default {
         {
           value: 'gift-certificate',
           lable: '礼品券',
+          listLabel: '礼品券列表',
           img: giftImg,
           desc:
-            '',
+            '建立礼品券，给用户直接发放礼品',
           listUrl: '/marketings/gift-manage/list?id=3',
           linkUrl: '/marketings/gift-manage/gift',
           createText: '新建礼品券'
         }
-        // ,
-        // {
-        //   value: 'discount-code',
-        //   lable: '优惠码',
-        //   img: zengpinImg,
-        //   desc:
-        //     '',
-        //   listUrl: '',
-        //   linkUrl: ''
-        // }
       ],
       complimentary: [
         {
           value: 'complimentary',
           lable: '赠品',
+          listLabel: '赠品列表',
           name: 'GiftsComplimentaryCreate',
           img: complimentary,
           createText: '新增赠品',
@@ -96,17 +91,10 @@ export default {
     }
   },
   watch: {
-    // deep: true,
-    // immediate: true,
-    // $route(newRoute) {
-    //   console.log(newRoute, '新路由')
-    //   this.activeName = newRoute.query.type // 这里就是新的query
-    // }
     '$route': {
       deep: true,
       immediate: true,
       handler(newRoute) {
-        console.log(newRoute, '新路由')
         this.activeName = newRoute.query.type // 这里就是新的query
       }
     }
@@ -122,19 +110,13 @@ export default {
 }
 </script>
 <style lang="scss">
-.app-container.activity {
-  background: #f7f7f7;
-  padding: 0;
-  .el-tabs__header {
-    background: #fff;
-    padding: 0 20px;
-    padding-top: 40px;
+  .app-container {
+    .activity {
+      padding: 0;
+      .el-tabs__nav-wrap::after {
+        height: 0;
+      }
+    }
   }
-  .el-tabs__nav-wrap::after {
-    height: 0;
-  }
-  .el-tabs__content {
-    padding: 0 20px;
-  }
-}
+
 </style>

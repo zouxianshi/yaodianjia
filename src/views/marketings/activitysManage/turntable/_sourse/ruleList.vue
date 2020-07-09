@@ -25,15 +25,6 @@
           :disabled="isRuning"
           @input="daterangeChange"
         />
-        <!-- <el-date-picker
-          v-model="ruleForm.activeTime"
-          :disabled="isRuning"
-          type="datetimerange"
-          range-separator="至"
-          :picker-options="pickerOptions"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        /> -->
       </el-form-item>
       <el-form-item label="活动说明" prop="activityNote">
         <el-input
@@ -51,6 +42,25 @@
           style="width:400px"
           placeholder="解释说明，最多20字"
         />
+      </el-form-item>
+      <el-form-item label="封面上传" prop="cover">
+        <el-upload
+          v-loading="uploadLoading"
+          class="avatar-uploader x-uploader"
+          :action="upLoadUrl"
+          :headers="headers"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+        >
+          <span v-if="!ruleForm.cover || ruleForm.cover === ''" style="width: 178px; height: 178px; display:block; line-height: 178px; font-weight: bold">
+            <i slot="default" class="el-icon-plus" />
+          </span>
+          <img v-else :src="showImg(ruleForm.cover)" class="avatar">
+        </el-upload>
+        <span style="color:#999">
+          （用于个人中心精彩活动聚合页展示，建议上传图片尺寸750*200，不大于2m，格式jpg、png）
+        </span>
       </el-form-item>
       <el-form-item>
         <div v-if="intrShow && this.$route.query.code==='TA003'" class="intrwarning">
@@ -149,6 +159,9 @@
           />次
         </span>
       </el-form-item>
+      <el-form-item label="是否推荐到员工分享" label-width="200">
+        <el-switch v-model="ruleForm.isShare" />
+      </el-form-item>
     </el-form>
     <div style="margin-left:30px">
       <el-button type="primary" @click="submitForm('ruleForm')">下一步</el-button>
@@ -157,6 +170,8 @@
 </template>
 <script>
 import { formatDate } from '@/utils/timer'
+import { mapGetters } from 'vuex'
+import config from '@/utils/config'
 export default {
   name: 'RuleList',
   props: {
@@ -218,14 +233,11 @@ export default {
       callback()
     }
     return {
+      uploadLoading: false,
       intrShow: false,
-      // pickerOptions: {
-      //   disabledDate(time) {
-      //     return time.getTime() < new Date(new Date().getTime() - 86400000)
-      //   }
-      // },
       // activeTime: [], // 活动有效期
       ruleForm: {
+        isShare: false, // 是否推荐到员工分享
         activeTime: [], // 活动有效期
         activityDetailName: '', // 活动名称
         bottomNote: '', // 底部文案
@@ -238,7 +250,8 @@ export default {
         countRule: '', // 次数限制
         dayLimit: '', // 每天限制
         personLimit: '', // 每人限制
-        activeLimit: '' // 活动参与
+        activeLimit: '', // 活动参与
+        cover: ''
       },
       rules: {
         activityDetailName: [
@@ -269,6 +282,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['merCode', 'token']),
+    upLoadUrl() { // 图片上传路径
+      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImgAny?merCode=${this.merCode}`
+    },
+    headers() {
+      return { Authorization: this.token }
+    },
     isPageUpdateOrView() {
       // 判断编辑还是查看页面
       if (this.params.pageState === 2) {
@@ -307,9 +327,44 @@ export default {
       // 监听按人限制变化
     }
   },
-  mounted() {
-  },
   methods: {
+    beforeAvatarUpload(file) { // 图片上传之前
+      const isImg =
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/jpg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message({
+          message: '上传图片大小不能超过 2MB!',
+          type: 'warning'
+        })
+        return false
+      }
+      if (!isImg) {
+        this.$message({
+          message: '请上传jpeg、png、jpg格式的图片',
+          type: 'warning'
+        })
+        return false
+      }
+      if (isImg) {
+        this.uploadLoading = true
+      }
+      return isImg
+    },
+    handleAvatarSuccess(res, file) { // 图片上传成功
+      if (res.code === '10000') {
+        this.ruleForm.cover = res.data
+        this.uploadLoading = false
+      } else {
+        this.uploadLoading = false
+        this.$message({
+          message: res.msg,
+          type: 'error'
+        })
+      }
+    },
     daterangeChange(e) {
       const _this = this
       _this.$nextTick(() => {
@@ -355,8 +410,8 @@ export default {
             })
             return false
           }
+          this.ruleForm.isShare = this.ruleForm.isShare ? 1 : 0
           this.$emit('handleNext', 2, this.ruleForm)
-          this.$emit('getcouponList', this.ruleForm)
         } else {
           return false
         }
@@ -394,4 +449,27 @@ export default {
     cursor: pointer;
   }
 }
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>

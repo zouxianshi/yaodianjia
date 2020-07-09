@@ -19,6 +19,18 @@
           :disabled="disabled"
         />
       </el-form-item>
+      <el-form-item label="活动描述：">
+        <el-input
+          v-model="form.description"
+          :disabled="disabled"
+          type="textarea"
+          :placeholder="disabled ? '':'不超过200字'"
+          maxlength="200"
+          :rows="4"
+          show-word-limit
+          style="width: 380px;"
+        />
+      </el-form-item>
       <el-form-item ref="activitTime" label="活动时间：" prop="activitTime">
         <el-date-picker
           v-model="form.activitTime"
@@ -79,19 +91,32 @@
         <select-goods ref="storeGods" :disabled="disabled" @del-item="delSelectGoods" />
       </el-form-item>
       <div class="form-title">换购规则</div>
+      <el-form-item label="活动规则：" required>
+        <el-radio-group
+          v-model="form.exchangeRuleSelection"
+          :disabled="disabled"
+          @change="exchangeRuleSelectionChange"
+        >
+          <el-radio :label="0">订单金额（元）</el-radio>
+          <el-radio :label="1">商品数量（件）</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item ref="threshold" label="活动门槛：" prop="threshold">
         <template>
           <el-input-number
             v-model="form.threshold"
-            :step="0.01"
+            :step="form.exchangeRuleSelection === 0?0.01:1"
             controls-position="right"
             step-strictly
-            :min="0.01"
-            :max="99999999"
+            :min="form.exchangeRuleSelection === 0?0.01:1"
+            :max="form.exchangeRuleSelection === 0?99999999:999"
             :disabled="disabled"
             style="width: 150px; margin-right: 8px"
-          />元
-          <span class="info">以最终下单支付的金额计算</span>
+          />
+          {{ form.exchangeRuleSelection === 0?'元' : '件' }}
+          <span
+            class="info"
+          >{{ form.exchangeRuleSelection === 0?'以最终下单支付的金额计算' : '以最终下单支付的件数计算' }}</span>
         </template>
       </el-form-item>
       <el-form-item label="换购商品：" required>
@@ -233,7 +258,9 @@ export default {
         type: ['1'],
         allStore: false,
         allSpec: false,
-        threshold: ''
+        threshold: '',
+        description: '',
+        exchangeRuleSelection: 0 // 换购规则选择：0-订单金额（元），1-商品数量（件）
       },
       rules: {
         name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
@@ -301,6 +328,7 @@ export default {
             this.form = {
               name: data.pmtName,
               activitTime: [data.startTime, data.endTime],
+              description: data.description,
               allStore: !!data.allStore,
               allSpec: !!data.allSpec,
               type: data.userCoupons === 3 ? ['1'] : [],
@@ -308,7 +336,9 @@ export default {
               confineNum: data.activityDetail.confineNum,
               ruleList: data.activityDetail.ruleList,
               startTime: data.startTime,
-              endTime: data.endTime
+              endTime: data.endTime,
+              exchangeRuleSelection:
+                data.activityDetail.exchangeRuleSelection || 0
             }
             this.chooseStore = Array.isArray(data.storeResDTOList)
               ? data.storeResDTOList
@@ -363,6 +393,7 @@ export default {
     delActivityGoods(item, index) {
       console.log('item, index', item, index)
       this.storeActivityGoods.splice(index, 1)
+      console.log('this.storeActivityGoods-----', this.storeActivityGoods)
       this.$refs.activityGod.dataFrom(this.storeActivityGoods)
       // this.storeActivityGoods = this.storeActivityGoods
     },
@@ -399,7 +430,8 @@ export default {
                 'allStore',
                 'endTime',
                 'startTime',
-                'name'
+                'name',
+                'description'
               ])
               let userCoupons = ''
               // 需要增加组装的参数    userCoupons  pmtRule:{ruleList, confineNum, threshold, userCoupons} activitySpecList storeIds merCode: this.merCode,
@@ -445,6 +477,7 @@ export default {
                 activitySpecList: specIdData, //
                 storeIds: storeIdData,
                 pmtRule: {
+                  exchangeRuleSelection: this.form.exchangeRuleSelection,
                   confineNum: this.form.confineNum,
                   threshold: this.form.threshold,
                   ruleList: res
@@ -526,6 +559,18 @@ export default {
         this.$message.success(msg)
         this.$router.replace('/marketing/activity/list/15')
       }
+    },
+    // 满减规格设置
+    exchangeRuleSelectionChange(val) {
+      console.log('exchangeRuleSelection----', val)
+      // 满减门槛元/件 0元1件
+      // 单位切换，如果切换为件，那么优惠内容只能为打折，否则维持原状
+      this.form.exchangeRuleSelection = val
+      if (val === 1) {
+        this.form.threshold = 1
+      } else {
+        this.form.threshold = 0.01
+      }
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -557,7 +602,11 @@ export default {
 </script>
 <style lang='scss' scoped>
 .app-container {
-  padding-bottom: 80px;
+  // padding-bottom: 80px;
+  // margin-bottom: 80px;
+  .el-form {
+    margin-bottom: 80px;
+  }
   .form-title {
     line-height: 14px;
     font-size: 14px;
@@ -569,15 +618,25 @@ export default {
     color: #b3b3b3;
   }
   .action-wapper {
-    position: absolute;
+    // position: absolute;
+    // padding: 12px;
+    // bottom: 0;
+    // left: 0;
+    // right: 0;
+    // background: #fff;
+    // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    // text-align: center;
+    // z-index: 1;
+    position: fixed !important;
     padding: 12px;
     bottom: 0;
-    left: 0;
+    left: 255px;
     right: 0;
+    z-index: 3000;
     background: #fff;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    text-align: center;
-    z-index: 1;
+    text-align: right;
+    width: calc(100% - 255px);
   }
 }
 </style>

@@ -17,11 +17,11 @@
         <!-- <el-table-column prop="date" label="消息模板类型" width="200">
           <template
             slot-scope="scope"
-          >{{ scope.row.modelType.toString() ==='1'? '卡券提醒' : '' || scope.row.modelType.toString() ==='2'? '订单提醒' : '' || scope.row.modelType.toString() ==='3'? '模块消息' : '' }}</template>
+          >{{ scope.row.modelType.toString() ==='1'? '卡券提醒' : '' || scope.row.modelType.toString() ==='2'? '订单提醒' : '' || scope.row.modelType.toString() ==='3'? '模板消息' : '' }}</template>
         </el-table-column> -->
-        <el-table-column prop="modelTime" label="推送时间" />
         <el-table-column prop="modelCode" label="模板编号" />
-        <el-table-column prop="modelHead" label="消息标题" />
+        <el-table-column prop="modelName" label="消息标题" />
+        <el-table-column prop="modelTime" label="触发推送" />
         <el-table-column prop="modelUrl" label="页面跳转" />
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
@@ -31,17 +31,23 @@
               inactive-color="#dcdfe6"
               @change="switchChange(scope.row)"
             />
+            <el-button type="text" size="mini" @click="editMessage(scope.row)">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <m-edit-rules ref="messageEdit" @frushData="getDate" />
   </div>
 </template>
 <script>
+import mEditRules from './editRules'
 import { searchWxTemp, setTemplate } from '@/api/channelService'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Message',
+  components: {
+    mEditRules
+  },
   props: {},
   data() {
     return {
@@ -53,17 +59,9 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
-  watch: {},
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
   mounted() {
     this.getDate()
   },
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
     handleChange(val) {
       this.getDate()
@@ -113,6 +111,9 @@ export default {
         this.tableData = tableData
         this.loading = false
       })
+    },
+    editMessage(data) {
+      this.$refs.messageEdit.open(data)
     }
   }
 }

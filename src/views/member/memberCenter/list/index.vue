@@ -41,7 +41,7 @@
               <i class="el-icon-download el-icon--right" />
             </el-button>
             <exportTable />
-            <span class="tips">提示：批量导出功能最多一次导出100000条数据</span>
+            <span class="tips">提示：批量导出功能最多一次导出50000条数据</span>
           </el-form-item>
         </el-form>
       </div>
@@ -79,7 +79,9 @@ export default {
       content: '',
       loading: false,
       isNoData: false,
-      paramsBac: {},
+      paramsBac: {
+
+      },
       pageInfo: {
         pageSize: 10,
         currentPage: 1,
@@ -166,7 +168,10 @@ export default {
     },
     // 导出会员
     exportTabel() {
-      exportMembers(this.paramsBac).then(res => {
+      var params = _.cloneDeep(this.paramsBac)
+      params.pageSize = 50000
+      params.currentPage = 1
+      exportMembers(params).then(res => {
         if (res.code === '10000') {
           this.$alert(
             '会员列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',

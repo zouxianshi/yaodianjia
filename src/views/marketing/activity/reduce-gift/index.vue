@@ -38,6 +38,18 @@
           </div>
         </template>
       </el-form-item>
+      <el-form-item label="活动描述：">
+        <el-input
+          v-model="form.description"
+          :disabled="disabled"
+          type="textarea"
+          :placeholder="disabled ? '':'不超过200字'"
+          maxlength="200"
+          :rows="4"
+          show-word-limit
+          style="width: 380px;"
+        />
+      </el-form-item>
       <el-form-item ref="activitTime" label="活动时间：" prop="activitTime">
         <el-date-picker
           v-model="form.activitTime"
@@ -108,7 +120,7 @@
           <el-tooltip class="item" effect="dark" placement="top-start">
             <div slot="content">
               循环次数说明
-              <br>循环满减最多循环1000次，比如每满100件10元，最多减10000元
+              <br>循环满减最多循环1000次，比如每满100减10元，最多减10000元
             </div>
             <el-radio :label="0">
               循环满减
@@ -293,7 +305,7 @@
     <!-- 门店列表 -->
     <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!-- 选择赠品组件 -->
-    <store-goods-gifts ref="storeGiftsComponent" :limit-max="1" @commit="handleGiftList" />
+    <store-goods-gifts ref="storeGiftsComponent" :limit-max="5" @commit="handleGiftList" />
   </div>
 </template>
 
@@ -341,6 +353,7 @@ export default {
         allStore: false,
         allSpec: false,
         imgUrl: '',
+        description: '',
         ruleType: 1, // 循环0/阶梯1
         img: '1',
         uint: 0, // 满减门槛元/件 0元1件
@@ -447,7 +460,9 @@ export default {
                   ...item,
                   checkOrNot: !!item.checkOrNot,
                   giftOrNot: !!item.giftOrNot,
-                  giftList: item.giftSpecDTO ? [item.giftSpecDTO] : [],
+                  giftList: Array.isArray(item.giftSpecDTO)
+                    ? item.giftSpecDTO
+                    : [],
                   discountType: item.discountType,
                   [`discount${item.discountType}`]: item.discount
                 }
@@ -460,6 +475,7 @@ export default {
               allSpec: !!data.allSpec,
               type: data.userCoupons === 3 ? ['1'] : [],
               img: data.imgUrl ? '2' : '1',
+              description: data.description,
               imgUrl: data.imgUrl,
               ruleType,
               uint,
@@ -767,7 +783,8 @@ export default {
             'endTime',
             'startTime',
             'name',
-            'imgUrl'
+            'imgUrl',
+            'description'
           ])
           // 需要增加组装的参数    userCoupons  pmtRule:{ruleList, ruleType} activitySpecList storeIds merCode: this.merCode,
           if (Array.isArray(this.form.type)) {
@@ -1015,15 +1032,25 @@ export default {
     margin: 10px 0;
   }
   .action-wapper {
-    position: absolute;
+    // position: absolute;
+    // padding: 12px;
+    // bottom: 0;
+    // left: 0;
+    // right: 0;
+    // background: #fff;
+    // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    // text-align: center;
+    // z-index: 1;
+    position: fixed !important;
     padding: 12px;
     bottom: 0;
-    left: 0;
+    left: 255px;
     right: 0;
+    z-index: 3000;
     background: #fff;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    text-align: center;
-    z-index: 1;
+    text-align: right;
+    width: calc(100% - 255px);
   }
 }
 </style>

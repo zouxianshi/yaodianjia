@@ -1,25 +1,23 @@
 <template>
-  <div class="app-container">
-    <el-dialog title="批量审核" :visible.sync="isShow" :append-to-body="true">
-      <el-form ref="form" :model="form" :rules="rules">
-        <el-form-item label="选择结果：" label-width="120px" prop="result">
-          <el-radio v-model="form.result" :label="1">通过</el-radio>
-          <el-radio v-model="form.result" :label="2">拒绝</el-radio>
-        </el-form-item>
-        <el-form-item v-if="form.result===2" label="拒绝原因：" label-width="120px" prop="reason">
-          <el-select v-model="form.reason" size="small">
-            <el-option label="药店加平台已存在改商品" :value="1" />
-            <el-option label="商品信息不够规范合格" :value="2" />
-            <el-option label="其他原因" :value="3" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="isShow = false">取 消</el-button>
-        <el-button type="primary" @click="confirm()">确 定</el-button>
-      </div>
-    </el-dialog>
-  </div>
+  <el-dialog title="批量审核" :visible.sync="isShow" :append-to-body="true">
+    <el-form ref="form" :model="form" :rules="rules">
+      <el-form-item label="选择结果：" label-width="120px" prop="result">
+        <el-radio v-model="form.result" :label="1">通过</el-radio>
+        <el-radio v-model="form.result" :label="2">拒绝</el-radio>
+      </el-form-item>
+      <el-form-item v-if="form.result===2" label="拒绝原因：" label-width="120px" prop="reason">
+        <el-select v-model="form.reason" size="small">
+          <el-option label="海典健康微商城平台已存在改商品" :value="1" />
+          <el-option label="商品信息不够规范合格" :value="2" />
+          <el-option label="其他原因" :value="3" />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="isShow = false">取 消</el-button>
+      <el-button type="primary" @click="confirm()">确 定</el-button>
+    </div>
+  </el-dialog>
 </template>
 <script>
 export default {

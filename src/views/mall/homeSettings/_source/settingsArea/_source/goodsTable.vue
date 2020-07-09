@@ -61,6 +61,10 @@ export default {
     itemList: {
       type: Array,
       default: () => []
+    },
+    gSource: {
+      type: String,
+      default: 'home'
     }
   },
   methods: {
@@ -122,8 +126,16 @@ export default {
         this.$message.error('当前组件只能添加（1）个商品！')
         return
       }
-      await this.$emit('on-update', activesData)
-      this.$parent.closeDrawer()
+      if (this.gSource === 'home') {
+        await this.$emit('on-update', activesData)
+        this.$parent.closeDrawer()
+      } else {
+        this.$emit('on-update', activesData, is => {
+          if (is) {
+            this.$parent.closeDrawer()
+          }
+        })
+      }
     }
   },
   watch: {
@@ -133,7 +145,7 @@ export default {
   },
   created() {
     this.searchParams.merCode = this.$store.getters.merCode
-    this.activesData = _.cloneDeep(this.itemList)
+    this.activesData = _.reject(_.cloneDeep(this.itemList), v => !v.commodityId)
     this.getData()
   },
   beforeMount() {

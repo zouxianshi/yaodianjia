@@ -84,7 +84,6 @@
           <!-- <el-table-column prop="startTime" label="开始时间" min-width="180" align="center" />
           <el-table-column prop="endTime" label="结束时间" min-width="180" align="center" />-->
           <el-table-column label="状态" min-width="80" align="center">
-            >
             <template slot-scope="scope">
               <el-tag v-if="scope.row.status=='1'" size="small">正常</el-tag>
               <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
@@ -157,14 +156,17 @@
               <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
             </el-form-item>
             <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
-              <el-input
-                v-model="xForm.linkUrl"
-                size="small"
-                autocomplete="off"
-                style="width: 350px"
-                :maxlength="1000"
-                placeholder="http:// 或 https://"
-              />
+              <el-tooltip class="item" effect="dark" :content="xForm.linkUrl" placement="left-start">
+                <el-input
+                  v-model="xForm.linkUrl"
+                  size="small"
+                  autocomplete="off"
+                  style="width: 280px"
+                  :maxlength="1000"
+                  placeholder="http:// 或 https://"
+                />
+              </el-tooltip>
+              <el-button icon="el-icon-link" size="small" @click="dialogUrlVisible = true">选择链接</el-button>
             </el-form-item>
             <el-form-item label="启用状态" :label-width="formLabelWidth">
               <el-switch v-model="xForm.status" />
@@ -188,7 +190,7 @@
                 v-model="xForm.sort"
                 size="small"
                 autocomplete="off"
-                style="width: 350px"
+                style="width: 380px"
                 :maxlength="5"
                 placeholder="正整数"
               />
@@ -200,10 +202,20 @@
                 autocomplete="off"
                 placeholder="10字以内"
                 :maxlength="10"
-                style="width: 350px"
+                style="width: 380px"
               />
             </el-form-item>
           </el-form>
+          <el-drawer
+            :wrapper-closable="false"
+            destroy-on-close
+            append-to-body
+            size="600px"
+            :visible.sync="dialogUrlVisible"
+          >
+            <div slot="title">选择链接</div>
+            <m-links-table v-if="dialogUrlVisible" :url="xForm.linkUrl" @on-link="_onLink" />
+          </el-drawer>
         </div>
         <div class="preview-box">
           <p class="title">
@@ -232,6 +244,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import mLinksTable from '../mall/homeSettings/_source/settingsArea/_source/linksTable'
 import {
   queryCenterStore,
   getPageSets,
@@ -245,15 +258,16 @@ import config from '../../utils/config'
 
 export default {
   name: 'Banner',
+  components: { mLinksTable },
   data() {
     const checkWebsite = (rule, value, callback) => {
       if (value === '') {
         // callback(new Error('请输入链接地址'))
         callback()
       }
-      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-        callback(new Error('链接格式不正确，例：http://111.com'))
-      }
+      // if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+      //   callback(new Error('链接格式不正确，例：http://111.com'))
+      // }
       callback()
     }
     const checkNum = (rule, value, callback) => {
@@ -263,6 +277,7 @@ export default {
       callback()
     }
     return {
+      dialogUrlVisible: false,
       saveLoading: false,
       dialogImageUrl: '',
       dialogVisible: false,
@@ -337,6 +352,9 @@ export default {
     this.fetchData()
   },
   methods: {
+    _onLink({ url }) {
+      this.xForm.linkUrl = url
+    },
     fetchData() {
       this._queryCenterStore().then(res => {
         if (res.code === '10000' && res.data) {
@@ -381,9 +399,9 @@ export default {
         } else {
           if (
             this.searchForm.timeBeg &&
-              this.searchForm.timeEnd &&
-              this.searchForm.timeBeg !== '' &&
-              this.searchForm.timeEnd !== ''
+            this.searchForm.timeEnd &&
+            this.searchForm.timeBeg !== '' &&
+            this.searchForm.timeEnd !== ''
           ) {
             // 比较时间
             const start = this.searchForm.timeBeg.replace(/[- :]/g, '')
@@ -510,9 +528,9 @@ export default {
     },
     beforeUpload(file) {
       const isType =
-          file.type === 'image/jpeg' ||
-          file.type === 'image/jpg' ||
-          file.type === 'image/png'
+        file.type === 'image/jpeg' ||
+        file.type === 'image/jpg' ||
+        file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isType) {
         this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
@@ -725,42 +743,41 @@ export default {
 }
 </script>
 <style lang="scss">
-  .scope-img-wrap {
-    width: 60px;
-    height: 40px;
-    background: #f5f5f5;
-    margin: auto;
-    img {
-      width: 100%;
-      height: 100%;
-    }
-  }
-  .x-dialog-body {
+.scope-img-wrap {
+  width: 60px;
+  height: 40px;
+  background: #f5f5f5;
+  margin: auto;
+  img {
     width: 100%;
-    display: flex;
-    .form-box {
-      flex: 1;
+    height: 100%;
+  }
+}
+.x-dialog-body {
+  width: 100%;
+  display: flex;
+  .form-box {
+    flex: 1;
+  }
+  .preview-box {
+    flex: 0 0 250px;
+    .title {
+      font-size: 18px;
     }
-    .preview-box {
-      flex: 0 0 250px;
-      .title {
-        font-size: 18px;
-      }
-      .prview-pic {
-        margin-top: 20px;
-        width: 100%;
-        height: 450px;
-      }
-    }
-    .test-1 {
-      color: red;
+    .prview-pic {
+      margin-top: 20px;
+      width: 100%;
+      height: 450px;
     }
   }
+  .test-1 {
+    color: red;
+  }
+}
 
-  .note-grey {
-    font-size: 14px;
-    line-height: 1.1;
-    color: #999999;
-  }
+.note-grey {
+  font-size: 14px;
+  line-height: 1.1;
+  color: #999999;
+}
 </style>
-

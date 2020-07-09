@@ -101,7 +101,7 @@ module.exports = {
             compress: {
               drop_console: process.env.VUE_APP_ENV && process.env.VUE_APP_ENV === 'production', // 非开发环境console
               drop_debugger: process.env.VUE_APP_ENV && process.env.VUE_APP_ENV === 'production', // 非开发环境去除debugger
-              pure_funcs: ['console.log']// 移除console
+              pure_funcs: process.env.VUE_APP_ENV && process.env.VUE_APP_ENV === 'production' ? ['console.log'] : [] // 移除console
             }
           }
         })
@@ -112,6 +112,7 @@ module.exports = {
       vuex: 'Vuex',
       'vue-router': 'VueRouter',
       jquery: '$',
+      swiper: 'Swiper',
       lodash: '_',
       'element': 'ELEMENT',
       'vuedraggable': 'vuedraggable',

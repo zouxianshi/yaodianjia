@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加轮播图</el-button>
+      <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd()">添加公告</el-button>
       <section @keydown.enter="search()">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
           <!-- <div class="search-item">
@@ -22,7 +22,7 @@
               placeholder="结束时间"
               @change="handleTimeChange($event, 2)"
             />
-          </div>-->
+          </div> -->
           <div class="search-item">
             <span class="label-name" style="width: 50px">状态</span>
             <el-select
@@ -40,49 +40,25 @@
             </el-select>
           </div>
           <div class="search-item">
-            <span class="label-name" style="width: 50px">备注</span>
-            <el-input v-model.trim="searchForm.remark" size="small" style="width: 200px" />
-          </div>
-          <div class="search-item">
             <el-button size="small" @click="search()">查 询</el-button>
           </div>
         </div>
       </section>
-      <section class="table-box webkit-scroll" style="height: calc(100% - 180px);overflow: auto">
+      <section class="table-box" style="height: calc(100% - 180px);overflow: auto">
         <el-table :data="tableData" style="width: 100%">
           <el-table-column label="序号" width="60" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.sortNumber || '' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="img" label="图片" min-width="100" align="center">
-            <template slot-scope="scope">
-              <div v-if="scope.row.imageUrl && scope.row.imageUrl!==''" class="x-img-mini">
-                <div class="x-image__preview">
-                  <el-image
-                    style="width: 50px;height: 50px;"
-                    fit="contain"
-                    :src="showImg(scope.row.imageUrl)"
-                    :preview-src-list="[showImg(scope.row.imageUrl)]"
-                  />
-                </div>
-              </div>
-              <div v-else style="line-height: 32px">暂未上传</div>
-            </template>
-          </el-table-column>
+          <el-table-column prop="announcement" label="展示内容" min-width="150" />
           <el-table-column prop="url" label="链接地址" min-width="240">
             <template v-if="scope.row.url && scope.row.url!==''" slot-scope="scope">
-              <a
-                class="x-a-text"
-                title="跳转链接"
-                :href="scope.row.url || ''"
-                target="_blank"
-                v-text="scope.row.url || ''"
-              />
+              <a class="x-a-text" title="跳转链接" :href="scope.row.url || ''" target="_blank" v-text="scope.row.url || ''" />
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="startTime" label="开始时间" min-width="180" align="center" />
-          <el-table-column prop="endTime" label="结束时间" min-width="180" align="center" />-->
+          <!-- <el-table-column prop="startTime" label="开始时间" min-width="150" align="center" />
+          <el-table-column prop="endTime" label="结束时间" min-width="150" align="center" /> -->
           <el-table-column label="状态" min-width="80" align="center">
             >
             <template slot-scope="scope">
@@ -90,22 +66,11 @@
               <el-tag v-if="scope.row.status=='0'" size="small" type="info">停用</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" min-width="120" align="center" />
           <el-table-column label="操作" align="center" min-width="240">
             <template slot-scope="scope">
               <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-              <el-button
-                v-if="scope.row.status===0"
-                type="primary"
-                size="mini"
-                @click="handleChangeStatus(scope.row)"
-              >启用</el-button>
-              <el-button
-                v-if="scope.row.status===1"
-                type="info"
-                size="mini"
-                @click="handleChangeStatus(scope.row)"
-              >停用</el-button>
+              <el-button v-if="scope.row.status===0" type="primary" size="mini" @click="handleChangeStatus(scope.row)">启用</el-button>
+              <el-button v-if="scope.row.status===1" type="info" size="mini" @click="handleChangeStatus(scope.row)">停用</el-button>
               <el-button type="danger" size="mini" @click="handleDel(scope.row)">删除</el-button>
             </template>
           </el-table-column>
@@ -125,108 +90,78 @@
       </section>
     </div>
     <el-dialog
-      :title="`${xForm.id==''? '添加':'修改'}轮播图`"
+      :title="`${xForm.id==''? '添加':'修改'}公告`"
       append-to-body
       :visible.sync="dialogFormVisible"
       width="800px"
       :close-on-click-modal="false"
       @closed="dialogClose('xForm')"
     >
-      <div v-loading="uploadLoading" element-loading-text="图片上传中" class="x-dialog-body">
+      <div class="x-dialog-body">
         <div class="form-box">
           <el-form ref="xForm" :model="xForm" :rules="xRules">
-            <el-form-item label="图片" :label-width="formLabelWidth" prop="imgUrl">
-              <el-upload
-                class="avatar-uploader x-uploader"
-                :headers="headers"
-                :action="upLoadUrl"
-                :show-file-list="false"
-                :on-success="handleUploadSuccess"
-                :on-error="handleUploadError"
-                :before-upload="beforeUpload"
-              >
-                <div v-if="xForm.imgUrl" class="el-img-box">
-                  <img :src="showImg(xForm.imgUrl)" class="image">
-                  <div class="img-actions" @click.stop>
-                    <i class="icon el-icon-upload2" title="上传" @click.stop="handleUpload" />
-                    <i class="icon el-icon-delete" title="删除" @click.stop="handleRemove" />
-                  </div>
-                </div>
-                <i v-else class="el-icon-plus icon-add" />
-              </el-upload>
-              <p class="note-grey">建议尺寸750*300像素，每张图片大小限制在80kb以内</p>
+            <el-form-item label="公告文字" :label-width="formLabelWidth" prop="notice">
+              <el-input
+                v-model="xForm.notice"
+                autocomplete="off"
+                style="width: 410px"
+                :maxlength="15"
+                placeholder="最多输入15字"
+              />
             </el-form-item>
             <el-form-item label="设置链接" :label-width="formLabelWidth" prop="linkUrl">
               <el-input
                 v-model="xForm.linkUrl"
                 size="small"
                 autocomplete="off"
-                style="width: 350px"
-                :maxlength="1000"
+                style="width: 310px"
+                :maxlength="500"
                 placeholder="http:// 或 https://"
               />
+              <el-button icon="el-icon-link" size="small" @click="dialogUrlVisible = true">选择链接</el-button>
             </el-form-item>
             <el-form-item label="启用状态" :label-width="formLabelWidth">
               <el-switch v-model="xForm.status" />
             </el-form-item>
             <!-- <el-form-item label="时间段" :label-width="formLabelWidth" prop="startTime">
               <el-date-picker
-                v-model="xForm.dateRange"
-                style="width: 350px"
+                v-model="searchForm.timeEnd"
                 size="small"
-                type="datetimerange"
+                type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
-                range-separator="至"
-                :default-time="['00:00:00','23:59:59']"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                @change="handleTimeChange($event, 3)"
+                placeholder="结束时间"
+                @change="handleTimeChange($event, 2)"
               />
-            </el-form-item>-->
+            </el-form-item> -->
             <el-form-item label="序号" :label-width="formLabelWidth" prop="sort">
-              <el-input
-                v-model="xForm.sort"
-                size="small"
-                autocomplete="off"
-                style="width: 350px"
-                :maxlength="5"
-                placeholder="正整数"
-              />
-            </el-form-item>
-            <el-form-item label="备注" :label-width="formLabelWidth">
-              <el-input
-                v-model="xForm.remark"
-                size="small"
-                autocomplete="off"
-                placeholder="10字以内"
-                :maxlength="10"
-                style="width: 350px"
-              />
+              <el-input v-model="xForm.sort" autocomplete="off" style="width: 410px" :maxlength="5" placeholder="正整数" />
             </el-form-item>
           </el-form>
         </div>
         <div class="preview-box">
           <p class="title">
-            <label style="font-weight: bold">内容位置：</label> 首页-轮播图
+            <label style="font-weight: bold">内容位置：</label> 首页-公告
           </p>
           <div class="prview-pic">
-            <img src="../../assets/image/h5/priview_1.png" style="width:100%;height:100%">
+            <img src="../../assets/image/h5/priview_2.png" style="width:100%;height:100%">
           </div>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          size="small"
-          :loading="saveLoading"
-          @click="handleSubmit('xForm')"
-        >确 定</el-button>
+        <el-button type="primary" size="small" :loading="saveLoading" @click="handleSubmit('xForm')">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="showImg(dialogImageUrl)" alt>
-    </el-dialog>
+    <el-drawer
+      :wrapper-closable="false"
+      destroy-on-close
+      append-to-body
+      size="600px"
+      :visible.sync="dialogUrlVisible"
+    >
+      <div slot="title">选择链接</div>
+      <m-links-table v-if="dialogUrlVisible" :url="xForm.linkUrl" @on-link="_onLink" />
+    </el-drawer>
   </div>
 </template>
 
@@ -241,19 +176,19 @@ import {
   delPageSet,
   updatePageSetStatus
 } from '../../api/wxmall'
-import config from '../../utils/config'
+import mLinksTable from '../mall/homeSettings/_source/settingsArea/_source/linksTable'
 
 export default {
-  name: 'Banner',
+  name: 'Notice',
   data() {
     const checkWebsite = (rule, value, callback) => {
       if (value === '') {
         // callback(new Error('请输入链接地址'))
         callback()
       }
-      if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
-        callback(new Error('链接格式不正确，例：http://111.com'))
-      }
+      // if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+      //   callback(new Error('链接格式不正确，例：http://111.com'))
+      // }
       callback()
     }
     const checkNum = (rule, value, callback) => {
@@ -263,10 +198,8 @@ export default {
       callback()
     }
     return {
+      dialogUrlVisible: false,
       saveLoading: false,
-      dialogImageUrl: '',
-      dialogVisible: false,
-      disabled: false,
       currentRole: 'adminDashboard',
       // I-01	轮播图
       // I-02	公告
@@ -277,7 +210,7 @@ export default {
       // I-00	主页名称
       // I-F2-1	精彩活动单张广告位
       // I-F2-2	精彩活动商品广告位
-      positionCode: 'I-01',
+      positionCode: 'I-02',
       statusOptions: [
         { id: 1, label: '全部', value: '' },
         { id: 2, label: '正常', value: '1' },
@@ -299,44 +232,46 @@ export default {
       dialogFormVisible: false,
       xForm: {
         id: '',
-        imgUrl: '',
+        notice: '',
         linkUrl: '',
-        sort: '',
-        remark: '',
-        status: true
+        status: true,
+        sort: ''
       },
       xRules: {
-        imgUrl: [{ required: true, message: '请上传图片', trigger: 'blur' }],
-        linkUrl: [{ validator: checkWebsite, trigger: 'blur' }],
+        notice: [
+          { required: true, message: '请输入公告文字', trigger: 'blur' }
+        ],
+        linkUrl: [
+          { validator: checkWebsite, trigger: 'blur' }
+        ],
         startTime: [
           { required: true, message: '请选择时间段', trigger: 'change' }
         ],
-        sort: [{ validator: checkNum, trigger: 'blur' }]
+        sort: [
+          { validator: checkNum, trigger: 'blur' }
+        ]
       },
       editDetail: null, // 编辑详情
-      formLabelWidth: '80px',
-      uploadLoading: false
+      formLabelWidth: '80px'
     }
   },
   computed: {
-    ...mapGetters(['roles', 'merCode']),
-    uploadFileUrl() {
-      return `${this.uploadFileURL}`
-    },
-    headers() {
-      return { Authorization: this.$store.getters.token }
-    },
+    ...mapGetters(['roles']),
     merCode() {
       return this.$store.state.user.merCode || ''
     },
-    upLoadUrl() {
-      return `${this.uploadFileURL}${config.merGoods}/1.0/file/_upload?merCode=${this.merCode}`
+    uploadFileUrl() {
+      return `${this.uploadFileURL}`
     }
   },
   created() {
     this.fetchData()
   },
+  components: { mLinksTable },
   methods: {
+    _onLink({ url }) {
+      this.xForm.linkUrl = url
+    },
     fetchData() {
       this._queryCenterStore().then(res => {
         if (res.code === '10000' && res.data) {
@@ -355,12 +290,6 @@ export default {
         this.$router.push('/storeSetting/chainSetting')
       })
     },
-    handleUpload() {
-      $('.el-img-box').click()
-    },
-    handleRemove() {
-      this.xForm.imgUrl = ''
-    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.pager.size = val
@@ -372,27 +301,19 @@ export default {
       this._getTableData()
     },
     handleTimeChange(val, type) {
-      if (type === 1 || type === 2) {
-        // 搜索栏 1.开始时间 2.结束时间
+      console.log(val, type)
+      if (type === 1 || type === 2) { // 搜索栏 1.开始时间 2.结束时间
         if (!val) {
-          type === 1
-            ? (this.searchForm.timeBeg = '')
-            : (this.searchForm.timeEnd = '')
+          type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
         } else {
-          if (
-            this.searchForm.timeBeg &&
-              this.searchForm.timeEnd &&
-              this.searchForm.timeBeg !== '' &&
-              this.searchForm.timeEnd !== ''
-          ) {
+          console.log('this.searchForm', this.searchForm)
+          if (this.searchForm.timeBeg && this.searchForm.timeEnd && this.searchForm.timeBeg !== '' && this.searchForm.timeEnd !== '') {
             // 比较时间
             const start = this.searchForm.timeBeg.replace(/[- :]/g, '')
             const end = this.searchForm.timeEnd.replace(/[- :]/g, '')
             if (parseInt(start) > parseInt(end)) {
               this.$message('结束时间必须大于开始时间')
-              type === 1
-                ? (this.searchForm.timeBeg = '')
-                : (this.searchForm.timeEnd = '')
+              type === 1 ? this.searchForm.timeBeg = '' : this.searchForm.timeEnd = ''
               return
             }
           }
@@ -404,8 +325,7 @@ export default {
         //   this.searchForm.timeBeg = ''
         //   this.searchForm.timeEnd = ''
         // }
-      } else if (type === 3) {
-        // dialog
+      } else if (type === 3) { // dialog
         if (val && val.length === 2) {
           this.xForm.startTime = val[0]
           this.xForm.endTime = val[1]
@@ -414,6 +334,8 @@ export default {
           this.xForm.endTime = ''
         }
       }
+      console.log('this.searchForm', this.searchForm)
+      console.log('this.xForm', this.xForm)
     },
     // 查询
     search() {
@@ -443,11 +365,10 @@ export default {
       // 信息查询
       this.xForm = {
         id: row.id,
-        imgUrl: row.imageUrl,
+        notice: row.announcement,
         linkUrl: row.url,
         status: row.status === 1,
-        sort: row.sortNumber,
-        remark: row.remark
+        sort: row.sortNumber
       }
       this.dialogFormVisible = true
     },
@@ -458,31 +379,18 @@ export default {
       // 表单重置
       this.xForm = {
         id: '',
-        imgUrl: '',
+        notice: '',
         linkUrl: '',
+        dateRange: '',
         sort: '',
-        remark: '',
         status: true
       }
       this.$refs[formName].resetFields()
     },
     handleSubmit(formName) {
       // 表单验证
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
-          // 验证结束时间
-          // const start_time = new Date(this.xForm.startTime).getTime()
-          // const end_time = new Date(this.xForm.endTime).getTime()
-          // const current_time = new Date().getTime()
-          // if (start_time >= end_time) {
-          //   this.$message.warning('结束时间必要大于开始时间')
-          //   return false
-          // }
-          // if (current_time >= end_time) {
-          //   this.$message.warning('结束时间必要大于当前时间')
-          //   return false
-          // }
-
           if (this.xForm.id === '') {
             // 新增
             this._addData()
@@ -496,45 +404,14 @@ export default {
         }
       })
     },
-    handleUploadError() {
-      this.uploadLoading = false
-    },
-    handleUploadSuccess(res, file) {
-      if (res.code === '10000') {
-        this.xForm.imgUrl = res.data || ''
-        this.$refs.xForm.clearValidate('imgUrl')
-      } else {
-        this.$message.error(res.msg)
-      }
-      this.uploadLoading = false
-    },
-    beforeUpload(file) {
-      const isType =
-          file.type === 'image/jpeg' ||
-          file.type === 'image/jpg' ||
-          file.type === 'image/png'
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isType) {
-        this.$message.warning('请上传 JPG、JPEG、PNG 格式的图片！')
-        return false
-      }
-      if (!isLt2M) {
-        this.$message.warning('请上传不超过 2M 的图片！')
-        return false
-      }
-      this.uploadLoading = true
-      return isType && isLt2M
-    },
     // 查询中心店（旗舰店）
     _queryCenterStore() {
       return new Promise((resolve, reject) => {
-        queryCenterStore({ merCode: this.merCode })
-          .then(res => {
-            resolve(res)
-          })
-          .catch(err => {
-            reject(err)
-          })
+        queryCenterStore({ merCode: this.merCode }).then(res => {
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     // 获取列表数据
@@ -563,6 +440,7 @@ export default {
             duration: 5 * 1000
           })
         }
+        console.log('res-1', res)
       })
     },
     // 获取数据详情
@@ -580,7 +458,7 @@ export default {
       }
       getPageSetDetail(params)
         .then(res => {
-          console.log('_getDataDetail', res)
+          console.log('res-1', res)
         })
         .catch(err => {
           console.log('err', err)
@@ -590,88 +468,84 @@ export default {
     _addData() {
       this.saveLoading = true
       const params = {
-        announcement: '',
+        announcement: this.xForm.notice,
         classId: '',
         createName: '',
-        id: '',
         status: this.xForm.status ? 1 : 0,
-        imageUrl: this.xForm.imgUrl,
+        id: '',
+        imageUrl: '',
         merCode: '',
         positionCode: this.positionCode,
-        remark: this.xForm.remark,
+        remark: '',
         productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
         url: this.xForm.linkUrl
       }
       console.log('add params', params)
-      addPageSet(params)
-        .then(res => {
-          if (res.code === '10000') {
-            this.$message({
-              message: '新增成功',
-              type: 'success'
-            })
-            this.dialogFormVisible = false
-            // 更新table
-            this._getTableData()
-          } else {
-            this.$message({
-              message: res.msg,
-              type: 'error',
-              duration: 5 * 1000
-            })
-          }
-          setTimeout(() => {
-            this.saveLoading = false
-          }, 500)
-        })
-        .catch(err => {
-          console.log('err', err)
+      addPageSet(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '新增成功',
+            type: 'success'
+          })
+          this.dialogFormVisible = false
+          // 更新table
+          this._getTableData()
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        setTimeout(() => {
           this.saveLoading = false
-        })
+        }, 500)
+      }).catch(err => {
+        console.log('err', err)
+        this.saveLoading = false
+      })
     },
     // 修改数据
     _editData() {
       this.saveLoading = true
       const params = {
-        announcement: '',
+        announcement: this.xForm.notice,
         classId: '',
         createName: '',
-        status: this.xForm.status ? 1 : 0,
         id: this.xForm.id,
-        imageUrl: this.xForm.imgUrl,
+        status: this.xForm.status ? 1 : 0,
+        imageUrl: '1',
         merCode: '',
         positionCode: this.positionCode,
-        remark: this.xForm.remark,
+        remark: '',
         productId: null, // 2-03 类型必填
         sortNumber: this.xForm.sort === '' ? null : this.xForm.sort,
         url: this.xForm.linkUrl
       }
-      editPageSet(params)
-        .then(res => {
-          if (res.code === '10000') {
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            this.dialogFormVisible = false
-            // 更新table
-            this._getTableData()
-          } else {
-            this.$message({
-              message: res.msg,
-              type: 'error',
-              duration: 5 * 1000
-            })
-          }
-          setTimeout(() => {
-            this.saveLoading = false
-          }, 500)
-        })
-        .catch(err => {
-          console.log('err', err)
+      editPageSet(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this.dialogFormVisible = false
+          // 更新table
+          this._getTableData()
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        setTimeout(() => {
           this.saveLoading = false
-        })
+        }, 500)
+      }).catch(err => {
+        console.log('err', err)
+        this.saveLoading = false
+      })
     },
     // 删除数据
     _delData(dataId) {
@@ -756,7 +630,6 @@ export default {
       color: red;
     }
   }
-
   .note-grey {
     font-size: 14px;
     line-height: 1.1;

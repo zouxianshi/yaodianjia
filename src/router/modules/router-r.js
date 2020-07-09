@@ -5,7 +5,7 @@ const router = [
     component: Layout,
     redirect: '/chainSetting',
     meta: {
-      title: '设置中心',
+      title: '渠道设置',
       icon: 'goods'
     },
     children: [
@@ -55,6 +55,30 @@ const router = [
           title: '微信小程序',
           icon: 'internalLink'
         }
+      },
+      {
+        path: 'comment-settings',
+        component: () => import('@/views/comment-settings/index'),
+        name: 'commentSettings',
+        hidden: true,
+        meta: {
+          title: '商城设置',
+          icon: 'commentSettings'
+          // auth: 'set.comment-settings'
+        },
+        children: [
+          {
+            path: 'manager',
+            component: () => import('@/views/comment-settings/manager'),
+            name: 'manager',
+            hidden: true,
+            meta: {
+              title: '评论管理',
+              icon: 'manager'
+              // auth: 'set.comment-settings'
+            }
+          }
+        ]
       }
     ]
   },

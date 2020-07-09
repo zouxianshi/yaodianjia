@@ -6,7 +6,7 @@
     >{{ numTips }}</el-alert>
     <div style="margin:20px 0">
       <el-form ref="formsGift" :model="formsGift" :rules="rulesGift">
-        <el-table :data="formsGift.selectedGift" style="width: 100%" height="calc(100vh - 430px)">
+        <el-table :data="formsGift.selectedGift" style="width: 100%" height="calc(100vh - 448px)">
           <el-table-column label="奖品顺序" type="index" width="100" />
           <el-table-column label="奖品类型">
             <template slot-scope="scope">{{ formatType(scope.row.giftType) }}</template>
@@ -24,19 +24,21 @@
                 v-model="scope.row.winRandom"
                 :disabled="isPageUpdateOrView || isRuning"
                 size="mini"
-                :precision="0"
+                :precision="2"
                 :step="1"
-                :min="1"
+                :min="0.01"
                 :max="100"
                 :controls="false"
-                style="width:60px"
+                style="width:70px"
               />
               <span style="font-size:16px">%</span>
             </template>
           </el-table-column>
           <el-table-column label="奖品数量">
             <template slot-scope="scope">
+              <el-input v-if="scope.row.giftNum===-1" disabled size="mini" style="width:100px" value="无限" />
               <el-input-number
+                v-else
                 v-model="scope.row.giftNum"
                 :disabled="isPageUpdateOrView || isRuning"
                 size="mini"
@@ -54,7 +56,7 @@
               <el-button
                 type="text"
                 size="small"
-                :disabled="isPageUpdateOrView || isRuning"
+                :disabled="scope.$index === 0 || isPageUpdateOrView || isRuning"
                 @click.native.prevent="deleteRow(scope.$index, formsGift.selectedGift)"
               >移除</el-button>
             </template>
@@ -64,14 +66,16 @@
     </div>
     <el-button
       type="primary"
+      size="mini"
       plain
       :disabled="formsGift.selectedGift.length>= 10 || isPageUpdateOrView || isRuning"
-      @click="dialogVisible = true;$refs.ruleForm && $refs.ruleForm.clearValidate()"
+      @click="addGifts"
     >添加奖品</el-button>
-    <div style="margin-top:40px">
-      <el-button type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
-      <el-button v-if="params.pageState!==2" type="primary" @click="submitData">保存并提交</el-button>
-      <el-button v-if="params.pageState===2" type="primary" @click="goBack">返回</el-button>
+    <span style="margin-left: 20%;color:#F56C6C">概率总计: {{ totalGl }}%</span>
+    <div style="margin-top:30px">
+      <el-button size="mini" type="primary" @click="$emit('handleNext', 1)">上一步</el-button>
+      <el-button v-if="params.pageState!==2" size="mini" type="primary" @click="submitData">保存并提交</el-button>
+      <el-button v-if="params.pageState===2" size="mini" type="primary" @click="goBack">返回</el-button>
     </div>
     <el-dialog title="添加奖品" :visible.sync="dialogVisible" width="70%" append-to-body>
       <el-form
@@ -91,20 +95,8 @@
           </el-select>
         </el-form-item>
         <el-form-item v-show="ruleForm.giftType===2" label="奖品内容" prop="giftContent">
-          <el-select
-            ref="giftIds"
-            v-model="ruleForm.giftId"
-            filterable
-            placeholder="请选择"
-            @change="changeGift"
-          >
-            <el-option
-              v-for="item in couponList"
-              :key="item.id"
-              :label="item.cname"
-              :value="item.id"
-            />
-          </el-select>
+          <el-button size="mini" @click="selectCoupon">选择优惠券</el-button>
+          <mSelectedCoupon ref="selectedCouponView" @onDel="onGetSelectCoupon" />
         </el-form-item>
         <el-form-item label="奖品图片" prop="giftImg">
           <el-upload
@@ -142,46 +134,56 @@
         <el-form-item label="中奖几率" prop="winRandom">
           <el-input-number
             v-model="ruleForm.winRandom"
-            :precision="0"
+            :precision="2"
             :step="1"
-            :min="1"
+            :min="0.01"
             :max="100"
             :controls="false"
             style="width:400px"
           />
-          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 20px; font-weight: 500;width: 30px;">％</span>
+          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">％</span>
+          <span style="margin-left: 24px;color: #F56C6C">剩余概率：{{ (10000 - (totalGl*100))/100 }}%</span>
         </el-form-item>
         <el-form-item label="奖品数量" prop="giftNum">
+          <!-- 在这 -->
+          <el-input
+            v-show="ruleForm.giftType === 5"
+            value="无限"
+            disabled
+            style="width:400px"
+          />
           <el-input-number
+            v-show="ruleForm.giftType !== 5"
             v-model="ruleForm.giftNum"
             :precision="0"
             :step="1"
-            :min="1"
+            :min="minNum"
             :max="100000"
             :controls="false"
             style="width:400px"
           />
-          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 20px; font-weight: 500;width: 30px;">份</span>
+          <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">份</span>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </span>
     </el-dialog>
+    <mCheckCoupon ref="checkCoupons" state="1" :timevalue="timevalue" :singlechoice="true" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
 <script>
-import { getCouponList } from '@/api/coupon'
 import { mapGetters } from 'vuex'
-import { formatDate } from '@/utils/timer'
 import config from '@/utils/config'
 import _ from 'lodash'
-// import discountpng from '@/assets/image/marketings/discountpng.png'
-// import coinpng from '@/assets/image/marketings/coin.png'
-// import giftpng from '@/assets/image/marketings/giftpng.png'
+import mCheckCoupon from '@/components/Marketings/checkCoupon'
+import mSelectedCoupon from '../../../_source/selectedCouNonum'
 export default {
   name: 'AwardSetting',
+  components: {
+    mCheckCoupon, mSelectedCoupon
+  },
   props: {
     params: {
       type: Object,
@@ -193,7 +195,7 @@ export default {
   data() {
     var validategiftNum = (rule, value, callback) => {
       if (
-        (Number(value) === 0 ||
+        (
           ('' + value).trim() === '' ||
           Number(value) > 100000)
       ) {
@@ -203,16 +205,29 @@ export default {
       }
     }
     return {
+      totalGl: 0,
+      minNum: 1, // 最小礼品数量
       uploadLoading: false,
       dialogVisible: false,
+      timevalue: [new Date(), new Date()],
+      selectedCoupons: [], // 已选择的优惠券列表
       formsGift: {
-        selectedGift: [] // 已选择的礼品券
+        selectedGift: [
+          {
+            giftContent: '谢谢参与',
+            giftImg: '',
+            giftName: '谢谢参与',
+            giftNum: -1,
+            giftType: 5,
+            winRandom: 1
+          }
+        ] // 已选择的礼品券
       },
       couponList: [],
       ruleForm: {
         giftId: null, // 选择优惠券时的id
         giftType: 1, // 礼品类型
-        giftNum: '', // 礼品数量
+        giftNum: 1, // 礼品数量
         giftName: '', // 礼品名称
         giftContent: '', // 礼品内容
         giftImg: '', // 礼品图片
@@ -224,7 +239,7 @@ export default {
         ],
         giftNum: [
           { required: true, message: '请设置奖品数量', trigger: 'blur' },
-          { validator: validategiftNum, trigger: 'change' }
+          { validator: validategiftNum, trigger: 'blur' }
         ]
       },
       rules: {
@@ -234,12 +249,32 @@ export default {
         giftNum: [
           { required: true, message: '请设置奖品数量', trigger: 'blur' },
           { validator: validategiftNum, trigger: 'change' }
-          // { required: true, message: '请设置奖品数量1~100000', trigger: 'blur' }
         ],
         giftContent: [
           { required: true, message: '请设置奖品内容', trigger: 'blur' }
         ]
       }
+    }
+  },
+  watch: {
+    formsGift: {
+      handler(newVal) { // 计算剩余中奖概率
+        let glTotal = 0
+        _.map(newVal.selectedGift, v => {
+          glTotal += v.winRandom
+        })
+        this.totalGl = parseInt(glTotal * 100) / 100
+      },
+      deep: true,
+      immediate: true
+    },
+    params: { // 将时间传给选择优惠券组件、筛选符合时间要求的优惠券
+      handler(newVal) {
+        this.timevalue = [newVal.beginTime, newVal.endTime]
+        console.log(this.timevalue)
+      },
+      deep: true,
+      immediate: true
     }
   },
   computed: {
@@ -278,10 +313,35 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getcouponList()
-  },
   methods: {
+    // 打开添加奖品弹窗
+    addGifts() {
+      this.dialogVisible = true
+      this.ruleForm = {
+        giftId: null, // 选择优惠券时的id
+        giftType: 1, // 礼品类型
+        giftNum: 1, // 礼品数量
+        giftName: '', // 礼品名称
+        giftContent: '', // 礼品内容
+        giftImg: '', // 礼品图片
+        winRandom: '' // 中
+      }
+      this.selectedCoupons = []
+      this.$refs.ruleForm && this.$refs.ruleForm.clearValidate()
+      this.onGetSelectCoupon(this.selectedCoupons)
+    },
+    selectCoupon() { // 选择优惠券
+      this.$refs.checkCoupons.handleGetlist()
+      this.$refs.checkCoupons.defaultcheck(this.selectedCoupons)
+    },
+    onGetSelectCoupon(selectedCoupons) {
+      if (selectedCoupons.length > 0) {
+        this.ruleForm.giftId = selectedCoupons[0].id
+        this.ruleForm.giftContent = selectedCoupons[0].cname
+      }
+      this.selectedCoupons = selectedCoupons
+      this.$refs.selectedCouponView.showPage(selectedCoupons, 1)
+    },
     goBack() {
       if (this.$route.query.code === 'TA003') {
         this.$router.push(
@@ -295,7 +355,7 @@ export default {
     },
     showImgs() {
       if (this.ruleForm.giftImg) {
-        return this.showImgHandler(this.ruleForm.giftImg)
+        return this.showImg(this.ruleForm.giftImg)
       } else {
         if (this.ruleForm.giftType === 2) {
           return require('../img/discountpng.png')
@@ -316,7 +376,7 @@ export default {
           return require('../img/giftpng.png')
         }
       } else {
-        return this.showImgHandler(data.giftImg)
+        return this.showImg(data.giftImg)
       }
     },
     deleteRow(index, table) {
@@ -348,6 +408,9 @@ export default {
             this.ruleForm.giftId = this.ruleForm.giftContent
             this.ruleForm.giftName = this.ruleForm.giftContent =
               this.ruleForm.giftContent + '海贝'
+          } else if (this.ruleForm.giftType === 5) {
+            this.ruleForm.giftNum = -1
+            this.ruleForm.giftName = this.ruleForm.giftContent
           } else {
             this.ruleForm.giftName = this.ruleForm.giftContent
           }
@@ -356,7 +419,7 @@ export default {
           this.ruleForm = {
             giftId: '', // 选择优惠券时的id
             giftType: 1, // 礼品类型
-            giftNum: '', // 礼品数量
+            giftNum: 1, // 礼品数量
             giftName: '', // 礼品名称
             giftContent: '', // 礼品内容
             giftImg: '', // 礼品图片
@@ -368,14 +431,11 @@ export default {
         }
       })
     },
-    changeGift() {
-      this.$nextTick(() => {
-        this.ruleForm.giftContent = this.$refs.giftIds.selectedLabel
-      })
-    },
     changeType() {
       var types = this.ruleForm.giftType
+      this.minNum = 1
       if (types === 5) {
+        this.ruleForm.giftNum = 1
         this.ruleForm.giftContent = '谢谢参与'
       } else if (types === 4) {
         this.ruleForm.giftContent = '再来一次'
@@ -391,21 +451,6 @@ export default {
       form.giftName = ''
       form.giftImg = ''
       form.winRandom = ''
-    },
-    getcouponList() {
-      const searchParams = {
-        cname: '',
-        ctype: 0,
-        busType: 0,
-        currentPage: 1,
-        pageSize: 999,
-        beginTime: formatDate(new Date())
-      }
-      getCouponList(searchParams).then(res => {
-        if (res.data && res.data.records) {
-          this.couponList = res.data.records
-        }
-      })
     },
     // 格式化表格数据：礼品类型
     formatType(type) {
@@ -495,9 +540,9 @@ export default {
       }
       var num = 0
       _.map(selected, item => {
-        num += item.winRandom * 100
+        num += item.winRandom * 10000
       })
-      if (num !== 100) {
+      if (parseInt(num) !== 10000) {
         this.$message({
           message: '奖品总中奖几率需等于100%',
           type: 'error'
@@ -512,7 +557,6 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss">
 .rule-awardSetting-modal {
-  padding-top: 10px;
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

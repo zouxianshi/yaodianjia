@@ -41,6 +41,7 @@
         <el-button type="text" style="margin-left: 20px" @click="onSetting(true)">设置</el-button>
         <el-switch
           v-model="form.status"
+          :disabled="true"
           :active-value="1"
           :inactive-value="0"
           style="margin-left: 200px"
@@ -373,7 +374,7 @@ export default {
             this.form.payAutoConfig = this.data.payAutoConfig
             this.form.payKey = this.data.payKey
             this.form.payType = this.data.payType
-            this.form.status = this.data.status
+            this.form.status = 1
             if (this.data.merchantCertificate) {
               this.fileList = [{
                 name: '商户证书',

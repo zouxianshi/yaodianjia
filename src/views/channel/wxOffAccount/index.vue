@@ -7,7 +7,7 @@
       <el-tab-pane label="自定义菜单" name="2" :disabled="isCustomDis">
         <m-custom-menu v-if="activeName === '2'" />
       </el-tab-pane>
-      <el-tab-pane label="模块消息" name="3">
+      <el-tab-pane label="模板消息" name="3" :disabled="isCustomDis">
         <mEssage v-if="activeName === '3'" />
       </el-tab-pane>
     </el-tabs>

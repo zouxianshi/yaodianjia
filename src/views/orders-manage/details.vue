@@ -187,7 +187,13 @@
             <!-- {{ detailsData.deliveryType ?'门店员工配送':'快递配送' }} -->
           </div>
           <div class="con">订单来源：微商城</div>
-          <div class="con">订单类型：{{ detailsData.prescriptionSheetMark | orderType }}</div>
+          <div class="con">
+            订单类型：
+            <span>
+              <span v-if="detailsData.prescriptionSheetMark === '1'">处方药订单</span>
+              <span v-else>{{ detailsData.orderType | orderType }}</span>
+            </span>
+          </div>
           <div v-if="detailsData.deliveryType!==2">
             <div
               v-if="detailsData.orderStatus!==6 && detailsData.deliveryType!==2"
@@ -199,6 +205,7 @@
           <div class="title">付款信息</div>
           <div class="con">付款方式：{{ detailsData.payMode ? '货到付款':'在线支付' }}</div>
           <div class="con">商品总额：￥{{ detailsData.totalOrderAmount }}</div>
+          <div v-if="detailsData.orderType === 'I'" class="con">海贝总额：{{ detailsData.totalActualHb }}</div>
           <div class="con">运费：￥{{ detailsData.actualFreightAmount }}</div>
           <template
             v-if="detailsData.couponDeduction+detailsData.integralDeduction+detailsData.activityDiscountAmont+detailsData.otherDiscountAmont"
@@ -500,9 +507,20 @@
           </div>
         </div>
       </template>
-
+      <!-- 特效药用药人信息 -->
+      <template v-if="detailsData.medicalUserEntity">
+        <div class="info">
+          <div class="info-item line">
+            <div class="title">用药人</div>
+            <div class="line-content">
+              <div class="con">姓名：{{ detailsData.medicalUserEntity.buyer }}</div>
+              <div class="con">身份证：{{ detailsData.medicalUserEntity.idcard }}</div>
+              <div class="con">手机号码：{{ detailsData.medicalUserEntity.buyerMobile }}</div>
+            </div>
+          </div>
+        </div>
+      </template>
       <!-- 物流信息 --退货物流-->
-      <!-- <template v-if="detailsData.retRecordList && (detailsData.orderStatus===8||detailsData.orderStatus===30)"> -->
       <template v-if="detailsData.retRecordList">
         <div
           v-for="(item,indexReturn) in detailsData.retRecordList"
@@ -555,7 +573,7 @@
                 <div class="header-cell">单价（元）</div>
                 <div class="header-cell">数量</div>
                 <div class="header-cell">小计（元）</div>
-                <div class="header-cell">药店加优惠</div>
+                <div class="header-cell">海典健康微商城优惠</div>
                 <div class="header-cell">状态</div>
               </div>
               <div class="header-right">
@@ -599,20 +617,26 @@
                     </div>
                     <div class="detail-item-middle">
                       <div class="item-cell cell-con">
-                        <div class="cell-text">￥{{ item.commodityPrice }}</div>
+                        <div class="cell-text">
+                          <span v-if="detailsData.orderType === 'I'">{{ item.exchangeHb || 0 }}海贝 +</span>
+                          <span>￥{{ item.commodityPrice }}</span>
+                        </div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">{{ item.commodityNumber }}</div>
                       </div>
                       <div class="item-cell cell-con">
-                        <div class="cell-text">￥{{ item.totalActualAmount }}</div>
+                        <div class="cell-text">
+                          <span v-if="detailsData.orderType === 'I'">{{ item.totalHb }}海贝 +</span>
+                          ￥{{ item.totalActualAmount }}
+                        </div>
                       </div>
-                      <div class="item-cell cell-con">
+                      <div class="item-cell cell-con preferential">
                         <div
                           v-if="item.isPromotion === 1"
                           class="cell-text"
-                        >立减：{{ item.activityDiscountAmont }}</div>
-                        <div class="cell-text">优惠：{{ item.couponAmount }}</div>
+                        >{{ item.pmtType | activityType }}：{{ item.activityDiscountAmont }}</div>
+                        <div class="cell-text">优惠券抵扣：{{ item.couponAmount }}</div>
                       </div>
                       <div class="item-cell cell-con">
                         <div class="cell-text">
@@ -665,9 +689,18 @@ export default {
       if (value === '1') {
         return '处方药订单'
       }
-      // if (value === 'V') {
-      //   return '积分订单'
-      // }
+      if (value === 'R') {
+        return '处方药订单'
+      }
+      if (value === 'N') {
+        return '普通订单'
+      }
+      if (value === 'G') {
+        return '拼团订单'
+      }
+      if (value === 'I') {
+        return '海贝商城订单'
+      }
     },
     orderStatus: function(value) {
       // 订单状态
@@ -718,6 +751,24 @@ export default {
       }
       if (value === 2) {
         return '门店自提'
+      }
+    },
+    activityType: function(value) {
+      // 活动优惠类型
+      if (value === 11) {
+        return '特惠优惠'
+      }
+      if (value === 12) {
+        return '秒杀优惠'
+      }
+      if (value === 13) {
+        return '拼团优惠'
+      }
+      if (value === 14) {
+        return '立减'
+      }
+      if (value === 15) {
+        return '加价优惠'
       }
     }
   },
@@ -1134,6 +1185,16 @@ export default {
     &:nth-last-child(1) {
       border: none;
     }
+    &.line {
+      width: 100%;
+      .line-content {
+        display: flex;
+        flex-direction: row;
+        .con {
+          margin-right: 20px;
+        }
+      }
+    }
     .title {
       line-height: 16px;
       font-size: 16px;
@@ -1197,6 +1258,9 @@ export default {
         flex: 1;
         text-align: center;
         width: 8vw;
+        &.preferential {
+          flex: 0 0 200px;
+        }
       }
     }
     .header-right {
@@ -1324,6 +1388,9 @@ export default {
               display: flex;
               align-items: center;
               justify-content: center;
+            }
+            .preferential {
+              flex: 0 0 200px;
             }
           }
         }

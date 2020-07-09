@@ -48,7 +48,8 @@ export default {
   computed: {
     ...mapGetters(['merCode'])
   },
-  created() {},
+  created() {
+  },
   methods: {
     open(type) {
       this.type = type

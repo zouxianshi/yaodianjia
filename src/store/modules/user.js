@@ -1,4 +1,5 @@
 import { getInfo } from '@/api/user'
+
 import { setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { MC } from '@merchant/commons'
@@ -69,13 +70,13 @@ const actions = {
           userInfo: data || {},
           merCode
         })
+
         resolve(superAdmin ? { resList: ['admin'] } : { resList: resList })
       }).catch(error => {
         reject(error)
       })
     })
   },
-
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve) => {

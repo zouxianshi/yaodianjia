@@ -4,7 +4,7 @@
     <div class="activity-bottom">
       <div class="activity-header">
         <div class="title">{{ item.lable }}</div>
-        <div v-if="item.desc===''" style="height:25px">{{ item.desc || '' }}</div>
+        <div v-if="item.desc===''" style="height:48px">{{ item.desc || '' }}</div>
         <el-tooltip v-if="item.desc!==''" class="item" effect="dark" :content="item.desc" placement="top-start">
           <div class="sub-title">{{ item.desc || '' }}</div>
         </el-tooltip>
@@ -15,7 +15,7 @@
           icon="el-icon-takeaway-box"
           class="button"
           @click="handleJump(item, 'list')"
-        >{{ item.lable }}列表</el-button>
+        >{{ item.listLabel }}</el-button>
         <el-divider direction="vertical" />
         <el-button
           type="text"
@@ -45,7 +45,6 @@ export default {
   },
   methods: {
     handleJump(itemUrl, jumpType) {
-      console.log('1111111---handleJump', itemUrl)
       // 跳转列表
       if (jumpType === 'list') {
         this.$router.push(itemUrl.listUrl)
@@ -96,6 +95,7 @@ export default {
       .sub-title {
         color: rgba(0, 0, 0, 0.65);
         font-size: 10px;
+        height: 48px;
         line-height: 24px;
         overflow: hidden;
         text-overflow: ellipsis;

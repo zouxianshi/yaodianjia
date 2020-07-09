@@ -1,15 +1,16 @@
 <template>
   <div class="app-container">
     <div class="store-goods-wrapper">
-      <el-radio-group v-model="listQuery.status" size="small" @change="_loadList">
+      <el-radio-group v-model="listQuery.status" size="small" @change="radioChange">
         <el-radio-button :label="1">在售</el-radio-button>
         <el-radio-button :label="0">下架</el-radio-button>
         <el-radio-button :label="2">售馨</el-radio-button>
         <el-radio-button :label="3">锁定</el-radio-button>
+        <el-radio-button :label="4">统计</el-radio-button>
       </el-radio-group>
       <section @keydown.enter="_loadList">
         <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-          <div class="search-item">
+          <div v-if="listQuery.status !== 4" class="search-item">
             <span class="label-name">选择门店</span>
             <el-select
               v-model="listQuery.storeId"
@@ -42,17 +43,32 @@
           </div>
           <div class="search-item">
             <span class="label-name">商品信息</span>
-            <el-input v-model.trim="listQuery.erpOrName" style="width:200px" size="small" placeholder="请输入商品名称/编码" />
+            <el-input
+              v-model.trim="listQuery.erpOrName"
+              style="width:200px"
+              size="small"
+              placeholder="请输入商品名称/编码"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">条形码</span>
-            <el-input v-model.trim="listQuery.barCode" style="width:200px" size="small" placeholder="条形码" />
+            <el-input
+              v-model.trim="listQuery.barCode"
+              style="width:200px"
+              size="small"
+              placeholder="条形码"
+            />
           </div>
         </div>
         <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">批准文号</span>
-            <el-input v-model.trim="listQuery.approvalNumber" style="width:200px" size="small" placeholder="批准文号" />
+            <el-input
+              v-model.trim="listQuery.approvalNumber"
+              style="width:200px"
+              size="small"
+              placeholder="批准文号"
+            />
           </div>
           <div class="search-item">
             <span class="label-name">药品类型</span>
@@ -61,11 +77,13 @@
               filterable
               size="small"
               placeholder="请选择"
+              @change="_loadList"
             >
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
               <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
+              <el-option label="OTC" value="4" />
             </el-select>
           </div>
           <div class="search-item">
@@ -81,6 +99,34 @@
               <el-option label="组合商品" value="2" />
             </el-select>
           </div>
+          <div v-if="listQuery.status !== 4" class="search-item">
+            <span class="label-name">锁定状态</span>
+            <el-select
+              v-model="listQuery.lockFlag"
+              filterable
+              size="small"
+              placeholder="请选择"
+              @change="_loadList"
+            >
+              <el-option label="全部" value />
+              <el-option label="锁定库存" :value="2" />
+              <el-option label="锁定价格" :value="1" />
+              <el-option label="锁定库存价格" :value="3" />
+              <el-option v-if="listQuery.status!==3" label="未锁定" :value="0" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">橱窗图</span>
+            <el-select
+              v-model="listQuery.hasMainPic"
+              placeholder="选择橱窗图"
+              size="small"
+              @change="_loadList"
+            >
+              <el-option label="有" :value="true" />
+              <el-option label="无" :value="false" />
+            </el-select>
+          </div>
         </div>
         <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
@@ -91,13 +137,25 @@
                 导出
                 <i class="el-icon-download el-icon--right" />
               </el-button>
-              <export-table />
+              <export-table :is-statistic="listQuery.status === 4" />
             </span>
+          </div>
+        </div>
+        <div v-if="listQuery.status === 4" class="search-form">
+          <div class="search-item" style="padding-left:75px;">
+            <p class="tips-txt">
+              商品库(自营)商品数：{{ statisticData && statisticData.totalNum }} 未同步到的商品：
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleShowNotAsyncDialog"
+              >{{ statisticData && statisticData.notSyncNum }}</el-button>
+            </p>
           </div>
         </div>
       </section>
       <div class="table-box">
-        <div class="choose-num">
+        <div v-if="listQuery.status !== 4" class="choose-num">
           <div>
             <el-button
               v-if="listQuery.status!==1&&listQuery.status!==2"
@@ -111,11 +169,12 @@
               size="small"
               @click="handleBatchUpDown(0)"
             >批量下架</el-button>
-            <el-button type size="small" @click="handleLock">批量锁定库存价格</el-button>
+            <el-button type="warning" size="small" @click="handleLock(0)">锁定库存价格</el-button>
+            <el-button type="warning" size="small" @click="handleLock(1)">解锁库存价格</el-button>
             <!-- listQuery.storeId -->
             <el-button
               v-if="listQuery.status !== 3"
-              type
+              type="info"
               size="small"
               @click="handleSynchro"
             >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
@@ -125,10 +184,13 @@
               size="small"
               @click="handleSynchroBefore"
             >批量同步库存价格</el-button>-->
+            <el-button type="warning" size="small" @click="handleBatchUpdate">批量编辑价格</el-button>
           </div>
           <span>已选中（{{ multipleSelection.length }}）个</span>
         </div>
         <el-table
+          v-if="listQuery.status !== 4"
+          key="1"
           v-loading="loading"
           :data="tableData"
           stripe
@@ -211,6 +273,16 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column align="left" min-width="120" label="锁定状态">
+            <template slot-scope="scope">
+              <div>
+                <span v-if="scope.row.lockFlag===1">锁定价格</span>
+                <span v-else-if="scope.row.lockFlag===2">锁定库存</span>
+                <span v-else-if="scope.row.lockFlag===3">锁定库存价格</span>
+                <span v-else-if="scope.row.lockFlag===0">未锁定</span>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="address" align="left" fixed="right" label="操作" min-width="150">
             <template slot-scope="scope">
               <!-- <el-button type="" size="mini" @click="handleListEdit(scope.row)">编辑</el-button> -->
@@ -224,6 +296,120 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <el-table
+          v-else
+          key="2"
+          v-loading="loading"
+          :data="tableData"
+          stripe
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          @sort-change="handleSortChange"
+        >
+          <el-table-column type="selection" width="55" />
+          <el-table-column
+            prop="orCode"
+            align="left"
+            min-width="120"
+            label="商品图片"
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <template v-if="scope.row.mainPic">
+                <el-image
+                  style="width: 70px; height: 70px"
+                  :src="showImg(scope.row.mainPic)+'?x-oss-process=style/w_80'"
+                  lazy
+                  fit="contain"
+                  @click="onLook(scope.row.mainPic)"
+                />
+              </template>
+              <template v-else>
+                <p class>暂未上传</p>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column align="left" min-width="150" show-overflow-tooltip label="商品信息">
+            <template slot-scope="scope">
+              <div>
+                <p>{{ scope.row.name }}</p>
+                <p class="ellipsis">
+                  <span
+                    v-for="(item,index) in scope.row.specSkuList"
+                    :key="index"
+                  >{{ item.skuKeyName }}：{{ item.skuValue }}{{ index===scope.row.specSkuList.length-1?'':',' }}</span>
+                </p>
+                <p v-if="scope.row.barCode" class="ellipsis" v-text="'条码：'+scope.row.barCode" />
+                <p class="ellipsis">{{ scope.row.approvalNumber }}</p>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="erpCode" label="商品编码" align="left" />
+          <el-table-column prop="mprice" label="参考价格" align="left" />
+          <el-table-column
+            prop="saleStoreNum"
+            min-width="90"
+            sortable="custom"
+            label="在售门店数"
+            align="left"
+          >
+            <template slot-scope="scope">
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleStoreNumClick(1, scope.row.erpCode)"
+              >{{ scope.row.saleStoreNum }}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="notSaleStoreNum"
+            min-width="90"
+            sortable="custom"
+            label="下架门店数"
+            align="left"
+          >
+            <template slot-scope="scope">
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleStoreNumClick(0, scope.row.erpCode)"
+              >{{ scope.row.notSaleStoreNum }}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalStock" sortable="custom" label="总库存" align="left" />
+          <el-table-column
+            prop="soldOutStoreNum"
+            min-width="90"
+            sortable="custom"
+            label="售罄门店数"
+            align="left"
+          >
+            <template slot-scope="scope">
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleStoreNumClick(2, scope.row.erpCode)"
+              >{{ scope.row.soldOutStoreNum }}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="lockStoreNum"
+            min-width="90"
+            sortable="custom"
+            label="锁定门店数"
+            align="left"
+          >
+            <template slot-scope="scope">
+              <el-button
+                class="hover-underline"
+                type="text"
+                @click="handleStoreNumClick(3, scope.row.erpCode)"
+              >{{ scope.row.lockStoreNum }}</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
         <div class="table-footer">
           <pagination
             :total="total"
@@ -236,43 +422,19 @@
       </div>
       <el-image-viewer v-if="isShowImg" :on-close="onCloseImg" :url-list="srcList" />
     </div>
-    <el-dialog
-      title="锁定库存价格"
-      :visible.sync="dialogVisible"
-      width="30%"
-      append-to-body
-      :close-on-click-modal="false"
-    >
-      <el-form ref="lockForm" :model="formData" :rules="rules" label-width="100px" size="small">
-        <el-form-item label="锁定商品属性">
-          <el-checkbox-group v-model="lockFlag">
-            <el-checkbox :label="1">价格</el-checkbox>
-            <el-checkbox :label="2">库存</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="定时解锁设置">
-          <el-checkbox
-            v-model="formData.unlockType"
-            :true-label="1"
-            :false-label="0"
-            @change="unlockTypeChange"
-          >定时解锁</el-checkbox>
-        </el-form-item>
-        <el-form-item v-if="formData.unlockType===1" label="解锁时间" prop="unlockTime">
-          <el-date-picker
-            v-model="formData.unlockTime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            type="datetime"
-            class="custom-class"
-            placeholder="选择日期时间"
-          />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" :loading="subLoading" @click="handleSubmitLock">确 定</el-button>
-      </span>
-    </el-dialog>
+    <lock
+      :is-show="lockDialogVisible"
+      :lock-type="lockType"
+      :goods-list="multipleSelection"
+      @complete="lockDialogVisible=false;_loadList()"
+      @close="lockDialogVisible=false"
+    />
+    <batchUpdate
+      :is-show="importAllVisible"
+      :spec-data="specData"
+      @complete="importAllVisible=false;getList()"
+      @close="importAllVisible=false"
+    />
     <el-dialog
       :title="`修改${type=='price'?'价格':'库存'}`"
       :visible.sync="isShow"
@@ -295,6 +457,25 @@
         >确 定</el-button>
       </span>
     </el-dialog>
+    <not-async-dialog
+      :is-show="isShowNotAsyncDialog"
+      :content="erpCodes"
+      @closed="isShowNotAsyncDialog=false"
+    />
+
+    <el-dialog
+      title="下架提醒"
+      :visible.sync="isShowTipsDialog"
+      append-to-body
+      @closed="handleTipsDialogCancel"
+    >
+      <p style="line-height: 1.5; text-align: center;" v-html="tipsDialogContent" />
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="handleTipsDialogCancel">取 消</el-button>
+        <el-button type="primary" size="small" @click="handleTipsDialogDefinite">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-backtop target=".app-container" :bottom="100" />
   </div>
 </template>
@@ -304,37 +485,25 @@ import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import exportTable from './export-table'
 import { mapGetters } from 'vuex'
-import { getTypeTree, exportData } from '@/api/group'
+import { getTypeTree, exportData, exportStatisticData } from '@/api/group'
+import lock from './_source/lock'
+import batchUpdate from './_source/batchUpdate'
+import notAsyncDialog from './_source/not-async-dialog'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import {
   getStoreGoodsList,
-  setLockPrice,
+  getStoreGoodsStatisticsList,
+  getStoreGoodsStatisticsSyncNumber,
   setUpdatePriceStock,
   setUpdateStoreData,
   getMyStoreList,
   setSynchro
 } from '@/api/store-goods'
+
 export default {
-  components: { Pagination, exportTable, ElImageViewer },
+  components: { Pagination, exportTable, ElImageViewer, lock, batchUpdate, notAsyncDialog },
   mixins: [mixins],
   data() {
-    const _checkTime = (rule, value, callback) => {
-      if (value) {
-        const chooseTime = Date.parse(new Date(value))
-        const nowTime = Date.parse(new Date())
-        if (chooseTime < nowTime) {
-          callback(new Error('选择时间必须大于当前时间'))
-        } else {
-          callback()
-        }
-      } else {
-        if (this.formData.unlockType === 1) {
-          callback(new Error('请选择解锁时间'))
-        } else {
-          callback()
-        }
-      }
-    }
     const _checkFloat = (rule, value, callback) => {
       const reg = /(^([0-9]+|0)$)|(^(([0-9]+|0)\.([0-9]{1,2}))$)/
       if (value) {
@@ -376,22 +545,14 @@ export default {
       keyword: '',
       tableData: [],
       multipleSelection: [],
-      dialogVisible: false,
+      lockDialogVisible: false,
+      importAllVisible: false,
       defaultProps: {
         children: 'children',
         label: 'name',
         value: 'id'
       },
-      lockFlag: [],
-      formData: {
-        lockFlag: 0,
-        lockList: [],
-        unlockTime: '',
-        unlockType: 0
-      },
-      rules: {
-        unlockTime: [{ validator: _checkTime, trigger: 'change' }]
-      },
+      lockType: 0,
       editRules: {
         price: [{ required: true, validator: _checkFloat, trigger: 'blur' }],
         stock: [{ required: true, validator: _checkFloat, trigger: 'blur' }]
@@ -403,6 +564,7 @@ export default {
       listQuery: {
         drugType: '',
         commodityType: '',
+        lockFlag: '',
         approvalNumber: '',
         barCode: '',
         groupId: '',
@@ -410,7 +572,9 @@ export default {
         storeId: '',
         status: 1,
         auditStatus: 1,
-        currentPage: 1
+        currentPage: 1,
+        sortMethod: null,
+        sortType: null
       },
       storeList: [],
       groupId: [],
@@ -419,11 +583,21 @@ export default {
       type: 'price',
       isShow: false,
       srcList: [],
-      isShowImg: false
+      isShowImg: false,
+      statisticData: null,
+      isShowNotAsyncDialog: false,
+      isShowTipsDialog: false,
+      tipsDialogContent: '',
+      cacheSetUpDownParams: {}
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'name'])
+    ...mapGetters(['merCode', 'name']),
+    erpCodes() {
+      return ((this.statisticData && this.statisticData.erpCodes) || []).join(
+        ','
+      )
+    }
   },
   created() {
     this.getList()
@@ -456,10 +630,7 @@ export default {
       this.groupId = ['']
       this.getList()
     },
-    unlockTypeChange() {
-      // 定时解锁 chang
-      this.formData.unlockTime = ''
-    },
+
     getList(status) {
       this._loadStoreList().then(res => {
         if (res) {
@@ -471,38 +642,60 @@ export default {
         }
       })
     },
-    _loadList() {
-      if (this.listQuery.storeId === '') {
-        if (
-          this.listQuery.name === '' &&
-          this.listQuery.erpCode === '' &&
-          this.listQuery.barCode === ''
-        ) {
+    radioChange() {
+      // 锁定标签下，需清空锁定状态搜索栏
+      if (this.listQuery.status === 3 && this.listQuery.lockFlag === 0) {
+        this.listQuery.lockFlag = ''
+      }
+      this._loadList()
+    },
+    async _loadList() {
+      const { sortMethod, sortType } = this.listQuery
+
+      if (this.listQuery.storeId === '' && this.listQuery.status !== 4) {
+        if (this.listQuery.erpOrName === '') {
           this.$message({
-            message: '选择全部门店时，请输入商品名称或商品编码、条形码',
+            message: '选择全部门店时，请输入商品名称或商品编码',
             type: 'warning'
           })
+          this.tableData = []
           return
         }
       }
-      this.loading = true
-      getStoreGoodsList(this.listQuery)
-        .then(res => {
-          this.loading = false
-          const { data, totalCount } = res.data
-          if (data.length === 0 && this.listQuery.currentPage !== 1) {
-            console.log(this.listQuery)
-            this.listQuery.currentPage--
-            this._loadList()
-          }
-          if (data) {
-            this.tableData = data
-            this.total = totalCount
-          }
-        })
-        .catch(() => {
-          this.loading = false
-        })
+      try {
+        this.loading = true
+        let res = null
+        // 如果是统计页签则调用统计数据查询接口
+        if (this.listQuery.status === 4) {
+          res = await getStoreGoodsStatisticsList({
+            ...this.listQuery,
+            ...(sortMethod ? { sortMethod } : {}),
+            ...(sortType ? { sortType } : {})
+          })
+          const numRes = await getStoreGoodsStatisticsSyncNumber({
+            merCode: this.merCode
+          })
+          this.statisticData = numRes.data
+        } else {
+          res = await getStoreGoodsList(this.listQuery)
+        }
+        this.loading = false
+        const { data, totalCount } = res.data
+        if (data.length === 0 && this.listQuery.currentPage !== 1) {
+          console.log(this.listQuery)
+          this.listQuery.currentPage--
+          this._loadList()
+        }
+        if (data) {
+          this.tableData = data
+          this.total = totalCount
+        }
+      } catch (error) {
+        console.log(error)
+        this.tableData = []
+        this.total = 0
+        this.loading = false
+      }
     },
     _loadTypeList() {
       // 获取分组
@@ -662,6 +855,7 @@ export default {
     handleChangeGroup(val) {
       console.log(val)
       this.listQuery.groupId = val[val.length - 1]
+      this._loadList()
     },
     remoteMethod(val) {
       this.selectloading = true
@@ -686,24 +880,34 @@ export default {
       this._loadList()
     },
     // 处理商品数据导出
-    handleExport() {
+    async handleExport() {
       if (this.listQuery.storeId === '') {
-        if (
-          this.listQuery.name === '' &&
-          this.listQuery.erpCode === '' &&
-          this.listQuery.barCode === ''
-        ) {
+        if (this.listQuery.name === '' && this.listQuery.erpCode === '') {
           this.$message({
-            message: '选择全部门店时，请输入商品名称或商品编码、条形码',
+            message: '选择全部门店时，请输入商品名称或商品编码',
             type: 'warning'
           })
           return
         }
       }
-      exportData({
-        ...this.listQuery,
-        storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
-      }).then(res => {
+      console.log(!!this.listQuery.lockFlag)
+      // if (this.listQuery.lockFlag) {
+      //   this.listQuery.lockFlag = null
+      // }
+      try {
+        let res = null
+        if (this.listQuery.status === 4) {
+          res = await exportStatisticData({
+            ...this.listQuery,
+            specIds: (this.multipleSelection || []).map(item => item.specId)
+          })
+        } else {
+          res = await exportData({
+            ...this.listQuery,
+            lockFlag: this.listQuery.lockFlag ? [this.listQuery.lockFlag] : [],
+            storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
+          })
+        }
         if (res.code === '10000') {
           this.$alert(
             '门店商品列表正在导出中，稍后请点击【查看并导出记录】下载导出文件',
@@ -716,20 +920,25 @@ export default {
             }
           )
         }
-      })
+      } catch (error) {
+        console.log('error', error)
+      }
     },
-    handleLock() {
+    handleLock(lockType) {
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: '请先选择要锁定库存价格的数据',
+          message: `请先选择要${
+            lockType === 0 ? '锁定' : '解锁'
+          }库存价格的数据`,
           type: 'warning'
         })
         return
       }
-      this.dialogVisible = true
-      this.lockFlag = []
-      this.formData.unlockType = 0
-      this.formData.unlockTime = ''
+      this.lockType = lockType
+      this.lockDialogVisible = true
+    },
+    handleBatchUpdate() {
+      this.importAllVisible = true
     },
     handleSetPriceStock() {
       this.$refs['editData'].validate(valid => {
@@ -763,6 +972,13 @@ export default {
         }
       })
     },
+    handleTipsDialogCancel() {
+      this.isShowTipsDialog = false
+      this.cacheSetUpDownParams = {}
+    },
+    handleTipsDialogDefinite() {
+      this._SetUpDown({ ...this.cacheSetUpDownParams, isDelete: true })
+    },
     handleUpDown(row) {
       // 单个上下级
       const status = row.status === 0 ? 1 : 0
@@ -783,11 +999,28 @@ export default {
     _SetUpDown(data) {
       // 执行上下架请求
       setUpdateStoreData(data).then(res => {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
-        this._loadList()
+        if (
+          res.code === '10000' &&
+          res.data &&
+          (res.data.code === 1 || res.data.code === 2)
+        ) {
+          // 校验不通过
+          this.isShowTipsDialog = true
+          this.tipsDialogContent =
+            res.data.code === 1
+              ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？'
+              : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(
+                res.data.erpList || []
+              ).join('、')}</p>`
+          this.cacheSetUpDownParams = data
+        } else {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.isShowTipsDialog = false
+          this._loadList()
+        }
       })
     },
     handleBatchUpDown(status) {
@@ -816,66 +1049,7 @@ export default {
       }
       this._SetUpDown(data)
     },
-    handleSubmitLock() {
-      // 执行锁定请求
-      const ary = []
-      // 获取规格id
-      this.multipleSelection.map(v => {
-        ary.push({
-          specId: v.id,
-          storeId: v.storeId
-        })
-      })
-      this.formData.lockList = ary
-      if (this.lockFlag.length === 0) {
-        // 全部锁定
-        this.formData.lockFlag = 0
-      }
-      if (this.lockFlag.includes(1)) {
-        // 锁定价格
-        this.formData.lockFlag = 1
-      }
-      if (this.lockFlag.includes(2)) {
-        this.formData.lockFlag = 2 // 锁定库存
-      }
-      if (this.lockFlag.includes(2) && this.lockFlag.includes(1)) {
-        this.formData.lockFlag = 3 // 锁定价格和库存
-      }
 
-      this.$refs['lockForm'].validate(valid => {
-        if (valid) {
-          if (
-            this.formData.unlockType === 1 &&
-            this.formData.unlockTime !== '' &&
-            this.lockFlag.length === 0
-          ) {
-            this.$message({
-              message: '请选择锁定属性',
-              type: 'error'
-            })
-            return
-          }
-          this.subLoading = true
-          setLockPrice(this.formData)
-            .then(res => {
-              this.$message({
-                message: '操作成功',
-                type: 'success'
-              })
-              this.dialogVisible = false
-              this.subLoading = false
-              this._loadList()
-            })
-            .catch(() => {
-              this.subLoading = false
-              this.dialogVisible = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
     handleEditData(row, key) {
       this.editData = JSON.parse(JSON.stringify(row))
       this.type = key
@@ -887,20 +1061,73 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    handleSortChange(val) {
+      const { order, prop } = val
+      let sortMethod = null
+      let sortType = null
+      switch (order) {
+        case 'ascending':
+          sortMethod = 1
+          break
+        case 'descending':
+          sortMethod = 2
+          break
+      }
+      switch (prop) {
+        case 'saleStoreNum':
+          sortType = 1
+          break
+        case 'notSaleStoreNum':
+          sortType = 2
+          break
+        case 'totalStock':
+          sortType = 3
+          break
+        case 'soldOutStoreNum':
+          sortType = 4
+          break
+        case 'lockStoreNum':
+          sortType = 5
+          break
+      }
+
+      this.$set(this.listQuery, 'sortMethod', sortMethod)
+      this.$set(this.listQuery, 'sortType', sortType)
+      this._loadList()
+    },
+    handleStoreNumClick(type, erpCode) {
+      this.$set(this.listQuery, 'status', type)
+      this.$set(this.listQuery, 'storeId', '')
+      this.$set(this.listQuery, 'erpOrName', erpCode)
+      this.$nextTick(() => {
+        this._loadList()
+      })
+    },
     handleClick() {
       this.$router.push('/goods-manage/mate')
+    },
+    handleShowNotAsyncDialog() {
+      this.isShowNotAsyncDialog = true
     }
   }
 }
 </script>
 <style lang="scss">
-.el-picker-panel__footer {
-  .el-button--text {
-    display: none;
-  }
-}
+// .el-picker-panel__footer {
+//   .el-button--text {
+//     display: none;
+//   }
+// }
 </style>
 <style lang="scss" scoped>
+.lock-tip {
+  color: #999999;
+  font-size: 14px;
+  margin: 44px 0 0 4px;
+  span {
+    color: red;
+  }
+}
 .store-goods-wrapper {
   .search-form {
     .search-item {
@@ -910,8 +1137,13 @@ export default {
       .el-input {
         width: 180px;
       }
+      .tips-txt {
+        color: #999999;
+        font-size: 14px;
+      }
     }
   }
+
   .cascader {
     .el-input {
       width: 300px !important;
@@ -929,6 +1161,13 @@ export default {
         color: #409eff;
       }
     }
+  }
+  .hover-underline {
+    color: #409eff;
+    cursor: pointer;
+  }
+  .hover-underline:hover {
+    text-decoration-line: underline;
   }
 }
 </style>

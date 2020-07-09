@@ -110,7 +110,7 @@ export function getRecommended(p) {
     ...p
   }
   return request({
-    url: `${config.customer}/1.0/commodity-search/_search`,
+    url: `${config.merGoods}/1.0/commodity-search/_search`,
     method: 'post',
     data
   })
@@ -124,5 +124,19 @@ export function getActivityComm(data) {
     url: `${config.merGoods}/1.0/comm-spec/_page`,
     method: 'post',
     data
+  })
+}
+
+export function getDefImg() {
+  return request({
+    url: `${config.merGoods}/1.0/cms-dim/_initImg`,
+    method: 'get'
+  })
+}
+
+export function createInitId() {
+  return request({
+    url: `${config.merGoods}/1.0/cms-dim/_init`,
+    method: 'post'
   })
 }

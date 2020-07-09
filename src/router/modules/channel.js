@@ -7,7 +7,7 @@ export default [
     redirect: '/channel/wx-official-account',
     name: 'channel',
     meta: {
-      title: '渠道管理',
+      title: '渠道设置',
       auth: false
     },
     children: [

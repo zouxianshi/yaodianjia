@@ -6,7 +6,7 @@
 
 import _ from 'lodash'
 import store from '@/store'
-import { MC } from '@merchant/commons'
+// import { MC } from '@merchant/commons'
 import { setMenuData } from '@/api/channelService'
 
 const handlerActive = (data, index) => {
@@ -18,10 +18,8 @@ const handlerActive = (data, index) => {
   return d
 }
 
-const merCode = MC.getCookie('mc-mercode')
-
 const state = {
-  VUE_APP_MEMBER_CENTER: process.env.VUE_APP_ENV ? `${process.env.VUE_APP_MEMBER_CENTER}?mercode=${merCode}` : `http://wxpt.dev.ydjia.cn/wshop/user-center?mercode=${merCode}`,
+  VUE_APP_MEMBER_CENTER: process.env.VUE_APP_ENV ? `${process.env.VUE_APP_MEMBER_CENTER}?mercode=` : `https://mall.hydee.cn/h5/pages/user/index?mercode=`,
   loading: false,
   menuData: []
   /* menuData: [
@@ -49,6 +47,7 @@ const mutations = {
     state.loading = payload
   },
   addMenuLevel1(state, payload) {
+    console.log(payload)
     const { item } = payload
     state.menuData.push(item)
   },
@@ -61,6 +60,7 @@ const mutations = {
     const { item, level1Index, level2Index } = payload
     if (level2Index === -1) {
       state.menuData[level1Index] = _.assign(state.menuData[level1Index], item)
+      console.log(state.menuData)
     } else {
       state.menuData[level1Index].sub_button[level2Index] = _.assign(state.menuData[level1Index].sub_button[level2Index], item)
     }
@@ -68,6 +68,7 @@ const mutations = {
       v.active = i === level1Index
       return v
     })
+    console.log(state.menuData)
   },
   delMenu(state, payload) {
     const { level1Index, level2Index } = payload
@@ -87,12 +88,12 @@ const actions = {
     commit('setLoading', true)
     // handler available back-end data structures
     const { VUE_APP_MEMBER_CENTER, menuData } = state
+    console.log(state.menuData)
     const button = _.cloneDeep(menuData)
-
     // handler request data
     _.map(button, v => {
       delete v.active
-      if (v.type === 'memberCard' || !v.sub_button.length) {
+      if (v.type === 'memberCard') {
         v.url = VUE_APP_MEMBER_CENTER
         v.type = 'view'
       }
@@ -109,13 +110,13 @@ const actions = {
     })
 
     return new Promise((resolve, reject) => {
-      setMenuData({ button }, store.state.user.merCode).then(() => {
+      setMenuData({ button }, store.state.user.merCode).then((res) => {
         setTimeout(() => {
           commit('setLoading', false)
           resolve()
         }, 800)
-      }).catch(() => {
-        reject()
+      }).catch((err) => {
+        reject(err)
         commit('setLoading', false)
       })
     })

@@ -1,8 +1,8 @@
 <template>
-  <div class="discount-index-model">
+  <div class="discount-index-model app-container">
     <div class="content">
       <div class="discount-content-l">
-        <mPhoneView :data="discountForm" :other-data="otherData" />
+        <mPhoneView :datas="discountForm" :other-data="otherData" />
       </div>
       <div class="discount-content-r">
         <el-steps :active="active">
@@ -93,11 +93,11 @@
                   选择商品 | 已选（{{ storeSelectGoods.length }}）
                 </el-button>
               </el-radio>
-              <el-radio :label="3">指定商品不可用&emsp;
+              <!-- <el-radio :label="3">指定商品不可用&emsp;
                 <el-button v-show="discountForm.productRule === 3" type="primary" plain size="mini" :disabled="isUpdate" @click="$refs.GoodsComponent.open()">
                   选择商品 | 已选（{{ storeSelectGoods.length }}）
                 </el-button>
-              </el-radio>
+              </el-radio> -->
             </el-radio-group>
           </el-form-item>
           <el-form-item v-show="storeSelectGoods.length > 0">
@@ -132,8 +132,8 @@ import mTimeRule from '../_source/formItems/timeRule' // 时间限制
 import mUserRule from '../_source/formItems/userRule' // 使用门槛
 import storeDialog from '../../../marketing/components/store' // 已选择门店
 import selectStore from '../../../marketing/components/select-store' // 已选择门店列表
-import storeGoods from '../../../marketing/components/store-gods'
-import selectGoods from '../../../marketing/components/select-goods'
+import storeGoods from '../../_source/pop-goods'
+import selectGoods from '../../_source/selected-goods'
 import { formatDate } from '@/utils/timer'
 
 import {
@@ -252,13 +252,9 @@ export default {
           var data = datas.listCouponProductEntity
           this.storeSelectGoods = []
           data.map(item => {
-            var arr = [{ skuKeyName: item.proSpec.split(':')[0], skuValue: item.proSpec.split(':')[1] }]
             var obj = {
-              picUrl: item.proImg,
               erpCode: item.proCode,
-              name: item.proName,
-              mprice: item.proPrice,
-              specSkus: arr
+              name: item.proName
             }
             this.storeSelectGoods.push(obj)
           })
@@ -390,15 +386,8 @@ export default {
               }
               this.storeSelectGoods.forEach(item => {
                 var obj = {
-                  proBrand: item.brandName,
                   proCode: item.erpCode,
-                  proId: item.id,
-                  proName: item.name,
-                  proImg: item.picUrl,
-                  proPrice: item.price,
-                  proSpec: item.specStr,
-                  ruleType: 1,
-                  proSpecId: item.specId
+                  proName: item.name
                 }
                 params.listCouponProduct.push(obj)
               })
@@ -434,9 +423,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .discount-index-model {
-  padding: 20px;
-  height: calc(100vh - 180px);
-  overflow: auto;
   .content {
     display: flex;
     .discount-content-l {

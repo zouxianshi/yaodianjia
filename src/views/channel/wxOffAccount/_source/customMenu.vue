@@ -32,7 +32,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('channel', ['VUE_APP_MEMBER_CENTER'])
+    ...mapState('channel', ['VUE_APP_MEMBER_CENTER', 'menuData']),
+    ...mapState('user', ['merCode'])
   },
   watch: {},
   beforeCreate() {
@@ -64,8 +65,12 @@ export default {
       this.saveCustomMenu().then(() => {
         this.$message({ message: '保存成功', type: 'success' })
         this.loading = false
-      }).catch(async() => {
-        await this.getData()
+      }).catch(async(res) => {
+        if (res.code === '40027') {
+          this.$message({ message: '跳转地址不能为空', type: 'error' })
+        } else {
+          await this.getData()
+        }
         this.loading = false
       })
     },
@@ -73,7 +78,7 @@ export default {
       this.setLoading(true)
       getMenuData(this.$store.state.user.merCode).then(async res => {
         const { button } = res.data || { button: [] }
-        const { VUE_APP_MEMBER_CENTER } = this
+        const VUE_APP_MEMBER_CENTER = this.VUE_APP_MEMBER_CENTER + this.merCode
         if (button.length) {
           const newMenuData = button
           _.map(newMenuData, v => {

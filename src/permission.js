@@ -37,6 +37,7 @@ router.beforeEach(async(to, from, next) => {
         try {
           // 获取用户信息
           const { resList } = await store.dispatch('user/getInfo')
+          // 区分新老商户支付链接和host   活动推广链接&支付配置
           if (resList.length) {
             if (to.path) {
               if (MC.isAuth(to.path, resList)) {

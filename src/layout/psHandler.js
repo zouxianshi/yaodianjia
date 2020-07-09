@@ -83,11 +83,11 @@ class InnerCtor {
             path: '/goods-manage/apply-record',
             disabled: this.get('commodity.commodity-new-record')
           },
-          {
-            name: '新品审核',
-            path: '/goods-manage/examine',
-            disabled: this.get('commodity.commodity-check')
-          },
+          // {
+          //   name: '新品审核',
+          //   path: '/goods-manage/examine',
+          //   disabled: this.get('commodity.commodity-check')
+          // },
           {
             name: `自定义分组`,
             path: '/goods-manage/group',
@@ -281,10 +281,40 @@ class InnerCtor {
             path: '/storeSetting/weapp',
             disabled: true,
             children: []
+          },
+          {
+            name: '商城设置',
+            path: '/storeSetting/comment-settings',
+            // disabled: this.get('set.comment-settings'),
+            disabled: true,
+            children: []
+          },
+        ]
+      },
+      {
+        name: '直播中心',
+        icon: 'icongoods',
+        path: '',
+        disabled: this.get('living_center'),
+        children: [
+          {
+            name: '直播介绍',
+            path: '/live-manage/introduce',
+            disabled: this.get('living_center.living_introduce'),
+            children: []
+          },
+          {
+            name: '直播活动',
+            path: '/live-manage/activity',
+            disabled: this.get('living_center.living_active')
+          },
+          {
+            name: '数据中心',
+            path: '/live-manage/datacenter',
+            disabled: this.get('living_center.living_data_center')
           }
         ]
       },
-
       {
         name: '预约商品',
         icon: 'icongoods',
@@ -364,7 +394,6 @@ class InnerCtor {
   }
   handlerPs() {
     let p = {}
-    console.warn('resList _____________________ : ', store.state.user.resList)
     _.map(store.state.user.resList, v => {
       _.map(v.children, v1 => {
         p[v.rePath] = _.assign(p[v.rePath], {

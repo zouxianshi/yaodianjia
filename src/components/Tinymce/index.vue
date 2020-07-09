@@ -1,6 +1,10 @@
 <template>
   <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
-    <textarea :id="tinymceId" class="tinymce-textarea" />
+    <textarea
+      :id="tinymceId"
+      class="tinymce-textarea"
+      :placeholder="placeholder"
+    />
     <div class="editor-custom-btn-container">
       <!-- <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" /> -->
     </div>
@@ -26,10 +30,18 @@ export default {
     id: {
       type: String,
       default: function() {
-        return 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
+        return (
+          'vue-tinymce-' +
+          +new Date() +
+          ((Math.random() * 1000).toFixed(0) + '')
+        )
       }
     },
     value: {
+      type: String,
+      default: ''
+    },
+    placeholder: {
       type: String,
       default: ''
     },
@@ -40,7 +52,8 @@ export default {
         return []
       }
     },
-    readonly: { // 只读
+    readonly: {
+      // 只读
       type: Boolean,
       default: false
     },
@@ -66,17 +79,18 @@ export default {
       tinymceId: this.id,
       fullscreen: false,
       languageTypeList: {
-        'en': 'en',
-        'zh': 'zh_CN',
-        'es': 'es_MX',
-        'ja': 'ja'
+        en: 'en',
+        zh: 'zh_CN',
+        es: 'es_MX',
+        ja: 'ja'
       }
     }
   },
   computed: {
     containerWidth() {
       const width = this.width
-      if (/^[\d]+(\.[\d]+)?$/.test(width)) { // matches `100`, `'100'`
+      if (/^[\d]+(\.[\d]+)?$/.test(width)) {
+        // matches `100`, `'100'`
         return `${width}px`
       }
       return width
@@ -90,7 +104,8 @@ export default {
     value(val) {
       if (!this.hasChange && this.hasInit) {
         this.$nextTick(() =>
-          window.tinymce.get(this.tinymceId).setContent(val || ''))
+          window.tinymce.get(this.tinymceId).setContent(val || '')
+        )
       }
     }
   },
@@ -159,13 +174,16 @@ export default {
           })
         },
         setup(editor) {
-          editor.on('FullscreenStateChanged', (e) => {
+          editor.on('FullscreenStateChanged', e => {
             _this.fullscreen = e.state
           })
         },
         images_upload_handler: (blobInfo, success, failure) => {
           const file = blobInfo.blob()
-          const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+          const isImg =
+            file.type === 'image/jpeg' ||
+            file.type === 'image/png' ||
+            file.type === 'image/jpg'
           const isLt2M = file.size / 1024 / 1024 < 2
           if (!isImg) {
             failure('只能上传格式为 jpg、jpeg、png的图片')
@@ -220,7 +238,11 @@ export default {
     imageSuccessCBK(arr) {
       const _this = this
       arr.forEach(v => {
-        window.tinymce.get(_this.tinymceId).insertContent(`<video control class="wscnph" style="width:100%" src="${v.url}" >`)
+        window.tinymce
+          .get(_this.tinymceId)
+          .insertContent(
+            `<video control class="wscnph" style="width:100%" src="${v.url}" >`
+          )
       })
     }
   }
@@ -232,7 +254,7 @@ export default {
   position: relative;
   line-height: normal;
 }
-.tinymce-container>>>.mce-fullscreen {
+.tinymce-container >>> .mce-fullscreen {
   z-index: 10000;
 }
 .tinymce-textarea {

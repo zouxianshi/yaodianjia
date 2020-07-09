@@ -10,10 +10,9 @@
         <div class="algin-center">
           <el-image
             style="width: 80px; height: 80px; border-radius:50%"
-            :src="showImg(data.logo)+'?x-oss-process=style/w_80'"
+            :src="data.logo? showImg(data.logo) : ''"
             lazy
             fit="contain"
-            :preview-src-list="[`${showImg(data.logo)}?x-oss-process=style/w_800`]"
           />
           <div>{{ otherData.merName }}</div>
           <div class="quanName">{{ data.cname || '未命名' }}</div>
@@ -41,11 +40,8 @@ import { formatDate } from '@/utils/timer'
 export default {
   name: 'PhoneView',
   props: {
-    data: {
-      type: Object,
-      default() {
-        return {}
-      }
+    datas: {
+
     },
     otherData: {
       type: Object,
@@ -56,7 +52,10 @@ export default {
   },
   data() {
     return {
-      imgSrc: eCode
+      imgSrc: eCode,
+      data: {
+        logo: null
+      }
     }
   },
   computed: {
@@ -69,7 +68,6 @@ export default {
     userTime() {
       var str = ''
       var times = this.data.effectTime
-      console.log(times, 'zhzzzzzzzzzzzzzz')
       if (this.data.timeRule === 1) { // 选择马上开始有效期
         str += '自领取起' + times + '天内有效'
       } else if (this.data.timeRule === 2) {
@@ -82,6 +80,15 @@ export default {
         }
       }
       return str
+    }
+  },
+  watch: {
+    datas: {
+      handler(newData, oldName) {
+        this.data = newData
+      },
+      // 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
+      deep: true
     }
   },
   methods: {

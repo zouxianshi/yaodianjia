@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <div class="depot-wrappe clearfix">
-      <el-alert type="warning" :closable="false">
+      <!-- <el-alert type="warning" :closable="false">
         <p slot="title" class="alret-title">
           为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您
           <router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
         </p>
-      </el-alert>
+      </el-alert> -->
       <div style="margin-top:20px">
         <a href="#/goods-manage/addition">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">添加标库商品</el-button>
@@ -27,14 +27,14 @@
           <div class="search-item">
             <span class="label-name">商品分类</span>
             <el-cascader
+              ref="cascType"
               v-model="listQuery.typeId"
+              :value="listQuery.level"
               size="small"
               :options="goodsTypeList"
               :props="defaultProps"
               clearable
               placeholder="选择商品分类"
-              :show-all-levels="false"
-              @focus="_loadGoodTypeList()"
             />
           </div>
           <div class="search-item">
@@ -49,9 +49,9 @@
             <el-select v-model="listQuery.drugType" size="small" placeholder="请选择药品类型">
               <el-option label="全部" value />
               <el-option label="甲类OTC" value="0" />
-              <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
               <el-option label="OTC" value="4" />
+              <el-option label="处方药" value="1" />
             </el-select>
           </div>
           <div class="search-item">
@@ -60,7 +60,7 @@
               v-model.trim="listQuery.erpOrName"
               size="small"
               style="width:200px"
-              placeholder="商品名称"
+              placeholder="商品名称/编码"
             />
           </div>
           <div class="search-item">
@@ -114,6 +114,18 @@
               <el-option label="全部" value />
               <el-option label="海典商品库" value="1" />
               <el-option label="自建商品库" value="2" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">橱窗图</span>
+            <el-select
+              v-model="listQuery.hasMainPic"
+              placeholder="选择橱窗图"
+              size="small"
+              @change="handleQuery"
+            >
+              <el-option label="有" :value="true" />
+              <el-option label="无" :value="false" />
             </el-select>
           </div>
         </div>
@@ -253,23 +265,20 @@
               align="left"
               fixed="right"
               label="操作"
-              :min-width="!listQuery.infoFlag?'100':'180'"
+              :min-width="!listQuery.infoFlag?'120':'200'"
             >
               <template slot-scope="scope">
-                <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
-                  <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
-                  <el-divider direction="vertical" />
-                  <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
-                </template>
+                <!-- <template v-if="listQuery.infoFlag&&scope.row.commodityType!==2">
+                  <el-button type="primary" size="mini" plain @click="handleUpDown(1,scope.row)">上架</el-button>
+                  <el-button type="warning" size="mini" plain @click="handleUpDown(0,scope.row)">下架</el-button>
+                </template>-->
                 <template v-if="scope.row.commodityType!==2">
-                  <el-divider direction="vertical" />
                   <a @click="handleEdit(scope.row.id)">
-                    <el-button type="text" size="mini">编辑</el-button>
+                    <el-button type="success" plain size="mini">编辑</el-button>
                   </a>
                 </template>
-                <template v-if="!scope.row.specId">
-                  <el-divider direction="vertical" />
-                  <el-button type="text" size="mini" @click="handleDel(scope.row)">删除</el-button>
+                <template>
+                  <el-button type="danger" plain size="mini" @click="handleDel(scope.row)">删除</el-button>
                 </template>
               </template>
             </el-table-column>
@@ -278,6 +287,7 @@
         </div>
         <pagination
           :total="total"
+          :page-sizes="[20, 30, 50, 100]"
           :page.sync="listQuery.currentPage"
           :limit.sync="listQuery.pageSize"
           @pagination="getList"
@@ -303,6 +313,7 @@
     <limit-buy
       :is-show="limitVisible"
       :spec-data="specData"
+      :commodity-ids="commodityIds"
       @complete="limitVisible=false;getList()"
       @close="limitVisible=false"
     />
@@ -352,13 +363,15 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'name',
-        value: 'id'
+        value: 'id',
+        checkStrictly: true
       },
       editId: '',
       isToEdit: false,
       goodsData: [],
       merCode: '',
       specData: [],
+      commodityIds: [],
       loading: false,
       exportLoading: false,
       tableData: [],
@@ -382,7 +395,9 @@ export default {
         groupId: '', // 分组id
         currentPage: 1,
         owner: 0,
-        typeId: '' // 商品分类id
+        typeId: '', // 商品分类id
+        level: '',
+        groupLevel: ''
       },
       goodsTypeList: []
     }
@@ -390,7 +405,9 @@ export default {
   created() {
     this.merCode = this.$store.state.user.merCode
     this.getList()
+    this._loadGoodTypeList()
     this._loadTypeList()
+    this._loadGoodTypeList()
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -402,32 +419,20 @@ export default {
     })
   },
   beforeRouteLeave(to, from, next) {
-    if (to.name === 'GoodsEdit' && from.name === 'Depot' && this.isToEdit) {
-      const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
-        item => item.name === 'GoodsEdit'
-      )
-      const isComEditId = this.editId === sessionStorage.getItem('editId')
-      if (!isComEditId) {
-        if (hasGoodsEdit && !sessionStorage.getItem('editIsQuery')) {
-          const answer = window.confirm('你还有数据没有保存，是否确认退出')
-          if (answer) {
-            this.$store.dispatch('tagsView/delView', to).then(res => {
-              this.isToEdit = false
-              next()
-            })
-          } else {
-            next()
-          }
-        } else {
-          this.$store.dispatch('tagsView/delView', to).then(res => {
-            this.isToEdit = false
-            next()
-          })
-        }
-      } else {
-        this.isToEdit = false
-        next()
-      }
+    const name = `depotEdit`
+    const hasGoodsEdit = this.$store.state.tagsView.visitedViews.find(
+      item => item.name === name
+    )
+    if (hasGoodsEdit && to.name === name) {
+      // const answer = window.confirm('你还有数据没有保存，是否确认退出')
+      // if (answer) {
+      //   this.$store.dispatch('tagsView/delView', to).then(res => {
+      //     this.isToEdit = false
+      next()
+      //   })
+      // } else {
+      //   this.isToEdit = false
+      // }
     } else {
       this.isToEdit = false
       next()
@@ -444,6 +449,7 @@ export default {
     handleSettingLimitBuy() {
       // 设置限购
       this.specData = []
+      this.commodityIds = []
       if (this.multiselect.length === 0) {
         this.$message({
           message: '请选择商品',
@@ -457,6 +463,7 @@ export default {
           flag = false
         }
         this.specData.push(`${res.specId}`)
+        this.commodityIds.push(`${res.id}`)
       })
       if (!flag) {
         this.$message({
@@ -484,7 +491,8 @@ export default {
         auditStatus: 1,
         groupId: '', // 分组id
         currentPage: 1,
-        typeId: ''
+        typeId: '',
+        level: ''
       }
       this.getList()
     },
@@ -492,14 +500,17 @@ export default {
       this.listQuery.currentPage = 1
       if (
         this.listQuery.typeId &&
-          Array.isArray(this.listQuery.typeId) &&
-          this.listQuery.typeId.length
+        Array.isArray(this.listQuery.typeId) &&
+        this.listQuery.typeId.length > 0
       ) {
         this.listQuery.typeId = this.listQuery.typeId[
           this.listQuery.typeId.length - 1
         ]
+      } else if (Array.isArray(this.listQuery.typeId) && this.listQuery.typeId.length === 0) {
+        this.listQuery.typeId = ''
       }
-      console.log(this.listQuery)
+      const nodesObj = this.$refs['cascType'].getCheckedNodes()
+      this.listQuery.level = nodesObj.length > 0 ? nodesObj[0].level : ''
       this.getList()
     },
     getList() {
@@ -531,15 +542,15 @@ export default {
         this.treeData = JSON.parse(JSON.stringify(this.treeData))
         this.treeData.unshift({ name: '全部', id: '' })
         this.treeData.push({ name: '未分组', id: 'weifenzuflag' })
-        this.$nextTick(_ => {
-          $('.el-tree')
-            .find('.el-tree-node')
-            .each(function(i) {
-              $(this)
-                .find('.el-tree-node__content .el-tree-node__expand-icon')
-                .click()
-            })
-        })
+        // this.$nextTick(_ => {
+        //   $('.el-tree')
+        //     .find('.el-tree-node')
+        //     .each(function(i) {
+        //       $(this)
+        //         .find('.el-tree-node__content .el-tree-node__expand-icon')
+        //         .click()
+        //     })
+        // })
       })
       getTypeDimensionList(this.$store.state.user.merCode).then(res => {
         this.groupData = res.data
@@ -560,7 +571,7 @@ export default {
     handleTreeClick(row, node) {
       // 节点被点击时
       this.listQuery.groupId = row.id
-      this.listQuery.level = row.level
+      this.listQuery.groupLevel = row.level
       this.getList()
     },
     handleChangeUpdown(status) {
@@ -632,16 +643,20 @@ export default {
     handleEdit(id) {
       this.isToEdit = true
       this.editId = id
-      this.$router.push('/goods-manage/edit?id=' + id)
+      this.$router.push('/goods-manage/depot-edit?id=' + id + '&backUrl=depot')
     },
     //
     handleDel(row) {
       console.log('当前删除的id', row)
-      this.$confirm('确定要删除当前商品嘛？', '', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        '请谨慎操作，删除后商品无法恢复，且顾客购物车的该商品信息一并消失。继续删除吗？',
+        '',
+        {
+          confirmButtonText: '继续删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
         delGoods({
           merCode: this.merCode, // 商品编码不可为空
           id: row.id, // 商品id不可为空
@@ -691,12 +706,16 @@ export default {
       // 修改分组
       this.goodsData = []
       this.multiselect.map(res => {
-        this.goodsData.push(res.id)
+        this.goodsData.push(res.specId)
       })
-      const param = { ids: this.goodsData, merCode: this.merCode }
+      // const param = { ids: this.goodsData, merCode: this.merCode }
       this.exportLoading = true
       // 商品导出
-      exportDataNew(param)
+      exportDataNew({
+        ...this.listQuery,
+        skuIds: this.goodsData,
+        hasLimit: true
+      })
         .then(res => {
           this.exportLoading = false
           if (res.type === 'application/json') {
@@ -705,7 +724,7 @@ export default {
               type: 'error'
             })
           } else {
-            download.blob(res)
+            download.blob(res, '导出结果文件', 'xlsx')
             this.$message({
               message: '数据导出成功',
               type: 'success'
@@ -718,70 +737,70 @@ export default {
 }
 </script>
 <style lang="scss">
-  .custom-tree-node {
-    display: -webkit-box;
-    display: flex;
-    display: -ms-flexbox;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    font-size: 14px;
-    padding-right: 8px;
-    width: 100%;
-    &.active {
-      color: #2d8cf0;
-    }
-    i {
-      display: inline-block;
-      margin-left: 10px;
-    }
-    .ellipsis {
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 9px;
-    }
+.custom-tree-node {
+  display: -webkit-box;
+  display: flex;
+  display: -ms-flexbox;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+  width: 100%;
+  &.active {
+    color: #2d8cf0;
   }
+  i {
+    display: inline-block;
+    margin-left: 10px;
+  }
+  .ellipsis {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 9px;
+  }
+}
 </style>
 <style lang="scss">
-  .el-tree-node__content {
-    margin-top: 5px;
-  }
+.el-tree-node__content {
+  margin-top: 5px;
+}
 </style>
 <style lang="scss" scoped>
-  .el-divider--vertical {
-    margin: 0 4px;
-  }
-  .el-button + .el-button {
-    margin-left: 0;
-  }
-  .depot-wrappe {
-    margin-bottom: 30px;
-    .search-item {
-      .label-name {
-        text-align: center;
-        width: 60px;
-      }
+.el-divider--vertical {
+  margin: 0 4px;
+}
+.el-button + .el-button {
+  margin-left: 0;
+}
+.depot-wrappe {
+  margin-bottom: 30px;
+  .search-item {
+    .label-name {
+      text-align: center;
+      width: 60px;
     }
   }
-  .table-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+}
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.depot-list {
+  float: left;
+  width: 210px;
+  .search-form {
+    margin: 10px 0;
   }
-  .depot-list {
-    float: left;
-    width: 210px;
-    .search-form {
-      margin: 10px 0;
-    }
-  }
+}
 
-  .depot-table {
-    margin-left: 230px;
-  }
+.depot-table {
+  margin-left: 230px;
+}
 </style>
 

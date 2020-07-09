@@ -6,8 +6,8 @@
     >查看导出记录</el-button>
     <el-dialog title="导出记录" :visible.sync="dialogExportVisible" append-to-body>
       <el-table v-loading="loadingList" :data="tableData" style="width: 100%" height="400">
-        <el-table-column prop="createTime" label="申请时间" width="180" />
-        <el-table-column prop="name" label="文件名称" width="180">
+        <el-table-column prop="createTime" label="申请时间" width="180" align="center" />
+        <el-table-column prop="name" label="文件名称" width="180" align="center">
           <template slot-scope="scope">
             <el-tooltip
               class="item"
@@ -19,8 +19,8 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="createName" label="申请人" />
-        <el-table-column prop="status" label="文件导出状态">
+        <el-table-column prop="createName" label="申请人" align="center" />
+        <el-table-column prop="status" label="文件导出状态" align="center">
           <!-- 任务状态(1.待执行 2.执行中 3.执行完成 4.执行失败 5.取消 -->
           <template slot-scope="scope">
             <el-tooltip
@@ -42,7 +42,7 @@
             <el-tag v-else :type="currentStatus(scope.row.status) && currentStatus(scope.row.status).type">{{ currentStatus(scope.row.status) && currentStatus(scope.row.status).value }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="action" label="操作" width="100">
+        <el-table-column prop="action" label="操作" width="100" align="center">
           <template slot-scope="scope">
             <a
               v-if="!!scope.row.filePath && scope.row.status === 3"

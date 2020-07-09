@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div v-loading="loadingList" class="store-goods-wrapper order-list">
-      <section @keydown.enter="_loadList">
+      <section style="position:relative" @keydown.enter="_loadList">
         <div class="search-form order-form" style="margin-top:20px;margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">订单搜索</span>
@@ -69,6 +69,7 @@
               <el-option label="普通订单" value="N" />
               <el-option label="拼团订单" value="G" />
               <!-- <el-option label="积分订单" value="V" /> -->
+              <el-option label="海贝商城订单" value="I" />
             </el-select>
             <!-- R处方药/N正常订单/V虚拟商品订单/G拼团订单 -->
             <!-- prescriptionSheetMark -->
@@ -181,6 +182,10 @@
             <export-table />
           </div>
         </div>
+        <div v-if="approvalNums > 0" class="message-tips">
+          您有{{ approvalNums }}个处方药订单审批，请及时处理！
+          <el-button class="sp-btn" type="text" @click="toMerchant">马上去审批 >></el-button>
+        </div>
       </section>
       <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
         <el-tab-pane label="主状态订单" name="first">
@@ -231,9 +236,10 @@
                         <div class="header-cell">订单编号：</div>
                         <div class="header-cell" style="margin-right: 8px">
                           {{ item.serialNumber }}
-                          <span
-                            v-if="item.orderType !== 'G'"
-                          >{{ item.prescriptionSheetMark | orderType }}</span>
+                          <span v-if="item.orderType !== 'G'">
+                            <span v-if="item.prescriptionSheetMark === '1'">(处方药订单)</span>
+                            <span v-else>{{ item.orderType | orderType }}</span>
+                          </span>
                         </div>
                         <template v-if="item.orderType === 'G'">
                           <div class="header-cell">拼团订单：</div>
@@ -301,7 +307,10 @@
                               <div class="goods-number marginTop20">{{ list.commodityCode }}</div>
                             </div>
                             <div class="goods-info padding10">
-                              <div class="goods-price">￥{{ list.commodityPrice }}</div>
+                              <div class="goods-price">
+                                <span v-if="item.orderType === 'I'">{{ list.exchangeHb }}海贝 +</span>
+                                <span>￥{{ list.commodityPrice }}</span>
+                              </div>
                               <div class="goods-num">({{ list.commodityNumber }}件)</div>
                             </div>
                           </div>
@@ -341,6 +350,7 @@
                               </template>
                               <span v-else v-text="orderStatusText(item)" />
                             </template>
+
                             <!-- 立即发货出现时机，当前订单状态为代发货且配送方式不为自提；当为处方单时，必须要保证需求单审核状态为通过 -->
                             <template
                               v-if="item.orderStatus===4 && item.deliveryType!==2 && (item.prescriptionSheetMark === '0'|| (item.prescriptionSheetMark === '1'&& item.prescriptionStatus === 2 ))"
@@ -348,7 +358,7 @@
                               <div class="order_btn btn_normal" style="text-align:right">
                                 <!-- 立即发货 -->
                                 <dialog-delivery-order
-                                  v-if="showSendBtn"
+                                  v-auth:order.order-all.immediate-delivery
                                   :employee-data="employeeData"
                                   :p-item="item"
                                   @sendOrder="sendOrder"
@@ -451,8 +461,9 @@
                         <div class="header-cell" style="margin-right: 8px">
                           {{ item.serialNumber }}
                           <span
-                            v-if="item.orderType !== 'G'"
-                          >{{ item.prescriptionSheetMark | orderType }}</span>
+                            v-if="item.orderType !== 'G' && item.orderType !== 'I'"
+                          >{{ item.orderType | orderType }}</span>
+                          <span v-if="item.orderType === 'I'">(海贝商城订单)</span>
                         </div>
                         <template v-if="item.orderType === 'G'">
                           <div class="header-cell">拼团订单：</div>
@@ -465,6 +476,7 @@
                           <dialog-refund-order
                             :id="item.returnQuestId"
                             :returnresp-dto="item.returnQuestRespDTO"
+                            :order-type="item.orderType"
                           />
                         </div>
                       </div>
@@ -513,7 +525,10 @@
                               <div class="goods-number marginTop20">{{ list.commodityCode }}</div>
                             </div>
                             <div class="goods-info padding10">
-                              <div class="goods-price">￥{{ list.commodityPrice }}</div>
+                              <div class="goods-price">
+                                <span v-if="item.orderType === 'I'">{{ list.exchangeHb }}海贝 +</span>
+                                <span>￥{{ list.commodityPrice }}</span>
+                              </div>
                               <div class="goods-num">({{ list.commodityNumber }}件)</div>
                               <!-- <template v-if="!(refundStatus.includes(listQuery.orderStatus))">
                             <template v-if="list.status===8||list.status===10">
@@ -715,26 +730,6 @@
         >确 定</el-button>
       </span>
     </el-dialog>
-
-    <!-- 待提货 确认提货-->
-    <!-- <el-dialog
-      title="请输入提货码"
-      :visible.sync="dialogPickUpVisible"
-      width="30%"
-      :before-close="handleClose"
-      append-to-body
-      :show-close="false"
-    >
-      <el-form class="marginTop20">
-        <el-input autocomplete="off" style="width:340px;margin-left:30px;" value="" placeholder="请输入提货码" size="small" />
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogPickUpVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogPickUpVisible = false">确 定</el-button>
-      </span>
-    </el-dialog>-->
-
-    <!-- 确认退货 收到退货---线上支付-->
     <el-dialog
       title="确认退货"
       :visible.sync="dialogConfirmReturnOnlVisible"
@@ -877,14 +872,14 @@
   </div>
 </template>
 <script>
-import ps from '@/layout/psHandler'
+// import ps from '@/layout/psHandler'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
 import dialogRefundOrder from './components/dialog-refundorder'
 import dialogDeliveryOrder from './components/dialog-delivery'
 import exportTable from './export-table'
 import { mapGetters } from 'vuex'
-// import { getTypeTree } from '@/api/group'
+import { getPendingOrder } from '@/api/order'
 import { getMyStoreList } from '@/api/store-goods'
 // import { getStoreList } from '@/api/depot'
 import { checkNumberdouble } from '@/utils/validate'
@@ -912,11 +907,23 @@ export default {
   filters: {
     orderType: function(value) {
       // 订单类型
-      if (value === '0') {
+      // if (value === '0') {
+      //   return '(普通订单)'
+      // }
+      // if (value === '1') {
+      //   return '(处方药订单)'
+      // }
+      if (value === 'R') {
+        return '(处方药订单)'
+      }
+      if (value === 'N') {
         return '(普通订单)'
       }
-      if (value === '1') {
-        return '(处方药订单)'
+      if (value === 'G') {
+        return '(拼团订单)'
+      }
+      if (value === 'I') {
+        return '(海贝商城订单)'
       }
       return ''
     },
@@ -999,6 +1006,8 @@ export default {
     }
     return {
       showListLoading: true,
+      approvalNum: 0, // 当前待审批单数量
+      timer: null,
       pickerOptions: {
         // 时间控件相关
         shortcuts: [
@@ -1062,7 +1071,6 @@ export default {
           // }
         ]
       },
-      showSendBtn: ps.showSendGoodsBtn() || false, // 立即发货鉴权
       // value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
       dateSelect: [], // 选择下单时间
       keyword: '',
@@ -1180,7 +1188,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'name', 'roles'])
+    ...mapGetters(['merCode', 'name', 'roles']),
+    approvalNums() {
+      return this.approvalNum
+    }
+  },
+  mounted() {
+    const that = this
+    that.$nextTick(() => {
+      that.timer = setInterval(that.getApprovalNum, 60000)
+    })
+  },
+  destroyed() {
+    clearInterval(this.timer)
   },
   created() {
     if (sessionStorage.getItem('listQ')) {
@@ -1188,6 +1208,7 @@ export default {
     }
     this.getList()
     this.getpreSendNum()
+    this.getApprovalNum()
   },
   methods: {
     orderStatusText(row) {
@@ -1384,35 +1405,6 @@ export default {
       })
     },
     getpreSendNum() {
-      // 获取待发货商品数量
-      // let isSuper = 0
-      // if (this.roles.includes('admin')) {
-      //   isSuper = 1
-      // } else {
-      //   isSuper = 0
-      // }
-      // const datas = {
-      //   merCode: this.merCode,
-      //   isSuper: isSuper,
-      //   storeId: this.listQuery.storeId
-      // }
-      // const datas = {
-      //   'empId': this.listQuery.empId, // 接单员工
-      //   'endDate': '', // 下单结束时间
-      //   'merCode': this.merCode,
-      //   'orderSearchType': '', // 订单搜索类型 1.订单号 2.收货人姓名 3.收货人手机 4.会员卡号
-      //   // 'orderSource': '', // 订单来源 1.微商城
-      //   'orderStatus': '', // 订单状态 2.待付款 4.待发货 6.待收货(门店自提=7.待提货) 8.待退货 10.待退款 12.已完成 20.已取消 30.退款完成
-      //   'prescriptionSheetMark': '', // 订单类型 是不是处方单1、0
-      //   'payment': '', // 支付方式
-      //   'proName': '', // 商品名称
-      //   'receive': '', // 收货方式
-      //   'searchValue': '', // 搜索内容
-      //   'startDate': '', // 下单开始时间
-      //   'isSuper': isSuper, // 是否是超级管理员
-      //   'storeId': this.listQuery.storeId // 下单门店id
-      // }
-      // console.log('获取待发货商品数量datas', datas)
       if (this.showListLoading) {
         this.loadingCountReceived = true
       }
@@ -1434,13 +1426,20 @@ export default {
         this.listQuery.endDate = this.dateSelect[1]
       }
     },
-    // orderDetail(id, state) { // 跳转订单详情
-    //   sessionStorage.setItem('listQ', JSON.stringify(this.listQuery))
-    //   this.$router.push({
-    //     path: `/orders-manage/all-orders/details`,
-    //     query: { id: id, state: state }
-    //   })
-    // },
+    // 跳转小蜜审方
+    toMerchant() {
+      window.open('https://xiaomi.hydee.cn/merchant-admin/', '_blank')
+    },
+    // 获取当前审批单数量
+    getApprovalNum() {
+      getPendingOrder(this.$store.state.user.merCode).then(res => {
+        console.log(res.code)
+        if (res.code === '10000') {
+          this.approvalNum = res.data ? res.data : 0
+          console.log(this.approvalNum)
+        }
+      })
+    },
     remoteMethod(val) {
       this.selectloading = true
     },
@@ -1477,7 +1476,6 @@ export default {
       this._loadList()
     },
     handleChangeOrderStatus(val) {
-      console.log('11111111-----handleChangeOrderStatus', val)
       // 订单状态改变时触发
       this.storeList.map(v => {
         if (v.id === val) {
@@ -1611,14 +1609,6 @@ export default {
             })
             return false
           }
-          // if (this.agreeRefundForm.actualRefundAmount <= 0) {
-          //   this.$message({
-          //     message: '退款金额必须大于0',
-          //     type: 'error',
-          //     duration: 5 * 1000
-          //   })
-          //   return false
-          // }
           setAgreeRefund(dataParam).then(res => {
             if (res.code === '10000') {
               this.loading = false
@@ -1732,8 +1722,6 @@ export default {
         display: inline-block;
         flex: 0 0 6em;
         text-align: right;
-      }
-      .item-value {
       }
     }
   }
@@ -1907,6 +1895,20 @@ export default {
         }
       }
     }
+  }
+}
+// 马上去审批处方单
+.message-tips{
+  position: absolute;
+  z-index: 200;
+  right: 0;
+  width: 500px;
+  color: #f52a2a;
+  height: 34px;line-height: 34px;padding: 0 20px;
+  border: 1px solid #f52a2a;
+  background-color: #f5c9c9;
+  .sp-btn{
+    float: right;
   }
 }
 .order-list {

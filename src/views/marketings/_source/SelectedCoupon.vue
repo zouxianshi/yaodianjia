@@ -5,20 +5,30 @@
       <el-table-column label="优惠内容" width="120" show-overflow-tooltip>
         <template
           slot-scope="scope"
-        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
+        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName,scope.row.cname) }}</template>
       </el-table-column>
       <el-table-column label="使用时间" show-overflow-tooltip>
         <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
       </el-table-column>
-      <el-table-column label="使用场景" width="80">
-        <template
-          slot-scope="scope"
-        >{{ scope.row.shopRule ===1?'线上':'' || scope.row.shopRule ===2?'线下':'' || scope.row.shopRule ===3?'线上线下通用':'' }}</template>
+      <el-table-column label="券类型" show-overflow-tooltip>
+        <template slot-scope="scope">
+          {{ scope.row.ctype === 1 ? '折扣券' : scope.row.ctype === 2 ? '满减券' : '折扣券' }}
+        </template>
       </el-table-column>
-      <el-table-column label="适用门店" width="100">
+      <el-table-column label="使用场景" show-overflow-tooltip>
         <template
           slot-scope="scope"
-        >{{ scope.row.productRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
+        >{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
+      </el-table-column>
+      <el-table-column label="适用门店" show-overflow-tooltip>
+        <template
+          slot-scope="scope"
+        >{{ scope.row.sceneRule ===1?'线上':'' || scope.row.sceneRule ===2?'线下':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
+      </el-table-column>
+      <el-table-column label="适用商品" show-overflow-tooltip>
+        <template
+          slot-scope="scope"
+        >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
       </el-table-column>
       <el-table-column label="发放张数" width="100">
         <template slot-scope="scope">
@@ -30,7 +40,7 @@
               :precision="0"
               size="mini"
               :min="1"
-              :max="10000"
+              :max="20"
               label="请输入发放张数"
               @change="onChangeLimit($event, scope.row)"
             />
@@ -69,10 +79,8 @@ export default {
   methods: {
     show(selectedCoupons) {
       this.selectedCoupons = selectedCoupons
-      console.log('应该要显示了')
     },
     showPage(selectedCoupons, pageStatus) {
-      console.log('应该要显示了')
       this.pageStatus = pageStatus
       this.selectedCoupons = selectedCoupons
       this.selectedCoupons.forEach(item => {
@@ -96,7 +104,7 @@ export default {
       })
     },
     // 商品折扣处理
-    handleshopRule(ctype, useRule, denomination, giftName) {
+    handleshopRule(ctype, useRule, denomination, giftName, cname) {
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -109,9 +117,11 @@ export default {
         } else {
           return `满${useRule}可用,减${denomination}元`
         }
+      } else if (ctype === 3) {
+        return `${cname}`
       } else {
-        if (giftName === 'null' || null) {
-          return ''
+        if (giftName === 'null' || giftName === null) {
+          return cname
         } else {
           return giftName
         }
@@ -127,7 +137,7 @@ export default {
         if (timeRule === 1) {
           return `自领取${effectTime}天有效`
         } else if (timeRule === 2) {
-          return `自领取${effectTime.split(',')[0]}天有效,${
+          return `自领取${effectTime.split(',')[0]}天后生效,生效后${
             effectTime.split(',')[1]
           }天失效`
         } else {
@@ -140,7 +150,7 @@ export default {
 </script>
 <style lang="scss">
 .selected-coupon-view {
-  width: 700px;
+  width: 80%; min-width: 600px;
   .el-pagination {
     text-align: right;
     margin-top: 15px;

@@ -1,6 +1,17 @@
 
-
 ## Getting started
+
+vim .env 
+
+```
+
+DEV_PORT = 7002
+
+# 本地调试环境
+API_BASE = https://middle.test.ydjia.cn/businesses-gateway
+
+
+```
 
 ```bash
 # clone the project

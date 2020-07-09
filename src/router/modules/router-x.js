@@ -7,8 +7,7 @@ const router = [
     name: 'wxmall',
     meta: {
       title: '商城装修',
-      icon: 'goods',
-      auth: 'yaodianjia-wxmall'
+      icon: 'goods'
     },
     alwaysShow: true,
     children: [
@@ -19,8 +18,7 @@ const router = [
         meta: {
           title: '主页设置',
           noCache: true,
-          activeMenu: '/wxmall/home-set',
-          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-home-set'
+          activeMenu: '/wxmall/home-set'
         }
       },
       {
@@ -29,8 +27,7 @@ const router = [
         name: 'banner',
         meta: {
           title: '首页轮播图',
-          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-banner'
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       }, {
         path: 'notice',
@@ -39,8 +36,7 @@ const router = [
         meta: {
           title: '首页公告栏',
           noCache: true,
-          activeMenu: '/wxmall/notice',
-          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-notice'
+          activeMenu: '/wxmall/notice'
         }
       }, {
         path: 'ad-position',
@@ -49,8 +45,7 @@ const router = [
         meta: {
           title: '分类广告位',
           noCache: true,
-          activeMenu: '/wxmall/ad-position',
-          auth: 'yaodianjia-wxmall.yaodianjia-wxmall-ad-position'
+          activeMenu: '/wxmall/ad-position'
         }
       }
     ]
@@ -61,9 +56,8 @@ const router = [
     redirect: '/marketing/activity',
     name: 'marketing',
     meta: {
-      title: '营销活动',
-      icon: 'goods',
-      auth: 'marketing'
+      title: '营销中心',
+      icon: 'goods'
     },
     alwaysShow: true,
     children: [
@@ -72,21 +66,10 @@ const router = [
         component: () => import('@/views/marketing/activity/index'),
         name: 'activity',
         meta: {
-          title: '活动管理',
-          auth: 'marketing.marketing-manager',
+          title: '精彩活动',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
-      // {
-      //   path: 'activity/create',
-      //   component: () => import('@/views/marketing/activity/create'),
-      //   name: 'create',
-      //   meta: {
-      //     title: '新建活动',
-      //     auth: 'marketing.marketing-manager',
-      //     noCache: true
-      //   }
-      // },
       {
         path: 'activity/dm-template',
         component: () => import('@/views/marketing/activity/DM/template'),
@@ -112,7 +95,7 @@ const router = [
         component: () => import('@/views/marketing/activity/list'),
         name: 'activityList',
         meta: {
-          title: '活动管理列表',
+          title: '精彩活动列表',
           activeMenu: '/marketing/activity',
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
@@ -167,17 +150,26 @@ const router = [
           activeMenu: '/marketing/activity'
         }
       },
-      // {
-      //   path: 'activity/limit-sec-edit',
-      //   component: () => import('@/views/marketing/activity/limit/limit_seckill_edit'),
-      //   name: 'limitSecEdit',
-      //   meta: {
-      //     title: '创建限时秒杀',
-      //     noCache: true,
-      //     activeMenu: '/marketing/activity'
-      //   }
-      // },
-      // 礼品管理模块
+      {
+        path: 'activity/constitute-goods',
+        component: () => import('@/views/marketing/activity/constitute-goods/list'),
+        name: 'constituteGoods',
+        meta: {
+          title: '组合商品',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/constitute-goods/edit',
+        component: () => import('@/views/marketing/activity/constitute-goods/edit'),
+        name: 'constituteGoodsEdit',
+        meta: {
+          title: '组合商品',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
       {
         path: 'gifts',
         component: () => import('@/views/marketing/gift-manage/index'),
@@ -185,8 +177,7 @@ const router = [
         meta: {
           title: '礼品管理',
           auth: 'marketing.gift',
-          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-          activeMenu: '/marketing/gifts'
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
       {
@@ -196,8 +187,7 @@ const router = [
         meta: {
           title: '赠品管理',
           auth: 'marketing.gift',
-          noCache: true, // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-          activeMenu: '/marketing/gifts'
+          noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
       {
@@ -206,8 +196,91 @@ const router = [
         name: 'GiftsComplimentaryCreate',
         meta: {
           title: '创建赠品',
-          auth: 'marketing.gift',
           noCache: false // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+        }
+      },
+      {
+        path: '/activity/newcomer-pack',
+        component: () => import('@/views/marketings/newcomer/newcomerGift'),
+        name: 'newcomerPack',
+        meta: {
+          title: '新人礼包'
+        }
+      }, {
+        path: '/activity/birthday-gift',
+        component: () => import('@/views/marketings/activitysManage/birthdayGift/index'),
+        name: 'birthday-gift',
+        meta: {
+          title: '生日礼包',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher-list',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/voucherList'),
+        name: 'member-voucher-list',
+        meta: {
+          title: '发券记录',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher-detail',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/detail'),
+        name: 'member-voucher-detail',
+        meta: {
+          title: '发券详情',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/index'),
+        name: 'member-voucher',
+        meta: {
+          title: '会员发券',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/exchangeMallList',
+        component: () => import('@/views/marketings/exchangeMall/exchange-list'),
+        name: 'exchangeMallList',
+        meta: {
+          title: '兑换商城',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/newcomer-create',
+        component: () => import('@/views/marketings/newcomer/newcomerCreate'),
+        name: 'newcomer-create',
+        meta: {
+          title: '新人礼包',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/sign-create',
+        component: () => import('@/views/marketings/signGift/signCreate'),
+        name: 'sign-create',
+        meta: {
+          title: '签到奖励'
+        }
+      }, {
+        path: '/activity/exchangeMallAdd',
+        component: () => import('@/views/marketings/exchangeMall/exchange-add'),
+        name: 'exchangeMallAdd',
+        meta: {
+          title: '兑换商城',
+          noCache: false,
+          activeMenu: '/marketing/activity'
         }
       }
     ]

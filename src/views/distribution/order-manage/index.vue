@@ -112,7 +112,7 @@
           >
             <img
               :src="
-                showImgHandler(
+                showImg(
                   dialogContent[0] && dialogContent[0].productImgUrl
                 )
               "
@@ -333,7 +333,7 @@ export default {
       pageSize: 10,
       orderListData: [],
       totalCount: 0,
-      loading: true,
+      loading: false,
       exportDialogVisible: false,
       selectDayModule: { label: '当天', id: 16 },
       selectResult: {},
@@ -606,9 +606,10 @@ export default {
         30,
         31
       ]
+      console.log('zc-------', num)
       return {
-        startDate: `${year}-${num}-01 00:00:00`,
-        endDate: `${year}-${num}-${mouthDayArray[num - 1]} 23:59:59`
+        startDate: `${year}-${num.value}-01 00:00:00`,
+        endDate: `${year}-${num.value}-${mouthDayArray[num.value - 1]} 23:59:59`
       }
     },
     getDayWeek() {

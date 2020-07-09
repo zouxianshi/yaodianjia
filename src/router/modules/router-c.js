@@ -7,7 +7,7 @@ const router = [
     redirect: '/customerService/msgSettings',
     name: 'customerService',
     meta: {
-      title: '客服管理',
+      title: '客服中心',
       icon: 'goods'
     },
     // alwaysShow: true,

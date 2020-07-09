@@ -1,18 +1,23 @@
 <template>
   <el-popover v-model="visible" placement="top-end" popper-class="plx-to-url-model">
     <div class="to-url-box">
-      <div style="margin-bottom: 16px;">
-        自定义链接 <el-input v-model="url" style="width: 260px;margin-left: 10px" placeholder="请输入自定义链接地址" size="mini" />
-      </div>
-      <!--<el-radio-group v-model="type">
-        &lt;!&ndash;<el-radio class="radio-item" :label="'memberCard'">会员领卡链接</el-radio>&ndash;&gt;
-        <el-radio class="radio-item" :label="'view'">
-          <span>
-            自定义链接 <el-input v-model="url" style="width: 260px;margin-left: 10px" placeholder="请输入自定义链接地址" size="mini" />
-          </span>
-          <p v-if="errorText" class="p-error">{{ errorText }}</p>
-        </el-radio>
-      </el-radio-group>-->
+      <el-form style="margin-top: 10px">
+        <el-form-item>
+          <div class="link-items">
+            自定义链接
+            <el-input v-model="url" style="width: 360px;margin-left: 24px" placeholder="请输入自定义链接地址" size="mini" />
+          </div>
+          <div class="link-items">
+            选择内部链接
+            <el-select v-model="urlSelect" size="mini" style="width: 200px;margin-left: 10px" @change="changeUrlType">
+              <el-option v-for="(item, index) in options" :key="index" :value="item.linkAddress" :label="item.pageName" />
+            </el-select>
+            <el-tooltip class="item" effect="light" content="可快捷选择内部链接。" placement="right-start">
+              <i class="el-icon-question" />
+            </el-tooltip>
+          </div>
+        </el-form-item>
+      </el-form>
     </div>
     <div style="text-align: right; margin: 0">
       <el-button size="mini" type="text" @click="visible = false">取消</el-button>
@@ -22,6 +27,7 @@
   </el-popover>
 </template>
 <script>
+import { getSelfUrl } from '@/api/channelService'
 import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'ToUrl',
@@ -39,13 +45,24 @@ export default {
   data() {
     return {
       type: 'view',
-      url: '',
       visible: false,
-      errorText: ''
+      errorText: '',
+      // 链接时自定义还是选择
+      url: '',
+      // 选择内部链接
+      options: [],
+      urlSelect: ''
     }
   },
+  created() {
+    getSelfUrl(this.$store.state.user.merCode).then(res => {
+      if (res.data) {
+        this.options = res.data
+      }
+    })
+  },
   computed: {
-    ...mapState('channel', ['menuData', 'VUE_APP_MEMBER_CENTER']),
+    ...mapState('channel', ['menuData']),
     isDisabled() {
       const { level1Index, level2Index } = this
       return level2Index === -1 && !!this.menuData[level1Index].sub_button.length
@@ -65,23 +82,6 @@ export default {
       this.handlerParams()
     }
   },
-  beforeCreate() {
-  },
-  created() {
-
-  },
-  beforeMount() {
-  },
-  mounted() {
-  },
-  beforeUpdate() {
-  },
-  updated() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
-  },
   methods: {
     ...mapMutations('channel', ['editMenu']),
     handlerParams() {
@@ -97,8 +97,12 @@ export default {
           : sub_button[level2Index].url
     },
     async onSave() {
-      const { level1Index, level2Index } = this
+      const { level1Index, level2Index, url } = this
       this.loading = true
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        this.$message({ message: '跳转地址必须http或https开头', type: 'error' })
+        return
+      }
       await this.editMenu({
         item: {
           type: 'view',
@@ -107,8 +111,11 @@ export default {
         level1Index,
         level2Index
       })
-
       this.visible = false
+    },
+    // 改变设置url类型时
+    changeUrlType() {
+      this.url = this.urlSelect
     }
   }
 }
@@ -128,5 +135,9 @@ export default {
         }
       }
     }
+  }
+  .link-items{
+    height: 60px;
+    line-height: 60px;
   }
 </style>

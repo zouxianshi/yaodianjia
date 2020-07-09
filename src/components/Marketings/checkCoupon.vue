@@ -10,7 +10,7 @@
       <div class="search-form">
         <div class="search-item">
           <div class="search-item">
-            <span class="label-name" style="width:100px">优惠券状态：</span>
+            <span class="label-name" style="width:100px">优惠券类型：</span>
             <el-select v-model="region" placeholder="活动区域">
               <el-option label="全部" value="0" />
               <el-option label="折扣券" value="1" />
@@ -34,9 +34,9 @@
         height="350"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="cname" label="优惠券名称" />
-        <el-table-column label="适用商品">
+        <el-table-column type="selection" width="55" align="left" />
+        <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
+        <el-table-column label="适用商品" show-overflow-tooltip>
           <template
             slot-scope="scope"
           >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}</template>
@@ -44,17 +44,17 @@
         <el-table-column prop="address" label="优惠内容">
           <template
             slot-scope="scope"
-          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName) }}</template>
+          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName, scope.row.cname) }}</template>
         </el-table-column>
-        <el-table-column label="使用时间" width="160">
+        <el-table-column label="使用时间" show-overflow-tooltip>
           <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
         </el-table-column>
-        <el-table-column label="使用场景" width="90">
+        <el-table-column label="使用场景" show-overflow-tooltip>
           <template
             slot-scope="scope"
           >{{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
         </el-table-column>
-        <el-table-column prop="productRule" label="适用门店" width="100">
+        <el-table-column label="适用门店" show-overflow-tooltip>
           <template
             slot-scope="scope"
           >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
@@ -158,25 +158,12 @@ export default {
       this.endTime = formatDate(newName[1])
     }
   },
-  beforeCreate() {},
-  created() {},
-  beforeMount() {},
-  mounted() {},
-  beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {},
-  destroyed() {},
   methods: {
     handleGetlist(val) {
       if (val === '查询') {
         this.pageSize = 10
         this.currentPage = 1
       }
-      // if (this.state === '领券中心') {
-      //   operatorType = 0
-      // } else if (this.state === '支付有礼') {
-      //   operatorType = 1
-      // }
       this.tableLoading = true
       const params = {
         beginTime: this.beforeTime,
@@ -204,7 +191,7 @@ export default {
     },
     checkSure() {
       if (this.singlechoice && this.multipleSelectionAll.length > 1) {
-        this.$message.error('请单选')
+        this.$message.error('只能选择一张优惠券！')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
@@ -228,7 +215,7 @@ export default {
       this.changePageCoreRecordData()
     },
     // 商品折扣处理
-    handleshopRule(ctype, useRule, denomination, giftName) {
+    handleshopRule(ctype, useRule, denomination, giftName, cname) {
       if (ctype === 1) {
         if (useRule === 0) {
           return `无门槛，${denomination}折`
@@ -241,6 +228,8 @@ export default {
         } else {
           return `满${useRule}可用,减${denomination}元`
         }
+      } else if (ctype === 3) {
+        return `${cname}`
       } else {
         if (giftName === 'null' || null) {
           return ''
@@ -255,7 +244,7 @@ export default {
         if (timeRule === 1) {
           return `自领取起${effectTime}天有效`
         } else if (timeRule === 2) {
-          return `自领取起${effectTime.split(',')[0]}天有效,${
+          return `自领取起${effectTime.split(',')[0]}天后生效,生效后${
             effectTime.split(',')[1]
           }天失效`
         } else {
@@ -350,13 +339,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .checkCoupon-model {
-  .el-table--medium th,
-  // .el-table--medium td {
-  //   padding: 2px;
-  // }
-  // .el-table thead th {
-  //   height: 50px;
-  // }
   .creatcoucops:hover {
     cursor: pointer;
   }

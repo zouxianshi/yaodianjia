@@ -10,7 +10,7 @@ const API_BASE = process.env.VUE_APP_API_BASE || '/api'
 const service = axios.create({
   baseURL: API_BASE, // url = base url + request url
   withCredentials: true, // send cookies when cross-domain requests
-  timeout: 20000 // request timeout
+  timeout: 60000 // request timeout
 })
 
 // request interceptor
@@ -60,6 +60,8 @@ service.interceptors.request.use(
   }
 )
 
+const inj = ['40027']
+
 // response interceptor
 service.interceptors.response.use(
   response => {
@@ -71,11 +73,13 @@ service.interceptors.response.use(
     }
     // 10000为所有接口成功码
     if (res.code !== '10000') {
-      Message({
-        message: res.msg,
-        type: 'error',
-        duration: 5 * 1000
-      })
+      if (!inj.includes(res.code)) {
+        Message({
+          message: res.msg,
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
       return Promise.reject(res || 'Error')
     }
     return Promise.resolve(res)

@@ -1,8 +1,8 @@
 <template>
-  <div class="discount-index-model">
+  <div class="discount-index-model app-container">
     <div class="content">
       <div class="discount-content-l">
-        <mPhoneView :data="discountForm" :other-data="otherData" />
+        <mPhoneView :datas="discountForm" :other-data="otherData" />
       </div>
       <div class="discount-content-r">
         <el-steps :active="active">
@@ -157,7 +157,7 @@ export default {
         giftId: '',
         useRule: 0, // 门槛金额
         shopRule: 1, // 适用门店
-        productRule: 2, // 使用商品(2.部分商品可用)
+        productRule: 1, // 使用商品(2.部分商品可用)
         timeRule: 3,
         logo: '' // 预览图片
       }
@@ -361,9 +361,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .discount-index-model {
-  padding: 20px;
-  height: calc(100vh - 180px);
-  overflow: auto;
   .content {
     display: flex;
     .discount-content-l {

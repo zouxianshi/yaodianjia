@@ -966,6 +966,9 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+.form-box {
+  margin-bottom: 80px;
+}
 .btn-select-store {
   display: inline-block;
   line-height: 1;
@@ -1005,15 +1008,26 @@ export default {
   color: #999999;
 }
 .form-footer {
-  position: absolute;
+  // position: absolute;
+  // padding: 12px;
+  // bottom: 0;
+  // left: 0;
+  // right: 0;
+  // background: #fff;
+  // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  // text-align: center;
+  // z-index: 1;
+
+  position: fixed !important;
   padding: 12px;
   bottom: 0;
-  left: 0;
+  left: 255px;
   right: 0;
+  z-index: 3000;
   background: #fff;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  text-align: center;
-  z-index: 1;
+  text-align: right;
+  width: calc(100% - 255px);
 }
 .app-container {
   padding-bottom: 80px;

@@ -38,7 +38,7 @@ export default {
   },
   mounted() {
     const { dragGlobal: { id }, h5Base, $store, dimensionId } = this
-    this.link = `${h5Base}pages/home/preview?dimensionId=${id || dimensionId}&merCode=${$store.getters.merCode}`
+    this.link = `${h5Base}pages/home/preview?dimensionId=${id || dimensionId}&merCode=${$store.getters.merCode}&isNew=0`
     this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
       text: this.link,
       width: 200,

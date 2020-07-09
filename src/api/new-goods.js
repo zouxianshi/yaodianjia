@@ -8,6 +8,29 @@ export function setGoodsAdd(params) {
     data: params
   })
 }
+// 新增单个商品信息（一键提交所有数据）
+export function setGoodsAddALL(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/create-one`,
+    method: 'post',
+    data: params
+  })
+}
+// 新增单个商品信息（一键提交所有数据）
+export function getGoodsInfo({ commodityId, merCode }) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/new/${commodityId}/${merCode}`,
+    method: 'get'
+  })
+}
+// 新增单个商品信息（一键提交所有数据）
+export function getGoodsAddALL(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/query-one`,
+    method: 'post',
+    data: params
+  })
+}
 
 // 更新商品基本信息
 export function updateBasicInfo(params) {
@@ -39,8 +62,8 @@ export function getNewGoodsRecord(params) {
 // 删除新品申请
 export function deleteGoods(params) {
   return request({
-    url: `${config.merGoods}/1.0/commodity`,
-    method: 'delete',
+    url: `${config.merGoods}/1.0/commodity/batch-del`,
+    method: 'post',
     data: params
   })
 }
@@ -52,7 +75,13 @@ export function getSpecs(categoryId) {
     method: 'get'
   })
 }
-
+// 根据一级分类查询规格
+export function getSpecsKey() {
+  return request({
+    url: `${config.merchandise}/1.0/attr-key/list`,
+    method: 'get'
+  })
+}
 // 保存规格
 export function setSpecsData(params) {
   return request({
@@ -87,7 +116,13 @@ export function getBasicGoodsInfo(commodityId, merCode) {
     method: 'get'
   })
 }
-
+// 获取商品所有信息
+export function commodityNew(params) {
+  return request({
+    url: `${config.merGoods}/1.0/commodity/new/${params.commodityId}/${params.merCode}`,
+    method: 'get'
+  })
+}
 // 获取海典标库sku规格管理
 export function getSpecsProductSKU(productId) {
   return request({

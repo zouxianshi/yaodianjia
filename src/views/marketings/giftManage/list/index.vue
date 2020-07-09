@@ -1,5 +1,5 @@
 <template>
-  <div class="list-index-model">
+  <div class="list-index-model app-container">
     <div class="header-nav">
       <div class="item-box">
         <!-- <m-gift-card v-for="(item, index) in cardInfo" :key="index" :info="item" /> -->

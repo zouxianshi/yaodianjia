@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="pageLoading" class="add" element-loading-text="加载中">
+  <div v-loading="pageLoading" class="add app-container" element-loading-text="加载中">
     <div class="payment-gift-rules">
       <h4>活动信息</h4>
       <el-form ref="form" :rules="rules" :model="form" label-width="100px" :disabled="disabled">
@@ -111,6 +111,12 @@
             />元，可参与活动
           </span>
         </el-form-item>
+        <el-form-item>
+          <el-radio-group v-model="form.useType">
+            <el-radio :label="1">商品金额触发</el-radio>
+            <el-radio :label="2">订单金额触发</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
     </div>
     <div class="payment-gift-rules">
@@ -137,6 +143,7 @@
             <mSelectedCoupon
               v-show="form.giftType===1&&selectedCoupons.length>0"
               ref="selectedCouponView"
+              style="width: 740px"
               @onDel="onGetSelectCoupon"
             />
             <el-radio :label="2">
@@ -156,19 +163,19 @@
           />
         </el-form-item>
         <el-form-item label="参与次数：" prop="countRule" required>
-          <el-tooltip class="item" effect="light" placement="top-start">
-            <i class="el-icon-question" style="position: relative;top:-20px;color:#606266" />
-            <div slot="content" style="width:500px;line-height:24px">
-              <p>为活动的参与的限制次数，如用户多次满足条件将根据此限制来判断给用户推送几次活动权益</p>
-              <p>如设置不限制，那么用户每次消费到达条件后即送对应的优惠券和抽奖机会</p>
-              <p>如设置为限制次数，那么用户参与活动达到条件后可获得权益的总次数，抽奖次数活动以抽奖设置的次数为准</p>
-              <p>例子：设置消费门槛满100元，活动次数设置为2，抽奖次数设置为3，那么用户可最多可参与2次活动，且每次活动可抽奖2次</p>
-            </div>
-          </el-tooltip>
           <el-radio-group v-model="countRuleReal">
             <el-radio :label="0">
               不限次数
               <span class="zkTips">用户每次消费达到条件后即送</span>
+              <el-tooltip class="item" effect="light" placement="top-start">
+                <i class="el-icon-question" style="color:#606266" />
+                <div slot="content" style="width:500px;line-height:24px">
+                  <p>为活动的参与的限制次数，如用户多次满足条件将根据此限制来判断给用户推送几次活动权益</p>
+                  <p>如设置不限制，那么用户每次消费到达条件后即送对应的优惠券和抽奖机会</p>
+                  <p>如设置为限制次数，那么用户参与活动达到条件后可获得权益的总次数，抽奖次数活动以抽奖设置的次数为准</p>
+                  <p>例子：设置消费门槛满100元，活动次数设置为2，抽奖次数设置为3，那么用户可最多可参与2次活动，且每次活动可抽奖2次</p>
+                </div>
+              </el-tooltip>
             </el-radio>
             <el-radio :label="1">
               <span class="amTips">
@@ -204,7 +211,7 @@
       <el-button v-if="disabled" type="primary" size="small" @click="$router.go(-1)">返 回</el-button>
     </div>
     <store-dialog ref="storeComponent" :list="selectedStores" @complete="onGetSelectStore" />
-    <mPopSelectActivity ref="selectActivity" :beginendtime="beginEndTime" @onSelect="onGetSelectActivity" />
+    <mPopSelectActivity ref="selectActivity" api-model-property="0" :beginendtime="beginEndTime" @onSelect="onGetSelectActivity" />
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
@@ -260,7 +267,6 @@ export default {
       callback()
     }
     const giftType_limit = (rule, value, callback) => {
-      console.log(this.selectedCoupons)
       if (this.form.giftType === 1) {
         if (this.selectedCoupons.length === 0) {
           callback(new Error('请选择优惠券'))
@@ -317,8 +323,9 @@ export default {
         // sceneRule: 0,
         sendRule: 1,
         shopRule: 1,
-        useRule: '',
-        giftType: 1
+        useRule: '', // 权益触发金额
+        giftType: 1,
+        useType: 1 // 权益触发方式
       },
       rules: {
         activityDetailName: [
@@ -348,7 +355,7 @@ export default {
           { required: true, validator: shopRule_limit, trigger: 'blur' }
         ],
         giftType: [
-          { required: true, validator: giftType_limit, trigger: 'blur' }
+          { required: true, validator: giftType_limit, trigger: 'change' }
         ]
       },
       selectedActivity: [],
@@ -385,15 +392,11 @@ export default {
     if (id) {
       if (op === '1') {
         this.pageStatus = 3
-        this.pageTitle = this.pageTitle + '详情'
         this.disabled = true
       } else {
         this.pageStatus = 2
-        this.pageTitle = this.pageTitle + '编辑'
       }
       this._getDetailData(id)
-    } else {
-      this.pageTitle = this.pageTitle + '新增'
     }
     this.$route.meta.title = this.pageTitle
     // document.title = pageTitle
@@ -496,7 +499,6 @@ export default {
       params = JSON.parse(JSON.stringify(this.form))
       this.saveLoading = true
       if (this.pageStatus === 1) {
-        console.log('createActivity', JSON.stringify(params))
         createActivity(params)
           .then(res => {
             this.saveLoading = false
@@ -584,7 +586,6 @@ export default {
       this.$refs.selectedCouponView.showPage(selectedCoupons, this.pageStatus)
     },
     onGetSelectProduct(selectedProducts) {
-      console.log(selectedProducts)
       selectedProducts.map(item => {
         item.id = item.proId || item.id
         item.proImg = item.picUrl || item.proImg
@@ -597,7 +598,6 @@ export default {
       )
     },
     updateActivityStatus(activity) {
-      console.log('activity', activity)
       if (activity.status && activity.timeStatus === -1) {
         // 未开始
       } else if (activity.status && activity.timeStatus === 1) {
@@ -618,7 +618,6 @@ export default {
         id: id
       }
       this.form.sceneRuleReal = [1, 2]
-      console.log('params detail', JSON.stringify(params))
       ActivityDetail(params)
         .then(res => {
           if (res.code === '10000') {
@@ -672,58 +671,40 @@ export default {
               }
             )
             this.onGetSelectProduct(this.selectedProducts)
-
-            // 编辑状态时，更新页面当前状态
-            // if (this.pageStatus === 2) {
-            //   this.updateActivityStatus(data)
-            // }
           }
-
           this.pageLoading = false
-        })
-        .catch(err => {
+        }).catch(() => {
           this.pageLoading = false
-          console.log('err', err)
         })
       this._getAddedCouponList(id)
       this._getAddedActivityList(id)
     },
     _getAddedCouponList(id) {
       const params = { currentPage: 1, id: id, pageSize: 9999 }
-      console.log('normalActivityAddedCouponList', JSON.stringify(params))
-      normalActivityAddedCouponList(params)
-        .then(res => {
-          if (res.code === '10000' && res.data.records.length > 0) {
-            this.selectedCoupons = _.cloneDeep(res.data.records)
-            this.onGetSelectCoupon(this.selectedCoupons)
-          }
-        })
-        .catch(err => {
-          console.log('err', err)
-        })
+      normalActivityAddedCouponList(params).then(res => {
+        if (res.code === '10000' && res.data.records.length > 0) {
+          this.selectedCoupons = _.cloneDeep(res.data.records)
+          this.onGetSelectCoupon(this.selectedCoupons)
+        }
+      })
     },
     _getAddedActivityList(id) {
       const params = { currentPage: 1, id: id, pageSize: 9999 }
-      console.log('normalAddedActivityList', JSON.stringify(params))
-      normalAddedActivityList(params)
-        .then(res => {
-          if (res.code === '10000' && res.data.records.length > 0) {
-            this.selectedActivity = _.cloneDeep(res.data.records)
-            this.onGetSelectActivity(this.selectedActivity)
-          }
-        })
-        .catch(err => {
-          console.log('err', err)
-        })
+      normalAddedActivityList(params).then(res => {
+        if (res.code === '10000' && res.data.records.length > 0) {
+          this.selectedActivity = _.cloneDeep(res.data.records)
+          this.onGetSelectActivity(this.selectedActivity)
+        }
+      })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 .add {
-  padding: 10px 61px;
-  height: calc(100vh - 158px);
-  overflow-y: scroll;
+  // padding: 10px 61px;
+  // height: calc(100vh - 158px);
+  // overflow-y: scroll;
   .payment-gift-info,
   .payment-gift-rules {
     // padding: 20px 0;
@@ -745,11 +726,15 @@ export default {
       }
       .el-radio-group {
         display: inline-block;
-        line-height: inherit;
-        /* vertical-align: text-top; */
+        // line-height: inherit;
+        vertical-align: text-top;
         font-size: 0;
         width: 100px;
-        margin-top: 3px;
+        // margin-top: 3px;
+        .el-radio{
+          line-height: 0;
+          margin-bottom: 20px;
+        }
       }
     }
     h4 {
@@ -772,10 +757,6 @@ export default {
       line-height: 14px;
     }
   }
-  // .payment-gift-rules {
-  //   border-top: 1px solid #eee;
-  //   border-bottom: 1px solid #eee;
-  // }
   .submit-box {
     text-align: center;
     margin-top: 20px;

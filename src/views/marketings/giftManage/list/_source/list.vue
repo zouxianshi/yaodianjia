@@ -23,7 +23,7 @@
       <el-table
         v-loading="loading"
         :data="tableData"
-        height="calc(100vh - 400px)"
+        height="calc(100vh - 360px)"
         style="width: 100%;"
         empty-text="您暂未创建任何优惠券"
       >
@@ -51,8 +51,8 @@
         </el-table-column>
         <el-table-column label="使用时间" width="180">
           <template slot-scope="scope">
-            <span v-if="scope.row.timeRule === 1">领取后{{ scope.row.effectTime }}天内</span>
-            <span v-if="scope.row.timeRule === 2">领取{{ scope.row.effectTime.split(',')[0] }}天后{{ scope.row.effectTime.split(',')[1] }}天内</span>
+            <span v-if="scope.row.timeRule === 1">领取后{{ scope.row.effectTime }}天内有效</span>
+            <span v-if="scope.row.timeRule === 2">领取{{ scope.row.effectTime.split(',')[0] }}天后生效，生效后{{ scope.row.effectTime.split(',')[1] }}天失效</span>
             <span v-if="scope.row.timeRule === 3">{{ scope.row.effectTime.split(',')[0] }} <br>到<br> {{ scope.row.effectTime.split(',')[1] }}</span>
           </template>
         </el-table-column>

@@ -17,26 +17,6 @@
       </el-table-column>
       <el-table-column prop="memberAge" label="年龄" align="center" />
       <el-table-column prop="memberPhone" width="150" label="手机号码" align="center" />
-      <!-- <el-table-column label="健康顾问q" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.healthConsultants?scope.row.healthConsultants[0].name: '' }}
-          <el-popover
-            v-if="scope.row.healthConsultants"
-            placement="bottom"
-            title="最近添加"
-            width="250"
-            trigger="click"
-          >
-            <mPopConsultantList
-              :datas="scope.row.healthConsultants|| []"
-              :user-id="scope.row.userId"
-            />
-            <el-button slot="reference" size="mini" type="text">
-              <i class="el-icon-arrow-down" />
-            </el-button>
-          </el-popover>
-        </template>
-      </el-table-column> -->
       <el-table-column label="会员分类" width="100" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.memberActive === 1">普通会员</span>
@@ -49,7 +29,7 @@
       <el-table-column prop="age" label="注册来源" width="120" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.registerSource === 1">门店推荐注册</span>
-          <span v-if="scope.row.registerSource === 2">员工二维码注册</span>
+          <span v-if="scope.row.registerSource === 2">员工推荐注册</span>
           <span v-if="scope.row.registerSource === 3">商户渠道注册</span>
           <span v-if="scope.row.registerSource === 4">平台渠道注册</span>
           <span v-if="scope.row.registerSource === 5">支付即会员</span>
@@ -66,8 +46,11 @@
             <div class="more-items">
               <el-button type="text" size="mini" @click="editBeans(scope.row.userId)">海贝管理</el-button>
             </div>
-            <div v-if="env !== 'production'" class="more-items">
+            <div class="more-items">
               <el-button type="text" size="mini" @click="handleUnbound(scope.row.userId)">解绑</el-button>
+            </div>
+            <div class="more-items">
+              <el-button type="text" size="mini" @click="syncMemberToErp(scope.row)">同步至ERP</el-button>
             </div>
             <el-button slot="reference" size="mini" type="text">更多</el-button>
           </el-popover>
@@ -85,7 +68,8 @@ import mPopEditBeans from './popEditBeans' // 海贝编辑
 import {
   queryOnlineIntegra,
   menberBaseInfo,
-  delMerMember
+  delMerMember,
+  syncMemberToErp
 } from '@/api/memberService'
 export default {
   name: 'List',
@@ -97,7 +81,7 @@ export default {
   props: {},
   data() {
     return {
-      env: process.env.VUE_APP_ENV,
+      // env: process.env.VUE_APP_ENV,
       tabelDatas: [],
       loading: false,
       beanTotalNum: 0 // 海贝总数量
@@ -109,6 +93,18 @@ export default {
     }
   },
   methods: {
+    syncMemberToErp(data) {
+      const params = {
+        'memberCards': [data.memberCard],
+        'userIds': [data.userId]
+      }
+      syncMemberToErp(params).then(res => {
+        if (res.code === '10000') {
+          this.$message.success(res.msg)
+          this.$emit('getData')
+        }
+      })
+    },
     handleUnbound(userId) {
       this.$confirm('确认解绑吗, 是否继续?', '提示', {
         confirmButtonText: '确定',
