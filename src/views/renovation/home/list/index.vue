@@ -3,7 +3,7 @@
     <section class="list-operate">
       <div>
         <el-button type="primary" plain="" size="small" @click="handleBatchDel">批量删除</el-button>
-        <el-button type="primary" plain size="small">批量修改分享信息</el-button>
+        <el-button type="primary" plain size="small" @click="handleSetShareinfo">批量修改分享信息</el-button>
       </div>
       <el-button type="primary" size="small" @click="handleEdit('')">新建首页</el-button>
     </section>
@@ -16,26 +16,32 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column label="页面标题" min-width="180" align="center">
+        <el-table-column type="selection" width="55" :selectable="isSelection" />
+        <el-table-column label="页面标题" min-width="180" align="left">
           <template slot-scope="scope">
             <span v-text="scope.row.title" />
             <el-tag v-if="scope.row.isUse===1" size="mini" type="warning"><span class="el-icon-s-home" /> 当前页</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="模板名称" min-width="180" align="center" />
+        <el-table-column prop="name" label="模板名称" min-width="180" align="left" />
+        <el-table-column prop="name" label="新旧主页" align="center">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.isNew" type="success">新首页</el-tag>
+            <el-tag v-else type="info">旧首页</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="最后修改时间" prop="modifyTime" min-width="120" align="center" />
         <el-table-column label="操作" fixed="right" align="center" min-width="190">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" plain @click="handleEdit(scope.row.id)">编辑</el-button>
+            <el-button size="mini" type="primary" plain @click="handleEdit(scope.row.id,scope.row.isNew)">编辑</el-button>
             <el-button size="mini" type="primary" plain @click="handlePreview(scope.row)">预览</el-button>
             <el-dropdown @command="handleCommand">
               <el-button type="primary" size="mini" plain>
                 更多<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设置为主页</el-dropdown-item>
-                <el-dropdown-item :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
+              <el-dropdown-menu slot="dropdown" style="text-align: center;">
+                <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设为主页</el-dropdown-item>
+                <el-dropdown-item :disabled="scope.row.isNew === 0" :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
                 <el-dropdown-item :command="{type:'copy',data:scope.row}">复制</el-dropdown-item>
                 <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'dele',data:scope.row}">删除</el-dropdown-item>
               </el-dropdown-menu>
@@ -44,19 +50,26 @@
         </el-table-column>
       </el-table>
     </section>
+    <input id="copyPath" class="" style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;" type="text">
     <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="previewShow">
-      <preview v-if="previewShow" :dimension-id="dimensionId" />
+      <preview v-if="previewShow" :dimension-id="dimensionId" :is-new="isNew" />
     </el-dialog>
     <base-form ref="baseform" @success="getList" />
+    <share-info ref="setShare" :ids="chooseAry" @success="getList" />
   </div>
 </template>
 <script>
 import Preview from './_source/preview'
 import RenovationService from '@/api/renovation'
 import BaseForm from './_source/baseForm'
+import ShareInfo from './_source/shareInfo'
+import { mapGetters } from 'vuex'
+
+import { setHome } from '@/api/mallService'
+
 export default {
   name: 'HomeListIndex',
-  components: { Preview, BaseForm },
+  components: { Preview, BaseForm, ShareInfo },
   data() {
     return {
       loading: false,
@@ -64,13 +77,21 @@ export default {
       previewShow: false,
       visible: false,
       multipleSelection: [],
-      dimensionId: ''
+      dimensionId: '',
+      chooseAry: [],
+      isNew: true
     }
   },
   created() {
     this.getList()
   },
+  computed: {
+    ...mapGetters(['merCode'])
+  },
   methods: {
+    isSelection(row) {
+      return row.isNew
+    },
     /**
      *
      * @description  获取首页列表数据
@@ -80,6 +101,12 @@ export default {
       try {
         const { data } = await RenovationService.getHomeList()
         this.tableData = data
+
+        /* _.map(this.tableData, (v,i) => {
+          if (!v.isNew) {
+            this.$refs.elTable.toggleRowSelection(this.tableData[i],true)
+          }
+        })*/
       } catch (error) {
         console.log(error)
       }
@@ -87,36 +114,69 @@ export default {
     //  点击更多 点击菜单项触发的事件回调
     handleCommand({ type, data }) {
       switch (type) {
-        case 'home':
+        case 'home': // set home
           this._SetHome(data)
           break
-        case 'set':
+        case 'set': //  page setting
           this.$refs.baseform.openDialog(data)
           break
-        case 'copy':
-
+        case 'copy': // copy
+          this._Setcopy(data)
           break
-        default:
+        default: // delete
           this._Delete([data.id])
           break
       }
     },
     handlePreview(row) {
       this.dimensionId = row.id
+      this.isNew = row.isNew
       this.previewShow = true
     },
-    handleEdit(id) {
-      const url = `/renovation/home/settings${id ? `?id=${id}` : ''}`
-      this.$router.push(url)
+    handleEdit(id, isNew) {
+      if (!id) {
+        this.$router.push(`/renovation/home/settings`)
+      } else {
+        let url = `/renovation/home/settings${id ? `?id=${id}` : ''}`
+        if (!isNew) {
+          url = `/mall/home-settings/${id}`
+        }
+        this.$router.push(url)
+      }
     },
     // 设置为首页模板
-    async _SetHome({ id }) {
-      await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
+    async _SetHome({ id, isNew }) {
+      if (isNew) {
+        await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
+      } else {
+        await setHome({ id })
+      }
       this.$message({
         message: '设置成功',
         type: 'success'
       })
       this.getList()
+    },
+    async _Setcopy(row) { //  复制一条数据
+      await RenovationService.copyCurrentHome({ id: row.id, isNew: row.isNew })
+      this.$message({
+        message: '复制成功',
+        type: 'success'
+      })
+      this.getList()
+    },
+    handleSetShareinfo() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: '请先选中页面',
+          type: 'warning'
+        })
+        return
+      }
+      this.multipleSelection.map(v => {
+        this.chooseAry.push(v.id)
+      })
+      this.$refs.setShare.openDialog()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -124,7 +184,7 @@ export default {
     handleBatchDel() { // 批量删除
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: '请选择你要删除的数据',
+          message: '请先选中页面',
           type: 'warning'
         })
         return

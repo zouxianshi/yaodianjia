@@ -18,9 +18,13 @@ export default {
     onNextStep() {
       const instance = findComponentsDownward(this.$root, 'StepBasics')[0]
       if (instance.$verification()) {
-        console.log(JSON.stringify(this.basics))
-
-        this.setStepVal(2)
+        if (this.basics.styleType) {
+          this.setStepVal(2)
+        } else {
+          this.$message.error('请选择风格')
+        }
+      } else {
+        this.$message.error('请完善页面设置信息')
       }
     }
   },

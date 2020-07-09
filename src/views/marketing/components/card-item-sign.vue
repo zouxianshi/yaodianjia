@@ -5,10 +5,15 @@
       <div class="activity-header">
         <div class="title">
           <span class="title-span">{{ item.titles }}</span>
+          <el-switch
+            v-model="closeOrOpen"
+            style="vertical-algin: middle"
+            active-color="#5677fc"
+            inactive-color="#a7a5a6"
+            @change="changeState"
+          />
         </div>
-        <el-tooltip class="item" effect="dark" :content="item.desc" placement="top-start">
-          <div class="sub-title">{{ item.desc || '' }}</div>
-        </el-tooltip>
+        <div v-if="item.desc===''" style="height:48px">{{ item.desc || '' }}</div>
       </div>
       <div class="action">
         <el-button
@@ -17,14 +22,8 @@
           class="button"
           @click="handleJump(item, 'list')"
         >{{ item.lable }}</el-button>
-        <el-divider direction="vertical" />
-        <el-switch
-          v-model="closeOrOpen"
-          style="vertical-algin: middle"
-          active-color="#5677fc"
-          inactive-color="#a7a5a6"
-          @change="changeState"
-        />
+        <!--<el-divider direction="vertical" />-->
+
       </div>
     </div>
     <!-- 右上角的事件 -->

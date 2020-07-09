@@ -86,5 +86,10 @@ export default {
       color: #ff0000;
       text-align: left;
     }
+    .sa-mandatory-asterisk {
+      font-size: 14px;
+      color: #ff0000;
+      margin-left: 6px;
+    }
   }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div class="announcement-form-item-model">
     <el-form label-width="90px" size="mini">
-      <el-form-item label="公告内容">
-        <el-input v-model="item.name" @change="onUploadItem" />
+      <el-form-item label="公告内容" :rules="[{ required: true}]">
+        <el-input v-model="item.name" maxlength="16" @change="onUploadItem" />
         <div v-if="error.isName" class="sa-assembly-error">
           {{ error.isName }}
         </div>

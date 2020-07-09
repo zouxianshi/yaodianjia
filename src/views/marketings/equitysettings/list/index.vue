@@ -45,7 +45,7 @@ export default {
         },
         {
           value: 'getHaibeiSetting',
-          lable: '消费兑换',
+          lable: '消费奖励',
           name: 'getHaibeiSetting',
           img: exGet,
           createText: '规则设置',

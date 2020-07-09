@@ -7,7 +7,7 @@
       </span>
       <span class="afim-upload">
         <m-el-upload @on-upload="onUpload">
-          <el-button icon="el-icon-position" size="mini">本地上传</el-button>
+          <el-button icon="el-icon-position" size="mini">本地上传</el-button><span class="sa-mandatory-asterisk">*</span>
           <div v-if="error.isImg" class="sa-assembly-error">
             {{ error.isImg }}
           </div>
@@ -16,9 +16,9 @@
     </div>
     <div class="afim-form">
       <el-form label-width="90px" size="mini">
-        <el-form-item label="链接地址">
+        <el-form-item label="链接地址" :rules="[{ required: true}]">
           <el-input v-model="item.url" style="width: calc(100% - 101px)" readonly />
-          <el-button icon="el-icon-link" @click="dialogVisible = true">选择链接</el-button>
+          <el-button icon="el-icon-link" @click="dialogVisible = true">选择链接 </el-button>
           <div v-if="error.isUrl" class="sa-assembly-error">
             {{ error.isUrl }}
           </div>

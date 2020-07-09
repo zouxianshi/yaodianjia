@@ -20,6 +20,8 @@
 import mIcons from './icons'
 import mTagAds from './../viewArea/_source/tagAds'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
+// import 'swiper/dist/css/swiper.css'
+import 'swiper/css/swiper.css'
 
 export default {
   name: 'VaBanner',

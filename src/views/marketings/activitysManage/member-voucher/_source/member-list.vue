@@ -279,7 +279,7 @@ export default {
             data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
             params.startBirthdayDay = data[0]
             params.endBirthdayDay = data[1]
-          } 
+          }
         }
         if (formData.lkTime === null) { // 领卡时间段
           params.startDate = formatDate(formData.lkTimeQj[0])

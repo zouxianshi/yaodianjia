@@ -305,7 +305,7 @@ export default {
   .params-items {
     .title {
       font-size: 18px;
-      font-weight: 500;
+      font-weight: 600;
       height: 40px;
       line-height: 40px;
       margin-bottom: 20px;

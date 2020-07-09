@@ -7,22 +7,19 @@
       <m-item-card title="广告框设置" @on-ass-submit="onAssSubmit">
         <el-divider content-position="left">标题设置</el-divider>
         <el-form label-width="90px" size="mini">
-          <el-form-item label="主标题">
-            <el-input v-model="itemParams.subTitle" maxlength="10" @change="onUploadItem" />
-            <div v-if="error.isSubTitle" class="sa-assembly-error">
-              {{ error.isSubTitle }}
-            </div>
-          </el-form-item>
-          <el-form-item label="副标题">
-            <el-input v-model="itemParams.title" maxlength="8" @change="onUploadItem" />
+          <el-form-item label="主标题" :rules="[{ required: true}]">
+            <el-input v-model="itemParams.title" maxlength="6" placeholder="请输入最多不超过6个汉字" @change="onUploadItem" />
             <div v-if="error.isTitle" class="sa-assembly-error">
               {{ error.isTitle }}
             </div>
           </el-form-item>
+          <el-form-item label="副标题">
+            <el-input v-model="itemParams.subtitle" maxlength="6" placeholder="请输入最多不超过6个汉字" @change="onUploadItem" />
+          </el-form-item>
         </el-form>
         <el-divider content-position="left">商品选择</el-divider>
         <div>
-          <m-form-item :item="itemParams" @on-el-delete="onElDelete" @on-update="onUpdate" />
+          <m-form-item :item="itemParams" source="adFrame" @on-el-delete="onElDelete" @on-update="onUpdate" />
         </div>
         <div v-if="error.isGoods" class="sa-assembly-error">
           {{ error.isGoods }}
@@ -43,7 +40,6 @@ export default {
       dialogVisible: false,
       itemParams: {},
       error: {
-        isSubTitle: false,
         isTitle: false,
         isGoods: false
       }
@@ -57,19 +53,14 @@ export default {
   },
   methods: {
     onUploadItem() {
-      const { subTitle, title, itemList } = this.itemParams
+      const { title, itemList } = this.itemParams
 
       this.reset()
 
       let flag = true
 
-      if (!subTitle) {
-        this.error.isSubTitle = '请输入主标题'
-        flag = false
-      }
-
       if (!title) {
-        this.error.isTitle = '请输入副标题'
+        this.error.isTitle = '请输入主标题'
         flag = false
       }
 
@@ -88,7 +79,6 @@ export default {
     },
     reset() {
       this.error = _.assign(this.error, {
-        isSubTitle: false,
         isTitle: false,
         isGoods: false
       })
@@ -101,6 +91,7 @@ export default {
           itemId: v.specId
         }
       })
+      this.error.isGoods = false
     },
     onElDelete(index) {
       this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)

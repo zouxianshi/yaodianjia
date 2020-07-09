@@ -6,7 +6,7 @@
     <div class="snm-view">
       <m-item-card title="商品选择" @on-ass-submit="onAssSubmit">
         <el-form label-width="90px" size="mini">
-          <el-form-item label="标题名称">
+          <el-form-item label="标题名称" :rules="[{ required: true}]">
             <el-input v-model="el.name" maxlength="6" />
             <div v-if="error.isName" class="sa-assembly-error">{{ error.isName }}</div>
           </el-form-item>

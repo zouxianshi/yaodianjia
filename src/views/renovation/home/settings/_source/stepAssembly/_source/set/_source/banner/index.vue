@@ -17,7 +17,7 @@
 </template>
 <script>
 import { mapMutations } from 'vuex'
-import { itemParams } from './../../../../default'
+import { itemParams, defaultParams } from './../../../../default'
 import mItemCard from './../itemCard'
 import mFormItem from './../advertisement/_source/formItem'
 import mBanner from './../../../preview/_source/banner/banner'
@@ -59,7 +59,7 @@ export default {
         this.setStaticDragData({
           banner: {
             ..._.cloneDeep(this.itemParams),
-            error: false
+            ..._.cloneDeep(defaultParams[`banner_first`])
           }
         })
       }

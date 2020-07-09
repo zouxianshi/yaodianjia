@@ -30,7 +30,7 @@ export default {
     }
   },
   methods: {
-    saveParams(params){ // 保存搜索会员参数
+    saveParams(params) { // 保存搜索会员参数
       this.params.conditionJson = params
     },
     toSetp2(memberList) {

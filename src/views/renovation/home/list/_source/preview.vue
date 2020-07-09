@@ -5,12 +5,17 @@
         <input id="path" class="" hidden type="text">
         <div class="share-path">
           <p id="url" class="link-txt" v-text="link" />
-          <span class="copy" @click="handleCopy">复制</span>
+          <span
+            v-clipboard:error="onError"
+            v-clipboard:copy="link"
+            v-clipboard:success="onCopy"
+            class="copy"
+          >复制</span>
         </div>
       </el-form-item>
       <el-form-item label="二维码">
         <div id="qrCode" ref="qrCodeDiv" />
-        <p>预览页面仅供样式查看，请勿对外开放</p>
+        <p>预览页面仅供样式查看，请勿对外投放</p>
       </el-form-item>
     </el-form>
   </div>
@@ -23,6 +28,10 @@ export default {
     dimensionId: {
       type: String,
       default: null
+    },
+    isNew: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -31,8 +40,8 @@ export default {
     }
   },
   mounted() {
-    const { $store, dimensionId } = this
-    this.link = `${this.h5Base}pages/home/preview?dimensionId=${dimensionId}&merCode=${$store.getters.merCode}`
+    const { $store, dimensionId, isNew } = this
+    this.link = `${this.h5Base}pages/home/preview?dimensionId=${dimensionId}&merCode=${$store.getters.merCode}&isNew=${isNew}`
     this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
       text: this.link,
       width: 200,
@@ -43,12 +52,10 @@ export default {
     })
   },
   methods: {
-    handleCopy() {
-      const txt = document.querySelector('#url').innerHTML
-      var input = document.querySelector('#path')
-      input.value = txt
-      input.select()
-      document.execCommand('Copy')
+    onError() {
+      this.$message.error('复制失败')
+    },
+    onCopy() {
       this.$message({
         message: '复制成功',
         type: 'success'
