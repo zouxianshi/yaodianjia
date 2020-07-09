@@ -34,11 +34,33 @@ export const defaultParams = {
   },
   'navigation_first': {
     error: false,
-    max: 8
+    max: 8,
+    imgSize: {
+      0: '160*160px',
+      1: '160*160px',
+      2: '160*160px',
+      3: '160*160px',
+      4: '160*160px',
+      5: '160*160px',
+      6: '160*160px',
+      7: '160*160px'
+    }
   },
   'navigation_second': {
     error: false,
-    max: 10
+    max: 10,
+    imgSize: {
+      0: '160*160px',
+      1: '160*160px',
+      2: '160*160px',
+      3: '160*160px',
+      4: '160*160px',
+      5: '160*160px',
+      6: '160*160px',
+      7: '160*160px',
+      8: '160*160px',
+      9: '160*160px'
+    }
   },
   'advertisement_first': {
     error: false,
