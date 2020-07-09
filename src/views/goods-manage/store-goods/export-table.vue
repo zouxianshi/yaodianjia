@@ -172,6 +172,6 @@ export default {
 </script>
 <style>
 .el-dialog {
-  width: 680px !important;
+  width: 930px !important;
 }
 </style>
