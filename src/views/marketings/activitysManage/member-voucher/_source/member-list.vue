@@ -306,8 +306,16 @@ export default {
         params.organizations = null
         if (formData.shopRule === 2) {
           params.organizations = []
+          params.organizationsArr = []
           _.map(formData.shopArr, item => {
+            let obj = {
+              stCode: item.stCode,
+              stName: item.stName,
+              address: item.province + item.city + item.area + item.address,
+              mobile: item.mobile
+            }
             params.organizations.push(item.stCode)
+            params.organizationsArr.push(obj)
           })
         }
       }
