@@ -7,7 +7,7 @@
       <el-table-column prop="createTime" label="发放时间" />
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          {{ scope.row.status === 1 ? '发放完成' : '发放中' }}
+          {{ scope.row.status === 1 ? '发放中' : '发放完成' }}
         </template>
       </el-table-column>
       <el-table-column label="操作">
