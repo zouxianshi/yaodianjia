@@ -172,7 +172,7 @@ export default {
       const params = {
         beginTime: this.beforeTime,
         busType: 1,
-        endTime: this.endTime,
+        endTime: this.endTime || formatDate(new Date()),
         cname: this.keyword,
         ctype: this.region,
         currentPage: this.currentPage,
