@@ -105,7 +105,7 @@ export default {
         this.detailParams.birthMonth = conditions.month + '月'
       }
       // 处理海贝范围
-      if (!!(conditions.minIntegral) && !!(conditions.maxIntegral) ) {
+      if (conditions.minIntegral !== "" && conditions.maxIntegral !== "" ) {
         this.detailParams.memberIntiger =
           conditions.minIntegral + ' - ' + conditions.maxIntegral
       }
