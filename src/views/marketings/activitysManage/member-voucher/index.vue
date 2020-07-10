@@ -14,7 +14,7 @@
 import mCouponList from './_source/coupon-list'
 import mMemberList from './_source/member-list'
 import mVoucherSuccess from './_source/voucher-success'
-import { batchSendCoupon } from '@/api/birthday'
+import { batchSendCoupon, batchSendCouponNew } from '@/api/birthday'
 export default {
   name: 'MemberVoucher',
   components: {
@@ -24,22 +24,24 @@ export default {
     return {
       stepActive: 1,
       params: {
-        couponNumList: [],
-        listUserCouponBaseInfo: []
+        couponNumList: []
+        // listUserCouponBaseInfo: []
       }
     }
   },
   methods: {
     saveParams(params){ // 保存搜索会员参数
       this.params.conditionJson = params
+      Object.assign(this.params, JSON.parse(params))
     },
-    toSetp2(memberList) {
+    toSetp2() {
       this.stepActive = 2
-      this.params.listUserCouponBaseInfo = memberList
+      // this.params.listUserCouponBaseInfo = memberList
     },
     toSetp3(couponNumList) {
       this.params.couponNumList = couponNumList
-      batchSendCoupon(this.params).then(res => {
+      batchSendCouponNew(this.params).then(res => {
+        console.log(res)
         if (res.code === '10000') {
           this.stepActive = 3
           this.$refs.success.countDown()

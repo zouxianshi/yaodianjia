@@ -102,8 +102,7 @@
       <el-button size="mini" type="primary" @click="getMemberData">查询</el-button>
     </el-form>
     <storeDialog />
-    <el-table v-loading="tabelLoading" :data="tabelData" @selection-change="changeSelect">
-      <el-table-column type="selection" width="55" />
+    <el-table v-loading="tabelLoading" :data="tabelData">
       <el-table-column prop="img" label="头像">
         <template slot-scope="scope">
           <el-image :src="showImg(scope.row.headUrl)" style=" width:70px; height:70px" />
@@ -171,7 +170,6 @@ export default {
     return {
       tabelLoading: false,
       tabelData: [],
-      listUserCouponBaseInfo: [],
       jsonParams: '', // 搜索条件json
       infoForm: {
         allMember: 1,
@@ -262,7 +260,7 @@ export default {
       const formData = (this.infoForm)
       let params = {}
       if (formData.allMember === 1) {
-        this.params = {}
+        this.params = {"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":"","maxIntegral":"","gender":null,"month":null,"organizations":null}
         params = Object.assign({}, this.params, this.pageInfo)
       } else {
         params = Object.assign({}, this.params, this.pageInfo)
@@ -281,11 +279,9 @@ export default {
             params.endBirthdayDay = data[1].slice(0, 10)
           } 
         }
-        console.log(formData.lkTime === null)
         if (formData.lkTime === null) { // 自行选择领卡时间段
           let times = formData.lkTimeQj[0]
           let times2 = formData.lkTimeQj[1]
-          console.log(times, times2, ('' + (times.getMonth() + 1) ).padStart(2, '0'), ('' + (times2.getMonth() + 1) ).padStart(2, '0'))
           params.startDate = `${times.getFullYear()}-${('' + (times.getMonth() + 1) ).padStart(2, '0')}-${('' + times.getDate()).padStart(2, '0')} 00:00:00 `
           params.endDate = `${times2.getFullYear()}-${('' + (times2.getMonth() + 1) ).padStart(2, '0')}-${('' + times2.getDate()).padStart(2, '0')} 23:59:59 `
         } else {
@@ -335,25 +331,10 @@ export default {
         }
       })
     },
-    // 选择会员
-    changeSelect(e) {
-      this.listUserCouponBaseInfo = []
-      _.map(e, item => {
-        const obj = {
-          memberCard: item.memberCard,
-          userId: item.userId
-        }
-        this.listUserCouponBaseInfo.push(obj)
-      })
-    },
     // 下一步
     onStep() {
-      if (this.listUserCouponBaseInfo.length === 0) {
-        this.$message.error('请至少选择一个会员')
-      } else {
-        this.$emit('submitParams', this.jsonParams)
-        this.$emit('nextstep', this.listUserCouponBaseInfo)
-      }
+      this.$emit('submitParams', this.jsonParams)
+      this.$emit('nextstep')
     }
   }
 }
