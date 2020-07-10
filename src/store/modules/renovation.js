@@ -26,31 +26,49 @@ const basics = {
   recommendedData: []
 }
 
+const agaSelectList = [
+  {
+    type: 'together',
+    key: 'group',
+    name: '拼团'
+  },
+  {
+    type: 'markup',
+    key: 'add',
+    name: '加价购'
+  },
+  {
+    type: 'spike',
+    key: 'amount',
+    name: '秒杀'
+  },
+  {
+    type: 'special',
+    key: 'preference',
+    name: '特惠'
+  },
+  {
+    type: 'fullReduction',
+    key: 'full',
+    name: '满减'
+  }
+]
+
 const state = {
   stepVal: 2,
   homeLoading: false,
   basics: _.cloneDeep(basics),
-  /* basics: {
-    'name': 'name',
-    'title': 'title',
-    'backgroundColor': '#ffffff',
-    'borderFlag': 1,
-    'borderStyle': 1,
-    'borderSize': 4,
-    'borderColor': '#06B54A',
-    'searchHint': '',
-    'styleType': 'custome',
-    'shareDesc': '分享描述',
-    'shareImg': 'https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/ydjia-merchant-manager/666666/20200628/31c8d2d82575494ca2d88348c68e9785.png'
-  },*/
-  dragList: [
-  ],
+  dragList: [],
   staticDragData: {
     banner: _.cloneDeep(bannerItem)
-  }
+  },
+  agaSelectList
 }
 
 const mutations = {
+  setAgaSelectList: (state, payload) => {
+    state.agaSelectList = payload
+  },
   setAgaData: (state, payload) => {
     state.agaData = _.assign(state.agaData, payload)
   },
@@ -79,9 +97,7 @@ const mutations = {
   reset: (state, payload) => {
     state.stepVal = 1
     state.basics = _.cloneDeep(basics)
-    state.dragList = [
-
-    ]
+    state.dragList = []
     state.staticDragData.banner = _.cloneDeep(bannerItem)
   }
 }
@@ -96,8 +112,17 @@ const actions = {
           actTypeList: [11, 12, 13, 14, 15]
         }
         renovationService.getActivityCollection(p).then(res => {
-          commit('setAgaData', res.data)
-          resolve(res.data)
+          const { data } = res
+          commit('setAgaData', data)
+
+          state.agaSelectList = _.map(state.agaSelectList, v => {
+            return {
+              ...v,
+              selected: !_.isEmpty(data[v.key]),
+              disabled: _.isEmpty(data[v.key])
+            }
+          })
+          resolve(data)
         }).catch(e => {
           reject(e)
         })

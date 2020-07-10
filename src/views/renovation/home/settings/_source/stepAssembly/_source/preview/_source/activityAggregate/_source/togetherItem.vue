@@ -1,15 +1,16 @@
 <template>
   <div class="together-item-model">
     <div class="tim-img">
-      <m-item-no-data height="158px" :size="50" />
+      <img v-if="el.storeSpec.picUrl" :src="showImg(el.storeSpec.picUrl)" alt="" style="height: 158px">
+      <m-item-no-data v-else height="158px" :size="50" />
     </div>
     <div class="tim-name">
-      <span>999三九感冒灵颗感999三九感冒灵颗感</span>
+      <span>{{ truName(el.storeSpec.name) }}</span>
     </div>
     <div class="tim-price">
       <span class="tim-t1">团购价</span>
-      <span class="tim-t2">¥2999</span>
-      <span class="tim-t3">¥3999</span>
+      <span class="tim-t2">¥{{ el.storeSpec.price }}</span>
+      <span class="tim-t3">¥{{ el.storeSpec.mprice }}</span>
     </div>
     <div class="tim-groups">
       <m-avatar />
@@ -27,8 +28,17 @@ export default {
   data() {
     return {}
   },
-  props: {},
-  methods: {},
+  props: {
+    el: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    truName(v) {
+      return _.truncate(v, { 'length': 12, 'omission': '...' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },

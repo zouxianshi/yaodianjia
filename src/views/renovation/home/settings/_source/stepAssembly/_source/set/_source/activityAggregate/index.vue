@@ -2,7 +2,7 @@
   <m-item-card title="活动组件选择" @on-ass-submit="onAssSubmit">
     <div class="aga-model">
       <el-row :gutter="20">
-        <el-col v-for="(item,$index) in agaList" :key="$index" :span="12">
+        <el-col v-for="(item,$index) in itemList" :key="$index" :span="12">
           <m-aga-item :item="item" />
         </el-col>
       </el-row>
@@ -11,47 +11,33 @@
 
 </template>
 <script>
+import { mapState, mapMutations } from 'vuex'
 import mItemCard from './../itemCard'
 import mAgaItem from './_source/agaItem'
-
-const agaList = [
-  {
-    type: 'together',
-    name: '拼团'
-  },
-  {
-    type: 'markup',
-    name: '加价购'
-  },
-  {
-    type: 'spike',
-    name: '秒杀'
-  },
-  {
-    type: 'special',
-    name: '特惠'
-  },
-  {
-    type: 'fullReduction',
-    name: '满减'
-  }
-]
 
 export default {
   name: 'Aga',
   data() {
     return {
-      agaList
+      itemList: []
     }
   },
   props: {},
   methods: {
-    onAssSubmit() {}
+    ...mapMutations('renovation', ['setAgaSelectList']),
+    onAssSubmit() {
+      if (!_.some(this.itemList, { 'selected': true })) {
+        this.$message.error('最少选择一个活动组件')
+        return
+      }
+      this.setAgaSelectList(_.cloneDeep(this.itemList))
+    }
   },
   watch: {},
   beforeCreate() {
   },
   created() {
+    this.itemList = _.cloneDeep(this.agaSelectList)
   },
   beforeMount() {
   },
@@ -65,7 +51,9 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('renovation', ['agaSelectList'])
+  },
   components: { mItemCard, mAgaItem }
 }
 </script>

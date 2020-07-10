@@ -1,15 +1,15 @@
 <template>
   <div class="aga-first-model">
     <!--拼团 group 13-->
-    <m-together v-if="agaData.group" />
+    <m-together v-if="is('group')" />
     <!--秒杀 amount 12-->
-    <m-spike v-if="agaData.amount" />
+    <m-spike v-if="is('amount')" />
     <!--特惠 preference 11-->
-    <m-special v-if="agaData.preference" />
+    <m-special v-if="is('preference')" />
     <!--满减 full 14-->
-    <m-full-reduction v-if="agaData.full" />
+    <m-full-reduction v-if="is('full')" />
     <!--加价购 add 15-->
-    <m-markup v-if="agaData.add" />
+    <m-markup v-if="is('add')" />
   </div>
 </template>
 <script>
@@ -25,7 +25,11 @@ export default {
     return {}
   },
   props: {},
-  methods: {},
+  methods: {
+    is(key) {
+      return _.find(this.agaSelectList, ['key', key]).selected
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -44,7 +48,7 @@ export default {
   destroyed() {
   },
   computed: {
-    ...mapState('renovation', ['agaData'])
+    ...mapState('renovation', ['agaData', 'agaSelectList'])
   },
   components: { mTogether, mSpike, mSpecial, mFullReduction, mMarkup }
 }
