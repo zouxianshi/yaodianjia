@@ -24,8 +24,8 @@
     </div>
     <div class="tabel-items">
       <div class="tital-coupon">
-        优惠券：
-        <span>{{ couponData.length }}</span>
+        发放优惠券总数：
+        <span>{{ count }}</span>
       </div>
       <el-table :data="couponData">
         <el-table-column label="券类型">
@@ -66,7 +66,7 @@
   </div>
 </template>
 <script>
-import { listCouponHistoryDetail } from '@/api/birthday'
+import { listCouponHistoryDetail, getCouponHistoryInfo } from '@/api/birthday'
 export default {
   data() {
     return {
@@ -79,45 +79,11 @@ export default {
         org: '全部门店'
       },
       couponData: [],
-      organization: []
+      organization: [],
+      count: 0
     }
   },
   created() {
-    var condition = sessionStorage.getItem('conditionJson')
-    if (condition !== "null" && !!condition) {
-      const conditions = JSON.parse(condition)
-      // 处理生日
-      if (!!(conditions.endBirthdayDay) && !!(conditions.startBirthdayDay) ) {
-        let day = parseInt(conditions.startBirthdayDay.slice(8, 10)) + 1
-        this.detailParams.ageQj =
-          conditions.startBirthdayDay.slice(0, 8) + day + 
-          ' - ' +
-          conditions.endBirthdayDay.slice(0, 10)
-      }
-      // 处理领卡日期
-      if (!!(conditions.startDate) && !!(conditions.endDate) ) {
-        this.detailParams.lkTime =
-          conditions.startDate.slice(0, 10) +
-          ' - ' +
-          conditions.endDate.slice(0, 10)
-      }
-      // 处理出生月份
-      if (conditions.month) {
-        this.detailParams.birthMonth = conditions.month + '月'
-      }
-      // 处理海贝范围
-      if (conditions.minIntegral !== "" && conditions.maxIntegral !== "" ) {
-        this.detailParams.memberIntiger =
-          conditions.minIntegral + ' - ' + conditions.maxIntegral
-      }
-      this.detailParams.sex = (conditions.gender === null || conditions.gender === undefined) ? '不限' : conditions.gender === 1 ? '男' : '女'
-      if (conditions.organizations !== null) {
-        this.detailParams.org = '部分门店'
-        this.organization = conditions.organizationsArr
-      } else {
-        this.detailParams.org = '全部门店'
-      }
-    }
     const params = {
       id: this.$route.query.id
     }
@@ -126,6 +92,13 @@ export default {
         this.couponData = res.data
       }
     })
+    getCouponHistoryInfo(params).then(res => {
+      if (res.code === '10000' && res.data) {
+        this.count = res.data.count
+        this.formartCondition(JSON.parse(res.data.conditionJson))
+      }
+    })
+    
   },
   methods: {
     // 商品折扣处理
@@ -162,6 +135,40 @@ export default {
         } else {
           return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
         }
+      }
+    },
+    // 格式化条件
+    formartCondition(conditions) {
+        // 处理生日
+      if (!!(conditions.endBirthdayDay) && !!(conditions.startBirthdayDay) ) {
+        let day = parseInt(conditions.startBirthdayDay.slice(8, 10)) + 1
+        this.detailParams.ageQj =
+          conditions.startBirthdayDay.slice(0, 8) + day + 
+          ' - ' +
+          conditions.endBirthdayDay.slice(0, 10)
+      }
+      // 处理领卡日期
+      if (!!(conditions.startDate) && !!(conditions.endDate) ) {
+        this.detailParams.lkTime =
+          conditions.startDate.slice(0, 10) +
+          ' - ' +
+          conditions.endDate.slice(0, 10)
+      }
+      // 处理出生月份
+      if (conditions.month) {
+        this.detailParams.birthMonth = conditions.month + '月'
+      }
+      // 处理海贝范围
+      if (conditions.minIntegral !== "" && conditions.maxIntegral !== "" ) {
+        this.detailParams.memberIntiger =
+          conditions.minIntegral + ' - ' + conditions.maxIntegral
+      }
+      this.detailParams.sex = (conditions.gender === null || conditions.gender === undefined) ? '不限' : conditions.gender === 1 ? '男' : '女'
+      if (conditions.organizations !== null) {
+        this.detailParams.org = '部分门店'
+        this.organization = conditions.organizationsArr
+      } else {
+        this.detailParams.org = '全部门店'
       }
     }
   }

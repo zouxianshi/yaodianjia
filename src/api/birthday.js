@@ -76,3 +76,12 @@ export function listCouponHistoryDetail(params) {
     data: params
   })
 }
+
+// 发券详情接口2
+export function getCouponHistoryInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/getCouponHistoryInfo?id=${params.id}`,
+    method: 'post',
+    data: {}
+  })
+}
