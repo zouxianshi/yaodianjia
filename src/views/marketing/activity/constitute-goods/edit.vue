@@ -1,7 +1,7 @@
 <template>
   <div class="exchange-model">
     <el-row>
-      <el-col :span="4">
+      <el-col :span="3">
         <div style="height: 200px;margin:30px 0px 0px 20px">
           <el-steps direction="vertical" :active="active">
             <el-step title="活动规则" />
@@ -9,7 +9,7 @@
           </el-steps>
         </div>
       </el-col>
-      <el-col :span="20" style="background:#fff">
+      <el-col :span="21" style="background:#fff">
         <el-card class="box-card">
           <activityRules v-if="active.toString()==='1'" @submitactivit="submitActivit" />
           <successSubmit
