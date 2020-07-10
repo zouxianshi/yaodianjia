@@ -1,14 +1,14 @@
 <template>
   <div class="aga-first-model">
-    <!--加价购-->
+    <!--加价购 add 15-->
     <m-markup />
-    <!--满减-->
+    <!--满减 full 14-->
     <m-full-reduction />
-    <!--特惠-->
+    <!--特惠 preference 11-->
     <m-special />
-    <!--秒杀-->
+    <!--秒杀 amount 12-->
     <m-spike />
-    <!--拼团-->
+    <!--拼团 group 13-->
     <m-together />
   </div>
 </template>

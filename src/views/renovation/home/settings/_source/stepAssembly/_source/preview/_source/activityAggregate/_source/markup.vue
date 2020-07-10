@@ -18,6 +18,7 @@
   </m-aga-card>
 </template>
 <script>
+import { mapState } from 'vuex'
 import mAgaCard from './agaCard'
 import mFullReductionItem from './fullReductionItem'
 
@@ -28,10 +29,12 @@ export default {
   },
   props: {},
   methods: {},
-  watch: {},
+  watch: {
+  },
   beforeCreate() {
   },
   created() {
+    this.agaData()
   },
   beforeMount() {
   },
@@ -45,7 +48,9 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('renovation', ['agaData'])
+  },
   components: { mAgaCard, mFullReductionItem }
 }
 </script>

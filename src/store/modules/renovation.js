@@ -5,6 +5,7 @@
  */
 
 import _ from 'lodash'
+import store from '@/store'
 import { uuid } from '@/utils' // eslint-disable-line
 import renovationService from '@/api/renovation'
 import { bannerItem, handlerBackfill,items,defaultParams } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
@@ -20,7 +21,8 @@ const basics = {
   searchHint: '', // 搜索预显
   styleType: '', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
   shareDesc: '', // 分享描述
-  shareImg: '' // 分享图片url
+  shareImg: '', // 分享图片url
+  agaData: {} // 活动集合数据
 }
 
 const state = {
@@ -48,6 +50,9 @@ const state = {
 }
 
 const mutations = {
+  setAgaData: (state, payload) => {
+    state.agaData = _.assign(state.agaData, payload)
+  },
   setBasics: (state, payload) => {
     state.basics = _.assign(state.basics, payload)
   },
@@ -78,6 +83,18 @@ const mutations = {
 }
 
 const actions = {
+  async getAgaData({ commit, state }, payload) {
+    if (_.isEmpty(state.agaData)) {
+      const p = {
+        storeId: store.state.mall.centerStoreId,
+        allFlag: true,
+        actTypeList: [11, 12, 13, 14, 15]
+      }
+      await renovationService.getActivityCollection(p).then(res => {
+        commit('setAgaData', res.data)
+      })
+    }
+  },
   saveHomeSetting({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const p = {

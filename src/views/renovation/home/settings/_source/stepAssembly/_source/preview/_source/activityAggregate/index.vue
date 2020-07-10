@@ -1,14 +1,18 @@
 <template>
   <div class="index-model">
-    <component :is="mod" :item="item" />
+    <component :is="mod" v-if="isComponent" :item="item" />
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex'
 import mFirst from './first'
+
 export default {
   name: 'ActivityAggregateIndex',
   data() {
-    return {}
+    return {
+      isComponent: false
+    }
   },
   props: {
     item: {
@@ -16,11 +20,16 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+    ...mapActions('renovation', ['getAgaData'])
+  },
   watch: {},
   beforeCreate() {
   },
-  created() {
+  async created() {
+    this.isComponent = false
+    await this.getAgaData()
+    this.isComponent = true
   },
   beforeMount() {
   },

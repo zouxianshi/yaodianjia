@@ -13,6 +13,14 @@ class RenovationService {
     this.serve = config.merGoods
   }
 
+  getActivityCollection(data) {
+    return request({
+      url: `${this.serve}/1.0/homepage-act/act-aggregate/list`,
+      method: 'post',
+      data
+    })
+  }
+
   homePageAdd(data) {
     return request({
       url: `${this.serve}/1.0/homepage/add`,
