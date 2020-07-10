@@ -5,6 +5,7 @@
       <mSelectedCoupon
         v-show="selectedCoupons.length>0"
         ref="selectedCouponView"
+        maxHeigth="450px"
         @onDel="onGetSelectCoupon"
       />
     </div>
