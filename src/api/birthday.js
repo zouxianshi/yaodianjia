@@ -56,7 +56,7 @@ export function deleteSendHistory(params) {
   return request({
     url: `${config.merGoods}/1.0/coupon/deleteSendHistory`,
     method: 'post',
-    data: params
+    data: params.ids
   })
 }
 // 发券详情
