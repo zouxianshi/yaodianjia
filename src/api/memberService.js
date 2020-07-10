@@ -132,3 +132,12 @@ export function delMerMember(data) {
     data
   })
 }
+// 会员同步至erp
+export function syncMemberToErp(data) {
+  return request({
+    url: `${config.merGoods}/1.0/memberCard/syncMemberToErp`,
+    method: 'post',
+    data
+  })
+}
+
