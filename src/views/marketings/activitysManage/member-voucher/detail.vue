@@ -88,8 +88,9 @@ export default {
       const conditions = JSON.parse(condition)
       // 处理生日
       if (!!(conditions.endBirthdayDay) && !!(conditions.startBirthdayDay) ) {
+        let day = parseInt(conditions.startBirthdayDay.slice(8, 10)) + 1
         this.detailParams.ageQj =
-          conditions.startBirthdayDay.slice(0, 10) +
+          conditions.startBirthdayDay.slice(0, 8) + day + 
           ' - ' +
           conditions.endBirthdayDay.slice(0, 10)
       }
