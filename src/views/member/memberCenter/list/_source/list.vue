@@ -95,11 +95,11 @@ export default {
   methods: {
     syncMemberToErp(data) {
       const params = {
-        'memberCards': [data.memberCard],
-        'userIds': [data.userId]
+        "memberCards": [data.memberCard],
+        "userIds": [data.userId]
       }
       syncMemberToErp(params).then(res => {
-        if (res.code === '10000') {
+        if(res.code === '10000'){
           this.$message.success(res.msg)
           this.$emit('getData')
         }
