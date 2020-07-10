@@ -1,19 +1,20 @@
 <template>
   <div class="spike-item-model">
     <div class="sim-img">
-      <m-item-no-data height="158px" :size="50" />
+      <img v-if="el.storeSpec.picUrl" :src="showImg(el.storeSpec.picUrl)" alt="" style="height: 158px;">
+      <m-item-no-data v-else height="158px" :size="50" />
     </div>
     <div class="sim-name">
-      <span>999三九感冒灵颗感999三九感冒灵颗感</span>
+      <span>{{ truName(el.storeSpec.name) }}</span>
     </div>
     <div class="sim-price">
       <span class="sim-t1">秒杀价</span>
-      <span class="sim-t2">¥2999</span>
-      <span class="sim-t3">立省 ¥29</span>
+      <span class="sim-t2">¥{{ el.storeSpec.price }}</span>
+      <span class="sim-t3">立省 ¥{{ el.storeSpec.mprice - el.storeSpec.price }}</span>
     </div>
     <div class="sim-qg-num">
       <div class="min-bar"><div class="bar" /></div>
-      <div class="min-text-1">已抢购20%</div>
+      <div class="min-text-1">已抢购{{ cpdSnappedUp }}%</div>
     </div>
     <div class="sim-btn">
       <el-button type="danger" round size="mini">去抢购</el-button>
@@ -27,8 +28,17 @@ export default {
   data() {
     return {}
   },
-  props: {},
-  methods: {},
+  props: {
+    el: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    truName(v) {
+      return _.truncate(v, { 'length': 12, 'omission': '...' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },
@@ -46,7 +56,12 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    cpdSnappedUp() {
+      const { stock, leftStock } = this.el
+      return _.floor(_.divide(stock - leftStock, leftStock))
+    }
+  },
   components: { mItemNoData }
 }
 </script>

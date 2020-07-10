@@ -1,25 +1,29 @@
 <template>
-  <m-aga-card type="fullReduction">
+  <m-aga-card type="fullReduction" :start-time="item.startTime" :end-time="item.endTime">
     <div class="full-reduction-model">
       <div class="frm-tip">
-        <p>满<strong>100</strong>打<strong>9</strong>折 <span>有赠品，送完即止</span></p>
+        <p>{{ item.smallTitle }} <span v-if="item.giftOrNot === 1">有赠品，送完即止</span></p>
       </div>
       <el-row :gutter="8">
-        <el-col v-for="(item,$index) in 3" :key="$index" :span="8">
-          <m-full-reduction-item />
+        <el-col v-for="(el,$index) in item.list" :key="$index" :span="8">
+          <m-full-reduction-item :el="el" />
         </el-col>
       </el-row>
     </div>
   </m-aga-card>
 </template>
 <script>
+
+import { mapState } from 'vuex'
 import mAgaCard from './agaCard'
 import mFullReductionItem from './fullReductionItem'
 
 export default {
-  name: 'Special',
+  name: 'FullReduction',
   data() {
-    return {}
+    return {
+      item: {}
+    }
   },
   props: {},
   methods: {},
@@ -27,6 +31,7 @@ export default {
   beforeCreate() {
   },
   created() {
+    this.item = this.agaData.full
   },
   beforeMount() {
   },
@@ -40,7 +45,9 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('renovation', ['agaData'])
+  },
   components: { mAgaCard, mFullReductionItem }
 }
 </script>

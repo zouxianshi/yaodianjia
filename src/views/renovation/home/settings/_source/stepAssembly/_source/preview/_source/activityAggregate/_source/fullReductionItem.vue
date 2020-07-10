@@ -1,10 +1,11 @@
 <template>
   <div :class="classes">
     <div class="mim-img">
-      <m-item-no-data height="96px" :size="50" />
+      <img v-if="el.picUrl" :src="showImg(el.picUrl)" alt="" style="height: 96px;">
+      <m-item-no-data v-else height="96px" :size="50" />
     </div>
     <div class="mim-price">
-      <span class="mim-t2">¥2999</span>
+      <span class="mim-t2">¥{{ el.mprice }}</span>
     </div>
     <div class="mim-btn">
       <el-button type="danger" round size="mini">立即加购</el-button>
@@ -21,6 +22,10 @@ export default {
     return {}
   },
   props: {
+    el: {
+      type: Object,
+      default: () => {}
+    },
     type: {
       type: String,
       default: ''

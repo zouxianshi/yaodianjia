@@ -1,17 +1,17 @@
 <template>
-  <m-aga-card type="markup">
+  <m-aga-card type="markup" :start-time="item.startTime" :end-time="item.endTime">
     <div class="markup-model">
       <el-row :gutter="8">
-        <el-col v-for="(item,$index) in 3" :key="$index" :span="8">
-          <m-full-reduction-item />
+        <el-col v-for="(el,$index) in item.list" :key="$index" :span="8">
+          <m-full-reduction-item :el="el" />
         </el-col>
       </el-row>
       <div class="mm-tip">
         <p>加购<strong>N</strong>元可以换以下商品</p>
       </div>
       <el-row :gutter="8">
-        <el-col v-for="(item,$index) in 3" :key="$index" :span="8">
-          <m-full-reduction-item type="white" :is-no-data="true" />
+        <el-col v-for="(el,$index) in item.list" :key="$index" :span="8">
+          <m-full-reduction-item :el="el" type="white" :is-no-data="true" />
         </el-col>
       </el-row>
     </div>
@@ -25,7 +25,9 @@ import mFullReductionItem from './fullReductionItem'
 export default {
   name: 'Markup',
   data() {
-    return {}
+    return {
+      item: {}
+    }
   },
   props: {},
   methods: {},
@@ -34,8 +36,7 @@ export default {
   beforeCreate() {
   },
   created() {
-    console.log(this.agaData)
-    console.log('------this.agaData')
+    this.item = this.agaData.add
   },
   beforeMount() {
   },

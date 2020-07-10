@@ -1,15 +1,16 @@
 <template>
   <div class="special-item-model">
     <div class="mim-img">
-      <m-item-no-data height="158px" :size="50" />
+      <img v-if="el.storeSpec.picUrl" :src="showImg(el.storeSpec.picUrl)" alt="" style="height: 158px;">
+      <m-item-no-data v-else height="158px" :size="50" />
     </div>
     <div class="mim-name">
-      <span>999三九感冒灵颗感999三九感冒灵颗感</span>
+      <span>{{ truName(el.storeSpec.name) }}</span>
     </div>
     <div class="mim-price">
       <span class="mim-t1">秒杀价</span>
-      <span class="mim-t2">¥2999</span>
-      <span class="mim-t3">立省 ¥29</span>
+      <span class="mim-t2">¥{{ el.storeSpec.price }}</span>
+      <span class="mim-t3">立省 ¥{{ el.storeSpec.mprice - el.storeSpec.price }}</span>
     </div>
     <div class="mim-btn">
       <el-button type="danger" round size="mini">立即抢购</el-button>
@@ -23,8 +24,17 @@ export default {
   data() {
     return {}
   },
-  props: {},
-  methods: {},
+  props: {
+    el: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    truName(v) {
+      return _.truncate(v, { 'length': 12, 'omission': '...' })
+    }
+  },
   watch: {},
   beforeCreate() {
   },

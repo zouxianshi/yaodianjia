@@ -22,7 +22,8 @@ const basics = {
   styleType: '', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
   shareDesc: '', // 分享描述
   shareImg: '', // 分享图片url
-  agaData: {} // 活动集合数据
+  agaData: {}, // 活动集合数据
+  recommendedData: []
 }
 
 const state = {
@@ -52,6 +53,9 @@ const state = {
 const mutations = {
   setAgaData: (state, payload) => {
     state.agaData = _.assign(state.agaData, payload)
+  },
+  setRecommendedData: (state, payload) => {
+    state.recommendedData = _.assign(state.recommendedData, payload)
   },
   setBasics: (state, payload) => {
     state.basics = _.assign(state.basics, payload)

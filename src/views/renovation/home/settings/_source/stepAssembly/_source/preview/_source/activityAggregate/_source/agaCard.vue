@@ -3,7 +3,7 @@
     <div class="acm-title">
       <div :class="`acm-icon acm-icon-${type}`" />
       <div class="acm-time">
-        <v-countdown :current-time="rtTimeStamp(`2020-06-29 00:00:00`)" :start-time="rtTimeStamp('2020-06-29 00:00:00')" :end-time="rtTimeStamp('2020-07-31 23:59:59')" />
+        <v-countdown :current-time="rtTimeStamp(startTime)" :start-time="rtTimeStamp(startTime)" :end-time="rtTimeStamp(endTime)" />
       </div>
     </div>
     <div class="acm-content">
@@ -26,6 +26,14 @@ export default {
     type: {
       type: String,
       default: 'together'
+    },
+    startTime: {
+      type: String,
+      default: '2021-07-02 16:25:34'
+    },
+    endTime: {
+      type: String,
+      default: '2021-07-02 16:25:34'
     }
   },
   methods: {
