@@ -257,7 +257,10 @@ export default {
     // 验证选择商品的数量
     const validGoodsNum = (rule, value, callback) => {
       console.log('this.basicForm.goodsIds-----', this.basicForm.goodsIds)
-      if (Array.isArray(this.basicForm.goodsIds.split(',')) && this.basicForm.goodsIds.split(',').length <= 1) {
+      if (
+        Array.isArray(this.basicForm.goodsIds.split(',')) &&
+        this.basicForm.goodsIds.split(',').length <= 1
+      ) {
         callback(new Error('最小选择两个商品'))
       }
       callback()
@@ -298,9 +301,7 @@ export default {
           { min: 1, max: 50, message: '长度在 1 到 50 个字', trigger: 'blur' }
         ],
         groupId: [{ required: true, message: '请选择分组', trigger: 'change' }],
-        goodsIds: [
-          { validator: validGoodsNum, trigger: 'change' }
-        ],
+        goodsIds: [{ validator: validGoodsNum, trigger: 'change' }],
         image: [{ required: true, message: '请上传图片', trigger: 'change' }],
         keyWord: [
           { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
@@ -396,31 +397,34 @@ export default {
     _loadInfo() {
       this.pageLoading = true
       // 加载商品信息
-      getConstituteGoodsInfo(this.$route.query.id, this.merCode).then(res => {
-        this.pageLoading = false
-        // 分组处理
-        if (res.data.groupIds && res.data.groupIds.length > 0) {
-          this._loadgroupGather('2', res.data.groupIds)
-        }
+      getConstituteGoodsInfo(this.$route.query.id, this.merCode)
+        .then(res => {
+          this.pageLoading = false
+          // 分组处理
+          if (res.data.groupIds && res.data.groupIds.length > 0) {
+            this._loadgroupGather('2', res.data.groupIds)
+          }
 
-        const { data } = res
-        // 赋值
-        console.log('data=====', data)
-        this.basicForm = data
-        this.$refs.storeGods.dataFrom(data.childCommodities)
-        this.basicForm.groupId = Array.isArray(data.groupIds)
-          ? data.groupIds.join(',')
-          : data.groupIds
-        this.basicForm.goodsIds = _.map(data.childCommodities, 'specId').join(
-          ','
-        )
-        this.storeSelectGoods = data.childCommodities
-        if (this.basicForm.detail) {
-          this.$refs.editor.setContent(this.basicForm.detail)
-        }
-      }).catch(() => {
-        this.pageLoading = false
-      })
+          const { data } = res
+          // 赋值
+          console.log('data=====', data)
+          this.basicForm = data
+          this.$refs.storeGods.dataFrom(data.childCommodities)
+          this.basicForm.limitNum = data.limitNum ? String(data.limitNum) : ''
+          this.basicForm.groupId = Array.isArray(data.groupIds)
+            ? data.groupIds.join(',')
+            : data.groupIds
+          this.basicForm.goodsIds = _.map(data.childCommodities, 'specId').join(
+            ','
+          )
+          this.storeSelectGoods = data.childCommodities
+          if (this.basicForm.detail) {
+            this.$refs.editor.setContent(this.basicForm.detail)
+          }
+        })
+        .catch(() => {
+          this.pageLoading = false
+        })
     },
     handleSelectionChange(row) {
       this.chooseTableSpec = row
@@ -683,6 +687,9 @@ export default {
               const data = {
                 merCode: this.merCode,
                 ...this.basicForm,
+                limitNum: this.basicForm.limitNum
+                  ? Number(this.basicForm.limitNum)
+                  : 0,
                 childCommodities
               }
               if (this.basicForm.id) {
