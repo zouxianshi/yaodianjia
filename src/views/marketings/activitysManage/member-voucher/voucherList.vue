@@ -56,12 +56,12 @@ export default {
       this.$router.push('/activity/member-voucher-detail?id=' + rows.id)
     },
     handleSizeChange(e) {
+      this.pageInfo.currentPage = 1
       this.pageInfo.pageSize = e
       this.getData()
     },
     handleCurrentChange(e) {
       this.pageInfo.currentPage = e
-      this.pageInfo.pageSize = 1
       this.getData()
     },
     getData() {
@@ -70,6 +70,7 @@ export default {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.records
           this.totalCount = res.data.total
+          console.log(this.totalCount)
         }
       })
     }

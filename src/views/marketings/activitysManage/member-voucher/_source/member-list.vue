@@ -221,8 +221,8 @@ export default {
       ageInterval: [
         { label: '不限', value: 1 },
         { label: '小于20岁', value: [0, 20] },
-        { label: '20-25岁', value: [20, 25] },
-        { label: '26-35岁', value: [26, 35] },
+        { label: '20-25岁', value: [20, 26] },
+        { label: '26-35岁', value: [26, 36] },
         { label: '36-45岁', value: [36, 45] },
         { label: '45岁以上', value: [45, 200] },
         { label: '选择出生年月', value: null }
@@ -268,8 +268,8 @@ export default {
         params = Object.assign({}, this.params, this.pageInfo)
         params.empCodes = formData.cardArr.trim() ? formData.cardArr.trim().split(',') : null
         if (formData.ageInterval === null) { // 自行选择年龄段
-          params.startBirthdayDay = formatDate(formData.agePicker[0])
-          params.endBirthdayDay = formatDate(new Date(formData.agePicker[1]).getTime() + 86399990)
+          params.startBirthdayDay = formatDate(formData.agePicker[0]).slice(0, 10)
+          params.endBirthdayDay = formatDate(formData.agePicker[1]).slice(0, 10)
         } else {
           var data = []
           if (formData.ageInterval === 1) { // 不限年龄
@@ -277,13 +277,15 @@ export default {
             params.endBirthdayDay = ""
           } else {
             data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
-            params.startBirthdayDay = data[0]
-            params.endBirthdayDay = data[1]
+            params.startBirthdayDay = data[0].slice(0, 10)
+            params.endBirthdayDay = data[1].slice(0, 10)
           } 
         }
         if (formData.lkTime === null) { // 自行选择领卡时间段
-          params.startDate = formatDate(formData.lkTimeQj[0])
-          params.endDate = formatDate(new Date(formData.lkTimeQj[1]).getTime() + 86399990)
+          let times = formData.lkTimeQj[0]
+          let times2 = formData.lkTimeQj[1]
+          params.startDate = `${times.getFullYear()}-${('' + (times.getMonth() + 1)).padStart('0', 2)}-${('' + times.getDate()).padStart('2', 2)} 00:00:00 `
+          params.endDate = `${times2.getFullYear()}-${('' +(times2.getMonth() + 1)).padStart('0', 2)}-${('' + times2.getDate()).padStart('2', 2)} 23:59:59 `
         } else {
           var data1 = []
           if (formData.lkTime === 1) { // 不限领卡时间段
