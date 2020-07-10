@@ -209,8 +209,8 @@ export default {
       totalCount: 0,
       lkOptions: [
         { label: '不限', value: 1 },
-        { label: '一周内', value: [0, 7] },
-        { label: '一月内', value: [0, 30] },
+        { label: '一周内', value: [0, 6] },
+        { label: '一月内', value: [0, 29] },
         { label: '选择时间段', value: null }
       ],
       sex: [
