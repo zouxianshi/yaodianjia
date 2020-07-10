@@ -19,7 +19,7 @@ class InnerCtor {
   }
   // 组合商品权限控制
   showGroupGoods() {
-    return this.get('commodity.commodity-combine')
+    return this.get('marketing.marketing-manager.commodity-combine')
   }
   navList() {
     return [
