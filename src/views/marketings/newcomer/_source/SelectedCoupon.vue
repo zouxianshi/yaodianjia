@@ -25,7 +25,7 @@
           slot-scope="scope"
         >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
       </el-table-column>
-      <el-table-column label="适用门店" width="120">
+      <el-table-column label="适用商品" width="120">
         <template
           slot-scope="scope"
         >{{ scope.row.productRule ===1?'全部商品':'部分商品可用' }}</template>

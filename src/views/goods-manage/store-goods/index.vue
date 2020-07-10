@@ -905,7 +905,7 @@ export default {
           res = await exportData({
             ...this.listQuery,
             lockFlag: this.listQuery.lockFlag ? [this.listQuery.lockFlag] : [],
-            storeId: this.listQuery.storeId ? [this.listQuery.storeId] : []
+            storeIds: this.listQuery.storeId ? [this.listQuery.storeId] : []
           })
         }
         if (res.code === '10000') {
@@ -946,13 +946,15 @@ export default {
           this.subLoading = true
           const data = {
             commodityId: this.editData.commodityId,
-            price: this.editData.price,
             specId: this.editData.id,
-            stock: this.editData.stock,
             storeId: this.editData.storeId,
             merCode: this.merCode
           }
-
+          if (this.type === 'price') {
+            data['price'] = this.editData.price
+          } else {
+            data['stock'] = this.editData.stock
+          }
           setUpdatePriceStock({ list: [data] })
             .then(res => {
               this.subLoading = false

@@ -6,7 +6,7 @@
       @click="dialogExportVisible = true;listQuery.currentPage=1;_loadList()"
     >查看导出记录</el-button>
     <el-dialog title="导出记录" :visible.sync="dialogExportVisible" append-to-body>
-      <el-table v-loading="loadingList" :data="tableData" style="width: 100%" height="400">
+      <el-table v-loading="loadingList" :data="tableData" height="400">
         <el-table-column prop="createTime" label="申请时间" width="180" />
         <el-table-column prop="name" label="文件名称" width="180">
           <template slot-scope="scope">
@@ -21,7 +21,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="createName" label="申请人" />
-        <el-table-column prop="status" label="文件导出状态">
+        <el-table-column prop="status" label="文件导出状态333">
           <!-- 任务状态(1.待执行 2.执行中 3.执行完成 4.执行失败 5.取消 -->
           <template slot-scope="scope">
             <el-tooltip
@@ -170,3 +170,8 @@ export default {
   }
 }
 </script>
+<style>
+.el-dialog {
+  width: 930px !important;
+}
+</style>

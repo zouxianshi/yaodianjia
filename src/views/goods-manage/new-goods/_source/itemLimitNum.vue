@@ -1,7 +1,7 @@
 <template>
   <div class="item-limit-num-model">
     <el-radio-group v-model="item.limitType">
-      <el-radio :label="0" style="display:block">不限购</el-radio>
+      <el-radio :label="0" style="display:block line-height: 28px">不限购</el-radio>
       <el-radio :label="1" style="margin-top:10px">
         <span style="color:#333">
           每笔订单限购&nbsp;

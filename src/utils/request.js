@@ -28,6 +28,7 @@ service.interceptors.request.use(
   config => {
     if (store.getters.token) {
       config.headers['Authorization'] = getToken()
+      config.headers['merCode'] = store.state.user.merCode
     }
     isExport = config.isExport || false
     const authParams = {
