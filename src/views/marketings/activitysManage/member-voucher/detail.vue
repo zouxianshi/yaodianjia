@@ -52,10 +52,10 @@
             slot-scope="scope"
           >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
         </el-table-column>
-        <el-table-column label="适用门店">
+        <el-table-column label="适用商品">
           <template
             slot-scope="scope"
-          >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
+          >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}</template>
         </el-table-column>
         <el-table-column label="每人发放数量">1</el-table-column>
       </el-table>

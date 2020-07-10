@@ -7,12 +7,13 @@
       <el-table-column prop="createTime" label="发放时间" />
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          {{ scope.row.status === 1 ? '发放中' : '发放完成' }}
+          {{ scope.row.status === 1 ? '发放中' : scope.row.status === 2 ? '发放完成' : '准备中' }}
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" @click="detail(scope.row)">查看</el-button>
+          <el-button type="text" @click="detele(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -35,7 +36,7 @@
   </div>
 </template>
 <script>
-import { couponHistoryList } from '@/api/birthday'
+import { couponHistoryList, deleteSendHistory } from '@/api/birthday'
 export default {
   data() {
     return {
@@ -54,6 +55,21 @@ export default {
     detail(rows) {
       sessionStorage.setItem('conditionJson', rows.conditionJson)
       this.$router.push('/activity/member-voucher-detail?id=' + rows.id)
+    },
+    // 删除
+    detele(rows) {
+      const params = {
+        ids: [rows.id]
+      }
+      deleteSendHistory(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          })
+          this.getData()
+        }
+      })
     },
     handleSizeChange(e) {
       this.pageInfo.currentPage = 1
