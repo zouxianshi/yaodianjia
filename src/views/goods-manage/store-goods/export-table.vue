@@ -21,7 +21,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="createName" label="申请人" />
-        <el-table-column prop="status" label="文件导出状态333">
+        <el-table-column prop="status" label="文件导出状态">
           <!-- 任务状态(1.待执行 2.执行中 3.执行完成 4.执行失败 5.取消 -->
           <template slot-scope="scope">
             <el-tooltip
