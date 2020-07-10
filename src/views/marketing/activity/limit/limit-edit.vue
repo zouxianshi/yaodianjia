@@ -666,7 +666,7 @@ export default {
               productName: goods.name || '',
               productSpecId: goods.specId || '',
               productSpecName: this.formatSkuInfo(goods.specSkuList || ''),
-              stock: (goods.stock || '') + ''
+              stock: (goods.stock || 0) + ''
               // mprice: goods.mprice // 参考
             }
             this.tableForm.selectedGoods.push(item)
