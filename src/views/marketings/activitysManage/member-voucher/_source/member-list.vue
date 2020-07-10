@@ -80,9 +80,9 @@
         <el-form-item label="模糊查询：">
           <el-input v-model="params.content" style="width: 195x" placeholder="会员名/会员卡号/手机号" />
         </el-form-item>
-        <el-form-item label="批量搜索：">
+        <!-- <el-form-item label="批量搜索：">
           <el-input v-model="infoForm.cardArr" style="width: 195px" placeholder="多个会员卡号请用、隔开" />
-        </el-form-item>
+        </el-form-item> -->
         <div />
         <el-form-item label="所属门店：">
           <el-select v-model="infoForm.shopRule" @change="infoForm.shopArr = []">

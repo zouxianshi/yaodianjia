@@ -132,10 +132,7 @@ export function delMerMember(data) {
     data
   })
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> fixbug-master-zc-0707
 // 会员同步至erp
 export function syncMemberToErp(data) {
   return request({
@@ -144,7 +141,4 @@ export function syncMemberToErp(data) {
     data
   })
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> fixbug-master-zc-0707
