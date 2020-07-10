@@ -126,8 +126,9 @@ export default {
     'dragList': {
       immediate: true,
       handler(v) {
-        // this.dragData = _.cloneDeep(v)
-        this.dragData = [
+        this.dragData = _.cloneDeep(v)
+        alert(666)
+        /* this.dragData = [
           {
             uuid: `${uuid('activityAggregate-')}${uuid()}${uuid()}${uuid()}`,
             type: 'activityAggregate',
@@ -136,14 +137,13 @@ export default {
             name: '默认样式',
             itemList: items(1)
           }
-        ]
+        ]*/
       }
     }
   },
   beforeCreate() {
   },
   created() {
-
   },
   beforeMount() {
   },

@@ -34,7 +34,8 @@ export default {
   beforeCreate() {
   },
   created() {
-    this.agaData()
+    console.log(this.agaData)
+    console.log('------this.agaData')
   },
   beforeMount() {
   },

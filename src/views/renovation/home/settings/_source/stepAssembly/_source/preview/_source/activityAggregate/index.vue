@@ -26,10 +26,13 @@ export default {
   watch: {},
   beforeCreate() {
   },
-  async created() {
+  created() {
     this.isComponent = false
-    await this.getAgaData()
-    this.isComponent = true
+    this.getAgaData().then(() => {
+      this.isComponent = true
+    }).catch(() => {
+      this.isComponent = true
+    })
   },
   beforeMount() {
   },

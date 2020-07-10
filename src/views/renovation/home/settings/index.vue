@@ -36,14 +36,12 @@ export default {
   beforeCreate() {
   },
   created() {
-    // todo 防止数据未清除 创建再次清空
-    this.reset()
+    this.isComponent = false
     this.setHomeLoading(true)
     const { query } = this.$route
     const { merCode } = this.$store.state.user
     this.getCenterStoreId({ merCode }).then(() => {
       if (!_.isEmpty(query)) {
-        this.setStepVal(2)
         this.getHomePage({ id: query.id }).then(() => {
           this.isComponent = true
           setTimeout(() => {

@@ -83,17 +83,24 @@ const mutations = {
 }
 
 const actions = {
-  async getAgaData({ commit, state }, payload) {
-    if (_.isEmpty(state.agaData)) {
-      const p = {
-        storeId: store.state.mall.centerStoreId,
-        allFlag: true,
-        actTypeList: [11, 12, 13, 14, 15]
+  getAgaData({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      if (_.isEmpty(state.agaData)) {
+        const p = {
+          storeId: store.state.mall.centerStoreId,
+          allFlag: true,
+          actTypeList: [11, 12, 13, 14, 15]
+        }
+        renovationService.getActivityCollection(p).then(res => {
+          commit('setAgaData', res.data)
+          resolve(res.data)
+        }).catch(e => {
+          reject(e)
+        })
+      } else {
+        resolve(state.agaData)
       }
-      await renovationService.getActivityCollection(p).then(res => {
-        commit('setAgaData', res.data)
-      })
-    }
+    })
   },
   saveHomeSetting({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
