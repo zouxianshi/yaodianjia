@@ -235,7 +235,7 @@ export default {
   },
   created() {
     this.getMemberData()
-    this.jsonParams = `{"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":null,"maxIntegral":null,"gender":null,"month":null,"organizations":null}`
+    this.jsonParams = `{"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":"","maxIntegral":"","gender":null,"month":null,"organizations":null}`
   },
   methods: {
     handleSizeChange(e) {
@@ -259,7 +259,7 @@ export default {
     },
     // 搜索会员列表
     getMemberData() {
-      const formData = _.cloneDeep(this.infoForm)
+      const formData = (this.infoForm)
       let params = {}
       if (formData.allMember === 1) {
         this.params = {}
@@ -281,11 +281,13 @@ export default {
             params.endBirthdayDay = data[1].slice(0, 10)
           } 
         }
+        console.log(formData.lkTime === null)
         if (formData.lkTime === null) { // 自行选择领卡时间段
           let times = formData.lkTimeQj[0]
           let times2 = formData.lkTimeQj[1]
-          params.startDate = `${times.getFullYear()}-${('' + (times.getMonth() + 1)).padStart('0', 2)}-${('' + times.getDate()).padStart('2', 2)} 00:00:00 `
-          params.endDate = `${times2.getFullYear()}-${('' +(times2.getMonth() + 1)).padStart('0', 2)}-${('' + times2.getDate()).padStart('2', 2)} 23:59:59 `
+          console.log(times, times2, ('' + (times.getMonth() + 1) ).padStart(2, '0'), ('' + (times2.getMonth() + 1) ).padStart(2, '0'))
+          params.startDate = `${times.getFullYear()}-${('' + (times.getMonth() + 1) ).padStart(2, '0')}-${('' + times.getDate()).padStart(2, '0')} 00:00:00 `
+          params.endDate = `${times2.getFullYear()}-${('' + (times2.getMonth() + 1) ).padStart(2, '0')}-${('' + times2.getDate()).padStart(2, '0')} 23:59:59 `
         } else {
           var data1 = []
           if (formData.lkTime === 1) { // 不限领卡时间段
