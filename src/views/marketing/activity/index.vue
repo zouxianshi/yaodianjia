@@ -60,6 +60,8 @@ import cardItemSign from '../components/card-item-sign' // 签到功能
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
+import groupGoods from '@/assets/image/acvity/group-goods.png'
+import ps from '@/layout/psHandler'
 import haibei from '@/assets/image/acvity/haibei.png'
 import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
@@ -172,6 +174,18 @@ export default {
           linkUrl: '/marketing/activity/limit-edit?l_type=12',
           desc:
             '单品秒杀强调高时效性的特价刺激，可设置独立库存，设置固定周期的限时活动，可提高顾客粘性。'
+        },
+        {
+          value: 'constituteGoods',
+          lable: '组合商品',
+          listLabel: '组合商品列表',
+          name: 'constituteGoods',
+          img: groupGoods,
+          pass: ps.showGroupGoods(), // 是否有权限
+          listUrl: '/marketing/activity/constitute-goods',
+          linkUrl: '/marketing/activity/constitute-goods/edit',
+          desc:
+            '组合商品可打包多件商品一起售卖，可以提供商品销售量，也可给到客户一定优惠.....'
         }
       ], // 商品促销
       gamesFun: [

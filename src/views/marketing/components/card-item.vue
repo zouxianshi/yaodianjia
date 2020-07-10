@@ -1,5 +1,5 @@
 <template>
-  <el-card class="activity-card" shadow="hover">
+  <el-card v-if="item.name !== 'constituteGoods' || item.pass" class="activity-card" shadow="hover">
     <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item, 'list')" />
     <div class="activity-bottom">
       <div class="activity-header">

@@ -7,7 +7,13 @@ const state = {
     current: 1,
     size: 20
   },
-  tabloading: false
+  tabloading: false,
+  // 计算参考价格
+  mprice: 0,
+  // 计算售卖价
+  soulePrice: 0,
+  // 计算重量
+  weight: 0
 }
 
 const mutations = {
@@ -26,6 +32,13 @@ const mutations = {
   // 更新tableListloading
   SET_TABLE_LOADING: (state, data) => {
     state.tabloading = data
+  },
+  // 更新组合商品的计算值
+  SET_TABLE_FORM_VALUE: (state, data) => {
+    console.log('SET_TABLE_FORM_VALUE-----', state, data)
+    state.mprice = data.mprice
+    state.soulePrice = data.soulePrice
+    state.weight = data.weight
   }
 }
 
