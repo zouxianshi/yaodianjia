@@ -254,6 +254,14 @@ export default {
       }
       callback()
     }
+    // 验证选择商品的数量
+    const validGoodsNum = (rule, value, callback) => {
+      console.log('this.basicForm.goodsIds-----', this.basicForm.goodsIds)
+      if (Array.isArray(this.basicForm.goodsIds.split(',')) && this.basicForm.goodsIds.split(',').length <= 1) {
+        callback(new Error('最小选择两个商品'))
+      }
+      callback()
+    }
     return {
       // goodsData: [],
       check_price: _check_price,
@@ -291,7 +299,7 @@ export default {
         ],
         groupId: [{ required: true, message: '请选择分组', trigger: 'change' }],
         goodsIds: [
-          { required: true, message: '请选择商品', trigger: 'change' }
+          { validator: validGoodsNum, trigger: 'change' }
         ],
         image: [{ required: true, message: '请上传图片', trigger: 'change' }],
         keyWord: [
