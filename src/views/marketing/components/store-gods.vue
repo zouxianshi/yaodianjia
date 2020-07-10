@@ -163,6 +163,11 @@ export default {
       type: Array,
       default: () => []
     },
+    limitMin: {
+      // 选取数量最低限制个数
+      type: Number,
+      default: 1
+    },
     limitMax: {
       // 选取数量限制个数 0表示不限制
       type: Number,
@@ -263,6 +268,13 @@ export default {
     confirm() {
       if (this.mySelectList && this.mySelectList.length === 0) {
         this.$message({ type: 'warning', message: '请选取商品' })
+        return false
+      }
+      if (this.limitMin !== 0 && this.mySelectList.length < this.limitMin) {
+        this.$message({
+          type: 'warning',
+          message: '最少要选取' + this.limitMin + '个商品'
+        })
         return false
       }
       if (this.limitMax !== 0 && this.mySelectList.length > this.limitMax) {

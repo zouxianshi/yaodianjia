@@ -816,7 +816,7 @@ export default {
                   confineNum: '' + item.confineNum,
                   productNameSpec: this.formatSkuInfo(item.specSkus || ''),
                   picUrl: item.picUrl,
-                  stock: (item.stock || '') + ''
+                  stock: (item.stock || 0) + ''
                 }
               })
               : []

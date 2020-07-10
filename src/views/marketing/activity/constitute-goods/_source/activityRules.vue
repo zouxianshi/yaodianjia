@@ -128,6 +128,8 @@
               <el-input
                 v-model="basicForm.keyWord"
                 :rows="5"
+                maxlength="30"
+                show-word-limit
                 type="textarea"
                 placeholder="请输入关键字,用、隔开"
               />
@@ -157,6 +159,7 @@
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
+      :limit-min="2"
       :limit-max="5"
       :store-ids="[]"
       :list="storeSelectGoods"
