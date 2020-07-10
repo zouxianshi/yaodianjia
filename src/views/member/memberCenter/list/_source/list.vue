@@ -69,9 +69,9 @@
             <div class="more-items">
               <el-button type="text" size="mini" @click="handleUnbound(scope.row.userId)">解绑</el-button>
             </div>
-            <div class="more-items">
+            <!-- <div class="more-items">
               <el-button type="text" size="mini" @click="syncMemberToErp(scope.row)">同步至ERP</el-button>
-            </div>
+            </div> -->
             <el-button slot="reference" size="mini" type="text">更多</el-button>
           </el-popover>
         </template>
