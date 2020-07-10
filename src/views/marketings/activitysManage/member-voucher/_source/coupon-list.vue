@@ -43,7 +43,6 @@ export default {
       if (type) {
         this.$emit('prevstep')
       } else {
-        console.log(this.selectedCoupons)
         if (this.selectedCoupons.length === 0) {
           this.$message.error('请至少选择一张优惠券')
         } else {
