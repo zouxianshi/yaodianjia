@@ -43,6 +43,15 @@ export function batchSendCoupon(params) {
   })
 }
 
+// 批量发券新接口
+export function batchSendCouponNew(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/batchSendCouponNew`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 获取发券记录
 export function couponHistoryList(params) {
   return request({
