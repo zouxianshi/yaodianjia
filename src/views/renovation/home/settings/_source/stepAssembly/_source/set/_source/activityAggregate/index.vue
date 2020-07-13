@@ -12,6 +12,7 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import { saveDragItem } from './../../../../default'
 import mItemCard from './../itemCard'
 import mAgaItem from './_source/agaItem'
 
@@ -19,10 +20,16 @@ export default {
   name: 'Aga',
   data() {
     return {
-      itemList: []
+      itemList: [],
+      itemParams: {}
     }
   },
-  props: {},
+  props: {
+    item: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {
     ...mapMutations('renovation', ['setAgaSelectList']),
     onAssSubmit() {
@@ -31,17 +38,25 @@ export default {
         return
       }
       this.setAgaSelectList(_.cloneDeep(this.itemList))
+      this.itemParams.value = _.join(_.map(_.reject(this.itemList, ['selected', false]), v => v.id), ',')
+      this.itemParams.error = false
+      saveDragItem(this.$root, this.itemParams)
+      this.$message.success('设置成功')
     }
   },
   watch: {},
   beforeCreate() {
   },
   created() {
-    this.itemList = _.cloneDeep(this.agaSelectList)
+    this.itemParams = _.cloneDeep(this.item)
+    this.itemList = this.itemParams.selectList
+    console.log(this.itemList)
+    console.log('------athis.itemList')
   },
   beforeMount() {
   },
   mounted() {
+
   },
   beforeUpdate() {
   },

@@ -42,6 +42,7 @@ export default {
     const { merCode } = this.$store.state.user
     this.getCenterStoreId({ merCode }).then(() => {
       if (!_.isEmpty(query)) {
+        this.setStepVal(2)
         this.getHomePage({ id: query.id }).then(() => {
           this.isComponent = true
           setTimeout(() => {

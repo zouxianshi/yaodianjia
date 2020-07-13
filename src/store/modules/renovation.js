@@ -8,7 +8,7 @@ import _ from 'lodash'
 import store from '@/store'
 import { uuid } from '@/utils' // eslint-disable-line
 import renovationService from '@/api/renovation'
-import { bannerItem, handlerBackfill,items,defaultParams } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
+import { bannerItem, handlerBackfill,items,defaultParams,agaSelectList } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
 
 const basics = {
   name: '', // 商家首页模板名称
@@ -26,43 +26,15 @@ const basics = {
   recommendedData: []
 }
 
-const agaSelectList = [
-  {
-    type: 'together',
-    key: 'group',
-    name: '拼团'
-  },
-  {
-    type: 'markup',
-    key: 'add',
-    name: '加价购'
-  },
-  {
-    type: 'spike',
-    key: 'amount',
-    name: '秒杀'
-  },
-  {
-    type: 'special',
-    key: 'preference',
-    name: '特惠'
-  },
-  {
-    type: 'fullReduction',
-    key: 'full',
-    name: '满减'
-  }
-]
-
 const state = {
-  stepVal: 2,
+  stepVal: 1,
   homeLoading: false,
   basics: _.cloneDeep(basics),
   dragList: [],
   staticDragData: {
     banner: _.cloneDeep(bannerItem)
   },
-  agaSelectList
+  agaSelectList: _.cloneDeep(agaSelectList)
 }
 
 const mutations = {

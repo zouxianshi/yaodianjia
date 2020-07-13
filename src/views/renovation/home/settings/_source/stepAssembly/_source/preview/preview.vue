@@ -102,6 +102,8 @@ export default {
         dragData = _.reject(dragData, ['type', 'recommend'])
         dragData.push(itemRecommend)
       }
+      console.log(dragData)
+      console.log('-------dragData')
       this.setDragList(dragData)
     },
     onDragChange() {
@@ -126,17 +128,17 @@ export default {
     'dragList': {
       immediate: true,
       handler(v) {
-        // this.dragData = _.cloneDeep(v)
-        this.dragData = [
-          {
-            uuid: `${uuid('activityAggregate-')}${uuid()}${uuid()}${uuid()}`,
-            type: 'activityAggregate',
-            typeName: '活动商品',
-            subType: 'first',
-            name: '默认样式',
-            itemList: items(1)
-          }
-        ]
+        this.dragData = _.cloneDeep(v)
+        // this.dragData = [
+        //   {
+        //     uuid: `${uuid('activityAggregate-')}${uuid()}${uuid()}${uuid()}`,
+        //     type: 'activityAggregate',
+        //     typeName: '活动商品',
+        //     subType: 'first',
+        //     name: '默认样式',
+        //     itemList: items(1)
+        //   }
+        // ]
       }
     }
   },

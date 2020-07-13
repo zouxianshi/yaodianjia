@@ -14,5 +14,9 @@ export const verifRequired = {
   adFrame: ({ itemList }) => _.isEmpty(itemList),
   coupon: ({ itemList }) => _.some(itemList, { cname: '', value: '' }),
   timeLimitedActivity: ({ activityId }) => _.isEmpty(activityId),
-  recommend: () => false
+  recommend: () => false,
+  activityAggregate: ({ value }) => {
+    console.log(value)
+    return _.isEmpty(value)
+  }
 }

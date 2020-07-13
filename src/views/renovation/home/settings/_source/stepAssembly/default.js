@@ -11,6 +11,7 @@
 
 import _ from 'lodash'
 import Vue from 'vue'
+import store from '@/store'
 import { mapState } from 'vuex'
 import { uuid, findComponentsDownward } from '@/utils'
 
@@ -146,6 +147,39 @@ export const defaultParams = {
   }
 }
 
+export const agaSelectList = [
+  {
+    type: 'together',
+    key: 'group',
+    name: '拼团',
+    id: '13'
+  },
+  {
+    type: 'markup',
+    key: 'add',
+    name: '加价购',
+    id: '15'
+  },
+  {
+    type: 'spike',
+    key: 'amount',
+    name: '秒杀',
+    id: '12'
+  },
+  {
+    type: 'special',
+    key: 'preference',
+    name: '特惠',
+    id: '11'
+  },
+  {
+    type: 'fullReduction',
+    key: 'full',
+    name: '满减',
+    id: '14'
+  }
+]
+
 export const handlerBackfill = data => {
   const newList = []
 
@@ -154,6 +188,18 @@ export const handlerBackfill = data => {
       ...v,
       uuid: `${uuid(`${v.type}-`)}${uuid()}${uuid()}${uuid()}`,
       ..._.cloneDeep(defaultParams[`${v.type}_${v.subType}`])
+    }
+    if (v.type === 'activityAggregate') {
+      const is = k => _.split(v.value, ',').includes(k)
+      v1 = {
+        ...v1,
+        selectList: _.map(store.state.renovation.agaSelectList, vv1 => {
+          return {
+            ...vv1,
+            selected: is(vv1.id)
+          }
+        })
+      }
     }
     if (v.type === 'timeLimitedActivity') {
       v1 = {
@@ -539,6 +585,7 @@ export default () => {
             subType: 'first',
             name: '默认显示全部活动',
             itemList: items(1),
+            selectList: store.state.renovation.agaSelectList || [],
             ..._.cloneDeep(defaultParams[`activityAggregate_first`])
           }
         ]
