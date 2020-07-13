@@ -275,9 +275,19 @@ export default {
             params.startBirthdayDay = ""
             params.endBirthdayDay = ""
           } else {
-            data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
-            params.startBirthdayDay = data[0].slice(0, 10)
-            params.endBirthdayDay = data[1].slice(0, 10)
+            if (formData.ageInterval[0] === 45) {
+              const dateObj = new Date(new Date().getTime() - 86400000)
+              let year = dateObj.getFullYear() -45
+              let month = ((dateObj.getMonth() + 1) + '').padStart(2, '0')
+              let day = (dateObj.getDate()  + '').padStart(2, '0')
+              data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
+              params.startBirthdayDay = data[0].slice(0, 10)
+              params.endBirthdayDay = `${ year }-${ month }-${ day }`
+            } else {
+              data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
+              params.startBirthdayDay = data[0].slice(0, 10)
+              params.endBirthdayDay = data[1].slice(0, 10)
+            }
           } 
         }
         if (formData.lkTime === null) { // 自行选择领卡时间段
