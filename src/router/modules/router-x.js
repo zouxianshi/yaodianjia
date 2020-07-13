@@ -200,13 +200,13 @@ const router = [
         }
       },
       {
-<<<<<<< HEAD
         path: '/activity/newcomer-pack',
         component: () => import('@/views/marketings/newcomer/newcomerGift'),
         name: 'newcomerPack',
         meta: {
           title: '新人礼包'
-=======
+        }
+      },{
         path: '/activity/birthday-gift',
         component: () => import('@/views/marketings/activitysManage/birthdayGift/index'),
         name: 'birthday-gift',
@@ -244,7 +244,6 @@ const router = [
           title: '会员发券',
           noCache: false,
           activeMenu: '/marketing/activity'
->>>>>>> feature_birthday_zc_V1.0.3
         }
       },
       {
