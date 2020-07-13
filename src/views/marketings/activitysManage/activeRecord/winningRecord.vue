@@ -111,7 +111,16 @@ export default {
       const params = Object.assign({}, this.pageInfo, this.searchParams)
       params.pageSize = 50000
       exportPrizeList(params).then(res => {
-        console.log(res)
+        this.$alert(
+          '中奖记录正在导出中，稍后请点击【查看导出记录】下载导出文件',
+          '中奖记录导出',
+          {
+            confirmButtonText: '好的',
+            center: true,
+            roundButton: true,
+            confirmButtonClass: 'hydee_alert_btn'
+          }
+        )
       })
     }
   }
