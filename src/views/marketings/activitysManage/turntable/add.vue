@@ -72,7 +72,8 @@ export default {
         })
         this.$refs.ruleList.ruleForm = data
         if (this.$route.query.type === 'copy') {
-          this.params.pageState = 1 // 1编辑(复制)
+          this.params.pageState = 0 // 1编辑(0复制)
+          this.params.state = 0
           this.params.activeTime = []
           this.$refs.ruleList.ruleForm.activeTime = [
           ]

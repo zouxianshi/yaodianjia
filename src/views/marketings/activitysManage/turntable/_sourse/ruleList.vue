@@ -294,6 +294,7 @@ export default {
       return { Authorization: this.token }
     },
     isPageUpdateOrView() {
+      console.log(this.params, 'zc0000000000000000')
       // 判断编辑还是查看页面
       if (this.params.pageState === 2) {
         // 查看

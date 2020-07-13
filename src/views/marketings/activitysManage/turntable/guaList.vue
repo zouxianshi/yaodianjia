@@ -94,6 +94,9 @@
                 <i class="el-icon-arrow-down el-icon--right" />
               </span>
               <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item :command="{index: scope.$index, val: 'copyActive'}">
+                  复制
+                </el-dropdown-item>
                 <el-dropdown-item
                   v-for="item in scope.row.options.slice(1)"
                   :key="item.id"
@@ -441,6 +444,11 @@ export default {
             id: this.tableData[command.index].id,
             code: this.$route.query.code
           }
+        })
+      } else if (command.val === 'copyActive') {
+        this.$router.push({
+          path: '/marketings/activity-manage/turntable/add',
+          query: { id: this.tableData[command.index].id, code: this.$route.query.code, type: 'copy' }
         })
       }
     },
