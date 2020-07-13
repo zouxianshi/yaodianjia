@@ -59,11 +59,8 @@
 <script>
 import cardItem from '../components/card-item'
 import cardItemClose from '../components/card-item-close'
-<<<<<<< HEAD
 import cardItemSign from '../components/card-item-sign' // 签到功能
-=======
 import cardItemBirth from '../components/card-item-birth'
->>>>>>> feature_birthday_zc_V1.0.3
 import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
@@ -77,23 +74,16 @@ import share from '@/assets/image/acvity/share.png'
 import paymentCourtesy from '@/assets/image/marketings/pay.png'
 import TurnTable from '@/assets/image/marketings/zhuan.png'
 import SqueeGee from '@/assets/image/marketings/guagua.png'
-<<<<<<< HEAD
 import newComer from '@/assets/image/acvity/new-commer-gift.png' // 新人礼包封面
 import signGift from '@/assets/image/acvity/sign-gift.png' // 签到封面
-=======
 import birthdayCover from '@/assets/image/marketings/birthdayGift.png'
 import memberVouchCover from '@/assets/image/marketings/memberVouch.png'
->>>>>>> feature_birthday_zc_V1.0.3
 import { activityOpenOrClose, searchActivityStatus } from '@/api/exchangeMall'
 
 import { _searchMemberSignIn, modifyStatus } from '@/api/marketing'// eslint-disable-line 
 
 export default {
-<<<<<<< HEAD
-  components: { cardItem, cardItemClose, cardItemSign },
-=======
-  components: { cardItem, cardItemClose, cardItemBirth },
->>>>>>> feature_birthday_zc_V1.0.3
+  components: { cardItem, cardItemClose, cardItemSign, cardItemBirth },
   /**
    * value => key 这里建议跟后端的key保持一致
    * lable: '活动标题
@@ -136,7 +126,6 @@ export default {
           linkUrl: '/marketings/activity-manage/payment-gift/add'
         },
         {
-<<<<<<< HEAD
           lable: '新人礼包',
           listLabel: '新人礼包列表',
           img: newComer,
@@ -144,7 +133,7 @@ export default {
           listUrl:
             '/activity/newcomer-pack',
           linkUrl: '/activity/newcomer-create'
-=======
+        },{
           lable: '会员发券',
           listLabel: '会员发券记录',
           createText: '发放优惠券',
@@ -152,7 +141,6 @@ export default {
           desc: '发优惠券给到会员，可以精细化精准营销，满足会员购物需求，给到实际的优惠',
           listUrl: '/activity/member-voucher-list',
           linkUrl: '/activity/member-voucher'
->>>>>>> feature_birthday_zc_V1.0.3
         }
       ], // 会员营销
       goodsActivity: [
