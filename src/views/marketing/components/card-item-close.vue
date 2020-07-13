@@ -14,6 +14,12 @@
           />
         </div>
         <div v-if="item.desc===''" style="height:48px">{{ item.desc || '' }}</div>
+<<<<<<< HEAD
+=======
+        <el-tooltip v-if="item.desc!==''" class="item" effect="dark" :content="item.desc" placement="top-start">
+          <div class="sub-title">{{ item.desc || '' }}</div>
+        </el-tooltip>
+>>>>>>> feature_birthday_zc_V1.0.3
       </div>
       <div class="action">
         <el-button

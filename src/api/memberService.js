@@ -132,6 +132,10 @@ export function delMerMember(data) {
     data
   })
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature_birthday_zc_V1.0.3
 // 会员同步至erp
 export function syncMemberToErp(data) {
   return request({
@@ -140,4 +144,7 @@ export function syncMemberToErp(data) {
     data
   })
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature_birthday_zc_V1.0.3

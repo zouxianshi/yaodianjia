@@ -34,7 +34,7 @@
         height="350"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" align="left" />
+        <el-table-column type="selection" width="55" align="left" style="" />
         <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
         <el-table-column label="适用商品" show-overflow-tooltip>
           <template
@@ -44,7 +44,7 @@
         <el-table-column prop="address" label="优惠内容">
           <template
             slot-scope="scope"
-          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName, scope.row.cname) }}</template>
+          >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName,scope.row.cname) }}</template>
         </el-table-column>
         <el-table-column label="使用时间" show-overflow-tooltip>
           <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
@@ -54,7 +54,7 @@
             slot-scope="scope"
           >{{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
         </el-table-column>
-        <el-table-column label="适用门店" show-overflow-tooltip>
+        <el-table-column prop="productRule" label="适用门店" show-overflow-tooltip>
           <template
             slot-scope="scope"
           >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
@@ -120,6 +120,10 @@ export default {
         return false
       }
     },
+    maxLength: {
+      type: Number,
+      default: 9999
+    },
     // 支付：1 //领券：0
     state: {
       type: String,
@@ -168,7 +172,7 @@ export default {
       const params = {
         beginTime: this.beforeTime,
         busType: 1,
-        endTime: this.endTime,
+        endTime: this.endTime || formatDate(new Date()),
         cname: this.keyword,
         ctype: this.region,
         currentPage: this.currentPage,
@@ -191,7 +195,9 @@ export default {
     },
     checkSure() {
       if (this.singlechoice && this.multipleSelectionAll.length > 1) {
-        this.$message.error('只能选择一张优惠券！')
+        this.$message.error('请单选')
+      } else if (this.multipleSelectionAll.length > this.maxLength) {
+        this.$message.error('最多选择' + this.maxLength + '张优惠券！')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
@@ -242,7 +248,7 @@ export default {
     handletimeRule(timeRule, effectTime) {
       if (timeRule) {
         if (timeRule === 1) {
-          return `自领取起${effectTime}天有效`
+          return `自领取起${effectTime}天内有效`
         } else if (timeRule === 2) {
           return `自领取起${effectTime.split(',')[0]}天后生效,生效后${
             effectTime.split(',')[1]
@@ -339,6 +345,13 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .checkCoupon-model {
+  .el-table--medium th,
+  // .el-table--medium td {
+  //   padding: 2px;
+  // }
+  // .el-table thead th {
+  //   height: 50px;
+  // }
   .creatcoucops:hover {
     cursor: pointer;
   }
