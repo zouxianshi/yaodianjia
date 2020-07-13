@@ -23,6 +23,7 @@ export default {
   data() {
     return {
       stepActive: 1,
+      isRunning: false,
       params: {
         couponNumList: []
         // listUserCouponBaseInfo: []
@@ -39,9 +40,13 @@ export default {
       // this.params.listUserCouponBaseInfo = memberList
     },
     toSetp3(couponNumList) {
+      if (this.isRunning) {
+        return
+      }
+      this.isRunning = true
       this.params.couponNumList = couponNumList
       batchSendCouponNew(this.params).then(res => {
-        console.log(res)
+        this.isRunning = false
         if (res.code === '10000') {
           this.stepActive = 3
           this.$refs.success.countDown()
