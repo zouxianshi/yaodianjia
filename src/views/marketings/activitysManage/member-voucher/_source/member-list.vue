@@ -232,8 +232,8 @@ export default {
     }
   },
   created() {
-    this.getMemberData()
     this.jsonParams = `{"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":"","maxIntegral":"","gender":null,"month":null,"organizations":null}`
+    this.getMemberData()
   },
   methods: {
     handleSizeChange(e) {
@@ -260,10 +260,11 @@ export default {
       const formData = (this.infoForm)
       let params = {}
       if (formData.allMember === 1) {
-        this.params = {"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":"","maxIntegral":"","gender":null,"month":null,"organizations":null}
+        this.params = {"allMember":1,"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":"","maxIntegral":"","gender":null,"month":null,"organizations":null}
         params = Object.assign({}, this.params, this.pageInfo)
       } else {
         params = Object.assign({}, this.params, this.pageInfo)
+        params.allMember = 2
         params.empCodes = formData.cardArr.trim() ? formData.cardArr.trim().split(',') : null
         if (formData.ageInterval === null) { // 自行选择年龄段
           params.startBirthdayDay = formatDate(formData.agePicker[0]).slice(0, 10)
