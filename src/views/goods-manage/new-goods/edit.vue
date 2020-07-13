@@ -20,7 +20,6 @@
         @click.native="handleGoStep(3)"
       />
     </el-steps>
-
     <div ref="appContaniner" class="app-container" @scroll="onScroll">
       <div v-loading="basicLoading" class="edit-wrapper" element-loading-text="拼命加载中">
         <!-- 第一步 -->
@@ -1241,11 +1240,11 @@ export default {
         data.width = packStandard[1] === 'undefined' ? '' : packStandard[1]
         data.height = packStandard[2] === 'undefined' ? '' : packStandard[2]
       }
-      // 赋值值
-      this.basicForm = data
-      if (this.basicForm.intro === null) {
-        this.basicForm.intro === ''
-      }
+      // 赋值值
+      this.basicForm = data
+      if (this.basicForm.intro === null) {
+        this.basicForm.intro === ''
+      }
       this.$refs.editor.setContent(this.basicForm.intro)
     },
     // 加载商品图片

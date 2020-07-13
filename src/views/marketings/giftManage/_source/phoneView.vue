@@ -40,9 +40,6 @@ import { formatDate } from '@/utils/timer'
 export default {
   name: 'PhoneView',
   props: {
-    datas: {
-
-    },
     otherData: {
       type: Object,
       default() {

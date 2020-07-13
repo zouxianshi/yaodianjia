@@ -52,15 +52,18 @@ export default {
     },
     // 当前时间
     currentTime: {
-      type: Number
+      type: Number,
+      default: 1
     },
     // 活动开始时间
     startTime: {
-      type: Number
+      type: Number,
+      default: 1
     },
     // 活动结束时间
     endTime: {
-      type: Number
+      type: Number,
+      default: 1
     },
     // 是否开启秒表倒计，未完成
     secondsFixed: {
