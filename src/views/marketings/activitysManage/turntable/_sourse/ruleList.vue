@@ -383,7 +383,8 @@ export default {
     setActiveTime(v) {
       this.ruleForm.activeTime = v
     },
-    handlechangetime() {
+    handlechangetime(e) {
+      console.log(e)
     },
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {

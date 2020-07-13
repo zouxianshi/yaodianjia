@@ -71,25 +71,11 @@ export default {
           this.removedList.push(item.id)
         })
         this.$refs.ruleList.ruleForm = data
-        this.$refs.ruleList.ruleForm.activeTime = [
-          new Date(data.beginTime),
-          new Date(data.endTime)
-        ]
-        if (data.joinRule === 3) {
-          this.$refs.ruleList.ruleForm.activeLimit = data.countRule
-        } else if (data.countType === 1) {
-          this.$refs.ruleList.ruleForm.personLimit = data.countRule
-        } else {
-          this.$refs.ruleList.ruleForm.dayLimit = data.countRule
-        }
-        data.listActivityGiftEntity.map(item => {
-          item.winRandom = item.winRandom * 100
-        })
-        this.$refs.awardSetting.formsGift.selectedGift =
-          data.listActivityGiftEntity
         if (this.$route.query.type === 'copy') {
           this.params.pageState = 1 // 1编辑(复制)
-          console.log(this.params)
+          this.params.activeTime = []
+          this.$refs.ruleList.ruleForm.activeTime = [
+          ]
         } else {
           if (data.state === 1 && data.status === 1) {
             this.params.pageState = 1 // 1编辑 2查看
@@ -103,7 +89,23 @@ export default {
           ) {
             this.params.pageState = 2 // 1编辑 2查看
           }
+          this.$refs.ruleList.ruleForm.activeTime = [
+            new Date(data.beginTime),
+            new Date(data.endTime)
+          ]
         }
+        if (data.joinRule === 3) {
+          this.$refs.ruleList.ruleForm.activeLimit = data.countRule
+        } else if (data.countType === 1) {
+          this.$refs.ruleList.ruleForm.personLimit = data.countRule
+        } else {
+          this.$refs.ruleList.ruleForm.dayLimit = data.countRule
+        }
+        data.listActivityGiftEntity.map(item => {
+          item.winRandom = item.winRandom * 100
+        })
+        this.$refs.awardSetting.formsGift.selectedGift =
+          data.listActivityGiftEntity
       })
     }
   },
