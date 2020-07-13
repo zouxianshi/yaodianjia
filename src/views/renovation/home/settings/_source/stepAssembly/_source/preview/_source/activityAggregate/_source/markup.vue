@@ -10,9 +10,16 @@
         <p>加购<strong>N</strong>元可以换以下商品</p>
       </div>
       <el-row :gutter="8">
-        <el-col v-for="(el,$index) in item.list" :key="$index" :span="8">
-          <m-full-reduction-item :el="el" type="white" :is-no-data="true" />
-        </el-col>
+        <template v-if="exchangeList.length">
+          <el-col v-for="(el,$index) in exchangeList" :key="$index" :span="8">
+            <m-full-reduction-item :el="el" type="white" />
+          </el-col>
+        </template>
+        <template v-else>
+          <el-col v-for="(el,$index) in 3" :key="$index" :span="8">
+            <m-full-reduction-item :el="el" type="white" :is-no-data="true" />
+          </el-col>
+        </template>
       </el-row>
     </div>
   </m-aga-card>

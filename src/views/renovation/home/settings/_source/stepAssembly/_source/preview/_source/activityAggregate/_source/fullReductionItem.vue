@@ -8,7 +8,7 @@
       <span class="mim-t2">¥{{ el.mprice }}</span>
     </div>
     <div class="mim-btn">
-      <el-button type="danger" round size="mini">立即加购</el-button>
+      <el-button type="danger" round size="mini">{{ type ? '立即换购' : '立即加购' }}</el-button>
     </div>
   </div>
 </template>
