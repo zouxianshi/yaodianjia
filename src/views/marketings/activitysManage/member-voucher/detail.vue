@@ -2,7 +2,7 @@
   <div class="app-container coupon-detail-modal">
     <el-form :model="detailParams" label-width="120px" label-position="right" inline>
       <el-form-item label="发放对象：" style="width: 100%">商户会员</el-form-item>
-      <el-form-item label="会员选择：" style="width: 30%">部分会员</el-form-item>
+      <el-form-item label="会员选择：" style="width: 30%">{{ detailParams.allMember === 1 ? '全部会员' : '部分会员' }}</el-form-item>
       <el-form-item label="出生月份：" style="width: 30%">{{ detailParams.birthMonth }}</el-form-item>
       <el-form-item label="性别：" style="width: 30%">{{ detailParams.sex }}</el-form-item>
       <el-form-item label="领卡时间：" style="width: 30%">{{ detailParams.lkTime }}</el-form-item>
@@ -140,6 +140,7 @@ export default {
     // 格式化条件
     formartCondition(conditions) {
         // 处理生日
+      this. detailParams.allMember = conditions.allMember === 1 ? 1 : 0 
       if (!!(conditions.endBirthdayDay) && !!(conditions.startBirthdayDay) ) {
         let day = parseInt(conditions.startBirthdayDay.slice(8, 10)) + 1
         this.detailParams.ageQj =
