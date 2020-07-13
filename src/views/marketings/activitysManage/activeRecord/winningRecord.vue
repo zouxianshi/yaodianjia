@@ -111,7 +111,10 @@ export default {
       const params = Object.assign({}, this.pageInfo, this.searchParams)
       params.pageSize = 50000
       exportPrizeList(params).then(res => {
-        console.log(res)
+        this.$message({
+          type: 'success',
+          message: '导出成功，稍后可在导出记录中查看并下载导出文件。'
+        })
       })
     }
   }
