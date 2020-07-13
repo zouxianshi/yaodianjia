@@ -26,7 +26,8 @@ export default {
   name: 'Markup',
   data() {
     return {
-      item: {}
+      item: {},
+      exchangeList: []
     }
   },
   props: {},
@@ -37,6 +38,7 @@ export default {
   },
   created() {
     this.item = this.agaData.add
+    this.exchangeList = this.item.rule && this.item.rule.list || []
   },
   beforeMount() {
   },
