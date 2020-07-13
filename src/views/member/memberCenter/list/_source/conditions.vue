@@ -56,6 +56,15 @@
           <el-radio label="2">女</el-radio>
         </el-radio-group>
       </el-form-item>
+      <el-form-item label="注册来源">
+        <el-radio-group v-model="conditions.regLy">
+          <el-radio :label=null>不限</el-radio>
+          <el-radio label="1">请选择</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="" v-if="conditions.regLy === '1'">
+        <div>选择推荐人</div>
+      </el-form-item>
     </el-form>
     <m-select-store ref="A" :store-data="organizationsArr" />
     <m-select-consultant ref="B" :con-data="empCodesArr" />
@@ -81,7 +90,8 @@ export default {
         empCodes: null, // 健康顾问
         memberActive: '', // 会员分类
         gender: '', // 性别
-        organizations: null // 门店
+        organizations: null, // 门店
+        regLy: null
       }
     }
   },

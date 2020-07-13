@@ -1,5 +1,5 @@
 <template>
-  <div class="mc-list-model">
+  <div class="mc-list-model app-container">
     <div class="header-title">会员列表</div>
     <div class="body-content">
       <div v-show="conditions" class="conditions-content">
@@ -48,7 +48,6 @@
       <m-tabel-list ref="listA" @getData="getData" />
       <div class="pagination">
         <el-pagination
-          background
           layout="prev, pager, next"
           :total="pageInfo.totalCont"
           :page-size="pageInfo.pageSize"
@@ -203,23 +202,13 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .mc-list-model {
-  background-color: #f7f7f7;
-  height: calc(100vh - 160px);
   .header-title {
     background-color: #fff;
-    height: 60px;
-    line-height: 60px;
-    padding: 0 2%;
     font-size: 18px;
     font-weight: bold;
   }
   .body-content {
     background-color: #fff;
-    height: calc(100vh - 260px);
-    overflow-y: auto;
-    width: 96%;
-    margin: 20px auto;
-    padding: 20px;
     .showBtn {
       border-bottom: 1px solid #eee;
       text-align: right;
@@ -236,8 +225,8 @@ export default {
     // 分页
     .pagination {
       text-align: right;
-      padding: 10px 0;
-      margin-top: 10px;
+      position: relative;
+      top: 20px;
     }
   }
 }
