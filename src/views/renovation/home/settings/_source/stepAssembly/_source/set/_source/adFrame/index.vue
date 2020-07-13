@@ -102,7 +102,6 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
-    console.log(this.itemParams)
   },
   beforeMount() {
   },
