@@ -102,8 +102,7 @@
       <el-button size="mini" type="primary" @click="getMemberData">查询</el-button>
     </el-form>
     <storeDialog />
-    <el-table v-loading="tabelLoading" :data="tabelData" @selection-change="changeSelect">
-      <el-table-column type="selection" width="55" />
+    <el-table v-loading="tabelLoading" :data="tabelData">
       <el-table-column prop="img" label="头像">
         <template slot-scope="scope">
           <el-image :src="showImg(scope.row.headUrl)" style=" width:70px; height:70px" />
@@ -171,7 +170,6 @@ export default {
     return {
       tabelLoading: false,
       tabelData: [],
-      listUserCouponBaseInfo: [],
       jsonParams: '', // 搜索条件json
       infoForm: {
         allMember: 1,
@@ -209,8 +207,8 @@ export default {
       totalCount: 0,
       lkOptions: [
         { label: '不限', value: 1 },
-        { label: '一周内', value: [0, 7] },
-        { label: '一月内', value: [0, 30] },
+        { label: '一周内', value: [0, 6] },
+        { label: '一月内', value: [0, 29] },
         { label: '选择时间段', value: null }
       ],
       sex: [
@@ -221,8 +219,8 @@ export default {
       ageInterval: [
         { label: '不限', value: 1 },
         { label: '小于20岁', value: [0, 20] },
-        { label: '20-25岁', value: [20, 25] },
-        { label: '26-35岁', value: [26, 35] },
+        { label: '20-25岁', value: [20, 26] },
+        { label: '26-35岁', value: [26, 36] },
         { label: '36-45岁', value: [36, 45] },
         { label: '45岁以上', value: [45, 200] },
         { label: '选择出生年月', value: null }
@@ -234,8 +232,8 @@ export default {
     }
   },
   created() {
+    this.jsonParams = `{"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":"","maxIntegral":"","gender":null,"month":null,"organizations":null}`
     this.getMemberData()
-    this.jsonParams = `{"gender":null,"content":"","currentPage":1,"pageSize":10,"empCodes":null,"startBirthdayDay":"1900-07-08 0:00:00","endBirthdayDay":"2020-07-08 23:59:59","startDate":"1900-01-01 00:00:00","endDate":"2200-01-01 00:00:00","minIntegral":null,"maxIntegral":null,"gender":null,"month":null,"organizations":null}`
   },
   methods: {
     handleSizeChange(e) {
@@ -259,35 +257,48 @@ export default {
     },
     // 搜索会员列表
     getMemberData() {
-      const formData = _.cloneDeep(this.infoForm)
+      const formData = (this.infoForm)
       let params = {}
       if (formData.allMember === 1) {
-        this.params = {}
+        this.params = {"allMember":1,"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":"","maxIntegral":"","gender":null,"month":null,"organizations":null}
         params = Object.assign({}, this.params, this.pageInfo)
       } else {
         params = Object.assign({}, this.params, this.pageInfo)
+        params.allMember = 2
         params.empCodes = formData.cardArr.trim() ? formData.cardArr.trim().split(',') : null
-        if (formData.ageInterval === null) { // 年龄段
-          params.startBirthdayDay = formatDate(formData.agePicker[0])
-          params.endBirthdayDay = formatDate(new Date(formData.agePicker[1]).getTime() + 86399990)
+        if (formData.ageInterval === null) { // 自行选择年龄段
+          params.startBirthdayDay = formatDate(formData.agePicker[0]).slice(0, 10)
+          params.endBirthdayDay = formatDate(formData.agePicker[1]).slice(0, 10)
         } else {
           var data = []
-          if (formData.ageInterval === 1) {
-            params.startBirthdayDay = '1900-01-01 00:00:00'
-            params.endBirthdayDay = formatDate(new Date(formData.agePicker[1]).getTime() + 86399990)
+          if (formData.ageInterval === 1) { // 不限年龄
+            params.startBirthdayDay = ""
+            params.endBirthdayDay = ""
           } else {
-            data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
-            params.startBirthdayDay = data[0]
-            params.endBirthdayDay = data[1]
-          }
+            if (formData.ageInterval[0] === 45) {
+              const dateObj = new Date(new Date().getTime() - 86400000)
+              let year = dateObj.getFullYear() -45
+              let month = ((dateObj.getMonth() + 1) + '').padStart(2, '0')
+              let day = (dateObj.getDate()  + '').padStart(2, '0')
+              data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
+              params.startBirthdayDay = data[0].slice(0, 10)
+              params.endBirthdayDay = `${ year }-${ month }-${ day }`
+            } else {
+              data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
+              params.startBirthdayDay = data[0].slice(0, 10)
+              params.endBirthdayDay = data[1].slice(0, 10)
+            }
+          } 
         }
-        if (formData.lkTime === null) { // 领卡时间段
-          params.startDate = formatDate(formData.lkTimeQj[0])
-          params.endDate = formatDate(new Date(formData.lkTimeQj[1]).getTime() + 86399990)
+        if (formData.lkTime === null) { // 自行选择领卡时间段
+          let times = formData.lkTimeQj[0]
+          let times2 = formData.lkTimeQj[1]
+          params.startDate = `${times.getFullYear()}-${('' + (times.getMonth() + 1) ).padStart(2, '0')}-${('' + times.getDate()).padStart(2, '0')} 00:00:00 `
+          params.endDate = `${times2.getFullYear()}-${('' + (times2.getMonth() + 1) ).padStart(2, '0')}-${('' + times2.getDate()).padStart(2, '0')} 23:59:59 `
         } else {
           var data1 = []
-          if (formData.lkTime === 1) {
-            data1 = ['1900-01-01 00:00:00', '2200-01-01 00:00:00']
+          if (formData.lkTime === 1) { // 不限领卡时间段
+            data1 = ["", ""]
           } else {
             data1 = formatLkTime(formData.lkTime[0], formData.lkTime[1])
           }
@@ -298,16 +309,24 @@ export default {
           params.minIntegral = formData.pointsMin
           params.maxIntegral = formData.pointsMax
         } else {
-          params.minIntegral = 0
-          params.maxIntegral = 999999999
+          params.minIntegral = ""
+          params.maxIntegral = ""
         }
         params.gender = formData.sex
         params.month = formData.month ? formData.month > 10 ? '' + formData.month : '0' + formData.month : null
         params.organizations = null
         if (formData.shopRule === 2) {
           params.organizations = []
+          params.organizationsArr = []
           _.map(formData.shopArr, item => {
+            let obj = {
+              stCode: item.stCode,
+              stName: item.stName,
+              address: item.province + item.city + item.area + item.address,
+              mobile: item.mobile
+            }
             params.organizations.push(item.stCode)
+            params.organizationsArr.push(obj)
           })
         }
       }
@@ -323,25 +342,10 @@ export default {
         }
       })
     },
-    // 选择会员
-    changeSelect(e) {
-      this.listUserCouponBaseInfo = []
-      _.map(e, item => {
-        const obj = {
-          memberCard: item.memberCard,
-          userId: item.userId
-        }
-        this.listUserCouponBaseInfo.push(obj)
-      })
-    },
     // 下一步
     onStep() {
-      if (this.listUserCouponBaseInfo.length === 0) {
-        this.$message.error('请至少选择一个会员')
-      } else {
-        this.$emit('submitParams', this.jsonParams)
-        this.$emit('nextstep', this.listUserCouponBaseInfo)
-      }
+      this.$emit('submitParams', this.jsonParams)
+      this.$emit('nextstep')
     }
   }
 }

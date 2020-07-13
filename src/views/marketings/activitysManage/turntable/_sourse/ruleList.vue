@@ -437,7 +437,6 @@ export default {
   }
   .intrwarning {
     font-size: 13px;
-    margin-left: 20px;
     background-color: #fdf6ec;
     color: #e6a23c;
     border-radius: 5px;

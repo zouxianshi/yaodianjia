@@ -2,7 +2,7 @@
   <div class="app-container coupon-detail-modal">
     <el-form :model="detailParams" label-width="120px" label-position="right" inline>
       <el-form-item label="发放对象：" style="width: 100%">商户会员</el-form-item>
-      <el-form-item label="会员选择：" style="width: 30%">部分会员</el-form-item>
+      <el-form-item label="会员选择：" style="width: 30%">{{ detailParams.allMember === 1 ? '全部会员' : '部分会员' }}</el-form-item>
       <el-form-item label="出生月份：" style="width: 30%">{{ detailParams.birthMonth }}</el-form-item>
       <el-form-item label="性别：" style="width: 30%">{{ detailParams.sex }}</el-form-item>
       <el-form-item label="领卡时间：" style="width: 30%">{{ detailParams.lkTime }}</el-form-item>
@@ -10,20 +10,22 @@
       <el-form-item label="会员海贝：" style="width: 30%">{{ detailParams.memberIntiger }}</el-form-item>
       <el-form-item label="所属门店：">{{ detailParams.org }}</el-form-item>
     </el-form>
-    <div v-if="detailParams.org === '部分门店'" class="tabel-items">
+    <div v-if="detailParams.org === '部分门店' && organization.length > 0" class="tabel-items">
       <el-table :data="organization">
         <el-table-column label="门店编码">
-          <template slot-scope="scope">{{ scope.row.stCode || scope.row.storeCode }}</template>
+          <template slot-scope="scope">{{ scope.row.stCode }}</template>
         </el-table-column>
         <el-table-column label="门店名称">
-          <template slot-scope="scope">{{ scope.row.stName || scope.row.storeName }}</template>
+          <template slot-scope="scope">{{ scope.row.stName }}</template>
         </el-table-column>
+        <el-table-column label="门店地址" prop="address" />
+        <el-table-column label="门店电话" prop="mobile" />
       </el-table>
     </div>
     <div class="tabel-items">
       <div class="tital-coupon">
-        优惠券：
-        <span>{{ couponData.length }}</span>
+        发放优惠券总数：
+        <span>{{ count }}</span>
       </div>
       <el-table :data="couponData">
         <el-table-column label="券类型">
@@ -50,10 +52,10 @@
             slot-scope="scope"
           >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
         </el-table-column>
-        <el-table-column label="适用门店">
+        <el-table-column label="适用商品">
           <template
             slot-scope="scope"
-          >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
+          >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}</template>
         </el-table-column>
         <el-table-column label="每人发放数量">1</el-table-column>
       </el-table>
@@ -64,7 +66,7 @@
   </div>
 </template>
 <script>
-import { listCouponHistoryDetail } from '@/api/birthday'
+import { listCouponHistoryDetail, getCouponHistoryInfo } from '@/api/birthday'
 export default {
   data() {
     return {
@@ -77,44 +79,11 @@ export default {
         org: '全部门店'
       },
       couponData: [],
-      organization: []
+      organization: [],
+      count: 0
     }
   },
   created() {
-    var condition = sessionStorage.getItem('conditionJson')
-    if (condition !== null && !!condition) {
-      const conditions = JSON.parse(condition)
-      // 处理生日
-      if (conditions.endBirthdayDay && conditions.startBirthdayDay && conditions.startBirthdayDay !== '1900-01-01 00:00:00') {
-        this.detailParams.ageQj =
-          conditions.startBirthdayDay.slice(0, 10) +
-          ' - ' +
-          conditions.endBirthdayDay.slice(0, 10)
-      }
-      // 处理领卡日期
-      if (conditions.endDate && conditions.startDate && conditions.startDate !== '1900-01-01 00:00:00') {
-        this.detailParams.lkTime =
-          conditions.startDate.slice(0, 10) +
-          ' - ' +
-          conditions.endDate.slice(0, 10)
-      }
-      // 处理出生月份
-      if (conditions.month) {
-        this.detailParams.birthMonth = conditions.month + '月'
-      }
-      // 处理海贝范围
-      if (conditions.minIntegral !== null && conditions.maxIntegral !== 999999999) {
-        this.detailParams.memberIntiger =
-          conditions.minIntegral + ' - ' + conditions.maxIntegral
-      }
-      this.detailParams.sex = (conditions.gender === null || conditions.gender === undefined) ? '不限' : conditions.gender === 1 ? '男' : '女'
-      if (conditions.organizations !== null) {
-        this.detailParams.org = '部分门店'
-        this.organization = conditions.organizations
-      } else {
-        this.detailParams.org = '全部门店'
-      }
-    }
     const params = {
       id: this.$route.query.id
     }
@@ -123,6 +92,13 @@ export default {
         this.couponData = res.data
       }
     })
+    getCouponHistoryInfo(params).then(res => {
+      if (res.code === '10000' && res.data) {
+        this.count = res.data.count
+        this.formartCondition(JSON.parse(res.data.conditionJson))
+      }
+    })
+    
   },
   methods: {
     // 商品折扣处理
@@ -159,6 +135,41 @@ export default {
         } else {
           return `${effectTime.split(',')[0]} - ${effectTime.split(',')[1]}`
         }
+      }
+    },
+    // 格式化条件
+    formartCondition(conditions) {
+        // 处理生日
+      this. detailParams.allMember = conditions.allMember === 1 ? 1 : 0 
+      if (!!(conditions.endBirthdayDay) && !!(conditions.startBirthdayDay) ) {
+        let day = parseInt(conditions.startBirthdayDay.slice(8, 10)) + 1
+        this.detailParams.ageQj =
+          conditions.startBirthdayDay.slice(0, 8) + day + 
+          ' - ' +
+          conditions.endBirthdayDay.slice(0, 10)
+      }
+      // 处理领卡日期
+      if (!!(conditions.startDate) && !!(conditions.endDate) ) {
+        this.detailParams.lkTime =
+          conditions.startDate.slice(0, 10) +
+          ' - ' +
+          conditions.endDate.slice(0, 10)
+      }
+      // 处理出生月份
+      if (conditions.month) {
+        this.detailParams.birthMonth = conditions.month + '月'
+      }
+      // 处理海贝范围
+      if (conditions.minIntegral !== "" && conditions.maxIntegral !== "" ) {
+        this.detailParams.memberIntiger =
+          conditions.minIntegral + ' - ' + conditions.maxIntegral
+      }
+      this.detailParams.sex = (conditions.gender === null || conditions.gender === undefined) ? '不限' : conditions.gender === 1 ? '男' : '女'
+      if (conditions.organizations !== null) {
+        this.detailParams.org = '部分门店'
+        this.organization = conditions.organizationsArr
+      } else {
+        this.detailParams.org = '全部门店'
       }
     }
   }

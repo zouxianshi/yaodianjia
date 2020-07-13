@@ -7,12 +7,13 @@
       <el-table-column prop="createTime" label="发放时间" />
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          {{ scope.row.status === 1 ? '发放完成' : '发放中' }}
+          {{ scope.row.status === 1 ? '发放中' : scope.row.status === 2 ? '发放完成' : '准备中' }}
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" @click="detail(scope.row)">查看</el-button>
+          <el-button type="text" @click="detele(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -27,7 +28,7 @@
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="100"
+        :total="totalCount"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -35,7 +36,7 @@
   </div>
 </template>
 <script>
-import { couponHistoryList } from '@/api/birthday'
+import { couponHistoryList, deleteSendHistory } from '@/api/birthday'
 export default {
   data() {
     return {
@@ -43,7 +44,8 @@ export default {
       pageInfo: {
         currentPage: 1,
         pageSize: 10
-      }
+      },
+      totalCount: 0
     }
   },
   created() {
@@ -54,13 +56,37 @@ export default {
       sessionStorage.setItem('conditionJson', rows.conditionJson)
       this.$router.push('/activity/member-voucher-detail?id=' + rows.id)
     },
-    handleSizeChange(e) {},
-    handleCurrentChange(e) {},
+    // 删除
+    detele(rows) {
+      const params = {
+        ids: [rows.id]
+      }
+      deleteSendHistory(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          })
+          this.getData()
+        }
+      })
+    },
+    handleSizeChange(e) {
+      this.pageInfo.currentPage = 1
+      this.pageInfo.pageSize = e
+      this.getData()
+    },
+    handleCurrentChange(e) {
+      this.pageInfo.currentPage = e
+      this.getData()
+    },
     getData() {
       const params = Object.assign({}, this.pageInfo)
       couponHistoryList(params).then(res => {
         if (res.code === '10000' && res.data) {
           this.tableData = res.data.records
+          this.totalCount = res.data.total
+          console.log(this.totalCount)
         }
       })
     }

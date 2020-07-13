@@ -219,7 +219,6 @@ export default {
         {
           value: 'Squeegee',
           name: 'SqueeGee',
-          lable: '刮刮乐',
           listLabel: '刮刮乐列表',
           desc: '刮刮刮，商户可以建立多场刮刮乐活动，用户满足一定条件门槛后便可参与刮奖活动，简单又好玩',
           img: SqueeGee,

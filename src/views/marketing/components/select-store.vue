@@ -9,7 +9,6 @@
     </el-form>
     <el-table
       :data="cutData"
-      size="small"
       show-overflow-tooltip
       style="width: 100%"
       max-height="500"
