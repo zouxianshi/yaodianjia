@@ -2,8 +2,8 @@
   <m-item-card title="活动组件选择" @on-ass-submit="onAssSubmit">
     <div class="aga-model">
       <el-row :gutter="20">
-        <el-col v-for="(item,$index) in itemList" :key="$index" :span="12">
-          <m-aga-item :item="item" />
+        <el-col v-for="(el,$index) in itemList" :key="$index" :span="12">
+          <m-aga-item :item="el" />
         </el-col>
       </el-row>
     </div>
@@ -37,11 +37,9 @@ export default {
         this.$message.error('最少选择一个活动组件')
         return
       }
-      this.setAgaSelectList(_.cloneDeep(this.itemList))
       this.itemParams.value = _.join(_.map(_.reject(this.itemList, ['selected', false]), v => v.id), ',')
       this.itemParams.error = false
       saveDragItem(this.$root, this.itemParams)
-      this.$message.success('设置成功')
     }
   },
   watch: {},
@@ -50,8 +48,6 @@ export default {
   created() {
     this.itemParams = _.cloneDeep(this.item)
     this.itemList = this.itemParams.selectList
-    console.log(this.itemList)
-    console.log('------athis.itemList')
   },
   beforeMount() {
   },

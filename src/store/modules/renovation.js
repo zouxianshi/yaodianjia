@@ -131,7 +131,6 @@ const actions = {
     })
   },
   saveHomePage({ commit, state }, payload) {
-    console.log([state.staticDragData.banner.id, ..._.map(state.dragList, 'id')])
     const p = {
       list: [state.staticDragData.banner, ...state.dragList],
       ...state.basics,

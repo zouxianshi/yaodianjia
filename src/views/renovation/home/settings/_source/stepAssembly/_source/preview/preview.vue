@@ -98,12 +98,12 @@ export default {
     onDragAdd() {
       let dragData = this.dragData
       const itemRecommend = _.find(dragData, ['type', 'recommend'])
+      // handler recommend params
       if (!_.isEmpty(itemRecommend)) {
         dragData = _.reject(dragData, ['type', 'recommend'])
         dragData.push(itemRecommend)
       }
-      console.log(dragData)
-      console.log('-------dragData')
+
       this.setDragList(dragData)
     },
     onDragChange() {
@@ -159,7 +159,7 @@ export default {
   destroyed() {
   },
   computed: {
-    ...mapState('renovation', ['staticDragData', 'dragList', 'basics']),
+    ...mapState('renovation', ['staticDragData', 'dragList', 'basics', 'agaSelectList']),
     dragOptions() {
       return {
         sort: true,

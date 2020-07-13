@@ -32,15 +32,13 @@ export default {
   },
   methods: {
     is(key) {
-      return _.map(_.reject(this.item.selectList, ['selected', false]), v => v.id).includes(key)
+      return _.split(this.item.value, ',').includes(key)
     }
   },
   watch: {},
   beforeCreate() {
   },
   created() {
-    console.log(this.item)
-    console.log('-----this.item')
   },
   beforeMount() {
   },

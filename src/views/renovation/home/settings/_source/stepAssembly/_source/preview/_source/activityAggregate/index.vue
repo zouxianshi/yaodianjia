@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import mFirst from './first'
 
 export default {
@@ -29,6 +29,10 @@ export default {
   created() {
     this.isComponent = false
     this.getAgaData().then(() => {
+      if (_.isEmpty(this.item.value)) {
+        this.$set(this.item, 'selectList', _.cloneDeep(this.agaSelectList))
+        this.$set(this.item, 'value', _.join(_.map(_.reject(this.agaSelectList, ['selected', false]), v => v.id), ','))
+      }
       this.isComponent = true
     }).catch(() => {
       this.isComponent = true
@@ -47,6 +51,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('renovation', ['agaSelectList']),
     mod() {
       switch (this.item.subType) {
         case 'first':

@@ -52,12 +52,10 @@ export default {
 
     },
     onElUpdate(el, i) {
-      console.log(el, i)
       this.$set(this.itemParams.itemList, i, el)
     },
     onCouponDelete(index) {
       this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)
-      console.log(this.itemParams.itemList)
     },
     onAssSubmit() {
       const { itemList } = this.itemParams
@@ -90,7 +88,6 @@ export default {
           })
         })
 
-        console.log(this.itemParams.itemList)
         this.dialogVisible = false
       }
     }
@@ -100,8 +97,6 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
-    console.log(this.itemParams)
-    console.log('-----this.itemParams')
   },
   beforeMount() {
   },

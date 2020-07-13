@@ -22,6 +22,7 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 import vDraggable from 'vuedraggable'
 import mTab from './_source/tab'
 import mCompsItem from './_source/compsItem'
@@ -78,6 +79,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('renovation', ['agaSelectList']),
     dragOptions() {
       return {
         animation: 150,

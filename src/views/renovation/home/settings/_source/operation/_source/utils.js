@@ -15,8 +15,5 @@ export const verifRequired = {
   coupon: ({ itemList }) => _.some(itemList, { cname: '', value: '' }),
   timeLimitedActivity: ({ activityId }) => _.isEmpty(activityId),
   recommend: () => false,
-  activityAggregate: ({ value }) => {
-    console.log(value)
-    return _.isEmpty(value)
-  }
+  activityAggregate: ({ value }) => _.isEmpty(value)
 }

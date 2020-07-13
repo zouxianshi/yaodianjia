@@ -190,10 +190,10 @@ export const handlerBackfill = data => {
       ..._.cloneDeep(defaultParams[`${v.type}_${v.subType}`])
     }
     if (v.type === 'activityAggregate') {
-      const is = k => _.split(v.value, ',').includes(k)
+      const is = id => _.split(v.value, ',').includes(id)
       v1 = {
         ...v1,
-        selectList: _.map(store.state.renovation.agaSelectList, vv1 => {
+        selectList: _.map(_.cloneDeep(store.state.renovation.agaSelectList), vv1 => {
           return {
             ...vv1,
             selected: is(vv1.id)
@@ -585,7 +585,9 @@ export default () => {
             subType: 'first',
             name: '默认显示全部活动',
             itemList: items(1),
-            selectList: store.state.renovation.agaSelectList || [],
+            selectList: (() => {
+              return store.state.renovation.agaSelectList || []
+            })(),
             ..._.cloneDeep(defaultParams[`activityAggregate_first`])
           }
         ]
