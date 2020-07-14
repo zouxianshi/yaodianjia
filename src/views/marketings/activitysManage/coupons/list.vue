@@ -12,7 +12,7 @@
         :closable="false"
       />
     </div>
-    <div class="search-form">
+    <div class="search-form" style="margin-bottom: 20px;">
       <div class="search-item">
         <div class="search-item">
           <span class="label-name" style="width:100px">优惠券状态：</span>
