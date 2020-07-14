@@ -6,7 +6,7 @@
     </div>
     <div class="csim-content">
       <div class="csim-no-data">
-        <m-line-bar margin-top="12px" :enter-type="enterType" :el="el" />
+        <m-line-bar margin-top="12px" :enter-type="enterType" :el="el" :maxlength="maxlength" />
       </div>
     </div>
   </div>
@@ -24,6 +24,10 @@ export default {
   },
   mixins: [mixinsCommonStyle],
   props: {
+    maxlength: {
+      type: String,
+      default: '23'
+    },
     el: {
       type: Object,
       default: () => {}

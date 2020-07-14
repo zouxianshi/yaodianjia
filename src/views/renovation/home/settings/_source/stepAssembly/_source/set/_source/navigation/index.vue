@@ -5,7 +5,7 @@
     </div>
     <div class="snm-view">
       <m-item-card :title="el.name ? el.name : `导航${selectIndex + 1}`" :is-delete="itemParams.itemList.length > (itemParams.subType === 'first' ? 4 : 5)" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
-        <m-form-item v-if="isItem" ref="formItem" :el="el" @on-el-update="onElUpdate" />
+        <m-form-item v-if="isItem" ref="formItem" :el="el" :item-params="{...itemParams,index:selectIndex}" @on-el-update="onElUpdate" />
       </m-item-card>
     </div>
   </div>

@@ -4,14 +4,14 @@
       <template v-if="item.itemList.length">
         <template v-for="(el,$index) in item.itemList">
           <el-col :key="$index" :span="8" class="sctm-item">
-            <m-second-item :el="el" img-height="90px" />
+            <m-second-item :el="el" img-height="90px" maxlength="14" />
           </el-col>
         </template>
       </template>
       <template v-else>
         <template v-for="(el,$index) in 3">
           <el-col :key="$index" :span="8" class="sctm-item">
-            <m-second-item :el="itemParams" img-height="90px" />
+            <m-second-item :el="itemParams" img-height="90px" maxlength="14" />
           </el-col>
         </template>
       </template>

@@ -1,34 +1,48 @@
 <template>
   <div :class="classes">
     <div class="cfim-item-left">
-      <div class="cfim-line-1" />
-      <div class="cfim-line-2" />
-      <div class="cfim-text-num">
-        <el-tooltip class="item" effect="dark" :content="` ${el.denomination || '-'}`" placement="top">
-          <div v-if="el.denomination">
-            <span v-if="el.ctype === 2" class="cfim-discount">¥</span>
-            <span style="display: inline-block;margin:0 -4px;">{{ truDenomination(`${el.denomination}`) }}</span>
-            <span v-if="el.ctype === 1" class="cfim-discount">折</span>
-          </div>
-          <div v-else>¥</div>
-        </el-tooltip>
-      </div>
-
-      <div class="cfim-type" :style="{background: (typeof el.ctype === 'undefined') ? 'rgba(255,255,255,1)' : 'transparent'}">
-        <span v-if="el.ctype === 1">折扣券</span>
-        <span v-if="el.ctype === 2">抵价券</span>
-        <span v-if="el.ctype === 3">礼品券</span>
-        <!--礼品卷只显示3字符-->
-      </div>
+      <template v-if="(typeof el.ctype === 'undefined')">
+        <div class="cfim-labar" />
+        <div class="cfim-labar" style="width: 70%" />
+        <div class="cfim-labar" style="width: 50%" />
+      </template>
+      <template v-else>
+        <div v-if="el.ctype === 1 || el.ctype === 2" class="cfim-price-box">
+          <b v-if="el.ctype === 2">¥</b>
+          <span class="cfim-price" style="display: inline-block;margin:0 -4px;">
+            {{ truDenomination(`${el.denomination}`) }}
+          </span>
+          <b v-if="el.ctype === 1">折</b>
+        </div>
+        <div v-if="el.ctype === 3" class="cfim-price-box">
+          <span class="cfim-price" style="display: inline-block;margin:0 -4px;">礼品券</span>
+        </div>
+        <div class="cfim-text-1">
+          <!--<template v-if="el.sceneRule === 1">线上门店可用,</template>
+          <template v-if="el.sceneRule === 2">线下门店可用,</template>
+          <template v-if="el.sceneRule === 3">线上线下通用,</template>
+          <template v-if="el.productRule === 1">所有商品可用,</template>
+          <template v-if="el.productRule === 2">部分商品可用,</template>
+          <template v-if="el.productRule === 3">部分商品不可用,</template>
+          <template v-if="el.shopRule === 1">全部门店可用</template>
+          <template v-if="el.shopRule === 2">部分门店可用</template>-->
+          {{ truTextTip }}
+        </div>
+        <div v-if="el.timeRule" class="cfim-text-2">
+          <span v-if="el.timeRule === 1">领取后{{ el.effectTime }}天内有效</span>
+          <span v-if="el.timeRule === 2">领取{{ el.effectTime.split(',')[0] }}天后生效，生效后{{ el.effectTime.split(',')[1] }}天失效</span>
+          <span v-if="el.timeRule === 3">{{ el.effectTime.split(',')[0] }} 到 {{ el.effectTime.split(',')[1] }}</span>
+        </div>
+        <div v-else class="cfim-text-2">
+          有效期：xxxx-xx-xx至xxxx-xx-xx
+        </div>
+      </template>
     </div>
     <div class="cfim-item-right">
-      <el-tooltip class="item" effect="dark" :content="el.cname" placement="top">
-        <div class="cfim-name" :class="el.cname ? 'no' : ''">
-          {{ truCname(el.cname) }}
-        </div>
-      </el-tooltip>
-      <div class="cfim-btn">
-        <el-button round size="mini">立即领取</el-button>
+      <div class="cfim-line-1" />
+      <div class="cfim-line-2" />
+      <div class="cfim-btn-text">
+        立即领取
       </div>
     </div>
   </div>
@@ -71,21 +85,6 @@ export default {
       'omission': '',
       'separator': /,? +/
       })
-    },
-    truCname(v) {
-      if (!v || v === 'undefined') {
-        return ''
-      }
-      return _.truncate(v, { 'length': (() => {
-        switch (this.size) {
-          case 'medium':
-            return 22
-          case 'small':
-            return 9
-          case 'mini':
-            return 7
-        }
-      })(), 'omission': '' })
     }
   },
   watch: {},
@@ -106,6 +105,53 @@ export default {
   destroyed() {
   },
   computed: {
+    truTextTip() {
+      const { sceneRule, productRule, shopRule } = this.el
+      const sceneRuleText = (() => {
+        switch (sceneRule) {
+          case 1:
+            return '线上门店可用'
+          case 2:
+            return '线下门店可用'
+          case 3:
+            return '线上线下通用'
+          default:
+            return ''
+        }
+      })()
+      const productRuleText = (() => {
+        switch (productRule) {
+          case 1:
+            return '所有商品可用'
+          case 2:
+            return '部分商品可用'
+          case 3:
+            return '部分商品不可用'
+          default:
+            return ''
+        }
+      })()
+      const shopRuleText = (() => {
+        switch (shopRule) {
+          case 1:
+            return '全部门店可用'
+          case 2:
+            return '部分门店可用'
+          default:
+            return ''
+        }
+      })()
+      return _.truncate(`${sceneRuleText},${productRuleText},${shopRuleText}`, { 'length': (() => {
+        switch (this.size) {
+          case 'medium':
+            return 22
+          case 'small':
+            return 12
+          case 'mini':
+            return 9
+        }
+      })(), 'omission': '...' })
+    },
     classes() {
       const { size } = this
       return [
@@ -125,19 +171,48 @@ export default {
     overflow: hidden;
     .cfim-item-left,.cfim-item-right {
       float: left;
+      height: 120px;
     }
     .cfim-item-left {
-      background: #C72D2D;
-      position: relative;
-      border-radius: 2px 0 0 2px;
+      width: calc(100% - 60px);
+      background: #F12F2F;
+      border-radius:4px 0 0 4px;
       text-align: center;
+      position: relative;
       z-index: 1;
+      .cfim-price-box {
+        color: #fff;
+        padding-top: 14px;
+        b {
+          font-size: 14px;
+        }
+        .cfim-price {
+          font-size: 46px;
+        }
+      }
+      .cfim-text-1 {
+        font-size: 13px;
+        color: #fff;
+        padding: 6px 0 ;
+      }
+      .cfim-text-2 {
+        font-size: 12px;
+        color: #FF8887;
+      }
+    }
+    .cfim-item-right {
+      width: 60px;
+      background: #C72D2D;
+      border-radius:0px 4px 4px 0;
+      position: relative;
+      z-index: 2;
       .cfim-line-1,.cfim-line-2 {
         width: 12px;
         height: 12px;
         background: #FBFBFB;
         border-radius:100%;
         position: absolute;
+        left: -6px;
       }
       .cfim-line-1 {
         top:-6px;
@@ -145,164 +220,98 @@ export default {
       .cfim-line-2 {
         bottom:-6px
       }
-      .cfim-text-num {
+      .cfim-btn-text {
+        font-size: 16px;
+        width: 20px;
         color: #fff;
-        .cfim-discount {
-          font-size: 12px;
-          transform: scale(0.8);
-          display: inline-block;
-          color: #fff;
-        }
-      }
-      .cfim-type {
-        width: 100%;
-        background:rgba(255,255,255,1);
-        border-radius:2px;
-        opacity:0.8;
-        font-size: 12px;
-        color: #fff;
-        -webkit-transform: scale(0.8);
-        display: inline-block;
+        margin: 28px auto 0 auto;
+        text-align: center;
       }
     }
-    .cfim-item-right {
-      width: calc(100% - 84px);
-      border-radius: 0 2px 2px 0;
-      background: -moz-linear-gradient(left,  rgba(243,37,37,0.94) 0%, rgba(243,37,37,0.94) 1%, rgba(238,63,63,1) 100%); /* FF3.6-15 */
-      background: -webkit-linear-gradient(left,  rgba(243,37,37,0.94) 0%,rgba(243,37,37,0.94) 1%,rgba(238,63,63,1) 100%); /* Chrome10-25,Safari5.1-6 */
-      background: linear-gradient(to right,  rgba(243,37,37,0.94) 0%,rgba(243,37,37,0.94) 1%,rgba(238,63,63,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f32525', endColorstr='#ee3f3f',GradientType=1 ); /* IE6-9 */
-      position: relative;
-      z-index: 0;
-      .cfim-name {
-        height: 18px;
-        line-height: 18px;
-        border-radius:2px;
-        background:rgba(255,255,255,.8);
-        font-size: 14px;
-        color: #fff;
-        &.no {
-           background: none;
-        }
-      }
-      .cfim-btn {
-        position: absolute;
-        .el-button {
-          border-color: #fff;
-          color: #F32525;
-        }
-      }
+
+    .cfim-labar {
+      width: 90%;
+      margin-top: 14px;
+      height: 20px;
+      background: #FF8887;
+      border-radius: 2px;
+      margin-left: 14px;
     }
-    &-medium {
-      .cfim-item-left,.cfim-item-right {
-        height: 104px;
-      }
-      .cfim-item-left {
-        width: 84px;
-        .cfim-line-1,.cfim-line-2 {
-          left: 78px;
-        }
-        .cfim-text-num {
-          font-size: 24px;
-          margin-top: 26px;
-        }
-        .cfim-type {
-          width: 80%;
-          height:15px;
-          margin-top: 10px;
-          font-size: 14px;
-          background: transparent;
-        }
-      }
-      .cfim-item-right {
-        .cfim-name {
-          margin:12px 0 0 12px;
-          width: calc(100% - 22px);
-        }
-        .cfim-btn {
-          right: 10px;
-          bottom: 12px;
-        }
-      }
-    }
+
     &-small {
+      height: 70px;
       .cfim-item-left,.cfim-item-right {
-        height: 66px;
+        height: 70px;
       }
       .cfim-item-left {
-        width: 45px;
-        .cfim-line-1,.cfim-line-2 {
-          left: 39px;
+        width: calc(100% - 46px);
+        .cfim-price-box {
+          padding-top: 8px;
+          .cfim-price {
+            font-size: 26px;
+          }
         }
-        .cfim-text-num {
-          font-size: 14px;
-          margin-top: 16px;
-        }
-        .cfim-type {
-          height:8px;
-          margin-top: 6px;
+        .cfim-text-1 {
           font-size: 12px;
+          line-height: 17px;
+        }
+        .cfim-text-2 {
+          display: none;
         }
       }
       .cfim-item-right {
-        width: calc(100% - 45px);
-        .cfim-name {
-          margin: 8px 0 0 8px;
-          width: calc(100% - 16px);
-          font-size: 14px;
+        width: 46px;
+        .cfim-btn-text {
+          width: 32px;
+          margin: 22px auto 0 auto;
+          font-size: 12px;
+          line-height: 14px;
         }
-        .cfim-btn {
-          right: 8px;
-          bottom: 8px;
-          .el-button {
-            height: 20px;
-            line-height: 20px;
-            border-color: #fff;
-            color: #F32525;
-            padding: 0px 10px;
-          }
-        }
+      }
+      .cfim-labar {
+        margin-top: 6px;
+        height: 13px;
+        margin-left: 7px;
       }
     }
+
     &-mini {
+      height: 58px;
       .cfim-item-left,.cfim-item-right {
-        height: 54px;
+        height: 58px;
       }
       .cfim-item-left {
-        width: 34px;
-        .cfim-line-1,.cfim-line-2 {
-          left: 28px;
+        width: calc(100% - 40px);
+        .cfim-price-box {
+          padding-top: 6px;
+          .cfim-price {
+            font-size: 22px;
+          }
         }
-        .cfim-text-num {
-          margin-top: 10px;
+        .cfim-text-1 {
+          width: 96px;
           font-size: 12px;
+          margin-top: -1px;
+          line-height: 16px;
         }
-        .cfim-type {
-          width:36px;
-          height:8px;
-          margin: 6px 0 0 0;
-          font-size: 12px;
+        .cfim-text-2 {
+          display: none;
         }
       }
       .cfim-item-right {
-        width: calc(100% - 34px);
-        .cfim-name {
-          margin: 6px 0 0 6px;
-          width: calc(100% - 12px);
+        width: 40px;
+        .cfim-btn-text {
+          width: 32px;
+          margin: 16px auto 0 auto;
           font-size: 12px;
+          line-height: 14px;
         }
-        .cfim-btn {
-          right: 6px;
-          bottom: 6px;
-          -webkit-transform: scale(0.8);
-          .el-button {
-            height: 20px;
-            line-height: 20px;
-            border-color: #fff;
-            color: #F32525;
-            padding: 0px 6px;
-          }
-        }
+      }
+      .cfim-labar {
+        width: 85%;
+        margin-top: 6px;
+        height: 11px;
+        margin-left: 6px;
       }
     }
   }

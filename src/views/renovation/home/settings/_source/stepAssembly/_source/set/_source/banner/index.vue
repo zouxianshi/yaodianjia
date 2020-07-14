@@ -6,7 +6,7 @@
     <div class="snm-view">
       <template v-for="(el,$index) in itemParams.itemList">
         <m-item-card :key="$index" :title="`轮播图${$index + 1}`" :is-submit="$index === itemParams.itemList.length - 1" :is-delete="(itemParams.itemList.length - 1) > 0" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete($event,$index)">
-          <m-form-item :key="$index" :ref="`banner_${$index}`" height="41px" :el="el" @on-el-update="onElUpdate($event,$index)" />
+          <m-form-item :key="$index" :ref="`banner_${$index}`" height="41px" :el="el" :ips="{type:itemParams.type,subType:itemParams.subType,index:$index}" @on-el-update="onElUpdate($event,$index)" />
           <div v-if="($index === itemParams.itemList.length - 1) && itemParams.itemList.length < itemParams.max" slot="create" style="margin-top: 16px">
             <el-button size="mini" @click="onAddBanner">添加轮播图</el-button>
           </div>

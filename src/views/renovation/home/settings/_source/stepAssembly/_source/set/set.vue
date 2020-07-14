@@ -122,5 +122,11 @@ export default {
       margin: 0 auto;
       padding: 20px 0 0px 0;
     }
+    .sa-upload-size {
+      font-size: 12px;
+      color: #9B9B9B;
+      text-align: left;
+      margin-top: 8px;
+    }
   }
 </style>
