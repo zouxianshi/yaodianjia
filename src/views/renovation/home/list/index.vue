@@ -1,5 +1,5 @@
 <template>
-  <div class="index-model">
+  <div class="renovation-list-model">
     <section class="list-operate">
       <div>
         <el-button type="primary" plain="" size="small" @click="handleBatchDel">批量删除</el-button>
@@ -11,7 +11,7 @@
       <el-table
         v-loading="loading"
         :data="tableData"
-        height="calc(100vh - 350px)"
+        height="calc(100vh - 306px)"
         size="small"
         style="width: 100%"
         @selection-change="handleSelectionChange"
@@ -217,9 +217,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .index-model {
+  .renovation-list-model {
     background: #fff;
-    padding: 24px 29px;
+    padding: 20px;
     .list-operate{
       display: flex;
       justify-content: space-between;
