@@ -547,6 +547,7 @@ export default {
       multipleSelection: [],
       lockDialogVisible: false,
       isIngleCommodity: false,
+      commodText: '',
       isIngleStore: true,
       importAllVisible: false,
       defaultProps: {
@@ -804,7 +805,7 @@ export default {
       }
       if (!this.listQuery.storeId && this.isIngleCommodity === false && this.multipleSelection.length === 0) {
         this.$message({
-          message: '无法同步全部门店的多个商品，请选择指定门店或者选择单个商品',
+          message: '门店或商品至少一个是相同的，才能执行同步',
           type: 'warning'
         })
         return
@@ -818,15 +819,18 @@ export default {
        */
       if (this.isIngleStore === false && this.isIngleCommodity === false) {
         this.$message({
-          message: '无法同步多个门店的多个商品，请选择指定门店或者选择单个商品',
+          message: '门店或商品至少一个是相同的，才能执行同步',
           type: 'warning'
         })
         return
       }
       // 弹窗确认
+      this.commodText = `确认要将当前所选${this.multipleSelection.length || this.total}条商品的价格库存数据从erp同步到线上吗？`
+      if (this.isIngleStore === true && this.isIngleCommodity === false && this.multipleSelection.length === 0) {
+        this.commodText = '是否执行该门店下的全部商品执行同步？'
+      }
       this.$confirm(
-        `确认要将当前所选${this.multipleSelection.length ||
-          this.total}条商品的价格库存数据从erp同步到线上吗？`,
+        `${this.commodText}`,
         '',
         {
           confirmButtonText: '确定',
@@ -846,6 +850,7 @@ export default {
           } else if (!this.listQuery.storeId && this.isIngleStore === false && this.isIngleCommodity === true) {
             syncTypeNum = 4
           }
+
           if (syncTypeNum === 2) {
             const findIndex = this.storeList.findIndex(mItem => {
               return mItem.id === this.listQuery.storeId
@@ -853,6 +858,7 @@ export default {
             storeAry.storeCode = this.storeList[findIndex].stCode
             storeAry.storeId = this.listQuery.storeId
           }
+
           // 店铺code
           if (this.multipleSelection.length) {
             this.multipleSelection.map(v => {
