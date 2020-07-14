@@ -141,7 +141,7 @@
         </span>
       </el-form-item>
       <el-form-item label="是否推荐到员工分享" label-width="200">
-        <el-switch v-model="ruleForm.isShare" />
+        <el-switch v-model="ruleForm.isShare" :disabled="isRuning" />
       </el-form-item>
     </el-form>
     <div style="margin-left:30px">
