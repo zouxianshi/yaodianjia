@@ -141,3 +141,12 @@ export function syncMemberToErp(data) {
   })
 }
 
+// 查询推荐人
+
+export function searchEmployee(data) {
+  return request({
+    url: `${config.merGoods}/1.0/employee/_search`,
+    method: 'post',
+    data
+  })
+}

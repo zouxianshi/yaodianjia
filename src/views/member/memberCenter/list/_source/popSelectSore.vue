@@ -9,14 +9,14 @@
             <el-button size="mini" type="text" style="width:28%" @click="filterStore">查询</el-button>
           </div>
           <div class="selects-content">
-            <mSelectRadio :items-arr="storeData" />
+            <mSelectRadio :items-arr="empStoreArr" />
           </div>
         </div>
         <div class="choose-right">
-          <div class="tips">已选择名单</div>
+          <div class="tips">已选择</div>
           <div class="has-choosed">
-            <div v-for="(items, index) in storeData" :key="index" style="display:inline-block">
-              <el-tag v-if="items.selectFlag" type="info" closable size="mini" @close="items.selectFlag=false">
+            <div v-for="(items, index) in empStoreArr" :key="index" style="display:inline-block">
+              <el-tag v-if="items.selectFlag" type="info" closable size="mini" @close="items.selectFlag=false" style="margin-right: 20px; margin-bottom: 10px ">
                 {{ items.stName }}
               </el-tag>
             </div>
@@ -25,7 +25,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="mini" @click="dialogVisible = false">确 定</el-button>
+        <el-button size="mini" @click="submitStore">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -37,25 +37,19 @@ export default {
   components: {
     mSelectRadio
   },
-  props: {
-    storeData: {
-      type: Array,
-      default() {
-        return []
-      }
-    }
-  },
   data() {
     return {
       serachWord: '',
-      dialogVisible: false
+      dialogVisible: false,
+      empStoreArr: []
     }
   },
   methods: {
     closeDia(done) {
       done()
     },
-    showDialogVisible() {
+    showDialogVisible(empStore) {
+      this.empStoreArr = empStore
       this.dialogVisible = true
       this.filterStore()
     },
@@ -68,6 +62,11 @@ export default {
           item.show = true
         }
       })
+    },
+    // 提交推荐门店数据
+    submitStore() {
+      this.$emit('chooseStore', this.empStoreArr)
+      this.dialogVisible = false
     }
   }
 }

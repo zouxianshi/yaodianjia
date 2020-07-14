@@ -107,31 +107,30 @@ export default {
     },
     // 获取列表数据
     getData(val) {
-      // else if (val === '查询' && Number(this.$refs.conditionsA.conditions.empCodes) === 1 && this.$refs.conditionsA.choosedEmpCodesArr.length === 0) {
-      //   this.$message({ type: 'warning', message: '请选择健康顾问' })
-      // }
-      if (
-        val === '查询' &&
-        Number(this.$refs.conditionsA.conditions.organizations) === 1 &&
-        this.$refs.conditionsA.choosedOrganizationsArr.length === 0
-      ) {
+      if ( val === '查询' && Number(this.$refs.conditionsA.conditions.organizations) === 1 && this.$refs.conditionsA.choosedOrganizationsArr.length === 0) {
         this.$message({ type: 'warning', message: '请选择门店' })
       } else {
         var params = _.cloneDeep(this.$refs.conditionsA.conditions)
         // console.log(params)
-        var choosedEmpCodesArr = this.$refs.conditionsA.choosedEmpCodesArr // 已选择顾问
-        var choosedOrganizationsArr = this.$refs.conditionsA
-          .choosedOrganizationsArr // 已选择门店
+        let choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
+        let choosedEmployee = this.$refs.conditionsA.choosedEmployee // 已选择推荐员工
+        let choosedEmpSto = this.$refs.conditionsA.choosedEmpSto // 已选择推荐门店
         params.currentPage = this.pageInfo.currentPage
         params.pageSize = this.pageInfo.pageSize
         params.content = this.content
-        // 如果顾问为选择顾问
-        if (params.empCodes === '1') {
+        // 如果推荐来源为推荐门店或推荐员工
+        if (params.regLy === '1') { // 推荐门店
           var arr = []
-          choosedEmpCodesArr.map(items => {
+          choosedEmpSto.map(items => {
+            arr.push(items.stCode)
+          })
+          params.regMedium = arr
+        } else if (params.regLy === '2') {
+          let arr = []
+          choosedEmployee.map(items => {
             arr.push(items.empCode)
           })
-          params.empCodes = arr
+          params.regMedium = arr
         }
         // 如果门店参数为选择门店
         if (params.organizations === '1') {
