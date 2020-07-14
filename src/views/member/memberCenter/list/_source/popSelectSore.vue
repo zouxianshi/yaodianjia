@@ -50,12 +50,13 @@ export default {
     },
     showDialogVisible(empStore) {
       this.empStoreArr = empStore
+      this.serachWord = ''
       this.dialogVisible = true
       this.filterStore()
     },
     // 筛选门店
     filterStore() {
-      _.forEach(this.storeData, item => {
+      _.forEach(this.empStoreArr, item => {
         if (item.stName.indexOf(this.serachWord) < 0) {
           item.show = false
         } else {

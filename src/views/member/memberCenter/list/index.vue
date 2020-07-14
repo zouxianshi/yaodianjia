@@ -121,12 +121,20 @@ export default {
         // 如果推荐来源为推荐门店或推荐员工
         if (params.regLy === '1') { // 推荐门店
           var arr = []
+          if (choosedEmpSto.length === 0) {
+            this.$message({ type: 'warning', message: '请选择推荐门店' })
+            return
+          }
           choosedEmpSto.map(items => {
             arr.push(items.stCode)
           })
           params.regMedium = arr
         } else if (params.regLy === '2') {
           let arr = []
+          if (choosedEmployee.length === 0) {
+            this.$message({ type: 'warning', message: '请选择员工' })
+            return
+          }
           choosedEmployee.map(items => {
             arr.push(items.empCode)
           })

@@ -71,11 +71,11 @@ export default {
   },
   methods: {
     closeDia(done) {
-      console.log("yes")
       done()
     },
     showDialogVisible(empLoyee) {
       this.empLoyeeArr = empLoyee
+      this.serachWord = ''
       this.dialogVisible = true
       this.filterStore()
     },
