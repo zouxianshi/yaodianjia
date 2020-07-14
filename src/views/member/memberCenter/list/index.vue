@@ -129,6 +129,7 @@ export default {
             arr.push(items.stCode)
           })
           params.regMedium = arr
+          params.regLy = null
         } else if (params.regLy === '2') {
           let arr = []
           if (choosedEmployee.length === 0) {
@@ -139,6 +140,7 @@ export default {
             arr.push(items.empCode)
           })
           params.regMedium = arr
+          params.regLy = null
         }
         // 如果门店参数为选择门店
         if (params.organizations === '1') {
