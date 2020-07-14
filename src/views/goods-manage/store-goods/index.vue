@@ -177,7 +177,7 @@
               type="info"
               size="small"
               @click="handleSynchro"
-            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
+            >同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
             <!-- <el-button
               v-if="listQuery.status !== 3"
               type
