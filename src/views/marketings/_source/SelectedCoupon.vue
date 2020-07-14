@@ -3,7 +3,7 @@
     <el-table height="250" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
       <el-table-column label="券类型" show-overflow-tooltip>
         <template slot-scope="scope">
-          {{ scope.row.ctype === 1 ? '折扣券' : scope.row.ctype === 2 ? '满减券' : '折扣券' }}
+          {{ scope.row.ctype === 1 ? '折扣券' : scope.row.ctype === 2 ? '满减券' : '礼品券' }}
         </template>
       </el-table-column>
       <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
