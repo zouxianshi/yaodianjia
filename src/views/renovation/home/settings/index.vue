@@ -29,7 +29,7 @@ export default {
   props: {},
   methods: {
     ...mapMutations('renovation', ['setStepVal', 'reset', 'setHomeLoading']),
-    ...mapActions('renovation', ['getHomePage']),
+    ...mapActions('renovation', ['getHomePage', 'getAgaData']),
     ...mapActions('mall', ['getCenterStoreId'])
   },
   watch: {},
@@ -40,7 +40,8 @@ export default {
     this.setHomeLoading(true)
     const { query } = this.$route
     const { merCode } = this.$store.state.user
-    this.getCenterStoreId({ merCode }).then(() => {
+    this.getCenterStoreId({ merCode }).then(async() => {
+      await this.getAgaData()
       if (!_.isEmpty(query)) {
         this.setStepVal(2)
         this.getHomePage({ id: query.id }).then(() => {
