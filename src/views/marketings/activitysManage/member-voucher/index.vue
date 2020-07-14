@@ -6,7 +6,7 @@
       <el-step title="发放成功" />
     </el-steps>
     <mMemberList v-show="stepActive === 1" @nextstep="toSetp2" @submitParams="saveParams" />
-    <mCouponList v-show="stepActive === 2" @nextstep="toSetp3" @prevstep="prev" />
+    <mCouponList v-show="stepActive === 2" @nextstep="toSetp3" @prevstep="prev" ref="cop" />
     <mVoucherSuccess v-show="stepActive === 3" ref="success" />
   </div>
 </template>
@@ -46,6 +46,7 @@ export default {
       this.isRunning = true
       this.params.couponNumList = couponNumList
       batchSendCouponNew(this.params).then(res => {
+        this.$refs.cop.stopLoading()
         this.isRunning = false
         if (res.code === '10000') {
           this.stepActive = 3
