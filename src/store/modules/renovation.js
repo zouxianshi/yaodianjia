@@ -22,7 +22,6 @@ const basics = {
   styleType: '', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
   shareDesc: '', // 分享描述
   shareImg: '', // 分享图片url
-  agaData: {}, // 活动集合数据
   recommendedData: []
 }
 
@@ -34,6 +33,7 @@ const state = {
   staticDragData: {
     banner: _.cloneDeep(bannerItem)
   },
+  agaData: {},
   agaSelectList: _.cloneDeep(agaSelectList)
 }
 
@@ -70,7 +70,9 @@ const mutations = {
     state.stepVal = 1
     state.basics = _.cloneDeep(basics)
     state.dragList = []
+    state.agaData = {}
     state.staticDragData.banner = _.cloneDeep(bannerItem)
+    state.agaSelectList = _.cloneDeep(agaSelectList)
   }
 }
 
