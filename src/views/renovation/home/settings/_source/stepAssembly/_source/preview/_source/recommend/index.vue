@@ -10,6 +10,7 @@
   </div>
 </template>
 <script>
+import { mapState, mapMutations } from 'vuex'
 import mFirst from './first'
 import mSecond from './second'
 
@@ -27,17 +28,24 @@ export default {
       default: () => {}
     }
   },
-  methods: {},
+  methods: {
+    ...mapMutations('renovation', ['setRecommendedData'])
+  },
   watch: {},
   beforeCreate() {
   },
   created() {
-    getRecommendedFormat(this).then(itemList => {
-      this.itemList = itemList
-      this.loading = false
-    }).catch(() => {
-      this.loading = false
-    })
+    if (_.isEmpty(this.recommendedData)) {
+      getRecommendedFormat(this).then(itemList => {
+        this.itemList = itemList
+        this.setRecommendedData(this.itemList)
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    } else {
+      this.itemList = this.recommendedData
+    }
   },
   beforeMount() {
   },
@@ -52,6 +60,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('renovation', ['recommendedData']),
     mod() {
       switch (this.item.subType) {
         case 'first':

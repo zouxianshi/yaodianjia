@@ -621,8 +621,8 @@ export default {
       if (!value) {
         if (
           this.basicForm.origin !== 1 &&
-          this.chooseTypeList.length !== 0 &&
-          this.chooseTypeList[0].name === '中西药品'
+            this.chooseTypeList.length !== 0 &&
+            this.chooseTypeList[0].name === '中西药品'
         ) {
           callback(new Error('请输入通用名'))
         } else {
@@ -653,8 +653,8 @@ export default {
         }
         if (
           rule.field === 'long' ||
-          rule.field === 'height' ||
-          rule.field === 'width'
+            rule.field === 'height' ||
+            rule.field === 'width'
         ) {
           if ((value && value <= 0) || value >= 100) {
             return callback(new Error('长宽高必须大于0 小于100'))
@@ -860,6 +860,22 @@ export default {
     } else {
       next()
     }
+    // } else {
+    // if (!this.leaveAction) {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // } else {
+    //   next()
+    // }
+    // }
   },
   mounted() {},
   created() {
@@ -1347,9 +1363,9 @@ export default {
     beforeUpload(file) {
       const size = file.size / 1024
       const isImg =
-        file.type === 'image/jpeg' ||
-        file.type === 'image/png' ||
-        file.type === 'image/jpg'
+          file.type === 'image/jpeg' ||
+          file.type === 'image/png' ||
+          file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
           message: '只能上传格式为 jpg、jpeg、png的图片',
@@ -1589,8 +1605,8 @@ export default {
             ].id // 分类id
             if (
               this.chooseTypeList &&
-              (this.chooseTypeList[0].name === '医疗器械' ||
-                this.chooseTypeList[0].name === '营养保健')
+                (this.chooseTypeList[0].name === '医疗器械' ||
+                  this.chooseTypeList[0].name === '营养保健')
             ) {
               this.basicForm.hasEphedrine = 0
               this.basicForm.needId = 0
@@ -1632,7 +1648,7 @@ export default {
             }
             if (
               this.chooseTypeList &&
-              this.chooseTypeList[0].name !== '中西药品'
+                this.chooseTypeList[0].name !== '中西药品'
             ) {
               data.drugType = ''
               data.dosageForm = ''
@@ -1848,6 +1864,47 @@ export default {
         .catch(_ => {
           this.subLoading2 = false
         })
+    },
+    handleSubIntro() {
+      // 保存商品详情
+      this.subLoading = true
+      const data = {
+        content: this.goodsIntro.content,
+        id: this.basicForm.id
+      }
+      saveGoodsDetails(data)
+        .then(res => {
+          this.doSubmitInfo()
+          // this.$message({
+          //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
+          //   type: 'success'
+          // })
+        })
+        .catch(_ => {
+          this.subLoading = false
+        })
+    },
+    doSubmitInfo() {
+      this.subLoading = false
+      this.leaveAction = true
+
+    //   setTimeout(() => {
+    //     this.$confirm('请确认已保存橱窗图', '提示', {
+    //       confirmButtonText: '确定',
+    //       cancelButtonText: '取消',
+    //       type: 'warning'
+    //     })
+    //       .then(() => {
+    //         this.$store.dispatch('tagsView/delView', this.$route).then(res => {
+    //           sessionStorage.setItem('isRefreshDepot', true)
+    //           this.$router.replace('/goods-manage/' + this.backUrl)
+    //         })
+    //       })
+    //       .catch(() => {
+    //         console.log('已取消')
+    //       })
+    //   }, 1000)
+    // }
     }
   }
 }

@@ -34,9 +34,9 @@
         height="350"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="cname" label="优惠券名称" />
-        <el-table-column label="适用商品">
+        <el-table-column type="selection" width="55" align="left" />
+        <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
+        <el-table-column label="适用商品" show-overflow-tooltip>
           <template
             slot-scope="scope"
           >{{ scope.row.productRule ===1?'全部商品':'' || scope.row.productRule ===2?'部分商品':'' || scope.row.productRule ===3?'部分商品不可用':'' }}</template>
@@ -46,15 +46,15 @@
             slot-scope="scope"
           >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName, scope.row.cname) }}</template>
         </el-table-column>
-        <el-table-column label="使用时间" width="160">
+        <el-table-column label="使用时间" show-overflow-tooltip>
           <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
         </el-table-column>
-        <el-table-column label="使用场景" width="90">
+        <el-table-column label="使用场景" show-overflow-tooltip>
           <template
             slot-scope="scope"
           >{{ scope.row.sceneRule ===1?'仅商城':'' || scope.row.sceneRule ===2?'仅门店':'' || scope.row.sceneRule ===3?'线上线下通用':'' }}</template>
         </el-table-column>
-        <el-table-column prop="productRule" label="适用门店" width="100">
+        <el-table-column label="适用门店" show-overflow-tooltip>
           <template
             slot-scope="scope"
           >{{ scope.row.shopRule ===1?'全部门店':'' || scope.row.shopRule ===2?'部分门店':'' || scope.row.shopRule ===3?'部分门店不可用':'' }}</template>
@@ -191,7 +191,7 @@ export default {
     },
     checkSure() {
       if (this.singlechoice && this.multipleSelectionAll.length > 1) {
-        this.$message.error('请单选')
+        this.$message.error('只能选择一张优惠券！')
       } else {
         const multipleSelectionAll = JSON.parse(
           JSON.stringify(this.multipleSelectionAll)
@@ -339,13 +339,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .checkCoupon-model {
-  .el-table--medium th,
-  // .el-table--medium td {
-  //   padding: 2px;
-  // }
-  // .el-table thead th {
-  //   height: 50px;
-  // }
   .creatcoucops:hover {
     cursor: pointer;
   }

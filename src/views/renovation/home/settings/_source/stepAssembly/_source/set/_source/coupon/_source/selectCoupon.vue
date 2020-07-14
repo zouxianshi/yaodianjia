@@ -122,8 +122,6 @@ export default {
       } else {
         this.selectList = _.reject(this.selectList, ['id', item.id])
       }
-
-      console.log(this.selectList)
     },
     handleshopRule(ctype, useRule, denomination, giftName) {
       return handleshopRule(ctype, useRule, denomination, giftName)

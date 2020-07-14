@@ -3,13 +3,12 @@
     <div class="payment-gift-rules">
       <h4>活动信息</h4>
       <el-form ref="form" :rules="rules" :model="form" label-width="100px" :disabled="disabled">
-        <el-form-item label="活动名称：" prop="activityDetailName">
+        <el-form-item label="活动名称：" prop="activityDetailName" style="width: 500px">
           <el-input
             v-model="form.activityDetailName"
             placeholder="请输入活动名称"
             clearable
             maxlength="30"
-            show-word-limit
           />
         </el-form-item>
         <el-form-item label="活动时间：" prop="beginEndTime">
@@ -26,11 +25,12 @@
           />
         </el-form-item>
 
-        <el-form-item label="活动说明：" prop="activityNote">
+        <el-form-item label="活动说明：" prop="activityNote" style="width: 800px">
           <el-input
             v-model="form.activityNote"
             type="textarea"
             maxlength="200"
+            rows="5"
             placeholder="请输入活动说明"
             clearable
             show-word-limit
@@ -134,27 +134,20 @@
             <el-radio :label="1">
               送优惠券
               <span class="zkTips">最多可选20张</span>
-              <div
-                v-if="form.giftType===1&&!disabled"
-                class="from-clickable"
-                @click="selectCoupon"
-              >选择优惠券</div>
+              <span v-if="form.giftType===1&&!disabled" class="from-clickable" @click="selectCoupon">选择优惠券</span>
             </el-radio>
-            <mSelectedCoupon
-              v-show="form.giftType===1&&selectedCoupons.length>0"
-              ref="selectedCouponView"
-              @onDel="onGetSelectCoupon"
-            />
             <el-radio :label="2">
               抽奖活动
               <span class="zkTips">只能选择1个</span>
-              <div
-                v-if="form.giftType===2&&!disabled"
-                class="from-clickable"
-                @click="selectActivity"
-              >选择活动</div>
+              <span v-if="form.giftType===2&&!disabled" class="from-clickable" @click="selectActivity">选择活动</span>
             </el-radio>
           </el-radio-group>
+          <mSelectedCoupon
+            v-show="form.giftType===1&&selectedCoupons.length>0"
+            ref="selectedCouponView"
+            style="width: 100%"
+            @onDel="onGetSelectCoupon"
+          />
           <mSelectedActivity
             v-show="form.giftType===2&&selectedActivity.length>0"
             ref="selectedActivityView"
@@ -391,15 +384,11 @@ export default {
     if (id) {
       if (op === '1') {
         this.pageStatus = 3
-        this.pageTitle = this.pageTitle + '详情'
         this.disabled = true
       } else {
         this.pageStatus = 2
-        this.pageTitle = this.pageTitle + '编辑'
       }
       this._getDetailData(id)
-    } else {
-      this.pageTitle = this.pageTitle + '新增'
     }
     this.$route.meta.title = this.pageTitle
     // document.title = pageTitle
@@ -705,15 +694,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .add {
-  // padding: 10px 61px;
-  // height: calc(100vh - 158px);
-  // overflow-y: scroll;
   .payment-gift-info,
   .payment-gift-rules {
-    // padding: 20px 0;
     form {
-      padding-left: 15%;
-      width: 90%;
+      padding-left: 5%;
+      width: 100%;
+      max-width: 1200px;
       .inline-input {
         width: 80px;
       }

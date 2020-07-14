@@ -52,12 +52,10 @@ export default {
 
     },
     onElUpdate(el, i) {
-      console.log(el, i)
       this.$set(this.itemParams.itemList, i, el)
     },
     onCouponDelete(index) {
       this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)
-      console.log(this.itemParams.itemList)
     },
     onAssSubmit() {
       const { itemList } = this.itemParams
