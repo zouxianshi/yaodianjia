@@ -1243,7 +1243,7 @@ export default {
       // 赋值值
       this.basicForm = data
       if (this.basicForm.intro === null) {
-        this.basicForm.intro === ''
+        this.basicForm.intro = ''
       }
       this.$refs.editor.setContent(this.basicForm.intro)
     },
