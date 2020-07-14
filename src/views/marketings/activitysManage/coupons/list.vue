@@ -318,7 +318,7 @@ export default {
     height: 50px;
   }
   .search-form {
-    margin-top: 10px;
+    margin-top: 10px; margin-bottom: 10px;
     .search-item {
       .el-input {
         width: 180px;
