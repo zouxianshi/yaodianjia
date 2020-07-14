@@ -5,9 +5,10 @@
  */
 
 import _ from 'lodash'
+import store from '@/store'
 import { uuid } from '@/utils' // eslint-disable-line
 import renovationService from '@/api/renovation'
-import { bannerItem, handlerBackfill,items,defaultParams } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
+import { bannerItem, handlerBackfill,items,defaultParams,agaSelectList } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
 
 const basics = {
   name: '', // 商家首页模板名称
@@ -20,34 +21,32 @@ const basics = {
   searchHint: '', // 搜索预显
   styleType: '', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
   shareDesc: '', // 分享描述
-  shareImg: '' // 分享图片url
+  shareImg: '', // 分享图片url
+  agaData: {}, // 活动集合数据
+  recommendedData: []
 }
 
 const state = {
-  stepVal: 2,
+  stepVal: 1,
   homeLoading: false,
   basics: _.cloneDeep(basics),
-  /* basics: {
-    'name': 'name',
-    'title': 'title',
-    'backgroundColor': '#ffffff',
-    'borderFlag': 1,
-    'borderStyle': 1,
-    'borderSize': 4,
-    'borderColor': '#06B54A',
-    'searchHint': '',
-    'styleType': 'custome',
-    'shareDesc': '分享描述',
-    'shareImg': 'https://centermerchant-test.oss-cn-shanghai.aliyuncs.com/ydjia-merchant-manager/666666/20200628/31c8d2d82575494ca2d88348c68e9785.png'
-  },*/
-  dragList: [
-  ],
+  dragList: [],
   staticDragData: {
     banner: _.cloneDeep(bannerItem)
-  }
+  },
+  agaSelectList: _.cloneDeep(agaSelectList)
 }
 
 const mutations = {
+  setAgaSelectList: (state, payload) => {
+    state.agaSelectList = payload
+  },
+  setAgaData: (state, payload) => {
+    state.agaData = _.assign(state.agaData, payload)
+  },
+  setRecommendedData: (state, payload) => {
+    state.recommendedData = _.assign(state.recommendedData, payload)
+  },
   setBasics: (state, payload) => {
     state.basics = _.assign(state.basics, payload)
   },
@@ -76,6 +75,34 @@ const mutations = {
 }
 
 const actions = {
+  getAgaData({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      if (_.isEmpty(state.agaData)) {
+        const p = {
+          storeId: store.state.mall.centerStoreId,
+          allFlag: true,
+          actTypeList: [11, 12, 13, 14, 15]
+        }
+        renovationService.getActivityCollection(p).then(res => {
+          const { data } = res
+          commit('setAgaData', data)
+
+          state.agaSelectList = _.map(state.agaSelectList, v => {
+            return {
+              ...v,
+              selected: !_.isEmpty(data[v.key]),
+              disabled: _.isEmpty(data[v.key])
+            }
+          })
+          resolve(data)
+        }).catch(e => {
+          reject(e)
+        })
+      } else {
+        resolve(state.agaData)
+      }
+    })
+  },
   saveHomeSetting({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const p = {
@@ -104,7 +131,6 @@ const actions = {
     })
   },
   saveHomePage({ commit, state }, payload) {
-    console.log([state.staticDragData.banner.id, ..._.map(state.dragList, 'id')])
     const p = {
       list: [state.staticDragData.banner, ...state.dragList],
       ...state.basics,

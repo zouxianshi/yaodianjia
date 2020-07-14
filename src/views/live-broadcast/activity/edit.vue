@@ -372,7 +372,7 @@ export default {
   },
   methods: {
     handleEditMerchant() {
-      MC.jumpToPath('merchant/index', 'merchant', '_blank')
+      MC.jumpToPath('merchant/index', 'merchant')
     },
     async _loadMerchantInfo() {
       try {
@@ -519,6 +519,7 @@ export default {
           if (this.formData.couponRelationReqDto.length > 0) {
             if (this.formData.commoditySpecList.length <= 0) {
               this.$alert('有优惠券必须添加商品哦')
+              return
             }
             const couponRelationReqDto = this.formData.couponRelationReqDto[0]
             if (

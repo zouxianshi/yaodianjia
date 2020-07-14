@@ -2,14 +2,13 @@
   <div class="select-store">
     <el-form v-if="Array.isArray(tableData) && tableData.length" :inline="true" :model="formInline" class="form-inline">
       <el-form-item label="门店名称">
-        <el-input v-model="formInline.name" clearable placeholder="门店编码/门店名称" />
+        <el-input v-model="formInline.name" size="mini" clearable placeholder="门店编码/门店名称" />
       </el-form-item>
-      <el-button type="primary" @click="onSubmit">查询</el-button>
+      <el-button type="primary" size="mini" @click="onSubmit">查询</el-button>
       <el-form-item><div style="color: rgb(191, 191, 191)">(说明：该查询仅支持下列列表的数据查询)</div></el-form-item>
     </el-form>
     <el-table
       :data="cutData"
-      size="small"
       show-overflow-tooltip
       style="width: 100%"
       max-height="500"

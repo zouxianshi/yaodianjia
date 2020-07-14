@@ -206,6 +206,45 @@ const router = [
         meta: {
           title: '新人礼包'
         }
+      },{
+        path: '/activity/birthday-gift',
+        component: () => import('@/views/marketings/activitysManage/birthdayGift/index'),
+        name: 'birthday-gift',
+        meta: {
+          title: '生日礼包',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher-list',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/voucherList'),
+        name: 'member-voucher-list',
+        meta: {
+          title: '发券记录',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher-detail',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/detail'),
+        name: 'member-voucher-detail',
+        meta: {
+          title: '发券详情',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/index'),
+        name: 'member-voucher',
+        meta: {
+          title: '会员发券',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
       },
       {
         path: '/activity/exchangeMallList',

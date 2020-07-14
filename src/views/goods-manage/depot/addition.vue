@@ -216,7 +216,11 @@ export default {
     },
     handleSetStore(row) {
       row.loading = true
-      checkComGoods({ ids: [row.id], userName: this.name, merCode: this.merCode })
+      checkComGoods({
+        ids: [row.id],
+        userName: this.name,
+        merCode: this.merCode
+      })
         .then(res => {
           this.$router.push(
             '/goods-manage/addition-edit?id=' +
