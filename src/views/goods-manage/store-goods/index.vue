@@ -431,10 +431,10 @@
     />
     <batchUpdate
       :is-show="importAllVisible"
-      :spec-data="specData"
       @complete="importAllVisible=false;getList()"
       @close="importAllVisible=false"
     />
+    <!-- :spec-data="specData" -->
     <el-dialog
       :title="`修改${type=='price'?'价格':'库存'}`"
       :visible.sync="isShow"
@@ -546,6 +546,8 @@ export default {
       tableData: [],
       multipleSelection: [],
       lockDialogVisible: false,
+      isIngleCommodity: false,
+      isIngleStore: true,
       importAllVisible: false,
       defaultProps: {
         children: 'children',
@@ -773,23 +775,50 @@ export default {
         })
     },
     handleSynchro() {
+      const ary = []
+      const storeAry = []
       if (!this.listQuery.storeId) {
+        this.isIngleStore = false
+      } else {
+        this.isIngleStore = true
+      }
+      if (this.multipleSelection.length === 0) {
+        this.isIngleCommodity = false
+      }
+      if (this.multipleSelection.length === 1) {
+        this.isIngleCommodity = true
+      }
+      if (this.multipleSelection.length > 1) {
+        const firstStoreCode = this.multipleSelection[0].storeCode
+        const firstCommodityCode = this.multipleSelection[0].erpCode
+        this.isIngleStore = true
+        this.isIngleCommodity = true
+        this.multipleSelection.map(v => {
+          if (firstStoreCode !== v.storeCode) {
+            this.isIngleStore = false
+          }
+          if (firstCommodityCode !== v.erpCode) {
+            this.isIngleCommodity = false
+          }
+        })
+      }
+      if (!this.listQuery.storeId && this.isIngleCommodity === false && this.multipleSelection.length === 0) {
         this.$message({
-          message: '无法同步全部门店商品，请选择指定门店',
+          message: '无法同步全部门店的多个商品，请选择指定门店或者选择单个商品',
           type: 'warning'
         })
         return
       }
-      const ary = []
+      // const ary = []
       // 同步价格
       /**
        * 分为两种
        * 1.同步查询出来的数据
        * 2.同步勾选的数据
        */
-      if (this.multipleSelection.length === 0 && this.total === 0) {
+      if (this.isIngleStore === false && this.isIngleCommodity === false) {
         this.$message({
-          message: '请选择商品',
+          message: '无法同步多个门店的多个商品，请选择指定门店或者选择单个商品',
           type: 'warning'
         })
         return
@@ -807,32 +836,51 @@ export default {
       )
         .then(() => {
           let data = {}
+          let syncTypeNum = 1
+          if (this.isIngleStore === true && this.isIngleCommodity === false && this.multipleSelection.length > 0) {
+            syncTypeNum = 1
+          } else if (this.isIngleStore === true && this.isIngleCommodity === false && this.multipleSelection.length === 0) {
+            syncTypeNum = 2
+          } else if (this.multipleSelection.length > 1 && this.isIngleStore === false && this.isIngleCommodity === true) {
+            syncTypeNum = 3
+          } else if (!this.listQuery.storeId && this.isIngleStore === false && this.isIngleCommodity === true) {
+            syncTypeNum = 4
+          }
+          if (syncTypeNum === 2) {
+            const findIndex = this.storeList.findIndex(mItem => {
+              return mItem.id === this.listQuery.storeId
+            })
+            storeAry.storeCode = this.storeList[findIndex].stCode
+            storeAry.storeId = this.listQuery.storeId
+          }
           // 店铺code
-          const findIndex = this.storeList.findIndex(mItem => {
-            return mItem.id === this.listQuery.storeId
-          })
           if (this.multipleSelection.length) {
             this.multipleSelection.map(v => {
               ary.push({
                 erpCode: v.erpCode,
+                specId: v.specId,
                 storeSpecId: v.storeSpecId
+              })
+            })
+            this.multipleSelection.map(v => {
+              storeAry.push({
+                storeCode: v.storeCode,
+                storeId: v.storeId
               })
             })
             data = {
               merCode: this.merCode,
-              storeCode: this.storeList[findIndex].stCode,
-              storeId: this.listQuery.storeId,
               specs: ary,
-              syncType: 1 // 单个门店部分商品
+              storeReqDTOs: storeAry,
+              syncType: syncTypeNum // 单个门店部分商品
             }
           } else {
             // 当前同步所有查询出来的数据；
             data = {
               merCode: this.merCode,
-              storeCode: this.storeList[findIndex].stCode,
-              storeId: this.listQuery.storeId,
               specs: ary,
-              syncType: 2 // 单个门店所有商品
+              storeReqDTOs: storeAry,
+              syncType: syncTypeNum // 单个门店所有商品
             }
           }
           // 调用接口同步
