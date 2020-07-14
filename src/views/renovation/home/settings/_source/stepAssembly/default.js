@@ -191,14 +191,17 @@ export const handlerBackfill = data => {
     }
     if (v.type === 'activityAggregate') {
       const is = id => _.split(v.value, ',').includes(id)
+      const selectList = _.map(_.cloneDeep(store.state.renovation.agaSelectList), vv1 => {
+        return {
+          ...vv1,
+          selected: is(vv1.id)
+        }
+      })
+
       v1 = {
         ...v1,
-        selectList: _.map(_.cloneDeep(store.state.renovation.agaSelectList), vv1 => {
-          return {
-            ...vv1,
-            selected: is(vv1.id)
-          }
-        })
+        chooseFlag: _.size(_.reject(selectList, ['selected', false])) === 5 ? 0 : 1,
+        selectList: selectList
       }
     }
     if (v.type === 'timeLimitedActivity') {

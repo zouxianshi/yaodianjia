@@ -39,6 +39,7 @@ export default {
       }
       this.itemParams.value = _.join(_.map(_.reject(this.itemList, ['selected', false]), v => v.id), ',')
       this.itemParams.error = false
+      this.itemParams.chooseFlag = _.size(_.reject(this.itemList, ['selected', false])) === 5 ? 0 : 1
       saveDragItem(this.$root, this.itemParams)
     }
   },
