@@ -211,7 +211,7 @@
                 <div class="edit-card-cnt">
                   <div class="content">
                     <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
-                      <el-form-item label="药品类型：">
+                      <el-form-item label="药品类型：" prop="drugType">
                         <el-select v-model="basicForm.drugType" placeholder="请选择药品类型">
                           <el-option label="甲类OTC" :value="0" />
                           <el-option label="乙类OTC" :value="2" />
@@ -757,6 +757,8 @@ export default {
           { required: true, message: '请选择所属品牌', trigger: 'change' }
         ],
         weight: [{ required: true, validator: _checkFloat, trigger: 'blur' }],
+        drugType: [{ required: true, message: '请选择药品类型', trigger: 'blur' }],
+        specSelect: [{ required: true, message: '请增加规格信息', trigger: 'blur' }],
         manufacture: [
           { required: true, message: '请输入生成企业', trigger: 'blur' }
         ],
@@ -1703,7 +1705,6 @@ export default {
                   if (this.$route.query.source === 'create') {
                     params.commDTO.origin = 2
                   }
-
                   this._CreateBasicInfo(params)
                   // }
                   // 需修改
@@ -1732,7 +1733,9 @@ export default {
                 content: this.goodsIntro.content,
                 id: this.basicForm.id
               }
-
+              console.log(params.specList)
+              console.log(params.imgList)
+              console.log(params.detailDTO)
               // todo handler params
               const { query } = this.$route
               if (query.origin) {
@@ -1742,7 +1745,6 @@ export default {
               if (this.$route.query.source === 'create') {
                 params.commDTO.origin = 2
               }
-
               this._CreateBasicInfo(params)
               // }
             }
