@@ -5,7 +5,10 @@
         <el-radio-button v-for="item in pageTypeList" :key="item.code" :label="item.name" />
       </el-radio-group>
     </div>
-    <div class="slm-page-content">
+    <div v-if="getPageTypeId() === 99" class="slm-page-content">
+      aaaaaa
+    </div>
+    <div v-else class="slm-page-content">
       <el-table :data="list" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 208px)" @row-click="onRowClick">
         <el-table-column label="" width="50">
           <template slot-scope="scope">
@@ -50,7 +53,12 @@ export default {
       return _.find(this.list, ['linkAddress', this.linkUrl])['linkAddress']
     },
     onChangePageType() {
-      this.getData(this.getPageTypeId())
+      const code = this.getPageTypeId()
+      if (code !== 99) {
+        this.getData(this.code)
+      } else {
+        console.log('------')
+      }
     },
     onRowClick({ linkAddress }) {
       this.linkUrl = linkAddress

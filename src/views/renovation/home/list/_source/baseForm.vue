@@ -17,25 +17,25 @@
             /> <span v-text="formData.backgroundColor" />
           </div>
         </el-form-item>
-        <el-form-item label="组件边框：" prop="borderFlag">
+        <el-form-item v-if="sourceType !== 'DM'" label="组件边框：" prop="borderFlag">
           <el-select v-model="formData.borderFlag">
             <el-option :value="0" label="无边框" />
             <el-option :value="1" label="有边框" />
           </el-select>
         </el-form-item>
         <template v-if="formData.borderFlag===1">
-          <el-form-item label="边框样式：" prop="borderStyle">
+          <el-form-item v-if="sourceType !== 'DM'" label="边框样式：" prop="borderStyle">
             <el-select v-model="formData.borderStyle">
               <el-option :value="0" label="直角" />
               <el-option :value="1" label="圆角" />
             </el-select>
           </el-form-item>
-          <el-form-item label="边框大小：" prop="borderSize">
+          <el-form-item v-if="sourceType !== 'DM'" label="边框大小：" prop="borderSize">
             <el-input v-model="formData.borderSize" type="number" placeholder="建议填写3" show-word-limit maxlength="12">
               <template slot="append">px</template>
             </el-input>
           </el-form-item>
-          <el-form-item label="边框颜色：" prop="borderColor">
+          <el-form-item v-if="sourceType !== 'DM'" label="边框颜色：" prop="borderColor">
             <div class="color-box">
               <el-color-picker
                 v-model="formData.borderColor"
@@ -133,11 +133,11 @@ export default {
     this.rules = {
       name: [{ required: this.sourceType === 'home', message: '请输入模板名称', trigger: 'blur' }],
       title: [{ required: true, message: '请输入页面标题', trigger: 'blur' }],
-      backgroundColor: [{ required: true, message: '请设置背景颜色', trigger: 'change' }],
-      borderFlag: [{ required: true, message: '请选择组件边框', trigger: 'change' }],
-      borderStyle: [{ required: true, message: '请选择边框样式', trigger: 'change' }],
-      borderSize: [{ required: true, message: '请输入边框大小', trigger: 'blur' }],
-      borderColor: [{ required: true, message: '请边框颜色', trigger: 'change' }],
+      backgroundColor: [{ required: this.sourceType === 'home', message: '请设置背景颜色', trigger: 'change' }],
+      borderFlag: [{ required: this.sourceType === 'home', message: '请选择组件边框', trigger: 'change' }],
+      borderStyle: [{ required: this.sourceType === 'home', message: '请选择边框样式', trigger: 'change' }],
+      borderSize: [{ required: this.sourceType === 'home', message: '请输入边框大小', trigger: 'blur' }],
+      borderColor: [{ required: this.sourceType === 'home', message: '请边框颜色', trigger: 'change' }],
       shareDesc: [
         { required: true, message: '请输入分享描述', trigger: 'blur' },
         { validator: vefDesc, trigger: 'blur' }

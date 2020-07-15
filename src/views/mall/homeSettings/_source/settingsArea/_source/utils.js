@@ -16,6 +16,10 @@ export const pageTypeList = [
   }
   // {
   //   name: '商品详情',
+  //   code: 99
+  // },
+  // {
+  //   name: '商品详情',
   //   code: 4
   // }
 ]
