@@ -71,9 +71,6 @@ export default {
         if (this.$route.query.type === 'copy') {
           this.params.pageState = 0 // 1编辑(0复制)
           this.params.state = 0
-          this.params.activeTime = []
-          this.$refs.ruleList.ruleForm.activeTime = [
-          ]
         } else {
           if (data.state === 1 && data.status === 1) {
             this.params.pageState = 1 // 1编辑 2查看
@@ -87,11 +84,11 @@ export default {
           ) {
             this.params.pageState = 2 // 1编辑 2查看
           }
-          this.$refs.ruleList.ruleForm.activeTime = [
-            new Date(data.beginTime),
-            new Date(data.endTime)
-          ]
         }
+        this.$refs.ruleList.ruleForm.activeTime = [
+          new Date(data.beginTime),
+          new Date(data.endTime)
+        ]
         if (data.joinRule === 3) {
           this.$refs.ruleList.ruleForm.activeLimit = data.countRule
         } else if (data.countType === 1) {
