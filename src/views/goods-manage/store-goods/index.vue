@@ -973,6 +973,8 @@ export default {
                   storeCode: this.multipleSelection[0].storeCode,
                   storeId: this.multipleSelection[0].storeId
                 })
+              } else if (syncTypeNum === 4) {
+                console.log(storeAry)
               } else {
                 this.multipleSelection.map(v => {
                   storeAry.push({
