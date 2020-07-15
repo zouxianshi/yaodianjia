@@ -1,6 +1,6 @@
 <template>
   <div class="sap-tla-first-model">
-    <div class="stfm-title-box" :style="commonStyleBackgr">
+    <div class="stfm-title-box" :style="itemStyleBackgr">
       <span class="stfm-text-1">
         <span v-if="item.validStatus === 0">距活动开始还剩</span>
         <span v-if="item.validStatus === 1">距活动结束还剩</span>
@@ -13,7 +13,7 @@
         <template v-if="item.validStatus === 1">
           <v-countdown :current-time="rtTimeStamp(item.startTime)" :start-time="rtTimeStamp(item.startTime)" :end-time="rtTimeStamp(item.endTime)" />
         </template>
-        <template v-if="item.validStatus === 2">
+        <template v-if="item.validStatus === 2 || !item.startTime">
           <v-countdown :current-time="1593678334" :start-time="1593678334" :end-time="1593678334" />
         </template>
       </span>
@@ -42,6 +42,7 @@
 </template>
 <script>
 import dayjs from 'dayjs'
+import { mapState } from 'vuex'
 import vCountdown from './countdown'
 import mLineBar from './../../../lineBar'
 import mItemNoData from './../../../itemNoData'
@@ -83,7 +84,12 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    ...mapState('renovation', ['basics']),
+    itemStyleBackgr() {
+      return this.basics.styleType === 'custom' ? { background: `${this.item.color}` } : this.commonStyleBackgr
+    }
+  },
   components: { mLineBar, mItemNoData, vCountdown }
 }
 </script>

@@ -127,11 +127,18 @@ export const defaultParams = {
   },
   'timeLimitedActivity_first': {
     error: false,
-    max: 10
+    max: 10,
+    color: '#F32526'
   },
   'timeLimitedActivity_second': {
     error: false,
-    max: 10
+    max: 10,
+    color: '#F32526'
+  },
+  'timeLimitedActivity_third': {
+    error: false,
+    max: 10,
+    color: '#F32526'
   },
   'coupon_first': {
     error: false,
