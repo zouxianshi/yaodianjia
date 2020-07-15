@@ -17,6 +17,10 @@ class InnerCtor {
     //立即发货鉴权
     return this.get('order.order-all.immediate-delivery')
   }
+  // 组合商品权限控制
+  showGroupGoods() {
+    return this.get('marketing.marketing-manager.commodity-combine')
+  }
   navList() {
     return [
       {

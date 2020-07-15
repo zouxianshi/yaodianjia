@@ -1,21 +1,21 @@
 <template>
   <div class="app-container">
     <div class="examine-wrapper">
-      <div style="margin-bottom:20px">
-        <a href="#/goods-manage/constitute-goods/edit">
+      <div class="content-header">
+        <div class="search-form">
+          <div class="search-item">
+            <span class="label-name" style="width:80px">商品名称：</span>
+            <el-input v-model.trim="keyword" size="small" placeholder="商品名称" />
+          </div>
+          <div class="search-item">
+            <el-button type="primary" size="small" @click="getList">查询</el-button>
+          </div>
+        </div>
+        <a href="#/marketing/activity/constitute-goods/edit">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">新增组合商品</el-button>
         </a>
       </div>
 
-      <div class="search-form">
-        <div class="search-item">
-          <span class="label-name" style="width:80px">商品名称：</span>
-          <el-input v-model.trim="keyword" size="small" placeholder="商品名称" />
-        </div>
-        <div class="search-item">
-          <el-button type="primary" size="small" @click="getList">查询</el-button>
-        </div>
-      </div>
       <div class="table-box tableBox_constitute">
         <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
           <el-table-column align="left" min-width="140" prop="erpCode" label="商品编码">
@@ -67,12 +67,25 @@
             </template>
           </el-table-column>
           <el-table-column prop="modifyTime" align="left" min-width="110" label="修改时间" />
-          <el-table-column align="left" min-width="150" label="操作">
+          <el-table-column align="left" width="150" label="操作" fixed="right">
             <template slot-scope="scope">
-              <!-- <el-button type="primary" size="mini" @click.stop="toSelectShops">上下架</el-button> -->
-              <el-button type="primary" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
-              <el-button type="info" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
-              <el-button type size="mini" @click="createSon(scope.row.id)">编辑</el-button>
+              <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
+              <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
+              <el-button type="text" size="mini" @click="createSon(scope.row.id)">编辑</el-button>
+              <!-- <el-popconfirm
+                confirm-button-text="确定"
+                cancel-button-text="取消"
+                icon="el-icon-info"
+                icon-color="red"
+                title="确定删除此商品吗？"
+                @onConfirm="deleteSon(scope.row.id)"
+              >
+                <el-button
+                  slot="reference"
+                  type="text"
+                  size="mini"
+                >删除</el-button>
+              </el-popconfirm> -->
             </template>
           </el-table-column>
         </el-table>
@@ -90,16 +103,27 @@
     <!--弹窗--选择门店-->
     <dialog-shops ref="shopsDialog" :list="[]" @confirm="shopsSelectChange" />
     <!--弹窗--上下架-->
-    <store :status="status" :choose-num="specData.length" :mer-code="merCode" :spec-data="specData" :is-show="dialogVisible" @close="dialogVisible=false" @complete="dialogVisible=false" />
+    <store
+      :status="status"
+      :choose-num="specData.length"
+      :mer-code="merCode"
+      :spec-data="specData"
+      :is-show="dialogVisible"
+      @close="dialogVisible=false"
+      @complete="dialogVisible=false"
+    />
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
-import { getConstituteGoodsList } from '@/api/constitute-goods'
-import dialogShops from './components/dialog-shops'
-import store from '../components/store'
+import {
+  getConstituteGoodsList,
+  deleteConstituteGoods
+} from '@/api/constitute-goods'
+import dialogShops from './_source/dialog-shops'
+import store from './_source/store'
 export default {
   components: { Pagination, dialogShops, store },
   mixins: [mixins],
@@ -125,7 +149,6 @@ export default {
     ...mapGetters(['merCode'])
   },
   created() {
-    this.merCode = this.$store.state.user.merCode
     this.getList()
   },
   methods: {
@@ -148,9 +171,20 @@ export default {
     },
     createSon(rowData) {
       this.$router.push({
-        path: `/goods-manage/constitute-goods/edit`,
+        path: `/marketing/activity/constitute-goods/edit`,
         query: { mercode: this.merCode, id: rowData }
       })
+    },
+    deleteSon(rowData) {
+      console.log('要删除的数据------', rowData)
+      deleteConstituteGoods()
+        .then(res => {
+          console.log('删除成功', res)
+          this.getList()
+        })
+        .catch(err => {
+          console.log('删除数据失败=------', err)
+        })
     },
     shopsSelectChange(list) {
       console.log('list', list)
@@ -166,7 +200,8 @@ export default {
       this.goodsData = list
       this.$refs.goodsDialog.close()
     },
-    handleUpDown(status, row) { // 单个上下架
+    handleUpDown(status, row) {
+      // 单个上下架
       this.specData = [`${row.specId}`]
       this.status = status
       this.dialogVisible = true
@@ -174,23 +209,35 @@ export default {
   }
 }
 </script>
-    <style lang="scss" scoped>
+<style lang="scss" scoped>
 .examine-wrapper {
-  .search-form {
-    .search-item {
-      .el-input {
-        width: 180px;
+  .content-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    .search-form {
+      .search-item {
+        .el-input {
+          width: 180px;
+        }
       }
     }
   }
 }
-.ellipsis{ width:100%;overflow: hidden; text-overflow: ellipsis;white-space: nowrap}
+.ellipsis {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .el-tag.el-tag--info {
-    word-break: break-all;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-    height: inherit;
-    margin-bottom: 5px;
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  height: inherit;
+  margin-bottom: 5px;
 }
 // .tableBox_constitute .el-image img{
 //   width: 55px;

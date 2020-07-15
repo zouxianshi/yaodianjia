@@ -1,5 +1,5 @@
 <template>
-  <el-card class="activity-card" shadow="hover">
+  <el-card v-if="item.name !== 'constituteGoods' || item.pass" class="activity-card" shadow="hover">
     <el-image class="image" fit="fill" :src="item.img" @click="handleJump(item, 'list')" />
     <div class="activity-bottom">
       <div class="activity-header">
@@ -15,7 +15,7 @@
           icon="el-icon-takeaway-box"
           class="button"
           @click="handleJump(item, 'list')"
-        >{{ item.lable }}列表</el-button>
+        >{{ item.listLabel }}</el-button>
         <el-divider direction="vertical" />
         <el-button
           type="text"
@@ -45,7 +45,6 @@ export default {
   },
   methods: {
     handleJump(itemUrl, jumpType) {
-      console.log('1111111---handleJump', itemUrl)
       // 跳转列表
       if (jumpType === 'list') {
         this.$router.push(itemUrl.listUrl)
@@ -96,6 +95,7 @@ export default {
       .sub-title {
         color: rgba(0, 0, 0, 0.65);
         font-size: 10px;
+        height: 48px;
         line-height: 24px;
         overflow: hidden;
         text-overflow: ellipsis;

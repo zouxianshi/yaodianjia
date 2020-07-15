@@ -80,17 +80,14 @@ export default {
       if (typeof selectCoupon === 'object') {
         this.itemParams.itemList = []
         _.map(selectCoupon, (v, i) => {
+          const { cname, denomination, ctype, value, effectTime, timeRule, sceneRule, productRule, shopRule } = v
+
           this.itemParams.itemList.push({
             ..._.cloneDeep(itemParams),
-            cname: v.cname,
-            itemId: `${v.id}`,
-            denomination: v.denomination,
-            ctype: v.ctype,
-            value: v.value
+            itemId: `${v.id}`, cname, denomination, ctype, value, effectTime, timeRule, sceneRule, productRule, shopRule
           })
         })
 
-        console.log(this.itemParams.itemList)
         this.dialogVisible = false
       }
     }
@@ -100,8 +97,6 @@ export default {
   },
   created() {
     this.itemParams = _.cloneDeep(this.item)
-    console.log(this.itemParams)
-    console.log('-----this.itemParams')
   },
   beforeMount() {
   },

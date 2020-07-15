@@ -82,7 +82,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { queryStore } from '../../../../api/chainSetting'
+import { queryStore } from '@/api/chainSetting'
 export default {
   name: 'DialogShops',
   props: {

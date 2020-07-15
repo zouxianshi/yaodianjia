@@ -1,7 +1,7 @@
 <template>
   <div :class="classes">
     <div v-if="itemList[0].img" class="safm-img">
-      <img :src="itemList[0].img" alt="" style="width:100%;height: 280px;">
+      <img :src="itemList[0].img" alt="" style="width:100%;">
     </div>
     <m-item-no-data v-else height="280px" :size="50" />
   </div>

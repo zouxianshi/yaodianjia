@@ -1241,8 +1241,11 @@ export default {
         data.width = packStandard[1] === 'undefined' ? '' : packStandard[1]
         data.height = packStandard[2] === 'undefined' ? '' : packStandard[2]
       }
-      // 赋值值
-      this.basicForm = data
+      // 赋值值
+      this.basicForm = data
+      if (this.basicForm.intro === null) {
+        this.basicForm.intro === ''
+      }
       this.$refs.editor.setContent(this.basicForm.intro)
     },
     // 加载商品图片
@@ -1730,11 +1733,52 @@ export default {
             }
           }
         } else {
-          // console.log('error submit')
           this.$message({
             message: '存在必填字段未填写',
             type: 'error'
           })
+          // if (this.basicForm.name === '') {
+          //   this.$message({
+          //     message: '请输入商品名称',
+          //     type: 'error'
+          //   })
+          //   return
+          // }
+          // if (this.basicForm.brandName === '') {
+          //   this.$message({
+          //     message: '请选择所属品牌',
+          //     type: 'error'
+          //   })
+          //   return
+          // }
+          // if (this.basicForm.weight === '') {
+          //   this.$message({
+          //     message: '请输入重量',
+          //     type: 'error'
+          //   })
+          //   return
+          // }
+          // if (this.basicForm.unit === '') {
+          //   this.$message({
+          //     message: '请输入选择单位',
+          //     type: 'error'
+          //   })
+          //   return
+          // }
+          // if (this.basicForm.manufacture === '') {
+          //   this.$message({
+          //     message: '请输入生产企业',
+          //     type: 'error'
+          //   })
+          //   return
+          // }
+          // if (this.basicForm.approvalNumber === '') {
+          //   this.$message({
+          //     message: '请输入批准文号',
+          //     type: 'error'
+          //   })
+          //   return
+          // }
         }
       })
     },

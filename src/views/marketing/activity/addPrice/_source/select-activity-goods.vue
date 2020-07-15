@@ -141,6 +141,7 @@ export default {
   },
   methods: {
     dataFrom(data) {
+      console.log('select-activity-goods-------', data)
       const dataFromSource = []
       if (Array.isArray(data) && data.length) {
         data.forEach(good => {

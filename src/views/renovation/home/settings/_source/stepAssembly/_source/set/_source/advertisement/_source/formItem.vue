@@ -7,7 +7,10 @@
       </span>
       <span class="afim-upload">
         <m-el-upload @on-upload="onUpload">
-          <el-button icon="el-icon-position" size="mini">本地上传</el-button><span class="sa-mandatory-asterisk">*</span>
+          <div style="text-align: left;">
+            <el-button icon="el-icon-position" size="mini">本地上传</el-button><span class="sa-mandatory-asterisk">*</span>
+            <div class="sa-upload-size">建议上传{{ rtSizeText }}图片</div>
+          </div>
           <div v-if="error.isImg" class="sa-assembly-error">
             {{ error.isImg }}
           </div>
@@ -16,12 +19,9 @@
     </div>
     <div class="afim-form">
       <el-form label-width="90px" size="mini">
-        <el-form-item label="链接地址" :rules="[{ required: true}]">
+        <el-form-item label="链接地址">
           <el-input v-model="item.url" style="width: calc(100% - 101px)" readonly />
           <el-button icon="el-icon-link" @click="dialogVisible = true">选择链接 </el-button>
-          <div v-if="error.isUrl" class="sa-assembly-error">
-            {{ error.isUrl }}
-          </div>
         </el-form-item>
       </el-form>
     </div>
@@ -36,6 +36,7 @@
 <script>
 import mItemNoData from './../../../../itemNoData'
 import mElUpload from './../../../../../../elUpload'
+import { defaultParams } from './../../../../../default'
 import mLinksTable from '@/views/mall/homeSettings/_source/settingsArea/_source/linksTable'
 
 export default {
@@ -45,8 +46,7 @@ export default {
       dialogVisible: false,
       item: {},
       error: {
-        isImg: false,
-        isUrl: false
+        isImg: false
       }
     }
   },
@@ -58,11 +58,15 @@ export default {
     el: {
       type: Object,
       default: () => {}
+    },
+    ips: {
+      type: Object,
+      default: () => {}
     }
   },
   methods: {
     $verification() {
-      const { img, url } = this.item
+      const { img } = this.item
       let flag = true
 
       this.reset()
@@ -72,17 +76,11 @@ export default {
         flag = false
       }
 
-      if (!url) {
-        this.error.isUrl = '请选择轮播图链接'
-        flag = false
-      }
-
       return flag
     },
     reset() {
       this.error = _.assign(this.error, {
-        isImg: false,
-        isUrl: false
+        isImg: false
       })
     },
     onLink({ url }) {
@@ -123,7 +121,12 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    rtSizeText() {
+      const { type, subType, index } = this.ips
+      return defaultParams[`${type}_${subType}`]['imgSize'][index]
+    }
+  },
   components: { mItemNoData, mElUpload, mLinksTable }
 }
 </script>

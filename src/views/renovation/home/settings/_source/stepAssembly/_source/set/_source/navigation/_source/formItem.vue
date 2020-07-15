@@ -11,7 +11,8 @@
           <el-button icon="el-icon-position" size="mini">本地上传</el-button>
           <span class="sa-mandatory-asterisk">*</span>
         </m-el-upload>
-        <div v-if="error.isImg" class="sa-assembly-error">{{ error.isImg }}</div>
+        <div class="sa-upload-size" style="display: inline-block;margin-right: 8px;">建议上传{{ rtSizeText }}图片</div>
+        <span v-if="error.isImg" class="sa-assembly-error">{{ error.isImg }}</span>
       </div>
     </div>
     <div class="nfim-form">
@@ -37,6 +38,7 @@
 </template>
 <script>
 import mItemNoData from './../../../../itemNoData'
+import { defaultParams } from './../../../../../default'
 import mSelectIcon from '@/views/mall/homeSettings/_source/settingsArea/navigation/selectIcon'
 import mElUpload from './../../../../../../elUpload'
 import mLinksTable from '@/views/mall/homeSettings/_source/settingsArea/_source/linksTable'
@@ -56,6 +58,10 @@ export default {
   },
   props: {
     el: {
+      type: Object,
+      default: () => {}
+    },
+    itemParams: {
       type: Object,
       default: () => {}
     }
@@ -136,7 +142,12 @@ export default {
   },
   destroyed() {
   },
-  computed: {},
+  computed: {
+    rtSizeText() {
+      const { type, subType, index } = this.itemParams
+      return defaultParams[`${type}_${subType}`]['imgSize'][index]
+    }
+  },
   components: { mItemNoData, mSelectIcon, mElUpload, mLinksTable }
 }
 </script>

@@ -18,35 +18,98 @@ import { uuid, findComponentsDownward } from '@/utils'
 export const defaultParams = {
   'banner_first': {
     error: false,
-    max: 10
+    max: 10,
+    imgSize: {
+      0: '1060*326px',
+      1: '1060*326px',
+      2: '1060*326px',
+      3: '1060*326px',
+      4: '1060*326px',
+      5: '1060*326px',
+      6: '1060*326px',
+      7: '1060*326px',
+      8: '1060*326px',
+      9: '1060*326px'
+    }
   },
   'navigation_first': {
     error: false,
-    max: 8
+    max: 8,
+    imgSize: {
+      0: '160*160px',
+      1: '160*160px',
+      2: '160*160px',
+      3: '160*160px',
+      4: '160*160px',
+      5: '160*160px',
+      6: '160*160px',
+      7: '160*160px'
+    }
   },
   'navigation_second': {
     error: false,
-    max: 10
+    max: 10,
+    imgSize: {
+      0: '160*160px',
+      1: '160*160px',
+      2: '160*160px',
+      3: '160*160px',
+      4: '160*160px',
+      5: '160*160px',
+      6: '160*160px',
+      7: '160*160px',
+      8: '160*160px',
+      9: '160*160px'
+    }
   },
   'advertisement_first': {
     error: false,
-    max: 1
+    max: 1,
+    imgSize: {
+      0: '1060*326px'
+    }
   },
   'advertisement_second': {
     error: false,
-    max: 3
+    max: 3,
+    imgSize: {
+      0: '436*376px',
+      1: '610*180px',
+      2: '610*180px'
+    }
   },
   'advertisement_third': {
     error: false,
-    max: 4
+    max: 4,
+    imgSize: {
+      0: '522*180px',
+      1: '522*180px',
+      2: '522*180px',
+      3: '522*180px'
+    }
   },
   'advertisement_four': {
     error: false,
-    max: 1
+    max: 1,
+    imgSize: {
+      0: '750*不限制高度'
+    }
   },
   'advertisement_five': {
     error: false,
-    max: 10
+    max: 10,
+    imgSize: {
+      0: '1060*326px',
+      1: '1060*326px',
+      2: '1060*326px',
+      3: '1060*326px',
+      4: '1060*326px',
+      5: '1060*326px',
+      6: '1060*326px',
+      7: '1060*326px',
+      8: '1060*326px',
+      9: '1060*326px'
+    }
   },
   'commodity_first': {
     error: false,
@@ -178,7 +241,7 @@ export const handlerBackfill = data => {
         itemList: _.map(v1.itemList, v2 => {
           return {
             ...v2,
-            ..._.pick(v2.couponDetail, ['cname', 'ctype', 'denomination'])
+            ..._.pick(v2.couponDetail, ['cname', 'ctype', 'denomination', 'timeRule', 'effectTime', 'sceneRule', 'productRule', 'shopRule'])
           }
         })
       }

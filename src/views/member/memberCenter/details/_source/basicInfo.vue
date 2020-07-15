@@ -60,7 +60,7 @@
                 <span v-if="basicInfo.memberActive === 9">沉寂会员</span>
               </el-form-item>
               <el-form-item label="所属门店：">
-                <span>{{ basicInfo.organization || '-' }}</span>
+                <span>{{ basicInfo.storeName || '-' }}</span>
               </el-form-item>
               <el-form-item label="注册来源：">
                 <span v-if="basicInfo.registerSource === 1">门店推荐注册</span>
@@ -72,8 +72,11 @@
               <el-form-item label="注册时间：">
                 <span>{{ basicInfo.createTime }}</span>
               </el-form-item>
-              <el-form-item label="默认发卡机构：">
-                <span>{{ basicInfo.organization || '-' }}</span>
+              <el-form-item label="推荐人：" v-if="basicInfo.regSource === 1">
+                <span>{{ basicInfo.empName || '-' }}</span>
+              </el-form-item>
+              <el-form-item label="推荐门店：" v-if="basicInfo.regSource === 2">
+                <span>{{ basicInfo.regMedium || '-' }}</span>
               </el-form-item>
             </el-form>
           </div>

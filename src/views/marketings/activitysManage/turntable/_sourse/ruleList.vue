@@ -160,6 +160,9 @@
           />次
         </span>
       </el-form-item>
+      <el-form-item label="是否推荐到员工分享" label-width="200">
+        <el-switch v-model="ruleForm.isShare" :disabled="isRuning" />
+      </el-form-item>
     </el-form>
     <div style="margin-left:30px">
       <el-button type="primary" @click="submitForm('ruleForm')">下一步</el-button>
@@ -235,6 +238,7 @@ export default {
       uploadLoading: false,
       intrShow: false,
       ruleForm: {
+        isShare: false, // 是否推荐到员工分享
         activeTime: [], // 活动有效期
         activityDetailName: '', // 活动名称
         bottomNote: '', // 底部文案
@@ -323,8 +327,6 @@ export default {
       // 监听按人限制变化
     }
   },
-  mounted() {
-  },
   methods: {
     beforeAvatarUpload(file) { // 图片上传之前
       const isImg =
@@ -404,8 +406,8 @@ export default {
             })
             return false
           }
+          this.ruleForm.isShare = this.ruleForm.isShare ? 1 : 0
           this.$emit('handleNext', 2, this.ruleForm)
-          this.$emit('getcouponList', this.ruleForm)
         } else {
           return false
         }
@@ -430,7 +432,6 @@ export default {
   }
   .intrwarning {
     font-size: 13px;
-    margin-left: 20px;
     background-color: #fdf6ec;
     color: #e6a23c;
     border-radius: 5px;

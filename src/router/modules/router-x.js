@@ -70,16 +70,6 @@ const router = [
           noCache: true // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
         }
       },
-      // {
-      //   path: 'activity/create',
-      //   component: () => import('@/views/marketing/activity/create'),
-      //   name: 'create',
-      //   meta: {
-      //     title: '新建活动',
-      //     auth: 'marketing.marketing-manager',
-      //     noCache: true
-      //   }
-      // },
       {
         path: 'activity/dm-template',
         component: () => import('@/views/marketing/activity/DM/template'),
@@ -161,6 +151,26 @@ const router = [
         }
       },
       {
+        path: 'activity/constitute-goods',
+        component: () => import('@/views/marketing/activity/constitute-goods/list'),
+        name: 'constituteGoods',
+        meta: {
+          title: '组合商品',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: 'activity/constitute-goods/edit',
+        component: () => import('@/views/marketing/activity/constitute-goods/edit'),
+        name: 'constituteGoodsEdit',
+        meta: {
+          title: '组合商品',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
         path: 'gifts',
         component: () => import('@/views/marketing/gift-manage/index'),
         name: 'giftsManage',
@@ -195,6 +205,45 @@ const router = [
         name: 'newcomerPack',
         meta: {
           title: '新人礼包'
+        }
+      },{
+        path: '/activity/birthday-gift',
+        component: () => import('@/views/marketings/activitysManage/birthdayGift/index'),
+        name: 'birthday-gift',
+        meta: {
+          title: '生日礼包',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher-list',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/voucherList'),
+        name: 'member-voucher-list',
+        meta: {
+          title: '发券记录',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher-detail',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/detail'),
+        name: 'member-voucher-detail',
+        meta: {
+          title: '发券详情',
+          noCache: false,
+          activeMenu: '/marketing/activity'
+        }
+      },
+      {
+        path: '/activity/member-voucher',
+        component: () => import('@/views/marketings/activitysManage/member-voucher/index'),
+        name: 'member-voucher',
+        meta: {
+          title: '会员发券',
+          noCache: false,
+          activeMenu: '/marketing/activity'
         }
       },
       {

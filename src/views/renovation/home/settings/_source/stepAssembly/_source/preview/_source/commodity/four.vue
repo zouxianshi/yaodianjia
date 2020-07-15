@@ -4,14 +4,14 @@
       <template v-if="item.itemList.length">
         <div class="scfm-item-box" :style="{width:`${(106 * item.itemList.length) + (basics.borderSize * item.itemList.length)}px`}">
           <template v-for="(el,$index) in item.itemList">
-            <m-second-item :key="$index" class="scfm-item" :el="el" img-height="86px" :enter-type="enterType" />
+            <m-second-item :key="$index" class="scfm-item" :el="el" img-height="86px" maxlength="14" :enter-type="enterType" />
           </template>
         </div>
       </template>
       <template v-else>
         <div class="scfm-item-box" :style="{width:`${(106 * 6) + (basics.borderSize * 6)}px`}">
           <template v-for="(el,$index) in 6">
-            <m-second-item :key="$index" class="scfm-item" :el="itemParams" img-height="86px" :enter-type="enterType" />
+            <m-second-item :key="$index" class="scfm-item" :el="itemParams" img-height="86px" maxlength="14" :enter-type="enterType" />
           </template>
         </div>
       </template>

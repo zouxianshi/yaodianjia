@@ -110,7 +110,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getcommSpecGoodsList } from '../../../../api/constitute-goods'
+import { getcommSpecGoodsList } from '@/api/constitute-goods'
 export default {
   name: 'DialogGoods',
   props: {

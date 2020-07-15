@@ -8,7 +8,7 @@
     :close-on-press-escape="false"
     :close-on-click-modal="false"
   >
-    <div class="modal-body">
+    <div class="stores-modal-body">
       <el-form
         :inline="true"
         :model="formInline"
@@ -34,6 +34,7 @@
         </el-form-item>
       </el-form>
       <el-table
+        size="small"
         ref="multipleTable"
         :data="tableData"
         stripe
@@ -306,8 +307,8 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.modal-body {
+<style lang="scss">
+.stores-modal-body {
   .search-box {
     display: flex;
     justify-content: space-between;

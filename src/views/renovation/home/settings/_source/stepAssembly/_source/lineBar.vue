@@ -1,7 +1,7 @@
 <template>
   <div :class="classes">
     <div class="lbm-sp1">
-      {{ el.name }}
+      {{ truName(el.name) }}
     </div>
     <div class="lbm-sp2" />
     <div class="lbm-sp3" :style="stylees">
@@ -39,9 +39,18 @@ export default {
       type: String,
       default: '0px'
     },
+    maxlength: {
+      type: String,
+      default: '12'
+    },
     enterType: {
       type: String,
       default: 'icon'
+    }
+  },
+  methods: {
+    truName(v) {
+      return _.truncate(v, { 'length': this.maxlength, 'omission': '...' })
     }
   },
   computed: {
