@@ -891,11 +891,11 @@ export default {
             this.multipleSelection.length > 1
           ) {
             this.$confirm(
-              `检测到您选择了多条数据但是是一个商品，是否是想同步所有门店`,
+              `检测到您选择了多条数据是同一个商品，是否是想同步该商品的所有门店？`,
               '',
               {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
+                confirmButtonText: '是',
+                cancelButtonText: '否',
                 type: 'warning'
               }
             )
