@@ -13,7 +13,7 @@
       <el-form-item label="活动名称" prop="activityDetailName">
         <el-input v-model="ruleForm.activityDetailName" style="width:400px" placeholder="最多30字" />
       </el-form-item>
-      <el-form-item label="活动时间" prop="activeTime">
+      <el-form-item label="活动时间" required>
         <el-date-picker
           v-model="ruleForm.activeTime"
           type="datetimerange"
@@ -23,17 +23,9 @@
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
           :disabled="isRuning"
+          :clearable="false"
           @input="daterangeChange"
         />
-        <!-- <el-date-picker
-          v-model="ruleForm.activeTime"
-          :disabled="isRuning"
-          type="datetimerange"
-          range-separator="至"
-          :picker-options="pickerOptions"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        /> -->
       </el-form-item>
       <el-form-item label="活动说明" prop="activityNote">
         <el-input
@@ -230,6 +222,7 @@ export default {
       }
     }
     const checkActivitTime = (rule, value, callback) => {
+      console.log(value)
       if (Number(value.length) === 0) {
         return callback(new Error('请选择活动开始和结束时间'))
       }
@@ -277,7 +270,6 @@ export default {
         ],
         activeTime: [
           {
-            required: true,
             validator: checkActivitTime,
             trigger: 'change'
           }
@@ -294,7 +286,6 @@ export default {
       return { Authorization: this.token }
     },
     isPageUpdateOrView() {
-      console.log(this.params, 'zc0000000000000000')
       // 判断编辑还是查看页面
       if (this.params.pageState === 2) {
         // 查看
@@ -381,12 +372,6 @@ export default {
         _this.$forceUpdate()
       })
     },
-    setActiveTime(v) {
-      this.ruleForm.activeTime = v
-    },
-    handlechangetime(e) {
-      console.log(e)
-    },
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {
         // 活动参与选抽奖次数
@@ -402,6 +387,7 @@ export default {
       this.ruleForm.countRule = ''
     },
     submitForm(formName) {
+      console.log(this.ruleForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!this.ruleForm.activeTime[0]) {
