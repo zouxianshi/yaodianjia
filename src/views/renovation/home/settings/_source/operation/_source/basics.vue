@@ -1,6 +1,6 @@
 <template>
   <div class="operation-basics-model">
-    <el-button type="primary" size="small" @click="onNextStep">下一步</el-button>
+    <el-button type="primary" size="small" @click="isHome ? onNextHomeStep() : onNextDmStep()">下一步</el-button>
     <el-button type="primary" plain size="small" @click="$router.push(`/renovation/home/list`)">返回列表</el-button>
   </div>
 </template>
@@ -10,12 +10,14 @@ import { findComponentsDownward } from '@/utils'
 export default {
   name: 'Basics',
   data() {
-    return {}
+    return {
+      isHome: this.$route.name === 'renovation-home-settings'
+    }
   },
   props: {},
   methods: {
     ...mapMutations('renovation', ['setStepVal']),
-    onNextStep() {
+    onNextHomeStep() {
       const instance = findComponentsDownward(this.$root, 'StepBasics')[0]
       if (instance.$verification()) {
         if (this.basics.styleType) {
@@ -23,6 +25,14 @@ export default {
         } else {
           this.$message.error('请选择风格')
         }
+      } else {
+        this.$message.error('请完善页面设置信息')
+      }
+    },
+    onNextDmStep() {
+      const instance = findComponentsDownward(this.$root, 'StepDmBasics')[0]
+      if (instance.$verification()) {
+        this.setStepVal(2)
       } else {
         this.$message.error('请完善页面设置信息')
       }

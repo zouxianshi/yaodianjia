@@ -9,21 +9,18 @@
     </section>
     <section class="table-box webkit-scroll">
       <el-table v-loading="loading" :data="tableData" height="calc(100vh - 306px)" size="small" style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" :selectable="isSelection" />
+        <el-table-column type="selection" width="55" />
         <el-table-column label="页面名称" min-width="180" align="left">
           <template slot-scope="scope">
             <span v-text="scope.row.title" />
-            <el-tag v-if="scope.row.isUse===1" size="mini" type="warning"><span class="el-icon-s-home" /> 当前页</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="最后修改时间" prop="modifyTime" min-width="120" align="center" />
         <el-table-column label="发布状态" min-width="180" align="center">
           <template slot-scope="scope">
-            {{ scope }}
-            <el-switch :value="true" />
+            <el-switch v-model="scope.row.publishStatus" active-value="1" inactive-value="0" />
           </template>
         </el-table-column>
-
         <el-table-column label="操作" fixed="right" align="center" min-width="190">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" plain @click="handleEdit(scope.row.id,scope.row.isNew)">编辑</el-button>
@@ -33,7 +30,6 @@
                 更多<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown" style="text-align: center;">
-                <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'home',data:scope.row}">设为主页</el-dropdown-item>
                 <el-dropdown-item :disabled="scope.row.isNew === 0" :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
                 <el-dropdown-item :command="{type:'copy',data:scope.row}">复制</el-dropdown-item>
                 <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'dele',data:scope.row}">删除</el-dropdown-item>
@@ -47,19 +43,16 @@
     <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="previewShow">
       <preview v-if="previewShow" :dimension-id="dimensionId" :is-new="isNew" />
     </el-dialog>
-    <base-form ref="baseform" @success="getList" />
-    <share-info ref="setShare" :ids="chooseAry" @success="getList" />
+    <base-form ref="baseform" source-type="DM" @success="getList" />
+    <share-info ref="setShare" :ids="chooseAry" source-type="DM" @success="getList" />
   </div>
 </template>
 <script>
 import Preview from './../../../renovation/home/list/_source/preview'
-import RenovationService from '@/api/renovation'
+import MarketingsService from '@/api/marketings'
 import BaseForm from './../../../renovation/home/list/_source/baseForm'
 import ShareInfo from './../../../renovation/home/list/_source/shareInfo'
 import { mapGetters } from 'vuex'
-
-import { setHome } from '@/api/mallService'
-
 export default {
   name: 'DmList',
   components: { Preview, BaseForm, ShareInfo },
@@ -82,9 +75,6 @@ export default {
     ...mapGetters(['merCode'])
   },
   methods: {
-    isSelection(row) {
-      return row.isNew
-    },
     /**
        *
        * @description  获取首页列表数据
@@ -92,14 +82,8 @@ export default {
        */
     async getList() {
       try {
-        const { data } = await RenovationService.getHomeList()
+        const { data } = await MarketingsService.getDMList()
         this.tableData = data
-
-        /* _.map(this.tableData, (v,i) => {
-            if (!v.isNew) {
-              this.$refs.elTable.toggleRowSelection(this.tableData[i],true)
-            }
-          })*/
       } catch (error) {
         console.log(error)
       }
@@ -107,9 +91,6 @@ export default {
     //  点击更多 点击菜单项触发的事件回调
     handleCommand({ type, data }) {
       switch (type) {
-        case 'home': // set home
-          this._SetHome(data)
-          break
         case 'set': //  page setting
           this.$refs.baseform.openDialog(data)
           break
@@ -126,32 +107,16 @@ export default {
       this.isNew = row.isNew
       this.previewShow = true
     },
-    handleEdit(id, isNew) {
+    handleEdit(id) {
       if (!id) {
-        this.$router.push(`/renovation/home/settings`)
+        this.$router.push(`/marketings/dm/settings`)
       } else {
-        let url = `/renovation/home/settings${id ? `?id=${id}` : ''}`
-        if (!isNew) {
-          url = `/mall/home-settings/${id}`
-        }
+        const url = `/marketings/dm/settings${id ? `?id=${id}` : ''}`
         this.$router.push(url)
       }
     },
-    // 设置为首页模板
-    async _SetHome({ id, isNew }) {
-      if (isNew) {
-        await RenovationService.setHomeTem({ id: id, isNew: 1, status: 0 })
-      } else {
-        await setHome({ id })
-      }
-      this.$message({
-        message: '设置成功',
-        type: 'success'
-      })
-      this.getList()
-    },
     async _Setcopy(row) { //  复制一条数据
-      await RenovationService.copyCurrentHome({ id: row.id, isNew: row.isNew })
+      await MarketingsService.copyDM({ id: row.id })
       this.$message({
         message: '复制成功',
         type: 'success'
@@ -194,7 +159,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async() => {
-        await RenovationService.batchDelete(data)
+        await MarketingsService.deleteDM(data)
         this.$message({
           message: '删除成功',
           type: 'success'
