@@ -6,7 +6,7 @@
       </el-radio-group>
     </div>
     <div v-if="getPageTypeId() === 99" class="slm-page-content">
-      aaaaaa
+      <m-links-goods v-model="linkUrl" />
     </div>
     <div v-else class="slm-page-content">
       <el-table :data="list" style="width: 100%" size="mini" class="scrollbar" height="calc(100vh - 208px)" @row-click="onRowClick">
@@ -26,6 +26,7 @@
   </div>
 </template>
 <script>
+import mLinksGoods from './linksGoods'
 import { getInternalLink } from '@/api/mallService'
 import { pageTypeList } from './utils'
 
@@ -36,6 +37,7 @@ export default {
       pageTypeList,
       pageType: '商城页面',
       list: [],
+      goodsList: [],
       linkUrl: ''
     }
   },
@@ -52,12 +54,10 @@ export default {
     getLinkUrl() {
       return _.find(this.list, ['linkAddress', this.linkUrl])['linkAddress']
     },
-    onChangePageType() {
-      const code = this.getPageTypeId()
+    async onChangePageType() {
+      const code = await this.getPageTypeId()
       if (code !== 99) {
-        this.getData(this.code)
-      } else {
-        console.log('------')
+        this.getData(code)
       }
     },
     onRowClick({ linkAddress }) {
@@ -71,7 +71,7 @@ export default {
       })
     },
     async onSubmit() {
-      await this.$emit('on-link', { url: this.getLinkUrl() })
+      await this.$emit('on-link', { url: this.getPageTypeId() !== 99 ? this.getLinkUrl() : this.linkUrl })
       this.$parent.closeDrawer()
     }
   },
@@ -94,7 +94,7 @@ export default {
   destroyed() {
   },
   computed: {},
-  components: {}
+  components: { mLinksGoods }
 }
 </script>
 
