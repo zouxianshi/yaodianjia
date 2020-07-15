@@ -968,12 +968,19 @@ export default {
                   storeSpecId: v.storeSpecId
                 })
               })
-              this.multipleSelection.map(v => {
+              if (syncTypeNum === 1) {
                 storeAry.push({
-                  storeCode: v.storeCode,
-                  storeId: v.storeId
+                  storeCode: this.multipleSelection[0].storeCode,
+                  storeId: this.multipleSelection[0].storeId
                 })
-              })
+              } else {
+                this.multipleSelection.map(v => {
+                  storeAry.push({
+                    storeCode: v.storeCode,
+                    storeId: v.storeId
+                  })
+                })
+              }
               data = {
                 merCode: this.merCode,
                 specs: ary,
@@ -1163,12 +1170,7 @@ export default {
         ) {
           // 校验不通过
           this.isShowTipsDialog = true
-          this.tipsDialogContent =
-            res.data.code === 1
-              ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？'
-              : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(
-                res.data.erpList || []
-              ).join('、')}</p>`
+          this.tipsDialogContent = res.data.code === 1 ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？' : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(res.data.erpList || []).join('、')}</p>`
           this.cacheSetUpDownParams = data
         } else {
           this.$message({
