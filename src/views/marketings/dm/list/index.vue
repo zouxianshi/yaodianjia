@@ -18,7 +18,7 @@
         <el-table-column label="最后修改时间" prop="modifyTime" min-width="120" align="center" />
         <el-table-column label="发布状态" min-width="180" align="center">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.publishStatus" :active-value="1" :inactive-value="0" />
+            <el-switch v-model="scope.row.publishStatus" :active-value="1" :inactive-value="0" @change="onPublishStatus(scope.row)" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" align="center" min-width="190">
@@ -75,6 +75,12 @@ export default {
     ...mapGetters(['merCode'])
   },
   methods: {
+    async onPublishStatus(v) {
+      MarketingsService.updateStatus({ status: v.publishStatus, id: v.id }).then(() => {
+        this.getList()
+        this.$message.success('更新状态成功')
+      })
+    },
     /**
        *
        * @description  获取首页列表数据

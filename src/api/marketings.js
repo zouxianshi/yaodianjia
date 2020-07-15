@@ -26,6 +26,14 @@ class MarketingsService {
     })
   }
 
+  updateStatus(data) {
+    return request({
+      url: `${this.serve}/1.0/dm-dim/use`,
+      method: 'put',
+      data
+    })
+  }
+
   /**
    *  @description 批量修改分享信息
    */
