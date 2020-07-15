@@ -7,7 +7,7 @@
 import _ from 'lodash'
 import store from '@/store'
 import { uuid } from '@/utils' // eslint-disable-line
-import renovationService from '@/api/renovation'
+import RenovationService from '@/api/renovation'
 import MarketingsService from '@/api/marketings'
 import { bannerItem, handlerBackfill,items,defaultParams,agaSelectList } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
 
@@ -84,7 +84,7 @@ const actions = {
           allFlag: true,
           actTypeList: [11, 12, 13, 14, 15]
         }
-        renovationService.getActivityCollection(p).then(res => {
+        RenovationService.getActivityCollection(p).then(res => {
           const { data } = res
           commit('setAgaData', data)
 
@@ -106,7 +106,21 @@ const actions = {
   },
   getHomePage({ commit, state }, payload) {
     const { id } = payload
-    renovationService.getHomePage(id).then(res => {
+    RenovationService.getHomePage(id).then(res => {
+      commit('setBasics', _.omit(res.data, ['list']))
+      commit('setDragList', handlerBackfill(res.data))
+      commit('setStaticDragData', {
+        banner: {
+          ..._.find(res.data.list, ['type', 'banner']),
+          ..._.cloneDeep(defaultParams[`banner_first`])
+        }
+      })
+    }).catch(() => {
+    })
+  },
+  getDMPage({ commit, state }, payload) {
+    const { id } = payload
+    RenovationService.getHomePage(id).then(res => {
       commit('setBasics', _.omit(res.data, ['list']))
       commit('setDragList', handlerBackfill(res.data))
       commit('setStaticDragData', {
@@ -124,7 +138,7 @@ const actions = {
         list: [state.staticDragData.banner, ...state.dragList],
         ...state.basics
       }
-      renovationService.saveHomeSetting(p).then(res => {
+      RenovationService.saveHomeSetting(p).then(res => {
         resolve(res)
       }).catch(e => {
         reject(e)
@@ -139,7 +153,7 @@ const actions = {
     }
 
     return new Promise((resolve, reject) => {
-      renovationService.updateHomeSetting(p).then(res => {
+      RenovationService.updateHomeSetting(p).then(res => {
         resolve(res)
       }).catch(e => {
         reject(e)

@@ -29,7 +29,7 @@ export default {
   props: {},
   methods: {
     ...mapMutations('renovation', ['setStepVal', 'reset', 'setHomeLoading']),
-    ...mapActions('renovation', ['getHomePage', 'getAgaData']),
+    ...mapActions('renovation', ['getDMPage', 'getAgaData']),
     ...mapActions('mall', ['getCenterStoreId'])
   },
   watch: {},
@@ -44,7 +44,7 @@ export default {
       await this.getAgaData()
       if (!_.isEmpty(query)) {
         this.setStepVal(2)
-        this.getHomePage({ id: query.id }).then(() => {
+        this.getDMPage({ id: query.id }).then(() => {
           this.isComponent = true
           setTimeout(() => {
             this.setHomeLoading(false)
