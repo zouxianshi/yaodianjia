@@ -36,12 +36,18 @@ export default {
   },
   data() {
     return {
-      link: ''
+      link: '',
+      isHome: this.$route.name === 'renovation-home-settings'
     }
   },
   mounted() {
     const { $store, dimensionId, isNew } = this
-    this.link = `${this.h5Base}pages/home/preview?dimensionId=${dimensionId}&merCode=${$store.getters.merCode}&isNew=${isNew}`
+    if (this.isHome) {
+      this.link = `${this.h5Base}pages/home/preview?dimensionId=${dimensionId}&merCode=${$store.getters.merCode}&isNew=${isNew}`
+    } else {
+      this.link = `${this.h5Base}dm/detail?dimensionId=${dimensionId}&merCode=${$store.getters.merCode}`
+    }
+
     this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
       text: this.link,
       width: 200,
