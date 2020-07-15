@@ -127,11 +127,18 @@ export const defaultParams = {
   },
   'timeLimitedActivity_first': {
     error: false,
-    max: 10
+    max: 10,
+    color: '#F32526'
   },
   'timeLimitedActivity_second': {
     error: false,
-    max: 10
+    max: 10,
+    color: '#F32526'
+  },
+  'timeLimitedActivity_third': {
+    error: false,
+    max: 10,
+    color: '#F32526'
   },
   'coupon_first': {
     error: false,
@@ -587,7 +594,7 @@ export default () => {
             typeName: '活动集合',
             subType: 'first',
             name: '默认显示全部活动',
-            itemList: items(1),
+            itemList: [],
             selectList: (() => {
               return store.state.renovation.agaSelectList || []
             })(),
