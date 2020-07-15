@@ -501,7 +501,14 @@ import {
 } from '@/api/store-goods'
 
 export default {
-  components: { Pagination, exportTable, ElImageViewer, lock, notAsyncDialog, batchUpdate },
+  components: {
+    Pagination,
+    exportTable,
+    ElImageViewer,
+    lock,
+    notAsyncDialog,
+    batchUpdate
+  },
   mixins: [mixins],
   data() {
     const _checkFloat = (rule, value, callback) => {
@@ -803,7 +810,11 @@ export default {
           }
         })
       }
-      if (!this.listQuery.storeId && this.isIngleCommodity === false && this.multipleSelection.length === 0) {
+      if (
+        !this.listQuery.storeId &&
+        this.isIngleCommodity === false &&
+        this.multipleSelection.length === 0
+      ) {
         this.$message({
           message: '门店或商品至少一个是相同的，才能执行同步',
           type: 'warning'
@@ -825,32 +836,48 @@ export default {
         return
       }
       // 弹窗确认
-      this.commodText = `确认要将当前所选${this.multipleSelection.length || this.total}条商品的价格库存数据从erp同步到线上吗？`
-      if (this.isIngleStore === true && this.isIngleCommodity === false && this.multipleSelection.length === 0) {
+      this.commodText = `确认要将当前所选${this.multipleSelection.length ||
+        this.total}条商品的价格库存数据从erp同步到线上吗？`
+      if (
+        this.isIngleStore === true &&
+        this.isIngleCommodity === false &&
+        this.multipleSelection.length === 0
+      ) {
         this.commodText = '是否执行该门店下的全部商品执行同步？'
       }
-      this.$confirm(
-        `${this.commodText}`,
-        '',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      )
+      this.$confirm(`${this.commodText}`, '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
         .then(() => {
           let data = {}
           let syncTypeNum = 1
-          if (this.isIngleStore === true && this.isIngleCommodity === false && this.multipleSelection.length > 0) {
+          if (
+            this.isIngleStore === true &&
+            this.isIngleCommodity === false &&
+            this.multipleSelection.length > 0
+          ) {
             syncTypeNum = 1
-          } else if (this.isIngleStore === true && this.isIngleCommodity === false && this.multipleSelection.length === 0) {
+          } else if (
+            this.isIngleStore === true &&
+            this.isIngleCommodity === false &&
+            this.multipleSelection.length === 0
+          ) {
             syncTypeNum = 2
-          } else if (this.multipleSelection.length > 1 && this.isIngleStore === false && this.isIngleCommodity === true) {
+          } else if (
+            this.multipleSelection.length > 1 &&
+            this.isIngleStore === false &&
+            this.isIngleCommodity === true
+          ) {
             syncTypeNum = 3
-          } else if (!this.listQuery.storeId && this.isIngleStore === false && this.isIngleCommodity === true) {
+          } else if (
+            !this.listQuery.storeId &&
+            this.isIngleStore === false &&
+            this.isIngleCommodity === true
+          ) {
             syncTypeNum = 4
           }
-
           if (syncTypeNum === 2) {
             const findIndex = this.storeList.findIndex(mItem => {
               return mItem.id === this.listQuery.storeId
@@ -858,49 +885,123 @@ export default {
             storeAry.storeCode = this.storeList[findIndex].stCode
             storeAry.storeId = this.listQuery.storeId
           }
-
-          // 店铺code
-          if (this.multipleSelection.length) {
-            this.multipleSelection.map(v => {
-              ary.push({
-                erpCode: v.erpCode,
-                specId: v.specId,
-                storeSpecId: v.storeSpecId
+          if (
+            !this.listQuery.storeId &&
+            this.isIngleCommodity === true &&
+            this.multipleSelection.length > 1
+          ) {
+            this.$confirm(
+              `检测到您选择了多条数据但是是一个商品，是否是想同步所有门店`,
+              '',
+              {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }
+            )
+              .then(() => {
+                syncTypeNum = 4
+                ary.push({
+                  erpCode: this.multipleSelection[0].erpCode,
+                  specId: this.multipleSelection[0].specId,
+                  storeSpecId: this.multipleSelection[0].storeSpecId
+                })
+                data = {
+                  merCode: this.merCode,
+                  specs: ary,
+                  storeReqDTOs: storeAry,
+                  syncType: syncTypeNum // 单个门店部分商品
+                }
+                // 调用接口同步
+                setSynchro(data)
+                  .then(res => {
+                    this.$message({
+                      message: '价格同步成功',
+                      type: 'success'
+                    })
+                    this.getList('noReset')
+                  })
+                  .catch(err => {
+                    console.log(err)
+                  })
               })
-            })
-            this.multipleSelection.map(v => {
-              storeAry.push({
-                storeCode: v.storeCode,
-                storeId: v.storeId
+              .catch(() => {
+                this.multipleSelection.map(v => {
+                  ary.push({
+                    erpCode: v.erpCode,
+                    specId: v.specId,
+                    storeSpecId: v.storeSpecId
+                  })
+                })
+                this.multipleSelection.map(v => {
+                  storeAry.push({
+                    storeCode: v.storeCode,
+                    storeId: v.storeId
+                  })
+                })
+                data = {
+                  merCode: this.merCode,
+                  specs: ary,
+                  storeReqDTOs: storeAry,
+                  syncType: syncTypeNum // 单个门店部分商品
+                }
+                // 调用接口同步
+                setSynchro(data)
+                  .then(res => {
+                    this.$message({
+                      message: '价格同步成功',
+                      type: 'success'
+                    })
+                    this.getList('noReset')
+                  })
+                  .catch(err => {
+                    console.log(err)
+                  })
               })
-            })
-            data = {
-              merCode: this.merCode,
-              specs: ary,
-              storeReqDTOs: storeAry,
-              syncType: syncTypeNum // 单个门店部分商品
-            }
           } else {
-            // 当前同步所有查询出来的数据；
-            data = {
-              merCode: this.merCode,
-              specs: ary,
-              storeReqDTOs: storeAry,
-              syncType: syncTypeNum // 单个门店所有商品
-            }
-          }
-          // 调用接口同步
-          setSynchro(data)
-            .then(res => {
-              this.$message({
-                message: '价格同步成功',
-                type: 'success'
+            // 店铺code
+            if (this.multipleSelection.length) {
+              this.multipleSelection.map(v => {
+                ary.push({
+                  erpCode: v.erpCode,
+                  specId: v.specId,
+                  storeSpecId: v.storeSpecId
+                })
               })
-              this.getList('noReset')
-            })
-            .catch(err => {
-              console.log(err)
-            })
+              this.multipleSelection.map(v => {
+                storeAry.push({
+                  storeCode: v.storeCode,
+                  storeId: v.storeId
+                })
+              })
+              data = {
+                merCode: this.merCode,
+                specs: ary,
+                storeReqDTOs: storeAry,
+                syncType: syncTypeNum // 单个门店部分商品
+              }
+            } else {
+              // 当前同步所有查询出来的数据；
+              data = {
+                merCode: this.merCode,
+                specs: ary,
+                storeReqDTOs: storeAry,
+                syncType: syncTypeNum // 单个门店所有商品
+              }
+            }
+            // 调用接口同步
+            setSynchro(data)
+              .then(res => {
+                this.$message({
+                  message: '价格同步成功',
+                  type: 'success'
+                })
+                this.getList('noReset')
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          }
         })
         .catch(() => {
           return
