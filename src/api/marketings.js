@@ -19,6 +19,13 @@ class MarketingsService {
     })
   }
 
+  getDMDetails(id) {
+    return request({
+      url: `${this.serve}/1.0/dm-dim/set/${id}`,
+      method: 'get'
+    })
+  }
+
   /**
    *  @description 批量修改分享信息
    */
@@ -42,12 +49,23 @@ class MarketingsService {
   }
 
   /**
-   * 复制dm单
+   * 删除dm单
    */
   deleteDM(id) {
     return request({
       url: `${this.serve}/1.0/dm-dim/${id}`,
       method: 'delete'
+    })
+  }
+
+  /**
+   * 批量删除
+   */
+  batchDeleteDM(data) {
+    return request({
+      url: `${this.serve}/1.0/dm-dim/batchDelete`,
+      method: 'post',
+      data
     })
   }
 

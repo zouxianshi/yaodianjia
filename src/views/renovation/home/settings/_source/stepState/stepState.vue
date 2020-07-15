@@ -16,7 +16,8 @@ export default {
   name: 'StepState',
   data() {
     return {
-      timer: 5
+      timer: 5,
+      isHome: this.$route.name === 'renovation-home-settings'
     }
   },
   props: {},
@@ -34,7 +35,7 @@ export default {
     this.timeName = setInterval(() => {
       this.timer--
       if (this.timer === 0) {
-        this.$router.push(`/renovation/home/list`)
+        this.$router.push(this.isHome ? `/renovation/home/list` : `/marketings/dm/list`)
         return
       }
     }, 1000)

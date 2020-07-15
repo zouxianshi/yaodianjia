@@ -18,7 +18,7 @@
         <el-table-column label="最后修改时间" prop="modifyTime" min-width="120" align="center" />
         <el-table-column label="发布状态" min-width="180" align="center">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.publishStatus" active-value="1" inactive-value="0" />
+            <el-switch v-model="scope.row.publishStatus" :active-value="1" :inactive-value="0" />
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" align="center" min-width="190">
@@ -30,9 +30,9 @@
                 更多<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown" style="text-align: center;">
-                <el-dropdown-item :disabled="scope.row.isNew === 0" :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
+                <el-dropdown-item :command="{type:'set',data:scope.row}">页面设置</el-dropdown-item>
                 <el-dropdown-item :command="{type:'copy',data:scope.row}">复制</el-dropdown-item>
-                <el-dropdown-item v-if="scope.row.isUse===0" :command="{type:'dele',data:scope.row}">删除</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.publishStatus === 0" :command="{type:'dele',data:scope.row}">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -147,6 +147,15 @@ export default {
         })
         return
       }
+
+      if (_.some(this.multipleSelection, { 'publishStatus': 1 })) {
+        this.$message({
+          message: '发布状态页面不允许删除',
+          type: 'warning'
+        })
+        return
+      }
+
       const data = []
       this.multipleSelection.map(v => {
         data.push(v.id)
@@ -159,7 +168,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async() => {
-        await MarketingsService.deleteDM(data)
+        _.size(data) === 1 ? await MarketingsService.deleteDM(data) : MarketingsService.batchDeleteDM(data)
         this.$message({
           message: '删除成功',
           type: 'success'

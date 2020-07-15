@@ -1,7 +1,7 @@
 <template>
   <div class="sap-header-model" :class="{'is-dm':!isHome}">
     <div class="shm-page-title">
-      <span>{{ basics.title }}-aaaaaa</span>
+      <span>{{ basics.title }}</span>
     </div>
     <div v-if="isHome" class="shm-search-name" @click="onSearchHint">
       <div class="shm-search-value">{{ basics.searchHint }}</div>

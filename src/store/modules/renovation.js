@@ -120,15 +120,9 @@ const actions = {
   },
   getDMPage({ commit, state }, payload) {
     const { id } = payload
-    RenovationService.getHomePage(id).then(res => {
+    MarketingsService.getDMDetails(id).then(res => {
       commit('setBasics', _.omit(res.data, ['list']))
       commit('setDragList', handlerBackfill(res.data))
-      commit('setStaticDragData', {
-        banner: {
-          ..._.find(res.data.list, ['type', 'banner']),
-          ..._.cloneDeep(defaultParams[`banner_first`])
-        }
-      })
     }).catch(() => {
     })
   },
@@ -178,15 +172,12 @@ const actions = {
       const p = {
         list: [...state.dragList],
         ...state.basics,
-        setIds: [state.staticDragData.banner.id, ..._.map(state.dragList, 'id')]
+        setIds: [..._.map(state.dragList, 'id')]
       }
-
-      return new Promise((resolve, reject) => {
-        MarketingsService.updateDMSetting(p).then(res => {
-          resolve(res)
-        }).catch(e => {
-          reject(e)
-        })
+      MarketingsService.updateDMSetting(p).then(res => {
+        resolve(res)
+      }).catch(e => {
+        reject(e)
       })
     })
   }

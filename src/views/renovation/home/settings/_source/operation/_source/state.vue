@@ -16,7 +16,7 @@ export default {
   methods: {
     ...mapMutations('renovation', ['setStepVal']),
     onGoHome() {
-      this.$router.push(`/renovation/${this.isHome ? 'home' : 'dm'}/list`)
+      this.$router.push(this.isHome ? `/renovation/home/list` : `/marketings/dm/list`)
     }
   },
   watch: {},
