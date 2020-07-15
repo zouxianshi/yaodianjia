@@ -4,7 +4,7 @@
       <div class="bm-title"><strong>页面基础设置</strong></div>
       <el-form label-width="142px">
         <el-form-item label="页面标题" :rules="[{ required: true}]">
-          <el-input v-model="basics.title" style="width: 320px;" maxlength="16" placeholder="请填写最多不超过16个汉字" />
+          <el-input v-model="basics.title" style="width: 320px;" maxlength="12" placeholder="请填写最多不超过12个汉字" />
           <span class="cm-text" style="position: relative;top:-6px;">当前页面标题用于页面展示及页面微信分享标题</span>
           <div v-if="error.isTitle" class="bm-basics-error">
             {{ error.isTitle }}

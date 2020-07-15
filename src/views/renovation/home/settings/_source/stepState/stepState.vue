@@ -5,8 +5,8 @@
         <i class="el-icon-success" />
       </div>
       <div class="ssm-text-1">操作成功</div>
-      <div class="ssm-text-2">首页创建成功，已保存至首页列表</div>
-      <div class="ssm-text-3"><span>{{ timer }}</span>秒后跳转至主页列表</div>
+      <div class="ssm-text-2">首页创建成功，{{ isHome ? '已保存至首页列表' : '已保存至DM单列表' }} </div>
+      <div class="ssm-text-3"><span>{{ timer }}</span>秒后 {{ isHome ? '跳转至主页列表' : '跳转至DM单列表' }} </div>
     </div>
   </div>
 </template>
