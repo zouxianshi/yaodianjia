@@ -320,7 +320,7 @@ export default {
         this.$message.error('当前奖品概率已达到100%，请先修改后再添加奖项')
         return false
       }
-      this.dialogVisible = true;
+      this.dialogVisible = true
       this.ruleForm = {
         giftId: null, // 选择优惠券时的id
         giftType: 1, // 礼品类型

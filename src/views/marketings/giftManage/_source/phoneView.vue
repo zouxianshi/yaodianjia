@@ -41,7 +41,10 @@ export default {
   name: 'PhoneView',
   props: {
     datas: {
-
+      type: Object,
+      default() {
+        return {}
+      }
     },
     otherData: {
       type: Object,

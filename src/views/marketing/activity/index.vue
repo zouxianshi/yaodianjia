@@ -133,7 +133,7 @@ export default {
           listUrl:
             '/activity/newcomer-pack',
           linkUrl: '/activity/newcomer-create'
-        },{
+        }, {
           lable: '会员发券',
           listLabel: '会员发券记录',
           createText: '发放优惠券',

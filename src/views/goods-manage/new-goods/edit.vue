@@ -1241,11 +1241,11 @@ export default {
         data.width = packStandard[1] === 'undefined' ? '' : packStandard[1]
         data.height = packStandard[2] === 'undefined' ? '' : packStandard[2]
       }
-      // 赋值值
-      this.basicForm = data
-      if (this.basicForm.intro === null) {
-        this.basicForm.intro === ''
-      }
+      // 赋值值
+      this.basicForm = data
+      if (this.basicForm.intro === null) {
+        this.basicForm.intro === ''
+      }
       this.$refs.editor.setContent(this.basicForm.intro)
     },
     // 加载商品图片
@@ -1915,7 +1915,7 @@ export default {
       height: 0;
       border-width: 15px;
       border-style: solid;
-      border-color:transparent #ffffdd transparent transparent;
+      border-color: transparent #ffffdd transparent transparent;
       position: absolute;
       left: -30px;
       top: 5px;
@@ -1936,11 +1936,11 @@ export default {
     margin-bottom: 10px;
     margin-top: 10px;
     color: #147de8;
-    -ms-user-select:none;
-    -khtml-user-select:none;
-    -webkit-user-select:none;
-    -moz-user-select:none;
-    user-select:none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
   }
   .specs-box {
     margin-top: 20px;
@@ -2109,7 +2109,7 @@ export default {
   background: #fff;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   text-align: right;
-  width:calc(100% - 255px);
+  width: calc(100% - 255px);
 }
 .link-btn {
   font-size: 14px;

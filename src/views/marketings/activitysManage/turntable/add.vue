@@ -112,7 +112,7 @@ export default {
     submitAjax(obj = {}) {
       // 新增优惠券
       Object.assign(this.params, obj)
-      let params = this.params
+      const params = this.params
       params.isShare = params.isShare ? 1 : 0
       params.integralRule = parseInt(params.integralRule)
       if (
@@ -170,23 +170,23 @@ export default {
               })
           } else {
             createLuckDraw(params)
-            .then(res => {
-              if (res.code === '10000') {
-                this.stepActive = 3
-                this.$refs.submitSave.countDown()
-              } else {
+              .then(res => {
+                if (res.code === '10000') {
+                  this.stepActive = 3
+                  this.$refs.submitSave.countDown()
+                } else {
+                  this.$message({
+                    message: '添加失败！',
+                    type: 'error'
+                  })
+                }
+              })
+              .catch(() => {
                 this.$message({
                   message: '添加失败！',
                   type: 'error'
                 })
-              }
-            })
-            .catch(() => {
-              this.$message({
-                message: '添加失败！',
-                type: 'error'
               })
-            })
           }
         }
       }
