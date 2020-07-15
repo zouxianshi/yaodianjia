@@ -34,7 +34,7 @@
 import { mapState } from 'vuex'
 import mShareSetting from './_source/shareSetting'
 export default {
-  name: 'StepDmBasics',
+  name: 'StepDMBasics',
   data() {
     return {
       basicsModel: {},

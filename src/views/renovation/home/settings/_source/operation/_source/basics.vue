@@ -18,7 +18,7 @@ export default {
   methods: {
     ...mapMutations('renovation', ['setStepVal']),
     onNextHomeStep() {
-      const instance = findComponentsDownward(this.$root, 'StepBasics')[0]
+      const instance = findComponentsDownward(this.$root, 'StepHomeBasics')[0]
       if (instance.$verification()) {
         if (this.basics.styleType) {
           this.setStepVal(2)
@@ -30,7 +30,7 @@ export default {
       }
     },
     onNextDmStep() {
-      const instance = findComponentsDownward(this.$root, 'StepDmBasics')[0]
+      const instance = findComponentsDownward(this.$root, 'StepDMBasics')[0]
       if (instance.$verification()) {
         this.setStepVal(2)
       } else {
