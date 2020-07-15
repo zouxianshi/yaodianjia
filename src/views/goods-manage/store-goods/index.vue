@@ -882,8 +882,10 @@ export default {
             const findIndex = this.storeList.findIndex(mItem => {
               return mItem.id === this.listQuery.storeId
             })
-            storeAry.storeCode = this.storeList[findIndex].stCode
-            storeAry.storeId = this.listQuery.storeId
+            storeAry.push({
+              storeCode: this.storeList[findIndex].stCode,
+              storeId: this.listQuery.storeId
+            })
           }
           if (
             !this.listQuery.storeId &&
@@ -926,12 +928,10 @@ export default {
                   })
               })
               .catch(() => {
-                this.multipleSelection.map(v => {
-                  ary.push({
-                    erpCode: v.erpCode,
-                    specId: v.specId,
-                    storeSpecId: v.storeSpecId
-                  })
+                ary.push({
+                  erpCode: this.multipleSelection[0].erpCode,
+                  specId: this.multipleSelection[0].specId,
+                  storeSpecId: this.multipleSelection[0].storeSpecId
                 })
                 this.multipleSelection.map(v => {
                   storeAry.push({
@@ -981,7 +981,7 @@ export default {
                 syncType: syncTypeNum // 单个门店部分商品
               }
             } else {
-              // 当前同步所有查询出来的数据；
+              // 当前同步所有查询出来的数据;
               data = {
                 merCode: this.merCode,
                 specs: ary,
