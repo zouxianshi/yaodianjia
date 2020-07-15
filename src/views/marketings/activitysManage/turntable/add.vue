@@ -115,7 +115,8 @@ export default {
     submitAjax(obj = {}) {
       // 新增优惠券
       Object.assign(this.params, obj)
-      var params = this.params
+      let params = this.params
+      params.isShare = params.isShare ? 1 : 0
       params.integralRule = parseInt(params.integralRule)
       if (
         new Date(params.beginTime).getTime() < new Date().getTime() &&

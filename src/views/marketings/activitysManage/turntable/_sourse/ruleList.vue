@@ -389,7 +389,6 @@ export default {
       this.ruleForm.countRule = ''
     },
     submitForm(formName) {
-      console.log(this.ruleForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!this.ruleForm.activeTime[0]) {
@@ -406,7 +405,6 @@ export default {
             })
             return false
           }
-          this.ruleForm.isShare = this.ruleForm.isShare ? 1 : 0
           this.$emit('handleNext', 2, this.ruleForm)
         } else {
           return false
