@@ -6,7 +6,7 @@
     </div>
     <div class="cfim-content">
       <div class="cfim-no-data">
-        <m-line-bar margin-top="24px" :el="el" />
+        <m-line-bar margin-top="24px" :el="el" maxlength="30" />
       </div>
     </div>
   </div>

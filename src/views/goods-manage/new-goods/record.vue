@@ -56,7 +56,7 @@
               @click="handleSendCheck(null,true)"
             >批量提交审核</el-button>
             <el-button
-              v-if="listQuery.auditStatus===2"
+              v-if="listQuery.auditStatus===2 && isShowbatchaudit === true"
               type="warning"
               size="small"
               @click="handleBatchCheck"
@@ -157,7 +157,7 @@
                 </a>
               </template>
               <template v-else-if="(scope.row.infoStatus>= 12)&&scope.row.auditStatus===2">
-                <a v-if="scope.row.commodityType!==2" @click="handleCurrentChange(scope.row)">
+                <a v-if="scope.row.commodityType!==2 && isShowaudit === true" @click="handleCurrentChange(scope.row)">
                   <el-button type="primary" size="mini">审核</el-button>
                 </a>
               </template>
@@ -224,7 +224,7 @@ import mixins from '@/utils/mixin'
 import { getNewGoodsRecord, deleteGoods } from '@/api/new-goods'
 import { setAuditGoods } from '@/api/examine'
 import { getTypeTree } from '@/api/group'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import checkDialog from './_source/check-dialog'
 import BaseDialog from '@/components/BaseDialog'
@@ -240,6 +240,8 @@ export default {
       total: 0,
       loading: false,
       isShowCheckDialog: false,
+      isShowaudit: false, // 是否显示审核按钮
+      isShowbatchaudit: false, // 是否显示批量审核按钮
       groupData: [],
       groupId: [],
       defaultProps: {
@@ -266,7 +268,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'name'])
+    ...mapGetters(['merCode', 'name']),
+    ...mapState('user', ['resList'])
   },
   watch: {},
   created() {
@@ -275,6 +278,37 @@ export default {
     }
     this.getList()
     this._loadTypeList()
+    // 批量审核按钮、表单审核按钮权限控制
+    let commodityData = {}
+    let commodityChild = {}
+    let commoditynewrecorData = {}
+    let commoditynewrecordChild = {}
+    let auditData = {}
+    let batchauditData = {}
+    commodityData = this.resList.find(d => d.rePath === 'commodity')
+    if (commodityData === undefined || commodityData === null) {
+      return
+    }
+    commodityChild = commodityData.children
+    if (commodityChild === undefined || commodityChild === null) {
+      return
+    }
+    commoditynewrecorData = commodityChild.find(d => d.rePath === 'commodity-new-record')
+    if (commoditynewrecorData === undefined || commoditynewrecorData === null) {
+      return
+    }
+    commoditynewrecordChild = commoditynewrecorData.children
+    if (commoditynewrecordChild === undefined || commoditynewrecordChild === null) {
+      return
+    }
+    auditData = commoditynewrecordChild.find(d => d.rePath === 'audit')
+    batchauditData = commoditynewrecordChild.find(d => d.rePath === 'batch-audit')
+    if (auditData !== undefined && auditData !== null) {
+      this.isShowaudit = true
+    }
+    if (batchauditData !== undefined && auditData !== null) {
+      this.isShowbatchaudit = true
+    }
     console.log(this.listQuery.auditStatus + '__________________________')
   },
   beforeRouteLeave(to, from, next) {

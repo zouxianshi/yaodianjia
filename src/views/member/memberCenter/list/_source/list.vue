@@ -1,6 +1,6 @@
 <template>
   <div class="list-model">
-    <el-table v-loading="loading" :data="tabelData" border style="width: 100%">
+    <el-table v-loading="loading" :data="tabelData" border style="width: 100%" height="calc(100vh - 480px)">
       <el-table-column label="微信头像" width="100" align="center">
         <template slot-scope="scope">
           <img v-if="scope.row.headUrl" class="headerImg" :src="scope.row.headUrl">
@@ -95,11 +95,11 @@ export default {
   methods: {
     syncMemberToErp(data) {
       const params = {
-        'memberCards': [data.memberCard],
-        'userIds': [data.userId]
+        "memberCards": [data.memberCard],
+        "userIds": [data.userId]
       }
       syncMemberToErp(params).then(res => {
-        if (res.code === '10000') {
+        if(res.code === '10000'){
           this.$message.success(res.msg)
           this.$emit('getData')
         }

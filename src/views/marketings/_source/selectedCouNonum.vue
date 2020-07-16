@@ -1,6 +1,11 @@
 <template>
   <div class="selected-coupon-view">
-    <el-table max-height="250" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
+    <el-table :max-height="maxHeigth" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
+      <el-table-column label="优惠券类型" show-overflow-tooltip>
+        <template slot-scope="scope">
+          {{ scope.row.ctype === 1 ? '折扣券' : scope.row.ctype === 2 ? '满减券' : '折扣券' }}
+        </template>
+      </el-table-column>
       <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
       <el-table-column label="优惠内容" width="120" show-overflow-tooltip>
         <template
@@ -9,11 +14,6 @@
       </el-table-column>
       <el-table-column label="使用时间" show-overflow-tooltip>
         <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>
-      </el-table-column>
-      <el-table-column label="优惠券类型" show-overflow-tooltip>
-        <template slot-scope="scope">
-          {{ scope.row.ctype === 1 ? '折扣券' : scope.row.ctype === 2 ? '满减券' : '折扣券' }}
-        </template>
       </el-table-column>
       <el-table-column label="使用场景" show-overflow-tooltip>
         <template
@@ -35,6 +35,12 @@
 </template>
 <script>
 export default {
+  props: {
+    maxHeigth: {
+      type: String,
+      default: '250px'
+    }
+  },
   data() {
     return {
       pageStatus: 1, // 1.新增 2.编辑 3.查看(特殊：编辑时，未开始到开始)

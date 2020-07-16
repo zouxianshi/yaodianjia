@@ -8,7 +8,7 @@
       <template v-if="itemParams.subType === 'five'">
         <template v-for="(eel,i) in itemParams.itemList">
           <m-item-card :key="i" :title="eel.name ? eel.name : `轮播图${i + 1}`" :is-submit="i === itemParams.itemList.length - 1" :is-delete="(itemParams.itemList.length - 1) > 0" @on-ass-submit="onManyAssSubmit" @on-ass-delete="onManyAssDelete">
-            <m-form-item :ref="`formItem_${i}`" :el="eel" @on-el-update="onElUpdate($event,i)" />
+            <m-form-item :ref="`formItem_${i}`" :el="eel" :ips="{type:itemParams.type,subType:itemParams.subType,index:i}" @on-el-update="onElUpdate($event,i)" />
             <div v-if="(i === itemParams.itemList.length - 1) && itemParams.itemList.length < itemParams.max" slot="create" style="margin-top: 16px">
               <el-button size="mini" @click="onAddBanner">添加轮播图</el-button>
             </div>
@@ -19,7 +19,7 @@
       <!--单条切换-->
       <template v-else>
         <m-item-card title="广告图" @on-ass-submit="onAssSubmit">
-          <m-form-item v-if="isItem" ref="formItem" :el="el" @on-el-update="onElUpdate" />
+          <m-form-item v-if="isItem" ref="formItem" :el="el" :ips="{type:itemParams.type,subType:itemParams.subType,index:selectIndex}" @on-el-update="onElUpdate" />
         </m-item-card>
       </template>
     </div>
@@ -86,7 +86,7 @@ export default {
     onAssSubmit() {
       let index = null
       _.forEach(this.itemParams.itemList, (v, i) => {
-        if (_.isEmpty(v.img) || _.isEmpty(v.url)) {
+        if (_.isEmpty(v.img)) {
           index = i
           return false
         }

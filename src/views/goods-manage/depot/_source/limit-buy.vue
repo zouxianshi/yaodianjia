@@ -13,7 +13,7 @@
         <el-form :model="modalForm">
           <el-form-item label="">
             <el-radio-group v-model="modalForm.limitType" @change="handleLimitChange">
-              <el-radio :label="0" style="display:block">不限购</el-radio>
+              <el-radio :label="0" style="display:block line-height: 28px">不限购</el-radio>
               <el-radio :label="1" style="margin-top:10px;display:block">
                 <span style="color:#333">每笔订单限购&nbsp;
                   <template v-if="modalForm.limitType===1">

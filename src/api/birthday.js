@@ -43,6 +43,15 @@ export function batchSendCoupon(params) {
   })
 }
 
+// 批量发券新接口
+export function batchSendCouponNew(params) {
+  return request({
+    url: `${config.merGoods}/1.0/market/batchSendCouponNew`,
+    method: 'post',
+    data: params
+  })
+}
+
 // 获取发券记录
 export function couponHistoryList(params) {
   return request({
@@ -51,12 +60,28 @@ export function couponHistoryList(params) {
     data: params
   })
 }
-
+// 删除发券记录
+export function deleteSendHistory(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/deleteSendHistory`,
+    method: 'post',
+    data: params.ids
+  })
+}
 // 发券详情
 export function listCouponHistoryDetail(params) {
   return request({
     url: `${config.merGoods}/1.0/coupon/listCouponHistoryDetail`,
     method: 'post',
     data: params
+  })
+}
+
+// 发券详情接口2
+export function getCouponHistoryInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/coupon/getCouponHistoryInfo?id=${params.id}`,
+    method: 'post',
+    data: {}
   })
 }

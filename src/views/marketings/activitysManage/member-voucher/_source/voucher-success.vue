@@ -4,8 +4,12 @@
       <img src="@/assets/image/save.png" style="width:120px;height:120px">
     </div>
     <div style="font-size:18px;margin:15px 0">操作成功</div>
-    <div style="color:#7E8E9E;margin:15px 0">会员发券成功，您可在发券记录查看</div>
-    <div>{{ content }}</div>
+    <div style="color:#7E8E9E;margin:15px 0">
+      优惠券发放中，稍后您可在
+      <el-button type="text" @click="$router.push('/activity/member-voucher-list')">发券记录</el-button>
+      中查看
+    </div>
+    <div>{{ content }}<el-button type="text" @click="$router.push('/activity/member-voucher-list')">发券记录</el-button></div>
   </div>
 </template>
 <script>
@@ -32,10 +36,10 @@ export default {
   methods: {
     // 倒计时
     countDown() {
-      this.content = this.totalTime + 's后跳转至发券记录'
+      this.content = this.totalTime + 's后跳转至'
       this.clock = window.setInterval(() => {
         this.totalTime--
-        this.content = this.totalTime + 's后跳转至发券记录'
+        this.content = this.totalTime + 's后跳转至'
         if (this.totalTime < 1) {
           window.clearInterval(this.clock)
           this.toUrl()
