@@ -68,10 +68,36 @@ export default {
         })
         data.isShare = data.isShare === 1
         this.$refs.ruleList.ruleForm = data
-        this.$refs.ruleList.ruleForm.activeTime = [
-          new Date(data.beginTime),
-          new Date(data.endTime)
-        ]
+        if (this.$route.query.type === 'copy') {
+          this.params.pageState = 0 // 1编辑(0复制)
+          if (data.state === 2) { // 未开始的时间也要复制
+            this.$refs.ruleList.ruleForm.activeTime = [
+              new Date(data.beginTime),
+              new Date(data.endTime)
+            ]
+          } else {
+            this.$refs.ruleList.ruleForm.activeTime = [
+            ]
+          }
+          this.params.state = 0
+        } else {
+          if (data.state === 1 && data.status === 1) {
+            this.params.pageState = 1 // 1编辑 2查看
+          } else if (data.state === 2 && data.status === 1) {
+            this.params.pageState = 1
+          } else if (
+            (data.state === 3 && data.status === 1) ||
+            (data.state === 1 && data.status === 0) ||
+            (data.state === 2 && data.status === 0) ||
+            (data.state === 3 && data.status === 0)
+          ) {
+            this.params.pageState = 2 // 1编辑 2查看
+          }
+          this.$refs.ruleList.ruleForm.activeTime = [
+            new Date(data.beginTime),
+            new Date(data.endTime)
+          ]
+        }
         if (data.joinRule === 3) {
           this.$refs.ruleList.ruleForm.activeLimit = data.countRule
         } else if (data.countType === 1) {
@@ -80,23 +106,10 @@ export default {
           this.$refs.ruleList.ruleForm.dayLimit = data.countRule
         }
         data.listActivityGiftEntity.map(item => {
-          console.log(item.winRandom)
           item.winRandom = item.winRandom * 100
         })
         this.$refs.awardSetting.formsGift.selectedGift =
           data.listActivityGiftEntity
-        if (data.state === 1 && data.status === 1) {
-          this.params.pageState = 1 // 1编辑 2查看
-        } else if (data.state === 2 && data.status === 1) {
-          this.params.pageState = 1
-        } else if (
-          (data.state === 3 && data.status === 1) ||
-          (data.state === 1 && data.status === 0) ||
-          (data.state === 2 && data.status === 0) ||
-          (data.state === 3 && data.status === 0)
-        ) {
-          this.params.pageState = 2 // 1编辑 2查看
-        }
       })
     }
   },
@@ -108,7 +121,8 @@ export default {
     submitAjax(obj = {}) {
       // 新增优惠券
       Object.assign(this.params, obj)
-      var params = this.params
+      const params = this.params
+      params.isShare = params.isShare ? 1 : 0
       params.integralRule = parseInt(params.integralRule)
       if (
         new Date(params.beginTime).getTime() < new Date().getTime() &&
@@ -117,28 +131,11 @@ export default {
         this.$message.warning('请返回上一步，活动开始时间不能小于当前时间')
         return
       } else {
-        if (params.id) {
-          params.listActivityGiftEntity = []
-          params.removedList = this.removedList
-          updateActivity(params)
-            .then(res => {
-              if (res.code === '10000') {
-                this.stepActive = 3
-                this.$refs.submitSave.countDown()
-              } else {
-                this.$message({
-                  message: '修改失败！',
-                  type: 'error'
-                })
-              }
-            })
-            .catch(() => {
-              this.$message({
-                message: '修改失败！',
-                type: 'error'
-              })
-            })
-        } else {
+        if (this.$route.query.type === 'copy') {
+          // 复制活动
+          delete params.id
+          delete params.createTime
+          delete params.updateTime
           createLuckDraw(params)
             .then(res => {
               if (res.code === '10000') {
@@ -146,17 +143,60 @@ export default {
                 this.$refs.submitSave.countDown()
               } else {
                 this.$message({
-                  message: '添加失败！',
+                  message: '复制失败！',
                   type: 'error'
                 })
               }
             })
             .catch(() => {
               this.$message({
-                message: '添加失败！',
+                message: '复制失败！',
                 type: 'error'
               })
             })
+        } else {
+          // 如果不是复制，判断是新增还是修改
+          if (params.id) {
+            params.listActivityGiftEntity = []
+            params.removedList = this.removedList
+            updateActivity(params)
+              .then(res => {
+                if (res.code === '10000') {
+                  this.stepActive = 3
+                  this.$refs.submitSave.countDown()
+                } else {
+                  this.$message({
+                    message: '修改失败！',
+                    type: 'error'
+                  })
+                }
+              })
+              .catch(() => {
+                this.$message({
+                  message: '修改失败！',
+                  type: 'error'
+                })
+              })
+          } else {
+            createLuckDraw(params)
+              .then(res => {
+                if (res.code === '10000') {
+                  this.stepActive = 3
+                  this.$refs.submitSave.countDown()
+                } else {
+                  this.$message({
+                    message: '添加失败！',
+                    type: 'error'
+                  })
+                }
+              })
+              .catch(() => {
+                this.$message({
+                  message: '添加失败！',
+                  type: 'error'
+                })
+              })
+          }
         }
       }
     }

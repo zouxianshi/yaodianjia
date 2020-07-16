@@ -93,6 +93,9 @@
                 <i class="el-icon-arrow-down el-icon--right" />
               </span>
               <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item :command="{index: scope.$index, val: 'copyActive'}">
+                  复制
+                </el-dropdown-item>
                 <el-dropdown-item
                   v-for="item in scope.row.options.slice(1)"
                   :key="item.id"
@@ -299,21 +302,6 @@ export default {
                 label: '删除',
                 isActive: true
               }
-              // {
-              //   id: 5,
-              //   value: '2',
-              //   label: '编辑'
-              // },
-              // {
-              //   id: 6,
-              //   value: '5',
-              //   label: '删除'
-              // },
-              // {
-              //   id: 7,
-              //   value: '4',
-              //   label: '推广'
-              // }
             ]
           } else if (
             (state === 3 && status === 1) ||
@@ -346,16 +334,6 @@ export default {
                 label: '删除',
                 isActive: true
               }
-              // {
-              //   id: 8,
-              //   value: '1',
-              //   label: '查看'
-              // },
-              // {
-              //   id: 9,
-              //   value: '5',
-              //   label: '删除'
-              // }
             ]
           }
         }
@@ -384,6 +362,7 @@ export default {
         .catch(() => {})
     },
     handleCommand(command) {
+      console.log(command)
       if (command.val === '5') {
         this.$confirm('确认删除吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -462,10 +441,12 @@ export default {
           path: '/marketings/activity-manage/turntable/add',
           query: { id: this.tableData[command.index].id, code: this.$route.query.code }
         })
+      } else if (command.val === 'copyActive') {
+        this.$router.push({
+          path: '/marketings/activity-manage/turntable/add',
+          query: { id: this.tableData[command.index].id, code: this.$route.query.code, type: 'copy' }
+        })
       }
-    },
-    changeOption(val) {
-      console.log(val)
     },
     handleSizeChange(val) {
       this.pageSize = val

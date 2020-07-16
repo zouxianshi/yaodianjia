@@ -13,7 +13,7 @@
       <el-form-item label="活动名称" prop="activityDetailName">
         <el-input v-model="ruleForm.activityDetailName" style="width:400px" placeholder="最多30字" />
       </el-form-item>
-      <el-form-item label="活动时间" prop="activeTime">
+      <el-form-item label="活动时间" required>
         <el-date-picker
           v-model="ruleForm.activeTime"
           type="datetimerange"
@@ -23,6 +23,7 @@
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
           :disabled="isRuning"
+          :clearable="false"
           @input="daterangeChange"
         />
       </el-form-item>
@@ -224,6 +225,7 @@ export default {
       }
     }
     const checkActivitTime = (rule, value, callback) => {
+      console.log(value)
       if (Number(value.length) === 0) {
         return callback(new Error('请选择活动开始和结束时间'))
       }
@@ -272,7 +274,6 @@ export default {
         ],
         activeTime: [
           {
-            required: true,
             validator: checkActivitTime,
             trigger: 'change'
           }
@@ -373,11 +374,6 @@ export default {
         _this.$forceUpdate()
       })
     },
-    setActiveTime(v) {
-      this.ruleForm.activeTime = v
-    },
-    handlechangetime() {
-    },
     changeJoinrule() {
       if (this.ruleForm.joinRule === 3) {
         // 活动参与选抽奖次数
@@ -409,7 +405,6 @@ export default {
             })
             return false
           }
-          this.ruleForm.isShare = this.ruleForm.isShare ? 1 : 0
           this.$emit('handleNext', 2, this.ruleForm)
         } else {
           return false

@@ -6,7 +6,7 @@
       <el-step title="发放成功" />
     </el-steps>
     <mMemberList v-show="stepActive === 1" @nextstep="toSetp2" @submitParams="saveParams" />
-    <mCouponList v-show="stepActive === 2" @nextstep="toSetp3" @prevstep="prev" ref="cop" />
+    <mCouponList v-show="stepActive === 2" ref="cop" @nextstep="toSetp3" @prevstep="prev" />
     <mVoucherSuccess v-show="stepActive === 3" ref="success" />
   </div>
 </template>
@@ -14,7 +14,7 @@
 import mCouponList from './_source/coupon-list'
 import mMemberList from './_source/member-list'
 import mVoucherSuccess from './_source/voucher-success'
-import { batchSendCoupon, batchSendCouponNew } from '@/api/birthday'
+import { batchSendCouponNew } from '@/api/birthday'
 export default {
   name: 'MemberVoucher',
   components: {
@@ -31,7 +31,7 @@ export default {
     }
   },
   methods: {
-    saveParams(params){ // 保存搜索会员参数
+    saveParams(params) { // 保存搜索会员参数
       this.params.conditionJson = params
       Object.assign(this.params, JSON.parse(params))
     },

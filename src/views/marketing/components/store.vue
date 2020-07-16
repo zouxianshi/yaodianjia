@@ -34,8 +34,8 @@
         </el-form-item>
       </el-form>
       <el-table
-        size="small"
         ref="multipleTable"
+        size="small"
         :data="tableData"
         stripe
         style="width: 100%"

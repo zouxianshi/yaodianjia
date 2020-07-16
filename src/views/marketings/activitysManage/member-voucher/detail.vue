@@ -98,7 +98,6 @@ export default {
         this.formartCondition(JSON.parse(res.data.conditionJson))
       }
     })
-    
   },
   methods: {
     // 商品折扣处理
@@ -139,17 +138,17 @@ export default {
     },
     // 格式化条件
     formartCondition(conditions) {
-        // 处理生日
-      this. detailParams.allMember = conditions.allMember === 1 ? 1 : 0 
-      if (!!(conditions.endBirthdayDay) && !!(conditions.startBirthdayDay) ) {
-        let day = parseInt(conditions.startBirthdayDay.slice(8, 10)) + 1
+      // 处理生日
+      this.detailParams.allMember = conditions.allMember === 1 ? 1 : 0
+      if (!!(conditions.endBirthdayDay) && !!(conditions.startBirthdayDay)) {
+        const day = parseInt(conditions.startBirthdayDay.slice(8, 10)) + 1
         this.detailParams.ageQj =
-          conditions.startBirthdayDay.slice(0, 8) + day + 
+          conditions.startBirthdayDay.slice(0, 8) + day +
           ' - ' +
           conditions.endBirthdayDay.slice(0, 10)
       }
       // 处理领卡日期
-      if (!!(conditions.startDate) && !!(conditions.endDate) ) {
+      if (!!(conditions.startDate) && !!(conditions.endDate)) {
         this.detailParams.lkTime =
           conditions.startDate.slice(0, 10) +
           ' - ' +
@@ -160,7 +159,7 @@ export default {
         this.detailParams.birthMonth = conditions.month + '月'
       }
       // 处理海贝范围
-      if (conditions.minIntegral !== "" && conditions.maxIntegral !== "" ) {
+      if (conditions.minIntegral !== '' && conditions.maxIntegral !== '') {
         this.detailParams.memberIntiger =
           conditions.minIntegral + ' - ' + conditions.maxIntegral
       }

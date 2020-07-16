@@ -3,7 +3,7 @@
     <div class="scrollbar sscm-select-box">
       <el-form label-width="80px">
         <el-form-item label="已选">
-          <el-tag v-for="(item,$index) in selectList" :key="$index">{{ item.name }}</el-tag>
+          <el-tag v-for="(items,$index) in selectList" :key="$index">{{ items.name }}</el-tag>
         </el-form-item>
       </el-form>
     </div>

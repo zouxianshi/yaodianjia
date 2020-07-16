@@ -72,10 +72,10 @@
               <el-form-item label="注册时间：">
                 <span>{{ basicInfo.createTime }}</span>
               </el-form-item>
-              <el-form-item label="推荐人：" v-if="basicInfo.regSource === 1">
+              <el-form-item v-if="basicInfo.regSource === 1" label="推荐人：">
                 <span>{{ basicInfo.empName || '-' }}</span>
               </el-form-item>
-              <el-form-item label="推荐门店：" v-if="basicInfo.regSource === 2">
+              <el-form-item v-if="basicInfo.regSource === 2" label="推荐门店：">
                 <span>{{ basicInfo.regMedium || '-' }}</span>
               </el-form-item>
             </el-form>
