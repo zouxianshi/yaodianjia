@@ -72,7 +72,7 @@
         <el-table-column label="操作" width="120" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="_edit(scope.row)">编辑</el-button>
-            <!-- <el-button type="text" size="mini" @click="deleteCoupons(scope.row.id)">删除</el-button> -->
+            <el-button type="text" size="mini" @click="deleteCoupons(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -159,19 +159,30 @@ export default {
     },
     // 删除优惠券
     deleteCoupons(ids) {
-      deleteCoupon({ id: ids }).then(res => {
-        if (res.code === '10000') {
-          this.$message({
-            message: '删除成功！',
-            type: 'success'
-          })
-          this.searchData()
-        } else {
-          this.$message({
-            message: '删除失败！',
-            type: 'error'
-          })
-        }
+      this.$confirm('确定删除该优惠券吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteCoupon({ id: ids }).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              message: '删除成功！',
+              type: 'success'
+            })
+            this.searchData()
+          } else {
+            this.$message({
+              message: '删除失败！',
+              type: 'error'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
       })
     }
   }
