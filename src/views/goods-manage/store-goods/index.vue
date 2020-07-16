@@ -9,7 +9,7 @@
         <el-radio-button :label="4">统计</el-radio-button>
       </el-radio-group>
       <section @keydown.enter="_loadList">
-        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
+        <div class="search-form" style="margin-top:20px;margin-bottom:0px">
           <div v-if="listQuery.status !== 4" class="search-item">
             <span class="label-name">选择门店</span>
             <el-select
@@ -59,8 +59,6 @@
               placeholder="条形码"
             />
           </div>
-        </div>
-        <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">批准文号</span>
             <el-input
@@ -84,19 +82,6 @@
               <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
               <el-option label="OTC" value="4" />
-            </el-select>
-          </div>
-          <div class="search-item">
-            <span class="label-name">商品类型</span>
-            <el-select
-              v-model="listQuery.commodityType"
-              filterable
-              size="small"
-              placeholder="普通商品/组合商品"
-              @change="handleChangeCommodityType"
-            >
-              <el-option label="普通商品" value="1" />
-              <el-option label="组合商品" value="2" />
             </el-select>
           </div>
           <div v-if="listQuery.status !== 4" class="search-item">
@@ -127,7 +112,45 @@
               <el-option label="无" :value="false" />
             </el-select>
           </div>
+          <div class="search-item">
+            <span class="label-name">品&nbsp;&nbsp;&nbsp;&nbsp;牌</span>
+            <el-select
+              v-model="listQuery.brandId"
+              v-loadmore="loadMore"
+              filterable
+              remote
+              clearable
+              :remote-method="brandremoteMethod"
+              :loading="loading"
+              size="small"
+              placeholder="选择品牌"
+              @change="handleBrandChange"
+              @clear="handleBrandClear"
+            >
+              <el-option
+                v-for="item in brandList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </div>
         </div>
+        <!-- <div class="search-form" style="margin-bottom:10px">
+          <div class="search-item">
+            <span class="label-name">商品类型</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              size="small"
+              placeholder="普通商品/组合商品"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="普通商品" value="1" />
+              <el-option label="组合商品" value="2" />
+            </el-select>
+          </div>
+        </div>-->
         <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
@@ -431,7 +454,6 @@
     />
     <batchUpdate
       :is-show="importAllVisible"
-      :spec-data="specData"
       @complete="importAllVisible=false;getList()"
       @close="importAllVisible=false"
     />
@@ -486,6 +508,7 @@ import Pagination from '@/components/Pagination'
 import exportTable from './export-table'
 import { mapGetters } from 'vuex'
 import { getTypeTree, exportData, exportStatisticData } from '@/api/group'
+import { getBrandList } from '@/api/new-goods'
 import lock from './_source/lock'
 import notAsyncDialog from './_source/not-async-dialog'
 import batchUpdate from './_source/batchUpdate'
@@ -501,7 +524,14 @@ import {
 } from '@/api/store-goods'
 
 export default {
-  components: { Pagination, exportTable, ElImageViewer, lock, notAsyncDialog, batchUpdate },
+  components: {
+    Pagination,
+    exportTable,
+    ElImageViewer,
+    lock,
+    notAsyncDialog,
+    batchUpdate
+  },
   mixins: [mixins],
   data() {
     const _checkFloat = (rule, value, callback) => {
@@ -545,6 +575,13 @@ export default {
       keyword: '',
       tableData: [],
       multipleSelection: [],
+      brandList: [], // 品牌列表
+      brandId: '', // 商品品牌id
+      brandName: '', // 品牌名称
+      brandNanme: '',
+      brandNanme_currentPage: 1,
+      brandNanme_pageSize: 30,
+      brandLoading: false,
       lockDialogVisible: false,
       importAllVisible: false,
       defaultProps: {
@@ -566,6 +603,7 @@ export default {
         commodityType: '',
         lockFlag: '',
         approvalNumber: '',
+        brandId: '', // 品牌类型
         barCode: '',
         groupId: '',
         manufacture: '',
@@ -602,6 +640,10 @@ export default {
   created() {
     this.getList()
     this._loadTypeList()
+    this._loadBrandList({
+      pageSize: 30,
+      currentPage: 1
+    }) // 获取所属品牌
   },
   methods: {
     onLook(url) {
@@ -611,6 +653,31 @@ export default {
     onCloseImg() {
       this.isShowImg = false
     },
+    handleBrandChange() {
+      this.getList()
+    },
+    handleBrandClear() {
+      this._loadBrandList({
+        pageSize: 30,
+        currentPage: 1
+      })
+      this.getList()
+    },
+    brandremoteMethod(query) {
+      this.brandNanme = query
+      this._loadBrandList({
+        brandName: query,
+        pageSize: 30,
+        currentPage: 1
+      })
+    },
+    loadMore: function() {
+      this._loadBrandList({
+        brandName: this.brandNanme,
+        pageSize: 30,
+        currentPage: this.brandNanme_currentPage
+      })
+    },
     resetQuery() {
       this.listQuery = {
         approvalNumber: '',
@@ -618,6 +685,7 @@ export default {
         erpOrName: '',
         erpCode: '',
         groupId: '',
+        brandId: '',
         manufacture: '',
         name: '',
         storeId: this.listQuery.storeId,
@@ -998,6 +1066,21 @@ export default {
       }
       this._SetUpDown(data)
     },
+    _loadBrandList(params) {
+      // 获取品牌
+      // this.brandLoading = true
+      getBrandList(params).then(res => {
+        const { data, currentPage } = res.data
+        if (currentPage === 1) {
+          this.brandList = Array.isArray(data) ? data : []
+        } else {
+          const arr = Array.isArray(data) ? data : []
+          this.brandList = [...this.brandList, ...arr]
+        }
+        this.brandNanme_currentPage = currentPage + 1
+        // this.brandLoading = false
+      })
+    },
     _SetUpDown(data) {
       // 执行上下架请求
       setUpdateStoreData(data).then(res => {
@@ -1008,12 +1091,7 @@ export default {
         ) {
           // 校验不通过
           this.isShowTipsDialog = true
-          this.tipsDialogContent =
-            res.data.code === 1
-              ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？'
-              : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(
-                res.data.erpList || []
-              ).join('、')}</p>`
+          this.tipsDialogContent = res.data.code === 1 ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？' : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(res.data.erpList || []).join('、')}</p>`
           this.cacheSetUpDownParams = data
         } else {
           this.$message({

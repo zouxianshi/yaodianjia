@@ -206,7 +206,8 @@ const router = [
         meta: {
           title: '新人礼包'
         }
-      }, {
+      },
+      {
         path: '/activity/birthday-gift',
         component: () => import('@/views/marketings/activitysManage/birthdayGift/index'),
         name: 'birthday-gift',
