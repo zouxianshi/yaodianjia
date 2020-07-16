@@ -5,7 +5,7 @@
       <div class="scm-comps-class">
         <ul>
           <template v-for="(item,$index) in defaultData[tabVal]">
-            <li v-if="item.type !== 'activityAggregate'" :key="$index" :class="{'act':selectVal === item.type}" @click="onToggle(item.type)"><span>{{ item.name }}</span></li>
+            <li :key="$index" :class="{'act':selectVal === item.type}" @click="onToggle(item.type)"><span>{{ item.name }}</span></li>
           </template>
         </ul>
       </div>
