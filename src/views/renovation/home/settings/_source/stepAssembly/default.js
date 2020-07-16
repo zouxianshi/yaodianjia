@@ -19,138 +19,203 @@ import { uuid, findComponentsDownward } from '@/utils'
 export const defaultParams = {
   'banner_first': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: 'banner轮播图'
   },
   'navigation_first': {
     error: false,
-    max: 8
+    max: 8,
+    typeName: '导航栏',
+    name: '一排四个'
   },
   'navigation_second': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '导航栏',
+    name: '一排五个'
   },
   'advertisement_first': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '广告图',
+    name: '单图样式'
   },
   'advertisement_second': {
     error: false,
-    max: 3
+    max: 3,
+    typeName: '广告图',
+    name: '多图样式1'
   },
   'advertisement_third': {
     error: false,
-    max: 4
+    max: 4,
+    typeName: '广告图',
+    name: '多图样式2'
   },
   'advertisement_four': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '广告图',
+    name: '单图不限高'
   },
   'advertisement_five': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '广告图',
+    name: '多图轮播'
   },
   'commodity_first': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '商品',
+    name: '一排单个'
   },
   'commodity_second': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '商品',
+    name: '一排两个'
   },
   'commodity_third': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '商品',
+    name: '一排三个'
   },
   'commodity_four': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '商品',
+    name: '一排多个'
   },
   'title_first': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '标题',
+    name: '默认样式'
   },
   'title_second': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '标题',
+    name: '样式风格1'
   },
   'title_third': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '标题',
+    name: '样式风格2'
   },
   'title_four': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '标题',
+    name: '样式风格3'
   },
   'title_five': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '标题',
+    name: '样式风格4'
   },
   'title_six': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '标题',
+    name: '样式风格5'
   },
   'title_seven': {
     error: false,
-    max: 1
+    max: 1,
+    typeName: '标题',
+    name: '样式风格6'
   },
   'announcement_first': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '公告',
+    name: '默认样式'
   },
   'announcement_second': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '公告',
+    name: '样式风格1'
   },
   'announcement_third': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '公告',
+    name: '样式风格2'
   },
   'announcement_four': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '公告',
+    name: '样式风格3'
   },
   'recommend_first': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '为你推荐',
+    name: '一排两个'
   },
   'recommend_second': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '为你推荐',
+    name: '一排三个'
   },
   'adFrame_first': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '广告框',
+    name: '默认样式'
   },
   'activityAggregate_first': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '活动集合',
+    name: '默认显示全部活动'
   },
   'timeLimitedActivity_first': {
     error: false,
     max: 10,
-    color: '#F32526'
+    color: '#F32526',
+    typeName: '限时活动',
+    name: '一排单个'
   },
   'timeLimitedActivity_second': {
     error: false,
     max: 10,
-    color: '#F32526'
+    color: '#F32526',
+    typeName: '限时活动',
+    name: '一排两个'
   },
   'timeLimitedActivity_third': {
     error: false,
     max: 10,
-    color: '#F32526'
+    color: '#F32526',
+    typeName: '限时活动',
+    name: '一排多个'
   },
   'coupon_first': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '优惠券',
+    name: '一排单个'
   },
   'coupon_second': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '优惠券',
+    name: '一排两个'
   },
   'coupon_third': {
     error: false,
-    max: 10
+    max: 10,
+    typeName: '优惠券',
+    name: '一排多个'
   }
 }
 
@@ -320,18 +385,14 @@ export default () => {
           {
             uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
             type: 'navigation',
-            typeName: '导航栏',
             subType: 'first',
-            name: '一排四个',
             itemList: items(4),
             ..._.cloneDeep(defaultParams[`navigation_first`])
           },
           {
             uuid: `${uuid('navigation-')}${uuid()}${uuid()}${uuid()}`,
             type: 'navigation',
-            typeName: '导航栏',
             subType: 'second',
-            name: '一排五个',
             itemList: items(5),
             ..._.cloneDeep(defaultParams[`navigation_second`])
           }
@@ -344,45 +405,35 @@ export default () => {
           {
             uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'advertisement',
-            typeName: '广告图',
             subType: 'first',
-            name: '单图样式',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`advertisement_first`])
           },
           {
             uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'advertisement',
-            typeName: '广告图',
             subType: 'second',
-            name: '多图样式1',
             itemList: items(3),
             ..._.cloneDeep(defaultParams[`advertisement_second`])
           },
           {
             uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'advertisement',
-            typeName: '广告图',
             subType: 'third',
-            name: '多图样式2',
             itemList: items(4),
             ..._.cloneDeep(defaultParams[`advertisement_third`])
           },
           {
             uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'advertisement',
-            typeName: '广告图',
             subType: 'four',
-            name: '单图不限高',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`advertisement_four`])
           },
           {
             uuid: `${uuid('advertisement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'advertisement',
-            typeName: '广告图',
             subType: 'five',
-            name: '多图轮播',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`advertisement_five`])
           }
@@ -395,36 +446,28 @@ export default () => {
           {
             uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'commodity',
-            typeName: '商品',
             subType: 'first',
-            name: '一排单个',
             itemList: [],
             ..._.cloneDeep(defaultParams[`commodity_first`])
           },
           {
             uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'commodity',
-            typeName: '商品',
             subType: 'second',
-            name: '一排两个',
             itemList: [],
             ..._.cloneDeep(defaultParams[`commodity_second`])
           },
           {
             uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'commodity',
-            typeName: '商品',
             subType: 'third',
-            name: '一排三个',
             itemList: [],
             ..._.cloneDeep(defaultParams[`commodity_third`])
           },
           {
             uuid: `${uuid('commodity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'commodity',
-            typeName: '商品',
             subType: 'four',
-            name: '一排多个',
             itemList: [],
             ..._.cloneDeep(defaultParams[`commodity_four`])
           }
@@ -437,63 +480,49 @@ export default () => {
           {
             uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
             type: 'title',
-            typeName: '标题',
             subType: 'first',
-            name: '默认样式',
             itemList: [{ ...items(1)[0], name: '热销商品' }],
             ..._.cloneDeep(defaultParams[`title_first`])
           },
           {
             uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
             type: 'title',
-            typeName: '标题',
             subType: 'second',
-            name: '样式风格1',
             itemList: [{ ...items(1)[0], name: '热销商品' }],
             ..._.cloneDeep(defaultParams[`title_second`])
           },
           {
             uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
             type: 'title',
-            typeName: '标题',
             subType: 'third',
-            name: '样式风格2',
             itemList: [{ ...items(1)[0], name: '热销商品' }],
             ..._.cloneDeep(defaultParams[`title_third`])
           },
           {
             uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
             type: 'title',
-            typeName: '标题',
             subType: 'four',
-            name: '样式风格3',
             itemList: [{ ...items(1)[0], name: '热销商品' }],
             ..._.cloneDeep(defaultParams[`title_four`])
           },
           {
             uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
             type: 'title',
-            typeName: '标题',
             subType: 'five',
-            name: '样式风格4',
             itemList: [{ ...items(1)[0], name: '热销商品' }],
             ..._.cloneDeep(defaultParams[`title_five`])
           },
           {
             uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
             type: 'title',
-            typeName: '标题',
             subType: 'six',
-            name: '样式风格5',
             itemList: [{ ...items(1)[0], name: '热销商品' }],
             ..._.cloneDeep(defaultParams[`title_six`])
           },
           {
             uuid: `${uuid('title-')}${uuid()}${uuid()}${uuid()}`,
             type: 'title',
-            typeName: '标题',
             subType: 'seven',
-            name: '样式风格6',
             itemList: [{ ...items(1)[0], name: '热销商品' }],
             ..._.cloneDeep(defaultParams[`title_seven`])
           }
@@ -506,36 +535,28 @@ export default () => {
           {
             uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'announcement',
-            typeName: '公告',
             subType: 'first',
-            name: '默认样式',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`announcement_first`])
           },
           {
             uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'announcement',
-            typeName: '公告',
             subType: 'second',
-            name: '样式风格1',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`announcement_second`])
           },
           {
             uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'announcement',
-            typeName: '公告',
             subType: 'third',
-            name: '样式风格2',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`announcement_third`])
           },
           {
             uuid: `${uuid('announcement-')}${uuid()}${uuid()}${uuid()}`,
             type: 'announcement',
-            typeName: '公告',
             subType: 'four',
-            name: '样式风格3',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`announcement_four`])
           }
@@ -548,18 +569,14 @@ export default () => {
           {
             uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
             type: 'recommend',
-            typeName: '为你推荐',
             subType: 'first',
-            name: '一排两个',
             itemList: [],
             ..._.cloneDeep(defaultParams[`recommend_first`])
           },
           {
             uuid: `${uuid('recommend-')}${uuid()}${uuid()}${uuid()}`,
             type: 'recommend',
-            typeName: '为你推荐',
             subType: 'second',
-            name: '一排三个',
             itemList: [],
             ..._.cloneDeep(defaultParams[`recommend_second`])
           }
@@ -574,11 +591,9 @@ export default () => {
           {
             uuid: `${uuid('adFrame-')}${uuid()}${uuid()}${uuid()}`,
             type: 'adFrame',
-            typeName: '广告框',
             subType: 'first',
             subtitle: '',
             title: '',
-            name: '默认样式',
             itemList: [],
             ..._.cloneDeep(defaultParams[`adFrame_first`])
           }
@@ -591,9 +606,7 @@ export default () => {
           {
             uuid: `${uuid('activityAggregate-')}${uuid()}${uuid()}${uuid()}`,
             type: 'activityAggregate',
-            typeName: '活动集合',
             subType: 'first',
-            name: '默认显示全部活动',
             itemList: [],
             selectList: (() => {
               return store.state.renovation.agaSelectList || []
@@ -609,9 +622,7 @@ export default () => {
           {
             uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'timeLimitedActivity',
-            typeName: '限时活动',
             subType: 'first',
-            name: '一排单个',
             chooseFlag: 0,
             startTime: '',
             endTime: '',
@@ -622,9 +633,7 @@ export default () => {
           {
             uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'timeLimitedActivity',
-            typeName: '限时活动',
             subType: 'second',
-            name: '一排两个',
             chooseFlag: 0,
             startTime: '',
             endTime: '',
@@ -635,9 +644,7 @@ export default () => {
           {
             uuid: `${uuid('timeLimitedActivity-')}${uuid()}${uuid()}${uuid()}`,
             type: 'timeLimitedActivity',
-            typeName: '限时活动',
             subType: 'third',
-            name: '一排多个',
             chooseFlag: 0,
             startTime: '',
             endTime: '',
@@ -654,27 +661,21 @@ export default () => {
           {
             uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
             type: 'coupon',
-            typeName: '优惠券',
             subType: 'first',
-            name: '一排单个',
             itemList: items(1),
             ..._.cloneDeep(defaultParams[`coupon_first`])
           },
           {
             uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
             type: 'coupon',
-            typeName: '优惠券',
             subType: 'second',
-            name: '一排两个',
             itemList: items(2),
             ..._.cloneDeep(defaultParams[`coupon_second`])
           },
           {
             uuid: `${uuid('coupon-')}${uuid()}${uuid()}${uuid()}`,
             type: 'coupon',
-            typeName: '优惠券',
             subType: 'third',
-            name: '一排多个',
             itemList: items(3),
             ..._.cloneDeep(defaultParams[`coupon_third`])
           }

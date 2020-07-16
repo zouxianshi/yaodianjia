@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       link: '',
-      isHome: this.$route.name === 'renovation-home-settings'
+      isHome: this.$route.name === 'renovation-home-settings' || this.$route.name === 'renovation-home-list'
     }
   },
   mounted() {
