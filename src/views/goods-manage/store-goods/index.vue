@@ -9,7 +9,7 @@
         <el-radio-button :label="4">统计</el-radio-button>
       </el-radio-group>
       <section @keydown.enter="_loadList">
-        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
+        <div class="search-form" style="margin-top:20px;margin-bottom:0px">
           <div v-if="listQuery.status !== 4" class="search-item">
             <span class="label-name">选择门店</span>
             <el-select
@@ -60,31 +60,6 @@
             />
           </div>
           <div class="search-item">
-            <span class="label-name">品&nbsp;&nbsp;&nbsp;&nbsp;牌</span>
-            <el-select
-              v-model="listQuery.brandId"
-              v-loadmore="loadMore"
-              filterable
-              remote
-              clearable
-              :remote-method="brandremoteMethod"
-              :loading="loading"
-              size="small"
-              placeholder="选择品牌"
-              @change="handleBrandChange"
-              @clear="handleBrandClear"
-            >
-              <el-option
-                v-for="item in brandList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </div>
-        </div>
-        <div class="search-form" style="margin-bottom:10px">
-          <div class="search-item">
             <span class="label-name">批准文号</span>
             <el-input
               v-model.trim="listQuery.approvalNumber"
@@ -109,19 +84,6 @@
               <el-option label="OTC" value="4" />
             </el-select>
           </div>
-          <!-- <div class="search-item">
-            <span class="label-name">商品类型</span>
-            <el-select
-              v-model="listQuery.commodityType"
-              filterable
-              size="small"
-              placeholder="普通商品/组合商品"
-              @change="handleChangeCommodityType"
-            >
-              <el-option label="普通商品" value="1" />
-              <el-option label="组合商品" value="2" />
-            </el-select>
-          </div>-->
           <div v-if="listQuery.status !== 4" class="search-item">
             <span class="label-name">锁定状态</span>
             <el-select
@@ -150,7 +112,45 @@
               <el-option label="无" :value="false" />
             </el-select>
           </div>
+          <div class="search-item">
+            <span class="label-name">品&nbsp;&nbsp;&nbsp;&nbsp;牌</span>
+            <el-select
+              v-model="listQuery.brandId"
+              v-loadmore="loadMore"
+              filterable
+              remote
+              clearable
+              :remote-method="brandremoteMethod"
+              :loading="loading"
+              size="small"
+              placeholder="选择品牌"
+              @change="handleBrandChange"
+              @clear="handleBrandClear"
+            >
+              <el-option
+                v-for="item in brandList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </div>
         </div>
+        <!-- <div class="search-form" style="margin-bottom:10px">
+          <div class="search-item">
+            <span class="label-name">商品类型</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              size="small"
+              placeholder="普通商品/组合商品"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="普通商品" value="1" />
+              <el-option label="组合商品" value="2" />
+            </el-select>
+          </div>
+        </div>-->
         <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
