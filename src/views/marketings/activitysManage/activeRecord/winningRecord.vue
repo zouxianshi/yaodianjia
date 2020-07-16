@@ -13,7 +13,7 @@
       <div class="exportRecord">
         <el-button type="primary" size="mini" style="margin-right: 24px" @click="exportTabel">批量导出</el-button>
         <exportRecordTabel />
-        <span class="tips">提示：批量导出功能最多一次导出50000条数据</span>
+        <!-- <span class="tips">提示：批量导出功能最多一次导出50000条数据</span> -->
       </div>
     </el-form>
     <el-table :data="tableData" height="calc(100vh - 400px)" style="width: 100%" :loading="loading">
