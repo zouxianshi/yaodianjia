@@ -232,75 +232,75 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.batch-wrapper {
-  .note_napl {
-    width: 100%;
-    height: auto;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    color: #666;
-    line-height: 20px;
-    padding: 10px 15px;
-    border-radius: 2px;
-    font-size: 12px;
-    button {
-      font-size: 12px;
-    }
-  }
-  .batch-cnt-card {
-    margin-top: 12px;
-    padding: 12px 20px;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    .template-list {
+  .batch-wrapper {
+    .note_napl {
       width: 100%;
-      height: 120px;
-      display: flex;
-      margin-top: 15px;
-      li {
-        &:first-child {
-          padding-left: 0;
-          padding-right: 10px;
-        }
-        width: 25%;
-        flex-grow: 1;
-        padding: 0 5px;
-        .m {
-          width: 100%;
-          height: 100%;
-          text-align: center;
-          padding-top: 14px;
-        }
-        .name {
-          height: 44px;
-          line-height: 44px;
-          font-size: 20px;
-          color: #fff;
-        }
-        a {
-          display: block;
-          margin-top: 8px;
-        }
-        &.zxy {
-          .m {
-            background: linear-gradient(45deg, #3396e9, #30c5e1);
+      height: auto;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      color: #666;
+      line-height: 20px;
+      padding: 10px 15px;
+      border-radius: 2px;
+      font-size: 12px;
+      button {
+        font-size: 12px;
+      }
+    }
+    .batch-cnt-card {
+      margin-top: 12px;
+      padding: 12px 20px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      .template-list {
+        width: 100%;
+        height: 120px;
+        display: flex;
+        margin-top: 15px;
+        li {
+          &:first-child {
+            padding-left: 0;
+            padding-right: 10px;
           }
-        }
-        &.yxbj {
+          width: 25%;
+          flex-grow: 1;
+          padding: 0 5px;
           .m {
-            background: linear-gradient(45deg, #96c, #dc90d5);
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            padding-top: 14px;
           }
-        }
-        &.yl {
-          .m {
-            background: linear-gradient(45deg, #f5ca35, #f6cf4a);
+          .name {
+            height: 44px;
+            line-height: 44px;
+            font-size: 20px;
+            color: #fff;
           }
-        }
-        &.qt {
-          .m {
-            background: linear-gradient(45deg, #04cc75, #52da59);
+          a {
+            display: block;
+            margin-top: 8px;
+          }
+          &.zxy {
+            .m {
+              background: linear-gradient(45deg, #3396e9, #30c5e1);
+            }
+          }
+          &.yxbj {
+            .m {
+              background: linear-gradient(45deg, #96c, #dc90d5);
+            }
+          }
+          &.yl {
+            .m {
+              background: linear-gradient(45deg, #f5ca35, #f6cf4a);
+            }
+          }
+          &.qt {
+            .m {
+              background: linear-gradient(45deg, #04cc75, #52da59);
+            }
           }
         }
       }
     }
   }
-}
 </style>

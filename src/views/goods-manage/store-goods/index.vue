@@ -200,7 +200,7 @@
               type="info"
               size="small"
               @click="handleSynchro"
-            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
+            >同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
             <!-- <el-button
               v-if="listQuery.status !== 3"
               type
@@ -457,6 +457,7 @@
       @complete="importAllVisible=false;getList()"
       @close="importAllVisible=false"
     />
+    <!-- :spec-data="specData" -->
     <el-dialog
       :title="`修改${type=='price'?'价格':'库存'}`"
       :visible.sync="isShow"
@@ -583,6 +584,9 @@ export default {
       brandNanme_pageSize: 30,
       brandLoading: false,
       lockDialogVisible: false,
+      isIngleCommodity: false,
+      commodText: '',
+      isIngleStore: true,
       importAllVisible: false,
       defaultProps: {
         children: 'children',
@@ -841,80 +845,234 @@ export default {
         })
     },
     handleSynchro() {
+      const ary = []
+      const storeAry = []
       if (!this.listQuery.storeId) {
+        this.isIngleStore = false
+      } else {
+        this.isIngleStore = true
+      }
+      if (this.multipleSelection.length === 0) {
+        this.isIngleCommodity = false
+      }
+      if (this.multipleSelection.length === 1) {
+        this.isIngleCommodity = true
+      }
+      if (this.multipleSelection.length > 1) {
+        const firstStoreCode = this.multipleSelection[0].storeCode
+        const firstCommodityCode = this.multipleSelection[0].erpCode
+        this.isIngleStore = true
+        this.isIngleCommodity = true
+        this.multipleSelection.map(v => {
+          if (firstStoreCode !== v.storeCode) {
+            this.isIngleStore = false
+          }
+          if (firstCommodityCode !== v.erpCode) {
+            this.isIngleCommodity = false
+          }
+        })
+      }
+      if (
+        !this.listQuery.storeId &&
+        this.isIngleCommodity === false &&
+        this.multipleSelection.length === 0
+      ) {
         this.$message({
-          message: '无法同步全部门店商品，请选择指定门店',
+          message: '门店或商品至少一个是相同的，才能执行同步',
           type: 'warning'
         })
         return
       }
-      const ary = []
+      // const ary = []
       // 同步价格
       /**
        * 分为两种
        * 1.同步查询出来的数据
        * 2.同步勾选的数据
        */
-      if (this.multipleSelection.length === 0 && this.total === 0) {
+      if (this.isIngleStore === false && this.isIngleCommodity === false) {
         this.$message({
-          message: '请选择商品',
+          message: '门店或商品至少一个是相同的，才能执行同步',
           type: 'warning'
         })
         return
       }
       // 弹窗确认
-      this.$confirm(
-        `确认要将当前所选${this.multipleSelection.length ||
-          this.total}条商品的价格库存数据从erp同步到线上吗？`,
-        '',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      )
+      this.commodText = `确认要将当前所选${this.multipleSelection.length ||
+        this.total}条商品的价格库存数据从erp同步到线上吗？`
+      if (
+        this.isIngleStore === true &&
+        this.isIngleCommodity === false &&
+        this.multipleSelection.length === 0
+      ) {
+        this.commodText = '是否执行该门店下的全部商品执行同步？'
+      }
+      this.$confirm(`${this.commodText}`, '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
         .then(() => {
           let data = {}
-          // 店铺code
-          const findIndex = this.storeList.findIndex(mItem => {
-            return mItem.id === this.listQuery.storeId
-          })
-          if (this.multipleSelection.length) {
-            this.multipleSelection.map(v => {
-              ary.push({
-                erpCode: v.erpCode,
-                storeSpecId: v.storeSpecId
-              })
-            })
-            data = {
-              merCode: this.merCode,
-              storeCode: this.storeList[findIndex].stCode,
-              storeId: this.listQuery.storeId,
-              specs: ary,
-              syncType: 1 // 单个门店部分商品
-            }
-          } else {
-            // 当前同步所有查询出来的数据；
-            data = {
-              merCode: this.merCode,
-              storeCode: this.storeList[findIndex].stCode,
-              storeId: this.listQuery.storeId,
-              specs: ary,
-              syncType: 2 // 单个门店所有商品
-            }
+          let syncTypeNum = 1
+          if (
+            this.isIngleStore === true &&
+            this.isIngleCommodity === false &&
+            this.multipleSelection.length > 0
+          ) {
+            syncTypeNum = 1
+          } else if (
+            this.isIngleStore === true &&
+            this.isIngleCommodity === false &&
+            this.multipleSelection.length === 0
+          ) {
+            syncTypeNum = 2
+          } else if (
+            this.multipleSelection.length > 1 &&
+            this.isIngleStore === false &&
+            this.isIngleCommodity === true
+          ) {
+            syncTypeNum = 3
+          } else if (
+            !this.listQuery.storeId &&
+            this.isIngleStore === false &&
+            this.isIngleCommodity === true
+          ) {
+            syncTypeNum = 4
           }
-          // 调用接口同步
-          setSynchro(data)
-            .then(res => {
-              this.$message({
-                message: '价格同步成功',
-                type: 'success'
+          if (syncTypeNum === 2) {
+            const findIndex = this.storeList.findIndex(mItem => {
+              return mItem.id === this.listQuery.storeId
+            })
+            storeAry.push({
+              storeCode: this.storeList[findIndex].stCode,
+              storeId: this.listQuery.storeId
+            })
+          }
+          if (
+            !this.listQuery.storeId &&
+            this.isIngleCommodity === true &&
+            this.multipleSelection.length > 1
+          ) {
+            this.$confirm(
+              `检测到您选择了多条数据是同一个商品，是否是想同步该商品的所有门店？`,
+              '',
+              {
+                confirmButtonText: '是',
+                cancelButtonText: '否',
+                type: 'warning'
+              }
+            )
+              .then(() => {
+                syncTypeNum = 4
+                ary.push({
+                  erpCode: this.multipleSelection[0].erpCode,
+                  specId: this.multipleSelection[0].specId,
+                  storeSpecId: this.multipleSelection[0].storeSpecId
+                })
+                data = {
+                  merCode: this.merCode,
+                  specs: ary,
+                  storeReqDTOs: storeAry,
+                  syncType: syncTypeNum // 单个门店部分商品
+                }
+                // 调用接口同步
+                setSynchro(data)
+                  .then(res => {
+                    this.$message({
+                      message: '价格同步成功',
+                      type: 'success'
+                    })
+                    this.getList('noReset')
+                  })
+                  .catch(err => {
+                    console.log(err)
+                  })
               })
-              this.getList('noReset')
-            })
-            .catch(err => {
-              console.log(err)
-            })
+              .catch(() => {
+                ary.push({
+                  erpCode: this.multipleSelection[0].erpCode,
+                  specId: this.multipleSelection[0].specId,
+                  storeSpecId: this.multipleSelection[0].storeSpecId
+                })
+                this.multipleSelection.map(v => {
+                  storeAry.push({
+                    storeCode: v.storeCode,
+                    storeId: v.storeId
+                  })
+                })
+                data = {
+                  merCode: this.merCode,
+                  specs: ary,
+                  storeReqDTOs: storeAry,
+                  syncType: syncTypeNum // 单个门店部分商品
+                }
+                // 调用接口同步
+                setSynchro(data)
+                  .then(res => {
+                    this.$message({
+                      message: '价格同步成功',
+                      type: 'success'
+                    })
+                    this.getList('noReset')
+                  })
+                  .catch(err => {
+                    console.log(err)
+                  })
+              })
+          } else {
+            // 店铺code
+            if (this.multipleSelection.length) {
+              this.multipleSelection.map(v => {
+                ary.push({
+                  erpCode: v.erpCode,
+                  specId: v.specId,
+                  storeSpecId: v.storeSpecId
+                })
+              })
+              if (syncTypeNum === 1) {
+                storeAry.push({
+                  storeCode: this.multipleSelection[0].storeCode,
+                  storeId: this.multipleSelection[0].storeId
+                })
+              } else if (syncTypeNum === 4) {
+                console.log(storeAry)
+              } else {
+                this.multipleSelection.map(v => {
+                  storeAry.push({
+                    storeCode: v.storeCode,
+                    storeId: v.storeId
+                  })
+                })
+              }
+              data = {
+                merCode: this.merCode,
+                specs: ary,
+                storeReqDTOs: storeAry,
+                syncType: syncTypeNum // 单个门店部分商品
+              }
+            } else {
+              // 当前同步所有查询出来的数据;
+              data = {
+                merCode: this.merCode,
+                specs: ary,
+                storeReqDTOs: storeAry,
+                syncType: syncTypeNum // 单个门店所有商品
+              }
+            }
+            // 调用接口同步
+            setSynchro(data)
+              .then(res => {
+                this.$message({
+                  message: '价格同步成功',
+                  type: 'success'
+                })
+                this.getList('noReset')
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          }
         })
         .catch(() => {
           return
