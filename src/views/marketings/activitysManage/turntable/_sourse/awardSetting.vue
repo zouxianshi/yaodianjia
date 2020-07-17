@@ -146,14 +146,7 @@
         </el-form-item>
         <el-form-item label="奖品数量" prop="giftNum">
           <!-- 在这 -->
-          <el-input
-            v-show="ruleForm.giftType === 5"
-            value="无限"
-            disabled
-            style="width:400px"
-          />
           <el-input-number
-            v-show="ruleForm.giftType !== 5"
             v-model="ruleForm.giftNum"
             :precision="0"
             :step="1"
@@ -415,7 +408,6 @@ export default {
             this.ruleForm.giftName = this.ruleForm.giftContent =
               this.ruleForm.giftContent + '海贝'
           } else if (this.ruleForm.giftType === 5) {
-            this.ruleForm.giftNum = -1
             this.ruleForm.giftName = this.ruleForm.giftContent
           } else {
             this.ruleForm.giftName = this.ruleForm.giftContent
