@@ -8,13 +8,15 @@ import { mapMutations } from 'vuex'
 export default {
   name: 'State',
   data() {
-    return {}
+    return {
+      isHome: this.$route.name === 'renovation-home-settings'
+    }
   },
   props: {},
   methods: {
     ...mapMutations('renovation', ['setStepVal']),
     onGoHome() {
-      this.$router.push(`/renovation/home/list`)
+      this.$router.push(this.isHome ? `/renovation/home/list` : `/marketings/dm/list`)
     }
   },
   watch: {},

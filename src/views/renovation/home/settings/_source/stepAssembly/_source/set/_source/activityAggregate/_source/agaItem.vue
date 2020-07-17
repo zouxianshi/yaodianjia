@@ -5,7 +5,8 @@
       <div class="aim-text">{{ item.name }}</div>
     </div>
     <div class="aga-check">
-      <el-checkbox v-model="item.selected" :disabled="item.disabled" />
+      <!--:disabled="item.disabled"-->
+      <el-checkbox v-model="item.selected" />
     </div>
   </div>
 </template>

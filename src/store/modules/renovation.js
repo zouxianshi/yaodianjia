@@ -7,7 +7,8 @@
 import _ from 'lodash'
 import store from '@/store'
 import { uuid } from '@/utils' // eslint-disable-line
-import renovationService from '@/api/renovation'
+import RenovationService from '@/api/renovation'
+import MarketingsService from '@/api/marketings'
 import { bannerItem, handlerBackfill,items,defaultParams,agaSelectList } from '@/views/renovation/home/settings/_source/stepAssembly/default' // eslint-disable-line
 
 const basics = {
@@ -19,10 +20,9 @@ const basics = {
   borderSize: 0, // 边框大小，单位px
   borderColor: '#FFFFFF', // 边框颜色，16进制值
   searchHint: '', // 搜索预显
-  styleType: '', // 首页风格色系：custome-自定义，red-中国红，blue-气质蓝，gold-淡雅金
+  styleType: '', // 首页风格色系：custom-自定义，red-中国红，blue-气质蓝，gold-淡雅金
   shareDesc: '', // 分享描述
   shareImg: '', // 分享图片url
-  agaData: {}, // 活动集合数据
   recommendedData: []
 }
 
@@ -34,6 +34,7 @@ const state = {
   staticDragData: {
     banner: _.cloneDeep(bannerItem)
   },
+  agaData: {},
   agaSelectList: _.cloneDeep(agaSelectList)
 }
 
@@ -70,7 +71,9 @@ const mutations = {
     state.stepVal = 1
     state.basics = _.cloneDeep(basics)
     state.dragList = []
+    state.agaData = {}
     state.staticDragData.banner = _.cloneDeep(bannerItem)
+    state.agaSelectList = _.cloneDeep(agaSelectList)
   }
 }
 
@@ -83,7 +86,7 @@ const actions = {
           allFlag: true,
           actTypeList: [11, 12, 13, 14, 15]
         }
-        renovationService.getActivityCollection(p).then(res => {
+        RenovationService.getActivityCollection(p).then(res => {
           const { data } = res
           commit('setAgaData', data)
 
@@ -103,22 +106,9 @@ const actions = {
       }
     })
   },
-  saveHomeSetting({ commit, state }, payload) {
-    return new Promise((resolve, reject) => {
-      const p = {
-        list: [state.staticDragData.banner, ...state.dragList],
-        ...state.basics
-      }
-      renovationService.homePageAdd(p).then(res => {
-        resolve(res)
-      }).catch(e => {
-        reject(e)
-      })
-    })
-  },
   getHomePage({ commit, state }, payload) {
     const { id } = payload
-    renovationService.getHomePage(id).then(res => {
+    RenovationService.getHomePage(id).then(res => {
       commit('setBasics', _.omit(res.data, ['list']))
       commit('setDragList', handlerBackfill(res.data))
       commit('setStaticDragData', {
@@ -130,7 +120,28 @@ const actions = {
     }).catch(() => {
     })
   },
-  saveHomePage({ commit, state }, payload) {
+  getDMPage({ commit, state }, payload) {
+    const { id } = payload
+    MarketingsService.getDMDetails(id).then(res => {
+      commit('setBasics', _.omit(res.data, ['list']))
+      commit('setDragList', handlerBackfill(res.data))
+    }).catch(() => {
+    })
+  },
+  saveHomeSetting({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const p = {
+        list: [state.staticDragData.banner, ...state.dragList],
+        ...state.basics
+      }
+      RenovationService.saveHomeSetting(p).then(res => {
+        resolve(res)
+      }).catch(e => {
+        reject(e)
+      })
+    })
+  },
+  updateHomeSetting({ commit, state }, payload) {
     const p = {
       list: [state.staticDragData.banner, ...state.dragList],
       ...state.basics,
@@ -138,13 +149,41 @@ const actions = {
     }
 
     return new Promise((resolve, reject) => {
-      renovationService.updateSetInfo(p).then(res => {
+      RenovationService.updateHomeSetting(p).then(res => {
+        resolve(res)
+      }).catch(e => {
+        reject(e)
+      })
+    })
+  },
+  saveDMSetting({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const p = {
+        list: [...state.dragList],
+        ...state.basics
+      }
+      MarketingsService.saveDMSetting(p).then(res => {
+        resolve(res)
+      }).catch(e => {
+        reject(e)
+      })
+    })
+  },
+  updateDMSetting({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const p = {
+        list: [...state.dragList],
+        ...state.basics,
+        setIds: [..._.map(state.dragList, 'id')]
+      }
+      MarketingsService.updateDMSetting(p).then(res => {
         resolve(res)
       }).catch(e => {
         reject(e)
       })
     })
   }
+
 }
 
 export default {

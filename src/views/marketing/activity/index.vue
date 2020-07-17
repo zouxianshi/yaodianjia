@@ -126,16 +126,6 @@ export default {
           linkUrl: '/marketings/activity-manage/payment-gift/add'
         },
         {
-          lable: '会员发券',
-          listLabel: '会员发券记录',
-          createText: '发放优惠券',
-          img: memberVouchCover,
-          desc: '发优惠券给到会员，可以精细化精准营销，满足会员购物需求，给到实际的优惠',
-          listUrl: '/activity/member-voucher-list',
-          linkUrl: '/activity/member-voucher'
-        },
-        {
-          value: '',
           lable: '新人礼包',
           listLabel: '新人礼包列表',
           img: newComer,
@@ -143,6 +133,14 @@ export default {
           listUrl:
             '/activity/newcomer-pack',
           linkUrl: '/activity/newcomer-create'
+        }, {
+          lable: '会员发券',
+          listLabel: '会员发券记录',
+          createText: '发放优惠券',
+          img: memberVouchCover,
+          desc: '发优惠券给到会员，可以精细化精准营销，满足会员购物需求，给到实际的优惠',
+          listUrl: '/activity/member-voucher-list',
+          linkUrl: '/activity/member-voucher'
         }
       ], // 会员营销
       goodsActivity: [

@@ -70,10 +70,16 @@ export default {
         this.$refs.ruleList.ruleForm = data
         if (this.$route.query.type === 'copy') {
           this.params.pageState = 0 // 1编辑(0复制)
+          if (data.state === 2) { // 未开始的时间也要复制
+            this.$refs.ruleList.ruleForm.activeTime = [
+              new Date(data.beginTime),
+              new Date(data.endTime)
+            ]
+          } else {
+            this.$refs.ruleList.ruleForm.activeTime = [
+            ]
+          }
           this.params.state = 0
-          this.params.activeTime = []
-          this.$refs.ruleList.ruleForm.activeTime = [
-          ]
         } else {
           if (data.state === 1 && data.status === 1) {
             this.params.pageState = 1 // 1编辑 2查看
@@ -115,7 +121,8 @@ export default {
     submitAjax(obj = {}) {
       // 新增优惠券
       Object.assign(this.params, obj)
-      var params = this.params
+      const params = this.params
+      params.isShare = params.isShare ? 1 : 0
       params.integralRule = parseInt(params.integralRule)
       if (
         new Date(params.beginTime).getTime() < new Date().getTime() &&

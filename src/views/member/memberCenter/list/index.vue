@@ -1,5 +1,5 @@
 <template>
-  <div class="mc-list-model">
+  <div class="mc-list-model app-container">
     <div class="header-title">会员列表</div>
     <div class="body-content">
       <div v-show="conditions" class="conditions-content">
@@ -48,7 +48,6 @@
       <m-tabel-list ref="listA" @getData="getData" />
       <div class="pagination">
         <el-pagination
-          background
           layout="prev, pager, next"
           :total="pageInfo.totalCont"
           :page-size="pageInfo.pageSize"
@@ -108,31 +107,40 @@ export default {
     },
     // 获取列表数据
     getData(val) {
-      // else if (val === '查询' && Number(this.$refs.conditionsA.conditions.empCodes) === 1 && this.$refs.conditionsA.choosedEmpCodesArr.length === 0) {
-      //   this.$message({ type: 'warning', message: '请选择健康顾问' })
-      // }
-      if (
-        val === '查询' &&
-        Number(this.$refs.conditionsA.conditions.organizations) === 1 &&
-        this.$refs.conditionsA.choosedOrganizationsArr.length === 0
-      ) {
+      if (val === '查询' && Number(this.$refs.conditionsA.conditions.organizations) === 1 && this.$refs.conditionsA.choosedOrganizationsArr.length === 0) {
         this.$message({ type: 'warning', message: '请选择门店' })
       } else {
         var params = _.cloneDeep(this.$refs.conditionsA.conditions)
         // console.log(params)
-        var choosedEmpCodesArr = this.$refs.conditionsA.choosedEmpCodesArr // 已选择顾问
-        var choosedOrganizationsArr = this.$refs.conditionsA
-          .choosedOrganizationsArr // 已选择门店
+        const choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
+        const choosedEmployee = this.$refs.conditionsA.choosedEmployee // 已选择推荐员工
+        const choosedEmpSto = this.$refs.conditionsA.choosedEmpSto // 已选择推荐门店
         params.currentPage = this.pageInfo.currentPage
         params.pageSize = this.pageInfo.pageSize
         params.content = this.content
-        // 如果顾问为选择顾问
-        if (params.empCodes === '1') {
+        // 如果推荐来源为推荐门店或推荐员工
+        if (params.regLy === '1') { // 推荐门店
           var arr = []
-          choosedEmpCodesArr.map(items => {
+          if (choosedEmpSto.length === 0) {
+            this.$message({ type: 'warning', message: '请选择推荐门店' })
+            return
+          }
+          choosedEmpSto.map(items => {
+            arr.push(items.stCode)
+          })
+          params.regMedium = arr
+          params.regLy = null
+        } else if (params.regLy === '2') {
+          const arr = []
+          if (choosedEmployee.length === 0) {
+            this.$message({ type: 'warning', message: '请选择员工' })
+            return
+          }
+          choosedEmployee.map(items => {
             arr.push(items.empCode)
           })
-          params.empCodes = arr
+          params.regMedium = arr
+          params.regLy = null
         }
         // 如果门店参数为选择门店
         if (params.organizations === '1') {
@@ -203,23 +211,13 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
 .mc-list-model {
-  background-color: #f7f7f7;
-  height: calc(100vh - 160px);
   .header-title {
     background-color: #fff;
-    height: 60px;
-    line-height: 60px;
-    padding: 0 2%;
     font-size: 18px;
     font-weight: bold;
   }
   .body-content {
     background-color: #fff;
-    height: calc(100vh - 260px);
-    overflow-y: auto;
-    width: 96%;
-    margin: 20px auto;
-    padding: 20px;
     .showBtn {
       border-bottom: 1px solid #eee;
       text-align: right;
@@ -236,8 +234,8 @@ export default {
     // 分页
     .pagination {
       text-align: right;
-      padding: 10px 0;
-      margin-top: 10px;
+      position: relative;
+      top: 20px;
     }
   }
 }

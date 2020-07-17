@@ -32,6 +32,9 @@ export default {
       if (_.isEmpty(this.item.value)) {
         this.$set(this.item, 'selectList', _.cloneDeep(this.agaSelectList))
         this.$set(this.item, 'value', _.join(_.map(_.reject(this.agaSelectList, ['selected', false]), v => v.id), ','))
+        this.$set(this.item, 'chooseFlag', 0)
+      } else {
+        this.$set(this.item, 'chooseFlag', _.size(_.reject(this.item.selectList, ['selected', false])) === 5 ? 0 : 1)
       }
       this.isComponent = true
     }).catch(() => {

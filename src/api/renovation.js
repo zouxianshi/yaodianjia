@@ -21,7 +21,7 @@ class RenovationService {
     })
   }
 
-  homePageAdd(data) {
+  saveHomeSetting(data) {
     return request({
       url: `${this.serve}/1.0/homepage/add`,
       method: 'post',
@@ -45,6 +45,9 @@ class RenovationService {
     })
   }
 
+  /**
+   * 获取首页信息
+   */
   getHomePage(id) {
     return request({
       url: `${this.serve}/1.0/homepage/set/${id}`,
@@ -52,7 +55,10 @@ class RenovationService {
     })
   }
 
-  updateSetInfo(data) {
+  /**
+   * 更新首页设置
+   */
+  updateHomeSetting(data) {
     return request({
       url: `${this.serve}/1.0/homepage/updateSetInfo`,
       method: 'post',
@@ -60,6 +66,9 @@ class RenovationService {
     })
   }
 
+  /**
+   * 查看默认模板数据
+   */
   getDefaultTpl(type) {
     return request({
       url: `${this.serve}/1.0/homepage/queryDefault?type=${type}`,
@@ -67,6 +76,9 @@ class RenovationService {
     })
   }
 
+  /**
+   * 获取优惠券列表
+   */
   getHomeCoupon(data) {
     return request({
       url: `${this.serve}/1.0/home-coupon/_search`,

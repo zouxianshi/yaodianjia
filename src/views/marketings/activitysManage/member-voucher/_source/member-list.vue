@@ -260,7 +260,7 @@ export default {
       const formData = (this.infoForm)
       let params = {}
       if (formData.allMember === 1) {
-        this.params = {"allMember":1,"gender":null,"content":"","empCodes":null,"startBirthdayDay":"","endBirthdayDay":"","startDate":"","endDate":"","minIntegral":"","maxIntegral":"","gender":null,"month":null,"organizations":null}
+        this.params = { 'allMember': 1, 'content': '', 'empCodes': null, 'startBirthdayDay': '', 'endBirthdayDay': '', 'startDate': '', 'endDate': '', 'minIntegral': '', 'maxIntegral': '', 'gender': null, 'month': null, 'organizations': null }
         params = Object.assign({}, this.params, this.pageInfo)
       } else {
         params = Object.assign({}, this.params, this.pageInfo)
@@ -272,33 +272,33 @@ export default {
         } else {
           var data = []
           if (formData.ageInterval === 1) { // 不限年龄
-            params.startBirthdayDay = ""
-            params.endBirthdayDay = ""
+            params.startBirthdayDay = ''
+            params.endBirthdayDay = ''
           } else {
             if (formData.ageInterval[0] === 45) {
               const dateObj = new Date(new Date().getTime() - 86400000)
-              let year = dateObj.getFullYear() -45
-              let month = ((dateObj.getMonth() + 1) + '').padStart(2, '0')
-              let day = (dateObj.getDate()  + '').padStart(2, '0')
+              const year = dateObj.getFullYear() - 45
+              const month = ((dateObj.getMonth() + 1) + '').padStart(2, '0')
+              const day = (dateObj.getDate() + '').padStart(2, '0')
               data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
               params.startBirthdayDay = data[0].slice(0, 10)
-              params.endBirthdayDay = `${ year }-${ month }-${ day }`
+              params.endBirthdayDay = `${year}-${month}-${day}`
             } else {
               data = formatAge(formData.ageInterval[0], formData.ageInterval[1])
               params.startBirthdayDay = data[0].slice(0, 10)
               params.endBirthdayDay = data[1].slice(0, 10)
             }
-          } 
+          }
         }
         if (formData.lkTime === null) { // 自行选择领卡时间段
-          let times = formData.lkTimeQj[0]
-          let times2 = formData.lkTimeQj[1]
-          params.startDate = `${times.getFullYear()}-${('' + (times.getMonth() + 1) ).padStart(2, '0')}-${('' + times.getDate()).padStart(2, '0')} 00:00:00 `
-          params.endDate = `${times2.getFullYear()}-${('' + (times2.getMonth() + 1) ).padStart(2, '0')}-${('' + times2.getDate()).padStart(2, '0')} 23:59:59 `
+          const times = formData.lkTimeQj[0]
+          const times2 = formData.lkTimeQj[1]
+          params.startDate = `${times.getFullYear()}-${('' + (times.getMonth() + 1)).padStart(2, '0')}-${('' + times.getDate()).padStart(2, '0')} 00:00:00 `
+          params.endDate = `${times2.getFullYear()}-${('' + (times2.getMonth() + 1)).padStart(2, '0')}-${('' + times2.getDate()).padStart(2, '0')} 23:59:59 `
         } else {
           var data1 = []
           if (formData.lkTime === 1) { // 不限领卡时间段
-            data1 = ["", ""]
+            data1 = ['', '']
           } else {
             data1 = formatLkTime(formData.lkTime[0], formData.lkTime[1])
           }
@@ -309,8 +309,8 @@ export default {
           params.minIntegral = formData.pointsMin
           params.maxIntegral = formData.pointsMax
         } else {
-          params.minIntegral = ""
-          params.maxIntegral = ""
+          params.minIntegral = ''
+          params.maxIntegral = ''
         }
         params.gender = formData.sex
         params.month = formData.month ? formData.month > 10 ? '' + formData.month : '0' + formData.month : null
@@ -319,7 +319,7 @@ export default {
           params.organizations = []
           params.organizationsArr = []
           _.map(formData.shopArr, item => {
-            let obj = {
+            const obj = {
               stCode: item.stCode,
               stName: item.stName,
               address: item.province + item.city + item.area + item.address,

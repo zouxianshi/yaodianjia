@@ -13,11 +13,11 @@
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import mStep from './_source/step'
-import mStepBasics from './_source/stepBasics/stepBasics'
-import mStepAssembly from './_source/stepAssembly/stepAssembly'
-import mStepState from './_source/stepState/stepState'
-import mOperation from './_source/operation/operation'
+import mStep from './../../../renovation/home/settings/_source/step'
+import mStepDmBasics from './../../../renovation/home/settings/_source/stepBasics/stepDmBasics'
+import mStepAssembly from './../../../renovation/home/settings/_source/stepAssembly/stepAssembly'
+import mStepState from './../../../renovation/home/settings/_source/stepState/stepState'
+import mOperation from './../../../renovation/home/settings/_source/operation/operation'
 
 export default {
   name: 'HomeSettingsIndex',
@@ -29,7 +29,7 @@ export default {
   props: {},
   methods: {
     ...mapMutations('renovation', ['setStepVal', 'reset', 'setHomeLoading']),
-    ...mapActions('renovation', ['getHomePage', 'getAgaData']),
+    ...mapActions('renovation', ['getDMPage', 'getAgaData']),
     ...mapActions('mall', ['getCenterStoreId'])
   },
   watch: {},
@@ -44,7 +44,7 @@ export default {
       await this.getAgaData()
       if (!_.isEmpty(query)) {
         this.setStepVal(2)
-        this.getHomePage({ id: query.id }).then(() => {
+        this.getDMPage({ id: query.id }).then(() => {
           this.isComponent = true
           setTimeout(() => {
             this.setHomeLoading(false)
@@ -83,10 +83,10 @@ export default {
   },
   computed: {
     ...mapState('renovation', ['stepVal', 'homeLoading']),
-    mod() { // eslint-disable-line
+      mod() { // eslint-disable-line
       switch (this.stepVal) {
         case 1:
-          return mStepBasics
+          return mStepDmBasics
         case 2:
           return mStepAssembly
         case 3:

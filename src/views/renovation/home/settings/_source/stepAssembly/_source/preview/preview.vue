@@ -5,7 +5,7 @@
       <m-header />
     </div>
     <div class="scrollbar apm-drag-area">
-      <div class="apm-banner" @click="onBannerSet()">
+      <div v-if="isHome" class="apm-banner" @click="onBannerSet()">
         <m-vrf-error v-if="staticDragData.banner.error" :item="staticDragData.banner" />
         <m-banner :item-list="staticDragData.banner.itemList" />
       </div>
@@ -75,10 +75,9 @@ export default {
   name: 'SaPreview',
   data() {
     return {
+      isHome: this.$route.name === 'renovation-home-settings',
       bannerItem,
-      dragData: [
-
-      ]
+      dragData: []
     }
   },
   props: {},

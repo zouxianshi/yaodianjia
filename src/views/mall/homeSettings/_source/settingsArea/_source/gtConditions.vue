@@ -1,8 +1,8 @@
 <template>
   <div class="gt-conditions-model">
     <el-cascader placeholder="商品分组" :props="{children: 'children',label: 'name',value: 'id'}" :options="groupData" size="mini" @change="onChange" />
-    <el-input v-model.trim="searchParams.brandName" placeholder="商品品牌" size="mini" style="width: 172px;" />
-    <el-input v-model.trim="searchParams.erpOrName" placeholder="商品编码/名称" size="mini" style="width: 192px;" />
+    <el-input v-model.trim="searchParams.brandName" placeholder="商品品牌" size="mini" style="width: 154px;" />
+    <el-input v-model.trim="searchParams.erpOrName" placeholder="商品编码/名称" size="mini" style="width: 165px;" />
     <el-button type="primary" size="mini" @click="onSubmit">查询</el-button>
   </div>
 </template>

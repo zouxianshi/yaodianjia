@@ -3,14 +3,14 @@
     <el-table height="250" style="width: 100%" :data="selectedCoupons.slice((pageInfo.currentPage-1)*pageInfo.pageSize, pageInfo.currentPage*pageInfo.pageSize)">
       <el-table-column label="券类型" show-overflow-tooltip>
         <template slot-scope="scope">
-          {{ scope.row.ctype === 1 ? '折扣券' : scope.row.ctype === 2 ? '满减券' : '折扣券' }}
+          {{ scope.row.ctype === 1 ? '折扣券' : scope.row.ctype === 2 ? '满减券' : '礼品券' }}
         </template>
       </el-table-column>
       <el-table-column prop="cname" label="优惠券名称" show-overflow-tooltip />
       <el-table-column label="优惠内容" width="120" show-overflow-tooltip>
         <template
           slot-scope="scope"
-        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName,scope.row.cname) }}</template>
+        >{{ handleshopRule(scope.row.ctype,scope.row.useRule,scope.row.denomination,scope.row.giftName, scope.row.cname) }}</template>
       </el-table-column>
       <el-table-column label="使用时间" show-overflow-tooltip>
         <template slot-scope="scope">{{ handletimeRule(scope.row.timeRule,scope.row.effectTime) }}</template>

@@ -1,9 +1,9 @@
 <template>
-  <div class="sap-header-model">
+  <div class="sap-header-model" :class="{'is-dm':!isHome}">
     <div class="shm-page-title">
       <span>{{ basics.title }}</span>
     </div>
-    <div class="shm-search-name" @click="onSearchHint">
+    <div v-if="isHome" class="shm-search-name" @click="onSearchHint">
       <div class="shm-search-value">{{ basics.searchHint }}</div>
     </div>
   </div>
@@ -17,7 +17,9 @@ import { searchHintItem } from './../../../../default'
 export default {
   name: 'SapHeader',
   data() {
-    return {}
+    return {
+      isHome: this.$route.name === 'renovation-home-settings'
+    }
   },
   props: {},
   methods: {
@@ -55,6 +57,9 @@ export default {
     height: 124px;
     background: url('./../../img/header.png') no-repeat;
     position: relative;
+    &.is-dm {
+      height: 72px;
+    }
     .shm-page-title {
       text-align: center;
       padding-top: 50px;

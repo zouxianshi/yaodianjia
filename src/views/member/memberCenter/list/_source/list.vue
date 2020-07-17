@@ -1,6 +1,6 @@
 <template>
   <div class="list-model">
-    <el-table v-loading="loading" :data="tabelData" border style="width: 100%">
+    <el-table v-loading="loading" :data="tabelData" border style="width: 100%" height="calc(100vh - 480px)">
       <el-table-column label="微信头像" width="100" align="center">
         <template slot-scope="scope">
           <img v-if="scope.row.headUrl" class="headerImg" :src="scope.row.headUrl">
@@ -49,9 +49,9 @@
             <div class="more-items">
               <el-button type="text" size="mini" @click="handleUnbound(scope.row.userId)">解绑</el-button>
             </div>
-            <!-- <div class="more-items">
+            <div class="more-items">
               <el-button type="text" size="mini" @click="syncMemberToErp(scope.row)">同步至ERP</el-button>
-            </div> -->
+            </div>
             <el-button slot="reference" size="mini" type="text">更多</el-button>
           </el-popover>
         </template>
@@ -95,8 +95,8 @@ export default {
   methods: {
     syncMemberToErp(data) {
       const params = {
-        memberCards: [data.memberCard],
-        userIds: [data.userId]
+        'memberCards': [data.memberCard],
+        'userIds': [data.userId]
       }
       syncMemberToErp(params).then(res => {
         if (res.code === '10000') {

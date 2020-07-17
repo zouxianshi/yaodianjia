@@ -5,15 +5,15 @@
       <mSelectedCoupon
         v-show="selectedCoupons.length>0"
         ref="selectedCouponView"
-        maxHeigth="450px"
+        max-heigth="450px"
         @onDel="onGetSelectCoupon"
       />
     </div>
     <div style="position: absolute;bottom: 24px">
       <el-button @click="onStep(true)">上一步</el-button>
-      <el-button @click="onStep(false)">确定</el-button>
+      <el-button v-loading="isLoading" @click="onStep(false)">确定</el-button>
     </div>
-    <checkCoupon ref="checkCoupons" :maxLength="5" state="1" @confincheck="onGetSelectCoupon" />
+    <checkCoupon ref="checkCoupons" :max-length="5" state="1" @confincheck="onGetSelectCoupon" />
   </div>
 </template>
 <script>
@@ -26,7 +26,8 @@ export default {
   },
   data() {
     return {
-      selectedCoupons: []
+      selectedCoupons: [],
+      isLoading: false
     }
   },
   methods: {
@@ -54,9 +55,14 @@ export default {
             }
             arr.push(obj)
           })
+          this.isLoading = true
           this.$emit('nextstep', arr)
         }
       }
+    },
+    // 结束加载中
+    stopLoading() {
+      this.isLoading = false
     }
   }
 }

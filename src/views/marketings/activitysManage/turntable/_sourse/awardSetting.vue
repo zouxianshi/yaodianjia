@@ -27,7 +27,7 @@
                 :precision="2"
                 :step="1"
                 :min="0.01"
-                :max="100"
+                :max="(100 - totalGl + scope.row.winRandom)"
                 :controls="false"
                 style="width:70px"
               />
@@ -137,23 +137,16 @@
             :precision="2"
             :step="1"
             :min="0.01"
-            :max="100"
+            :max="(parseInt(10000 - (totalGl*100)))/100"
             :controls="false"
             style="width:400px"
           />
           <span style="display:inline-block; height: 34px; line-height: 34px; font-size: 16px;width: 30px;">％</span>
-          <span style="margin-left: 24px;color: #F56C6C">剩余概率：{{ (10000 - (totalGl*100))/100 }}%</span>
+          <span style="margin-left: 24px;color: #F56C6C">剩余概率：{{ (parseInt(10000 - (totalGl*100)))/100 }}%</span>
         </el-form-item>
         <el-form-item label="奖品数量" prop="giftNum">
           <!-- 在这 -->
-          <el-input
-            v-show="ruleForm.giftType === 5"
-            value="无限"
-            disabled
-            style="width:400px"
-          />
           <el-input-number
-            v-show="ruleForm.giftType !== 5"
             v-model="ruleForm.giftNum"
             :precision="0"
             :step="1"
@@ -316,7 +309,11 @@ export default {
   methods: {
     // 打开添加奖品弹窗
     addGifts() {
-      this.dialogVisible = true;
+      if (this.totalGl >= 100) {
+        this.$message.error('当前奖品概率已达到100%，请先修改后再添加奖项')
+        return false
+      }
+      this.dialogVisible = true
       this.ruleForm = {
         giftId: null, // 选择优惠券时的id
         giftType: 1, // 礼品类型
@@ -340,7 +337,9 @@ export default {
         this.ruleForm.giftContent = selectedCoupons[0].cname
       }
       this.selectedCoupons = selectedCoupons
-      this.$refs.selectedCouponView.showPage(selectedCoupons, 1)
+      if (this.$refs.selectedCouponView) {
+        this.$refs.selectedCouponView.showPage(selectedCoupons, 1)
+      }
     },
     goBack() {
       if (this.$route.query.code === 'TA003') {
@@ -409,7 +408,6 @@ export default {
             this.ruleForm.giftName = this.ruleForm.giftContent =
               this.ruleForm.giftContent + '海贝'
           } else if (this.ruleForm.giftType === 5) {
-            this.ruleForm.giftNum = -1
             this.ruleForm.giftName = this.ruleForm.giftContent
           } else {
             this.ruleForm.giftName = this.ruleForm.giftContent
