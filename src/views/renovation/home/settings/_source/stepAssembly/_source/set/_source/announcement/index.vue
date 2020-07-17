@@ -5,7 +5,7 @@
     </div>
     <div class="snm-choose">
       <el-radio-group v-model="itemParams.chooseFlag" @change="onChooseFlag">
-        <el-radio :label="0" style="margin-right: 80px">横线滚动</el-radio>
+        <el-radio :label="0" style="margin-right: 80px">横向滚动</el-radio>
         <el-radio :label="1">纵向滚动</el-radio>
       </el-radio-group>
     </div>

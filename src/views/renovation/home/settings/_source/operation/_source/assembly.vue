@@ -2,7 +2,7 @@
   <div class="operation-assembly-model">
     <el-button type="primary" size="small" :loading="isLoading" @click="isHome ? onSubmitHome('save') : onSubmitDm('save')">保存</el-button>
     <el-button v-if="isEdit" type="primary" plain size="small" @click="onPreviousStep">上一步</el-button>
-    <el-button type="primary" plain size="small" @click="isHome ? onSubmitHome('preview') : onSubmitDm('preview')">预览</el-button>
+    <el-button v-if="isPre" type="primary" plain size="small" @click="isHome ? onSubmitHome('preview') : onSubmitDm('preview')">预览</el-button>
     <el-button type="primary" plain size="small" @click="$router.push(isHome ? `/renovation/home/list` : `/marketings/dm/list`)">返回列表</el-button>
     <div>
       <el-dialog title="效果预览" append-to-body width="500px" :visible.sync="isPreview">
@@ -25,7 +25,8 @@ export default {
       isPreview: false,
       dimensionId: '',
       isLoading: false,
-      isHome: this.$route.name === 'renovation-home-settings'
+      isHome: this.$route.name === 'renovation-home-settings',
+      isPre: this.$route.name === 'renovation-home-settings' || _.has(this.$route.query, 'id')
     }
   },
   props: {},
@@ -131,6 +132,8 @@ export default {
   beforeCreate() {
   },
   created() {
+    console.log(this.$route)
+    console.log('-----this.$route')
   },
   beforeMount() {
   },
