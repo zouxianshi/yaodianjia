@@ -17,6 +17,7 @@ import member from './modules/member'
 import channel from './modules/channel'
 import auth from './modules/auth'
 import renovation from './modules/renovation'
+import factory from './modules/factory-live'
 
 import mall from './modules/mall'
 import { mUsersModule, mHomeModule } from '@merchant/commons'
@@ -88,7 +89,8 @@ export const asyncRoutes = [
   ...channel,
   ...auth,
   ...marketings,
-  ...renovation
+  ...renovation,
+  ...factory
 ]
 
 const createRouter = () => new Router({

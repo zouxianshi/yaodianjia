@@ -1,18 +1,6 @@
 <template>
   <div class="app-container">
     <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd('')">新建直播活动</el-button>
-    <!-- <section @keydown.enter="search()">
-      <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-        <div class="search-item">
-          <span class="label-name">直播主题</span>
-          <el-input v-model.trim="listQuery.keyword" size="small" style="width: 200px" />
-        </div>
-        <div class="search-item">
-          <el-button size="small" @click="search()">查 询</el-button>
-        </div>
-      </div>
-    </section>-->
-    <!-- <div id="qrcode" /> -->
     <section class="table-box webkit-scroll">
       <el-table
         v-loading="loading"
@@ -43,7 +31,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="beginTime" label="开播时间" min-width="180" align="center" />
-        <el-table-column :prop="duration" label="时长" min-width="180" align="center">
+        <el-table-column label="时长" min-width="180" align="center">
           <template slot-scope="scope">
             <span>{{ ChangeHourMinutestr(scope.row.duration) }}</span>
           </template>
@@ -197,6 +185,7 @@ export default {
      * 获取数据列表
      */
     async getList() {
+      this.listQuery.merType = 1 
       this.loading = true
       try {
         const { data } = await liveRequest.getLiveList(this.listQuery)

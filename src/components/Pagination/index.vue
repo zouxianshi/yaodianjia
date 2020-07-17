@@ -32,6 +32,7 @@ export default {
       type: Number,
       default: 20
     },
+
     pageSizes: {
       type: Array,
       default() {

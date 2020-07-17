@@ -13,12 +13,23 @@ export default [{
         {
             path: '/factory-live/list',
             component: () => import('@/views/factory-live/list'),
-            name: 'factory-live-lis',
+            name: 'factory-live-list',
             meta: {
-                title: '厂家直播列表',
+                title: '直播列表',
                 auth: '',
                 noCache: true,
                 activeMenu: '/factory-live/list'
+            }
+        },
+        {
+            path: '/factory-live/create',
+            component: () => import('@/views/factory-live/create'),
+            name: 'factory-live-create',
+            meta: {
+                title: '创建直播',
+                auth: '',
+                noCache: true,
+                activeMenu: '/factory-live/create'
             }
         }
     ]
