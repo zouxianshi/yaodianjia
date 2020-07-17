@@ -5,12 +5,12 @@
         ref="formData"
         :model="formData"
         :rules="rules"
-        label-width="120px"
+        label-width="150px"
         size="small"
         class="demo-ruleForm"
       >
         <div class="form-title">基础设置</div>
-        <el-form-item ref="name" label="活动名称" prop="name">
+        <el-form-item ref="name" label="活动名称：" prop="name">
           <el-input
             v-model="formData.name"
             :disabled="disabled"
@@ -18,7 +18,7 @@
             placeholder="活动名称不超过12字"
           />
         </el-form-item>
-        <el-form-item label="活动底图">
+        <el-form-item label="活动底图：">
           <el-radio-group v-model="formData.img" :disabled="disabled">
             <el-radio label="1">不添加</el-radio>
             <el-radio label="2">添加</el-radio>
@@ -87,7 +87,7 @@
             </div>
           </template>
         </el-form-item>
-        <el-form-item label="活动描述">
+        <el-form-item label="活动描述：">
           <el-input
             v-model="formData.description"
             type="textarea"
@@ -99,7 +99,7 @@
             placeholder="活动描述尽量精简，将会展示在商品副标题内"
           />
         </el-form-item>
-        <el-form-item ref="activitTime" label="活动时间" prop="activitTime">
+        <el-form-item ref="activitTime" label="活动时间：" prop="activitTime">
           <el-date-picker
             v-model="formData.activitTime"
             type="datetimerange"
@@ -112,7 +112,7 @@
             @change="handleTimeChange"
           />
         </el-form-item>
-        <el-form-item label="成团有效时间" prop="effectiveTime">
+        <el-form-item label="成团有效时间：" prop="effectiveTime">
           <div class="custom-input">
             <el-input-number
               v-model="formData.effectiveTime"
@@ -130,6 +130,17 @@
             <span style="color: rgb(193, 193, 193); margin-left: 4px">小时</span>
             <span style="color: rgb(193, 193, 193); margin-left: 4px">（设置开团后成团有效时间，过时则用户拼团失败）</span>
           </div>
+        </el-form-item>
+        <el-form-item label="拼团商品推广：" prop="isShowNormal">
+          <el-tooltip :content="'是否在普通商品详情页展示拼团信息: ' + (formData.isShowNormal?'是':'否')" placement="top">
+            <el-switch
+              v-model="formData.isShowNormal"
+              active-color="#147de8"
+              inactive-color="#e2e2e2"
+              :active-value="1"
+              :inactive-value="0"
+            />
+          </el-tooltip>
         </el-form-item>
         <div class="form-title">活动店铺</div>
         <!-- <el-form-item label="活动店铺" prop="allStore" required>
@@ -332,7 +343,8 @@ export default {
         allStore: false,
         startTime: '',
         endTime: '',
-        description: ''
+        description: '',
+        isShowNormal: 0
       },
       goodsList: [],
       rules: {
@@ -439,7 +451,8 @@ export default {
             allStore: !!(res.data && res.data.allStore),
             effectiveTime: res.data && res.data.effectiveTime,
             img: res.data && res.data.imgUrl ? '2' : '1',
-            imgUrl: res.data && res.data.imgUrl
+            imgUrl: res.data && res.data.imgUrl,
+            isShowNormal: res.data && res.data.isShowNormal ? 1 : 0
           }
           this.chooseStore =
             res.data && Array.isArray(res.data.storeResDTOList)

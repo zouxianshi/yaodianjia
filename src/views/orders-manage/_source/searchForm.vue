@@ -520,6 +520,7 @@ export default {
       } else {
         activeName = 'first'
       }
+      this.activeName = activeName
       this.$emit('changeTab', activeName)
       this.searchList()
     },

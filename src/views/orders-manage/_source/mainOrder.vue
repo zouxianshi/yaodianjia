@@ -35,14 +35,14 @@
           <template v-if="tableData && tableData.length>0">
             <div
               v-for="item in tableData"
-              :key="item.returnQuestId || item.serialNumber "
+              :key="item.returnQuestId || item.id "
               class="order-table-body"
             >
               <div class="order-detail-header">
                 <div class="header-left">
                   <div class="header-cell">订单编号：</div>
                   <div class="header-cell" style="margin-right: 8px">
-                    {{ item.serialNumber }}
+                    {{ item.id }}
                     <span v-if="item.orderType !== 'G'">
                       <span v-if="item.prescriptionSheetMark === '1'">(处方药订单)</span>
                       <span v-else>{{ item.orderType | orderType }}</span>

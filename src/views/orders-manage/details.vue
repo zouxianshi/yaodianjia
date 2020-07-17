@@ -4,7 +4,7 @@
       <div class="wrapper">
         <div class="item">
           <div class="item-left">
-            订单号：{{ detailsData.serialNumber }}
+            订单号：{{ detailsData.id }}
             <template
               v-if="detailsData.prescriptionSheetMark==='1'"
             >（{{ detailsData.prescriptionSheetMark | orderType }}）</template>
@@ -13,7 +13,7 @@
             <el-button
               type="primary"
               size="mini"
-              @click="handleSetPushErp(detailsData.serialNumber)"
+              @click="handleSetPushErp(detailsData.id)"
             >补推到ERP</el-button>
           </div>
         </div>
