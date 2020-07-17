@@ -71,23 +71,18 @@ export default {
       cutData: [],
       cols: [
         {
-          prop: 'picUrl',
+          prop: 'mainPic',
           label: '商品图片',
           type: 'img',
           render: true // 交给后续逻辑渲染
         },
         {
-          prop: 'erpCode',
+          prop: 'platformCode',
           label: '商品编码'
         },
         {
           prop: 'name',
           label: '商品名称'
-        },
-
-        {
-          prop: 'mprice',
-          label: '参考价(元)'
         },
         {
           prop: 'productName',
@@ -103,12 +98,11 @@ export default {
   },
   methods: {
     dataFrom(data) {
-      console.log('111111111111111111111', data)
       this.tableData = Array.isArray(data)
         ? data.map(item => {
           return {
             ...item,
-            productName: this.formatSkuInfo(item.specSkus || '')
+            productName: this.formatSkuInfo(item.specSkuList || '')
           }
         })
         : []
@@ -122,7 +116,6 @@ export default {
     handleCutData() {
       const { current, size } = this.pager
       console.log(
-        '1111111111',
         this.pager,
         this.tableData.slice((current - 1) * size, size)
       )

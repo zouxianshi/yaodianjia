@@ -15,29 +15,9 @@
           :model="searchForm"
           size="small"
           class="demo-form-inline"
-          @keydown.enter="_loadStoreData"
         >
-          <el-form-item label="商品分组">
-            <el-cascader
-              v-model="searchForm.typeid"
-              v-loading="typeTreeLoading"
-              :options="typeTree"
-              :props="merchantOption"
-              clearable
-              @change="onTypeChange"
-            />
-          </el-form-item>
-          <el-form-item label="商品品牌">
-            <el-input v-model.trim="searchForm.brandName" clearable placeholder="请输入商品品牌" />
-          </el-form-item>
           <el-form-item label="商品信息">
             <el-input v-model.trim="searchForm.searchKeyWord" clearable placeholder="商品编码/商品名称" />
-          </el-form-item>
-          <el-form-item v-show="false" label="活动开始时间">
-            <el-input v-model="searchForm.startTime" clearable />
-          </el-form-item>
-          <el-form-item v-show="false" label="活动结束时间">
-            <el-input v-model="searchForm.endTime" clearable />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="forSearch">查询</el-button>
@@ -60,7 +40,7 @@
           <el-table-column align="center" label="商品图片" min-width="60">
             <template slot-scope="scope">
               <div
-                v-if="scope.row.picUrl && scope.row.picUrl!==''"
+                v-if="scope.row.mainPic && scope.row.mainPic!==''"
                 class="x-img-mini"
                 style="width: 60px; height: 60px"
               >
@@ -68,8 +48,8 @@
                   <el-image
                     style="width: 60px; height: 60px"
                     fit="contain"
-                    :src="showImg(scope.row.picUrl)"
-                    :preview-src-list="[showImg(scope.row.picUrl)]"
+                    :src="showImg(scope.row.mainPic)"
+                    :preview-src-list="[showImg(scope.row.mainPic)]"
                   />
                 </div>
               </div>
@@ -82,7 +62,7 @@
             </template>-->
           </el-table-column>
           <el-table-column prop="name" label="商品名称" :show-overflow-tooltip="true" />
-          <el-table-column prop="erpCode" label="商品编码" :show-overflow-tooltip="true" />
+          <el-table-column prop="platformCode" label="商品编码" :show-overflow-tooltip="true" />
           <el-table-column
             prop="brandName"
             label="品牌"
@@ -91,21 +71,9 @@
           />
           <el-table-column label="规格信息" min-width="100" :show-overflow-tooltip="true">
             <template slot-scope="scope" :show-overflow-tooltip="true">
-              <div v-html="formatSkuInfo(scope.row.specSkus)" />
+              <div v-html="formatSkuInfo(scope.row.specSkuList)" />
             </template>
           </el-table-column>
-          <el-table-column
-            prop="mprice"
-            label="参考价格(元)"
-            min-width="60"
-            align="center"
-            :show-overflow-tooltip="true"
-          />
-          <!-- <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="primary" size="small" @click.stop="handleSelect(scope.row)">选取</el-button>
-          </template>
-          </el-table-column>-->
         </el-table>
         <div class="table-footer">
           <el-pagination
@@ -154,8 +122,7 @@
 </template>
 
 <script>
-import { getTypeTree } from '@/api/common'
-import { queryActivityCommGoods } from '@/api/activity'
+import { getProduct } from '@/api/factory-live'
 export default {
   name: 'DialogGoods',
   props: {
@@ -213,14 +180,12 @@ export default {
       // multipleSelection: [], //
       mySelectList: [],
       checkAll: false,
-      typeTree: [], // 分组数据
       // 商品分组设置
       merchantOption: {
         label: 'name',
         value: 'id',
         checkStrictly: true // 是否可以选择任一级
-      },
-      typeTreeLoading: false
+      }
     }
   },
   computed: {
@@ -232,12 +197,6 @@ export default {
     // 获取数据
     fetchData() {
       this._getTableData() // 统计列表
-      this._getTypeTree() // 分类类表
-    },
-    onTypeChange(typeid) {
-      // 分类切换
-      console.log('searchForm------', typeid)
-      this.forSearch()
     },
     // 调用打开方法；
     open() {
@@ -284,7 +243,6 @@ export default {
         })
         return false
       }
-      console.log('confirm', this.mySelectList)
       this.$emit('on-change', this.mySelectList)
       this.close()
     },
@@ -302,12 +260,10 @@ export default {
       this.reset()
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
       this.pager.size = val
       this._getTableData()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
       this.pager.current = val
       this._getTableData()
     },
@@ -364,7 +320,6 @@ export default {
     },
     // 选取store-4. table数据更新时(初次,切页面等), 根据 mySelectList 更新table的列表选中
     updateChecked() {
-      console.log('我准备回显数据------')
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
@@ -388,27 +343,18 @@ export default {
     },
     _getTableData() {
       this.loading = true
-      const [firstTypeId, secondTypeId, threeTypeId] = this.searchForm.typeid
       const params = {
-        brandName: this.searchForm.brandName,
-        searchKeyWord: this.searchForm.searchKeyWord,
-        currentPage: this.pager.current,
-        groupType: this.groupType,
         pageSize: this.pager.size,
-        firstTypeId,
-        secondTypeId,
-        threeTypeId,
-        merCode: this.merCode,
-        distinct: true,
-        storeIds: this.storeIds
+        currentPage: this.pager.current,
+        name: this.searchForm.searchKeyWord,
+        hasSpec: true
       }
-
-      queryActivityCommGoods(params)
+      getProduct(params)
         .then(res => {
+          console.log(res)
           if (res.code === '10000' && res.data) {
             this.tableData = res.data.data || []
             this.pager.total = res.data.totalCount
-            console.log('我获取玩列表了--------')
             this.$nextTick(() => {
               this.updateChecked()
             })
@@ -420,29 +366,7 @@ export default {
         .catch(e => {
           this.loading = false
         })
-    },
-    _getTypeTree() {
-      const params = {
-        // dimensionId: '',
-        merCode: this.merCode,
-        type: 2, //	integer($int32)类型，1-分类，2-分组
-        use: true
-      }
-      this.typeTreeLoading = true
-      getTypeTree(params)
-        .then(res => {
-          if (res.code === '10000' && res.data) {
-            this.typeTree = res.data
-          } else {
-            this.typeTree = []
-          }
-          this.typeTreeLoading = false
-        })
-        .catch(res => {
-          this.typeTreeLoading = false
-        })
-    },
-    handleOpenStore() {}
+    }
   }
 }
 </script>

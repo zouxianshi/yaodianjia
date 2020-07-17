@@ -36,7 +36,9 @@
           <el-button @click="startLive(scope.row.id)" type="text">
             <i class="el-icon-video-camera" />
           </el-button>
-          <el-button type="text" size="small">编辑</el-button>
+          <el-button type="text" size="small">
+            <i class="el-icon-delete"></i>
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
