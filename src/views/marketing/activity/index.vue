@@ -218,9 +218,9 @@ export default {
         {
           value: 'Squeegee',
           name: 'SqueeGee',
-          listLabel: '刮刮乐列表',
           lable: '刮刮乐',
           desc: '刮刮刮，商户可以建立多场刮刮乐活动，用户满足一定条件门槛后便可参与刮奖活动，简单又好玩',
+          listLabel: '刮刮乐列表',
           img: SqueeGee,
           listUrl: '/marketings/activity-manage/turntable/guaList?code=TA004&name=刮刮乐',
           linkUrl: '/marketings/activity-manage/turntable/add?code=TA004'
@@ -250,6 +250,7 @@ export default {
           linkUrl: '/activity/exchangeMallAdd'
         },
         {
+          createText: '',
           name: 'signGift',
           lable: '签到设置',
           desc: '设置不同模式签到奖励，激励用户每天签到，获取海贝，增加用户粘性，鼓励海贝兑换商品，增进销售。',
