@@ -5,13 +5,13 @@
       <span class="cfim-text-1">已选：{{ itemList.length }}</span>
     </div>
     <div class="cfim-item-box">
-      <table>
-        <tr v-for="(el,$index) in itemList" :key="$index">
-          <td width="60"><img class="cfim-good-img" :src="showImg(el.img)"></td>
-          <td><span class="cfim-good-name">{{ truName(el.name) }}</span></td>
-          <td width="50"><el-button type="text" :disabled="source === 'adFrame' ? itemList.length <= 3 : false" @click="onItemDelete($index)">删除</el-button></td>
-        </tr>
-      </table>
+      <v-draggable v-model="itemList" draggable=".cfim-item" v-bind="dragOptions" @end="onEnd">
+        <div v-for="(el,$index) in itemList" :key="$index" class="cfim-item">
+          <div class="cfim-good-pic"><img :src="showImg(el.img)"></div>
+          <div class="cfim-good-name">{{ tru(el.name,12) }}</div>
+          <div class="cfim-good-del"><el-button type="text" :disabled="source === 'adFrame' ? itemList.length <= 3 : false" @click="onItemDelete($index)">删除</el-button></div>
+        </div>
+      </v-draggable>
     </div>
     <el-drawer :wrapper-closable="false" destroy-on-close	append-to-body size="700px" :visible.sync="dialogVisible">
       <div slot="title">选择商品 <span class="sa-mandatory-asterisk">*</span></div>
@@ -20,6 +20,7 @@
   </div>
 </template>
 <script>
+import vDraggable from 'vuedraggable'
 import { itemParams } from './../../../../../default'
 import mGoodsTable from '@/views/mall/homeSettings/_source/settingsArea/_source/goodsTable'
 export default {
@@ -41,8 +42,11 @@ export default {
     }
   },
   methods: {
-    truName(v) {
-      return _.truncate(v, { 'length': 18, 'omission': '...' })
+    onEnd() {
+      this.$emit('on-update', this.itemList)
+    },
+    tru(key, length) {
+      return _.truncate(key, { 'length': length, 'omission': '' })
     },
     onItemDelete(i) {
       this.$emit('on-el-delete', i)
@@ -99,6 +103,18 @@ export default {
   destroyed() {
   },
   computed: {
+    dragOptions() {
+      return {
+        animation: 150,
+        disabled: false,
+        ghostClass: 'ghost',
+        group: {
+          put: false,
+          name: 'shared',
+          pull: 'clone'
+        }
+      }
+    },
     cpdSubType() {
       const { subType } = this.item
       switch (subType) {
@@ -113,7 +129,7 @@ export default {
       }
     }
   },
-  components: { mGoodsTable }
+  components: { mGoodsTable, vDraggable }
 }
 </script>
 
@@ -128,32 +144,40 @@ export default {
     }
     .cfim-item-box {
       margin-top: 10px;
-      table {
-        width: 100%;
-        tr {
-          td {
-            height: 52px;
+      .cfim-item {
+        height: 40px;
+        line-height: 40px;
+        overflow: hidden;
+        margin-bottom: 10px;
+        cursor: pointer;
+        &:hover {
+          .cfim-good-name {
+            color: #147de8;
           }
         }
-      }
-      .cfim-good-img {
-        width: 42px;
-        height:42px;
-        border: 1px solid #F0F0F0;
-        padding: 4px;
-      }
-      .cfim-good-name {
-        font-size: 14px;
-        color: #4A4A4A;
-        line-height: 52px;
-      }
-      .cfim-good-delete {
-        font-size: 14px;
-        color: #4F88FF;
-        line-height: 52px;
-        display: block;
-        text-align: center;
-        cursor: pointer;
+        .cfim-good-pic {
+          width: 42px;
+          float: left;
+          >img {
+            width: 40px;
+            height: 40px;
+            display: block;
+            border: 1px solid #F0F0F0;
+            padding: 2px;
+          }
+        }
+        .cfim-good-name {
+          width: calc(100% - 82px);
+          float: left;
+          font-size: 14px;
+          color: #4A4A4A;
+          line-height: 40px;
+          margin-left: 8px;
+        }
+        .cfim-good-del {
+          float: left;
+          width: 30px;
+        }
       }
     }
   }

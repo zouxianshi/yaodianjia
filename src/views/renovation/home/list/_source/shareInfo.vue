@@ -33,6 +33,7 @@
 import mixins from './mixins'
 import { checkName } from '@/utils/validate'
 import RenovationService from '@/api/renovation'
+import MarketingsService from '@/api/marketings'
 
 const vefDesc = (rule, value, callback) => {
   if (checkName(value)) {
@@ -51,6 +52,10 @@ export default {
       default: () => {
         return []
       }
+    },
+    sourceType: {
+      type: String,
+      default: 'home'
     }
   },
   data() {
@@ -97,7 +102,7 @@ export default {
           const data = { ids: this.ids, ...this.formData }
           try {
             this.saveLoading = true
-            await RenovationService.updateShareInfo(data)
+            this.sourceType === 'home' ? await RenovationService.updateShareInfo(data) : await MarketingsService.updateShareInfo(data)
             this.$message({
               message: '设置成功',
               type: 'success'

@@ -1,7 +1,7 @@
 <template>
   <div class="set-navigation-model">
     <div class="set-view-ass">
-      <component :is="mod" :item="itemParams" :active="`navigation_${selectIndex}`" @on-select="onSelect" @on-create="onCreate" />
+      <component :is="mod" source-type="set" :item="itemParams" :active="`navigation_${selectIndex}`" @on-drag="onDrag" @on-select="onSelect" @on-create="onCreate" />
     </div>
     <div class="snm-view">
       <m-item-card :title="el.name ? el.name : `导航${selectIndex + 1}`" :is-delete="itemParams.itemList.length > (itemParams.subType === 'first' ? 4 : 5)" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete">
@@ -34,6 +34,9 @@ export default {
     }
   },
   methods: {
+    onDrag() {
+      this.onSelect({ el: {}, i: 0 })
+    },
     onElUpdate(item) {
       this.$set(this.itemParams.itemList, this.selectIndex, item)
     },

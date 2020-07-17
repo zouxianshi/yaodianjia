@@ -3,7 +3,7 @@
     <div class="safm-left-bg" />
     <div class="safm-right-bg" />
     <div class="safm-box">
-      <m-notice text-color="#3E3E3E" :item-list="itemList" />
+      <m-notice text-color="#3E3E3E" :item-list="itemList" :choose-flag="item.chooseFlag" />
     </div>
   </div>
 </template>

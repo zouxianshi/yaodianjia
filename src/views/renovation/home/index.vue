@@ -11,7 +11,7 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .renovation-home-model {
     background:#F5F8FB;
-    height: calc(100vh - 182px);
+    height: calc(100vh - 201px);
     margin: -20px;
   }
 </style>
