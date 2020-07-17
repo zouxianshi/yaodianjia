@@ -134,25 +134,29 @@ export const defaultParams = {
     error: false,
     max: 10,
     typeName: '公告',
-    name: '默认样式'
+    name: '默认样式',
+    chooseFlag: 0
   },
   'announcement_second': {
     error: false,
     max: 10,
     typeName: '公告',
-    name: '样式风格1'
+    name: '样式风格1',
+    chooseFlag: 0
   },
   'announcement_third': {
     error: false,
     max: 10,
     typeName: '公告',
-    name: '样式风格2'
+    name: '样式风格2',
+    chooseFlag: 0
   },
   'announcement_four': {
     error: false,
     max: 10,
     typeName: '公告',
-    name: '样式风格3'
+    name: '样式风格3',
+    chooseFlag: 0
   },
   'recommend_first': {
     error: false,
@@ -219,6 +223,7 @@ export const defaultParams = {
   }
 }
 
+// All activities enum
 export const agaSelectList = [
   {
     type: 'together',
@@ -252,6 +257,7 @@ export const agaSelectList = [
   }
 ]
 
+// handler backfill json
 export const handlerBackfill = data => {
   const newList = []
 
@@ -261,6 +267,14 @@ export const handlerBackfill = data => {
       uuid: `${uuid(`${v.type}-`)}${uuid()}${uuid()}${uuid()}`,
       ..._.cloneDeep(defaultParams[`${v.type}_${v.subType}`])
     }
+
+    if (v.type === 'announcement') {
+      v1 = {
+        ...v1,
+        chooseFlag: v.chooseFlag
+      }
+    }
+
     if (v.type === 'activityAggregate') {
       const is = id => _.split(v.value, ',').includes(id)
       const selectList = _.map(_.cloneDeep(store.state.renovation.agaSelectList), vv1 => {
@@ -306,7 +320,6 @@ export const handlerBackfill = data => {
     }
     newList.push(v1)
   })
-
   return newList
 }
 

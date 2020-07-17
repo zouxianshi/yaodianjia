@@ -3,7 +3,7 @@
     <div class="satm-left-bg" />
     <div class="satm-right-bg" />
     <div class="satm-box">
-      <m-notice text-color="#FF8C2F" :item-list="itemList" />
+      <m-notice text-color="#FF8C2F" :item-list="itemList" :choose-flag="item.chooseFlag" />
     </div>
   </div>
 </template>

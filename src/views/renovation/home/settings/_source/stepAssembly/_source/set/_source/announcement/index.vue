@@ -3,6 +3,12 @@
     <div class="set-view-ass" style="width: 340px">
       <component :is="mod" :item="itemParams" @on-create="onCreate" />
     </div>
+    <div class="snm-choose">
+      <el-radio-group v-model="itemParams.chooseFlag" @change="onChooseFlag">
+        <el-radio :label="0" style="margin-right: 80px">横线滚动</el-radio>
+        <el-radio :label="1">纵向滚动</el-radio>
+      </el-radio-group>
+    </div>
     <div class="snm-view">
       <template v-for="(el,i) in itemParams.itemList">
         <m-item-card :key="i" :title="`公告${i + 1}`" :is-submit="i === itemParams.itemList.length - 1" :is-delete="(itemParams.itemList.length - 1) > 0" @on-ass-submit="onAssSubmit" @on-ass-delete="onAssDelete(i)">
@@ -38,6 +44,9 @@ export default {
     }
   },
   methods: {
+    onChooseFlag() {
+      console.log(this.itemParams)
+    },
     onAddBanner() {
       this.itemParams.itemList.push(_.cloneDeep(itemParams))
     },
@@ -102,5 +111,10 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss">
   .set-announcement-model {
+    .snm-choose {
+      width: 270px;
+      margin: 20px auto 0 auto;
+      text-align: center;
+    }
   }
 </style>
