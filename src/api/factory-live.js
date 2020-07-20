@@ -19,3 +19,18 @@ export function getProduct(params) {
     data: params
   })
 }
+export function factoryTotalData() {
+  return request({
+    url: `${config.merGoods}/1.0/statistics/factoryTotalData`,
+    method: 'get'
+  })
+}
+// 厂家历史直播场次列表
+export function factoryList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/statistics/history/factoryList`,
+    method: 'post',
+    data: params
+  })
+}
+

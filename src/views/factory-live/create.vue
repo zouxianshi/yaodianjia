@@ -3,21 +3,10 @@
     <div class="info-title">基本信息</div>
     <el-form :model="liveForm" ref="liveForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="直播头像：">
-        <el-upload
-          size="mini"
-          class="avatar-uploader"
-          :action="upLoadUrl"
-          :headers="headers"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
           <img v-if="liveForm.merLogoUrl" :src="showImg(liveForm.merLogoUrl)" class="avatar" />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
       </el-form-item>
       <el-form-item label="直播名称：">
-        <el-input size="mini" v-model="liveForm.merName" style="width:400px" />
+        <el-input size="mini" v-model="liveForm.merName" style="width:400px" disabled />
       </el-form-item>
       <el-form-item label="直播主题：" prop="name">
         <el-input size="mini" v-model="liveForm.name" style="width:400px" />
@@ -66,11 +55,11 @@
         <selectedGoods ref="storeGods" @del-item="delSelectGoods" v-show="liveForm.commoditySpecList.length>0" />
       </el-form-item>
       <el-form-item label="直播奖励：" prop="name">
-        成交<el-input-number size="mini" :min="0" :max="99999" :precision="0" :controls="false"></el-input-number>
-        奖励<el-input-number size="mini" :min="0" :max="99999" :precision="0" :controls="false"></el-input-number>
+        成交<el-input-number size="mini" :min="0" :max="99999" :precision="0" :controls="false" v-model="liveForm.prizeRule"></el-input-number>
+        奖励<el-input-number size="mini" :min="0" :max="99999" :precision="0" :controls="false" v-model="liveForm.prizeAmount"></el-input-number>
       </el-form-item>
       <el-form-item label="订阅门槛：" prop="name">
-        <el-select v-model="liveForm.menkan" placeholder="请选择" size="mini">
+        <el-select v-model="liveForm.subscribeLimitType" placeholder="请选择" size="mini">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -81,7 +70,7 @@
       </el-form-item>
       <el-form-item label="图文信息：" prop="name">
         <Tinymce
-          v-model="liveForm.intro"
+          v-model="liveForm.graphicDetails"
           :height="400"
         />
       </el-form-item>
@@ -104,6 +93,7 @@ import { formatDate } from '@/utils/timer'
 import { mapGetters } from 'vuex'
 import config from '@/utils/config'
 import LiveRequest from '@/api/live'
+import { merchantDetail } from '@/api/merchant_Person_Api' // 商户信息
 import { getProduct } from '@/api/factory-live'
 import Tinymce from '@/components/Tinymce'
 import selectedGoods from './_source/selected-goods'
@@ -124,8 +114,10 @@ export default {
         liveIntroduce: '', // 直播简介
         activityNotice: '',
         commoditySpecList: [], //商品信息
-        menkan: 0, //订阅门槛
-        intro: '' // 图文详情
+        prizeAmount: '', // 奖励金额
+        prizeRule: '', // 奖励规则
+        subscribeLimitType: 0, //订阅门槛
+        graphicDetails: '' // 图文详情
       },
       // 订阅门槛
       options:[
@@ -136,7 +128,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['merCode', 'token']),
+    ...mapGetters(['merCode', 'token', 'user']),
     upLoadUrl() { // 图片上传路径
       return `${this.uploadFileURL}${config.merGoods}/1.0/file/_uploadImgAny?merCode=${this.merCode}`
     },
@@ -144,14 +136,31 @@ export default {
       return { Authorization: this.token }
     }
   },
-  created() {},
+  created() {
+    console.log(this.$route.query)
+    const  querys = this.$route.query
+    if (querys.id) { // 编辑
+      LiveRequest.getLiveInfo(querys.id).then(res => {
+        console.log(res)
+        _.map(res.data.commoditys, goods => {
+          goods.mainPic = goods.picUrl
+        })
+        this.liveForm = Object.assign(this.liveForm, res.data)
+        this.liveForm.commoditySpecList = res.data.commoditys
+        this.$refs.storeGods.dataFrom(this.liveForm.commoditySpecList)
+      })
+    } else {
+      merchantDetail().then(res => {
+        console.log(res)
+        if (res.code === '10000') {
+          this.liveForm.merLogoUrl = res.data.merLogo
+          this.liveForm.merName = res.data.merName
+        }
+      })
+    }
+  },
   methods: {
-    handleAvatarSuccess(res, file) {
-      console.log(res)
-      this.liveForm.merLogoUrl = res.data
-    },
     handleAvatarSuccess1(res, file) {
-      console.log(res)
       this.liveForm.coverPicUrl = res.data
     },
     beforeAvatarUpload(file) {
@@ -179,10 +188,32 @@ export default {
     saveLive() {
       const params = _.cloneDeep(this.liveForm)
       params.beginTime = formatDate(params.beginTime)
-      console.log(params)
-      LiveRequest.createLive(params).then(res => {
-        console.log(res)
-      })
+      if (this.$route.query.id) {
+       LiveRequest.updateLiveInfo(params).then(res => {
+         if (res.code === '10000') {
+          this.$message({
+            type: 'success',
+            message: '修改成功！'
+          })
+          this.$router.push('/factory-live/list')
+        }
+       })
+      } else {
+        _.map(params.commoditySpecList, goods => {
+          goods.picUrl = goods.mainPic ? goods.mainPic : ''
+          goods.merCode = this.merCode
+          goods.specStr = goods.specSkuList ? (goods.specSkuList[0].skuKeyName + ': ' + goods.specSkuList[0].skuValue) : ''
+        })
+        LiveRequest.createLive(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              type: 'success',
+              message: '添加成功！'
+            })
+            this.$router.push('/factory-live/list')
+          }
+        })
+      }
     }
   }
 }

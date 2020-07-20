@@ -17,13 +17,13 @@
           :prop="col.prop"
         >
           <template slot-scope="scope">
-            <div v-if="scope.row.picUrl && scope.row.picUrl!==''" style="width: 60px; height: 60px">
+            <div v-if="scope.row.mainPic && scope.row.mainPic!==''" style="width: 60px; height: 60px">
               <div class="x-image__preview">
                 <el-image
                   style="width: 60px; height: 60px"
                   fit="contain"
-                  :src="showImg(scope.row.picUrl)"
-                  :preview-src-list="[showImg(scope.row.picUrl)]"
+                  :src="showImg(scope.row.mainPic)"
+                  :preview-src-list="[showImg(scope.row.mainPic)]"
                 />
               </div>
             </div>
@@ -77,7 +77,7 @@ export default {
           render: true // 交给后续逻辑渲染
         },
         {
-          prop: 'platformCode',
+          prop: 'id',
           label: '商品编码'
         },
         {
@@ -102,7 +102,7 @@ export default {
         ? data.map(item => {
           return {
             ...item,
-            productName: this.formatSkuInfo(item.specSkuList || '')
+            productName: this.formatSkuInfo(item.specSkuList) || item.specStr
           }
         })
         : []
@@ -115,10 +115,6 @@ export default {
     // 获取数据源
     handleCutData() {
       const { current, size } = this.pager
-      console.log(
-        this.pager,
-        this.tableData.slice((current - 1) * size, size)
-      )
       this.cutData = this.tableData.slice((current - 1) * size, size * current)
     },
     // 格式化规格信息

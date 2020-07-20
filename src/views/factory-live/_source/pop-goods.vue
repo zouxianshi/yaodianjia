@@ -323,7 +323,7 @@ export default {
       const currentCheckedList = []
       this.tableData.forEach(item => {
         const index = this.mySelectList.findIndex(mItem => {
-          return mItem.specId === item.specId
+          return Number(mItem.specId) === item.specId
         })
         if (index > -1) {
           currentCheckedList.push(item)

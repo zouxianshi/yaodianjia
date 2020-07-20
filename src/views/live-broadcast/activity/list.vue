@@ -46,7 +46,7 @@
         </el-table-column>
 
         <el-table-column label="数量" prop="commodityNum" min-width="80" align="center" />
-        <el-table-column prop="remark" label="直播视频" min-width="120" align="center">
+        <el-table-column label="直播视频" min-width="120" align="center">
           <template slot-scope="scope">
             <div style="display:flex;justify-content: center;">
               <div class="cover">

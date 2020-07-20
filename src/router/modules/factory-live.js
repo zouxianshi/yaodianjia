@@ -15,7 +15,7 @@ export default [{
             component: () => import('@/views/factory-live/list'),
             name: 'factory-live-list',
             meta: {
-                title: '直播列表',
+                title: '厂家直播列表',
                 auth: '',
                 noCache: true,
                 activeMenu: '/factory-live/list'
@@ -26,10 +26,21 @@ export default [{
             component: () => import('@/views/factory-live/create'),
             name: 'factory-live-create',
             meta: {
-                title: '创建直播',
+                title: '厂家直播',
                 auth: '',
                 noCache: true,
                 activeMenu: '/factory-live/create'
+            }
+        },
+        {
+            path: '/factory-live/dataCenter',
+            component: () => import('@/views/factory-live/dataCenter/index'),
+            name: 'factory-live-dataCenter',
+            meta: {
+                title: '数据中心',
+                auth: '',
+                noCache: true,
+                activeMenu: '/factory-live/dataCenter'
             }
         }
     ]
