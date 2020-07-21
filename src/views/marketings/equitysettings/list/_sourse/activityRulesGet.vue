@@ -295,7 +295,7 @@
             <template v-if="forms.unit === '3'">
               <el-form-item ref="startTime" prop="startTime">
                 <el-date-picker
-                  v-model="forms.customTime.startTime"
+                  v-model="forms.startTime"
                   type="datetime"
                   placeholder="不限制"
                   clearable
@@ -304,7 +304,7 @@
               <span style="margin: 0 10px">-</span>
               <el-form-item ref="endTime" prop="endTime">
                 <el-date-picker
-                  v-model="forms.customTime.endTime"
+                  v-model="forms.endTime"
                   type="datetime"
                   placeholder="不限制"
                   clearable
@@ -363,10 +363,8 @@ export default {
         unit: '0',
         weekTime: '',
         monthTime: '',
-        customTime: {
-          startTime: '',
-          endTime: ''
-        }
+        startTime: '',
+        endTime: ''
       },
       ImgexAmount,
       ImgexNum,
@@ -413,6 +411,24 @@ export default {
           this.pageLoading = false
           if (res.code === '10000') {
             const { data } = res
+            let unit = '0'
+            let weekTime = ''
+            let monthTime = ''
+            let startTime = ''
+            let endTime = ''
+            if (data.rateExchangeRule && data.rateExchangeRule.rateEffectType) {
+              unit = data.rateExchangeRule.rateEffectType + ''
+              if (data.rateExchangeRule.rateEffectType * 1 === 1) {
+                weekTime = data.rateExchangeRule.rateEffectArray.split(',')
+              } else if (data.rateExchangeRule.rateEffectType * 1 === 2) {
+                monthTime = data.rateExchangeRule.rateEffectArray.split(',')
+              }
+            }
+            if (data.rateExchangeRule) {
+              startTime = data.rateExchangeRule.rateEffectBeginTime || ''
+              endTime = data.rateExchangeRule.rateEffectEndTime || ''
+            }
+            console.log('222222')
             this.forms = {
               ...this.forms,
               numberChange:
@@ -424,26 +440,16 @@ export default {
                   ? data.amountExchangeRules
                   : [],
               amountAreaChange:
-                data && data.fixedAmountRule
-                  ? [data.fixedAmountRule]
-                  : [],
-              rate: data.rate || 1,
-              unit: data.rateEffectType || '0',
-              weekTime:
-                data.rateEffectType === '1'
-                  ? data.rateEffectArray.split(',')
-                  : [],
-              monthTime:
-                data.rateEffectType === '2'
-                  ? data.rateEffectArray.split(',')
-                  : [],
-              customTime: {
-                startTime: data.rateEffectBeginTime,
-                endTime: data.rateEffectEndTime
-              }
+                data && data.fixedAmountRule ? [data.fixedAmountRule] : [],
+              rate: (data.rateExchangeRule && data.rateExchangeRule.rate) || 1,
+              unit,
+              weekTime,
+              monthTime,
+              startTime,
+              endTime
             }
-
             this.leftTimes = data && data.limitModifyTimes
+            console.log('1111111111111111111')
           }
         })
         .catch(() => {
@@ -632,14 +638,14 @@ export default {
             merCode: this.merCode,
             numberExchangeRules,
             fixedAmountRule: amountAreaExchangeRules[0],
-            rateExchangeRules: {
+            rateExchangeRule: {
               ruleType: 2,
               merCode: this.merCode,
               rate: this.forms.rate,
               rateEffectType: this.forms.unit,
               rateEffectArray, // 生效时间-保存周/月生效时间
-              rateEffectBeginTime: this.forms.customTime.startTime, // 生效时间-自定义开始时间
-              rateEffectEndTime: this.forms.customTime.endTime // 生效时间-自定义结束时间
+              rateEffectBeginTime: this.forms.startTime, // 生效时间-自定义开始时间
+              rateEffectEndTime: this.forms.endTime // 生效时间-自定义结束时间
             }
           }
           console.log('要上传的参数---', params)
