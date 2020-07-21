@@ -12,6 +12,15 @@ export function searchLiveData(params) {
     data: params
   })
 }
+
+// 删除直播
+export function deleteLive(liveId) {
+  return request({
+    url: `${config.merGoods}/1.0/activity/delete?liveId=${liveId}`,
+    method: 'get'
+  })
+}
+
 export function getProduct(params) {
   return request({
     url: `${config.merchandise}/1.0/product/_search`,
@@ -34,3 +43,39 @@ export function factoryList(params) {
   })
 }
 
+// 编辑厂家直播
+export function updateLiveInfo(params) {
+  return request({
+    url: `${config.merGoods}/1.0/activity/factoryEdit`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 单场直播订阅详情
+export function subscriptionList(params) {
+  return request({
+    url: `${config.merGoods}/1.0/statistics/subscribe/list?liveId=${params.id}`,
+    method: 'get'
+  })
+}
+
+// 查询商户可订阅的所有厂家直播
+
+export function subscribeableFactoryLive(params) {
+  return request({
+    url: `${config.merGoods}/1.0/factoryLive/list`,
+    method: 'post',
+    data: params,
+    noMerCode: true
+  })
+}
+
+// 订阅厂家直播
+export function subLive(params) {
+  return request({
+    url: `${config.merGoods}/1.0/factoryLive/subscribe/${params.merCode}/${params.liveId}`,
+    method: 'get',
+    noMerCode: true
+  })
+}

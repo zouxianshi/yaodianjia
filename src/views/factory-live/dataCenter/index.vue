@@ -26,7 +26,7 @@
           </div>
           <div class="box-list">
             <p class="nums">
-              {{ totaldata.totalOrderNum || 0 }}
+              {{ totaldata.totalVisitOrderRate || 0 }}
               <span>&nbsp;%</span>
             </p>
             <p>总用户成交率</p>
@@ -49,42 +49,58 @@
         </el-card>
       </div>
       <section class="table-box webkit-scroll">
-        <el-table :data="tableData" style="width: 100% ;" height="calc(100vh - 380px)">
+        <el-table :data="tableData" style="width: 100% ;" height="calc(100vh - 390px)">
           <el-table-column label="序号" width="60" type="index" align="center" />
-          <el-table-column prop="name" label="主播主题" min-width="180" align="center" />
-          <el-table-column prop="duration" label="直播封面" min-width="100" align="center">
+          <el-table-column prop="name" label="主题" min-width="180" align="center" />
+          <el-table-column prop="duration" label="封面" min-width="100" align="center">
             <template slot-scope="scope">
               <img :src="showImg(scope.row.coverPicUrl)" style="width:100px;height:60px">
             </template>
           </el-table-column>
-          <el-table-column label="直播时间" min-width="180" align="center">
+          <el-table-column label="开播时间" min-width="180" align="center">
             <template slot-scope="scope">
               <p>{{ scope.row.realBeginTime }}</p>
-              <p>{{ scope.row.endTime }}</p>
+              <!-- <p>{{ scope.row.endTime }}</p> -->
             </template>
           </el-table-column>
-          <el-table-column label="直播时长" min-width="180" align="center">
+          <el-table-column label="时长" min-width="180" align="center">
             <template slot-scope="scope">
-              <p>{{ scope.row.duration }}分钟</p>
+              <p v-if="scope.row.duration">{{ scope.row.duration }}分钟</p>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="url" label="成交金额" min-width="240" />
-          <el-table-column label="数量" min-width="80" align="center" />
-          <el-table-column prop="remark" label="直播视频" min-width="120" align="center" />-->
-          <el-table-column label="操作" fixed="right" align="center" min-width="240">
+          <el-table-column label="相关商品" min-width="180" align="center">
             <template slot-scope="scope">
-              <!-- <el-button size="mini" type="text" @click="handleEdit(scope.row)">开播</el-button> -->
+              <el-button type="text" @click="getGoods(scope.row.id)">查看商品</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="商品数" min-width="180" align="center" prop="commodityNum">
+          </el-table-column>
+          <el-table-column label="订阅数" min-width="180" align="center" prop="subscriptionNum">
+            <template slot-scope="scope">
+              <el-button type="text" @click="getSubscription(scope.row.id)">
+                {{scope.row.subscriptionNum}}
+                <!-- <i class="el-icon-s-data" /> -->
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="观看人数" min-width="180" align="center" prop="visitNum"></el-table-column>
+          <el-table-column label="操作" fixed="right" align="center" min-width="80">
+            <template slot-scope="scope">
               <el-button type="text" size="mini" @click="handleEdit(scope.row)">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
       </section>
+      <!--  相关商品、相关订阅 -->
+      <popGoods ref="goods" /> 
+      <popSubscription ref="subscription" />
       <section class="c-footer">
         <pagination
           :total="total"
           :page.sync="listQuery.currentPage"
           :limit.sync="listQuery.pageSize"
           @pagination="getList"
+          style="margin:0;padding:0"
         />
       </section>
     </div>
@@ -96,9 +112,11 @@ import mixins from '@/utils/mixin'
 import { mapGetters } from 'vuex'
 import liveRequest from '@/api/live'
 import { factoryTotalData, factoryList } from '@/api/factory-live'
+import popGoods from './pop-goods'
+import popSubscription from './pop-subscription'
 import config from '@/utils/config'
 export default {
-  components: { Pagination },
+  components: { Pagination, popSubscription,  popGoods },
   mixins: [mixins],
   data() {
     return {
@@ -107,9 +125,9 @@ export default {
         currentPage: 1,
         pageSize: 10
       },
-      historyList: [],
       totaldata: '',
-      total: 0
+      total: 0,
+      goodsTabel: [], // 相关商品接口
     }
   },
   computed: {
@@ -129,7 +147,7 @@ export default {
     async getList() {
       try {
         const { data } = await factoryList(this.listQuery)
-        console.log(data)
+        console.log(data, '张超新街口')
         this.tableData = data.data
         this.total = data.totalCount
       } catch (error) {
@@ -145,7 +163,14 @@ export default {
         console.log(error)
       }
     },
-
+    // 获取直播商品数据
+    getGoods(id) {
+      this.$refs.goods.open(id)
+    },
+    // 获取直播订阅数据
+    getSubscription(id) {
+      this.$refs.subscription.open(id)
+    },
     handleEdit(row) {
       console.log(row)
       this.$router.push(`/live-manage/data-details?id=${row.id}`)
@@ -191,6 +216,9 @@ export default {
         }
       }
     }
+  }
+  .c-footer{
+    margin: 0;
   }
 }
 </style>

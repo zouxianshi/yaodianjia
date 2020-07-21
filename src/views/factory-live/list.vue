@@ -51,18 +51,18 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
+      <el-table-column fixed="right" label="操作" width="180">
         <template slot-scope="scope">
-          <el-button @click="edit(scope.row)" type="text" size="small">
-            <i class="el-icon-edit"></i>
+          <el-button @click="startLive(scope.row.id)" type="text">
+            <i class="el-icon-video-camera" />
           </el-button>
           <el-button @click="shareLive(scope.row.id)" type="text">
             <i class="el-icon-share"></i>
           </el-button>
-          <el-button @click="startLive(scope.row.id)" type="text">
-            <i class="el-icon-video-camera" />
+          <el-button @click="edit(scope.row)" type="text" size="small" v-if="scope.row.status === 0">
+            <i class="el-icon-edit"></i>
           </el-button>
-          <el-button type="text" size="small">
+          <el-button type="text" size="small" @click="_onDelete(scope.row.id)">
             <i class="el-icon-delete"></i>
           </el-button>
         </template>
@@ -99,7 +99,7 @@
 </template>
 <script>
 import _ from 'lodash'
-import { searchLiveData } from '@/api/factory-live'
+import { searchLiveData, deleteLive } from '@/api/factory-live'
 import LiveRequest from '@/api/live'
 import { formartTime, formartStatus } from './_utils'
 import popShareLive from './_source/pop-share-live' // 分享直播
@@ -153,7 +153,6 @@ export default {
     },
     // 编辑
     edit(row) {
-      console.log(row)
       this.$router.push({
         path: '/factory-live/create',
         query: {
@@ -161,11 +160,26 @@ export default {
         }
       })
     },
+    // 删除
+    _onDelete(id) {
+      deleteLive(id).then(res => {
+        if (res.code === '10000'){
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          })
+          this.getLiveData()
+        }
+      })
+    },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      this.pageInfo.currentPage = 1
+      this.pageInfo.pageSize = val
+      this.getLiveData()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      this.pageInfo.currentPage = val
+      this.getLiveData()
     },
     // 回放相关
     handleColseVideo() {

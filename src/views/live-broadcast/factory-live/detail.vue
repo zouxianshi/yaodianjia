@@ -1,7 +1,7 @@
 <template>
   <div class="app-cotainer factory-live-create">
     <div class="info-title">基本信息</div>
-    <el-form :model="liveForm" ref="rulesForm" label-width="100px" :rules="rules" class="demo-ruleForm">
+    <el-form :model="liveForm" disabled ref="rulesForm" label-width="100px" :rules="rules" class="demo-ruleForm">
       <el-form-item label="直播头像：" required>
           <img v-if="liveForm.merLogoUrl" :src="showImg(liveForm.merLogoUrl)" class="avatar" />
       </el-form-item>
@@ -49,10 +49,9 @@
       </el-form-item>
     </el-form>
     <div class="info-title">关联介绍</div>
-    <el-form :model="liveForm" ref="liveForm" label-width="100px" class="demo-ruleForm">
+    <el-form :model="liveForm" disabled ref="liveForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="参与商品：">
-        <el-button type="primary" size="mini" @click="$refs.GoodsComponent.open()">选择商品</el-button>
-        <selectedGoods ref="storeGods" @del-item="delSelectGoods" v-show="liveForm.commoditySpecList.length>0" />
+        <selectedGoods ref="storeGods" disabled v-show="liveForm.commoditySpecList.length>0" />
       </el-form-item>
       <el-form-item label="直播奖励：">
         成交<el-input-number size="mini" :min="0" :max="99999" :precision="0" :controls="false" v-model="liveForm.prizeRule"></el-input-number>
@@ -72,12 +71,11 @@
         <Tinymce
           v-model="liveForm.graphicDetails"
           :height="400"
+          disabled
         />
       </el-form-item>
     </el-form>
-    <div class="submit-btn">
-      <el-button size="mini" @click="saveLive">保存</el-button>
-    </div>
+    <el-button size="mini" @click="$router.push('/live-manage/factory-live')">返回</el-button>
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
@@ -96,8 +94,8 @@ import LiveRequest from '@/api/live'
 import { merchantDetail } from '@/api/merchant_Person_Api' // 商户信息
 import { getProduct, updateLiveInfo } from '@/api/factory-live'
 import Tinymce from '@/components/Tinymce'
-import selectedGoods from './_source/selected-goods'
-import storeGoods from './_source/pop-goods'
+import selectedGoods from '../../factory-live/_source/selected-goods'
+import storeGoods from '../../factory-live/_source/pop-goods'
 export default {
   components: {
     Tinymce, storeGoods, selectedGoods
@@ -154,7 +152,6 @@ export default {
     }
   },
   created() {
-    console.log(this.$route.query)
     const  querys = this.$route.query
     if (querys.id) { // 编辑
       LiveRequest.getLiveInfo(querys.id).then(res => {
@@ -195,50 +192,6 @@ export default {
     handleSelectGoods(val) {
       this.liveForm.commoditySpecList = val
       this.$refs.storeGods.dataFrom(val)
-    },
-    // 删除已选择商品
-    delSelectGoods(item, index) {
-      this.liveForm.commoditySpecList.splice(index, 1)
-      this.$refs.storeGods.dataFrom(this.liveForm.commoditySpecList)
-    },
-    // 提交直播数据
-    saveLive() {
-      console.log(this.$refs['rulesForm'])
-      this.$refs['rulesForm'].validate((valid) => {
-        console.log(valid)
-        if (valid) {
-          const params = _.cloneDeep(this.liveForm)
-          params.beginTime = formatDate(params.beginTime)
-          if (this.$route.query.id) {
-            updateLiveInfo(params).then(res => {
-            if (res.code === '10000') {
-              this.$message({
-                type: 'success',
-                message: '修改成功！'
-              })
-              this.$router.push('/factory-live/list')
-            }
-          })
-          } else {
-            _.map(params.commoditySpecList, goods => {
-              goods.picUrl = goods.mainPic ? goods.mainPic : ''
-              goods.merCode = this.merCode
-              goods.specStr = goods.specSkuList ? (goods.specSkuList[0].skuKeyName + ': ' + goods.specSkuList[0].skuValue) : ''
-            })
-            LiveRequest.createLive(params).then(res => {
-              if (res.code === '10000') {
-                this.$message({
-                  type: 'success',
-                  message: '添加成功！'
-                })
-                this.$router.push('/factory-live/list')
-              }
-            })
-          }
-        } else {
-          return false;
-        }
-      }) 
     }
   }
 }

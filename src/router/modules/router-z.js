@@ -286,6 +286,22 @@ const router = [
           title: '数据详情',
           noCache: true
         }
+      },{
+        path: 'factory-live',
+        component: () => import('@/views/live-broadcast/factory-live/index'),
+        name: 'factory-live',
+        meta: {
+          title: '厂家直播',
+          noCache: true
+        }
+      },{
+        path: 'factory-live-details',
+        component: () => import('@/views/live-broadcast/factory-live/detail'),
+        name: 'factory-live-details',
+        meta: {
+          title: '厂家直播详情',
+          noCache: true
+        }
       }
     ]
   },

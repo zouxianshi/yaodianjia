@@ -38,6 +38,9 @@ service.interceptors.request.use(
       timestame: Date.parse(new Date())
     }
     if (config.method === 'get') {
+      if (config.noMerCode) {
+        delete authParams.merCode
+      }
       config.params = {
         ...config.params,
         ...authParams
