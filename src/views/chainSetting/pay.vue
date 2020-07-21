@@ -370,7 +370,6 @@ export default {
           this.distributionOrder = res.data[0].distributionOrder
           this.deliveryOrder = res.data[0].deliveryOrder
           this.selfOrder = res.data[0].selfOrder
-          this.form.status = res.data[0].isOpenWxPay
         } else {
           this.loading = false
           this.$message({
