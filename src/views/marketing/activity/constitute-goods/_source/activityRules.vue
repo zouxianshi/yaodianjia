@@ -66,7 +66,7 @@
                 </el-tag>
               </div>
             </el-form-item>
-            <el-form-item label="相关商品：" prop="goodsIds" required>
+            <el-form-item label="相关商品：" prop="goodsIds">
               <el-input v-model="basicForm.goodsIds" style="display: none" />
               <div style="margin-bottom: 8px">
                 <el-button
@@ -159,7 +159,7 @@
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
-      :limit-min="2"
+      :limit-min="1"
       :limit-max="5"
       :store-ids="[]"
       :list="storeSelectGoods"
@@ -259,9 +259,9 @@ export default {
       console.log('this.basicForm.goodsIds-----', this.basicForm.goodsIds)
       if (
         Array.isArray(this.basicForm.goodsIds.split(',')) &&
-        this.basicForm.goodsIds.split(',').length <= 1
+        this.basicForm.goodsIds.split(',').length === 0
       ) {
-        callback(new Error('最小选择两个商品'))
+        callback(new Error('最选择商品'))
       }
       callback()
     }
@@ -301,7 +301,9 @@ export default {
           { min: 1, max: 50, message: '长度在 1 到 50 个字', trigger: 'blur' }
         ],
         groupId: [{ required: true, message: '请选择分组', trigger: 'change' }],
-        goodsIds: [{ validator: validGoodsNum, trigger: 'change' }],
+        goodsIds: [
+          { required: true, message: '请选择商品', trigger: 'blur' },
+          { validator: validGoodsNum, trigger: 'change' }],
         image: [{ required: true, message: '请上传图片', trigger: 'change' }],
         keyWord: [
           { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
