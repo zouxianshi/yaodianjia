@@ -102,13 +102,13 @@
           <div class="form-line">
             <span style="margin-right: 8px">消费</span>
             <el-form-item
-              :ref="'amountAreaChange.'+ $Index + '.amount'"
-              :prop="'amountAreaChange.'+ $Index + '.amount'"
+              :ref="'amountAreaChange.'+ $Index + '.minAmount'"
+              :prop="'amountAreaChange.'+ $Index + '.minAmount'"
               :rules="{
                 validator:validAmountPrice, trigger: 'change'
               }"
             >
-              <el-input v-model="domain.amount" placeholder style="width:120px" size="small">
+              <el-input v-model="domain.minAmount" placeholder style="width:120px" size="small">
                 <template slot="append">￥</template>
               </el-input>
             </el-form-item>
@@ -423,11 +423,24 @@ export default {
                 data && Array.isArray(data.amountExchangeRules)
                   ? data.amountExchangeRules
                   : [],
-              amountAreaChange: [],
-              rate: 1,
-              unit: '0',
-              weekTime: '',
-              monthTime: ''
+              amountAreaChange:
+                data && data.fixedAmountRule
+                  ? [data.fixedAmountRule]
+                  : [],
+              rate: data.rate || 1,
+              unit: data.rateEffectType || '0',
+              weekTime:
+                data.rateEffectType === '1'
+                  ? data.rateEffectArray.split(',')
+                  : [],
+              monthTime:
+                data.rateEffectType === '2'
+                  ? data.rateEffectArray.split(',')
+                  : [],
+              customTime: {
+                startTime: data.rateEffectBeginTime,
+                endTime: data.rateEffectEndTime
+              }
             }
 
             this.leftTimes = data && data.limitModifyTimes
@@ -452,7 +465,7 @@ export default {
         keyId: `amountChange-${new Date().getTime()}`
       }
       const amountAreaChangeInit = {
-        amount: '',
+        minAmount: '',
         exchangeHb: '',
         cumulative: 0,
         keyId: `amountAreaChange-${new Date().getTime()}`
@@ -603,7 +616,7 @@ export default {
                 ...element,
                 ruleType: 3,
                 merCode: this.merCode,
-                minAmount: element.amount * 1 || 0
+                minAmount: element.minAmount * 1 || 0
               })
             })
           }
@@ -618,7 +631,7 @@ export default {
             amountExchangeRules,
             merCode: this.merCode,
             numberExchangeRules,
-            fixedAmountRule: amountAreaExchangeRules,
+            fixedAmountRule: amountAreaExchangeRules[0],
             rateExchangeRules: {
               ruleType: 2,
               rate: this.forms.rate,
