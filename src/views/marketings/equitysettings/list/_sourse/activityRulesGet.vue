@@ -634,6 +634,7 @@ export default {
             fixedAmountRule: amountAreaExchangeRules[0],
             rateExchangeRules: {
               ruleType: 2,
+              merCode: this.merCode,
               rate: this.forms.rate,
               rateEffectType: this.forms.unit,
               rateEffectArray, // 生效时间-保存周/月生效时间
