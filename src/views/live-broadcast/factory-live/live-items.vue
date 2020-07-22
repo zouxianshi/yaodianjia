@@ -66,34 +66,46 @@ export default {
     },
     // 订阅直播
     dyLive(id) {
-      const params = {
-        liveId: id,
-        merCode: this.$store.state.user.merCode
-      }
-      subLive(params).then(res => {
-        if (res.code === '10000') {
-          this.$message({
-            type: 'success',
-            message: '订阅成功！'
-          })
-          this.$emit('freshDate')
+      this.$confirm('确定订阅该直播?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const params = {
+          liveId: id,
+          merCode: this.$store.state.user.merCode
         }
-      })
+        subLive(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              type: "success",
+              message: '订阅成功！'
+            })
+            this.$emit('freshDate')
+          }
+        })
+      }) 
     },
     // 取消订阅
     unsubscribe(id) {
-      const params = {
-        liveId: id,
-        merCode: this.$store.state.user.merCode
-      }
-      unsubscribe(params).then(res => {
-        if (res.code === '10000') {
-          this.$message({
-            type: 'success',
-            message: '已取消订阅！'
-          })
-          this.$emit('freshDate')
+      this.$confirm('确定取消订阅该直播？稍后可重新订阅', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const params = {
+          liveId: id,
+          merCode: this.$store.state.user.merCode
         }
+        unsubscribe(params).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              type: "success",
+              message: '已取消订阅！'
+            })
+            this.$emit('freshDate')
+          }
+        })
       })
     },
     // 查看详情
