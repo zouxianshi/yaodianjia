@@ -169,7 +169,7 @@
           <Tinymce
             v-model="formData.graphicDetails"
             :height="400"
-            disabled
+            :readonly="true"
           />
         </el-form-item>
         <el-form-item label>

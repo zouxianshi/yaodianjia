@@ -39,9 +39,9 @@
               <img v-if="formData.coverPicUrl" :src="showImg(formData.coverPicUrl)" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
-            <span class="tip">建议上传16：9的图片，图片大小不能超过2M，图片格式（png、jpg）</span>
           </div>
         </el-form-item>
+        <el-form-item><span class="tip">建议上传16：9的图片，图片大小不能超过2M，图片格式（png、jpg）</span></el-form-item>
         <el-form-item label="直播简介" prop="liveIntroduce">
           <el-input
             v-model="formData.liveIntroduce"

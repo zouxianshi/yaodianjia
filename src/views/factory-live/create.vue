@@ -139,9 +139,9 @@ export default {
       },
       // 订阅门槛
       options:[
-        {value: 0, label: '无对应商品可订阅'},
-        {value: 1, label: '至少要有一个对应商品方可订阅'},
-        {value: 2, label: '必须对应所有商品方可订阅'}
+        {value: 1, label: '无对应商品可订阅'},
+        {value: 2, label: '至少要有一个对应商品方可订阅'},
+        {value: 3, label: '必须对应所有商品方可订阅'}
       ]
     }
   },
