@@ -237,7 +237,7 @@ const router = [
     children: [
       {
         path: 'activity',
-        component: () => import('@/views/live-broadcast/activity/list'),
+        component: () => import('@/views/live-broadcast/activity/index'),
         name: 'live-activity',
         meta: {
           // auth: 'commodity.commodity-combine',
@@ -251,7 +251,16 @@ const router = [
         name: 'live-activity-edit',
         meta: {
           // auth: 'commodity.commodity-combine',
-          title: '直播活动',
+          title: '编辑自主直播',
+          noCache: true
+        }
+      },
+      {
+        path: 'factory-live-edit',
+        component: () => import('@/views/live-broadcast/activity/factory-live-edit'),
+        name: 'factory-live-edit',
+        meta: {
+          title: '编辑厂家直播',
           noCache: true
         }
       },
@@ -284,6 +293,22 @@ const router = [
         name: 'data-details',
         meta: {
           title: '数据详情',
+          noCache: true
+        }
+      }, {
+        path: 'factory-live',
+        component: () => import('@/views/live-broadcast/factory-live/index'),
+        name: 'factory-live',
+        meta: {
+          title: '厂家直播',
+          noCache: true
+        }
+      }, {
+        path: 'factory-live-details',
+        component: () => import('@/views/live-broadcast/factory-live/detail'),
+        name: 'factory-live-details',
+        meta: {
+          title: '厂家直播详情',
           noCache: true
         }
       }

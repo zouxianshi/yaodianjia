@@ -9,7 +9,7 @@ class LiveRequest {
    */
   getLiveList(params) {
     return request({
-      url: `${config.live}/1.0/activity/list`,
+      url: `${config.merGoods}/1.0/activity/list`,
       method: 'post',
       data: params
     })
@@ -39,7 +39,7 @@ class LiveRequest {
    */
   createLive(params) {
     return request({
-      url: `${config.live}/1.0/activity/add`,
+      url: `${config.merGoods}/1.0/activity/add`,
       method: 'post',
       data: params
     })
@@ -49,7 +49,7 @@ class LiveRequest {
    */
   updateLiveInfo(params) {
     return request({
-      url: `${config.live}/1.0/activity/edit`,
+      url: `${config.merGoods}/1.0/activity/edit`,
       method: 'post',
       data: params
     })
@@ -59,7 +59,7 @@ class LiveRequest {
    */
   getLiveInfo(liveId) {
     return request({
-      url: `${config.live}/1.0/activity/editDetail/${liveId}`
+      url: `${config.merGoods}/1.0/activity/editDetail/${liveId}`
     })
   }
   /*
@@ -69,7 +69,7 @@ class LiveRequest {
    */
   getLiveDetails(params) {
     return request({
-      url: `${config.live}/1.0/activity/detail/${params.liveId}`,
+      url: `${config.merGoods}/1.0/activity/detail/${params.liveId}`,
       method: 'get'
     })
   }
@@ -89,7 +89,7 @@ class LiveRequest {
    */
   getLiveGoods(liveId) {
     return request({
-      url: `${config.live}/1.0/activity/commodity/list`,
+      url: `${config.merGoods}/1.0/activity/commodity/list`,
       method: 'get',
       params: { liveId: liveId }
     })
@@ -132,7 +132,7 @@ class LiveRequest {
    */
   getdataCenterlist(params) {
     return request({
-      url: `${config.live}/1.0/statistics/history/list`,
+      url: `${config.merGoods}/1.0/statistics/history/list`,
       method: 'post',
       data: params
     })
@@ -145,7 +145,7 @@ class LiveRequest {
    */
   getdataCenterTotaldata(params) {
     return request({
-      url: `${config.live}/1.0/statistics/totalData`,
+      url: `${config.merGoods}/1.0/statistics/totalData`,
       method: 'get'
     })
   }
@@ -157,7 +157,7 @@ class LiveRequest {
    */
   getdataCenterStatistics(params) {
     return request({
-      url: `${config.live}/1.0/statistics/get?liveId=${params.liveId}`,
+      url: `${config.merGoods}/1.0/statistics/get?liveId=${params.liveId}`,
       method: 'get'
     })
   }

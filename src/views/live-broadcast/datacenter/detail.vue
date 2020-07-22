@@ -36,29 +36,30 @@
       <div style="margin-top:20px">
         <el-card body-style="padding:0 0 20px">
           <p class="title-line">基本信息</p>
-          <el-divider />
           <div class="info-wrapper">
-            <el-form>
+            <el-form label-width="100" label-position="right">
               <el-form-item label="直播名称：">
-                <span>{{ LiveDetails.name }}</span>
-              </el-form-item>
-              <el-form-item label="直播头像：">
-                <img class="detail_avatar" :src="showImg(LiveDetails.merLogoUrl)" alt>
+                <span>{{ LiveDetails.merName }}</span>
               </el-form-item>
               <el-form-item label="直播主题：">
-                <span>{{ statistics.name }}</span>
+                <span>{{ LiveDetails.name }}</span>
               </el-form-item>
               <el-form-item label="开播时间：">
-                <span>{{ statistics.realBeginTime }}</span>
+                <span>{{ LiveDetails.realBeginTime }}</span>
+              </el-form-item>
+              <el-form-item label="时长：">
+                <span v-if="LiveDetails.duration">{{ LiveDetails.duration }}分钟</span>
+              </el-form-item>
+            </el-form>
+            <el-form>
+              <el-form-item label="直播头像：">
+                <img class="detail_avatar" :src="showImg(LiveDetails.merLogoUrl)" alt>
               </el-form-item>
               <el-form-item label="直播封面：">
                 <img style="width:100px;height:100px" :src="showImg(LiveDetails.coverPicUrl)" alt>
               </el-form-item>
-              <!-- </el-form-></el-form> -->
             </el-form>
           </div>
-          <!-- <p class="title-line">关联商品</p> -->
-          <el-divider />
         </el-card>
       </div>
     </div>
@@ -109,6 +110,7 @@ export default {
         const { data } = await liveRequest.getLiveDetails({
           liveId: this.$route.query.id
         })
+        console.log(data, 'zvvvvvvvvvvvvv')
         this.LiveDetails = data
       } catch (error) {
         console.log(error)
@@ -142,7 +144,8 @@ export default {
   border-radius: 100%;
 }
 .title-line {
-  padding: 20px 23px 0;
+  padding: 20px 23px 0;font-size: 16px;margin-bottom: 24px;
+  font-weight: 600;
 }
 .live-total {
   // padding:0 30px;
@@ -174,7 +177,10 @@ export default {
   }
 }
 .info-wrapper {
-  padding: 0 120px;
+  display: flex; justify-content: space-around;
+  .el-form{
+    flex: 0 0 45%;
+  }
 }
 .detail_avatar{
   width: 60px;
