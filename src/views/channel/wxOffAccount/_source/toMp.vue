@@ -2,7 +2,7 @@
   <el-popover v-model="visible" placement="top-end" popper-class="plx-to-mp-model">
     <div class="to-mp-box">
       <el-radio-group v-model="type">
-        <el-radio class="radio-item" label="miniprogram">商户小程序</el-radio>
+        <el-radio class="radio-item" label="miniprogram">海典健康商城</el-radio>
       </el-radio-group>
     </div>
     <div style="text-align: right; margin: 0">

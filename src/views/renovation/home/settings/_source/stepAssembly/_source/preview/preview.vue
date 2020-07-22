@@ -5,7 +5,7 @@
       <m-header />
     </div>
     <div class="scrollbar apm-drag-area">
-      <div class="apm-banner" @click="onBannerSet()">
+      <div v-if="isHome" class="apm-banner" @click="onBannerSet()">
         <m-vrf-error v-if="staticDragData.banner.error" :item="staticDragData.banner" />
         <m-banner :item-list="staticDragData.banner.itemList" />
       </div>
@@ -75,9 +75,9 @@ export default {
   name: 'SaPreview',
   data() {
     return {
+      isHome: this.$route.name === 'renovation-home-settings',
       bannerItem,
-      dragData: [
-      ]
+      dragData: []
     }
   },
   props: {},
@@ -97,10 +97,12 @@ export default {
     onDragAdd() {
       let dragData = this.dragData
       const itemRecommend = _.find(dragData, ['type', 'recommend'])
+      // handler recommend params
       if (!_.isEmpty(itemRecommend)) {
         dragData = _.reject(dragData, ['type', 'recommend'])
         dragData.push(itemRecommend)
       }
+
       this.setDragList(dragData)
     },
     onDragChange() {
@@ -126,13 +128,22 @@ export default {
       immediate: true,
       handler(v) {
         this.dragData = _.cloneDeep(v)
+        // this.dragData = [
+        //   {
+        //     uuid: `${uuid('activityAggregate-')}${uuid()}${uuid()}${uuid()}`,
+        //     type: 'activityAggregate',
+        //     typeName: '活动商品',
+        //     subType: 'first',
+        //     name: '默认样式',
+        //     itemList: items(1)
+        //   }
+        // ]
       }
     }
   },
   beforeCreate() {
   },
   created() {
-
   },
   beforeMount() {
   },
@@ -147,7 +158,7 @@ export default {
   destroyed() {
   },
   computed: {
-    ...mapState('renovation', ['staticDragData', 'dragList', 'basics']),
+    ...mapState('renovation', ['staticDragData', 'dragList', 'basics', 'agaSelectList']),
     dragOptions() {
       return {
         sort: true,

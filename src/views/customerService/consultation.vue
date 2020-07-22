@@ -64,7 +64,7 @@
                     </div>
                     <div class="goods-message-info">
                       <div class="goods-name">{{ JSON.parse(dItem.content).title }}</div>
-                      <div class="goods-price">¥{{ Number(JSON.parse(dItem.content).price).toFixed(2) }}</div>
+                      <!-- <div class="goods-price">¥{{ Number(JSON.parse(dItem.content).price).toFixed(2) }}</div> -->
                     </div>
                   </div>
                 </div>

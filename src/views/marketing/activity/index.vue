@@ -65,7 +65,7 @@ import reduceGift from '@/assets/image/acvity/reduce-gift.png'
 import counpCenter from '@/assets/image/acvity/coup-center.png'
 import limitSecKill from '@/assets/image/acvity/limit-seckill.png'
 import groupGoods from '@/assets/image/acvity/group-goods.png'
-
+import ps from '@/layout/psHandler'
 import haibei from '@/assets/image/acvity/haibei.png'
 import addPrice from '@/assets/image/acvity/add-price.png'
 import limitPreferential from '@/assets/image/acvity/limit-preferential.png'
@@ -209,6 +209,7 @@ export default {
           listLabel: '组合商品列表',
           name: 'constituteGoods',
           img: groupGoods,
+          pass: ps.showGroupGoods(), // 是否有权限
           listUrl: '/marketing/activity/constitute-goods',
           linkUrl: '/marketing/activity/constitute-goods/edit',
           desc:
@@ -221,6 +222,7 @@ export default {
           name: 'SqueeGee',
           listLabel: '刮刮乐列表',
           desc: '刮刮刮，商户可以建立多场刮刮乐活动，用户满足一定条件门槛后便可参与刮奖活动，简单又好玩',
+          listLabel: '刮刮乐列表',
           img: SqueeGee,
           listUrl: '/marketings/activity-manage/turntable/guaList?code=TA004&name=刮刮乐',
           linkUrl: '/marketings/activity-manage/turntable/add?code=TA004'
@@ -250,6 +252,7 @@ export default {
           linkUrl: '/activity/exchangeMallAdd'
         },
         {
+          createText: '',
           name: 'signGift',
           lable: '签到设置',
           desc: '设置不同模式签到奖励，激励用户每天签到，获取海贝，增加用户粘性，鼓励海贝兑换商品，增进销售。',

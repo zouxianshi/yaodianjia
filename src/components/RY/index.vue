@@ -52,12 +52,12 @@ export default {
             console.warn('进入页面Chat.init onReceived回调', message)
             this.newMsg = message
             // 通知在线咨询组件有新消息
-            // 在线咨询当前选中用户id
-            console.log('消息组件，收到消息', message)
 
             // sound tip
             this.playAudio()
 
+            console.warn('消息组件，收到消息', message)
+            // 在线咨询当前选中用户id
             const { userId } = _this.curOnlineUserData
 
             // 判断如果在聊天界面则直接改变数据 不再聊天界面则右上角弹出通知

@@ -6,7 +6,7 @@
           为方便您快速创建商品，您可以直接添加海典标库商品，如果找不到您想发布的商品，请您
           <router-link tag="span" class="link" to="/goods-manage/apply">自建新品</router-link>
         </p>
-      </el-alert> -->
+      </el-alert>-->
       <div style="margin-top:20px">
         <a href="#/goods-manage/addition">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">添加标库商品</el-button>
@@ -37,13 +37,13 @@
               placeholder="选择商品分类"
             />
           </div>
-          <div class="search-item">
+          <!-- <div class="search-item">
             <span class="label-name">商品类型</span>
             <el-select v-model="listQuery.commodityType" size="small" placeholder="普通商品/组合商品">
               <el-option label="普通商品" value="1" />
               <el-option label="组合商品" value="2" />
             </el-select>
-          </div>
+          </div>-->
           <div class="search-item">
             <span class="label-name">药品类型</span>
             <el-select v-model="listQuery.drugType" size="small" placeholder="请选择药品类型">
@@ -126,6 +126,29 @@
             >
               <el-option label="有" :value="true" />
               <el-option label="无" :value="false" />
+            </el-select>
+          </div>
+          <div class="search-item">
+            <span class="label-name">品&nbsp;&nbsp;&nbsp;&nbsp;牌</span>
+            <el-select
+              v-model="listQuery.brandId"
+              v-loadmore="loadMore"
+              filterable
+              remote
+              clearable
+              :remote-method="remoteMethod"
+              :loading="loading"
+              size="small"
+              placeholder="选择品牌"
+              @change="handleBrandChange"
+              @clear="handleBrandClear"
+            >
+              <el-option
+                v-for="item in brandList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
             </el-select>
           </div>
         </div>
@@ -330,6 +353,7 @@
 import ElImageViewer from '@/components/imageViewer/imageViewer'
 import { getGoodsList, delGoods, exportDataNew } from '@/api/depot'
 import { getTypeDimensionList, getTypeTree } from '@/api/group'
+import { getBrandList } from '@/api/new-goods'
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 import download from '@hydee/download'
@@ -375,6 +399,13 @@ export default {
       loading: false,
       exportLoading: false,
       tableData: [],
+      brandList: [], // 品牌列表
+      brandId: '', // 商品品牌id
+      brandName: '', // 品牌名称
+      brandNanme: '',
+      brandNanme_currentPage: 1,
+      brandNanme_pageSize: 30,
+      brandLoading: false,
       dialogVisible: false,
       importAllVisible: false,
       limitVisible: false,
@@ -386,6 +417,7 @@ export default {
         drugType: '', // 药品类型
         erpOrName: '', // 商品信息
         commodityType: '', // 商品分类
+        brandId: '', // 品牌类型
         approvalNumber: '', // 批准文号
         barCode: '', // 条形码
         manufacture: '', // 生产企业
@@ -408,6 +440,10 @@ export default {
     this._loadGoodTypeList()
     this._loadTypeList()
     this._loadGoodTypeList()
+    this._loadBrandList({
+      pageSize: 30,
+      currentPage: 1
+    }) // 获取所属品牌
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -445,6 +481,31 @@ export default {
     },
     onCloseImg() {
       this.isShowImg = false
+    },
+    handleBrandChange() {
+      this.getList()
+    },
+    handleBrandClear() {
+      this._loadBrandList({
+        pageSize: 30,
+        currentPage: 1
+      })
+      this.getList()
+    },
+    remoteMethod(query) {
+      this.brandNanme = query
+      this._loadBrandList({
+        brandName: query,
+        pageSize: 30,
+        currentPage: 1
+      })
+    },
+    loadMore: function() {
+      this._loadBrandList({
+        brandName: this.brandNanme,
+        pageSize: 30,
+        currentPage: this.brandNanme_currentPage
+      })
     },
     handleSettingLimitBuy() {
       // 设置限购
@@ -484,6 +545,7 @@ export default {
         owner: 0,
         approvalNumber: '',
         barCode: '',
+        brandId: '',
         manufacture: '',
         name: '',
         infoFlag: this.listQuery.infoFlag,
@@ -506,7 +568,10 @@ export default {
         this.listQuery.typeId = this.listQuery.typeId[
           this.listQuery.typeId.length - 1
         ]
-      } else if (Array.isArray(this.listQuery.typeId) && this.listQuery.typeId.length === 0) {
+      } else if (
+        Array.isArray(this.listQuery.typeId) &&
+        this.listQuery.typeId.length === 0
+      ) {
         this.listQuery.typeId = ''
       }
       const nodesObj = this.$refs['cascType'].getCheckedNodes()
@@ -531,6 +596,21 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+    _loadBrandList(params) {
+      // 获取品牌
+      // this.brandLoading = true
+      getBrandList(params).then(res => {
+        const { data, currentPage } = res.data
+        if (currentPage === 1) {
+          this.brandList = Array.isArray(data) ? data : []
+        } else {
+          const arr = Array.isArray(data) ? data : []
+          this.brandList = [...this.brandList, ...arr]
+        }
+        this.brandNanme_currentPage = currentPage + 1
+        // this.brandLoading = false
+      })
     },
     _loadTypeList() {
       getTypeTree({

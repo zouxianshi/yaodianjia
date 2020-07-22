@@ -36,7 +36,7 @@ export default [
           {
             path: '/member/member-center/details',
             component: () => import('@/views/member/memberCenter/details'),
-            name: 'mc-list',
+            name: 'mc-details',
             meta: {
               title: '会员详情',
               auth: false,

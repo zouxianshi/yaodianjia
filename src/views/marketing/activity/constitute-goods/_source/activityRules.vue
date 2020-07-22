@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div v-loading="pageLoading" class="app-container_activity">
     <el-form
       ref="basic"
       :model="basicForm"
@@ -15,24 +15,13 @@
           </div>
           <div class="edit-card-cnt">
             <el-form-item label="组合商品名称：" prop="name" required>
-              <el-input v-model="basicForm.name" placeholder="请输入商品名称" size="small" />
-            </el-form-item>
-            <el-form-item label="组合商品分组：" prop="groupId" required>
-              <el-input v-model="basicForm.groupId" style="display: none" />
-              <el-button size="small" @click="groupVisible=true">选择分组</el-button>
-              <div v-if="chooseGroup.length" class="group-list">
-                <el-tag
-                  v-for="(item,index) in chooseGroup"
-                  :key="index"
-                  style="margin-right:10px"
-                  closable
-                  @close="handleRemoveGroup(index)"
-                >
-                  <span
-                    class="tag"
-                  >{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}{{ item[2] && "&nbsp;>&nbsp;" + item[2].name }}</span>
-                </el-tag>
-              </div>
+              <el-input
+                v-model="basicForm.name"
+                maxlength="50"
+                clearable
+                placeholder="请输入商品名称"
+                size="small"
+              />
             </el-form-item>
             <el-form-item label="组合商品图片：" prop="image" required>
               <el-upload
@@ -58,8 +47,26 @@
                 </div>
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
+              <span style="color: rgba(224, 224, 224, 1)">支持jpg、png,文件大小2M以内</span>
             </el-form-item>
-            <el-form-item label="相关商品：" prop="goodsIds" required>
+            <el-form-item label="组合商品分组：" prop="groupId" required>
+              <el-input v-model="basicForm.groupId" style="display: none" />
+              <el-button type="primary" plain size="small" @click="groupVisible=true">选择分组</el-button>
+              <div v-if="chooseGroup.length" class="group-list">
+                <el-tag
+                  v-for="(item,index) in chooseGroup"
+                  :key="index"
+                  style="margin-right:10px"
+                  closable
+                  @close="handleRemoveGroup(index)"
+                >
+                  <span
+                    class="tag"
+                  >{{ item[0].name }}&nbsp;>&nbsp;{{ item[1].name }}{{ item[2] && "&nbsp;>&nbsp;" + item[2].name }}</span>
+                </el-tag>
+              </div>
+            </el-form-item>
+            <el-form-item label="相关商品：" prop="goodsIds">
               <el-input v-model="basicForm.goodsIds" style="display: none" />
               <div style="margin-bottom: 8px">
                 <el-button
@@ -68,19 +75,11 @@
                   size="small"
                   @click="$refs.GoodsComponent.open()"
                 >选择商品 | 已选（{{ storeSelectGoods.length }}）</el-button>
+                <span class="color_gray">最多选择5个子商品</span>
               </div>
+            </el-form-item>
+            <el-form-item label>
               <select-goods-constitute ref="storeGods" @del-item="delSelectGoods" />
-            </el-form-item>
-            <el-form-item label="相关门店：" prop="storeIds">
-              <el-input v-model="basicForm.storeIds" style="display: none" />
-              <el-button
-                type="primary"
-                plain
-                @click="$refs.storeComponent.open()"
-              >选择门店 | 已选（{{ chooseStore.length }}）</el-button>
-            </el-form-item>
-            <el-form-item>
-              <select-store ref="selectStoreComponent" @del-item="delSelectStore" />
             </el-form-item>
             <el-row>
               <el-col :span="12">
@@ -109,7 +108,7 @@
                     controls-position="right"
                     :max="999999"
                   />
-                  <el-tooltip content="每个用户限购数量" placement="top">
+                  <el-tooltip content="每个用户限购数量，0或不填都为不限制" placement="top">
                     <i style="color: #147de8" class="el-icon-warning-outline" />
                   </el-tooltip>
                 </el-form-item>
@@ -128,14 +127,16 @@
             <el-form-item label="关键字：" prop="keyWord" @submit.native.prevent>
               <el-input
                 v-model="basicForm.keyWord"
-                :rows="2"
+                :rows="5"
+                maxlength="30"
+                show-word-limit
                 type="textarea"
                 placeholder="请输入关键字,用、隔开"
               />
             </el-form-item>
-            <el-form-item label="活动购买须知：" prop="desc" @submit.native.prevent>
+            <!-- <el-form-item label="活动购买须知：" prop="desc" @submit.native.prevent>
               <el-input v-model="basicForm.desc" :rows="4" type="textarea" />
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item label="商品说明书：">
               <p class="color_gray">填写商品说明书，详细介绍文字</p>
               <Tinymce ref="editor" v-model="basicForm.detail" :height="400" />
@@ -158,23 +159,25 @@
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
+      :limit-min="1"
+      :limit-max="5"
       :store-ids="[]"
       :list="storeSelectGoods"
       @on-change="handleSelectGoods"
     />
-    <!-- 门店列表 -->
-    <store-dialog ref="storeComponent" :list="chooseStore" @complete="handleSelectStore" />
     <!--弹窗--选择分组-->
     <edit-group
       :is-show="groupVisible"
       type="1"
       :group-data="groupDataDimens"
+      :choose-data="chooseGroup"
       @back="handleSaveGroup"
       @close="groupVisible=false"
     />
   </div>
 </template>
 <script>
+// 这是新版组合山商品新增
 import Tinymce from '@/components/Tinymce'
 import { getTypeTree, getPreGroupList, getTypeDimensionList } from '@/api/group'
 import config from '@/utils/config'
@@ -190,8 +193,6 @@ import {
 } from '@/api/constitute-goods'
 import selectGoodsConstitute from './select-goods-constitute'
 import storeGoods from '../../../components/store-gods'
-import storeDialog from '../../../components/store'
-import selectStore from '../../../components/select-store'
 import { checkNumberdouble } from '@/utils/validate'
 import editGroup from './grouping'
 import { findArray } from '@/utils/index'
@@ -200,9 +201,7 @@ export default {
     Tinymce,
     editGroup,
     selectGoodsConstitute,
-    storeGoods,
-    storeDialog,
-    selectStore
+    storeGoods
   },
   mixins: [mixins, specsMixin],
   data() {
@@ -247,11 +246,22 @@ export default {
       if (rule.required && !value) {
         callback(new Error('请输入数值'))
       }
-      if (value !== '' && reg.test(value)) {
+      if (!!value && reg.test(value)) {
         callback(new Error('请输入非负整数'))
       }
       if (value > 99999999) {
         callback(new Error('最大值不能超过99999999'))
+      }
+      callback()
+    }
+    // 验证选择商品的数量
+    const validGoodsNum = (rule, value, callback) => {
+      console.log('this.basicForm.goodsIds-----', this.basicForm.goodsIds)
+      if (
+        Array.isArray(this.basicForm.goodsIds.split(',')) &&
+        this.basicForm.goodsIds.split(',').length === 0
+      ) {
+        callback(new Error('最选择商品'))
       }
       callback()
     }
@@ -269,6 +279,7 @@ export default {
         multiple: true
       },
       subLoading: false,
+      pageLoading: false,
       loading: false, // 加载分类
       basicForm: {
         detail: '', // 富文本内容
@@ -279,24 +290,20 @@ export default {
         weight: 0, // 商品总重量
         keyWord: '', // 关键字
         name: '', // 商品名
-        // groupIds: [], // 分组的ids
-        groupId: '', // 分组id
-        desc: '',
-        goodsIds: '', // 商品信息
-        storeIds: '' // 门店信息
+        groupIds: [], // 分组的ids
+        groupId: '',
+        // groupId: '', // 分组id
+        goodsIds: '' // 商品信息
       },
       basicRules: {
         name: [
           { required: true, message: '请输入商品名称', trigger: 'blur' },
-          { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
+          { min: 1, max: 50, message: '长度在 1 到 50 个字', trigger: 'blur' }
         ],
         groupId: [{ required: true, message: '请选择分组', trigger: 'change' }],
         goodsIds: [
-          { required: true, message: '请选择商品', trigger: 'change' }
-        ],
-        storeIds: [
-          { required: true, message: '请选择门店', trigger: 'change' }
-        ],
+          { required: true, message: '请选择商品', trigger: 'blur' },
+          { validator: validGoodsNum, trigger: 'change' }],
         image: [{ required: true, message: '请上传图片', trigger: 'change' }],
         keyWord: [
           { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' }
@@ -320,7 +327,6 @@ export default {
       chooseTableSpec: [],
       uploadLoading: false,
       leaveAction: false, // 离开页面动作，true为保存离开  false异常离开
-      chooseStore: [],
       storeSelectGoods: []
     }
   },
@@ -367,6 +373,7 @@ export default {
   },
   methods: {
     _loadgroupGather(type, ids) {
+      console.log('pppppppppp- ', type, ids)
       // 查询分类和分组的父类
       const data = {
         ids: ids,
@@ -390,21 +397,36 @@ export default {
       })
     },
     _loadInfo() {
+      this.pageLoading = true
       // 加载商品信息
-      getConstituteGoodsInfo(this.$route.query.id, this.merCode).then(res => {
-        // 分组处理
-        if (res.data.groupId && res.data.groupId.length > 0) {
-          this._loadgroupGather('2', [res.data.groupId])
-        }
-        const { data } = res
-        // 赋值
-        console.log('data=====', data)
-        this.basicForm = data
-        // this.basicForm.childCommodities = data.childCommodities
-        if (this.basicForm.detail) {
-          this.$refs.editor.setContent(this.basicForm.detail)
-        }
-      })
+      getConstituteGoodsInfo(this.$route.query.id, this.merCode)
+        .then(res => {
+          this.pageLoading = false
+          // 分组处理
+          if (res.data.groupIds && res.data.groupIds.length > 0) {
+            this._loadgroupGather('2', res.data.groupIds)
+          }
+
+          const { data } = res
+          // 赋值
+          console.log('data=====', data)
+          this.basicForm = data
+          this.$refs.storeGods.dataFrom(data.childCommodities)
+          this.basicForm.limitNum = data.limitNum ? String(data.limitNum) : ''
+          this.basicForm.groupId = Array.isArray(data.groupIds)
+            ? data.groupIds.join(',')
+            : data.groupIds
+          this.basicForm.goodsIds = _.map(data.childCommodities, 'specId').join(
+            ','
+          )
+          this.storeSelectGoods = data.childCommodities
+          if (this.basicForm.detail) {
+            this.$refs.editor.setContent(this.basicForm.detail)
+          }
+        })
+        .catch(() => {
+          this.pageLoading = false
+        })
     },
     handleSelectionChange(row) {
       this.chooseTableSpec = row
@@ -497,21 +519,16 @@ export default {
       this.chooseArray = row
       this.chooseGroup = []
       this._filters(this.chooseArray)
-      if (row.length > 1) {
-        this.$message({
-          type: 'warning',
-          message: '组合商品分组有且只能选择一个'
-        })
-        return false
-      }
-      this.basicForm.groupId = row[0][row[0].length - 1]
+
       this.groupVisible = false
     },
     handleRemoveGroup(index) {
       // 删除选择的分组
       this.chooseGroup.splice(index, 1)
+      this.basicForm.groupIds.splice(index, 1)
     },
     _filters(data) {
+      const groupIdsList = []
       data.forEach((val, index1) => {
         const findIndex = findArray(this.groupData, { id: val[0] })
         if (findIndex > -1) {
@@ -544,6 +561,15 @@ export default {
           }
         }
       })
+      Array.isArray(data) &&
+        data.map(item => {
+          if (Array.isArray(item) && item.length) {
+            groupIdsList.push(item[item.length - 1])
+          }
+        })
+      this.basicForm.groupIds = groupIdsList
+      this.basicForm.groupId = groupIdsList.join(',')
+      console.log('chooseGroup', this.chooseGroup, groupIdsList)
     },
     handleAddSpec() {
       this.specsForm.specs.push({
@@ -576,7 +602,7 @@ export default {
             type: 'success'
           })
           this.basicForm.id = res.data
-          this.$router.push('/goods-manage/constitute-goods')
+          this.$router.push('/marketing/activity/constitute-goods')
           this.subLoading = false
         })
         .catch(_ => {
@@ -592,7 +618,7 @@ export default {
             message: '保存成功',
             type: 'success'
           })
-          this.$router.push('/goods-manage/constitute-goods')
+          this.$router.push('/marketing/activity/constitute-goods')
           this.subLoading = false
         })
         .catch(_ => {
@@ -632,12 +658,48 @@ export default {
       this.$refs['basic'].validate(valid => {
         console.log('valid:', valid)
         if (valid) {
-          const data = JSON.parse(JSON.stringify(this.basicForm))
           this.$refs.storeGods
             .onsubmit()
             .then(res => {
               console.log('二次验证也通过了----------------------', res)
               console.log(this.basicForm)
+              let childCommodities = []
+              this.subLoading = true
+              // 过滤子商品信息传给后台
+              if (Array.isArray(res)) {
+                childCommodities = _.map(res, n => {
+                  return {
+                    ..._.pick(n, [
+                      'commodityId',
+                      'commodityName',
+                      'erpCode',
+                      'mainPic',
+                      'standard',
+                      'mprice',
+                      'specId',
+                      'price',
+                      'number',
+                      'weight'
+                    ]),
+                    merCode: this.merCode
+                  }
+                })
+                console.log('childCommodities', childCommodities)
+              }
+              const data = {
+                merCode: this.merCode,
+                ...this.basicForm,
+                limitNum: this.basicForm.limitNum
+                  ? Number(this.basicForm.limitNum)
+                  : 0,
+                childCommodities
+              }
+              if (this.basicForm.id) {
+                data.commodityId = data.id
+                this._UpdateBasicInfo(data)
+              } else {
+                this._CreateBasicInfo(data)
+              }
             })
             .catch(res => {
               console.log('二次验证失败----------------------')
@@ -645,15 +707,7 @@ export default {
           // data.groupId = this.chooseGroup[0][2]
           //   ? this.chooseGroup[0][2].id
           //   : this.chooseGroup[0][1].id // 第三级分组的id
-
-          data.merCode = this.merCode
           // this.subLoading = true
-          // if (this.basicForm.id) {
-          //   data.commodityId = data.id
-          //   this._UpdateBasicInfo(data)
-          // } else {
-          //   this._CreateBasicInfo(data)
-          // }
         } else {
           this.$message({
             message: '存在必填字段未填写',
@@ -666,32 +720,27 @@ export default {
       console.log('item, index', item, index)
       console.log('this.storeSelectGoods', this.storeSelectGoods)
       this.storeSelectGoods.splice(index, 1)
-      this.basicForm.storeIds = _.map(this.storeSelectGoods, 'specId').join(',')
+      this.basicForm.goodsIds = _.map(this.storeSelectGoods, 'specId').join(',')
       this.$refs.storeGods.dataFrom(this.storeSelectGoods)
-      // this.storeSelectGoods = this.storeSelectGoods
-    },
-    delSelectStore(item, index) {
-      console.log('item, index', item, index, this.chooseStore)
-      this.chooseStore.splice(index, 1)
-      this.basicForm.storeIds = _.map(this.chooseStore, 'id').join(',')
-      this.$refs.selectStoreComponent.dataFrom(this.chooseStore)
-      // this.chooseStore = this.chooseStore
     },
     handleSelectGoods(val) {
       this.storeSelectGoods = val
       this.basicForm.goodsIds = _.map(val, 'specId').join(',')
       this.$refs.storeGods.dataFrom(val)
-    },
-    handleSelectStore(val) {
-      console.log('门店结果页出来了-------', val)
-      this.chooseStore = val
-      this.basicForm.storeIds = _.map(val, 'id').join(',')
-      this.$refs.selectStoreComponent.dataFrom(val)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+.app-container_activity {
+  .footer {
+    text-align: center;
+    margin: 50px auto;
+  }
+  .color_gray {
+    color: #999;
+  }
+}
 .edit-wrapper {
   color: #333;
   margin-bottom: 80px;
@@ -710,7 +759,7 @@ export default {
       width: 300px;
     }
     .el-textarea {
-      @extend .el-input;
+      width: 600px;
     }
     .header {
       height: 40px;
@@ -738,147 +787,45 @@ export default {
   .next-btn {
     margin-top: 20px;
   }
-  .goods-details {
-    display: flex;
-    margin-bottom: 10px;
-    .left-show {
-      width: 320px;
-      height: auto;
-      border: 1px solid #e0e0e0;
-      .img {
-        width: 320px;
-        height: 64px;
-        background: url('../../../../../assets/image/sprite_dm.png') -2px -86px;
-      }
-      .basicMsgs {
-        width: 100%;
-        height: 100px;
-        color: #666;
-        line-height: 25px;
-        text-align: center;
-        padding-top: 20px;
-        background: #f2f2f2;
-      }
-      .editSqu {
-        height: 376px;
-        border: 1px dashed red;
-      }
-      .w-e-text {
-        padding: 0 10px;
-        overflow-y: scroll;
-      }
-    }
-    .edit-box {
-      margin-left: 20px;
-      padding: 10px;
-      background: #f8f8f8;
-      border: 1px solid #d1d1d1;
-      position: relative;
-    }
-  }
-  .spec-list {
-    width: 500px;
-    border-radius: 5px;
-    border: 1px solid #c9c9cc;
-    margin-left: 80px;
-    margin-bottom: 10px;
-    .header {
-      height: 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 12px;
-      border-bottom: 1px solid #c9c9cc;
-      i {
-        cursor: pointer;
-      }
-    }
-    .spec-content {
-      padding: 12px;
-      .el-input {
-        width: 250px;
-      }
-      .specs-img-table {
-        .avatar-uploader-icon {
-          width: 80px;
-          height: 80px;
-          line-height: 80px !important;
-        }
-        .avatar {
-          width: 80px;
-          height: 80px;
-        }
-      }
-      .specs-img {
-        .avatar-uploader-icon {
-          width: 100px;
-          height: 100px;
-          line-height: 100px !important;
-        }
-        .avatar {
-          width: 100px;
-          height: 100px;
-        }
-      }
-    }
-  }
   .add-spec {
     margin-left: 80px;
   }
 }
-.link-btn {
-  font-size: 14px;
-}
-.modal-body {
-  .cascader {
-    .el-input {
-      width: 300px !important;
-    }
-  }
-}
-.color_gray {
-  color: #999;
-}
-</style>
-<style>
-.edit-wrapper .edit-card .el-input.inp_mini {
-  width: 90px;
-  min-width: 90px;
-  padding: 0 5px;
-}
-.icon_items {
-  width: 160px;
-  text-align: right;
-  padding-right: 20px;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-.footer {
-  text-align: center;
-  margin: 50px auto;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 120px;
-  height: 120px;
-  line-height: 120px !important;
-  text-align: center;
-}
+
+// .link-btn {
+//   font-size: 14px;
+// }
+// .modal-body {
+//   .cascader {
+//     .el-input {
+//       width: 300px !important;
+//     }
+//   }
+// }
 </style>
 <style lang="scss">
-.table-form {
-  .el-form-item {
-    margin: 15px 0;
+// .table-form {
+//   .el-form-item {
+//     margin: 15px 0;
+//   }
+//   .el-input {
+//     input {
+//       text-align: center;
+//     }
+//   }
+// }
+// .edit-wrapper .edit-card .el-input.inp_mini {
+//   width: 110px;
+// }
+.app-container_activity {
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 120px;
+    height: 120px;
+    line-height: 120px !important;
+    text-align: center;
   }
-  .el-input {
-    input {
-      text-align: center;
-    }
-  }
-}
-.edit-wrapper .edit-card .el-input.inp_mini {
-  width: 110px;
 }
 </style>
 

@@ -24,8 +24,6 @@ export default {
     onToggle(v) {
       this.$emit('valueEvent', v)
       this.$emit('on-toggle-tab', v)
-
-      console.log(this.value)
     }
   },
   watch: {},

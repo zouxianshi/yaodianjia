@@ -45,7 +45,7 @@
       </el-form-item>
       <el-form-item label="推荐来源">
         <el-radio-group v-model="conditions.regLy" @change="clearSelected">
-          <el-radio :label=null>不限</el-radio>
+          <el-radio :label="null">不限</el-radio>
           <el-radio label="1">
             <span @click="chooseReg('store')">选择门店<i class="el-icon-arrow-down" /></span>
           </el-radio>
@@ -81,7 +81,7 @@ import { queryStoreByOrgId } from '@/api/coupon'
 import mSelectStore from './selectStore' // 选择会员属于哪个门店
 import popSelectEmployee from './pop-select-employee' // 选择推荐员工
 import popSelectStore from './popSelectSore' // 选择推荐人属于哪个门店
-import { queryEmployee, searchEmployee, queryStore } from '@/api/memberService' // 选择门店和选择推荐来源接口
+import { searchEmployee, queryStore } from '@/api/memberService' // 选择门店和选择推荐来源接口
 export default {
   name: 'Conditions',
   components: {
@@ -170,12 +170,12 @@ export default {
     },
     // 获取推荐人门店数据
     getEmpStore() {
-      const params = { "currentPage": 1, "pageSize": 999999, "status": 1 }
+      const params = { 'currentPage': 1, 'pageSize': 999999, 'status': 1 }
       queryStore(params).then(res => {
-        let data = res.data ? res.data.data : []
+        const data = res.data ? res.data.data : []
         data.map(item => {
           item.selectFlag = false
-          item.show= true
+          item.show = true
         })
         this.selectedEmpStore = data
       })
@@ -185,7 +185,7 @@ export default {
       searchEmployee(
         { currentPage: 1, pageSize: 999, pageFlag: false, status: 1 }
       ).then(res => {
-        let data = res.data ? res.data.data : []
+        const data = res.data ? res.data.data : []
         data.map(item => {
           item.selectFlag = false
           item.show = true // (前端查询筛选用)

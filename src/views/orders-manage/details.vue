@@ -4,7 +4,7 @@
       <div class="wrapper">
         <div class="item">
           <div class="item-left">
-            订单号：{{ detailsData.serialNumber }}
+            订单号：{{ detailsData.id }}
             <template
               v-if="detailsData.prescriptionSheetMark==='1'"
             >（{{ detailsData.prescriptionSheetMark | orderType }}）</template>
@@ -13,7 +13,7 @@
             <el-button
               type="primary"
               size="mini"
-              @click="handleSetPushErp(detailsData.serialNumber)"
+              @click="handleSetPushErp(detailsData.id)"
             >补推到ERP</el-button>
           </div>
         </div>
@@ -214,6 +214,9 @@
               优惠：￥
               {{ (detailsData.couponDeduction*100+detailsData.integralDeduction*100+detailsData.activityDiscountAmont*100+detailsData.otherDiscountAmont*100)/100 }}
             </div>
+            <div
+              class="con"
+            >优惠券ID：{{ detailsData.orderCoupon ? detailsData.orderCoupon.couponId :'' }}</div>
           </template>
 
           <div class="con">应付总额：￥{{ detailsData.totalActualOrderAmount }}</div>
@@ -573,7 +576,7 @@
                 <div class="header-cell">单价（元）</div>
                 <div class="header-cell">数量</div>
                 <div class="header-cell">小计（元）</div>
-                <div class="header-cell">海典健康微商城优惠</div>
+                <div class="header-cell">微商城优惠</div>
                 <div class="header-cell">状态</div>
               </div>
               <div class="header-right">

@@ -343,7 +343,7 @@ export default {
     cursor: pointer;
   }
   .search-form {
-    margin-bottom: 0px;
+    margin-bottom: 10px;
     .search-item {
       .el-input {
         width: 180px;
@@ -352,7 +352,7 @@ export default {
   }
   .block {
     text-align: right;
-    margin-top: 40px;
+    margin-top: 20px;
   }
   .has-selected {
     margin-top: 10px;

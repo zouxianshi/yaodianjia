@@ -20,9 +20,10 @@ import mBasicsSetting from './_source/basicsSetting'
 import mStyleSetting from './_source/styleSetting'
 import mShareSetting from './_source/shareSetting'
 export default {
-  name: 'StepBasics',
+  name: 'StepHomeBasics',
   data() {
     return {
+      isHome: this.$route.name === 'renovation-home-settings',
       basicsModel: {}
     }
   },

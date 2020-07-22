@@ -89,7 +89,6 @@ export default {
   created() {
     this.getStatistics()
     this.getLiveDetails()
-    this.getLivegoods()
   },
   methods: {
     async getStatistics() {
@@ -114,19 +113,8 @@ export default {
       } catch (error) {
         console.log(error)
       }
-    },
-    // 获取直播商品列表
-    async getLivegoods() {
-      try {
-        const { data } = await liveRequest.getLivegoods({
-          liveId: this.$route.query.id
-        })
-        console.log(data)
-        this.goodsList.push(data)
-      } catch (error) {
-        console.log(error)
-      }
     }
+
   }
 }
 </script>
@@ -187,5 +175,14 @@ export default {
 }
 .info-wrapper {
   padding: 0 120px;
+}
+.detail_avatar{
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+}
+.detail_coverPicUrl{
+  width: 100px;
+  height: 100px;
 }
 </style>

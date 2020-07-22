@@ -2,7 +2,7 @@
   <el-dialog title="页面设置" append-to-body="" :close-on-click-modal="false" width="500px" :visible.sync="visible">
     <div class="form-box">
       <el-form ref="formData" :model="formData" :rules="rules" label-width="100px" size="small">
-        <el-form-item label="模板名称：" prop="name">
+        <el-form-item v-if="sourceType !== 'DM'" label="模板名称：" prop="name">
           <el-input v-model="formData.name" placeholder="请输入最多不超过12个汉字" show-word-limit maxlength="12" />
         </el-form-item>
         <el-form-item label="页面标题：" prop="title">
@@ -17,25 +17,25 @@
             /> <span v-text="formData.backgroundColor" />
           </div>
         </el-form-item>
-        <el-form-item label="组件边框：" prop="borderFlag">
+        <el-form-item v-if="sourceType !== 'DM'" label="组件边框：" prop="borderFlag">
           <el-select v-model="formData.borderFlag">
             <el-option :value="0" label="无边框" />
             <el-option :value="1" label="有边框" />
           </el-select>
         </el-form-item>
         <template v-if="formData.borderFlag===1">
-          <el-form-item label="边框样式：" prop="borderStyle">
+          <el-form-item v-if="sourceType !== 'DM'" label="边框样式：" prop="borderStyle">
             <el-select v-model="formData.borderStyle">
               <el-option :value="0" label="直角" />
               <el-option :value="1" label="圆角" />
             </el-select>
           </el-form-item>
-          <el-form-item label="边框大小：" prop="borderSize">
+          <el-form-item v-if="sourceType !== 'DM'" label="边框大小：" prop="borderSize">
             <el-input v-model="formData.borderSize" type="number" placeholder="建议填写3" show-word-limit maxlength="12">
               <template slot="append">px</template>
             </el-input>
           </el-form-item>
-          <el-form-item label="边框颜色：" prop="borderColor">
+          <el-form-item v-if="sourceType !== 'DM'" label="边框颜色：" prop="borderColor">
             <div class="color-box">
               <el-color-picker
                 v-model="formData.borderColor"
@@ -75,6 +75,7 @@
 <script>
 import { checkName } from '@/utils/validate'
 import RenovationService from '@/api/renovation'
+import MarketingsService from '@/api/marketings'
 import mixins from './mixins'
 
 const vefDesc = (rule, value, callback) => {
@@ -117,21 +118,31 @@ export default {
         '#c9c9c9'
       ],
       rules: {
-        name: [{ required: true, message: '请输入模板名称', trigger: 'blur' }],
-        title: [{ required: true, message: '请输入页面标题', trigger: 'blur' }],
-        backgroundColor: [{ required: true, message: '请设置背景颜色', trigger: 'change' }],
-        borderFlag: [{ required: true, message: '请选择组件边框', trigger: 'change' }],
-        borderStyle: [{ required: true, message: '请选择边框样式', trigger: 'change' }],
-        borderSize: [{ required: true, message: '请输入边框大小', trigger: 'blur' }],
-        borderColor: [{ required: true, message: '请边框颜色', trigger: 'change' }],
-        shareDesc: [
-          { required: true, message: '请输入分享描述', trigger: 'blur' },
-          { validator: vefDesc, trigger: 'blur' }
-        ],
-        shareImg: [{ required: true, message: '请上传分享图片', trigger: 'change' }]
       },
       pageLoading: null,
       saveLoaiding: false
+    }
+  },
+  props: {
+    sourceType: {
+      type: String,
+      default: 'home'
+    }
+  },
+  created() {
+    this.rules = {
+      name: [{ required: this.sourceType === 'home', message: '请输入模板名称', trigger: 'blur' }],
+      title: [{ required: true, message: '请输入页面标题', trigger: 'blur' }],
+      backgroundColor: [{ required: this.sourceType === 'home', message: '请设置背景颜色', trigger: 'change' }],
+      borderFlag: [{ required: this.sourceType === 'home', message: '请选择组件边框', trigger: 'change' }],
+      borderStyle: [{ required: this.sourceType === 'home', message: '请选择边框样式', trigger: 'change' }],
+      borderSize: [{ required: this.sourceType === 'home', message: '请输入边框大小', trigger: 'blur' }],
+      borderColor: [{ required: this.sourceType === 'home', message: '请边框颜色', trigger: 'change' }],
+      shareDesc: [
+        { required: true, message: '请输入分享描述', trigger: 'blur' },
+        { validator: vefDesc, trigger: 'blur' }
+      ],
+      shareImg: [{ required: true, message: '请上传分享图片', trigger: 'change' }]
     }
   },
   methods: {
@@ -166,7 +177,8 @@ export default {
     async _updateBase() {
       this.saveLoaiding = true
       try {
-        await RenovationService.updateBaseInfo(this.formData)
+        this.sourceType === 'home' ? await RenovationService.updateBaseInfo(this.formData) : await MarketingsService.updateBaseInfo(this.formData)
+
         this.$message({
           message: '更新成功',
           type: 'success'

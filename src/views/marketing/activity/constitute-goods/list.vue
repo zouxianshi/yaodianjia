@@ -11,7 +11,7 @@
             <el-button type="primary" size="small" @click="getList">查询</el-button>
           </div>
         </div>
-        <a href="#/goods-manage/constitute-goods/edit">
+        <a href="#/marketing/activity/constitute-goods/edit">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline">新增组合商品</el-button>
         </a>
       </div>
@@ -67,13 +67,25 @@
             </template>
           </el-table-column>
           <el-table-column prop="modifyTime" align="left" min-width="110" label="修改时间" />
-          <el-table-column align="left" min-width="180" label="操作" fixed="right">
+          <el-table-column align="left" width="150" label="操作" fixed="right">
             <template slot-scope="scope">
-              <!-- <el-button type="primary" size="mini" @click.stop="toSelectShops">上下架</el-button> -->
               <el-button type="text" size="mini" @click="handleUpDown(1,scope.row)">上架</el-button>
               <el-button type="text" size="mini" @click="handleUpDown(0,scope.row)">下架</el-button>
               <el-button type="text" size="mini" @click="createSon(scope.row.id)">编辑</el-button>
-              <el-button type="text" size="mini" @click="createSon(scope.row.id)">删除</el-button>
+              <!-- <el-popconfirm
+                confirm-button-text="确定"
+                cancel-button-text="取消"
+                icon="el-icon-info"
+                icon-color="red"
+                title="确定删除此商品吗？"
+                @onConfirm="deleteSon(scope.row.id)"
+              >
+                <el-button
+                  slot="reference"
+                  type="text"
+                  size="mini"
+                >删除</el-button>
+              </el-popconfirm> -->
             </template>
           </el-table-column>
         </el-table>
@@ -106,7 +118,10 @@
 import { mapGetters } from 'vuex'
 import mixins from '@/utils/mixin'
 import Pagination from '@/components/Pagination'
-import { getConstituteGoodsList } from '@/api/constitute-goods'
+import {
+  getConstituteGoodsList,
+  deleteConstituteGoods
+} from '@/api/constitute-goods'
 import dialogShops from './_source/dialog-shops'
 import store from './_source/store'
 export default {
@@ -156,9 +171,20 @@ export default {
     },
     createSon(rowData) {
       this.$router.push({
-        path: `/goods-manage/constitute-goods/edit`,
+        path: `/marketing/activity/constitute-goods/edit`,
         query: { mercode: this.merCode, id: rowData }
       })
+    },
+    deleteSon(rowData) {
+      console.log('要删除的数据------', rowData)
+      deleteConstituteGoods()
+        .then(res => {
+          console.log('删除成功', res)
+          this.getList()
+        })
+        .catch(err => {
+          console.log('删除数据失败=------', err)
+        })
     },
     shopsSelectChange(list) {
       console.log('list', list)

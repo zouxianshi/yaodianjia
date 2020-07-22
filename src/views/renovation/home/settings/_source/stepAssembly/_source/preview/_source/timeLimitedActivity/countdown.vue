@@ -2,16 +2,16 @@
   <div class="tla-countdown-model">
     <p v-if="msTime.show">
       <span v-if="msTime.day > 0">
-        <span class="tla-tbox-block" style="margin-right: 4px;">{{ msTime.day }}</span>天
+        <span class="tla-tbox-block" style="margin-right: 4px;" :style="{background:color}">{{ msTime.day }}</span>天
       </span>
-      <span class="tla-tbox-block">{{ msTime.hour }}</span><b>:</b>
-      <span class="tla-tbox-block">{{ msTime.minutes }}</span><b>:</b>
-      <span class="tla-tbox-block">{{ msTime.seconds }}</span><b>S</b>
+      <span class="tla-tbox-block" :style="{background:color}">{{ msTime.hour }}</span><b>:</b>
+      <span class="tla-tbox-block" :style="{background:color}">{{ msTime.minutes }}</span><b>:</b>
+      <span class="tla-tbox-block" :style="{background:color}">{{ msTime.seconds }}</span><b>S</b>
     </p>
     <p v-else>
-      <span class="tla-tbox-block">00</span><b>:</b>
-      <span class="tla-tbox-block">00</span><b>:</b>
-      <span class="tla-tbox-block">00</span><b>S</b>
+      <span class="tla-tbox-block" :style="{background:color}">00</span><b>:</b>
+      <span class="tla-tbox-block" :style="{background:color}">00</span><b>:</b>
+      <span class="tla-tbox-block" :style="{background:color}">00</span><b>S</b>
     </p>
   </div>
 </template>
@@ -22,8 +22,9 @@
    * @description   倒计时
    * @link https://github.com/cgygd/vue2-countdown
    */
+/* eslint-disable */
 export default {
-  name: 'Countdown',
+  name: 'VCountdown',
   data() {
     return {
       tipShow: true,
@@ -45,6 +46,10 @@ export default {
     }
   },
   props: {
+    color: {
+      type: String,
+      default: '#FF9F43'
+    },
     // 时间控件ID
     id: {
       type: String,
@@ -52,15 +57,18 @@ export default {
     },
     // 当前时间
     currentTime: {
-      type: Number
+      type: Number,
+      default: 0
     },
     // 活动开始时间
     startTime: {
-      type: Number
+      type: Number,
+      default: 0
     },
     // 活动结束时间
     endTime: {
-      type: Number
+      type: Number,
+      default: 0
     },
     // 是否开启秒表倒计，未完成
     secondsFixed: {
