@@ -203,12 +203,15 @@ export default {
     },
     // 提交直播数据
     saveLive() {
-      console.log(this.$refs['rulesForm'])
       this.$refs['rulesForm'].validate((valid) => {
-        console.log(valid)
         if (valid) {
           const params = _.cloneDeep(this.liveForm)
           params.beginTime = formatDate(params.beginTime)
+          _.map(params.commoditySpecList, goods => {
+            goods.picUrl = goods.mainPic ? goods.mainPic : ''
+            goods.merCode = this.merCode
+            goods.specStr = goods.specSkuList ? (goods.specSkuList[0].skuKeyName + ': ' + goods.specSkuList[0].skuValue) : goods.specStr
+          })
           if (this.$route.query.id) {
             updateLiveInfo(params).then(res => {
             if (res.code === '10000') {
@@ -220,11 +223,6 @@ export default {
             }
           })
           } else {
-            _.map(params.commoditySpecList, goods => {
-              goods.picUrl = goods.mainPic ? goods.mainPic : ''
-              goods.merCode = this.merCode
-              goods.specStr = goods.specSkuList ? (goods.specSkuList[0].skuKeyName + ': ' + goods.specSkuList[0].skuValue) : ''
-            })
             LiveRequest.createLive(params).then(res => {
               if (res.code === '10000') {
                 this.$message({
