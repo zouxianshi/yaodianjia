@@ -79,7 +79,7 @@
       </el-form-item>
     </el-form>
     <div class="submit-btn">
-      <el-button size="mini" @click="saveLive">保存</el-button>
+      <el-button size="mini" @click="saveLive" v-loading="submitLoading">保存</el-button>
     </div>
     <!-- 选择主商品组件 -->
     <store-goods
@@ -119,7 +119,7 @@ export default {
         commoditySpecList: [], // 商品信息
         prizeAmount: '', // 奖励金额
         prizeRule: '', // 奖励规则
-        subscribeLimitType: 0, // 订阅门槛
+        subscribeLimitType: 1, //订阅门槛
         graphicDetails: '' // 图文详情
       },
       rules: {
@@ -144,7 +144,8 @@ export default {
         {value: 1, label: '无对应商品可订阅'},
         {value: 2, label: '至少要有一个对应商品方可订阅'},
         {value: 3, label: '必须对应所有商品方可订阅'}
-      ]
+      ],
+      submitLoading: false
     }
   },
   computed: {
@@ -211,6 +212,7 @@ export default {
     saveLive() {
       this.$refs['rulesForm'].validate((valid) => {
         if (valid) {
+          this.submitLoading = true
           const params = _.cloneDeep(this.liveForm)
           params.beginTime = formatDate(params.beginTime)
           _.map(params.commoditySpecList, goods => {
@@ -220,16 +222,18 @@ export default {
           })
           if (this.$route.query.id) {
             updateLiveInfo(params).then(res => {
-              if (res.code === '10000') {
-                this.$message({
-                  type: 'success',
-                  message: '修改成功！'
-                })
-                this.$router.push('/factory-live/list')
-              }
-            })
+            this.submitLoading = false
+            if (res.code === '10000') {
+              this.$message({
+                type: 'success',
+                message: '修改成功！'
+              })
+              this.$router.push('/factory-live/list')
+            }
+          })
           } else {
             LiveRequest.createLive(params).then(res => {
+              this.submitLoading = false
               if (res.code === '10000') {
                 this.$message({
                   type: 'success',
