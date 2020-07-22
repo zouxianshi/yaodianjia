@@ -242,6 +242,8 @@ import liveRequest from '@/api/live'
 import { merchantDetail } from '@/api/merchant_Person_Api'
 // 图文详情 ↓
 import Tinymce from '@/components/Tinymce'
+// 编辑一订阅直播
+import { yDyfactoryLiveDetailEdit, editYDyfactoryLive } from '@/api/factory-live'
 export default {
   name: 'LiveActivityEdit',
   components: { storeGoods, checkCoupon, Tinymce },
@@ -332,8 +334,12 @@ export default {
       }
     },
     async _loadLiveInfo() {
+      const params = {
+          liveId: this.$route.query.id,
+          merCode: this.merCode
+      }
       try {
-        const { data } = await liveRequest.getLiveInfo(this.$route.query.id)
+        const { data } = await yDyfactoryLiveDetailEdit(params)
         const detaiInfo = data
         detaiInfo.commoditySpecList = data.commoditys
         if (data.activityCouponList) {
@@ -515,7 +521,8 @@ export default {
     async updateLive() {
       this.saveLoading = true
       try {
-        await liveRequest.updateLiveInfo(this.formData)
+        this.formData.subscribeMerCode = this.merCode
+        await editYDyfactoryLive(this.formData)
         this.$message({
           message: '修改成功',
           type: 'success'

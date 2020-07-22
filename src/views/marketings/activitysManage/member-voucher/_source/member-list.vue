@@ -356,8 +356,8 @@ export default {
     text-align: right;
     margin-top: 20px;
   }
-}
-.el-form-item {
-  margin-bottom: 0;
+  .el-form-item {
+    margin-bottom: 0;
+  }
 }
 </style>
