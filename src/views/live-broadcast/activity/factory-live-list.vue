@@ -61,18 +61,13 @@
           <template slot-scope="scope">
             <template>
               <el-button
-                v-if="scope.row.status===0||scope.row.status===1||scope.row.status===3"
-                size="mini"
-                type="text"
-                @click="handleStartLive(scope.row.id)"
-              >开播</el-button>
-              <el-button
                 slot="reference"
                 type="text"
                 size="mini"
                 @click="handleShareCode(scope.row)"
               >分享</el-button>
               <el-button
+                v-if="scope.row.status === 0"
                 type="text"
                 size="mini"
                 @click="handleAdd(scope.row.id)"
@@ -137,7 +132,6 @@
       </span>
     </el-dialog>
     <popShareLive ref="popShareLive" />
-    <popStartLive ref="popStartLive" />
   </div>
 </template>
 <script>
@@ -148,10 +142,9 @@ import { yDyfactoryLive, yDyfactoryLiveDetail } from '@/api/factory-live'
 import { mapGetters } from 'vuex'
 // 开启直播以及分享弹窗
 import popShareLive from '../../factory-live/_source/pop-share-live' // 分享直播
-import popStartLive from '../../factory-live/_source/pop-start-live'
 export default {
   name: 'Live',
-  components: { Pagination, popShareLive, popStartLive },
+  components: { Pagination, popShareLive },
   mixins: [mixins],
   data() {
     return {
@@ -195,12 +188,6 @@ export default {
         console.log(error)
         this.loading = false
       }
-    },
-    /**
-     * 发起直播
-     */
-    async handleStartLive(id) {
-      this.$refs.popStartLive.openShare(this.merCode, id)
     },
     /**
      * 获取该条数据的商品数据

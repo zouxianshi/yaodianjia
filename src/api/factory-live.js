@@ -121,11 +121,30 @@ export function yDyfactoryLive(params) {
   })
 }
 
-// 商户中心 - 厂家直播详情
+// 商户中心 - 厂家直播详情（分享、开播用）
 export function yDyfactoryLiveDetail(params) {
   return request({
     url: `${config.merGoods}/1.0/activity/detail/${params.merCode}/${params.liveId}`,
     method: 'get',
     noMerCode: true
+  })
+}
+
+
+// 商户中心 - 厂家直播详情 (编辑用)
+export function yDyfactoryLiveDetailEdit(params) {
+  return request({
+    url: `${config.merGoods}/1.0/factoryLive/factoryDetail/${params.merCode}/${params.liveId}`,
+    method: 'get',
+    noMerCode: true
+  })
+}
+
+// 编辑一订阅直播
+export function editYDyfactoryLive(params) {
+  return request({
+    url: `${config.merGoods}/1.0/factoryLive/subscribe/edit`,
+    method: 'post',
+    data: params
   })
 }
