@@ -251,7 +251,16 @@ const router = [
         name: 'live-activity-edit',
         meta: {
           // auth: 'commodity.commodity-combine',
-          title: '直播活动',
+          title: '编辑自主直播',
+          noCache: true
+        }
+      },
+      {
+        path: 'factory-live-edit',
+        component: () => import('@/views/live-broadcast/activity/factory-live-edit'),
+        name: 'factory-live-edit',
+        meta: {
+          title: '编辑厂家直播',
           noCache: true
         }
       },

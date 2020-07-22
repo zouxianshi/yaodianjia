@@ -301,7 +301,7 @@ export default {
       yDyfactoryLiveDetail(params).then(res => {
         console.log('厂家订阅的直播详情', res)
       })
-      // this.$router.push(`/live-manage/activity-edit?id=${id}`)
+      this.$router.push(`/live-manage/factory-live-edit?id=${id}`)
     },
     handleShowGoods(row) {
       this._loadLiveGoods(row)
