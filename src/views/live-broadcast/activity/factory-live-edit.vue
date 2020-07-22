@@ -15,7 +15,7 @@
           {{ formData.merName }}
         </el-form-item>
         <el-form-item label="直播主题：" prop="name">
-          <el-input v-model="formData.name" maxlength="20" show-word-limit placeholder="请输入直播主题" style="width:300px" />
+          <el-input v-model="formData.name" maxlength="20" show-word-limit placeholder="请输入直播主题" style="width:300px" disabled />
         </el-form-item>
         <el-form-item label="开播时间：" prop="beginTime">
           <el-date-picker
@@ -24,6 +24,7 @@
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择开播时间"
             style="width:300px"
+            disabled
           />
         </el-form-item>
         <el-form-item label="直播封面：" prop="coverPicUrl">
@@ -35,6 +36,7 @@
               :headers="headers"
               :on-success="handleCoverSuccess"
               :before-upload="beforeAvatarUpload"
+              disabled
             >
               <img v-if="formData.coverPicUrl" :src="showImg(formData.coverPicUrl)" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -51,6 +53,7 @@
             maxlength="500"
             placeholder="请输入直播简介"
             style="width:500px"
+            disabled
           />
         </el-form-item>
         <el-form-item label="直播公告" prop="activityNotice">
@@ -62,6 +65,7 @@
             maxlength="150"
             placeholder="请输入直播公告"
             style="width:500px"
+            disabled
           />
         </el-form-item>
         <!-- 关联商品 -->
@@ -76,7 +80,6 @@
             size="small"
             style="margin-top:10px"
           >
-            <!-- <el-table-column v-if="!activityId" type="selection" width="55" /> -->
             <el-table-column label="商品名称" prop="name" min-width="100" />
             <el-table-column label="商品编码" prop="erpCode" />
             <el-table-column label="规格">
@@ -88,12 +91,6 @@
             <el-table-column label="参考价" prop="mprice" />
             <el-table-column label="操作" min-width="110">
               <template slot-scope="scope">
-                <!-- <el-button
-                  type
-                  size="mini"
-                  :disabled="disabled"
-                  @click="handleEditSetting(scope.row)"
-                >设置</el-button>-->
                 <el-button type="text" size="mini" @click="handleGoodsDel(scope.$index)">移除</el-button>
               </template>
             </el-table-column>
@@ -172,20 +169,8 @@
           <Tinymce
             v-model="formData.graphicDetails"
             :height="400"
+            disabled
           />
-        </el-form-item>
-        <el-form-item label="粉丝群二维码：">
-          <el-upload
-            class="avatar-uploader"
-            :action="upLoadUrl"
-            :show-file-list="false"
-            :headers="headers"
-            :on-success="handleCoverSuccess1"
-            :before-upload="beforeAvatarUpload"
-          >
-            <img v-if="formData.fanBasePicUrl" :src="showImg(formData.fanBasePicUrl)" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
-          </el-upload>
         </el-form-item>
         <el-form-item label>
           <el-button type="primary" :loading="saveLoading" @click="handleSubmit">保存</el-button>
@@ -274,7 +259,6 @@ export default {
         merLogoUrl: '',
         merName: '',
         name: '',
-        fanBasePicUrl: '', // 粉丝群二维码
         liveIntroduce: '',
         activityNotice:
           '欢迎来到直播间！平台倡导绿色直播，若直播间出现违法违规行为，请及时举报。为了您的购物安全，请点击直播间“相关商品”官方渠道选购商品。',
@@ -538,11 +522,6 @@ export default {
     //  上传封面
     handleCoverSuccess(res, file) {
       this.formData.coverPicUrl = res.data
-      this.pageLoading.close()
-    },
-    // 上传粉丝微信群
-    handleCoverSuccess1(res, file) {
-      this.formData.fanBasePicUrl = res.data
       this.pageLoading.close()
     },
     beforeAvatarUpload(file) {

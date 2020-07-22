@@ -55,7 +55,7 @@ export default {
     formatStart(time) {
       const times = (new Date(time).getTime() - new Date().getTime()) / 1000
       if (times > 86400) {
-        return Math.floor(tiems / 86400) + '天'
+        return Math.floor(times/86400) + '天'
       } else if (times > 3600) {
         return Math.floor(times / 3600) + '小时'
       } else if (times < 0) {

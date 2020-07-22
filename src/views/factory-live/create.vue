@@ -72,6 +72,7 @@
       </el-form-item>
       <el-form-item label="图文信息：">
         <Tinymce
+          ref="editor"
           v-model="liveForm.graphicDetails"
           :height="400"
         />
@@ -155,9 +156,8 @@ export default {
       return { Authorization: this.token }
     }
   },
-  created() {
-    console.log(this.$route.query)
-    const querys = this.$route.query
+  mounted() {
+    const  querys = this.$route.query
     if (querys.id) { // 编辑
       LiveRequest.getLiveInfo(querys.id).then(res => {
         console.log(res)
@@ -165,12 +165,16 @@ export default {
           goods.mainPic = goods.picUrl
         })
         this.liveForm = Object.assign(this.liveForm, res.data)
+        // 赋值值
+        if (this.liveForm.graphicDetails === null) {
+          this.liveForm.graphicDetails = ''
+        }
+        this.$refs.editor.setContent(this.liveForm.graphicDetails)
         this.liveForm.commoditySpecList = res.data.commoditys
         this.$refs.storeGods.dataFrom(this.liveForm.commoditySpecList)
       })
     } else {
       merchantDetail().then(res => {
-        console.log(res)
         if (res.code === '10000') {
           this.liveForm.merLogoUrl = res.data.merLogo
           this.liveForm.merName = res.data.merName
