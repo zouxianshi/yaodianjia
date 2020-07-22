@@ -11,7 +11,7 @@
     <el-button size="mini" @click="getData()" style="float:right">查询</el-button>
     <div class="live-content" v-if="liveData.length > 0">
       <el-card class="box-card" v-for="(liveItem, index) in liveData" :key="index" style="padding: 10px">
-        <liveItems  :datas="liveItem" />
+        <liveItems  @freshDate="getData" :datas="liveItem" />
       </el-card>
     </div>
     <div class="live-content" v-else>
@@ -90,7 +90,7 @@ export default {
     display: flex;justify-content: space-between; flex-wrap: wrap;
     height: calc(100vh - 340px);overflow: auto;margin-top: 10px;
     .box-card{
-      flex: 0 0 49%;margin-top: 20px;
+      flex: 0 0 49%;margin-top: 20px;height: 280px;
     }
   }
   .page-box{

@@ -201,13 +201,13 @@ export default {
     // 调用打开方法；
     open() {
       this.dialog.visible = true
-      console.log('this.list-----', this.list)
       if (Array.isArray(this.list) && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
         this.mySelectList = []
       }
-      this.fetchData()
+      this.tableData = []
+      // this.fetchData()
     },
     close() {
       this.dialog.visible = false

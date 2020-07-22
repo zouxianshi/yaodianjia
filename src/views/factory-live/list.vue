@@ -51,18 +51,21 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="180">
+      <el-table-column fixed="right" label="操作" width="120" align="center">
         <template slot-scope="scope">
-          <el-button @click="startLive(scope.row.id)" type="text">
+          <el-button @click="startLive(scope.row.id)" type="text" v-if="scope.row.auditStatus === 2">
             <i class="el-icon-video-camera" />
           </el-button>
-          <el-button @click="shareLive(scope.row.id)" type="text">
+          <el-button @click="shareLive(scope.row.id)" type="text" v-if="scope.row.auditStatus === 2">
             <i class="el-icon-share"></i>
           </el-button>
-          <el-button @click="edit(scope.row)" type="text" size="small" v-if="scope.row.status === 0">
+          <el-button @click="check(scope.row.id)" type="text" v-if="scope.row.auditStatus === 0">
+            <i class="el-icon-s-check" tag="审核" />
+          </el-button>
+          <el-button @click="edit(scope.row)" type="text" size="small" v-if="scope.row.auditStatus === 0">
             <i class="el-icon-edit"></i>
           </el-button>
-          <el-button type="text" size="small" @click="_onDelete(scope.row.id)">
+          <el-button type="text" size="small" @click="_onDelete(scope.row.id)" v-if="scope.row.auditStatus === 0">
             <i class="el-icon-delete"></i>
           </el-button>
         </template>
@@ -99,7 +102,7 @@
 </template>
 <script>
 import _ from 'lodash'
-import { searchLiveData, deleteLive } from '@/api/factory-live'
+import { searchLiveData, deleteLive, submitAudit } from '@/api/factory-live'
 import LiveRequest from '@/api/live'
 import { formartTime, formartStatus } from './_utils'
 import popShareLive from './_source/pop-share-live' // 分享直播
@@ -150,6 +153,23 @@ export default {
     // 获取开启直播二维码
     startLive(id) {
       this.$refs.popStartLive.openShare(this.merCode, id)
+    },
+    // 审核直播
+    check(id) {
+      const params = {
+        "auditStatus": 1,
+        "id": id
+      }
+      submitAudit(params).then(res => {
+        console.log(res)
+        if (res.code === '10000') {
+          this.$message({
+            type: 'success',
+            message: '已提交审核！'
+          })
+          this.getLiveData()
+        }
+      })
     },
     // 编辑
     edit(row) {

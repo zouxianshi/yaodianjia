@@ -147,7 +147,6 @@ export default {
     async getList() {
       try {
         const { data } = await factoryList(this.listQuery)
-        console.log(data, '张超新街口')
         this.tableData = data.data
         this.total = data.totalCount
       } catch (error) {

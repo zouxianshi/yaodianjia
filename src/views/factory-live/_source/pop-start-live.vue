@@ -6,9 +6,9 @@
     :before-close="handleClose"
     :append-to-body="true"
   >
-    <div class="share-live-content">
+    <div class="start-live-content">
       <div class="pm-qr-code">
-        <div id="qrCode" ref="qrCodeDiv" style="height:260px" v-loading="loading" />
+        <el-image  :src="imgCode" style="width:250px;height:250px" v-loading="loading" />
         <div style="margin-top:50px;font-weight:bold;text-align:center;font-size:16px">扫码开启直播</div>
       </div>
     </div>
@@ -18,14 +18,15 @@
   </el-dialog>
 </template>
 <script>
-import QRCode from 'qrcodejs2'
 import liveRequest from '@/api/live'
+import { getAppletsQrCode } from '@/api/factory-live'
 export default {
   data() {
     return {
       dialogVisible: false,
       loading: false,
-      qrCode: null
+      qrCode: null,
+      imgCode: ''
     }
   },
   methods: {
@@ -33,20 +34,15 @@ export default {
       this.loading = true
       this.dialogVisible = true
       liveRequest.getLiveDetails({ liveId: id }).then(res => {
-        this.loading = false
-        if (this.$refs.qrCodeDiv && this.$refs.qrCodeDiv.innerHTML !== '') {
-          this.$refs.qrCodeDiv.innerHTML = ''
+        // 获取分享二维码
+        const params = {
+          appletUrl: res.data.anchorAppletsUrl,
+          liveId: id
         }
-        if (res.code === '10000' && res.data) {
-          this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
-            text: res.data.pushStreamUrl,
-            width: 260,
-            height: 260,
-            colorDark: '#333333', // 二维码颜色
-            colorLight: '#ffffff', // 二维码背景色
-            correctLevel: QRCode.CorrectLevel.L // 容错率，L/M/H
-          })
-        }
+        getAppletsQrCode(params).then(res => {
+          this.loading = false
+          this.imgCode = `data:image/png;base64,${res.data}`
+        })
       })
     },
     handleClose(done) {
@@ -60,7 +56,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.share-live-content {
+.start-live-content {
   .pm-qr-code{
     width:260px;margin: 0 auto;
   }

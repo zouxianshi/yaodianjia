@@ -33,14 +33,14 @@ export default [{
             }
         },
         {
-            path: '/factory-live/dataCenter',
+            path: '/factory-live/data-center',
             component: () => import('@/views/factory-live/dataCenter/index'),
-            name: 'factory-live-dataCenter',
+            name: 'factory-live-data-center',
             meta: {
                 title: '数据中心',
                 auth: '',
                 noCache: true,
-                activeMenu: '/factory-live/dataCenter'
+                activeMenu: '/factory-live/data-center'
             }
         }
     ]

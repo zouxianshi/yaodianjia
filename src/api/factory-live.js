@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 import config from '@/utils/config'
+import { param } from 'jquery'
 
 /*
  优惠券管理
@@ -55,8 +56,19 @@ export function updateLiveInfo(params) {
 // 单场直播订阅详情
 export function subscriptionList(params) {
   return request({
-    url: `${config.merGoods}/1.0/statistics/subscribe/list?liveId=${params.id}`,
-    method: 'get'
+    url: `${config.merGoods}/1.0/statistics/subscribe/list`,
+    method: 'post',
+    data: params,
+    noMerCode: true
+  })
+}
+
+// 厂家直播提交审核
+export function submitAudit(params) {
+  return request({
+    url: `${config.merGoods}/1.0/activity/submitAudit`,
+    method: 'post',
+    data: params
   })
 }
 
@@ -66,8 +78,7 @@ export function subscribeableFactoryLive(params) {
   return request({
     url: `${config.merGoods}/1.0/factoryLive/list`,
     method: 'post',
-    data: params,
-    noMerCode: true
+    data: params
   })
 }
 
@@ -75,6 +86,45 @@ export function subscribeableFactoryLive(params) {
 export function subLive(params) {
   return request({
     url: `${config.merGoods}/1.0/factoryLive/subscribe/${params.merCode}/${params.liveId}`,
+    method: 'get',
+    noMerCode: true
+  })
+}
+//取消订阅
+export function unsubscribe(params) {
+  return request({
+    url: `${config.merGoods}/1.0/factoryLive/unsubscribe/${params.merCode}/${params.liveId}`,
+    method: 'get',
+    noMerCode: true
+  })
+}
+
+
+// 生成二维i吗
+export function getAppletsQrCode(params) {
+  return request({
+    url: `${config.merGoods}/1.0/activity/getAppletsQrCode`,
+    method: 'post',
+    data: params
+  })
+}
+
+
+// 商户中心 已订阅  的 厂家直播相关
+
+// 查询商户中心-厂家直播列表
+export function yDyfactoryLive(params) {
+  return request({
+    url: `${config.merGoods}/1.0/activity/factoryLive/list`,
+    method: 'post',
+    data: params
+  })
+}
+
+// 商户中心 - 厂家直播详情
+export function yDyfactoryLiveDetail(params) {
+  return request({
+    url: `${config.merGoods}/1.0/activity/detail/${params.merCode}/${params.liveId}`,
     method: 'get',
     noMerCode: true
   })

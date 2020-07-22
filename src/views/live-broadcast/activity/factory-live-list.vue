@@ -1,11 +1,10 @@
 <template>
   <div class="app-container">
-    <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd('')">新建直播活动</el-button>
     <section class="table-box webkit-scroll">
       <el-table
         v-loading="loading"
         :data="tableData"
-        height="calc(100vh - 400px)"
+        height="calc(100vh - 350px)"
         size="small"
         style="width: 100%"
       >
@@ -14,7 +13,7 @@
             <span>{{ scope.$index+1 }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="主题" min-width="180" align="center" />
+        <el-table-column prop="name" label="主播主题" min-width="180" align="center" />
         <el-table-column label="封面" min-width="100" align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.coverPicUrl && scope.row.coverPicUrl!==''" class="x-img-mini">
@@ -45,8 +44,8 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="商品数" prop="commodityNum" min-width="80" align="center" />
-        <el-table-column label="直播回放" min-width="120" align="center">
+        <el-table-column label="数量" prop="commodityNum" min-width="80" align="center" />
+        <el-table-column label="直播视频" min-width="120" align="center">
           <template slot-scope="scope">
             <div style="display:flex;justify-content: center;">
               <div class="cover">
@@ -74,14 +73,10 @@
                 @click="handleShareCode(scope.row)"
               >分享</el-button>
               <el-button
-                v-if="scope.row.status===0"
                 type="text"
                 size="mini"
                 @click="handleAdd(scope.row.id)"
               >编辑</el-button>
-              <el-button type="text" size="small" @click="_onDelete(scope.row.id)">
-                <i class="el-icon-delete"></i>
-              </el-button>
             </template>
           </template>
         </el-table-column>
@@ -149,8 +144,8 @@
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 import liveRequest from '@/api/live'
+import { yDyfactoryLive, yDyfactoryLiveDetail } from '@/api/factory-live'
 import { mapGetters } from 'vuex'
-import { deleteLive } from '@/api/factory-live'
 // 开启直播以及分享弹窗
 import popShareLive from '../../factory-live/_source/pop-share-live' // 分享直播
 import popStartLive from '../../factory-live/_source/pop-start-live'
@@ -167,9 +162,16 @@ export default {
       aliPlay: null,
       goodsVisible: false,
       goodsList: [],
+      shareVisible: false,
+      pageLink: '',
       playList: [],
       playIndex: 0,
-      playUrl: ''
+      playUrl: '',
+      listQuery: {
+        "currentPage": 1,
+        "merCode": this.merCode,
+        "pageSize": 10
+      }
     }
   },
   computed: {
@@ -183,13 +185,9 @@ export default {
      * 获取数据列表
      */
     async getList() {
-      this.listQuery.merType = 1 
       this.loading = true
       try {
-        const { data } = await liveRequest.getLiveList(this.listQuery)
-        data.data.map(v => {
-          v.codeVisible = false
-        })
+        const { data } = await yDyfactoryLive(this.listQuery)
         this.tableData = data.data
         this.total = data.totalCount
         this.loading = false
@@ -221,19 +219,6 @@ export default {
     handleShareCode(row) {
       this.$refs.popShareLive.openShare(this.merCode, row.id)
     },
-    // 删除直播
-    _onDelete(id) {
-      deleteLive(id).then(res => {
-        if (res.code === '10000'){
-          this.$message({
-            type: 'success',
-            message: '删除成功！'
-          })
-          this.getList()
-        }
-      })
-    },
-    
     handleColseVideo() {
       this.aliPlay.pause()
       this.videoVisible = false
@@ -309,7 +294,14 @@ export default {
       }
     },
     handleAdd(id) {
-      this.$router.push(`/live-manage/activity-edit?id=${id}`)
+      const params = {
+        liveId: id,
+        merCode: this.merCode
+      }
+      yDyfactoryLiveDetail(params).then(res => {
+        console.log('厂家订阅的直播详情', res)
+      })
+      // this.$router.push(`/live-manage/activity-edit?id=${id}`)
     },
     handleShowGoods(row) {
       this._loadLiveGoods(row)

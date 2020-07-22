@@ -15,14 +15,17 @@
         <span>{{datas.merName}}</span>
         <el-button type="primary" size="mini" @click="ckDetail(datas.id)">详情</el-button>
       </div>
-      <div class="sub-btn" @click="dyLive(datas.id)">
-        <i class="el-icon-edit-outline" />
+      <div class="sub-btn">
+        <el-image :src="starPng" v-if="datas.subscribeFlag === 0" @click="dyLive(datas.id)" />
+        <el-image :src="staredPng" v-else @click="unsubscribe(datas.id)" />
       </div>
     </div>
   </div>
 </template>
 <script>
-import { subLive } from '@/api/factory-live'
+import { subLive, unsubscribe } from '@/api/factory-live'
+import starPng from '../asset/img/start.png'
+import staredPng from '../asset/img/started.png'
 export default {
   props: {
     datas: {
@@ -40,6 +43,12 @@ export default {
   computed: {
     startData() {
       return this.formatStart(this.datas.beginTime)
+    },
+    starPng() {
+      return starPng
+    },
+    staredPng() {
+      return staredPng
     }
   },
   methods: {
@@ -57,14 +66,34 @@ export default {
     },
     // 订阅直播
     dyLive(id) {
-      console.log(id)
-      console.log(this.$store.state.user.merCode)
       const params = {
         liveId: id,
         merCode: this.$store.state.user.merCode
       }
       subLive(params).then(res => {
-        console.log(res)
+        if (res.code === '10000') {
+          this.$message({
+            type: "success",
+            message: '订阅成功！'
+          })
+          this.$emit('freshDate')
+        }
+      })
+    },
+    // 取消订阅
+    unsubscribe(id) {
+      const params = {
+        liveId: id,
+        merCode: this.$store.state.user.merCode
+      }
+      unsubscribe(params).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            type: "success",
+            message: '已取消订阅！'
+          })
+          this.$emit('freshDate')
+        }
       })
     },
     // 查看详情

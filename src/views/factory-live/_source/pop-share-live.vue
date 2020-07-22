@@ -2,14 +2,14 @@
   <el-dialog title="" :visible.sync="dialogVisible" width="800px" :before-close="handleClose" :append-to-body="true">
     <div class="share-live-content">
       <div class="content-left">
-        <div class="pm-qr-code">
-          <div id="qrCode" ref="qrCodeDiv" style="height:260px" v-loading="loading" />
+        <div class="pm-qr-code" v-loading="empCodeLoading">
+          <img  :src="imgCode" style="width:250px;height:250px" />
           <div style="margin-top:50px;font-weight:bold;text-align:center;font-size:16px">扫码观看直播</div>
         </div>
       </div>
-      <div class="content-right">
+      <div class="content-right scrollbar" v-loading="loading">
         <el-image style="height:200px;width:100%" :src="showImg(baseInfo.coverPicUrl)"></el-image>
-        <el-form :model="baseInfo">
+        <el-form :model="baseInfo" label-width="120" label-position="right">
           <el-form-item label="直播方：" style="margin-bottom: 10px">
             <span>{{baseInfo.merName}}</span>
           </el-form-item>
@@ -25,48 +25,47 @@
         </el-form>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer" style="padding: 0 10px 10px">
+    <!-- <span slot="footer" class="dialog-footer" style="padding: 0 10px 10px">
       <el-button @click="dialogVisible = false" size="mini">关 闭</el-button>
-    </span>
+    </span> -->
   </el-dialog>
 </template>
 <script>
-import QRCode from 'qrcodejs2'
 import liveRequest from '@/api/live'
+import { getAppletsQrCode } from '@/api/factory-live'
 export default {
   data() {
     return {
       dialogVisible: false,
       loading: false,
+      empCodeLoading: false,
       baseInfo: {
         
       },
-      qrCode: null
+      qrCode: null,
+      imgCode: ''
     }
   },
   methods: {
     openShare(merCode, id) {
       this.loading = true
+      this.empCodeLoading = true
       this.dialogVisible = true
       this.baseInfo = {}
       liveRequest.getLiveDetails({liveId: id}).then(res => {
+        this.loading = false
         if (res.code === '10000' && res.data) {
           this.baseInfo = res.data
+          // 获取分享二维码
+          const params = {
+            appletUrl: this.baseInfo.clientAppletsUrl,
+            liveId: id
+          }
+          getAppletsQrCode(params).then(res => {
+            this.empCodeLoading = false
+            this.imgCode = `data:image/png;base64,${res.data}`
+          })
         }
-      })
-      if (this.$refs.qrCodeDiv && this.$refs.qrCodeDiv.innerHTML !== '') {
-        this.$refs.qrCodeDiv.innerHTML = ''
-      }
-      liveRequest.getShareLivePage(merCode, id).then(res => {
-        this.loading = false
-        this.qrCode = new QRCode(this.$refs.qrCodeDiv, {
-          text: res.data,
-          width: 260,
-          height: 260,
-          colorDark: '#333333', // 二维码颜色
-          colorLight: '#ffffff', // 二维码背景色
-          correctLevel: QRCode.CorrectLevel.L// 容错率，L/M/H
-        })
       })
     },
     handleClose(done) {
@@ -81,18 +80,22 @@ export default {
 </script>
 <style lang="scss">
 .share-live-content{
-  display: flex;
+  display: flex;border: 1px solid #eee;
   .content-left{
-    flex: 0 0 50%;
+    flex: 0 0 45%;
     .pm-qr-code {
-      width: 260px;
-      height: 260px;
-      margin: 0 auto;
+      width: 100%;text-align:center;
+      margin: 0 auto;height: 450px;
+      padding-top: 50px;
     }
   }
   .content-right{
-    height: 450px; overflow: auto;
-    flex: 0 0 50%;
+    background-color: #6943DB;
+    height: 450px; overflow: auto;padding:10px;color: #ffff;
+    flex: 0 0 55%;
+    .el-form-item__label{
+      color: #fff;
+    }
   }
 }
 </style>

@@ -237,7 +237,7 @@ const router = [
     children: [
       {
         path: 'activity',
-        component: () => import('@/views/live-broadcast/activity/list'),
+        component: () => import('@/views/live-broadcast/activity/index'),
         name: 'live-activity',
         meta: {
           // auth: 'commodity.commodity-combine',

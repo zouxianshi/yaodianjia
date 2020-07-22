@@ -1,51 +1,27 @@
 <template>
   <div class="app-cotainer factory-live-create">
     <div class="info-title">基本信息</div>
-    <el-form :model="liveForm" disabled ref="rulesForm" label-width="100px" :rules="rules" class="demo-ruleForm">
-      <el-form-item label="直播头像：" required>
+    <el-form :model="liveForm" disabled ref="rulesForm" label-width="100px" class="demo-ruleForm">
+      <el-form-item label="直播头像：">
           <img v-if="liveForm.merLogoUrl" :src="showImg(liveForm.merLogoUrl)" class="avatar" />
       </el-form-item>
-      <el-form-item label="直播名称：" required>
-        <el-input size="mini" v-model="liveForm.merName" style="width:400px" disabled />
+      <el-form-item label="直播名称：">
+        {{ liveForm.merName }}
       </el-form-item>
       <el-form-item label="直播主题：" prop="name">
-        <el-input size="mini" v-model="liveForm.name" style="width:400px" />
+        {{ liveForm.name }}
       </el-form-item>
       <el-form-item label="开播时间：" prop="beginTime">
-        <el-date-picker
-          size="mini"
-          v-model="liveForm.beginTime"
-          type="datetime"
-          placeholder="选择日期时间">
-        </el-date-picker>
+        {{ liveForm.beginTime }}
       </el-form-item>
       <el-form-item label="直播封面：" prop="coverPicUrl">
-        <el-upload
-          size="mini"
-          class="avatar-uploader"
-          :action="upLoadUrl"
-          :headers="headers"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess1"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img v-if="liveForm.coverPicUrl" :src="showImg(liveForm.coverPicUrl)" class="avatar" />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
+        <img style="width:110px;height:110px" v-if="liveForm.coverPicUrl" :src="showImg(liveForm.coverPicUrl)" class="avatar" />
       </el-form-item>
       <el-form-item label="直播简介：" prop="liveIntroduce">
-        <el-input
-          type="textarea"
-          placeholder="请输入直播简介"
-          v-model="liveForm.liveIntroduce" style="width:400px">
-        </el-input>
+        {{ liveForm.liveIntroduce }}
       </el-form-item>
       <el-form-item label="直播公告：" prop="activityNotice">
-        <el-input
-          type="textarea"
-          placeholder="请输入直播简介"
-          v-model="liveForm.activityNotice" style="width:400px">
-        </el-input>
+        {{ liveForm.activityNotice }}
       </el-form-item>
     </el-form>
     <div class="info-title">关联介绍</div>
@@ -54,8 +30,7 @@
         <selectedGoods ref="storeGods" disabled v-show="liveForm.commoditySpecList.length>0" />
       </el-form-item>
       <el-form-item label="直播奖励：">
-        成交<el-input-number size="mini" :min="0" :max="99999" :precision="0" :controls="false" v-model="liveForm.prizeRule"></el-input-number>
-        奖励<el-input-number size="mini" :min="0" :max="99999" :precision="0" :controls="false" v-model="liveForm.prizeAmount"></el-input-number>
+        成交 {{ liveForm.prizeRule }} 奖励 {{ liveForm.prizeAmount }}
       </el-form-item>
       <el-form-item label="订阅门槛：">
         <el-select v-model="liveForm.subscribeLimitType" placeholder="请选择" size="mini">
@@ -75,7 +50,7 @@
         />
       </el-form-item>
     </el-form>
-    <el-button size="mini" @click="$router.push('/live-manage/factory-live')">返回</el-button>
+    <el-button size="mini" :disabled="false" @click="$router.push('/live-manage/factory-live')">返回</el-button>
     <!-- 选择主商品组件 -->
     <store-goods
       ref="GoodsComponent"
@@ -116,23 +91,6 @@ export default {
         prizeRule: '', // 奖励规则
         subscribeLimitType: 0, //订阅门槛
         graphicDetails: '' // 图文详情
-      },
-      rules: {
-        name: [
-          { required: true, message: '请输入直播主题', trigger: 'blur' }
-        ],
-        beginTime: [
-          { required: true, message: '请选择直播开始时间', trigger: 'change' }
-        ],
-        coverPicUrl: [
-          { required: true, message: '请上传直播封面', trigger: 'change' }
-        ],
-        activityNotice: [
-          { required: true, message: '请输入直播公告', trigger: 'blur' }
-        ],
-        liveIntroduce: [
-          { required: true, message: '请输入直播简介', trigger: 'blur' }
-        ]
       },
       // 订阅门槛
       options:[
