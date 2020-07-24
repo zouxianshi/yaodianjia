@@ -107,14 +107,14 @@ export default {
     },
     // 获取列表数据
     getData(val) {
-      if ( val === '查询' && Number(this.$refs.conditionsA.conditions.organizations) === 1 && this.$refs.conditionsA.choosedOrganizationsArr.length === 0) {
+      if (val === '查询' && Number(this.$refs.conditionsA.conditions.organizations) === 1 && this.$refs.conditionsA.choosedOrganizationsArr.length === 0) {
         this.$message({ type: 'warning', message: '请选择门店' })
       } else {
         var params = _.cloneDeep(this.$refs.conditionsA.conditions)
         // console.log(params)
-        let choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
-        let choosedEmployee = this.$refs.conditionsA.choosedEmployee // 已选择推荐员工
-        let choosedEmpSto = this.$refs.conditionsA.choosedEmpSto // 已选择推荐门店
+        const choosedOrganizationsArr = this.$refs.conditionsA.choosedOrganizationsArr // 已选择门店
+        const choosedEmployee = this.$refs.conditionsA.choosedEmployee // 已选择推荐员工
+        const choosedEmpSto = this.$refs.conditionsA.choosedEmpSto // 已选择推荐门店
         params.currentPage = this.pageInfo.currentPage
         params.pageSize = this.pageInfo.pageSize
         params.content = this.content
@@ -129,8 +129,9 @@ export default {
             arr.push(items.stCode)
           })
           params.regMedium = arr
+          params.regLy = null
         } else if (params.regLy === '2') {
-          let arr = []
+          const arr = []
           if (choosedEmployee.length === 0) {
             this.$message({ type: 'warning', message: '请选择员工' })
             return
@@ -139,6 +140,7 @@ export default {
             arr.push(items.empCode)
           })
           params.regMedium = arr
+          params.regLy = null
         }
         // 如果门店参数为选择门店
         if (params.organizations === '1') {

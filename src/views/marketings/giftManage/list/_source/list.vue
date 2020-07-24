@@ -159,20 +159,30 @@ export default {
     },
     // 删除优惠券
     deleteCoupons(ids) {
-      deleteCoupon({ id: ids }).then(res => {
-        console.log(res)
-        if (res.code === '10000') {
-          this.$message({
-            message: '删除成功！',
-            type: 'success'
-          })
-          this.searchData()
-        } else {
-          this.$message({
-            message: '删除失败！',
-            type: 'error'
-          })
-        }
+      this.$confirm('确定删除该优惠券吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteCoupon({ id: ids }).then(res => {
+          if (res.code === '10000') {
+            this.$message({
+              message: '删除成功！',
+              type: 'success'
+            })
+            this.searchData()
+          } else {
+            this.$message({
+              message: '删除失败！',
+              type: 'error'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }

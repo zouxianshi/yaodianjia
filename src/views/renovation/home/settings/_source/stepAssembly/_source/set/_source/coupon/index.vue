@@ -13,6 +13,7 @@
         <template v-for="(el,i) in itemParams.itemList">
           <m-form-item :key="i" :ref="`coupon_${i}`" :el="el" :is-delete="isDelete" @on-el-update="onElUpdate($event,i)" @on-coupon-delete="onCouponDelete(i)" />
         </template>
+
       </m-item-card>
     </div>
     <el-dialog title="选择优惠券" append-to-body	:visible.sync="dialogVisible" width="800">
@@ -52,16 +53,16 @@ export default {
 
     },
     onElUpdate(el, i) {
-      console.log(el, i)
       this.$set(this.itemParams.itemList, i, el)
     },
     onCouponDelete(index) {
       this.itemParams.itemList = _.filter(this.itemParams.itemList, (v, i) => i !== index)
-      console.log(this.itemParams.itemList)
     },
     onAssSubmit() {
       const { itemList } = this.itemParams
       let flag = true
+
+      console.log(itemList)
 
       _.map(itemList, (v, i) => {
         const refs = this.$refs[`coupon_${i}`][0].$verification()

@@ -6,50 +6,16 @@
         <el-divider />
         <el-form-item label="直播头像：">
           <!-- <template v-if="!showUpAvatar"> -->
-          <div style="width:50px;height:50px;border-radius:50%">
+          <div style="width:70px;height:70px;border-radius:50%">
             <img :src="showImg(formData.merLogoUrl)" width="100%" style="border-radius:50%">
-            <el-button
-              type="info"
-              size="mini"
-              circle
-              class="edit-avatar"
-              icon="el-icon-edit"
-              @click="handleEditMerchant"
-            />
           </div>
-          <!-- </template> -->
-          <!-- <template v-else>
-            <div class="cover">
-              <el-upload
-                class="avatar-uploader"
-                :action="upLoadUrl"
-                :show-file-list="false"
-                :headers="headers"
-                :on-success="handleLogoSuccess"
-                :before-upload="beforeAvatarUpload"
-              >
-                <img v-if="formData.merLogoUrl" :src="showImg(formData.merLogoUrl)" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon" />
-              </el-upload>
-            </div>
-          </template>-->
         </el-form-item>
         <el-form-item label="直播名称：">
           <span />
           {{ formData.merName }}
         </el-form-item>
         <el-form-item label="直播主题：" prop="name">
-          <el-input v-model="formData.name" maxlength="20" show-word-limit placeholder="请输入直播主题" />
-        </el-form-item>
-        <el-form-item label="公告" prop="activityNotice">
-          <el-input
-            v-model="formData.activityNotice"
-            type="textarea"
-            :rows="2"
-            show-word-limit
-            maxlength="150"
-            placeholder="请输入公告"
-          />
+          <el-input v-model="formData.name" maxlength="20" show-word-limit placeholder="请输入直播主题" style="width:300px" />
         </el-form-item>
         <el-form-item label="开播时间：" prop="beginTime">
           <el-date-picker
@@ -57,6 +23,7 @@
             type="datetime"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择开播时间"
+            style="width:300px"
           />
         </el-form-item>
         <el-form-item label="直播封面：" prop="coverPicUrl">
@@ -72,21 +39,33 @@
               <img v-if="formData.coverPicUrl" :src="showImg(formData.coverPicUrl)" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
-            <span class="tip">建议上传16：9的图片，图片大小不能超过2M，图片格式（png、jpg）</span>
           </div>
         </el-form-item>
-        <el-form-item label="直播介绍" prop="liveIntroduce">
+        <el-form-item><span class="tip">建议上传16：9的图片，图片大小不能超过2M，图片格式（png、jpg）</span></el-form-item>
+        <el-form-item label="直播简介" prop="liveIntroduce">
           <el-input
             v-model="formData.liveIntroduce"
             type="textarea"
-            :rows="2"
+            autosize
             show-word-limit
             maxlength="500"
-            placeholder="请输入公告"
+            placeholder="请输入直播简介"
+            style="width:500px"
+          />
+        </el-form-item>
+        <el-form-item label="直播公告" prop="activityNotice">
+          <el-input
+            v-model="formData.activityNotice"
+            type="textarea"
+            autosize
+            show-word-limit
+            maxlength="150"
+            placeholder="请输入直播公告"
+            style="width:500px"
           />
         </el-form-item>
         <!-- 关联商品 -->
-        <div class="form-title">关联商品</div>
+        <div class="form-title">关联介绍</div>
         <el-divider />
         <el-form-item label="参与商品：">
           <el-button type="primary" size="mini" @click="handleOpenGoods">选择商品</el-button>
@@ -188,45 +167,25 @@
             </el-table-column>
           </el-table>
         </el-form-item>
-        <!-- 广告位 -->
-        <div class="form-title">广告位</div>
-        <el-divider />
-        <el-form-item label="广告位：" prop="adPicUrl">
-          <div class="ad-cover">
-            <el-upload
-              :disabled="ad_disabled"
-              class="avatar-uploader"
-              :action="upLoadUrl"
-              :show-file-list="false"
-              :headers="headers"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-            >
-              <img v-if="formData.adPicUrl" :src="showImg(formData.adPicUrl)" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon" />
-            </el-upload>
-            <span class="tip">{{ ad_disabled?'禁止编辑':'建议上传750*80，图片大小不能超过2M，图片格式（png、jpg）' }}</span>
-          </div>
+        <!-- 图文信息等  -->
+        <el-form-item label="图文详情：">
+          <Tinymce
+            v-model="formData.graphicDetails"
+            :height="400"
+          />
         </el-form-item>
-        <el-form-item label="链接地址：" prop="adLinkUrl">
-          <el-input v-model="formData.adLinkUrl" placeholder="链接地址" :disabled="ad_disabled" />
-        </el-form-item>
-        <el-form-item label="直播背景色：">
-          <!-- <colorPicker v-model="formData.bgColor" /> -->
-          <el-radio-group v-model="formData.bgColor" size="mini">
-            <el-radio label="SIMPLE" border>
-              <span class="color-box" style="background:#fff" />
-            </el-radio>
-            <el-radio label="ORIGAN" border>
-              <span class="color-box" style="background:#FF6A48;" />
-            </el-radio>
-            <el-radio label="GREEN" border>
-              <span class="color-box" style="background:#47BD88;" />
-            </el-radio>
-            <el-radio label="CYAN" border>
-              <span class="color-box" style="background:#31CCED;" />
-            </el-radio>
-          </el-radio-group>
+        <el-form-item label="粉丝群二维码：">
+          <el-upload
+            class="avatar-uploader"
+            :action="upLoadUrl"
+            :show-file-list="false"
+            :headers="headers"
+            :on-success="handleCoverSuccess1"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="formData.fanBasePicUrl" :src="showImg(formData.fanBasePicUrl)" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
         </el-form-item>
         <el-form-item label>
           <el-button type="primary" :loading="saveLoading" @click="handleSubmit">保存</el-button>
@@ -275,16 +234,17 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { MC } from '@merchant/commons'
 import config from '@/utils/config'
 import storeGoods from '@/views/marketing/components/store-gods'
 import checkCoupon from '@/components/Marketings/checkCoupon'
 import _ from 'lodash'
 import liveRequest from '@/api/live'
 import { merchantDetail } from '@/api/merchant_Person_Api'
+// 图文详情 ↓
+import Tinymce from '@/components/Tinymce'
 export default {
   name: 'LiveActivityEdit',
-  components: { storeGoods, checkCoupon },
+  components: { storeGoods, checkCoupon, Tinymce },
   data() {
     var _checkTime = (rule, value, callback) => {
       if (!value) {
@@ -303,33 +263,27 @@ export default {
       popoverId: '',
       showUpAvatar: false,
       formData: {
+        merType: 1,
         couponRelationReqDto: [],
         commoditySpecList: [],
-        adLinkUrl: '',
-        adPicUrl: '',
         beginTime: '',
-        bgColor: 'SIMPLE',
         coverPicUrl: '',
         createName: '',
         merLogoUrl: '',
         merName: '',
         name: '',
+        fanBasePicUrl: '', // 粉丝群二维码
         liveIntroduce: '',
         activityNotice:
-          '欢迎来到直播间！平台倡导绿色直播，若直播间出现违法违规行为，请及时举报。为了您的购物安全，请点击直播间“相关商品”官方渠道选购商品。'
+          '欢迎来到直播间！平台倡导绿色直播，若直播间出现违法违规行为，请及时举报。为了您的购物安全，请点击直播间“相关商品”官方渠道选购商品。',
+        graphicDetails: ''
       },
       ruleForm: {
         name: [{ required: true, message: '请输入直播主题', trigger: 'blur' }],
         beginTime: [{ required: true, validator: _checkTime, trigger: 'change' }],
-        // adLinkUrl: [
-        //   { required: true, message: '请输入广告链接地址', trigger: 'blur' }
-        // ],
         activityNotice: [
           { required: true, message: '请输入直播公告', trigger: 'blur' }
         ],
-        // adPicUrl: [
-        //   { required: true, message: '请上传广告位图片', trigger: 'change' }
-        // ],
         coverPicUrl: [
           { required: true, message: '请上传封面', trigger: 'change' }
         ]
@@ -348,8 +302,7 @@ export default {
         ]
       },
       titles: '',
-      editIndex: 0,
-      ad_disabled: false
+      editIndex: 0
     }
   },
   computed: {
@@ -363,17 +316,12 @@ export default {
   },
   created() {
     if (this.$route.query.id) {
-      this.ad_disabled = true
       this._loadLiveInfo()
     } else {
-      this.ad_disabled = false
       this._loadMerchantInfo()
     }
   },
   methods: {
-    handleEditMerchant() {
-      MC.jumpToPath('merchant/index', 'merchant', '_blank')
-    },
     async _loadMerchantInfo() {
       try {
         const { data } = await merchantDetail()
@@ -396,7 +344,6 @@ export default {
         }
         delete detaiInfo.commoditys
         delete detaiInfo.activityCouponList
-        console.log(_.assign(this.formData, detaiInfo))
         this.formData = _.assign(this.formData, detaiInfo)
       } catch (error) {
         console.log(error)
@@ -519,6 +466,7 @@ export default {
           if (this.formData.couponRelationReqDto.length > 0) {
             if (this.formData.commoditySpecList.length <= 0) {
               this.$alert('有优惠券必须添加商品哦')
+              return
             }
             const couponRelationReqDto = this.formData.couponRelationReqDto[0]
             if (
@@ -535,20 +483,6 @@ export default {
               return
             }
           }
-          // if (this.formData.commoditySpecList.length === 0) {
-          //   this.$message({
-          //     message: '请选择商品',
-          //     type: 'warning'
-          //   })
-          //   return
-          // }
-          // if (this.formData.couponRelationReqDto.length === 0) {
-          //   this.$message({
-          //     message: '请选择优惠券',
-          //     type: 'warning'
-          //   })
-          //   return
-          // }
           if (this.$route.query.id) {
             this.updateLive()
           } else {
@@ -556,7 +490,6 @@ export default {
           }
         } else {
           this.$alert('请填写正确的信息')
-          console.log('error submit!!')
           return false
         }
       })
@@ -596,17 +529,14 @@ export default {
         this.saveLoading = false
       }
     },
-    errorHandler() {},
+    //  上传封面
     handleCoverSuccess(res, file) {
       this.formData.coverPicUrl = res.data
       this.pageLoading.close()
     },
-    handleAvatarSuccess(res) {
-      this.formData.adPicUrl = res.data
-      this.pageLoading.close()
-    },
-    handleLogoSuccess(res) {
-      this.formData.merLogoUrl = res.data
+    // 上传粉丝微信群
+    handleCoverSuccess1(res, file) {
+      this.formData.fanBasePicUrl = res.data
       this.pageLoading.close()
     },
     beforeAvatarUpload(file) {
@@ -663,9 +593,8 @@ export default {
   .form-title {
     line-height: 16px;
     font-size: 16px;
-    border-left: #409eff 2px solid;
     padding-left: 10px;
-    margin-bottom: 16px;
+    font-weight: 600;
   }
   .cover {
     .avatar-uploader-icon {

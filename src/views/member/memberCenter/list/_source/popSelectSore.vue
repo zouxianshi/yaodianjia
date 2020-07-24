@@ -16,7 +16,7 @@
           <div class="tips">已选择</div>
           <div class="has-choosed">
             <div v-for="(items, index) in empStoreArr" :key="index" style="display:inline-block">
-              <el-tag v-if="items.selectFlag" type="info" closable size="mini" @close="items.selectFlag=false" style="margin-right: 20px; margin-bottom: 10px ">
+              <el-tag v-if="items.selectFlag" type="info" closable size="mini" style="margin-right: 20px; margin-bottom: 10px " @close="items.selectFlag=false">
                 {{ items.stName }}
               </el-tag>
             </div>

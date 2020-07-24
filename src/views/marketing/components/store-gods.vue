@@ -135,7 +135,8 @@
                 closable
                 @close="removeMyselectItem(mItem, index2)"
               >
-                <span :title="mItem.name">{{ mItem.name }}</span>
+                <!-- commodityName是为了兼容组合商品返回的数据没有name -->
+                <span :title="mItem.name">{{ mItem.name || mItem.commodityName }}</span>
               </el-tag>
             </div>
           </div>
@@ -161,6 +162,11 @@ export default {
     list: {
       type: Array,
       default: () => []
+    },
+    limitMin: {
+      // 选取数量最低限制个数
+      type: Number,
+      default: 1
     },
     limitMax: {
       // 选取数量限制个数 0表示不限制
@@ -230,13 +236,11 @@ export default {
     },
     onTypeChange(typeid) {
       // 分类切换
-      console.log('searchForm------', typeid)
       this.forSearch()
     },
     // 调用打开方法；
     open() {
       this.dialog.visible = true
-      console.log('this.list-----', this.list)
       if (Array.isArray(this.list) && this.list.length > 0) {
         this.mySelectList = this.list.slice()
       } else {
@@ -262,6 +266,13 @@ export default {
     confirm() {
       if (this.mySelectList && this.mySelectList.length === 0) {
         this.$message({ type: 'warning', message: '请选取商品' })
+        return false
+      }
+      if (this.limitMin !== 0 && this.mySelectList.length < this.limitMin) {
+        this.$message({
+          type: 'warning',
+          message: '最少要选取' + this.limitMin + '个商品'
+        })
         return false
       }
       if (this.limitMax !== 0 && this.mySelectList.length > this.limitMax) {
@@ -393,9 +404,11 @@ export default {
       queryActivityCommGoods(params)
         .then(res => {
           if (res.code === '10000' && res.data) {
+            _.map(res.data.data, goodsItems => {
+              goodsItems.source = 1
+            })
             this.tableData = res.data.data || []
             this.pager.total = res.data.totalCount
-            console.log('我获取玩列表了--------')
             this.$nextTick(() => {
               this.updateChecked()
             })

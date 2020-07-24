@@ -3,6 +3,9 @@
     <el-form label-width="90px" size="mini">
       <el-form-item label="优惠券名称">
         <strong>{{ item.cname }}</strong>
+        <div v-if="error.isItemId" class="sa-assembly-error">
+          {{ error.isItemId }}
+        </div>
         <div class="cfim-delete">
           <el-button type="text" :disabled="!isDelete" @click="$emit('on-coupon-delete')">删除</el-button>
         </div>
@@ -22,7 +25,8 @@ export default {
   data() {
     return {
       error: {
-        isValue: false
+        isValue: false,
+        isItemId: false
       },
       item: {}
     }
@@ -39,13 +43,19 @@ export default {
   },
   methods: {
     $verification() {
-      const { value } = this.item
+      const { value, itemId } = this.item
       let flag = true
 
       this.error.isValue = false
+      this.error.isItemId = false
 
       if (!value) {
         this.error.isValue = '请输入发放量'
+        flag = false
+      }
+
+      if (!itemId) {
+        this.error.isItemId = '请选择优惠券'
         flag = false
       }
 

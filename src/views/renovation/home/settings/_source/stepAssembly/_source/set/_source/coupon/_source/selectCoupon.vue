@@ -3,7 +3,7 @@
     <div class="scrollbar sscm-select-box">
       <el-form label-width="80px">
         <el-form-item label="已选">
-          <el-tag v-for="(item,$index) in selectList" :key="$index">{{ item.cname }}</el-tag>
+          <el-tag v-for="(el,$index) in selectList" :key="$index">{{ el.cname }}</el-tag>
         </el-form-item>
       </el-form>
     </div>
@@ -11,7 +11,7 @@
       <span class="sscm-coupon-type">
         <span class="sscm-text-1">活动类型 </span>
         <el-select v-model="searchParams.ctype" size="mini" placeholder="请选择" style="width: 200px;">
-          <el-option v-for="item in [{value:0,label:'全部'},{value:1,label:'折扣券'},{value:2,label:'满减劵'},{value:3,label:'礼品券'},]" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="el in [{value:0,label:'全部'},{value:1,label:'折扣券'},{value:2,label:'满减劵'},{value:3,label:'礼品券'},]" :key="el.value" :label="el.label" :value="el.value" />
         </el-select>
       </span>
       <span class="sscm-coupon-name">
@@ -122,8 +122,6 @@ export default {
       } else {
         this.selectList = _.reject(this.selectList, ['id', item.id])
       }
-
-      console.log(this.selectList)
     },
     handleshopRule(ctype, useRule, denomination, giftName) {
       return handleshopRule(ctype, useRule, denomination, giftName)

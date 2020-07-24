@@ -29,19 +29,19 @@ export default {
   props: {},
   methods: {
     ...mapMutations('renovation', ['setStepVal', 'reset', 'setHomeLoading']),
-    ...mapActions('renovation', ['getHomePage']),
+    ...mapActions('renovation', ['getHomePage', 'getAgaData']),
     ...mapActions('mall', ['getCenterStoreId'])
   },
   watch: {},
   beforeCreate() {
   },
   created() {
-    // todo 防止数据未清除 创建再次清空
-    this.reset()
+    this.isComponent = false
     this.setHomeLoading(true)
     const { query } = this.$route
     const { merCode } = this.$store.state.user
-    this.getCenterStoreId({ merCode }).then(() => {
+    this.getCenterStoreId({ merCode }).then(async() => {
+      await this.getAgaData()
       if (!_.isEmpty(query)) {
         this.setStepVal(2)
         this.getHomePage({ id: query.id }).then(() => {

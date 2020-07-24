@@ -19,7 +19,7 @@
           <div class="selects-content">
             <div class="select-radio-model">
               <div v-for="(items, index) in empLoyeeArr" :key="index">
-                <div class="items" v-if="items.show">
+                <div v-if="items.show" class="items">
                   <span class="items-name">{{ items.empName }}</span>
                   <i v-if="items.selectFlag" class="el-icon-circle-check" @click="choosed(items)" />
                   <span v-else class="before-choose" @click="unchoosed(items)" />
@@ -37,8 +37,8 @@
                 type="info"
                 closable
                 size="mini"
-                @close="items.selectFlag=false"
                 style="margin-right: 20px; margin-bottom: 10px "
+                @close="items.selectFlag=false"
               >{{ items.empName }}</el-tag>
             </div>
           </div>

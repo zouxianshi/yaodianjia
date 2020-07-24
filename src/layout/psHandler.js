@@ -17,6 +17,10 @@ class InnerCtor {
     //立即发货鉴权
     return this.get('order.order-all.immediate-delivery')
   }
+  // 组合商品权限控制
+  showGroupGoods() {
+    return this.get('marketing.marketing-manager.commodity-combine')
+  }
   navList() {
     return [
       {
@@ -97,12 +101,12 @@ class InnerCtor {
             name: `门店商品管理`,
             path: '/goods-manage/store-goods',
             disabled: this.get('commodity.commodity-store')
-          },
-          {
-            name: `组合商品`,
-            path: '/goods-manage/constitute-goods',
-            disabled: this.get('commodity.commodity-combine')
           }
+          // {
+          //   name: `组合商品`,
+          //   path: '/goods-manage/constitute-goods',
+          //   disabled: this.get('commodity.commodity-combine')
+          // }
         ]
       },
       {

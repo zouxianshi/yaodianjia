@@ -5,7 +5,7 @@
       <div class="scm-comps-class">
         <ul>
           <template v-for="(item,$index) in defaultData[tabVal]">
-            <li v-if="item.type !== 'activityAggregate'" :key="$index" :class="{'act':selectVal === item.type}" @click="onToggle(item.type)"><span>{{ item.name }}</span></li>
+            <li :key="$index" :class="{'act':selectVal === item.type}" @click="onToggle(item.type)"><span>{{ item.name }}</span></li>
           </template>
         </ul>
       </div>
@@ -22,6 +22,7 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 import vDraggable from 'vuedraggable'
 import mTab from './_source/tab'
 import mCompsItem from './_source/compsItem'
@@ -78,6 +79,7 @@ export default {
   destroyed() {
   },
   computed: {
+    ...mapState('renovation', ['agaSelectList']),
     dragOptions() {
       return {
         animation: 150,

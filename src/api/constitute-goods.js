@@ -42,3 +42,14 @@ export function getcommSpecGoodsList(params) {
     data: params
   })
 }
+
+/**
+ * 删除组合商品
+ */
+export function deleteConstituteGoods(params) {
+  return request({
+    url: `${config.merGoods}/1.0/assemble-comm`,
+    method: 'delete',
+    data: params
+  })
+}

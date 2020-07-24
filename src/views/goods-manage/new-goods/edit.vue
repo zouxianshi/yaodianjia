@@ -20,7 +20,6 @@
         @click.native="handleGoStep(3)"
       />
     </el-steps>
-
     <div ref="appContaniner" class="app-container" @scroll="onScroll">
       <div v-loading="basicLoading" class="edit-wrapper" element-loading-text="拼命加载中">
         <!-- 第一步 -->
@@ -212,7 +211,7 @@
                 <div class="edit-card-cnt">
                   <div class="content">
                     <template v-if="chooseTypeList.length!==0&&chooseTypeList[0].name=='中西药品'">
-                      <el-form-item label="药品类型：">
+                      <el-form-item label="药品类型：" prop="drugType">
                         <el-select v-model="basicForm.drugType" placeholder="请选择药品类型">
                           <el-option label="甲类OTC" :value="0" />
                           <el-option label="乙类OTC" :value="2" />
@@ -622,8 +621,8 @@ export default {
       if (!value) {
         if (
           this.basicForm.origin !== 1 &&
-          this.chooseTypeList.length !== 0 &&
-          this.chooseTypeList[0].name === '中西药品'
+            this.chooseTypeList.length !== 0 &&
+            this.chooseTypeList[0].name === '中西药品'
         ) {
           callback(new Error('请输入通用名'))
         } else {
@@ -654,8 +653,8 @@ export default {
         }
         if (
           rule.field === 'long' ||
-          rule.field === 'height' ||
-          rule.field === 'width'
+            rule.field === 'height' ||
+            rule.field === 'width'
         ) {
           if ((value && value <= 0) || value >= 100) {
             return callback(new Error('长宽高必须大于0 小于100'))
@@ -758,6 +757,8 @@ export default {
           { required: true, message: '请选择所属品牌', trigger: 'change' }
         ],
         weight: [{ required: true, validator: _checkFloat, trigger: 'blur' }],
+        drugType: [{ required: true, message: '请选择药品类型', trigger: 'blur' }],
+        specSelect: [{ required: true, message: '请增加规格信息', trigger: 'blur' }],
         manufacture: [
           { required: true, message: '请输入生成企业', trigger: 'blur' }
         ],
@@ -861,6 +862,22 @@ export default {
     } else {
       next()
     }
+    // } else {
+    // if (!this.leaveAction) {
+    //   const answer = window.confirm('你还有数据没有保存，是否确认退出')
+    //   if (answer) {
+    //     if (this.pageLoading) {
+    //       this.pageLoading.close()
+    //     }
+    //     this.$store.dispatch('tagsView/delView', from)
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // } else {
+    //   next()
+    // }
+    // }
   },
   mounted() {},
   created() {
@@ -1243,6 +1260,9 @@ export default {
       }
       // 赋值值
       this.basicForm = data
+      if (this.basicForm.intro === null) {
+        this.basicForm.intro = ''
+      }
       this.$refs.editor.setContent(this.basicForm.intro)
     },
     // 加载商品图片
@@ -1345,9 +1365,9 @@ export default {
     beforeUpload(file) {
       const size = file.size / 1024
       const isImg =
-        file.type === 'image/jpeg' ||
-        file.type === 'image/png' ||
-        file.type === 'image/jpg'
+          file.type === 'image/jpeg' ||
+          file.type === 'image/png' ||
+          file.type === 'image/jpg'
       if (!isImg) {
         this.$message({
           message: '只能上传格式为 jpg、jpeg、png的图片',
@@ -1587,8 +1607,8 @@ export default {
             ].id // 分类id
             if (
               this.chooseTypeList &&
-              (this.chooseTypeList[0].name === '医疗器械' ||
-                this.chooseTypeList[0].name === '营养保健')
+                (this.chooseTypeList[0].name === '医疗器械' ||
+                  this.chooseTypeList[0].name === '营养保健')
             ) {
               this.basicForm.hasEphedrine = 0
               this.basicForm.needId = 0
@@ -1630,7 +1650,7 @@ export default {
             }
             if (
               this.chooseTypeList &&
-              this.chooseTypeList[0].name !== '中西药品'
+                this.chooseTypeList[0].name !== '中西药品'
             ) {
               data.drugType = ''
               data.dosageForm = ''
@@ -1685,7 +1705,6 @@ export default {
                   if (this.$route.query.source === 'create') {
                     params.commDTO.origin = 2
                   }
-
                   this._CreateBasicInfo(params)
                   // }
                   // 需修改
@@ -1714,7 +1733,9 @@ export default {
                 content: this.goodsIntro.content,
                 id: this.basicForm.id
               }
-
+              console.log(params.specList)
+              console.log(params.imgList)
+              console.log(params.detailDTO)
               // todo handler params
               const { query } = this.$route
               if (query.origin) {
@@ -1724,7 +1745,6 @@ export default {
               if (this.$route.query.source === 'create') {
                 params.commDTO.origin = 2
               }
-
               this._CreateBasicInfo(params)
               // }
             }
@@ -1846,6 +1866,47 @@ export default {
         .catch(_ => {
           this.subLoading2 = false
         })
+    },
+    handleSubIntro() {
+      // 保存商品详情
+      this.subLoading = true
+      const data = {
+        content: this.goodsIntro.content,
+        id: this.basicForm.id
+      }
+      saveGoodsDetails(data)
+        .then(res => {
+          this.doSubmitInfo()
+          // this.$message({
+          //   message: '保存成功，请至“待完善” / “待提交审核”/ “已通过”页面查询商品',
+          //   type: 'success'
+          // })
+        })
+        .catch(_ => {
+          this.subLoading = false
+        })
+    },
+    doSubmitInfo() {
+      this.subLoading = false
+      this.leaveAction = true
+
+    //   setTimeout(() => {
+    //     this.$confirm('请确认已保存橱窗图', '提示', {
+    //       confirmButtonText: '确定',
+    //       cancelButtonText: '取消',
+    //       type: 'warning'
+    //     })
+    //       .then(() => {
+    //         this.$store.dispatch('tagsView/delView', this.$route).then(res => {
+    //           sessionStorage.setItem('isRefreshDepot', true)
+    //           this.$router.replace('/goods-manage/' + this.backUrl)
+    //         })
+    //       })
+    //       .catch(() => {
+    //         console.log('已取消')
+    //       })
+    //   }, 1000)
+    // }
     }
   }
 }
@@ -1912,7 +1973,7 @@ export default {
       height: 0;
       border-width: 15px;
       border-style: solid;
-      border-color:transparent #ffffdd transparent transparent;
+      border-color: transparent #ffffdd transparent transparent;
       position: absolute;
       left: -30px;
       top: 5px;
@@ -1933,11 +1994,11 @@ export default {
     margin-bottom: 10px;
     margin-top: 10px;
     color: #147de8;
-    -ms-user-select:none;
-    -khtml-user-select:none;
-    -webkit-user-select:none;
-    -moz-user-select:none;
-    user-select:none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
   }
   .specs-box {
     margin-top: 20px;
@@ -2106,7 +2167,7 @@ export default {
   background: #fff;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   text-align: right;
-  width:calc(100% - 255px);
+  width: calc(100% - 255px);
 }
 .link-btn {
   font-size: 14px;

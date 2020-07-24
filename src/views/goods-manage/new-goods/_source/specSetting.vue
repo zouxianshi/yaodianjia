@@ -6,7 +6,8 @@
       </el-form-item>
     </el-form>
     <el-form v-if="cpdIsSpec">
-      <el-form-item label="规格信息：">
+      <el-form-item label="规格信息：" prop="specSelect">
+        <span class="tip">*</span>
         <div>
           <!--规格列表-->
           <m-spec-info v-if="isSpec && specListData.length" :spec-select="specSelect" :spec-list="specListData" />
@@ -140,5 +141,11 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
   .spec-setting-model {
 
+  }
+
+  .el-form-item__content .tip {
+    position: absolute;
+    left: -10px;
+    top: 3px;
   }
 </style>

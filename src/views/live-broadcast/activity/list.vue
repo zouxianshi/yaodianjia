@@ -1,23 +1,11 @@
 <template>
   <div class="app-container">
     <el-button class="btn btn-add" type="primary" size="small" @click.stop="handleAdd('')">新建直播活动</el-button>
-    <!-- <section @keydown.enter="search()">
-      <div class="search-form" style="margin-top:20px;margin-bottom:10px">
-        <div class="search-item">
-          <span class="label-name">直播主题</span>
-          <el-input v-model.trim="listQuery.keyword" size="small" style="width: 200px" />
-        </div>
-        <div class="search-item">
-          <el-button size="small" @click="search()">查 询</el-button>
-        </div>
-      </div>
-    </section>-->
-    <!-- <div id="qrcode" /> -->
     <section class="table-box webkit-scroll">
       <el-table
         v-loading="loading"
         :data="tableData"
-        height="calc(100vh - 350px)"
+        height="calc(100vh - 400px)"
         size="small"
         style="width: 100%"
       >
@@ -26,7 +14,7 @@
             <span>{{ scope.$index+1 }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="主播主题" min-width="180" align="center" />
+        <el-table-column prop="name" label="主题" min-width="180" align="center" />
         <el-table-column label="封面" min-width="100" align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.coverPicUrl && scope.row.coverPicUrl!==''" class="x-img-mini">
@@ -43,7 +31,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="beginTime" label="开播时间" min-width="180" align="center" />
-        <el-table-column :prop="duration" label="时长" min-width="180" align="center">
+        <el-table-column label="时长" min-width="180" align="center">
           <template slot-scope="scope">
             <span>{{ ChangeHourMinutestr(scope.row.duration) }}</span>
           </template>
@@ -57,8 +45,8 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="数量" prop="commodityNum" min-width="80" align="center" />
-        <el-table-column prop="remark" label="直播视频" min-width="120" align="center">
+        <el-table-column label="商品数" prop="commodityNum" min-width="80" align="center" />
+        <el-table-column label="直播回放" min-width="120" align="center">
           <template slot-scope="scope">
             <div style="display:flex;justify-content: center;">
               <div class="cover">
@@ -72,7 +60,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" align="center" min-width="150">
           <template slot-scope="scope">
-            <template v-if="scope.row.status!==2">
+            <template>
               <el-button
                 v-if="scope.row.status===0||scope.row.status===1||scope.row.status===3"
                 size="mini"
@@ -91,6 +79,9 @@
                 size="mini"
                 @click="handleAdd(scope.row.id)"
               >编辑</el-button>
+              <el-button type="text" size="small" @click="_onDelete(scope.row.id)">
+                <i class="el-icon-delete" />
+              </el-button>
             </template>
           </template>
         </el-table-column>
@@ -150,37 +141,32 @@
         <el-button type="primary" size="small" @click="goodsVisible = false">关 闭</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="扫码分享" :visible.sync="shareVisible" append-to-body width="30%">
-      <preview v-if="shareVisible" :link="pageLink" />
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" size="small" @click="shareVisible = false">关 闭</el-button>
-      </span>
-    </el-dialog>
+    <popShareLive ref="popShareLive" />
+    <popStartLive ref="popStartLive" />
   </div>
 </template>
 <script>
 import Pagination from '@/components/Pagination'
 import mixins from '@/utils/mixin'
 import liveRequest from '@/api/live'
-import QRCode from 'qrcodejs2'
 import { mapGetters } from 'vuex'
-import preview from './_source/perview'
+import { deleteLive } from '@/api/factory-live'
+// 开启直播以及分享弹窗
+import popShareLive from '../../factory-live/_source/pop-share-live' // 分享直播
+import popStartLive from '../../factory-live/_source/pop-start-live'
 export default {
   name: 'Live',
-  components: { Pagination, preview },
+  components: { Pagination, popShareLive, popStartLive },
   mixins: [mixins],
   data() {
     return {
       tableData: [],
-      qrcode: null,
       codeVisible: false,
       loading: false,
       videoVisible: false,
       aliPlay: null,
       goodsVisible: false,
       goodsList: [],
-      shareVisible: false,
-      pageLink: '',
       playList: [],
       playIndex: 0,
       playUrl: ''
@@ -197,6 +183,7 @@ export default {
      * 获取数据列表
      */
     async getList() {
+      this.listQuery.merType = 1
       this.loading = true
       try {
         const { data } = await liveRequest.getLiveList(this.listQuery)
@@ -215,12 +202,7 @@ export default {
      * 发起直播
      */
     async handleStartLive(id) {
-      try {
-        await liveRequest.startLive(id)
-        this.$router.push('/live-manage/live-now?id=' + id)
-      } catch (error) {
-        console.log(error)
-      }
+      this.$refs.popStartLive.openShare(this.merCode, id)
     },
     /**
      * 获取该条数据的商品数据
@@ -237,25 +219,21 @@ export default {
      * 分享二维码
      */
     handleShareCode(row) {
-      liveRequest.getShareLivePage(this.merCode, row.id).then(res => {
-        this.pageLink = res.data
-        this.shareVisible = true
+      this.$refs.popShareLive.openShare(this.merCode, row.id)
+    },
+    // 删除直播
+    _onDelete(id) {
+      deleteLive(id).then(res => {
+        if (res.code === '10000') {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          })
+          this.getList()
+        }
       })
     },
-    createQrCode(data) {
-      if (this.qrcode) {
-        this.qrcode.makeCode(data)
-      } else {
-        this.qrcode = new QRCode('qrcode', {
-          width: 132,
-          height: 132,
-          text: data, // 二维码地址
-          colorDark: '#000',
-          colorLight: '#fff',
-          correctLevel: QRCode.CorrectLevel.L // 设置二维码容错率
-        })
-      }
-    },
+
     handleColseVideo() {
       this.aliPlay.pause()
       this.videoVisible = false

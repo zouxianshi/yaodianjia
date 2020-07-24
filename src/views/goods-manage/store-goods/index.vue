@@ -9,7 +9,7 @@
         <el-radio-button :label="4">统计</el-radio-button>
       </el-radio-group>
       <section @keydown.enter="_loadList">
-        <div class="search-form" style="margin-top:20px;margin-bottom:10px">
+        <div class="search-form" style="margin-top:20px;margin-bottom:0px">
           <div v-if="listQuery.status !== 4" class="search-item">
             <span class="label-name">选择门店</span>
             <el-select
@@ -59,8 +59,6 @@
               placeholder="条形码"
             />
           </div>
-        </div>
-        <div class="search-form" style="margin-bottom:10px">
           <div class="search-item">
             <span class="label-name">批准文号</span>
             <el-input
@@ -84,19 +82,6 @@
               <el-option label="处方药" value="1" />
               <el-option label="乙类OTC" value="2" />
               <el-option label="OTC" value="4" />
-            </el-select>
-          </div>
-          <div class="search-item">
-            <span class="label-name">商品类型</span>
-            <el-select
-              v-model="listQuery.commodityType"
-              filterable
-              size="small"
-              placeholder="普通商品/组合商品"
-              @change="handleChangeCommodityType"
-            >
-              <el-option label="普通商品" value="1" />
-              <el-option label="组合商品" value="2" />
             </el-select>
           </div>
           <div v-if="listQuery.status !== 4" class="search-item">
@@ -127,7 +112,45 @@
               <el-option label="无" :value="false" />
             </el-select>
           </div>
+          <div class="search-item">
+            <span class="label-name">品&nbsp;&nbsp;&nbsp;&nbsp;牌</span>
+            <el-select
+              v-model="listQuery.brandId"
+              v-loadmore="loadMore"
+              filterable
+              remote
+              clearable
+              :remote-method="brandremoteMethod"
+              :loading="loading"
+              size="small"
+              placeholder="选择品牌"
+              @change="handleBrandChange"
+              @clear="handleBrandClear"
+            >
+              <el-option
+                v-for="item in brandList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </div>
         </div>
+        <!-- <div class="search-form" style="margin-bottom:10px">
+          <div class="search-item">
+            <span class="label-name">商品类型</span>
+            <el-select
+              v-model="listQuery.commodityType"
+              filterable
+              size="small"
+              placeholder="普通商品/组合商品"
+              @change="handleChangeCommodityType"
+            >
+              <el-option label="普通商品" value="1" />
+              <el-option label="组合商品" value="2" />
+            </el-select>
+          </div>
+        </div>-->
         <div class="search-form">
           <div class="search-item" style="padding-left:75px;">
             <el-button type="primary" size="small" @click="_loadList">查询</el-button>
@@ -177,7 +200,7 @@
               type="info"
               size="small"
               @click="handleSynchro"
-            >批量同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
+            >同步库存价格{{ multipleSelection.length?`(已选${multipleSelection.length}条)`:`(共${total}条)` }}</el-button>
             <!-- <el-button
               v-if="listQuery.status !== 3"
               type
@@ -431,10 +454,10 @@
     />
     <batchUpdate
       :is-show="importAllVisible"
-      :spec-data="specData"
       @complete="importAllVisible=false;getList()"
       @close="importAllVisible=false"
     />
+    <!-- :spec-data="specData" -->
     <el-dialog
       :title="`修改${type=='price'?'价格':'库存'}`"
       :visible.sync="isShow"
@@ -486,6 +509,7 @@ import Pagination from '@/components/Pagination'
 import exportTable from './export-table'
 import { mapGetters } from 'vuex'
 import { getTypeTree, exportData, exportStatisticData } from '@/api/group'
+import { getBrandList } from '@/api/new-goods'
 import lock from './_source/lock'
 import batchUpdate from './_source/batchUpdate'
 import notAsyncDialog from './_source/not-async-dialog'
@@ -545,7 +569,17 @@ export default {
       keyword: '',
       tableData: [],
       multipleSelection: [],
+      brandList: [], // 品牌列表
+      brandId: '', // 商品品牌id
+      brandName: '', // 品牌名称
+      brandNanme: '',
+      brandNanme_currentPage: 1,
+      brandNanme_pageSize: 30,
+      brandLoading: false,
       lockDialogVisible: false,
+      isIngleCommodity: false,
+      commodText: '',
+      isIngleStore: true,
       importAllVisible: false,
       defaultProps: {
         children: 'children',
@@ -566,6 +600,7 @@ export default {
         commodityType: '',
         lockFlag: '',
         approvalNumber: '',
+        brandId: '', // 品牌类型
         barCode: '',
         groupId: '',
         manufacture: '',
@@ -602,6 +637,10 @@ export default {
   created() {
     this.getList()
     this._loadTypeList()
+    this._loadBrandList({
+      pageSize: 30,
+      currentPage: 1
+    }) // 获取所属品牌
   },
   methods: {
     onLook(url) {
@@ -611,6 +650,31 @@ export default {
     onCloseImg() {
       this.isShowImg = false
     },
+    handleBrandChange() {
+      this.getList()
+    },
+    handleBrandClear() {
+      this._loadBrandList({
+        pageSize: 30,
+        currentPage: 1
+      })
+      this.getList()
+    },
+    brandremoteMethod(query) {
+      this.brandNanme = query
+      this._loadBrandList({
+        brandName: query,
+        pageSize: 30,
+        currentPage: 1
+      })
+    },
+    loadMore: function() {
+      this._loadBrandList({
+        brandName: this.brandNanme,
+        pageSize: 30,
+        currentPage: this.brandNanme_currentPage
+      })
+    },
     resetQuery() {
       this.listQuery = {
         approvalNumber: '',
@@ -618,6 +682,7 @@ export default {
         erpOrName: '',
         erpCode: '',
         groupId: '',
+        brandId: '',
         manufacture: '',
         name: '',
         storeId: this.listQuery.storeId,
@@ -773,80 +838,234 @@ export default {
         })
     },
     handleSynchro() {
+      const ary = []
+      const storeAry = []
       if (!this.listQuery.storeId) {
+        this.isIngleStore = false
+      } else {
+        this.isIngleStore = true
+      }
+      if (this.multipleSelection.length === 0) {
+        this.isIngleCommodity = false
+      }
+      if (this.multipleSelection.length === 1) {
+        this.isIngleCommodity = true
+      }
+      if (this.multipleSelection.length > 1) {
+        const firstStoreCode = this.multipleSelection[0].storeCode
+        const firstCommodityCode = this.multipleSelection[0].erpCode
+        this.isIngleStore = true
+        this.isIngleCommodity = true
+        this.multipleSelection.map(v => {
+          if (firstStoreCode !== v.storeCode) {
+            this.isIngleStore = false
+          }
+          if (firstCommodityCode !== v.erpCode) {
+            this.isIngleCommodity = false
+          }
+        })
+      }
+      if (
+        !this.listQuery.storeId &&
+        this.isIngleCommodity === false &&
+        this.multipleSelection.length === 0
+      ) {
         this.$message({
-          message: '无法同步全部门店商品，请选择指定门店',
+          message: '门店或商品至少一个是相同的，才能执行同步',
           type: 'warning'
         })
         return
       }
-      const ary = []
+      // const ary = []
       // 同步价格
       /**
        * 分为两种
        * 1.同步查询出来的数据
        * 2.同步勾选的数据
        */
-      if (this.multipleSelection.length === 0 && this.total === 0) {
+      if (this.isIngleStore === false && this.isIngleCommodity === false) {
         this.$message({
-          message: '请选择商品',
+          message: '门店或商品至少一个是相同的，才能执行同步',
           type: 'warning'
         })
         return
       }
       // 弹窗确认
-      this.$confirm(
-        `确认要将当前所选${this.multipleSelection.length ||
-          this.total}条商品的价格库存数据从erp同步到线上吗？`,
-        '',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      )
+      this.commodText = `确认要将当前所选${this.multipleSelection.length ||
+        this.total}条商品的价格库存数据从erp同步到线上吗？`
+      if (
+        this.isIngleStore === true &&
+        this.isIngleCommodity === false &&
+        this.multipleSelection.length === 0
+      ) {
+        this.commodText = '是否执行该门店下的全部商品执行同步？'
+      }
+      this.$confirm(`${this.commodText}`, '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
         .then(() => {
           let data = {}
-          // 店铺code
-          const findIndex = this.storeList.findIndex(mItem => {
-            return mItem.id === this.listQuery.storeId
-          })
-          if (this.multipleSelection.length) {
-            this.multipleSelection.map(v => {
-              ary.push({
-                erpCode: v.erpCode,
-                storeSpecId: v.storeSpecId
-              })
-            })
-            data = {
-              merCode: this.merCode,
-              storeCode: this.storeList[findIndex].stCode,
-              storeId: this.listQuery.storeId,
-              specs: ary,
-              syncType: 1 // 单个门店部分商品
-            }
-          } else {
-            // 当前同步所有查询出来的数据；
-            data = {
-              merCode: this.merCode,
-              storeCode: this.storeList[findIndex].stCode,
-              storeId: this.listQuery.storeId,
-              specs: ary,
-              syncType: 2 // 单个门店所有商品
-            }
+          let syncTypeNum = 1
+          if (
+            this.isIngleStore === true &&
+            this.isIngleCommodity === false &&
+            this.multipleSelection.length > 0
+          ) {
+            syncTypeNum = 1
+          } else if (
+            this.isIngleStore === true &&
+            this.isIngleCommodity === false &&
+            this.multipleSelection.length === 0
+          ) {
+            syncTypeNum = 2
+          } else if (
+            this.multipleSelection.length > 1 &&
+            this.isIngleStore === false &&
+            this.isIngleCommodity === true
+          ) {
+            syncTypeNum = 3
+          } else if (
+            !this.listQuery.storeId &&
+            this.isIngleStore === false &&
+            this.isIngleCommodity === true
+          ) {
+            syncTypeNum = 4
           }
-          // 调用接口同步
-          setSynchro(data)
-            .then(res => {
-              this.$message({
-                message: '价格同步成功',
-                type: 'success'
+          if (syncTypeNum === 2) {
+            const findIndex = this.storeList.findIndex(mItem => {
+              return mItem.id === this.listQuery.storeId
+            })
+            storeAry.push({
+              storeCode: this.storeList[findIndex].stCode,
+              storeId: this.listQuery.storeId
+            })
+          }
+          if (
+            !this.listQuery.storeId &&
+            this.isIngleCommodity === true &&
+            this.multipleSelection.length > 1
+          ) {
+            this.$confirm(
+              `检测到您选择了多条数据是同一个商品，是否是想同步该商品的所有门店？`,
+              '',
+              {
+                confirmButtonText: '是',
+                cancelButtonText: '否',
+                type: 'warning'
+              }
+            )
+              .then(() => {
+                syncTypeNum = 4
+                ary.push({
+                  erpCode: this.multipleSelection[0].erpCode,
+                  specId: this.multipleSelection[0].specId,
+                  storeSpecId: this.multipleSelection[0].storeSpecId
+                })
+                data = {
+                  merCode: this.merCode,
+                  specs: ary,
+                  storeReqDTOs: storeAry,
+                  syncType: syncTypeNum // 单个门店部分商品
+                }
+                // 调用接口同步
+                setSynchro(data)
+                  .then(res => {
+                    this.$message({
+                      message: '价格同步成功',
+                      type: 'success'
+                    })
+                    this.getList('noReset')
+                  })
+                  .catch(err => {
+                    console.log(err)
+                  })
               })
-              this.getList('noReset')
-            })
-            .catch(err => {
-              console.log(err)
-            })
+              .catch(() => {
+                ary.push({
+                  erpCode: this.multipleSelection[0].erpCode,
+                  specId: this.multipleSelection[0].specId,
+                  storeSpecId: this.multipleSelection[0].storeSpecId
+                })
+                this.multipleSelection.map(v => {
+                  storeAry.push({
+                    storeCode: v.storeCode,
+                    storeId: v.storeId
+                  })
+                })
+                data = {
+                  merCode: this.merCode,
+                  specs: ary,
+                  storeReqDTOs: storeAry,
+                  syncType: syncTypeNum // 单个门店部分商品
+                }
+                // 调用接口同步
+                setSynchro(data)
+                  .then(res => {
+                    this.$message({
+                      message: '价格同步成功',
+                      type: 'success'
+                    })
+                    this.getList('noReset')
+                  })
+                  .catch(err => {
+                    console.log(err)
+                  })
+              })
+          } else {
+            // 店铺code
+            if (this.multipleSelection.length) {
+              this.multipleSelection.map(v => {
+                ary.push({
+                  erpCode: v.erpCode,
+                  specId: v.specId,
+                  storeSpecId: v.storeSpecId
+                })
+              })
+              if (syncTypeNum === 1) {
+                storeAry.push({
+                  storeCode: this.multipleSelection[0].storeCode,
+                  storeId: this.multipleSelection[0].storeId
+                })
+              } else if (syncTypeNum === 4) {
+                console.log(storeAry)
+              } else {
+                this.multipleSelection.map(v => {
+                  storeAry.push({
+                    storeCode: v.storeCode,
+                    storeId: v.storeId
+                  })
+                })
+              }
+              data = {
+                merCode: this.merCode,
+                specs: ary,
+                storeReqDTOs: storeAry,
+                syncType: syncTypeNum // 单个门店部分商品
+              }
+            } else {
+              // 当前同步所有查询出来的数据;
+              data = {
+                merCode: this.merCode,
+                specs: ary,
+                storeReqDTOs: storeAry,
+                syncType: syncTypeNum // 单个门店所有商品
+              }
+            }
+            // 调用接口同步
+            setSynchro(data)
+              .then(res => {
+                this.$message({
+                  message: '价格同步成功',
+                  type: 'success'
+                })
+                this.getList('noReset')
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          }
         })
         .catch(() => {
           return
@@ -998,6 +1217,21 @@ export default {
       }
       this._SetUpDown(data)
     },
+    _loadBrandList(params) {
+      // 获取品牌
+      // this.brandLoading = true
+      getBrandList(params).then(res => {
+        const { data, currentPage } = res.data
+        if (currentPage === 1) {
+          this.brandList = Array.isArray(data) ? data : []
+        } else {
+          const arr = Array.isArray(data) ? data : []
+          this.brandList = [...this.brandList, ...arr]
+        }
+        this.brandNanme_currentPage = currentPage + 1
+        // this.brandLoading = false
+      })
+    },
     _SetUpDown(data) {
       // 执行上下架请求
       setUpdateStoreData(data).then(res => {
@@ -1008,12 +1242,7 @@ export default {
         ) {
           // 校验不通过
           this.isShowTipsDialog = true
-          this.tipsDialogContent =
-            res.data.code === 1
-              ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？'
-              : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(
-                res.data.erpList || []
-              ).join('、')}</p>`
+          this.tipsDialogContent = res.data.code === 1 ? '该商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？' : `<p>如下商品正在参与活动，下架后将从活动中自动去除该商品。确认继续操作吗？</p><p>商品编码：${(res.data.erpList || []).join('、')}</p>`
           this.cacheSetUpDownParams = data
         } else {
           this.$message({
