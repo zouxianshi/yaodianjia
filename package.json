@@ -43,7 +43,7 @@
     "@hydee/download": "^1.0.9",
     "@merchant/commons": "^2.0.1-beta.61",
     "@vue/utils": "^1.0.1",
-    "axios": "0.18.1",
+    "axios": "1.6.0",
     "cos-js-sdk-v5": "^0.5.26",
     "crypto": "^1.0.1",
     "dayjs": "^1.8.18",
